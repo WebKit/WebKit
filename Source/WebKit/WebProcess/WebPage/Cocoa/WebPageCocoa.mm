@@ -515,7 +515,7 @@ void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<Dic
     }
 
     auto selection = frame->selection().selection();
-    auto expandedSelectionRange = VisibleSelection { selection.visibleStart().previous(CannotCrossEditingBoundary), selection.visibleEnd().next(CannotCrossEditingBoundary) }.range();
+    auto expandedSelectionRange = VisibleSelection { selection.visibleStart().previous(EditingBoundaryCrossingRule::CannotCross), selection.visibleEnd().next(EditingBoundaryCrossingRule::CannotCross) }.range();
     if (!expandedSelectionRange) {
         completion({ });
         return;

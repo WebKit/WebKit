@@ -212,7 +212,7 @@ public:
     bool isCaret() const { return m_selection.isCaret(); }
     bool isRange() const { return m_selection.isRange(); }
     bool isCaretOrRange() const { return m_selection.isCaretOrRange(); }
-    bool isAll(EditingBoundaryCrossingRule rule = CannotCrossEditingBoundary) const { return m_selection.isAll(rule); }
+    bool isAll(EditingBoundaryCrossingRule rule = EditingBoundaryCrossingRule::CannotCross) const { return m_selection.isAll(rule); }
     
     void nodeWillBeRemoved(Node&);
     void textWasReplaced(CharacterData&, unsigned offset, unsigned oldLength, unsigned newLength);

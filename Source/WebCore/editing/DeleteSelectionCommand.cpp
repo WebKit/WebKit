@@ -265,8 +265,8 @@ void DeleteSelectionCommand::smartDeleteParagraphSpacers()
     bool selectionEndsInParagraphSeparator = isEndOfParagraph(visibleEnd);
     bool selectionEndIsEndOfContent = endOfEditableContent(visibleEnd) == visibleEnd;
     bool startAndEndInSameUnsplittableElement = unsplittableElementForPosition(visibleStart.deepEquivalent()) == unsplittableElementForPosition(visibleEnd.deepEquivalent());
-    visibleStart = visibleStart.previous(CannotCrossEditingBoundary);
-    visibleEnd = visibleEnd.next(CannotCrossEditingBoundary);
+    visibleStart = visibleStart.previous(EditingBoundaryCrossingRule::CannotCross);
+    visibleEnd = visibleEnd.next(EditingBoundaryCrossingRule::CannotCross);
     bool previousPositionIsStartOfContent = startOfEditableContent(visibleStart) == visibleStart;
     bool previousPositionIsBlankParagraph = isBlankParagraph(visibleStart);
     bool endPositionIsBlankParagraph = isBlankParagraph(visibleEnd);
@@ -303,9 +303,9 @@ bool DeleteSelectionCommand::initializePositionData()
     Position start, end;
     initializeStartEnd(start, end);
     
-    if (!isEditablePosition(start, ContentIsEditable))
+    if (!isEditablePosition(start, EditableType::Content))
         start = firstEditablePositionAfterPositionInRoot(start, highestEditableRoot(start).get());
-    if (!isEditablePosition(end, ContentIsEditable))
+    if (!isEditablePosition(end, EditableType::Content))
         end = lastEditablePositionBeforePositionInRoot(end, highestEditableRoot(start).get());
 
     if (start.isNull() || end.isNull())
@@ -325,8 +325,8 @@ bool DeleteSelectionCommand::initializePositionData()
     // Don't move content out of a table cell.
     // If the cell is non-editable, enclosingNodeOfType won't return it by default, so
     // tell that function that we don't care if it returns non-editable nodes.
-    RefPtr startCell { enclosingNodeOfType(m_upstreamStart, &isTableCell, CanCrossEditingBoundary) };
-    RefPtr endCell { enclosingNodeOfType(m_downstreamEnd, &isTableCell, CanCrossEditingBoundary) };
+    RefPtr startCell { enclosingNodeOfType(m_upstreamStart, &isTableCell, EditingBoundaryCrossingRule::CanCross) };
+    RefPtr endCell { enclosingNodeOfType(m_downstreamEnd, &isTableCell, EditingBoundaryCrossingRule::CanCross) };
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (endCell && endCell != startCell)
         m_mergeBlocksAfterDelete = false;
@@ -402,8 +402,8 @@ bool DeleteSelectionCommand::initializePositionData()
     // like the one below, since editing functions should obviously accept editing positions.
     // FIXME: Passing false to enclosingNodeOfType tells it that it's OK to return a non-editable
     // node.  This was done to match existing behavior, but it seems wrong.
-    m_startBlock = enclosingNodeOfType(m_downstreamStart.parentAnchoredEquivalent(), &isBlock, CanCrossEditingBoundary);
-    m_endBlock = enclosingNodeOfType(m_upstreamEnd.parentAnchoredEquivalent(), &isBlock, CanCrossEditingBoundary);
+    m_startBlock = enclosingNodeOfType(m_downstreamStart.parentAnchoredEquivalent(), &isBlock, EditingBoundaryCrossingRule::CanCross);
+    m_endBlock = enclosingNodeOfType(m_upstreamEnd.parentAnchoredEquivalent(), &isBlock, EditingBoundaryCrossingRule::CanCross);
 
     return true;
 }
@@ -822,8 +822,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     if (mergeDestination == startOfParagraphToMove)
         return;
 
-    VisiblePosition currentStartOfParagraphToMove = startOfParagraph(startOfParagraphToMove, CanSkipOverEditingBoundary);
-    VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove, CanSkipOverEditingBoundary);
+    VisiblePosition currentStartOfParagraphToMove = startOfParagraph(startOfParagraphToMove, EditingBoundaryCrossingRule::CanSkipOver);
+    VisiblePosition endOfParagraphToMove = endOfParagraph(startOfParagraphToMove, EditingBoundaryCrossingRule::CanSkipOver);
     
     if (mergeDestination == endOfParagraphToMove)
         return;
@@ -920,7 +920,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
     // has completed.
     
     // If we deleted into a blockquote, but are now no longer in a blockquote, use the alternate typing style
-    if (m_deleteIntoBlockquoteStyle && !enclosingNodeOfType(m_endingPosition, isMailBlockquote, CanCrossEditingBoundary))
+    if (m_deleteIntoBlockquoteStyle && !enclosingNodeOfType(m_endingPosition, isMailBlockquote, EditingBoundaryCrossingRule::CanCross))
         m_typingStyle = m_deleteIntoBlockquoteStyle;
     m_deleteIntoBlockquoteStyle = nullptr;
 
@@ -1010,9 +1010,9 @@ void DeleteSelectionCommand::doApply()
     auto affinity = m_selectionToDelete.affinity();
 
     Position downstreamEnd = m_selectionToDelete.end().downstream();
-    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart(), CanCrossEditingBoundary)
-            && isEndOfParagraph(m_selectionToDelete.visibleEnd(), CanCrossEditingBoundary)
-            && !lineBreakExistsAtVisiblePosition(m_selectionToDelete.visibleEnd());
+    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart(), EditingBoundaryCrossingRule::CanCross)
+        && isEndOfParagraph(m_selectionToDelete.visibleEnd(), EditingBoundaryCrossingRule::CanCross)
+        && !lineBreakExistsAtVisiblePosition(m_selectionToDelete.visibleEnd());
     if (m_needPlaceholder) {
         // Don't need a placeholder when deleting a selection that starts just before a table
         // and ends inside it (we do need placeholders to hold open empty cells, but that's

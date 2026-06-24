@@ -137,8 +137,8 @@ void InsertListCommand::doApply()
     // FIXME: We paint the gap before some paragraphs that are indented with left 
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
-    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd, CanSkipOverEditingBoundary)) {
-        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary), endingSelection().directionality()));
+    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd, EditingBoundaryCrossingRule::CanSkipOver)) {
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(EditingBoundaryCrossingRule::CannotCross), endingSelection().directionality()));
         if (!endingSelection().rootEditableElement())
             return;
     }
@@ -149,18 +149,18 @@ void InsertListCommand::doApply()
         if (selection.isRange()) {
             VisiblePosition startOfSelection = selection.visibleStart();
             VisiblePosition endOfSelection = selection.visibleEnd();
-            VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
+            VisiblePosition startOfLastParagraph = startOfParagraph(endOfSelection, EditingBoundaryCrossingRule::CanSkipOver);
 
             RefPtr<ContainerNode> startScope;
             int startIndex = indexForVisiblePosition(startOfSelection, startScope);
 
-            if (startOfLastParagraph.isNotNull() && startOfParagraph(startOfSelection, CanSkipOverEditingBoundary) != startOfLastParagraph) {
+            if (startOfLastParagraph.isNotNull() && startOfParagraph(startOfSelection, EditingBoundaryCrossingRule::CanSkipOver) != startOfLastParagraph) {
                 bool forceCreateList = !selectionHasListOfType(selection, listTag);
 
                 auto currentSelection = *endingSelection().firstRange();
                 VisiblePosition startOfCurrentParagraph = startOfSelection;
                 VisiblePosition oldPositionBeforeReplacedParagraph;
-                while (startOfCurrentParagraph.isNotNull() && !inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, CanCrossEditingBoundary)) {
+                while (startOfCurrentParagraph.isNotNull() && !inSameParagraph(startOfCurrentParagraph, startOfLastParagraph, EditingBoundaryCrossingRule::CanCross)) {
                     // doApply() may operate on and remove the last paragraph of the selection from the document
                     // if it's in the same list item as startOfCurrentParagraph. Return early to avoid an
                     // infinite loop and because there is no more work to be done.
@@ -187,7 +187,7 @@ void InsertListCommand::doApply()
                         ASSERT(endOfSelection.isNotNull());
                         if (endOfSelection.isNull() || !endOfSelection.rootEditableElement())
                             return;
-                        startOfLastParagraph = startOfParagraph(endOfSelection, CanSkipOverEditingBoundary);
+                        startOfLastParagraph = startOfParagraph(endOfSelection, EditingBoundaryCrossingRule::CanSkipOver);
                     }
 
                     // Fetch the start of the selection after moving the first paragraph,
@@ -328,8 +328,8 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
         previousListChild = listChildNode->previousSibling();
     } else {
         // A paragraph is visually a list item minus a list marker.  The paragraph will be moved.
-        start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
-        end = endOfParagraph(start, CanSkipOverEditingBoundary);
+        start = startOfParagraph(originalStart, EditingBoundaryCrossingRule::CanSkipOver);
+        end = endOfParagraph(start, EditingBoundaryCrossingRule::CanSkipOver);
         nextListChild = enclosingListChild(end.next().deepEquivalent().deprecatedNode(), &listNode);
         ASSERT(nextListChild != listChildNode);
         previousListChild = enclosingListChild(start.previous().deepEquivalent().deprecatedNode(), &listNode);
@@ -399,8 +399,8 @@ static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, con
 
 RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& originalStart, const HTMLQualifiedName& listTag)
 {
-    VisiblePosition start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
-    VisiblePosition end = endOfParagraph(start, CanSkipOverEditingBoundary);
+    VisiblePosition start = startOfParagraph(originalStart, EditingBoundaryCrossingRule::CanSkipOver);
+    VisiblePosition end = endOfParagraph(start, EditingBoundaryCrossingRule::CanSkipOver);
     
     if (start.isNull() || end.isNull() || !start.deepEquivalent().containerNode()->hasEditableStyle() || !end.deepEquivalent().containerNode()->hasEditableStyle())
         return nullptr;
@@ -411,8 +411,8 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     appendNode(placeholder.copyRef(), listItemElement.copyRef());
 
     // Place list item into adjoining lists.
-    auto previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(CannotCrossEditingBoundary), listTag, m_listStyleType);
-    auto nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(CannotCrossEditingBoundary), listTag, m_listStyleType);
+    auto previousList = adjacentEnclosingList(start.deepEquivalent(), start.previous(EditingBoundaryCrossingRule::CannotCross), listTag, m_listStyleType);
+    auto nextList = adjacentEnclosingList(start.deepEquivalent(), end.next(EditingBoundaryCrossingRule::CannotCross), listTag, m_listStyleType);
     RefPtr<HTMLElement> listElement;
     if (previousList)
         appendNode(WTF::move(listItemElement), *previousList);
@@ -461,8 +461,8 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
 
     // Inserting list element and list item list may change start of pargraph to move. We calculate start of paragraph again.
     document().updateLayoutIgnorePendingStylesheets();
-    start = startOfParagraph(startOfParagraph(start, CanSkipOverEditingBoundary));
-    end = endOfParagraph(endOfParagraph(start, CanSkipOverEditingBoundary));
+    start = startOfParagraph(startOfParagraph(start, EditingBoundaryCrossingRule::CanSkipOver));
+    end = endOfParagraph(endOfParagraph(start, EditingBoundaryCrossingRule::CanSkipOver));
     moveParagraph(start, end, positionBeforeNode(placeholder), true);
 
     if (listElement)

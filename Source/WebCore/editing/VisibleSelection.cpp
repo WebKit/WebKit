@@ -311,7 +311,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
                     // The paragraph break after the last paragraph in the last cell of a block table ends
                     // at the start of the paragraph after the table.
                     if (isBlock(*table))
-                        end = end.next(CannotCrossEditingBoundary);
+                        end = end.next(EditingBoundaryCrossingRule::CannotCross);
                     else
                         end = wordEnd;
                 }
@@ -364,7 +364,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
                 // The paragraph break after the last paragraph in the last cell of a block table ends
                 // at the start of the paragraph after the table, not at the position just after the table.
                 if (isBlock(*table))
-                    end = end.next(CannotCrossEditingBoundary);
+                    end = end.next(EditingBoundaryCrossingRule::CannotCross);
                 // There is no parargraph break after the last paragraph in the last cell of an inline table.
                 else
                     end = visibleParagraphEnd;

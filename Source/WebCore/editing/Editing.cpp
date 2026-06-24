@@ -143,9 +143,9 @@ static bool computeEditability(const Node& node, EditableType editableType, Node
         return true;
 
     switch (editableType) {
-    case ContentIsEditable:
+    case EditableType::Content:
         return false;
-    case HasEditableAXRole:
+    case EditableType::AXRole:
         return isEditableToAccessibility(node);
     }
     ASSERT_NOT_REACHED();
@@ -159,7 +159,7 @@ bool hasEditableStyle(const Node& node, EditableType editableType)
 
 bool isEditableNode(const Node& node)
 {
-    return computeEditability(node, ContentIsEditable, Node::ShouldUpdateStyle::Update);
+    return computeEditability(node, EditableType::Content, Node::ShouldUpdateStyle::Update);
 }
 
 bool isEditablePosition(const Position& position, EditableType editableType)
@@ -187,11 +187,11 @@ Element* editableRootForPosition(const Position& position, EditableType editable
         return nullptr;
 
     switch (editableType) {
-    case HasEditableAXRole:
+    case EditableType::AXRole:
         if (CheckedPtr cache = node->document().existingAXObjectCache())
             return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
         [[fallthrough]];
-    case ContentIsEditable:
+    case EditableType::Content:
         return node->rootEditableElement();
     }
     return nullptr;
@@ -525,8 +525,8 @@ Element* enclosingElementWithTag(const Position& position, const QualifiedName& 
 RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule rule)
 {
     // FIXME: support CanSkipCrossEditingBoundary
-    ASSERT(rule == CanCrossEditingBoundary || rule == CannotCrossEditingBoundary);
-    auto root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
+    ASSERT(rule == EditingBoundaryCrossingRule::CanCross || rule == EditingBoundaryCrossingRule::CannotCross);
+    auto root = rule == EditingBoundaryCrossingRule::CannotCross ? highestEditableRoot(position) : nullptr;
     for (RefPtr n = position.deprecatedNode(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
@@ -543,7 +543,7 @@ RefPtr<Node> enclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(
 RefPtr<Node> highestEnclosingNodeOfType(const Position& position, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule rule, Node* stayWithin)
 {
     RefPtr<Node> highest;
-    RefPtr root = rule == CannotCrossEditingBoundary ? highestEditableRoot(position) : nullptr;
+    RefPtr root = rule == EditingBoundaryCrossingRule::CannotCross ? highestEditableRoot(position) : nullptr;
     for (RefPtr<Node> n = position.containerNode(); n && n != stayWithin; n = n->parentNode()) {
         if (root && !n->hasEditableStyle())
             continue;
@@ -963,7 +963,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     // (a table is itself a paragraph).
     if (RefPtr table = isFirstPositionAfterTable(endOfSelection)) {
         if (startOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(*table))
-            newSelection = VisibleSelection(startOfSelection, endOfSelection.previous(CannotCrossEditingBoundary));
+            newSelection = VisibleSelection(startOfSelection, endOfSelection.previous(EditingBoundaryCrossingRule::CannotCross));
     }
     
     // If the start of the selection to modify is just before a table,
@@ -972,7 +972,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     // containing the table itself.
     if (RefPtr table = isLastPositionBeforeTable(startOfSelection)) {
         if (endOfSelection.deepEquivalent().deprecatedNode()->isDescendantOf(*table))
-            newSelection = VisibleSelection(startOfSelection.next(CannotCrossEditingBoundary), endOfSelection);
+            newSelection = VisibleSelection(startOfSelection.next(EditingBoundaryCrossingRule::CannotCross), endOfSelection);
     }
     
     return newSelection;
@@ -992,7 +992,7 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
     auto position = visiblePosition.deepEquivalent();
     Ref document = *position.document();
 
-    auto editableRoot = highestEditableRoot(position, AXObjectCache::accessibilityEnabled() ? HasEditableAXRole : ContentIsEditable);
+    auto editableRoot = highestEditableRoot(position, AXObjectCache::accessibilityEnabled() ? EditableType::AXRole : EditableType::Content);
     if (editableRoot && !document->inDesignMode())
         scope = editableRoot;
     else {

@@ -3087,7 +3087,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
         // with spellcheck disabled. To fix this, we need to refactor markAllMisspellingsAndBadGrammarInRanges so that
         // it can handle a list of spelling ranges, alongside the grammar range.
         while (sentenceStart < spellCheckingStart) {
-            auto previousPosition = spellCheckingStart.previous(CannotCrossEditingBoundary);
+            auto previousPosition = spellCheckingStart.previous(EditingBoundaryCrossingRule::CannotCross);
             if (previousPosition.isNull() || previousPosition == spellCheckingStart)
                 break;
 
@@ -3102,7 +3102,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
         }
 
         while (spellCheckingEnd < sentenceEnd) {
-            auto nextPosition = spellCheckingEnd.next(CannotCrossEditingBoundary);
+            auto nextPosition = spellCheckingEnd.next(EditingBoundaryCrossingRule::CannotCross);
             if (nextPosition.isNull() || nextPosition == spellCheckingEnd)
                 break;
 

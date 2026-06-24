@@ -486,22 +486,22 @@ AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObj
     auto intent = originalIntent;
     if (m_lastSelection.isCaret() && selection.isCaret()) {
         // Cursor movement
-        if (selection.visibleStart() == m_lastSelection.visibleStart().next(CannotCrossEditingBoundary)) {
+        if (selection.visibleStart() == m_lastSelection.visibleStart().next(EditingBoundaryCrossingRule::CannotCross)) {
             intent.type = AXTextStateChangeType::SelectionMove;
             intent.selection.direction = AXTextSelectionDirection::Next;
             intent.selection.granularity = AXTextSelectionGranularity::Character;
-        } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(CannotCrossEditingBoundary)) {
+        } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(EditingBoundaryCrossingRule::CannotCross)) {
             intent.type = AXTextStateChangeType::SelectionMove;
             intent.selection.direction = AXTextSelectionDirection::Previous;
             intent.selection.granularity = AXTextSelectionGranularity::Character;
         }
     } else if (selection.visibleBase() == m_lastSelection.visibleBase()) {
         // Selection
-        if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(CannotCrossEditingBoundary)) {
+        if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(EditingBoundaryCrossingRule::CannotCross)) {
             intent.type = AXTextStateChangeType::SelectionExtend;
             intent.selection.direction = AXTextSelectionDirection::Next;
             intent.selection.granularity = AXTextSelectionGranularity::Character;
-        } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(CannotCrossEditingBoundary)) {
+        } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(EditingBoundaryCrossingRule::CannotCross)) {
             intent.type = AXTextStateChangeType::SelectionExtend;
             intent.selection.direction = AXTextSelectionDirection::Previous;
             intent.selection.granularity = AXTextSelectionGranularity::Character;

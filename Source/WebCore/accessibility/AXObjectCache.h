@@ -863,8 +863,8 @@ protected:
     CharacterOffset nextBoundary(const CharacterOffset&, BoundarySearchFunction);
     CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, WordSide = WordSide::RightWordIfOnBoundary);
     CharacterOffset endCharacterOffsetOfWord(const CharacterOffset&, WordSide = WordSide::RightWordIfOnBoundary);
-    CharacterOffset startCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-    CharacterOffset endCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+    CharacterOffset startCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
+    CharacterOffset endCharacterOffsetOfParagraph(const CharacterOffset&, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
     CharacterOffset startCharacterOffsetOfSentence(const CharacterOffset&);
     CharacterOffset endCharacterOffsetOfSentence(const CharacterOffset&);
     CharacterOffset characterOffsetForPoint(const IntPoint&);

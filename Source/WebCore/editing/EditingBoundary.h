@@ -27,15 +27,15 @@
 
 namespace WebCore {
 
-enum EditingBoundaryCrossingRule {
-    CanCrossEditingBoundary,
-    CannotCrossEditingBoundary,
-    CanSkipOverEditingBoundary
+enum class EditingBoundaryCrossingRule : uint8_t {
+    CanCross,
+    CannotCross,
+    CanSkipOver
 };
 
-enum EditableType {
-    ContentIsEditable,
-    HasEditableAXRole
+enum class EditableType : uint8_t {
+    Content,
+    AXRole
 };
 
 } // namespace WebCore
