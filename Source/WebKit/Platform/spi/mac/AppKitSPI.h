@@ -263,8 +263,13 @@ NS_HEADER_AUDIT_END(nullability, sendability)
 
 #if HAVE(NSREFRESHCONTROLLER)
 
-#if !defined(__has_include) || !__has_include(<AppKit/NSRefreshControl_Private.h>)
+#if !defined(__has_include) || (!__has_include(<AppKit/NSRefreshControl_Private.h>) && !__has_include(<AppKit/NSRefreshControl.h>))
 @interface NSRefreshControl : NSView
+@end
+#endif
+
+#if !defined(__has_include) || (!__has_include(<AppKit/NSRefreshController_Private.h>) && !__has_include(<AppKit/NSRefreshController.h>))
+@interface NSRefreshController : NSObject
 @end
 #endif
 
