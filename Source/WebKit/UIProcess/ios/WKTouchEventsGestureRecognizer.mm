@@ -243,6 +243,37 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
     return defaultRollAngle;
 }
 
+static bool isBeganTouchPhase(UITouchPhase phase)
+{
+    return phase == UITouchPhaseBegan || phase == UITouchPhaseRegionEntered;
+}
+
+// UIKit can report one touch set where some touches just began while other touches
+// already moved, ended, or cancelled. Keep the existing rule that the final expected
+// event is dispatched once, but first split out a touchstart by preserving only the
+// began-like touches as changed. The final dispatch then suppresses those began-like
+// touches to stationary so they remain active without firing a duplicate touchstart.
+enum class TouchPhaseAdjustment : uint8_t {
+    None,
+    PreserveBeganTouchesOnly,
+    SuppressBeganTouches,
+};
+
+static UITouchPhase adjustedTouchPhase(UITouchPhase phase, TouchPhaseAdjustment adjustment)
+{
+    switch (adjustment) {
+    case TouchPhaseAdjustment::None:
+        return phase;
+    case TouchPhaseAdjustment::PreserveBeganTouchesOnly:
+        return isBeganTouchPhase(phase) ? phase : UITouchPhaseStationary;
+    case TouchPhaseAdjustment::SuppressBeganTouches:
+        return isBeganTouchPhase(phase) ? UITouchPhaseStationary : phase;
+    }
+    return phase;
+}
+
+static NSTimeInterval representativeTimestampForTouches(NSSet<UITouch *> *, WebKit::WKTouchEventType, TouchPhaseAdjustment);
+
 - (WebKit::WKTouchEvent)_touchEventForChildTouch:(UITouch *)touch withParent:(const WebKit::WKTouchPoint&)parentTouchPoint
 {
     auto locationInWindow = [touch locationInView:nil];
@@ -281,7 +312,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
     return event;
 }
 
-- (void)_recordTouches:(NSSet<UITouch *> *)touches ofType:(WebKit::WKTouchEventType)type forEvent:(UIEvent *)event
+- (void)_recordTouches:(NSSet<UITouch *> *)touches ofType:(WebKit::WKTouchEventType)type forEvent:(UIEvent *)event phaseAdjustment:(TouchPhaseAdjustment)phaseAdjustment
 {
     _lastTouchEvent.type = type;
     _lastTouchEvent.inJavaScriptGesture = false;
@@ -301,7 +332,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
     if (_lastTouchEvent.touchPoints.size() != touchCount)
         _lastTouchEvent.touchPoints.resize(touchCount);
 
-    _lastTouchEvent.timestamp = touches.anyObject.timestamp;
+    _lastTouchEvent.timestamp = representativeTimestampForTouches(touches, type, phaseAdjustment);
 
     _lastTouchEvent.coalescedEvents = { };
     _lastTouchEvent.predictedEvents = { };
@@ -312,6 +343,8 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
     [_activeTouchesByIdentifier removeAllObjects];
 
     for (UITouch *touch in touches) {
+        auto touchPhase = adjustedTouchPhase(touch.phase, phaseAdjustment);
+
         // Get the identifier of this touch. Or create one if one did not exist.
         RetainPtr associatedIdentifier = dynamic_objc_cast<NSNumber>(objc_getAssociatedObject(touch, &associatedTouchIdentifierKey));
 
@@ -319,7 +352,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
         // instance persists between trackpad clicks, and there is existing web content that does not expect subsequent
         // clicks to have the same touch identifier (62895732).
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        if (touch._isPointerTouch && type == WebKit::WKTouchEventType::Begin)
+        if (touch._isPointerTouch && touchPhase == UITouchPhaseBegan)
             associatedIdentifier = nil;
 #endif
 
@@ -340,7 +373,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
         touchPoint.previousLocationInRootViewCoordinates = previousLocationInRootView;
         touchPoint.locationInViewport = mapRootViewToViewport(locationInRootView, contentView.get());
         touchPoint.identifier = [associatedIdentifier unsignedIntValue];
-        touchPoint.phase = touch.phase;
+        touchPoint.phase = touchPhase;
         touchPoint.majorRadiusInWindowCoordinates = touch.majorRadius;
         touchPoint.twist = defaultRollAngle;
 
@@ -371,7 +404,7 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
 
         ++touchIndex;
 
-        if ((touchPoint.phase == UITouchPhaseEnded) || (touchPoint.phase == UITouchPhaseCancelled)) {
+        if ((touchPhase == UITouchPhaseEnded) || (touchPhase == UITouchPhaseCancelled)) {
             releasedTouchCentroidInWindowCoordinates.x += locationInWindow.x;
             releasedTouchCentroidInWindowCoordinates.y += locationInWindow.y;
             releasedTouchCentroidInRootViewCoordinates.x += locationInRootView.x;
@@ -453,6 +486,27 @@ static WebKit::WKTouchEventType eventTypeForTouchPhase(UITouchPhase phase)
     return WebKit::WKTouchEventType::Change;
 }
 
+static NSTimeInterval representativeTimestampForTouches(NSSet<UITouch *> *touches, WebKit::WKTouchEventType type, TouchPhaseAdjustment phaseAdjustment)
+{
+    switch (phaseAdjustment) {
+    case TouchPhaseAdjustment::PreserveBeganTouchesOnly:
+        for (UITouch *touch in touches) {
+            if (isBeganTouchPhase(touch.phase))
+                return touch.timestamp;
+        }
+        break;
+    case TouchPhaseAdjustment::SuppressBeganTouches:
+        for (UITouch *touch in touches) {
+            if (!isBeganTouchPhase(touch.phase) && eventTypeForTouchPhase(touch.phase) == type)
+                return touch.timestamp;
+        }
+        break;
+    case TouchPhaseAdjustment::None:
+        break;
+    }
+    return touches.anyObject.timestamp;
+}
+
 static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches)
 {
     auto lastPhase = UITouchPhaseBegan;
@@ -461,6 +515,18 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
             lastPhase = std::max(lastPhase, touch.phase);
     }
     return eventTypeForTouchPhase(lastPhase);
+}
+
+static bool shouldDispatchBeganTouchesBeforeExpectedEvent(NSSet *touches, WebKit::WKTouchEventType expectedType)
+{
+    if (expectedType == WebKit::WKTouchEventType::Begin)
+        return false;
+
+    for (UITouch *touch in touches) {
+        if (isBeganTouchPhase(touch.phase))
+            return true;
+    }
+    return false;
 }
 
 - (void)performAction
@@ -477,19 +543,9 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
     return NO;
 }
 
-- (void)_processTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event type:(WebKit::WKTouchEventType)type
+- (void)_dispatchTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event type:(WebKit::WKTouchEventType)type phaseAdjustment:(TouchPhaseAdjustment)phaseAdjustment
 {
-    // WebCore expects only one event for each distinct set of touches. Gesture recognizer will call
-    // all applicable touchesBegan:, touchesMoved: and so on. If two things happen simultaneously, like this:
-    //     WebKit::WKTouchEventType::Change (UITouchPhaseMoved, UITouchPhaseEnded)
-    //     WebKit::WKTouchEventType::End    (UITouchPhaseMoved, UITouchPhaseEnded)
-    // we should only process and send the last of those into WebCore. Note touches is actually the set returned
-    // by [event touchesForGestureRecognizer:self], not the set of touches passed in to touchesBegan:withEvent:.
-    // See <rdar://8398098> for more detail.
-    if (lastExpectedWKEventTypeForTouches(touches) != type)
-        return;
-
-    [self _recordTouches:touches ofType:type forEvent:event];
+    [self _recordTouches:touches ofType:type forEvent:event phaseAdjustment:phaseAdjustment];
 
     [self performAction];
 
@@ -518,6 +574,30 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
         self.state = UIGestureRecognizerStateEnded;
     else if (type == WebKit::WKTouchEventType::Cancel)
         self.state = UIGestureRecognizerStateCancelled;
+}
+
+- (void)_processTouches:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event type:(WebKit::WKTouchEventType)type
+{
+    auto expectedType = lastExpectedWKEventTypeForTouches(touches);
+    bool shouldDispatchBeganTouches = shouldDispatchBeganTouchesBeforeExpectedEvent(touches, expectedType);
+
+    // WebCore expects only one event for each distinct set of touches. Gesture recognizer will call
+    // all applicable touchesBegan:, touchesMoved: and so on. If two things happen simultaneously, like this:
+    //     WebKit::WKTouchEventType::Change (UITouchPhaseMoved, UITouchPhaseEnded)
+    //     WebKit::WKTouchEventType::End    (UITouchPhaseMoved, UITouchPhaseEnded)
+    // we should only process and send the last of those into WebCore. Note touches is actually the set returned
+    // by [event touchesForGestureRecognizer:self], not the set of touches passed in to touchesBegan:withEvent:.
+    // See <rdar://8398098> for more detail.
+    if (expectedType != type && !(type == WebKit::WKTouchEventType::Begin && shouldDispatchBeganTouches))
+        return;
+
+    if (type == WebKit::WKTouchEventType::Begin && shouldDispatchBeganTouches) {
+        [self _dispatchTouches:touches withEvent:event type:type phaseAdjustment:TouchPhaseAdjustment::PreserveBeganTouchesOnly];
+        return;
+    }
+
+    auto phaseAdjustment = expectedType == type && shouldDispatchBeganTouches ? TouchPhaseAdjustment::SuppressBeganTouches : TouchPhaseAdjustment::None;
+    [self _dispatchTouches:touches withEvent:event type:type phaseAdjustment:phaseAdjustment];
 }
 
 - (BOOL)canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer
