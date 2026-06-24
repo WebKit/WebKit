@@ -324,20 +324,26 @@ class Commit(object):
             seen_first_line = True
         return result
 
-    @property
-    def trailers(self):
-        if not self.message:
+    @classmethod
+    def parse_trailers(cls, message):
+        if not message:
             return []
         result = []
 
-        for line in reversed(self.message.rstrip('\n').split('\n')):
-            m = self.TRAILER_RE.match(line)
+        for line in reversed(message.rstrip('\n').split('\n')):
+            m = cls.TRAILER_RE.match(line)
             if m:
-                value = m['value'].strip(self.GIT_SPACE)
+                value = m['value'].strip(cls.GIT_SPACE)
                 result.append(f"{m['key']}: {value}")
             else:
                 break
         return list(reversed(result))
+
+    @property
+    def trailers(self):
+        if not self.message:
+            return []
+        return self.parse_trailers(self.message)
 
     def __repr__(self):
         if self.branch_point and self.identifier is not None and self.branch:

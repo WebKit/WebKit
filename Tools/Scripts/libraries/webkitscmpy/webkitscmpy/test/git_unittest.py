@@ -22,14 +22,18 @@
 
 import copy
 import os
+import re
 import shutil
+import tempfile
 import time
+import unittest
 from datetime import datetime, timezone
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from webkitcorepy import LoggerCapture, OutputCapture, run, testing
-from webkitcorepy.mocks import Time as MockTime
+from webkitcorepy.mocks import ProcessCompletion as MockProcessCompletion, Subprocess as MockSubprocess, Time as MockTime
 from webkitscmpy import Commit, Contributor, local, mocks, remote
+from webkitscmpy.binary_revision_map import BinaryRevisionMap, ENTRY_SIZE, ZERO_ENTRY
 
 
 class TestGit(testing.PathTestCase):
@@ -457,7 +461,7 @@ CommitDate: {time_c}
     def test_project_config(self):
         with mocks.local.Git(self.path, git_svn=True):
             project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
-            os.mkdir(os.path.dirname(project_config))
+            os.makedirs(os.path.dirname(project_config), exist_ok=True)
             with open(project_config, 'w') as f:
                 f.write('[webkitscmpy]\n')
                 f.write('    history = never\n')
@@ -967,6 +971,333 @@ CommitDate: 1600000001
             result = repo._args_from_content(content)
             self.assertEqual(result.get('timestamp'), 1600000001)
             self.assertEqual(result.get('revision'), 12345)
+
+
+class BinaryRevisionMapTest(unittest.TestCase):
+    HASH_R1 = '9b8311f25a77ba14923d9d5a6532103f54abefcb'
+    HASH_R3 = 'a30ce8494bf1ac2807a69844f726be4a9843ca55'
+
+    def _make_file(self, contents):
+        fd, path = tempfile.mkstemp(suffix='.bin')
+        os.close(fd)
+        self.addCleanup(self._safe_remove, path)
+        with open(path, 'wb') as f:
+            f.write(contents)
+        return path
+
+    @staticmethod
+    def _safe_remove(path):
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+
+    def _three_slot_payload(self):
+        # r1 populated, r2 null, r3 populated.
+        return bytes.fromhex(self.HASH_R1) + ZERO_ENTRY + bytes.fromhex(self.HASH_R3)
+
+    def test_getitem_returns_expected_for_each_slot(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            self.assertEqual(m[1], self.HASH_R1)
+            self.assertIsNone(m[2])  # zero slot → None (in the map, no hash)
+            self.assertEqual(m[3], self.HASH_R3)
+
+    def test_getitem_raises_keyerror_beyond_eof(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            with self.assertRaises(KeyError):
+                m[4]
+            with self.assertRaises(KeyError):
+                m[100]
+            # Mapping mixin: get() returns None on KeyError.
+            self.assertIsNone(m.get(4))
+            self.assertIsNone(m.get(100))
+
+    def test_getitem_raises_keyerror_for_zero_or_negative_revisions(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            with self.assertRaises(KeyError):
+                m[0]
+            with self.assertRaises(KeyError):
+                m[-1]
+            self.assertIsNone(m.get(0))
+            self.assertIsNone(m.get(-1))
+
+    def test_iter_yields_full_revision_range(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            self.assertEqual(list(m), [1, 2, 3])
+
+    def test_contains_reflects_in_range(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            self.assertIn(1, m)
+            self.assertIn(2, m)  # zero slot is still in the map (value None)
+            self.assertIn(3, m)
+            self.assertNotIn(4, m)
+            self.assertNotIn(0, m)
+
+    def test_items_via_mixin_includes_null_slots(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            self.assertEqual(
+                dict(m.items()),
+                {1: self.HASH_R1, 2: None, 3: self.HASH_R3},
+            )
+
+    def test_len_returns_slot_count(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            self.assertEqual(len(m), 3)
+
+    def test_len_zero_for_empty_file(self):
+        path = self._make_file(b'')
+        with BinaryRevisionMap(path) as m:
+            self.assertEqual(len(m), 0)
+            with self.assertRaises(KeyError):
+                m[1]
+
+    def test_hash_to_revision_returns_populated_slots_only(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            h2r = m.hash_to_revision()
+            self.assertEqual(h2r, {self.HASH_R1: 1, self.HASH_R3: 3})
+
+    def test_hash_to_revision_is_memoized(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            first = m.hash_to_revision()
+            second = m.hash_to_revision()
+            self.assertIs(first, second)
+
+    def test_missing_file_getitem_raises_keyerror(self):
+        m = BinaryRevisionMap('/nonexistent/path/svn-revision-to-hash.bin')
+        try:
+            with self.assertRaises(KeyError):
+                m[1]
+            self.assertIsNone(m.get(1))
+            self.assertIsNone(m.get(100))
+        finally:
+            m.close()
+
+    def test_missing_file_iter_yields_nothing(self):
+        m = BinaryRevisionMap('/nonexistent/path/svn-revision-to-hash.bin')
+        try:
+            self.assertEqual(list(m), [])
+        finally:
+            m.close()
+
+    def test_missing_file_len_returns_zero(self):
+        m = BinaryRevisionMap('/nonexistent/path/svn-revision-to-hash.bin')
+        try:
+            self.assertEqual(len(m), 0)
+        finally:
+            m.close()
+
+    def test_missing_file_hash_to_revision_returns_empty_dict(self):
+        m = BinaryRevisionMap('/nonexistent/path/svn-revision-to-hash.bin')
+        try:
+            self.assertEqual(m.hash_to_revision(), {})
+        finally:
+            m.close()
+
+    def test_missing_file_close_is_noop(self):
+        m = BinaryRevisionMap('/nonexistent/path/svn-revision-to-hash.bin')
+        # Should not raise even though _open() was never successfully called.
+        m.close()
+        m.close()
+
+    def test_context_manager_exits_cleanly(self):
+        path = self._make_file(self._three_slot_payload())
+        with BinaryRevisionMap(path) as m:
+            self.assertEqual(m[1], self.HASH_R1)
+        # After exit, the mmap and view should be released.
+        self.assertIsNone(m._mmap)
+        self.assertIsNone(m._view)
+
+    def test_double_close_is_noop(self):
+        path = self._make_file(self._three_slot_payload())
+        m = BinaryRevisionMap(path)
+        self.assertEqual(m[1], self.HASH_R1)
+        m.close()
+        # Second close should not raise.
+        m.close()
+
+    def test_reopen_after_close(self):
+        path = self._make_file(self._three_slot_payload())
+        m = BinaryRevisionMap(path)
+        try:
+            self.assertEqual(m[1], self.HASH_R1)
+            m.close()
+            # Re-access should re-open the file.
+            self.assertEqual(m[3], self.HASH_R3)
+            self.assertEqual(len(m), 3)
+        finally:
+            m.close()
+
+
+class TestCacheSVNRevisionMap(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    # These are the well-known commit hashes/revisions in the mock git-repo.json
+    # for the git_svn=True case (revision N → identifier N@main for N<=4 etc.).
+    HASH_R9 = 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc'
+
+    def setUp(self):
+        super().setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+        os.mkdir(os.path.join(self.path, 'metadata'))
+
+    def _write_binary_map(self, mapping, max_rev):
+        path = os.path.join(self.path, 'metadata', 'svn-revision-to-hash.bin')
+        with open(path, 'wb') as f:
+            for rev in range(1, max_rev + 1):
+                if rev in mapping:
+                    f.write(bytes.fromhex(mapping[rev]))
+                else:
+                    f.write(ZERO_ENTRY)
+        return path
+
+    def test_to_hash_fast_path_returns_binary_value(self):
+        with mocks.local.Git(self.path, git_svn=True), OutputCapture():
+            self._write_binary_map({9: self.HASH_R9}, 9)
+            repo = local.Git(self.path, cached=True)
+
+            # to_hash on revision should hit the binary map first.
+            self.assertEqual(repo.cache.to_hash(revision='r9'), self.HASH_R9)
+
+    def test_to_hash_fast_path_skips_slow_populate(self):
+        # With the binary file present, looking up to_hash(revision=...) should
+        # return directly from the binary map without invoking populate() / git log.
+        with mocks.local.Git(self.path, git_svn=True), OutputCapture():
+            self._write_binary_map({9: self.HASH_R9}, 9)
+            repo = local.Git(self.path, cached=True)
+
+            with patch.object(repo.cache, 'populate', side_effect=AssertionError('populate must not be called for binary-map hit')) as p:
+                self.assertEqual(repo.cache.to_hash(revision='r9'), self.HASH_R9)
+                p.assert_not_called()
+
+
+class TestCachePopulate(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    # Subset of mock commits that live on the default 'main' branch (git_svn=True).
+    # populate(branch='main') only walks main's history, so we restrict EXPECTED
+    # to the main-branch commits.
+    EXPECTED = {
+        '9b8311f25a77ba14923d9d5a6532103f54abefcb': 1,
+        'fff83bb2d9171b4d9196e977eb0508fd57e7a08d': 2,
+        '1abe25b443e985f93b90d830e4a7e3731336af4d': 4,
+        'bae5d1e90999d4f916a8a15810ccfa43f37a2fd6': 8,
+        'd8bce26fa65c6fc8f39c17927abb77f69fab82fc': 9,
+    }
+
+    def setUp(self):
+        super().setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+
+    def test_populate_fast_path_with_binary_map(self):
+        # The mocks.local.Git context auto-creates metadata/svn-revision-to-hash.bin
+        # from the commits when git_svn=True (see mocks/local/git.py).
+        with mocks.local.Git(self.path, git_svn=True), OutputCapture():
+            repo = local.Git(self.path, cached=True)
+            repo.cache.populate(branch='main')
+
+            # Each expected revision should map to an identifier.
+            for hash, rev in self.EXPECTED.items():
+                self.assertIsNotNone(repo.cache.to_identifier(revision=rev))
+                self.assertIn(hash, repo.cache._hash_to_identifiers)
+
+            # Spot-check the specific identifiers.
+            self.assertEqual(repo.cache.to_identifier(revision=1), '1@main')
+            self.assertEqual(repo.cache.to_identifier(revision=9), '5@main')
+
+    def test_populate_without_binary_map_skips_revisions(self):
+        # No metadata/svn-revision-to-hash.bin → revision mappings remain
+        # empty, but hash → identifier still populates via git log --format=%H.
+        with mocks.local.Git(self.path, git_svn=True), OutputCapture():
+            # Delete the auto-created binary map to simulate a clone without it.
+            bin_path = os.path.join(self.path, 'metadata', 'svn-revision-to-hash.bin')
+            if os.path.exists(bin_path):
+                os.unlink(bin_path)
+
+            repo = local.Git(self.path, cached=True)
+            repo.cache.populate(branch='main')
+
+            for hash in self.EXPECTED.keys():
+                self.assertIn(hash, repo.cache._hash_to_identifiers)
+            for rev in self.EXPECTED.values():
+                self.assertIsNone(repo.cache.to_identifier(revision=rev))
+
+    def test_public_api_returns_none_without_binary_map(self):
+        # Without metadata/svn-revision-to-hash.bin all three public revision-
+        # based APIs must return None (not raise); hash-based APIs still work.
+        hash_r9 = 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc'
+        with mocks.local.Git(self.path, git_svn=True), OutputCapture():
+            bin_path = os.path.join(self.path, 'metadata', 'svn-revision-to-hash.bin')
+            if os.path.exists(bin_path):
+                os.unlink(bin_path)
+            self.assertFalse(os.path.exists(bin_path))
+
+            repo = local.Git(self.path, cached=True)
+            self.assertIsNone(repo.cache.to_hash(revision='r9'))
+            self.assertIsNone(repo.cache.to_identifier(revision='r9'))
+            self.assertIsNone(repo.cache.to_revision(hash=hash_r9))
+
+
+class TestCacheLifecycle(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super().setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+
+    def test_del_closes_svn_revision_map(self):
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path, cached=True)
+            close_mock = MagicMock()
+            stub = MagicMock()
+            stub.close = close_mock
+            repo.cache._svn_revision_map = stub
+
+            # Direct destructor call: avoids gc-ordering flakiness.
+            repo.cache.__del__()
+            close_mock.assert_called_once_with()
+
+    def test_del_via_gc(self):
+        # Verify that __del__ fires when the Cache is collected. Break the
+        # Cache↔Git ref cycle deliberately so CPython's refcount finalisation
+        # fires deterministically without gc.collect() or skipTest.
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path, cached=True)
+            close_mock = MagicMock()
+            stub = MagicMock()
+            stub.close = close_mock
+            repo.cache._svn_revision_map = stub
+
+            # Hold a strong ref to the Cache, then clear repo's ref to it.
+            # With repo.cache = None, the Cache's only strong ref is our
+            # local variable; del cache → refcount 0 → __del__ fires without
+            # needing gc.collect().
+            cache = repo.cache
+            repo.cache = None
+            del repo
+            del cache
+
+        self.assertEqual(close_mock.call_count, 1)
+
+    def test_del_swallows_close_exception(self):
+        # __del__ must be best-effort: if close() raises, the destructor
+        # should not propagate the exception.
+        with mocks.local.Git(self.path), OutputCapture():
+            repo = local.Git(self.path, cached=True)
+            stub = MagicMock()
+            stub.close.side_effect = RuntimeError('boom')
+            repo.cache._svn_revision_map = stub
+
+            # Must not raise.
+            repo.cache.__del__()
 
 
 class TestMockGit(testing.PathTestCase):
