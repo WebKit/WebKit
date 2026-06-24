@@ -318,6 +318,7 @@ bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, 
             wakeUpServer(wakeUpResult);
         return true;
     }
+    // fprintf(stderr, "Encoding failure, insufficient space!\n");
     return false;
 }
 

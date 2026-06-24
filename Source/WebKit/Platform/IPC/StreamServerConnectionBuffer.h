@@ -27,6 +27,7 @@
 
 #include "IPCSemaphore.h"
 #include "StreamConnectionBuffer.h"
+#include "StreamConnectionBufferRingWrapper.h"
 #include "StreamConnectionEncoder.h"
 
 namespace IPC {
@@ -34,6 +35,7 @@ namespace IPC {
 class StreamServerConnectionBuffer : public StreamConnectionBuffer {
 public:
     static std::optional<StreamServerConnectionBuffer> map(Handle&&);
+
     StreamServerConnectionBuffer(StreamServerConnectionBuffer&&) = default;
     StreamServerConnectionBuffer& operator=(StreamServerConnectionBuffer&&) = default;
     std::optional<std::span<uint8_t>> tryAcquire();
@@ -43,19 +45,25 @@ public:
     WakeUpClient releaseAll();
 
 private:
-    using StreamConnectionBuffer::StreamConnectionBuffer;
+    StreamServerConnectionBuffer(Ref<WebCore::SharedMemory>&&);
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
     std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
-    size_t size(size_t offset, size_t limit) const;
-    size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     using ServerLimit = ClientOffset;
     Atomic<ServerLimit>& sharedServerLimit() { return clientOffset(); }
     Atomic<ServerOffset>& sharedServerOffset() { return serverOffset(); }
-    size_t clampedLimit(ServerLimit) const;
 
     size_t m_serverOffset { 0 };
+
+    RingBuffer m_ringBuffer;
+    size_t lastOffset { 0 };
+    size_t lastLimit { 0 };
 };
+
+inline StreamServerConnectionBuffer::StreamServerConnectionBuffer(Ref<WebCore::SharedMemory>&& memory)
+    : StreamConnectionBuffer(WTF::move(memory))
+    , m_ringBuffer(mutableSpan())
+{ }
 
 inline std::optional<StreamServerConnectionBuffer> StreamServerConnectionBuffer::map(Handle&& handle)
 {
@@ -71,10 +79,10 @@ inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquir
     if (serverLimit == ServerLimit::serverIsSleepingTag)
         return std::nullopt;
 
-    auto result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
+    auto result = alignedMutableSpan(m_serverOffset, serverLimit);
     if (result.size() < minimumMessageSize) {
         serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acquire);
-        result = alignedMutableSpan(m_serverOffset, clampedLimit(serverLimit));
+        result = alignedMutableSpan(m_serverOffset, serverLimit);
     }
 
     if (result.size() < minimumMessageSize)
@@ -92,9 +100,12 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
 {
     ASSERT(readSize);
     readSize = std::max(readSize, minimumMessageSize);
-    ServerOffset serverOffset = static_cast<ServerOffset>(wrapOffset(alignOffset(m_serverOffset) + readSize));
+    size_t serverOffset = roundUpToMultipleOf<messageAlignment>(m_serverOffset + readSize);
+    if (serverOffset >= dataSize())
+        serverOffset -= dataSize();
 
-    ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
+    ASSERT(serverOffset < dataSize());
+    ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(serverOffset), std::memory_order_acq_rel);
     WakeUpClient wakeUpClient = WakeUpClient::No;
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
@@ -120,35 +131,20 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
     return wakeUpClient;
 }
 
+#include <stdio.h>
+
 inline std::span<uint8_t> StreamServerConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());
-    size_t aligned = alignOffset(offset);
-    size_t resultSize = 0;
-    if (offset < limit) {
-        if (offset <= aligned && aligned < limit)
-            resultSize = size(aligned, limit);
-    } else if (offset > limit) {
-        if (aligned >= offset || aligned < limit)
-            resultSize = size(aligned, limit);
-    }
-    return mutableSpan().subspan(aligned, resultSize);
-}
-
-inline size_t StreamServerConnectionBuffer::size(size_t offset, size_t limit) const
-{
+    lastOffset = offset;
+    lastLimit = limit;
+    ASSERT(offset == roundUpToMultipleOf<messageAlignment>(offset));
+    // fprintf(stderr, "%06lx : [%06lx, %06lx)\n", reinterpret_cast<size_t>(&m_ringBuffer.getSpan(0, 1)[0]), offset, limit);
     if (offset <= limit)
-        return limit - offset;
-    return dataSize() - offset;
-}
-
-inline size_t StreamServerConnectionBuffer::clampedLimit(ServerLimit serverLimit) const
-{
-    ASSERT(!(serverLimit & ServerLimit::serverIsSleepingTag));
-    size_t limit = static_cast<size_t>(serverLimit);
-    ASSERT(limit <= dataSize() - 1);
-    return std::min(limit, dataSize() - 1);
+        return m_ringBuffer.getSpan(offset, limit - offset);
+    else
+        return m_ringBuffer.getSpan(offset, limit + dataSize() - offset);
 }
 
 }
