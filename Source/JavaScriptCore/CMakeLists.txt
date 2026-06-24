@@ -383,7 +383,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ProxyHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/SetPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/ShadowRealmPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js

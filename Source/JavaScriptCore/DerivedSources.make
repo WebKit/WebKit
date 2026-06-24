@@ -126,7 +126,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/ProxyHelpers.js \
     $(JavaScriptCore)/builtins/ReflectObject.js \
     $(JavaScriptCore)/builtins/SetIteratorPrototype.js \
-    $(JavaScriptCore)/builtins/SetPrototype.js \
     $(JavaScriptCore)/builtins/ShadowRealmPrototype.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \
     $(JavaScriptCore)/builtins/TypedArrayConstructor.js \

@@ -65,7 +65,6 @@ $(PROJECT_DIR)/builtins/PromiseOperations.js
 $(PROJECT_DIR)/builtins/ProxyHelpers.js
 $(PROJECT_DIR)/builtins/ReflectObject.js
 $(PROJECT_DIR)/builtins/SetIteratorPrototype.js
-$(PROJECT_DIR)/builtins/SetPrototype.js
 $(PROJECT_DIR)/builtins/ShadowRealmPrototype.js
 $(PROJECT_DIR)/builtins/StringConstructor.js
 $(PROJECT_DIR)/builtins/TypedArrayConstructor.js

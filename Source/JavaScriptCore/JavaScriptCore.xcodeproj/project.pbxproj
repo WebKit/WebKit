@@ -4845,7 +4845,6 @@
 		7013CA891B491A9400CAE613 /* JSMicrotask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMicrotask.cpp; sourceTree = "<group>"; };
 		7013CA8A1B491A9400CAE613 /* JSMicrotask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMicrotask.h; sourceTree = "<group>"; };
 		7035587C1C418419004BD7BF /* MapPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MapPrototype.js; sourceTree = "<group>"; };
-		7035587D1C418419004BD7BF /* SetPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SetPrototype.js; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		705B41A31A6E501E00716757 /* Symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Symbol.cpp; sourceTree = "<group>"; };
 		705B41A41A6E501E00716757 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
@@ -10708,7 +10707,6 @@
 				E34AE50028B75C07006088FA /* ProxyHelpers.js */,
 				7CF9BC5F1B65D9B1009DB1EF /* ReflectObject.js */,
 				534D9BF82363C55D0054524D /* SetIteratorPrototype.js */,
-				7035587D1C418419004BD7BF /* SetPrototype.js */,
 				2E3AF00D28171AC000371A25 /* ShadowRealmPrototype.js */,
 				7CF9BC601B65D9B1009DB1EF /* StringConstructor.js */,
 				534C457A1BC703DC007476A7 /* TypedArrayConstructor.js */,

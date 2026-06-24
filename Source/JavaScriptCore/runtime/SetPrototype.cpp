@@ -54,6 +54,7 @@ static JSC_DECLARE_HOST_FUNCTION(setProtoFuncSymmetricDifference);
 static JSC_DECLARE_HOST_FUNCTION(setProtoFuncIsSubsetOf);
 static JSC_DECLARE_HOST_FUNCTION(setProtoFuncIsSupersetOf);
 static JSC_DECLARE_HOST_FUNCTION(setProtoFuncIsDisjointFrom);
+static JSC_DECLARE_HOST_FUNCTION(setProtoFuncForEach);
 
 static JSC_DECLARE_HOST_FUNCTION(setProtoFuncSize);
 
@@ -78,8 +79,8 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entriesFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPrivateName(), entriesFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* forEachFunc = JSFunction::create(vm, globalObject, setPrototypeForEachCodeGenerator(vm), globalObject);
-    putDirectWithoutTransition(vm, vm.propertyNames->forEach, forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSFunction* forEachFunc = JSFunction::create(vm, globalObject, 1, vm.propertyNames->builtinNames().forEachPublicName().string(), setProtoFuncForEach, ImplementationVisibility::Public);
+    putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().forEachPublicName(), forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().forEachPrivateName(), forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSFunction* hasFunc = JSFunction::create(vm, globalObject, 1, vm.propertyNames->has.string(), setProtoFuncHas, ImplementationVisibility::Public, JSSetHasIntrinsic);
@@ -1088,6 +1089,72 @@ JSC_DEFINE_HOST_FUNCTION(setProtoFuncValues, (JSGlobalObject* globalObject, Call
 JSC_DEFINE_HOST_FUNCTION(setProtoFuncEntries, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(createSetIteratorObject(globalObject, callFrame, IterationKind::Entries));
+}
+
+JSC_DEFINE_HOST_FUNCTION(setProtoFuncForEach, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+
+    JSSet* set = getSet(globalObject, thisValue);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    JSValue callback = callFrame->argument(0);
+    if (!callback.isCallable()) [[unlikely]] {
+        throwTypeError(globalObject, scope, "Set.prototype.forEach callback must be a function"_s);
+        return JSValue::encode(jsUndefined());
+    }
+
+    auto callData = JSC::getCallDataInline(callback);
+    ASSERT(callData.type != CallData::Type::None);
+
+    JSValue thisArgs = callFrame->argument(1);
+    JSCell* storageCell = set->storageOrSentinel(vm);
+    if (storageCell == vm.orderedHashTableSentinel())
+        return JSValue::encode(jsUndefined());
+
+    JSSet::Helper::Entry nextEntry = 0;
+    JSCellButterfly* storage = jsCast<JSSet::Storage*>(storageCell);
+
+    std::optional<CachedCall> cachedHasCall;
+    if (callData.type == CallData::Type::JS) [[likely]] {
+        cachedHasCall.emplace(globalObject, jsCast<JSFunction*>(callback), 3);
+        RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+    }
+
+    while (true) {
+        storageCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, nextEntry);
+        if (storageCell == vm.orderedHashTableSentinel())
+            break;
+
+        JSCellButterfly* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+
+        JSSet::Helper::TableSize currentEntry = JSSet::Helper::iterationEntry(*currentStorage);
+        JSValue key = JSSet::Helper::getKey(*currentStorage, currentEntry);
+
+        nextEntry = currentEntry + 1;
+
+        if (cachedHasCall) [[likely]]
+            cachedHasCall->callWithArguments(globalObject, thisArgs, key, key, thisValue);
+        else {
+            MarkedArgumentBuffer arguments;
+            arguments.append(key);
+            arguments.append(key);
+            arguments.append(thisValue);
+            ASSERT(!arguments.hasOverflowed());
+
+            call(globalObject, callback, callData, thisArgs, arguments);
+        }
+        RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+        storage = currentStorage;
+    }
+
+    scope.release();
+    return JSValue::encode(jsUndefined());
 }
 
 }
