@@ -416,7 +416,7 @@ public:
 
     void emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock*, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode, GPRReg temp1, GPRReg temp2, GPRReg temp3);
 
-    void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves);
+    void emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves, RegisterSet dontRestoreRegisters = RegisterSet());
 
     void emitSaveThenMaterializeTagRegisters()
     {

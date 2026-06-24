@@ -1244,6 +1244,9 @@ OMGIRGenerator::OMGIRGenerator(AbstractHeapRepository& heaps, CompilationContext
 
     m_proc.pinRegister(GPRInfo::wasmContextInstancePointer);
     m_proc.pinRegister(GPRInfo::wasmBaseMemoryPointer);
+    // FIXME: The wasm ABI effectively has to assume this is a caller save when getting
+    // called by wasm, so there's no point in saving and restoring it if B3 chooses to
+    // use it. We actively don't restore this register in many cases anyway e.g. tail calls.
     if (mode == MemoryMode::BoundsChecking)
         m_proc.pinRegister(GPRInfo::wasmBoundsCheckingSizeRegister);
 
@@ -5675,8 +5678,10 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     {
         DisallowMacroScratchRegisterUsage disallowScratch(jit);
 
-        // Set up a valid frame so that we can clobber this one.
-        jit.emitRestore(calleeSaves);
+        // Set up a valid frame so that we can clobber this one. Don't restore
+        // wasmBoundsCheckingSizeRegister since we may have set it above and it's
+        // not a normal callee save independent of whether we used it or not.
+        jit.emitRestoreCalleeSavesFor(&calleeSaves, RegisterSet(GPRInfo::wasmBoundsCheckingSizeRegister));
 
         for (unsigned i = 0; i < params.size(); ++i) {
             auto arg = params[i];
@@ -5703,8 +5708,10 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     constexpr bool tmpNeedsSaving = false;
     constexpr int tmpSpillOffsetRelativeToOriginalSP = 0;
 
-    // Set up a valid frame so that we can clobber this one.
-    jit.emitRestore(calleeSaves);
+    // Set up a valid frame so that we can clobber this one. Don't restore
+    // wasmBoundsCheckingSizeRegister since we may have set it above and it's
+    // not a normal callee save independent of whether we used it or not.
+    jit.emitRestoreCalleeSavesFor(&calleeSaves, RegisterSet(GPRInfo::wasmBoundsCheckingSizeRegister));
 
 #if ASSERT_ENABLED
     for (unsigned i = 0; i < params.size(); ++i) {

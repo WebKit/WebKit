@@ -1629,9 +1629,9 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
     spooler.finalizeFPR();
 }
 
-void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
+void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves, RegisterSet dontRestoreRegisters)
 {
-    auto dontRestoreRegisters = RegisterSetBuilder::stackRegisters();
+    dontRestoreRegisters.merge(RegisterSetBuilder::stackRegisters());
     unsigned registerCount = calleeSaves->registerCount();
     if constexpr (AssemblyHelpersInternal::dumpVerbose)
         JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
