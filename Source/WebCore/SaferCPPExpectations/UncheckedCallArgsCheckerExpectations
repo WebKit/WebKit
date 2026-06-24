@@ -116,7 +116,6 @@ dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
 editing/AlternativeTextController.cpp
-editing/ApplyBlockElementCommand.cpp
 editing/ApplyStyleCommand.cpp
 editing/BreakBlockquoteCommand.cpp
 editing/CompositeEditCommand.cpp
