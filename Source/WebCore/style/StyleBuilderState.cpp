@@ -344,13 +344,17 @@ unsigned BuilderState::siblingCount()
     if (m_currentProperty && m_currentProperty->styleScopeOrdinal <= ScopeOrdinal::ContainingHost)
         return 0;
 
-    auto* parent = element()->parentElement();
-    if (!parent)
+    // parentNode() rather than parentElement() to support direct children of shadow roots.
+    auto* parentNode = element()->parentNode();
+    if (!parentNode || is<Document>(*parentNode))
         return 1;
 
     m_style.setUsesTreeCountingFunctions();
-    parent->setChildrenAffectedByBackwardPositionalRules();
-    parent->setChildrenAffectedByForwardPositionalRules();
+
+    if (auto* parentElement = dynamicDowncast<Element>(*parentNode)) {
+        parentElement->setChildrenAffectedByBackwardPositionalRules();
+        parentElement->setChildrenAffectedByForwardPositionalRules();
+    }
 
     unsigned count = 1;
     for (const auto* sibling = ElementTraversal::previousSibling(*element()); sibling; sibling = ElementTraversal::previousSibling(*sibling))
@@ -371,13 +375,17 @@ unsigned BuilderState::siblingIndex()
     if (m_currentProperty && m_currentProperty->styleScopeOrdinal <= ScopeOrdinal::ContainingHost)
         return 0;
 
-    auto* parent = element()->parentElement();
-    if (!parent)
+    // parentNode() rather than parentElement() to support direct children of shadow roots.
+    auto* parentNode = element()->parentNode();
+    if (!parentNode || is<Document>(*parentNode))
         return 1;
 
     m_style.setUsesTreeCountingFunctions();
-    parent->setChildrenAffectedByBackwardPositionalRules();
-    parent->setChildrenAffectedByForwardPositionalRules();
+
+    if (auto* parentElement = dynamicDowncast<Element>(*parentNode)) {
+        parentElement->setChildrenAffectedByBackwardPositionalRules();
+        parentElement->setChildrenAffectedByForwardPositionalRules();
+    }
 
     unsigned count = 1;
     for (const auto* sibling = ElementTraversal::previousSibling(*element()); sibling; sibling = ElementTraversal::previousSibling(*sibling))
