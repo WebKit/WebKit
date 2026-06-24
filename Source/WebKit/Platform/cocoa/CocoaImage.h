@@ -42,4 +42,8 @@ namespace WebKit {
 RetainPtr<NSData> transcode(CGImageRef, CFStringRef typeIdentifier);
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef, CFStringRef preferredMIMEType);
 
+// Decodes a bitmap image from untrusted bytes, restricting ImageIO to the same set of image types
+// supported for web content (WebCore::isSupportedImageType()). Returns nil for any other type.
+RetainPtr<CocoaImage> createCocoaImageRestrictedToSupportedTypes(NSData *, double displayScale = 1);
+
 } // namespace WebKit
