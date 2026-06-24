@@ -32,6 +32,7 @@
 #include <WebCore/ImmediateActionStage.h>
 #include <WebCore/IntPointHash.h>
 #include <WebCore/LayoutPoint.h>
+#include <WebCore/MailBlockquoteHandling.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/RenderObject.h>
@@ -78,6 +79,7 @@ class AutoscrollController;
 class ContainerNode;
 class DataTransfer;
 class Document;
+class DocumentFragment;
 class DragData;
 class Element;
 class Event;
@@ -312,6 +314,7 @@ public:
     WEBCORE_EXPORT void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent&);
 
     bool handleTextInputEvent(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard);
+    bool handleTextInput(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard, DocumentFragment* = nullptr, bool shouldSmartReplace = false, bool shouldMatchStyle = false, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     void defaultTextInputEventHandler(TextEvent&);
 
 #if ENABLE(DRAG_SUPPORT)

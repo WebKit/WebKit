@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/DictationAlternative.h>
+#include <WebCore/MailBlockquoteHandling.h>
 #include <WebCore/TextEventInputType.h>
 #include <WebCore/UIEvent.h>
 
@@ -34,7 +35,6 @@ namespace WebCore {
 
     class DocumentFragment;
 
-    enum class MailBlockquoteHandling : bool;
 
     class TextEvent final : public UIEvent {
         WTF_MAKE_TZONE_ALLOCATED(TextEvent);
