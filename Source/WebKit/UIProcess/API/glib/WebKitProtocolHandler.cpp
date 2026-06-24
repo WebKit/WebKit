@@ -281,6 +281,11 @@ static String renderBufferDescription(WebKitURISchemeRequest* request)
             bufferDescription.append("AHardwareBuffer: "_s, formatName);
             break;
 #endif
+#if USE(NEXUS)
+        case RendererBufferDescription::Type::BroadcomNexus:
+            bufferDescription.append("BroadcomNexus"_s);
+            break;
+#endif
         }
         switch (description.usage) {
         case RendererBufferFormat::Usage::Rendering:

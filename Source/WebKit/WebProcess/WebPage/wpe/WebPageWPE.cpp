@@ -43,7 +43,7 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
     return false;
 }
 
-#if ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 void WebPage::preferredBufferFormatsDidChange(Vector<RendererBufferFormat>&& preferredBufferFormats)
 {
     m_preferredBufferFormats = WTF::move(preferredBufferFormats);

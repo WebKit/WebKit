@@ -535,7 +535,7 @@ void LayerTreeHost::commitTransientZoom(double scale, FloatPoint origin, FloatPo
 }
 #endif
 
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 void LayerTreeHost::preferredBufferFormatsDidChange()
 {
     m_compositor->preferredBufferFormatsDidChange();

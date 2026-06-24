@@ -37,6 +37,9 @@ struct RendererBufferDescription {
 #if OS(ANDROID)
         AHardwareBuffer,
 #endif
+#if USE(NEXUS)
+        BroadcomNexus,
+#endif
     };
 
     Type type { Type::DMABuf };

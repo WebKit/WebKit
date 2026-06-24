@@ -56,6 +56,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/android/GraphicsContextGLTextureMapperAndroid.h
     platform/graphics/android/PlatformDisplayAndroid.h
 
+    platform/graphics/egl/PlatformDisplayBroadcomNexus.h
     platform/graphics/egl/PlatformDisplayDefault.h
     platform/graphics/egl/PlatformDisplaySurfaceless.h
 

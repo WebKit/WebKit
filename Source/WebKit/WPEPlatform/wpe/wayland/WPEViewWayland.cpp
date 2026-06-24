@@ -50,6 +50,10 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
+#if USE(NEXUS)
+#include <wpe/WPEBufferBroadcomNexus.h>
+#endif
+
 // These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
 // and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-client-protocol.h>
@@ -240,6 +244,11 @@ public:
     {
     }
 
+    SharedMemoryBuffer(WPEView* view, wl_buffer* buffer)
+        : WaylandBuffer(view, buffer)
+    {
+    }
+
     virtual ~SharedMemoryBuffer() = default;
 
     WPE::WaylandSHMPool* wlPool() const { return m_wlPool.get(); }
@@ -349,6 +358,83 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEView* view, GBytes* bytes
     return new SharedMemoryBuffer(view, WTF::move(wlPool), offset, width, height, stride);
 }
 
+#if USE(NEXUS)
+static struct wl_buffer* createWaylandBufferFromNexus(WPEView* view, WPEBuffer* buffer, GError** error)
+{
+    static PFNEGLCREATEWAYLANDBUFFERFROMIMAGEWL s_eglCreateWaylandBufferFromImageWL;
+    static bool checkWlBufferFromImage;
+
+    GUniqueOutPtr<GError> bufferError;
+    auto* eglDisplay = wpe_display_get_egl_display(wpe_view_get_display(view), &bufferError.outPtr());
+    if (!eglDisplay) {
+        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: can't create Wayland buffer because failed to get EGL display: %s", bufferError->message);
+        return nullptr;
+    }
+
+    /* do this once at the beginning so we know if we can use images */
+    if (!checkWlBufferFromImage && !s_eglCreateWaylandBufferFromImageWL) {
+        if (epoxy_has_egl_extension(eglDisplay, "EGL_WL_create_wayland_buffer_from_image"))
+            s_eglCreateWaylandBufferFromImageWL = reinterpret_cast<PFNEGLCREATEWAYLANDBUFFERFROMIMAGEWL>(epoxy_eglGetProcAddress("eglCreateWaylandBufferFromImageWL"));
+        checkWlBufferFromImage = true;
+    }
+
+    auto* bufferBCM = WPE_BUFFER_BROADCOM_NEXUS(buffer);
+
+    if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(wpe_buffer_get_user_data(buffer))) {
+        if (!s_eglCreateWaylandBufferFromImageWL) {
+            GBytes* bytes = wpe_buffer_broadcom_nexus_get_memory(bufferBCM, nullptr, nullptr, nullptr);
+            if (!bytes) {
+                g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: couldn't get a suitable buffer");
+                return nullptr;
+            }
+            sharedMemoryBuffer->wlPool()->write(WTF::span(bytes));
+            wpe_buffer_broadcom_nexus_surface_flush(bufferBCM);
+        }
+        return sharedMemoryBuffer->wlBuffer();
+    }
+
+    SharedMemoryBuffer* sharedMemoryBuffer;
+
+    if (s_eglCreateWaylandBufferFromImageWL) {
+        auto eglImage = wpe_buffer_import_to_egl_image(buffer, &bufferError.outPtr());
+        if (!eglImage) {
+            g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to import buffer to EGL image: %s", bufferError->message);
+            return nullptr;
+        }
+
+        auto* wlBuffer = s_eglCreateWaylandBufferFromImageWL(eglDisplay, eglImage);
+        if (!wlBuffer) {
+            g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: eglCreateWaylandBufferFromImageWL failed with error %#04x", eglGetError());
+            return nullptr;
+        }
+
+        sharedMemoryBuffer = new SharedMemoryBuffer(view, wlBuffer);
+    } else {
+        unsigned short width, height;
+        unsigned stride;
+
+        GBytes* bytes = wpe_buffer_broadcom_nexus_get_memory(bufferBCM, &width, &height, &stride);
+        if (!bytes) {
+            g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: couldn't get a suitable buffer");
+            return nullptr;
+        }
+
+        sharedMemoryBuffer = sharedMemoryBufferCreate(view, bytes, width, height, stride);
+        wpe_buffer_broadcom_nexus_surface_flush(bufferBCM);
+    }
+
+    if (!sharedMemoryBuffer) {
+        g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: can't create Wayland buffer because failed to create shared memory");
+        return nullptr;
+    }
+
+    wl_buffer_add_listener(sharedMemoryBuffer->wlBuffer(), &bufferListener, buffer);
+
+    wpe_buffer_set_user_data(buffer, sharedMemoryBuffer, reinterpret_cast<GDestroyNotify>(waylandBufferDestroy));
+    return sharedMemoryBuffer->wlBuffer();
+}
+#endif
+
 static struct wl_buffer* createWaylandBufferSHM(WPEView* view, WPEBuffer* buffer, GError** error)
 {
     if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(wpe_buffer_get_user_data(buffer))) {
@@ -383,6 +469,10 @@ static struct wl_buffer* createWaylandBuffer(WPEView* view, WPEBuffer* buffer, G
         wlBuffer = createWaylandBufferFromDMABuf(view, buffer, error);
     else if (WPE_IS_BUFFER_SHM(buffer))
         wlBuffer = createWaylandBufferSHM(view, buffer, error);
+#if USE(NEXUS)
+    else if (WPE_IS_BUFFER_BROADCOM_NEXUS(buffer))
+        wlBuffer = createWaylandBufferFromNexus(view, buffer, error);
+#endif
     else
         RELEASE_ASSERT_NOT_REACHED();
 

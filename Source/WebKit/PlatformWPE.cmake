@@ -486,6 +486,10 @@ if (USE_OPENXR)
    list(APPEND WebKit_LIBRARIES OpenXR::openxr_loader)
 endif ()
 
+if (USE_NEXUS)
+    list(APPEND WebCore_LIBRARIES nexus nxclient)
+endif ()
+
 if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebKit_LIBRARIES Libseccomp::Libseccomp)
 endif ()

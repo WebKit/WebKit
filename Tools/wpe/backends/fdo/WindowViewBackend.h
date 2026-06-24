@@ -36,7 +36,8 @@ typedef void* EGLConfig;
 typedef void* EGLContext;
 typedef void* EGLDisplay;
 typedef void* EGLSurface;
-typedef struct wl_egl_window *EGLNativeWindowType;
+
+struct wl_egl_window;
 
 // Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
 #ifndef EGL_CAST

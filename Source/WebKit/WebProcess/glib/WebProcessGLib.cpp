@@ -66,6 +66,10 @@
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 
+#if USE(NEXUS)
+#include <WebCore/PlatformDisplayBroadcomNexus.h>
+#endif
+
 #if OS(ANDROID)
 #include <WebCore/PlatformDisplayAndroid.h>
 #endif
@@ -159,6 +163,13 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
                 return;
             }
         }
+    }
+#endif
+
+#if USE(NEXUS)
+    if (auto display = PlatformDisplayBroadcomNexus::create()) {
+        PlatformDisplay::setSharedDisplay(WTF::move(display));
+        return;
     }
 #endif
 

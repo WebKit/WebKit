@@ -77,6 +77,9 @@ public:
 #if OS(ANDROID)
         Android,
 #endif
+#if USE(NEXUS)
+        BroadcomNexus,
+#endif
 #if PLATFORM(GTK) || OS(ANDROID)
         Default,
 #endif
@@ -94,7 +97,7 @@ public:
 
     EGLImage createEGLImage(EGLContext, EGLenum target, EGLClientBuffer, const Vector<EGLAttrib>&) const;
     bool destroyEGLImage(EGLImage) const;
-#if USE(GBM) || OS(ANDROID)
+#if USE(GBM) || USE(NEXUS) || OS(ANDROID)
     const Vector<GLDisplay::BufferFormat>& bufferFormats();
 #endif
 #if USE(GBM) && USE(GSTREAMER)

@@ -74,7 +74,7 @@ public:
     int maxTextureSize() const { return m_maxTextureSize; }
 
     void backgroundColorDidChange();
-#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     void preferredBufferFormatsDidChange();
 #endif
     void pendingTilesDidChange();

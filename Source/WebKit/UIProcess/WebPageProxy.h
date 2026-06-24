@@ -670,7 +670,7 @@ struct WebURLSchemeHandlerIdentifierType;
 struct WebUndoStepIDType;
 struct WebsitePoliciesData;
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
 struct RendererBufferFormat;
 #endif
 
@@ -2725,7 +2725,7 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtectionsPolicies() const { return m_advancedPrivacyProtectionsPolicies; }
 #endif
 
-#if ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
+#if ENABLE(WPE_PLATFORM) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     void preferredBufferFormatsDidChange();
 #endif
 
@@ -2947,7 +2947,7 @@ public:
     void resetPointerLockState(void);
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || OS(ANDROID))
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && (USE(GBM) || USE(NEXUS) || OS(ANDROID))
     Vector<RendererBufferFormat> preferredBufferFormats() const;
 #endif
 
