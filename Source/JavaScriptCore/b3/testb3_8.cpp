@@ -2660,6 +2660,43 @@ void testCCmpMixedWidth64And32(int64_t a, int32_t b)
     CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
 }
 
+// Regression for findCompareChain rollback: pre-fix, BitOr's BitXor-child
+// failure leaked an inner logic node, dropping LessThan from the chain.
+void testCCmpChainRollback(int32_t i, int32_t len, int32_t a, int32_t b, int32_t c, int32_t d)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, int32_t, int32_t, int32_t, int32_t>(proc, root);
+
+    Value* iLtLen = root->appendNew<Value>(proc, LessThan, Origin(), arguments[0], arguments[1]);
+    Value* eqAB = root->appendNew<Value>(proc, Equal, Origin(), arguments[2], arguments[3]);
+    Value* eqCD = root->appendNew<Value>(proc, Equal, Origin(), arguments[4], arguments[5]);
+    Value* innerAnd = root->appendNew<Value>(proc, BitAnd, Origin(), eqAB, eqCD);
+    Value* xorAC = root->appendNew<Value>(proc, BitXor, Origin(), arguments[2], arguments[4]);
+    Value* outerOr = root->appendNew<Value>(proc, BitOr, Origin(), innerAnd, xorAC);
+    Value* eqZero = root->appendNew<Value>(proc, Equal, Origin(),
+        outerOr, root->appendNew<Const32Value>(proc, Origin(), 0));
+    Value* condition = root->appendNew<Value>(proc, BitAnd, Origin(), iLtLen, eqZero);
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(), condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNewControlValue(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    int zero = 0; // style checker complains about == 0
+    int32_t expected = (i < len && ((((a == b) & (c == d)) | (a ^ c)) == zero)) ? 1 : 0;
+    CHECK_EQ(compileAndRun<int32_t>(proc, i, len, a, b, c, d), expected);
+}
+
 #endif // ENABLE(B3_JIT)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
