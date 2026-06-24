@@ -83,11 +83,11 @@ class _W3CTestConverter(HTMLParser):
         css_property_value_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSValueKeywords.in')
 
         self.prefixed_properties = self.read_webkit_prefixed_css_property_list(css_property_file)
-        prop_regex = r'([\s{]|^)(' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + r')(\s+:|:)'
+        prop_regex = r'(?P<leading_char>[\s{]|^)(?P<property_name>' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + r')(?P<trailing_colon>\s+:|:)'
         self.prop_re = re.compile(prop_regex)
 
         self.prefixed_property_values = self.legacy_read_webkit_prefixed_css_property_list(css_property_value_file)
-        prop_value_regex = r'(:\s*|^\s*)(' + "|".join(value.replace('-webkit-', '') for value in self.prefixed_property_values) + r')(\s*;|\s*}|\s*$)'
+        prop_value_regex = r'(?P<leading_char>:\s*|^\s*)(?P<property_name>' + "|".join(value.replace('-webkit-', '') for value in self.prefixed_property_values) + r')(?P<trailing_colon>\s*;|\s*}|\s*$)'
         self.prop_value_re = re.compile(prop_value_regex)
 
     def output(self):
@@ -158,18 +158,32 @@ class _W3CTestConverter(HTMLParser):
 
     def add_webkit_prefix_following_regex(self, text, regex):
         converted_list = set()
-        text_chunks = []
-        cur_pos = 0
-        for m in regex.finditer(text):
-            text_chunks.extend([text[cur_pos:m.start()], m.group(1), '-webkit-', m.group(2), m.group(3)])
-            converted_list.add(m.group(2))
-            cur_pos = m.end()
-        text_chunks.append(text[cur_pos:])
+
+        def replace_if_not_already_prefixed(match):
+            leading_char = match.group('leading_char')
+            property_name = match.group('property_name')
+            trailing_colon = match.group('trailing_colon')
+
+            block_start = text.rfind('{', 0, match.start())
+            if block_start == -1:
+                block_start = 0
+            block_end = text.find('}', match.end())
+            if block_end == -1:
+                block_end = len(text)
+            enclosing_block = text[block_start:block_end]
+
+            if f'-webkit-{property_name}' in enclosing_block:
+                return f'{leading_char}{property_name}{trailing_colon}'
+
+            converted_list.add(property_name)
+            return f'{leading_char}-webkit-{property_name}{trailing_colon}'
+
+        converted_text = regex.sub(replace_if_not_already_prefixed, text)
 
         for item in converted_list:
             _log.info('  converting %s', item)
 
-        return (converted_list, ''.join(text_chunks))
+        return (converted_list, converted_text)
 
     def convert_reference_relpaths(self, text):
         """ Searches |text| for instances of files in reference_support_info and updates the relative path to be correct for the new ref file location"""
