@@ -2855,12 +2855,8 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
         bool anySent = false;
         if (RefPtr currentItem = backForwardList().currentItem())
             anySent = dispatchPerFrameTraversals(protect(currentItem->mainFrameItem()), protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
-        else {
-            sendGoToBackForwardItemForFrame(protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
-            anySent = true;
-        }
         if (!anySent)
-            WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: walk dispatched no GoToBackForwardItem messages — back/forward action will be silently dropped");
+            sendGoToBackForwardItemForFrame(protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
     } else {
         process->markProcessAsRecentlyUsed();
         process->send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), copyFrameStateForBackForwardNavigation(frameItem), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, shouldRestoreFromBackForwardCache, std::nullopt, WTF::move(publicSuffix), { }, WebCore::ProcessSwapDisposition::None }), webPageIDInProcess(process));
@@ -2882,19 +2878,11 @@ bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromF
     if (!sameDocument)
         return anySent;
 
+    auto& fromChildren = fromFrame.children();
     auto& toChildren = toFrame.children();
-    for (size_t i = 0; i < toChildren.size(); ++i) {
-        Ref toChild = toChildren[i];
-        auto childFrameID = toChild->frameID();
-        if (!childFrameID)
-            continue;
-        // Stored frameIDs can disagree across entries after a process swap; fall back to position, which is stable across history.
-        RefPtr fromChild = fromFrame.childItemForFrameID(*childFrameID);
-        if (!fromChild)
-            fromChild = fromFrame.childItemAtIndex(i);
-        if (!fromChild)
-            continue;
-        if (dispatchPerFrameTraversals(*fromChild, toChild, navigationID, frameLoadType, shouldRestore, publicSuffix))
+    size_t commonCount = std::min(fromChildren.size(), toChildren.size());
+    for (size_t i = 0; i < commonCount; ++i) {
+        if (dispatchPerFrameTraversals(fromChildren[i], toChildren[i], navigationID, frameLoadType, shouldRestore, publicSuffix))
             anySent = true;
     }
     return anySent;
