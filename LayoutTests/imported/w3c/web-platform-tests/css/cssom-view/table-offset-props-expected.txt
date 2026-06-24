@@ -5,9 +5,9 @@ PASS Basic caption
 PASS Table and narrower caption
 PASS Table and wider caption
 PASS Table with padding
-FAIL Table with padding and content-box sizing assert_equals: Table with padding and content-box sizing offsetWidth expected 26 but got 20
-FAIL Table with separated border assert_equals: Table with separated border offsetWidth expected 26 but got 20
-FAIL Table with collapsed border assert_equals: Table with collapsed border offsetWidth expected 26 but got 20
+PASS Table with padding and content-box sizing
+PASS Table with separated border
+PASS Table with collapsed border
 PASS Caption with padding
 PASS Caption with border
 PASS Caption with margin

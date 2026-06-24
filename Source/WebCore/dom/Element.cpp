@@ -87,6 +87,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLTableElement.h"
 #include "HTMLTemplateElement.h"
 #include "HTMLTextAreaElement.h"
 #include "IdChangeInvalidation.h"
@@ -1572,6 +1573,10 @@ int Element::offsetWidth()
     protect(document())->updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::IgnorePendingStylesheets });
     if (CheckedPtr renderer = renderBoxModelObject()) {
         auto offsetWidth = LayoutUnit { roundToInt(renderer->offsetWidth()) };
+        // HTML tables with content-box sizing store only the raw CSS width without border/padding,
+        // unlike CSS display:table elements.
+        if (is<HTMLTableElement>(*this) && renderer->style().boxSizing() == BoxSizing::ContentBox)
+            offsetWidth += renderer->paddingLeft() + renderer->paddingRight() + renderer->borderLeft() + renderer->borderRight();
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble());
     }
     return 0;
@@ -1582,6 +1587,10 @@ int Element::offsetHeight()
     protect(document())->updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::IgnorePendingStylesheets });
     if (CheckedPtr renderer = renderBoxModelObject()) {
         auto offsetHeight = LayoutUnit { roundToInt(renderer->offsetHeight()) };
+        // HTML tables with content-box sizing store only the raw CSS height without border/padding,
+        // unlike CSS display:table elements.
+        if (is<HTMLTableElement>(*this) && renderer->style().boxSizing() == BoxSizing::ContentBox)
+            offsetHeight += renderer->paddingTop() + renderer->paddingBottom() + renderer->borderTop() + renderer->borderBottom();
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble());
     }
     return 0;
@@ -1612,6 +1621,11 @@ int Element::clientLeft()
     protect(document())->updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Left, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::IgnorePendingStylesheets });
 
     if (CheckedPtr renderer = renderBox()) {
+        // Per https://www.w3.org/TR/CSS2/tables.html#model, the border belongs to the
+        // table grid box, not the table wrapper box. Since WebKit has no table wrapper box,
+        // clientLeft for a table should return 0 (as it would for the wrapper box).
+        if (renderer->isRenderTable())
+            return 0;
         auto clientLeft = LayoutUnit { roundToInt(renderer->clientLeft()) };
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(clientLeft, *renderer).toDouble());
     }
@@ -1623,6 +1637,11 @@ int Element::clientTop()
     protect(document())->updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Top, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::IgnorePendingStylesheets });
 
     if (CheckedPtr renderer = renderBox()) {
+        // Per https://www.w3.org/TR/CSS2/tables.html#model, the border belongs to the
+        // table grid box, not the table wrapper box. Since WebKit has no table wrapper box,
+        // clientTop for a table should return 0 (as it would for the wrapper box).
+        if (renderer->isRenderTable())
+            return 0;
         auto clientTop = LayoutUnit { roundToInt(renderer->clientTop()) };
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(clientTop, *renderer).toDouble());
     }
@@ -1658,8 +1677,13 @@ int Element::clientWidth()
         // retrieve clientWidth/Height from table wrapper box, not table grid box. So
         // when we retrieve clientWidth/Height, it includes table's border size.
         if (renderer->isRenderTable()) {
-            if (renderer->style().boxSizing() == BoxSizing::ContentBox)
+            if (renderer->style().boxSizing() == BoxSizing::ContentBox) {
                 clientWidth += renderer->paddingLeft() + renderer->paddingRight();
+                // HTML tables store only the raw CSS width without border, so paddingBoxWidth()
+                // incorrectly subtracts border that was never included. Add it back.
+                if (is<HTMLTableElement>(*this))
+                    clientWidth += renderer->borderLeft() + renderer->borderRight();
+            }
             clientWidth += renderer->borderLeft() + renderer->borderRight();
         }
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(clientWidth, *renderer).toDouble());
@@ -1695,8 +1719,13 @@ int Element::clientHeight()
         // retrieve clientWidth/Height from table wrapper box, not table grid box. So
         // when we retrieve clientWidth/Height, it includes table's border size.
         if (renderer->isRenderTable()) {
-            if (renderer->style().boxSizing() == BoxSizing::ContentBox)
+            if (renderer->style().boxSizing() == BoxSizing::ContentBox) {
                 clientHeight += renderer->paddingTop() + renderer->paddingBottom();
+                // HTML tables store only the raw CSS height without border, so paddingBoxHeight()
+                // incorrectly subtracts border that was never included. Add it back.
+                if (is<HTMLTableElement>(*this))
+                    clientHeight += renderer->borderTop() + renderer->borderBottom();
+            }
             clientHeight += renderer->borderTop() + renderer->borderBottom();
         }
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(clientHeight, *renderer).toDouble());
@@ -1828,8 +1857,15 @@ int Element::scrollWidth()
         return 0;
     }
 
-    if (CheckedPtr renderer = renderBox())
-        return Style::adjustForAbsoluteZoom(renderer->scrollWidth(), *renderer);
+    if (CheckedPtr renderer = renderBox()) {
+        auto scrollWidth = renderer->scrollWidth();
+        // HTML tables with content-box sizing store only the raw CSS width without border/padding.
+        // scrollWidth() = paddingBoxWidth() = width() - border, so we need to add
+        // padding + 2 * border to arrive at the correct content-box padding-box width.
+        if (is<HTMLTableElement>(*this) && renderer->style().boxSizing() == BoxSizing::ContentBox)
+            scrollWidth += roundToInt(renderer->paddingLeft() + renderer->paddingRight() + 2 * (renderer->borderLeft() + renderer->borderRight()));
+        return Style::adjustForAbsoluteZoom(scrollWidth, *renderer);
+    }
     return 0;
 }
 
@@ -1846,8 +1882,15 @@ int Element::scrollHeight()
         return 0;
     }
 
-    if (CheckedPtr renderer = renderBox())
-        return Style::adjustForAbsoluteZoom(renderer->scrollHeight(), *renderer);
+    if (CheckedPtr renderer = renderBox()) {
+        auto scrollHeight = renderer->scrollHeight();
+        // HTML tables with content-box sizing store only the raw CSS height without border/padding.
+        // scrollHeight() = paddingBoxHeight() = height() - border, so we need to add
+        // padding + 2 * border to arrive at the correct content-box padding-box height.
+        if (is<HTMLTableElement>(*this) && renderer->style().boxSizing() == BoxSizing::ContentBox)
+            scrollHeight += roundToInt(renderer->paddingTop() + renderer->paddingBottom() + 2 * (renderer->borderTop() + renderer->borderBottom()));
+        return Style::adjustForAbsoluteZoom(scrollHeight, *renderer);
+    }
     return 0;
 }
 
