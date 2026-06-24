@@ -6966,6 +6966,7 @@ imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-00
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-005.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-006.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-007.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-gutter-both-edges-block-size.html [ Skip ]
 
 # Trailing space/text alignment iOS-specific WPT failures
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-001.html [ ImageOnlyFailure ]

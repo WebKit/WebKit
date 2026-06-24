@@ -36,13 +36,12 @@ inline LayoutUnit RenderBox::clientLogicalBottom() const { return borderBefore()
 inline LayoutUnit RenderBox::clientLogicalHeight() const { return writingMode().isHorizontal() ? clientHeight() : clientWidth(); }
 inline LayoutUnit RenderBox::clientLogicalWidth() const { return writingMode().isHorizontal() ? clientWidth() : clientHeight(); }
 inline LayoutUnit RenderBox::clientTop() const { return borderTop(); }
-inline LayoutRect RenderBox::computedCSSContentBoxRect() const { return LayoutRect(borderLeft() + computedCSSPaddingLeft(), borderTop() + computedCSSPaddingTop(), paddingBoxWidth() - computedCSSPaddingLeft() - computedCSSPaddingRight()  - (style().scrollbarGutter().isStableBothEdges() ? verticalScrollbarWidth() : 0), paddingBoxHeight() - computedCSSPaddingTop() - computedCSSPaddingBottom() - (style().scrollbarGutter().isStableBothEdges() ? horizontalScrollbarHeight() : 0)); }
-inline LayoutUnit RenderBox::contentBoxHeight() const { return std::max(0_lu, paddingBoxHeight() - paddingTop() - paddingBottom() - (style().scrollbarGutter().isStableBothEdges() ? horizontalScrollbarHeight() : 0)); }
+inline LayoutRect RenderBox::computedCSSContentBoxRect() const { return LayoutRect(borderLeft() + computedCSSPaddingLeft(), borderTop() + computedCSSPaddingTop(), paddingBoxWidth() - computedCSSPaddingLeft() - computedCSSPaddingRight()  - ((style().scrollbarGutter().isStableBothEdges() && isHorizontalWritingMode()) ? verticalScrollbarWidth() : 0), paddingBoxHeight() - computedCSSPaddingTop() - computedCSSPaddingBottom() - ((style().scrollbarGutter().isStableBothEdges() && !isHorizontalWritingMode()) ? horizontalScrollbarHeight() : 0)); }
+inline LayoutUnit RenderBox::contentBoxHeight() const { return std::max(0_lu, paddingBoxHeight() - paddingTop() - paddingBottom() - ((style().scrollbarGutter().isStableBothEdges() && !isHorizontalWritingMode()) ? horizontalScrollbarHeight() : 0)); }
 inline LayoutUnit RenderBox::contentBoxLogicalHeight() const { return writingMode().isHorizontal() ? contentBoxHeight() : contentBoxWidth(); }
 inline LayoutUnit RenderBox::contentBoxLogicalHeight(LayoutUnit overridingBorderBoxHeight) const
 {
-    auto scrollbarLogicalHeight = this->scrollbarLogicalHeight();
-    return std::max(0_lu, overridingBorderBoxHeight - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight - (style().scrollbarGutter().isStableBothEdges() ? scrollbarLogicalHeight : 0));
+    return std::max(0_lu, overridingBorderBoxHeight - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
 }
 inline LayoutSize RenderBox::contentBoxLogicalSize() const { return writingMode().isHorizontal() ? contentBoxSize() : contentBoxSize().transposedSize(); }
 inline LayoutUnit RenderBox::contentBoxLogicalWidth() const { return writingMode().isHorizontal() ? contentBoxWidth() : contentBoxHeight(); }
@@ -52,7 +51,7 @@ inline LayoutUnit RenderBox::contentBoxLogicalWidth(LayoutUnit overridingBorderB
     return std::max(LayoutUnit(), overridingBorderBoxWidth - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth - (style().scrollbarGutter().isStableBothEdges() ? scrollbarLogicalWidth : 0));
 }
 inline LayoutSize RenderBox::contentBoxSize() const { return { contentBoxWidth(), contentBoxHeight() }; }
-inline LayoutUnit RenderBox::contentBoxWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight() - (style().scrollbarGutter().isStableBothEdges() ? verticalScrollbarWidth() : 0)); }
+inline LayoutUnit RenderBox::contentBoxWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight() - ((style().scrollbarGutter().isStableBothEdges() && isHorizontalWritingMode()) ? verticalScrollbarWidth() : 0)); }
 inline std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerLogicalHeight() const { return writingMode().isHorizontal() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth(); }
 inline std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerLogicalWidth() const { return writingMode().isHorizontal() ? explicitIntrinsicInnerWidth() : explicitIntrinsicInnerHeight(); }
 inline bool RenderBox::hasHorizontalOverflow() const { return scrollWidth() != roundToInt(paddingBoxWidth()); }
@@ -142,10 +141,13 @@ inline LayoutRect RenderBox::contentBoxRect() const
 
         bool bothEdgeScrollbarGutters = style().scrollbarGutter().isStableBothEdges();
 
-        if ((shouldPlaceVerticalScrollbarOnLeft() || bothEdgeScrollbarGutters))
+        // scrollbar-gutter only reserves gutters on the inline edges. The scrollbar itself is
+        // reserved on the inline-end edge by paddingBox{Width,Height} below; both-edges mirrors
+        // an equal gutter onto the inline-start edge. Which physical edge that is depends on the
+        // writing mode, so it must never affect the block-start (e.g. top in horizontal) edge.
+        if (shouldPlaceVerticalScrollbarOnLeft() || (bothEdgeScrollbarGutters && isHorizontalWritingMode()))
             leftScrollbarSpace = verticalScrollbarWidth;
-        // FIXME: It's wrong that scrollbar-gutter: both-edges affects height: webkit.org/b/266938
-        if (bothEdgeScrollbarGutters)
+        if (bothEdgeScrollbarGutters && !isHorizontalWritingMode())
             topScrollbarSpace = horizontalScrollbarHeight;
     }
 
