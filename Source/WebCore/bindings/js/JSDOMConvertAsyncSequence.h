@@ -83,8 +83,6 @@ public:
     void callNext(NextCallback&&);
     void callReturn(JSC::JSValue reason, ReturnCallback&& callback) { m_base->callReturn(reason, WTF::move(callback)); }
 
-    AsyncSequence& base() { return m_base.get(); }
-
 private:
     explicit AsyncSequenceValue(Ref<AsyncSequence>&& base)
         : m_base(WTF::move(base))
@@ -97,7 +95,7 @@ private:
 template<typename T>
 void AsyncSequenceValue<T>::callNext(NextCallback&& callback)
 {
-    m_base->callNext([protectedThis = Ref { *this }, callback = WTF::move(callback)](JSDOMGlobalObject* globalObject, bool isOK, JSC::JSValue resultRecord) mutable {
+    m_base->callNext([callback = WTF::move(callback)](JSDOMGlobalObject* globalObject, bool isOK, JSC::JSValue resultRecord) mutable {
         if (!globalObject) {
             callback(nullptr, makeUnexpected(JSC::JSValue { }));
             return;
@@ -119,10 +117,9 @@ void AsyncSequenceValue<T>::callNext(NextCallback&& callback)
 
         // https://webidl.spec.whatwg.org/#js-async-iterable : "get the next iteration result".
         bool done = JSC::iteratorCompleteExported(globalObject, resultRecord);
-        if (scope.exception()) [[unlikely]] {
-            auto* exception = scope.exception();
+        if (auto* exception = scope.exception()) [[unlikely]] {
             scope.clearException();
-            callback(globalObject, makeUnexpected(exception ? exception->value() : JSC::JSValue { }));
+            callback(globalObject, makeUnexpected(exception->value()));
             return;
         }
         if (done) {
@@ -131,19 +128,17 @@ void AsyncSequenceValue<T>::callNext(NextCallback&& callback)
         }
 
         JSC::JSValue value = JSC::iteratorValue(globalObject, resultRecord);
-        if (scope.exception()) [[unlikely]] {
-            auto* exception = scope.exception();
+        if (auto* exception = scope.exception()) [[unlikely]] {
             scope.clearException();
-            callback(globalObject, makeUnexpected(exception ? exception->value() : JSC::JSValue { }));
+            callback(globalObject, makeUnexpected(exception->value()));
             return;
         }
 
         // Convert the yielded value to the element type T (may throw a TypeError, etc.).
         auto converted = Detail::AsyncSequenceElementConverter<T>::convert(scope, *globalObject, value);
-        if (scope.exception()) [[unlikely]] {
-            auto* exception = scope.exception();
+        if (auto* exception = scope.exception()) [[unlikely]] {
             scope.clearException();
-            callback(globalObject, makeUnexpected(exception ? exception->value() : JSC::JSValue { }));
+            callback(globalObject, makeUnexpected(exception->value()));
             return;
         }
 
