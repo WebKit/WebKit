@@ -34,6 +34,7 @@
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "TestInputDelegate.h"
 #import "UIKitSPIForTesting.h"
 #import "Helpers/ios/UserInterfaceSwizzler.h"
 #import "WKBrowserEngineDefinitions.h"
@@ -1444,6 +1445,69 @@ TEST(WKScrollViewTests, FixedClippingViewTracksRubberBandDuringInteractiveObscur
     EXPECT_NEAR(clipBounds.origin.y, -150.0, 1.0);
 
     [webView _endInteractiveObscuredInsetsChange];
+}
+
+static RetainPtr<NSDictionary> keyboardUserInfo(CGRect endFrameInScreen, BOOL isLocal)
+{
+    return @{
+        UIKeyboardFrameBeginUserInfoKey: [NSValue valueWithCGRect:CGRectOffset(endFrameInScreen, 0, CGRectGetHeight(endFrameInScreen))],
+        UIKeyboardFrameEndUserInfoKey: [NSValue valueWithCGRect:endFrameInScreen],
+        UIKeyboardAnimationDurationUserInfoKey: @0.0,
+        UIKeyboardAnimationCurveUserInfoKey: @0,
+        UIKeyboardIsLocalUserInfoKey: @(isLocal),
+    };
+}
+
+// -_keyboardDidChangeFrame: does not go through -_shouldUpdateKeyboardWithInfo:, so post
+// the full show sequence to exercise every path.
+static void postKeyboardShowSequence(NSDictionary *info)
+{
+    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+    [center postNotificationName:UIKeyboardWillShowNotification object:nil userInfo:info];
+    [center postNotificationName:UIKeyboardWillChangeFrameNotification object:nil userInfo:info];
+    [center postNotificationName:UIKeyboardDidChangeFrameNotification object:nil userInfo:info];
+}
+
+static CGRect bottomKeyboardFrame(WKWebView *webView)
+{
+    CGRect screen = webView.window.screen.bounds;
+    return CGRectMake(0, CGRectGetHeight(screen) - 336, CGRectGetWidth(screen), 336);
+}
+
+// A keyboard owned by another app must not make this web view reserve space for it,
+// which would push the page's position:fixed; bottom:0 content up.
+TEST(WKScrollViewTests, ForeignKeyboardDoesNotReserveSpace)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 844)]);
+    [webView addToTestWindow];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView waitForNextPresentationUpdate];
+
+    postKeyboardShowSequence(keyboardUserInfo(bottomKeyboardFrame(webView.get()), NO).get());
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(CGRectIsEmpty([webView _inputViewBoundsInWindow]));
+}
+
+// A keyboard for this web view's own focused element must still reserve space
+// (regression guard against ignoring every keyboard).
+TEST(WKScrollViewTests, LocalKeyboardForFocusedElementReservesSpace)
+{
+    RetainPtr inputDelegate = adoptNS([TestInputDelegate new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 390, 844)]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView addToTestWindow];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><input>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.querySelector('input').focus()"];
+    [webView waitForNextPresentationUpdate];
+
+    postKeyboardShowSequence(keyboardUserInfo(bottomKeyboardFrame(webView.get()), YES).get());
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE(CGRectIsEmpty([webView _inputViewBoundsInWindow]));
 }
 
 } // namespace TestWebKitAPI
