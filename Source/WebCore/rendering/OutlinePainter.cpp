@@ -93,8 +93,9 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
     if (!borderStyle || *borderStyle == BorderStyle::None)
         return;
 
-    auto outlineWidth = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineWidth(), Style::ZoomNeeded { });
-    auto outlineOffset = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineOffset(), Style::ZoomNeeded { });
+    auto zoom = styleToUse->usedZoomForLength();
+    auto outlineWidth = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineWidth(), zoom, deviceScaleFactor(renderer));
+    auto outlineOffset = Style::evaluate<LayoutUnit>(styleToUse->usedOutlineOffset(), zoom);
 
     auto outerRect = paintRect;
     outerRect.inflate(outlineOffset + outlineWidth);
@@ -203,8 +204,8 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderInline& renderer, con
     auto zoom = styleToUse->usedZoomForLength();
     auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
 
-    auto outlineOffset = Style::evaluate<float>(styleToUse->usedOutlineOffset(), Style::ZoomNeeded { });
-    auto outlineWidth = Style::evaluate<float>(styleToUse->usedOutlineWidth(), Style::ZoomNeeded { });
+    auto outlineOffset = Style::evaluate<float>(styleToUse->usedOutlineOffset(), zoom);
+    auto outlineWidth = Style::evaluate<float>(styleToUse->usedOutlineWidth(), zoom, deviceScaleFactor);
 
     Vector<FloatRect> pixelSnappedRects;
     for (size_t index = 0; index < lineRects.size(); ++index) {
@@ -261,12 +262,12 @@ static bool NODELETE useShrinkWrappedFocusRingForOutlineStyleAuto()
 
 static void drawFocusRing(GraphicsContext& context, const Path& path, const Style::ComputedStyle& style, const Color& color)
 {
-    context.drawFocusRing(path, Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color, style.usedZoom());
+    context.drawFocusRing(path, Style::evaluate<float>(style.usedOutlineWidth(), style.usedZoomForLength(), style.deviceScaleFactor()), color, style.usedZoom());
 }
 
 static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const Style::ComputedStyle& style, const Color& color)
 {
-    context.drawFocusRing(rects, Style::evaluate<float>(style.usedOutlineWidth(), Style::ZoomNeeded { }), color, style.usedZoom());
+    context.drawFocusRing(rects, Style::evaluate<float>(style.usedOutlineWidth(), style.usedZoomForLength(), style.deviceScaleFactor()), color, style.usedZoom());
 }
 
 void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<LayoutRect>& focusRingRects) const
@@ -278,7 +279,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     auto deviceScaleFactor = WebCore::deviceScaleFactor(renderer);
     auto zoom = style->usedZoomForLength();
 
-    auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), Style::ZoomNeeded { });
+    auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), zoom);
 
     Vector<FloatRect> pixelSnappedFocusRingRects;
     for (auto rect : focusRingRects) {

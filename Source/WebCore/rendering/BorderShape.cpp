@@ -79,8 +79,10 @@ static RectCorners<float> cornerCurvaturesFromStyle(const Style::ComputedStyle&)
 
 BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
 {
+    auto zoom = style.usedZoomForLength();
+    auto deviceScaleFactor = style.deviceScaleFactor();
     auto borderWidths = RectEdges<LayoutUnit>::map(style.usedBorderWidths(), [&](auto width) {
-        return Style::evaluate<LayoutUnit>(width, Style::ZoomNeeded { });
+        return Style::evaluate<LayoutUnit>(width, zoom, deviceScaleFactor);
     });
     return shapeForBorderRect(style, borderRect, borderWidths, closedEdges);
 }

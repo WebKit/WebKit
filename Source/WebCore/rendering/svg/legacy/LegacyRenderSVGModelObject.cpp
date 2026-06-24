@@ -98,14 +98,14 @@ const RenderElement* LegacyRenderSVGModelObject::pushMappingToContainer(const Re
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
-static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& renderer, LayoutRect& rect, const Style::ZoomFactor& zoomFactor)
+static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& renderer, LayoutRect& rect)
 {
     auto shadowRect = rect;
     if (auto& boxShadow = renderer.style().boxShadow(); !boxShadow.isNone())
-        Style::adjustRectForShadow(shadowRect, boxShadow, zoomFactor);
+        Style::adjustRectForShadow(shadowRect, boxShadow, renderer.style().usedZoomForLength());
 
     auto outlineRect = rect;
-    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().usedOutlineSize() };
+    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().usedOutlineSize(renderer.outlineStyleForRepaint().usedZoomForLength(), renderer.outlineStyleForRepaint().deviceScaleFactor()) };
     if (outlineSize)
         outlineRect.inflate(outlineSize);
 
@@ -118,7 +118,7 @@ static void adjustRectForOutlineAndShadow(const LegacyRenderSVGModelObject& rend
 LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const
 {
     LayoutRect box = enclosingLayoutRect(repaintRectInLocalCoordinates());
-    adjustRectForOutlineAndShadow(*this, box, style().usedZoomForLength());
+    adjustRectForOutlineAndShadow(*this, box);
 
     FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
     return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), protect(document())->deviceScaleFactor()));

@@ -329,12 +329,12 @@ inline bool ComputedStyle::hasMask() const
 
 inline bool ComputedStyle::hasOutline() const
 {
-    return outlineStyle() != OutlineStyle::None && usedOutlineWidth().isPositive();
+    return !usedOutlineWidth().isZero();
 }
 
 inline bool ComputedStyle::hasOutlineInVisualOverflow() const
 {
-    return hasOutline() && usedOutlineSize() > 0;
+    return !usedOutlineWidth().isZero() && (usedOutlineWidth().unresolvedValue() + usedOutlineOffset().unresolvedValue()) > 0;
 }
 
 inline bool ComputedStyle::hasOutOfFlowPosition() const

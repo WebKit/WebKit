@@ -89,7 +89,7 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
             return { };
     }
     if (auto fixedHeight = height.tryFixed())
-        return LayoutUnit { fixedHeight->resolveZoom(layoutBox.style().usedZoomForLength()) };
+        return Style::evaluate<LayoutUnit>(*fixedHeight, layoutBox.style().usedZoomForLength());
 
     if (!containingBlockHeight) {
         if (layoutState().inQuirksMode()) {
@@ -1084,15 +1084,17 @@ inline static WritingMode usedWritingMode(const Box& layoutBox)
 BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
 {
     CheckedRef style = layoutBox.style();
+    auto zoom = style->usedZoomForLength();
+    auto deviceScaleFactor = style->deviceScaleFactor();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
         {
-            Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), zoom, deviceScaleFactor),
+            Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), zoom, deviceScaleFactor)
         },
         {
-            Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), zoom, deviceScaleFactor),
+            Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), zoom, deviceScaleFactor)
         },
     };
 }

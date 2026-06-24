@@ -39,7 +39,7 @@ namespace Style {
 // <line-width> = <length [0,∞]> | thin | medium | thick
 // https://drafts.csswg.org/css-backgrounds/#typedef-line-width
 struct LineWidth {
-    using Length = Style::Length<CSS::Nonnegative>;
+    using Length = Style::Length<CSS::NonnegativeUnzoomed>;
 
     Length value;
 
@@ -49,8 +49,9 @@ struct LineWidth {
     static Length snapLengthAsBorderWidth(float, float deviceScaleFactor);
     static Length snapLengthAsBorderWidth(Length, float deviceScaleFactor);
 
+    constexpr auto unresolvedValue() const { return value.unresolvedValue(); }
+
     constexpr bool isZero() const { return value.isZero(); }
-    constexpr bool isPositive() const { return value.isPositive(); }
 
     constexpr explicit operator bool() const { return !isZero(); }
 
@@ -71,20 +72,20 @@ template<> struct Blending<LineWidth> {
     auto blend(const LineWidth&, const LineWidth&, const Style::ComputedStyle&, const Style::ComputedStyle&, const Interpolation::Context&) -> LineWidth;
 };
 
-// MARK: - Evaluate
+// MARK: - Evaluation
 
-template<typename Result> struct Evaluation<LineWidth, Result> {
-    constexpr auto operator()(const LineWidth& value, ZoomNeeded zoom) -> Result
-    {
-        return Result(value.value.resolveZoom(zoom));
-    }
+template<> struct Evaluation<LineWidth, float> {
+    WEBCORE_EXPORT auto operator()(const LineWidth&, ZoomFactor, float deviceScaleFactor) -> float;
+};
+template<> struct Evaluation<LineWidth, LayoutUnit> {
+    WEBCORE_EXPORT auto operator()(const LineWidth&, ZoomFactor, float deviceScaleFactor) -> LayoutUnit;
 };
 
 template<> struct Evaluation<LineWidthBox, FloatBoxExtent> {
-    FloatBoxExtent NODELETE operator()(const LineWidthBox&, ZoomNeeded);
+    auto operator()(const LineWidthBox&, ZoomFactor, float deviceScaleFactor) -> FloatBoxExtent;
 };
 template<> struct Evaluation<LineWidthBox, LayoutBoxExtent> {
-    LayoutBoxExtent NODELETE operator()(const LineWidthBox&, ZoomNeeded);
+    auto operator()(const LineWidthBox&, ZoomFactor, float deviceScaleFactor) -> LayoutBoxExtent;
 };
 
 } // namespace Style

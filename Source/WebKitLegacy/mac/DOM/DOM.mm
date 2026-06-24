@@ -449,12 +449,20 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     if (!renderer)
         return zeroQuad();
 
-    auto& style = renderer->style();
-    WebCore::IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+    CheckedRef style = renderer->style();
 
-    boundingBox.move(WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }), WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style.usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.usedBorderRightWidth(), WebCore::Style::ZoomNeeded { }));
-    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style.usedBorderBottomWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style.usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
+    auto zoom = style->usedZoomForLength();
+    auto deviceScaleFactor = style->deviceScaleFactor();
+
+    auto borderTop = WebCore::Style::evaluate<float>(style->usedBorderTopWidth(), zoom, deviceScaleFactor);
+    auto borderRight = WebCore::Style::evaluate<float>(style->usedBorderRightWidth(), zoom, deviceScaleFactor);
+    auto borderBottom = WebCore::Style::evaluate<float>(style->usedBorderBottomWidth(), zoom, deviceScaleFactor);
+    auto borderLeft = WebCore::Style::evaluate<float>(style->usedBorderLeftWidth(), zoom, deviceScaleFactor);
+
+    WebCore::IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+    boundingBox.move(borderLeft, borderTop);
+    boundingBox.setWidth(boundingBox.width() - borderLeft - borderRight);
+    boundingBox.setHeight(boundingBox.height() - borderBottom - borderTop);
 
     // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
     return wkQuadFromFloatQuad(WebCore::FloatQuad(boundingBox));

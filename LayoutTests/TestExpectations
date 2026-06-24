@@ -8078,11 +8078,6 @@ imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-paint-order.html [ Im
 imported/w3c/web-platform-tests/intersection-observer/animating.html [ Pass Failure ]
 imported/w3c/web-platform-tests/intersection-observer/v2/3d-transform-occlusion.html [ Skip ] # timeout
 
-# Standardized CSS zoom tests.
-imported/w3c/web-platform-tests/css/css-viewport/zoom/border-spacing.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-viewport/zoom/border-width.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-viewport/zoom/border.html [ ImageOnlyFailure ]
-
 # RenderTreeNeedsLayoutChecker hits.
 webkit.org/b/304002 [ Debug ] fast/inline/missing-content-on-autofill-with-out-of-flow-input-descendant.html [ Skip ]
 webkit.org/b/305468 [ Debug ] fast/dynamic/input-crash-after-style-change.html [ Skip ]

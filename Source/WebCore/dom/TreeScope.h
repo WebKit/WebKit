@@ -98,7 +98,7 @@ public:
     void addElementByName(const AtomString&, Element&);
     void removeElementByName(const AtomString&, Element&);
 
-    Document& documentScope() const { return m_documentScope.get(); }
+    Document& NODELETE documentScope() const { return m_documentScope.get(); }
     static constexpr ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
     // https://dom.spec.whatwg.org/#retarget

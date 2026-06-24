@@ -396,7 +396,7 @@ Style::PaddingBox RenderThemeIOS::platformPopupInternalPaddingBox(const Style::C
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         // FIXME: Reduce code duplication with toTruncatedPaddingEdge.
-        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(),  Style::ZoomNeeded { }))) / style.usedZoom() };
+        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), style.deviceScaleFactor()))) / style.usedZoom() };
 
         // Return in horizontal-tb LTR; popupInternalPaddingBox() handles conversion.
         // The chevron is always on the logical end, so pad the end to prevent text from overlapping with it.
@@ -564,7 +564,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto& style = box.style();
+    CheckedRef style = box.style();
 
     Path glyphPath;
     FloatSize glyphSize;
@@ -619,18 +619,21 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
-    bool isHorizontalWritingMode = style.writingMode().isHorizontal();
+    bool isHorizontalWritingMode = style->writingMode().isHorizontal();
     auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
 
     auto glyphInlineSize = isHorizontalWritingMode ? glyphSize.width() : glyphSize.height();
     auto glyphBlockSize = isHorizontalWritingMode ? glyphSize.height() : glyphSize.width();
 
+    auto zoom = style->usedZoomForLength();
+    auto deviceScaleFactor = style->deviceScaleFactor();
+
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphBlockSize / 2.0f);
-    if (!style.writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) - Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+    if (!style->writingMode().isInlineFlipped())
+        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) - Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) + Style::evaluate<float>(box.style().paddingEnd(), logicalRect.width(), box.style().usedZoomForLength()));
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) + Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();
@@ -641,7 +644,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     glyphPath.transform(transform);
 
     if (isEnabled(box))
-        context.setFillColor(style.color());
+        context.setFillColor(style->color());
     else
         context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
 

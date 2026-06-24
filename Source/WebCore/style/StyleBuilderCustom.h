@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -330,7 +330,7 @@ inline void BuilderCustom::resetUsedZoom(BuilderState& builderState)
 inline void BuilderCustom::applyInitialZoom(BuilderState& builderState)
 {
     resetUsedZoom(builderState);
-    builderState.setZoom(Style::ComputedStyle::initialZoom());
+    builderState.setZoom(ComputedStyle::initialZoom());
 }
 
 inline void BuilderCustom::applyInheritZoom(BuilderState& builderState)
@@ -394,7 +394,7 @@ inline void BuilderCustom::applyInheritWordSpacing(BuilderState& builderState)
 
 inline void BuilderCustom::applyInitialWordSpacing(BuilderState& builderState)
 {
-    builderState.style().setWordSpacing(Style::ComputedStyle::initialWordSpacing());
+    builderState.style().setWordSpacing(ComputedStyle::initialWordSpacing());
     builderState.setFontDirty();
 }
 
@@ -413,7 +413,7 @@ inline void BuilderCustom::applyInheritLetterSpacing(BuilderState& builderState)
 
 inline void BuilderCustom::applyInitialLetterSpacing(BuilderState& builderState)
 {
-    builderState.style().setLetterSpacing(Style::ComputedStyle::initialLetterSpacing());
+    builderState.style().setLetterSpacing(ComputedStyle::initialLetterSpacing());
     builderState.setFontDirty();
 }
 
@@ -434,8 +434,8 @@ inline void BuilderCustom::applyInheritLineHeight(BuilderState& builderState)
 
 inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
 {
-    builderState.style().setLineHeight(Style::ComputedStyle::initialLineHeight());
-    builderState.style().setSpecifiedLineHeight(Style::ComputedStyle::initialSpecifiedLineHeight());
+    builderState.style().setLineHeight(ComputedStyle::initialLineHeight());
+    builderState.style().setSpecifiedLineHeight(ComputedStyle::initialSpecifiedLineHeight());
 }
 
 static inline float computeBaseSpecifiedFontSize(const Document& document, const ComputedStyle& style, bool percentageAutosizingEnabled)
@@ -547,7 +547,7 @@ inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
     if (fontDescription.useFixedDefaultSize()) {
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
-            builderState.setFontDescriptionFontSize(Style::fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
+            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
     }
 
     if (!initialDesc.firstFamily().name.isEmpty())
@@ -570,44 +570,62 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 
     if (fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize) {
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
-            builderState.setFontDescriptionFontSize(Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, builderState.document()));
+            builderState.setFontDescriptionFontSize(fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, builderState.document()));
     }
 }
 
 inline void BuilderCustom::applyInitialBorderTopWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderTopWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderTopWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
+    else
+        builderState.style().setBorderTopWidth(ComputedStyle::initialBorderTopWidth());
 }
 
 inline void BuilderCustom::applyInitialBorderRightWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderRightWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderRightWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
+    else
+        builderState.style().setBorderRightWidth(ComputedStyle::initialBorderRightWidth());
 }
 
 inline void BuilderCustom::applyInitialBorderBottomWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderBottomWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderBottomWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
+    else
+        builderState.style().setBorderBottomWidth(ComputedStyle::initialBorderBottomWidth());
 }
 
 inline void BuilderCustom::applyInitialBorderLeftWidth(BuilderState& builderState)
 {
-    builderState.style().setBorderLeftWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setBorderLeftWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
+    else
+        builderState.style().setBorderLeftWidth(ComputedStyle::initialBorderLeftWidth());
 }
 
 inline void BuilderCustom::applyInitialOutlineWidth(BuilderState& builderState)
 {
-    builderState.style().setOutlineWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setOutlineWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
+    else
+        builderState.style().setOutlineWidth(ComputedStyle::initialOutlineWidth());
 }
 
 inline void BuilderCustom::applyInitialColumnRuleWidth(BuilderState& builderState)
 {
-    builderState.style().setColumnRuleWidth(Style::LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.document().deviceScaleFactor()));
+    if (!builderState.cssToLengthConversionData().evaluationTimeZoomEnabled())
+        builderState.style().setColumnRuleWidth(LineWidth::snapLengthAsBorderWidth(3.0f * builderState.style().usedZoom(), builderState.style().deviceScaleFactor()));
+    else
+        builderState.style().setColumnRuleWidth(ComputedStyle::initialColumnRuleWidth());
 }
 
 inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 {
     auto fontDescription = builderState.fontDescription();
-    float size = Style::fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), builderState.document());
+    float size = fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), builderState.document());
 
     if (size < 0)
         return;
@@ -750,7 +768,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         case CSSValueXLarge:
         case CSSValueXxLarge:
         case CSSValueXxxLarge:
-            size = Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), builderState.document());
+            size = fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), builderState.document());
             builderState.setFontDescriptionKeywordSizeFromIdentifier(ident);
             break;
         case CSSValueLarger:

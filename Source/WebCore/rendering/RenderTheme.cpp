@@ -574,11 +574,12 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
     IntSize thumbSize;
     if (CheckedPtr thumbRenderer = input->sliderThumbElement()->renderer()) {
         const auto& thumbStyle = thumbRenderer->style();
+        auto zoom = thumbStyle.usedZoomForLength();
 
         auto fixedWidth = thumbStyle.width().tryFixed();
         auto fixedHeight = thumbStyle.height().tryFixed();
-        auto thumbWidth = fixedWidth ? static_cast<int>(fixedWidth->resolveZoom(thumbStyle.usedZoomForLength())) : 0;
-        auto thumbHeight = fixedHeight ? static_cast<int>(fixedHeight->resolveZoom(thumbStyle.usedZoomForLength())) : 0;
+        auto thumbWidth = fixedWidth ? Style::evaluate<int>(*fixedWidth, zoom) : 0;
+        auto thumbHeight = fixedHeight ? Style::evaluate<int>(*fixedHeight, zoom) : 0;
 
         thumbSize = { thumbWidth, thumbHeight };
     }
@@ -843,7 +844,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderElement& re
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorApplyingColorFilter(),
-        Style::evaluate<FloatBoxExtent>(style->usedBorderWidths().to<Style::LineWidthBox>(), Style::ZoomNeeded { })
+        Style::evaluate<FloatBoxExtent>(style->usedBorderWidths().to<Style::LineWidthBox>(), style->usedZoomForLength(), style->deviceScaleFactor())
     };
 }
 
@@ -1394,27 +1395,30 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     };
     // Transpose for vertical writing mode:
     if (!style.writingMode().isHorizontal() && supportsVerticalWritingMode(appearance))
-        borderBox = Style::LineWidthBox { borderBox.left(), borderBox.top(), borderBox.right(), borderBox.bottom() };
+        borderBox.transpose();
 
-    if (Style::evaluate<float>(borderBox.top(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderTopWidth(), Style::ZoomNeeded { })) {
+    auto zoom = style.usedZoomForLength();
+    auto deviceScaleFactor = style.deviceScaleFactor();
+
+    if (Style::evaluate<float>(borderBox.top(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderTopWidth(), zoom, deviceScaleFactor)) {
         if (!borderBox.top().isZero())
             style.setBorderTopWidth(Style::LineWidth { borderBox.top() });
         else
             style.resetBorderTop();
     }
-    if (Style::evaluate<float>(borderBox.right(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderRightWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.right(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderRightWidth(), zoom, deviceScaleFactor)) {
         if (!borderBox.right().isZero())
             style.setBorderRightWidth(Style::LineWidth { borderBox.right() });
         else
             style.resetBorderRight();
     }
-    if (Style::evaluate<float>(borderBox.bottom(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderBottomWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.bottom(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderBottomWidth(), zoom, deviceScaleFactor)) {
         if (!borderBox.bottom().isZero())
             style.setBorderBottomWidth(Style::LineWidth { borderBox.bottom() });
         else
             style.resetBorderBottom();
     }
-    if (Style::evaluate<float>(borderBox.left(), Style::ZoomNeeded { }) != Style::evaluate<int>(style.usedBorderLeftWidth(), Style::ZoomNeeded { })) {
+    if (Style::evaluate<float>(borderBox.left(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor)) {
         if (!borderBox.left().isZero())
             style.setBorderLeftWidth(Style::LineWidth { borderBox.left() });
         else
