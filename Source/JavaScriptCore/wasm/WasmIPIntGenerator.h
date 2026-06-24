@@ -356,6 +356,7 @@ struct ArrayInitElemMetadata {
 struct RefTestCastMetadata {
     int32_t toHeapType;
     uint8_t length;
+    uint8_t allowNull;
 };
 
 #pragma pack()

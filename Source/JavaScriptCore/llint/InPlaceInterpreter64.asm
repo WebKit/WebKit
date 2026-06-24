@@ -3585,9 +3585,7 @@ end)
 ipintOp(_br_on_cast, macro()
     validateOpcodeConfig(a1)
     loadi IPInt::RefTestCastMetadata::toHeapType[MC], a1
-    # fb 18 FLAGS
-    loadb 2[PC], a2
-    rshifti 1, a2  # bit 1 = null2
+    loadb IPInt::RefTestCastMetadata::allowNull[MC], a2
     loadq [sp], a3
     operationCall(macro() cCall3(_ipint_extern_ref_test) end)
 
@@ -3603,9 +3601,7 @@ end)
 ipintOp(_br_on_cast_fail, macro()
     validateOpcodeConfig(a1)
     loadi IPInt::RefTestCastMetadata::toHeapType[MC], a1
-    loadb 2[PC], a2
-    # fb 19 FLAGS
-    rshifti 1, a2  # bit 1 = null2
+    loadb IPInt::RefTestCastMetadata::allowNull[MC], a2
     loadq [sp], a3
     operationCall(macro() cCall3(_ipint_extern_ref_test) end)
 

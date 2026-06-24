@@ -1368,20 +1368,22 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addStructSet(ExpressionType, co
     return { };
 }
 
-WARN_UNUSED_RETURN PartialResult IPIntGenerator::addRefTest(ExpressionType, bool, int32_t heapType, bool, ExpressionType&)
+WARN_UNUSED_RETURN PartialResult IPIntGenerator::addRefTest(ExpressionType, bool allowNull, int32_t heapType, bool, ExpressionType&)
 {
     m_metadata->appendMetadata<IPInt::RefTestCastMetadata>({
         heapType,
-        static_cast<uint8_t>(getCurrentInstructionLength())
+        static_cast<uint8_t>(getCurrentInstructionLength()),
+        static_cast<uint8_t>(allowNull),
     });
     return { };
 }
 
-WARN_UNUSED_RETURN PartialResult IPIntGenerator::addRefCast(ExpressionType, bool, int32_t heapType, ExpressionType&)
+WARN_UNUSED_RETURN PartialResult IPIntGenerator::addRefCast(ExpressionType, bool allowNull, int32_t heapType, ExpressionType&)
 {
     m_metadata->appendMetadata<IPInt::RefTestCastMetadata>({
         heapType,
-        static_cast<uint8_t>(getCurrentInstructionLength())
+        static_cast<uint8_t>(getCurrentInstructionLength()),
+        static_cast<uint8_t>(allowNull),
     });
     return { };
 }
@@ -2661,11 +2663,12 @@ WARN_UNUSED_RETURN PartialResult IPIntGenerator::addBranchNull(ControlType& bloc
     return { };
 }
 
-WARN_UNUSED_RETURN PartialResult IPIntGenerator::addBranchCast(ControlType& block, ExpressionType, Stack&, bool, int32_t heapType, bool)
+WARN_UNUSED_RETURN PartialResult IPIntGenerator::addBranchCast(ControlType& block, ExpressionType, Stack&, bool allowNull, int32_t heapType, bool)
 {
     m_metadata->appendMetadata<IPInt::RefTestCastMetadata>({
         heapType,
-        0
+        0,
+        static_cast<uint8_t>(allowNull),
     });
 
     IPIntLocation here = { curPC(), curMC() };
