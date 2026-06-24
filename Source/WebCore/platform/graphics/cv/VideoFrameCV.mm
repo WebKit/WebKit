@@ -65,12 +65,16 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     return transferSession->createVideoFrame(image.platformImage().get(), { }, image.size());
 }
 
-static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
+static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource, uint32_t bytesPerRowToCopy)
 {
     auto destination = CVPixelBufferGetSpanOfPlane(pixelBuffer, planeIndex);
     uint32_t bytesPerRowDestination = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, planeIndex);
+    // Copy only the visible row bytes, but step the source by its (coded) row stride so a frame
+    // cropped from a larger coded size reads each row from the correct position without running
+    // past the end of the source buffer.
+    auto count = std::min(bytesPerRowToCopy, bytesPerRowDestination);
     for (unsigned i = 0; i < height; ++i) {
-        memcpySpan(destination, source.first(std::min(bytesPerRowSource, bytesPerRowDestination)));
+        memcpySpan(destination, source.first(count));
         skip(source, bytesPerRowSource);
         skip(destination, bytesPerRowDestination);
     }
@@ -124,19 +128,28 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     if (span.size() < height * planeY.sourceWidthBytes)
         return nullptr;
 
-    auto data = span;
-    data = copyToCVPixelBufferPlane(pixelBuffer.get(), 0, data, height, planeY.sourceWidthBytes);
-    // Source height may be bigger than destination height in case of a cropped frame, skip the cropped lines.
-    if (planeY.sourceHeight > height)
-        data = data.subspan((planeY.sourceHeight - height) * planeY.sourceWidthBytes);
+    // Each plane is laid out for the coded size; read it from its coded base (destinationOffset)
+    // offset by the visibleRect crop origin (sourceTop rows + sourceLeftBytes). Stepping over the
+    // coded plane heights keeps UV aligned when codedHeight exceeds visibleRect.height, and the
+    // crop origin honors a non-zero visibleRect x/y.
+    auto planeOffset = [](const ComputedPlaneLayout& plane) {
+        return plane.destinationOffset + plane.sourceTop * plane.destinationStride + plane.sourceLeftBytes;
+    };
+    auto lastRowExtent = [](size_t rowCount, uint32_t sourceStride, uint32_t bytesToCopy) -> size_t {
+        return rowCount ? (rowCount - 1) * sourceStride + bytesToCopy : 0;
+    };
+
+    copyToCVPixelBufferPlane(pixelBuffer.get(), 0, span.subspan(planeOffset(planeY)), height, planeY.destinationStride, width);
     if (CVPixelBufferGetPlaneCount(pixelBuffer.get()) == 2) {
         const auto heightUV = height / 2;
-        ASSERT(std::to_address(span.end()) >= data.subspan(heightUV * planeUV.sourceWidthBytes).data());
+        const uint32_t widthUV = ((width + 1) / 2) * 2;
+        auto dataUV = span.subspan(planeOffset(planeUV));
+        ASSERT(dataUV.size() >= lastRowExtent(heightUV, planeUV.destinationStride, widthUV));
         if (CVPixelBufferGetWidthOfPlane(pixelBuffer.get(), 1) != (width / 2)
             || CVPixelBufferGetHeightOfPlane(pixelBuffer.get(), 1) != heightUV
-            || (data.subspan(heightUV * planeUV.sourceWidthBytes).data() > std::to_address(span.end())))
+            || dataUV.size() < lastRowExtent(heightUV, planeUV.destinationStride, widthUV))
             return nullptr;
-        copyToCVPixelBufferPlane(pixelBuffer.get(), 1, data, height / 2, planeUV.sourceWidthBytes);
+        copyToCVPixelBufferPlane(pixelBuffer.get(), 1, dataUV, heightUV, planeUV.destinationStride, widthUV);
     }
 
     return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
@@ -199,15 +212,17 @@ RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t 
 RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
-    // Plane offsets must step over the full coded plane heights (layout*.sourceHeight), not the
-    // visible output height, otherwise a frame whose codedHeight exceeds visibleRect.height (e.g.
-    // a 1920x1088 frame cropped to 1920x1080) reads the chroma planes from the wrong offset.
-    size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
-    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * layoutU.sourceHeight;
+    // Each plane is laid out for the coded size; read it from its coded base (destinationOffset)
+    // offset by the visibleRect crop origin (sourceTop rows + sourceLeftBytes). Stepping over the
+    // coded plane heights keeps the chroma planes aligned when codedHeight exceeds visibleRect.height,
+    // and the crop origin honors a non-zero visibleRect x/y.
+    auto planeOffset = [](const ComputedPlaneLayout& plane) {
+        return plane.destinationOffset + plane.sourceTop * plane.destinationStride + plane.sourceLeftBytes;
+    };
     webrtc::I420BufferLayout layout {
-        layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,
-        offsetLayoutU, layoutU.sourceWidthBytes,
-        offsetLayoutV, layoutV.sourceWidthBytes
+        planeOffset(layoutY), layoutY.destinationStride,
+        planeOffset(layoutU), layoutU.destinationStride,
+        planeOffset(layoutV), layoutV.destinationStride
     };
     auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout, colorSpace.fullRange.value_or(false)));
 
@@ -230,16 +245,17 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
 RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, const ComputedPlaneLayout& layoutA, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
-    size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
-    size_t offsetLayoutV = offsetLayoutU + layoutU.sourceLeftBytes + layoutU.sourceWidthBytes * layoutU.sourceHeight;
-    size_t offsetLayoutA = offsetLayoutV + layoutV.sourceLeftBytes + layoutV.sourceWidthBytes * layoutV.sourceHeight;
+    // See createI420: read each plane from its coded base offset by the visibleRect crop origin.
+    auto planeOffset = [](const ComputedPlaneLayout& plane) {
+        return plane.destinationOffset + plane.sourceTop * plane.destinationStride + plane.sourceLeftBytes;
+    };
     webrtc::I420ABufferLayout layout {
         {
-            layoutY.sourceLeftBytes, layoutY.sourceWidthBytes,
-            offsetLayoutU, layoutU.sourceWidthBytes,
-            offsetLayoutV, layoutV.sourceWidthBytes
+            planeOffset(layoutY), layoutY.destinationStride,
+            planeOffset(layoutU), layoutU.destinationStride,
+            planeOffset(layoutV), layoutV.destinationStride
         },
-        offsetLayoutA, layoutA.sourceWidthBytes
+        planeOffset(layoutA), layoutA.destinationStride
     };
     auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout));
 
