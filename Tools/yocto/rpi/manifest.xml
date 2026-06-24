@@ -15,5 +15,6 @@
   <project remote="github" revision="f26bab34e6c208149fe1ad04521864b663489f4d" name="kraj/meta-clang.git" path="sources/meta-clang"/>
   <project remote="github" revision="85eeb6b50883d22c977396f5e8fe211a7961cf2e" name="OSSystems/meta-browser.git" path="sources/meta-browser"/>
   <project remote="yocto" revision="c19b6da5a3afd3c892b3b1b44983e993ac6d5308" name="meta-lts-mixins" path="sources/meta-lts-mixins"/>
+  <project remote="github" revision="395888676eaa9174705b00b8d504ac58109b860b" name="jeremy-prater/meta-swift.git" path="sources/meta-swift"/>
 
 </manifest>

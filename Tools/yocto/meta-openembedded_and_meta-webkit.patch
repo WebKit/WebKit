@@ -714,7 +714,7 @@ diff --git a/sources/meta-webkit/conf/distro/webkitdevci.conf b/sources/meta-web
 index 1f952c2..d299d1f 100644
 --- a/sources/meta-webkit/conf/distro/webkitdevci.conf
 +++ b/sources/meta-webkit/conf/distro/webkitdevci.conf
-@@ -47,6 +47,17 @@ PACKAGECONFIG:append:pn-weston-init = " no-idle-timeout"
+@@ -47,6 +47,18 @@ PACKAGECONFIG:append:pn-weston-init = " no-idle-timeout"
  PACKAGECONFIG:append:pn-php = " apache2"
  # Disable mysql support as we don't need to build mysql/mariadb
  PACKAGECONFIG:remove:pn-php = "mysql"
@@ -730,8 +730,9 @@ index 1f952c2..d299d1f 100644
  # Whitelist license from some deps.
  LICENSE_FLAGS_ACCEPTED:append = " commercial synaptics-killswitch"
 +
-+# Optional support for clang if meta-clang is enabled
-+CLANGSDK ?= "1"
++# The SDK host clang comes from the swift.org bundle (nativesdk-swift), so keep
++# meta-clang's nativesdk-clang out of the SDK host to avoid a conflict.
++CLANGSDK = "0"
 diff --git a/sources/meta-webkit/conf/layer.conf b/sources/meta-webkit/conf/layer.conf
 index 124c13d..1a38638 100644
 --- a/sources/meta-webkit/conf/layer.conf
@@ -745,14 +746,6 @@ index 124c13d..1a38638 100644
      "
  
  BBFILE_COLLECTIONS += "webkit"
-diff --git a/sources/meta-webkit/dynamic-layers/clang-layer/recipes-core/images/webkit-dev-ci-tools.bbappend b/sources/meta-webkit/dynamic-layers/clang-layer/recipes-core/images/webkit-dev-ci-tools.bbappend
-new file mode 100644
-index 0000000..b1950a5
---- /dev/null
-+++ b/sources/meta-webkit/dynamic-layers/clang-layer/recipes-core/images/webkit-dev-ci-tools.bbappend
-@@ -0,0 +1,2 @@
-+TOOLCHAIN_HOST_TASK:append = " nativesdk-clang nativesdk-compiler-rt nativesdk-compiler-rt-sanitizers"
-+IMAGE_INSTALL:append = " clang compiler-rt compiler-rt-sanitizers libcxx"
 diff --git a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
 index 205c058..9cf85c8 100644
 --- a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bb
@@ -835,3 +828,31 @@ index 2355936..0820dd9 100644
          if ${@bb.utils.contains('PACKAGECONFIG', 'dhcp-ethernet', 'true', 'false', d)}; then
                 install -D -m0644 ${WORKDIR}/wired.network ${D}${systemd_unitdir}/network/80-wired.network
          fi
+diff --git a/sources/meta-webkit/recipes-browser/wpewebkit/wpewebkit_%.bbappend b/sources/meta-webkit/recipes-browser/wpewebkit/wpewebkit_%.bbappend
+new file mode 100644
+index 0000000..1a2b3c4
+--- /dev/null
++++ b/sources/meta-webkit/recipes-browser/wpewebkit/wpewebkit_%.bbappend
+@@ -0,0 +1,12 @@
++# Optional Swift/C++ interop support for WPE WebKit (contributed upstream to
++# meta-webkit). Off by default. Enable per distro/image on a Swift-capable arch
++# (aarch64 or armv7, riscv64 has no upstream Swift target) with:
++#     PACKAGECONFIG:append:pn-wpewebkit = " swift"
++# CMAKE_Swift_COMPILER is the in-tree wrapper that ships in release tarballs.
++# The Swift target triple is derived from CMAKE_SYSTEM_PROCESSOR in CMakeLists.txt.
++PACKAGECONFIG[swift] = " \
++    -DENABLE_SWIFT_DEMO_URI_SCHEME=ON -DENABLE_BACK_FORWARD_LIST_SWIFT=ON \
++    -DCMAKE_Swift_COMPILER=${S}/Tools/Scripts/swift/swiftc-wrapper.sh \
++    -DCMAKE_Swift_FLAGS_INIT='-sdk ${STAGING_DIR_TARGET} -resource-dir ${STAGING_DIR_TARGET}${libdir}/swift' \
++    ,-DENABLE_SWIFT_DEMO_URI_SCHEME=OFF -DENABLE_BACK_FORWARD_LIST_SWIFT=OFF \
++    ,swift-native swift-stdlib swift-foundation libdispatch"
+diff --git a/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bbappend b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bbappend
+new file mode 100644
+index 0000000..2b3c4d5
+--- /dev/null
++++ b/sources/meta-webkit/recipes-browser/packagegroups/packagegroup-wpewebkit-depends.bbappend
+@@ -0,0 +1,4 @@
++# Pull the Swift runtime from meta-swift into the WPE WebKit packagegroup.
++# Built for aarch64 and armv7. riscv64 has no upstream Swift target yet.
++RDEPENDS:packagegroup-wpewebkit-depends-core:append:aarch64 = " swift-stdlib swift-foundation libdispatch"
++RDEPENDS:packagegroup-wpewebkit-depends-core:append:arm = " swift-stdlib swift-foundation libdispatch"

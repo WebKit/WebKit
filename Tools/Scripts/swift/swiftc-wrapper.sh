@@ -51,8 +51,23 @@ for arg in "$@"; do
         pass_next_verbatim=
         continue
     fi
+    # Drop bare host `-I /usr/include` (or /usr/local/include): in a cross-build
+    # they leak host glibc into the clang importer and break the libstdc++ `std`
+    # module. Safe everywhere (clang searches /usr/include by default).
+    if [[ -n "$pending_dash_I" ]]; then
+        pending_dash_I=
+        case "$arg" in
+            "/usr/include"|"/usr/local/include") ;;
+            *) args+=("-I" "$arg") ;;
+        esac
+        continue
+    fi
     case "$arg" in
-        "-Xcc"|"-Xlinker"|"-Xfrontend")
+        "-I")
+            pending_dash_I=1
+            ;;
+        "-I/usr/include"|"-I/usr/local/include") ;;
+        "-Xcc"|"-Xlinker"|"-Xfrontend"|"-Xclang-linker")
             args+=("$arg")
             pass_next_verbatim=1
             ;;
@@ -70,7 +85,10 @@ for arg in "$@"; do
             ;;
         "-include") skip_next=1 ;;
         "-fuse-ld="*)
-            args+=("-Xcc" "$arg")
+            # Link-only flag leaked into CFLAGS. -Xclang-linker hands it to the
+            # clang swiftc spawns when linking, so it's ignored at compile time
+            # instead of being rejected.
+            args+=("-Xclang-linker" "$arg")
             ;;
         # swiftc does not understand clang-specific include flags like
         # -isystem / -iquote / -idirafter; wrap them (and their following

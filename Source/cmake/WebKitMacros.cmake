@@ -883,7 +883,15 @@ function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
     if (CMAKE_OSX_SYSROOT)
         list(APPEND _clang_cmd "-isysroot" "${CMAKE_OSX_SYSROOT}")
     endif ()
-    if (CMAKE_Swift_COMPILER_TARGET)
+    # CMAKE_CXX_COMPILER_ARG1 holds the bundle clang's triple, --sysroot,
+    # --gcc-install-dir and libstdc++ dirs. Mirror them so this hand-built
+    # preprocess doesn't leak host glibc into wtf/Platform.h. Supplies --target
+    # too, so the block below is just a fallback when ARG1 is empty.
+    if (CMAKE_CXX_COMPILER_ARG1)
+        separate_arguments(_cxx_compiler_arg1 NATIVE_COMMAND "${CMAKE_CXX_COMPILER_ARG1}")
+        list(APPEND _clang_cmd ${_cxx_compiler_arg1})
+    endif ()
+    if (CMAKE_Swift_COMPILER_TARGET AND NOT CMAKE_CXX_COMPILER_ARG1)
         list(APPEND _clang_cmd "-target" "${CMAKE_Swift_COMPILER_TARGET}")
     endif ()
     if (WEBKIT_ADDITIONS_INCLUDE_PATH)
@@ -1106,6 +1114,12 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
                 if (_dir MATCHES "/clang/[0-9]+/include(/|$)")
                     continue ()
                 endif ()
+                # In cross-builds, forwarding host implicit C include dirs as
+                # explicit -I breaks the libstdc++ `std` module. The sysroot
+                # already covers the target.
+                if (CMAKE_CROSSCOMPILING)
+                    continue ()
+                endif ()
                 list(APPEND _swift_options "-Xcc" "-I${_dir}")
             endforeach ()
         endif ()
@@ -1157,7 +1171,11 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         endif ()
         list(APPEND _swift_options "-module-cache-path" "${CMAKE_BINARY_DIR}/SwiftModuleCache")
         set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
-        list(APPEND _swift_options "-track-system-dependencies")
+        # -track-system-dependencies resolves libstdc++'s modulemap via a
+        # /lib->/usr/lib path Yocto doesn't expose, breaking the cross build.
+        if (NOT CMAKE_CROSSCOMPILING)
+            list(APPEND _swift_options "-track-system-dependencies")
+        endif ()
         # We'll use these options both for mainstream cmake invocations of swiftc (here)
         # and for our own invocation to output an interoperability .h file (later).
         # target_compile_options deduplicates repeated tokens, so collapse each
