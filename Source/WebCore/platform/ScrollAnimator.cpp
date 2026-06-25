@@ -37,6 +37,7 @@
 #include "LayoutSize.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnchoringController.h"
 #include "ScrollExtents.h"
 #include "ScrollableArea.h"
 #include "ScrollbarsController.h"
@@ -249,6 +250,12 @@ bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
 
 static void notifyScrollAnchoringControllerOfScroll(ScrollableArea& scrollableArea)
 {
+    // Route through scrollPositionDidChange() so the controller can re-select an anchor from clean
+    // geometry; a bare clearScrollAnchor() here would discard one captured earlier in the same scroll.
+    if (CheckedPtr controller = scrollableArea.scrollAnchoringController()) {
+        controller->scrollPositionDidChange();
+        return;
+    }
     scrollableArea.clearScrollAnchor();
 }
 

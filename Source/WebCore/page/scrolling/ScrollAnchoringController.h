@@ -124,6 +124,7 @@ private:
 
     void invalidate();
     void chooseAnchorElement(Document&, RenderBox& scrollerBox);
+    void selectAnchorWhileTreeIsClean();
     bool NODELETE anchoringSuppressedByStyleChange() const;
     void updateScrollableAreaRegistration();
 
