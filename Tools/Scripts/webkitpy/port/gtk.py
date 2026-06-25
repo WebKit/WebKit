@@ -37,7 +37,6 @@ import webkitpy
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.glib import GLibPort
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
@@ -96,12 +95,6 @@ class GtkPort(GLibPort):
                 _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs")
 
         return environment
-
-    def _generate_all_test_configurations(self):
-        configurations = []
-        for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self.version_name(), architecture='x86', build_type=build_type))
-        return configurations
 
     def _path_to_driver(self):
         return self._built_executables_path(self.driver_name())

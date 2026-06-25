@@ -33,7 +33,6 @@ import shlex
 
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.glib import GLibPort
 from webkitpy.port.headlessdriver import HeadlessDriver
 from webkitpy.port.westondriver import WestonDriver
@@ -88,12 +87,6 @@ class WPEPort(GLibPort):
 
     def check_sys_deps(self):
         return super(WPEPort, self).check_sys_deps() and self._driver_class().check_driver(self)
-
-    def _generate_all_test_configurations(self):
-        configurations = []
-        for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self.version_name(), architecture='x86', build_type=build_type))
-        return configurations
 
     def _path_to_driver(self):
         return self._built_executables_path(self.driver_name())
