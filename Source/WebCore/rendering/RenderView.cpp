@@ -35,6 +35,9 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
+#if ENABLE(MODEL_ELEMENT)
+#include "HTMLModelElement.h"
+#endif
 #include "HitTestResult.h"
 #include "ImageQualityController.h"
 #include "LayoutBoxGeometry.h"
@@ -1085,6 +1088,11 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
                 m_SVGSVGElementsWithPausedImageAnimation.add(*svgSvgElement);
             }
         }
+
+#if ENABLE(MODEL_ELEMENT) && ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
+        if (auto* modelElement = dynamicDowncast<HTMLModelElement>(renderElement.element()))
+            modelElement->setAllowsAnimation(shouldAnimate);
+#endif
     }
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

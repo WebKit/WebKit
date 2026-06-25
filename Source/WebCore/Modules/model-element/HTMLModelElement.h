@@ -172,6 +172,10 @@ public:
     void setCurrentTime(double);
 #endif
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) && ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
+    void setAllowsAnimation(bool);
+#endif
+
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
     bool canSetEntityTransform() const;
 #endif

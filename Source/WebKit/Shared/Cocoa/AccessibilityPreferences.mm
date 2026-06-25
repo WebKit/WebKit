@@ -97,6 +97,12 @@ bool imageAnimationEnabled()
         return WebKit::initialImageAnimationEnabled;
     if (auto* functionPointer = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr())
         return functionPointer();
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+    // Fall back to the general Reduce Motion flag: if it is on, treat animated content
+    // as disabled to match iOS behavior.
+    RetainPtr appId = applicationBundleIdentifier().createCFString();
+    return !_AXSReduceMotionEnabledApp(appId.get());
+#endif
 #endif
     return true;
 }

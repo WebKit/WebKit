@@ -88,6 +88,7 @@
 #include "ScreenProperties.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "Theme.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <WebCore/HTTPStatusCodes.h>
@@ -447,6 +448,18 @@ void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
         renderer->updateFromElement();
     if (!m_readyPromise->isFulfilled())
         m_readyPromise->resolve(*this);
+
+#if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
+    // Suppress animation if the page has disabled animations (e.g. "Pause All Animations"
+    // accessibility action) or the user has enabled "Reduce Motion" in system preferences.
+    RefPtr page = document().page();
+    bool animationsSuppressed = (page && !page->imageAnimationEnabled())
+        || Theme::singleton().userPrefersReducedMotion();
+    if (animationsSuppressed) {
+        if (RefPtr player = m_modelPlayer)
+            player->setAnimationIsPlaying(false, [](bool) { });
+    }
+#endif
 }
 
 void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceError&)
@@ -683,7 +696,16 @@ void HTMLModelElement::createModelPlayer()
     }
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
-    modelPlayer->setAutoplay(autoplay());
+    // Suppress autoplay if the page has disabled animations (e.g. "Pause All Animations"
+    // accessibility action or "Auto-play Animated Images" sub-setting) or if the user
+    // has enabled "Reduce Motion" in system preferences. Checking upfront — before load()
+    // — avoids a race where the GPU process starts animating before a pause message arrives.
+    bool animationsSuppressed = false;
+    if (RefPtr page = document().page())
+        animationsSuppressed = !page->imageAnimationEnabled();
+    if (!animationsSuppressed)
+        animationsSuppressed = Theme::singleton().userPrefersReducedMotion();
+    modelPlayer->setAutoplay(autoplay() && !animationsSuppressed);
     modelPlayer->setLoop(loop());
     modelPlayer->setPlaybackRate(m_playbackRate, [](double) { });
 #endif
@@ -1595,6 +1617,16 @@ void HTMLModelElement::isPlayingAnimation(IsPlayingAnimationPromise&& promise)
             promise.resolve(*isPlaying);
     });
 }
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL) && ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
+void HTMLModelElement::setAllowsAnimation(bool allowsAnimation)
+{
+    // Also suppress if Reduce Motion is enabled, regardless of the page-level flag.
+    bool shouldPlay = allowsAnimation && !Theme::singleton().userPrefersReducedMotion();
+    if (RefPtr modelPlayer = m_modelPlayer)
+        modelPlayer->setAnimationIsPlaying(shouldPlay, [](bool) { });
+}
+#endif
 
 void HTMLModelElement::setAnimationIsPlaying(bool isPlaying, DOMPromiseDeferred<void>&& promise)
 {
