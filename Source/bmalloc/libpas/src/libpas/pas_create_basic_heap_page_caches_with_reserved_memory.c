@@ -37,7 +37,7 @@
 #include "pas_mte.h"
 #include "pas_reserved_memory_provider.h"
 
-static pas_allocation_result allocate_from_compact_megapages(
+static pas_allocation_result allocate_from_megapages(
     size_t size,
     pas_alignment alignment,
     const char* name,
@@ -56,33 +56,7 @@ static pas_allocation_result allocate_from_compact_megapages(
     heap_config = pas_heap_config_kind_get_config(heap->config_kind);
 
     return pas_large_heap_try_allocate_and_forget(
-        &heap->large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
-        heap_config, transaction);
-}
-
-static pas_allocation_result allocate_from_megapages(
-    size_t size,
-    pas_alignment alignment,
-    const char* name,
-    pas_heap* heap,
-    pas_physical_memory_transaction* transaction,
-    void* arg)
-{
-    const pas_heap_config* heap_config;
-    pas_megapage_cache_size cache_size = (pas_megapage_cache_size)(uintptr_t)arg;
-
-    PAS_UNUSED_PARAM(name);
-    PAS_ASSERT(heap);
-    PAS_ASSERT(transaction);
-    PAS_ASSERT(!alignment.alignment_begin);
-
-    heap_config = pas_heap_config_kind_get_config(heap->config_kind);
-
-    PAS_PROFILE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config, cache_size);
-    PAS_MTE_HANDLE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config);
-
-    return pas_large_heap_try_allocate_and_forget(
-        &heap->megapage_large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
+        &heap->large_heap, size, alignment.alignment,
         heap_config, transaction);
 }
 
@@ -137,21 +111,6 @@ pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memo
         &caches->medium_megapage_cache,
         allocate_from_megapages,
         pas_megapage_cache_size_medium);
-
-    pas_megapage_cache_construct(
-        &caches->small_compact_exclusive_segregated_megapage_cache,
-        allocate_from_compact_megapages,
-        pas_megapage_cache_size_small_compact);
-
-    pas_megapage_cache_construct(
-        &caches->small_compact_other_megapage_cache,
-        allocate_from_compact_megapages,
-        pas_megapage_cache_size_small_compact);
-
-    pas_megapage_cache_construct(
-        &caches->medium_compact_megapage_cache,
-        allocate_from_compact_megapages,
-        pas_megapage_cache_size_medium_compact);
 
     pas_heap_lock_unlock();
 

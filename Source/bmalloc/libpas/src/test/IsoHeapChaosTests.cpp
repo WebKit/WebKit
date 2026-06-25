@@ -78,10 +78,10 @@ namespace {
 constexpr bool verbose = false;
 
 const pas_heap_config* selectedHeapConfig;
-void* (*selectedAllocateCommonPrimitive)(size_t size, pas_allocation_mode allocation_mode);
-void* (*selectedAllocateCommonPrimitiveZeroed)(size_t size, pas_allocation_mode allocation_mode);
-void* (*selectedAllocate)(pas_heap_ref* heapRef, pas_allocation_mode allocation_mode);
-void* (*selectedAllocateArray)(pas_heap_ref* heapRef, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
+void* (*selectedAllocateCommonPrimitive)(size_t size);
+void* (*selectedAllocateCommonPrimitiveZeroed)(size_t size);
+void* (*selectedAllocate)(pas_heap_ref* heapRef);
+void* (*selectedAllocateArray)(pas_heap_ref* heapRef, size_t count, size_t alignment);
 void (*selectedShrink)(void* ptr, size_t newSize);
 void (*selectedDeallocate)(void* ptr);
 pas_heap* selectedCommonPrimitiveHeap;
@@ -97,9 +97,9 @@ pas_heap_ref* createIsoHeapRefForSize(size_t size)
 #if PAS_ENABLE_BMALLOC
 pas_primitive_heap_ref gigacageHeapRef;
 
-void* gigacageAllocate(size_t size, pas_allocation_mode allocation_mode)
+void* gigacageAllocate(size_t size)
 {
-    return bmalloc_allocate_auxiliary(&gigacageHeapRef, size, allocation_mode);
+    return bmalloc_allocate_auxiliary(&gigacageHeapRef, size);
 }
 
 pas_heap_ref* createBmallocHeapRefForSize(size_t size)
@@ -111,8 +111,7 @@ pas_heap_ref* createBmallocHeapRefForSize(size_t size)
 
     return new pas_heap_ref(
         BMALLOC_HEAP_REF_INITIALIZER(
-            new bmalloc_type(BMALLOC_TYPE_INITIALIZER((unsigned)size, 1, strdup(stringOut.str().c_str()))),
-            pas_bmalloc_heap_ref_kind_non_compact));
+            new bmalloc_type(BMALLOC_TYPE_INITIALIZER((unsigned)size, 1, strdup(stringOut.str().c_str())))));
 }
 #endif // PAS_ENABLE_BMALLOC
 
@@ -707,10 +706,10 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             logOptionalObject(threadIndex, size);
             void* ptr;
             if (zeroed) {
-                ptr = selectedAllocateCommonPrimitiveZeroed(size, pas_non_compact_allocation_mode);
+                ptr = selectedAllocateCommonPrimitiveZeroed(size);
                 verifyZeroed(threadIndex, ptr, size);
             } else
-                ptr = selectedAllocateCommonPrimitive(size, pas_non_compact_allocation_mode);
+                ptr = selectedAllocateCommonPrimitive(size);
             addObject(threadIndex, ptr, size, zeroed);
             return;
         }
@@ -728,9 +727,9 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
         logOptionalObject(threadIndex, size);
         void* ptr;
         if (count <= 1)
-            ptr = selectedAllocate(heap, pas_non_compact_allocation_mode);
+            ptr = selectedAllocate(heap);
         else
-            ptr = selectedAllocateArray(heap, count, 1, pas_non_compact_allocation_mode);
+            ptr = selectedAllocateArray(heap, count, 1);
         addObject(threadIndex, ptr, size, false);
     };
     
@@ -1347,15 +1346,6 @@ void addIsoTests()
 #endif // PAS_ENABLE_ISO
 }
 
-#if PAS_ENABLE_JIT
-// Wrapper to make jit_heap_try_allocate conform with the expected
-// allocate-common-primitive function signature.
-void* jit_heap_test_try_allocate(size_t size, pas_allocation_mode)
-{
-    return jit_heap_try_allocate(size);
-}
-#endif
-
 void addAllTests()
 {
     addIsoTests();
@@ -1453,7 +1443,7 @@ void addAllTests()
             "bmalloc-gigacage",
             [] () {
                 static const bmalloc_type gigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "Gigacage");
-                gigacageHeapRef = BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&gigacageType, pas_bmalloc_heap_ref_kind_compact);
+                gigacageHeapRef = BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&gigacageType);
 
                 size_t reservationSize = 1000000000;
                 void* reservation = malloc(reservationSize);
@@ -1513,7 +1503,7 @@ void addAllTests()
             "jit",
             [] () {
                 selectedHeapConfig = &jit_heap_config;
-                selectedAllocateCommonPrimitive = jit_heap_test_try_allocate;;
+                selectedAllocateCommonPrimitive = jit_heap_try_allocate;
                 selectedAllocate = nullptr;
                 selectedAllocateArray = nullptr;
                 selectedDeallocate = jit_heap_deallocate;
@@ -1537,7 +1527,7 @@ void addAllTests()
             "jit-with-shrink",
             [] () {
                 selectedHeapConfig = &jit_heap_config;
-                selectedAllocateCommonPrimitive = jit_heap_test_try_allocate;;
+                selectedAllocateCommonPrimitive = jit_heap_try_allocate;
                 selectedAllocate = nullptr;
                 selectedAllocateArray = nullptr;
                 selectedShrink = jit_heap_shrink;
