@@ -24997,6 +24997,47 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue doubleToStrictInt52(ExitKind exitKind, Node* node, LValue value, bool canIgnoreNegativeZero)
     {
+#if CPU(ARM64)
+        if (MacroAssemblerARM64::supportsRoundFloatToIntegerFloat()) {
+            // Fuse the integrality, strict-int52-range, and (optionally) negative-zero checks into a
+            // single (f)ccmp chain that OSR-exits on failure, instead of separate B3 speculations that
+            // each become their own compare+branch.
+            PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+            patchpoint->append(ConstrainedValue(value, ValueRep::SomeRegister));
+            patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+            patchpoint->numGPScratchRegisters = 1;
+            patchpoint->numFPScratchRegisters = 1;
+
+            unsigned osrExitArgumentOffset = patchpoint->numChildren() + /* result */ 1;
+            OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(doubleValue(value), node);
+            // The conversion writes the result register before branching to the exit, so the exit arguments must use LateColdAny.
+            patchpoint->appendVectorWithRep(buildExitArguments(exitDescriptor, m_origin.forExit, doubleValue(value)), ValueRep::LateColdAny);
+
+            State* state = &m_ftlState;
+            NodeOrigin origin = m_origin;
+            auto nodeIndex = m_nodeIndexInGraph;
+
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                GPRReg resultGPR = params[0].gpr();
+                FPRReg valueFPR = params[1].fpr();
+                GPRReg scratchGPR = params.gpScratch(0);
+                FPRReg scratchFPR = params.fpScratch(0);
+
+                CCallHelpers::JumpList failureCases;
+                jit.branchConvertDoubleToInt52(valueFPR, resultGPR, failureCases, scratchGPR, scratchFPR, canIgnoreNegativeZero);
+
+                RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, exitKind, origin, params, nodeIndex, osrExitArgumentOffset);
+                RefPtr<FTL::JITCode> jitCode = state->jitCode;
+                jit.addLinkTask([=, protectedJitCode = jitCode] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(failureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
+                });
+            });
+            return patchpoint;
+        }
+#endif
+
         LValue integerValue = m_out.doubleToInt64(value);
         LValue integerValueConvertedToDouble = tryDoubleToInt64AsDouble(value);
         if (!integerValueConvertedToDouble)
@@ -25029,6 +25070,46 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
     {
+#if CPU(ARM64)
+        if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
+            PatchpointValue* patchpoint = m_out.patchpoint(Int32);
+            patchpoint->append(ConstrainedValue(value, ValueRep::SomeRegister));
+            patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+            // The negative-zero-accepting path needs an FP scratch for the convert-back-and-compare tail.
+            patchpoint->numFPScratchRegisters = shouldCheckNegativeZero ? 0 : 1;
+
+            unsigned osrExitArgumentOffset = patchpoint->numChildren() + /* result */ 1;
+            OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(doubleValue(value), m_node);
+            // FJCVTZS writes the result register before we branch to the exit, so the exit arguments must
+            // use LateColdAny to interfere with the result (and the clobbered registers); plain ColdAny
+            // could be allocated into the result register, which we would have already overwritten by the
+            // time the exit is taken, corrupting OSR reconstruction.
+            patchpoint->appendVectorWithRep(buildExitArguments(exitDescriptor, m_origin.forExit, doubleValue(value)), ValueRep::LateColdAny);
+
+            State* state = &m_ftlState;
+            NodeOrigin origin = m_origin;
+            auto nodeIndex = m_nodeIndexInGraph;
+
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                GPRReg resultGPR = params[0].gpr();
+                FPRReg valueFPR = params[1].fpr();
+                FPRReg scratchFPR = shouldCheckNegativeZero ? InvalidFPRReg : params.fpScratch(0);
+
+                CCallHelpers::JumpList failureCases;
+                jit.branchConvertDoubleToInt32UsingJavaScriptSemantics(valueFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero);
+
+                RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, Overflow, origin, params, nodeIndex, osrExitArgumentOffset);
+                RefPtr<FTL::JITCode> jitCode = state->jitCode;
+                jit.addLinkTask([=, protectedJitCode = jitCode] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(failureCases, linkBuffer.locationOf<NoPtrTag>(handle->label));
+                });
+            });
+            return patchpoint;
+        }
+#endif
+
         LValue integerValue = m_out.doubleToInt32(value);
         LValue int32InDouble = tryDoubleToInt32AsDouble(value);
         if (!int32InDouble)

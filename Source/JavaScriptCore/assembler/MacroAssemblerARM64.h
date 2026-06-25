@@ -2938,8 +2938,13 @@ public:
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
     // (specifically, in this case, 0).
-    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID, bool negZeroCheck = true)
+    void branchConvertDoubleToInt32(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID scratch, bool negZeroCheck = true)
     {
+        if (supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
+            branchConvertDoubleToInt32UsingJavaScriptSemantics(src, dest, failureCases, scratch, negZeroCheck);
+            return;
+        }
+
         m_assembler.fcvtns<32, 64>(dest, src);
         if (supportsRoundFloatToIntegerFloat())
             m_assembler.frint32z<64>(fpTempRegister, src);
@@ -2957,6 +2962,30 @@ public:
             failureCases.append(makeTestBitAndBranch(scratch, 63, IsNonZero));
             valueIsNonZero.link(this);
         }
+    }
+
+    // Uses the ARMv8.3 FJCVTZS instruction (FEAT_JSCVT). FJCVTZS performs a JavaScript-semantics
+    // double->int32 conversion and sets the Z flag iff the conversion is exact AND the input is not
+    // negative zero. So:
+    //   negZeroCheck == true  -> Z==1 is exactly the success condition; a single b.ne is the check.
+    //   negZeroCheck == false -> negative zero must be accepted, so on the inexact (Z==0) path we
+    //     fall back to a convert-back-and-compare. fcmp(-0.0, +0.0) is equal, so -0.0 is accepted,
+    //     while non-integers / overflow / NaN are rejected.
+    void branchConvertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest, JumpList& failureCases, FPRegisterID scratch, bool negZeroCheck)
+    {
+        m_assembler.fjcvtzs(dest, src); // This zero extends and sets the Z flag on exact, non-negative-zero results.
+        if (negZeroCheck) {
+            failureCases.append(makeBranch(Assembler::ConditionNE));
+            return;
+        }
+
+        Jump exact = makeBranch(Assembler::ConditionEQ);
+        // Convert the integer result back to double & compare to the original value - if not equal or
+        // unordered (NaN) then jump. Note that -0.0 converts to int 0, and fcmp(-0.0, 0.0) is equal,
+        // so -0.0 is correctly accepted here.
+        m_assembler.scvtf<64, 32>(scratch, dest);
+        failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, scratch));
+        exact.link(this);
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
@@ -5605,6 +5634,18 @@ public:
     void compareOnFlagsFloat(FPRegisterID left, FPRegisterID right)
     {
         m_assembler.fcmp<32>(left, right);
+    }
+
+    // Emits a tst that only sets NZCV flags (no result register), for use with ccmp chains / branchOnFlags.
+    void testOnFlags64(RegisterID reg, TrustedImm64 mask)
+    {
+        LogicalImmediate logicalImm = LogicalImmediate::create64(mask.m_value);
+        if (logicalImm.isValid()) {
+            m_assembler.tst<64>(reg, logicalImm);
+            return;
+        }
+        move(mask, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.tst<64>(reg, dataTempRegister);
     }
 
     void compareOnFlagsDouble(FPRegisterID left, FPRegisterID right)

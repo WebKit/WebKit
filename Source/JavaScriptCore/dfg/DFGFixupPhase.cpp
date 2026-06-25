@@ -82,6 +82,38 @@ public:
 
 private:
 
+    // ARM64 FJCVTZS performs the double->int32 conversion and sets the Z flag iff the result is exact
+    // and not negative zero. So checking for negative zero is free there. It is a single flag branch,
+    // and is in fact cheaper than the -0-accepting path (which needs an extra convert-back-and-compare tail).
+    // This inverts the usual cost model, under which we drop the negative-zero check whenever the bytecode
+    // permits it. Here we decide whether to keep that check even when the bytecode could ignore it,
+    // because doing so is free.
+    //
+    // We only keep it when profiling has not observed negative zero nor an Int32 overflow at this site.
+    // The overflow signal matters for correctness of the heuristic: the combined FJCVTZS check reports a
+    // negative-zero failure as an Overflow OSR exit, so an actual -0 at this site shows up as NodeMayOverflowInt32
+    // on recompilation. Gating on it both avoids needless exits and prevents a recompilation loop.
+    static bool negativeZeroCheckIsFree(NodeFlags flags)
+    {
+#if CPU(ARM64)
+        return CCallHelpers::supportsDoubleToInt32ConversionUsingJavaScriptSemantics()
+            && !nodeMayNegZero(flags, AllRareCases)
+            && !nodeMayOverflowInt32(flags, AllRareCases);
+#else
+        UNUSED_PARAM(flags);
+        return false;
+#endif
+    }
+
+    // Selects the checked double->int32 arithmetic mode, keeping the negative-zero check when the bytecode requires it or when it is free.
+    static Arith::Mode arithModeForCheckedDoubleToInt32(Node* node)
+    {
+        NodeFlags flags = node->arithNodeFlags();
+        if (!bytecodeCanIgnoreNegativeZero(flags) || negativeZeroCheckIsFree(flags))
+            return Arith::CheckOverflowAndNegativeZero;
+        return Arith::CheckOverflow;
+    }
+
     void fixupArithDivInt32(Node* node, Edge& leftChild, Edge& rightChild)
     {
         if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
@@ -114,10 +146,7 @@ private:
 
         node->setOp(DoubleAsInt32);
         node->children.initialize(Edge(newDivision, DoubleRepUse), Edge(), Edge());
-        if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-            node->setArithMode(Arith::CheckOverflow);
-        else
-            node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+        node->setArithMode(arithModeForCheckedDoubleToInt32(node));
 
     }
 
@@ -910,7 +939,7 @@ private:
 
                 if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
                     node->setResult(NodeResultInt32);
-                    if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) && !negativeZeroCheckIsFree(node->arithNodeFlags()))
                         node->setArithRoundingMode(Arith::RoundingMode::Int32);
                     else
                         node->setArithRoundingMode(Arith::RoundingMode::Int32WithNegativeZeroCheck);
@@ -4298,10 +4327,7 @@ private:
                 // In that case, let's receive the child value as a Double value and convert it to Int32. This case happens in misc-bugs-847389-jpeg2000.
                 fixEdge<DoubleRepUse>(node->child1());
                 node->setOp(DoubleAsInt32);
-                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-                    node->setArithMode(Arith::CheckOverflow);
-                else
-                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                node->setArithMode(arithModeForCheckedDoubleToInt32(node));
                 return;
             }
 

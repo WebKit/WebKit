@@ -6943,6 +6943,44 @@ static void testBranchConvertDoubleToInt52()
     CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(0.3))), (1LL << 52));
     CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-0.1))), (1LL << 52));
 }
+
+static void testBranchConvertDoubleToInt52IgnoreNegativeZero()
+{
+    auto toInt52 = compile([](CCallHelpers& jit) {
+        emitFunctionPrologue(jit);
+        constexpr bool canIgnoreNegativeZero = true;
+        CCallHelpers::JumpList failureCases;
+        jit.branchConvertDoubleToInt52(FPRInfo::argumentFPR0, GPRInfo::returnValueGPR, failureCases, GPRInfo::returnValueGPR2, FPRInfo::argumentFPR1, canIgnoreNegativeZero);
+        auto done = jit.jump();
+        failureCases.link(&jit);
+        jit.move(CCallHelpers::TrustedImm64(1ULL << 52), GPRInfo::returnValueGPR);
+        done.link(&jit);
+        emitFunctionEpilogue(jit);
+        jit.ret();
+    });
+
+    // In-range integers convert successfully.
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1LL << 50))), (1LL << 50));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 51) - 1))), ((1LL << 51) - 1));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-(1LL << 51)))), (-(1LL << 51)));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1))), 1LL);
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-1))), -1LL);
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(0))), 0LL);
+    // Unlike the negative-zero-checking variant, -0.0 is accepted and yields 0.
+    CHECK_EQ((invoke<int64_t>(toInt52, -static_cast<double>(0))), 0LL);
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(13790395561LL))), 13790395561LL); // a real sha256 intermediate
+
+    // Out-of-range / non-integral / NaN / Inf all fail.
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1LL << 51))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>((1LL << 51) + 1))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-((1LL << 51) + 1)))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(1LL << 52))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(std::numeric_limits<double>::infinity()))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-std::numeric_limits<double>::infinity()))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(std::numeric_limits<double>::quiet_NaN()))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(42.195))), (1LL << 52));
+    CHECK_EQ((invoke<int64_t>(toInt52, static_cast<double>(-0.1))), (1LL << 52));
+}
 #endif
 
 #if CPU(ARM64)
@@ -8689,6 +8727,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testBranchIfNotType());
 #if CPU(X86_64) || CPU(ARM64)
     RUN(testBranchConvertDoubleToInt52());
+    RUN(testBranchConvertDoubleToInt52IgnoreNegativeZero());
 #endif
 
 #if CPU(X86_64)

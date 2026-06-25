@@ -1591,15 +1591,42 @@ public:
 
         truncateDoubleToInt64(srcFPR, destGPR);
 
-        bool convertedBack = false;
 #if CPU(ARM64)
         if (supportsRoundFloatToIntegerFloat()) {
-            convertedBack = true;
             roundTowardZeroInt64Double(srcFPR, scratch2FPR);
+
+            // We have several independent failure conditions that all branch to the same target:
+            //   (1) integrality:  srcFPR != scratch2FPR (or unordered)
+            //   (2) strict-int52: (destGPR + 2^51) has any bit set above bit 51
+            //   (3) negative zero (only when !canIgnoreNegativeZero): destGPR == 0 && sign bit of srcFPR set
+            // Fuse them into a single flag-producing chain using (f)ccmp so we emit one branch instead of
+            // two or three. The range test sets Z=1 on success; fccmp then conditionally folds the
+            // integrality compare; a final integer ccmp folds the negative-zero test.
+            //
+            // Range test: Z=1 iff in strict-int52 range.
+            add64(TrustedImm64(0x0008000000000000ULL), destGPR, scratch1GPR);
+            testOnFlags64(scratch1GPR, TrustedImm64(0xFFF0000000000000ULL)); // tst sets Z=1 iff in range
+            // If in range (EQ), perform fcmp(srcFPR, scratch2FPR); otherwise force flags so the final
+            // branch is taken. nzcv = 0 leaves Z=0 (failure) when the range test failed.
+            compareConditionallyOnFlagsDouble(srcFPR, scratch2FPR, TrustedImm32(0), Equal);
+            // Combine the negative-zero test: pass so far iff EQ. If not EQ, force the final branch.
+            //   raw = bitcast(srcFPR); negative zero iff destGPR == 0 && (raw >> 63).
+            // We compute Z = !(destGPR == 0 && rawSignBitSet) only when the prior checks passed.
+            failureCases.append(branchOnFlags(NotEqual));
+
+            if (canIgnoreNegativeZero)
+                return;
+
+            // At this point the value is an integer in strict-int52 range. Reject -0.0.
+            auto valueIsNonZero = branchTest64(NonZero, destGPR);
+            moveDoubleTo64(srcFPR, scratch1GPR);
+            failureCases.append(branchTest64(NonZero, scratch1GPR, TrustedImm64(1ULL << 63)));
+            valueIsNonZero.link(this);
+            return;
         }
 #endif
-        if (!convertedBack)
-            convertInt64ToDouble(destGPR, scratch2FPR);
+
+        convertInt64ToDouble(destGPR, scratch2FPR);
 
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, srcFPR, scratch2FPR));
 
