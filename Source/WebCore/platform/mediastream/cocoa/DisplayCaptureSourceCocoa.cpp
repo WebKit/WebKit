@@ -33,6 +33,7 @@
 #include "MediaDeviceHashSalts.h"
 #include "MediaSampleAVFObjC.h"
 #include "NativeImage.h"
+#include "OrientationNotifier.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
@@ -251,6 +252,18 @@ void DisplayCaptureSourceCocoa::setSizeFrameRateAndZoom(const VideoPresetConstra
         setFrameRate(*constraints.frameRate);
 }
 
+void DisplayCaptureSourceCocoa::monitorOrientation(OrientationNotifier& notifier)
+{
+    notifier.addObserver(*this);
+    orientationChanged(notifier.orientation());
+}
+
+void DisplayCaptureSourceCocoa::orientationChanged(IntDegrees orientation)
+{
+    m_capturer->orientationChanged(orientation);
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
 void DisplayCaptureSourceCocoa::emitFrame()
 {
     if (muted())
@@ -301,19 +314,19 @@ void DisplayCaptureSourceCocoa::emitFrame()
             if (!surface)
                 return nullptr;
 
-            return m_imageTransferSession->createVideoFrame(surface.get(), sampleTime, size());
+            return m_imageTransferSession->createVideoFrame(surface.get(), sampleTime, size(), m_capturer->videoFrameRotation());
         },
         [this, sampleTime](RefPtr<NativeImage>& image) -> RefPtr<VideoFrame> {
             if (!image)
                 return nullptr;
 
-            return m_imageTransferSession->createVideoFrame(image->platformImage().get(), sampleTime, size());
+            return m_imageTransferSession->createVideoFrame(image->platformImage().get(), sampleTime, size(), m_capturer->videoFrameRotation());
         },
         [this, sampleTime](RetainPtr<CMSampleBufferRef>& sample) -> RefPtr<VideoFrame> {
             if (!sample)
                 return nullptr;
 
-            return m_imageTransferSession->createVideoFrame(sample.get(), sampleTime, size());
+            return m_imageTransferSession->createVideoFrame(sample.get(), sampleTime, size(), m_capturer->videoFrameRotation());
         }
     );
 

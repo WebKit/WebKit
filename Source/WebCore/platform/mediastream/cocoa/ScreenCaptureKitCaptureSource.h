@@ -96,6 +96,10 @@ private:
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
     IntSize intrinsicSize() const final;
     void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
+#if PLATFORM(IOS_FAMILY)
+    void orientationChanged(IntDegrees) final;
+    VideoFrameRotation videoFrameRotation() const final;
+#endif
 
     // LoggerHelper
     ASCIILiteral logClassName() const final { return "ScreenCaptureKitCaptureSource"_s; }
@@ -141,6 +145,10 @@ private:
     bool m_didReceiveVideoFrame { false };
     bool m_isPrewarming { false };
     CompletionHandler<void(CaptureSourceError&&)> m_whenReadyCallback;
+#if PLATFORM(IOS_FAMILY)
+    IntDegrees m_currentOrientation { 0 };
+    VideoFrameRotation m_videoFrameRotation { };
+#endif
 };
 
 } // namespace WebCore

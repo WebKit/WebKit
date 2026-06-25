@@ -626,6 +626,9 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     if (!m_intrinsicSize || *m_intrinsicSize != IntSize(intrinsicSize)) {
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "resetting m_intrinsicSize to ", m_intrinsicSize);
         m_intrinsicSize = IntSize(intrinsicSize);
+#if PLATFORM(IOS_FAMILY)
+        orientationChanged(m_currentOrientation);
+#endif
         configurationChanged();
     }
 
@@ -635,6 +638,31 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
             m_whenReadyCallback({ });
     }
 }
+
+#if PLATFORM(IOS_FAMILY)
+void ScreenCaptureKitCaptureSource::orientationChanged(IntDegrees orientation)
+{
+    m_currentOrientation = orientation;
+
+    auto size = m_intrinsicSize.value_or(IntSize { });
+    if (size.isEmpty())
+        return;
+
+    IntDegrees displayNativeOrientation = (size.width() > size.height()) ? 90 : 0;
+    auto rotationDegrees = ((displayNativeOrientation - m_currentOrientation) + 360) % 360;
+    switch (rotationDegrees) {
+    case 90:  m_videoFrameRotation = VideoFrameRotation::Right; break;
+    case 180: m_videoFrameRotation = VideoFrameRotation::UpsideDown; break;
+    case 270: m_videoFrameRotation = VideoFrameRotation::Left; break;
+    default:  m_videoFrameRotation = VideoFrameRotation::None; break;
+    }
+}
+
+VideoFrameRotation ScreenCaptureKitCaptureSource::videoFrameRotation() const
+{
+    return m_videoFrameRotation;
+}
+#endif
 
 dispatch_queue_t ScreenCaptureKitCaptureSource::captureQueue()
 {

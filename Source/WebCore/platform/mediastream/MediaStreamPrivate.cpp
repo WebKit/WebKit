@@ -322,8 +322,13 @@ void MediaStreamPrivate::trackEnded(MediaStreamTrackPrivate& track)
 void MediaStreamPrivate::monitorOrientation(OrientationNotifier& notifier)
 {
     for (Ref track : m_tracks) {
-        if (track->isCaptureTrack() && track->deviceType() == CaptureDevice::DeviceType::Camera)
-            protect(track->source())->monitorOrientation(notifier);
+        if (track->isCaptureTrack()) {
+            auto type = track->deviceType();
+            if (type == CaptureDevice::DeviceType::Camera
+                || type == CaptureDevice::DeviceType::Screen
+                || type == CaptureDevice::DeviceType::Window)
+                protect(track->source())->monitorOrientation(notifier);
+        }
     }
 }
 

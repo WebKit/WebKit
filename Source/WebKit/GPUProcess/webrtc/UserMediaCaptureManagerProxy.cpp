@@ -599,6 +599,8 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     }
 
     auto source = sourceOrError.source();
+    if (device.type() == WebCore::CaptureDevice::DeviceType::Screen || device.type() == WebCore::CaptureDevice::DeviceType::Window)
+        source->monitorOrientation(m_orientationNotifier);
 #if !RELEASE_LOG_DISABLED
     source->setLogger(protect(m_connectionProxy->logger()), LoggerHelper::uniqueLogIdentifier());
 #endif

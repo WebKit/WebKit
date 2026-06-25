@@ -17628,7 +17628,8 @@ void WebPageProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation
 #if ENABLE(MEDIA_STREAM)
 #if PLATFORM(COCOA)
     RefPtr gpuProcess = m_configuration->processPool().gpuProcess();
-    if (gpuProcess && protect(preferences())->captureVideoInGPUProcessEnabled())
+    Ref prefs = preferences();
+    if (gpuProcess && (prefs->captureVideoInGPUProcessEnabled() || prefs->useGPUProcessForDisplayCapture()))
         gpuProcess->setOrientationForMediaCapture(orientation);
 #elif USE(GSTREAMER)
     send(Messages::WebPage::SetOrientationForMediaCapture(orientation));
