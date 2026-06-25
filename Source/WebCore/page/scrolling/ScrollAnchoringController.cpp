@@ -31,7 +31,10 @@
 #include "DocumentQuirks.h"
 #include "Editing.h"
 #include "FloatRect.h"
+#include "FrameSelection.h"
 #include "LegacyRenderSVGModelObject.h"
+#include "LocalFrame.h"
+#include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Quirks.h"
@@ -298,16 +301,34 @@ void ScrollAnchoringController::notifyChildHadSuppressingStyleChange(RenderEleme
     scrollerBox->setScrollAnchoringSuppressionStyleChanged(true);
 }
 
-static CheckedPtr<RenderElement> priorityCandidateForElement(Element* element)
+static CheckedPtr<RenderElement> priorityCandidateForNode(Node* node)
 {
-    while (element) {
-        if (CheckedPtr renderer = element->renderer()) {
+    for (RefPtr ancestor = node; ancestor; ancestor = ancestor->parentElement()) {
+        if (CheckedPtr renderer = dynamicDowncast<RenderElement>(ancestor->renderer())) {
             if (!renderer->isAnonymousBlock() && (!renderer->isInline() || renderer->isAtomicInlineLevelBox()))
                 return renderer;
         }
-        SUPPRESS_UNCOUNTED_LOCAL element = element->parentElement();
     }
     return nullptr;
+}
+
+// The priority candidate is the element containing the selection's focus point when it lies within
+// the focused editable element; otherwise it is the focused element itself.
+static RefPtr<Node> editingPriorityCandidateNode(Document& document, Element& focusedElement)
+{
+    RefPtr frame = document.frame();
+    if (!frame)
+        return &focusedElement;
+
+    auto& selection = frame->selection().selection();
+    if (selection.isNone())
+        return &focusedElement;
+
+    RefPtr focusNode = selection.focus().containerNode();
+    if (focusNode && focusedElement.contains(*focusNode))
+        return focusNode;
+
+    return &focusedElement;
 }
 
 // https://drafts.csswg.org/css-scroll-anchoring/#anchor-priority-candidates
@@ -319,7 +340,8 @@ bool ScrollAnchoringController::findPriorityCandidate(Document& document)
 
     RefPtr focusedElement = document.focusedElement();
     if (focusedElement && isEditableNode(*focusedElement)) {
-        if (CheckedPtr candidate = priorityCandidateForElement(focusedElement)) {
+        RefPtr candidateNode = editingPriorityCandidateNode(document, *focusedElement);
+        if (CheckedPtr candidate = priorityCandidateForNode(candidateNode.get())) {
             auto status = examinePriorityCandidate(*candidate);
             if (isViableStatus(status)) {
                 m_anchorObject = *candidate;
@@ -364,7 +386,7 @@ AnchorSearchStatus ScrollAnchoringController::examinePriorityCandidate(RenderEle
     if (!ancestor)
         return AnchorSearchStatus::Exclude;
 
-    return examineAnchorCandidate(*ancestor);
+    return examineAnchorCandidate(renderer);
 }
 
 static bool NODELETE overflowAnchorProhibitsAnchoring(const RenderElement& object, const RenderBox& scrollingAncestor)
