@@ -63,6 +63,7 @@ class Decoder;
 namespace WebCore {
 class FrameTreeSyncData;
 class ResourceRequest;
+class SecurityOrigin;
 class SecurityOriginData;
 class ShareableBitmapHandle;
 class TextIndicator;
@@ -309,12 +310,17 @@ public:
     void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
     void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
+    WebCore::SecurityOriginData documentSecurityOriginData() const;
+
 private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, IsMainFrame);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
+
+    enum class ForInitialization : bool { No, Yes };
+    void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);
 
     RefPtr<WebFrameProxy> deepLastChild();
     WebFrameProxy* firstChild() const;
@@ -352,6 +358,7 @@ private:
     MonotonicTime m_lastActivationTimestamp { -MonotonicTime::infinity() };
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;
+    RefPtr<WebCore::SecurityOrigin> m_documentSecurityOrigin;
 } SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy);
 
 } // namespace WebKit
