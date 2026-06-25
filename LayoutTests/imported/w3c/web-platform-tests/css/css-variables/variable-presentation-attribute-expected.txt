@@ -4,7 +4,7 @@ PASS Testing 'stroke-width' on '#box2'.
 PASS Testing 'stroke-width' on '#box3'.
 PASS Testing 'clip' on '#test4'.
 PASS Testing 'alignment-baseline'.
-PASS Testing 'baseline-shift'.
+FAIL Testing 'baseline-shift'. assert_equals: Default value. expected "baseline" but got "0px"
 PASS Testing 'clip-rule'.
 PASS Testing 'color'.
 FAIL Testing 'color-interpolation-filters'. assert_equals: Default value. expected "" but got "linearrgb"

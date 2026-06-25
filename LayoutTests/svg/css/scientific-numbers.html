@@ -101,18 +101,19 @@ test("5e1      ", "50px");
 
 debug("");
 debug("Test behavior on overflow");
-test("2E+500", "baseline");
-test("-2E+500", "baseline");
+test("2E+500", "0px");
+test("-2E+500", "0px");
 
 debug("");
 debug("Invalid values");
-test("50e0.0", "baseline");
-test("50 e0", "baseline");
-test("50e 0", "baseline");
-test("50.e0", "baseline");
+test("50e0.0", "0px");
+test("50 e0", "0px");
+test("50e 0", "0px");
+test("50.e0", "0px");
 
 var successfullyParsed = true;
 
-completeTest();</script>
+completeTest();
+</script>
 </body>
 </html>

@@ -96,19 +96,19 @@ PASS getComputedStyle(text).baselineShift is "50px"
 
 Test behavior on overflow
 PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "0px"
 PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "0px"
 
 Invalid values
 PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "0px"
 PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "0px"
 PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "0px"
 PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "baseline"
-PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "0px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
