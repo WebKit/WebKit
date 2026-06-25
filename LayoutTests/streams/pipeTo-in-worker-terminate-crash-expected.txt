@@ -1,0 +1,3 @@
+
+PASS Terminating a worker while pipeTo is in flight should not crash
+
