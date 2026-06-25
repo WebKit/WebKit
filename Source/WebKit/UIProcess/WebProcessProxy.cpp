@@ -644,11 +644,17 @@ bool WebProcessProxy::shouldSendPendingMessage(const IPC::Encoder& encoder)
         if (loadParameters && resourceDirectoryURL && pageID && checkAssumedReadAccessToResourceURL) {
             if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
                 auto url = loadParameters->request.url();
-                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), url, *resourceDirectoryURL,  *checkAssumedReadAccessToResourceURL, [weakThis = WeakPtr { *this }, destinationID, loadParameters = WTF::move(loadParameters)] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
+                page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), url, *resourceDirectoryURL, *checkAssumedReadAccessToResourceURL, [weakThis = WeakPtr { *this }, destinationID, loadParameters = WTF::move(loadParameters), page] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
                     if (!weakThis)
                         return;
                     if (sandboxExtension)
                         loadParameters->sandboxExtensionHandle = WTF::move(*sandboxExtension);
+#if HAVE(AUDIT_TOKEN)
+                    if (loadParameters->request.url().protocolIsFile()) {
+                        if (auto handle = page->createNetworkProcessSandboxExtensionForFileURL(loadParameters->request.url()))
+                            loadParameters->networkProcessSandboxExtensionHandle = WTF::move(*handle);
+                    }
+#endif
                     weakThis->send(Messages::WebPage::LoadRequest(WTF::move(*loadParameters)), destinationID);
                 });
             }

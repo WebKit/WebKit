@@ -470,6 +470,15 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         trackingParameters.frameID,
         request
     };
+#if HAVE(AUDIT_TOKEN)
+    if (request.url().protocolIsFile()) {
+        RefPtr frame = resourceLoader.frame();
+        RefPtr page = frame ? frame->page() : nullptr;
+        RefPtr webPage = page ? WebPage::fromCorePage(*page) : nullptr;
+        if (auto pendingExtension = webPage ? webPage->takePendingNetworkProcessSandboxExtension() : std::nullopt)
+            loadParameters.resourceSandboxExtension = WTF::move(*pendingExtension);
+    }
+#endif
     loadParameters.createSandboxExtensionHandlesIfNecessary();
 
     loadParameters.identifier = identifier;

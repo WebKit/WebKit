@@ -2436,6 +2436,11 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     m_pendingNavigationID = loadParameters.navigationID;
     m_internals->pendingWebsitePolicies = WTF::move(loadParameters.websitePolicies);
 
+#if HAVE(AUDIT_TOKEN)
+    if (loadParameters.request.url().protocolIsFile() && loadParameters.networkProcessSandboxExtensionHandle)
+        m_pendingNetworkProcessSandboxExtension = WTF::move(loadParameters.networkProcessSandboxExtensionHandle);
+#endif
+
     m_sandboxExtensionTracker.beginLoad(WTF::move(loadParameters.sandboxExtensionHandle));
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
@@ -6740,7 +6745,8 @@ void WebPage::SandboxExtensionTracker::willPerformLoadDragDestinationAction(RefP
 
 void WebPage::SandboxExtensionTracker::beginLoad(SandboxExtension::Handle&& handle)
 {
-    setPendingProvisionalSandboxExtension(SandboxExtension::create(WTF::move(handle)));
+    auto extension = SandboxExtension::create(WTF::move(handle));
+    setPendingProvisionalSandboxExtension(WTF::move(extension));
 }
 
 void WebPage::SandboxExtensionTracker::beginReload(WebFrame* frame, SandboxExtension::Handle&& handle)

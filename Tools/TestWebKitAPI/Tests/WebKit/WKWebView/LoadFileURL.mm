@@ -46,6 +46,18 @@ TEST(WKWebView, LoadFileWithLoadRequest)
     [delegate waitForDidFinishNavigation];
 }
 
+TEST(WKWebView, LoadFileWithFileURL)
+{
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURL *file = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadFileURL:file allowingReadAccessToURL:file.URLByDeletingLastPathComponent];
+    [delegate waitForDidFinishNavigation];
+}
+
 TEST(WKWebView, LoadTwoFiles)
 {
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

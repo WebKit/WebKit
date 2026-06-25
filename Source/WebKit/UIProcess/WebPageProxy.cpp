@@ -2157,6 +2157,19 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     completionHandler(std::nullopt);
 }
 
+#if HAVE(AUDIT_TOKEN)
+std::optional<SandboxExtensionHandle> WebPageProxy::createNetworkProcessSandboxExtensionForFileURL(const URL& url)
+{
+    auto& networkProcess = websiteDataStore().networkProcess();
+    if (!networkProcess.hasConnection())
+        return std::nullopt;
+    auto networkToken = protect(networkProcess.connection())->getAuditToken();
+    if (!networkToken)
+        return std::nullopt;
+    return SandboxExtension::createHandleForReadByAuditToken(url.fileSystemPath(), *networkToken);
+}
+#endif
+
 void WebPageProxy::prepareToLoadWebPage(WebProcessProxy& process, LoadParameters& parameters)
 {
     addPlatformLoadParameters(process, parameters);
@@ -2390,7 +2403,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     loadParameters.publicSuffix = WebCore::PublicSuffixStore::singleton().publicSuffix(loadParameters.request.url());
     loadParameters.isRequestFromClientOrUserInput = isAppInitiated;
     Ref process = m_legacyMainFrameProcess;
-    maybeInitializeSandboxExtensionHandle(process, fileURL, resourceDirectoryURL, true, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, loadParameters = WTF::move(loadParameters), resourceDirectoryURL] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
+    maybeInitializeSandboxExtensionHandle(process, fileURL, resourceDirectoryURL, true, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, loadParameters = WTF::move(loadParameters), resourceDirectoryURL, fileURL] (std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
         const bool checkAssumedReadAccessToResourceURL = false;
         RefPtr protectedProcess = weakProcess.get();
         RefPtr protectedThis = weakThis.get();
@@ -2399,7 +2412,10 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
         if (sandboxExtension)
             loadParameters.sandboxExtensionHandle = WTF::move(*sandboxExtension);
 
-        protectedThis->prepareToLoadWebPage(*protectedProcess, loadParameters);
+#if HAVE(AUDIT_TOKEN)
+        if (auto handle = protectedThis->createNetworkProcessSandboxExtensionForFileURL(fileURL))
+            loadParameters.networkProcessSandboxExtensionHandle = WTF::move(*handle);
+#endif
 
         protectedProcess->markProcessAsRecentlyUsed();
         if (protectedProcess->isLaunching())

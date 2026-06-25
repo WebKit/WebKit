@@ -1432,6 +1432,10 @@ public:
     void performDragOperation(std::optional<WebCore::FrameIdentifier>, WebCore::DragData&&, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&,  CompletionHandler<void(DragOperationResult dragOperationResult)>&&);
 #endif
 
+#if HAVE(AUDIT_TOKEN)
+    std::optional<SandboxExtension::Handle> takePendingNetworkProcessSandboxExtension() { return std::exchange(m_pendingNetworkProcessSandboxExtension, std::nullopt); }
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
     void dragEnded(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation>, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&&);
 
@@ -3029,6 +3033,9 @@ private:
 
     std::optional<SandboxExtension::Handle> m_pendingDropSandboxExtensionHandle;
     std::optional<Vector<SandboxExtension::Handle>> m_pendingDropExtensionHandlesForFileUpload;
+#if HAVE(AUDIT_TOKEN)
+    std::optional<SandboxExtension::Handle> m_pendingNetworkProcessSandboxExtension;
+#endif
 
     PAL::HysteresisActivity m_pageScrolledHysteresis;
 

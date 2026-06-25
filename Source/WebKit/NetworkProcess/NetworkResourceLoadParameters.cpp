@@ -37,6 +37,8 @@ using namespace WebCore;
 void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
 {
     if (request.url().protocolIsFile()) {
+        if (resourceSandboxExtension)
+            return;
         String path = request.url().fileSystemPath();
 #if HAVE(AUDIT_TOKEN)
         if (auto networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken()) {

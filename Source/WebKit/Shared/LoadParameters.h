@@ -60,6 +60,9 @@ struct LoadParameters {
 
     WebCore::ResourceRequest request;
     SandboxExtension::Handle sandboxExtensionHandle;
+#if HAVE(AUDIT_TOKEN)
+    std::optional<SandboxExtension::Handle> networkProcessSandboxExtensionHandle;
+#endif
 
     RefPtr<WebCore::SharedBuffer> data;
     String MIMEType;

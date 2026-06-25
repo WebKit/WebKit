@@ -2383,6 +2383,9 @@ public:
 #endif
 
     void maybeInitializeSandboxExtensionHandle(WebProcessProxy&, const URL&, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtensionHandle>&&)>&&);
+#if HAVE(AUDIT_TOKEN)
+    std::optional<SandboxExtensionHandle> createNetworkProcessSandboxExtensionForFileURL(const URL&);
+#endif
 
 #if ENABLE(WEB_AUTHN)
     // Web Authentication API

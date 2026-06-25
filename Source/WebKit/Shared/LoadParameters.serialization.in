@@ -29,6 +29,9 @@ enum class WebCore::LockBackForwardList : bool;
     std::optional<WebCore::FrameIdentifier> frameIdentifier;
     [EncodeRequestBody] WebCore::ResourceRequest request;
     WebKit::SandboxExtensionHandle sandboxExtensionHandle;
+#if HAVE(AUDIT_TOKEN)
+    std::optional<WebKit::SandboxExtensionHandle> networkProcessSandboxExtensionHandle;
+#endif
     RefPtr<WebCore::SharedBuffer> data;
 
     String MIMEType;
