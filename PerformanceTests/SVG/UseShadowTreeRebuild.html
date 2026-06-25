@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--
+  PerformanceTests/SVG/UseShadowTreeRebuild.html
+  Measures the cost of mutating a single attribute on a <use> target,
+  as a function of target-subtree size N and instance count K.
+
+  Pre-fix:  O(N * K) per setAttribute (full shadow-tree teardown + re-clone).
+  Post-fix: O(K)     per setAttribute (in-place propagation to K instances).
+
+  Steady-state per-tick numbers for a fill mutation + forced layout:
+
+    N=200,  K=50   (10k elts):   22 ms → 1 ms   (~22×)
+    N=500,  K=100  (50k elts):  120 ms → 4 ms   (~30×)
+    N=1000, K=200 (200k elts):  490 ms → 18 ms  (~27×)
+
+  Bug: https://bugs.webkit.org/show_bug.cgi?id=53704
+-->
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+  #stage { width: 400px; height: 400px; }
+</style>
+</head>
+<body>
+<div id="wrapper">
+  <svg id="stage" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+    <defs id="defs"></defs>
+    <g id="uses"></g>
+  </svg>
+</div>
+<script>
+  // Default scale: 10k descendant elements × 50 instances. Keep the product
+  // moderate so the perf runner finishes iterations in bounded time.
+  const N = 200;   // target subtree size (children of #unit)
+  const K = 50;    // number of <use> instances referencing #unit
+
+  const svgNS = "http://www.w3.org/2000/svg";
+  const defs = document.getElementById("defs");
+  const uses = document.getElementById("uses");
+
+  const unit = document.createElementNS(svgNS, "g");
+  unit.id = "unit";
+  for (let i = 0; i < N; i++) {
+    const r = document.createElementNS(svgNS, "rect");
+    r.setAttribute("x", ((i * 37) % 180) - 90);
+    r.setAttribute("y", ((i * 53) % 180) - 90);
+    r.setAttribute("width", 3);
+    r.setAttribute("height", 3);
+    r.setAttribute("fill", "red");
+    unit.appendChild(r);
+  }
+  defs.appendChild(unit);
+
+  for (let k = 0; k < K; k++) {
+    const u = document.createElementNS(svgNS, "use");
+    u.setAttribute("href", "#unit");
+    u.setAttribute("transform", "rotate(" + (k * 360 / K) + ") translate(120 0)");
+    uses.appendChild(u);
+  }
+
+  // Warm up one layout so the initial clone pass doesn't dominate the first sample.
+  void document.body.offsetWidth;
+
+  let frame = 0;
+  const target = unit.firstChild;
+
+  function run() {
+    // A single attribute mutation on a descendant rect of the <use> target.
+    // Post-fix: the new value propagates in place to each of the K clone-rects
+    // (the rect's instances in the K <use> shadow trees), via
+    // SVGElement::synchronizeAttributeToInstances. Pre-fix: every <use>
+    // referencing #unit scheduled a full shadow-tree teardown + re-clone on
+    // the next style recalc.
+    frame++;
+    target.setAttribute("fill", (frame & 1) ? "red" : "blue");
+    // Force pending style/layout work to flush now, so it counts inside this
+    // iteration rather than amortizing across later ticks.
+    void document.body.offsetWidth;
+  }
+
+  PerfTestRunner.measureRunsPerSecond({
+    description: "Attribute change on target of " + K + " <use> instances (target N=" + N + ").",
+    run: run,
+    done: function() {
+      document.getElementById("wrapper").style.display = "none";
+    }
+  });
+</script>
+</body>
+</html>
