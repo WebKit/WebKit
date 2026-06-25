@@ -941,8 +941,8 @@ PASS Element interface: attribute attributes
 PASS Element interface: operation getAttributeNames()
 PASS Element interface: operation getAttribute(DOMString)
 PASS Element interface: operation getAttributeNS(DOMString?, DOMString)
-PASS Element interface: operation setAttribute(DOMString, DOMString)
-PASS Element interface: operation setAttributeNS(DOMString?, DOMString, DOMString)
+PASS Element interface: operation setAttribute(DOMString, (TrustedType or DOMString))
+PASS Element interface: operation setAttributeNS(DOMString?, DOMString, (TrustedType or DOMString))
 PASS Element interface: operation removeAttribute(DOMString)
 PASS Element interface: operation removeAttributeNS(DOMString?, DOMString)
 PASS Element interface: operation toggleAttribute(DOMString, optional boolean)
@@ -1001,10 +1001,10 @@ PASS Element interface: element must inherit property "getAttribute(DOMString)" 
 PASS Element interface: calling getAttribute(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "getAttributeNS(DOMString?, DOMString)" with the proper type
 PASS Element interface: calling getAttributeNS(DOMString?, DOMString) on element with too few arguments must throw TypeError
-PASS Element interface: element must inherit property "setAttribute(DOMString, DOMString)" with the proper type
-PASS Element interface: calling setAttribute(DOMString, DOMString) on element with too few arguments must throw TypeError
-PASS Element interface: element must inherit property "setAttributeNS(DOMString?, DOMString, DOMString)" with the proper type
-PASS Element interface: calling setAttributeNS(DOMString?, DOMString, DOMString) on element with too few arguments must throw TypeError
+PASS Element interface: element must inherit property "setAttribute(DOMString, (TrustedType or DOMString))" with the proper type
+PASS Element interface: calling setAttribute(DOMString, (TrustedType or DOMString)) on element with too few arguments must throw TypeError
+PASS Element interface: element must inherit property "setAttributeNS(DOMString?, DOMString, (TrustedType or DOMString))" with the proper type
+PASS Element interface: calling setAttributeNS(DOMString?, DOMString, (TrustedType or DOMString)) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "removeAttribute(DOMString)" with the proper type
 PASS Element interface: calling removeAttribute(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "removeAttributeNS(DOMString?, DOMString)" with the proper type

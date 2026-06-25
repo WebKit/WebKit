@@ -17,4 +17,11 @@ PASS CSSContainerRule must be primary interface of sheet.cssRules[0].cssRules[0]
 PASS Stringification of sheet.cssRules[0].cssRules[0]
 PASS CSSContainerRule interface: sheet.cssRules[0].cssRules[0] must inherit property "containerName" with the proper type
 PASS CSSContainerRule interface: sheet.cssRules[0].cssRules[0] must inherit property "containerQuery" with the proper type
+FAIL CSSSupportsConditionRule interface: existence and properties of interface object assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
+FAIL CSSSupportsConditionRule interface object length assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
+FAIL CSSSupportsConditionRule interface object name assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
+FAIL CSSSupportsConditionRule interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
+FAIL CSSSupportsConditionRule interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
+FAIL CSSSupportsConditionRule interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
+FAIL CSSSupportsConditionRule interface: attribute name assert_own_property: self does not have own property "CSSSupportsConditionRule" expected property "CSSSupportsConditionRule" missing
 

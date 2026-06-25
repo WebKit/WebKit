@@ -272,12 +272,12 @@ PASS Window interface: attribute scrollX
 PASS Window interface: attribute pageXOffset
 PASS Window interface: attribute scrollY
 PASS Window interface: attribute pageYOffset
-PASS Window interface: operation scroll(optional ScrollToOptions)
-PASS Window interface: operation scroll(unrestricted double, unrestricted double)
-PASS Window interface: operation scrollTo(optional ScrollToOptions)
-PASS Window interface: operation scrollTo(unrestricted double, unrestricted double)
-PASS Window interface: operation scrollBy(optional ScrollToOptions)
-PASS Window interface: operation scrollBy(unrestricted double, unrestricted double)
+FAIL Window interface: operation scroll(optional ScrollToOptions) assert_unreached: Throws "TypeError: Can only call Window.scroll on instances of Window" instead of rejecting promise Reached unreachable code
+FAIL Window interface: operation scroll(unrestricted double, unrestricted double) assert_unreached: Throws "TypeError: Can only call Window.scroll on instances of Window" instead of rejecting promise Reached unreachable code
+FAIL Window interface: operation scrollTo(optional ScrollToOptions) assert_unreached: Throws "TypeError: Can only call Window.scrollTo on instances of Window" instead of rejecting promise Reached unreachable code
+FAIL Window interface: operation scrollTo(unrestricted double, unrestricted double) assert_unreached: Throws "TypeError: Can only call Window.scrollTo on instances of Window" instead of rejecting promise Reached unreachable code
+FAIL Window interface: operation scrollBy(optional ScrollToOptions) assert_unreached: Throws "TypeError: Can only call Window.scrollBy on instances of Window" instead of rejecting promise Reached unreachable code
+FAIL Window interface: operation scrollBy(unrestricted double, unrestricted double) assert_unreached: Throws "TypeError: Can only call Window.scrollBy on instances of Window" instead of rejecting promise Reached unreachable code
 PASS Window interface: attribute screenX
 PASS Window interface: attribute screenLeft
 PASS Window interface: attribute screenY
@@ -348,13 +348,13 @@ FAIL Document interface: calling convertPointFromNode(DOMPointInit, GeometryNode
 PASS Element interface: operation getClientRects()
 PASS Element interface: operation getBoundingClientRect()
 PASS Element interface: operation checkVisibility(optional CheckVisibilityOptions)
-PASS Element interface: operation scrollIntoView(optional (boolean or ScrollIntoViewOptions))
-PASS Element interface: operation scroll(optional ScrollToOptions)
-PASS Element interface: operation scroll(unrestricted double, unrestricted double)
-PASS Element interface: operation scrollTo(optional ScrollToOptions)
-PASS Element interface: operation scrollTo(unrestricted double, unrestricted double)
-PASS Element interface: operation scrollBy(optional ScrollToOptions)
-PASS Element interface: operation scrollBy(unrestricted double, unrestricted double)
+FAIL Element interface: operation scrollIntoView(optional (boolean or ScrollIntoViewOptions)) assert_unreached: Throws "TypeError: Can only call Element.scrollIntoView on instances of Element" instead of rejecting promise Reached unreachable code
+FAIL Element interface: operation scroll(optional ScrollToOptions) assert_unreached: Throws "TypeError: Can only call Element.scroll on instances of Element" instead of rejecting promise Reached unreachable code
+FAIL Element interface: operation scroll(unrestricted double, unrestricted double) assert_unreached: Throws "TypeError: Can only call Element.scroll on instances of Element" instead of rejecting promise Reached unreachable code
+FAIL Element interface: operation scrollTo(optional ScrollToOptions) assert_unreached: Throws "TypeError: Can only call Element.scrollTo on instances of Element" instead of rejecting promise Reached unreachable code
+FAIL Element interface: operation scrollTo(unrestricted double, unrestricted double) assert_unreached: Throws "TypeError: Can only call Element.scrollTo on instances of Element" instead of rejecting promise Reached unreachable code
+FAIL Element interface: operation scrollBy(optional ScrollToOptions) assert_unreached: Throws "TypeError: Can only call Element.scrollBy on instances of Element" instead of rejecting promise Reached unreachable code
+FAIL Element interface: operation scrollBy(unrestricted double, unrestricted double) assert_unreached: Throws "TypeError: Can only call Element.scrollBy on instances of Element" instead of rejecting promise Reached unreachable code
 PASS Element interface: attribute scrollTop
 PASS Element interface: attribute scrollLeft
 PASS Element interface: attribute scrollWidth

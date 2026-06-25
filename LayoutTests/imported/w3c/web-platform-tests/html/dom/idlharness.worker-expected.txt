@@ -434,6 +434,16 @@ PASS DataTransfer interface: existence and properties of interface object
 PASS DataTransferItemList interface: existence and properties of interface object
 PASS DataTransferItem interface: existence and properties of interface object
 PASS DragEvent interface: existence and properties of interface object
+PASS Origin interface: existence and properties of interface object
+PASS Origin interface object length
+PASS Origin interface object name
+PASS Origin interface: existence and properties of interface prototype object
+PASS Origin interface: existence and properties of interface prototype object's "constructor" property
+PASS Origin interface: existence and properties of interface prototype object's @@unscopables property
+PASS Origin interface: operation from(any)
+PASS Origin interface: attribute opaque
+PASS Origin interface: operation isSameOrigin(Origin)
+PASS Origin interface: operation isSameSite(Origin)
 PASS Window interface: existence and properties of interface object
 PASS BarProp interface: existence and properties of interface object
 PASS Location interface: existence and properties of interface object
