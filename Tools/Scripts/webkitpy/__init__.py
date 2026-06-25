@@ -98,7 +98,7 @@ AutoInstall.register(
 )
 AutoInstall.register(Package('pytest_asyncio', Version(0, 18, 3), pypi_name='pytest-asyncio', implicit_deps=['pytest'], wheel=True))
 AutoInstall.register(Package('pytest_timeout', Version(2, 1, 0), pypi_name='pytest-timeout', implicit_deps=['pytest'], wheel=True))
-AutoInstall.register(Package('websockets', Version(12, 0), wheel=True))
+AutoInstall.register(Package('websockets', Version(15, 0, 1), wheel=True))
 
 if sys.version_info < (3, 11):
     AutoInstall.register(Package('exceptiongroup', Version(1, 1, 0), wheel=True))
