@@ -341,3 +341,5 @@ webkit.org/b/317676 TestWebKitAPI.SiteIsolation.NavigateIframeSameOriginBackForw
 webkit.org/b/317676 TestWebKitAPI.SiteIsolation.RestoreSessionFromAnotherWebView [ Skip ]
 
 webkit.org/b/317783 [ ios ] TestWebKitAPI.SiteIsolation.FindStringSelectionSameOriginFrameBeforeWrap [ Skip ]
+
+webkit.org/b/317810 [ ios ] TestWebKitAPI.ModalDialogDuringOverlappingFocus.AlertNotDeferredAfterFIFOAsyncFocusCompletions [ Skip ]
