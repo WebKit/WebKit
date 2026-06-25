@@ -1334,7 +1334,7 @@ class StyleProcessor(ProcessorBase):
         wpt_paths = []
         for abs_path in files:
             rel_path = os.path.relpath(abs_path, cwd)
-            if rel_path.startswith(wpt_dir + os.sep):
+            if rel_path.startswith(wpt_dir + os.sep) and not rel_path.endswith('-expected.txt'):
                 wpt_rel = os.path.relpath(rel_path, wpt_dir)
                 wpt_paths.append(wpt_rel)
         if wpt_paths:

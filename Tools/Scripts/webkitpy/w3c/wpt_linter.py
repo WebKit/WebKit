@@ -66,9 +66,10 @@ class WPTLinter(object):
                 check=True,
             )
         except subprocess.CalledProcessError as e:
-            # lint exits with 1 when there's lint errors; any other exit code is an
-            # actual failure.
-            if e.returncode != 1:
+            # wpt lint exits with the number of errors found (not a fixed 1).
+            # Treat any non-zero exit that produced JSON output as lint errors;
+            # an empty stdout means the tool itself failed.
+            if not e.stdout.strip():
                 raise RuntimeError(
                     'WPT linter failed:\n' + e.stderr.decode('utf-8', 'replace')
                 ) from e
