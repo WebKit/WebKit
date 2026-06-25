@@ -1091,11 +1091,11 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin, ShellMixin):
             self.command = ['python3', f'Tools/Scripts/run-{platform}-tests',
                             f'--{self.getProperty("configuration")}',
                             f'--json-output={self.jsonFileName}',
-                            "--buildbot-master", DNS_NAME,
-                            "--builder-name", self.getProperty("buildername"),
-                            "--build-number", self.getProperty("buildnumber"),
-                            "--buildbot-worker", self.getProperty("workername"),
-                            "--report", RESULTS_WEBKIT_URL,
+                            f'--buildbot-master={DNS_NAME}',
+                            f'--builder-name={self.getProperty("buildername")}',
+                            f'--build-number={self.getProperty("buildnumber")}',
+                            f'--buildbot-worker={self.getProperty("workername")}',
+                            f'--report={RESULTS_WEBKIT_URL}',
                             ]
         else:
             self.appendCustomTestingFlags(platform, self.getProperty('device_model'))
