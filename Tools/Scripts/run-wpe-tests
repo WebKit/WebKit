@@ -18,8 +18,10 @@
 # Boston, MA 02110-1301, USA.
 
 import logging
+import optparse
 import os
 import sys
+from webkitpy.results.options import upload_options
 
 from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk, maybe_use_container_sdk_root_dir
 maybe_enter_webkit_container_sdk()
@@ -57,6 +59,9 @@ class WPETestRunner(TestRunner):
 if __name__ == "__main__":
     runner_args = get_runner_args(sys.argv)
     check_environment("wpe")
+    option_group_definitions = []
+    option_group_definitions.append(('Upload Options', upload_options()))
+
     option_parser = create_option_parser()
     option_parser.add_option('--display-server', choices=['headless', 'wayland'], default='headless',
                              help='"headless": Use headless view backend. "wayland": Use the current wayland session.')
@@ -64,6 +69,12 @@ if __name__ == "__main__":
                              help='Use WPE legacy API.')
 
     args = sys.argv[1:]
+
+    for group_name, group_options in option_group_definitions:
+        option_group = optparse.OptionGroup(option_parser, group_name)
+        option_group.add_options(group_options)
+        option_parser.add_option_group(option_group)
+
     options, args = option_parser.parse_args(args)
 
     if options.wpe_legacy_api:
