@@ -169,7 +169,10 @@ class GtkPort(GLibPort):
     def configuration_for_upload(self, host=None):
         configuration = super(GtkPort, self).configuration_for_upload(host=host)
         configuration['platform'] = 'GTK'
-        configuration['version_name'] = self._display_server.capitalize() if self._display_server else 'Xvfb'
+        # resultsdbpy frontend tends to group multiple versions in a single timeline
+        # when they share a version name. As we are using stable versions since 305707@main,
+        # let's avoid this grouping for now due to issues like https://webkit.org/b/306091.
+        configuration.pop('version_name', None)
         return configuration
 
     def get_browser_path(self, browser_name):

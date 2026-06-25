@@ -99,7 +99,7 @@ class GtkPortTest(port_testcase.PortTestCase):
         self.assertEqual(configuration['is_simulator'], False)
         self.assertEqual(configuration['platform'], 'GTK')
         self.assertEqual(configuration['style'], 'release')
-        self.assertEqual(configuration['version_name'], 'Xvfb')
+        self.assertNotIn('version_name', configuration)
         self.assertEqual(configuration['version'], '2.51')
 
     def test_gtk4_expectations_binary_only(self):
