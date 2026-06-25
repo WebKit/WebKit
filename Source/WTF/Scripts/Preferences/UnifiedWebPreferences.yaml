@@ -1656,6 +1656,20 @@ CSSUnprefixedBackdropFilterEnabled:
       "ENABLE(UNPREFIXED_BACKDROP_FILTER)": true
       default: false
 
+CSSUnprefixedBoxDecorationBreakEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Unprefixed box-decoration-break"
+  humanReadableDescription: "Enable unprefixed box-decoration-break CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSWordBreakAutoPhraseEnabled:
   type: bool
   status: preview

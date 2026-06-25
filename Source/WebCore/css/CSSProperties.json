@@ -10182,10 +10182,25 @@
                 "slice"
             ],
             "codegen-properties": {
+                "cascade-alias": "box-decoration-break",
+                "skip-style-builder": true,
+                "parser-grammar": "<<values>>"
+            },
+            "status": "non-standard"
+        },
+        "box-decoration-break": {
+            "animation-type": "discrete",
+            "initial": "slice",
+            "values": [
+                "clone",
+                "slice"
+            ],
+            "codegen-properties": {
                 "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "BoxDecorationBreak",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "settings-flag": "cssUnprefixedBoxDecorationBreakEnabled"
             },
             "status": {
                 "status": "experimental"
