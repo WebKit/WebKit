@@ -91,6 +91,14 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
     }
 #endif
 
+    for (auto& arg : argvSpan.subspan(argIndex)) {
+        if (CStringView::unsafeFromUTF8(arg) == "--enable-shared-array-buffer"_s) {
+            JSC::Options::initialize([] {
+                JSC::Options::useSharedArrayBuffer() = true;
+            });
+        }
+    }
+
     return true;
 }
 
