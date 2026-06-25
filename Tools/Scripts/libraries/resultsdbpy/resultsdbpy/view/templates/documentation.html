@@ -339,7 +339,7 @@ const documentation = {
                     '    "expected": <expected result of run>,\n' +
                     '    "time": <miliseconds it took test to run>\n' +
                     '}'),
-                    `The 'time' element optional. If 'actual' or 'expected' are undefined, they are assumed to be PASS. These results are organized in a list of dictionaries organized like so:`,
+                    `The 'time' element is optional. If 'actual' or 'expected' are undefined, they are assumed to be PASS. Both 'actual' and 'expected' must be space-separated strings of result values (e.g. 'PASS', 'FAIL', or 'PASS FAIL' for multiple expected values). These results are organized in a list of dictionaries organized like so:`,
                     codeBlock('[\n' +
                     '    {\n' +
                     '        "configuration": <configuration-object-a>,\n' +

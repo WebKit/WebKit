@@ -508,7 +508,7 @@ class TestRunner(object):
             for test, test_cases in tests_to_upload.items():
                 for test_case in test_cases:
                     name = "%s:%s" % (self._get_test_short_name(test), test_case[0])
-                    results[name] = Upload.create_test_result(actual=test_case[1], expected=test_case[2])
+                    results[name] = Upload.create_test_result(actual=test_case[1], expected=' '.join(test_case[2]) if test_case[2] else None)
 
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
