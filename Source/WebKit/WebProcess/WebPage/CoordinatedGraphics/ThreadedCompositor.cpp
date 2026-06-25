@@ -151,6 +151,8 @@ void ThreadedCompositor::invalidate()
         Locker locker { m_state.lock };
         stopRenderTimer();
         m_state.didCompositeRenderingUpdateFunction = nullptr;
+        if (m_state.didCompositeForScrollingCompletionHandler)
+            m_state.didCompositeForScrollingCompletionHandler();
         m_state.state = State::Invalidated;
     }
 
@@ -454,6 +456,7 @@ void ThreadedCompositor::renderLayerTree()
 
     OptionSet<CompositionReason> reasons;
     bool shouldNotifiyDidComposite = false;
+    CompletionHandlerCallingScope didCompositeForScrollingCompletionHandlerScope;
     {
         Locker locker { m_state.lock };
 
@@ -476,6 +479,8 @@ void ThreadedCompositor::renderLayerTree()
 
         ASSERT(m_state.state == State::Scheduled);
         m_state.state = State::InProgress;
+
+        didCompositeForScrollingCompletionHandlerScope = std::exchange(m_state.didCompositeForScrollingCompletionHandler, { });
     }
 
     if (!m_useSkia && (!m_context || !m_context->makeContextCurrent()))
@@ -506,6 +511,9 @@ void ThreadedCompositor::renderLayerTree()
     WTFBeginSignpost(this, FlushCompositingState);
     flushCompositingState(reasons);
     WTFEndSignpost(this, FlushCompositingState);
+
+    if (auto completionHandler = didCompositeForScrollingCompletionHandlerScope.release())
+        completionHandler();
 
     WTFBeginSignpost(this, PaintToGLContext);
     paintToCurrentGLContext(viewportTransform, viewportSize, reasons);
@@ -542,6 +550,16 @@ void ThreadedCompositor::requestCompositionForRenderingUpdate(Function<void()>&&
     if (m_sceneState->pendingTiles())
         m_state.isWaitingForTiles = true;
     scheduleUpdateLocked();
+}
+
+void ThreadedCompositor::requestCompositionForScrolling(CompletionHandler<void()>&& didCompositeFunction, bool scheduleUpdate)
+{
+    Locker locker { m_state.lock };
+    m_state.reasons.add(CompositionReason::AsyncScrolling);
+    ASSERT(!m_state.didCompositeForScrollingCompletionHandler);
+    m_state.didCompositeForScrollingCompletionHandler = WTF::move(didCompositeFunction);
+    if (scheduleUpdate)
+        scheduleUpdateLocked();
 }
 
 void ThreadedCompositor::requestComposition(CompositionReason reason)

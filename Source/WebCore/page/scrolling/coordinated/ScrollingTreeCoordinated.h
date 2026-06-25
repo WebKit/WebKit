@@ -55,6 +55,9 @@ private:
 #endif
 
     RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint) final;
+
+    std::atomic<bool> m_didRequestComposition { false };
+
 #if ENABLE(WHEEL_EVENT_REGIONS)
     OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const final;
 #endif

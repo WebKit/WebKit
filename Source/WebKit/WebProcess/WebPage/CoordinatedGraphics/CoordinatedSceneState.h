@@ -54,7 +54,6 @@ public:
     void removeLayer(WebCore::CoordinatedPlatformLayer&);
 
     bool flush();
-    void flushPendingState();
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&, bool useSkia);
     void invalidate();
 

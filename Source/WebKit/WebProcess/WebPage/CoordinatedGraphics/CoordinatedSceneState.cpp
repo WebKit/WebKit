@@ -90,16 +90,7 @@ bool CoordinatedSceneState::flush()
             m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
     }
 
-    flushPendingState();
-
     return didChangeLayers;
-}
-
-void CoordinatedSceneState::flushPendingState()
-{
-    Locker stateLock { m_stateLock };
-    for (auto& layer : m_layers)
-        layer->flushPendingState();
 }
 
 void CoordinatedSceneState::commitPendingLayers()

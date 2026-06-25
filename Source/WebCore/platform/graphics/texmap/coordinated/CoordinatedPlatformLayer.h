@@ -83,6 +83,7 @@ public:
         virtual void notifyCompositionRequired() = 0;
         virtual bool isCompositionRequiredOrOngoing() const = 0;
         virtual void requestComposition(CompositionReason) = 0;
+        virtual void requestCompositionForScrolling(CompletionHandler<void()>&&, bool scheduleUpdate) = 0;
         virtual RunLoop* compositingRunLoop() const = 0;
         virtual int maxTextureSize() const = 0;
         virtual void willPaintTile() = 0;
@@ -195,7 +196,6 @@ public:
     void updateContents(bool affectedByTransformAnimation);
     void updateBackingStore();
 
-    void flushPendingState();
     void flushCompositingState(const OptionSet<CompositionReason>&, bool = false);
 
     bool hasPendingTilesCreation() const { return m_pendingTilesCreation; }
@@ -203,6 +203,7 @@ public:
     void processPendingBackingStoreTileUpdates();
     bool isCompositionRequiredOrOngoing() const;
     void requestComposition(CompositionReason);
+    void requestCompositionForScrolling(CompletionHandler<void()>&&, bool scheduleUpdate);
     RunLoop* compositingRunLoop() const;
     int maxTextureSize() const;
 
@@ -244,6 +245,7 @@ private:
         BackingStore,
         BlendMode,
         BoundsOrigin,
+        BoundsOriginForScrolling,
         Children,
         ChildrenTransform,
         ClipPath,
@@ -266,6 +268,7 @@ private:
         MasksToBounds,
         Opacity,
         Position,
+        PositionForScrolling,
         Preserves3D,
         Replica,
 #if ENABLE(SCROLLING_THREAD)
@@ -296,9 +299,11 @@ private:
     Lock m_lock;
     EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_position WTF_GUARDED_BY_LOCK(m_lock);
+    FloatPoint m_positionForScrolling WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint3D m_anchorPoint WTF_GUARDED_BY_LOCK(m_lock) { 0.5f, 0.5f, 0 };
     FloatSize m_size WTF_GUARDED_BY_LOCK(m_lock);
     FloatPoint m_boundsOrigin WTF_GUARDED_BY_LOCK(m_lock);
+    FloatPoint m_boundsOriginForScrolling WTF_GUARDED_BY_LOCK(m_lock);
     TransformationMatrix m_transform WTF_GUARDED_BY_LOCK(m_lock);
     TransformationMatrix m_childrenTransform WTF_GUARDED_BY_LOCK(m_lock);
     FloatRect m_visibleRect WTF_GUARDED_BY_LOCK(m_lock);
@@ -353,13 +358,6 @@ private:
 #if ENABLE(SCROLLING_THREAD)
     Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
 #endif
-
-    struct {
-        std::optional<FloatPoint> position;
-        std::optional<FloatPoint> positionForScrolling;
-        std::optional<FloatPoint> boundsOrigin;
-        std::optional<FloatPoint> boundsOriginForScrolling;
-    } m_pendingState WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

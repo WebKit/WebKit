@@ -352,7 +352,6 @@ void LayerTreeHost::requestComposition(CompositionReason reason)
 {
 #if ENABLE(SCROLLING_THREAD)
     if (ScrollingThread::isCurrentThread()) {
-        m_sceneState->flushPendingState();
         if (!m_compositionRequiredInScrollingThread)
             return;
         m_compositionRequiredInScrollingThread = false;
@@ -436,6 +435,11 @@ void LayerTreeHost::requestCompositionForRenderingUpdate()
         WTFEndSignpost(this, DidComposite);
     });
     WTFEmitSignpost(this, RequestCompositionForRenderingUpdate);
+}
+
+void LayerTreeHost::requestCompositionForScrolling(CompletionHandler<void()>&& completionHandler, bool scheduleUpdate)
+{
+    m_compositor->requestCompositionForScrolling(WTF::move(completionHandler), scheduleUpdate);
 }
 
 #if PLATFORM(GTK)

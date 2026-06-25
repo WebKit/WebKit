@@ -41,6 +41,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/Atomics.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -85,6 +86,7 @@ public:
 
     void setSize(const WebCore::IntSize&, float);
     void requestCompositionForRenderingUpdate(Function<void()>&&);
+    void requestCompositionForScrolling(CompletionHandler<void()>&&, bool scheduleUpdate);
     void requestComposition(WebCore::CompositionReason);
     RunLoop* runLoop();
 
@@ -165,6 +167,7 @@ private:
         bool isWaitingForTiles WTF_GUARDED_BY_LOCK(lock) { false };
         OptionSet<WebCore::CompositionReason> reasons WTF_GUARDED_BY_LOCK(lock);
         Function<void()> didCompositeRenderingUpdateFunction WTF_GUARDED_BY_LOCK(lock);
+        CompletionHandler<void()> didCompositeForScrollingCompletionHandler WTF_GUARDED_BY_LOCK(lock);
     } m_state;
 
     struct {
