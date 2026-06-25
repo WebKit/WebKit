@@ -31,6 +31,7 @@
 
 #include "WebDriverBidiBackendDispatchers.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
 #include <cstdint>
 #include <optional>
@@ -52,6 +53,7 @@ public:
 
     // Inspector::BidiBrowsingContextDispatcherHandler methods.
     void activate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, Inspector::CommandCallback<void>&&) override;
+    void captureScreenshot(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<Inspector::Protocol::BidiBrowsingContext::ScreenshotOrigin>&&, RefPtr<JSON::Object>&& format, RefPtr<JSON::Object>&& clip, Inspector::CommandCallback<String>&&) override;
     void close(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalPromptUnload, Inspector::CommandCallback<void>&&) override;
     void create(Inspector::Protocol::BidiBrowsingContext::CreateType, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, Inspector::CommandCallback<String>&&) override;
     void getTree(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&) override;
@@ -63,6 +65,27 @@ public:
 
 private:
     enum class IncludeParentID: bool { No, Yes };
+
+    enum class ScreenshotOrigin { Viewport, Document };
+    enum class ImageFormatType { Png, Jpeg, Webp };
+
+    struct ScreenshotParameters {
+        ScreenshotOrigin origin { ScreenshotOrigin::Viewport };
+        ImageFormatType format { ImageFormatType::Png };
+        std::optional<double> quality;
+        std::optional<WebCore::FloatRect> clipRect;
+    };
+
+    static WebCore::FloatRect getOriginRectangle(ScreenshotOrigin, const WebPageProxy&);
+    static WebCore::FloatRect normalizeRect(const WebCore::FloatRect&);
+    static std::optional<ImageFormatType> parseImageFormatType(const String&);
+    static String imageFormatTypeToString(ImageFormatType);
+    WebCore::FloatRect rectangleIntersection(const WebCore::FloatRect&, const WebCore::FloatRect&);
+    std::optional<WebCore::FloatRect> parseClipRectangle(const RefPtr<JSON::Object>& clip, const WebCore::FloatRect& originRect);
+    std::optional<WebCore::FloatRect> parseBoxClipRectangle(const RefPtr<JSON::Object>& clip, const WebCore::FloatRect& originRect);
+    std::optional<WebCore::FloatRect> parseElementClipRectangle(const RefPtr<JSON::Object>& clip, const WebCore::FloatRect& originRect);
+    void performScreenshotCapture(WebPageProxy&, const ScreenshotParameters&, Inspector::CommandCallback<String>&&);
+    String convertImageFormat(const String& base64PNG, const String& targetFormat, std::optional<double> quality) const;
 
     void getNextTree(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>, std::optional<uint64_t> maxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&);
     Ref<Inspector::Protocol::BidiBrowsingContext::Info> getNavigableInfo(const WebKit::FrameTreeNodeData&, std::optional<uint64_t> maxDepth, IncludeParentID);

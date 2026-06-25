@@ -76,6 +76,11 @@ std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(cons
     return std::nullopt;
 #endif
 }
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot, const WebCore::IntRect&)
+{
+    return platformGetBase64EncodedPNGData(snapshot);
+}
 #endif
 
 } // namespace WebKit

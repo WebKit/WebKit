@@ -40,6 +40,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/MathCommon.h>
+#include <WebCore/FloatRect.h>
 #include <limits>
 #include <wtf/Borrow.h>
 #include <wtf/Ref.h>
@@ -103,6 +104,53 @@ void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
 
     session->closeBrowsingContext(pageHandle, WTF::move(callback));
+}
+
+void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsingContext, std::optional<Inspector::Protocol::BidiBrowsingContext::ScreenshotOrigin>&& optionalOrigin, RefPtr<JSON::Object>&& format, RefPtr<JSON::Object>&& clip, CommandCallback<String>&& callback)
+{
+    RefPtr session = m_session.get();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, WindowNotFound);
+
+    ScreenshotParameters params;
+
+    if (optionalOrigin) {
+        auto origin = *optionalOrigin;
+        switch (origin) {
+        case Inspector::Protocol::BidiBrowsingContext::ScreenshotOrigin::Viewport:
+            params.origin = ScreenshotOrigin::Viewport;
+            break;
+        case Inspector::Protocol::BidiBrowsingContext::ScreenshotOrigin::Document:
+            params.origin = ScreenshotOrigin::Document;
+            break;
+        }
+    } else
+        params.origin = ScreenshotOrigin::Viewport;
+
+    if (format) {
+        String typeValue = format->getString("type"_s);
+        if (!typeValue.isEmpty()) {
+            auto parsedFormat = parseImageFormatType(typeValue);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedFormat, InvalidParameter);
+            params.format = *parsedFormat;
+        }
+        if (auto qualityValue = format->getDouble("quality"_s))
+            params.quality = qualityValue.value();
+    }
+
+    auto originRect = getOriginRectangle(params.origin, *webPageProxy);
+
+    if (clip) {
+        auto clipRect = parseClipRectangle(clip, originRect);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!clipRect, InvalidParameter);
+        params.clipRect = rectangleIntersection(originRect, *clipRect);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(params.clipRect->isEmpty(), InternalError);
+    } else
+        params.clipRect = originRect;
+
+    performScreenshotCapture(*webPageProxy, params, WTF::move(callback));
 }
 
 static constexpr Inspector::Protocol::Automation::BrowsingContextPresentation defaultBrowsingContextPresentation = Inspector::Protocol::Automation::BrowsingContextPresentation::Tab;
@@ -417,6 +465,137 @@ void BidiBrowsingContextAgent::setViewport(const BrowsingContext& optionalContex
         // https://bugs.webkit.org/show_bug.cgi?id=288104
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(true, NotImplemented);
     }
+}
+
+WebCore::FloatRect BidiBrowsingContextAgent::getOriginRectangle(ScreenshotOrigin origin, const WebPageProxy& webPageProxy)
+{
+    auto viewSize = webPageProxy.viewSize();
+
+    if (origin == ScreenshotOrigin::Viewport)
+        return WebCore::FloatRect(0, 0, viewSize.width(), viewSize.height());
+
+    // FIXME: Get actual document scroll dimensions when available
+    return WebCore::FloatRect(0, 0, viewSize.width(), viewSize.height());
+}
+
+WebCore::FloatRect BidiBrowsingContextAgent::normalizeRect(const WebCore::FloatRect& rect)
+{
+    float x = rect.x(), y = rect.y();
+    float width = rect.width(), height = rect.height();
+
+    if (width < 0) {
+        x += width;
+        width = -width;
+    }
+    if (height < 0) {
+        y += height;
+        height = -height;
+    }
+    return { x, y, width, height };
+}
+
+WebCore::FloatRect BidiBrowsingContextAgent::rectangleIntersection(const WebCore::FloatRect& rect1, const WebCore::FloatRect& rect2)
+{
+    auto norm1 = normalizeRect(rect1);
+    auto norm2 = normalizeRect(rect2);
+
+    float x0 = std::max(norm1.x(), norm2.x());
+    float x1 = std::min(norm1.maxX(), norm2.maxX());
+    float y0 = std::max(norm1.y(), norm2.y());
+    float y1 = std::min(norm1.maxY(), norm2.maxY());
+
+    float width = (x1 < x0) ? 0 : (x1 - x0);
+    float height = (y1 < y0) ? 0 : (y1 - y0);
+    return WebCore::FloatRect(x0, y0, width, height);
+}
+
+std::optional<WebCore::FloatRect> BidiBrowsingContextAgent::parseClipRectangle(const RefPtr<JSON::Object>& clip, const WebCore::FloatRect& originRect)
+{
+    if (!clip)
+        return std::nullopt;
+
+    String clipType = clip->getString("type"_s);
+
+    if (clipType == "element"_s)
+        return parseElementClipRectangle(clip, originRect);
+
+    return parseBoxClipRectangle(clip, originRect);
+}
+
+std::optional<WebCore::FloatRect> BidiBrowsingContextAgent::parseBoxClipRectangle(const RefPtr<JSON::Object>& clip, const WebCore::FloatRect& originRect)
+{
+    auto x = clip->getDouble("x"_s).value_or(0);
+    auto y = clip->getDouble("y"_s).value_or(0);
+    auto width = clip->getDouble("width"_s).value_or(0);
+    auto height = clip->getDouble("height"_s).value_or(0);
+    return WebCore::FloatRect(originRect.x() + x, originRect.y() + y, width, height);
+}
+
+std::optional<WebCore::FloatRect> BidiBrowsingContextAgent::parseElementClipRectangle(const RefPtr<JSON::Object>& clip, const WebCore::FloatRect& originRect)
+{
+    // FIXME: rdar://160959983 - implement element reference resolution
+    auto elementObj = clip->getObject("element"_s);
+    if (!elementObj)
+        return std::nullopt;
+    return std::nullopt;
+}
+
+void BidiBrowsingContextAgent::performScreenshotCapture(WebPageProxy& page, const ScreenshotParameters& params, Inspector::CommandCallback<String>&& callback)
+{
+    RefPtr session = m_session.get();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    String frameHandle = ""_s;
+    String nodeHandle = ""_s;
+    bool scrollIntoViewIfNeeded = false;
+    bool clipToViewport = (params.origin == ScreenshotOrigin::Viewport);
+
+    session->takeScreenshot(session->handleForWebPageProxy(page), frameHandle, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [this, params, callback = WTF::move(callback)](CommandResult<String>&& result) mutable {
+        if (!result) {
+            callback(makeUnexpected(result.error()));
+            return;
+        }
+
+        String finalImage = result.value();
+        if (params.format != ImageFormatType::Png)
+            finalImage = convertImageFormat(result.value(), imageFormatTypeToString(params.format), params.quality);
+
+        callback(WTF::move(finalImage));
+    });
+}
+
+std::optional<BidiBrowsingContextAgent::ImageFormatType> BidiBrowsingContextAgent::parseImageFormatType(const String& format)
+{
+    if (format == "png"_s || format == "image/png"_s)
+        return ImageFormatType::Png;
+    if (format == "jpeg"_s || format == "image/jpeg"_s)
+        return ImageFormatType::Jpeg;
+    if (format == "webp"_s || format == "image/webp"_s)
+        return ImageFormatType::Webp;
+    return std::nullopt;
+}
+
+String BidiBrowsingContextAgent::imageFormatTypeToString(ImageFormatType format)
+{
+    switch (format) {
+    case ImageFormatType::Png:
+        return "image/png"_s;
+    case ImageFormatType::Jpeg:
+        return "image/jpeg"_s;
+    case ImageFormatType::Webp:
+        return "image/webp"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return "image/png"_s;
+}
+
+String BidiBrowsingContextAgent::convertImageFormat(const String& base64PNG, const String& targetFormat, std::optional<double> quality) const
+{
+    UNUSED_PARAM(targetFormat);
+    UNUSED_PARAM(quality);
+
+    // FIXME: Implement image format conversion
+    return base64PNG;
 }
 
 } // namespace WebKit
