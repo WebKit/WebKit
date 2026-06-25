@@ -221,6 +221,12 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTF::move(resourceLoadStatisticsManualPrevalentResource);
 
     auto cookieFile = directories.cookieStorageFile;
+#if PLATFORM(IOS_FAMILY)
+    if (cookieFile.isEmpty())
+        cookieFile = FileSystem::pathByAppendingComponent(WebsiteDataStore::resolvedCookieStorageDirectory(), "Cookies.binarycookies"_s);
+
+#endif // PLATFORM(IOS_FAMILY)
+
     createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {

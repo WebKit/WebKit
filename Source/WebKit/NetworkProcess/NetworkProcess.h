@@ -593,9 +593,7 @@ private:
     void setNetworkProxySettings(PAL::SessionID, WebCore::CurlProxySettings&&);
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
-#endif
 
     void terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType, PAL::SessionID, const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
     void runningOrTerminatingServiceWorkerCountForTesting(PAL::SessionID, CompletionHandler<void(unsigned)>&&) const;

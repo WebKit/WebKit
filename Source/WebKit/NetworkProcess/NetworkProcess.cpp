@@ -547,6 +547,7 @@ void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDa
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
     if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty()) {
         SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
+        setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
         if (sessionID != PAL::SessionID::defaultSessionID())
             uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
     }
