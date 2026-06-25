@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 110;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -11,9 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5325BDDD21DFF4F500A0DEE1 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
 			buildPhases = (
-				5325BDDE21DFF4F800A0DEE1 /* ShellScript */,
-			);
-			dependencies = (
+				5325BDDE21DFF4F800A0DEE1 /* Run Sublaunch Script */,
 			);
 			name = "Apply Configuration to XCFileLists";
 			productName = "Apply Configuration to XCFileLists";
@@ -21,8 +19,6 @@
 		A115CCB41B9D769D00E89159 /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = A115CCB51B9D769D00E89159 /* Build configuration list for PBXAggregateTarget "All" */;
-			buildPhases = (
-			);
 			dependencies = (
 				E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */,
 				A115CCBC1B9D76C400E89159 /* PBXTargetDependency */,
@@ -38,15 +34,13 @@
 				DD453D922EC3A61700C1D6A8 /* Generate <wtf/Platform.h> args */,
 				BC952D8211F3BF78003398B4 /* Generate Derived Sources */,
 			);
-			dependencies = (
-			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
 		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00E43E412D9781430060461A /* WebContentCaptivePortalExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = 00E43E3F2D977FC70060461A /* WebContentCaptivePortalExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		00E43E412D9781430060461A /* WebContentCaptivePortalExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = 00E43E3F2D977FC70060461A /* WebContentCaptivePortalExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0F18E6E51D6B9B9E0027E547 /* UIScriptContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DD1D6B9AAF0027E547 /* UIScriptContext.cpp */; };
 		0F18E6E61D6B9BA20027E547 /* UIScriptControllerShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E6DF1D6B9AAF0027E547 /* UIScriptControllerShared.cpp */; };
 		0F18E7181D6BC4560027E547 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F18E7151D6BC4560027E547 /* JSWrapper.cpp */; };
@@ -170,9 +164,9 @@
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
-		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E17D422CC4447B0077C3AE /* main.cpp */; };
 		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
 		F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */; };
@@ -195,11 +189,13 @@
 			inputFiles = (
 				"$(SRCROOT)/../TestRunnerShared/Scripts/install-extensions-rule.sh",
 			);
-			isEditable = 1;
 			outputFiles = (
 				"$(BUILT_PRODUCTS_DIR)/$(EXTENSIONS_FOLDER_PATH)/$(INPUT_FILE_NAME)",
 			);
-			script = "\"${SCRIPT_INPUT_FILE_0}\"\n";
+			script = (
+				"\"${SCRIPT_INPUT_FILE_0}\"",
+				"",
+			);
 		};
 /* End PBXBuildRule section */
 
@@ -265,20 +261,17 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		CEC209031D36E36A00261596 /* Copy Plug-Ins */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				2E34C90018B68808000067BB /* WebKitTestRunnerInjectedBundle.bundle in Copy Plug-Ins */,
 			);
 			name = "Copy Plug-Ins";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E372BC342C08E22D006DFE67 /* Embed Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
-			dstSubfolderSpec = 16;
+			dstSubfolder = Product;
 			files = (
 				E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */,
 				E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */,
@@ -286,7 +279,6 @@
 				E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */,
 			);
 			name = "Embed Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -535,16 +527,13 @@
 /* Begin PBXFrameworksBuildPhase section */
 		2EE52CDD1890A9A80010ED21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				D2D99AFC2AA27BA800000BBF /* Network.framework in Frameworks */,
 				57A0062F22976EF800AD08BD /* Security.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				51058AD51D678820009A538C /* libWebCoreTestSupport.dylib in Frameworks */,
 				D2D99AEE2A9EF3F500000BBF /* Network.framework in Frameworks */,
@@ -553,31 +542,24 @@
 				DD4671AE2A6B136200E49DBD /* WebCore.framework in Frameworks */,
 				51058AD61D678825009A538C /* WebKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A18510241B9ADE4800744AEB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BC25186011D15D54002EBC01 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
 				A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */,
 				0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E3D8A9412CC4AFB3006B43E3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -1109,7 +1091,6 @@
 /* Begin PBXHeadersBuildPhase section */
 		A18510251B9ADE4800744AEB /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				2DB6187E1D7D58D400978D19 /* CoreGraphicsTestSPI.h in Headers */,
 				2DD4C49A1D6E7D3B0007379C /* EventSerializerMac.h in Headers */,
@@ -1121,7 +1102,6 @@
 				2D058E0B22E2EF6D00E4C145 /* UIScriptControllerMac.h in Headers */,
 				F474EE3D2B82B65100DE5F41 /* WKTextExtractionTestingHelpers.h in Headers */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
@@ -1241,7 +1221,6 @@
 				};
 			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */;
-			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -1249,6 +1228,8 @@
 				Base,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* WebKitTestRunner */;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 100;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1267,15 +1248,12 @@
 /* Begin PBXResourcesBuildPhase section */
 		2EE52CDE1890A9A80010ED21 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				0F4B08731D5BE88D00EC1B78 /* Launch.storyboard in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BC25185E11D15D54002EBC01 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
 				1CEA84DD203782ED00440D08 /* FakeHelvetica-ArmenianCharacter.ttf in Resources */,
@@ -1296,83 +1274,56 @@
 				6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */,
 				6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		5325BDDE21DFF4F800A0DEE1 /* Run Sublaunch Script */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Run Sublaunch Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"\n";
+			shellScript = (
+				"eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"",
+				"",
+			);
 		};
 		53A8193A21E52973000B93AB /* Check .xcfilelists */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"$(SRCROOT)/DerivedSources.make",
 			);
 			name = "Check .xcfilelists";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"$(TARGET_TEMP_DIR)/check-xcfilelists.timestamp",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = (
+				"Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"",
+				"",
+			);
 		};
 		BC952D8211F3BF78003398B4 /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
 			inputFileListPaths = (
 				"$(SRCROOT)/DerivedSources-input.xcfilelist",
-			);
-			inputPaths = (
 			);
 			name = "Generate Derived Sources";
 			outputFileListPaths = (
 				"$(SRCROOT)/DerivedSources-output.xcfilelist",
 			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "Scripts/generate-derived-sources.sh\n";
+			shellScript = (
+				"Scripts/generate-derived-sources.sh",
+				"",
+			);
 		};
 		DD453D922EC3A61700C1D6A8 /* Generate <wtf/Platform.h> args */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
 			dependencyFile = "$(DERIVED_FILES_DIR)/generate-platform-args.d";
-			files = (
-			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
 				"$(WTF_BUILD_SCRIPTS_DIR)/generate-platform-args",
 			);
 			name = "Generate <wtf/Platform.h> args";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-args.arm64.resp",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-args.arm64_32.resp",
@@ -1381,16 +1332,20 @@
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-args.x86_64.resp",
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/rdar150228472.swift",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = installhdrs ]\nthen touch \"${DERIVED_FILES_DIR}/generate-platform-args.d\"\nelse \"${SCRIPT_INPUT_FILE_0}\"\nfi\n";
+			shellScript = (
+				"if [ \"${ACTION}\" = installhdrs ]",
+				"then touch \"${DERIVED_FILES_DIR}/generate-platform-args.d\"",
+				"else \"${SCRIPT_INPUT_FILE_0}\"",
+				"fi",
+				"",
+			);
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2EE52CDC1890A9A80010ED21 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */,
 				4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */,
@@ -1400,11 +1355,9 @@
 				2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */,
 				F415C23527AF5B390028F505 /* UIPasteboardConsistencyEnforcer.mm in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8DD76F990486AA7600D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				334BF3B92D4E5BE7004AE4EA /* EventSenderProxyCocoa.mm in Sources */,
@@ -1418,11 +1371,9 @@
 				E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */,
 				9376417A210D737200A3DAAE /* WebKitTestRunnerWindow.mm in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A18510231B9ADE4800744AEB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				F44A531721B899E200DBB99C /* ClassMethodSwizzler.mm in Sources */,
 				A185103A1B9AE0DA00744AEB /* CrashReporterInfo.mm in Sources */,
@@ -1461,11 +1412,9 @@
 				A18510441B9AE14A00744AEB /* WorkQueueManager.cpp in Sources */,
 				33558B2E2AF1C22B0041E63F /* WPTFunctions.cpp in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BC25185F11D15D54002EBC01 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				29210EDA144CC3EA00835BB6 /* AccessibilityCommonCocoa.mm in Sources */,
 				29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */,
@@ -1507,15 +1456,12 @@
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 				93C78823250C6C2E00C0AA24 /* WPTFunctions.cpp in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E3D8A9362CC4AFB3006B43E3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -1563,7 +1509,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1DEB927508733DD40010E9CD /* Debug */ = {
+		1DEB927508733DD40010E9CD /* Debug configuration for PBXNativeTarget "WebKitTestRunner" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
@@ -1574,7 +1520,7 @@
 			};
 			name = Debug;
 		};
-		1DEB927608733DD40010E9CD /* Release */ = {
+		1DEB927608733DD40010E9CD /* Release configuration for PBXNativeTarget "WebKitTestRunner" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
@@ -1585,21 +1531,21 @@
 			};
 			name = Release;
 		};
-		1DEB927908733DD40010E9CD /* Debug */ = {
+		1DEB927908733DD40010E9CD /* Debug configuration for PBXProject "WebKitTestRunner" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		1DEB927A08733DD40010E9CD /* Release */ = {
+		1DEB927A08733DD40010E9CD /* Release configuration for PBXProject "WebKitTestRunner" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		2EE52D091890A9A90010ED21 /* Debug */ = {
+		2EE52D091890A9A90010ED21 /* Debug configuration for PBXNativeTarget "WebKitTestRunnerApp" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
@@ -1616,7 +1562,7 @@
 			};
 			name = Debug;
 		};
-		2EE52D0A1890A9A90010ED21 /* Release */ = {
+		2EE52D0A1890A9A90010ED21 /* Release configuration for PBXNativeTarget "WebKitTestRunnerApp" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
@@ -1631,7 +1577,7 @@
 			};
 			name = Release;
 		};
-		2EE52D0B1890A9A90010ED21 /* Production */ = {
+		2EE52D0B1890A9A90010ED21 /* Production configuration for PBXNativeTarget "WebKitTestRunnerApp" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
@@ -1646,7 +1592,7 @@
 			};
 			name = Production;
 		};
-		5325BDDA21DFF4F500A0DEE1 /* Debug */ = {
+		5325BDDA21DFF4F500A0DEE1 /* Debug configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
@@ -1655,7 +1601,7 @@
 			};
 			name = Debug;
 		};
-		5325BDDB21DFF4F500A0DEE1 /* Release */ = {
+		5325BDDB21DFF4F500A0DEE1 /* Release configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
@@ -1664,7 +1610,7 @@
 			};
 			name = Release;
 		};
-		5325BDDC21DFF4F500A0DEE1 /* Production */ = {
+		5325BDDC21DFF4F500A0DEE1 /* Production configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
@@ -1673,70 +1619,70 @@
 			};
 			name = Production;
 		};
-		A115CCB61B9D769D00E89159 /* Debug */ = {
+		A115CCB61B9D769D00E89159 /* Debug configuration for PBXAggregateTarget "All" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		A115CCB71B9D769D00E89159 /* Release */ = {
+		A115CCB71B9D769D00E89159 /* Release configuration for PBXAggregateTarget "All" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
-		A115CCB81B9D769D00E89159 /* Production */ = {
+		A115CCB81B9D769D00E89159 /* Production configuration for PBXAggregateTarget "All" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
-		A185102E1B9ADE4800744AEB /* Debug */ = {
+		A185102E1B9ADE4800744AEB /* Debug configuration for PBXNativeTarget "WebKitTestRunner (Library)" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		A185102F1B9ADE4800744AEB /* Release */ = {
+		A185102F1B9ADE4800744AEB /* Release configuration for PBXNativeTarget "WebKitTestRunner (Library)" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		A18510301B9ADE4800744AEB /* Production */ = {
+		A18510301B9ADE4800744AEB /* Production configuration for PBXNativeTarget "WebKitTestRunner (Library)" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
 		};
-		BC25186411D15D55002EBC01 /* Debug */ = {
+		BC25186411D15D55002EBC01 /* Debug configuration for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		BC25186511D15D55002EBC01 /* Release */ = {
+		BC25186511D15D55002EBC01 /* Release configuration for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		BC646D6D136A3A8700B35DED /* Production */ = {
+		BC646D6D136A3A8700B35DED /* Production configuration for PBXProject "WebKitTestRunner" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793426118F7D3C005EA8E2 /* Base.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
 		};
-		BC646D6E136A3A8700B35DED /* Production */ = {
+		BC646D6E136A3A8700B35DED /* Production configuration for PBXNativeTarget "WebKitTestRunner" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
@@ -1747,49 +1693,49 @@
 			};
 			name = Production;
 		};
-		BC646D6F136A3A8700B35DED /* Production */ = {
+		BC646D6F136A3A8700B35DED /* Production configuration for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
 		};
-		BC646D70136A3A8700B35DED /* Production */ = {
+		BC646D70136A3A8700B35DED /* Production configuration for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Production;
 		};
-		BC952D7811F3BF5E003398B4 /* Debug */ = {
+		BC952D7811F3BF5E003398B4 /* Debug configuration for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Debug;
 		};
-		BC952D7911F3BF5E003398B4 /* Release */ = {
+		BC952D7911F3BF5E003398B4 /* Release configuration for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources";
 			};
 			name = Release;
 		};
-		E3D8A9472CC4AFB3006B43E3 /* Debug */ = {
+		E3D8A9472CC4AFB3006B43E3 /* Debug configuration for PBXNativeTarget "WebKitEligibilityUtil" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		E3D8A9482CC4AFB3006B43E3 /* Release */ = {
+		E3D8A9482CC4AFB3006B43E3 /* Release configuration for PBXNativeTarget "WebKitEligibilityUtil" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		E3D8A9492CC4AFB3006B43E3 /* Production */ = {
+		E3D8A9492CC4AFB3006B43E3 /* Production configuration for PBXNativeTarget "WebKitEligibilityUtil" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
 			buildSettings = {
@@ -1802,94 +1748,86 @@
 		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "WebKitTestRunner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB927508733DD40010E9CD /* Debug */,
-				1DEB927608733DD40010E9CD /* Release */,
-				BC646D6E136A3A8700B35DED /* Production */,
+				1DEB927508733DD40010E9CD /* Debug configuration for PBXNativeTarget "WebKitTestRunner" */,
+				1DEB927608733DD40010E9CD /* Release configuration for PBXNativeTarget "WebKitTestRunner" */,
+				BC646D6E136A3A8700B35DED /* Production configuration for PBXNativeTarget "WebKitTestRunner" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB927908733DD40010E9CD /* Debug */,
-				1DEB927A08733DD40010E9CD /* Release */,
-				BC646D6D136A3A8700B35DED /* Production */,
+				1DEB927908733DD40010E9CD /* Debug configuration for PBXProject "WebKitTestRunner" */,
+				1DEB927A08733DD40010E9CD /* Release configuration for PBXProject "WebKitTestRunner" */,
+				BC646D6D136A3A8700B35DED /* Production configuration for PBXProject "WebKitTestRunner" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		2EE52D0F1890A9A90010ED21 /* Build configuration list for PBXNativeTarget "WebKitTestRunnerApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2EE52D091890A9A90010ED21 /* Debug */,
-				2EE52D0A1890A9A90010ED21 /* Release */,
-				2EE52D0B1890A9A90010ED21 /* Production */,
+				2EE52D091890A9A90010ED21 /* Debug configuration for PBXNativeTarget "WebKitTestRunnerApp" */,
+				2EE52D0A1890A9A90010ED21 /* Release configuration for PBXNativeTarget "WebKitTestRunnerApp" */,
+				2EE52D0B1890A9A90010ED21 /* Production configuration for PBXNativeTarget "WebKitTestRunnerApp" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		5325BDDD21DFF4F500A0DEE1 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5325BDDA21DFF4F500A0DEE1 /* Debug */,
-				5325BDDB21DFF4F500A0DEE1 /* Release */,
-				5325BDDC21DFF4F500A0DEE1 /* Production */,
+				5325BDDA21DFF4F500A0DEE1 /* Debug configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
+				5325BDDB21DFF4F500A0DEE1 /* Release configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
+				5325BDDC21DFF4F500A0DEE1 /* Production configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		A115CCB51B9D769D00E89159 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A115CCB61B9D769D00E89159 /* Debug */,
-				A115CCB71B9D769D00E89159 /* Release */,
-				A115CCB81B9D769D00E89159 /* Production */,
+				A115CCB61B9D769D00E89159 /* Debug configuration for PBXAggregateTarget "All" */,
+				A115CCB71B9D769D00E89159 /* Release configuration for PBXAggregateTarget "All" */,
+				A115CCB81B9D769D00E89159 /* Production configuration for PBXAggregateTarget "All" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		A185102D1B9ADE4800744AEB /* Build configuration list for PBXNativeTarget "WebKitTestRunner (Library)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A185102E1B9ADE4800744AEB /* Debug */,
-				A185102F1B9ADE4800744AEB /* Release */,
-				A18510301B9ADE4800744AEB /* Production */,
+				A185102E1B9ADE4800744AEB /* Debug configuration for PBXNativeTarget "WebKitTestRunner (Library)" */,
+				A185102F1B9ADE4800744AEB /* Release configuration for PBXNativeTarget "WebKitTestRunner (Library)" */,
+				A18510301B9ADE4800744AEB /* Production configuration for PBXNativeTarget "WebKitTestRunner (Library)" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BC25186411D15D55002EBC01 /* Debug */,
-				BC25186511D15D55002EBC01 /* Release */,
-				BC646D6F136A3A8700B35DED /* Production */,
+				BC25186411D15D55002EBC01 /* Debug configuration for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */,
+				BC25186511D15D55002EBC01 /* Release configuration for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */,
+				BC646D6F136A3A8700B35DED /* Production configuration for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		BC952D7D11F3BF6A003398B4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BC952D7811F3BF5E003398B4 /* Debug */,
-				BC952D7911F3BF5E003398B4 /* Release */,
-				BC646D70136A3A8700B35DED /* Production */,
+				BC952D7811F3BF5E003398B4 /* Debug configuration for PBXAggregateTarget "Derived Sources" */,
+				BC952D7911F3BF5E003398B4 /* Release configuration for PBXAggregateTarget "Derived Sources" */,
+				BC646D70136A3A8700B35DED /* Production configuration for PBXAggregateTarget "Derived Sources" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 		E3D8A9462CC4AFB3006B43E3 /* Build configuration list for PBXNativeTarget "WebKitEligibilityUtil" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E3D8A9472CC4AFB3006B43E3 /* Debug */,
-				E3D8A9482CC4AFB3006B43E3 /* Release */,
-				E3D8A9492CC4AFB3006B43E3 /* Production */,
+				E3D8A9472CC4AFB3006B43E3 /* Debug configuration for PBXNativeTarget "WebKitEligibilityUtil" */,
+				E3D8A9482CC4AFB3006B43E3 /* Release configuration for PBXNativeTarget "WebKitEligibilityUtil" */,
+				E3D8A9492CC4AFB3006B43E3 /* Production configuration for PBXNativeTarget "WebKitEligibilityUtil" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};
 	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+	validationLevel = 1;
 }
