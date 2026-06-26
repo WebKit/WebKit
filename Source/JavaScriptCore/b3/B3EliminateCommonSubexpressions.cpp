@@ -444,8 +444,11 @@ private:
             if (m_blocksWithSets.contains(block)) {
                 for (unsigned valueIndex = 0; valueIndex < block->size(); ++valueIndex) {
                     Value* value = block->at(valueIndex);
-                    if (!canHaveSets(value))
-                        continue;
+                    // Do not gate on canHaveSets(value) here: a value that was a
+                    // memory-access m_sets key when its entry was added can later
+                    // be turned into a Nop by store elimination. Its fixup extras
+                    // must still be materialized in this block, otherwise the SSA
+                    // Defs / Upsilons that reference them are left dangling.
                     auto iter = m_sets.find(value);
                     if (iter == m_sets.end())
                         continue;
