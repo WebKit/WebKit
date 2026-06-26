@@ -8380,7 +8380,8 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
         if (result.wasGranted == StorageAccessWasGranted::Yes) {
             switch (result.scope) {
             case StorageAccessScope::PerFrame:
-                frame->protectedLocalFrameLoaderClient()->setHasFrameSpecificStorageAccess({ frameID, pageID });
+                if (RefPtr localFrameLoaderClient = frame->localFrameLoaderClient())
+                    localFrameLoaderClient->setHasFrameSpecificStorageAccess({ frameID, pageID });
                 break;
             case StorageAccessScope::PerPage:
                 addDomainWithPageLevelStorageAccess(result.topFrameDomain, result.subFrameDomain);
