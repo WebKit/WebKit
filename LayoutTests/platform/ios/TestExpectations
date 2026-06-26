@@ -399,6 +399,7 @@ http/tests/media/audio-load-loadeddata.html [ Pass ]
 
 # Digital Credentials
 http/wpt/identity/identitycredentialscontainer-get-hidden.https.html [ Skip ]
+webkit.org/b/317961 imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html [ Skip ]
 
 # No touch events
 fast/events/touch [ Skip ]
