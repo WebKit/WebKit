@@ -155,6 +155,30 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
     return std::make_pair(command, argument);
 }
 
+#if ENABLE(MEDIA_STREAM)
+static std::optional<Exception> validateMediaSessionCaptureToggleAction(const Document& document, MediaSessionAction action, ASCIILiteral actionDescriptor)
+{
+    if (!document.settings().mediaSessionCaptureToggleAPIEnabled()
+        && (action == MediaSessionAction::Togglecamera
+            || action == MediaSessionAction::Togglemicrophone
+            || action == MediaSessionAction::Togglescreenshare
+            || action == MediaSessionAction::Voiceactivity))
+        return Exception { ExceptionCode::TypeError, makeString(actionDescriptor, " must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+    return std::nullopt;
+}
+#endif
+
+static std::optional<Exception> validateMediaSessionExtendedAction(const Document& document, MediaSessionAction action, ASCIILiteral actionDescriptor)
+{
+    if (!document.settings().mediaSessionExtendedActionsEnabled()
+        && (action == MediaSessionAction::Hangup
+            || action == MediaSessionAction::Previousslide
+            || action == MediaSessionAction::Nextslide
+            || action == MediaSessionAction::Enterpictureinpicture))
+        return Exception { ExceptionCode::TypeError, makeString(actionDescriptor, " must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+    return std::nullopt;
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSession);
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
@@ -292,10 +316,12 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
 
 ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessionActionHandler>&& handler)
 {
-#if ENABLE(MEDIA_STREAM)
     RefPtr document = this->document();
-    if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare || action == MediaSessionAction::Voiceactivity))
-        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+#if ENABLE(MEDIA_STREAM)
+    if (document) {
+        if (auto exception = validateMediaSessionCaptureToggleAction(*document, action, "Argument 1 ('action') to MediaSession.setActionHandler"_s))
+            return WTF::move(*exception);
+    }
 
 #if PLATFORM(MAC) && !HAVE(VOICEACTIVITYDETECTION)
     if (document && action == MediaSessionAction::Voiceactivity)
@@ -306,8 +332,10 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
         document->setShouldListenToVoiceActivity(!!handler);
 #endif
 
-    if (RefPtr document = this->document(); document && !document->settings().mediaSessionExtendedActionsEnabled() && (action == MediaSessionAction::Hangup || action == MediaSessionAction::Previousslide || action == MediaSessionAction::Nextslide || action == MediaSessionAction::Enterpictureinpicture))
-        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+    if (document) {
+        if (auto exception = validateMediaSessionExtendedAction(*document, action, "Argument 1 ('action') to MediaSession.setActionHandler"_s))
+            return WTF::move(*exception);
+    }
 
     RefPtr sessionManager = this->sessionManager();
     if (!sessionManager)
@@ -359,9 +387,17 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (RefPtr document = this->document(); document && !document->settings().mediaSessionExtendedActionsEnabled() && (actionDetails.action == MediaSessionAction::Hangup || actionDetails.action == MediaSessionAction::Previousslide || actionDetails.action == MediaSessionAction::Nextslide || actionDetails.action == MediaSessionAction::Enterpictureinpicture)) {
-        promise.reject(ExceptionCode::TypeError);
-        return;
+    if (RefPtr document = this->document()) {
+#if ENABLE(MEDIA_STREAM)
+        if (auto exception = validateMediaSessionCaptureToggleAction(*document, actionDetails.action, "Member MediaSessionActionDetails.action"_s)) {
+            promise.reject(WTF::move(*exception));
+            return;
+        }
+#endif
+        if (auto exception = validateMediaSessionExtendedAction(*document, actionDetails.action, "Member MediaSessionActionDetails.action"_s)) {
+            promise.reject(WTF::move(*exception));
+            return;
+        }
     }
 
     if (!callActionHandler(actionDetails, TriggerGestureIndicator::No)) {
