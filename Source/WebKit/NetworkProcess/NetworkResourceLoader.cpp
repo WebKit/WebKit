@@ -1437,19 +1437,10 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
 
     // We send the request body separately because the ResourceRequest body normally does not get encoded when sent over IPC, as an optimization.
     // However, we really need the body here because a redirect cross-site may cause a process-swap and the request to start again in a new WebContent process.
-    sendWithAsyncReply(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTF::move(redirectResponse), ResourceResponse::SanitizationType::Redirection)), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), firstPartyForCookiesFromRedirectRequest = redirectRequest.firstPartyForCookies()] (ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials) mutable {
+    sendWithAsyncReply(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTF::move(redirectResponse), ResourceResponse::SanitizationType::Redirection)), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler({ });
-
-        if (newRequest.firstPartyForCookies() != firstPartyForCookiesFromRedirectRequest) {
-            Ref connection = protectedThis->m_connection;
-            auto allowCookieAccess = connection->networkProcess().allowsFirstPartyForCookies(
-                connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
-            MESSAGE_CHECK_COMPLETION_BASE(allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow,
-                connection->connection(), completionHandler({ }));
-        }
-
         protectedThis->continueWillSendRequest(WTF::move(newRequest), isAllowedToAskUserForCredentials, WTF::move(completionHandler));
     });
 }
