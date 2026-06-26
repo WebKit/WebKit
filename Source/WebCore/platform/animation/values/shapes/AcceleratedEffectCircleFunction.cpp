@@ -31,6 +31,7 @@
 #include "AcceleratedEffectAnimationUtilities.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
+#include <wtf/Lock.h>
 #include <wtf/TinyLRUCache.h>
 
 namespace WebCore {
@@ -52,8 +53,13 @@ public:
     }
 };
 
-static const WebCore::Path& cachedAcceleratedEffectCirclePath(const FloatRect& rect)
+static WebCore::Path cachedAcceleratedEffectCirclePath(const FloatRect& rect)
 {
+    // This may be reached on the main run loop and the ScrollingThread concurrently
+    // (via RemoteLayerTreeEventDispatcher::updateAnimations), so the global cache
+    // must be guarded and the result copied out under the lock.
+    static Lock cacheLock;
+    Locker locker { cacheLock };
     static NeverDestroyed<TinyLRUCache<FloatRect, WebCore::Path, 4, AcceleratedEffectCirclePathPolicy>> cache;
     return cache.get().get(rect);
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { height: 5000px; }
+.mover {
+    position: absolute;
+    top: 50px; left: 50px;
+    width: 40px; height: 40px;
+    will-change: transform;
+    animation: move auto linear;
+    animation-timeline: scroll(root);
+}
+@keyframes move {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+}
+/* Distinct polygon() values from the opener to force LRU eviction churn. */
+#n0 { offset-path: polygon(0% 0%, 23% 2%, 5% 10%, 10% 48%, 94% 13%); }
+#n1 { offset-path: polygon(0% 0%, 48% 4%, 30% 35%, 35% 23%, 87% 38%); }
+#n2 { offset-path: polygon(0% 0%, 73% 7%, 55% 60%, 60% 73%, 77% 63%); }
+#n3 { offset-path: polygon(0% 0%, 98% 9%, 80% 85%, 85% 98%, 67% 88%); }
+#n4 { offset-path: polygon(0% 0%, 100% 12%, 100% 100%, 100% 100%, 57% 100%); }
+#n5 { offset-path: polygon(0% 0%, 100% 14%, 100% 100%, 100% 100%, 47% 100%); }
+</style>
+</head>
+<body>
+<div class="mover" id="n0"></div>
+<div class="mover" id="n1"></div>
+<div class="mover" id="n2"></div>
+<div class="mover" id="n3"></div>
+<div class="mover" id="n4"></div>
+<div class="mover" id="n5"></div>
+<script>
+let dir = 1;
+function pump()
+{
+    let y = scrollY + dir * 600;
+    if (y > 3800) { dir = -1; y = 3800; }
+    if (y < 10)   { dir =  1; y = 10; }
+    scrollTo({ top: y, behavior: "smooth" });
+}
+setInterval(pump, 60);
+pump();
+
+let n = 0;
+setInterval(() => { document.title = ++n; }, 33);
+</script>
+</body>
+</html>
