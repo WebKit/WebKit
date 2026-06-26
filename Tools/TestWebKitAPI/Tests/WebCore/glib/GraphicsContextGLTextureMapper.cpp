@@ -80,11 +80,9 @@ private:
     std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
 };
 
-class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool>> {
+class AnyContextAttributeTest : public testing::TestWithParam<bool> {
 protected:
-    bool antialias() const { return std::get<0>(GetParam()); }
-    bool preserveDrawingBuffer() const { return std::get<1>(GetParam()); }
-    bool isWebGL2() const { return std::get<2>(GetParam()); }
+    bool isWebGL2() const { return GetParam(); }
 #if ENABLE(WEBXR)
     GraphicsContextGLAttributes attributes();
     RefPtr<TestedGraphicsContextGLTextureMapper> createTestContext(IntSize contextSize);
@@ -112,11 +110,7 @@ GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
 {
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = isWebGL2();
-    attributes.antialias = antialias();
-    attributes.depth = false;
-    attributes.stencil = false;
     attributes.alpha = true;
-    attributes.preserveDrawingBuffer = preserveDrawingBuffer();
     return attributes;
 }
 
@@ -150,8 +144,6 @@ TEST_F(GraphicsContextGLTextureMapperTest, ClearBufferIncorrectSizes)
     using GL = GraphicsContextGL;
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = true;
-    attributes.depth = true;
-    attributes.stencil = true;
     auto gl = createTestedGraphicsContextGL(attributes);
     gl->reshape(1, 1);
 
@@ -237,8 +229,6 @@ TEST_F(GraphicsContextGLTextureMapperTest, DestroyWithoutMakingCurrent)
 {
     GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = true;
-    attributes.depth = true;
-    attributes.stencil = true;
     RefPtr gl1 = createTestedGraphicsContextGL(attributes);
     gl1->reshape(1, 1);
     RefPtr gl2 = createTestedGraphicsContextGL(attributes);
@@ -422,10 +412,7 @@ TEST_P(AnyContextAttributeTest, WebXRBlitTest)
 
 INSTANTIATE_TEST_SUITE_P(GraphicsContextGLTextureMapperTest,
     AnyContextAttributeTest,
-    testing::Combine(
-        testing::Values(true, false),
-        testing::Values(true, false),
-        testing::Values(true, false)),
+    testing::Values(true, false),
     TestParametersToStringFormatter());
 
 class GraphicsContextGLTextureMapperReadPixelsTest : public ::testing::Test {
