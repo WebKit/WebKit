@@ -1,0 +1,10 @@
+A worker serializing FontFace descriptors must not race the main thread on the process-global CSS serialization memoization map (CSSPrimitiveValue). Under ASan/TSan, the unfixed code reports a heap-use-after-free or double-free in HashTable::rehash; this test should run clean.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash during concurrent serialization.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

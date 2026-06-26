@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("A worker serializing FontFace descriptors must not race the main thread on the process-global CSS serialization memoization map (CSSPrimitiveValue). Under ASan/TSan, the unfixed code reports a heap-use-after-free or double-free in HashTable::rehash; this test should run clean.");
+
+jsTestIsAsync = true;
+
+// Each worker hammers customCSSText() off the main thread for ~800ms. It mixes two paths:
+//   - fractional percentages, which allocate a fresh heap CSSPrimitiveValue per value and, when
+//     overwritten, destroy it (map.add followed by map.remove) to churn the shared HashTable and
+//     provoke rehash() of the backing buffer.
+//   - integer percentages 0..255, which resolve to the shared StaticCSSValuePool objects that are
+//     also serialized on the main thread (the bit-field hazard).
+var workerSource = `
+    function pump() {
+        var deadline = performance.now() + 800;
+        while (performance.now() < deadline) {
+            var faces = [];
+            for (var i = 0; i < 256; ++i) {
+                var fractional = (i + 0.123456).toFixed(6) + "%";
+                var face = new FontFace("worker-" + i, "url(x)", { sizeAdjust: fractional });
+                face.sizeAdjust; // map.add(heap value)
+                faces.push(face);
+            }
+            for (var j = 0; j < faces.length; ++j) {
+                faces[j].sizeAdjust = (j + 0.654321).toFixed(6) + "%"; // destroys previous => map.remove
+                faces[j].sizeAdjust; // map.add(new heap value)
+            }
+            for (var k = 0; k < 256; ++k) {
+                // Shared static-pool objects, also touched on the main thread.
+                var shared = new FontFace("shared-" + k, "url(x)", { sizeAdjust: k + "%" });
+                shared.sizeAdjust;
+                shared.style;
+                shared.weight;
+                shared.width;
+            }
+        }
+        postMessage("done");
+    }
+    pump();
+`;
+
+var NUM_WORKERS = 4;
+var workersDone = 0;
+var blobURL = URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" }));
+
+function onWorkerDone() {
+    if (++workersDone < NUM_WORKERS)
+        return;
+    testPassed("Did not crash during concurrent serialization.");
+    finishJSTest();
+}
+
+for (var w = 0; w < NUM_WORKERS; ++w) {
+    var worker = new Worker(blobURL);
+    worker.onmessage = onWorkerDone;
+}
+
+// Concurrently churn the shared map on the main thread: fractional percentages create and destroy
+// heap CSSPrimitiveValues, and integer percentages hit the same shared static-pool objects.
+var element = document.documentElement;
+var deadline = performance.now() + 800;
+while (performance.now() < deadline) {
+    for (var i = 0; i < 256; ++i) {
+        element.style.width = (i + 0.7777).toFixed(6) + "%"; // create heap value
+        element.style.getPropertyValue("width");             // map.add; next overwrite => map.remove
+    }
+    element.style.height = "100%";
+    for (var i = 0; i < 64; ++i)
+        element.style.getPropertyValue("height");            // shared static-pool object
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
