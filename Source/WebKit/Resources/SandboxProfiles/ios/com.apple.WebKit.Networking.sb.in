@@ -147,6 +147,12 @@
 (allow file-read* (with message "Allowing read access to root")
     (literal "/"))
 
+#if USE(EXTENSIONKIT)
+(allow file-read* file-write*
+    (container-subpath "Library/Caches")
+    (container-subpath "tmp"))
+#endif // USE(EXTENSIONKIT)
+
 (allow mach-lookup
     (mach-lookup-allowed))
 

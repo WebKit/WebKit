@@ -268,16 +268,6 @@ void AuxiliaryProcess::applyProcessCreationParameters(AuxiliaryProcessCreationPa
 #endif
 }
 
-void AuxiliaryProcess::grantAccessToContainerTempDirectory(const SandboxExtension::Handle& handle)
-{
-    SandboxExtension::consumePermanently(handle);
-#if ENABLE(LLVM_PROFILE_GENERATION) && PLATFORM(IOS_FAMILY)
-    WebKit::initializeLLVMProfiling();
-    WebCore::initializeLLVMProfiling();
-    JSC::initializeLLVMProfiling();
-#endif // ENABLE(LLVM_PROFILE_GENERATION) && PLATFORM(IOS_FAMILY)
-}
-
 #if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
 void AuxiliaryProcess::populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&&)
 {

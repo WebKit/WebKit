@@ -2289,16 +2289,18 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         createHandleFromResolvedPathIfPossible(resolvedCookieStorageDirectory(), cookieStorageDirectoryExtensionHandle);
         parameters.cookieStorageDirectoryExtensionHandle = WTF::move(cookieStorageDirectoryExtensionHandle);
 
+#if !USE(EXTENSIONKIT)
         SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
         createHandleFromResolvedPathIfPossible(resolvedContainerCachesNetworkingDirectory(), containerCachesDirectoryExtensionHandle);
         parameters.containerCachesDirectoryExtensionHandle = WTF::move(containerCachesDirectoryExtensionHandle);
 
+        if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(networkingServiceName, SandboxExtension::Type::ReadWrite))
+            parameters.tempDirectoryExtensionHandle = WTF::move(handleAndFilePath->first);
+#endif
         SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
         createHandleFromResolvedPathIfPossible(parentBundleDirectory(), parentBundleDirectoryExtensionHandle, SandboxExtension::Type::ReadOnly);
         parameters.parentBundleDirectoryExtensionHandle = WTF::move(parentBundleDirectoryExtensionHandle);
 
-        if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(networkingServiceName, SandboxExtension::Type::ReadWrite))
-            parameters.tempDirectoryExtensionHandle = WTF::move(handleAndFilePath->first);
         if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadOnly))
             parameters.tempDirectoryRootExtensionHandle = WTF::move(handleAndFilePath->first);
     }
