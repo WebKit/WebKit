@@ -207,6 +207,7 @@ if (ENABLE_WEBCORE)
         Helpers/Utilities.cpp
         Helpers/WebCoreTestUtilities.cpp
 
+        Tests/WebCore/AV1Utilities.cpp
         Tests/WebCore/AffineTransform.cpp
         Tests/WebCore/AudioSampleFormat.cpp
         Tests/WebCore/CSSParser.cpp

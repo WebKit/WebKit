@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "PlatformExportMacros.h"
-#include "PlatformVideoColorSpace.h"
-#include "SharedBuffer.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/PlatformExportMacros.h>
+#include <WebCore/PlatformVideoColorSpace.h>
+#include <WebCore/SharedBuffer.h>
 #include <JavaScriptCore/DataView.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
@@ -174,6 +174,28 @@ struct AV1CodecConfigurationRecord {
     uint32_t height { defaultHeight };
 };
 
+// Sequence header state captured during parsing. In addition to the codec configuration record
+// it carries the parser context required by uncompressed_header() to locate the frame size,
+// so a subsequent frame header (or frame) OBU can be parsed to honour frame_size_override_flag.
+struct AV1SequenceHeaderInfo {
+    AV1CodecConfigurationRecord codecRecord;
+
+    bool reducedStillPictureHeader { false };
+    bool frameIdNumbersPresentFlag { false };
+    uint32_t idLen { 0 };
+    bool decoderModelInfoPresentFlag { false };
+    bool equalPictureInterval { true };
+    uint8_t bufferRemovalTimeLengthMinus1 { 0 };
+    bool enableOrderHint { false };
+    uint8_t orderHintBits { 0 };
+    uint8_t seqForceScreenContentTools { 0 };
+    uint8_t seqForceIntegerMv { 0 };
+    uint8_t frameWidthBitsMinus1 { 0 };
+    uint8_t frameHeightBitsMinus1 { 0 };
+    uint8_t operatingPointsCount { 0 };
+    std::array<bool, 32> decoderModelPresentForThisOp { };
+};
+
 struct PlatformMediaCapabilitiesVideoConfiguration;
 class VideoInfo;
 
@@ -184,7 +206,7 @@ WEBCORE_EXPORT bool NODELETE validateAV1ConfigurationRecord(const AV1CodecConfig
 WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);
-std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t>);
+std::optional<AV1SequenceHeaderInfo> parseSequenceHeaderOBU(std::span<const uint8_t>);
 WEBCORE_EXPORT PlatformVideoColorSpace createPlatformVideoColorSpaceFromAV1CodecConfigurationRecord(const AV1CodecConfigurationRecord&);
 WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAV1Stream(std::span<const uint8_t>, std::optional<FloatSize> = std::nullopt, const std::optional<PlatformVideoColorSpace>& colorSpaceOverride = std::nullopt);
 
