@@ -23,8 +23,6 @@
 
 // This is more-or-less duplicate of WebKit/StdLibExtras.swift. Remove this file once that is in WTF.
 
-#if ENABLE_CXX_INTEROP
-
 import wtf
 
 extension WTF.String: LosslessStringConvertible {
@@ -58,5 +56,3 @@ extension WTF.String: ExpressibleByNilLiteral {
         self = unsafe WTF.nullString().pointee
     }
 }
-
-#endif // ENABLE_CXX_INTEROP

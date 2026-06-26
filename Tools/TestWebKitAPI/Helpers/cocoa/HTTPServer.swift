@@ -21,8 +21,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_CXX_INTEROP
-
 import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.HTTPServer
 import struct Swift.String
@@ -220,5 +218,3 @@ extension TestWebKitAPI.__CxxHTTPServer.`Protocol` {
             }
     }
 }
-
-#endif // ENABLE_CXX_INTEROP
