@@ -1378,32 +1378,14 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier 
 
 void NetworkConnectionToWebProcess::logUserInteraction(RegistrableDomain&& domain)
 {
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, domain) == NetworkProcess::AllowCookieAccess::Allow);
-
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->logUserInteraction(WTF::move(domain), [] { });
     }
 }
 
-// Validate that the WebContent process is not setting fields it has no authority over. The WCP-side ResourceLoadObserver
-// never populates these; only the network grocess grant/classification paths should write them.
-static bool resourceLoadStatisticsContainsOnlyObservableFields(const ResourceLoadStatistics& statistics)
-{
-    return statistics.storageAccessUnderTopFrameDomains.isEmpty()
-        && !statistics.grandfathered
-        && !statistics.isPrevalentResource
-        && !statistics.isVeryPrevalentResource
-        && !statistics.dataRecordsRemoved
-        && !statistics.timesAccessedAsFirstPartyDueToUserInteraction
-        && !statistics.timesAccessedAsFirstPartyDueToStorageAccessAPI;
-}
-
 void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
 {
-    for (auto& statistic : statistics)
-        MESSAGE_CHECK_COMPLETION(resourceLoadStatisticsContainsOnlyObservableFields(statistic), completionHandler());
-
     if (CheckedPtr networkSession = this->networkSession()) {
         if (networkSession->sessionID().isEphemeral()) {
             completionHandler();
@@ -1489,9 +1471,6 @@ void NetworkConnectionToWebProcess::storageAccessQuirkForTopFrameDomain(URL&& to
 
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain)
 {
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, domainInNeedOfStorageAccess) == NetworkProcess::AllowCookieAccess::Allow);
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, openerDomain) == NetworkProcess::AllowCookieAccess::Allow);
-
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->requestStorageAccessUnderOpener(WTF::move(domainInNeedOfStorageAccess), openerPageID, WTF::move(openerDomain));
