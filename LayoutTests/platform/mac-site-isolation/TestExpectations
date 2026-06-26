@@ -60,7 +60,6 @@ webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-
 http/tests/site-isolation/inspector/worker/worker-in-cross-origin-iframe.html [ Pass ]
 http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
 http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
-http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.https.html [ Failure ]
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
 http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Failure ]

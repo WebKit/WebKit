@@ -1332,10 +1332,10 @@ void NetworkConnectionToWebProcess::clearPageSpecificData(PageIdentifier pageID)
         storageSession->clearPageSpecificDataForResourceLoadStatistics(pageID);
 }
 
-void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier frameID, PageIdentifier pageID)
+void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier frameID)
 {
     if (CheckedPtr storageSession = m_networkProcess->storageSession(m_sessionID))
-        storageSession->removeStorageAccessForFrame(frameID, pageID);
+        storageSession->removeStorageAccessForFrame(frameID);
 }
 
 void NetworkConnectionToWebProcess::logUserInteraction(RegistrableDomain&& domain)

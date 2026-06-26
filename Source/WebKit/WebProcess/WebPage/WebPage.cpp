@@ -2430,6 +2430,11 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
         return;
     }
 
+    if (loadParameters.shouldRevokeFrameSpecificStorageAccess) {
+        if (RefPtr client = frame->localFrameLoaderClient())
+            client->revokeFrameSpecificStorageAccess();
+    }
+
     setLastNavigationWasAppInitiated(loadParameters.request.isAppInitiated());
 
 #if ENABLE(APP_BOUND_DOMAINS)

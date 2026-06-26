@@ -85,7 +85,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     ClearPageSpecificData(WebCore::PageIdentifier pageID);
 
-    [EnabledBy=StorageAccessAPIEnabled] RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
+    [EnabledBy=StorageAccessAPIEnabled] RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID);
     LogUserInteraction(WebCore::RegistrableDomain domain)
     ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics) -> ()
     [EnabledBy=StorageAccessAPIEnabled] HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess)

@@ -95,6 +95,7 @@ struct LoadParameters {
     bool isHandledByAboutSchemeHandler { false };
     bool isHistoryItemNavigation { false };
     bool shouldConsiderEnhancedSecurityForInsecureResponse { false };
+    bool shouldRevokeFrameSpecificStorageAccess { false };
 
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> advancedPrivacyProtections;
     uint64_t requiredCookiesVersion { 0 };

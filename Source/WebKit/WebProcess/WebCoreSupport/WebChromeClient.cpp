@@ -411,6 +411,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         frame.loader().navigationUpgradeToHTTPSBehavior(),
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
+        false, /* shouldRevokeFrameSpecificStorageAccess */
         openedMainFrameName,
         std::nullopt, /* targetBackForwardItemIdentifier */
         std::nullopt, /* sourceBackForwardItemIdentifier */

@@ -269,7 +269,7 @@ public:
     WEBCORE_EXPORT bool hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier>, std::optional<PageIdentifier>) const;
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
     WEBCORE_EXPORT void grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, std::optional<FrameIdentifier>, PageIdentifier);
-    WEBCORE_EXPORT void removeStorageAccessForFrame(FrameIdentifier, PageIdentifier);
+    WEBCORE_EXPORT void removeStorageAccessForFrame(FrameIdentifier);
     WEBCORE_EXPORT void clearPageSpecificDataForResourceLoadStatistics(PageIdentifier);
     WEBCORE_EXPORT void removeAllStorageAccess();
     WEBCORE_EXPORT void NODELETE setCacheMaxAgeCapForPrevalentResources(Seconds);

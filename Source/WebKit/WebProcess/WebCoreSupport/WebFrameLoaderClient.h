@@ -49,6 +49,7 @@ class HitTestResult;
 class NavigationAction;
 class ResourceRequest;
 class ResourceResponse;
+class Site;
 using FramePolicyFunction = CompletionHandler<void(PolicyAction)>;
 
 struct FrameTreeSyncSerializationData;
@@ -64,7 +65,7 @@ class WebFrameLoaderClient {
 public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
-    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags) const;
+    std::optional<NavigationActionData> navigationActionData(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, bool shouldRevokeFrameSpecificStorageAccess) const;
 
     virtual void applyWebsitePolicies(WebsitePoliciesData&&) = 0;
 
@@ -72,10 +73,17 @@ public:
 
     ScopeExit<Function<void()>> takeFrameInvalidator() { return WTF::move(m_frameInvalidator); }
 
+    // Returns true if the navigation's initiator is a different frame than the
+    // target and is on a different site than the target's current site. Used by
+    // both WebLocalFrameLoaderClient and WebRemoteFrameClient to decide whether
+    // to drop frame-specific storage access on cross-frame, cross-site iframe
+    // navigation.
+    static bool initiatorIsCrossFrameAndCrossSite(const WebCore::NavigationAction&, WebCore::FrameIdentifier targetFrameID, const WebCore::Site& targetSite);
+
 protected:
     WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
 
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&);
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, std::optional<WebCore::NavigationIdentifier>, std::optional<WebCore::HitTestResult>&&, bool, WebCore::NavigationUpgradeToHTTPSBehavior, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, bool shouldRevokeFrameSpecificStorageAccess, WebCore::FramePolicyFunction&&);
     void updateSandboxFlags(WebCore::SandboxFlags);
     void updateReferrerPolicy(WebCore::ReferrerPolicy);
     void updateOpener(std::optional<WebCore::FrameIdentifier>);

@@ -40,6 +40,7 @@ struct WebKit::NavigationActionData {
     WebCore::NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior;
     bool isInitialFrameSrcLoad;
     bool isContentRuleListRedirect;
+    bool shouldRevokeFrameSpecificStorageAccess;
     String openedMainFrameName;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;

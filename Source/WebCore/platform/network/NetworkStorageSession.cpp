@@ -396,13 +396,10 @@ void NetworkStorageSession::grantStorageAccess(const RegistrableDomain& resource
     }
 }
 
-void NetworkStorageSession::removeStorageAccessForFrame(FrameIdentifier frameID, PageIdentifier pageID)
+void NetworkStorageSession::removeStorageAccessForFrame(FrameIdentifier frameID)
 {
-    auto iteration = m_framesGrantedStorageAccess.find(pageID);
-    if (iteration == m_framesGrantedStorageAccess.end())
-        return;
-
-    iteration->value.remove(frameID);
+    for (auto& innerMap : m_framesGrantedStorageAccess.values())
+        innerMap.remove(frameID);
 }
 
 void NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics(PageIdentifier pageID)

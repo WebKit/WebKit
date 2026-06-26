@@ -402,7 +402,7 @@ private:
 
     void clearPageSpecificData(WebCore::PageIdentifier);
 
-    void removeStorageAccessForFrame(WebCore::FrameIdentifier, WebCore::PageIdentifier);
+    void removeStorageAccessForFrame(WebCore::FrameIdentifier);
 
     void logUserInteraction(RegistrableDomain&&);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);

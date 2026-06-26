@@ -27,6 +27,8 @@
 #include "WebRemoteFrameClient.h"
 
 #include "MessageSenderInlines.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebMessagePortChannelProvider.h"
@@ -41,9 +43,12 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/NavigationAction.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/SecurityOrigin.h>
+#include <WebCore/Site.h>
 #include <WebCore/UserGestureIndicator.h>
 
 namespace WebKit {
@@ -205,7 +210,20 @@ void WebRemoteFrameClient::unfocus()
 void WebRemoteFrameClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
     FormState* formState, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
 {
-    WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags, policyDecisionMode, WTF::move(function));
+    // For the SI case where this iframe is in a different process from the navigation's initiator,
+    // revoke the iframe's frame-specific storage-access grant. The NetworkProcess-side clear is
+    // sent directly from this (the initiating) WebProcess. The storage permission in the iframe's
+    // process is cleared when WebPage::loadRequest is called. A flag to revoke storage access is
+    // passed in from here to NavigationActionData and forwarded to LoadParameters.
+    bool shouldRevokeFrameSpecificStorageAccess = false;
+    if (RefPtr coreFrame = m_frame->coreFrame()) {
+        if (RefPtr targetOrigin = coreFrame->frameDocumentSecurityOrigin())
+            shouldRevokeFrameSpecificStorageAccess = initiatorIsCrossFrameAndCrossSite(navigationAction, m_frame->frameID(), Site(targetOrigin->data()));
+    }
+    if (shouldRevokeFrameSpecificStorageAccess)
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(m_frame->frameID()), 0);
+
+    WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags, policyDecisionMode, shouldRevokeFrameSpecificStorageAccess, WTF::move(function));
 }
 
 void WebRemoteFrameClient::updateSandboxFlags(WebCore::SandboxFlags sandboxFlags)

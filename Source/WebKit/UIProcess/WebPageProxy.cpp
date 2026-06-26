@@ -5749,6 +5749,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.ownerPermissionsPolicy = navigation->ownerPermissionsPolicy();
             loadParameters.navigationUpgradeToHTTPSBehavior = navigationAction->data().navigationUpgradeToHTTPSBehavior;
             loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
+            loadParameters.shouldRevokeFrameSpecificStorageAccess = navigationAction->data().shouldRevokeFrameSpecificStorageAccess;
             if (auto& action = navigation->lastNavigationAction())
                 loadParameters.requester = action->requester;
             if (navigation->currentRequestIsRedirect())

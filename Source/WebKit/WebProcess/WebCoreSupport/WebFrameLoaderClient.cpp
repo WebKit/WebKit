@@ -40,7 +40,9 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NavigationAction.h>
 #include <WebCore/PolicyChecker.h>
+#include <WebCore/Site.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -66,7 +68,17 @@ WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Func
 
 WebFrameLoaderClient::~WebFrameLoaderClient() = default;
 
-std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags) const
+bool WebFrameLoaderClient::initiatorIsCrossFrameAndCrossSite(const NavigationAction& navigationAction, FrameIdentifier targetFrameID, const Site& targetSite)
+{
+    auto requestor = navigationAction.requester();
+    if (!requestor || !requestor->frameID)
+        return false;
+    if (*requestor->frameID == targetFrameID)
+        return false;
+    return Site(requestor->url) != targetSite;
+}
+
+std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, bool shouldRevokeFrameSpecificStorageAccess) const
 {
     RefPtr webPage = m_frame->page();
     if (!webPage) {
@@ -164,6 +176,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationUpgradeToHTTPSBehavior,
         navigationAction.isInitialFrameSrcLoad(),
         navigationAction.isContentRuleListRedirect(),
+        shouldRevokeFrameSpecificStorageAccess,
         { },
         navigationAction.targetBackForwardItemIdentifier(),
         navigationAction.sourceBackForwardItemIdentifier(),
@@ -190,11 +203,11 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
     };
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse, FormState*, const String& clientRedirectSourceForHistory, std::optional<WebCore::NavigationIdentifier> navigationID, std::optional<WebCore::HitTestResult>&& hitTestResult, bool hasOpener, NavigationUpgradeToHTTPSBehavior navigationUpgradeToHTTPSBehavior, SandboxFlags sandboxFlags, PolicyDecisionMode policyDecisionMode, bool shouldRevokeFrameSpecificStorageAccess, FramePolicyFunction&& function)
 {
     LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getCurrentProcessID(), request.url().string().utf8().data());
 
-    auto navigationActionData = this->navigationActionData(navigationAction, request, redirectResponse, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags);
+    auto navigationActionData = this->navigationActionData(navigationAction, request, redirectResponse, clientRedirectSourceForHistory, navigationID, WTF::move(hitTestResult), hasOpener, navigationUpgradeToHTTPSBehavior, sandboxFlags, shouldRevokeFrameSpecificStorageAccess);
     if (!navigationActionData)
         return function(PolicyAction::Ignore);
 
