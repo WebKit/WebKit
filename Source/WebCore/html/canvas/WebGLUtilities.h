@@ -219,18 +219,19 @@ public:
     {
     }
 
+    ScopedWebGLRestoreFramebuffer(ScopedWebGLRestoreFramebuffer&& other)
+        : m_context(std::exchange(other.m_context, nullptr))
+    {
+    }
+
     ~ScopedWebGLRestoreFramebuffer()
     {
-        RefPtr gl = m_context->graphicsContextGL();
-        if (RefPtr gl2Ccontext = dynamicDowncast<WebGL2RenderingContext>(m_context.get())) {
-            gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, objectOrZero(gl2Ccontext->m_readFramebufferBinding));
-            gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, objectOrZero(gl2Ccontext->m_framebufferBinding));
-        } else
-            gl->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, objectOrZero(m_context->m_framebufferBinding));
+        if (RefPtr context = m_context.get())
+            context->rebindFramebuffers();
     }
 
 private:
-    WeakRef<WebGLRenderingContextBase> m_context;
+    WeakPtr<WebGLRenderingContextBase> m_context;
 };
 
 class ScopedWebGLRestoreRenderbuffer {
@@ -298,35 +299,41 @@ public:
         : m_context(context)
     {
         RefPtr gl = context.graphicsContextGL();
-        gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
-        if (context.m_oesDrawBuffersIndexed)
-            gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
-        else
-            gl->colorMask(maskRed, maskGreen, maskBlue, maskAlpha);
+        // Only touch GL state (and pay the IPC) when the requested value differs from the
+        // value the WebGL layer already has; the destructor restores to that same value, so
+        // an unchanged value needs neither a set nor a restore.
+        m_restoreColor = clearRed != context.m_clearColor[0] || clearGreen != context.m_clearColor[1]
+            || clearBlue != context.m_clearColor[2] || clearAlpha != context.m_clearColor[3];
+        if (m_restoreColor)
+            gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
+
+        m_restoreMask = maskRed != context.m_colorMask[0] || maskGreen != context.m_colorMask[1]
+            || maskBlue != context.m_colorMask[2] || maskAlpha != context.m_colorMask[3];
+        if (m_restoreMask) {
+            if (context.m_oesDrawBuffersIndexed)
+                gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
+            else
+                gl->colorMask(maskRed, maskGreen, maskBlue, maskAlpha);
+        }
     }
 
     ~ScopedClearColorAndMask()
     {
-        auto clearRed   = m_context->m_clearColor[0];
-        auto clearGreen = m_context->m_clearColor[1];
-        auto clearBlue  = m_context->m_clearColor[2];
-        auto clearAlpha = m_context->m_clearColor[3];
-
-        auto maskRed   = m_context->m_colorMask[0];
-        auto maskGreen = m_context->m_colorMask[1];
-        auto maskBlue  = m_context->m_colorMask[2];
-        auto maskAlpha = m_context->m_colorMask[3];
-
         RefPtr gl = m_context->graphicsContextGL();
-        gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
-        if (m_context->m_oesDrawBuffersIndexed)
-            gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
-        else
-            gl->colorMask(maskRed, maskGreen, maskBlue, maskAlpha);
+        if (m_restoreColor)
+            gl->clearColor(m_context->m_clearColor[0], m_context->m_clearColor[1], m_context->m_clearColor[2], m_context->m_clearColor[3]);
+        if (m_restoreMask) {
+            if (m_context->m_oesDrawBuffersIndexed)
+                gl->colorMaskiOES(0, m_context->m_colorMask[0], m_context->m_colorMask[1], m_context->m_colorMask[2], m_context->m_colorMask[3]);
+            else
+                gl->colorMask(m_context->m_colorMask[0], m_context->m_colorMask[1], m_context->m_colorMask[2], m_context->m_colorMask[3]);
+        }
     }
 
 private:
     WeakRef<WebGLRenderingContextBase> m_context;
+    bool m_restoreColor { false };
+    bool m_restoreMask { false };
 };
 
 class ScopedClearDepthAndMask {
@@ -339,8 +346,12 @@ public:
             return;
 
         RefPtr gl = context.graphicsContextGL();
-        gl->clearDepth(clear);
-        gl->depthMask(mask);
+        m_restoreClear = clear != context.m_clearDepth;
+        if (m_restoreClear)
+            gl->clearDepth(clear);
+        m_restoreMask = mask != context.m_depthMask;
+        if (m_restoreMask)
+            gl->depthMask(mask);
     }
 
     ~ScopedClearDepthAndMask()
@@ -349,12 +360,16 @@ public:
             return;
 
         RefPtr gl = m_context->graphicsContextGL();
-        gl->clearDepth(m_context->m_clearDepth);
-        gl->depthMask(m_context->m_depthMask);
+        if (m_restoreClear)
+            gl->clearDepth(m_context->m_clearDepth);
+        if (m_restoreMask)
+            gl->depthMask(m_context->m_depthMask);
     }
 
 private:
     WeakPtr<WebGLRenderingContextBase> m_context;
+    bool m_restoreClear { false };
+    bool m_restoreMask { false };
 };
 
 class ScopedClearStencilAndMask {
@@ -367,8 +382,12 @@ public:
             return;
 
         RefPtr gl = context.graphicsContextGL();
-        gl->clearStencil(clear);
-        gl->stencilMaskSeparate(GraphicsContextGL::FRONT, mask);
+        m_restoreClear = clear != context.m_clearStencil;
+        if (m_restoreClear)
+            gl->clearStencil(clear);
+        m_restoreMask = mask != context.m_stencilMask;
+        if (m_restoreMask)
+            gl->stencilMaskSeparate(GraphicsContextGL::FRONT, mask);
     }
 
     ~ScopedClearStencilAndMask()
@@ -377,12 +396,16 @@ public:
             return;
 
         RefPtr gl = m_context->graphicsContextGL();
-        gl->clearStencil(m_context->m_clearStencil);
-        gl->stencilMaskSeparate(GraphicsContextGL::FRONT, m_context->m_stencilMask);
+        if (m_restoreClear)
+            gl->clearStencil(m_context->m_clearStencil);
+        if (m_restoreMask)
+            gl->stencilMaskSeparate(GraphicsContextGL::FRONT, m_context->m_stencilMask);
     }
 
 private:
     WeakPtr<WebGLRenderingContextBase> m_context;
+    bool m_restoreClear { false };
+    bool m_restoreMask { false };
 };
 
 }

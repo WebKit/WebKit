@@ -85,24 +85,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     if (m_texture)
         GL_DeleteTextures(1, &m_texture);
 
-    auto attributes = contextAttributes();
-
-    if (attributes.antialias) {
-        GL_DeleteRenderbuffers(1, &m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth)
-            GL_DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-        GL_DeleteFramebuffers(1, &m_multisampleFBO);
-    } else {
-        if (attributes.stencil || attributes.depth) {
-            if (m_depthStencilBuffer)
-                GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
-        }
-
-        if (m_preserveDrawingBufferTexture)
-            GL_DeleteTextures(1, &m_preserveDrawingBufferTexture);
-        if (m_preserveDrawingBufferFBO)
-            GL_DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
-    }
     GL_DeleteFramebuffers(1, &m_fbo);
 
     if (m_contextObj) {
@@ -161,7 +143,18 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 
 RefPtr<PixelBuffer> GraphicsContextGLEGL::readCompositedResults()
 {
-    return readRenderingResultsForPainting();
+    if (!m_isCompositorTextureInitialized)
+        return nullptr;
+    if (!makeContextCurrent())
+        return nullptr;
+    if (getInternalFramebufferSize().isEmpty())
+        return nullptr;
+    // swapCompositorTexture() leaves m_fbo attached to the texture that will be rendered into
+    // next, so the presented frame lives in m_compositorTexture and needs a framebuffer of its own.
+    ScopedFramebuffer readFBO;
+    ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO, readFBO);
+    GL_FramebufferTexture2D(fboBinding.framebufferTarget(), GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_compositorTexture, 0);
+    return readPixelsForPaintResults();
 }
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
@@ -223,15 +216,18 @@ bool GraphicsContextGLEGL::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObje
 #endif
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLEGL::surfaceBufferToVideoFrame(SurfaceBuffer)
+RefPtr<VideoFrame> GraphicsContextGLEGL::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
 #if USE(GSTREAMER)
-    if (auto pixelBuffer = readCompositedResults()) {
+    RefPtr pixelBuffer = buffer == SurfaceBuffer::DrawingBuffer ? readRenderingResultsForPainting() : readCompositedResults();
+    if (pixelBuffer) {
         VideoFrameGStreamer::CreateOptions options;
         options.rotation = VideoFrameGStreamer::Rotation::UpsideDown;
         options.isMirrored = true;
         return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { }, 30, options);
     }
+#else
+    UNUSED_PARAM(buffer);
 #endif
     return nullptr;
 }
@@ -382,18 +378,8 @@ void GraphicsContextGLEGL::swapCompositorTexture()
 #endif
     m_isCompositorTextureInitialized = true;
 
-    if (m_preserveDrawingBufferTexture) {
-        // The context requires the use of an intermediate texture in order to implement preserveDrawingBuffer:true without antialiasing.
-        // m_fbo is bound at this point.
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_preserveDrawingBufferTexture, 0);
-        // Attach m_texture to m_preserveDrawingBufferFBO for later blitting.
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_preserveDrawingBufferFBO);
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    } else {
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-    }
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
     GL_Flush();
 
@@ -408,14 +394,14 @@ bool GraphicsContextGLEGL::reshapeDrawingBuffer()
     const int width = size.width();
     const int height = size.height();
     GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
-    GLenum textureTarget = GL_TEXTURE_2D;
     GLuint internalColorFormat = colorFormat;
-    ScopedRestoreTextureBinding restoreBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
+    ScopedRestoreTextureBinding restoreBinding(GL_TEXTURE_BINDING_2D, GL_TEXTURE_2D);
+    ScopedBufferBinding scopedPixelUnpackBufferReset(GL_PIXEL_UNPACK_BUFFER, 0, m_isForWebGL2);
 
-    GL_BindTexture(textureTarget, m_compositorTexture);
-    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    GL_BindTexture(textureTarget, m_texture);
-    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    GL_BindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    GL_TexImage2D(GL_TEXTURE_2D, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    GL_BindTexture(GL_TEXTURE_2D, m_texture);
+    GL_TexImage2D(GL_TEXTURE_2D, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
 
     m_isCompositorTextureInitialized = false;
 

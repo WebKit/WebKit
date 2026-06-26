@@ -102,6 +102,7 @@ class EXTTextureNorm16;
 class HTMLImageElement;
 class ImageData;
 class IntSize;
+class IntRect;
 class KHRParallelShaderCompile;
 class NativeImage;
 class NVShaderNoperspectiveInterpolation;
@@ -146,6 +147,7 @@ class WebGLShader;
 class WebGLShaderPrecisionFormat;
 class WebGLStencilTexturing;
 class WebGLUniformLocation;
+class ScopedWebGLRestoreFramebuffer;
 
 #if ENABLE(MEDIA_STREAM)
 class VideoFrame;
@@ -170,6 +172,7 @@ using WebGLCanvas = Variant<
 
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext {
     WTF_MAKE_TZONE_ALLOCATED(WebGLRenderingContextBase);
+    friend class WebGLDefaultFramebuffer;
 public:
     USING_CAN_MAKE_WEAKPTR(GPUBasedCanvasRenderingContext);
 
@@ -984,6 +987,11 @@ protected:
 
     // Get the framebuffer bound to the given target.
     virtual WebGLFramebuffer* NODELETE getFramebufferBinding(GCGLenum target);
+    [[nodiscard]] virtual std::optional<ScopedWebGLRestoreFramebuffer> prepareDefaultFramebufferForReadIfBound(std::optional<IntRect> = std::nullopt);
+
+    // Restore the GL framebuffer bindings to the state recorded by the WebGL layer
+    // (used by ScopedWebGLRestoreFramebuffer on scope exit).
+    virtual void rebindFramebuffers();
 
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.

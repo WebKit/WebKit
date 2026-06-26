@@ -1121,6 +1121,7 @@ void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum target, GCGLint level, G
     if (!validateTexture3DBinding("copyTexSubImage3D"_s, target))
         return;
     clearIfComposited(CallerTypeOther);
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(IntRect { x, y, width, height });
     protect(graphicsContextGL())->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
@@ -2894,6 +2895,25 @@ WebGLFramebuffer* WebGL2RenderingContext::getFramebufferBinding(GCGLenum target)
     return WebGLRenderingContextBase::getFramebufferBinding(target);
 }
 
+std::optional<ScopedWebGLRestoreFramebuffer> WebGL2RenderingContext::prepareDefaultFramebufferForReadIfBound(std::optional<IntRect> rect)
+{
+    // WebGL2: read FB is separate. Default framebuffer is bound for reading when
+    // m_readFramebufferBinding is null.
+    if (m_readFramebufferBinding)
+        return std::nullopt;
+    return m_defaultFramebuffer->prepareForReadWhenBound(rect);
+}
+
+void WebGL2RenderingContext::rebindFramebuffers()
+{
+    RefPtr gl = graphicsContextGL();
+    if (!gl)
+        return;
+    auto defaultFBO = m_defaultFramebuffer ? m_defaultFramebuffer->object() : 0;
+    gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, m_readFramebufferBinding ? m_readFramebufferBinding->object() : defaultFBO);
+    gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, m_framebufferBinding ? m_framebufferBinding->object() : defaultFBO);
+}
+
 bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(ASCIILiteral functionName, GCGLenum attachment)
 {
     switch (attachment) {
@@ -3498,6 +3518,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
 
     clearIfComposited(CallerTypeOther);
 
+    auto restoreReadBinding = prepareDefaultFramebufferForReadIfBound(rect);
     protect(graphicsContextGL())->readPixelsBufferObject(rect, format, type, offsetAndSkip.value(), m_packParameters.alignment, m_packParameters.rowLength);
 }
 
