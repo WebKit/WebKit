@@ -71,6 +71,7 @@
 #include "StyleExtractor.h"
 #include "StyleInterpolation.h"
 #include "StylePendingResources.h"
+#include "StylePrimitiveNumericTypes+DeprecatedConversions.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -198,12 +199,15 @@ static std::optional<Variant<double, TimelineRangeOffset>> doubleOrTimelineRange
     if (offsets.size() != 1)
         return { };
 
-    auto [rangeCSSValueID, value] = offsets[0];
-    auto rangeName = Style::convertCSSValueIDToSingleAnimationRangeName(rangeCSSValueID);
-    if (rangeName == Style::SingleAnimationRangeName::Normal)
-        return value;
+    auto [rangeCSSValueID, offsetCSSPercentage] = offsets[0];
 
-    return { TimelineRangeOffset { Style::convertSingleAnimationRangeNameToRangeString(rangeName), CSSNumericFactory::percent(value * 100) } };
+    auto resolvedOffsetPercentage = Style::deprecatedToStyle(offsetCSSPercentage).value;
+    auto rangeName = Style::convertCSSValueIDToSingleAnimationRangeName(rangeCSSValueID);
+
+    if (rangeName == Style::SingleAnimationRangeName::Normal)
+        return { CSS::clampToRange<CSS::ClosedPercentageRange, double>(resolvedOffsetPercentage) / 100 };
+
+    return { TimelineRangeOffset { Style::convertSingleAnimationRangeNameToRangeString(rangeName), CSSNumericFactory::percent(resolvedOffsetPercentage) } };
 }
 
 static std::optional<KeyframeEffect::KeyframeOffset> validateKeyframeOffset(const KeyframeEffect::KeyframeOffset& offset, const Document& document)
@@ -931,7 +935,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
         if (!styleScope)
             return { };
 
-        return protect(styleScope->resolver())->keyframeRulesForName(computedBlendingKeyframes.keyframesName(), backingStyleAnimation.timingFunction().value.ptr());
+        return protect(styleScope->resolver())->keyframeRulesForName(computedBlendingKeyframes.keyframesName(), backingStyleAnimation.timingFunction());
     }();
 
     auto matchingStyleRuleKeyframe = [&](const BlendingKeyframe& keyframe) -> StyleRuleKeyframe* {
@@ -1424,7 +1428,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const Style::ComputedS
     if (m_target) {
         Style::Scope::resolveTreeScopedReference(protect(*m_target), *backingStyleAnimationName, [&](const Style::Scope& scope, const AtomString&) {
             ASSERT(scope.resolverIfExists());
-            return protect(scope.resolverIfExists())->keyframeStylesForAnimation(protect(*m_target), unanimatedStyle, resolutionContext, blendingKeyframes, backingStyleAnimation.timingFunction().value.ptr());
+            return protect(scope.resolverIfExists())->keyframeStylesForAnimation(protect(*m_target), unanimatedStyle, resolutionContext, blendingKeyframes, backingStyleAnimation.timingFunction());
         });
 
         // Ensure resource loads for all the frames.

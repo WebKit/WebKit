@@ -27,6 +27,7 @@
 #include "CompositeOperation.h"
 #include "KeyframeInterpolation.h"
 #include "StyleComputedStyle.h"
+#include "StyleEasingFunction.h"
 #include "StyleSingleAnimationRangeName.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
@@ -86,8 +87,11 @@ public:
     const Style::ComputedStyle* style() const LIFETIME_BOUND { return m_style.get(); }
     void setStyle(std::unique_ptr<Style::ComputedStyle>&& style) { m_style = WTF::move(style); }
 
-    TimingFunction* timingFunction() const { return m_timingFunction.get(); }
-    void setTimingFunction(const RefPtr<TimingFunction>& timingFunction) { m_timingFunction = timingFunction; }
+    const std::optional<Style::EasingFunction>& easingFunction() const { return m_timingFunction; }
+    void setEasingFunction(Style::EasingFunction&& easingFunction) { m_timingFunction = WTF::move(easingFunction); }
+
+    TimingFunction* timingFunction() const { return m_timingFunction ? m_timingFunction->value.ptr() : nullptr; }
+    void setTimingFunction(Ref<TimingFunction>&& timingFunction) { m_timingFunction = Style::EasingFunction { WTF::move(timingFunction) }; }
 
     void setCompositeOperation(std::optional<CompositeOperation> op) { m_compositeOperation = op; }
 
@@ -101,7 +105,9 @@ private:
     double m_computedOffset { std::numeric_limits<double>::quiet_NaN() };
     HashSet<AnimatableCSSProperty> m_properties; // The properties specified in this keyframe.
     std::unique_ptr<Style::ComputedStyle> m_style;
-    RefPtr<TimingFunction> m_timingFunction;
+    // https://drafts.csswg.org/web-animations-1/#keyframe-specific-easing-function
+    std::optional<Style::EasingFunction> m_timingFunction;
+    // https://drafts.csswg.org/web-animations-1/#keyframe-specific-composite-operation
     std::optional<CompositeOperation> m_compositeOperation;
     bool m_containsDirectionAwareProperty { false };
     bool m_hasPropertiesWithRevertRuleOrLayer { false };

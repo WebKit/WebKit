@@ -54,6 +54,16 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::S
     );
 }
 
+Ref<TimingFunction> createTimingFunction(const CSSToLengthConversionData& conversionData, const CSS::SpringEasingFunction& function)
+{
+    return SpringTimingFunction::create(
+        toStyle(function->mass, conversionData).value,
+        toStyle(function->stiffness, conversionData).value,
+        toStyle(function->damping, conversionData).value,
+        toStyle(function->initialVelocity, conversionData).value
+    );
+}
+
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::SpringEasingFunction& function)
 {
     if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))

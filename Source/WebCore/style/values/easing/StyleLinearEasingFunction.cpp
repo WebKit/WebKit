@@ -163,6 +163,13 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::L
     });
 }
 
+Ref<TimingFunction> createTimingFunction(const CSSToLengthConversionData& conversionData, const CSS::LinearEasingFunction& function)
+{
+    return createTimingFunctionWithResolver(function, [&](const auto& value) -> double {
+        return toStyle(value, conversionData).value;
+    });
+}
+
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::LinearEasingFunction& function)
 {
     if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))

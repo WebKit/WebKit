@@ -31,6 +31,7 @@
 #include <limits>
 #include <type_traits>
 #include <wtf/EnumTraits.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 namespace CSS {
@@ -211,6 +212,11 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveDataIndex {
 
     constexpr bool operator==(const PrimitiveDataIndex&) const = default;
     constexpr bool operator==(Storage other) const { return storage == other; }
+
+    friend void add(Hasher& hasher, const PrimitiveDataIndex& index)
+    {
+        add(hasher, index.storage);
+    }
 
     Storage storage;
 };
@@ -478,6 +484,15 @@ template<Numeric N, SpecificKeyword... Ks> struct PrimitiveData {
         if (isCalc())
             return f(asCalc());
         return index.visitKeyword(std::forward<F>(f));
+    }
+
+    friend void add(Hasher& hasher, const PrimitiveData& data)
+    {
+        add(hasher, data.index);
+        if (data.isRaw())
+            add(hasher, data.payload.number);
+        else if (data.isCalc())
+            add(hasher, data.payload.calc);
     }
 
     void setAsMovedFrom()

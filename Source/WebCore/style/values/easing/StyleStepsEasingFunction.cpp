@@ -100,6 +100,15 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::S
     );
 }
 
+Ref<TimingFunction> createTimingFunction(const CSSToLengthConversionData& conversionData, const CSS::StepsEasingFunction& function)
+{
+    return WTF::switchOn(function->value,
+        [&](const auto& value) -> Ref<TimingFunction> {
+            return StepsTimingFunction::create(toStyle(value.steps, conversionData).value, toStepPosition(value.keyword));
+        }
+    );
+}
+
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::StepsEasingFunction& function)
 {
     if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))
