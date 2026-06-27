@@ -122,7 +122,7 @@ TEST(WebKit, UploadDirectory)
     EXPECT_FALSE(error);
 }
 
-TEST(WebKit, BlockedUploadDirectory)
+TEST(WebKit, AllowUploadDirectoryInAppSpecificTempDirectory)
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error = nil;
@@ -144,10 +144,10 @@ TEST(WebKit, BlockedUploadDirectory)
                 "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input type='file' name='testname'></form>"_s;
                 connection.send(response, [=] {
                     connection.receiveHTTPRequest([=](Vector<char>&& request) {
-                        EXPECT_FALSE(contains(request.span(), "Content-Length: 543\r\n"_span));
+                        EXPECT_TRUE(contains(request.span(), "Content-Length: 543\r\n"_span));
                         size_t headerEnd = find(request.span(), "\r\n\r\n"_span);
                         EXPECT_TRUE(headerEnd != notFound);
-                        EXPECT_EQ(request.size() - (headerEnd + strlen("\r\n\r\n")), 0u);
+                        EXPECT_EQ(request.size() - (headerEnd + strlen("\r\n\r\n")), 543u);
                         constexpr auto secondResponse =
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: 0\r\n\r\n"_s;
