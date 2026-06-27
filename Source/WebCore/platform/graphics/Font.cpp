@@ -53,6 +53,7 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
@@ -646,14 +647,28 @@ bool Font::canRenderCombiningCharacterSequence(StringView stringView) const
         ++it;
 
         if (it != end && isVariationSelector(*it)) {
-            if (!platformSupportsCodePoint(codePoint, *it)) {
-                // Try the characters individually.
-                if (!supportsCodePoint(codePoint) || !supportsCodePoint(*it))
+            auto variationSelector = *it;
+            // platformSupportsCodePoint(base, selector) is authoritative when true (e.g. a format 14 cmap entry).
+            if (!platformSupportsCodePoint(codePoint, variationSelector)) {
+                // The selector isn't rendered itself, so don't require a standalone glyph for it (emoji fonts list
+                // U+FE0F only in their format 14 cmap); requiring one wrongly rejects them. The base is enough.
+                if (!supportsCodePoint(codePoint))
+                    return false;
+                // But still honor the requested presentation: VS16 needs a color font, VS15 a text font. Test
+                // font-level color capability, not the base glyph, so substitution-built emoji (keycaps) survive.
+                bool fontHasColorGlyphs = !std::holds_alternative<NoEmojiGlyphs>(m_emojiType);
+                if (variationSelector == emojiVariationSelector && !fontHasColorGlyphs)
+                    return false;
+                if (variationSelector == textVariationSelector && fontHasColorGlyphs)
                     return false;
             }
             ++it;
             continue;
         }
+
+        // Default-ignorable code points (e.g. ZWJ in emoji sequences) drive shaping but aren't rendered themselves.
+        if (isDefaultIgnorableCodePoint(codePoint))
+            continue;
 
         if (!supportsCodePoint(codePoint))
             return false;

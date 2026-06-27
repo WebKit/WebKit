@@ -4891,7 +4891,6 @@ imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-metrics-override.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-position-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-04.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-05.html [ ImageOnlyFailure ]
