@@ -374,9 +374,19 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(Variant<Ref<ShadowRoot>
         }
     );
 
+    auto isShadowIncludingInclusiveAncestorOfAnyShadowRoot = [&](ShadowRoot* root) {
+        if (!root)
+            return false;
+        for (auto& shadowRoot : shadowRootSet) {
+            if (root->isShadowIncludingInclusiveAncestorOf(shadowRoot.ptr()))
+                return true;
+        }
+        return false;
+    };
+
     Ref startNode = range->startContainer();
     unsigned startOffset = range->startOffset();
-    while (startNode->isInShadowTree() && !shadowRootSet.contains(startNode->containingShadowRoot())) {
+    while (startNode->isInShadowTree() && !isShadowIncludingInclusiveAncestorOfAnyShadowRoot(startNode->containingShadowRoot())) {
         RefPtr host = startNode->shadowHost();
         ASSERT(host && host->parentNode());
         startNode = *host->parentNode();
@@ -385,7 +395,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(Variant<Ref<ShadowRoot>
 
     Ref endNode = range->endContainer();
     unsigned endOffset = range->endOffset();
-    while (endNode->isInShadowTree() && !shadowRootSet.contains(endNode->containingShadowRoot())) {
+    while (endNode->isInShadowTree() && !isShadowIncludingInclusiveAncestorOfAnyShadowRoot(endNode->containingShadowRoot())) {
         RefPtr host = endNode->shadowHost();
         ASSERT(host && host->parentNode());
         endNode = *host->parentNode();
