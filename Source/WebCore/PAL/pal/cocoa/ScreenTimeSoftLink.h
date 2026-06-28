@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)
+
 #if ENABLE(SCREEN_TIME)
 
 #import <ScreenTime/STScreenTimeConfiguration.h>
@@ -39,3 +41,5 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, STScreenTimeConfiguration)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, STScreenTimeConfigurationObserver)
 
 #endif // ENABLE(SCREEN_TIME)
+
+#endif // !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)

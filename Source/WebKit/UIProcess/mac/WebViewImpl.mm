@@ -197,6 +197,7 @@
 
 #import "AppKitSoftLink.h"
 #import <pal/cocoa/RevealSoftLink.h>
+#import <pal/cocoa/ScreenTimeSoftLink.h>
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/cocoa/WritingToolsUISoftLink.h>

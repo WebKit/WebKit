@@ -173,6 +173,30 @@ SUPPRESS_NODELETE bool defaultTopContentInsetBackgroundCanChangeAfterScrolling()
 #endif
 }
 
+#if ENABLE(SCREEN_TIME)
+bool defaultScreenTimeEnabled()
+{
+    bool isSafari = false;
+#if PLATFORM(IOS_FAMILY)
+    isSafari = WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
+#elif PLATFORM(MAC)
+    isSafari = WTF::MacApplication::isSafari();
+#endif
+
+    if (isSafari)
+        return false;
+
+#if PLATFORM(MAC)
+    bool isTurboTax = WTF::MacApplication::isTurboTax();
+
+    if (isTurboTax && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AutoLayoutInWKWebView))
+        return false;
+#endif // PLATFORM(MAC)
+
+    return true;
+}
+#endif // ENABLE(SCREEN_TIME)
+
 bool NODELETE defaultContentInsetBackgroundFillEnabled()
 {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)

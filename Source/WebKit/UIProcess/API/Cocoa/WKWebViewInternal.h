@@ -56,10 +56,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
-#if ENABLE(SCREEN_TIME)
-#import <ScreenTime/STWebpageController.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #import "DynamicViewportSizeUpdate.h"
 #import "UIKitSPI.h"
@@ -206,6 +202,7 @@ enum class AdjustedColorExtensionsForBannerViewOverlaysEnablement : uint8_t {
 #endif
 
 #if ENABLE(SCREEN_TIME)
+@class STWebpageController;
 @class WKScreenTimeConfigurationObserver;
 #endif
 
