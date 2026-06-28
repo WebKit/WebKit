@@ -322,7 +322,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
     // Multi-rect (inline spanning lines): shrink-wrap path.
     auto path = pathWithShrinkWrappedRects(pixelSnappedFocusRingRects, style->border().radii, outlineOffset, style->writingMode(), zoom, deviceScaleFactor);
     if (path.isEmpty()) {
-        for (auto rect : pixelSnappedFocusRingRects)
+        for (auto& rect : pixelSnappedFocusRingRects)
             path.addRect(rect);
     }
     drawFocusRing(m_paintInfo.context(), path, style.get(), focusRingColor);
