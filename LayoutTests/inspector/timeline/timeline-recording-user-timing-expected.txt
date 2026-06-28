@@ -1,0 +1,33 @@
+Tests that User Timing records (including the measure detail) survive export and re-import.
+
+
+== Running test suite: TimelineRecording.UserTiming.ExportImport
+-- Running test case: TimelineRecording.UserTiming.ExportImport
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Recording should have one User Timing record.
+PASS: Original should be a UserTimingTimelineRecord.
+PASS: Original subtype should be Measure.
+PASS: Original label should be "myMeasure".
+PASS: Original endTime should be greater than startTime.
+PASS: Original detail should be a live WI.RemoteObject.
+PASS: Original detail should be expandable.
+PASS: Original detail should be an object.
+PASS: Original detail should preview 3 properties.
+PASS: Original detail should preview a "map" property.
+PASS: Original the "map" property should preview as a Map.
+PASS: TimelineRecording should be able to export.
+PASS: Imported TimelineRecording should be marked imported.
+PASS: Imported recording should have a User Timing timeline.
+PASS: Imported recording should have one User Timing record.
+PASS: Imported should be a UserTimingTimelineRecord.
+PASS: Imported subtype should be Measure.
+PASS: Imported label should be "myMeasure".
+PASS: Imported endTime should be greater than startTime.
+PASS: Imported detail should be a WI.ObjectPreview snapshot.
+PASS: Imported detail should be an object.
+PASS: Imported detail should preview 3 properties.
+PASS: Imported detail should preview a "map" property.
+PASS: Imported the "map" property should preview as a Map.
+

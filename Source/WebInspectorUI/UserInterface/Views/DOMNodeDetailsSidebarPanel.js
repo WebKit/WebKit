@@ -319,7 +319,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
                 let mode = initialSection ? WI.ObjectTreeView.Mode.Properties : WI.ObjectTreeView.Mode.PureAPI;
                 let objectTree = new WI.ObjectTreeView(prototype, mode, propertyPath);
-                objectTree.showOnlyProperties();
+                objectTree.hideThis();
                 objectTree.setPrototypeNameOverride(prototypeName);
 
                 let detailsSection = new WI.DetailsSection(prototype.description.hash + "-prototype-properties", title, null, null, true);
@@ -439,7 +439,8 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
                 let objectTree = element.__objectTree;
                 if (objectTree) {
-                    objectTree.showOnlyJSON();
+                    objectTree.hideThis();
+                    objectTree.hidePrototype();
                     objectTree.expand();
                 }
 

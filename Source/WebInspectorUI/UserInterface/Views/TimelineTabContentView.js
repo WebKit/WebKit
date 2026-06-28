@@ -134,6 +134,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             return WI.UIString("Media");
         case WI.TimelineRecord.Type.Screenshots:
             return WI.UIString("Screenshots");
+        case WI.TimelineRecord.Type.UserTiming:
+            return WI.UIString("User Timing");
         default:
             console.error("Unknown Timeline type:", timelineType);
         }
@@ -162,6 +164,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             return "media-icon";
         case WI.TimelineRecord.Type.Screenshots:
             return "screenshots-icon";
+        case WI.TimelineRecord.Type.UserTiming:
+            return "user-timing-icon";
         default:
             console.error("Unknown Timeline type:", timelineType);
         }
@@ -190,6 +194,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             return "media";
         case WI.TimelineRecord.Type.Screenshots:
             return "screenshots";
+        case WI.TimelineRecord.Type.UserTiming:
+            return "user-timing";
         default:
             console.error("Unknown Timeline type:", timelineType);
         }
@@ -273,6 +279,18 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
             break;
 
+        case WI.TimelineRecord.Type.UserTiming:
+            switch (timelineRecord.eventType) {
+            case WI.UserTimingTimelineRecord.EventType.PerformanceMeasure:
+                return "performance-measure-record";
+            case WI.UserTimingTimelineRecord.EventType.ConsoleTime:
+                return "console-time-record";
+            default:
+                console.error("Unknown UserTimingTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
+            }
+
+            break;
+
         case WI.TimelineRecord.Type.CPU:
         case WI.TimelineRecord.Type.Memory:
         case WI.TimelineRecord.Type.Screenshots:
@@ -311,6 +329,8 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             if (includeDetailsInMainTitle && timelineRecord.subtitle)
                 return timelineRecord.subtitle;
             return timelineRecord.displayName;
+        case WI.TimelineRecord.Type.UserTiming:
+            return timelineRecord.label;
         case WI.TimelineRecord.Type.CPU:
         case WI.TimelineRecord.Type.Memory:
         case WI.TimelineRecord.Type.Screenshots:

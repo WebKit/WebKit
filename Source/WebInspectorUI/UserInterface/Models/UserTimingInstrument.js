@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.LocalJSONContentView = class LocalJSONContentView extends WI.LocalRemoteObjectContentView
+WI.UserTimingInstrument = class UserTimingInstrument extends WI.Instrument
 {
-    constructor(json, representedObject)
+    constructor()
     {
-        console.assert(typeof json === "string" && json.isJSON());
+        console.assert(WI.UserTimingInstrument.supported());
 
-        super(representedObject);
+        super();
+    }
 
-        this._json = json;
+    // Static
+
+    static supported()
+    {
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): Timeline.EventType.PerformanceMeasure did not exist yet.
+        return InspectorBackend.hasDomain("Timeline") && !!InspectorBackend.Enum.Timeline.EventType.PerformanceMeasure;
     }
 
     // Protected
 
-    get expression()
+    get timelineRecordType()
     {
-        return this._json;
-    }
-
-    renderRemoteObject(remoteObject)
-    {
-        const propertyPath = null;
-        const forceExpanding = true;
-        let objectTree = new WI.ObjectTreeView(remoteObject, WI.ObjectTreeView.Mode.Properties, propertyPath, forceExpanding);
-        objectTree.hideThis();
-        objectTree.hidePrototype();
-        objectTree.expand();
-
-        this.element.appendChild(objectTree.element);
+        return WI.TimelineRecord.Type.UserTiming;
     }
 };

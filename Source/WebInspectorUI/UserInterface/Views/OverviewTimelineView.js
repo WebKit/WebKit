@@ -227,6 +227,10 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         this._dataGrid.removeChildren();
 
         if (this._shouldGroupBySourceCode) {
+            let userTimingTimeline = this._recording.timelines.get(WI.TimelineRecord.Type.UserTiming);
+            if (userTimingTimeline)
+                this._pendingRepresentedObjects.pushAll(userTimingTimeline.records);
+
             let networkTimeline = this._recording.timelines.get(WI.TimelineRecord.Type.Network);
             if (networkTimeline)
                 this._pendingRepresentedObjects.pushAll(networkTimeline.records.map((record) => record.resource));
@@ -248,6 +252,10 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
                 return dataGridNode.resource.firstTimestamp;
             if (dataGridNode instanceof WI.SourceCodeTimelineTimelineDataGridNode)
                 return dataGridNode.sourceCodeTimeline.startTime;
+
+            let record = dataGridNode.record;
+            if (record)
+                return record.startTime;
 
             console.error("Unknown data grid node.", dataGridNode);
             return 0;
@@ -351,7 +359,12 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
                     this._addResourceToDataGridIfNeeded(representedObject);
                 else if (representedObject instanceof WI.SourceCodeTimeline)
                     this._addSourceCodeTimeline(representedObject);
-                else
+                else if (representedObject instanceof WI.UserTimingTimelineRecord) {
+                    this._insertDataGridNode(new WI.UserTimingTimelineDataGridNode(representedObject, {
+                        graphDataSource: this,
+                        shouldShowPopover: true,
+                    }));
+                } else
                     console.error("Unknown represented object", representedObject);
             } else {
                 const options = {
@@ -370,6 +383,8 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
                     dataGridNode = new WI.ScriptTimelineDataGridNode(representedObject, options);
                 else if (representedObject instanceof WI.HeapAllocationsTimelineRecord)
                     dataGridNode = new WI.HeapAllocationsTimelineDataGridNode(representedObject, options);
+                else if (representedObject instanceof WI.UserTimingTimelineRecord)
+                    dataGridNode = new WI.UserTimingTimelineDataGridNode(representedObject, options);
 
                 console.assert(dataGridNode, representedObject);
                 if (!dataGridNode)
@@ -407,12 +422,16 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         let {record} = event.data;
 
         if (this._shouldGroupBySourceCode) {
-            if (event.target.type !== WI.TimelineRecord.Type.Network)
-                return;
+            if (event.target.type === WI.TimelineRecord.Type.UserTiming)
+                this._pendingRepresentedObjects.push(record);
+            else {
+                if (event.target.type !== WI.TimelineRecord.Type.Network)
+                    return;
 
-            console.assert(record instanceof WI.ResourceTimelineRecord);
+                console.assert(record instanceof WI.ResourceTimelineRecord);
 
-            this._pendingRepresentedObjects.push(record.resource);
+                this._pendingRepresentedObjects.push(record.resource);
+            }
         } else
             this._pendingRepresentedObjects.push(record);
 

@@ -59,6 +59,10 @@
     content: url(../Images/IdentifierIcons.svg#MediaInstrument-light);
 }
 
+.user-timing-icon .icon {
+    content: url(../Images/IdentifierIcons.svg#UserTimingInstrument-light);
+}
+
 .stopwatch-icon .icon {
     content: url(../Images/Stopwatch.svg#light);
 }
@@ -145,6 +149,14 @@
     content: url(../Images/TypeIcons.svg#HeapSnapshot-light);
 }
 
+.performance-measure-record .icon {
+    content: url(../Images/TypeIcons.svg#PerformanceMeasure-light);
+}
+
+.console-time-record .icon {
+    content: url(../Images/TypeIcons.svg#ConsoleTime-light);
+}
+
 @media (prefers-color-scheme: dark) {
     .time-icon .icon {
         filter: invert();
@@ -184,6 +196,10 @@
 
     .media-icon .icon {
         content: url(../Images/IdentifierIcons.svg#MediaInstrument-dark);
+    }
+
+    .user-timing-icon .icon {
+        content: url(../Images/IdentifierIcons.svg#UserTimingInstrument-dark);
     }
 
     .stopwatch-icon .icon {
@@ -260,5 +276,13 @@
 
     .heap-snapshot-record .icon {
         content: url(../Images/TypeIcons.svg#HeapSnapshot-dark);
+    }
+
+    .performance-measure-record .icon {
+        content: url(../Images/TypeIcons.svg#PerformanceMeasure-dark);
+    }
+
+    .console-time-record .icon {
+        content: url(../Images/TypeIcons.svg#ConsoleTime-dark);
     }
 }

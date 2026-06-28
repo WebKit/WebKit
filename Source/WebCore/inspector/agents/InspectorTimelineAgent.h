@@ -36,8 +36,10 @@
 #include "LayoutRect.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/DebuggerPrimitives.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
@@ -70,6 +72,8 @@ enum class TimelineRecordType {
     TimeStamp,
     Time,
     TimeEnd,
+    PerformanceMark,
+    PerformanceMeasure,
 
     FunctionCall,
     ProbeSample,
@@ -101,7 +105,7 @@ public:
     // TimelineBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    Inspector::Protocol::ErrorStringOr<void> start(std::optional<int>&& maxCallStackDepth);
+    Inspector::Protocol::ErrorStringOr<void> start(std::optional<int>&& maxCallStackDepth, const String& objectGroup);
     Inspector::Protocol::ErrorStringOr<void> stop();
     Inspector::Protocol::ErrorStringOr<void> setInstruments(Ref<JSON::Array>&&);
 
@@ -121,6 +125,7 @@ public:
     void didEvaluateScript();
     void didTimeStamp(const String& message);
     void didPerformanceMark(const String& label, std::optional<MonotonicTime>);
+    void performanceMeasure(const String& label, MonotonicTime startTime, MonotonicTime endTime, JSC::JSValue detail, JSC::JSGlobalObject&);
     void didEnqueueFirstContentfulPaint();
     void didEnqueueLargestContentfulPaint(Element*, unsigned area);
     void didRequestAnimationFrame(int callbackId);
@@ -203,6 +208,7 @@ private:
 
     const UniqueRef<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     Vector<TimelineRecordEntry> m_recordStack;
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
@@ -213,6 +219,8 @@ private:
     bool m_programmaticCaptureRestoreBreakpointActiveValue { false };
 
     Vector<Inspector::Protocol::Timeline::Instrument> m_instruments;
+
+    String m_userTimingObjectGroup;
 };
 
 } // namespace WebCore

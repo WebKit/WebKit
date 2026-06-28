@@ -183,6 +183,24 @@ WI.RemoteObject = class RemoteObject
         target.AnimationAgent.resolveAnimation(animation.animationId, objectGroup, wrapCallback);
     }
 
+    // Import / Export
+
+    exportData()
+    {
+        console.assert(this._type !== "object" || this._value === null);
+
+        // Only expected to be used by timeline recordings.
+        let json = {
+            type: this._type,
+            subtype: this._subtype,
+        };
+        if (this._description)
+            json.description = this._description;
+        if (this._preview)
+            json.preview = this._preview.exportData();
+        return json;
+    }
+
     // Public
 
     get target()
