@@ -219,4 +219,11 @@ void WebBackForwardListItem::updateFrameID(FrameIdentifier oldFrameID, FrameIden
         m_navigatedFrameID = newFrameID;
 }
 
+void WebBackForwardListItem::clearFrameID(FrameIdentifier frameID)
+{
+    m_mainFrameItem->clearFrameIDIfMatches(frameID);
+    if (m_navigatedFrameID && *m_navigatedFrameID == frameID)
+        m_navigatedFrameID = std::nullopt;
+}
+
 } // namespace WebKit

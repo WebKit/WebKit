@@ -544,6 +544,7 @@ private:
     TestOptions testOptionsForTest(const TestCommand&) const;
     TestFeatures platformSpecificFeatureDefaultsForTest(const TestCommand&) const;
     TestFeatures platformSpecificFeatureOverridesDefaultsForTest(const TestCommand&) const;
+    TestFeatures featuresImpliedBySiteIsolation() const;
 
     void updateWebViewSizeForTest(const TestInvocation&);
     void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);

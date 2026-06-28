@@ -69,6 +69,7 @@ public:
     void clearChildren() { m_children.clear(); }
 
     void NODELETE updateFrameID(WebCore::FrameIdentifier);
+    void NODELETE clearFrameIDIfMatches(WebCore::FrameIdentifier);
 
     void NODELETE setWasRestoredFromSession();
 

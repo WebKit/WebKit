@@ -323,7 +323,7 @@ public:
 
         if (page->settings().useUIProcessForBackForwardItemLoading()) {
             localFrame->loader().setPendingAsyncBackForwardNavigation();
-            localFrame->loader().client().dispatchGoToBackForwardItemAtIndex(m_steps, FrameLoadType::IndexedBackForward);
+            localFrame->loader().client().dispatchGoToBackForwardItemAtIndex(m_steps);
             return;
         }
 
@@ -819,14 +819,22 @@ void NavigationScheduler::scheduleHistoryNavigation(Frame& originatingFrame, int
 
     if (steps) {
         if (Ref top = m_frame->tree().top(); top.ptr() != m_frame.ptr()) {
-            if (RefPtr localTop = dynamicDowncast<LocalFrame>(top.get())) {
-                if (RefPtr localOriginating = dynamicDowncast<LocalFrame>(originatingFrame); localOriginating && !localOriginating->loader().isComplete())
-                    localOriginating->loader().completed();
-                if (m_redirect)
-                    cancel();
+            RefPtr localTop = dynamicDowncast<LocalFrame>(top.get());
+            RefPtr localOriginating = dynamicDowncast<LocalFrame>(originatingFrame);
+            if (localOriginating && !localOriginating->loader().isComplete())
+                localOriginating->loader().completed();
+            if (m_redirect)
+                cancel();
+
+            if (localTop) {
                 protect(localTop->navigationScheduler())->scheduleHistoryNavigation(originatingFrame, steps);
                 return;
             }
+            ASSERT(localOriginating);
+            if (!localOriginating)
+                return;
+            localOriginating->loader().client().dispatchEnqueueHistoryTraversalDelta(steps);
+            return;
         }
     }
 

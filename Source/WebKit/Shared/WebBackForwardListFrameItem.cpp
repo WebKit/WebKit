@@ -149,6 +149,14 @@ void WebBackForwardListFrameItem::updateFrameID(FrameIdentifier newFrameID)
     m_frameState->frameID = newFrameID;
 }
 
+void WebBackForwardListFrameItem::clearFrameIDIfMatches(FrameIdentifier frameID)
+{
+    if (m_frameState->frameID == frameID)
+        m_frameState->frameID = std::nullopt;
+    for (auto& child : m_children)
+        child->clearFrameIDIfMatches(frameID);
+}
+
 Ref<FrameState> WebBackForwardListFrameItem::copyFrameState()
 {
     Ref frameState = protect(this->frameState())->copy();

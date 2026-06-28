@@ -105,6 +105,7 @@ public:
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
 
     void updateFrameID(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
+    void clearFrameID(WebCore::FrameIdentifier);
 
 private:
     WebBackForwardListItem(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, BrowsingContextGroup*);

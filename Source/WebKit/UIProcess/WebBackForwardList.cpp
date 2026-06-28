@@ -864,6 +864,12 @@ void WebBackForwardList::updateFrameIdentifier(FrameIdentifier oldFrameID, Frame
         entry->updateFrameID(oldFrameID, newFrameID);
 }
 
+void WebBackForwardList::clearFrameIdentifier(FrameIdentifier frameID)
+{
+    for (auto& entry : m_entries)
+        entry->clearFrameID(frameID);
+}
+
 void WebBackForwardList::replaceFrameStateForChild(WebBackForwardListItem& item, WebCore::FrameIdentifier frameID, Ref<FrameState>&& newFrameState)
 {
     RefPtr targetFrameItem = item.mainFrameItem().childItemForFrameID(frameID);

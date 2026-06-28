@@ -303,6 +303,7 @@
 #include <ranges>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/CoroutineUtilities.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/FileSystem.h>
@@ -312,6 +313,7 @@
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/URLParser.h>
@@ -887,6 +889,63 @@ static Ref<BrowsingContextGroup> getOrCreateBrowsingContextGroup(const API::Page
     return BrowsingContextGroup::create();
 }
 
+class WebPageProxy::SessionHistoryTraversalQueue final : public CanMakeCheckedPtr<WebPageProxy::SessionHistoryTraversalQueue> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SessionHistoryTraversalQueue);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SessionHistoryTraversalQueue);
+public:
+    explicit SessionHistoryTraversalQueue(WebPageProxy& page)
+        : m_pageProxy(page)
+        , m_flushTimer(RunLoop::mainSingleton(), "WebPageProxy::SessionHistoryTraversalQueue::FlushTimer"_s, this, &SessionHistoryTraversalQueue::flush)
+    {
+    }
+
+    ~SessionHistoryTraversalQueue()
+    {
+        m_flushTimer.stop();
+    }
+
+    void enqueueDelta(int32_t delta)
+    {
+        if (m_hasPending) {
+            auto sum = WTF::CheckedInt32 { m_pendingDelta } + delta;
+            if (sum.hasOverflowed()) {
+                cancel();
+                return;
+            }
+            m_pendingDelta = sum.value();
+        } else {
+            m_pendingDelta = delta;
+            m_hasPending = true;
+            m_flushTimer.startOneShot(0_s);
+        }
+    }
+
+    void cancel()
+    {
+        m_flushTimer.stop();
+        m_pendingDelta = 0;
+        m_hasPending = false;
+    }
+
+private:
+    void flush()
+    {
+        int32_t delta = std::exchange(m_pendingDelta, 0);
+        m_hasPending = false;
+
+        if (!delta)
+            return;
+
+        Ref pageProxy = m_pageProxy.get();
+        pageProxy->goToBackForwardItemAtIndex(delta);
+    }
+
+    WeakRef<WebPageProxy> m_pageProxy;
+    int32_t m_pendingDelta { 0 };
+    RunLoop::Timer m_flushTimer;
+    bool m_hasPending { false };
+};
+
 WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref<API::PageConfiguration>&& configuration)
     : m_internals(makeUniqueRefWithoutRefCountedCheck<Internals>(*this, configuration->processInheritedFromOpener()))
     , m_identifier(Identifier::generate())
@@ -905,6 +964,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_navigationState(makeUniqueRefWithoutRefCountedCheck<WebNavigationState>(*this))
     , m_generatePageLoadTimingTimer(RunLoop::mainSingleton(), "WebPageProxy::GeneratePageLoadTimingTimer"_s, this, &WebPageProxy::didEndNetworkRequestsForPageLoadTimingTimerFired)
+    , m_sessionHistoryTraversalQueue(makeUniqueRefWithoutRefCountedCheck<SessionHistoryTraversalQueue>(*this))
 #if PLATFORM(COCOA)
     , m_textIndicatorFadeTimer(RunLoop::mainSingleton(), "WebPageProxy::TextIndicatorFadeTimer"_s, this, &WebPageProxy::startTextIndicatorFadeOut)
 #endif
@@ -1886,6 +1946,8 @@ void WebPageProxy::close()
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
+
+    m_sessionHistoryTraversalQueue->cancel();
 
     // Make sure we do this before we clear the UIClient so that we can ask the UIClient
     // to release the wake locks.
@@ -2873,10 +2935,27 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
     return RefPtr<API::Navigation> { WTF::move(navigation) };
 }
 
+// HTML spec replaces an iframe's initial about:blank entry on the frame's first real navigation; WebKit's BF list keeps the stale state in older entries, so dispatching a traversal into one would regress the live iframe.
+static bool isStaleInitialAboutBlankIframeTarget(WebBackForwardListFrameItem& fromFrame, WebBackForwardListFrameItem& toFrame)
+{
+    auto& toURL = toFrame.frameState().urlString;
+    if (!toURL.isEmpty() && toURL != "about:blank"_s)
+        return false;
+    auto& fromURL = fromFrame.frameState().urlString;
+    if (fromURL.isEmpty() || fromURL == "about:blank"_s)
+        return false;
+    auto toFrameID = toFrame.frameID();
+    if (!toFrameID)
+        return false;
+    RefPtr toLiveFrame = WebFrameProxy::webFrame(*toFrameID);
+    return toLiveFrame && !toLiveFrame->isMainFrame();
+}
+
 bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromFrame, WebBackForwardListFrameItem& toFrame, NavigationIdentifier navigationID, FrameLoadType frameLoadType, ShouldRestoreFromBackForwardCache shouldRestore, const WebCore::PublicSuffix& publicSuffix)
 {
     bool anySent = false;
-    if (fromFrame.frameState().itemSequenceNumber != toFrame.frameState().itemSequenceNumber)
+    if (fromFrame.frameState().itemSequenceNumber != toFrame.frameState().itemSequenceNumber
+        && !isStaleInitialAboutBlankIframeTarget(fromFrame, toFrame))
         anySent = sendGoToBackForwardItemForFrame(toFrame, navigationID, frameLoadType, shouldRestore, publicSuffix);
 
     bool sameDocument = fromFrame.frameState().documentSequenceNumber == toFrame.frameState().documentSequenceNumber;
@@ -3050,7 +3129,7 @@ void WebPageProxy::shouldGoToBackForwardListItemSync(BackForwardItemIdentifier i
     shouldGoToBackForwardListItem(itemID, false, WTF::move(completionHandler));
 }
 
-void WebPageProxy::goToBackForwardItemAtIndex(int32_t steps, FrameLoadType frameLoadType)
+void WebPageProxy::goToBackForwardItemAtIndex(int32_t steps)
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "goToBackForwardItemAtIndex: steps=%d", steps);
 
@@ -3058,7 +3137,12 @@ void WebPageProxy::goToBackForwardItemAtIndex(int32_t steps, FrameLoadType frame
     if (!item)
         return;
 
-    goToBackForwardItem(frameItemForLegacyTraversalRouting(*item, "goToBackForwardItemAtIndex"_s), frameLoadType);
+    goToBackForwardItem(frameItemForLegacyTraversalRouting(*item, "goToBackForwardItemAtIndex"_s), FrameLoadType::IndexedBackForward);
+}
+
+void WebPageProxy::enqueueHistoryTraversalDelta(int32_t delta)
+{
+    m_sessionHistoryTraversalQueue->enqueueDelta(delta);
 }
 
 bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem& item)
@@ -7590,6 +7674,11 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
             return;
         webProcess.send(Messages::WebPage::FrameWasRemovedInAnotherProcess(frameID), pageID);
     });
+}
+
+void WebPageProxy::frameWasDestroyed(FrameIdentifier frameID)
+{
+    backForwardList().clearFrameIdentifier(frameID);
 }
 
 void WebPageProxy::disconnectFramesFromPage()
