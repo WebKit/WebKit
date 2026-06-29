@@ -1830,6 +1830,11 @@ http/tests/push-api [ Skip ]
 
 webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
 
+# libsoup 3.6.6 mangles interior spaces in Content-Disposition filenames to '_'
+# (regressed by libsoup 9e1570c9, fixed upstream by db09564e). Remove once the
+# SDK ships a libsoup with that fix.
+http/tests/download/basic-ascii.html [ Failure ]
+
 # There is no network load scheduling or prioritization with NetworkProcess.
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
