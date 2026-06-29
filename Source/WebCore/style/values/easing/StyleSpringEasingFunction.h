@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class CSSToLengthConversionData;
 class SpringTimingFunction;
 class TimingFunction;
 
@@ -39,6 +40,7 @@ class ComputedStyle;
 CSS::SpringEasingFunction NODELETE toCSSSpringEasingFunction(const SpringTimingFunction&, const Style::ComputedStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::SpringEasingFunction&);
+Ref<TimingFunction> createTimingFunction(const CSSToLengthConversionData&, const CSS::SpringEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::SpringEasingFunction&);
 
 } // namespace Style

@@ -74,45 +74,6 @@ static CSS::EasingFunction toCSSEasingFunction(const TimingFunction& function, c
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Ref<TimingFunction> createTimingFunction(BuilderState& state, const CSS::EasingFunction& function)
-{
-    return WTF::switchOn(function.value,
-        [&](const CSS::Keyword::Linear&) -> Ref<TimingFunction> {
-            return LinearTimingFunction::create();
-        },
-        [&](const CSS::LinearEasingFunction& function) -> Ref<TimingFunction> {
-            return createTimingFunction(state, function);
-        },
-        [&](const CSS::Keyword::Ease&) -> Ref<TimingFunction> {
-            return CubicBezierTimingFunction::create();
-        },
-        [&](const CSS::Keyword::EaseIn&) -> Ref<TimingFunction> {
-            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseIn);
-        },
-        [&](const CSS::Keyword::EaseOut&) -> Ref<TimingFunction> {
-            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseOut);
-        },
-        [&](const CSS::Keyword::EaseInOut&) -> Ref<TimingFunction> {
-            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
-        },
-        [&](const CSS::CubicBezierEasingFunction& function) -> Ref<TimingFunction> {
-            return createTimingFunction(state, function);
-        },
-        [&](const CSS::Keyword::StepStart&) -> Ref<TimingFunction> {
-            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::Start);
-        },
-        [&](const CSS::Keyword::StepEnd&) -> Ref<TimingFunction> {
-            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::End);
-        },
-        [&](const CSS::StepsEasingFunction& function) -> Ref<TimingFunction> {
-            return createTimingFunction(state, function);
-        },
-        [&](const CSS::SpringEasingFunction& function) -> Ref<TimingFunction> {
-            return createTimingFunction(state, function);
-        }
-    );
-}
-
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::EasingFunction& function)
 {
     return WTF::switchOn(function.value,
@@ -175,6 +136,29 @@ static Ref<TimingFunction> createTimingFunctionFromValueID(BuilderState& state, 
     }
 }
 
+static Ref<TimingFunction> createTimingFunctionFromValueID(const CSSToLengthConversionData&, CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueLinear:
+        return LinearTimingFunction::create();
+    case CSSValueEase:
+        return CubicBezierTimingFunction::create();
+    case CSSValueEaseIn:
+        return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseIn);
+    case CSSValueEaseOut:
+        return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseOut);
+    case CSSValueEaseInOut:
+        return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
+    case CSSValueStepStart:
+        return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::Start);
+    case CSSValueStepEnd:
+        return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::End);
+    default:
+        ASSERT_NOT_REACHED();
+        return LinearTimingFunction::create();
+    }
+}
+
 static RefPtr<TimingFunction> createTimingFunctionFromValueIDDeprecated(CSSValueID valueID)
 {
     switch (valueID) {
@@ -208,14 +192,103 @@ RefPtr<TimingFunction> createTimingFunctionDeprecated(const CSSValue& value)
 
 // MARK: - Conversion
 
+auto ToStyle<CSS::EasingFunction>::operator()(const CSS::EasingFunction& value, const BuilderState& state) -> EasingFunction
+{
+    return EasingFunction { WTF::switchOn(value.value,
+        [&](const CSS::Keyword::Linear&) -> Ref<TimingFunction> {
+            return LinearTimingFunction::create();
+        },
+        [&](const CSS::LinearEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(state, function);
+        },
+        [&](const CSS::Keyword::Ease&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create();
+        },
+        [&](const CSS::Keyword::EaseIn&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseIn);
+        },
+        [&](const CSS::Keyword::EaseOut&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseOut);
+        },
+        [&](const CSS::Keyword::EaseInOut&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
+        },
+        [&](const CSS::CubicBezierEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(state, function);
+        },
+        [&](const CSS::Keyword::StepStart&) -> Ref<TimingFunction> {
+            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::Start);
+        },
+        [&](const CSS::Keyword::StepEnd&) -> Ref<TimingFunction> {
+            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::End);
+        },
+        [&](const CSS::StepsEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(state, function);
+        },
+        [&](const CSS::SpringEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(state, function);
+        }
+    ) };
+}
+
+auto ToStyle<CSS::EasingFunction>::operator()(const CSS::EasingFunction& value, const CSSToLengthConversionData& conversionData) -> EasingFunction
+{
+    return EasingFunction { WTF::switchOn(value.value,
+        [&](const CSS::Keyword::Linear&) -> Ref<TimingFunction> {
+            return LinearTimingFunction::create();
+        },
+        [&](const CSS::LinearEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(conversionData, function);
+        },
+        [&](const CSS::Keyword::Ease&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create();
+        },
+        [&](const CSS::Keyword::EaseIn&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseIn);
+        },
+        [&](const CSS::Keyword::EaseOut&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseOut);
+        },
+        [&](const CSS::Keyword::EaseInOut&) -> Ref<TimingFunction> {
+            return CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
+        },
+        [&](const CSS::CubicBezierEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(conversionData, function);
+        },
+        [&](const CSS::Keyword::StepStart&) -> Ref<TimingFunction> {
+            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::Start);
+        },
+        [&](const CSS::Keyword::StepEnd&) -> Ref<TimingFunction> {
+            return StepsTimingFunction::create(1, StepsTimingFunction::StepPosition::End);
+        },
+        [&](const CSS::StepsEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(conversionData, function);
+        },
+        [&](const CSS::SpringEasingFunction& function) -> Ref<TimingFunction> {
+            return createTimingFunction(conversionData, function);
+        }
+    ) };
+}
+
 auto CSSValueConversion<EasingFunction>::operator()(BuilderState& state, const CSSValue& value) -> EasingFunction
 {
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value))
         return { createTimingFunctionFromValueID(state, keywordValue->valueID()) };
     if (RefPtr easingFunctionValue = dynamicDowncast<CSSEasingFunctionValue>(value))
-        return { createTimingFunction(state, easingFunctionValue->easingFunction()) };
+        return toStyle(easingFunctionValue->easingFunction(), state);
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
+    return { LinearTimingFunction::create() };
+}
+
+auto CSSValueConversion<EasingFunction>::operator()(const CSSToLengthConversionData& conversionData, const CSSValue& value) -> EasingFunction
+{
+    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value))
+        return { createTimingFunctionFromValueID(conversionData, keywordValue->valueID()) };
+    if (RefPtr easingFunctionValue = dynamicDowncast<CSSEasingFunctionValue>(value))
+        return toStyle(easingFunctionValue->easingFunction(), conversionData);
+
+    ASSERT_NOT_REACHED();
     return { LinearTimingFunction::create() };
 }
 

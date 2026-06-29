@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,36 @@
 
 #pragma once
 
-#include "CSSLinearEasingFunction.h"
+#include <WebCore/CSSPrimitiveNumericRange.h>
 
 namespace WebCore {
+namespace CSS {
 
-class CSSToLengthConversionData;
-class LinearTimingFunction;
-class TimingFunction;
+// MARK: Integer Primitive
 
-namespace Style {
+template<Range = All, typename = int> struct Integer;
 
-class BuilderState;
-class ComputedStyle;
+// MARK: Number Primitive
 
-CSS::LinearEasingFunction toCSSLinearEasingFunction(const LinearTimingFunction&, const Style::ComputedStyle&);
+template<Range = All, typename = double> struct Number;
 
-Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::LinearEasingFunction&);
-Ref<TimingFunction> createTimingFunction(const CSSToLengthConversionData&, const CSS::LinearEasingFunction&);
-Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::LinearEasingFunction&);
+// MARK: Percentage Primitive
 
-} // namespace Style
+template<Range = All, typename = double> struct Percentage;
+
+// MARK: Dimension Primitives
+
+template<Range = All, typename = double> struct Angle;
+template<Range = All, typename = float> struct Length;
+template<Range = All, typename = double> struct Time;
+template<Range = All, typename = double> struct Frequency;
+template<Range = Nonnegative, typename = double> struct Resolution;
+template<Range = All, typename = double> struct Flex;
+
+// MARK: Dimension + Percentage Primitives
+
+template<Range = All, typename = float> struct AnglePercentage;
+template<Range = All, typename = float> struct LengthPercentage;
+
+} // namespace CSS
 } // namespace WebCore

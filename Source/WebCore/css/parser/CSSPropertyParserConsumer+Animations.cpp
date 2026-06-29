@@ -39,56 +39,41 @@
 #include "CSSPropertyParserConsumer+Timeline.h"
 #include "CSSPropertyParserState.h"
 #include "CSSStringValue.h"
-#include "StylePrimitiveNumericTypes+DeprecatedConversions.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-Vector<std::pair<CSSValueID, double>> consumeKeyframeKeyList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+Vector<std::pair<CSSValueID, CSS::Percentage<>>> consumeKeyframeKeyList(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <keyframe-selector> = from | to | <percentage [0,100]> | <timeline-range-name> <percentage>
     // https://drafts.csswg.org/css-animations-1/#typedef-keyframe-selector
+    //   and extended by
+    // https://drafts.csswg.org/scroll-animations/#named-range-keyframes
 
-    enum class RestrictedToZeroToHundredRange : bool { No, Yes };
-    auto consumeAndConvertPercentage = [&](CSSParserTokenRange& range, RestrictedToZeroToHundredRange restricted) -> std::optional<double> {
-        // FIXME: We use Style::deprecatedToStyle() to deal with calc() and % values.
-        // We will eventually want to return a CSS value that can be kept as-is on a
-        // BlendingKeyframe so that resolution happens when we have the necessary context
-        // when the keyframes are associated with a target element.
-        if (auto percentageValue = MetaConsumer<CSS::Percentage<>>::consume(range, state)) {
-            auto resolvedPercentage = Style::deprecatedToStyle(*percentageValue).value;
-            if (restricted == RestrictedToZeroToHundredRange::No)
-                return resolvedPercentage / 100;
-            if (resolvedPercentage >= 0 && resolvedPercentage <= 100)
-                return resolvedPercentage / 100;
-        }
-        return { };
-    };
-
-    auto timelineRange = [&](CSSParserTokenRange& range, CSSValueID id) -> std::optional<std::pair<CSSValueID, double>> {
+    auto timelineRange = [&](CSSParserTokenRange& range, CSSValueID id) -> std::optional<std::pair<CSSValueID, CSS::Percentage<>>> {
         if (CSSPropertyParserHelpers::isTimelineRangeName(id)) {
-            if (auto convertedPercentage = consumeAndConvertPercentage(range, RestrictedToZeroToHundredRange::No))
-                return { { id, *convertedPercentage } };
+            if (auto percentage = MetaConsumer<CSS::Percentage<>>::consume(range, state))
+                return { { id, WTF::move(*percentage) } };
         }
         return { };
     };
 
-    Vector<std::pair<CSSValueID, double>> result;
+    Vector<std::pair<CSSValueID, CSS::Percentage<>>> result;
     while (true) {
         range.consumeWhitespace();
 
         if (auto tokenValue = consumeIdent(range)) {
             auto valueId = tokenValue->valueID();
             if (valueId == CSSValueFrom)
-                result.append({ CSSValueNormal, 0 });
+                result.append({ CSSValueNormal, CSS::Percentage<> { 0 } });
             else if (valueId == CSSValueTo)
-                result.append({ CSSValueNormal, 1 });
+                result.append({ CSSValueNormal, CSS::Percentage<> { 100 } });
             else if (auto pair = timelineRange(range, valueId))
                 result.append(*pair);
             else
                 return { }; // Parser error, invalid value in keyframe selector
-        } else if (auto convertedPercentage = consumeAndConvertPercentage(range, RestrictedToZeroToHundredRange::Yes))
-            result.append({ CSSValueNormal, *convertedPercentage });
+        } else if (auto percentage = MetaConsumer<CSS::Percentage<CSS::ClosedPercentageRange>>::consume(range, state))
+            result.append({ CSSValueNormal, CSS::rangeExpandingCast<CSS::All>(*percentage) });
         else
             return { }; // Parser error, invalid value in keyframe selector
 
@@ -102,7 +87,7 @@ Vector<std::pair<CSSValueID, double>> consumeKeyframeKeyList(CSSParserTokenRange
     }
 }
 
-Vector<std::pair<CSSValueID, double>> parseKeyframeKeyList(const String& string, const CSSParserContext& context)
+Vector<std::pair<CSSValueID, CSS::Percentage<>>> parseKeyframeKeyList(const String& string, const CSSParserContext& context)
 {
     auto tokenizer = CSSTokenizer(string);
     auto range = tokenizer.tokenRange();

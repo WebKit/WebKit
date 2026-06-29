@@ -152,7 +152,7 @@ std::optional<CSS::GridLine> consumeUnresolvedGridLine(CSSParserTokenRange& rang
         auto name = consumeUnresolvedCustomIdentForGridLine(range, state);
 
         if (consumeIdentRaw<CSSValueSpan>(range).has_value()) {
-            auto rangeCastedIndex = CSS::dynamicRangecast<CSS::Positive>(*index);
+            auto rangeCastedIndex = CSS::dynamicRangeNarrowingCast<CSS::Positive>(*index);
             if (!rangeCastedIndex)
                 return std::nullopt;
 
@@ -181,7 +181,7 @@ std::optional<CSS::GridLine> consumeUnresolvedGridLine(CSSParserTokenRange& rang
 
     if (consumeIdentRaw<CSSValueSpan>(range).has_value()) {
         if (index) {
-            auto rangeCastedIndex = CSS::dynamicRangecast<CSS::Positive>(*index);
+            auto rangeCastedIndex = CSS::dynamicRangeNarrowingCast<CSS::Positive>(*index);
             if (!rangeCastedIndex)
                 return std::nullopt;
 

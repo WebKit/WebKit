@@ -57,7 +57,6 @@ class StyleRuleKeyframes;
 class StyleRulePage;
 class StyleSheet;
 class StyleSheetList;
-class TimingFunction;
 class ViewportStyleResolver;
 
 enum class RuleMatchingBehavior: uint8_t {
@@ -71,6 +70,7 @@ class ComputedStyle;
 class CustomFunctionRegistry;
 struct BuilderContext;
 struct CachedMatchResult;
+struct EasingFunction;
 struct ResolvedStyle;
 struct SelectorMatchingState;
 struct UnadjustedStyle;
@@ -101,7 +101,7 @@ public:
 
     ResolvedStyle styleForElement(Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    bool keyframeStylesForAnimation(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&, const TimingFunction*) const;
+    bool keyframeStylesForAnimation(Element&, const ComputedStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&, const EasingFunction& defaultTimingFunction) const;
 
     WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(Element&, const PseudoElementRequest&, const ResolutionContext&);
 
@@ -148,7 +148,7 @@ public:
     static KeyframesRuleMap& NODELETE userAgentKeyframes();
     static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
-    Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&, const TimingFunction*) const;
+    Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&, const EasingFunction& defaultTimingFunction) const;
 
     const CustomFunctionRegistry* NODELETE customFunctionRegistry() const;
     CustomFunctionRegistry& ensureCustomFunctionRegistry();

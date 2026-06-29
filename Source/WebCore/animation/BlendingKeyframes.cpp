@@ -132,22 +132,26 @@ void BlendingKeyframes::copyKeyframes(const BlendingKeyframes& other)
 
 static const StyleRuleKeyframe& zeroPercentKeyframe()
 {
+    using namespace CSS::Literals;
+
     static LazyNeverDestroyed<Ref<StyleRuleKeyframe>> rule;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
-        rule.get()->setKey({ CSSValueNormal, 0 });
+        rule.get()->setKey({ CSSValueNormal, 0_css_percentage });
     });
     return rule.get().get();
 }
 
 static const StyleRuleKeyframe& hundredPercentKeyframe()
 {
+    using namespace CSS::Literals;
+
     static LazyNeverDestroyed<Ref<StyleRuleKeyframe>> rule;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
-        rule.get()->setKey({ CSSValueNormal, 1 });
+        rule.get()->setKey({ CSSValueNormal, 1_css_percentage });
     });
     return rule.get().get();
 }

@@ -209,7 +209,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, const Option
         auto timingFunctionResult = CSSPropertyParserHelpers::parseEasingFunctionDeprecated(timing.easing, parsingContext);
         if (!timingFunctionResult)
             return Exception { ExceptionCode::TypeError };
-        setTimingFunction(WTF::move(timingFunctionResult));
+        setTimingFunction(timingFunctionResult.releaseNonNull());
     }
 
     // 5. Assign each member present in input to the corresponding timing property of effect as follows:

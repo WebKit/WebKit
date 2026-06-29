@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumeric.h"
 #include "CSSRule.h"
 #include "StyleRule.h"
 
@@ -38,14 +39,14 @@ class StyleRuleCSSStyleProperties;
 class StyleRuleKeyframe final : public StyleRuleBase {
 public:
     static Ref<StyleRuleKeyframe> NODELETE create(Ref<StyleProperties>&&);
-    static Ref<StyleRuleKeyframe> create(Vector<std::pair<CSSValueID, double>>&& keys, Ref<StyleProperties>&&);
+    static Ref<StyleRuleKeyframe> create(Vector<std::pair<CSSValueID, CSS::Percentage<>>>&& keys, Ref<StyleProperties>&&);
     ~StyleRuleKeyframe();
 
     Ref<StyleRuleKeyframe> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
 
     struct Key {
         CSSValueID rangeName;
-        double offset;
+        CSS::Percentage<> offset;
 
         void writeToString(StringBuilder&) const;
         bool operator==(const Key&) const = default;

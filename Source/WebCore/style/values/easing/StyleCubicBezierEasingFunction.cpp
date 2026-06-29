@@ -60,6 +60,16 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::C
     );
 }
 
+Ref<TimingFunction> createTimingFunction(const CSSToLengthConversionData& conversionData, const CSS::CubicBezierEasingFunction& function)
+{
+    return CubicBezierTimingFunction::create(
+        toStyle(get<0>(get<0>(function->value)), conversionData).value,
+        toStyle(get<1>(get<0>(function->value)), conversionData).value,
+        toStyle(get<0>(get<1>(function->value)), conversionData).value,
+        toStyle(get<1>(get<1>(function->value)), conversionData).value
+    );
+}
+
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::CubicBezierEasingFunction& function)
 {
     if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))

@@ -80,6 +80,7 @@
 #include "StyleEasingFunction.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleKeyword+Mappings.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolveForDocument.h"
@@ -106,20 +107,39 @@
 namespace WTF {
 
 struct StyleRuleKeyframeKeyHash {
-    static unsigned NODELETE hash(const WebCore::StyleRuleKeyframe::Key& p) { return pairIntHash(p.rangeName, p.offset); }
+    static unsigned NODELETE hash(const WebCore::StyleRuleKeyframe::Key& p) { return computeHash(p.rangeName, p.offset); }
     static bool NODELETE equal(const WebCore::StyleRuleKeyframe::Key& a, const WebCore::StyleRuleKeyframe::Key& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 template<> struct HashTraits<WebCore::StyleRuleKeyframe::Key> : GenericHashTraits<WebCore::StyleRuleKeyframe::Key> {
-    static WebCore::StyleRuleKeyframe::Key NODELETE emptyValue() { return { WebCore::CSSValueDefault, 0 }; }
+    static WebCore::StyleRuleKeyframe::Key NODELETE emptyValue() { return { WebCore::CSSValueDefault, HashTableEmptyValue }; }
     static bool NODELETE isEmptyValue(const WebCore::StyleRuleKeyframe::Key& value) { return value.rangeName == WebCore::CSSValueDefault; }
 
-    static void NODELETE constructDeletedValue(WebCore::StyleRuleKeyframe::Key& slot) { slot.rangeName = WebCore::CSSValueNone; }
+    template<typename>
+    static void NODELETE constructDeletedValue(WebCore::StyleRuleKeyframe::Key& slot) { slot.rangeName = WebCore::CSSValueNone; slot.offset = HashTableEmptyValue; }
     static bool NODELETE isDeletedValue(const WebCore::StyleRuleKeyframe::Key& slot) { return slot.rangeName == WebCore::CSSValueNone; }
 };
 template<> struct DefaultHash<WebCore::StyleRuleKeyframe::Key> : StyleRuleKeyframeKeyHash { };
 
-}
+struct EasingFunctionHash {
+    static unsigned NODELETE hash(const WebCore::Style::EasingFunction& p) { return computeHash(p.value.ptr()); }
+    static bool NODELETE equal(const WebCore::Style::EasingFunction& a, const WebCore::Style::EasingFunction& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+template<> struct HashTraits<WebCore::Style::EasingFunction> : GenericHashTraits<WebCore::Style::EasingFunction> {
+    static constexpr bool emptyValueIsZero = true;
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static WebCore::Style::EasingFunction NODELETE emptyValue() { return WebCore::Style::EasingFunction { Ref<WebCore::TimingFunction>(HashTableEmptyValue) }; }
+    template<typename>
+    static void NODELETE constructEmptyValue(WebCore::Style::EasingFunction& slot) { new (NotNull, std::addressof(slot)) WebCore::Style::EasingFunction(Ref<WebCore::TimingFunction>(HashTableEmptyValue)); }
+    static bool NODELETE isEmptyValue(const WebCore::Style::EasingFunction& value) { return value.value.isHashTableEmptyValue(); }
+
+    static void constructDeletedValue(WebCore::Style::EasingFunction& slot) { new (NotNull, std::addressof(slot)) WebCore::Style::EasingFunction(Ref<WebCore::TimingFunction>(HashTableDeletedValue)); }
+    static bool NODELETE isDeletedValue(const WebCore::Style::EasingFunction& value) { return value.value.isHashTableDeletedValue(); }
+};
+template<> struct DefaultHash<WebCore::Style::EasingFunction> : EasingFunctionHash { };
+
+} // namespace WTF
 
 namespace WebCore {
 namespace Style {
@@ -442,7 +462,7 @@ bool Resolver::isAnimationNameValid(const AtomString& name) const
         || userAgentKeyframes().find(name) != userAgentKeyframes().end();
 }
 
-Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName, const TimingFunction* defaultTimingFunction) const
+Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName, const EasingFunction& defaultTimingFunction) const
 {
     if (animationName.isEmpty())
         return { };
@@ -465,21 +485,19 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return Animation::initialCompositeOperation();
     };
 
-    auto timingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> Ref<const TimingFunction> {
+    auto timingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> EasingFunction {
         if (RefPtr timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
             if (RefPtr timingFunction = createTimingFunctionDeprecated(timingFunctionCSSValue.releaseNonNull()))
-                return timingFunction.releaseNonNull();
+                return EasingFunction { timingFunction.releaseNonNull() };
         }
-        if (defaultTimingFunction)
-            return *defaultTimingFunction;
-        return CubicBezierTimingFunction::defaultTimingFunction();
+        return defaultTimingFunction;
     };
 
-    HashSet<Ref<const TimingFunction>> timingFunctions;
-    auto uniqueTimingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> Ref<const TimingFunction> {
-        Ref timingFunction = timingFunctionForKeyframe(keyframe);
+    HashSet<EasingFunction> timingFunctions;
+    auto uniqueTimingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> EasingFunction {
+        auto timingFunction = timingFunctionForKeyframe(keyframe);
         for (auto& existingTimingFunction : timingFunctions) {
-            if (arePointingToEqualData(timingFunction.ptr(), existingTimingFunction.ptr()))
+            if (timingFunction == existingTimingFunction)
                 return existingTimingFunction;
         }
         timingFunctions.add(timingFunction);
@@ -489,7 +507,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     Ref keyframesRule = it->value;
     auto* keyframes = &keyframesRule->keyframes();
 
-    using KeyframeUniqueKey = std::tuple<StyleRuleKeyframe::Key, Ref<const TimingFunction>, CompositeOperation>;
+    using KeyframeUniqueKey = std::tuple<StyleRuleKeyframe::Key, EasingFunction, CompositeOperation>;
     auto hasDuplicateKeys = [&]() -> bool {
         HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
         for (auto& keyframe : *keyframes) {
@@ -513,6 +531,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     for (auto& originalKeyframe : *keyframes) {
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
+
         for (auto key : originalKeyframe->keys()) {
             KeyframeUniqueKey uniqueKey { key, timingFunction, compositeOperation };
             if (RefPtr existingStyleRuleKeyframe = keyframesMap.get(uniqueKey)) {
@@ -536,7 +555,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-bool Resolver::keyframeStylesForAnimation(Element& element, const Style::ComputedStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list, const TimingFunction* defaultTimingFunction) const
+bool Resolver::keyframeStylesForAnimation(Element& element, const Style::ComputedStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list, const EasingFunction& defaultTimingFunction) const
 {
     list.clear();
 
@@ -544,22 +563,49 @@ bool Resolver::keyframeStylesForAnimation(Element& element, const Style::Compute
     if (keyframeRules.isEmpty())
         return false;
 
+    auto conversionData = CSSToLengthConversionData {
+        elementStyle,
+        context.documentElementStyle,
+        context.parentStyle ? context.parentStyle : &document().initialStyle(),
+        document().renderView(),
+        &element
+    };
+
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
         for (auto& key : keyframeRule->keys()) {
-            BlendingKeyframe blendingKeyframe({ Style::convertCSSValueIDToSingleAnimationRangeName(key.rangeName), key.offset }, { nullptr });
+            auto offsetPercentage = toStyle(key.offset, conversionData).value;
+            auto offsetRangeName = convertCSSValueIDToSingleAnimationRangeName(key.rangeName);
+
+            if (offsetRangeName == Style::SingleAnimationRangeName::Normal || offsetRangeName == Style::SingleAnimationRangeName::Omitted)
+                offsetPercentage = CSS::clampToRange<CSS::ClosedPercentageRange, double>(offsetPercentage);
+
+            BlendingKeyframe blendingKeyframe({
+                    offsetRangeName,
+                    offsetPercentage / 100.0,
+                },
+                { nullptr }
+            );
+
             blendingKeyframe.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), blendingKeyframe));
+
             if (RefPtr timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
-                blendingKeyframe.setTimingFunction(createTimingFunctionDeprecated(timingFunctionCSSValue.releaseNonNull()));
+                blendingKeyframe.setEasingFunction(toStyleFromCSSValue<EasingFunction>(conversionData, *timingFunctionCSSValue));
+
             if (RefPtr compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
-                if (auto compositeOperation = toCompositeOperation(compositeOperationCSSValue.releaseNonNull()))
+                if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
                     blendingKeyframe.setCompositeOperation(*compositeOperation);
             }
             list.insert(WTF::move(blendingKeyframe));
             list.updatePropertiesMetadata(keyframeRule->properties());
         }
     }
+
+    // FIXME: Do we need to do anything like `styleForKeyframe` does with:
+    //   if (state.style()->usesViewportUnits())
+    //       element.document().setHasStyleWithViewportUnits();
+    // for viewport unit usage by `key.offset` or
 
     return true;
 }
