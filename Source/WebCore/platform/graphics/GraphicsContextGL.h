@@ -1693,6 +1693,12 @@ public:
     WEBCORE_EXPORT virtual RefPtr<Image> videoFrameToImage(VideoFrame&);
 #endif
 
+    // GPU-GPU copy from a 2D canvas's ImageBuffer (must be IOSurface-backed) to a WebGL texture.
+    // Returns false if the fast path is not available (caller should fall back to CPU readback).
+    // For TexImage2D, the destination texture is reallocated; for TexSubImage2D, only the
+    // sub-rectangle at (xoffset, yoffset) is updated.
+    virtual bool copyTextureFromCanvas2D(ImageBuffer&, PlatformGLObject /*texture*/, GCGLenum /*target*/, GCGLint /*level*/, GCGLenum /*internalFormat*/, GCGLenum /*format*/, GCGLenum /*type*/, GCGLint /*xoffset*/, GCGLint /*yoffset*/, bool /*isSubImage*/, bool /*premultiplyAlpha*/, bool /*flipY*/) { return false; }
+
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 
     struct PixelStoreParameters final {

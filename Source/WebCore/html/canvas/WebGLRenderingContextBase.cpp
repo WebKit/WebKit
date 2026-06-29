@@ -3363,7 +3363,26 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 
     if (RefPtr imageData = source.getImageData()) {
         texImageSourceHelper(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, sourceImageRect, depth, unpackImageHeight, TexImageSource(imageData.releaseNonNull()));
-    } else if (RefPtr image = source.copiedImage()) {
+        return { };
+    }
+
+    // GPU-GPU fast path for an IOSurface-backed 2D canvas; anything unsupported falls through
+    // to the CPU readback path below.
+    bool sourceImageRectIsDefault = sourceImageRect == texImageSourceSize(source);
+    bool isFastPathFunction = functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexSubImage2D;
+    if (isFastPathFunction && sourceImageRectIsDefault && texture
+        && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
+        && type == GraphicsContextGL::UNSIGNED_BYTE
+        && !level && depth == 1
+        && !hasBoundPixelUnpackBuffer()) {
+        if (RefPtr buffer = source.makeRenderingResultsAvailable()) {
+            bool isSubImage = functionID == TexImageFunctionID::TexSubImage2D;
+            if (graphicsContextGL()->copyTextureFromCanvas2D(*buffer, texture->object(), target, level, internalformat, format, type, xoffset, yoffset, isSubImage, m_unpackPremultiplyAlpha, m_unpackFlipY))
+                return { };
+        }
+    }
+
+    if (RefPtr image = source.copiedImage()) {
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     }
     return { };

@@ -1012,6 +1012,11 @@ protected:
 
     virtual bool validateAndCacheBufferBinding(const AbstractLocker&, ASCIILiteral functionName, GCGLenum target, WebGLBuffer*);
 
+    // True when WebGL2's PIXEL_UNPACK_BUFFER target is bound to a non-null buffer.
+    // Used to disable the canvas-2D GPU-GPU fast path, which writes through the
+    // regular pixel-store state.
+    virtual bool hasBoundPixelUnpackBuffer() const { return false; }
+
     // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
     void synthesizeGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);
     void synthesizeLostContextGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);

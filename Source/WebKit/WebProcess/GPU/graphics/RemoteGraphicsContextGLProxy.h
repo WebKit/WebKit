@@ -101,6 +101,7 @@ public:
     bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
     RefPtr<WebCore::Image> videoFrameToImage(WebCore::VideoFrame&) final;
 #endif
+    bool copyTextureFromCanvas2D(WebCore::ImageBuffer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY) final;
 
     void simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting) final;
     void getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data) final;

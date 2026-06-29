@@ -55,6 +55,10 @@ class GraphicsLayerContentsDisplayDelegate;
 class GraphicsContextGLCVCocoa;
 #endif
 
+#if PLATFORM(COCOA)
+class GraphicsContextGLCocoaCanvas2DCopier;
+#endif
+
 #if ENABLE(MEDIA_STREAM)
 class ImageRotationSessionVT;
 #endif
@@ -114,6 +118,14 @@ public:
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) final;
 #endif
+    // The canvas-2D → WebGL fast path is invoked through IPC by the
+    // Remote* layer (which is the only code that has the IOSurface send-right).
+    // We do not override the generic ImageBuffer-taking entry point here; in
+    // direct-mode (non-GPU-process) builds the base class' default no-op
+    // implementation returns false and the caller falls back to the existing
+    // CPU readback path. The shared implementation below is the one piece used
+    // by the IPC handler.
+    bool copyTextureFromCanvas2DIOSurface(IOSurfaceRef, PlatformGLObject destTexture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, int32_t xoffset, int32_t yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
@@ -165,6 +177,13 @@ protected:
 #endif
     RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
+
+    // Dedicated, lazily-created share-group context for the canvas-2D → WebGL fast path,
+    // isolating its GL state from the WebGL application's (like GraphicsContextGLCVCocoa).
+#if PLATFORM(COCOA)
+    std::unique_ptr<GraphicsContextGLCocoaCanvas2DCopier> m_canvas2DCopier;
+    bool m_triedCreatingCanvas2DCopier { false };
+#endif
 #if ENABLE(WEBXR)
     using RasterizationRateMapArray =  EnumeratedArray<PlatformXR::Layout, RetainPtr<MTLRasterizationRateMap>, PlatformXR::Layout::Layered>;
     RasterizationRateMapArray m_rasterizationRateMap;
@@ -174,6 +193,9 @@ protected:
     size_t m_currentDrawingBufferIndex { 0 };
     std::array<IOSurfacePbuffer, maxReusedDrawingBuffers> m_drawingBuffers;
     friend class GraphicsContextGLCVCocoa;
+#if PLATFORM(COCOA)
+    friend class GraphicsContextGLCocoaCanvas2DCopier;
+#endif
 };
 
 inline IOSurfacePbuffer::IOSurfacePbuffer(std::unique_ptr<IOSurface>&& surface, void* pbuffer)

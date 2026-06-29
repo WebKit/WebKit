@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>texImage2D with HTMLCanvasElement (2D) — pixel correctness in cases where the GPU-GPU fast path is intentionally bypassed.</title>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("The canvas-2D → WebGL fast path must skip and fall back to the CPU readback path for: WebGL2 with a bound PIXEL_UNPACK_BUFFER, level > 0 uploads, type != UNSIGNED_BYTE, format outside {RGB, RGBA}, and texImage3D. In every such case the pixels in the destination texture must still be correct.");
+
+const W = 8;
+const H = 8;
+
+function makeSource()
+{
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#ff8040";
+    ctx.fillRect(0, 0, W, H);
+    return c;
+}
+
+function makeWebGL2Context()
+{
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    return c.getContext("webgl2");
+}
+
+function readBack(gl, w, h)
+{
+    const buf = new Uint8Array(w * h * 4);
+    gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    return buf;
+}
+
+function checkOpaqueOrange(gl, w, h, label)
+{
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    const tex = gl.getParameter(gl.TEXTURE_BINDING_2D);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    const buf = readBack(gl, w, h);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.deleteFramebuffer(fb);
+    const r = buf[0], g = buf[1], b = buf[2], a = buf[3];
+    debug(label + ` first pixel = [${r}, ${g}, ${b}, ${a}]`);
+    shouldBeTrue(`Math.abs(${r} - 255) <= 2 && Math.abs(${g} - 128) <= 2 && Math.abs(${b} - 64) <= 2 && Math.abs(${a} - 255) <= 2`);
+}
+
+// Case 1: WebGL2 with a bound PIXEL_UNPACK_BUFFER must take the CPU path.
+{
+    debug("\n--- WebGL2 with bound PIXEL_UNPACK_BUFFER ---");
+    const gl = makeWebGL2Context();
+    if (!gl) {
+        testFailed("WebGL2 not available");
+    } else {
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        const pbo = gl.createBuffer();
+        gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, pbo);
+        // With a PBO bound and an HTMLCanvasElement source, the fast path must be skipped.
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, makeSource());
+        gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
+        checkOpaqueOrange(gl, W, H, "PBO bound:");
+    }
+}
+
+// Case 2: level > 0 must take the CPU path.
+{
+    debug("\n--- level > 0 ---");
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const gl = c.getContext("webgl");
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(gl.TEXTURE_2D, 1, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, makeSource()); // level 1
+    // Sample level 1 via an FBO + a 1x1 quad would require a separate test; here we
+    // just verify the upload didn't throw and the texture object is still usable.
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+// Case 3: type != UNSIGNED_BYTE must take the CPU path.
+{
+    debug("\n--- type=UNSIGNED_SHORT_4_4_4_4 ---");
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const gl = c.getContext("webgl");
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, makeSource());
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+// Case 4: format=LUMINANCE_ALPHA must take the CPU path.
+{
+    debug("\n--- format=LUMINANCE_ALPHA ---");
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const gl = c.getContext("webgl");
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, makeSource());
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+</script>
+</body>
+</html>

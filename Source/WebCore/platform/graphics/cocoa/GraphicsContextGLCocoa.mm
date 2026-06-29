@@ -33,16 +33,21 @@
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "GraphicsLayerContentsDisplayDelegate.h"
+#import "IOSurface.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
 #import "PixelBuffer.h"
 #import "ProcessIdentity.h"
 #import <CoreGraphics/CGBitmapContext.h>
+#import <CoreVideo/CVPixelBuffer.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashTraits.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
@@ -69,6 +74,51 @@ namespace WebCore {
 using GL = GraphicsContextGL;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLCocoa);
+
+// Canvas-2D -> WebGL fast path. Runs entirely in its own share-group GL context, so the
+// WebGL application's GL state never needs to be saved or restored (same model as the
+// HTMLVideoElement path in GraphicsContextGLCVCocoa).
+class GraphicsContextGLCocoaCanvas2DCopier {
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLCocoaCanvas2DCopier);
+public:
+    static std::unique_ptr<GraphicsContextGLCocoaCanvas2DCopier> create(GraphicsContextGLCocoa&);
+    ~GraphicsContextGLCocoaCanvas2DCopier();
+
+    bool copy(IOSurfaceRef, PlatformGLObject destTexture, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, int32_t xoffset, int32_t yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY);
+
+    // Drop the cached allocation record when the destination texture is deleted or re-specified,
+    // so a recycled GL name can't get a stale hit. Mirrors GraphicsContextGLCVCocoa's m_knownContent.
+    void invalidateTexture(GCGLuint texture) { m_destAllocations.remove(texture); }
+
+private:
+    explicit GraphicsContextGLCocoaCanvas2DCopier(GraphicsContextGLCocoa&);
+    bool makeCurrent() { return m_context && GraphicsContextGLCocoa::makeCurrent(m_display, m_context); }
+
+    GCGLDisplay m_display { nullptr };
+    GCGLContext m_context { nullptr };
+    GCGLConfig m_config { nullptr };
+    GCGLenum m_sourceTextureTarget { 0 };
+    PlatformGLObject m_program { 0 };
+    PlatformGLObject m_vertexBuffer { 0 };
+    PlatformGLObject m_framebuffer { 0 };
+    PlatformGLObject m_sourceTexture { 0 };
+    void* m_cachedPbuffer { nullptr };
+    uint32_t m_cachedSurfaceID { 0 };
+    GCGLint m_textureUniformLocation { -1 };
+    GCGLint m_flipYUniformLocation { -1 };
+    GCGLint m_unmultiplyUniformLocation { -1 };
+    GCGLint m_texSizeUniformLocation { -1 };
+
+    struct DestAllocation {
+        IntSize size;
+        uint32_t internalFormat { 0 };
+        uint32_t format { 0 };
+        uint32_t type { 0 };
+        friend bool operator==(const DestAllocation&, const DestAllocation&) = default;
+    };
+    HashMap<GCGLuint, DestAllocation, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>> m_destAllocations;
+};
+
 
 // This variable is accessed in single-threaded manner.
 // For WK1, this variable is accessed from multiple threads but always sequentially.
@@ -187,6 +237,7 @@ GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& cre
 
 GraphicsContextGLCocoa::~GraphicsContextGLCocoa()
 {
+    // m_canvas2DCopier owns its own GL context and tears it down in its destructor.
     if (makeContextCurrent())
         freeDrawingBuffers();
 }
@@ -827,6 +878,8 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
 {
     if (m_cv)
         m_cv->invalidateKnownTextureContent(texture);
+    if (m_canvas2DCopier)
+        m_canvas2DCopier->invalidateTexture(texture);
 }
 
 RefPtr<NativeImage> GraphicsContextGLCocoa::copyNativeImageYFlipped(SurfaceBuffer buffer)
@@ -907,6 +960,310 @@ bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, P
     return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
 }
 #endif
+
+static constexpr const char* s_canvas2DCopyVertexShaderTexture2D =
+    "attribute vec2 a_position;\n"
+    "uniform bool u_flipY;\n"
+    "varying vec2 v_texCoord;\n"
+    "void main() {\n"
+    "    vec2 uv = a_position * 0.5 + 0.5;\n"
+    "    if (u_flipY) uv.y = 1.0 - uv.y;\n"
+    "    v_texCoord = uv;\n"
+    "    gl_Position = vec4(a_position, 0.0, 1.0);\n"
+    "}\n";
+
+static constexpr const char* s_canvas2DCopyVertexShaderTextureRectangle =
+    "attribute vec2 a_position;\n"
+    "uniform bool u_flipY;\n"
+    "uniform vec2 u_texSize;\n"
+    "varying vec2 v_texCoord;\n"
+    "void main() {\n"
+    "    vec2 uv = a_position * 0.5 + 0.5;\n"
+    "    if (u_flipY) uv.y = 1.0 - uv.y;\n"
+    "    v_texCoord = uv * u_texSize;\n"
+    "    gl_Position = vec4(a_position, 0.0, 1.0);\n"
+    "}\n";
+
+static constexpr const char* s_canvas2DCopyFragmentShaderTexture2D =
+    "precision mediump float;\n"
+    "uniform sampler2D u_tex;\n"
+    "uniform bool u_unmultiply;\n"
+    "varying vec2 v_texCoord;\n"
+    "void main() {\n"
+    "    vec4 c = texture2D(u_tex, v_texCoord);\n"
+    "    if (u_unmultiply && c.a > 0.0) c.rgb /= c.a;\n"
+    "    gl_FragColor = c;\n"
+    "}\n";
+
+static constexpr const char* s_canvas2DCopyFragmentShaderTextureRectangle =
+    "precision mediump float;\n"
+    "uniform sampler2DRect u_tex;\n"
+    "uniform bool u_unmultiply;\n"
+    "varying vec2 v_texCoord;\n"
+    "void main() {\n"
+    "    vec4 c = texture2DRect(u_tex, v_texCoord);\n"
+    "    if (u_unmultiply && c.a > 0.0) c.rgb /= c.a;\n"
+    "    gl_FragColor = c;\n"
+    "}\n";
+
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLCocoaCanvas2DCopier);
+
+std::unique_ptr<GraphicsContextGLCocoaCanvas2DCopier> GraphicsContextGLCocoaCanvas2DCopier::create(GraphicsContextGLCocoa& owner)
+{
+    std::unique_ptr<GraphicsContextGLCocoaCanvas2DCopier> copier { new GraphicsContextGLCocoaCanvas2DCopier(owner) };
+    if (!copier->m_context)
+        return nullptr;
+    return copier;
+}
+
+GraphicsContextGLCocoaCanvas2DCopier::~GraphicsContextGLCocoaCanvas2DCopier()
+{
+    if (!m_context || !GraphicsContextGLCocoa::makeCurrent(m_display, m_context))
+        return;
+    if (m_cachedPbuffer)
+        WebCore::destroyPbufferAndDetachIOSurface(m_display, m_cachedPbuffer);
+    if (m_sourceTexture)
+        GL_DeleteTextures(1, &m_sourceTexture);
+    GL_DeleteFramebuffers(1, &m_framebuffer);
+    GL_DeleteBuffers(1, &m_vertexBuffer);
+    GL_DeleteProgram(m_program);
+    EGL_DestroyContext(m_display, m_context);
+}
+
+GraphicsContextGLCocoaCanvas2DCopier::GraphicsContextGLCocoaCanvas2DCopier(GraphicsContextGLCocoa& owner)
+{
+    const EGLint contextAttributes[] = {
+        EGL_CONTEXT_CLIENT_VERSION, owner.m_isForWebGL2 ? 3 : 2,
+        EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE, EGL_FALSE,
+        EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE, EGL_FALSE,
+        EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM, EGL_FALSE,
+        EGL_NONE
+    };
+    EGLDisplay display = owner.platformDisplay();
+    EGLConfig config = owner.platformConfig();
+    EGLContext context = EGL_CreateContext(display, config, owner.m_contextObj, contextAttributes);
+    if (context == EGL_NO_CONTEXT)
+        return;
+    GraphicsContextGLCocoa::makeCurrent(display, context);
+    auto contextCleanup = makeScopeExit([display, context] {
+        GraphicsContextGLCocoa::makeCurrent(display, EGL_NO_CONTEXT);
+        EGL_DestroyContext(display, context);
+    });
+
+    GCGLenum sourceTextureTarget = owner.drawingBufferTextureTarget();
+    bool useTexture2D = sourceTextureTarget == GL_TEXTURE_2D;
+
+#if PLATFORM(MAC)
+    if (!useTexture2D) {
+        GL_RequestExtensionANGLE("GL_ANGLE_texture_rectangle");
+        GL_RequestExtensionANGLE("GL_EXT_texture_format_BGRA8888");
+        if (GL_GetError() != GL_NO_ERROR)
+            return;
+    }
+#endif
+
+    GLuint vertexShader = GL_CreateShader(GL_VERTEX_SHADER);
+    GLuint fragmentShader = GL_CreateShader(GL_FRAGMENT_SHADER);
+    GLuint program = GL_CreateProgram();
+    auto shaderCleanup = makeScopeExit([vertexShader, fragmentShader] {
+        GL_DeleteShader(vertexShader);
+        GL_DeleteShader(fragmentShader);
+    });
+    auto programCleanup = makeScopeExit([program] {
+        GL_DeleteProgram(program);
+    });
+    if (!vertexShader || !fragmentShader || !program) {
+        LOG(WebGL, "GraphicsContextGLCocoaCanvas2DCopier - failed to create shader or program.");
+        return;
+    }
+
+    const char* vertexShaderSource = useTexture2D ? s_canvas2DCopyVertexShaderTexture2D : s_canvas2DCopyVertexShaderTextureRectangle;
+    const char* fragmentShaderSource = useTexture2D ? s_canvas2DCopyFragmentShaderTexture2D : s_canvas2DCopyFragmentShaderTextureRectangle;
+    GL_ShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+    GL_ShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    GL_CompileShader(vertexShader);
+    GL_CompileShader(fragmentShader);
+    GLint vertexCompileStatus = 0;
+    GLint fragmentCompileStatus = 0;
+    GL_GetShaderivRobustANGLE(vertexShader, GL_COMPILE_STATUS, 1, nullptr, &vertexCompileStatus);
+    GL_GetShaderivRobustANGLE(fragmentShader, GL_COMPILE_STATUS, 1, nullptr, &fragmentCompileStatus);
+    if (!vertexCompileStatus || !fragmentCompileStatus) {
+        LOG(WebGL, "GraphicsContextGLCocoaCanvas2DCopier - shader failed to compile.");
+        return;
+    }
+    GL_AttachShader(program, vertexShader);
+    GL_AttachShader(program, fragmentShader);
+    GL_LinkProgram(program);
+
+    GLuint vertexBuffer = 0;
+    GL_GenBuffers(1, &vertexBuffer);
+    auto vertexBufferCleanup = makeScopeExit([vertexBuffer] {
+        GL_DeleteBuffers(1, &vertexBuffer);
+    });
+    static constexpr float vertices[] = { -1, -1, 1, -1, -1, 1, 1, 1 };
+    GL_BindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    GL_BufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLuint framebuffer = 0;
+    GL_GenFramebuffers(1, &framebuffer);
+    auto framebufferCleanup = makeScopeExit([framebuffer] {
+        GL_DeleteFramebuffers(1, &framebuffer);
+    });
+
+    GLint status = 0;
+    GL_GetProgramivRobustANGLE(program, GL_LINK_STATUS, 1, nullptr, &status);
+    if (!status) {
+        LOG(WebGL, "GraphicsContextGLCocoaCanvas2DCopier - program failed to link.");
+        return;
+    }
+
+    GLint positionAttributeLocation = GL_GetAttribLocation(program, "a_position");
+    if (positionAttributeLocation < 0) {
+        LOG(WebGL, "GraphicsContextGLCocoaCanvas2DCopier - missing a_position attribute.");
+        return;
+    }
+    GL_UseProgram(program);
+    GL_EnableVertexAttribArray(positionAttributeLocation);
+    GL_VertexAttribPointer(positionAttributeLocation, 2, GL_FLOAT, false, 0, 0);
+    GL_BindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    contextCleanup.release();
+    programCleanup.release();
+    vertexBufferCleanup.release();
+    framebufferCleanup.release();
+    m_display = display;
+    m_context = context;
+    m_config = config;
+    m_sourceTextureTarget = sourceTextureTarget;
+    m_program = program;
+    m_vertexBuffer = vertexBuffer;
+    m_framebuffer = framebuffer;
+    m_textureUniformLocation = GL_GetUniformLocation(program, "u_tex");
+    m_flipYUniformLocation = GL_GetUniformLocation(program, "u_flipY");
+    m_unmultiplyUniformLocation = GL_GetUniformLocation(program, "u_unmultiply");
+    m_texSizeUniformLocation = GL_GetUniformLocation(program, "u_texSize");
+}
+
+bool GraphicsContextGLCocoaCanvas2DCopier::copy(IOSurfaceRef ioSurface, PlatformGLObject destTexture, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, int32_t xoffset, int32_t yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY)
+{
+    if (!makeCurrent())
+        return false;
+
+    // Derive the dimensions from the IOSurface itself rather than trusting a size sent over IPC.
+    int width = IOSurfaceGetWidth(ioSurface);
+    int height = IOSurfaceGetHeight(ioSurface);
+    if (width <= 0 || height <= 0)
+        return false;
+
+    if (isSubImage) {
+        // The FBO blit silently clips a sub-rectangle that runs off the destination, whereas
+        // glTexSubImage2D raises GL_INVALID_VALUE and uploads nothing. When the driver reports the
+        // destination level's dimensions, reject the out-of-bounds case so the caller falls back to
+        // the CPU path and preserves that error behavior. The common in-bounds upload stays on GPU.
+        GLint destWidth = 0;
+        GLint destHeight = 0;
+        GL_BindTexture(GL_TEXTURE_2D, destTexture);
+        GL_GetTexLevelParameterivRobustANGLE(GL_TEXTURE_2D, level, GL_TEXTURE_WIDTH, 1, nullptr, &destWidth);
+        GL_GetTexLevelParameterivRobustANGLE(GL_TEXTURE_2D, level, GL_TEXTURE_HEIGHT, 1, nullptr, &destHeight);
+        if (destWidth > 0 && destHeight > 0
+            && (xoffset < 0 || yoffset < 0 || xoffset + width > destWidth || yoffset + height > destHeight))
+            return false;
+    }
+
+    if (!m_sourceTexture) {
+        GL_GenTextures(1, &m_sourceTexture);
+        if (!m_sourceTexture)
+            return false;
+        GL_BindTexture(m_sourceTextureTarget, m_sourceTexture);
+        GL_TexParameteri(m_sourceTextureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        GL_TexParameteri(m_sourceTextureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GL_TexParameteri(m_sourceTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GL_TexParameteri(m_sourceTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    }
+
+    uint32_t surfaceID = IOSurfaceGetID(ioSurface);
+    if (m_cachedPbuffer && m_cachedSurfaceID != surfaceID) {
+        WebCore::destroyPbufferAndDetachIOSurface(m_display, m_cachedPbuffer);
+        m_cachedPbuffer = nullptr;
+        m_cachedSurfaceID = 0;
+    }
+    if (!m_cachedPbuffer) {
+        GL_BindTexture(m_sourceTextureTarget, m_sourceTexture);
+        m_cachedPbuffer = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, m_sourceTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_BGRA_EXT, width, height, GL_UNSIGNED_BYTE, ioSurface, 0);
+        if (!m_cachedPbuffer)
+            return false;
+        m_cachedSurfaceID = surfaceID;
+    }
+
+    IntSize size { width, height };
+    DestAllocation desired { size, internalFormat, format, type };
+    bool needsAllocation = !isSubImage;
+    if (!isSubImage) {
+        auto it = m_destAllocations.find(destTexture);
+        if (it != m_destAllocations.end() && it->value == desired)
+            needsAllocation = false;
+    }
+    if (needsAllocation) {
+        GL_BindTexture(GL_TEXTURE_2D, destTexture);
+        GL_TexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
+        m_destAllocations.set(destTexture, desired);
+    }
+
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, destTexture, level);
+    if (GL_CheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE && !isSubImage && !needsAllocation) {
+        GL_BindTexture(GL_TEXTURE_2D, destTexture);
+        GL_TexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
+        m_destAllocations.set(destTexture, desired);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, destTexture, level);
+    }
+
+    bool ok = GL_CheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    if (ok) {
+        GL_ActiveTexture(GL_TEXTURE0);
+        GL_BindTexture(m_sourceTextureTarget, m_sourceTexture);
+        GL_Uniform1i(m_textureUniformLocation, 0);
+        GL_Uniform1i(m_flipYUniformLocation, flipY ? 1 : 0);
+        GL_Uniform1i(m_unmultiplyUniformLocation, premultiplyAlpha ? 0 : 1);
+        if (m_texSizeUniformLocation != -1)
+            GL_Uniform2f(m_texSizeUniformLocation, width, height);
+        if (isSubImage)
+            GL_Viewport(xoffset, yoffset, width, height);
+        else
+            GL_Viewport(0, 0, width, height);
+        GL_DrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    return ok;
+}
+
+bool GraphicsContextGLCocoa::copyTextureFromCanvas2DIOSurface(IOSurfaceRef ioSurface, PlatformGLObject destTexture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, int32_t xoffset, int32_t yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY)
+{
+    if (!ioSurface || !destTexture)
+        return false;
+    if (target != GL::TEXTURE_2D || level || type != GL::UNSIGNED_BYTE)
+        return false;
+    if (format != GL::RGB && format != GL::RGBA)
+        return false;
+
+    // Only sample surfaces we know are 32-bit BGRA, the way the video path inspects its pixel
+    // format before binding. A wide-gamut/float16 canvas (e.g. colorType: "float16") is backed by
+    // a non-BGRA8 surface that would otherwise be reinterpreted as BGRA8 and produce garbage; let
+    // those fall back to the CPU readback path.
+    auto pixelFormat = IOSurfaceGetPixelFormat(ioSurface);
+    if (pixelFormat != kCVPixelFormatType_32BGRA && pixelFormat != kCVPixelFormatType_Lossless_32BGRA)
+        return false;
+
+    if (!m_canvas2DCopier && !m_triedCreatingCanvas2DCopier) {
+        m_triedCreatingCanvas2DCopier = true;
+        m_canvas2DCopier = GraphicsContextGLCocoaCanvas2DCopier::create(*this);
+    }
+    if (!m_canvas2DCopier)
+        return false;
+    return m_canvas2DCopier->copy(ioSurface, destTexture, level, internalFormat, format, type, xoffset, yoffset, isSubImage, premultiplyAlpha, flipY);
+}
 
 void GraphicsContextGLCocoa::prepareForDrawingBufferWrite()
 {

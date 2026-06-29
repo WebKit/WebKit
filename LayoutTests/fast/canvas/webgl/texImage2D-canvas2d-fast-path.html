@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>texImage2D / texSubImage2D from 2D canvas (GPU fast path) produce the same pixels as the CPU path.</title>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Verify that texImage2D / texSubImage2D with HTMLCanvasElement (2D context) sources produce the expected pixels, regardless of whether the GPU-GPU IOSurface fast path or the CPU readback path is taken. Covers flipY × premultiplyAlpha permutations and full-image / sub-image uploads.");
+
+// Build a 16x16 source 2D canvas with four solid-colored quadrants. The 2D canvas
+// backing is premultiplied; we render colors at full alpha so values are stable
+// across both the fast path and the CPU fallback.
+const W = 16;
+const H = 16;
+
+function makeSourceCanvas()
+{
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "rgba(255, 0, 0, 1)"; ctx.fillRect(0,    0,    W/2, H/2); // top-left red
+    ctx.fillStyle = "rgba(0, 255, 0, 1)"; ctx.fillRect(W/2,  0,    W/2, H/2); // top-right green
+    ctx.fillStyle = "rgba(0, 0, 255, 1)"; ctx.fillRect(0,    H/2,  W/2, H/2); // bottom-left blue
+    ctx.fillStyle = "rgba(255, 255, 0, 1)"; ctx.fillRect(W/2, H/2, W/2, H/2); // bottom-right yellow
+    return c;
+}
+
+const target = document.createElement("canvas");
+target.width = W;
+target.height = H;
+const gl = target.getContext("webgl", { preserveDrawingBuffer: true });
+const program = (function() {
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, "attribute vec2 p; varying vec2 uv; void main() { uv = (p + 1.0) * 0.5; gl_Position = vec4(p, 0.0, 1.0); }");
+    gl.compileShader(vs);
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, "precision mediump float; uniform sampler2D t; varying vec2 uv; void main() { gl_FragColor = texture2D(t, uv); }");
+    gl.compileShader(fs);
+    const p = gl.createProgram();
+    gl.attachShader(p, vs);
+    gl.attachShader(p, fs);
+    gl.linkProgram(p);
+    gl.useProgram(p);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(p, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    return p;
+})();
+
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+function readPixel(x, y)
+{
+    const buf = new Uint8Array(4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    return [buf[0], buf[1], buf[2], buf[3]];
+}
+
+function approxEqual(rgba, expected)
+{
+    for (let i = 0; i < 4; ++i)
+        if (Math.abs(rgba[i] - expected[i]) > 2)
+            return false;
+    return true;
+}
+
+function runOne(flipY, premultiply, useSubImage)
+{
+    debug("");
+    debug(`flipY=${flipY}, premultiplyAlpha=${premultiply}, useSubImage=${useSubImage}`);
+
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiply);
+
+    const src = makeSourceCanvas();
+    if (useSubImage) {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, src);
+    } else
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+
+    gl.viewport(0, 0, W, H);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    // WebGL framebuffer has its origin at the bottom-left. When flipY=true, the canvas
+    // is uploaded upright, so the top-left source quadrant (red) is sampled at the
+    // top of the rendered output (top → high y in framebuffer coords).
+    const topQuadRed   = flipY ? [255, 0,   0, 255] : [0,   0,   255, 255]; // canvas TL vs canvas BL
+    const topQuadGreen = flipY ? [0,   255, 0, 255] : [255, 255, 0,   255];
+    const botQuadBlue  = flipY ? [0,   0, 255, 255] : [255, 0,   0,   255];
+    const botQuadYel   = flipY ? [255, 255, 0, 255] : [0,   255, 0,   255];
+
+    const tl = readPixel(2, H - 2);   // top-left of framebuffer
+    const tr = readPixel(W - 2, H - 2);
+    const bl = readPixel(2, 2);       // bottom-left of framebuffer
+    const br = readPixel(W - 2, 2);
+
+    shouldBeTrue(`approxEqual([${tl}], [${topQuadRed}])`);
+    shouldBeTrue(`approxEqual([${tr}], [${topQuadGreen}])`);
+    shouldBeTrue(`approxEqual([${bl}], [${botQuadBlue}])`);
+    shouldBeTrue(`approxEqual([${br}], [${botQuadYel}])`);
+}
+
+// We render the source at full alpha = 1, so the premultiplied/unpremultiplied
+// representations are bit-identical. Both premultiply settings should yield the
+// same color values, exercising both branches of the alpha logic.
+for (const useSubImage of [false, true])
+    for (const flipY of [false, true])
+        for (const premultiply of [false, true])
+            runOne(flipY, premultiply, useSubImage);
+</script>
+</body>
+</html>

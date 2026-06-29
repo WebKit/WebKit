@@ -31,6 +31,8 @@
 #include "GPUConnectionToWebProcess.h"
 #include "IPCUtilities.h"
 #include "RemoteSharedResourceCache.h"
+#include <WebCore/GraphicsContextGLCocoa.h>
+#include <WebCore/IOSurface.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/MachSendRight.h>
@@ -75,6 +77,39 @@ void RemoteGraphicsContextGL::setSharedVideoFrameMemory(WebCore::SharedMemory::H
     m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
 }
 #endif
+
+// The send-right can only reference an IOSurface the Web Process already owns, matching the
+// security posture of CopyTextureFromVideoFrame. GPU read/write ordering relies on IOSurface
+// use-counts and Metal's automatic barriers, as the video fast path does.
+void RemoteGraphicsContextGL::copyTextureFromCanvas2D(WTF::MachSendRight&& ioSurfaceSendRight, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, int32_t xoffset, int32_t yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+
+    if (!m_objectNames.isValidKey(texture)) {
+        ASSERT_IS_TESTING_IPC();
+        completionHandler(false);
+        return;
+    }
+    PlatformGLObject destTextureName = m_objectNames.get(texture);
+
+    if (!ioSurfaceSendRight) {
+        completionHandler(false);
+        return;
+    }
+
+    auto importedSurface = WebCore::IOSurface::createFromSendRight(WTF::move(ioSurfaceSendRight));
+    if (!importedSurface) {
+        completionHandler(false);
+        return;
+    }
+
+    RefPtr context = m_context;
+    if (!context) {
+        completionHandler(false);
+        return;
+    }
+    completionHandler(context->copyTextureFromCanvas2DIOSurface(importedSurface->surface(), destTextureName, target, level, internalFormat, format, type, xoffset, yoffset, isSubImage, premultiplyAlpha, flipY));
+}
 
 namespace {
 

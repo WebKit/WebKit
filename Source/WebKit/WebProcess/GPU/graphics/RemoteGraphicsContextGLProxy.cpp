@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
+#include "ImageBufferBackendHandleSharing.h"
 #include "RemoteGraphicsContextGLInitializationState.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
@@ -262,7 +263,48 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
     return false;
 #endif
 }
+#endif // ENABLE(VIDEO)
 
+bool RemoteGraphicsContextGLProxy::copyTextureFromCanvas2D(WebCore::ImageBuffer& source, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY)
+{
+#if PLATFORM(COCOA)
+    if (isContextLost())
+        return false;
+
+    // Flush the canvas's pending 2D drawing so the GPU process applies it to the backing surface
+    // before reading it; otherwise queued paint commands are not yet committed and we would sample
+    // a stale frame. The CPU readback path gets this for free via copyNativeImage().
+    source.flushDrawingContext();
+
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(source.toBackendSharing());
+    if (!sharing)
+        return false;
+    auto handle = sharing->createBackendHandle(WebCore::SharedMemory::Protection::ReadOnly);
+    if (!handle || !std::holds_alternative<MachSendRight>(*handle))
+        return false;
+    auto sendRight = std::get<MachSendRight>(WTF::move(*handle));
+    if (!sendRight)
+        return false;
+    if (source.backendSize().isEmpty())
+        return false;
+
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromCanvas2D(WTF::move(sendRight), texture, target, level, internalFormat, format, type, xoffset, yoffset, isSubImage, premultiplyAlpha, flipY));
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return false;
+    }
+    auto [result] = sendResult.takeReply();
+    return result;
+#else
+    UNUSED_PARAM(source); UNUSED_PARAM(texture); UNUSED_PARAM(target); UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat); UNUSED_PARAM(format); UNUSED_PARAM(type);
+    UNUSED_PARAM(xoffset); UNUSED_PARAM(yoffset); UNUSED_PARAM(isSubImage);
+    UNUSED_PARAM(premultiplyAlpha); UNUSED_PARAM(flipY);
+    return false;
+#endif
+}
+
+#if ENABLE(VIDEO)
 RefPtr<Image> RemoteGraphicsContextGLProxy::videoFrameToImage(WebCore::VideoFrame& frame)
 {
     if (isContextLost())

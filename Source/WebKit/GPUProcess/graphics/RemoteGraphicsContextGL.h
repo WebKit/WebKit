@@ -137,6 +137,9 @@ protected:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 #endif
+#if PLATFORM(COCOA)
+    void copyTextureFromCanvas2D(WTF::MachSendRight&& ioSurfaceSendRight, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, int32_t xoffset, int32_t yoffset, bool isSubImage, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
+#endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
     void getBufferSubDataInline(uint32_t target, uint64_t offset, uint64_t dataSize, CompletionHandler<void(std::span<const uint8_t>)>&&);
     void getBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle, CompletionHandler<void(bool)>&&);

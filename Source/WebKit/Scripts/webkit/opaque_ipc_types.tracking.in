@@ -334,6 +334,10 @@
 
     [NotSentFromWebContent] MessageParam WebPage.SetObscuredContentInsetsFenced machSendRight
     [NotSentFromWebContent] MessageParamReply RemoteGraphicsContextGL.PrepareForDisplay displayBuffer
+
+    # Web process passes the canvas 2D IOSurface mach send-right to the GPU process so the
+    # WebGL fast path can bind it directly without a CPU readback.
+    [Legacy] MessageParam RemoteGraphicsContextGL.CopyTextureFromCanvas2D ioSurfaceSendRight
 }
 
 [UnsafeWrapper] Vector<MachSendRight> {
