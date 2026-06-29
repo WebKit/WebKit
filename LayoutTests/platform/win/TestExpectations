@@ -4724,8 +4724,6 @@ imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html 
 imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html [ Skip ] # Flake or perhaps always fails
 imported/w3c/web-platform-tests/largest-contentful-paint/video-play-after-poster.html [ Failure ] # Harness Error The operation is not supported.
 
-webkit.org/b/306256 editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
-
 fast/canvas/offscreen-webgl-transfer-after-navigation-crash.html [ Skip ] # Flaky failing test
 
 webkit.org/b/312135 fast/animation/request-video-frame-callback-in-isolated-world-with-javascript-disabled.html [ Timeout ]

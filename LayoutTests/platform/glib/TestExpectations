@@ -5214,8 +5214,6 @@ webkit.org/b/310418 http/wpt/mediastream/getUserMedia-odd-size.html [ Failure Pa
 
 webkit.org/b/305538 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
 
-webkit.org/b/306256 editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
-
 webkit.org/b/306265 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html [ Pass Failure ]
 
 webkit.org/b/306340 fast/css/vertical-align-rem-on-root.html [ Pass Timeout ]
