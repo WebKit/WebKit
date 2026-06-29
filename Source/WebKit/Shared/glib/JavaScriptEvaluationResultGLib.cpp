@@ -32,6 +32,8 @@
 #include "APISerializedScriptValue.h"
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 
@@ -63,17 +65,16 @@ auto JavaScriptEvaluationResult::GLibExtractor::toValue(GVariant* variant) -> Va
 {
     if (g_variant_is_of_type(variant, G_VARIANT_TYPE("a{sv}"))) {
         ObjectMap objectMap;
-        GVariantIter iter;
-        g_variant_iter_init(&iter, variant);
+        GUniquePtr<GVariantIter> iter(g_variant_iter_new(variant));
         const char* key;
-        GVariant* value;
-        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
+        GRefPtr<GVariant> value;
+        while (g_variant_iter_next(iter.get(), "{&sv}", &key, &value.outPtr())) {
             if (!key || !value)
                 continue;
             auto keyID = JSObjectID::generate();
             m_map.add(keyID, String::fromUTF8(key));
             auto valueID = JSObjectID::generate();
-            m_map.add(valueID, toValue(value));
+            m_map.add(valueID, toValue(value.get()));
             objectMap.add(keyID, valueID);
         }
         return { WTF::move(objectMap) };
@@ -116,12 +117,11 @@ static bool isSerializable(GVariant* variant)
         return true;
 
     if (g_variant_is_of_type(variant, G_VARIANT_TYPE("a{sv}"))) {
-        GVariantIter iter;
-        g_variant_iter_init(&iter, variant);
+        GUniquePtr<GVariantIter> iter(g_variant_iter_new(variant));
         const char* key;
-        GVariant* value;
-        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
-            if (!key || !isSerializable(value))
+        GRefPtr<GVariant> value;
+        while (g_variant_iter_next(iter.get(), "{&sv}", &key, &value.outPtr())) {
+            if (!key || !isSerializable(value.get()))
                 return false;
         }
         return true;
