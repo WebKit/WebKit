@@ -510,6 +510,68 @@ Bug(y) failures/expected/text.html [ Failure ]
                                      "Bug(test) [ XP ] passes/text.html [ Failure ]\n")
 
 
+class VariantMatchingTests(Base):
+    """Tests for _collect_matching_tests: a file-level entry covers variants.
+
+    Note on [ Skip ] expectations: Skip is parsed as a modifier, so
+    parsed_expectations stores PASS (not SKIP).  We verify coverage via
+    has_modifier(test, SKIP) rather than get_expectations(test).
+    """
+
+    def parse_exp_with_tests(self, expectations, test_list):
+        """Like parse_exp but with an explicit test list instead of get_basic_tests()."""
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = expectations
+        self._port.expectations_dict = lambda **kwargs: expectations_dict
+        self._exp = TestExpectations(self._port, test_list)
+        self._exp.parse_all_expectations()
+
+    def _is_skipped(self, test):
+        """Return True if the model has a Skip modifier applied to test."""
+        return self._exp.model().has_modifier(test, SKIP)
+
+    def test_file_entry_matches_query_variant(self):
+        # A bare file entry foo.html [ Skip ] must cover foo.html?bar
+        # (query-string variant).  Before the fix, _collect_matching_tests
+        # only did exact-string lookup for is_file=True lines, so
+        # foo.html?bar was never added to matching_tests and the Skip was
+        # silently ignored for the variant — leaving it with only the
+        # default PASS expectation and no Skip modifier.
+        self.parse_exp_with_tests(
+            'Bug(test) failures/expected/text.html [ Skip ]',
+            ['failures/expected/text.html',
+             'failures/expected/text.html?var=1',
+             'failures/expected/text.html#frag'],
+        )
+        self.assertTrue(self._is_skipped('failures/expected/text.html?var=1'),
+                        'query-string variant must inherit Skip from file-level entry')
+        self.assertTrue(self._is_skipped('failures/expected/text.html#frag'),
+                        'fragment variant must inherit Skip from file-level entry')
+
+    def test_specific_variant_wins_over_file_entry(self):
+        # When a more-specific foo.html?bar [ Failure ] entry also exists,
+        # it must win over the file-level foo.html [ Skip ] for that variant,
+        # while the file-level entry still covers the other variants.
+        # _already_seen_better_match keeps the longer-path entry.
+        self.parse_exp_with_tests(
+            'Bug(test) failures/expected/text.html [ Skip ]\n'
+            'Bug(test) failures/expected/text.html?var=1 [ Failure ]',
+            ['failures/expected/text.html',
+             'failures/expected/text.html?var=1',
+             'failures/expected/text.html?var=2'],
+        )
+        # The variant-specific Failure entry wins for the variant: not Skipped.
+        self.assertFalse(self._is_skipped('failures/expected/text.html?var=1'),
+                         'specific variant entry must override file-level Skip')
+        self.assert_exp('failures/expected/text.html?var=1', FAIL)
+        # The file-level Skip still applies to the bare file and to a variant
+        # with no entry of its own.
+        self.assertTrue(self._is_skipped('failures/expected/text.html'),
+                        'file-level Skip must still apply to the bare file')
+        self.assertTrue(self._is_skipped('failures/expected/text.html?var=2'),
+                        'file-level Skip must still apply to other variants')
+
+
 class PrintExpectationsTests(Base):
     def test_absent(self):
         self.parse_exp('')
