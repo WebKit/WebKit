@@ -1292,24 +1292,12 @@ std::optional<Navigation::DispatchResult> Navigation::handleSameDocumentNavigati
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
-Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#inner-navigate-event-firing-algorithm
+// Returns std::nullopt when rate-limited (caller returns DispatchResult::Aborted).
+std::optional<Navigation::PreparedNavigateEvent> Navigation::prepareNavigateEvent(NavigationNavigationType navigationType, NavigationDestination& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
 {
-    if (hasEntriesAndEventsDisabled()) {
-        ASSERT(m_methodTrackers.isEmpty());
-        return DispatchResult::Completed;
-    }
-
-    bool wasBeingDispatched = m_ongoingNavigateEvent && m_ongoingNavigateEvent->isBeingDispatched();
-
-    abortOngoingNavigationIfNeeded();
-
-    // Prevent recursion on synchronous history navigation steps issued
-    // from the navigate event handler.
-    if (wasBeingDispatched && classicHistoryAPIState)
-        return DispatchResult::Completed;
-
     RefPtr apiMethodTracker = navigationType == NavigationNavigationType::Traverse
-        ? m_methodTrackers.promoteUpcomingTraverseToOngoing(destination->key())
+        ? m_methodTrackers.promoteUpcomingTraverseToOngoing(destination.key())
         : m_methodTrackers.promoteUpcomingNonTraverseToOngoing();
 
     // Enforce rate limiting to prevent excessive navigation requests.
@@ -1324,19 +1312,19 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         if (apiMethodTracker)
             rejectFinishedPromise(apiMethodTracker.get(), Exception { ExceptionCode::QuotaExceededError, "Navigation rate limit exceeded"_s }, JSC::JSValue { });
 
-        return DispatchResult::Aborted;
+        return std::nullopt;
     }
 
-    RefPtr document = window()->document();
+    Ref document = *window()->document();
 
     // FIXME: this should not be needed, we should pass it into FrameLoader.
     if (apiMethodTracker && apiMethodTracker->serializedState())
-        destination->setStateObject(protect(apiMethodTracker->serializedState()));
-    bool isSameDocument = destination->sameDocument();
+        destination.setStateObject(protect(apiMethodTracker->serializedState()));
+    bool isSameDocument = destination.sameDocument();
     bool isTraversal = navigationType == NavigationNavigationType::Traverse;
-    bool canIntercept = documentCanHaveURLRewritten(*document, destination->url()) && (!isTraversal || isSameDocument);
+    bool canIntercept = documentCanHaveURLRewritten(document.get(), destination.url()) && (!isTraversal || isSameDocument);
     bool canBeCanceled = !isTraversal || (document->isTopDocument() && isSameDocument); // FIXME: and user involvement is not browser-ui or navigation's relevant global object has transient activation.
-    bool hashChange = !classicHistoryAPIState && equalIgnoringFragmentIdentifier(document->url(), destination->url()) && !equalRespectingNullity(document->url().fragmentIdentifier(),  destination->url().fragmentIdentifier());
+    bool hashChange = !classicHistoryAPIState && equalIgnoringFragmentIdentifier(document->url(), destination.url()) && !equalRespectingNullity(document->url().fragmentIdentifier(),  destination.url().fragmentIdentifier());
     auto info = apiMethodTracker ? apiMethodTracker->info().getValue() : JSC::jsUndefined();
     auto world = apiMethodTracker ? apiMethodTracker->info().world() : nullptr;
 
@@ -1357,14 +1345,14 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
             updatedSourceElement = form.ptr();
     }
 
-    RefPtr abortController = AbortController::create(*scriptExecutionContext);
+    Ref abortController = AbortController::create(*scriptExecutionContext);
 
     auto init = NavigateEvent::Init {
         { false, canBeCanceled, false },
         navigationType,
-        destination,
+        Ref { destination },
         canIntercept,
-        UserGestureIndicator::processingUserGesture(document.get()),
+        UserGestureIndicator::processingUserGesture(document.ptr()),
         hashChange,
         Ref { abortController->signal() },
         formData,
@@ -1378,7 +1366,41 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     if (apiMethodTracker)
         apiMethodTracker->info().clear();
 
-    Ref event = NavigateEvent::create(WTF::move(world), eventNames().navigateEvent, WTF::move(init), abortController.get());
+    Ref event = NavigateEvent::create(WTF::move(world), eventNames().navigateEvent, WTF::move(init), abortController.ptr());
+
+    return PreparedNavigateEvent {
+        WTF::move(event),
+        WTF::move(abortController),
+        WTF::move(apiMethodTracker),
+        WTF::move(document),
+    };
+}
+
+Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationType, Ref<NavigationDestination>&& destination, const String& downloadRequestFilename, FormState* formState, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement)
+{
+    if (hasEntriesAndEventsDisabled()) {
+        ASSERT(m_methodTrackers.isEmpty());
+        return DispatchResult::Completed;
+    }
+
+    bool wasBeingDispatched = m_ongoingNavigateEvent && m_ongoingNavigateEvent->isBeingDispatched();
+
+    abortOngoingNavigationIfNeeded();
+
+    // Prevent recursion on synchronous history navigation steps issued
+    // from the navigate event handler.
+    if (wasBeingDispatched && classicHistoryAPIState)
+        return DispatchResult::Completed;
+
+    auto prepared = prepareNavigateEvent(navigationType, destination.get(), downloadRequestFilename, formState, classicHistoryAPIState, sourceElement);
+    if (!prepared)
+        return DispatchResult::Aborted;
+
+    Ref event = prepared->event;
+    Ref abortController = prepared->abortController;
+    RefPtr apiMethodTracker = prepared->apiMethodTracker;
+    Ref document = prepared->document;
+
     m_ongoingNavigateEvent = event.ptr();
     m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
@@ -1404,10 +1426,10 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
 
     // Step 32:
     if (event->wasIntercepted())
-        setupInterceptionState(event.get(), navigationType, destination.get(), *document, classicHistoryAPIState);
+        setupInterceptionState(event.get(), navigationType, destination.get(), document.get(), classicHistoryAPIState);
 
     if (endResultIsSameDocument) {
-        if (auto result = handleSameDocumentNavigation(event.get(), navigationType, apiMethodTracker.get(), *abortController, *document))
+        if (auto result = handleSameDocumentNavigation(event.get(), navigationType, apiMethodTracker.get(), abortController.get(), document.get()))
             return *result;
     } else if (apiMethodTracker) {
         // For cross-document navigations, don't cleanup the tracker immediately.

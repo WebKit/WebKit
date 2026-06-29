@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class Document;
 class DocumentLoader;
 class FormState;
 class HistoryItem;
@@ -269,6 +270,13 @@ private:
     bool hasEntriesAndEventsDisabled() const;
     Result performTraversal(JSC::JSGlobalObject&, const String& key, Navigation::Options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
     ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
+    struct PreparedNavigateEvent {
+        Ref<NavigateEvent> event;
+        Ref<AbortController> abortController;
+        RefPtr<NavigationAPIMethodTracker> apiMethodTracker;
+        Ref<Document> document;
+    };
+    std::optional<PreparedNavigateEvent> prepareNavigateEvent(NavigationNavigationType, NavigationDestination&, const String& downloadRequestFilename, FormState*, SerializedScriptValue* classicHistoryAPIState, Element* sourceElement);
     DispatchResult innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr, Element* sourceElement = nullptr);
     void setupInterceptionState(NavigateEvent&, NavigationNavigationType, NavigationDestination&, Document&, SerializedScriptValue* classicHistoryAPIState);
     std::optional<DispatchResult> handleSameDocumentNavigation(NavigateEvent&, NavigationNavigationType, NavigationAPIMethodTracker*, AbortController&, Document&);
