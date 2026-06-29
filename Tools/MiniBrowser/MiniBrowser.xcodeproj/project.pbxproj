@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 110;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
 		DD403C872851B13F00D899FC /* MiniBrowser (Platform filters) */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = DD403C8A2851B13F00D899FC /* Build configuration list for PBXAggregateTarget "MiniBrowser (Platform filters)" */;
-			buildPhases = (
-			);
 			dependencies = (
 				DD403C8C2851B14300D899FC /* PBXTargetDependency */,
 			);
@@ -90,13 +88,11 @@
 /* Begin PBXFrameworksBuildPhase section */
 		8D11072E0486CEB800E47090 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				72945D0229B7F204006ACF75 /* QuartzCore.framework in Frameworks */,
 				5C9332AF24C1349C0036DECE /* SecurityInterface.framework in Frameworks */,
 				511AAEB72A8C1E77007ECBEE /* UserNotifications.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -205,8 +201,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = MiniBrowser;
 			productInstallPath = "$(HOME)/Applications";
 			productName = MiniBrowser;
@@ -233,13 +227,14 @@
 				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MiniBrowser" */;
-			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* MiniBrowser */;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 100;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -252,20 +247,17 @@
 /* Begin PBXResourcesBuildPhase section */
 		8D1107290486CEB800E47090 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */,
 				7CA379431AC381C10079DC37 /* ExtensionManagerWindowController.xib in Resources */,
 				BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
@@ -277,7 +269,6 @@
 				0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */,
 				BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -293,21 +284,21 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		C01FCF4B08A954540054247B /* Debug */ = {
+		C01FCF4B08A954540054247B /* Debug configuration for PBXNativeTarget "MiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		C01FCF4C08A954540054247B /* Release */ = {
+		C01FCF4C08A954540054247B /* Release configuration for PBXNativeTarget "MiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		C01FCF4F08A954540054247B /* Debug */ = {
+		C01FCF4F08A954540054247B /* Debug configuration for PBXProject "MiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */;
 			buildSettings = {
@@ -315,20 +306,20 @@
 			};
 			name = Debug;
 		};
-		C01FCF5008A954540054247B /* Release */ = {
+		C01FCF5008A954540054247B /* Release configuration for PBXProject "MiniBrowser" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
-		DD403C882851B13F00D899FC /* Debug */ = {
+		DD403C882851B13F00D899FC /* Debug configuration for PBXAggregateTarget "MiniBrowser (Platform filters)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 			};
 			name = Debug;
 		};
-		DD403C892851B13F00D899FC /* Release */ = {
+		DD403C892851B13F00D899FC /* Release configuration for PBXAggregateTarget "MiniBrowser (Platform filters)" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 			};
@@ -340,31 +331,29 @@
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MiniBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C01FCF4B08A954540054247B /* Debug */,
-				C01FCF4C08A954540054247B /* Release */,
+				C01FCF4B08A954540054247B /* Debug configuration for PBXNativeTarget "MiniBrowser" */,
+				C01FCF4C08A954540054247B /* Release configuration for PBXNativeTarget "MiniBrowser" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MiniBrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C01FCF4F08A954540054247B /* Debug */,
-				C01FCF5008A954540054247B /* Release */,
+				C01FCF4F08A954540054247B /* Debug configuration for PBXProject "MiniBrowser" */,
+				C01FCF5008A954540054247B /* Release configuration for PBXProject "MiniBrowser" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		DD403C8A2851B13F00D899FC /* Build configuration list for PBXAggregateTarget "MiniBrowser (Platform filters)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DD403C882851B13F00D899FC /* Debug */,
-				DD403C892851B13F00D899FC /* Release */,
+				DD403C882851B13F00D899FC /* Debug configuration for PBXAggregateTarget "MiniBrowser (Platform filters)" */,
+				DD403C892851B13F00D899FC /* Release configuration for PBXAggregateTarget "MiniBrowser (Platform filters)" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+	validationLevel = 1;
 }
