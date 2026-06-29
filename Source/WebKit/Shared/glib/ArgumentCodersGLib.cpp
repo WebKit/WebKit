@@ -116,8 +116,10 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRe
         certificatesData.insert(0, WTF::move(certificateData));
     }
 
-    if (certificatesData.isEmpty())
+    if (certificatesData.isEmpty()) {
+        encoder << Vector<std::span<const uint8_t>> { };
         return;
+    }
 
     encoder << certificatesData;
 
