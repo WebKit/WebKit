@@ -146,7 +146,7 @@ PASS ToASCII("XN--A-Ä.PT") P4
 PASS ToASCII("XN--A-Ä.PT") P4
 PASS ToASCII("Xn--A-Ä.pt") P4
 PASS ToASCII("Xn--A-Ä.pt") P4
-FAIL ToASCII("xn--xn--a--gua.pt") V4; V2 (ignored) assert_throws_js: function "() => new URL(`https://${idnaTest.input}/x`)" did not throw
+PASS ToASCII("xn--xn--a--gua.pt") V4; V2 (ignored)
 PASS ToASCII("日本語。ＪＰ")
 PASS ToASCII("日本語。JP")
 PASS ToASCII("日本語。jp")
@@ -249,7 +249,7 @@ PASS ToASCII("a.-b.") V3 (ignored); A4_2 (ignored)
 PASS ToASCII("a.b-.c") V3 (ignored)
 PASS ToASCII("a.-.c") V3 (ignored)
 PASS ToASCII("a.bc--de.f") V2 (ignored)
-FAIL ToASCII("xn--xn---epa") V4; V2 (ignored) assert_throws_js: function "() => new URL(`https://${idnaTest.input}/x`)" did not throw
+PASS ToASCII("xn--xn---epa") V4; V2 (ignored)
 PASS ToASCII("ä.­.c") A4_2 (ignored)
 PASS ToASCII("ä.­.c") A4_2 (ignored)
 PASS ToASCII("Ä.­.C") A4_2 (ignored)
@@ -354,7 +354,7 @@ PASS ToASCII("xn--ASCII-") P4
 PASS ToASCII("ascii")
 PASS ToASCII("xn--unicode-.org") P4
 PASS ToASCII("unicode.org")
-FAIL ToASCII("陋㛼当𤎫竮䗗") "https://陋㛼当𤎫竮䗗/x" cannot be parsed as a URL.
+PASS ToASCII("陋㛼当𤎫竮䗗")
 PASS ToASCII("陋㛼当𤎫竮䗗")
 PASS ToASCII("xn--snl253bgitxhzwu2arn60c")
 PASS ToASCII("電𡍪弳䎫窮䵗")
@@ -395,8 +395,8 @@ PASS ToASCII("‍≠ᢙ≯.솣-ᡴⴀ") C2
 PASS ToASCII("xn--jbf911clb.xn----p9j493ivi4l")
 PASS ToASCII("≠ᢙ≯.솣-ᡴⴀ")
 PASS ToASCII("≠ᢙ≯.솣-ᡴⴀ")
-FAIL ToASCII("≠ᢙ≯.솣-ᡴႠ") "https://≠ᢙ≯.솣-ᡴႠ/x" cannot be parsed as a URL.
-FAIL ToASCII("≠ᢙ≯.솣-ᡴႠ") "https://≠ᢙ≯.솣-ᡴႠ/x" cannot be parsed as a URL.
+PASS ToASCII("≠ᢙ≯.솣-ᡴႠ")
+PASS ToASCII("≠ᢙ≯.솣-ᡴႠ")
 PASS ToASCII("xn--jbf929a90b0b.xn----p9j493ivi4l") C2
 PASS ToASCII("xn--jbf911clb.xn----6zg521d196p") V7
 PASS ToASCII("xn--jbf929a90b0b.xn----6zg521d196p") C2; V7
@@ -522,20 +522,20 @@ PASS ToASCII("‌｡͔") C1; V6
 PASS ToASCII("‌。͔") C1; V6
 PASS ToASCII(".xn--yua") V6; A4_2 (ignored)
 PASS ToASCII("xn--0ug.xn--yua") C1; V6
-FAIL ToASCII("𞤥󠅮．ᡄႮ") "https://𞤥󠅮．ᡄႮ/x" cannot be parsed as a URL.
-FAIL ToASCII("𞤥󠅮.ᡄႮ") "https://𞤥󠅮.ᡄႮ/x" cannot be parsed as a URL.
+PASS ToASCII("𞤥󠅮．ᡄႮ")
+PASS ToASCII("𞤥󠅮.ᡄႮ")
 PASS ToASCII("𞤥󠅮.ᡄⴎ")
-FAIL ToASCII("𞤃󠅮.ᡄႮ") "https://𞤃󠅮.ᡄႮ/x" cannot be parsed as a URL.
+PASS ToASCII("𞤃󠅮.ᡄႮ")
 PASS ToASCII("𞤃󠅮.ᡄⴎ")
 PASS ToASCII("xn--de6h.xn--37e857h")
 PASS ToASCII("𞤥.ᡄⴎ")
-FAIL ToASCII("𞤃.ᡄႮ") "https://𞤃.ᡄႮ/x" cannot be parsed as a URL.
+PASS ToASCII("𞤃.ᡄႮ")
 PASS ToASCII("𞤃.ᡄⴎ")
 PASS ToASCII("𞤥󠅮．ᡄⴎ")
-FAIL ToASCII("𞤃󠅮．ᡄႮ") "https://𞤃󠅮．ᡄႮ/x" cannot be parsed as a URL.
+PASS ToASCII("𞤃󠅮．ᡄႮ")
 PASS ToASCII("𞤃󠅮．ᡄⴎ")
 PASS ToASCII("xn--de6h.xn--mnd799a") V7
-FAIL ToASCII("𞤥.ᡄႮ") "https://𞤥.ᡄႮ/x" cannot be parsed as a URL.
+PASS ToASCII("𞤥.ᡄႮ")
 PASS ToASCII("ྤ񱤯．𝟭Ⴛ") V6; V7
 PASS ToASCII("ྤ񱤯.1Ⴛ") V6; V7
 PASS ToASCII("ྤ񱤯.1ⴛ") V6; V7
@@ -658,22 +658,22 @@ PASS ToASCII("xn--0ugx66b.xn--0ugz2871c") C1; V7
 PASS ToASCII("≯𑜫󠭇.᜴񒞤𑍬ᢧ") V6; V7
 PASS ToASCII("≯𑜫󠭇.᜴񒞤𑍬ᢧ") V6; V7
 PASS ToASCII("xn--hdhx157g68o0g.xn--c0e65eu616c34o7a") V6; V7
-FAIL ToASCII("ß｡𐋳Ⴌྸ") "https://ß｡𐋳Ⴌྸ/x" cannot be parsed as a URL.
-FAIL ToASCII("ß。𐋳Ⴌྸ") "https://ß。𐋳Ⴌྸ/x" cannot be parsed as a URL.
+PASS ToASCII("ß｡𐋳Ⴌྸ")
+PASS ToASCII("ß。𐋳Ⴌྸ")
 PASS ToASCII("ß。𐋳ⴌྸ")
-FAIL ToASCII("SS。𐋳Ⴌྸ") "https://SS。𐋳Ⴌྸ/x" cannot be parsed as a URL.
+PASS ToASCII("SS。𐋳Ⴌྸ")
 PASS ToASCII("ss。𐋳ⴌྸ")
-FAIL ToASCII("Ss。𐋳Ⴌྸ") "https://Ss。𐋳Ⴌྸ/x" cannot be parsed as a URL.
+PASS ToASCII("Ss。𐋳Ⴌྸ")
 PASS ToASCII("ss.xn--lgd921mvv0m")
 PASS ToASCII("ss.𐋳ⴌྸ")
-FAIL ToASCII("SS.𐋳Ⴌྸ") "https://SS.𐋳Ⴌྸ/x" cannot be parsed as a URL.
-FAIL ToASCII("Ss.𐋳Ⴌྸ") "https://Ss.𐋳Ⴌྸ/x" cannot be parsed as a URL.
+PASS ToASCII("SS.𐋳Ⴌྸ")
+PASS ToASCII("Ss.𐋳Ⴌྸ")
 PASS ToASCII("xn--zca.xn--lgd921mvv0m")
 PASS ToASCII("ß.𐋳ⴌྸ")
 PASS ToASCII("ß｡𐋳ⴌྸ")
-FAIL ToASCII("SS｡𐋳Ⴌྸ") "https://SS｡𐋳Ⴌྸ/x" cannot be parsed as a URL.
+PASS ToASCII("SS｡𐋳Ⴌྸ")
 PASS ToASCII("ss｡𐋳ⴌྸ")
-FAIL ToASCII("Ss｡𐋳Ⴌྸ") "https://Ss｡𐋳Ⴌྸ/x" cannot be parsed as a URL.
+PASS ToASCII("Ss｡𐋳Ⴌྸ")
 PASS ToASCII("ss.xn--lgd10cu829c") V7
 PASS ToASCII("xn--zca.xn--lgd10cu829c") V7
 PASS ToASCII("ᩚ𛦝్。𚝬𝟵") V6; V7
@@ -948,12 +948,12 @@ PASS ToASCII("xn--of6h.xn--inb")
 PASS ToASCII("󠄽-．-්") V3 (ignored)
 PASS ToASCII("󠄽-.-්") V3 (ignored)
 PASS ToASCII("-.xn----ptf") V3 (ignored)
-FAIL ToASCII("Ⴚ𐋸󠄄。𝟝ퟶ်") "https://Ⴚ𐋸󠄄。𝟝ퟶ်/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴚ𐋸󠄄。5ퟶ်") "https://Ⴚ𐋸󠄄。5ퟶ်/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴚ𐋸󠄄。𝟝ퟶ်")
+PASS ToASCII("Ⴚ𐋸󠄄。5ퟶ်")
 PASS ToASCII("ⴚ𐋸󠄄。5ퟶ်")
 PASS ToASCII("xn--ilj2659d.xn--5-dug9054m")
 PASS ToASCII("ⴚ𐋸.5ퟶ်")
-FAIL ToASCII("Ⴚ𐋸.5ퟶ်") "https://Ⴚ𐋸.5ퟶ်/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴚ𐋸.5ퟶ်")
 PASS ToASCII("ⴚ𐋸󠄄。𝟝ퟶ်")
 PASS ToASCII("xn--ynd2415j.xn--5-dug9054m") V7
 PASS ToASCII("‍-ᠹ﹪.ᷡᤢ") C2; V6; U1 (ignored)
@@ -1069,8 +1069,8 @@ PASS ToASCII("훉≮｡ิ") V6
 PASS ToASCII("훉≮。ิ") V6
 PASS ToASCII("훉≮。ิ") V6
 PASS ToASCII("xn--gdh2512e.xn--i4c") V6
-FAIL ToASCII("ꡆ。Ↄྵ놮-") V3 (ignored) "https://ꡆ。Ↄྵ놮-/x" cannot be parsed as a URL.
-FAIL ToASCII("ꡆ。Ↄྵ놮-") V3 (ignored) "https://ꡆ。Ↄྵ놮-/x" cannot be parsed as a URL.
+PASS ToASCII("ꡆ。Ↄྵ놮-") V3 (ignored)
+PASS ToASCII("ꡆ。Ↄྵ놮-") V3 (ignored)
 PASS ToASCII("ꡆ。ↄྵ놮-") V3 (ignored)
 PASS ToASCII("ꡆ。ↄྵ놮-") V3 (ignored)
 PASS ToASCII("xn--fc9a.xn----qmg097k469k") V3 (ignored)
@@ -1169,8 +1169,8 @@ PASS ToASCII("ⅎ្‍。≠‍‌") C1; C2
 PASS ToASCII("xn--u4e969b.xn--1ch")
 PASS ToASCII("ⅎ្.≠")
 PASS ToASCII("ⅎ្.≠")
-FAIL ToASCII("Ⅎ្.≠") "https://Ⅎ្.≠/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⅎ្.≠") "https://Ⅎ្.≠/x" cannot be parsed as a URL.
+PASS ToASCII("Ⅎ្.≠")
+PASS ToASCII("Ⅎ្.≠")
 PASS ToASCII("xn--u4e823bq1a.xn--0ugb89o") C1; C2
 PASS ToASCII("ⅎ្‍｡≠‍‌") C1; C2
 PASS ToASCII("ⅎ្‍｡≠‍‌") C1; C2
@@ -1277,10 +1277,10 @@ PASS ToASCII("≯򍘅.‍𐅼򲇛") C2; V7
 PASS ToASCII("≯򍘅.‍𐅼򲇛") C2; V7
 PASS ToASCII("xn--hdh84488f.xn--xy7cw2886b") V7
 PASS ToASCII("xn--hdh84488f.xn--1ug8099fbjp4e") C2; V7
-FAIL ToASCII("꧐Ӏ᮪ࣶ．눵") "https://꧐Ӏ᮪ࣶ．눵/x" cannot be parsed as a URL.
-FAIL ToASCII("꧐Ӏ᮪ࣶ．눵") "https://꧐Ӏ᮪ࣶ．눵/x" cannot be parsed as a URL.
-FAIL ToASCII("꧐Ӏ᮪ࣶ.눵") "https://꧐Ӏ᮪ࣶ.눵/x" cannot be parsed as a URL.
-FAIL ToASCII("꧐Ӏ᮪ࣶ.눵") "https://꧐Ӏ᮪ࣶ.눵/x" cannot be parsed as a URL.
+PASS ToASCII("꧐Ӏ᮪ࣶ．눵")
+PASS ToASCII("꧐Ӏ᮪ࣶ．눵")
+PASS ToASCII("꧐Ӏ᮪ࣶ.눵")
+PASS ToASCII("꧐Ӏ᮪ࣶ.눵")
 PASS ToASCII("꧐ӏ᮪ࣶ.눵")
 PASS ToASCII("꧐ӏ᮪ࣶ.눵")
 PASS ToASCII("xn--s5a04sn4u297k.xn--2e1b")
@@ -1335,8 +1335,8 @@ PASS ToASCII("xn--0on3543c5981i.") V7; A4_2 (ignored)
 PASS ToASCII("xn--0on3543c5981i.xn--1ug") C2; V7
 PASS ToASCII("︒｡Ⴃ≯") V7
 PASS ToASCII("︒｡Ⴃ≯") V7
-FAIL ToASCII("。。Ⴃ≯") A4_2 (ignored) "https://。。Ⴃ≯/x" cannot be parsed as a URL.
-FAIL ToASCII("。。Ⴃ≯") A4_2 (ignored) "https://。。Ⴃ≯/x" cannot be parsed as a URL.
+PASS ToASCII("。。Ⴃ≯") A4_2 (ignored)
+PASS ToASCII("。。Ⴃ≯") A4_2 (ignored)
 PASS ToASCII("。。ⴃ≯") A4_2 (ignored)
 PASS ToASCII("。。ⴃ≯") A4_2 (ignored)
 PASS ToASCII("..xn--hdh782b") A4_2 (ignored)
@@ -1377,8 +1377,8 @@ PASS ToASCII("xn----qmlv7tw180a.xn--x50zy803a") C2; V7; V3 (ignored)
 PASS ToASCII("󠦮.≯𞀆") V7
 PASS ToASCII("󠦮.≯𞀆") V7
 PASS ToASCII("xn--t546e.xn--hdh5166o") V7
-FAIL ToASCII("ڹ．ᡳᅟ") "https://ڹ．ᡳᅟ/x" cannot be parsed as a URL.
-FAIL ToASCII("ڹ.ᡳᅟ") "https://ڹ.ᡳᅟ/x" cannot be parsed as a URL.
+PASS ToASCII("ڹ．ᡳᅟ")
+PASS ToASCII("ڹ.ᡳᅟ")
 PASS ToASCII("xn--skb.xn--g9e")
 PASS ToASCII("ڹ.ᡳ")
 PASS ToASCII("xn--skb.xn--osd737a") V7
@@ -1394,8 +1394,8 @@ PASS ToASCII("ss‌꫶ᢥ.⊶ⴡⴖ") C1
 PASS ToASCII("Ss‌꫶ᢥ.⊶Ⴡⴖ") C1
 PASS ToASCII("xn--ss-4epx629f.xn--ifh802b6a")
 PASS ToASCII("ss꫶ᢥ.⊶ⴡⴖ")
-FAIL ToASCII("SS꫶ᢥ.⊶ჁႶ") "https://SS꫶ᢥ.⊶ჁႶ/x" cannot be parsed as a URL.
-FAIL ToASCII("Ss꫶ᢥ.⊶Ⴡⴖ") "https://Ss꫶ᢥ.⊶Ⴡⴖ/x" cannot be parsed as a URL.
+PASS ToASCII("SS꫶ᢥ.⊶ჁႶ")
+PASS ToASCII("Ss꫶ᢥ.⊶Ⴡⴖ")
 PASS ToASCII("xn--ss-4ep585bkm5p.xn--ifh802b6a") C1
 PASS ToASCII("xn--zca682johfi89m.xn--ifh802b6a") C1
 PASS ToASCII("ß‌꫶ᢥ．⊶ⴡⴖ") C1
@@ -1556,11 +1556,11 @@ PASS ToASCII("‌Ⴚ。Σ") C1
 PASS ToASCII("‌ⴚ。σ") C1
 PASS ToASCII("xn--ilj.xn--4xa")
 PASS ToASCII("ⴚ.σ")
-FAIL ToASCII("Ⴚ.Σ") "https://Ⴚ.Σ/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴚ.Σ")
 PASS ToASCII("ⴚ.ς")
-FAIL ToASCII("Ⴚ.ς") "https://Ⴚ.ς/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴚ.ς")
 PASS ToASCII("xn--ilj.xn--3xa")
-FAIL ToASCII("Ⴚ.σ") "https://Ⴚ.σ/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴚ.σ")
 PASS ToASCII("xn--0ug262c.xn--4xa") C1
 PASS ToASCII("xn--0ug262c.xn--3xa") C1
 PASS ToASCII("‌ⴚ｡ς") C1
@@ -1711,8 +1711,8 @@ PASS ToASCII("‌ⴁ畝‍.≮") C1; C2
 PASS ToASCII("xn--skjy82u.xn--gdh")
 PASS ToASCII("ⴁ畝.≮")
 PASS ToASCII("ⴁ畝.≮")
-FAIL ToASCII("Ⴁ畝.≮") "https://Ⴁ畝.≮/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴁ畝.≮") "https://Ⴁ畝.≮/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴁ畝.≮")
+PASS ToASCII("Ⴁ畝.≮")
 PASS ToASCII("xn--0ugc160hb36e.xn--gdh") C1; C2
 PASS ToASCII("‌ⴁ畝‍．≮") C1; C2
 PASS ToASCII("‌ⴁ畝‍．≮") C1; C2
@@ -1757,8 +1757,8 @@ PASS ToASCII("𑓂‌≮.≮") V6
 PASS ToASCII("𑓂‌≮.≮") V6
 PASS ToASCII("xn--gdhz656g.xn--gdh") V6
 PASS ToASCII("xn--0ugy6glz29a.xn--gdh") V6
-FAIL ToASCII("🕼．ﾠ") A4_2 (ignored) "https://🕼．ﾠ/x" cannot be parsed as a URL.
-FAIL ToASCII("🕼.ᅠ") A4_2 (ignored) "https://🕼.ᅠ/x" cannot be parsed as a URL.
+PASS ToASCII("🕼．ﾠ") A4_2 (ignored)
+PASS ToASCII("🕼.ᅠ") A4_2 (ignored)
 PASS ToASCII("xn--my8h.") A4_2 (ignored)
 PASS ToASCII("🕼.") A4_2 (ignored)
 PASS ToASCII("xn--my8h.xn--psd") V7
@@ -1770,14 +1770,14 @@ PASS ToASCII("󞝃。򑆃񉢗--") V7; V2 (ignored); V3 (ignored)
 PASS ToASCII("xn--2y75e.xn-----1l15eer88n") V7; V2 (ignored); V3 (ignored)
 PASS ToASCII("蔰。󠁹ࣝ-𑈵") V7
 PASS ToASCII("xn--sz1a.xn----mrd9984r3dl0i") V7
-FAIL ToASCII("ςჅ。ݚ") "https://ςჅ。ݚ/x" cannot be parsed as a URL.
+PASS ToASCII("ςჅ。ݚ")
 PASS ToASCII("ςⴥ。ݚ")
-FAIL ToASCII("ΣჅ。ݚ") "https://ΣჅ。ݚ/x" cannot be parsed as a URL.
+PASS ToASCII("ΣჅ。ݚ")
 PASS ToASCII("σⴥ。ݚ")
 PASS ToASCII("Σⴥ。ݚ")
 PASS ToASCII("xn--4xa203s.xn--epb")
 PASS ToASCII("σⴥ.ݚ")
-FAIL ToASCII("ΣჅ.ݚ") "https://ΣჅ.ݚ/x" cannot be parsed as a URL.
+PASS ToASCII("ΣჅ.ݚ")
 PASS ToASCII("Σⴥ.ݚ")
 PASS ToASCII("xn--3xa403s.xn--epb")
 PASS ToASCII("ςⴥ.ݚ")
@@ -1790,8 +1790,8 @@ PASS ToASCII("ڼ.Ẏᡤ")
 PASS ToASCII("ڼ.Ẏᡤ")
 PASS ToASCII("xn--pt9c.xn--0kjya")
 PASS ToASCII("𐩗.ⴉⴕ")
-FAIL ToASCII("𐩗.ႩႵ") "https://𐩗.ႩႵ/x" cannot be parsed as a URL.
-FAIL ToASCII("𐩗.Ⴉⴕ") "https://𐩗.Ⴉⴕ/x" cannot be parsed as a URL.
+PASS ToASCII("𐩗.ႩႵ")
+PASS ToASCII("𐩗.Ⴉⴕ")
 PASS ToASCII("xn--pt9c.xn--hnd666l") V7
 PASS ToASCII("xn--pt9c.xn--hndy") V7
 PASS ToASCII("‌‌ㄤ．̮󕨑ূ") C1; V6; V7
@@ -1822,26 +1822,26 @@ PASS ToASCII("1꫶Ss𑲥。ᷘ") V6
 PASS ToASCII("１꫶Ss𑲥｡ᷘ") V6
 PASS ToASCII("xn--3j78f.xn--mkb20b") V7
 PASS ToASCII("𲤱⒛⾳．ꡦ⒈") V7
-PASS ToASCII("𲤱20.音.ꡦ1.") V7; A4_2 (ignored)
-PASS ToASCII("xn--20-9802c.xn--0w5a.xn--1-eg4e.") V7; A4_2 (ignored)
+FAIL ToASCII("𲤱20.音.ꡦ1.") V7; A4_2 (ignored) assert_throws_js: function "() => new URL(`https://${idnaTest.input}/x`)" did not throw
+FAIL ToASCII("xn--20-9802c.xn--0w5a.xn--1-eg4e.") V7; A4_2 (ignored) assert_throws_js: function "() => new URL(`https://${idnaTest.input}/x`)" did not throw
 PASS ToASCII("xn--dth6033bzbvx.xn--tsh9439b") V7
-FAIL ToASCII("Ⴕ。۰≮ß݅") "https://Ⴕ。۰≮ß݅/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴕ。۰≮ß݅") "https://Ⴕ。۰≮ß݅/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴕ。۰≮ß݅")
+PASS ToASCII("Ⴕ。۰≮ß݅")
 PASS ToASCII("ⴕ。۰≮ß݅")
 PASS ToASCII("ⴕ。۰≮ß݅")
-FAIL ToASCII("Ⴕ。۰≮SS݅") "https://Ⴕ。۰≮SS݅/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴕ。۰≮SS݅") "https://Ⴕ。۰≮SS݅/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴕ。۰≮SS݅")
+PASS ToASCII("Ⴕ。۰≮SS݅")
 PASS ToASCII("ⴕ。۰≮ss݅")
 PASS ToASCII("ⴕ。۰≮ss݅")
-FAIL ToASCII("Ⴕ。۰≮Ss݅") "https://Ⴕ。۰≮Ss݅/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴕ。۰≮Ss݅") "https://Ⴕ。۰≮Ss݅/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴕ。۰≮Ss݅")
+PASS ToASCII("Ⴕ。۰≮Ss݅")
 PASS ToASCII("xn--dlj.xn--ss-jbe65aw27i")
 PASS ToASCII("ⴕ.۰≮ss݅")
 PASS ToASCII("ⴕ.۰≮ss݅")
-FAIL ToASCII("Ⴕ.۰≮SS݅") "https://Ⴕ.۰≮SS݅/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴕ.۰≮SS݅") "https://Ⴕ.۰≮SS݅/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴕ.۰≮Ss݅") "https://Ⴕ.۰≮Ss݅/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴕ.۰≮Ss݅") "https://Ⴕ.۰≮Ss݅/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴕ.۰≮SS݅")
+PASS ToASCII("Ⴕ.۰≮SS݅")
+PASS ToASCII("Ⴕ.۰≮Ss݅")
+PASS ToASCII("Ⴕ.۰≮Ss݅")
 PASS ToASCII("xn--dlj.xn--zca912alh227g")
 PASS ToASCII("ⴕ.۰≮ß݅")
 PASS ToASCII("ⴕ.۰≮ß݅")
@@ -1910,7 +1910,7 @@ PASS ToASCII("𲮚９ꍩ៓．‍ß") C2; V7
 PASS ToASCII("𲮚9ꍩ៓.‍ß") C2; V7
 PASS ToASCII("𲮚9ꍩ៓.‍SS") C2; V7
 PASS ToASCII("𲮚9ꍩ៓.‍ss") C2; V7
-PASS ToASCII("xn--9-i0j5967eg3qz.ss") V7
+FAIL ToASCII("xn--9-i0j5967eg3qz.ss") V7 assert_throws_js: function "() => new URL(`https://${idnaTest.input}/x`)" did not throw
 PASS ToASCII("xn--9-i0j5967eg3qz.xn--ss-l1t") C2; V7
 PASS ToASCII("xn--9-i0j5967eg3qz.xn--zca770n") C2; V7
 PASS ToASCII("𲮚９ꍩ៓．‍SS") C2; V7
@@ -1984,11 +1984,11 @@ PASS ToASCII("xn--hva929dl29p.") V7; A4_2 (ignored)
 PASS ToASCII("xn--hva929dl29p.xn--0ug") C1; V7
 PASS ToASCII("xn--hva754s.") A4_2 (ignored)
 PASS ToASCII("ⴖͦ.") A4_2 (ignored)
-FAIL ToASCII("Ⴖͦ.") A4_2 (ignored) "https://Ⴖͦ./x" cannot be parsed as a URL.
+PASS ToASCII("Ⴖͦ.") A4_2 (ignored)
 PASS ToASCII("xn--hva929d.") V7; A4_2 (ignored)
 PASS ToASCII("xn--hzb.xn--ukj4430l")
 PASS ToASCII("ࢻ.ⴃ𞀒")
-FAIL ToASCII("ࢻ.Ⴃ𞀒") "https://ࢻ.Ⴃ𞀒/x" cannot be parsed as a URL.
+PASS ToASCII("ࢻ.Ⴃ𞀒")
 PASS ToASCII("xn--hzb.xn--bnd2938u") V7
 PASS ToASCII("‍‌。２䫷󠧷") C1; C2; V7
 PASS ToASCII("‍‌。2䫷󠧷") C1; C2; V7
@@ -2026,7 +2026,7 @@ PASS ToASCII("‍攌꯭。ᢖ-Ⴘ") C2
 PASS ToASCII("‍攌꯭。ᢖ-ⴘ") C2
 PASS ToASCII("xn--p9ut19m.xn----mck373i")
 PASS ToASCII("攌꯭.ᢖ-ⴘ")
-FAIL ToASCII("攌꯭.ᢖ-Ⴘ") "https://攌꯭.ᢖ-Ⴘ/x" cannot be parsed as a URL.
+PASS ToASCII("攌꯭.ᢖ-Ⴘ")
 PASS ToASCII("xn--1ug592ykp6b.xn----mck373i") C2
 PASS ToASCII("xn--p9ut19m.xn----k1g451d") V7
 PASS ToASCII("xn--1ug592ykp6b.xn----k1g451d") C2; V7
@@ -2332,8 +2332,8 @@ PASS ToASCII("xn----ef8c.xn--2v9a") V6; V3 (ignored)
 PASS ToASCII("-｡ᢘ") V3 (ignored)
 PASS ToASCII("-。ᢘ") V3 (ignored)
 PASS ToASCII("-.xn--ibf") V3 (ignored)
-FAIL ToASCII("🂴Ⴋ.≮") "https://🂴Ⴋ.≮/x" cannot be parsed as a URL.
-FAIL ToASCII("🂴Ⴋ.≮") "https://🂴Ⴋ.≮/x" cannot be parsed as a URL.
+PASS ToASCII("🂴Ⴋ.≮")
+PASS ToASCII("🂴Ⴋ.≮")
 PASS ToASCII("🂴ⴋ.≮")
 PASS ToASCII("🂴ⴋ.≮")
 PASS ToASCII("xn--2kj7565l.xn--gdh")
@@ -2430,7 +2430,7 @@ PASS ToASCII("xn--1-rgn.xn--4x6j.xn--jof45148n") C1; V7
 PASS ToASCII("xn--tshw462r.xn--jof45148n") V7
 PASS ToASCII("xn--0ug88o7471d.xn--jof45148n") C1; V7
 PASS ToASCII("𝅵｡𝟫𞀈䬺⒈") V7; A4_2 (ignored)
-FAIL ToASCII("𝅵。9𞀈䬺1.") A4_2 (ignored) "https://𝅵。9𞀈䬺1./x" cannot be parsed as a URL.
+PASS ToASCII("𝅵。9𞀈䬺1.") A4_2 (ignored)
 PASS ToASCII(".xn--91-030c1650n.") A4_2 (ignored)
 PASS ToASCII(".xn--9-ecp936non25a") V7; A4_2 (ignored)
 PASS ToASCII("xn--3f1h.xn--91-030c1650n.") V7; A4_2 (ignored)
@@ -2523,8 +2523,8 @@ PASS ToASCII("xn---3,-3eu.xn--9h2d") V6; V3 (ignored); U1 (ignored)
 PASS ToASCII("xn---3,-3eu051c.xn--9h2d") C1; V6; V3 (ignored); U1 (ignored)
 PASS ToASCII("xn----pck1820x.xn--9h2d") V6; V7; V3 (ignored)
 PASS ToASCII("xn----pck312bx563c.xn--9h2d") C1; V6; V7; V3 (ignored)
-FAIL ToASCII("឴.쮇-") V3 (ignored); A4_2 (ignored) "https://឴.쮇-/x" cannot be parsed as a URL.
-FAIL ToASCII("឴.쮇-") V3 (ignored); A4_2 (ignored) "https://឴.쮇-/x" cannot be parsed as a URL.
+PASS ToASCII("឴.쮇-") V3 (ignored); A4_2 (ignored)
+PASS ToASCII("឴.쮇-") V3 (ignored); A4_2 (ignored)
 PASS ToASCII(".xn----938f") V3 (ignored); A4_2 (ignored)
 PASS ToASCII("xn--z3e.xn----938f") V6; V7; V3 (ignored)
 PASS ToASCII("‌𑓂。⒈-􀪛") C1; V7
@@ -2572,15 +2572,15 @@ PASS ToASCII("锣。੍󠘻󠚆") V6; V7
 PASS ToASCII("xn--gc5a.xn--ybc83044ppga") V6; V7
 PASS ToASCII("xn--8gb2338k.xn--lhb0154f")
 PASS ToASCII("ؽ𑈾.ى꤫")
-FAIL ToASCII("ჁႱ6̘。ßᬃ") "https://ჁႱ6̘。ßᬃ/x" cannot be parsed as a URL.
+PASS ToASCII("ჁႱ6̘。ßᬃ")
 PASS ToASCII("ⴡⴑ6̘。ßᬃ")
-FAIL ToASCII("ჁႱ6̘。SSᬃ") "https://ჁႱ6̘。SSᬃ/x" cannot be parsed as a URL.
+PASS ToASCII("ჁႱ6̘。SSᬃ")
 PASS ToASCII("ⴡⴑ6̘。ssᬃ")
-FAIL ToASCII("Ⴡⴑ6̘。Ssᬃ") "https://Ⴡⴑ6̘。Ssᬃ/x" cannot be parsed as a URL.
+PASS ToASCII("Ⴡⴑ6̘。Ssᬃ")
 PASS ToASCII("xn--6-8cb7433a2ba.xn--ss-2vq")
 PASS ToASCII("ⴡⴑ6̘.ssᬃ")
-FAIL ToASCII("ჁႱ6̘.SSᬃ") "https://ჁႱ6̘.SSᬃ/x" cannot be parsed as a URL.
-FAIL ToASCII("Ⴡⴑ6̘.Ssᬃ") "https://Ⴡⴑ6̘.Ssᬃ/x" cannot be parsed as a URL.
+PASS ToASCII("ჁႱ6̘.SSᬃ")
+PASS ToASCII("Ⴡⴑ6̘.Ssᬃ")
 PASS ToASCII("xn--6-8cb7433a2ba.xn--zca894k")
 PASS ToASCII("ⴡⴑ6̘.ßᬃ")
 PASS ToASCII("xn--6-8cb306hms1a.xn--ss-2vq") V7
