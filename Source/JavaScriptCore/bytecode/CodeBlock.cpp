@@ -506,6 +506,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpTryGetById)
         LINK(OpGetByIdDirect)
+        LINK(OpInById)
         LINK(OpGetByValWithThis)
         LINK(OpToThis)
 
@@ -1546,6 +1547,14 @@ void CodeBlock::finalizeLLIntInlineCaches()
             dataLogLnIf(Options::verboseOSR(), "Clearing get_by_id_direct LLInt property access.");
             metadata.m_structureID = StructureID();
             metadata.m_offset = 0;
+        });
+
+        m_metadata->forEach<OpInById>([&] (auto& metadata) {
+            StructureID oldStructureID = metadata.m_structureID;
+            if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+                return;
+            dataLogLnIf(Options::verboseOSR(), "Clearing in_by_id LLInt property access.");
+            metadata.m_structureID = StructureID();
         });
 
         m_metadata->forEach<OpGetPrivateName>([&] (auto& metadata) {
