@@ -1821,12 +1821,29 @@ private:
     {
         if (n->hasInt32Result() || n->isInt32Constant())
             return Edge(n, KnownInt32Use);
+        if (n->hasDoubleResult())
+            return Edge(n, DoubleRepUse);
+        if (n->hasInt52Result())
+            return Edge(n, Int52RepUse);
         return Edge(n, UntypedUse);
+    }
+
+    // An offset relationship (anything other than a zero-offset equality) is sound
+    // only when the operand's runtime value is an int32, because IRO combines it
+    // with int32 offset arithmetic. A non-int32 double can hold AnyIntAsDouble
+    // values outside int32 range, so such a relationship cannot be carried over it.
+    static bool canCarryOffsetRelationship(Node* n)
+    {
+        return n->hasInt32Result() || n->isInt32Constant();
     }
 
     void insertOffsetAssertion(unsigned nodeIndex, NodeOrigin origin, Node* leftNode, Node* rightNode, int64_t offset, Node::AssertInBoundsCompare compare)
     {
-        // AssertInBounds offsets are derived from int32 IRO offsets via ±1
+        // An offset relationship is reasoned about with int32 arithmetic, so it is
+        // only meaningful over int32 operands. IRO never forms such a relationship
+        // over a non-int32 operand; a violation here means that invariant broke.
+        RELEASE_ASSERT(canCarryOffsetRelationship(leftNode) && canCarryOffsetRelationship(rightNode));
+        // AssertInBounds offsets are derived from int32 IRO offsets via +/-1
         // or negation, so they fit in [INT32_MIN-1, INT32_MAX+1]. Anything
         // wider would indicate the caller is computing the offset wrong.
         RELEASE_ASSERT(offset >= int64_t { std::numeric_limits<int32_t>::min() } - 1
@@ -1863,18 +1880,23 @@ private:
         RELEASE_ASSERT(left && right);
         int64_t offset = rel.offset();
 
-        // A zero-offset equality over a non-int32 operand (e.g. two boxed values
-        // proven identical) carries no integer bound, but IRO will still use it
-        // to substitute one operand for the other. Validate value sameness in
-        // that case rather than an int32 bound, so we neither skip it nor crash
-        // on a legitimate non-integer equivalence.
-        auto isInt32Rep = [] (Node* n) { return n->hasInt32Result() || n->isInt32Constant(); };
-        if (rel.kind() == Relationship::Equal && !offset && (!isInt32Rep(left) || !isInt32Rep(right))) {
+        // A zero-offset equality asserts value identity, which holds in any
+        // representation, so validate it directly when an operand is not int32.
+        // This avoids the int32 offset arithmetic of the relational decomposition
+        // below, which is sound only over int32 operands. A Double/Int52 operand
+        // is compared as a double (the values are integer-valued); otherwise the
+        // operands are compared as JSValues, which also boxes an int32 side.
+        if (rel.kind() == Relationship::Equal && !offset
+            && (!canCarryOffsetRelationship(left) || !canCarryOffsetRelationship(right))) {
+            bool asDouble = left->hasDoubleResult() || left->hasInt52Result()
+                || right->hasDoubleResult() || right->hasInt52Result();
+            Edge leftEdge = asDouble ? validatorEdgeFor(left) : Edge(left, UntypedUse);
+            Edge rightEdge = asDouble ? validatorEdgeFor(right) : Edge(right, UntypedUse);
             m_insertionSet.insertNode(
                 nodeIndex, SpecNone, AssertInBounds, origin,
                 OpInfo(static_cast<uint32_t>(Node::AssertInBoundsCompareIdentical)),
                 OpInfo(static_cast<uint64_t>(0)),
-                Edge(left, UntypedUse), Edge(right, UntypedUse));
+                leftEdge, rightEdge);
             return;
         }
 
@@ -1962,6 +1984,18 @@ private:
     void setRelationship(
         RelationshipMap& relationshipMap, Relationship relationship, unsigned timeToLive = 1)
     {
+        // Only zero-offset equalities may involve a non-int32 operand. Every other
+        // relationship carries an integer offset combined with int32 arithmetic,
+        // which is unsound over a double operand whose value can fall outside int32
+        // range. Refusing to track those keeps facts that future rules build on
+        // int32-safe; equalities are exempt because they assert value identity
+        // (representation-independent) and are only consumed against an int32 side.
+        bool zeroOffsetEqual = relationship.kind() == Relationship::Equal && !relationship.offset();
+        if (!zeroOffsetEqual
+            && (!canCarryOffsetRelationship(relationship.left().node())
+                || !canCarryOffsetRelationship(relationship.right().node())))
+            return;
+
         setOneSide(relationshipMap, relationship, timeToLive);
         setOneSide(relationshipMap, relationship.flipped(), timeToLive);
     }

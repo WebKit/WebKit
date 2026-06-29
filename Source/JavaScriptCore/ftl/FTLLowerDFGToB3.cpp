@@ -6317,11 +6317,34 @@ IGNORE_CLANG_WARNINGS_END
         RELEASE_ASSERT(Options::validateBoundsCheckElimination() || Options::validateIntegerRangeOptimization());
 
         if (m_node->assertInBoundsCompare() == Node::AssertInBoundsCompareIdentical) {
-            LValue left = lowJSValue(m_node->child1());
-            LValue right = lowJSValue(m_node->child2());
+            // Value identity for a zero-offset equality. Double/Int52 operands have
+            // no JSValue form, so when either side is one, compare both as doubles
+            // (the operands are integer-valued); otherwise compare JSValues, which
+            // also covers a boxed value against an int32.
+            auto isDoubleOrInt52 = [] (Edge edge) {
+                return edge.useKind() == DoubleRepUse || edge.useKind() == Int52RepUse;
+            };
+            LValue same;
+            if (isDoubleOrInt52(m_node->child1()) || isDoubleOrInt52(m_node->child2())) {
+                auto lowAsDouble = [&] (Edge edge) -> LValue {
+                    switch (edge.useKind()) {
+                    case DoubleRepUse:
+                        return lowDouble(edge);
+                    case Int52RepUse:
+                        return m_out.intToDouble(lowStrictInt52(edge));
+                    case KnownInt32Use:
+                        return m_out.intToDouble(lowInt32(edge));
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                        return nullptr;
+                    }
+                };
+                same = m_out.doubleEqual(lowAsDouble(m_node->child1()), lowAsDouble(m_node->child2()));
+            } else
+                same = m_out.equal(lowJSValue(m_node->child1()), lowJSValue(m_node->child2()));
             LBasicBlock notSameCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
-            m_out.branch(m_out.equal(left, right), usually(continuation), rarely(notSameCase));
+            m_out.branch(same, usually(continuation), rarely(notSameCase));
             LBasicBlock lastNext = m_out.appendTo(notSameCase, continuation);
             m_out.trap();
             m_out.appendTo(continuation, lastNext);
