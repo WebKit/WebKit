@@ -35,6 +35,7 @@ import logging
 import re
 
 from webkitpy.common.iteration_compatibility import iteritems, itervalues
+from webkitpy.layout_tests.models.test import test_name_and_variant
 from webkitpy.layout_tests.models.test_configuration import (
     TestConfiguration,
     TestConfigurationConverter,
@@ -126,9 +127,13 @@ class TestExpectationParser(object):
         self._test_configuration_converter = TestConfigurationConverter(set(port.all_test_configurations()), port.configuration_specifier_macros())
         if full_test_list is None:
             self._full_test_list = None  # type: Optional[Set[str]]
+            self._tests_by_file_path = None  # type: Optional[Dict[str, List[str]]]
         else:
             self._full_test_list = set(full_test_list)
-        self._sorted_full_test_list = None
+            self._sorted_full_test_list = None
+            self._tests_by_file_path = {}
+            for test in self._full_test_list:
+                self._tests_by_file_path.setdefault(test_name_and_variant(test)[0], []).append(test)
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
         self._shorten_filename = shorten_filename
 
@@ -264,10 +269,11 @@ class TestExpectationParser(object):
             expectation_line.matching_tests = self._sorted_full_test_list[start:end]
             return
 
-        # this is a test file, do a quick check if it's in the
-        # full test suite.
-        if expectation_line.path in self._full_test_list:
-            expectation_line.matching_tests.append(expectation_line.path)
+        # File expectation: match the file itself and every variant of it. A
+        # bare file name in TestExpectations covers all variants of that file
+        # unless a more-specific entry overrides — _already_seen_better_match
+        # handles precedence by path length.
+        expectation_line.matching_tests = list(self._tests_by_file_path.get(expectation_line.path, ()))
 
     # FIXME: Update the original modifiers and remove this once the old syntax is gone.
     _configuration_tokens_list = [
