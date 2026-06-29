@@ -103,6 +103,11 @@ public:
     virtual bool isImageBufferBackendHandleSharing() const { return false; }
 };
 
+enum class NativeImageCopyMode : bool {
+    CopyOnWrite,
+    CopyBackingStore
+};
+
 class ImageBufferBackend {
 public:
     using Parameters = ImageBufferBackendParameters;
@@ -124,6 +129,7 @@ public:
     virtual void submitDrawingCommands() { }
 
     virtual RefPtr<NativeImage> copyNativeImage() = 0;
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(NativeImageCopyMode);
     virtual RefPtr<NativeImage> createNativeImageReference() = 0;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
 

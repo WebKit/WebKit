@@ -54,6 +54,10 @@ messages -> RemoteGraphicsContextGL Stream {
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
+#if PLATFORM(COCOA)
+    void CopyTextureFromNativeImage(WebCore::RenderingResourceIdentifier sharedImageIdentifier, uint32_t destTarget, PlatformGLObject destId, int32_t destLevel, int32_t internalFormat, uint32_t destType, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+    void CopySubTextureFromNativeImage(WebCore::RenderingResourceIdentifier sharedImageIdentifier, uint32_t destTarget, PlatformGLObject destId, int32_t destLevel, uint32_t format, int32_t xoffset, int32_t yoffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+#endif
     void SimulateEventForTesting(enum:uint8_t WebCore::GraphicsContextGLSimulatedEventForTesting event)
     void GetBufferSubDataInline(uint32_t target, uint64_t offset, uint64_t dataSize) -> (std::span<const uint8_t> data) Synchronous
     void GetBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle handle) -> (bool valid) Synchronous NotStreamEncodable

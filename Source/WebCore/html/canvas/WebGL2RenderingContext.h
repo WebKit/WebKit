@@ -276,6 +276,7 @@ private:
     RefPtr<WebGLBuffer> validateBufferDataParameters(ASCIILiteral functionName, GCGLenum target, GCGLenum usage) final;
     RefPtr<WebGLBuffer> validateBufferDataTarget(ASCIILiteral functionName, GCGLenum target) final;
     bool validateAndCacheBufferBinding(const AbstractLocker&, ASCIILiteral functionName, GCGLenum target, WebGLBuffer*) final;
+    bool hasBoundPixelUnpackBuffer() const final { return !!m_boundPixelUnpackBuffer.get(); }
     GCGLint maxDrawBuffers() final;
     GCGLint maxColorAttachments() final;
     bool validateCapability(ASCIILiteral functionName, GCGLenum cap) final;

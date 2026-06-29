@@ -1,0 +1,56 @@
+Verify that texImage2D / texSubImage2D with HTMLCanvasElement (2D context) sources produce the expected pixels, regardless of whether the GPU-GPU IOSurface fast path or the CPU readback path is taken. Covers flipY Ã— premultiplyAlpha permutations and full-image / sub-image uploads.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+flipY=false, premultiplyAlpha=false, useSubImage=false
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+
+flipY=false, premultiplyAlpha=true, useSubImage=false
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+
+flipY=true, premultiplyAlpha=false, useSubImage=false
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+
+flipY=true, premultiplyAlpha=true, useSubImage=false
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+
+flipY=false, premultiplyAlpha=false, useSubImage=true
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+
+flipY=false, premultiplyAlpha=true, useSubImage=true
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+
+flipY=true, premultiplyAlpha=false, useSubImage=true
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+
+flipY=true, premultiplyAlpha=true, useSubImage=true
+PASS approxEqual([255,0,0,255], [255,0,0,255]) is true
+PASS approxEqual([0,255,0,255], [0,255,0,255]) is true
+PASS approxEqual([0,0,255,255], [0,0,255,255]) is true
+PASS approxEqual([255,255,0,255], [255,255,0,255]) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

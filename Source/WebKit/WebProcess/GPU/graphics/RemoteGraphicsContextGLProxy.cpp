@@ -252,7 +252,78 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
     return false;
 #endif
 }
+#endif // ENABLE(VIDEO)
 
+#if PLATFORM(COCOA)
+std::optional<WebCore::RenderingResourceIdentifier> RemoteGraphicsContextGLProxy::shareNativeImageForCopy(WebCore::NativeImage& image)
+{
+    if (isContextLost())
+        return std::nullopt;
+    RefPtr renderingBackend = m_renderingBackend.get();
+    if (!renderingBackend) [[unlikely]]
+        return std::nullopt;
+    if (!renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, image.colorSpace()))
+        return std::nullopt;
+    auto sharedImageIdentifier = WebCore::RenderingResourceIdentifier::generate();
+    renderingBackend->shareNativeImage(image.renderingResourceIdentifier(), sharedImageIdentifier);
+    return sharedImageIdentifier;
+}
+#endif
+
+bool RemoteGraphicsContextGLProxy::copyTextureFromNativeImage(WebCore::NativeImage& image, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLint internalFormat, GCGLenum destType, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+#if PLATFORM(COCOA)
+    auto sharedImageIdentifier = shareNativeImageForCopy(image);
+    if (!sharedImageIdentifier)
+        return false;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CopyTextureFromNativeImage(*sharedImageIdentifier, destTarget, destId, destLevel, internalFormat, destType, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha));
+    if (sendResult != IPC::Error::NoError) [[unlikely]] {
+        markContextLost();
+        return false;
+    }
+    return true;
+#else
+    UNUSED_PARAM(image);
+    UNUSED_PARAM(destTarget);
+    UNUSED_PARAM(destId);
+    UNUSED_PARAM(destLevel);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(destType);
+    UNUSED_PARAM(unpackFlipY);
+    UNUSED_PARAM(unpackPremultiplyAlpha);
+    UNUSED_PARAM(unpackUnmultiplyAlpha);
+    return false;
+#endif
+}
+
+bool RemoteGraphicsContextGLProxy::copySubTextureFromNativeImage(WebCore::NativeImage& image, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLenum format, GCGLint xoffset, GCGLint yoffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+#if PLATFORM(COCOA)
+    auto sharedImageIdentifier = shareNativeImageForCopy(image);
+    if (!sharedImageIdentifier)
+        return false;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CopySubTextureFromNativeImage(*sharedImageIdentifier, destTarget, destId, destLevel, format, xoffset, yoffset, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha));
+    if (sendResult != IPC::Error::NoError) [[unlikely]] {
+        markContextLost();
+        return false;
+    }
+    return true;
+#else
+    UNUSED_PARAM(image);
+    UNUSED_PARAM(destTarget);
+    UNUSED_PARAM(destId);
+    UNUSED_PARAM(destLevel);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(xoffset);
+    UNUSED_PARAM(yoffset);
+    UNUSED_PARAM(unpackFlipY);
+    UNUSED_PARAM(unpackPremultiplyAlpha);
+    UNUSED_PARAM(unpackUnmultiplyAlpha);
+    return false;
+#endif
+}
+
+#if ENABLE(VIDEO)
 RefPtr<Image> RemoteGraphicsContextGLProxy::videoFrameToImage(WebCore::VideoFrame& frame)
 {
     if (isContextLost())

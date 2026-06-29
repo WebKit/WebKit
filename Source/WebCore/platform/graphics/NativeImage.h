@@ -33,10 +33,15 @@
 #include <WebCore/PlatformImage.h>
 #include <WebCore/RenderingResource.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(SKIA)
 class GrDirectContext;
+#endif
+
+#if HAVE(IOSURFACE)
+typedef struct __IOSurface* IOSurfaceRef;
 #endif
 
 namespace WebCore {
@@ -83,6 +88,15 @@ public:
 
     WEBCORE_EXPORT void replacePlatformImage(PlatformImagePtr&&) const;
 
+#if HAVE(IOSURFACE)
+    IOSurfaceRef backingIOSurface() const { return m_backingIOSurface.get(); }
+    void setBackingIOSurface(RetainPtr<IOSurfaceRef>&& surface, Function<void()>&& releaseHandler = { })
+    {
+        m_backingIOSurface = WTF::move(surface);
+        m_backingIOSurfaceReleaseHandler = WTF::move(releaseHandler);
+    }
+#endif
+
 #if USE(SKIA) || USE(COORDINATED_GRAPHICS)
     uint64_t uniqueID() const;
 #endif
@@ -117,6 +131,10 @@ protected:
     mutable Headroom m_headroom { Headroom::None };
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
     RenderingResourceIdentifier m_renderingResourceIdentifier { RenderingResourceIdentifier::generate() };
+#if HAVE(IOSURFACE)
+    RetainPtr<IOSurfaceRef> m_backingIOSurface;
+    Function<void()> m_backingIOSurfaceReleaseHandler;
+#endif
 #if USE(SKIA)
     GrDirectContext* m_grContext { nullptr };
 #endif

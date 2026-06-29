@@ -96,6 +96,11 @@ RefPtr<NativeImage> RemoteSharedResourceCache::takeNativeImage(RenderingResource
     return m_nativeImages.take({ { identifier, 0 }, 0 }, defaultRemoteSharedResourceCacheTimeout);
 }
 
+RefPtr<NativeImage> RemoteSharedResourceCache::takeNativeImage(RenderingResourceIdentifier identifier, Seconds timeout)
+{
+    return m_nativeImages.take({ { identifier, 0 }, 0 }, timeout);
+}
+
 void RemoteSharedResourceCache::releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier)
 {
     // Must wait due to using current accounting mechanism.

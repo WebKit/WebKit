@@ -409,6 +409,15 @@ void RemoteRenderingBackend::cacheNativeImageFromSharedNativeImage(WebCore::Rend
     MESSAGE_CHECK(success, "NativeImage already cached.");
 }
 
+void RemoteRenderingBackend::shareNativeImage(RenderingResourceIdentifier imageIdentifier, RenderingResourceIdentifier sharedImageIdentifier)
+{
+    assertIsCurrent(workQueue());
+    RefPtr image = m_remoteResourceCache.cachedNativeImage(imageIdentifier);
+    MESSAGE_CHECK(image, "NativeImage not found.");
+    bool success = m_sharedResourceCache->addNativeImage(sharedImageIdentifier, image.releaseNonNull());
+    MESSAGE_CHECK(success, "Shared NativeImage already exists.");
+}
+
 void RemoteRenderingBackend::releaseNativeImage(RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());

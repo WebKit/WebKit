@@ -73,6 +73,11 @@ RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
     return createNativeImageReference();
 }
 
+RefPtr<NativeImage> ImageBufferBackend::copyNativeImage(NativeImageCopyMode)
+{
+    return copyNativeImage();
+}
+
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 void ImageBufferBackend::convertToLuminanceMaskFloat16()
 {

@@ -1349,6 +1349,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::ModalContainerControlType': ['<WebCore/ModalContainerTypes.h>'],
         'WebCore::ModalContainerDecision': ['<WebCore/ModalContainerTypes.h>'],
         'WebCore::MouseEventPolicy': ['<WebCore/DocumentLoader.h>'],
+        'WebCore::NativeImageCopyMode': ['<WebCore/ImageBufferBackend.h>'],
         'WebCore::NetworkTransactionInformation': ['<WebCore/NetworkLoadInformation.h>'],
         'WebCore::NavigationUpgradeToHTTPSBehavior': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::NowPlayingMetadata': ['<WebCore/NowPlayingInfo.h>'],

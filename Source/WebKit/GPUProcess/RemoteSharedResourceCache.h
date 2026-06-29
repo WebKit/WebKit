@@ -62,6 +62,7 @@ public:
 
     bool addNativeImage(WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>);
     RefPtr<WebCore::NativeImage> takeNativeImage(WebCore::RenderingResourceIdentifier);
+    RefPtr<WebCore::NativeImage> takeNativeImage(WebCore::RenderingResourceIdentifier, Seconds timeout);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

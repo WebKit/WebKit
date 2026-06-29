@@ -162,6 +162,7 @@ private:
     void nativeImageBitmap(WebCore::RenderingResourceIdentifier imageIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>)>&&);
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImageFromSharedNativeImage(WebCore::RenderingResourceIdentifier);
+    void shareNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::RenderingResourceIdentifier sharedImageIdentifier);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
     void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
     void releasePathImpl(RemotePathImplIdentifier);

@@ -1012,6 +1012,8 @@ protected:
 
     virtual bool validateAndCacheBufferBinding(const AbstractLocker&, ASCIILiteral functionName, GCGLenum target, WebGLBuffer*);
 
+    virtual bool hasBoundPixelUnpackBuffer() const { return false; }
+
     // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
     void synthesizeGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);
     void synthesizeLostContextGLError(GCGLenum, ASCIILiteral functionName, ASCIILiteral description);
