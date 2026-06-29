@@ -62,6 +62,7 @@ struct WebDynamicScrollBarsViewPrivate;
 // visible is that they have been suppressed by setAlwaysHideHorizontal/VerticalScroller:.
 - (BOOL)horizontalScrollingAllowed;
 - (BOOL)verticalScrollingAllowed;
+- (NSRect)documentVisibleRect;
 @end
 
 #endif // !TARGET_OS_IPHONE

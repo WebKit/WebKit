@@ -634,6 +634,8 @@ void GraphicsLayer::setSize(const FloatSize& size)
     if (size == m_size)
         return;
     
+    ALWAYS_LOG_WITH_STREAM(stream << " GL::setSize: " << size);
+    
     m_size = size;
 
     if (shouldRepaintOnSizeChange())
@@ -938,6 +940,7 @@ static void dumpChildren(TextStream& ts, const Vector<Ref<GraphicsLayer>>& child
 
 void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOptions> options) const
 {
+    ALWAYS_LOG_WITH_STREAM(stream << " dumpProperties: ");
     TextStream::IndentScope indentScope(ts);
     if (!m_offsetFromRenderer.isZero())
         ts << indent << "(offsetFromRenderer "_s << m_offsetFromRenderer << ")\n"_s;

@@ -2773,6 +2773,7 @@ void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)
         m_frameRect = newRect;
         repaint();
         repaintOverhangingFloats(true);
+        ALWAYS_LOG_WITH_STREAM(stream<< "RB:setSize: " << m_frameRect);
     }
 }
 

@@ -75,7 +75,7 @@ public:
 
     template<typename T> void setX(T x) { m_frameRect.setX(x); }
     template<typename T> void setY(T y) { m_frameRect.setY(y); }
-    template<typename T> void setWidth(T width) { m_frameRect.setWidth(width); }
+    template<typename T> void setWidth(T width) { ALWAYS_LOG_WITH_STREAM(stream<< "RB:sewidth: " << width); m_frameRect.setWidth(width); }
     template<typename T> void setHeight(T height) { m_frameRect.setHeight(height); }
 
     inline LayoutUnit logicalLeft() const;
@@ -104,7 +104,7 @@ public:
 
     void setLocation(const LayoutPoint& location) { m_frameRect.setLocation(location); }
     
-    void setSize(const LayoutSize& size) { m_frameRect.setSize(size); }
+    void setSize(const LayoutSize& size) { ALWAYS_LOG_WITH_STREAM(stream<< "RB:setSize: " << size); m_frameRect.setSize(size); }
     void move(LayoutUnit dx, LayoutUnit dy) { m_frameRect.move(dx, dy); }
 
     LayoutRect frameRect() const { return m_frameRect; }

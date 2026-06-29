@@ -111,6 +111,10 @@ static Class customScrollerClass;
 
     _private = new WebDynamicScrollBarsViewPrivate;
     zeroBytes(*_private);
+    if (customScrollerClass) {
+        _private->alwaysHideVerticalScroller = true;
+        _private->alwaysHideHorizontalScroller = true;
+    }
     return self;
 }
 
@@ -121,6 +125,10 @@ static Class customScrollerClass;
 
     _private = new WebDynamicScrollBarsViewPrivate;
     zeroBytes(*_private);
+    if (customScrollerClass) {
+        _private->alwaysHideVerticalScroller = true;
+        _private->alwaysHideHorizontalScroller = true;
+    }
     return self;
 }
 
@@ -155,7 +163,7 @@ static Class customScrollerClass;
 
 - (void)setAlwaysHideHorizontalScroller:(BOOL)shouldBeHidden
 {
-    if (_private->alwaysHideHorizontalScroller == shouldBeHidden)
+    if (_private->alwaysHideHorizontalScroller == shouldBeHidden || DeprecatedGlobalSettings::mockScrollbarsEnabled())
         return;
 
     _private->alwaysHideHorizontalScroller = shouldBeHidden;
@@ -164,7 +172,7 @@ static Class customScrollerClass;
 
 - (void)setAlwaysHideVerticalScroller:(BOOL)shouldBeHidden
 {
-    if (_private->alwaysHideVerticalScroller == shouldBeHidden)
+    if (_private->alwaysHideVerticalScroller == shouldBeHidden || DeprecatedGlobalSettings::mockScrollbarsEnabled())
         return;
 
     _private->alwaysHideVerticalScroller = shouldBeHidden;
@@ -209,6 +217,13 @@ static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
     }
 
     [super scrollClipView:clipView toPoint:point];
+}
+
+- (NSRect)documentVisibleRect
+{
+    auto rect = FloatRect([super documentVisibleRect]);
+    rect.contract({[self verticalScrollbarWidth], [self horizontalScrollbarHeight]});
+    return rect;
 }
 
 @end
@@ -276,6 +291,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 - (void)updateScrollers
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "updateScrollers: ");
     NSView *documentView = [self documentView];
 
     // If we came in here with the view already needing a layout, then do that first.
@@ -295,6 +311,9 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     BOOL newHasHorizontalScroller = hasHorizontalScroller;
     BOOL newHasVerticalScroller = hasVerticalScroller;
+
+    BOOL horizontalWasHidden = _private->horizontalScrollingAllowedButScrollerHidden;
+    BOOL verticalWasHidden = _private->verticalScrollingAllowedButScrollerHidden;
 
     if (!documentView) {
         newHasHorizontalScroller = NO;
@@ -342,6 +361,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     visibleSize.height = ceilf(visibleSize.height);
     frameSize.width = ceilf(frameSize.width);
     frameSize.height = ceilf(frameSize.height);
+    
+    ALWAYS_LOG_WITH_STREAM(stream << " updateScrollers: " << FloatSize(visibleSize) << " documentSize: " << FloatSize(documentSize));
 
     if (_private->hScroll == WebCore::ScrollbarMode::Auto) {
         newHasHorizontalScroller = documentSize.width > visibleSize.width;
@@ -373,12 +394,17 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
             _private->verticalScrollingAllowedButScrollerHidden = true;
         }
     }
+    
+    if ((newHasHorizontalScroller || newHasVerticalScroller || (horizontalWasHidden && !newHasHorizontalScroller) || (verticalWasHidden && !newHasVerticalScroller)) && DeprecatedGlobalSettings::mockScrollbarsEnabled())
+        needsLayout = YES;
 
     if (_private->horizontalScrollingAllowedButScrollerHidden)
         newHasHorizontalScroller = NO;
 
     if (_private->verticalScrollingAllowedButScrollerHidden)
         newHasVerticalScroller = NO;
+    
+    ALWAYS_LOG_WITH_STREAM(stream << "updateScrollers: " << _private->verticalScrollingAllowedButScrollerHidden);
 
     if (hasHorizontalScroller != newHasHorizontalScroller) {
         _private->inUpdateScrollers = YES;
@@ -633,6 +659,22 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [super setContentInsets:edgeInsets];
     [self tile];
+}
+
+- (float)verticalScrollbarWidth
+{
+    ALWAYS_LOG_WITH_STREAM(stream << "verticalScrollbarWidth: " << (_private->verticalScrollingAllowedButScrollerHidden ? 15 : 0) << " enabled: " << DeprecatedGlobalSettings::mockScrollbarsEnabled());
+
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled())
+        return _private->verticalScrollingAllowedButScrollerHidden ? 15.0 : 0.0;
+    return 0.0;
+}
+
+- (float)horizontalScrollbarHeight
+{
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled())
+        return _private->horizontalScrollingAllowedButScrollerHidden ? 15.0 : 0.0;
+    return 0.0;
 }
 
 @end
