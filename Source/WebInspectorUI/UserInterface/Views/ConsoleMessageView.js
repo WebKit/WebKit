@@ -476,7 +476,10 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         if (callFrame && (!callFrame.isConsoleEvaluation || WI.settings.debugShowConsoleEvaluations.value)) {
             let existingCallFrameView = this._callFrameView;
 
-            this._callFrameView = new WI.CallFrameView(callFrame, {showFunctionName: !!callFrame.functionName});
+            this._callFrameView = new WI.CallFrameView(callFrame, {
+                showFunctionName: !!callFrame.functionName,
+                stackTrace: this._message.stackTrace,
+            });
             this._callFrameView.classList.add("console-message-location");
 
             if (existingCallFrameView)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body[dir] .resource-headers > section.summary > .details {
-    border-color: var(--network-system-color);
-}
-
-body[dir] .resource-headers > section.error > .details {
-    border-color: var(--network-error-color);
-}
-
-body[dir] .resource-headers > section:is(.redirect, .headers) > .details {
-    border-color: var(--network-header-color);
-}
-
-.resource-headers .url + .url > .key {
-    color: transparent;
-}
-
-.resource-headers .summary .key {
-    color: var(--network-system-color);
-}
-
-.resource-headers .header > .key {
-    color: var(--network-header-color);
-}
-
-.resource-headers .h1-status > .key,
-.resource-headers .h2-pseudo-header > .key {
-    color: var(--network-pseudo-header-color);
-}
-
-.resource-headers .go-to-link {
-    -webkit-user-select: text;
-}
-
-.resource-headers .pair.initiator > .value {
-    display: inline-flex;
-    align-items: center;
+.stack-trace-popover {
+    overflow: auto;
+    max-width: 600px;
+    max-height: 300px;
 }
