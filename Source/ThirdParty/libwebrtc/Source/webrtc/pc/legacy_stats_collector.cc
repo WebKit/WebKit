@@ -787,6 +787,43 @@ bool LegacyStatsCollector::IsValidTrack(const std::string& track_id) {
              StatsReport::kStatsReportTypeTrack, track_id)) != nullptr;
 }
 
+#if WEBRTC_WEBKIT_BUILD
+StatsReport::Id LegacyStatsCollector::AddCertificateReports(
+    std::unique_ptr<SSLCertificateStats> cert_stats) {
+  RTC_DCHECK_RUN_ON(pc_->signaling_thread());
+
+  StatsReport::Id first_id;
+  StatsReport::Id prev_id;
+  for (SSLCertificateStats* stats = cert_stats.get(); stats;
+       stats = stats->issuer.get()) {
+    StatsReport::Id id(StatsReport::NewTypedId(
+        StatsReport::kStatsReportTypeCertificate, stats->fingerprint));
+
+    StatsReport* report = reports_.ReplaceOrAddNew(id);
+    report->set_timestamp(stats_gathering_started_);
+    report->AddString(StatsReport::kStatsValueNameFingerprint,
+                      stats->fingerprint);
+    report->AddString(StatsReport::kStatsValueNameFingerprintAlgorithm,
+                      stats->fingerprint_algorithm);
+    report->AddString(StatsReport::kStatsValueNameDer,
+                      stats->base64_certificate);
+    // `report` MUST NOT be used after the next ReplaceOrAddNew below: a
+    // later iteration whose `id` Equals an earlier-inserted entry would
+    // delete that entry and invalidate any captured `StatsReport*`.
+    if (!first_id.get()) {
+      first_id = id;
+    } else if (StatsReport* prev_report = reports_.Find(prev_id)) {
+      // Re-look-up the previous report through the collection now, instead
+      // of holding a `StatsReport*` across the ReplaceOrAddNew above.
+      // `prev_id` is a refcounted `scoped_refptr<IdBase>` that survives any
+      // deletion of the StatsReport that owned it.
+      prev_report->AddId(StatsReport::kStatsValueNameIssuerId, id);
+    }
+    prev_id = id;
+  }
+  return first_id;
+}
+#else
 StatsReport* LegacyStatsCollector::AddCertificateReports(
     std::unique_ptr<SSLCertificateStats> cert_stats) {
   RTC_DCHECK_RUN_ON(pc_->signaling_thread());
@@ -819,6 +856,7 @@ StatsReport* LegacyStatsCollector::AddCertificateReports(
   }
   return first_report;
 }
+#endif
 
 StatsReport* LegacyStatsCollector::AddConnectionInfoReport(
     const std::string& content_name,
@@ -1054,17 +1092,27 @@ void LegacyStatsCollector::ExtractSessionInfo_s(SessionStats& session_stats) {
     //
     StatsReport::Id local_cert_report_id, remote_cert_report_id;
     if (transport.local_cert_stats) {
+#if WEBRTC_WEBKIT_BUILD
+      local_cert_report_id =
+          AddCertificateReports(std::move(transport.local_cert_stats));
+#else
       StatsReport* r =
           AddCertificateReports(std::move(transport.local_cert_stats));
       if (r)
         local_cert_report_id = r->id();
+#endif
     }
 
     if (transport.remote_cert_stats) {
+#if WEBRTC_WEBKIT_BUILD
+      remote_cert_report_id =
+          AddCertificateReports(std::move(transport.remote_cert_stats));
+#else
       StatsReport* r =
           AddCertificateReports(std::move(transport.remote_cert_stats));
       if (r)
         remote_cert_report_id = r->id();
+#endif
     }
 
     for (const auto& channel_iter : transport.stats.channel_stats) {

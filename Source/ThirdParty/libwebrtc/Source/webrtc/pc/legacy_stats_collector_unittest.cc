@@ -668,6 +668,29 @@ class LegacyStatsCollectorTest : public ::testing::Test {
     return Clock::NtpToUtc(clock_.CurrentNtpTime()).ms();
   }
 
+#if WEBRTC_WEBKIT_BUILD
+  // Drives a single UpdateStats() pass with a controlled local certificate
+  // chain.  Used by tests that assert survival under ASan (no return-value
+  // checks); see the AddCertificateReports tests at the end of this file.
+  void RunUpdateStatsWithLocalCertChain(
+      const std::vector<std::string>& local_ders) {
+    const std::string kTransportName = "transport";
+
+    auto pc = CreatePeerConnection();
+    auto stats = CreateStatsCollector(pc.get());
+
+    pc->AddVoiceChannel("audio", kTransportName);
+    pc->SetTransportStats(kTransportName, TransportChannelStats());
+
+    FakeSSLIdentity local_identity(DersToPems(local_ders));
+    scoped_refptr<RTCCertificate> local_certificate(
+        RTCCertificate::Create(local_identity.Clone()));
+    pc->SetLocalCertificate(kTransportName, local_certificate);
+
+    stats->UpdateStats(PeerConnectionInterface::kStatsOutputLevelStandard);
+  }
+#endif  // WEBRTC_WEBKIT_BUILD
+
  protected:
   // Slight enhancement to SimulatedClock.
   // SimulatedClock uses a simplified model where its internal monotonic time is
@@ -1534,6 +1557,35 @@ TEST_F(LegacyStatsCollectorTest, UnsupportedDigestIgnored) {
   TestCertificateReports(local_identity, std::vector<std::string>(1, local_der),
                          remote_identity, std::vector<std::string>());
 }
+
+#if WEBRTC_WEBKIT_BUILD
+// AddCertificateReports() must not return a `StatsReport*` that has been
+// freed by a subsequent ReplaceOrAddNew() in the same loop, and must not
+// dereference an in-loop `prev_report` that has been freed by a
+// subsequent ReplaceOrAddNew().  These tests drive a single UpdateStats()
+// pass with a controlled local certificate chain and rely on ASan to
+// flag the heap-use-after-free; survival is the assertion.
+
+// Covers the in-loop dereference site: chain entries 1 and 2 share a
+// fingerprint, so iteration 2's ReplaceOrAddNew() frees iteration 1's
+// report, then the loop dereferences the captured `prev_report`.
+TEST_F(LegacyStatsCollectorTest,
+       AddCertificateReportsConsecutiveDuplicateInChain) {
+  RunUpdateStatsWithLocalCertChain({"duplicate", "duplicate"});
+  SUCCEED() << "AddCertificateReports() did not deref a freed StatsReport*.";
+}
+
+// Covers the caller-side dereference site: chain entry 3 shares a
+// fingerprint with the leaf (entry 1), so iteration 3's
+// ReplaceOrAddNew() frees the leaf's report, then
+// AddCertificateReports() returns that freed pointer to
+// ExtractSessionInfo_s() which calls `r->id()` on it.
+TEST_F(LegacyStatsCollectorTest,
+       AddCertificateReportsNonConsecutiveDuplicateInChain) {
+  RunUpdateStatsWithLocalCertChain({"leaf", "intermediate", "leaf"});
+  SUCCEED() << "AddCertificateReports() did not return a freed StatsReport*.";
+}
+#endif  // WEBRTC_WEBKIT_BUILD
 
 // This test verifies that the audio/video related stats which are -1 initially
 // will be filtered out.

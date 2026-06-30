@@ -114,10 +114,17 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
 
   bool UseStandardBytesStats() const { return use_standard_bytes_stats_; }
 
+#if WEBRTC_WEBKIT_BUILD
+  StatsReport::Id AddCertificateReportsForTest(
+      std::unique_ptr<SSLCertificateStats> cert_stats) {
+    return AddCertificateReports(std::move(cert_stats));
+  }
+#else
   StatsReport* AddCertificateReportsForTest(
       std::unique_ptr<SSLCertificateStats> cert_stats) {
     return AddCertificateReports(std::move(cert_stats));
   }
+#endif
 
  private:
   // Struct that's populated on the network thread and carries the values to
@@ -158,10 +165,17 @@ class LegacyStatsCollector : public LegacyStatsCollectorInterface {
   StatsReport* AddCandidateReport(const CandidateStats& candidate_stats,
                                   bool local);
 
+#if WEBRTC_WEBKIT_BUILD
   // Adds a report for this certificate and every certificate in its chain, and
-  // returns the leaf certificate's report (`cert_stats`'s report).
+  // returns the leaf certificate's report Id (`cert_stats`'s report Id).
+  // Returns a null Id if the chain is empty.
+  StatsReport::Id AddCertificateReports(
+      std::unique_ptr<SSLCertificateStats> cert_stats);
+#else
+  // Adds a report for this certificate and every certificate in its chain.
   StatsReport* AddCertificateReports(
       std::unique_ptr<SSLCertificateStats> cert_stats);
+#endif
 
   StatsReport* AddConnectionInfoReport(const std::string& content_name,
                                        int component,
