@@ -16,6 +16,35 @@ if (getcwd() =~ m{/CMakeFiles/}) {
     exec($ninja, @ARGV);
 }
 
+# Self-heal PCHs in a relocated (APFS copy-on-write) build dir reused via a clang
+# VFS overlay (.pch-vfs-overlay.yaml, written by the relocating tooling) that
+# re-homes each .pch's baked paths so they need not be recompiled. A cmake
+# reconfigure rewrites the cmake_pch.* wrappers (new content, unchanged mtime), so
+# ninja keeps the now-stale .pch and clang rejects it; when a reconfigure is
+# pending and the overlay exists, reconfigure first, then touch any wrapper whose
+# content changed so ninja rebuilds just those .pch.
+if (-e ".pch-vfs-overlay.yaml" && `$ninja -n @ARGV 2>&1` =~ /\bRe-running CMake\b/) {
+    require File::Find;
+    my $snapshot = sub {
+        my %h;
+        File::Find::find({ no_chdir => 1, wanted => sub {
+            return unless m{(?:^|/)cmake_pch[.\w]*\.(?:hxx|h)$};
+            local $/;
+            open(my $f, '<', $_) or return;
+            $h{$_} = <$f>;
+            close($f);
+        } }, '.');
+        return %h;
+    };
+    my %before = $snapshot->();
+    system($ninja, 'build.ninja');
+    my %after = $snapshot->();
+    my $now = time;
+    for my $w (keys %after) {
+        utime($now, $now, $w) if !defined($before{$w}) || $before{$w} ne $after{$w};
+    }
+}
+
 # Real compilation
 my $bundlePolicy = $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY};
 if (!defined($bundlePolicy)) {
