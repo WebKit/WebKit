@@ -205,7 +205,8 @@
 (allow network-outbound
     ;; Local mDNSResponder for DNS, arbitrary outbound TCP
     (literal "/private/var/run/mDNSResponder")
-    (remote tcp))
+    (remote tcp)
+    (remote udp))
 
 ;; Needed for CFNetworkAgent, see 33386291
 (allow mach-lookup
