@@ -10,4 +10,5 @@ layer at (0,0) size 200x200
   RenderSVGViewportContainer at (0,0) size 200x200
 layer at (0,0) size 200x200
   RenderSVGViewportContainer {svg} at (0,0) size 200x200
-    RenderSVGRect {rect} at (60,90) size 80x20 [fill={[type=SOLID] [color=#008000]}] [x=60.00] [y=90.00] [width=80.00] [height=20.00]
+layer at (60,90) size 80x20
+  RenderSVGRect {rect} at (60,90) size 80x20 [fill={[type=SOLID] [color=#008000]}] [x=60.00] [y=90.00] [width=80.00] [height=20.00]

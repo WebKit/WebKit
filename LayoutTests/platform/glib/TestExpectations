@@ -2589,6 +2589,7 @@ svg/z-index [ Skip ]
 svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 # Gradient+text have placing issues in gtk/wpe.
@@ -5381,8 +5382,6 @@ webkit.org/b/310213 http/tests/xmlhttprequest/chunked-progress-event-expectedLen
 webkit.org/b/310215 fast/loader/submit-form-while-parsing-2.html [ Pass Failure Timeout ]
 
 webkit.org/b/310268 fast/css/anchor-position-media-query-viewport-units.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/287572 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ ImageOnlyFailure ]
 
 webkit.org/b/310543 fast/css/outline-auto-zoom-canvas.html [ Failure ]
 webkit.org/b/310543 fast/images/imagemap-focus-ring-zoom-style.html [ ImageOnlyFailure ]

@@ -60,7 +60,6 @@ public:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     virtual bool requiresLayer() const = 0;
-    bool requiresLayerForSVGIntrinsicReasons() const;
 
     // Returns true if the background is painted opaque in the given rect.
     // The query rect is given in local coordinate system.

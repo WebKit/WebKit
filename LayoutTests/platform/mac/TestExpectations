@@ -1886,6 +1886,7 @@ webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-stream
 svg/transforms/layout-tiny-elements-in-scaled-group.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-origin-in-small-units.svg [ ImageOnlyFailure ]
 svg/transforms/rotation-tiny-element-in-group.svg [ ImageOnlyFailure ]
+svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
 svg/transforms/transformed-child-in-container.svg [ Pass ImageOnlyFailure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 

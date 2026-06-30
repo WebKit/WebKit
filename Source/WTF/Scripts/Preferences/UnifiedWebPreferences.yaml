@@ -4629,19 +4629,6 @@ LayerBasedSVGEngineEnabled:
     WebKit:
       default: false
 
-LayerBasedSVGEngineForceLayerCreationEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "LBSE: Force layer creation for all SVG renderers"
-  humanReadableDescription: "Force the layer-based SVG Engine (LBSE) to create a RenderLayer for every SVG renderer (debugging only)"
-  defaultValue:
-    WebCore:
-      default: false
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
 LayoutFallbackWidth:
   type: uint32_t
   status: embedder

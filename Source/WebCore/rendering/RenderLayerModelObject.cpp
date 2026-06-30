@@ -141,23 +141,6 @@ bool RenderLayerModelObject::hasSelfPaintingLayer() const
     return m_layer && m_layer->isSelfPaintingLayer();
 }
 
-bool RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons() const
-{
-    // Plain 2D transforms need no layer, paintRendererByApplyingTransformForSVG() handles them.
-    // 3D transforms require compositing, hence a layer, as do grouping effects, z-index, etc.
-    return createsGroup()
-        || style().transform().has3DOperation()
-        || style().translate().is3DOperation()
-        || style().scale().is3DOperation()
-        || style().rotate().is3DOperation()
-        || style().transformStyle3D() == TransformStyle3D::Preserve3D
-        || !style().perspective().isNone()
-        || hasHiddenBackface()
-        || hasReflection()
-        || !style().specifiedZIndex().isAuto()
-        || style().isolation() != Isolation::Auto;
-}
-
 void RenderLayerModelObject::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
     s_wasFloating = isFloating();

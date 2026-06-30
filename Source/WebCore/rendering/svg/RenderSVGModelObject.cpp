@@ -46,7 +46,6 @@
 #include "SVGNames.h"
 #include "SVGPathFromElement.h"
 #include "SVGUseElement.h"
-#include "Settings.h"
 #include "StyleTransformResolver.h"
 #include "TransformState.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -70,19 +69,6 @@ RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, Style
 }
 
 RenderSVGModelObject::~RenderSVGModelObject() = default;
-
-bool RenderSVGModelObject::requiresLayer() const
-{
-    if (document().settings().layerBasedSVGEngineForceLayerCreationEnabled())
-        return true;
-    if (requiresLayerForSVGIntrinsicReasons())
-        return true;
-    // All transformed containers (not leaves) gain a layer, so the induced transformations are
-    // visible to RenderLayerCompositor and the composition code paths.
-    if (isTransformed() && isRenderSVGContainer())
-        return true;
-    return false;
-}
 
 void RenderSVGModelObject::updateFromStyle()
 {

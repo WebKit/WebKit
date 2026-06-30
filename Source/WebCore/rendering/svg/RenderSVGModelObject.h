@@ -51,7 +51,7 @@ class RenderSVGModelObject : public RenderLayerModelObject {
 public:
     virtual ~RenderSVGModelObject();
 
-    bool requiresLayer() const override;
+    bool requiresLayer() const override { return true; }
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
