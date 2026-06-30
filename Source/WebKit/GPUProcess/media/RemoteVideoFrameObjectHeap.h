@@ -53,7 +53,10 @@ public:
     void deref() const final { IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any>::deref(); }
 
     void close();
-    RemoteVideoFrameProxy::Properties add(Ref<WebCore::VideoFrame>&&);
+    // Adds `frame` under a reference allocated by the GPU process.
+    RemoteVideoFrameReference add(Ref<WebCore::VideoFrame>&&);
+    // Adds `frame` under the Web-process-allocated `reference`.
+    void add(RemoteVideoFrameReference, Ref<WebCore::VideoFrame>&&);
     RefPtr<WebCore::VideoFrame> get(RemoteVideoFrameReadReference&&);
 
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&&) { close(); }

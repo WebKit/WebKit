@@ -52,18 +52,16 @@ class RemoteVideoFrameProxy final : public WebCore::VideoFrame {
     WTF_MAKE_NONCOPYABLE(RemoteVideoFrameProxy);
 public:
     using Properties = RemoteVideoFrameProxyProperties;
-    static Properties properties(WebKit::RemoteVideoFrameReference, const WebCore::VideoFrame&);
+    static Properties properties(const WebCore::VideoFrame&);
 
-    static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
-
-    // Called by the end-points that capture creation messages that are sent from GPUP but
-    // whose destinations were released in WP before message was processed.
-    static void releaseUnused(IPC::Connection&, Properties&&);
+    static Ref<RemoteVideoFrameProxy> create(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, RemoteVideoFrameReference, Properties&&);
 
     ~RemoteVideoFrameProxy() final;
 
     RemoteVideoFrameIdentifier LEGACY_NODELETE identifier() const;
     RemoteVideoFrameReadReference LEGACY_NODELETE newReadReference() const;
+    // False when the frame belongs to a GPU process that is no longer running.
+    bool hasValidConnection() const;
 
     WebCore::IntSize size() const { return m_size; }
 
@@ -77,7 +75,7 @@ public:
 #endif
 
 private:
-    RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
+    RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, RemoteVideoFrameReference, Properties&&);
 
     enum CloneConstructor { cloneConstructor };
     RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy&);

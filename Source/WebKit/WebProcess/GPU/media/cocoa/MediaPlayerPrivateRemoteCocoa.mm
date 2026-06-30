@@ -49,9 +49,14 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 }
 #endif
 
-void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties)
+void MediaPlayerPrivateRemote::pushVideoFrameMetadata(IPC::Connection& connection, WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameReference reference, RemoteVideoFrameProxy::Properties&& properties)
 {
-    auto videoFrame = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), WTF::move(properties));
+    // Drop the frames from a GPU process connection that is no longer used. The current GPU process
+    // would wait for a frame with the reference that never arrives.
+    if (&connection != &this->connection())
+        return;
+    // Adopt the reference to RemoteVideoFrameProxy before the early outs, so that the frame gets released.
+    auto videoFrame = RemoteVideoFrameProxy::create(connection, protect(videoFrameObjectHeapProxy()), reference, WTF::move(properties));
     if (!m_isGatheringVideoFrameMetadata)
         return;
     m_videoFrameMetadata = WTF::move(videoFrameMetadata);
