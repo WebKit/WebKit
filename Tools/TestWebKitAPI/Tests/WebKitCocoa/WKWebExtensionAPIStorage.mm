@@ -54,6 +54,22 @@ static auto *storageManifest = @{
     } ],
 };
 
+static auto *unlimitedStorageManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Storage Test",
+    @"description": @"Storage Test",
+    @"version": @"1",
+
+    @"permissions": @[ @"unlimitedStorage" ],
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+};
+
 TEST(WKWebExtensionAPIStorage, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -637,6 +653,23 @@ TEST(WKWebExtensionAPIStorage, StorageFromSubframe)
     [manager.get().defaultTab.webView loadRequest:urlRequestMain];
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPIStorage, SetExceedsMaximumDataSize)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        // 5120 keys × 200 KB ≈ 1GB of data, exceeding the 950 MB per-call limit.
+        @"const value = 'x'.repeat(200 * 1024)",
+        @"const data = {}",
+        @"for (let i = 0; i < 5120; i++)",
+        @"    data[`key${i}`] = value",
+
+        @"browser.test.assertThrows(() => browser.storage.local.set(data), /exceeded maximum data size allowed per call/i)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(unlimitedStorageManifest, @{ @"background.js": backgroundScript });
 }
 
 } // namespace TestWebKitAPI
