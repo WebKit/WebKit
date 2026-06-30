@@ -168,6 +168,7 @@ public:
     void setIdentifier(int64_t identifier) { m_identifier = identifier; }
     int64_t identifier() const { return m_identifier; }
 
+    WEBCORE_EXPORT unsigned filesCount() const;
     unsigned imageOrMediaFilesCount() const;
 
     static EncodingType parseEncodingType(const String& type)

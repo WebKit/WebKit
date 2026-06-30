@@ -118,6 +118,16 @@ Ref<FormData> FormData::isolatedCopy() const
     return formData;
 }
 
+unsigned FormData::filesCount() const
+{
+    unsigned filesCount = 0;
+    for (auto& element : m_elements) {
+        if (std::holds_alternative<WebCore::FormDataElement::EncodedFileData>(element.data))
+            ++filesCount;
+    }
+    return filesCount;
+}
+
 unsigned FormData::imageOrMediaFilesCount() const
 {
     unsigned imageOrMediaFilesCount = 0;
