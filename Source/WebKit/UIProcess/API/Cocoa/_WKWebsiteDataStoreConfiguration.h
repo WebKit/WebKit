@@ -82,8 +82,8 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL serviceWorkerProcessTerminationDelayEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic, nullable, copy) NSURL *networkCacheDirectory WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic, nullable, copy) NSURL *deviceIdHashSaltsStorageDirectory WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
-@property (nonatomic, nullable, copy) NSURL *applicationCacheDirectory WK_API_DEPRECATED("ApplicationCache is no longer supported", macos(10.15.4, WK_MAC_TBA), ios(13.4, WK_IOS_TBA));
-@property (nonatomic, nullable, copy) NSString *applicationCacheFlatFileSubdirectoryName WK_API_DEPRECATED("ApplicationCache is no longer supported", macos(10.4, WK_MAC_TBA), ios(13.4, WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSURL *applicationCacheDirectory WK_API_DEPRECATED("ApplicationCache is no longer supported", macos(10.15.4, 26.4), ios(13.4, 26.4));
+@property (nonatomic, nullable, copy) NSString *applicationCacheFlatFileSubdirectoryName WK_API_DEPRECATED("ApplicationCache is no longer supported", macos(10.4, 26.4), ios(13.4, 26.4));
 @property (nonatomic, nullable, copy) NSURL *mediaCacheDirectory WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic, nullable, copy) NSURL *mediaKeysStorageDirectory WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) NSUInteger testSpeedMultiplier WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
@@ -109,7 +109,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 // Testing only.
 @property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
-@property (nonatomic, nullable, copy) NSString *additionalDomainsWithUserInteractionForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSString *additionalDomainsWithUserInteractionForTesting WK_API_AVAILABLE(macos(26.4), ios(26.4));
 @property (nonatomic) NSUInteger overridePersistentNotificationMinimumLifetimeForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 @end
 

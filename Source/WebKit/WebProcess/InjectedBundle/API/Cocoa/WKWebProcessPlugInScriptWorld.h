@@ -38,6 +38,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (void)clearWrappers;
 - (void)makeAllShadowRootsOpen WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)disableOverrideBuiltinsBehavior WK_API_AVAILABLE(macos(10.14), ios(12.0));
-- (void)allowJSHandleCreation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)allowJSHandleCreation WK_API_AVAILABLE(macos(26.4), ios(26.4));
 
 @end

@@ -27,6 +27,6 @@
 
 @interface NSString (WKExtras)
 
-- (NSString *)_wk_decodeHostName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (NSString *)_wk_decodeHostName WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 @end

@@ -69,7 +69,7 @@ typedef NS_ENUM(NSInteger, WKSecurityRestrictionMode) {
     WKSecurityRestrictionModeNone,
     WKSecurityRestrictionModeMaximizeCompatibility,
     WKSecurityRestrictionModeLockdown
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 /*! A WKWebpagePreferences object is a collection of properties that
  determine the preferences to use when loading and rendering a page.
@@ -126,6 +126,6 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
  When the system has chosen WKSecurityRestrictionModeLockdown (e.g., in Lockdown Mode), attempts to set a less restrictive mode will fail silently.
  The default value is WKSecurityRestrictionModeNone.
  */
-@property (nonatomic) WKSecurityRestrictionMode securityRestrictionMode WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic) WKSecurityRestrictionMode securityRestrictionMode WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 @end

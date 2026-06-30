@@ -159,7 +159,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView hasVideoInPictureInPictureDidChange:(BOOL)hasVideoInPictureInPicture WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_webView:(WKWebView *)webView shouldAllowPDFAtURL:(NSURL *)fileURL toOpenFromFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-- (void)_webView:(WKWebView *)webView didReceiveConsoleLogForTesting:(NSString *)log WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_webView:(WKWebView *)webView didReceiveConsoleLogForTesting:(NSString *)log WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 - (void)_webView:(WKWebView *)webView imageOrMediaDocumentSizeChanged:(CGSize)size WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (NSDictionary *)_dataDetectionContextForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -228,7 +228,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView setRecentlyAccessedGamepads:(BOOL)recentlyAccessedGamepads WK_API_AVAILABLE(visionos(2.0));
 - (void)_webView:(WKWebView *)webView gamepadsConnectedStateDidChange:(BOOL)gamepadsConnected WK_API_AVAILABLE(visionos(2.0));
 
-- (void)_webViewWillPresentModalUI:(WKWebView *)webView WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+- (void)_webViewWillPresentModalUI:(WKWebView *)webView WK_API_AVAILABLE(visionos(26.4));
 #endif
 
 #if TARGET_OS_IPHONE

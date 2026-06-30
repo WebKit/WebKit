@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, _WKInspectorDebuggableType) {
     _WKInspectorDebuggableTypeServiceWorker,
     _WKInspectorDebuggableTypePage,
     _WKInspectorDebuggableTypeWebPage,
-    _WKInspectorDebuggableTypeWasmDebugger WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    _WKInspectorDebuggableTypeWasmDebugger WK_API_AVAILABLE(macos(26.4), ios(26.4)),
 } WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
