@@ -33,6 +33,8 @@
 #include "OpenXRGraphicsBinding.h"
 #if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
 #include "OpenXRGraphicsBindingOpenGLES.h"
+#elif defined(XR_USE_GRAPHICS_API_VULKAN)
+#include "OpenXRGraphicsBindingVulkan.h"
 #endif
 #include "OpenXRHitTestManager.h"
 #include "OpenXRInput.h"
@@ -767,6 +769,8 @@ void OpenXRCoordinator::initializeDevice(bool isForTesting)
     std::unique_ptr<OpenXRGraphicsBinding> graphicsBinding;
 #if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
     graphicsBinding = OpenXRGraphicsBindingOpenGLES::create();
+#elif defined(XR_USE_GRAPHICS_API_VULKAN)
+    graphicsBinding = OpenXRGraphicsBindingVulkan::create();
 #endif
     if (!graphicsBinding || !graphicsBinding->initializeDisplay(isForTesting)) {
         LOG(XR, "Failed to create a display for OpenXR.");

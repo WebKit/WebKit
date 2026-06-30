@@ -42,6 +42,11 @@ typedef void (*(*PFNEGLGETPROCADDRESSPROC)(const char *))(void);
 #include <jni.h>
 #endif
 
+// The Vulkan types need to be defined before including openxr_platform.h
+#if defined(XR_USE_GRAPHICS_API_VULKAN)
+#include <volk.h>
+#endif
+
 #include <openxr/openxr_platform.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -57,6 +62,12 @@ public:
 #endif
 #if defined(XR_USE_GRAPHICS_API_OPENGL_ES)
     PFN_xrGetOpenGLESGraphicsRequirementsKHR xrGetOpenGLESGraphicsRequirementsKHR { nullptr };
+#endif
+#if defined(XR_USE_GRAPHICS_API_VULKAN)
+    PFN_xrGetVulkanGraphicsRequirements2KHR xrGetVulkanGraphicsRequirements2KHR { nullptr };
+    PFN_xrCreateVulkanInstanceKHR xrCreateVulkanInstanceKHR { nullptr };
+    PFN_xrGetVulkanGraphicsDevice2KHR xrGetVulkanGraphicsDevice2KHR { nullptr };
+    PFN_xrCreateVulkanDeviceKHR xrCreateVulkanDeviceKHR { nullptr };
 #endif
 #if defined(XR_EXT_hand_tracking)
     PFN_xrCreateHandTrackerEXT xrCreateHandTrackerEXT { nullptr };

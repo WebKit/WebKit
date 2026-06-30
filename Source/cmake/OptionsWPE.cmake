@@ -371,8 +371,25 @@ if (ENABLE_WEBXR)
     find_package(OpenXR REQUIRED CONFIG)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENXR ${OpenXR_FOUND})
     set(OPENXR_VERSION "${OpenXR_VERSION}" CACHE INTERNAL "OpenXR SDK version")
+
+    # Graphics API used by the OpenXR backend. OpenGLES is the default; Vulkan can
+    # be selected at build time with -DWEBXR_GRAPHICS_API=VULKAN.
+    set(WEBXR_GRAPHICS_API "OPENGL_ES" CACHE STRING "Graphics API for the OpenXR WebXR backend (OPENGL_ES or VULKAN)")
+    set_property(CACHE WEBXR_GRAPHICS_API PROPERTY STRINGS "OPENGL_ES" "VULKAN")
+
+    if (WEBXR_GRAPHICS_API STREQUAL "VULKAN")
+        # 341 for volkLoadInstanceTable(), which the binding uses so its Vulkan dispatch stays out of volk's process-wide
+        # globals and cannot collide with any other volk user in the same process.
+        find_package(volk 341 CONFIG)
+        if (NOT TARGET volk::volk OR NOT TARGET volk::volk_headers)
+            message(FATAL_ERROR "Volk 341 or newer is required for WEBXR_GRAPHICS_API=VULKAN")
+        endif ()
+        SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_VULKAN TRUE)
+    else ()
+        SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_OPENGL_ES TRUE)
+    endif ()
+
     SET_AND_EXPOSE_TO_BUILD(XR_USE_PLATFORM_EGL TRUE)
-    SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_OPENGL_ES TRUE)
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBXR_AR TRUE)
     SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBXR_HANDS TRUE)
     if (ANDROID)

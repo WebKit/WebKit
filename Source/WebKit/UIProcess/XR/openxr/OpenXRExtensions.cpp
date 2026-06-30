@@ -90,6 +90,16 @@ bool OpenXRExtensions::loadMethods(XrInstance instance)
         return false;
     }
 #endif
+#if defined(XR_USE_GRAPHICS_API_VULKAN)
+    xrGetInstanceProcAddr(instance, "xrGetVulkanGraphicsRequirements2KHR", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->xrGetVulkanGraphicsRequirements2KHR));
+    xrGetInstanceProcAddr(instance, "xrCreateVulkanInstanceKHR", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->xrCreateVulkanInstanceKHR));
+    xrGetInstanceProcAddr(instance, "xrGetVulkanGraphicsDevice2KHR", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->xrGetVulkanGraphicsDevice2KHR));
+    xrGetInstanceProcAddr(instance, "xrCreateVulkanDeviceKHR", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->xrCreateVulkanDeviceKHR));
+    if (!m_methods->xrGetVulkanGraphicsRequirements2KHR || !m_methods->xrCreateVulkanInstanceKHR || !m_methods->xrGetVulkanGraphicsDevice2KHR || !m_methods->xrCreateVulkanDeviceKHR) {
+        LOG(XR, "Failed to load the KHR_vulkan_enable2 functions");
+        return false;
+    }
+#endif
 #if defined(XR_EXT_hand_tracking)
     if (isExtensionSupported(XR_EXT_HAND_TRACKING_EXTENSION_NAME ""_span)) {
         xrGetInstanceProcAddr(instance, "xrCreateHandTrackerEXT", reinterpret_cast<PFN_xrVoidFunction*>(&m_methods->xrCreateHandTrackerEXT));

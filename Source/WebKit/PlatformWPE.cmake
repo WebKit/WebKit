@@ -490,6 +490,9 @@ endif ()
 
 if (USE_OPENXR)
    list(APPEND WebKit_LIBRARIES OpenXR::openxr_loader)
+   if (XR_USE_GRAPHICS_API_VULKAN)
+       list(APPEND WebKit_LIBRARIES volk::volk)
+   endif ()
 endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)
