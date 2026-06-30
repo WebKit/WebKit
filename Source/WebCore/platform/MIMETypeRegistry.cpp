@@ -586,6 +586,9 @@ bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
+    auto lowercaseType = mimeType.convertToASCIILowercase();
+    if (!lowercaseType.startsWith("video/"_s) && !lowercaseType.startsWith("audio/"_s) && !lowercaseType.startsWith("application/"_s))
+        return false;
     return supportedMediaMIMETypes().contains(mimeType);
 }
 
