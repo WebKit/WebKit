@@ -49,6 +49,7 @@ typedef void (*(*PFNEGLGETPROCADDRESSPROC)(const char *))(void);
 #include <openxr/openxr_platform.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebKit {
 
@@ -85,6 +86,12 @@ private:
         VkFormat format { VK_FORMAT_UNDEFINED };
         // Command buffer that blits this image into its paired swapchain image, recorded once and resubmitted on every commit.
         VkCommandBuffer commandBuffer { VK_NULL_HANDLE };
+        // Per-image synchronization so frames overlap without a per-frame queue wait. inFlightFence signals when this image's
+        // submission completes (lazy wait before reusing the command buffer), and acquireSemaphore receives the WebProcess
+        // render completion fence each frame (waited on by the blit). Both are sized to the swapchain so reusing one
+        // image's objects never collides with another's in flight work.
+        VkFence inFlightFence { VK_NULL_HANDLE };
+        VkSemaphore acquireSemaphore { VK_NULL_HANDLE };
     };
 
     std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture2D(uint64_t swapchainImage, const OpenXRSwapchain&, uint32_t width, uint32_t height);
@@ -112,13 +119,10 @@ private:
     VkQueue m_vkQueue { VK_NULL_HANDLE };
     VkCommandPool m_commandPool { VK_NULL_HANDLE };
 
-    // Binary semaphore used to GPU-wait on the web process' render-completion fence: waitFrameFence()
-    // imports the sync-file fd into it as a temporary payload, and commitFrame()'s blit submission
-    // waits on it so the copy observes the finished writes without stalling the CPU. Mirrors the
-    // OpenGLES GLFence::importFD()/serverWait() path. m_acquireSemaphorePending tracks whether a
-    // payload was imported for the current commit.
-    VkSemaphore m_acquireSemaphore { VK_NULL_HANDLE };
-    bool m_acquireSemaphorePending { false };
+    // The WebProcess render completion fence, stashed by waitFrameFence() and consumed by the next
+    // commitFrame(), which imports it into the just acquired image's acquireSemaphore. waitFrameFence() does not know which
+    // image the commit will target, so the fd is held here in between.
+    WTF::UnixFileDescriptor m_pendingFenceFD;
 
     HashMap<uint64_t, ExportedImage> m_exportedImages;
 };

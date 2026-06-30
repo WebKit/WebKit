@@ -246,13 +246,6 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
         return false;
     }
 
-    VkSemaphoreCreateInfo semaphoreCreateInfo { };
-    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    if (m_deviceTable.vkCreateSemaphore(m_vkDevice, &semaphoreCreateInfo, nullptr, &m_acquireSemaphore) != VK_SUCCESS) {
-        LOG(XR, "Failed to create the Vulkan frame-fence semaphore.");
-        return false;
-    }
-
     m_graphicsBinding = createOpenXRStruct<XrGraphicsBindingVulkanKHR, XR_TYPE_GRAPHICS_BINDING_VULKAN2_KHR>();
     m_graphicsBinding.instance = m_vkInstance;
     m_graphicsBinding.physicalDevice = m_vkPhysicalDevice;
@@ -325,11 +318,7 @@ void OpenXRGraphicsBindingVulkan::releaseSessionGraphics()
         destroyExportedImage(exportedImage);
     m_exportedImages.clear();
 
-    if (m_acquireSemaphore != VK_NULL_HANDLE) {
-        m_deviceTable.vkDestroySemaphore(m_vkDevice, m_acquireSemaphore, nullptr);
-        m_acquireSemaphore = VK_NULL_HANDLE;
-    }
-    m_acquireSemaphorePending = false;
+    m_pendingFenceFD = { };
 
     if (m_commandPool != VK_NULL_HANDLE) {
         m_deviceTable.vkDestroyCommandPool(m_vkDevice, m_commandPool, nullptr);
@@ -353,10 +342,15 @@ void OpenXRGraphicsBindingVulkan::releaseSessionGraphics()
 void OpenXRGraphicsBindingVulkan::destroyExportedImage(ExportedImage& exportedImage)
 {
     ASSERT(m_vkDevice != VK_NULL_HANDLE);
+    if (exportedImage.acquireSemaphore != VK_NULL_HANDLE)
+        m_deviceTable.vkDestroySemaphore(m_vkDevice, exportedImage.acquireSemaphore, nullptr);
+    if (exportedImage.inFlightFence != VK_NULL_HANDLE)
+        m_deviceTable.vkDestroyFence(m_vkDevice, exportedImage.inFlightFence, nullptr);
     if (exportedImage.image != VK_NULL_HANDLE)
         m_deviceTable.vkDestroyImage(m_vkDevice, exportedImage.image, nullptr);
     if (exportedImage.memory != VK_NULL_HANDLE)
         m_deviceTable.vkFreeMemory(m_vkDevice, exportedImage.memory, nullptr);
+    // The command buffer is owned by m_commandPool and freed when the pool is destroyed.
     exportedImage = { };
 }
 
@@ -509,6 +503,23 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
         return std::nullopt;
     }
 
+    // Per-image synchronization objects. The fence starts signaled so the first commitFrame() that reuses this image waits on
+    // it without a special case. (On failure cleanupOnError destroys whatever was created.)
+    VkFenceCreateInfo fenceCreateInfo { };
+    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    if (m_deviceTable.vkCreateFence(m_vkDevice, &fenceCreateInfo, nullptr, &exportedImage.inFlightFence) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateFence failed for exported texture");
+        return std::nullopt;
+    }
+
+    VkSemaphoreCreateInfo semaphoreCreateInfo { };
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    if (m_deviceTable.vkCreateSemaphore(m_vkDevice, &semaphoreCreateInfo, nullptr, &exportedImage.acquireSemaphore) != VK_SUCCESS) {
+        RELEASE_LOG(XR, "OpenXR Vulkan: vkCreateSemaphore failed for exported texture");
+        return std::nullopt;
+    }
+
     cleanupOnError.release();
     m_exportedImages.set(swapchainImage, WTF::move(exportedImage));
 
@@ -596,9 +607,9 @@ bool OpenXRGraphicsBindingVulkan::recordBlitCommandBuffer(ExportedImage& exporte
 
 void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwapchain& swapchain, TextureType type, const Vector<uint64_t>&)
 {
-    // Consume any fence imported by waitFrameFence() for this commit. Snapshot it up front so the
-    // early returns below don't leave a stale payload waiting on the next layer's commit.
-    bool waitOnAcquireFence = std::exchange(m_acquireSemaphorePending, false);
+    // Take the fence stashed by waitFrameFence() for this commit. Snapshot it up front so the early returns below don't leave a
+    // stale fd waiting on the next layer's commit (the UnixFileDescriptor closes it if we bail out).
+    auto pendingFenceFD = std::exchange(m_pendingFenceFD, WTF::UnixFileDescriptor { });
 
     if (type != TextureType::Texture2D)
         return;
@@ -613,59 +624,61 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
     VkImage swapchainImage = toVkImage(swapchain.acquiredTexture());
     ASSERT(swapchainImage != VK_NULL_HANDLE);
 
-    // The blit is identical every time this swapchain image is acquired (fixed source/destination images and region), so its
-    // command buffer is recorded once and resubmitted on every commit. Reuse is safe because the per-frame vkQueueWaitIdle below
-    // guarantees the previous submission completed before this one is resubmitted.
+    // The blit is identical every time this swapchain image is acquired so its command buffer is recorded once and resubmitted on every commit.
     if (exportedImage.commandBuffer == VK_NULL_HANDLE && !recordBlitCommandBuffer(exportedImage, swapchainImage))
         return;
 
-    // Make the blit wait, on the GPU, for the web process to finish rendering into the exported image
-    // (the fence imported by waitFrameFence()). TRANSFER stage because the blit reads at transfer time.
+    // Wait for this image's previous submission to retire before reusing its command buffer and acquire semaphore, then reset
+    // the fence for this frame's submission. The fence was created signaled and the image was last used a full swapchain cycle
+    // ago, so this almost always returns immediately; it only blocks if the GPU has fallen behind by the swapchain depth. This
+    // is what lets us drop the per-frame vkQueueWaitIdle and overlap CPU and GPU work.
+    m_deviceTable.vkWaitForFences(m_vkDevice, 1, &exportedImage.inFlightFence, VK_TRUE, UINT64_MAX);
+    m_deviceTable.vkResetFences(m_vkDevice, 1, &exportedImage.inFlightFence);
+
+    // Import the web process' render-completion fence (stashed by waitFrameFence()) into this image's semaphore so the blit can
+    // wait on it on the GPU. SYNC_FD payloads are temporary and consumed by the wait, and the fence wait above guarantees the
+    // previous wait on this semaphore has already executed, so re-importing here is safe.
+    bool waitOnAcquireFence = false;
+    if (pendingFenceFD) {
+        VkImportSemaphoreFdInfoKHR importInfo { };
+        importInfo.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+        importInfo.semaphore = exportedImage.acquireSemaphore;
+        importInfo.flags = VK_SEMAPHORE_IMPORT_TEMPORARY_BIT;
+        importInfo.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
+        importInfo.fd = pendingFenceFD.value();
+        if (m_deviceTable.vkImportSemaphoreFdKHR(m_vkDevice, &importInfo) == VK_SUCCESS) {
+            // Vulkan owns the fd on a successful SYNC_FD import, disown it (discarding the result) to avoid a double close.
+            (void)pendingFenceFD.release();
+            waitOnAcquireFence = true;
+        } else
+            RELEASE_LOG(XR, "OpenXR Vulkan: vkImportSemaphoreFdKHR failed; frame fence ignored");
+    }
+
+    // The blit waits on the GPU for the WebProcess to finish rendering into the exported image (TRANSFER stage, where the
+    // blit reads), and signals inFlightFence on completion so the next reuse of this image can wait on it.
     VkPipelineStageFlags acquireWaitStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
     VkSubmitInfo submitInfo { };
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     if (waitOnAcquireFence) {
         submitInfo.waitSemaphoreCount = 1;
-        submitInfo.pWaitSemaphores = &m_acquireSemaphore;
+        submitInfo.pWaitSemaphores = &exportedImage.acquireSemaphore;
         submitInfo.pWaitDstStageMask = &acquireWaitStage;
     }
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &exportedImage.commandBuffer;
-    m_deviceTable.vkQueueSubmit(m_vkQueue, 1, &submitInfo, VK_NULL_HANDLE);
-
-    // FIXME: perf — a per-frame queue wait serializes CPU and GPU. The eventual path should let the runtime synchronize on
-    // the queue instead of blocking here. Note this idle also currently guarantees m_acquireSemaphore's temporary payload is
-    // consumed before the next frame re-imports into it, so removing it needs per-frame semaphores or a tracking fence.
-    m_deviceTable.vkQueueWaitIdle(m_vkQueue);
+    m_deviceTable.vkQueueSubmit(m_vkQueue, 1, &submitInfo, exportedImage.inFlightFence);
 }
 
 void OpenXRGraphicsBindingVulkan::waitFrameFence(WTF::UnixFileDescriptor&& fenceFD)
 {
-    // The fence is the web process' render-completion sync_file. Import it into m_acquireSemaphore as a temporary SYNC_FD
-    // payload; commitFrame() then makes its blit submission wait on that semaphore so the copy observes the finished writes
-    // on the GPU without stalling the CPU. This mirrors the OpenGLES GLFence::importFD()/serverWait() path. SYNC_FD payloads
-    // are always temporary and are consumed by the wait, so the semaphore is reusable across frames.
-    if (!fenceFD)
-        return;
-
-    ASSERT(m_acquireSemaphore != VK_NULL_HANDLE);
-
-    VkImportSemaphoreFdInfoKHR importInfo { };
-    importInfo.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
-    importInfo.semaphore = m_acquireSemaphore;
-    importInfo.flags = VK_SEMAPHORE_IMPORT_TEMPORARY_BIT;
-    importInfo.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
-    importInfo.fd = fenceFD.value();
-
-    if (m_deviceTable.vkImportSemaphoreFdKHR(m_vkDevice, &importInfo) != VK_SUCCESS) {
-        RELEASE_LOG(XR, "OpenXR Vulkan: vkImportSemaphoreFdKHR failed; frame fence ignored");
-        return;
-    }
-
-    // On a successful SYNC_FD import Vulkan takes ownership of the fd, so disown it from the descriptor (discarding the
-    // returned value) to avoid a double close.
-    (void)fenceFD.release();
-    m_acquireSemaphorePending = true;
+    // The fence is the WebProcess render completion sync_file. waitFrameFence() does not know which swapchain image the
+    // following endFrame()/commitFrame() will target, so just stash the fd here. Then commitFrame() imports it into that image's
+    // acquireSemaphore and the blit submission waits on it, mirroring the OpenGLES GLFence::importFD()/serverWait() path.
+    // The caller (OpenXRCoordinator::endFrame) always pairs a waitFrameFence() with the following layer's commitFrame(), which
+    // consumes and clears m_pendingFenceFD up front, so there must be no unconsumed fd here. (The move assignment would still close
+    // a previous fd rather than leak it, but a stash without an intervening consume means the pairing contract was broken.)
+    ASSERT(!m_pendingFenceFD);
+    m_pendingFenceFD = WTF::move(fenceFD);
 }
 
 } // namespace WebKit
