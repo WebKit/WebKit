@@ -31,6 +31,7 @@
 
 #include "CSSContainerRule.h"
 #include "CSSImportRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSLayerBlockRule.h"
 #include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
@@ -52,7 +53,7 @@ namespace Style {
 
 void InspectorCSSOMWrappers::collectFromStyleSheetIfNeeded(CSSStyleSheet& styleSheet)
 {
-    if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
+    if (!m_styleRuleToCSSOMWrapperMap.isEmpty() || !m_keyframesRuleToCSSOMWrapperMap.isEmpty())
         collect(&styleSheet);
 }
 
@@ -95,6 +96,9 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
             // Eagerly collect rules nested in this style rule.
             collect(uncheckedDowncast<CSSStyleRule>(cssRule.get()));
             break;
+        case StyleRuleType::Keyframes:
+            m_keyframesRuleToCSSOMWrapperMap.add(&uncheckedDowncast<CSSKeyframesRule>(*cssRule).keyframesRule(), uncheckedDowncast<CSSKeyframesRule>(*cssRule));
+            break;
         default:
             break;
         }
@@ -128,7 +132,7 @@ void InspectorCSSOMWrappers::maybeCollectFromStyleSheets(const Vector<Ref<CSSSty
 
 void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& extensionStyleSheets)
 {
-    if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
+    if (m_styleRuleToCSSOMWrapperMap.isEmpty() || m_keyframesRuleToCSSOMWrapperMap.isEmpty()) {
         collectFromStyleSheetContents(protect(UserAgentStyle::defaultStyleSheet));
         collectFromStyleSheetContents(protect(UserAgentStyle::quirksStyleSheet));
         collectFromStyleSheetContents(protect(UserAgentStyle::svgStyleSheet));
@@ -158,9 +162,14 @@ void InspectorCSSOMWrappers::collectScopeWrappers(Scope& styleScope)
     maybeCollectFromStyleSheets(styleScope.activeStyleSheets());
 }
 
-CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(const StyleRule* rule)
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForStyleRuleInSheets(const StyleRule* rule)
 {
     return m_styleRuleToCSSOMWrapperMap.get(rule);
+}
+
+CSSKeyframesRule* InspectorCSSOMWrappers::getWrapperForKeyframesRuleInSheets(const StyleRuleKeyframes* rule)
+{
+    return m_keyframesRuleToCSSOMWrapperMap.get(rule);
 }
 
 } // namespace Style

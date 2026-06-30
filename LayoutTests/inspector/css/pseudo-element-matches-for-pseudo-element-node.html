@@ -12,7 +12,7 @@ function test() {
         InspectorTest.expectThat(!nodeStyles.inlineStyle, "No Inline Styles");
         InspectorTest.expectThat(!nodeStyles.attributesStyle, "No Attribute Styles");
         InspectorTest.expectThat(!nodeStyles.inheritedRules.length, "No Inherited Styles");
-        InspectorTest.expectThat(!Object.keys(nodeStyles.pseudoElements).length, "No Pseudo Element Styles");
+        InspectorTest.expectThat(!nodeStyles.pseudoElements.size, "No Pseudo Element Styles");
 
         InspectorTest.expectThat(nodeStyles.computedStyle, "Has Computed Styles");
 

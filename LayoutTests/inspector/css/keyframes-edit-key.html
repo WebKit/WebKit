@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("CSS.Keyframes");
+    let domNodeStyles;
+    function opacity() { return InspectorTest.evaluateInPage(`getComputedStyle(document.getElementById("target")).opacity`); }
+
+    suite.addTestCase({
+        name: "CSS.Keyframes.EditKeyTextRestylesAnimation",
+        description: "Editing a keyframe key should restyle elements using the @keyframes.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(await documentNode.querySelector("#target")));
+            await domNodeStyles.refresh();
+
+            InspectorTest.expectEqual(domNodeStyles.keyframes[0].selectorText, "0%", "First keyframe key is `0%`.");
+            InspectorTest.expectTrue(domNodeStyles.keyframes[0].style.selectorEditable, "Keyframe key is editable.");
+
+            let before = undefined;
+            while (before !== "0.2") before = await opacity();
+            InspectorTest.expectEqual(before, "0.2", "Paused at 0%: opacity 0.2.");
+
+            await domNodeStyles.keyframes[1].setSelectorText("0%");
+            InspectorTest.expectEqual(domNodeStyles.keyframes[1].selectorText, "0%", "Second keyframe key persisted as `0%`.");
+
+            let after = undefined;
+            while (after !== "0.8") after = await opacity();
+            InspectorTest.expectEqual(after, "0.8", "Moving the `100%` key to `0%` restyles the paused animation to opacity 0.8.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<style>
+    @keyframes anim { 0% { opacity: 0.2; } 100% { opacity: 0.8; } }
+    #target { animation: anim 100s linear paused; }
+</style>
+<div id="target"></div>
+</body>
+</html>

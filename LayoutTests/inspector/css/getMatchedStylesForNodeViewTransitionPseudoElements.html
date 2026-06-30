@@ -47,13 +47,13 @@ function test()
 
             await InspectorTest.evaluateInPage(`startViewTransition()`);
             await styles.refresh();
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransition).length, 2, "Expected entry for selector `*::view-transition` after starting the view transition.");
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransition).uniqueOrderedStyles.length, 2, "Expected entry for selector `*::view-transition` after starting the view transition.");
 
             // FIXME: These should use the correct values when adding support for named pseudo-elements. We'll also want to test different names individually. (webkit.org/b/283951)
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionGroup), undefined, "No crash");
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionImagePair), undefined, "No crash");
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionOld), undefined, "No crash");
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.ViewTransitionNew), undefined, "No crash");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionGroup), "No crash");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionImagePair), "No crash");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionOld), "No crash");
+            InspectorTest.expectFalse(styles.pseudoElements.has(WI.CSSManager.PseudoSelectorNames.ViewTransitionNew), "No crash");
         }
     });
 

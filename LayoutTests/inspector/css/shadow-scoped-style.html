@@ -56,7 +56,7 @@ function test()
                     InspectorTest.expectThat(hostNode.hasShadowRoots(), "Node should have shadow roots.");
                     InspectorTest.expectFalse(hostNode.isInShadowTree(), "Node should not be in a shadow tree.");
                     InspectorTest.expectThat(hostNode.shadowRoots()[0].shadowRootType() === WI.DOMNode.ShadowRootType.Open, "Node should have an open shadow root.");
-                    InspectorTest.expectThat(isEmptyObject(nodeStyles.pseudoElements), "Node should have no pseudo element styles.");
+                    InspectorTest.expectThat(!nodeStyles.pseudoElements.size, "Node should have no pseudo element styles.");
                     dumpStyleDeclarations(nodeStyles.orderedStyles);
                     resolve();
                 }).catch(reject);

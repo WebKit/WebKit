@@ -31,6 +31,7 @@
 #include "CSSPropertyParserConsumer+Animations.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleProperties.h"
+#include "CSSStyleSheet.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
@@ -147,6 +148,13 @@ void CSSKeyframeRule::reattach(StyleRuleBase&)
 {
     // No need to reattach, the underlying data is shareable on mutation.
     ASSERT_NOT_REACHED();
+}
+
+void CSSKeyframeRule::setKeyText(const String& text)
+{
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+
+    protect(m_keyframe)->setKeyText(text);
 }
 
 } // namespace WebCore

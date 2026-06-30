@@ -301,6 +301,39 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             addSection(section);
         };
 
+        let addedKeyframes = new Set;
+        let addKeyframes = (style, keyframes) => {
+            let tokens = new Set;
+            let usesVariable = false;
+            for (let property of style.enabledProperties) {
+                if (property.name !== "animation" && property.name !== "animation-name")
+                    continue;
+
+                for (let token of property.value.split(/[\s,]+/)) {
+                    if (token)
+                        tokens.add(token);
+
+                    if (token.startsWith("var("))
+                        usesVariable = true;
+                }
+            }
+
+            for (let keyframe of keyframes) {
+                if (addedKeyframes.has(keyframe))
+                    continue;
+
+                let name = keyframe.groupings.find((grouping) => grouping.type === WI.CSSGrouping.Type.KeyframesRule).text;
+
+                // Rather than trying to compute the value of the CSS variable in this context,
+                // just treat any CSS variable usage as though it could reference any animation.
+                // Since the backend only sends animations that are used, this should catch that.
+                if (tokens.has(name) || usesVariable) {
+                    addedKeyframes.add(keyframe);
+                    createSection(keyframe.style);
+                }
+            }
+        };
+
         let addedPseudoStyles = false;
         let addPseudoStyles = () => {
             if (addedPseudoStyles)
@@ -308,7 +341,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
             // Add all pseudo styles before any inherited rules.
 
-            for (let [pseudoId, uniqueOrderedStyles] of this.nodeStyles.pseudoElements) {
+            for (let [pseudoId, {uniqueOrderedStyles, keyframes}] of this.nodeStyles.pseudoElements) {
                 let pseudoElement = null;
                 if (pseudoId === WI.CSSManager.PseudoSelectorNames.Before)
                     pseudoElement = this.nodeStyles.node.beforePseudoElement();
@@ -326,6 +359,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                     }
 
                     createSection(style);
+                    addKeyframes(style, keyframes);
                 }
             }
 
@@ -340,6 +374,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 continue;
 
             createSection(style);
+            addKeyframes(style, this.nodeStyles.keyframes);
         }
 
         addPseudoStyles();
