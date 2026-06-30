@@ -1,0 +1,3 @@
+
+PASS Removing a programmatically-focused element does not scroll the document
+
