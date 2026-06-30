@@ -100,6 +100,8 @@ void ReadableStreamDefaultReader::read(JSDOMGlobalObject& globalObject, Ref<Read
 {
     if (RefPtr internalReader = this->internalDefaultReader()) {
         auto value = internalReader->readForBindings(globalObject);
+        if (!value)
+            return;
         auto* promise = jsDynamicCast<JSC::JSPromise*>(value);
         if (!promise)
             return;
