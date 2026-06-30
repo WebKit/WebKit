@@ -628,6 +628,9 @@
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action */
 "Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry." = "Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for icon with unsupported image format */
+"Failed to load image for path “%@”. The image is not in a supported format." = "Failed to load image for path “%@”. The image is not in a supported format.";
+
 /* WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only */
 "Failed to load images in `default_icon` for the `action` manifest entry." = "Failed to load images in `default_icon` for the `action` manifest entry.";
 
