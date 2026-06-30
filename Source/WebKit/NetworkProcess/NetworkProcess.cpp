@@ -527,42 +527,6 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
 }
 
 #if PLATFORM(COCOA)
-#if PLATFORM(MAC)
-static String getDarwinCacheDir()
-{
-    char temp[PATH_MAX];
-    size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
-    if (!length) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not retrieve cache directory path: %s\n", safeStrerror(errno).data());
-        return { };
-    }
-    RELEASE_ASSERT(length <= sizeof(temp));
-    char resolvedPath[PATH_MAX];
-    if (!realpath(temp, resolvedPath)) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not canonicalize cache directory path: %s\n", safeStrerror(errno).data());
-        return { };
-    }
-    return String::fromUTF8(resolvedPath);
-}
-#endif // PLATFORM(MAC)
-
-static String getDarwinTempDir()
-{
-    char temp[PATH_MAX];
-    size_t length = confstr(_CS_DARWIN_USER_TEMP_DIR, temp, sizeof(temp));
-    if (!length) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not retrieve temporary directory path: %s\n", safeStrerror(errno).data());
-        return { };
-    }
-    RELEASE_ASSERT(length <= sizeof(temp));
-    char resolvedPath[PATH_MAX];
-    if (!realpath(temp, resolvedPath)) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not canonicalize temporary directory path: %s\n", safeStrerror(errno).data());
-        return { };
-    }
-    return String::fromUTF8(resolvedPath);
-}
-
 static void addPathsBlockedForSandboxExtensions(const WebsiteDataStoreParameters& parameters)
 {
     String cacheDirectory = FileSystem::parentPath(parameters.networkSessionParameters.networkCacheDirectory);
@@ -583,16 +547,12 @@ static void addPathsBlockedForSandboxExtensions(const WebsiteDataStoreParameters
         "/private/var/db"_s,
         cacheDirectory,
 #if PLATFORM(MAC)
-        getDarwinTempDir(),
-        getDarwinCacheDir(),
         homeRelativeHTTPStoragesDirectory,
         homeRelativeKeychainDirectory,
 #else
         "/private/var/Managed Preferences"_s,
         "/private/var/MobileAsset"_s,
         "/private/var/preferences"_s,
-        getDarwinTempDir(),
-        containerCachesDirectory,
 #endif
         homeRelativePreferencesDirectory,
         parameters.cookieStoragePath,
