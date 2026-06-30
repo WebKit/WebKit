@@ -441,8 +441,9 @@ private:
             return;
         }
 
-        auto properties = m_videoFrameObjectHeap->add(frame);
-        m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata), 0);
+        auto properties = RemoteVideoFrameProxy::properties(frame);
+        auto reference = m_videoFrameObjectHeap->add(frame);
+        m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, reference, properties, metadata), 0);
     }
 
     bool preventSourceFromEnding()
