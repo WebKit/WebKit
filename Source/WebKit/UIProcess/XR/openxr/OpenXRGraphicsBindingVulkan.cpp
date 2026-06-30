@@ -237,7 +237,9 @@ bool OpenXRGraphicsBindingVulkan::initializeForSession(XrInstance instance, XrSy
 
     VkCommandPoolCreateInfo poolCreateInfo { };
     poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    // The per-swapchain-image commit command buffers are recorded once and never reset or re-recorded, so no pool flags are
+    // needed; they are freed in bulk when the pool is destroyed.
+    poolCreateInfo.flags = 0;
     poolCreateInfo.queueFamilyIndex = m_queueFamilyIndex;
     if (m_deviceTable.vkCreateCommandPool(m_vkDevice, &poolCreateInfo, nullptr, &m_commandPool) != VK_SUCCESS) {
         LOG(XR, "Failed to create the Vulkan command pool.");
@@ -521,25 +523,8 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingVulka
     };
 }
 
-void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwapchain& swapchain, TextureType type, const Vector<uint64_t>&)
+bool OpenXRGraphicsBindingVulkan::recordBlitCommandBuffer(ExportedImage& exportedImage, VkImage swapchainImage)
 {
-    // Consume any fence imported by waitFrameFence() for this commit. Snapshot it up front so the
-    // early returns below don't leave a stale payload waiting on the next layer's commit.
-    bool waitOnAcquireFence = std::exchange(m_acquireSemaphorePending, false);
-
-    if (type != TextureType::Texture2D)
-        return;
-
-    ASSERT(m_vkDevice != VK_NULL_HANDLE);
-
-    auto exportedImageIterator = m_exportedImages.find(keyImage);
-    if (exportedImageIterator == m_exportedImages.end())
-        return;
-    const auto& exportedImage = exportedImageIterator->value;
-
-    VkImage swapchainImage = toVkImage(swapchain.acquiredTexture());
-    ASSERT(swapchainImage != VK_NULL_HANDLE);
-
     VkCommandBufferAllocateInfo commandBufferAllocateInfo { };
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     commandBufferAllocateInfo.commandPool = m_commandPool;
@@ -548,17 +533,9 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
 
     VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
     if (m_deviceTable.vkAllocateCommandBuffers(m_vkDevice, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS) {
-        RELEASE_LOG(XR, "OpenXR Vulkan: failed to allocate command buffer for commit");
-        return;
+        RELEASE_LOG(XR, "OpenXR Vulkan: failed to allocate commit command buffer");
+        return false;
     }
-    auto freeCommandBuffer = makeScopeExit([&] {
-        m_deviceTable.vkFreeCommandBuffers(m_vkDevice, m_commandPool, 1, &commandBuffer);
-    });
-
-    VkCommandBufferBeginInfo beginInfo { };
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-    m_deviceTable.vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
     auto makeBarrier = [](VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkAccessFlags srcAccess, VkAccessFlags dstAccess, uint32_t srcQueueFamily = VK_QUEUE_FAMILY_IGNORED, uint32_t dstQueueFamily = VK_QUEUE_FAMILY_IGNORED) {
         VkImageMemoryBarrier barrier { };
@@ -573,6 +550,11 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
         barrier.dstAccessMask = dstAccess;
         return barrier;
     };
+
+    VkCommandBufferBeginInfo beginInfo { };
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    // No VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: this buffer is recorded once and resubmitted on every commit.
+    m_deviceTable.vkBeginCommandBuffer(commandBuffer, &beginInfo);
 
     // The exported image was written by the WebProcess through an external (OpenGL) DMABuf import, so acquire queue family
     // ownership of it from VK_QUEUE_FAMILY_FOREIGN_EXT before reading. We keep it in VK_IMAGE_LAYOUT_GENERAL throughout: GENERAL
@@ -608,6 +590,35 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
 
     m_deviceTable.vkEndCommandBuffer(commandBuffer);
 
+    exportedImage.commandBuffer = commandBuffer;
+    return true;
+}
+
+void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwapchain& swapchain, TextureType type, const Vector<uint64_t>&)
+{
+    // Consume any fence imported by waitFrameFence() for this commit. Snapshot it up front so the
+    // early returns below don't leave a stale payload waiting on the next layer's commit.
+    bool waitOnAcquireFence = std::exchange(m_acquireSemaphorePending, false);
+
+    if (type != TextureType::Texture2D)
+        return;
+
+    ASSERT(m_vkDevice != VK_NULL_HANDLE);
+
+    auto exportedImageIterator = m_exportedImages.find(keyImage);
+    if (exportedImageIterator == m_exportedImages.end())
+        return;
+    auto& exportedImage = exportedImageIterator->value;
+
+    VkImage swapchainImage = toVkImage(swapchain.acquiredTexture());
+    ASSERT(swapchainImage != VK_NULL_HANDLE);
+
+    // The blit is identical every time this swapchain image is acquired (fixed source/destination images and region), so its
+    // command buffer is recorded once and resubmitted on every commit. Reuse is safe because the per-frame vkQueueWaitIdle below
+    // guarantees the previous submission completed before this one is resubmitted.
+    if (exportedImage.commandBuffer == VK_NULL_HANDLE && !recordBlitCommandBuffer(exportedImage, swapchainImage))
+        return;
+
     // Make the blit wait, on the GPU, for the web process to finish rendering into the exported image
     // (the fence imported by waitFrameFence()). TRANSFER stage because the blit reads at transfer time.
     VkPipelineStageFlags acquireWaitStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
@@ -619,7 +630,7 @@ void OpenXRGraphicsBindingVulkan::commitFrame(uint64_t keyImage, const OpenXRSwa
         submitInfo.pWaitDstStageMask = &acquireWaitStage;
     }
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
+    submitInfo.pCommandBuffers = &exportedImage.commandBuffer;
     m_deviceTable.vkQueueSubmit(m_vkQueue, 1, &submitInfo, VK_NULL_HANDLE);
 
     // FIXME: perf — a per-frame queue wait serializes CPU and GPU. The eventual path should let the runtime synchronize on

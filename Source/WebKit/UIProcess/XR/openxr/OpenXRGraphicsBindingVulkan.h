@@ -83,9 +83,12 @@ private:
         uint32_t width { 0 };
         uint32_t height { 0 };
         VkFormat format { VK_FORMAT_UNDEFINED };
+        // Command buffer that blits this image into its paired swapchain image, recorded once and resubmitted on every commit.
+        VkCommandBuffer commandBuffer { VK_NULL_HANDLE };
     };
 
     std::optional<PlatformXR::FrameData::ExternalTexture> exportTexture2D(uint64_t swapchainImage, const OpenXRSwapchain&, uint32_t width, uint32_t height);
+    bool recordBlitCommandBuffer(ExportedImage&, VkImage swapchainImage);
     void destroyExportedImage(ExportedImage&);
 
     // All dispatch below loader level goes through these tables instead of volk's globals, so this binding does not clobber the
