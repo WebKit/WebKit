@@ -30,10 +30,13 @@ import os
 import sys
 import unittest
 
-import resultsdbpy
-from webkitcorepy import AutoInstall
-
 libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+for _library in ['webkitcorepy', 'webkitscmpy', 'webkitflaskpy', 'webkitbugspy']:
+    _path = os.path.join(libraries, _library)
+    if os.path.isdir(_path) and _path not in sys.path:
+        sys.path.insert(0, _path)
+
+from webkitcorepy import AutoInstall
 if sys.platform == 'darwin':
     is_root = not os.getuid()
     does_own_libraries = os.stat(libraries).st_uid == os.getuid()
@@ -41,6 +44,7 @@ if sys.platform == 'darwin':
         libraries = os.path.expanduser('~/Library/webkitpy')
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
 
+import resultsdbpy
 from cassandra.cqlengine.management import CQLENG_ALLOW_SCHEMA_MANAGEMENT
 
 
