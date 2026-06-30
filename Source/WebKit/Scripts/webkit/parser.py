@@ -52,7 +52,6 @@ def parse(file):
     receiver_dispatched_to_exception = False
     receiver_attributes = None
     shared_preferences_needs_connection = False
-    wants_send_cancel_reply = False
     swift_receiver = False
     swift_receiver_build_enabled_by = None
     destination = None
@@ -92,9 +91,6 @@ def parse(file):
                 continue
             elif attribute == 'ExceptionForDispatchedTo':
                 receiver_dispatched_to_exception = True
-                continue
-            elif attribute == 'WantsSendCancelReply':
-                wants_send_cancel_reply = True
                 continue
             elif attribute == 'SwiftReceiver':
                 swift_receiver = True
@@ -202,7 +198,7 @@ def parse(file):
     if receiver_dispatched_to and receiver_dispatched_to_exception:
         raise Exception("ERROR: 'ExceptionForDispatchedTo' cannot be used together with 'DispatchedTo=%s'" % receiver_dispatched_to)
 
-    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, wants_send_cancel_reply, swift_receiver, swift_receiver_build_enabled_by)
+    return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_exception, receiver_enabled_by_conjunction, receiver_dispatched_from, receiver_dispatched_from_exception, receiver_dispatched_to, receiver_dispatched_to_exception, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace, swift_receiver, swift_receiver_build_enabled_by)
 
 
 def parse_attributes_string(attributes_string):

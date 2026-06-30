@@ -394,9 +394,10 @@ std::optional<AuxiliaryProcessProxy::AsyncReplyID> AuxiliaryProcessProxy::sendWi
     static_assert(!T::isSync, "Async message expected");
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-    message.encode(encoder.get());
     auto handler = IPC::Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
     auto replyID = handler.replyID;
+    encoder.get() << *replyID;
+    message.encode(encoder.get());
     if (sendMessage(WTF::move(encoder), sendOptions, WTF::move(handler), shouldStartProcessThrottlerActivity))
         return replyID;
     return std::nullopt;
@@ -408,9 +409,10 @@ std::optional<AuxiliaryProcessProxy::AsyncReplyID> AuxiliaryProcessProxy::sendWi
     static_assert(!T::isSync, "Async message expected");
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-    message.encode(encoder.get());
     auto handler = IPC::Connection::makeAsyncReplyHandlerWithDispatcher<T>(std::forward<C>(completionHandler), dispatcher);
     auto replyID = handler.replyID;
+    encoder.get() << *replyID;
+    message.encode(encoder.get());
     if (sendMessageWithDispatcher(WTF::move(encoder), sendOptions, WTF::move(handler), shouldStartProcessThrottlerActivity))
         return replyID;
     return std::nullopt;

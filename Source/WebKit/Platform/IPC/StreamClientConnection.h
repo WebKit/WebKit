@@ -121,8 +121,10 @@ public:
 private:
     StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&, Seconds defaultTimeoutDuration);
 
-    template<typename T, typename... AdditionalData>
-    bool trySendStream(std::span<uint8_t>, T& message, AdditionalData&&...);
+    template<typename T>
+    bool trySendStream(std::span<uint8_t>, T& message);
+    template<typename T>
+    bool trySendAsyncWithReplyStream(std::span<uint8_t>, T& message, AsyncReplyID);
     template<typename T>
     std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, std::span<uint8_t>);
     Error trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
@@ -225,14 +227,14 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     connection->addAsyncReplyHandler(WTF::move(handler));
 
     if constexpr (T::isStreamEncodable) {
-        if (trySendStream(*span, message, replyID))
+        if (trySendAsyncWithReplyStream(*span, message, replyID))
             return replyID;
     }
 
     sendProcessOutOfStreamMessage(WTF::move(*span));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
-    message.encode(encoder.get());
     encoder.get() << replyID;
+    message.encode(encoder.get());
     if (connection->sendMessage(WTF::move(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
         return replyID;
 
@@ -285,14 +287,14 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     connection->addAsyncReplyHandlerWithDispatcher(WTF::move(handler));
 
     if constexpr(T::isStreamEncodable) {
-        if (trySendStream(*span, message, replyID))
+        if (trySendAsyncWithReplyStream(*span, message, replyID))
             return replyID;
     }
 
     sendProcessOutOfStreamMessage(WTF::move(*span));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
-    message.encode(encoder.get());
     encoder.get() << replyID;
+    message.encode(encoder.get());
     if (connection->sendMessage(WTF::move(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
         return replyID;
 
@@ -305,12 +307,31 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     return { };
 }
 
-template<typename T, typename... AdditionalData>
-bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, AdditionalData&&... args)
+template<typename T>
+bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message)
 {
     StreamConnectionEncoder messageEncoder { T::name(), span };
     message.encode(messageEncoder);
-    if ((messageEncoder << ... << std::forward<decltype(args)>(args))) {
+    if (messageEncoder) {
+        auto wakeUpResult = m_buffer.release(messageEncoder.size());
+        if constexpr (T::isStreamBatched)
+            wakeUpServerBatched(wakeUpResult);
+        else
+            wakeUpServer(wakeUpResult);
+        return true;
+    }
+    return false;
+}
+
+template<typename T>
+bool StreamClientConnection::trySendAsyncWithReplyStream(std::span<uint8_t> span, T& message, AsyncReplyID replyID)
+{
+    StreamConnectionEncoder messageEncoder { T::name(), span };
+    // Encode the reply ID as a header field (right after the message name) so the receiver can
+    // recover it without decoding the message arguments (see Decoder and messageIsAsyncWithReply).
+    messageEncoder << replyID;
+    message.encode(messageEncoder);
+    if (messageEncoder) {
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         if constexpr (T::isStreamBatched)
             wakeUpServerBatched(wakeUpResult);

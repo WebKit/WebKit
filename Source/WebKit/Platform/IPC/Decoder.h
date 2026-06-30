@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AsyncReplyID.h"
 #include "Attachment.h"
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
@@ -91,17 +92,23 @@ public:
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
     uint64_t destinationID() const { return m_destinationID; }
-    SyncRequestID syncRequestID() const { ASSERT(m_syncRequestID); return *m_syncRequestID; }
+    SyncRequestID syncRequestID() const { ASSERT(m_replyID); return SyncRequestID(m_replyID); }
+    AsyncReplyID asyncReplyID() const { ASSERT(m_replyID); return AsyncReplyID(m_replyID); }
     bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
+    bool isAsyncWithReplyMessage() const { return messageIsAsyncWithReply(messageName()); }
+    bool isAsyncReplyMessage() const { return messageIsReplyToAsyncWithReply(messageName()); }
+
     ShouldDispatchWhenWaitingForSyncReply NODELETE shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
     bool NODELETE shouldUseFullySynchronousModeForTesting() const;
     bool NODELETE shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
-    bool isAsyncReplyMessage() const { return isAsyncReply(messageName()); }
+
+    bool wasHandled() const { return m_wasHandled; }
+    void markHandled() { m_wasHandled = true; }
 
 #if PLATFORM(MAC)
     void NODELETE setImportanceAssertion(ImportanceAssertion&&);
@@ -207,13 +214,16 @@ private:
 #endif
 
     uint64_t m_destinationID;
-    Markable<SyncRequestID> m_syncRequestID;
+    // Holds the SyncRequestID (sync messages) or the AsyncReplyID (async messages with a reply),
+    // both decoded from the message header. 0 means neither is present.
+    uint64_t m_replyID { 0 };
 
     Vector<uint32_t> m_indicesOfObjectsFailingDecoding;
 
 #if ENABLE(IPC_TESTING_API)
     ASCIILiteral m_errorString;
 #endif
+    bool m_wasHandled { false };
 };
 
 template<>
