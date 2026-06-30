@@ -243,9 +243,14 @@ bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineId
 void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (ObjectIdentifier<MediaPlayerIdentifierType>::isValidIdentifier(decoder.destinationID())) {
-        if (RefPtr player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())).get())
+        if (RefPtr player = m_players.get(ObjectIdentifier<MediaPlayerIdentifierType>(decoder.destinationID())).get()) {
             player->didReceiveMessage(connection, decoder);
+            return;
+        }
     }
+    // The player has been removed. Reply to the messages expecting a reply, so that for example
+    // the frames offered with PushVideoFrameMetadata are released in the GPU process.
+    MediaPlayerPrivateRemote::sendCancelReply(connection, decoder);
 }
 
 void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)

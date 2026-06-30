@@ -711,6 +711,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::RemoteNativeImageWriteReference',
         'WebKit::RemoteSnapshotIdentifier',
         'WebKit::RemoteVideoFrameReadReference',
+        'WebKit::RemoteVideoFrameReference',
         'WebKit::RemoteVideoFrameWriteReference',
         'WebKit::RenderingUpdateID',
         'WebKit::TextCheckerRequestID',
@@ -1786,6 +1787,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::ReloadFromOrigin': ['"WebExtensionTab.h"'],
         'WebKit::RemoteLayerBackingStoreProperties': ['"RemoteLayerBackingStore.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
+        'WebKit::RemoteVideoFrameReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoFrameWriteReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteNativeImageReference': ['"RemoteNativeImageIdentifier.h"'],
         'WebKit::RemoteNativeImageReadReference': ['"RemoteNativeImageIdentifier.h"'],
@@ -2189,19 +2191,21 @@ def generate_message_handler(receiver):
         for message in receiver.messages:
             if message.reply_parameters is None or message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
                 continue
-            result.append('    case IPC::MessageName::%s_%s: {\n' % (receiver.name, message.name))
-            result.append('        auto arguments = decoder.decode<typename Messages::%s::%s::Arguments>();\n' % (receiver.name, message.name))
-            result.append('        if (!arguments) [[unlikely]]\n')
-            result.append('            return;\n')
-            result.append('        auto replyID = decoder.decode<IPC::AsyncReplyID>();\n')
-            result.append('        if (!replyID) [[unlikely]]\n')
-            result.append('            return;\n')
-            result.append('        connection.sendAsyncReply<Messages::%s::%s>(*replyID\n' % (receiver.name, message.name))
+            case_statement = []
+            case_statement.append('    case IPC::MessageName::%s_%s: {\n' % (receiver.name, message.name))
+            case_statement.append('        auto arguments = decoder.decode<typename Messages::%s::%s::Arguments>();\n' % (receiver.name, message.name))
+            case_statement.append('        if (!arguments) [[unlikely]]\n')
+            case_statement.append('            return;\n')
+            case_statement.append('        auto replyID = decoder.decode<IPC::AsyncReplyID>();\n')
+            case_statement.append('        if (!replyID) [[unlikely]]\n')
+            case_statement.append('            return;\n')
+            case_statement.append('        connection.sendAsyncReply<Messages::%s::%s>(*replyID\n' % (receiver.name, message.name))
             for parameter in message.reply_parameters:
-                result.append('            , IPC::AsyncReplyError<%s>::create()\n' % (parameter.type))
-            result.append('        );\n')
-            result.append('        return;\n')
-            result.append('    }\n')
+                case_statement.append('            , IPC::AsyncReplyError<%s>::create()\n' % (parameter.type))
+            case_statement.append('        );\n')
+            case_statement.append('        return;\n')
+            case_statement.append('    }\n')
+            result.append(surround_in_condition(''.join(case_statement), message.condition))
         result.append('    default:\n')
         result.append('        // No reply to send.\n')
         result.append('        return;\n')

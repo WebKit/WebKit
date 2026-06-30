@@ -604,18 +604,24 @@ void LibWebRTCCodecs::failedDecoding(VideoDecoderIdentifier decoderIdentifier)
     }
 }
 
-void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
+void LibWebRTCCodecs::completedDecoding(IPC::Connection& connection, VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&& reply)
 {
     assertIsCurrent(workQueue());
 
-    // Adopt RemoteVideoFrameProxy::Properties to RemoteVideoFrameProxy instance before the early outs, so that the reference gets adopted.
-    // Typically RemoteVideoFrameProxy::Properties&& sent to destinations that are already removed need to be handled separately.
-    // LibWebRTCCodecs is not ever removed, so we do not do this. However, if it ever is, LibWebRTCCodecs::handleMessageToRemovedDestination()
-    // needs to be implemented.
-    Ref<RemoteVideoFrameProxy> remoteVideoFrame = [&] {
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    RefPtr<RemoteVideoFrameProxy> remoteVideoFrame = [&] -> RefPtr<RemoteVideoFrameProxy> {
         Locker locker { m_connectionLock };
-        return RemoteVideoFrameProxy::create(protect(m_connection).releaseNonNull(), *protect(m_videoFrameObjectHeapProxy), WTF::move(properties));
+        // Reject frames from a GPU process connection that is no longer used. The current GPU process
+        // would wait for a frame with the reference that never arrives.
+        if (m_connection != &connection)
+            return nullptr;
+        return RemoteVideoFrameProxy::create(protect(m_connection).releaseNonNull(), *protect(m_videoFrameObjectHeapProxy), reference, WTF::move(properties));
     }();
+    if (!remoteVideoFrame) {
+        reply(std::nullopt);
+        return;
+    }
+    reply(reference);
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);
     if (!decoder)
@@ -624,7 +630,7 @@ void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier
         return;
     Locker locker { AdoptLock, decoder->decodedImageCallbackLock };
     if (decoder->decoderCallback) {
-        decoder->decoderCallback(WTF::move(remoteVideoFrame), timeStamp);
+        decoder->decoderCallback(remoteVideoFrame.releaseNonNull(), timeStamp);
         return;
     }
     if (!decoder->decodedImageCallback)
@@ -632,7 +638,7 @@ void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier
 
     auto frameSize = remoteVideoFrame->size();
     // The leakRef() call is balanced by the release callback of videoDecoderTaskComplete.
-    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, &remoteVideoFrame.leakRef(),
+    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteVideoFrame.leakRef(),
         [](auto* pointer) { return static_cast<RemoteVideoFrameProxy*>(pointer)->pixelBuffer(); },
         [](auto* pointer) { static_cast<RemoteVideoFrameProxy*>(pointer)->deref(); },
         frameSize.width(), frameSize.height());

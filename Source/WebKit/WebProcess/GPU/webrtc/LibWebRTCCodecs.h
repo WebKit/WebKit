@@ -206,6 +206,9 @@ public:
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    // Replies to the async-with-reply messages (CompletedDecoding frame offers) that arrive when the
+    // work queue message receiver is not registered, so that the GPU process releases the offered frames.
+    static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
 
     void setVP9HardwareSupportForTesting(std::optional<bool> value) { m_vp9HardwareSupportForTesting = value; }
     void setVP9VTBSupport(bool isSupportingVP9HardwareDecoder) { m_isSupportingVP9HardwareDecoder = isSupportingVP9HardwareDecoder; }
@@ -234,7 +237,7 @@ private:
 
     void failedDecoding(VideoDecoderIdentifier);
     void flushDecoderCompleted(VideoDecoderIdentifier);
-    void completedDecoding(VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&&);
+    void completedDecoding(IPC::Connection&, VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&&, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
     void completedDecodingCV(VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
     void completedEncoding(VideoEncoderIdentifier, std::span<const uint8_t>, const WebCore::GPUVideoEncoderFrameInfo&);

@@ -73,6 +73,8 @@
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#include "RemoteCaptureSampleManager.h"
+#include "RemoteCaptureSampleManagerMessages.h"
 #include "UserMediaCaptureManager.h"
 #include "UserMediaCaptureManagerMessages.h"
 #endif
@@ -254,7 +256,23 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         protect(sampleBufferDisplayLayerManager())->didReceiveLayerMessage(connection, decoder);
         return true;
     }
+
+    if (decoder.messageReceiverName() == Messages::RemoteCaptureSampleManager::messageReceiverName()) {
+        // RemoteCaptureSampleManager work queue message receiver is not registered to this connection.
+        // Reply to the frame offers so that the GPU process releases the frames.
+        RemoteCaptureSampleManager::sendCancelReply(connection, decoder);
+        return true;
+    }
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+    if (decoder.messageReceiverName() == Messages::LibWebRTCCodecs::messageReceiverName()) {
+        // LibWebRTCCodecs work queue message receiver is not registered to this connection.
+        // Reply to the frame offers so that the GPU process releases the frames.
+        LibWebRTCCodecs::sendCancelReply(connection, decoder);
+        return true;
+    }
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>requestVideoFrameCallback: destroying the media player while video frames are being delivered</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="utilities.js"></script>
+</head>
+<body>
+<script>
+// While requestVideoFrameCallback is pending, the media player delivers a video frame for each
+// presented frame. Destroy the media player while it is playing, so that frames are still being
+// delivered to the player that no longer exists.
+// Uses an MP4 file, so that with the GPU process the player runs there and the frames are
+// delivered to the Web process over IPC.
+const iterations = 5;
+
+function blockMainThread(milliseconds)
+{
+    const end = performance.now() + milliseconds;
+    while (performance.now() < end) { }
+}
+
+async function playAndDestroyPlayer(src)
+{
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    video.src = src;
+    await video.play();
+    await waitForVideoFrame(video);
+    await waitForVideoFrame(video);
+    video.requestVideoFrameCallback(() => { });
+    // Let the frames presented meanwhile queue up, so that they are delivered after the player is destroyed.
+    blockMainThread(200);
+    video.removeAttribute("src");
+    video.load();
+    video.remove();
+}
+
+promise_test(async () => {
+    for (let i = 0; i < iterations; ++i)
+        await playAndDestroyPlayer("content/test.mp4");
+    // Let the frames that were in flight arrive.
+    await new Promise(resolve => setTimeout(resolve, 100));
+    if (window.GCController)
+        GCController.collect();
+
+    // Media playback still works after the frames to the destroyed players have been dropped.
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    video.src = "content/test.mp4";
+    await video.play();
+    const [, metadata] = await waitForVideoFrame(video);
+    assert_greater_than(metadata.presentedFrames, 0);
+    video.removeAttribute("src");
+    video.load();
+    video.remove();
+}, "Destroying the media player while video frames are being delivered");
+</script>
+</body>
+</html>

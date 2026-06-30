@@ -76,12 +76,15 @@ public:
 
     // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    // Replies to the async-with-reply messages (VideoFrameAvailable frame offers) that arrive when the
+    // work queue message receiver is not registered, so that the GPU process releases the offered frames.
+    static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
 
 private:
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&, IPC::Semaphore&&, const MediaTime&, uint64_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
-    void videoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoFrameTimeMetadata);
+    void videoFrameAvailable(IPC::Connection&, WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoFrameTimeMetadata, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
     void videoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier, RetainPtr<CVPixelBufferRef>&&, WebCore::VideoFrameRotation, bool mirrored, MediaTime, WebCore::VideoFrameTimeMetadata);
 

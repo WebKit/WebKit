@@ -118,8 +118,12 @@ std::optional<SharedVideoFrame> SharedVideoFrameWriter::write(const VideoFrame& 
 
 std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(const VideoFrame& frame, NOESCAPE const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, NOESCAPE const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
 {
-    if (auto* frameProxy = dynamicDowncast<RemoteVideoFrameProxy>(frame))
+    if (auto* frameProxy = dynamicDowncast<RemoteVideoFrameProxy>(frame)) {
+        // The frames of a GPU process that is no longer running are not in the current GPU process.
+        if (!frameProxy->hasValidConnection())
+            return { };
         return frameProxy->newReadReference();
+    }
 
 #if USE(LIBWEBRTC)
     if (auto* webrtcFrame = dynamicDowncast<VideoFrameLibWebRTC>(frame))

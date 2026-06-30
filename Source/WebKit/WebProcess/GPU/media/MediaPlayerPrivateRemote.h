@@ -104,6 +104,9 @@ public:
     constexpr WebCore::MediaPlayerType mediaPlayerType() const final { return WebCore::MediaPlayerType::Remote; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    // Replies to the async-with-reply messages (e.g. PushVideoFrameMetadata frame offers) sent to a player
+    // that no longer exists, so that the GPU process releases the offered frames.
+    static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
 
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     std::optional<WebCore::MediaPlayerIdentifier> identifier() const final { return m_id; }
@@ -482,7 +485,7 @@ private:
     void soundStageSizeDidChange() final;
 
 #if PLATFORM(COCOA)
-    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
+    void pushVideoFrameMetadata(IPC::Connection&, WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&&);
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protect(manager()->gpuProcessConnection())->videoFrameObjectHeapProxy(); }
 

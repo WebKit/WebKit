@@ -53,6 +53,10 @@ static WorkQueue& remoteVideoFrameObjectHeapQueueSingleton()
     return queue.get();
 }
 
+// Upper bound for waiting on an asynchronously-inserted frame in get(). For accepted frames the
+// insertion is already in flight, so this is only an outer safety cap, not a steady-state wait.
+static constexpr Seconds defaultTimeout = 10_s;
+
 Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(Ref<IPC::Connection>&& connection)
 {
     Ref heap = adoptRef(*new RemoteVideoFrameObjectHeap(WTF::move(connection)));
@@ -91,13 +95,10 @@ void RemoteVideoFrameObjectHeap::close()
     // TODO: add can happen after stopping.
 }
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
+void RemoteVideoFrameObjectHeap::add(RemoteVideoFrameReference reference, Ref<WebCore::VideoFrame>&& frame)
 {
-    auto newFrameReference = RemoteVideoFrameReference::generateForAdd();
-    auto properties = RemoteVideoFrameProxy::properties(newFrameReference, frame);
-    auto success = m_heap.add(newFrameReference, WTF::move(frame));
+    auto success = m_heap.add(reference, WTF::move(frame));
     ASSERT_UNUSED(success, success);
-    return properties;
 }
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
@@ -198,7 +199,14 @@ void RemoteVideoFrameObjectHeap::setSharedVideoFrameMemory(SharedMemory::Handle&
 
 RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameReadReference&& read)
 {
-    return m_heap.read(WTF::move(read), 0_s);
+    // A frame's heap insertion can complete asynchronously relative to a reader on another
+    // connection: for GPU-process-originated frames the Web process allocates the identifier and
+    // the matching add() runs only when the offer reply is handled here, while a consumer (e.g.
+    // WebGL copyTextureFromVideoFrame on its own stream) may already hold the proxy and present the
+    // read reference. Wait briefly for the insertion rather than failing immediately. This cannot
+    // deadlock: a proxy only exists once the Web process handler has already sent the reply, so the
+    // add() is always in flight on the (independent) connection dispatcher while we wait here.
+    return m_heap.read(WTF::move(read), defaultTimeout);
 }
 
 #endif

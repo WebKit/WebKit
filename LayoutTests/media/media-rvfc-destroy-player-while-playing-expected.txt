@@ -1,0 +1,3 @@
+
+PASS Destroying the media player while video frames are being delivered
+
