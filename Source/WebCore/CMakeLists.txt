@@ -3276,7 +3276,7 @@ if (DEFINED WebCore_EXTRA_LINK_OPTIONS)
     target_link_options(WebCore PRIVATE ${WebCore_EXTRA_LINK_OPTIONS})
 endif ()
 
-# WebCore has no Swift sources. When SWIFT_REQUIRED is ON, CMake may select the
+# WebCore has no Swift sources. CMake may select the
 # Swift linker for targets that transitively depend on Swift libraries (PAL).
 # Force CXX linker -- swiftc mishandles -I include paths during linking.
 set_target_properties(WebCore PROPERTIES LINKER_LANGUAGE CXX)

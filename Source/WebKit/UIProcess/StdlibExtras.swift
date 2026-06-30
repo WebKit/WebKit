@@ -26,7 +26,6 @@
 // FIXME (rdar://164119356): Move parts of StdLibExtras.swift into WTF
 // (those parts which are not specific to WebKit-level types) - and enable
 // irrespective of BACK_FORWARD_LIST_SWIFT
-#if ENABLE_BACK_FORWARD_LIST_SWIFT
 
 import WebKit_Internal
 import wtf
@@ -98,7 +97,5 @@ extension CxxRefVector {
         self = vec
     }
 }
-
-#endif // ENABLE_BACK_FORWARD_LIST_SWIFT
 
 #endif // compiler(>=6.2.3)

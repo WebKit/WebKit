@@ -39,8 +39,6 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-
 // Workaround for rdar://162358154
 using SpanConstChar = std::span<const char>;
 
@@ -81,4 +79,3 @@ Ref<WebKit::WebBackForwardListItem> createItemFromState(const WebKit::BackForwar
 Vector<Ref<WebKit::WebBackForwardListItem>> createItemsFromState(const WebKit::BackForwardListState&, WebKit::WebPageProxyIdentifier pageIdentifier);
 WebKit::WebBackForwardListItem* itemAtIndexInBackForwardListItemVector(const Vector<Ref<WebKit::WebBackForwardListItem>>& items, size_t index);
 
-#endif // ENABLE(BACK_FORWARD_LIST_SWIFT)

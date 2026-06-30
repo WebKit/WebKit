@@ -145,36 +145,6 @@ macro(WEBKIT_OPTION_BEGIN)
         set(ENABLE_UNIFIED_BUILDS_DEFAULT ON)
     endif ()
 
-    # Default the Swift prototype features on for GTK/WPE, but only when the toolchain
-    # can build it: Clang (not GCC) with a new-enough Swift. Otherwise they stay off;
-    # an explicit -D against such a toolchain is rejected in WEBKIT_OPTION_END.
-    #
-    # If either value was already set before this point (e.g. by a platform config),
-    # keep whatever is already defined and only fill in the one(s) still unset.
-    # When cross-building default to off, because the auto-detection here would pick
-    # up the host swiftc instead of a cross-aware one and break the target build.
-    if (NOT DEFINED ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT OR NOT DEFINED ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT)
-        if (CMAKE_CROSSCOMPILING)
-            set(_swift_features_default OFF)
-        elseif (COMPILER_IS_CLANG)
-            _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
-            if (_swift_interop_ok)
-                set(_swift_features_default ON)
-            else ()
-                set(_swift_features_default OFF)
-            endif ()
-        else ()
-            set(_swift_features_default OFF)
-        endif ()
-
-        if (NOT DEFINED ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT)
-            set(ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT ${_swift_features_default})
-        endif ()
-        if (NOT DEFINED ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT)
-            set(ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT ${_swift_features_default})
-        endif ()
-    endif ()
-
     WEBKIT_OPTION_DEFINE(ENABLE_ACCESSIBILITY_ISOLATED_TREE "Toggle accessibility isolated tree support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_API_TESTS "Enable public API unit tests" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_APPLE_PAY "Toggle Apple Pay support" PRIVATE OFF)
@@ -202,7 +172,6 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_AUTOCAPITALIZE "Toggle autocapitalize support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_AV1 "Toggle AV1 codec support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_AVF_CAPTIONS "Toggle AVFoundation caption support" PRIVATE OFF)
-    WEBKIT_OPTION_DEFINE(ENABLE_BACK_FORWARD_LIST_SWIFT "Toggle Swift back forward list" PRIVATE ${ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT})
     WEBKIT_OPTION_DEFINE(ENABLE_BREAKPAD "Toggle breakpad minidump support." PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_BUBBLEWRAP_SANDBOX "Toggle Bubblewrap sandboxing support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_CACHE_PARTITIONING "Toggle cache partitioning support" PRIVATE OFF)
@@ -281,7 +250,7 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_SPEECH_SYNTHESIS "Toggle Speech Synthesis API support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_SPELLCHECK "Toggle Spellchecking support (requires Enchant)" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_STREAMING_IPC_IN_LOG_FORWARDING "Toggle streaming connection in WebKit::LogStream" PRIVATE OFF)
-    WEBKIT_OPTION_DEFINE(ENABLE_SWIFT_DEMO_URI_SCHEME "Toggle Swift demo URI feature" PRIVATE ${ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT})
+    WEBKIT_OPTION_DEFINE(ENABLE_SWIFT_DEMO_URI_SCHEME "Toggle Swift demo URI feature" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_TELEPHONE_NUMBER_DETECTION "Toggle telephone number detection support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_TEXT_AUTOSIZING "Toggle automatic text size adjustment support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_THUNDER "Toggle EME V3 Thunder support" PRIVATE OFF)
@@ -481,39 +450,27 @@ macro(WEBKIT_OPTION_END)
     # Swift-emitted C++ thunks rely on Clang ABI details), so refuse to configure
     # a Swift feature under a non-Clang compiler.
     if (NOT COMPILER_IS_CLANG)
-        if (ENABLE_SWIFT_DEMO_URI_SCHEME OR ENABLE_BACK_FORWARD_LIST_SWIFT)
-            message(FATAL_ERROR
-                "Swift/C++ interop on the GLib ports requires Clang, but the "
-                "configured C++ compiler is ${CMAKE_CXX_COMPILER_ID}. Re-run "
-                "the configure step with CC=clang CXX=clang++, or pass "
-                "-DENABLE_SWIFT_DEMO_URI_SCHEME=OFF "
-                "-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF.")
-        endif ()
+        message(FATAL_ERROR
+            "Swift/C++ interop on the GLib ports requires Clang, but the "
+            "configured C++ compiler is ${CMAKE_CXX_COMPILER_ID}. Re-run "
+            "the configure step with CC=clang CXX=clang++.")
     endif ()
 
-    # A Swift feature still on with a too-old toolchain was requested explicitly
-    # (the default declines to auto-enable it), so fail loudly rather than drop it
-    # silently. Apple is gated elsewhere; non-Clang is already rejected above.
-    if (NOT APPLE AND COMPILER_IS_CLANG AND (ENABLE_SWIFT_DEMO_URI_SCHEME OR ENABLE_BACK_FORWARD_LIST_SWIFT))
+    # Swift/C++ interop is now always required. Fail loudly if the
+    # toolchain is too old. Apple is gated elsewhere; non-Clang is
+    # already rejected above.
+    if (NOT APPLE AND COMPILER_IS_CLANG)
         _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
         if (NOT _swift_interop_ok)
             message(FATAL_ERROR
-                "ENABLE_SWIFT_DEMO_URI_SCHEME / ENABLE_BACK_FORWARD_LIST_SWIFT "
-                "were requested, but the Swift toolchain is too old for WebKit's "
-                "Swift/C++ interop: it lacks the -emit-clang-header-min-access "
-                "frontend flag, first shipped in Swift 6.3 (6.2 and earlier do "
-                "not have it). Detected: ${SWIFT_DETECTED_VERSION}. Install Swift "
-                "6.3 or newer from swift.org and reconfigure, or pass "
-                "-DENABLE_SWIFT_DEMO_URI_SCHEME=OFF "
-                "-DENABLE_BACK_FORWARD_LIST_SWIFT=OFF.")
+                "Swift/C++ interop is required but the Swift toolchain is too old: "
+                "it lacks the -emit-clang-header-min-access frontend flag, first "
+                "shipped in Swift 6.3 (6.2 and earlier do not have it). "
+                "Detected: ${SWIFT_DETECTED_VERSION}. Install Swift 6.3 or newer "
+                "from swift.org and reconfigure.")
         endif ()
     endif ()
 
-    if (ENABLE_SWIFT_DEMO_URI_SCHEME OR ENABLE_BACK_FORWARD_LIST_SWIFT)
-        set(SWIFT_REQUIRED ON)
-    else ()
-        set(SWIFT_REQUIRED OFF)
-    endif ()
 endmacro()
 
 macro(PRINT_WEBKIT_OPTIONS)

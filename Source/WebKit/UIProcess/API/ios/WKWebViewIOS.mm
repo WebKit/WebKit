@@ -119,9 +119,7 @@
 #import <UIKit/UITraitCollection.h>
 #endif
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 #include "WebKit-Swift.h"
-#endif
 
 #if PLATFORM(VISION)
 #import "RealitySystemSupportSPI.h"
