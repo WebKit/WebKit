@@ -43,8 +43,13 @@
 
     GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
     GPUTexture createTexture(GPUTextureDescriptor descriptor);
+<<<<<<< HEAD
     GPUSampler createSampler(optional GPUSamplerDescriptor descriptor = {});
     GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
+=======
+    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
+    [CallWith=CurrentScriptExecutionContext] GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
+>>>>>>> 7e660535f175 (WebGPU importExternalTexture bypasses Same-Origin Policy for cross-origin video pixel readback)
 
     GPUBindGroupLayout createBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
     GPUPipelineLayout createPipelineLayout(GPUPipelineLayoutDescriptor descriptor);

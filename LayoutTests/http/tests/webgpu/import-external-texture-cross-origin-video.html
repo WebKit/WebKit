@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>importExternalTexture should throw SecurityError for cross-origin tainted video</title>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function log(msg) {
+    document.body.appendChild(document.createTextNode(msg + '\n'));
+}
+
+async function runTest() {
+    if (!navigator.gpu) {
+        log('SKIP: WebGPU not available');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) {
+        log('SKIP: No WebGPU adapter');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    const device = await adapter.requestDevice();
+
+    // Load a video from a cross-origin URL (localhost vs 127.0.0.1).
+    // No crossorigin attribute means the video becomes origin-tainted.
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    // This test is served from 127.0.0.1:8000, so localhost:8000 is cross-origin.
+    video.src = 'http://localhost:8000/webgpu/resources/red-green.mp4';
+
+    await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error('Video load timed out')), 10000);
+        video.addEventListener('canplay', () => { clearTimeout(timeout); resolve(); }, { once: true });
+        video.addEventListener('error', () => { clearTimeout(timeout); reject(new Error('Video load error')); }, { once: true });
+        video.play().catch(() => {});
+    });
+
+    // Confirm the video is genuinely cross-origin tainted: canvas getImageData must throw.
+    const taintCheck = document.createElement('canvas');
+    taintCheck.width = 1;
+    taintCheck.height = 1;
+    const ctx = taintCheck.getContext('2d');
+    ctx.drawImage(video, 0, 0, 1, 1);
+    try {
+        ctx.getImageData(0, 0, 1, 1);
+        log('FAIL: Canvas did not block cross-origin pixel readback — video lacks CORS taint, test is invalid');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    } catch (e) {
+        if (e.name !== 'SecurityError') {
+            log('FAIL: Canvas threw unexpected error: ' + e.name + ': ' + e.message);
+            if (window.testRunner)
+                testRunner.notifyDone();
+            return;
+        }
+        // SecurityError thrown — video is correctly tainted, proceed.
+    }
+
+    // importExternalTexture with a cross-origin tainted video must throw SecurityError.
+    try {
+        device.importExternalTexture({ source: video });
+        log('FAIL: importExternalTexture did not throw for a cross-origin tainted video');
+    } catch (e) {
+        if (e.name === 'SecurityError')
+            log('PASS: importExternalTexture threw SecurityError for a cross-origin tainted video');
+        else
+            log('FAIL: importExternalTexture threw unexpected error: ' + e.name + ': ' + e.message);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest().catch(e => {
+    document.body.appendChild(document.createTextNode('FAIL: ' + e.name + ': ' + e.message + '\n'));
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
