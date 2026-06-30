@@ -221,7 +221,12 @@ void MemoryIndexCursor::indexRecordsAllChanged()
 
 void MemoryIndexCursor::indexValueChanged(const IDBKeyData& key, const IDBKeyData& primaryKey)
 {
-    if (m_currentKey != key || m_currentPrimaryKey != primaryKey)
+    // For Prev/Prevunique cursors, m_currentIterator wraps std::set reverse_iterators
+    // whose stored base() points one element past the logical position. Erasing that
+    // adjacent element leaves base() dangling even though m_currentKey/m_currentPrimaryKey
+    // are unchanged, so for reverse cursors we must invalidate on any index mutation
+    // and let iterate() re-seek via reverseFind().
+    if (info().isDirectionForward() && (m_currentKey != key || m_currentPrimaryKey != primaryKey))
         return;
 
     m_currentIterator.invalidate();
