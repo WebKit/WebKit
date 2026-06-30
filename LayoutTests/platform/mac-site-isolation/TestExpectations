@@ -4,6 +4,7 @@
 # Tests that crash #
 ####################
 http/tests/inspector/target/provisional-load-cancels-previous-load.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/inheritance/about-blank-from-javascript-url-inherits-csp-from-initiator.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html?7-8 [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html?7-8 [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html?7-8 [ Skip ]
