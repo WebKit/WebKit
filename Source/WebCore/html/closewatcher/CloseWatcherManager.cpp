@@ -52,13 +52,16 @@ void CloseWatcherManager::add(Ref<CloseWatcher> watcher)
 
 void CloseWatcherManager::remove(CloseWatcher& watcher)
 {
-    for (auto& group : m_groups) {
-        group.removeFirstMatching([&watcher] (const Ref<CloseWatcher>& current) {
+    m_groups.removeAllMatching([&watcher](auto& group) {
+        group.removeFirstMatching([&watcher](const Ref<CloseWatcher>& current) {
             return current.ptr() == &watcher;
         });
+<<<<<<< HEAD
     }
 
     m_groups.removeAllMatching([] (const Vector<Ref<CloseWatcher>>& group) {
+=======
+>>>>>>> cf6a686e2e58 (Crash in CloseWatcherManager::remove)
         return group.isEmpty();
     });
 }

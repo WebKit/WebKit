@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CloseWatcherEnabled=true ] -->
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let first = new CloseWatcher();
+let second;
+internals.withUserGesture(() => { second = new CloseWatcher(); });
+first.destroy();
+second.destroy();
+
+document.write("PASS if no crash.");
+</script>
