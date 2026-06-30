@@ -1938,6 +1938,55 @@ TEST(URLSchemeHandler, CrossOriginNoCorsSubresourcesBlocked)
     EXPECT_FALSE([receivedPaths containsObject:@"/data"]);
 }
 
+// file: URLs are assumed to be app loaded and are given an exception to CORS handling for custom schemes
+TEST(URLSchemeHandler, LoadFileURLNoCorsSubresourceAllowed)
+{
+    NSString *tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WKURLSchemeHandlerLoadFileURLTest"];
+    [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtPath:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
+
+    NSString *htmlPath = [tempDir stringByAppendingPathComponent:@"page.html"];
+    NSString *html = @"<!doctype html><html><head><script>"
+        "let results = {};"
+        "function report() {"
+          "if ('script' in results && 'fetch' in results)"
+            "alert('script=' + results.script + '|fetch=' + results.fetch);"
+        "}"
+        "window.addEventListener('load', () => {"
+          "const s = document.createElement('script');"
+          "s.src = 'myapp://host.test/config';"
+          "s.onload = () => { results.script = 'executed:' + (window.LEAKED_CONFIG || 'unset'); report(); };"
+          "s.onerror = () => { results.script = 'blocked'; report(); };"
+          "document.head.appendChild(s);"
+          "fetch('myapp://host.test/data', { mode: 'no-cors' })"
+            ".then(() => { results.fetch = 'ok'; report(); })"
+            ".catch(() => { results.fetch = 'blocked'; report(); });"
+        "});"
+        "</script></head><body>page</body></html>";
+    [html writeToFile:htmlPath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+
+    RetainPtr receivedPaths = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        [receivedPaths addObject:task.request.URL.path];
+        respondForCrossOriginTest(task);
+    }];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"myapp"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSURL *fileURL = [NSURL fileURLWithPath:htmlPath];
+    [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL.URLByDeletingLastPathComponent];
+
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "script=executed:secret-value|fetch=ok");
+    EXPECT_TRUE([receivedPaths containsObject:@"/config"]);
+    EXPECT_TRUE([receivedPaths containsObject:@"/data"]);
+
+    [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
+}
+
 // Verifies that cross origin requests to a custom scheme handler work as expected,
 // both when they should be blocked and should be allowed.
 TEST(URLSchemeHandler, CrossOriginIframeCORSEnforcementForCustomScheme)
