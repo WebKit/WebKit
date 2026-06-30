@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -351,6 +352,94 @@ TEST(WebLocks, CrossSiteIframeUsingLocksInServiceWorkerHostingProcess)
     // Detaching the iframe will call WebLockRegistryProxy::clientIsGoingAway.
     __block bool detachDone = false;
     [webView evaluateJavaScript:@"document.getElementById('subframe').remove(); 1" completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+        detachDone = true;
+    }];
+    TestWebKitAPI::Util::run(&detachDone);
+
+    // Wait long enough for webContentProcessDidTerminate to fire.
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_FALSE(webProcessTerminated);
+}
+
+TEST(WebLocks, CrossSiteIframeUsingLocksInsideAboutBlankPopup)
+{
+    TestWebKitAPI::HTTPServer server1({ }, TestWebKitAPI::HTTPServer::Protocol::Http);
+    TestWebKitAPI::HTTPServer server2({ }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto iframeHTML =
+        "<script>"
+        "  navigator.locks.request('iframe-lock', () => new Promise(() => {}));"
+        "</script>"_s;
+
+    // Opener page: opens an about:blank popup (which inherits server1's origin),
+    // then injects a cross-site iframe pointing at server2 into that popup.
+    auto openerHTML = makeString(
+        "<script>"
+        "  function runTest() {"
+        "    const popup = window.open('');"
+        "    window.popupRef = popup;"
+        "    const f = popup.document.createElement('iframe');"
+        "    f.id = 'subframe';"
+        "    f.src = 'http://localhost:"_s, server2.port(), "/iframe';"
+        "    f.onload = () => webkit.messageHandlers.testHandler.postMessage('IFRAME_READY');"
+        "    popup.document.body.appendChild(f);"
+        "  }"
+        "</script>"_s);
+
+    server1.addResponse("/"_s, { openerHTML });
+    server2.addResponse("/iframe"_s, { iframeHTML });
+
+    // No process swap on navigation keeps the popup in the opener's process.
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = processPool.get();
+    enableWebLocksAPI(configuration.get());
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    __block RetainPtr<TestWKWebView> popupWebView;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *cfg, WKNavigationAction *, WKWindowFeatures *) {
+        popupWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:cfg]);
+        return popupWebView.get();
+    };
+    [webView setUIDelegate:uiDelegate.get()];
+
+    __block bool done = false;
+    __block bool webProcessTerminated = false;
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webProcessTerminated = true;
+        done = true;
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message isEqualToString:@"IFRAME_READY"])
+            done = true;
+    }];
+
+    [webView synchronouslyLoadRequest:server1.request()];
+    [webView evaluateJavaScript:@"runTest()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+
+    // Wait long enough for webContentProcessDidTerminate to fire.
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_FALSE(webProcessTerminated);
+
+    // If the WebProcess was terminated by requestLock's MESSAGE_CHECK, we
+    // have already failed and don't need to check clientIsGoingAway.
+    if (webProcessTerminated)
+        return;
+
+    // Detaching the iframe will call WebLockRegistryProxy::clientIsGoingAway.
+    __block bool detachDone = false;
+    [webView evaluateJavaScript:@"window.popupRef.document.getElementById('subframe').remove(); 1" completionHandler:^(id, NSError *error) {
         EXPECT_NULL(error);
         detachDone = true;
     }];

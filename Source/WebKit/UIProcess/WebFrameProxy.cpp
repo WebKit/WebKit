@@ -67,6 +67,7 @@
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/SecurityPolicy.h>
 #include <WebCore/ShareableBitmapHandle.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <stdio.h>
@@ -131,6 +132,8 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
     WebProcessPool::statistics().wkFrameCount++;
 
     page.inspectorController().createWebFrameInspectorTarget(*this, WebFrameInspectorTarget::toTargetID(frameID));
+
+    updateDocumentSecurityOrigin(opener, ForInitialization::Yes);
 }
 
 WebFrameProxy::~WebFrameProxy()
@@ -332,14 +335,20 @@ void WebFrameProxy::didFailProvisionalLoad()
 void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument)
 {
     m_frameLoadState.didCommitLoad();
-    if (RefPtr page = m_page)
-        process().didCommitLoadClientOrigin(ClientOrigin { SecurityOriginData::fromURL(page->mainFrame()->url()), SecurityOriginData::fromURL(m_frameLoadState.url()) });
 
     m_title = String();
     m_MIMEType = contentType;
     m_certificateInfo = certificateInfo;
     m_containsPluginDocument = containsPluginDocument;
     m_lastActivationTimestamp = -MonotonicTime::infinity();
+
+    RefPtr creator = parentFrame() ? parentFrame() : opener();
+    updateDocumentSecurityOrigin(creator.get());
+
+    if (RefPtr page = m_page) {
+        RefPtr mainFrame = page->mainFrame();
+        protect(process())->didCommitLoadClientOrigin(ClientOrigin { mainFrame ? mainFrame->documentSecurityOriginData() : SecurityOriginData { }, documentSecurityOriginData() });
+    }
 
     RefPtr webPage = page();
     if (webPage && webPage->protectedPreferences()->siteIsolationEnabled())
@@ -1032,6 +1041,31 @@ void WebFrameProxy::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors,
         return completion({ });
 
     sendWithAsyncReply(Messages::WebFrame::GetNodeForSelectorPaths(WTF::move(selectors)), WTF::move(completion));
+}
+
+SecurityOriginData WebFrameProxy::documentSecurityOriginData() const
+{
+    if (RefPtr origin = m_documentSecurityOrigin)
+        return origin->data();
+    return SecurityOriginData::fromURL(url());
+}
+
+void WebFrameProxy::updateDocumentSecurityOrigin(WebFrameProxy* creator, ForInitialization forInitialization)
+{
+    if (m_effectiveSandboxFlags.contains(SandboxFlag::Origin)) {
+        m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
+        return;
+    }
+
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(url())) {
+        if (RefPtr creatorFrame = creator)
+            m_documentSecurityOrigin = creatorFrame->m_documentSecurityOrigin;
+        else if (forInitialization == ForInitialization::Yes)
+            m_documentSecurityOrigin = WebCore::SecurityOrigin::opaqueOrigin();
+        return;
+    }
+
+    m_documentSecurityOrigin = SecurityOrigin::create(url());
 }
 
 } // namespace WebKit
