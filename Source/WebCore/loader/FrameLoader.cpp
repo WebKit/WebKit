@@ -4220,7 +4220,24 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     if (!canContinue) {
         FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderContinueLoadAfterNavigationPolicyCannotContinue, static_cast<int>(allowNavigationToInvalidURL), request.url().isValid(), static_cast<int>(navigationPolicyDecision));
 
-        // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
+        // A process-swapping cross-origin navigation skips the canContinue path below, where the push/replace
+        // navigate event is otherwise dispatched, so dispatch it here before the destination process loads.
+        if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess) {
+            std::optional<NavigationIdentifier> navigationID = m_policyDocumentLoader ? m_policyDocumentLoader->navigationID() : std::nullopt;
+            if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : std::function<bool()> { }) {
+                ASSERT(navigationID);
+                if (!pendingDispatchNavigateEvent()) {
+                    // preventDefault(): setPolicyDocumentLoader(nullptr) sends DidDestroyNavigation, dropping the UI process's deferred load.
+                    setPolicyDocumentLoader(nullptr);
+                    checkCompleted();
+                    return;
+                }
+            }
+            if (navigationID)
+                client().proceedWithNavigationInNewProcess(*navigationID);
+        }
+
+        // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we
         // need to report that the client redirect was cancelled.
         // FIXME: The client should be told about ignored non-quick redirects, too.
         if (m_quickRedirectComing)

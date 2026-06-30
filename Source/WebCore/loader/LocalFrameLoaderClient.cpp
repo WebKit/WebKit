@@ -60,6 +60,10 @@ void LocalFrameLoaderClient::applyMonitorUnloadToOwnerFrame(IFrameUnloadReason)
 {
 }
 
+void LocalFrameLoaderClient::proceedWithNavigationInNewProcess(NavigationIdentifier)
+{
+}
+
 // The three notifications below are entry points for the multi-process BFCache
 // coordination on top of WebKit's UIProcess. WebKitLegacy's WebFrameLoaderClient
 // does not run a UIProcess and tracks BFCache locally, so the base class

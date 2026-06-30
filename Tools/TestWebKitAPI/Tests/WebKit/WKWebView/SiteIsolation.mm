@@ -723,6 +723,70 @@ TEST(SiteIsolation, CancelNavigationActionCleansUpProvisionalFrame)
     ));
 }
 
+TEST(SiteIsolation, PreventDefaultCancelsCrossOriginProcessSwap)
+{
+    HTTPServer server({
+        // One-shot so the same-origin flush navigation below is not also cancelled.
+        { "/source"_s, { "<script>navigation.onnavigate = (e) => { navigation.onnavigate = null; e.preventDefault(); alert('navigated'); };</script>"_s } },
+        { "/after"_s, { "flushed"_s } },
+        { "/destination"_s, { "this cross-origin page must never commit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/source"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // A commit of the cross-origin destination is the failure signal; it must never happen.
+    __block bool committedDestination = false;
+    navigationDelegate.get().didCommitNavigation = ^(WKWebView *view, WKNavigation *) {
+        if ([view.URL.host isEqualToString:@"apple.com"])
+            committedDestination = true;
+    };
+
+    [webView evaluateJavaScript:
+        @"let a = document.createElement('a');"
+        "a.href = 'https://apple.com/destination';"
+        "document.body.appendChild(a);"
+        "a.click();"
+    completionHandler:nil];
+
+    // Pre-fix the navigate event never fired here, so this would hang.
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "navigated");
+
+    // Same-origin flush: a UI-process round-trip, so any stray destination commit would already have fired.
+    [webView evaluateJavaScript:@"location.href = 'https://example.com/after'" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_FALSE(committedDestination);
+    EXPECT_WK_STREQ(webView.get().URL.absoluteString, "https://example.com/after");
+}
+
+TEST(SiteIsolation, PreventDefaultCancelsCrossOriginSubframeProcessSwap)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://webkit.org/child'></iframe>"_s } },
+        // The subframe cancels its OWN navigation (one-shot). Self-initiated is required: a parent-initiated
+        // cross-origin navigation is not same-origin with the subframe and dispatches no navigate event.
+        { "/child"_s, { "<script>"
+            "navigation.onnavigate = (e) => { navigation.onnavigate = null; e.preventDefault(); alert('subframe-navigated'); };"
+            "addEventListener('load', () => { let a = document.createElement('a'); a.href = 'https://apple.com/destination'; document.body.appendChild(a); a.click(); });"
+            "</script>"_s } },
+        { "/destination"_s, { "this cross-origin subframe page must never commit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+
+    // Pre-fix this would hang: the subframe process swap (ProvisionalFrameProxy, not the main frame's
+    // ProvisionalPageProxy) ignored preventDefault().
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "subframe-navigated");
+
+    // The subframe must remain on its origin; the third site never commits.
+    auto childFrame = [webView mainFrame].childFrames.firstObject;
+    EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
+    EXPECT_WK_STREQ([webView mainFrame].info.securityOrigin.host, "example.com");
+}
+
 TEST(SiteIsolation, BasicPostMessageWindowOpen)
 {
     auto exampleHTML = "<script>"

@@ -231,6 +231,12 @@ void WebLocalFrameLoaderClient::documentLoaderDetached(WebCore::NavigationIdenti
         page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }
 
+void WebLocalFrameLoaderClient::proceedWithNavigationInNewProcess(WebCore::NavigationIdentifier navigationID)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::ProceedWithProvisionalLoadInNewProcess(navigationID));
+}
+
 void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     RefPtr webPage = m_frame->page();

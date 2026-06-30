@@ -383,6 +383,9 @@ public:
 
     virtual void documentLoaderDetached(NavigationIdentifier, LoadWillContinueInAnotherProcess) { }
 
+    // Tells the UI process to begin the process-swap load it deferred until the navigate event resolved. Default no-op.
+    virtual void proceedWithNavigationInNewProcess(NavigationIdentifier);
+
     virtual void frameNameChanged(const String&) { }
 
     virtual RefPtr<HistoryItem> createHistoryItemTree(bool clipAtTarget, BackForwardItemIdentifier) const = 0;
