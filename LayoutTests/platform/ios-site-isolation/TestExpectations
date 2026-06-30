@@ -72,7 +72,6 @@ http/tests/security/xss-DENIED-script-inject-into-inactive-window3.html [ Timeou
 http/tests/storage/storage-map-leaking.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
 http/wpt/web-locks/back-forward-cache-suspend-test.https.html [ Timeout ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-cross-origin.html [ Timeout ]
 loader/go-back-to-different-window-size.html [ Timeout ]
 media/restore-from-page-cache.html [ Timeout ]
 platform/ios/ios/fixed/fixed-back-forward.html [ Timeout ]

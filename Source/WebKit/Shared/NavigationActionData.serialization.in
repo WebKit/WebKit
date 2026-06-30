@@ -62,4 +62,5 @@ struct WebKit::NavigationActionData {
     [EncodeRequestBody] WebCore::ResourceRequest request;
     String invalidURLString;
     std::optional<WebCore::NavigationRequester> requester;
+    bool hasNavigationAPINavigateEvent;
 };

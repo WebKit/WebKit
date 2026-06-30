@@ -127,6 +127,7 @@ public:
 
     void setPendingDispatchNavigateEvent(std::function<bool()>&& function) { m_pendingDispatchNavigateEvent = WTF::move(function); }
     std::function<bool()> takePendingDispatchNavigateEvent() { return std::exchange(m_pendingDispatchNavigateEvent, nullptr); }
+    bool hasPendingDispatchNavigateEvent() const { return !!m_pendingDispatchNavigateEvent; }
 
     // Whether UIProcess has already made the policy decision for this navigation.
     PolicyAlreadyDecided policyAlreadyDecided() const { return m_policyAlreadyDecided; }
