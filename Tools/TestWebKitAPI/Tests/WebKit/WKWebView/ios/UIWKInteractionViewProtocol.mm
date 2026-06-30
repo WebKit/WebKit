@@ -263,7 +263,7 @@ static RetainPtr<NSArray> recordedCompositionEvents(TestWKWebView *webView)
 TEST(UIWKInteractionViewProtocol, TextInteractionCanBeginInExistingSelection)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
-    auto contentView = [webView textInputContentView];
+    RetainPtr contentView = [webView textInputContentView];
     BOOL allowsTextInteractionOutsideOfSelection = [contentView textInteractionGesture:UIWKGestureLoupe shouldBeginAtPoint:CGPointMake(50, 50)];
     EXPECT_TRUE(allowsTextInteractionOutsideOfSelection);
 
@@ -277,7 +277,7 @@ TEST(UIWKInteractionViewProtocol, TextInteractionCanBeginInExistingSelection)
 TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextContainingEmojis)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
-    auto contentView = [webView textInputContentView];
+    RetainPtr contentView = [webView textInputContentView];
     [contentView selectAll:nil];
     [contentView insertText:@"Hello world. This 👉🏻 is a good boy"];
     [webView waitForNextPresentationUpdate];
@@ -290,7 +290,7 @@ TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextContainingEmojis)
 TEST(UIWKInteractionViewProtocol, SuppressSelectionChangesDuringDictation)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
-    auto contentView = [webView textInputContentView];
+    RetainPtr contentView = [webView textInputContentView];
     [contentView selectAll:nil];
     [contentView insertText:@"Hello world"];
     [webView waitForNextPresentationUpdate];
@@ -310,7 +310,7 @@ TEST(UIWKInteractionViewProtocol, SuppressSelectionChangesDuringDictation)
 TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextStartsComposition)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
-    auto contentView = [webView textInputContentView];
+    RetainPtr contentView = [webView textInputContentView];
     installCompositionEventRecorder(webView.get());
 
     // The initial hypothesis arrives as a plain insertText: (the seed).
@@ -330,13 +330,16 @@ TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextStartsComposition)
 TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextContinuesComposition)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
-    auto contentView = [webView textInputContentView];
+    RetainPtr contentView = [webView textInputContentView];
     installCompositionEventRecorder(webView.get());
 
-    [contentView insertText:@"Te"];
-    [contentView replaceDictatedText:@"Te" withText:@"Test"];
-    [contentView replaceDictatedText:@"Test" withText:@"Test one"];
-    [contentView replaceDictatedText:@"Test one" withText:@"Test 123"];
+    // Stream a longer phrase one word at a time, as dictation does in practice.
+    [contentView insertText:@"th"];
+    [contentView replaceDictatedText:@"th" withText:@"the"];
+    [contentView replaceDictatedText:@"the" withText:@"the quick"];
+    [contentView replaceDictatedText:@"the quick" withText:@"the quick brown"];
+    [contentView replaceDictatedText:@"the quick brown" withText:@"the quick brown fox"];
+    [contentView replaceDictatedText:@"the quick brown fox" withText:@"the quick brown fox jumps"];
     [webView waitForNextPresentationUpdate];
 
     RetainPtr events = recordedCompositionEvents(webView.get());
@@ -351,14 +354,14 @@ TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextContinuesComposition)
 
     EXPECT_EQ(1U, compositionStartCount);
     EXPECT_EQ(0U, compositionEndCount);
-    EXPECT_TRUE([events containsObject:@"compositionupdate:Test 123"]);
-    EXPECT_WK_STREQ("Test 123", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+    EXPECT_TRUE([events containsObject:@"compositionupdate:the quick brown fox jumps"]);
+    EXPECT_WK_STREQ("the quick brown fox jumps", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
 
 TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextClearingEmitsCompositionEnd)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
-    auto contentView = [webView textInputContentView];
+    RetainPtr contentView = [webView textInputContentView];
     installCompositionEventRecorder(webView.get());
 
     [contentView insertText:@"Te"];
@@ -374,6 +377,168 @@ TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextClearingEmitsCompositionEnd
     RetainPtr events = recordedCompositionEvents(webView.get());
     EXPECT_TRUE([events containsObject:@"compositionend:"]);
     EXPECT_WK_STREQ("Test 123", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextReplacesSelectedText)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    RetainPtr contentView = [webView textInputContentView];
+    installCompositionEventRecorder(webView);
+
+    // Start with some existing text and select all of it, as if the user selected text
+    // before invoking dictation.
+    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = 'Hello world'; getSelection().selectAllChildren(document.body)"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+
+    [contentView insertText:@"Te"];
+    [webView waitForNextPresentationUpdate];
+
+    [contentView replaceDictatedText:@"Te" withText:@"Test"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr events = recordedCompositionEvents(webView);
+    EXPECT_TRUE([events containsObject:@"compositionstart:"]);
+    EXPECT_TRUE([events containsObject:@"compositionupdate:Test"]);
+    EXPECT_WK_STREQ("Test", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextReplacesSelectedPortion)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    RetainPtr contentView = [webView textInputContentView];
+    installCompositionEventRecorder(webView);
+
+    // Start with some existing text and select only the last word ("world").
+    [webView stringByEvaluatingJavaScript:@"(() => {"
+        "    document.body.innerHTML = 'Hello world';"
+        "    const text = document.body.firstChild;"
+        "    const range = document.createRange();"
+        "    range.setStart(text, 6);"
+        "    range.setEnd(text, 11);"
+        "    getSelection().removeAllRanges();"
+        "    getSelection().addRange(range);"
+        "})()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("world", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+
+    [contentView insertText:@"Te"];
+    [webView waitForNextPresentationUpdate];
+
+    [contentView replaceDictatedText:@"Te" withText:@"Test"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr events = recordedCompositionEvents(webView);
+    EXPECT_TRUE([events containsObject:@"compositionstart:"]);
+    EXPECT_TRUE([events containsObject:@"compositionupdate:Test"]);
+    EXPECT_WK_STREQ("Hello Test", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextReplacesMultiWordSelection)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    RetainPtr contentView = [webView textInputContentView];
+    installCompositionEventRecorder(webView);
+
+    // Select multiple words in the middle of the text, leaving words (and spaces) on both sides.
+    [webView stringByEvaluatingJavaScript:@"(() => {"
+        "    document.body.innerHTML = 'one two three four';"
+        "    const text = document.body.firstChild;"
+        "    const range = document.createRange();"
+        "    range.setStart(text, 4);"
+        "    range.setEnd(text, 13);"
+        "    getSelection().removeAllRanges();"
+        "    getSelection().addRange(range);"
+        "})()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("two three", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+
+    [contentView insertText:@"Te"];
+    [webView waitForNextPresentationUpdate];
+
+    [contentView replaceDictatedText:@"Te" withText:@"Test"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr events = recordedCompositionEvents(webView);
+    EXPECT_TRUE([events containsObject:@"compositionstart:"]);
+    EXPECT_TRUE([events containsObject:@"compositionupdate:Test"]);
+    EXPECT_WK_STREQ("one Test four", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextEmitsCompositionEventSequence)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    RetainPtr contentView = [webView textInputContentView];
+    installCompositionEventRecorder(webView);
+
+    [contentView insertText:@"th"];
+    [contentView replaceDictatedText:@"th" withText:@"the"];
+    [contentView replaceDictatedText:@"the" withText:@"the quick"];
+    [contentView replaceDictatedText:@"the quick" withText:@"the quick brown"];
+    [contentView willInsertFinalDictationResult];
+    [contentView replaceDictatedText:@"the quick brown" withText:@""];
+    [contentView insertText:@"the quick brown"];
+    [contentView didInsertFinalDictationResult];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr events = recordedCompositionEvents(webView);
+    NSArray *expected = @[
+        @"compositionstart:",
+        @"compositionupdate:the",
+        @"compositionupdate:the quick",
+        @"compositionupdate:the quick brown",
+        @"compositionend:",
+    ];
+    EXPECT_TRUE([events isEqualToArray:expected]);
+    EXPECT_WK_STREQ("the quick brown", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextPreservesSurroundingText)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    RetainPtr contentView = [webView textInputContentView];
+    installCompositionEventRecorder(webView);
+
+    // Place the caret in the middle of existing text, as if dictating between two characters.
+    [webView stringByEvaluatingJavaScript:@"document.body.innerHTML = '()'; getSelection().setPosition(document.body.firstChild, 1)"];
+    [webView waitForNextPresentationUpdate];
+
+    [contentView insertText:@"Te"];
+    [contentView replaceDictatedText:@"Te" withText:@"Test"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr events = recordedCompositionEvents(webView);
+    EXPECT_TRUE([events containsObject:@"compositionstart:"]);
+    EXPECT_TRUE([events containsObject:@"compositionupdate:Test"]);
+    EXPECT_WK_STREQ("(Test)", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextHandlesShrinkingHypothesis)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    RetainPtr contentView = [webView textInputContentView];
+    installCompositionEventRecorder(webView);
+
+    [contentView insertText:@"Te"];
+    [contentView replaceDictatedText:@"Te" withText:@"Test"];
+    [contentView replaceDictatedText:@"Test" withText:@"Test one"];
+    [contentView replaceDictatedText:@"Test one" withText:@"Test"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr events = recordedCompositionEvents(webView);
+    NSUInteger compositionStartCount = 0;
+    NSUInteger compositionEndCount = 0;
+    for (NSString *event in events.get()) {
+        if ([event isEqualToString:@"compositionstart:"])
+            compositionStartCount++;
+        else if ([event hasPrefix:@"compositionend:"])
+            compositionEndCount++;
+    }
+
+    EXPECT_EQ(1U, compositionStartCount);
+    EXPECT_EQ(0U, compositionEndCount);
+    EXPECT_WK_STREQ("compositionupdate:Test", [events lastObject]);
+    EXPECT_WK_STREQ("Test", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
 
 } // namespace TestWebKitAPI
