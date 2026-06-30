@@ -314,15 +314,16 @@ RefPtr<VideoFrame> AudioVideoRendererRemote::currentVideoFrame() const
         return nullptr;
 
     RefPtr<VideoFrame> videoFrame;
+    auto reference = RemoteVideoFrameReference::generateForAdd();
     callOnMainRunLoopAndWait([&] {
-        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteAudioVideoRendererProxyManager::CurrentVideoFrame(m_identifier), 0);
+        auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteAudioVideoRendererProxyManager::CurrentVideoFrame(m_identifier, reference), 0);
         if (!sendResult.succeeded())
             return;
 
         auto [result] = sendResult.takeReply();
         if (!result)
             return;
-        videoFrame = RemoteVideoFrameProxy::create(gpuProcessConnection->connection(), protect(gpuProcessConnection->videoFrameObjectHeapProxy()), WTF::move(*result));
+        videoFrame = RemoteVideoFrameProxy::create(gpuProcessConnection->connection(), protect(gpuProcessConnection->videoFrameObjectHeapProxy()), reference, WTF::move(*result));
     });
     return videoFrame;
 }

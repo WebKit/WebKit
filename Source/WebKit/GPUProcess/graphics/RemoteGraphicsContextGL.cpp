@@ -46,6 +46,11 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #endif
 
+#if PLATFORM(COCOA) && (ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS))
+#include <WebCore/CVUtilities.h>
+#include <WebCore/VideoFrameCV.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_connection);
 
 namespace WebKit {
@@ -237,13 +242,26 @@ void RemoteGraphicsContextGL::copyNativeImageYFlipped(WebCore::GraphicsContextGL
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebKit::RemoteVideoFrameReference reference)
 {
     assertIsCurrent(workQueue());
-    std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
-    if (auto videoFrame = protect(m_context)->surfaceBufferToVideoFrame(buffer))
-        result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
-    completionHandler(WTF::move(result));
+    // The Web process has already allocated `reference` and built the proxy from properties it
+    // knows (the readback frame's metadata is fully determined by the drawing buffer).
+    RefPtr<WebCore::VideoFrame> videoFrame = protect(m_context)->surfaceBufferToVideoFrame(buffer);
+#if PLATFORM(COCOA)
+    if (!videoFrame) {
+        // Readback failed (e.g. a transient drawing-buffer size mismatch). The proxy already exists
+        // in the Web process, so insert a black placeholder under `reference` rather than leaving the
+        // slot empty: a consumer holding the proxy then resolves immediately to a (black) frame instead
+        // of waiting out get()'s timeout. A genuinely absent reference still blocks/returns null, so
+        // "present placeholder" and "absent" remain distinguishable (unlike storing a null frame).
+        auto size = protect(m_context)->getInternalFramebufferSize();
+        if (RetainPtr blackBuffer = WebCore::createBlackPixelBuffer(size.width(), size.height()))
+            videoFrame = WebCore::VideoFrameCV::create({ }, false, WebCore::VideoFrame::Rotation::None, WTF::move(blackBuffer));
+    }
+#endif
+    if (videoFrame)
+        m_videoFrameObjectHeap->add(reference, videoFrame.releaseNonNull());
 }
 #endif
 

@@ -92,8 +92,13 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    auto properties = protect(m_videoFrameObjectHeap)->add(WebCore::VideoFrameCV::create({ }, false, WebCore::VideoFrame::Rotation::None, WTF::move(buffer)));
-    protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
+    Ref videoFrame = WebCore::VideoFrameCV::create({ }, false, WebCore::VideoFrame::Rotation::None, WTF::move(buffer));
+    auto properties = RemoteVideoFrameProxy::properties(videoFrame.get());
+    protect(m_webProcessConnection)->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties),
+        [videoFrameObjectHeap = protect(m_videoFrameObjectHeap), videoFrame = WTF::move(videoFrame)](std::optional<RemoteVideoFrameReference> reference) mutable {
+            if (reference)
+                videoFrameObjectHeap->add(*reference, WTF::move(videoFrame));
+        }, m_id);
 }
 
 WebCore::FloatSize RemoteMediaPlayerProxy::mediaPlayerVideoLayerSize() const

@@ -94,7 +94,7 @@ messages -> MediaPlayerPrivateRemote {
 #endif
 
 #if PLATFORM(COCOA)
-    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, struct WebKit::RemoteVideoFrameProxyProperties frameProperties);
+    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, struct WebKit::RemoteVideoFrameProxyProperties frameProperties) -> (std::optional<WebKit::RemoteVideoFrameReference> reference)
     LayerHostingContextChanged(struct WebCore::HostingContext hostingContext, WebCore::FloatSize presentationSize);
 #endif
 

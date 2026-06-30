@@ -146,7 +146,7 @@ private:
     void setResourceOwner(RemoteAudioVideoRendererIdentifier, const WebCore::ProcessIdentity& resourceOwner);
     void setVideoPlaybackMetricsUpdateInterval(RemoteAudioVideoRendererIdentifier, double);
     void flushAndRemoveImage(RemoteAudioVideoRendererIdentifier);
-    void currentVideoFrame(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>)>&&) const;
+    void currentVideoFrame(RemoteAudioVideoRendererIdentifier, RemoteVideoFrameReference, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>)>&&) const;
     void currentBitmapImage(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&) const;
 
     // VideoFullscreenInterface

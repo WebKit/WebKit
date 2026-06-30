@@ -51,6 +51,10 @@
 #include <WebCore/MediaPlayer.h>
 #endif
 
+#if PLATFORM(COCOA) && (ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS))
+#include <CoreVideo/CVPixelBuffer.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -214,20 +218,47 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::copyNativeImageYFlipped(Surfac
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+// surfaceBufferToVideoFrame() in the GPU process always produces an un-mirrored, un-rotated frame
+// with no presentation time, whose size is the drawing buffer size and whose color space is the
+// drawing buffer's (see GraphicsContextGLCocoa::surfaceBufferToVideoFrame). All of that is known to
+// the Web process, so it can build the proxy properties itself and the message needs no reply.
+static RemoteVideoFrameProxy::Properties surfaceBufferVideoFrameProperties(WebCore::IntSize size, const WebCore::DestinationColorSpace& drawingBufferColorSpace)
+{
+    auto primaries = PlatformVideoColorPrimaries::Bt709;
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    if (drawingBufferColorSpace == DestinationColorSpace::DisplayP3())
+        primaries = PlatformVideoColorPrimaries::SmpteEg432;
+#else
+    UNUSED_PARAM(drawingBufferColorSpace);
+#endif
+    PlatformVideoColorSpace colorSpace {
+        primaries,
+        PlatformVideoTransferCharacteristics::Iec6196621,
+        PlatformVideoMatrixCoefficients::Rgb,
+        true
+    };
+    uint32_t pixelFormat = 0;
+#if PLATFORM(COCOA)
+    pixelFormat = kCVPixelFormatType_32BGRA;
+#endif
+    return { MediaTime { }, false, VideoFrameRotation::None, size, pixelFormat, WTF::move(colorSpace) };
+}
+
 RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
     ASSERT(isMainRunLoop());
     if (isContextLost())
         return nullptr;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::SurfaceBufferToVideoFrame(buffer));
-    if (!sendResult.succeeded()) {
+    // The Web process owns the identifier and the metadata; fire-and-forget the readback request and
+    // build the proxy immediately. The GPU process fills the heap slot (or a tombstone on failure).
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::SurfaceBufferToVideoFrame(buffer, reference));
+    if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return nullptr;
     }
-    auto [result] = sendResult.takeReply();
-    if (!result)
-        return nullptr;
-    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), protect(protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy()), WTF::move(*result));
+    Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+    return RemoteVideoFrameProxy::create(gpuProcessConnection->connection(), protect(gpuProcessConnection->videoFrameObjectHeapProxy()), reference, surfaceBufferVideoFrameProperties(getInternalFramebufferSize(), m_drawingBufferColorSpace));
 }
 #endif
 

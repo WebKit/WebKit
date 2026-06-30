@@ -1180,14 +1180,15 @@ RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
         return m_videoFrameGatheredWithVideoFrameMetadata;
 #endif
 
-    auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), m_id);
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(reference), m_id);
     if (!sendResult.succeeded())
         return nullptr;
 
     auto [result, changed] = sendResult.takeReply();
     if (changed) {
         if (result)
-            m_videoFrameForCurrentTime = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), WTF::move(*result));
+            m_videoFrameForCurrentTime = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), reference, WTF::move(*result));
         else
             m_videoFrameForCurrentTime = nullptr;
     }

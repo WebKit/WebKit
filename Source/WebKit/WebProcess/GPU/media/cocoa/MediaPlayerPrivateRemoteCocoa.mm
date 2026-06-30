@@ -49,11 +49,16 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 }
 #endif
 
-void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties)
+void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&& reply)
 {
-    auto videoFrame = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), WTF::move(properties));
-    if (!m_isGatheringVideoFrameMetadata)
+    if (!m_isGatheringVideoFrameMetadata) {
+        // Reject the offer: nothing consumes the frame, so it is never added to the heap.
+        reply(std::nullopt);
         return;
+    }
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    auto videoFrame = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), reference, WTF::move(properties));
+    reply(reference);
     m_videoFrameMetadata = WTF::move(videoFrameMetadata);
     m_videoFrameGatheredWithVideoFrameMetadata = WTF::move(videoFrame);
 }

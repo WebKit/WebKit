@@ -974,7 +974,7 @@ void RemoteMediaPlayerProxy::currentTimeChanged(const MediaTime& mediaTime)
     protect(m_webProcessConnection)->send(Messages::MediaPlayerPrivateRemote::CurrentTimeChanged(timeUpdateData(*protect(m_player), mediaTime)), m_id);
 }
 
-void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&& completionHandler)
+void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(RemoteVideoFrameReference reference, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&& completionHandler)
 {
     std::optional<RemoteVideoFrameProxy::Properties> result;
     bool changed = false;
@@ -984,8 +984,10 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     if (m_videoFrameForCurrentTime != videoFrame) {
         m_videoFrameForCurrentTime = videoFrame;
         changed = true;
-        if (videoFrame)
-            result = protect(m_videoFrameObjectHeap)->add(videoFrame.releaseNonNull());
+        if (videoFrame) {
+            result = RemoteVideoFrameProxy::properties(*videoFrame);
+            protect(m_videoFrameObjectHeap)->add(reference, videoFrame.releaseNonNull());
+        }
     }
     completionHandler(WTF::move(result), changed);
 }

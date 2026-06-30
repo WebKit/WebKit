@@ -632,7 +632,7 @@ void RemoteAudioVideoRendererProxyManager::flushAndRemoveImage(RemoteAudioVideoR
         renderer->flushAndRemoveImage();
 }
 
-void RemoteAudioVideoRendererProxyManager::currentVideoFrame(RemoteAudioVideoRendererIdentifier identifier, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>)>&& completionHandler) const
+void RemoteAudioVideoRendererProxyManager::currentVideoFrame(RemoteAudioVideoRendererIdentifier identifier, RemoteVideoFrameReference reference, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>)>&& completionHandler) const
 {
     RefPtr renderer = rendererFor(identifier);
     if (!renderer) {
@@ -640,8 +640,10 @@ void RemoteAudioVideoRendererProxyManager::currentVideoFrame(RemoteAudioVideoRen
         return;
     }
     std::optional<RemoteVideoFrameProxy::Properties> result;
-    if (RefPtr videoFrame = renderer->currentVideoFrame())
-        result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
+    if (RefPtr videoFrame = renderer->currentVideoFrame()) {
+        result = RemoteVideoFrameProxy::properties(*videoFrame);
+        m_videoFrameObjectHeap->add(reference, videoFrame.releaseNonNull());
+    }
     completionHandler(WTF::move(result));
 }
 

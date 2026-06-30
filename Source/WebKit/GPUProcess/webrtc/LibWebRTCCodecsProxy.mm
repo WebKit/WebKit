@@ -160,8 +160,15 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
             return;
         }
 
-        auto properties = videoFrameObjectHeap->add(WTF::move(videoFrame));
-        connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTF::move(properties) }, 0);
+        // Offer the decoded frame to the Web process: it allocates the durable reference and
+        // returns it in the reply, at which point the frame is added to the heap. A cancelled
+        // reply (e.g. connection teardown) rejects the offer and drops the frame.
+        auto properties = RemoteVideoFrameProxy::properties(videoFrame.get());
+        connection->sendWithAsyncReply(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTF::move(properties) },
+            [videoFrameObjectHeap, videoFrame = WTF::move(videoFrame)](std::optional<RemoteVideoFrameReference> reference) mutable {
+                if (reference)
+                    videoFrameObjectHeap->add(*reference, WTF::move(videoFrame));
+            }, 0);
     };
 }
 

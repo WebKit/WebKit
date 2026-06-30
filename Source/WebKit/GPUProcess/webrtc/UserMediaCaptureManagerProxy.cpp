@@ -436,8 +436,16 @@ private:
             return;
         }
 
-        auto properties = videoFrameObjectHeap->add(frame);
-        m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata), 0);
+        // Offer the frame to the Web process. The Web process allocates the durable
+        // RemoteVideoFrameReference and returns it in the reply; the frame is added to the
+        // heap under that reference only once the offer is accepted. If the reply is
+        // cancelled (e.g. connection teardown) the offer is rejected and the frame dropped.
+        auto properties = RemoteVideoFrameProxy::properties(frame);
+        m_connection->sendWithAsyncReply(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata),
+            [videoFrameObjectHeap, frame = Ref { frame }](std::optional<RemoteVideoFrameReference> reference) mutable {
+                if (reference)
+                    videoFrameObjectHeap->add(*reference, WTF::move(frame));
+            }, 0);
     }
 
     bool preventSourceFromEnding()

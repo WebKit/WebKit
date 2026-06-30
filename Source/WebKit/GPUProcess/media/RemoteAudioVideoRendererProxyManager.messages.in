@@ -81,7 +81,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     SetResourceOwner(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::ProcessIdentity resourceOwner)
     SetVideoPlaybackMetricsUpdateInterval(WebKit::RemoteAudioVideoRendererIdentifier identifier, double interval)
     FlushAndRemoveImage(WebKit::RemoteAudioVideoRendererIdentifier identifier)
-    CurrentVideoFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame) Synchronous
+    CurrentVideoFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebKit::RemoteVideoFrameReference reference) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame) Synchronous
     CurrentBitmapImage(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
