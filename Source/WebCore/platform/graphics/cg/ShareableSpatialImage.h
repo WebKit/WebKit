@@ -27,9 +27,9 @@
 
 #if ENABLE(SPATIAL_IMAGE_DETECTION)
 
-#include "BitmapImage.h"
-#include "ShareableBitmap.h"
-#include "SpatialImageTypes.h"
+#include <WebCore/BitmapImage.h>
+#include <WebCore/ShareableBitmap.h>
+#include <WebCore/SpatialImageTypes.h>
 
 #include <wtf/RetainPtr.h>
 
