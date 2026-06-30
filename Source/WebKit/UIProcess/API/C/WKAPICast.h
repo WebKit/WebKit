@@ -83,12 +83,7 @@ class MediaKeySystemPermissionCallback;
 class NotificationPermissionRequest;
 class QueryPermissionResultCallback;
 class UserMediaPermissionRequestProxy;
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
-#else
-class WebBackForwardList;
-using WebBackForwardListWrapper = WebBackForwardList;
-#endif
 class WebBackForwardListItem;
 class WebColorPickerResultListenerProxy;
 class WebContextMenuListenerProxy;

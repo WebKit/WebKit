@@ -1680,27 +1680,25 @@ add_dependencies(WebCore WebCore_CopyAudioResources)
 # Stage the in-tree WebCore module maps into the framework bundle so the Swift
 # Clang importer finds them as real modules via -F (as JavaScriptCore does, and
 # as iOS does below). -import-underlying-module needs the public one.
-if (SWIFT_REQUIRED)
-    set(_webcore_modules_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Modules")
-    add_custom_command(
-        OUTPUT "${_webcore_modules_dir}/module.modulemap"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${WEBCORE_DIR}/WebCore.modulemap" "${_webcore_modules_dir}/module.modulemap"
-        MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore.modulemap"
-        VERBATIM)
-    add_custom_command(
-        OUTPUT "${_webcore_modules_dir}/module.private.modulemap"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${WEBCORE_DIR}/WebCore_Private.modulemap" "${_webcore_modules_dir}/module.private.modulemap"
-        MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore_Private.modulemap"
-        VERBATIM)
-    add_custom_target(WebCore_CopyPrivateModuleMap ALL DEPENDS
-        "${_webcore_modules_dir}/module.modulemap"
-        "${_webcore_modules_dir}/module.private.modulemap")
-    add_dependencies(WebCore WebCore_CopyPrivateModuleMap)
-endif ()
+set(_webcore_modules_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Modules")
+add_custom_command(
+    OUTPUT "${_webcore_modules_dir}/module.modulemap"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${WEBCORE_DIR}/WebCore.modulemap" "${_webcore_modules_dir}/module.modulemap"
+    MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore.modulemap"
+    VERBATIM)
+add_custom_command(
+    OUTPUT "${_webcore_modules_dir}/module.private.modulemap"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${WEBCORE_DIR}/WebCore_Private.modulemap" "${_webcore_modules_dir}/module.private.modulemap"
+    MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore_Private.modulemap"
+    VERBATIM)
+add_custom_target(WebCore_CopyPrivateModuleMap ALL DEPENDS
+    "${_webcore_modules_dir}/module.modulemap"
+    "${_webcore_modules_dir}/module.private.modulemap")
+add_dependencies(WebCore WebCore_CopyPrivateModuleMap)
 
 # Modern media controls button icons. RenderThemeCocoa::mediaControlsImageDataForIconNameAndType
 # loads these at runtime from WebCore.framework/Resources/modern-media-controls/images/<name>.<type>;

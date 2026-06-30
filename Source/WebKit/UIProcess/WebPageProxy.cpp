@@ -345,9 +345,7 @@
 #include "APIApplicationManifest.h"
 #endif
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 #include "WebBackForwardListSwiftUtilities.h"
-#endif
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "BidiDigitalCredentialsAgent.h"
@@ -2950,11 +2948,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
         launchProcess(Site { URL { item->url() } }, ProcessLaunchReason::InitialProcess);
 
         if (item != backForwardList().currentItem())
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
             backForwardList().goToItem(&*item);
-#else
-            backForwardList().goToItem(*item);
-#endif
     }
 
     Ref process = processForTheFrameItem(frameItem);
@@ -7194,11 +7188,7 @@ SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListIt
     RELEASE_ASSERT(RunLoop::isMain());
     SessionState sessionState;
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
     sessionState.backForwardListState = backForwardList().backForwardListState(WebBackForwardListItemFilter::create(WTF::move(filter)).ptr());
-#else
-    sessionState.backForwardListState = backForwardList().backForwardListState(filter);
-#endif
 
     auto& pendingURL = internals().pageLoadState.pendingAPIRequestURL();
     auto& provisionalURL = !pendingURL.isEmpty() ? pendingURL : internals().pageLoadState.provisionalURL();
@@ -9499,11 +9489,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(cspOriginsThatUpgradeInsecureNavigations, untrustedCspOriginsThatUpgradeInsecureNavigations, ProcessSpeaksForDomain);
 
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " didCommitLoadForFrame in navigation %" PRIu64, identifier().toUInt64(), navigationID ? navigationID->object().toUInt64() : 0);
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
     LOG(BackForward, "(Back/Forward) After load commit, back/forward list is now:%s", std::string(backForwardList().loggingString()).data());
-#else
-    LOG_WITH_STREAM(BackForward, stream << "(Back/Forward) After load commit, back/forward list is now:"_s << backForwardList().loggingString());
-#endif
 
     RefPtr protectedPageClient { pageClient() };
 
@@ -9565,11 +9551,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
         MESSAGE_CHECK_BASE(!frame->isMainFrame(), connection);
         MESSAGE_CHECK_BASE(redirectReplaceFrameState->children.isEmpty(), connection);
         if (RefPtr currentItem = backForwardList().currentItem())
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
             backForwardList().replaceFrameStateForChild(&*currentItem, frameID, redirectReplaceFrameState.releaseNonNull());
-#else
-            backForwardList().replaceFrameStateForChild(*currentItem, frameID, redirectReplaceFrameState.releaseNonNull());
-#endif
     }
 
     // Reattach iframe subtree from BFCache restore. Always drain the pending entry to avoid
@@ -13698,20 +13680,12 @@ void WebPageProxy::requestDOMPasteAccess(IPC::Connection& connection, DOMPasteAc
 
 void WebPageProxy::backForwardAddItemShared(IPC::Connection& connection, Ref<FrameState>&& navigatedFrameState, LoadedWebArchive loadedWebArchive, BrowsingContextGroup& browsingContextGroup)
 {
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
     backForwardList().backForwardAddItemShared(&connection, WTF::move(navigatedFrameState), loadedWebArchive, &browsingContextGroup);
-#else
-    backForwardList().backForwardAddItemShared(connection, WTF::move(navigatedFrameState), loadedWebArchive, browsingContextGroup);
-#endif
 }
 
 void WebPageProxy::backForwardGoToItemShared(IPC::Connection& connection, BackForwardItemIdentifier itemID)
 {
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
     backForwardList().backForwardGoToItemShared(&connection, itemID);
-#else
-    backForwardList().backForwardGoToItemShared(connection, itemID);
-#endif
 }
 
 void WebPageProxy::compositionWasCanceled()
@@ -21564,14 +21538,12 @@ RefPtr<WebDeviceOrientationUpdateProviderProxy> WebPageProxy::webDeviceOrientati
 }
 #endif
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 
 WebBackForwardListMessageForwarder& WebPageProxy::backForwardListMessageReceiver() const
 {
     return m_backForwardList->messageReceiver();
 }
 
-#endif
 
 void WebPageProxy::receivedQualifiedServerTrust(WebCore::CertificateInfo&& serverTrust, WebCore::CertificateInfo&& qualifiedServerTrust)
 {
