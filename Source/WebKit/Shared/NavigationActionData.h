@@ -86,10 +86,15 @@ struct NavigationActionData {
     std::optional<WebPageProxyIdentifier> originatingPageID;
     FrameInfoData frameInfo;
     std::optional<WebCore::NavigationIdentifier> navigationID;
-    WebCore::ResourceRequest originalRequest;
+    // Sent as nullopt when equal to `request`, to avoid serializing and re-parsing a potentially
+    // very large URL twice. Resolve via originalRequestOrFallback() / fall back to `request`.
+    std::optional<WebCore::ResourceRequest> originalRequest;
     WebCore::ResourceRequest request;
     String invalidURLString;
     std::optional<WebCore::NavigationRequester> requester;
+
+    // `originalRequest` is sent as nullopt when it equals `request`; resolve it here.
+    const WebCore::ResourceRequest& originalRequestOrFallback() const { return originalRequest ? *originalRequest : request; }
 };
 
 }
