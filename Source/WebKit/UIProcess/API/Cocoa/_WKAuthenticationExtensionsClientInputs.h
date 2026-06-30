@@ -44,13 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 // Concrete classes that conform to staging protocols
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(26.4), ios(26.4))
 @interface _WKAuthenticationPRFInputValues : NSObject <_WKAuthenticationPRFInputValuesStaging>
 @property (nullable, nonatomic, copy) NSData *prfSalt1;
 @property (nullable, nonatomic, copy) NSData *prfSalt2;
 @end
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(26.4), ios(26.4))
 @interface _WKAuthenticationExtensionsLargeBlobInputs : NSObject <_WKAuthenticationExtensionsLargeBlobInputsStaging>
 @property (nullable, nonatomic, copy) NSString *support;
 @property (nonatomic) BOOL read;

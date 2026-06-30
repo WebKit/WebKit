@@ -18,7 +18,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 typedef NS_ENUM(NSInteger, _WKWebExtensionBookmarkType) {
     _WKWebExtensionBookmarkTypeBookmark,
     _WKWebExtensionBookmarkTypeFolder,
-} NS_SWIFT_NAME(_WKWebExtension.BookmarkType) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(_WKWebExtension.BookmarkType) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 /*! @abstract A class conforming to the ``_WKWebExtensionBookmark`` protocol represents a single bookmark node (a bookmark or folder) to web extensions. */
 WK_SWIFT_UI_ACTOR

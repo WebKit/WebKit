@@ -31,13 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 // FIXME: This SPI should become an API - rdar://problem/164244457
 
 WK_SWIFT_UI_ACTOR
-WK_API_AVAILABLE(visionos(WK_XROS_TBA))
+WK_API_AVAILABLE(visionos(26.4))
 @protocol _WKImmersiveEnvironmentDelegate <NSObject>
 
 #if (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
-- (void)webView:(WKWebView *)webView allowImmersiveEnvironmentFromURL:(NSURL *)url completion:(void (^)(bool allow))completion NS_SWIFT_ASYNC_NAME(webView(_:allowImmersiveEnvironmentFromURL:)) WK_API_AVAILABLE(visionos(WK_XROS_TBA));
-- (void)webView:(WKWebView *)webView presentImmersiveEnvironment:(UIView *)environmentView completion:(void (^)(NSError * _Nullable error))completion NS_SWIFT_ASYNC_NAME(webView(_:presentImmersiveEnvironment:)) WK_API_AVAILABLE(visionos(WK_XROS_TBA));
-- (void)webView:(WKWebView *)webView dismissImmersiveEnvironment:(void (^)(void))completion NS_SWIFT_ASYNC_NAME(webViewDismissImmersiveEnvironment(_:)) WK_API_AVAILABLE(visionos(WK_XROS_TBA));
+- (void)webView:(WKWebView *)webView allowImmersiveEnvironmentFromURL:(NSURL *)url completion:(void (^)(bool allow))completion NS_SWIFT_ASYNC_NAME(webView(_:allowImmersiveEnvironmentFromURL:)) WK_API_AVAILABLE(visionos(26.4));
+- (void)webView:(WKWebView *)webView presentImmersiveEnvironment:(UIView *)environmentView completion:(void (^)(NSError * _Nullable error))completion NS_SWIFT_ASYNC_NAME(webView(_:presentImmersiveEnvironment:)) WK_API_AVAILABLE(visionos(26.4));
+- (void)webView:(WKWebView *)webView dismissImmersiveEnvironment:(void (^)(void))completion NS_SWIFT_ASYNC_NAME(webViewDismissImmersiveEnvironment(_:)) WK_API_AVAILABLE(visionos(26.4));
 #endif
 
 @end

@@ -31,7 +31,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKSessionState : NSObject
 
 - (instancetype)initWithData:(NSData *)data;
-- (BOOL)isEqualForTesting:(_WKSessionState *)other WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (BOOL)isEqualForTesting:(_WKSessionState *)other WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 @property (nonatomic, readonly, copy) NSData *data;
 
