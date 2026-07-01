@@ -118,8 +118,13 @@ public:
     ExceptionOr<Ref<GPUBuffer>> createBuffer(GPUBufferDescriptor&&);
     ExceptionOr<Ref<GPUTexture>> createTexture(GPUTextureDescriptor&&);
     std::optional<String> errorValidatingSupportedFormat(GPUTextureFormat) const;
+<<<<<<< HEAD
     ExceptionOr<Ref<GPUSampler>> createSampler(std::optional<GPUSamplerDescriptor>&&);
     ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(GPUExternalTextureDescriptor&&);
+=======
+    ExceptionOr<Ref<GPUSampler>> createSampler(const std::optional<GPUSamplerDescriptor>&);
+    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(ScriptExecutionContext&, const GPUExternalTextureDescriptor&);
+>>>>>>> 7e660535f175 (WebGPU importExternalTexture bypasses Same-Origin Policy for cross-origin video pixel readback)
 
     ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(GPUBindGroupLayoutDescriptor&&);
     ExceptionOr<Ref<GPUPipelineLayout>> createPipelineLayout(GPUPipelineLayoutDescriptor&&);

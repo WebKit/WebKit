@@ -393,6 +393,7 @@ private:
 };
 #endif
 
+<<<<<<< HEAD
 ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExternalTextureDescriptor&& externalTextureDescriptor)
 {
 #if ENABLE(VIDEO)
@@ -403,6 +404,11 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
         return std::nullopt;
     };
 #endif
+=======
+ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(ScriptExecutionContext& context, const GPUExternalTextureDescriptor& externalTextureDescriptor)
+{
+    UNUSED_PARAM(context);
+>>>>>>> 7e660535f175 (WebGPU importExternalTexture bypasses Same-Origin Policy for cross-origin video pixel readback)
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
@@ -438,8 +444,25 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
 #else
     Ref videoElementRef = externalTextureDescriptor.source;
 #endif
+<<<<<<< HEAD
     if (auto exception = checkVideoElementOriginTaint(videoElementRef))
         return WTF::move(*exception);
+=======
+        if ((*videoElement)->taintsOrigin(*protect(context.securityOrigin()).get()))
+            return Exception { ExceptionCode::SecurityError, "GPUDevice.importExternalTexture: Cross origin external videos are not allowed in WebGPU"_s };
+
+        WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
+        m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
+        m_previouslyImportedExternalTexture.first = *videoElement;
+        m_previouslyImportedExternalTexture.second = externalTexture.ptr();
+        videoElementPtr->requestVideoFrameCallback(GPUDeviceVideoFrameRequestCallback::create(externalTexture.get(), *videoElementPtr, *this, RefPtr { scriptExecutionContext() }.get()));
+        queueTaskKeepingObjectAlive(*this, TaskSource::WebGPU, [videoElementPtr, externalTextureRef = externalTexture](auto& gpuDevice) {
+            if (!videoElementPtr)
+                return;
+            auto it = gpuDevice.m_videoElementToExternalTextureMap.find(*videoElementPtr);
+            if (it == gpuDevice.m_videoElementToExternalTextureMap.end() || externalTextureRef.ptr() != it->value.get())
+                return;
+>>>>>>> 7e660535f175 (WebGPU importExternalTexture bypasses Same-Origin Policy for cross-origin video pixel readback)
 
     WeakPtr videoElementPtr = videoElementRef.ptr();
     m_videoElementToExternalTextureMap.set(videoElementRef, externalTexture.get());
