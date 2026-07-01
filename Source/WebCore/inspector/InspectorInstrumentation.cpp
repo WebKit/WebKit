@@ -1118,7 +1118,7 @@ void InspectorInstrumentation::didChangeCanvasSizeImpl(InstrumentingAgents& inst
         canvasAgent->didChangeCanvasSize(context);
 }
 
-void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents& instrumentingAgents, CanvasRenderingContext& context)
+void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents& instrumentingAgents, const CanvasRenderingContext& context)
 {
     if (auto* canvasAgent = instrumentingAgents.enabledCanvasAgent())
         canvasAgent->didChangeCanvasMemory(context);

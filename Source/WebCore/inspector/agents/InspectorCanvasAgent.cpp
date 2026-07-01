@@ -366,7 +366,7 @@ void InspectorCanvasAgent::didChangeCanvasSize(CanvasRenderingContext& context)
     m_frontendDispatcher->canvasSizeChanged(inspectorCanvas->identifier(), size.width(), size.height());
 }
 
-void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context)
+void InspectorCanvasAgent::didChangeCanvasMemory(const CanvasRenderingContext& context)
 {
     RefPtr<InspectorCanvas> inspectorCanvas;
 
@@ -707,7 +707,7 @@ RefPtr<InspectorCanvas> InspectorCanvasAgent::assertInspectorCanvas(Inspector::P
     return inspectorCanvas;
 }
 
-RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(CanvasRenderingContext& context)
+RefPtr<InspectorCanvas> InspectorCanvasAgent::findInspectorCanvas(const CanvasRenderingContext& context)
 {
     for (auto& inspectorCanvas : m_identifierToInspectorCanvas.values()) {
         if (&inspectorCanvas->canvasContext() == &context)

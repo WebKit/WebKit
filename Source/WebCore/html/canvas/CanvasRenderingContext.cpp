@@ -94,17 +94,6 @@ void CanvasRenderingContext::deref() const
     m_canvas->deref();
 }
 
-RefPtr<ImageBuffer> CanvasRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
-{
-    // This will be removed once all contexts store their own buffers.
-    return canvasBase().buffer();
-}
-
-bool CanvasRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
-{
-    return false;
-}
-
 bool CanvasRenderingContext::delegatesDisplay() const
 {
 #if USE(SKIA)
@@ -225,15 +214,8 @@ void CanvasRenderingContext::checkOrigin(const CSSStyleImageValue&)
     m_canvas->setOriginTainted();
 }
 
-void CanvasRenderingContext::updateMemoryCostOnAllocation(bool hasNewBuffer)
+void CanvasRenderingContext::updateMemoryCost(size_t newMemoryCost) const
 {
-    // FIXME: once the ImageBuffer is moved to 2D context, all different context
-    // types calculate the memory use in their own way.
-    size_t newMemoryCost = 0;
-    if (hasNewBuffer) {
-        if (RefPtr buffer = canvasBase().buffer())
-            newMemoryCost = buffer->memoryCost();
-    }
     size_t oldMemoryCost = m_memoryCost.load(std::memory_order_relaxed);
     m_memoryCost.store(newMemoryCost, std::memory_order_relaxed);
     if (newMemoryCost) {

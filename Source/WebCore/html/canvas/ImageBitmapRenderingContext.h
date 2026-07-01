@@ -55,13 +55,16 @@ public:
     ExceptionOr<void> transferFromImageBitmap(RefPtr<ImageBitmap>);
     bool hasAlpha() { return m_settings.alpha; }
 
+    RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return !m_buffer; }
+    void didUpdateCanvasSizeProperties(bool) final { }
+
 private:
     ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
     RefPtr<ImageBuffer> transferToImageBuffer() final;
 
-    void setBlank();
-
+    RefPtr<ImageBuffer> m_buffer;
     ImageBitmapRenderingContextSettings m_settings;
 };
 

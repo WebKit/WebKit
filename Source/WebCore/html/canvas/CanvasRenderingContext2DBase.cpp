@@ -57,6 +57,7 @@
 #include "FloatQuad.h"
 #include "GeometryUtilities.h"
 #include "Gradient.h"
+#include "GraphicsClient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -97,6 +98,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasRenderingContext2DBase);
+
+static constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
 
 static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
 
@@ -256,46 +259,39 @@ CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, C
     ASSERT(is2dBase());
 }
 
-void CanvasRenderingContext2DBase::unwindStateStack()
-{
-    // Ensure that the state stack in the ImageBuffer's context
-    // is cleared before destruction, to avoid assertions in the
-    // GraphicsContext dtor.
-    size_t stackSize = m_stateStack.size();
-    if (stackSize <= 1)
-        return;
-    m_stateStack.shrink(1);
-    auto* context = existingDrawingContext();
-    if (!context)
-        return;
-    for (;stackSize > 1; --stackSize)
-        context->restore();
-}
-
 CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 {
 #if ASSERT_ENABLED
-    unwindStateStack();
+    size_t restoreCount = m_stateStack.size() - 1;
+    for (size_t i = 0; i < restoreCount; ++i)
+        restore();
+    m_stateStack.first() = State();
+    if (RefPtr buffer = m_buffer)
+        buffer->context().restore();
 #endif
 }
 
 bool CanvasRenderingContext2DBase::isAccelerated() const
 {
-    auto* context = existingDrawingContext();
-    return context && context->renderingMode() == RenderingMode::Accelerated;
+    return m_buffer && m_buffer->context().renderingMode() == RenderingMode::Accelerated;
+}
+
+RefPtr<ImageBuffer> CanvasRenderingContext2DBase::surfaceBufferToImageBuffer(SurfaceBuffer)
+{
+    return buffer();
 }
 
 bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
 {
     // Before the first draw (or first access to the drawing buffer), the drawing buffer is transparent black.
     // Currently the canvas does not support alpha == false.
-    return !canvasBase().hasCreatedImageBuffer();
+    return !m_hasCreatedImageBuffer;
 }
 
 #if USE(SKIA)
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
 {
-    if (auto buffer = canvasBase().buffer())
+    if (RefPtr buffer = this->buffer())
         return buffer->layerContentsDisplayDelegate();
     return nullptr;
 }
@@ -313,26 +309,43 @@ bool CanvasRenderingContext2DBase::hasDeferredOperations() const
 void CanvasRenderingContext2DBase::flushDeferredOperations()
 {
     m_hasDeferredOperations = false;
-    if (RefPtr buffer = canvasBase().buffer())
+    if (RefPtr buffer = this->buffer())
         buffer->flushDrawingContextAsync();
 }
 
 void CanvasRenderingContext2DBase::reset()
 {
-    unwindStateStack();
+    // CanvasRenderingContext2D.reset() behaves exactly like width/height self-assignment,
+    // `ctx.width = ctx.width`.
+    didUpdateCanvasSizeProperties(false);
+}
 
-    ASSERT(m_stateStack.size() == 1);
+void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChanged)
+{
+    size_t restoreCount = m_stateStack.size() - 1;
+    for (size_t i = 0; i < restoreCount; ++i)
+        restore();
     m_stateStack.first() = State();
-
     m_path.clear();
     m_unrealizedSaveCount = 0;
     m_cachedContents.emplace<CachedContentsTransparent>();
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
-    if (auto* c = existingDrawingContext()) {
-        c->restore();
-        c->save();
-        c->clearRect(FloatRect { { }, canvasBase().size() });
+    if (sizeChanged) {
+        m_hasCreatedImageBuffer = false;
+        if (m_buffer) {
+#if ASSERT_ENABLED
+            Ref { *m_buffer }->context().restore();
+#endif
+            m_buffer = nullptr;
+            updateMemoryCost(0);
+        }
+        InspectorInstrumentation::didChangeCanvasSize(*this);
+    } else if (RefPtr buffer = m_buffer) {
+        auto& context = buffer->context();
+        context.restore();
+        context.save();
+        context.clearRect(FloatRect { { }, canvasBase().size() });
     }
 }
 
@@ -2435,18 +2448,11 @@ const Vector<CanvasRenderingContext2DBase::State, 1>& CanvasRenderingContext2DBa
 
 GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
-    if (auto* paintContext = dynamicDowncast<PaintRenderingContext2D>(*this))
-        return paintContext->ensureDrawingContext();
-    if (auto* buffer = canvasBase().buffer())
+    if (auto* paintContext = dynamicDowncast<PaintRenderingContext2D>(*this)) [[unlikely]]
+        return paintContext->drawingContext();
+    if (RefPtr buffer = this->buffer())
         return &buffer->context();
     return nullptr;
-}
-
-GraphicsContext* CanvasRenderingContext2DBase::existingDrawingContext() const
-{
-    if (!canvasBase().hasCreatedImageBuffer())
-        return nullptr;
-    return drawingContext();
 }
 
 GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContext() const
@@ -2461,14 +2467,15 @@ GraphicsContext* CanvasRenderingContext2DBase::effectiveDrawingContext() const
 
 AffineTransform CanvasRenderingContext2DBase::baseTransform() const
 {
-    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): The image buffer from CanvasBase should be moved to CanvasRenderingContext2DBase.
-    ASSERT(canvasBase().hasCreatedImageBuffer());
-    return canvasBase().buffer()->baseTransform();
+    if (auto* paintContext = dynamicDowncast<PaintRenderingContext2D>(*this)) [[unlikely]]
+        return paintContext->baseTransform();
+    ASSERT(m_hasCreatedImageBuffer);
+    return buffer()->baseTransform();
 }
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
-    if (auto buffer = canvasBase().buffer())
+    if (RefPtr buffer = this->buffer())
         buffer->prepareForDisplay();
 }
 
@@ -2659,7 +2666,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight)
 {
-    RefPtr buffer = canvasBase().buffer();
+    RefPtr buffer = this->buffer();
     if (!buffer)
         return;
 
@@ -3101,7 +3108,7 @@ std::optional<RenderingMode> CanvasRenderingContext2DBase::renderingModeForTesti
 
 std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()
 {
-    if (auto* buffer = canvasBase().buffer()) {
+    if (RefPtr buffer = this->buffer()) {
         buffer->ensureBackendCreated();
         if (buffer->hasBackend())
             return buffer->renderingMode();
@@ -3228,6 +3235,51 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
 
     modifiableState().wordSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setWordSpacing(pixels);
+}
+
+RefPtr<ImageBuffer> CanvasRenderingContext2DBase::buffer() const
+{
+    if (m_hasCreatedImageBuffer)
+        return m_buffer;
+    m_hasCreatedImageBuffer = true;
+    RefPtr buffer = allocateImageBuffer();
+    if (!buffer)
+        return nullptr;
+    auto& context = buffer->context();
+    context.setShadowsIgnoreTransforms(true);
+    context.setImageInterpolationQuality(defaultInterpolationQuality);
+    context.setStrokeThickness(1);
+    // Save the initial state, so that `reset()` can restore it.
+    context.save();
+    updateMemoryCost(buffer->memoryCost());
+    m_buffer = buffer;
+
+#if USE(CA) || USE(SKIA)
+    // Recalculate compositing requirements if acceleration state changed.
+    if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
+        canvasElement->invalidateStyleAndLayerComposition();
+#if USE(SKIA)
+        if (CheckedPtr renderer = canvasElement->renderBox()) {
+            if (renderer->hasAcceleratedCompositing() && delegatesDisplay())
+                renderer->contentChanged(ContentChangeType::Canvas);
+        }
+#endif
+    }
+#endif
+    return buffer;
+}
+
+RefPtr<ImageBuffer> CanvasRenderingContext2DBase::allocateImageBuffer() const
+{
+    if (!canvasBase().validateArea())
+        return nullptr;
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+    RenderingMode renderingMode = !willReadFrequently() && canvasBase().shouldAccelerate() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    if (auto renderingModeForTesting = this->renderingModeForTesting())
+        renderingMode = *renderingModeForTesting;
+    return ImageBuffer::create(canvasBase().size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace(), pixelFormat(), scriptExecutionContext->graphicsClient());
 }
 
 } // namespace WebCore

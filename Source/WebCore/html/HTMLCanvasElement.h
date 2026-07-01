@@ -77,7 +77,6 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
-    void setCSSCanvasContextSize(const IntSize& newSize);
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
@@ -131,10 +130,6 @@ public:
 
     SecurityOrigin* securityOrigin() const final;
 
-    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=275100): Only some canvas rendering contexts need an ImageBuffer.
-    // It would be better to have the contexts own the buffers.
-    void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
-
     bool needsPreparationForDisplay();
     void prepareForDisplay();
     void dynamicRangeLimitDidChange(PlatformDynamicRangeLimit);
@@ -153,6 +148,8 @@ public:
     void deref() const final { HTMLElement::deref(); }
 
     using HTMLElement::scriptExecutionContext;
+
+    void setSizeForControllingContext(IntSize) final;
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
@@ -175,8 +172,6 @@ private:
     bool canStartSelection() const final;
 
     void didUpdateSizeProperties();
-
-    void createImageBuffer() const final;
 
     bool usesContentsAsLayerContents() const;
 

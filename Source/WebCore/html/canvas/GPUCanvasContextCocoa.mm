@@ -279,12 +279,14 @@ std::optional<double> GPUCanvasContextCocoa::getEffectiveDynamicRangeLimitValue(
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
 
-void GPUCanvasContextCocoa::reshape()
+void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
 {
     if (RefPtr currentTexture = m_currentTexture) {
         currentTexture->destroy();
         m_currentTexture = nullptr;
     }
+    m_readDisplayBuffer = nullptr;
+    updateMemoryCost();
     auto newSize = canvasBase().size();
     auto newWidth = static_cast<GPUIntegerCoordinate>(newSize.width());
     auto newHeight = static_cast<GPUIntegerCoordinate>(newSize.height());
@@ -313,9 +315,21 @@ void GPUCanvasContextCocoa::reshape()
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+    const auto size = canvasBase().size();
+    if (size.isEmpty())
+        return nullptr;
+    if (!m_readDisplayBuffer) {
+        m_readDisplayBuffer = ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, scriptExecutionContext->graphicsClient());
+        updateMemoryCost();
+    }
+    RefPtr<ImageBuffer> buffer = m_readDisplayBuffer;
+
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
     if (!m_configuration)
-        return canvasBase().buffer();
+        return buffer;
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=294654 - OffscreenCanvas may not reflect the display the OffscreenCanvas is displayed on during background / resume
 #if HAVE(SUPPORT_HDR_DISPLAY)
@@ -324,20 +338,20 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
 #endif
 
     auto frameCount = m_configuration->frameCount;
-    m_compositorIntegration->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }, frameCount] {
+    m_compositorIntegration->prepareForDisplay(frameCount, [weakThis = WeakPtr { *this }, frameCount, buffer] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         RefPtr base = protectedThis->canvasBase();
         base->clearCopiedImage();
-        if (RefPtr buffer = base->buffer(); buffer && protectedThis->m_configuration) {
+        if (buffer && protectedThis->m_configuration) {
             buffer->flushDrawingContext();
             protectedThis->m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, frameCount);
             protectedThis->present(frameCount);
         }
     });
-    return canvasBase().buffer();
+    return buffer;
 }
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
@@ -481,6 +495,8 @@ void GPUCanvasContextCocoa::unconfigure()
     m_presentationContext->unconfigure();
     m_configuration = std::nullopt;
     m_currentTexture = nullptr;
+    m_readDisplayBuffer = nullptr;
+    updateMemoryCost();
     ASSERT(!isConfigured());
 }
 
@@ -563,7 +579,8 @@ void GPUCanvasContextCocoa::prepareForDisplay()
 {
     if (!isConfigured())
         return;
-
+    m_readDisplayBuffer = nullptr;
+    updateMemoryCost();
     ASSERT(m_configuration->frameCount < m_configuration->renderBuffers.size());
 
     auto frameIndex = m_configuration->frameCount;
@@ -581,7 +598,22 @@ void GPUCanvasContextCocoa::prepareForDisplay()
 void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
 {
     m_compositingResultsNeedsUpdating = true;
+    if (m_readDisplayBuffer) {
+        m_readDisplayBuffer = nullptr;
+        updateMemoryCost();
+    }
     markCanvasChanged();
+}
+
+void GPUCanvasContextCocoa::updateMemoryCost() const
+{
+    // Computes only a rough ballpark figure to drive garbage collection.
+    size_t newMemoryCost = 0;
+    if (m_readDisplayBuffer)
+        newMemoryCost += Ref { *m_readDisplayBuffer }->memoryCost();
+    if (m_currentTexture)
+        newMemoryCost += m_width * m_height * 4;
+    CanvasRenderingContext::updateMemoryCost(newMemoryCost);
 }
 
 

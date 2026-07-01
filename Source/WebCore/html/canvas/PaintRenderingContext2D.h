@@ -44,12 +44,14 @@ public:
 
     virtual ~PaintRenderingContext2D();
 
-    GraphicsContext* ensureDrawingContext() const;
-    GraphicsContext* existingDrawingContext() const final;
-    AffineTransform baseTransform() const final;
+    GraphicsContext* drawingContext() const;
+    AffineTransform baseTransform() const;
 
     CustomPaintCanvas& canvas() const;
     void replayDisplayList(GraphicsContext& target) const;
+
+protected:
+    void didUpdateCanvasSizeProperties(bool) final;
 
 private:
     PaintRenderingContext2D(CustomPaintCanvas&);

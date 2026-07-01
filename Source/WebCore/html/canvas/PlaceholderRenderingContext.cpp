@@ -129,30 +129,43 @@ IntSize PlaceholderRenderingContext::size() const
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    RefPtr<ImageBuffer> buffer;
-    Ref canvas = this->canvas();
-    if (canvas->hasCreatedImageBuffer())
-        buffer = canvas->buffer();
-    m_source->setContentsToLayer(layer, buffer.get(), m_opaque);
+    m_source->setContentsToLayer(layer, m_buffer.get(), m_opaque);
 }
 
-void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& buffer, bool originClean, bool opaque)
+void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuffer, bool originClean, bool opaque)
 {
     m_opaque = opaque;
-
-    // Transfer the drawn bitmap and its origin-clean flag to the output canvas.
+    IntSize newSize = newBuffer->truncatedLogicalSize();
+    updateMemoryCost(newBuffer->memoryCost());
+    m_buffer = WTF::move(newBuffer);
+    Ref canvas = this->canvas();
+    canvas->setSizeForControllingContext(newSize);
     if (originClean)
-        canvasBase().setOriginClean();
+        canvas->setOriginClean();
     else
-        canvasBase().setOriginTainted();
-    canvasBase().setImageBufferAndMarkDirty(WTF::move(buffer));
+        canvas->setOriginTainted();
+    canvas->didDraw(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);
 }
 
 PixelFormat PlaceholderRenderingContext::pixelFormat() const
 {
-    if (Ref canvas = this->canvas(); canvas->buffer())
-        return Ref { *canvas->buffer() }->pixelFormat();
+    if (RefPtr buffer = m_buffer)
+        return buffer->pixelFormat();
     return CanvasRenderingContext::pixelFormat();
+}
+
+RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
+{
+    return m_buffer;
+}
+
+bool PlaceholderRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
+{
+    return !m_buffer;
+}
+
+void PlaceholderRenderingContext::didUpdateCanvasSizeProperties(bool)
+{
 }
 
 }

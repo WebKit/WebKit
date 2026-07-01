@@ -58,10 +58,11 @@ public:
     void prepareForDisplay() override;
     PixelFormat pixelFormat() const override;
     bool isOpaque() const override;
-    void reshape() override;
-
+    void didUpdateCanvasSizeProperties(bool) override;
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;
+    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
+
     // GPUCanvasContext methods:
     CanvasType canvas() override;
     ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
@@ -94,6 +95,7 @@ private:
     void updateScreenHeadroom(float, bool suppressEDR);
     void updateScreenHeadroomFromScreenProperties();
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
+    void updateMemoryCost() const;
 
     struct Configuration {
         Ref<GPUDevice> device;
@@ -123,6 +125,7 @@ private:
     bool m_suppressEDR { false };
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
     bool m_compositingResultsNeedsUpdating { false };
+    RefPtr<ImageBuffer> m_readDisplayBuffer;
 };
 
 } // namespace WebCore

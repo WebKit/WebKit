@@ -55,7 +55,6 @@
 
 namespace WebCore {
 
-constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
 static std::optional<size_t> maxCanvasAreaForTesting;
 
 static std::optional<uint64_t> canvasNoiseHashSaltIfNeeded(ScriptExecutionContext& context)
@@ -79,15 +78,7 @@ CanvasBase::~CanvasBase()
 {
     ASSERT(m_didNotifyObserversCanvasDestroyed);
     ASSERT(m_observers.isEmptyIgnoringNullReferences());
-    ASSERT(!m_imageBuffer);
     m_canvasNoiseHashSalt = std::nullopt;
-}
-
-ImageBuffer* CanvasBase::buffer() const
-{
-    if (!hasCreatedImageBuffer())
-        createImageBuffer();
-    return m_imageBuffer.get();
 }
 
 RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
@@ -98,7 +89,10 @@ RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostPro
             m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer.get(), *m_canvasNoiseHashSalt, context->is2d() ? CanvasNoiseInjectionPostProcessArea::DirtyRect : CanvasNoiseInjectionPostProcessArea::FullBuffer);
         return buffer;
     }
-    return buffer();
+    if (!validateArea())
+        return nullptr;
+    // Currently we don't cache transparent black bitmaps of canvases that do not have a context.
+    return ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 }
 
 static inline size_t maxCanvasArea()
@@ -228,44 +222,15 @@ void CanvasBase::setSize(const IntSize& size)
         return;
 
     m_size = size;
+    m_hasWarnedExceedsArea = false;
 
     if (RefPtr context = renderingContext())
         InspectorInstrumentation::didChangeCanvasSize(*context);
 }
 
-RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
+bool CanvasBase::shouldAccelerate() const
 {
-    RefPtr returnBuffer = std::exchange(m_imageBuffer, WTF::move(buffer));
-    if (returnBuffer)
-        returnBuffer->context().restore();
-
-    IntSize oldSize = m_size;
-    if (RefPtr imageBuffer = m_imageBuffer) {
-        m_size = imageBuffer->truncatedLogicalSize();
-        auto& context = imageBuffer->context();
-        context.setShadowsIgnoreTransforms(true);
-        context.setImageInterpolationQuality(defaultInterpolationQuality);
-        context.setStrokeThickness(1);
-        // Save the initial state, so that 2D rendering context reset can restore it.
-        // Will be made more localized when the ImageBuffer is moved to 2D rendering context.
-        context.save();
-    }
-    if (RefPtr context = renderingContext()) {
-        if (oldSize != m_size)
-            InspectorInstrumentation::didChangeCanvasSize(*context);
-        const bool hasNewBuffer = m_imageBuffer;
-        context->updateMemoryCostOnAllocation(hasNewBuffer);
-    }
-    return returnBuffer;
-}
-
-bool CanvasBase::shouldAccelerate(const IntSize& size) const
-{
-    return shouldAccelerate(size.unclampedArea());
-}
-
-bool CanvasBase::shouldAccelerate(uint64_t area) const
-{
+    size_t area = size().unclampedArea();
     RefPtr scriptExecutionContext = this->scriptExecutionContext();
 #if USE(CA) || USE(SKIA)
     if (!scriptExecutionContext->settingsValues().canvasUsesAcceleratedDrawing)
@@ -283,31 +248,22 @@ bool CanvasBase::shouldAccelerate(uint64_t area) const
 #endif
 }
 
-RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
+bool CanvasBase::validateArea() const
 {
-    uint64_t area = size().unclampedArea();
-    RefPtr scriptExecutionContext = this->scriptExecutionContext();
+    size_t area = size().unclampedArea();
     if (!area)
-        return nullptr;
+        return false;
     if (area > maxCanvasArea()) {
-        auto message = makeString("Canvas area exceeds the maximum limit (width * height > "_s, maxCanvasArea(), ")."_s);
-        scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
-        return nullptr;
+        if (!m_hasWarnedExceedsArea) {
+            if (RefPtr scriptExecutionContext = this->scriptExecutionContext()) {
+                auto message = makeString("Canvas area exceeds the maximum limit (width * height > "_s, maxCanvasArea(), ")."_s);
+                scriptExecutionContext->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+            }
+            m_hasWarnedExceedsArea = true;
+        }
+        return false;
     }
-
-    RefPtr context = renderingContext();
-    bool willReadFrequently = context ? context->willReadFrequently() : false;
-
-    RenderingMode renderingMode;
-    if (auto renderingModeForTesting = context ? context->renderingModeForTesting() : std::nullopt)
-        renderingMode = *renderingModeForTesting;
-    else
-        renderingMode = !willReadFrequently && shouldAccelerate(area) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-
-    auto colorSpace = context ? context->colorSpace() : DestinationColorSpace::SRGB();
-    auto pixelFormat = context ? context->pixelFormat() : PixelFormat::BGRA8;
-
-    return ImageBuffer::create(size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, scriptExecutionContext->graphicsClient());
+    return true;
 }
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const

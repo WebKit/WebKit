@@ -66,40 +66,57 @@ ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
 
 ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<ImageBitmap> imageBitmap)
 {
-    if (!imageBitmap) {
-        setBlank();
-        canvasBase().setOriginClean();
+    RefPtr<ImageBuffer> newBuffer;
+    bool originClean = true;
+    if (imageBitmap) {
+        if (imageBitmap->isDetached())
+            return Exception { ExceptionCode::InvalidStateError };
+        originClean = imageBitmap->originClean();
+        newBuffer = imageBitmap->takeImageBuffer();
+    } else if (!m_buffer)
         return { };
-    }
-    if (imageBitmap->isDetached())
-        return Exception { ExceptionCode::InvalidStateError };
-    if (imageBitmap->originClean())
-        canvasBase().setOriginClean();
-    else
-        canvasBase().setOriginTainted();
-    canvasBase().setImageBufferAndMarkDirty(imageBitmap->takeImageBuffer());
-    return { };
-}
 
-void ImageBitmapRenderingContext::setBlank()
-{
-    // FIXME: What is the point of creating a full size transparent buffer that
-    // can never be changed? Wouldn't a 1x1 buffer give the same rendering? The
-    // only reason I can think of is toDataURL(), but that doesn't seem like
-    // a good enough argument to waste memory.
-    auto buffer = ImageBuffer::create(FloatSize(canvasBase().width(), canvasBase().height()), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    canvasBase().setImageBufferAndMarkDirty(WTF::move(buffer));
+    Ref canvasBase = this->canvasBase();
+    if (originClean)
+        canvasBase->setOriginClean();
+    else
+        canvasBase->setOriginTainted();
+    if (newBuffer) {
+        IntSize newSize = newBuffer->truncatedLogicalSize();
+        updateMemoryCost(newBuffer->memoryCost());
+        m_buffer = newBuffer.releaseNonNull();
+        canvasBase->setSizeForControllingContext(newSize);
+    } else {
+        m_buffer = nullptr;
+        updateMemoryCost(0);
+    }
+    canvasBase->didDraw(FloatRect { { }, canvasBase->size() });
+    return { };
 }
 
 RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
 {
-    if (!canvasBase().hasCreatedImageBuffer())
-        return canvasBase().allocateImageBuffer();
-    RefPtr result = canvasBase().buffer();
-    if (!result)
-        return nullptr;
-    setBlank();
+    Ref canvasBase = this->canvasBase();
+    auto size = canvasBase->size();
+    if (!m_buffer)
+        return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr result = std::exchange(m_buffer, { });
+    updateMemoryCost(0);
+    canvasBase->setOriginClean();
+    canvasBase->didDraw(FloatRect { { }, size });
     return result;
+}
+
+RefPtr<ImageBuffer> ImageBitmapRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
+{
+    if (!m_buffer) {
+        RefPtr buffer = ImageBuffer::create(Ref { canvasBase() }->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        if (buffer) {
+            updateMemoryCost(buffer->memoryCost());
+            m_buffer = WTF::move(buffer);
+        }
+    }
+    return m_buffer;
 }
 
 }

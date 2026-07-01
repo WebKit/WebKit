@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
-CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 268435456).
 Testing height: 100 type: none
 Got exception: "InvalidStateError: The object is in an invalid state."
 Testing height: 100 type: 2d

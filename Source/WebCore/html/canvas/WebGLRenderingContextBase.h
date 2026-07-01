@@ -429,9 +429,10 @@ public:
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
-    void reshape() override;
+    void didUpdateCanvasSizeProperties(bool) override;
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
 
     RefPtr<ByteArrayPixelBuffer> drawingBufferToPixelBuffer();
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
@@ -588,6 +589,7 @@ protected:
     virtual void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*);
     bool needsPreparationForDisplay() const final { return true; }
     void updateActiveOrdinal();
+    void updateMemoryCost() const;
 
     struct ContextLostState {
         ContextLostState(LostContextMode mode)
@@ -707,7 +709,8 @@ protected:
     int m_numGLErrorsToConsoleAllowed;
 
     bool m_compositingResultsNeedUpdating { false };
-    std::optional<SurfaceBuffer> m_canvasBufferContents;
+    RefPtr<ImageBuffer> m_readDrawingBuffer;
+    RefPtr<ImageBuffer> m_readDisplayBuffer;
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2

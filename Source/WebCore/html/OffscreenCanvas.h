@@ -128,8 +128,7 @@ public:
 
     void setWidth(unsigned);
     void setHeight(unsigned);
-
-    void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
+    void setSizeForControllingContext(IntSize) final;
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
@@ -173,8 +172,7 @@ private:
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
 
-    void didUpdateSizeProperties();
-    void createImageBuffer() const final;
+    void didUpdateSizeProperties(bool sizeChanged);
 
     void scheduleCommitToPlaceholderCanvas();
 
