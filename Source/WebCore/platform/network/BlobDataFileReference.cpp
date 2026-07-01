@@ -35,6 +35,7 @@ BlobDataFileReference::BlobDataFileReference(const String& path, const String& r
     : m_path(path)
     , m_replacementPath(replacementPath)
 {
+    ASSERT(isMainThread());
 }
 
 BlobDataFileReference::~BlobDataFileReference()

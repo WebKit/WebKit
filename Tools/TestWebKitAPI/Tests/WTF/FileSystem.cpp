@@ -130,7 +130,8 @@ TEST_F(FileSystemTest, MappingExistingEmptyFile)
 {
     auto mappedFileData = FileSystem::mapFile(tempEmptyFilePath(), FileSystem::MappedFileMode::Shared);
     EXPECT_TRUE(!!mappedFileData);
-    EXPECT_TRUE(!*mappedFileData);
+    EXPECT_TRUE(!!*mappedFileData);
+    EXPECT_EQ(mappedFileData->size(), 0u);
 }
 
 TEST_F(FileSystemTest, FilesHaveSameVolume)

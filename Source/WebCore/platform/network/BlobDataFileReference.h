@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT BlobDataFileReference : public RefCounted<BlobDataFileReference> {
+class WEBCORE_EXPORT BlobDataFileReference : public ThreadSafeRefCounted<BlobDataFileReference, WTF::DestructionThread::Main> {
 public:
     static Ref<BlobDataFileReference> create(const String& path, const String& replacementPath = { })
     {
