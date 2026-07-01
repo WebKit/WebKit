@@ -147,7 +147,7 @@ void NetworkDataTaskBlob::didReceiveResponse(ResourceResponse&& response)
 
         switch (policyAction) {
         case PolicyAction::Use:
-            buffer().resize(bufferSize);
+            resizeBuffer(bufferSize);
             readAsync();
             break;
         case PolicyAction::LoadWillContinueInAnotherProcess:
@@ -214,7 +214,7 @@ void NetworkDataTaskBlob::download()
 
     ASSERT(!m_client);
 
-    buffer().resize(bufferSize);
+    resizeBuffer(bufferSize);
     readAsync();
 }
 
