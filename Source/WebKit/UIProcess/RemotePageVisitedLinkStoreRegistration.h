@@ -43,7 +43,7 @@ public:
     }
     ~RemotePageVisitedLinkStoreRegistration()
     {
-        if (RefPtr page = m_page.get())
+        if (RefPtr page = m_page)
             m_process->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
     }
 

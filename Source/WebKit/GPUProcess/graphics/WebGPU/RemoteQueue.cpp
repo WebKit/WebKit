@@ -188,7 +188,7 @@ Ref<WebCore::WebGPU::Queue> RemoteQueue::protectedBacking()
 
 Ref<WebGPU::ObjectHeap> RemoteQueue::protectedObjectHeap() const
 {
-    return m_objectHeap.get();
+    return m_objectHeap;
 }
 
 } // namespace WebKit

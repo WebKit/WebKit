@@ -223,7 +223,7 @@ public:
     void getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&&);
     FrameTreeCreationParameters frameTreeCreationParameters() const;
 
-    WebFrameProxy* parentFrame() const { return m_parentFrame.get(); }
+    WebFrameProxy* parentFrame() const { return m_parentFrame; }
     Ref<WebFrameProxy> rootFrame();
     RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
 
@@ -278,9 +278,9 @@ public:
     void updateScrollingMode(WebCore::ScrollbarMode);
 
     void updateOpener(std::optional<WebCore::FrameIdentifier>);
-    WebFrameProxy* opener() const { return m_opener.get(); }
+    WebFrameProxy* opener() const { return m_opener; }
     void disownOpener() { m_opener = nullptr; }
-    WebFrameProxy* disownedOpener() const { return m_disownedOpener.get(); }
+    WebFrameProxy* disownedOpener() const { return m_disownedOpener; }
 
     std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
     void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }

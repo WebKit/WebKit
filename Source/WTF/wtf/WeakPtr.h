@@ -118,6 +118,8 @@ public:
         return m_impl ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
     }
 
+    operator T*() const { return get(); }
+
     WeakRef<T> releaseNonNull()
     {
         return WeakRef<T> { m_impl.releaseNonNull(), enableWeakPtrThreadingAssertions() };

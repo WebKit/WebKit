@@ -79,8 +79,8 @@ private:
     WebCore::WebGPU::ShaderModule& backing() { return m_backing; }
     Ref<WebCore::WebGPU::ShaderModule> protectedBacking();
     Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
-    Ref<RemoteGPU> protectedGPU() const { return m_gpu.get(); }
+    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap; }
+    Ref<RemoteGPU> protectedGPU() const { return m_gpu; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

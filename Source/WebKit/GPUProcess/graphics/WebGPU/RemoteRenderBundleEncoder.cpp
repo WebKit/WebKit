@@ -199,7 +199,7 @@ Ref<IPC::StreamServerConnection> RemoteRenderBundleEncoder::protectedStreamConne
 
 Ref<WebGPU::ObjectHeap> RemoteRenderBundleEncoder::protectedObjectHeap() const
 {
-    return m_objectHeap.get();
+    return m_objectHeap;
 }
 
 } // namespace WebKit

@@ -444,7 +444,7 @@ void RemoteDevice::setLabel(String&& label)
 
 Ref<WebGPU::ObjectHeap> RemoteDevice::protectedObjectHeap() const
 {
-    return m_objectHeap.get();
+    return m_objectHeap;
 }
 
 } // namespace WebKit
