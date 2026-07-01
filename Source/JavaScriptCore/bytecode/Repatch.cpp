@@ -723,6 +723,7 @@ void repatchGetBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue ba
 // Mainly used to transition from megamorphic case to generic case.
 void repatchGetBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kind)
 {
+    ConcurrentJSLocker locker(codeBlock->m_lock);
     resetGetBy(codeBlock, stubInfo, kind);
     repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByGaveUpFunction(kind));
 }
@@ -927,6 +928,7 @@ static CodePtr<CFunctionPtrTag> appropriatePutByGaveUpFunction(PutByKind putByKi
 // Mainly used to transition from megamorphic case to generic case.
 void repatchPutBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kind)
 {
+    ConcurrentJSLocker locker(codeBlock->m_lock);
     resetPutBy(codeBlock, stubInfo, kind);
     repatchSlowPathCall(codeBlock, stubInfo, appropriatePutByGaveUpFunction(kind));
 }
@@ -1533,6 +1535,7 @@ inline CodePtr<CFunctionPtrTag> appropriateInByGaveUpFunction(InByKind kind)
 // Mainly used to transition from megamorphic case to generic case.
 void repatchInBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, InByKind kind)
 {
+    ConcurrentJSLocker locker(codeBlock->m_lock);
     resetInBy(codeBlock, stubInfo, kind);
     repatchSlowPathCall(codeBlock, stubInfo, appropriateInByGaveUpFunction(kind));
 }
