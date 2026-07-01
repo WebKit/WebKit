@@ -3680,7 +3680,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        setForNode(node, m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous));
+        {
+            RegisteredStructureSet structureSet;
+            structureSet.add(m_graph.registerStructure(m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous)));
+            structureSet.add(m_graph.registerStructure(m_vm.cellButterflyOnlyAtomStringsStructure.get()));
+            setForNode(node, structureSet);
+        }
         break;
         
     case NewArrayBuffer:
