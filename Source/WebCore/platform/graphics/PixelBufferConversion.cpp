@@ -361,63 +361,60 @@ static void convertImagePixelsFromFloat16ToFloat16(const ConstPixelBufferConvers
     // verbatim. Do not early-return on a color-space mismatch: the destination is allocated
     // uninitialized, so skipping the write would leak heap bytes through getPixelBuffer().
 
-    auto sourceBytes = source.rows.size_bytes();
-    auto sourcePixelComponents = sourceBytes / 2;
-    auto sourcePixels = sourcePixelComponents / 4;
-    auto sourceHeight = sourceBytes / source.bytesPerRow;
-    auto sourceWidth = sourcePixels / sourceHeight;
+    struct Pixel16 {
+        Float16 r;
+        Float16 g;
+        Float16 b;
+        Float16 a;
+    };
+    static_assert(sizeof(Float16) == 2);
+    static_assert(sizeof(Pixel16) == 4 * sizeof(Float16));
 
-    auto destinationBytes = destination.rows.size_bytes();
-    auto destinationPixelComponents = destinationBytes / 2;
-    auto destinationPixels = destinationPixelComponents / 4;
-    auto destinationHeight = destinationBytes / destination.bytesPerRow;
-    auto destinationWidth = destinationPixels / destinationHeight;
+    // FIXME: This lambda should be moved to separate functions and the caller passes a pointer to one of them.
+    auto convertSinglePixel16 = [](const auto& sourceSpan, auto sourceAlphaFormat, auto& destinationSpan, auto destinationAlphaFormat) {
+        ASSERT(sourceSpan.size_bytes() == sizeof(Pixel16));
+        ASSERT(destinationSpan.size_bytes() == sizeof(Pixel16));
 
-    if (destinationSize.height() >= 0 && size_t(destinationSize.height()) < destinationHeight)
-        destinationHeight = size_t(destinationSize.height());
-    if (destinationSize.width() >= 0 && size_t(destinationSize.width()) < destinationWidth)
-        destinationWidth = size_t(destinationSize.width());
-
-    auto sourceRowStartOffset = 0;
-    auto destinationRowStartOffset = 0;
-    for (size_t y = 0; y < sourceHeight && y < destinationHeight; ++y) {
-        size_t offset = 0;
-        for (size_t x = 0; x < sourceWidth && x < destinationWidth; ++x) {
-            struct Pixel16 {
-                Float16 r = { };
-                Float16 g = { };
-                Float16 b = { };
-                Float16 a = { };
-            };
-            static_assert(sizeof(Float16) == 2);
-            static_assert(sizeof(Pixel16) == 4 * sizeof(Float16));
-            union {
-                Pixel16 pixel16 { };
-                std::array<uint8_t, sizeof(Pixel16)> bytes;
-            } pixel16OrBytesUnion;
-            for (size_t byte = 0; byte < sizeof(Pixel16); ++byte)
-                pixel16OrBytesUnion.bytes[byte] = source.rows[sourceRowStartOffset + offset + byte];
-            if (source.format.alphaFormat != destination.format.alphaFormat) {
-                if (source.format.alphaFormat == AlphaPremultiplication::Unpremultiplied && destination.format.alphaFormat == AlphaPremultiplication::Premultiplied) {
-                    auto fa = float(pixel16OrBytesUnion.pixel16.a);
-                    pixel16OrBytesUnion.pixel16.r = Float16(float(pixel16OrBytesUnion.pixel16.r) * fa);
-                    pixel16OrBytesUnion.pixel16.g = Float16(float(pixel16OrBytesUnion.pixel16.g) * fa);
-                    pixel16OrBytesUnion.pixel16.b = Float16(float(pixel16OrBytesUnion.pixel16.b) * fa);
-                } else if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied && destination.format.alphaFormat == AlphaPremultiplication::Unpremultiplied) {
-                    if (auto fa = float(pixel16OrBytesUnion.pixel16.a)) {
-                        pixel16OrBytesUnion.pixel16.r = Float16(float(pixel16OrBytesUnion.pixel16.r) / fa);
-                        pixel16OrBytesUnion.pixel16.g = Float16(float(pixel16OrBytesUnion.pixel16.g) / fa);
-                        pixel16OrBytesUnion.pixel16.b = Float16(float(pixel16OrBytesUnion.pixel16.b) / fa);
-                    }
-                } else
-                    RELEASE_ASSERT_NOT_REACHED();
-            }
-            for (size_t byte = 0; byte < sizeof(Pixel16); ++byte)
-                destination.rows[destinationRowStartOffset + offset + byte] = pixel16OrBytesUnion.bytes[byte];
-            offset += sizeof(Pixel16);
+        if (sourceAlphaFormat == destinationAlphaFormat) {
+            memcpySpan(destinationSpan, sourceSpan);
+            return;
         }
-        sourceRowStartOffset += source.bytesPerRow;
-        destinationRowStartOffset += destination.bytesPerRow;
+
+        const auto& sourcePixel16 = reinterpretCastSpanStartTo<Pixel16>(sourceSpan);
+        auto& destinationPixel16 = reinterpretCastSpanStartTo<Pixel16>(destinationSpan);
+
+        if (destinationAlphaFormat == AlphaPremultiplication::Premultiplied) {
+            auto fa = float(sourcePixel16.a);
+            destinationPixel16.r = Float16(float(sourcePixel16.r) * fa);
+            destinationPixel16.g = Float16(float(sourcePixel16.g) * fa);
+            destinationPixel16.b = Float16(float(sourcePixel16.b) * fa);
+            destinationPixel16.a = Float16(fa);
+            return;
+        }
+
+        if (auto fa = float(sourcePixel16.a)) {
+            destinationPixel16.r = Float16(float(sourcePixel16.r) / fa);
+            destinationPixel16.g = Float16(float(sourcePixel16.g) / fa);
+            destinationPixel16.b = Float16(float(sourcePixel16.b) / fa);
+            destinationPixel16.a = Float16(fa);
+            return;
+        }
+
+        memcpySpan(destinationSpan, sourceSpan);
+    };
+
+    size_t sourceRowStart = 0;
+    size_t destinationRowStart = 0;
+    size_t bytesPerRow = destinationSize.width() * sizeof(Pixel16);
+
+    for (int y = 0; y < destinationSize.height(); ++y) {
+        for (size_t x = 0; x < bytesPerRow; x += sizeof(Pixel16)) {
+            const auto sourceSpan = source.rows.subspan(sourceRowStart + x, sizeof(Pixel16));
+            auto destinationSpan = destination.rows.subspan(destinationRowStart + x, sizeof(Pixel16));
+            convertSinglePixel16(sourceSpan, source.format.alphaFormat, destinationSpan, destination.format.alphaFormat);
+        }
+        sourceRowStart += source.bytesPerRow;
+        destinationRowStart += destination.bytesPerRow;
     }
 }
 
