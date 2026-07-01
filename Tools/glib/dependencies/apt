@@ -99,6 +99,7 @@ PACKAGES=(
     python3-gi
     ruby-highline
     ruby-json
+    time
 
     # These are dependencies necessary for building the jhbuild.
     bison

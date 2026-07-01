@@ -56,6 +56,7 @@ PACKAGES=(
     pulseaudio
     python2-psutil
     ttf-liberation
+    time
 
     # These are dependencies necessary for building the jhbuild.
     # Note: Could not find libegl-mesa.

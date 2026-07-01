@@ -31,6 +31,7 @@
 import logging
 import optparse
 import os
+import sys
 import traceback
 
 from webkitpy.common.host import Host
@@ -573,6 +574,12 @@ def run(port, options, args, logging_stream):
                 _log.debug('Enabled coredumps for test run')
             except (ModuleNotFoundError, ValueError, OSError) as e:
                 _log.error('Failed to enable coredumps: %s' % str(e))
+        if sys.platform.startswith('linux'):
+            try:
+                from webkitpy.port.linux_get_crash_log import GDBCrashLogStartupHandler
+                GDBCrashLogStartupHandler()
+            except (OSError, ImportError) as e:
+                _log.error(f'Failed to initialize crash log handler: {e}')
 
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)
