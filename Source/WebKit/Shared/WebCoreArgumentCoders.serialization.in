@@ -1066,6 +1066,22 @@ struct WebCore::ClientOrigin {
 
 enum class WebCore::AdjustViewSize : bool;
 
+<<<<<<< HEAD
+=======
+enum class WebCore::UseLosslessCompression : bool;
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageBufferFormat {
+    WebCore::PixelFormat pixelFormat;
+    WebCore::UseLosslessCompression useLosslessCompression;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
+    WebCore::AlphaPremultiplication alphaFormat;
+    WebCore::PixelFormat pixelFormat;
+    [Validator='colorSpace->usesRGBColorModel()'] WebCore::DestinationColorSpace colorSpace;
+};
+
+>>>>>>> 8e2784fd0807 (GetPixelBuffer should zeroFill the destination if any error happens)
 [RefCounted] class WebCore::TextIndicator {
     WebCore::TextIndicatorData data();
 };

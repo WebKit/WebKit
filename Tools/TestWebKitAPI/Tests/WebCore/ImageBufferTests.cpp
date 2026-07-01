@@ -326,8 +326,11 @@ INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
         testing::Values(RenderingMode::Unaccelerated, RenderingMode::Accelerated)),
     TestParametersToStringFormatter());
 
+<<<<<<< HEAD
 #if USE(CG)
 
+=======
+>>>>>>> 8e2784fd0807 (GetPixelBuffer should zeroFill the destination if any error happens)
 TEST(ImageBufferTests, GetPixelBufferAllZeros)
 {
     auto sourceColorSpace = DestinationColorSpace::SRGB();
@@ -361,6 +364,9 @@ TEST(ImageBufferTests, GetPixelBufferAllZeros)
     EXPECT_TRUE(getPixelBufferAllZeros({ FloatPoint { size - size / 10 }, size / 10 }));
 }
 
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> 8e2784fd0807 (GetPixelBuffer should zeroFill the destination if any error happens)
 }
