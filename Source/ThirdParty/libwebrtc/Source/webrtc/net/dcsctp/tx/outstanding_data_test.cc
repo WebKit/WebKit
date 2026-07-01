@@ -747,7 +747,6 @@ TEST_F(OutstandingDataTest, NackBetweenAckBlocksDoesNotAccessOutOfBounds) {
                   /*is_in_fast_recovery=*/false);
 }
 
-<<<<<<< HEAD
 TEST_F(OutstandingDataTest, HandlesSacksWithOutOfBoundsTsns) {
   // Send chunks with TSNs 10, 11, 12, 13, 14, 15, 16
   for (int i = 0; i < 7; ++i) {
@@ -773,7 +772,5 @@ TEST_F(OutstandingDataTest, HandlesSacksWithOutOfBoundsTsns) {
   EXPECT_EQ(buf_.unacked_items(), 2u);  // 13, 15
 }
 
-=======
->>>>>>> 32514d0e14e3 (WebRTC dcSCTP: NackBetweenAckBlocks Heap OOB Read/Write)
 }  // namespace
 }  // namespace dcsctp
