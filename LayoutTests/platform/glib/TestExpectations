@@ -93,6 +93,7 @@ imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-079.xht 
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-080.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-155.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-156.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-text-decorations.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--cover--height.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-unicode-range-system-fallback.html [ Pass ]
@@ -109,6 +110,7 @@ imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-fill-only.html
 imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-stroke-only.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-transparent-background.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-019.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-023.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/preserve3d-and-flattening-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/grouped-kind-of-widget-fallback-border-block-start-color-001.html [ Pass ]
@@ -588,7 +590,6 @@ media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
 webkit.org/b/263317 media/video-played-collapse.html [ Failure Pass ]
 webkit.org/b/263317 media/media-source/media-controller-media-source-play-then-pause.html [ Pass Timeout ]
 webkit.org/b/263317 media/media-source/media-source-seek-and-play.html [ Pass Timeout ]
-webkit.org/b/298491 media/media-vp9-reschange-webm.html [ Timeout ]
 
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
@@ -1446,7 +1447,6 @@ webkit.org/b/296246 imported/w3c/web-platform-tests/event-timing/first-input-int
 webkit.org/b/296246 imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Skip ]
 webkit.org/b/296246 imported/w3c/web-platform-tests/event-timing/TapToStopFling.html [ Skip ]
 
-fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Events-related bugs
@@ -1726,7 +1726,6 @@ http/wpt/webcodecs/H264-422.html [ Failure ]
 
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
-webkit.org/b/298925 fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
 
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
 
@@ -2058,9 +2057,9 @@ webkit.org/b/298703 http/tests/security/webaudio-render-remote-audio-blocked-no-
 webkit.org/b/273486 svg/filters/svg-gaussianblur-edgeMode-duplicate.svg [ ImageOnlyFailure ]
 
 # Canvas tests that fail only with skia-gpu.
-webkit.org/b/272582 fast/canvas/canvas-strokePath-gradient-shadow.html [ Failure ]
-webkit.org/b/272582 fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
-webkit.org/b/272582 fast/canvas/canvas-strokeRect-gradient-shadow.html [ Failure ]
+webkit.org/b/272582 [ x86_64 ] fast/canvas/canvas-strokePath-gradient-shadow.html [ Failure ]
+webkit.org/b/272582 [ x86_64 ] fast/canvas/canvas-strokeRect-alpha-shadow.html [ Failure ]
+webkit.org/b/272582 [ x86_64 ] fast/canvas/canvas-strokeRect-gradient-shadow.html [ Failure ]
 webkit.org/b/274513 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-canvas.html [ ImageOnlyFailure ]
 
 webkit.org/b/273766 fast/canvas/canvas-scale-shadowBlur.html [ Failure ]
@@ -2077,8 +2076,6 @@ svg/zoom/page/text-with-non-scaling-stroke.html [ ImageOnlyFailure ]
 
 # Test failing only with swrast
 webkit.org/b/273396 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
-webkit.org/b/273396 css3/color-filters/color-filter-color-text-decorations.html [ ImageOnlyFailure ]
-webkit.org/b/273396 css3/color-filters/color-filter-text-decoration-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/273396 css3/masking/clip-path-border-radius-content-box-001.html [ ImageOnlyFailure ]
 webkit.org/b/273396 css3/masking/clip-path-border-radius-fill-box-001.html [ ImageOnlyFailure ]
 webkit.org/b/273396 css3/masking/clip-path-border-radius-padding-box-001.html [ ImageOnlyFailure ]
@@ -2088,8 +2085,6 @@ webkit.org/b/273396 fast/block/float/floats-offset-image-quirk-lineheight.html [
 webkit.org/b/273396 fast/block/float/floats-offset-image-quirk.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/block/float/floats-offset-image-strict-lineheight.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/block/float/floats-offset-image-strict.html [ ImageOnlyFailure ]
-webkit.org/b/273396 fast/canvas/canvas-filter-text-drawing.html [ ImageOnlyFailure ]
-webkit.org/b/273396 fast/canvas/canvas-layer-filter-text-drawing.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/clip/overflow-hidden-with-border-radius-overflow-clipping-parent.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/css/ignore-empty-focus-ring-rects.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-svg.html [ ImageOnlyFailure ]
@@ -2099,10 +2094,6 @@ webkit.org/b/273396 fast/multicol/clipped-video-in-second-column.html [ ImageOnl
 webkit.org/b/273396 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
 webkit.org/b/273396 fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/blink/fast/multicol/client-rects-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph-background-image.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ ImageOnlyFailure ]
-webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-anchor-positioning-007.html [ Failure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-img-horiz-001.xhtml [ Pass ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-img-vert-001.xhtml [  Pass ImageOnlyFailure ]
@@ -2134,7 +2125,6 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/svg-stroke-dashar
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ ImageOnlyFailure ]
 webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
-webkit.org/b/273396 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
 
 webkit.org/b/273477 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
@@ -2517,8 +2507,6 @@ webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ 
 
 http/tests/media/video-play-stall-seek.html [ Timeout Pass ]
 
-webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Pass Failure ]
-
 # Missing support for RTP header encryption support:
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4625
 webrtc/encrypted-rtp-header-extensions.html [ Failure ]
@@ -2533,10 +2521,6 @@ webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats
 fast/mediastream/video-rotation2.html [ Failure Pass Timeout ]
 
 webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ] # Timeout
-
-http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
-
-webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Failure Timeout ]
 
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
@@ -2565,7 +2549,6 @@ fast/mediastream/getDisplayMedia-max-constraints5.html [ Skip ]
 
 # DataChannel GstWebRTC implementation incomplete, missing stats support.
 webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
-webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Failure ]
 # Crash due to webkit.org/b/286859
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Crash ]
 
@@ -2636,8 +2619,6 @@ webrtc/video-replace-track.html [ Pass Failure Timeout Crash ]
 webkit.org/b/235885 webrtc/video.html [ Skip ]
 
 # Expected to pass when updating SDK to GStreamer 1.28.
-webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-address.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html [ Skip ]
 
@@ -2698,7 +2679,6 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 # this is not enough for the receiver webrtcbin to create its video source pad,
 # because on sender side we need at least a complete GOP... So the tests time
 # out, awaiting forever a remote mediastream.
-webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8-2d.html [ Crash Failure ]
 webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
 
 # Pending investigation. Current status is out of 143 tests, only 44 run as
@@ -2745,8 +2725,6 @@ imported/w3c/web-platform-tests/webrtc/protocol/msid-parse.html [ Failure Timeou
 # Expected to pass when our SDK ships GStreamer 1.28. See also:
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/80e663d5605124fbd7e4b69e69060749a541e491
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/ea69849cd89a9d1a69c98bd9c640452a5deb72c2
-imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc/protocol/ice-ufragpwd.html [ Failure ]
 
 # Missing support for multiple MediaStreams per track/transceiver.
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3954
@@ -2763,7 +2741,6 @@ imported/w3c/web-platform-tests/webrtc/RTCRtpParameters-codecs.html [ Failure ]
 webkit.org/b/286481 imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html [ Failure ]
 
 # webrtcbin expects mid in its offer/answer SDP, this is not spec compliant, it's an optional field.
-imported/w3c/web-platform-tests/webrtc/protocol/missing-fields.html [ Failure ]
 
 # Simulcast support is not complete yet.
 imported/w3c/web-platform-tests/webrtc/simulcast [ Pass ]
@@ -3576,7 +3553,7 @@ webkit.org/b/133151 js/cached-window-properties.html [ Skip ] # Timeout.
 webkit.org/b/222638 js/throw-large-string-oom.html [ Pass Timeout ]
 
 # Fails when built with GCC but passes with Clang
-webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
+webkit.org/b/218220 [ x86_64 ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 Bug(GLIB) fast/css/draggable-region-parser.html [ Failure ]
@@ -3868,7 +3845,6 @@ webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-16.html [ ImageOnlyFailure ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-19.html [ ImageOnlyFailure ]
 webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/standard-font-family-20.html [ ImageOnlyFailure ]
-webkit.org/b/207255 webanimations/transform-accelerated-animation-removed-one-frame-after-finished-promise.html  [ Failure ]
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Crash ]
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height-viewbox.html [ Crash ]
 webkit.org/b/207574 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height.html [ Crash ]
@@ -3990,7 +3966,6 @@ fast/inline/overflowing-content-with-hypens.html [ ImageOnlyFailure ]
 fast/ruby/annotation-with-line-gap.html [ ImageOnlyFailure ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ ImageOnlyFailure Pass ]
 imported/blink/fast/backgrounds/root-background-with-page-scaled-out.html [ ImageOnlyFailure Pass ]
-imported/blink/svg/text/selection-partial-gradient.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/content-security-policy/generic/image-document-ignores-csp.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/basic.html [ ImageOnlyFailure ]
@@ -4149,7 +4124,6 @@ webkit.org/b/268238  imported/w3c/web-platform-tests/merchant-validation/constru
 webkit.org/b/268238  imported/w3c/web-platform-tests/merchant-validation/onmerchantvalidation-attribute.https.html [ Skip ]
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
-webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure ]
 compositing/backing-store-attachment-1.html [ Failure ]
 webkit.org/b/207625 compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Failure ]
 webkit.org/b/187268 compositing/backing/backing-store-attachment-outside-viewport.html [ Failure ]
@@ -4171,8 +4145,6 @@ webkit.org/b/169918 compositing/fixed-positioned-pseudo-content-no-compositing.h
 webkit.org/b/169918 compositing/geometry/ancestor-overflow-change.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
-webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
-webkit.org/b/206498 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/preserve-3d-switching.html [ Failure ]
@@ -4188,8 +4160,6 @@ webkit.org/b/169918 compositing/iframes/connect-compositing-iframe2.html [ Failu
 webkit.org/b/169918 compositing/iframes/connect-compositing-iframe3.html [ Failure ]
 webkit.org/b/169918 compositing/iframes/enter-compositing-iframe.html [ Failure ]
 webkit.org/b/169918 compositing/iframes/iframe-resize.html [ Failure ]
-webkit.org/b/206498 compositing/iframes/iframe-size-to-zero.html [ Failure ]
-webkit.org/b/206498 compositing/iframes/leave-compositing-iframe.html [ Failure ]
 webkit.org/b/169918 compositing/iframes/overlapped-iframe.html [ Failure ]
 # The backing store is cleared when page cached in GTK
 webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Failure ]
@@ -4197,7 +4167,6 @@ webkit.org/b/192433 compositing/iframes/remove-reinsert-webview-with-iframe.html
 webkit.org/b/169918 compositing/iframes/scrolling-iframe.html [ Failure ]
 webkit.org/b/169918 compositing/images/direct-image-object-fit.html [ Failure ]
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
-webkit.org/b/206498 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
 webkit.org/b/202228 compositing/layer-creation/fixed-position-descendants-out-of-view.html [ Failure ]
 webkit.org/b/169918 [ Release ] compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 webkit.org/b/169918 [ Debug ] compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Skip ] # Crash.
@@ -4257,10 +4226,6 @@ compositing/canvas/hidpi-canvas-backing-store.html [ Failure ]
 compositing/layer-creation/no-compositing-for-sticky.html [ Failure ]
 compositing/tiling/tiled-drawing-async-frame-scrolling.html [ Failure ]
 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
-compositing/video/video-poster.html [ Failure ]
-compositing/visibility/root-visibility-toggle.html [ Failure ]
-webkit.org/b/212134 css3/filters/should-not-have-compositing-layer.html [ Failure ]
-webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-completion.html [ Failure ]
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
 
@@ -4569,7 +4534,6 @@ webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ S
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
 
-webkit.org/b/286580 http/tests/media/clearkey/clear-key-session-id.html [ Failure ]
 
 fast/canvas/font-family-system-ui-canvas.html [ ImageOnlyFailure ]
 

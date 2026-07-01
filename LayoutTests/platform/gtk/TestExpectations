@@ -130,6 +130,7 @@ webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
 
 webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
 webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html [ Failure ]
 
 webkit.org/b/305553 fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 

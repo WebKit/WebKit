@@ -168,6 +168,7 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 
 # Mediastream
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
+webkit.org/b/298925 [ x86_64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
 
 # Media Queries
 webkit.org/b/226521 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass Failure ]
@@ -988,7 +989,6 @@ imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vertical-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-above-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-027.html [ Pass ImageOnlyFailure ]
@@ -1104,14 +1104,12 @@ webkit.org/b/279178 fast/scrolling/scroll-into-view-on-composited-scrollable-ove
 webkit.org/b/279179 [ Debug ] imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.any.sharedworker.html [ Failure Pass ]
 
 fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
-fast/inline/min-content-width-with-hypens.html [ ImageOnlyFailure ]
 fast/multicol/layers-split-across-columns.html [ ImageOnlyFailure ]
 fast/scrolling/scroll-corner-update-on-direction-change.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
 
 # Failures that happen with WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 (which is enabled on the bots)
-webkit.org/b/287572 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
 webkit.org/b/287572 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/287572 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/287572 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
@@ -1125,7 +1123,6 @@ webkit.org/b/287572 fast/lists/list-marker-before-float-rtl.html [ ImageOnlyFail
 webkit.org/b/287572 fast/multicol/border-radius-overflow-columns.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/multicol/client-rects.html [ ImageOnlyFailure ]
 webkit.org/b/287572 fast/text/empty-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/287572 fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/mozilla/svg/markers-and-group-opacity-01.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-parent.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
@@ -1133,8 +1130,8 @@ webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mo
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-001.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure ]
-webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-border-radius.html [ ImageOnlyFailure ]
-webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 [ x86_64 ] imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-border-radius.html [ ImageOnlyFailure ]
+webkit.org/b/287572 [ x86_64 ] imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-closest-farthest-corner.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ ImageOnlyFailure ]
@@ -1233,7 +1230,6 @@ webkit.org/b/287572 svg/compositing/outermost-svg-directly-composited-transforme
 webkit.org/b/287572 svg/compositing/outermost-svg-with-border.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/compositing/outermost-svg-with-border-overflow-visible.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/compositing/outermost-svg-with-border-padding-margin.html [ ImageOnlyFailure ]
-webkit.org/b/287572 svg/compositing/svg-poster-circle.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/filters/filter-on-root-tile-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/287572 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
 
