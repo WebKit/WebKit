@@ -533,6 +533,8 @@ FloatSize GraphicsContext::scaleFactor() const
 
 FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const
 {
+    if (srcRect.isEmpty())
+        return scaleFactor();
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     auto transformedDestRect = transform.mapRect(destRect);
     return transformedDestRect.size() / srcRect.size();

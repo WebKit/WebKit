@@ -276,6 +276,31 @@ TEST(GraphicsContextTests, OutOfGamutSRGBNotDrawn)
         EXPECT_EQ(firstPixel[i], primaryData[i]);
 }
 
+TEST(GraphicsContextTests, ScaleFactorForDrawingHandlesDegenerateSourceRect)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    RetainPtr cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
+    GraphicsContextCG ctx(cgContext.get());
+
+    FloatRect destRect(0, 0, 100, 100);
+
+    // A non-empty source rect yields the dest/src ratio.
+    auto normal = ctx.scaleFactorForDrawing(destRect, FloatRect(0, 0, 50, 25));
+    EXPECT_FLOAT_EQ(normal.width(), 2);
+    EXPECT_FLOAT_EQ(normal.height(), 4);
+
+    // A degenerate source rect must not produce a non-finite scale factor (which would otherwise
+    // propagate into decode-size and subsampling-level decisions). It falls back to the device
+    // scale factor, which is 1x for this untransformed bitmap context.
+    for (auto srcRect : { FloatRect(0, 0, 0, 25), FloatRect(0, 0, 50, 0), FloatRect(0, 0, 0, 0) }) {
+        auto scale = ctx.scaleFactorForDrawing(destRect, srcRect);
+        EXPECT_TRUE(std::isfinite(scale.width()));
+        EXPECT_TRUE(std::isfinite(scale.height()));
+        EXPECT_FLOAT_EQ(scale.width(), 1);
+        EXPECT_FLOAT_EQ(scale.height(), 1);
+    }
+}
+
 } // namespace TestWebKitAPI
 
 #endif // USE(CG)
