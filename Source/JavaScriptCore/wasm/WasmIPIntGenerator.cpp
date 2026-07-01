@@ -736,6 +736,7 @@ Value IPIntGenerator::addConstant(Type type, uint64_t value)
 [[nodiscard]] PartialResult IPIntGenerator::addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&)
 {
     changeStackSize(-1);
+    m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }
 
