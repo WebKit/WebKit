@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <WebCore/BoxSides.h>
 #include <WebCore/CSSPrimitiveNumeric.h>
 #include <WebCore/FontBaseline.h>
 #include <WebCore/LayoutRange.h>
@@ -469,6 +470,7 @@ public:
     
     bool percentageLogicalHeightIsResolvable() const;
     bool logicalHeightBehavesAsAuto() const;
+    bool sizeBehavesAsAuto(const Style::PreferredSize&, LogicalBoxAxis) const;
     bool hasUnsplittableScrollingOverflow() const;
     bool isUnsplittableForPagination() const;
 
@@ -688,11 +690,17 @@ protected:
 
     void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
     bool NODELETE shouldIgnoreAspectRatio() const;
-    // -webkit-fill-available always resolves through the containing-block chain (walking up to the
-    // viewport if needed), so it is considered resolvable regardless of whether the immediate CB has
-    // a definite block size. Only the spec stretch keyword is gated on `isBlockSizeResolvableForStretch`.
-    bool isResolveableStretchSize(const auto& size) const { return size.isStretch() && (size.isFillAvailable() || isBlockSizeResolvableForStretch()); }
-    bool isUnresolveableStretchSize(const auto& size) const { return size.isStretch() && !size.isFillAvailable() && !isBlockSizeResolvableForStretch(); }
+    // -webkit-fill-available always resolves through the containing-block chain, so it is resolvable
+    // regardless of the immediate CB. Only a block-axis stretch can be unresolvable (behaving like a
+    // percentage height against an indefinite containing block, CSS2 §10.5); an inline-axis stretch resolves.
+    bool isResolveableStretchSize(const auto& size, LogicalBoxAxis axis = LogicalBoxAxis::Block) const
+    {
+        return size.isStretch() && (axis == LogicalBoxAxis::Inline || size.isFillAvailable() || isBlockSizeResolvableForStretch());
+    }
+    bool isUnresolveableStretchSize(const auto& size, LogicalBoxAxis axis = LogicalBoxAxis::Block) const
+    {
+        return size.isStretch() && axis == LogicalBoxAxis::Block && !size.isFillAvailable() && !isBlockSizeResolvableForStretch();
+    }
     LayoutUnit computeLogicalWidthFromAspectRatio() const;
     void applyAutomaticContentBasedMinimumSize(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void applyTransferredMinMaxSizesFromAspectRatio(LayoutUnit& minContentLogicalWidth, LayoutUnit& maxContentLogicalWidth) const;

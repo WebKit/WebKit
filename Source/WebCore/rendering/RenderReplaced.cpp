@@ -553,7 +553,7 @@ void RenderReplaced::computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(Fl
     // each axis, the final returned size may in fact not preserve the aspect ratio.
     auto& style = this->style();
     auto computedLogicalHeight = style.logicalHeight();
-    bool logicalHeightBehavesAsAuto = computedLogicalHeight.isAuto() || (computedLogicalHeight.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable()) || isUnresolveableStretchSize(computedLogicalHeight);
+    bool logicalHeightBehavesAsAuto = sizeBehavesAsAuto(computedLogicalHeight, LogicalBoxAxis::Block);
     if (!intrinsicRatio.isZero() && style.logicalWidth().isAuto() && logicalHeightBehavesAsAuto) {
         auto removeBorderAndPaddingFromMinMaxSizes = [](LayoutUnit& minSize, LayoutUnit &maxSize, LayoutUnit borderAndPadding) {
             minSize = std::max(0_lu, minSize - borderAndPadding);

@@ -5308,20 +5308,26 @@ bool RenderBox::isBlockSizeResolvableForStretch() const
     return false;
 }
 
-bool RenderBox::logicalHeightBehavesAsAuto() const
+bool RenderBox::sizeBehavesAsAuto(const Style::PreferredSize& size, LogicalBoxAxis axis) const
 {
-    auto height = style().logicalHeight();
-    if (height.isAuto() || height.isIntrinsic() || isUnresolveableStretchSize(height))
+    // https://www.w3.org/TR/css-sizing-3/#behave-as-auto
+    // Intrinsic-sizing keywords are excluded; callers OR in isIntrinsic() when they need it.
+    if (size.isAuto())
         return true;
-    // A percentage/calc that does not resolve against the containing block behaves as auto. Resolvability
-    // is checked from the containing block's style only (hasDefiniteLogicalHeightForPercentageResolutionFromStyle), so this stays
-    // side-effect-free (no percent-height descendant registration) and independent of transient layout
-    // state - unlike percentageLogicalHeightIsResolvable().
-    if (!isOutOfFlowPositioned() && height.isPercentOrCalculated()) {
+    if (isUnresolveableStretchSize(size, axis))
+        return true;
+    // A block-axis percentage that cannot resolve against its containing block behaves as auto (CSS2 §10.5).
+    if (axis == LogicalBoxAxis::Block && !isOutOfFlowPositioned() && size.isPercentOrCalculated()) {
         CheckedPtr containingBlock = this->containingBlock();
         return containingBlock && !containingBlock->hasDefiniteLogicalHeightForPercentageResolutionFromStyle();
     }
     return false;
+}
+
+bool RenderBox::logicalHeightBehavesAsAuto() const
+{
+    const Style::PreferredSize& height = style().logicalHeight();
+    return height.isIntrinsic() || sizeBehavesAsAuto(height, LogicalBoxAxis::Block);
 }
 
 bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
