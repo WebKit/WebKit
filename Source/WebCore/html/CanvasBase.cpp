@@ -250,8 +250,9 @@ void CanvasBase::setSize(const IntSize& size)
 
 RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
 {
-    m_contextStateSaver = nullptr;
     RefPtr returnBuffer = std::exchange(m_imageBuffer, WTF::move(buffer));
+    if (returnBuffer)
+        returnBuffer->context().restore();
 
     IntSize oldSize = m_size;
     size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order_relaxed);
@@ -259,10 +260,13 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
     if (RefPtr imageBuffer = m_imageBuffer) {
         m_size = imageBuffer->truncatedLogicalSize();
         newMemoryCost = imageBuffer->memoryCost();
-        imageBuffer->context().setShadowsIgnoreTransforms(true);
-        imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
-        imageBuffer->context().setStrokeThickness(1);
-        m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(imageBuffer->context());
+        auto& context = imageBuffer->context();
+        context.setShadowsIgnoreTransforms(true);
+        context.setImageInterpolationQuality(defaultInterpolationQuality);
+        context.setStrokeThickness(1);
+        // Save the initial state, so that 2D rendering context reset can restore it.
+        // Will be made more localized when the ImageBuffer is moved to 2D rendering context.
+        context.save();
     }
     m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order_relaxed);
     if (newMemoryCost) {
@@ -396,15 +400,6 @@ RefPtr<ImageBuffer> CanvasBase::createImageForNoiseInjection() const
     buffer->context().setFillColor(fillColor);
     buffer->context().fillRect({ IntPoint { }, size() });
     return buffer;
-}
-
-void CanvasBase::resetGraphicsContextState() const
-{
-    if (m_contextStateSaver) {
-        // Reset to the initial graphics context state.
-        m_contextStateSaver->restore();
-        m_contextStateSaver->save();
-    }
 }
 
 WebCoreOpaqueRoot root(CanvasBase* canvas)

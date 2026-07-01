@@ -264,14 +264,12 @@ void CanvasRenderingContext2DBase::unwindStateStack()
     size_t stackSize = m_stateStack.size();
     if (stackSize <= 1)
         return;
-
-    // We need to keep the last state because it is tracked by CanvasBase::m_contextStateSaver.
+    m_stateStack.shrink(1);
     auto* context = existingDrawingContext();
-    while (m_stateStack.size() > 1) {
-        m_stateStack.removeLast();
-        if (context)
-            context->restore();
-    }
+    if (!context)
+        return;
+    for (;stackSize > 1; --stackSize)
+        context->restore();
 }
 
 CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
@@ -332,7 +330,8 @@ void CanvasRenderingContext2DBase::reset()
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
     if (auto* c = existingDrawingContext()) {
-        canvasBase().resetGraphicsContextState();
+        c->restore();
+        c->save();
         c->clearRect(FloatRect { { }, canvasBase().size() });
     }
 }

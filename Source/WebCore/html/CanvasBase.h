@@ -45,7 +45,6 @@ class CanvasRenderingContext;
 class Element;
 class Event;
 class GraphicsContext;
-class GraphicsContextStateSaver;
 class Image;
 class ImageBuffer;
 class IntRect;
@@ -129,8 +128,6 @@ public:
     bool postProcessPixelBufferResults(Ref<PixelBuffer>&&) const;
     void recordLastFillText(const String&);
 
-    void resetGraphicsContextState() const;
-
     void setNoiseInjectionSalt(NoiseInjectionHashSalt salt) { m_canvasNoiseHashSalt = salt; }
     bool havePendingCanvasNoiseInjection() const { return m_canvasNoiseInjection.haveDirtyRects(); }
 
@@ -164,7 +161,6 @@ private:
     mutable IntSize m_size;
     mutable RefPtr<ImageBuffer> m_imageBuffer;
     mutable std::atomic<size_t> m_imageBufferMemoryCost { 0 };
-    mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
 
     String m_lastFillText;

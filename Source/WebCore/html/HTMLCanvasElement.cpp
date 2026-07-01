@@ -615,8 +615,6 @@ void HTMLCanvasElement::didUpdateSizeProperties()
 
     if (RefPtr context = dynamicDowncast<CanvasRenderingContext2D>(m_context.get()))
         context->reset();
-    else
-        resetGraphicsContextState();
 
     IntSize oldSize = size();
     IntSize newSize(w, h);
