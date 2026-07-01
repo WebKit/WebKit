@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,15 @@
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+// Assign to a copy-on-write group member (via DataRef::access) only when it differs, marking the
+// node dirty. Consolidates the otherwise-identical compare / access / setPropertyChanged setter bodies.
+#define SET_COW_PROPERTY(dataRef, member, newValue, property) do { \
+        if ((dataRef)->member != (newValue)) { \
+            (dataRef).access().member = (newValue); \
+            setPropertyChanged(property); \
+        } \
+    } while (0)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateFrameScrollingNode);
 
@@ -126,31 +135,36 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     scrollbarWidth,
     useDarkAppearanceForScrollbars,
     WTF::move(keyboardScrollData))
-    , m_rootContentsLayer(rootContentsLayer)
-    , m_counterScrollingLayer(counterScrollingLayer)
-    , m_insetClipLayer(insetClipLayer)
-    , m_contentShadowLayer(contentShadowLayer)
-    , m_eventTrackingRegions(WTF::move(eventTrackingRegions))
-    , m_layoutViewport(layoutViewport)
-    , m_sizeForVisibleContent(sizeForVisibleContent)
-    , m_minLayoutViewportOrigin(minLayoutViewportOrigin)
-    , m_maxLayoutViewportOrigin(maxLayoutViewportOrigin)
-    , m_overrideVisualViewportSize(overrideVisualViewportSize)
-    , m_frameScaleFactor(frameScaleFactor)
-    , m_obscuredContentInsets(obscuredContentInsets)
-#if HAVE(NSREFRESHCONTROLLER)
-    , m_topScrollStretchForRefreshController(topScrollStretchForRefreshController)
-#endif
-    , m_headerHeight(headerHeight)
-    , m_footerHeight(footerHeight)
-    , m_behaviorForFixed(WTF::move(scrollBehaviorForFixedElements))
-
-    , m_visualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport)
-    , m_asyncFrameOrOverflowScrollingEnabled(asyncFrameOrOverflowScrollingEnabled)
-    , m_wheelEventGesturesBecomeNonBlocking(wheelEventGesturesBecomeNonBlocking)
-    , m_scrollingPerformanceTestingEnabled(scrollingPerformanceTestingEnabled)
-    , m_overlayScrollbarsEnabled(overlayScrollbarsEnabled)
 {
+    SUPPRESS_UNCOUNTED_LOCAL auto& layout = m_staticLayoutData.access();
+    layout.eventTrackingRegions = WTF::move(eventTrackingRegions);
+    layout.layoutViewport = layoutViewport;
+    layout.sizeForVisibleContent = sizeForVisibleContent;
+    layout.minLayoutViewportOrigin = minLayoutViewportOrigin;
+    layout.maxLayoutViewportOrigin = maxLayoutViewportOrigin;
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& config = m_staticConfigData.access();
+    config.rootContentsLayer = rootContentsLayer;
+    config.counterScrollingLayer = counterScrollingLayer;
+    config.insetClipLayer = insetClipLayer;
+    config.contentShadowLayer = contentShadowLayer;
+    config.overrideVisualViewportSize = overrideVisualViewportSize;
+    config.obscuredContentInsets = WTF::move(obscuredContentInsets);
+
+    m_headerHeight = headerHeight;
+    m_footerHeight = footerHeight;
+    m_behaviorForFixed = WTF::move(scrollBehaviorForFixedElements);
+    m_visualViewportIsSmallerThanLayoutViewport = visualViewportIsSmallerThanLayoutViewport;
+    m_asyncFrameOrOverflowScrollingEnabled = asyncFrameOrOverflowScrollingEnabled;
+    m_wheelEventGesturesBecomeNonBlocking = wheelEventGesturesBecomeNonBlocking;
+    m_scrollingPerformanceTestingEnabled = scrollingPerformanceTestingEnabled;
+    m_overlayScrollbarsEnabled = overlayScrollbarsEnabled;
+
+    m_dynamicState.frameScaleFactor = frameScaleFactor;
+#if HAVE(NSREFRESHCONTROLLER)
+    m_dynamicState.topScrollStretchForRefreshController = topScrollStretchForRefreshController;
+#endif
+
     ASSERT(isFrameScrollingNode());
 }
 
@@ -162,25 +176,17 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(ScrollingStat
 
 ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateScrollingNode(stateNode, adoptiveTree)
-    , m_eventTrackingRegions(stateNode.eventTrackingRegions())
-    , m_layoutViewport(stateNode.layoutViewport())
-    , m_sizeForVisibleContent(stateNode.sizeForVisibleContent())
-    , m_minLayoutViewportOrigin(stateNode.minLayoutViewportOrigin())
-    , m_maxLayoutViewportOrigin(stateNode.maxLayoutViewportOrigin())
-    , m_overrideVisualViewportSize(stateNode.overrideVisualViewportSize())
-    , m_frameScaleFactor(stateNode.frameScaleFactor())
-    , m_obscuredContentInsets(stateNode.obscuredContentInsets())
-#if HAVE(NSREFRESHCONTROLLER)
-    , m_topScrollStretchForRefreshController(stateNode.topScrollStretchForRefreshController())
-#endif
-    , m_headerHeight(stateNode.headerHeight())
-    , m_footerHeight(stateNode.footerHeight())
-    , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
-    , m_visualViewportIsSmallerThanLayoutViewport(stateNode.visualViewportIsSmallerThanLayoutViewport())
-    , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
-    , m_wheelEventGesturesBecomeNonBlocking(stateNode.wheelEventGesturesBecomeNonBlocking())
-    , m_scrollingPerformanceTestingEnabled(stateNode.scrollingPerformanceTestingEnabled())
-    , m_overlayScrollbarsEnabled(stateNode.overlayScrollbarsEnabled())
+    , m_staticLayoutData(stateNode.m_staticLayoutData)
+    , m_staticConfigData(stateNode.m_staticConfigData)
+    , m_dynamicState(stateNode.m_dynamicState)
+    , m_headerHeight(stateNode.m_headerHeight)
+    , m_footerHeight(stateNode.m_footerHeight)
+    , m_behaviorForFixed(stateNode.m_behaviorForFixed)
+    , m_visualViewportIsSmallerThanLayoutViewport(stateNode.m_visualViewportIsSmallerThanLayoutViewport)
+    , m_asyncFrameOrOverflowScrollingEnabled(stateNode.m_asyncFrameOrOverflowScrollingEnabled)
+    , m_wheelEventGesturesBecomeNonBlocking(stateNode.m_wheelEventGesturesBecomeNonBlocking)
+    , m_scrollingPerformanceTestingEnabled(stateNode.m_scrollingPerformanceTestingEnabled)
+    , m_overlayScrollbarsEnabled(stateNode.m_overlayScrollbarsEnabled)
 {
     if (hasChangedProperty(Property::RootContentsLayer))
         setRootContentsLayer(stateNode.rootContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -245,21 +251,17 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
 
 void ScrollingStateFrameScrollingNode::setFrameScaleFactor(float scaleFactor)
 {
-    if (m_frameScaleFactor == scaleFactor)
+    if (m_dynamicState.frameScaleFactor == scaleFactor)
         return;
 
-    m_frameScaleFactor = scaleFactor;
+    m_dynamicState.frameScaleFactor = scaleFactor;
 
     setPropertyChanged(Property::FrameScaleFactor);
 }
 
 void ScrollingStateFrameScrollingNode::setEventTrackingRegions(const EventTrackingRegions& eventTrackingRegions)
 {
-    if (m_eventTrackingRegions == eventTrackingRegions)
-        return;
-
-    m_eventTrackingRegions = eventTrackingRegions;
-    setPropertyChanged(Property::EventTrackingRegion);
+    SET_COW_PROPERTY(m_staticLayoutData, eventTrackingRegions, eventTrackingRegions, Property::EventTrackingRegion);
 }
 
 void ScrollingStateFrameScrollingNode::setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements behaviorForFixed)
@@ -273,47 +275,27 @@ void ScrollingStateFrameScrollingNode::setScrollBehaviorForFixedElements(ScrollB
 
 void ScrollingStateFrameScrollingNode::setLayoutViewport(const FloatRect& r)
 {
-    if (m_layoutViewport == r)
-        return;
-
-    m_layoutViewport = r;
-    setPropertyChanged(Property::LayoutViewport);
+    SET_COW_PROPERTY(m_staticLayoutData, layoutViewport, r, Property::LayoutViewport);
 }
 
 void ScrollingStateFrameScrollingNode::setSizeForVisibleContent(const FloatSize& size)
 {
-    if (m_sizeForVisibleContent == size)
-        return;
-
-    m_sizeForVisibleContent = size;
-    setPropertyChanged(Property::SizeForVisibleContent);
+    SET_COW_PROPERTY(m_staticLayoutData, sizeForVisibleContent, size, Property::SizeForVisibleContent);
 }
 
 void ScrollingStateFrameScrollingNode::setMinLayoutViewportOrigin(const FloatPoint& p)
 {
-    if (m_minLayoutViewportOrigin == p)
-        return;
-
-    m_minLayoutViewportOrigin = p;
-    setPropertyChanged(Property::MinLayoutViewportOrigin);
+    SET_COW_PROPERTY(m_staticLayoutData, minLayoutViewportOrigin, p, Property::MinLayoutViewportOrigin);
 }
 
 void ScrollingStateFrameScrollingNode::setMaxLayoutViewportOrigin(const FloatPoint& p)
 {
-    if (m_maxLayoutViewportOrigin == p)
-        return;
-
-    m_maxLayoutViewportOrigin = p;
-    setPropertyChanged(Property::MaxLayoutViewportOrigin);
+    SET_COW_PROPERTY(m_staticLayoutData, maxLayoutViewportOrigin, p, Property::MaxLayoutViewportOrigin);
 }
 
 void ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize(std::optional<FloatSize> viewportSize)
 {
-    if (viewportSize == m_overrideVisualViewportSize)
-        return;
-
-    m_overrideVisualViewportSize = viewportSize;
-    setPropertyChanged(Property::OverrideVisualViewportSize);
+    SET_COW_PROPERTY(m_staticConfigData, overrideVisualViewportSize, viewportSize, Property::OverrideVisualViewportSize);
 }
 
 void ScrollingStateFrameScrollingNode::setHeaderHeight(int headerHeight)
@@ -336,21 +318,17 @@ void ScrollingStateFrameScrollingNode::setFooterHeight(int footerHeight)
 
 void ScrollingStateFrameScrollingNode::setObscuredContentInsets(const FloatBoxExtent& obscuredContentInsets)
 {
-    if (m_obscuredContentInsets == obscuredContentInsets)
-        return;
-
-    m_obscuredContentInsets = obscuredContentInsets;
-    setPropertyChanged(Property::ObscuredContentInsets);
+    SET_COW_PROPERTY(m_staticConfigData, obscuredContentInsets, obscuredContentInsets, Property::ObscuredContentInsets);
 }
 
 #if HAVE(NSREFRESHCONTROLLER)
 
 void ScrollingStateFrameScrollingNode::setTopScrollStretchForRefreshController(float topScrollStretchForRefreshController)
 {
-    if (m_topScrollStretchForRefreshController == topScrollStretchForRefreshController)
+    if (m_dynamicState.topScrollStretchForRefreshController == topScrollStretchForRefreshController)
         return;
 
-    m_topScrollStretchForRefreshController = topScrollStretchForRefreshController;
+    m_dynamicState.topScrollStretchForRefreshController = topScrollStretchForRefreshController;
     setPropertyChanged(Property::TopScrollStretchForRefreshController);
 }
 
@@ -358,63 +336,39 @@ void ScrollingStateFrameScrollingNode::setTopScrollStretchForRefreshController(f
 
 void ScrollingStateFrameScrollingNode::setRootContentsLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_rootContentsLayer)
-        return;
-
-    m_rootContentsLayer = layerRepresentation;
-    setPropertyChanged(Property::RootContentsLayer);
+    SET_COW_PROPERTY(m_staticConfigData, rootContentsLayer, layerRepresentation, Property::RootContentsLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setCounterScrollingLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_counterScrollingLayer)
-        return;
-    
-    m_counterScrollingLayer = layerRepresentation;
-    setPropertyChanged(Property::CounterScrollingLayer);
+    SET_COW_PROPERTY(m_staticConfigData, counterScrollingLayer, layerRepresentation, Property::CounterScrollingLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setInsetClipLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_insetClipLayer)
-        return;
-    
-    m_insetClipLayer = layerRepresentation;
-    setPropertyChanged(Property::InsetClipLayer);
+    SET_COW_PROPERTY(m_staticConfigData, insetClipLayer, layerRepresentation, Property::InsetClipLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setContentShadowLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_contentShadowLayer)
-        return;
-    
-    m_contentShadowLayer = layerRepresentation;
-    setPropertyChanged(Property::ContentShadowLayer);
+    SET_COW_PROPERTY(m_staticConfigData, contentShadowLayer, layerRepresentation, Property::ContentShadowLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setHeaderLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_headerLayer)
-        return;
-    
-    m_headerLayer = layerRepresentation;
-    setPropertyChanged(Property::HeaderLayer);
+    SET_COW_PROPERTY(m_staticConfigData, headerLayer, layerRepresentation, Property::HeaderLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setFooterLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_footerLayer)
-        return;
-    
-    m_footerLayer = layerRepresentation;
-    setPropertyChanged(Property::FooterLayer);
+    SET_COW_PROPERTY(m_staticConfigData, footerLayer, layerRepresentation, Property::FooterLayer);
 }
 
 void ScrollingStateFrameScrollingNode::setVisualViewportIsSmallerThanLayoutViewport(bool visualViewportIsSmallerThanLayoutViewport)
 {
     if (visualViewportIsSmallerThanLayoutViewport == m_visualViewportIsSmallerThanLayoutViewport)
         return;
-    
+
     m_visualViewportIsSmallerThanLayoutViewport = visualViewportIsSmallerThanLayoutViewport;
     setPropertyChanged(Property::VisualViewportIsSmallerThanLayoutViewport);
 }
@@ -423,7 +377,7 @@ void ScrollingStateFrameScrollingNode::setAsyncFrameOrOverflowScrollingEnabled(b
 {
     if (enabled == m_asyncFrameOrOverflowScrollingEnabled)
         return;
-    
+
     m_asyncFrameOrOverflowScrollingEnabled = enabled;
     setPropertyChanged(Property::AsyncFrameOrOverflowScrollingEnabled);
 }
@@ -432,7 +386,7 @@ void ScrollingStateFrameScrollingNode::setWheelEventGesturesBecomeNonBlocking(bo
 {
     if (enabled == m_wheelEventGesturesBecomeNonBlocking)
         return;
-    
+
     m_wheelEventGesturesBecomeNonBlocking = enabled;
     setPropertyChanged(Property::WheelEventGesturesBecomeNonBlocking);
 }
@@ -441,7 +395,7 @@ void ScrollingStateFrameScrollingNode::setScrollingPerformanceTestingEnabled(boo
 {
     if (enabled == m_scrollingPerformanceTestingEnabled)
         return;
-    
+
     m_scrollingPerformanceTestingEnabled = enabled;
     setPropertyChanged(Property::ScrollingPerformanceTestingEnabled);
 }
@@ -450,6 +404,7 @@ void ScrollingStateFrameScrollingNode::setOverlayScrollbarsEnabled(bool enabled)
 {
     if (m_overlayScrollbarsEnabled == enabled)
         return;
+
     m_overlayScrollbarsEnabled = enabled;
     setPropertyChanged(Property::OverlayScrollbarsEnabled);
 }
@@ -459,66 +414,142 @@ bool ScrollingStateFrameScrollingNode::isMainFrame() const
     return nodeType() == ScrollingNodeType::MainFrame;
 }
 
+bool ScrollingStateFrameScrollingNode::hasUnchangedGroupsAs(const ScrollingStateNode& other) const
+{
+    if (!ScrollingStateScrollingNode::hasUnchangedGroupsAs(other))
+        return false;
+    auto& otherFrame = downcast<ScrollingStateFrameScrollingNode>(other);
+    if (m_staticLayoutData.ptr() != otherFrame.m_staticLayoutData.ptr())
+        return false;
+    if (m_staticConfigData.ptr() != otherFrame.m_staticConfigData.ptr())
+        return false;
+    if (m_dynamicState != otherFrame.m_dynamicState)
+        return false;
+    // Direct (non-CoW) members, compared for the same reason as in the base class.
+    if (m_headerHeight != otherFrame.m_headerHeight)
+        return false;
+    if (m_footerHeight != otherFrame.m_footerHeight)
+        return false;
+    if (m_behaviorForFixed != otherFrame.m_behaviorForFixed)
+        return false;
+    if (m_visualViewportIsSmallerThanLayoutViewport != otherFrame.m_visualViewportIsSmallerThanLayoutViewport)
+        return false;
+    if (m_asyncFrameOrOverflowScrollingEnabled != otherFrame.m_asyncFrameOrOverflowScrollingEnabled)
+        return false;
+    if (m_wheelEventGesturesBecomeNonBlocking != otherFrame.m_wheelEventGesturesBecomeNonBlocking)
+        return false;
+    if (m_scrollingPerformanceTestingEnabled != otherFrame.m_scrollingPerformanceTestingEnabled)
+        return false;
+    if (m_overlayScrollbarsEnabled != otherFrame.m_overlayScrollbarsEnabled)
+        return false;
+    return true;
+}
+
+void ScrollingStateFrameScrollingNode::clearLayerFieldsForUnchangedProperties()
+{
+    // First clear scrolling-node layers on the base class, then frame-only layers.
+    ScrollingStateScrollingNode::clearLayerFieldsForUnchangedProperties();
+
+    bool needsAccess = (!hasChangedProperty(Property::RootContentsLayer) && m_staticConfigData->rootContentsLayer)
+        || (!hasChangedProperty(Property::CounterScrollingLayer) && m_staticConfigData->counterScrollingLayer)
+        || (!hasChangedProperty(Property::InsetClipLayer) && m_staticConfigData->insetClipLayer)
+        || (!hasChangedProperty(Property::ContentShadowLayer) && m_staticConfigData->contentShadowLayer)
+        || (!hasChangedProperty(Property::HeaderLayer) && m_staticConfigData->headerLayer)
+        || (!hasChangedProperty(Property::FooterLayer) && m_staticConfigData->footerLayer);
+    if (!needsAccess)
+        return;
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& config = m_staticConfigData.access();
+    if (!hasChangedProperty(Property::RootContentsLayer))
+        config.rootContentsLayer = { };
+    if (!hasChangedProperty(Property::CounterScrollingLayer))
+        config.counterScrollingLayer = { };
+    if (!hasChangedProperty(Property::InsetClipLayer))
+        config.insetClipLayer = { };
+    if (!hasChangedProperty(Property::ContentShadowLayer))
+        config.contentShadowLayer = { };
+    if (!hasChangedProperty(Property::HeaderLayer))
+        config.headerLayer = { };
+    if (!hasChangedProperty(Property::FooterLayer))
+        config.footerLayer = { };
+}
+
+#if ASSERT_ENABLED
+void ScrollingStateFrameScrollingNode::verifyClearedLayerFieldsForUnchangedProperties() const
+{
+    ScrollingStateScrollingNode::verifyClearedLayerFieldsForUnchangedProperties();
+    ASSERT(hasChangedProperty(Property::RootContentsLayer) || !m_staticConfigData->rootContentsLayer);
+    ASSERT(hasChangedProperty(Property::CounterScrollingLayer) || !m_staticConfigData->counterScrollingLayer);
+    ASSERT(hasChangedProperty(Property::InsetClipLayer) || !m_staticConfigData->insetClipLayer);
+    ASSERT(hasChangedProperty(Property::ContentShadowLayer) || !m_staticConfigData->contentShadowLayer);
+    ASSERT(hasChangedProperty(Property::HeaderLayer) || !m_staticConfigData->headerLayer);
+    ASSERT(hasChangedProperty(Property::FooterLayer) || !m_staticConfigData->footerLayer);
+}
+#endif
+
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ts << "Frame scrolling node"_s;
     
     ScrollingStateScrollingNode::dumpProperties(ts, behavior);
-    
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& layout = m_staticLayoutData.get();
+    SUPPRESS_UNCOUNTED_LOCAL auto& config = m_staticConfigData.get();
+
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerIDs) {
-        ts.dumpProperty("root contents layer ID"_s, m_rootContentsLayer.layerID());
-        if (m_counterScrollingLayer.layerID())
-            ts.dumpProperty("counter scrolling layer ID"_s, m_counterScrollingLayer.layerID());
-        if (m_insetClipLayer.layerID())
-            ts.dumpProperty("inset clip layer ID"_s, m_insetClipLayer.layerID());
-        if (m_contentShadowLayer.layerID())
-            ts.dumpProperty("content shadow layer ID"_s, m_contentShadowLayer.layerID());
-        if (m_headerLayer.layerID())
-            ts.dumpProperty("header layer ID"_s, m_headerLayer.layerID());
-        if (m_footerLayer.layerID())
-            ts.dumpProperty("footer layer ID"_s, m_footerLayer.layerID());
+        ts.dumpProperty("root contents layer ID"_s, config.rootContentsLayer.layerID());
+        if (config.counterScrollingLayer.layerID())
+            ts.dumpProperty("counter scrolling layer ID"_s, config.counterScrollingLayer.layerID());
+        if (config.insetClipLayer.layerID())
+            ts.dumpProperty("inset clip layer ID"_s, config.insetClipLayer.layerID());
+        if (config.contentShadowLayer.layerID())
+            ts.dumpProperty("content shadow layer ID"_s, config.contentShadowLayer.layerID());
+        if (config.headerLayer.layerID())
+            ts.dumpProperty("header layer ID"_s, config.headerLayer.layerID());
+        if (config.footerLayer.layerID())
+            ts.dumpProperty("footer layer ID"_s, config.footerLayer.layerID());
     }
 
-    if (m_frameScaleFactor != 1)
-        ts.dumpProperty("frame scale factor"_s, m_frameScaleFactor);
-    if (m_obscuredContentInsets.top())
-        ts.dumpProperty("top content inset"_s, m_obscuredContentInsets.top());
-    if (m_obscuredContentInsets.bottom())
-        ts.dumpProperty("bottom content inset"_s, m_obscuredContentInsets.bottom());
-    if (m_obscuredContentInsets.left())
-        ts.dumpProperty("left content inset"_s, m_obscuredContentInsets.left());
-    if (m_obscuredContentInsets.right())
-        ts.dumpProperty("right content inset"_s, m_obscuredContentInsets.right());
+    if (m_dynamicState.frameScaleFactor != 1)
+        ts.dumpProperty("frame scale factor"_s, m_dynamicState.frameScaleFactor);
+    if (config.obscuredContentInsets.top())
+        ts.dumpProperty("top content inset"_s, config.obscuredContentInsets.top());
+    if (config.obscuredContentInsets.bottom())
+        ts.dumpProperty("bottom content inset"_s, config.obscuredContentInsets.bottom());
+    if (config.obscuredContentInsets.left())
+        ts.dumpProperty("left content inset"_s, config.obscuredContentInsets.left());
+    if (config.obscuredContentInsets.right())
+        ts.dumpProperty("right content inset"_s, config.obscuredContentInsets.right());
 #if HAVE(NSREFRESHCONTROLLER)
-    if (m_topScrollStretchForRefreshController)
-        ts.dumpProperty("top scroll stretch for refresh controller"_s, m_topScrollStretchForRefreshController);
+    if (m_dynamicState.topScrollStretchForRefreshController)
+        ts.dumpProperty("top scroll stretch for refresh controller"_s, m_dynamicState.topScrollStretchForRefreshController);
 #endif
     if (m_headerHeight)
         ts.dumpProperty("header height"_s, m_headerHeight);
     if (m_footerHeight)
         ts.dumpProperty("footer height"_s, m_footerHeight);
-    
-    ts.dumpProperty("layout viewport"_s, m_layoutViewport);
 
-    if (m_layoutViewport.size() != m_sizeForVisibleContent)
-        ts.dumpProperty("size for visible content"_s, m_sizeForVisibleContent);
+    ts.dumpProperty("layout viewport"_s, layout.layoutViewport);
 
-    ts.dumpProperty("min layout viewport origin"_s, m_minLayoutViewportOrigin);
-    ts.dumpProperty("max layout viewport origin"_s, m_maxLayoutViewportOrigin);
-    
-    if (m_overrideVisualViewportSize)
-        ts.dumpProperty("override visual viewport size"_s, m_overrideVisualViewportSize.value());
+    if (layout.layoutViewport.size() != layout.sizeForVisibleContent)
+        ts.dumpProperty("size for visible content"_s, layout.sizeForVisibleContent);
 
-    if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
+    ts.dumpProperty("min layout viewport origin"_s, layout.minLayoutViewportOrigin);
+    ts.dumpProperty("max layout viewport origin"_s, layout.maxLayoutViewportOrigin);
+
+    if (config.overrideVisualViewportSize)
+        ts.dumpProperty("override visual viewport size"_s, config.overrideVisualViewportSize.value());
+
+    if (!layout.eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
         TextStream::GroupScope scope(ts);
         ts << "asynchronous event dispatch region"_s;
-        for (auto rect : m_eventTrackingRegions.asynchronousDispatchRegion.rects()) {
+        for (auto rect : layout.eventTrackingRegions.asynchronousDispatchRegion.rects()) {
             ts << '\n';
             ts << indent << rect;
         }
     }
 
-    auto& synchronousDispatchRegionMap = m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
+    auto& synchronousDispatchRegionMap = layout.eventTrackingRegions.eventSpecificSynchronousDispatchRegions;
     if (!synchronousDispatchRegionMap.isEmpty()) {
         auto eventRegionNames = copyToVector(synchronousDispatchRegionMap.keys());
         std::ranges::sort(eventRegionNames);
@@ -540,5 +571,7 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<
 }
 
 } // namespace WebCore
+
+#undef SET_COW_PROPERTY
 
 #endif // ENABLE(ASYNC_SCROLLING)

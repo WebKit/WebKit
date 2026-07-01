@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateTree.h"
+#include <wtf/DataRef.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -37,6 +41,15 @@
 #endif
 
 namespace WebCore {
+
+// Assign to a copy-on-write group member (via DataRef::access) only when it differs, marking the
+// node dirty. Consolidates the otherwise-identical compare / access / setPropertyChanged setter bodies.
+#define SET_COW_PROPERTY(dataRef, member, newValue, property) do { \
+        if ((dataRef)->member != (newValue)) { \
+            (dataRef).access().member = (newValue); \
+            setPropertyChanged(property); \
+        } \
+    } while (0)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateScrollingNode);
 
@@ -80,75 +93,79 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     bool useDarkAppearanceForScrollbars,
     RequestedKeyboardScrollData&& keyboardScrollData
 ) : ScrollingStateNode(nodeType, nodeID, WTF::move(children), changedProperties, layerID)
-    , m_scrollableAreaSize(scrollableAreaSize)
-    , m_totalContentsSize(totalContentsSize)
-    , m_reachableContentsSize(reachableContentsSize)
-    , m_scrollPosition(scrollPosition)
-    , m_scrollOrigin(scrollOrigin)
-    , m_snapOffsetsInfo(WTF::move(snapOffsetsInfo))
-    , m_currentHorizontalSnapPointIndex(currentHorizontalSnapPointIndex)
-    , m_currentVerticalSnapPointIndex(currentVerticalSnapPointIndex)
-    , m_scrollContainerLayer(scrollContainerLayer)
-    , m_scrolledContentsLayer(scrolledContentsLayer)
-    , m_horizontalScrollbarLayer(horizontalScrollbarLayer)
-    , m_verticalScrollbarLayer(verticalScrollbarLayer)
-    , m_scrollbarHoverState(WTF::move(scrollbarHoverState))
-    , m_mouseLocationState(WTF::move(mouseLocationState))
-    , m_scrollbarEnabledState(WTF::move(scrollbarEnabledState))
-    , m_scrollbarColor(WTF::move(scrollbarColor))
-    , m_scrollableAreaParameters(WTF::move(scrollableAreaParameters))
     , m_requestedScrollData(WTF::move(requestedScrollData))
-    , m_keyboardScrollData(WTF::move(keyboardScrollData))
-#if ENABLE(SCROLLING_THREAD)
-    , m_synchronousScrollingReasons(synchronousScrollingReasons)
-#endif
-    , m_scrollbarLayoutDirection(scrollbarLayoutDirection)
-    , m_scrollbarWidth(scrollbarWidth)
-    , m_useDarkAppearanceForScrollbars(useDarkAppearanceForScrollbars)
-    , m_isMonitoringWheelEvents(isMonitoringWheelEvents)
-    , m_mouseIsOverContentArea(mouseIsOverContentArea)
 {
+    SUPPRESS_UNCOUNTED_LOCAL auto& layout = m_staticLayoutData.access();
+    layout.scrollableAreaSize = scrollableAreaSize;
+    layout.totalContentsSize = totalContentsSize;
+    layout.reachableContentsSize = reachableContentsSize;
+    layout.snapOffsetsInfo = WTF::move(snapOffsetsInfo);
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& config = m_staticConfigData.access();
+    config.scrollOrigin = scrollOrigin;
+    config.scrollableAreaParameters = WTF::move(scrollableAreaParameters);
+    config.scrollbarColor = WTF::move(scrollbarColor);
+    config.scrollContainerLayer = scrollContainerLayer;
+    config.scrolledContentsLayer = scrolledContentsLayer;
+    config.horizontalScrollbarLayer = horizontalScrollbarLayer;
+    config.verticalScrollbarLayer = verticalScrollbarLayer;
+#if ENABLE(SCROLLING_THREAD)
+    config.synchronousScrollingReasons = synchronousScrollingReasons;
+#endif
+
+    m_scrollbarEnabledState = WTF::move(scrollbarEnabledState);
+    m_scrollbarLayoutDirection = scrollbarLayoutDirection;
+    m_scrollbarWidth = scrollbarWidth;
+    m_useDarkAppearanceForScrollbars = useDarkAppearanceForScrollbars;
+
+    m_dynamicState.scrollPosition = scrollPosition;
+    m_dynamicState.currentHorizontalSnapPointIndex = currentHorizontalSnapPointIndex;
+    m_dynamicState.currentVerticalSnapPointIndex = currentVerticalSnapPointIndex;
+    m_dynamicState.scrollbarHoverState = WTF::move(scrollbarHoverState);
+    m_dynamicState.mouseLocationState = WTF::move(mouseLocationState);
+    m_dynamicState.keyboardScrollData = WTF::move(keyboardScrollData);
+    m_dynamicState.isMonitoringWheelEvents = isMonitoringWheelEvents;
+    m_dynamicState.mouseIsOverContentArea = mouseIsOverContentArea;
+
     // scrollingNodeAdded will be called in attachAfterDeserialization.
 }
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(stateNode, adoptiveTree)
-    , m_scrollableAreaSize(stateNode.scrollableAreaSize())
-    , m_totalContentsSize(stateNode.totalContentsSize())
-    , m_reachableContentsSize(stateNode.reachableContentsSize())
-    , m_scrollPosition(stateNode.scrollPosition())
-    , m_scrollOrigin(stateNode.scrollOrigin())
-    , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
-    // m_currentHorizontalSnapPointIndex is not currently copied.
-    // m_currentVerticalSnapPointIndex is not currently copied.
+    , m_staticLayoutData(stateNode.m_staticLayoutData)
+    , m_staticConfigData(stateNode.m_staticConfigData)
+    , m_requestedScrollData(stateNode.requestedScrollData())
+    , m_scrollbarEnabledState(stateNode.m_scrollbarEnabledState)
+    , m_scrollbarLayoutDirection(stateNode.m_scrollbarLayoutDirection)
+    , m_scrollbarWidth(stateNode.m_scrollbarWidth)
+    , m_useDarkAppearanceForScrollbars(stateNode.m_useDarkAppearanceForScrollbars)
 #if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
-    , m_scrollbarHoverState(stateNode.scrollbarHoverState())
-#endif
-#if PLATFORM(MAC)
-    , m_mouseLocationState(stateNode.mouseLocationState())
-#endif
-#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
-    , m_scrollbarEnabledState(stateNode.scrollbarEnabledState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
 #endif
-    , m_scrollbarColor(stateNode.scrollbarColor())
-    , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
-    , m_requestedScrollData(stateNode.requestedScrollData())
-    , m_keyboardScrollData(stateNode.keyboardScrollData())
-#if ENABLE(SCROLLING_THREAD)
-    , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
-#endif
-    , m_scrollbarLayoutDirection(stateNode.scrollbarLayoutDirection())
-    , m_scrollbarWidth(stateNode.scrollbarWidth())
-    , m_useDarkAppearanceForScrollbars(stateNode.useDarkAppearanceForScrollbars())
-    , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
-    , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     , m_scrollbarOpacity(stateNode.scrollbarOpacity())
 #endif
 {
     scrollingStateTree().scrollingNodeAdded();
+
+    // Copy dynamic state. The legacy IPC clone path elided snap-point indices from the
+    // copy ctor; we no longer do, because (a) the elision was redundant for IPC (the encoder
+    // gates serialization on Property::CurrentHorizontal/VerticalSnapOffsetIndex, not on the
+    // field value), and (b) elision in the m_lastCommittedTree snapshot caused nodes with a
+    // non-default snap index to be perpetually flagged dirty by hasUnchangedGroupsAs.
+    m_dynamicState.scrollPosition = stateNode.m_dynamicState.scrollPosition;
+    m_dynamicState.currentHorizontalSnapPointIndex = stateNode.m_dynamicState.currentHorizontalSnapPointIndex;
+    m_dynamicState.currentVerticalSnapPointIndex = stateNode.m_dynamicState.currentVerticalSnapPointIndex;
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    m_dynamicState.scrollbarHoverState = stateNode.m_dynamicState.scrollbarHoverState;
+#endif
+#if PLATFORM(MAC)
+    m_dynamicState.mouseLocationState = stateNode.m_dynamicState.mouseLocationState;
+#endif
+    m_dynamicState.keyboardScrollData = stateNode.m_dynamicState.keyboardScrollData;
+    m_dynamicState.isMonitoringWheelEvents = stateNode.m_dynamicState.isMonitoringWheelEvents;
+    m_dynamicState.mouseIsOverContentArea = stateNode.m_dynamicState.mouseIsOverContentArea;
 
     if (hasChangedProperty(Property::ScrollContainerLayer))
         setScrollContainerLayer(stateNode.scrollContainerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -198,102 +215,141 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateScrollingNode::applicableP
     return properties;
 }
 
-void ScrollingStateScrollingNode::setScrollableAreaSize(const FloatSize& size)
+bool ScrollingStateScrollingNode::hasUnchangedGroupsAs(const ScrollingStateNode& other) const
 {
-    if (m_scrollableAreaSize == size)
+    if (!ScrollingStateNode::hasUnchangedGroupsAs(other))
+        return false;
+    auto& otherScrolling = downcast<ScrollingStateScrollingNode>(other);
+    if (m_staticLayoutData.ptr() != otherScrolling.m_staticLayoutData.ptr())
+        return false;
+    if (m_staticConfigData.ptr() != otherScrolling.m_staticConfigData.ptr())
+        return false;
+    if (m_dynamicState != otherScrolling.m_dynamicState)
+        return false;
+    // Direct (non-CoW) members are mutated outside the groups above, so they must be
+    // compared here too, otherwise a node dirtied only through one of them is dropped
+    // from the dirty-node list.
+    if (m_requestedScrollData != otherScrolling.m_requestedScrollData)
+        return false;
+    if (m_scrollbarEnabledState != otherScrolling.m_scrollbarEnabledState)
+        return false;
+    if (m_scrollbarLayoutDirection != otherScrolling.m_scrollbarLayoutDirection)
+        return false;
+    if (m_scrollbarWidth != otherScrolling.m_scrollbarWidth)
+        return false;
+    if (m_useDarkAppearanceForScrollbars != otherScrolling.m_useDarkAppearanceForScrollbars)
+        return false;
+    return true;
+}
+
+void ScrollingStateScrollingNode::clearLayerFieldsForUnchangedProperties()
+{
+    // Match the pre-refactor direct-member default-empty behavior: any layer field whose
+    // Property bit is NOT set on the clone must be empty in the IPC payload. Without this,
+    // the in-process Coordinated Graphics scrolling-tree receiver dereferences the inherited
+    // (un-translated) layer as ScrollingPlatformLayer* and asserts on the variant type.
+    bool needsAccess = (!hasChangedProperty(Property::ScrollContainerLayer) && m_staticConfigData->scrollContainerLayer)
+        || (!hasChangedProperty(Property::ScrolledContentsLayer) && m_staticConfigData->scrolledContentsLayer)
+        || (!hasChangedProperty(Property::HorizontalScrollbarLayer) && m_staticConfigData->horizontalScrollbarLayer)
+        || (!hasChangedProperty(Property::VerticalScrollbarLayer) && m_staticConfigData->verticalScrollbarLayer);
+    if (!needsAccess)
         return;
 
-    m_scrollableAreaSize = size;
-    setPropertyChanged(Property::ScrollableAreaSize);
+    SUPPRESS_UNCOUNTED_LOCAL auto& config = m_staticConfigData.access();
+    if (!hasChangedProperty(Property::ScrollContainerLayer))
+        config.scrollContainerLayer = { };
+    if (!hasChangedProperty(Property::ScrolledContentsLayer))
+        config.scrolledContentsLayer = { };
+    if (!hasChangedProperty(Property::HorizontalScrollbarLayer))
+        config.horizontalScrollbarLayer = { };
+    if (!hasChangedProperty(Property::VerticalScrollbarLayer))
+        config.verticalScrollbarLayer = { };
+}
+
+#if ASSERT_ENABLED
+void ScrollingStateScrollingNode::verifyClearedLayerFieldsForUnchangedProperties() const
+{
+    ASSERT(hasChangedProperty(Property::ScrollContainerLayer) || !m_staticConfigData->scrollContainerLayer);
+    ASSERT(hasChangedProperty(Property::ScrolledContentsLayer) || !m_staticConfigData->scrolledContentsLayer);
+    ASSERT(hasChangedProperty(Property::HorizontalScrollbarLayer) || !m_staticConfigData->horizontalScrollbarLayer);
+    ASSERT(hasChangedProperty(Property::VerticalScrollbarLayer) || !m_staticConfigData->verticalScrollbarLayer);
+}
+#endif
+
+void ScrollingStateScrollingNode::setScrollableAreaSize(const FloatSize& size)
+{
+    SET_COW_PROPERTY(m_staticLayoutData, scrollableAreaSize, size, Property::ScrollableAreaSize);
 }
 
 void ScrollingStateScrollingNode::setTotalContentsSize(const FloatSize& totalContentsSize)
 {
-    if (m_totalContentsSize == totalContentsSize)
-        return;
-
-    m_totalContentsSize = totalContentsSize;
-    setPropertyChanged(Property::TotalContentsSize);
+    SET_COW_PROPERTY(m_staticLayoutData, totalContentsSize, totalContentsSize, Property::TotalContentsSize);
 }
 
 void ScrollingStateScrollingNode::setReachableContentsSize(const FloatSize& reachableContentsSize)
 {
-    if (m_reachableContentsSize == reachableContentsSize)
-        return;
-
-    m_reachableContentsSize = reachableContentsSize;
-    setPropertyChanged(Property::ReachableContentsSize);
+    SET_COW_PROPERTY(m_staticLayoutData, reachableContentsSize, reachableContentsSize, Property::ReachableContentsSize);
 }
 
 void ScrollingStateScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    if (m_scrollPosition == scrollPosition)
+    if (m_dynamicState.scrollPosition == scrollPosition)
         return;
 
-    m_scrollPosition = scrollPosition;
+    m_dynamicState.scrollPosition = scrollPosition;
     setPropertyChanged(Property::ScrollPosition);
 }
 
 void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
 {
-    if (m_scrollOrigin == scrollOrigin)
-        return;
-
-    m_scrollOrigin = scrollOrigin;
-    setPropertyChanged(Property::ScrollOrigin);
+    SET_COW_PROPERTY(m_staticConfigData, scrollOrigin, scrollOrigin, Property::ScrollOrigin);
 }
 
 void ScrollingStateScrollingNode::setSnapOffsetsInfo(const FloatScrollSnapOffsetsInfo& info)
 {
-    if (m_snapOffsetsInfo.isEqual(info))
+    if (m_staticLayoutData->snapOffsetsInfo.isEqual(info))
         return;
 
-    m_snapOffsetsInfo = info;
+    m_staticLayoutData.access().snapOffsetsInfo = info;
     setPropertyChanged(Property::SnapOffsetsInfo);
 }
 
 void ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex(std::optional<unsigned> index)
 {
-    if (m_currentHorizontalSnapPointIndex == index)
+    if (m_dynamicState.currentHorizontalSnapPointIndex == index)
         return;
-    
-    m_currentHorizontalSnapPointIndex = index;
+
+    m_dynamicState.currentHorizontalSnapPointIndex = index;
     setPropertyChanged(Property::CurrentHorizontalSnapOffsetIndex);
 }
 
 void ScrollingStateScrollingNode::setCurrentVerticalSnapPointIndex(std::optional<unsigned> index)
 {
-    if (m_currentVerticalSnapPointIndex == index)
+    if (m_dynamicState.currentVerticalSnapPointIndex == index)
         return;
 
-    m_currentVerticalSnapPointIndex = index;
+    m_dynamicState.currentVerticalSnapPointIndex = index;
     setPropertyChanged(Property::CurrentVerticalSnapOffsetIndex);
 }
 
 void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAreaParameters& parameters)
 {
-    if (m_scrollableAreaParameters == parameters)
-        return;
-
-    m_scrollableAreaParameters = parameters;
-    setPropertyChanged(Property::ScrollableAreaParams);
+    SET_COW_PROPERTY(m_staticConfigData, scrollableAreaParameters, parameters, Property::ScrollableAreaParams);
 }
 
 #if ENABLE(SCROLLING_THREAD)
 void ScrollingStateScrollingNode::setSynchronousScrollingReasons(OptionSet<SynchronousScrollingReason> reasons)
 {
-    if (m_synchronousScrollingReasons == reasons)
-        return;
-
-    m_synchronousScrollingReasons = reasons;
-    setPropertyChanged(Property::ReasonsForSynchronousScrolling);
+    SET_COW_PROPERTY(m_staticConfigData, synchronousScrollingReasons, reasons, Property::ReasonsForSynchronousScrolling);
 }
 #endif
 
 
 void ScrollingStateScrollingNode::setKeyboardScrollData(const RequestedKeyboardScrollData& scrollData)
 {
-    m_keyboardScrollData = scrollData;
+    // One-shot command, not durable state: never de-dupe, or a repeated identical command
+    // across commits is dropped and the scroll won't fire. Mirrors setRequestedScrollData.
+    m_dynamicState.keyboardScrollData = scrollData;
     setPropertyChanged(Property::KeyboardScrollData);
 }
 
@@ -456,46 +512,31 @@ bool ScrollingStateScrollingNode::hasScrollPositionRequest() const
 
 void ScrollingStateScrollingNode::setIsMonitoringWheelEvents(bool isMonitoringWheelEvents)
 {
-    if (isMonitoringWheelEvents == m_isMonitoringWheelEvents)
+    if (isMonitoringWheelEvents == m_dynamicState.isMonitoringWheelEvents)
         return;
 
-    m_isMonitoringWheelEvents = isMonitoringWheelEvents;
+    m_dynamicState.isMonitoringWheelEvents = isMonitoringWheelEvents;
     setPropertyChanged(Property::IsMonitoringWheelEvents);
 }
 
 void ScrollingStateScrollingNode::setScrollContainerLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_scrollContainerLayer)
-        return;
-
-    m_scrollContainerLayer = layerRepresentation;
-    setPropertyChanged(Property::ScrollContainerLayer);
+    SET_COW_PROPERTY(m_staticConfigData, scrollContainerLayer, layerRepresentation, Property::ScrollContainerLayer);
 }
 
 void ScrollingStateScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)
 {
-    if (layerRepresentation == m_scrolledContentsLayer)
-        return;
-
-    m_scrolledContentsLayer = layerRepresentation;
-    setPropertyChanged(Property::ScrolledContentsLayer);
+    SET_COW_PROPERTY(m_staticConfigData, scrolledContentsLayer, layerRepresentation, Property::ScrolledContentsLayer);
 }
 
 void ScrollingStateScrollingNode::setHorizontalScrollbarLayer(const LayerRepresentation& layer)
 {
-    if (layer == m_horizontalScrollbarLayer)
-        return;
-
-    m_horizontalScrollbarLayer = layer;
-    setPropertyChanged(Property::HorizontalScrollbarLayer);
+    SET_COW_PROPERTY(m_staticConfigData, horizontalScrollbarLayer, layer, Property::HorizontalScrollbarLayer);
 }
 
 void ScrollingStateScrollingNode::setVerticalScrollbarLayer(const LayerRepresentation& layer)
 {
-    if (layer == m_verticalScrollbarLayer)
-        return;
-    m_verticalScrollbarLayer = layer;
-    setPropertyChanged(Property::VerticalScrollbarLayer);
+    SET_COW_PROPERTY(m_staticConfigData, verticalScrollbarLayer, layer, Property::VerticalScrollbarLayer);
 }
 
 #if !PLATFORM(MAC) && !USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
@@ -506,55 +547,50 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scro
 
 void ScrollingStateScrollingNode::setMouseIsOverContentArea(bool flag)
 {
-    if (flag == m_mouseIsOverContentArea)
+    if (flag == m_dynamicState.mouseIsOverContentArea)
         return;
 
-    m_mouseIsOverContentArea = flag;
+    m_dynamicState.mouseIsOverContentArea = flag;
     setPropertyChanged(Property::ContentAreaHoverState);
 }
 
 void ScrollingStateScrollingNode::setMouseMovedInContentArea(const MouseLocationState& mouseLocationState)
 {
-    m_mouseLocationState = mouseLocationState;
+    if (m_dynamicState.mouseLocationState == mouseLocationState)
+        return;
+    m_dynamicState.mouseLocationState = mouseLocationState;
     setPropertyChanged(Property::MouseActivityState);
 }
-    
+
 void ScrollingStateScrollingNode::setScrollbarHoverState(ScrollbarHoverState hoverState)
 {
-    if (hoverState == m_scrollbarHoverState)
+    if (hoverState == m_dynamicState.scrollbarHoverState)
         return;
 
-    m_scrollbarHoverState = hoverState;
+    m_dynamicState.scrollbarHoverState = hoverState;
     setPropertyChanged(Property::ScrollbarHoverState);
 }
 
 void ScrollingStateScrollingNode::setScrollbarEnabledState(ScrollbarOrientation orientation, bool enabled)
 {
-    if ((orientation == ScrollbarOrientation::Horizontal ? m_scrollbarEnabledState.horizontalScrollbarIsEnabled : m_scrollbarEnabledState.verticalScrollbarIsEnabled) == enabled)
+    bool& field = (orientation == ScrollbarOrientation::Horizontal)
+        ? m_scrollbarEnabledState.horizontalScrollbarIsEnabled
+        : m_scrollbarEnabledState.verticalScrollbarIsEnabled;
+    if (field == enabled)
         return;
-
-    if (orientation == ScrollbarOrientation::Horizontal)
-        m_scrollbarEnabledState.horizontalScrollbarIsEnabled = enabled;
-    else
-        m_scrollbarEnabledState.verticalScrollbarIsEnabled = enabled;
-
+    field = enabled;
     setPropertyChanged(Property::ScrollbarEnabledState);
 }
 
 void ScrollingStateScrollingNode::setScrollbarColor(std::optional<ScrollbarColor> state)
 {
-    if (state == m_scrollbarColor)
-        return;
-
-    m_scrollbarColor = state;
-    setPropertyChanged(Property::ScrollbarColor);
+    SET_COW_PROPERTY(m_staticConfigData, scrollbarColor, state, Property::ScrollbarColor);
 }
 
 void ScrollingStateScrollingNode::setScrollbarLayoutDirection(UserInterfaceLayoutDirection scrollbarLayoutDirection)
 {
     if (scrollbarLayoutDirection == m_scrollbarLayoutDirection)
         return;
-
     m_scrollbarLayoutDirection = scrollbarLayoutDirection;
     setPropertyChanged(Property::ScrollbarLayoutDirection);
 }
@@ -588,30 +624,33 @@ void ScrollingStateScrollingNode::setScrollbarOpacity(float scrollbarOpacity)
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
     ScrollingStateNode::dumpProperties(ts, behavior);
-    
-    if (!m_scrollPosition.isZero()) {
+
+    SUPPRESS_UNCOUNTED_LOCAL auto& layout = m_staticLayoutData.get();
+    SUPPRESS_UNCOUNTED_LOCAL auto& config = m_staticConfigData.get();
+
+    if (!m_dynamicState.scrollPosition.isZero()) {
         TextStream::GroupScope scope(ts);
         ts << "scroll position "_s
-            << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.x()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_scrollPosition.y());
+            << TextStream::FormatNumberRespectingIntegers(m_dynamicState.scrollPosition.x()) << " "
+            << TextStream::FormatNumberRespectingIntegers(m_dynamicState.scrollPosition.y());
     }
 
-    if (!m_scrollableAreaSize.isEmpty()) {
+    if (!layout.scrollableAreaSize.isEmpty()) {
         TextStream::GroupScope scope(ts);
         ts << "scrollable area size "_s
-            << TextStream::FormatNumberRespectingIntegers(m_scrollableAreaSize.width()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_scrollableAreaSize.height());
+            << TextStream::FormatNumberRespectingIntegers(layout.scrollableAreaSize.width()) << " "
+            << TextStream::FormatNumberRespectingIntegers(layout.scrollableAreaSize.height());
     }
 
-    if (!m_totalContentsSize.isEmpty()) {
+    if (!layout.totalContentsSize.isEmpty()) {
         TextStream::GroupScope scope(ts);
         ts << "contents size "_s
-            << TextStream::FormatNumberRespectingIntegers(m_totalContentsSize.width()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_totalContentsSize.height());
+            << TextStream::FormatNumberRespectingIntegers(layout.totalContentsSize.width()) << " "
+            << TextStream::FormatNumberRespectingIntegers(layout.totalContentsSize.height());
     }
 
-    if (m_reachableContentsSize != m_totalContentsSize)
-        ts.dumpProperty("reachable contents size"_s, m_reachableContentsSize);
+    if (layout.reachableContentsSize != layout.totalContentsSize)
+        ts.dumpProperty("reachable contents size"_s, layout.reachableContentsSize);
 
     auto dumpRequest = [&](const RequestedScrollData& request) {
         if (request.requestType == ScrollRequestType::PositionUpdate || request.requestType == ScrollRequestType::AnimatedPositionUpdate) {
@@ -648,42 +687,44 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
     for (auto& request : m_requestedScrollData)
         dumpRequest(request);
 
-    if (!m_scrollOrigin.isZero())
-        ts.dumpProperty("scroll origin"_s, m_scrollOrigin);
+    if (!config.scrollOrigin.isZero())
+        ts.dumpProperty("scroll origin"_s, config.scrollOrigin);
 
-    if (m_snapOffsetsInfo.horizontalSnapOffsets.size())
-        ts.dumpProperty("horizontal snap offsets"_s, m_snapOffsetsInfo.horizontalSnapOffsets);
+    if (layout.snapOffsetsInfo.horizontalSnapOffsets.size())
+        ts.dumpProperty("horizontal snap offsets"_s, layout.snapOffsetsInfo.horizontalSnapOffsets);
 
-    if (m_snapOffsetsInfo.verticalSnapOffsets.size())
-        ts.dumpProperty("vertical snap offsets"_s, m_snapOffsetsInfo.verticalSnapOffsets);
+    if (layout.snapOffsetsInfo.verticalSnapOffsets.size())
+        ts.dumpProperty("vertical snap offsets"_s, layout.snapOffsetsInfo.verticalSnapOffsets);
 
-    if (m_currentHorizontalSnapPointIndex)
-        ts.dumpProperty("current horizontal snap point index"_s, m_currentHorizontalSnapPointIndex);
+    if (m_dynamicState.currentHorizontalSnapPointIndex)
+        ts.dumpProperty("current horizontal snap point index"_s, m_dynamicState.currentHorizontalSnapPointIndex);
 
-    if (m_currentVerticalSnapPointIndex)
-        ts.dumpProperty("current vertical snap point index"_s, m_currentVerticalSnapPointIndex);
+    if (m_dynamicState.currentVerticalSnapPointIndex)
+        ts.dumpProperty("current vertical snap point index"_s, m_dynamicState.currentVerticalSnapPointIndex);
 
-    ts.dumpProperty("scrollable area parameters"_s, m_scrollableAreaParameters);
+    ts.dumpProperty("scrollable area parameters"_s, config.scrollableAreaParameters);
 
 #if ENABLE(SCROLLING_THREAD)
-    if (!m_synchronousScrollingReasons.isEmpty())
-        ts.dumpProperty("Scrolling on main thread because:"_s, ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
+    if (!config.synchronousScrollingReasons.isEmpty())
+        ts.dumpProperty("Scrolling on main thread because:"_s, ScrollingCoordinator::synchronousScrollingReasonsAsText(config.synchronousScrollingReasons));
 #endif
 
     if (m_useDarkAppearanceForScrollbars)
         ts.dumpProperty("uses dark appearance for scrollbars"_s, m_useDarkAppearanceForScrollbars);
 
-    if (m_isMonitoringWheelEvents)
-        ts.dumpProperty("expects wheel event test trigger"_s, m_isMonitoringWheelEvents);
+    if (m_dynamicState.isMonitoringWheelEvents)
+        ts.dumpProperty("expects wheel event test trigger"_s, m_dynamicState.isMonitoringWheelEvents);
 
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeLayerIDs) {
-        if (m_scrollContainerLayer.layerID())
-            ts.dumpProperty("scroll container layer"_s, m_scrollContainerLayer.layerID());
-        if (m_scrolledContentsLayer.layerID())
-            ts.dumpProperty("scrolled contents layer"_s, m_scrolledContentsLayer.layerID());
+        if (config.scrollContainerLayer.layerID())
+            ts.dumpProperty("scroll container layer"_s, config.scrollContainerLayer.layerID());
+        if (config.scrolledContentsLayer.layerID())
+            ts.dumpProperty("scrolled contents layer"_s, config.scrolledContentsLayer.layerID());
     }
 }
 
 } // namespace WebCore
+
+#undef SET_COW_PROPERTY
 
 #endif // ENABLE(ASYNC_SCROLLING)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,11 +47,11 @@ public:
     virtual ~ScrollingStatePositionedNode();
 
     // These are the overflow scrolling nodes whose scroll position affects the layers in this node.
-    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const LIFETIME_BOUND { return m_relatedOverflowScrollingNodes; }
+    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const LIFETIME_BOUND { return m_staticLayoutData->relatedOverflowScrollingNodes; }
     WEBCORE_EXPORT void setRelatedOverflowScrollingNodes(Vector<ScrollingNodeID>&&);
 
     WEBCORE_EXPORT void updateConstraints(const AbsolutePositionConstraints&);
-    const AbsolutePositionConstraints& layoutConstraints() const LIFETIME_BOUND { return m_constraints; }
+    const AbsolutePositionConstraints& layoutConstraints() const LIFETIME_BOUND { return m_staticLayoutData->constraints; }
 
 private:
     WEBCORE_EXPORT ScrollingStatePositionedNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, Vector<ScrollingNodeID>&&, AbsolutePositionConstraints&&);
@@ -60,9 +60,28 @@ private:
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
+    bool hasUnchangedGroupsAs(const ScrollingStateNode&) const final;
 
-    Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
-    AbsolutePositionConstraints m_constraints;
+    // Layout-derived positioned-node state. CoW-shared via DataRef.
+    class StaticLayoutPositionedState : public ThreadSafeRefCounted<StaticLayoutPositionedState> {
+    public:
+        static Ref<StaticLayoutPositionedState> create() { return adoptRef(*new StaticLayoutPositionedState); }
+        Ref<StaticLayoutPositionedState> copy() const { return adoptRef(*new StaticLayoutPositionedState(*this)); }
+
+        Vector<ScrollingNodeID> relatedOverflowScrollingNodes;
+        AbsolutePositionConstraints constraints;
+
+    private:
+        StaticLayoutPositionedState() = default;
+        StaticLayoutPositionedState(const StaticLayoutPositionedState& other)
+            : ThreadSafeRefCounted<StaticLayoutPositionedState>()
+            , relatedOverflowScrollingNodes(other.relatedOverflowScrollingNodes)
+            , constraints(other.constraints)
+        {
+        }
+    };
+
+    DataRef<StaticLayoutPositionedState> m_staticLayoutData { StaticLayoutPositionedState::create() };
 };
 
 } // namespace WebCore

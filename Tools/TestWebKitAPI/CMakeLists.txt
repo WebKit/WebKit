@@ -248,6 +248,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/RegionTests.cpp
         Tests/WebCore/RenderStyleChange.cpp
+        Tests/WebCore/ScrollingStateTreeCommit.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/ShareableBitmap.cpp
         Tests/WebCore/SharedBuffer.cpp

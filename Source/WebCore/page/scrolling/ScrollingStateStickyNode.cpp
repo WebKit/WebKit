@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,10 @@
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
+#include <wtf/DataRef.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -45,9 +49,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateStickyNode);
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, StickyPositionViewportConstraints&& constraints, LayerRepresentation&& viewportAnchorLayer)
     : ScrollingStateNode(ScrollingNodeType::Sticky, nodeID, WTF::move(children), changedProperties, layerID)
-    , m_constraints(WTF::move(constraints))
-    , m_viewportAnchorLayer(WTF::move(viewportAnchorLayer))
 {
+    m_staticLayoutData.access().constraints = WTF::move(constraints);
+    m_staticConfigData.access().viewportAnchorLayer = WTF::move(viewportAnchorLayer);
 }
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
@@ -57,7 +61,8 @@ ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, Scr
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(const ScrollingStateStickyNode& node, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(node, adoptiveTree)
-    , m_constraints(StickyPositionViewportConstraints(node.viewportConstraints()))
+    , m_staticLayoutData(node.m_staticLayoutData)
+    , m_staticConfigData(node.m_staticConfigData)
 {
     if (hasChangedProperty(Property::ViewportAnchorLayer))
         setViewportAnchorLayer(node.viewportAnchorLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -82,28 +87,54 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateStickyNode::applicableProp
     return properties;
 }
 
+bool ScrollingStateStickyNode::hasUnchangedGroupsAs(const ScrollingStateNode& other) const
+{
+    if (!ScrollingStateNode::hasUnchangedGroupsAs(other))
+        return false;
+    auto& otherSticky = downcast<ScrollingStateStickyNode>(other);
+    if (m_staticLayoutData.ptr() != otherSticky.m_staticLayoutData.ptr())
+        return false;
+    if (m_staticConfigData.ptr() != otherSticky.m_staticConfigData.ptr())
+        return false;
+    return true;
+}
+
+void ScrollingStateStickyNode::clearLayerFieldsForUnchangedProperties()
+{
+    if (hasChangedProperty(Property::ViewportAnchorLayer) || !m_staticConfigData->viewportAnchorLayer)
+        return;
+    m_staticConfigData.access().viewportAnchorLayer = { };
+}
+
+#if ASSERT_ENABLED
+void ScrollingStateStickyNode::verifyClearedLayerFieldsForUnchangedProperties() const
+{
+    ASSERT(hasChangedProperty(Property::ViewportAnchorLayer) || !m_staticConfigData->viewportAnchorLayer);
+}
+#endif
 void ScrollingStateStickyNode::setViewportAnchorLayer(const LayerRepresentation& layer)
 {
-    if (layer == m_viewportAnchorLayer)
+    if (layer == m_staticConfigData->viewportAnchorLayer)
         return;
 
-    m_viewportAnchorLayer = layer;
+    m_staticConfigData.access().viewportAnchorLayer = layer;
     setPropertyChanged(Property::ViewportAnchorLayer);
 }
 
 void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)
 {
-    if (m_constraints == constraints)
+    if (m_staticLayoutData->constraints == constraints)
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateStickyNode " << scrollingNodeID() << " updateConstraints with constraining rect " << constraints.constrainingRectAtLastLayout() << " sticky offset " << constraints.stickyOffsetAtLastLayout() << " layer pos at last layout " << constraints.layerPositionAtLastLayout());
 
-    m_constraints = constraints;
+    m_staticLayoutData.access().constraints = constraints;
     setPropertyChanged(Property::ViewportConstraints);
 }
 
 FloatPoint ScrollingStateStickyNode::computeAnchorLayerPosition(const LayoutRect& viewportRect) const
 {
+    auto& constraints = m_staticLayoutData->constraints;
     // This logic follows ScrollingTreeStickyNode::computeConstrainingRectAndAnchorLayerPosition().
     FloatSize offsetFromStickyAncestors;
     auto computeLayerPositionForScrollingNode = [&](ScrollingStateNode& scrollingStateNode) {
@@ -111,10 +142,10 @@ FloatPoint ScrollingStateStickyNode::computeAnchorLayerPosition(const LayoutRect
         if (is<ScrollingStateFrameScrollingNode>(scrollingStateNode))
             constrainingRect = viewportRect;
         else if (auto* overflowScrollingNode = dynamicDowncast<ScrollingStateOverflowScrollingNode>(scrollingStateNode))
-            constrainingRect = FloatRect(overflowScrollingNode->scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+            constrainingRect = FloatRect(overflowScrollingNode->scrollPosition(), constraints.constrainingRectAtLastLayout().size());
 
         constrainingRect.move(offsetFromStickyAncestors);
-        return m_constraints.anchorLayerPositionForConstrainingRect(constrainingRect);
+        return constraints.anchorLayerPositionForConstrainingRect(constrainingRect);
     };
 
     for (auto ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
@@ -134,11 +165,11 @@ FloatPoint ScrollingStateStickyNode::computeAnchorLayerPosition(const LayoutRect
 
         if (is<ScrollingStateFixedNode>(*ancestor)) {
             // FIXME: Do we need scrolling tree nodes at all for nested cases?
-            return m_constraints.layerPositionAtLastLayout();
+            return constraints.layerPositionAtLastLayout();
         }
     }
     ASSERT_NOT_REACHED();
-    return m_constraints.layerPositionAtLastLayout();
+    return constraints.layerPositionAtLastLayout();
 }
 
 FloatPoint ScrollingStateStickyNode::computeClippingLayerPosition(const LayoutRect& viewportRect) const
@@ -148,7 +179,7 @@ FloatPoint ScrollingStateStickyNode::computeClippingLayerPosition(const LayoutRe
         return { };
     }
 
-    return m_constraints.viewportRelativeLayerPosition(viewportRect);
+    return m_staticLayoutData->constraints.viewportRelativeLayerPosition(viewportRect);
 }
 
 void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
@@ -161,7 +192,7 @@ void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const Layou
         if (!layer)
             return;
 
-        LOG_WITH_STREAM(Compositing, stream << "ScrollingStateStickyNode " << scrollingNodeID() << " reconcileLayerPositionForViewportRect " << action << " position of layer " << layer->primaryLayerID() << " to " << position << " sticky offset " << m_constraints.stickyOffsetAtLastLayout());
+        LOG_WITH_STREAM(Compositing, stream << "ScrollingStateStickyNode " << scrollingNodeID() << " reconcileLayerPositionForViewportRect " << action << " position of layer " << layer->primaryLayerID() << " to " << position << " sticky offset " << m_staticLayoutData->constraints.stickyOffsetAtLastLayout());
 
         switch (action) {
         case ScrollingLayerPositionAction::Set:
@@ -189,12 +220,13 @@ void ScrollingStateStickyNode::reconcileLayerPositionForViewportRect(const Layou
 
 bool ScrollingStateStickyNode::hasViewportClippingLayer() const
 {
-    return m_viewportAnchorLayer && layer() != m_viewportAnchorLayer;
+    auto& anchor = m_staticConfigData->viewportAnchorLayer;
+    return anchor && layer() != anchor;
 }
 
 FloatSize ScrollingStateStickyNode::scrollDeltaSinceLastCommit(const LayoutRect& viewportRect) const
 {
-    return computeAnchorLayerPosition(viewportRect) - m_constraints.anchorLayerPositionAtLastLayout();
+    return computeAnchorLayerPosition(viewportRect) - m_staticLayoutData->constraints.anchorLayerPositionAtLastLayout();
 }
 
 void ScrollingStateStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
@@ -202,37 +234,39 @@ void ScrollingStateStickyNode::dumpProperties(TextStream& ts, OptionSet<Scrollin
     ts << "Sticky node"_s;
     ScrollingStateNode::dumpProperties(ts, behavior);
 
-    if (m_constraints.anchorEdges()) {
+    auto& constraints = m_staticLayoutData->constraints;
+
+    if (constraints.anchorEdges()) {
         TextStream::GroupScope scope(ts);
         ts << "anchor edges: "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
             ts << "AnchorEdgeLeft "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
             ts << "AnchorEdgeRight "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
             ts << "AnchorEdgeTop "_s;
-        if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
+        if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
             ts << "AnchorEdgeBottom"_s;
     }
 
-    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
-        ts.dumpProperty("left offset"_s, m_constraints.leftOffset());
-    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
-        ts.dumpProperty("right offset"_s, m_constraints.rightOffset());
-    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
-        ts.dumpProperty("top offset"_s, m_constraints.topOffset());
-    if (m_constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
-        ts.dumpProperty("bottom offset"_s, m_constraints.bottomOffset());
+    if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeLeft))
+        ts.dumpProperty("left offset"_s, constraints.leftOffset());
+    if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeRight))
+        ts.dumpProperty("right offset"_s, constraints.rightOffset());
+    if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeTop))
+        ts.dumpProperty("top offset"_s, constraints.topOffset());
+    if (constraints.hasAnchorEdge(ViewportConstraints::AnchorEdgeBottom))
+        ts.dumpProperty("bottom offset"_s, constraints.bottomOffset());
 
-    ts.dumpProperty("containing block rect"_s, m_constraints.containingBlockRect());
+    ts.dumpProperty("containing block rect"_s, constraints.containingBlockRect());
 
-    ts.dumpProperty("sticky box rect"_s, m_constraints.stickyBoxRect());
+    ts.dumpProperty("sticky box rect"_s, constraints.stickyBoxRect());
 
-    ts.dumpProperty("constraining rect"_s, m_constraints.constrainingRectAtLastLayout());
+    ts.dumpProperty("constraining rect"_s, constraints.constrainingRectAtLastLayout());
 
-    ts.dumpProperty("sticky offset at last layout"_s, m_constraints.stickyOffsetAtLastLayout());
+    ts.dumpProperty("sticky offset at last layout"_s, constraints.stickyOffsetAtLastLayout());
 
-    ts.dumpProperty("layer position at last layout"_s, m_constraints.layerPositionAtLastLayout());
+    ts.dumpProperty("layer position at last layout"_s, constraints.layerPositionAtLastLayout());
 }
 
 } // namespace WebCore

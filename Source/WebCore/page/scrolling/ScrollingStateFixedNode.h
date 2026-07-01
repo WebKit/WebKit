@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ public:
     virtual ~ScrollingStateFixedNode();
 
     WEBCORE_EXPORT void updateConstraints(const FixedPositionViewportConstraints&);
-    const FixedPositionViewportConstraints& viewportConstraints() const LIFETIME_BOUND { return m_constraints; }
+    const FixedPositionViewportConstraints& viewportConstraints() const LIFETIME_BOUND { return m_staticLayoutData->constraints; }
 
 private:
     WEBCORE_EXPORT ScrollingStateFixedNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, FixedPositionViewportConstraints&&);
@@ -57,8 +57,26 @@ private:
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
+    bool hasUnchangedGroupsAs(const ScrollingStateNode&) const final;
 
-    FixedPositionViewportConstraints m_constraints;
+    // Layout-derived fixed-node state. CoW-shared via DataRef.
+    class StaticLayoutFixedState : public ThreadSafeRefCounted<StaticLayoutFixedState> {
+    public:
+        static Ref<StaticLayoutFixedState> create() { return adoptRef(*new StaticLayoutFixedState); }
+        Ref<StaticLayoutFixedState> copy() const { return adoptRef(*new StaticLayoutFixedState(*this)); }
+
+        FixedPositionViewportConstraints constraints;
+
+    private:
+        StaticLayoutFixedState() = default;
+        StaticLayoutFixedState(const StaticLayoutFixedState& other)
+            : ThreadSafeRefCounted<StaticLayoutFixedState>()
+            , constraints(other.constraints)
+        {
+        }
+    };
+
+    DataRef<StaticLayoutFixedState> m_staticLayoutData { StaticLayoutFixedState::create() };
 };
 
 } // namespace WebCore

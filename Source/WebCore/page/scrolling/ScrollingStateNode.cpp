@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,6 +141,26 @@ Ref<ScrollingStateNode> ScrollingStateNode::cloneAndReset(ScrollingStateTree& ad
     cloneAndResetChildren(clone.get(), adoptiveTree);
 
     return clone;
+}
+
+bool ScrollingStateNode::hasUnchangedGroupsAs(const ScrollingStateNode& other) const
+{
+    // The only caller (ScrollingStateTree::commit) reaches `other` via
+    // m_lastCommittedTree->stateNodeForID(this->scrollingNodeID()), so node IDs match by
+    // construction. Node types are stable per ID — a type change destroys the node and
+    // re-creates it with a new ID (see ScrollingStateTree::createUnparentedNode). Both
+    // invariants are debug-asserted; the runtime returns true so subclass overrides can
+    // downcast `other` to their concrete type without an extra runtime check.
+    //
+    // m_layer is intentionally not part of this comparison. The clone path's
+    // toRepresentation translation is gated on Property::Layer, so a snapshot taken after
+    // properties are reset cannot faithfully reproduce m_layer. Layer changes propagate
+    // through Property::Layer in m_changedProperties (existing IPC path) and, for partitioned
+    // subclasses, through DataRef-shared static-config layer fields.
+    ASSERT(m_nodeID == other.m_nodeID);
+    ASSERT(m_nodeType == other.m_nodeType);
+    UNUSED_PARAM(other);
+    return true;
 }
 
 void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode& clone, ScrollingStateTree& adoptiveTree)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,6 +97,9 @@ public:
     FrameIdentifier rootFrameIdentifier() const { return *m_rootFrameIdentifier; }
     void setRootFrameIdentifier(std::optional<FrameIdentifier> frameID) { m_rootFrameIdentifier = frameID; }
 
+    // Diagnostic/testing accessor: node IDs whose copy-on-write groups changed during the most recent commit() call.
+    const Vector<ScrollingNodeID>& dirtyNodeIDsFromLastCommit() const LIFETIME_BOUND { return m_dirtyNodeIDsFromLastCommit; }
+
 private:
     ScrollingStateTree(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&&);
 
@@ -122,6 +125,17 @@ private:
     HashMap<ScrollingNodeID, Ref<ScrollingStateNode>> m_unparentedNodes;
 
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
+
+    // Snapshot of the most recently committed tree, used by commit() to detect which nodes' copy-on-write groups
+    // have changed since the last commit. Owned (separate clone from the unique_ptr returned to the caller).
+    // The static groups are shared by DataRef (a ref-count bump), so this duplicates only the per-node object
+    // plus dynamic/requested state (order of a few hundred bytes per node), not the whole tree. A second such
+    // clone is built on every non-idle commit — a deliberate tradeoff to power the dirty-node diagnostic.
+    std::unique_ptr<ScrollingStateTree> m_lastCommittedTree;
+
+    // Cached output of the dirty-node detection from the most recent commit().
+    Vector<ScrollingNodeID> m_dirtyNodeIDsFromLastCommit;
+
     unsigned m_scrollingNodeCount { 0 };
     LayerRepresentation::Type m_preferredLayerRepresentation { LayerRepresentation::GraphicsLayerRepresentation };
     bool m_hasChangedProperties { false };

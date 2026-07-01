@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -262,6 +262,16 @@ public:
     virtual Ref<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
     Ref<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
     void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);
+
+    virtual bool hasUnchangedGroupsAs(const ScrollingStateNode& other) const;
+    virtual void clearLayerFieldsForUnchangedProperties() { }
+
+#if ASSERT_ENABLED
+    // Debug-only verification of the clearLayerFieldsForUnchangedProperties contract. Asserts
+    // that for every layer field in the node's copy-on-write static-config group, either the
+    // corresponding Property::XxxLayer bit is set on this clone or the field is empty.
+    virtual void verifyClearedLayerFieldsForUnchangedProperties() const { }
+#endif
     
     bool hasChangedProperties() const { return !m_changedProperties.isEmpty(); }
     bool hasChangedProperty(Property property) const { return m_changedProperties.contains(property); }
