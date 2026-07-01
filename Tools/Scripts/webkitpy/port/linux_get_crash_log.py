@@ -180,6 +180,12 @@ class CrashLogEnvVars(StrEnum):
 
 class CrashLogUtils:
 
+    # Prefix used for renaming the coredumps when autodeletion is enabled using method Abspath.
+    # The renaming happens before generating the backtrace with gdb, so so no other concurrent
+    # worker selects it meanwhile. The prefix breaks the core_pattern match and is explicitly
+    # skipped by the selection scan. Stale files are cleaned also by clean_old_coredumps().
+    CLAIMED_COREDUMP_PREFIX = '.webkit_cdump_'
+
     @staticmethod
     def get_gdb_concurrent_execution_limit():
         # 0 means no limit
@@ -396,6 +402,24 @@ class CrashLogUtils:
         return f'{fmt(logical)} (sparse, {fmt(actual)} on disk)'
 
     @staticmethod
+    def safe_getmtime(path):
+        # wrapper for os.path.getmtime that tolerates the file disappearing.
+        # With WEBKIT_CORE_DUMPS_AUTODELETE=1 and several workers running a file enumerated
+        # by os.listdir() can be removed by another worker (after processing its own core)
+        # before this worker stats it. Returns None instead of crashing in that case.
+        try:
+            return os.path.getmtime(path)
+        except OSError:
+            return None
+
+    @staticmethod
+    def most_recent_existing(paths):
+        # Most recently modified path that still exists, or None.
+        # Same than max(paths, key=os.path.getmtime), but ignoring paths gone.
+        stamped = [(mtime, p) for p in paths if (mtime := CrashLogUtils.safe_getmtime(p)) is not None]
+        return max(stamped)[1] if stamped else None
+
+    @staticmethod
     def make_temp_path(suffix='', prefix='tmp', dir=None):
         # Safe replacement for the deprecated tempfile.mktemp().
         fd, path = tempfile.mkstemp(suffix=suffix, prefix=prefix, dir=dir)
@@ -518,10 +542,15 @@ class ThreadNamesCrashLogCapturer(object):
     def handle_coredump(self, pid):
         # Called in a dedicated thread as soon as the coredump file is created.
         # Reads thread info and writes it to the threadinfo-${pid}.txt
+        pid = str(pid)
         timestamp = datetime.datetime.now().isoformat(timespec='seconds')
         thread_info = self.read_thread_info(pid)
+        # /proc/{pid}/task/{pid}/comm is the same as /proc/{pid}/comm
+        program_name = thread_info.get(pid, '<unknown>') if thread_info else '<unknown>'
+        num_threads = len(thread_info) if thread_info else 0
+        thread_s = 'thread' if num_threads == 1 else 'threads'
         output_path = os.path.join(self._webkit_thread_info_crashlog_dir, CrashLogUtils.get_thread_info_file_name(pid))
-        _log.debug(f'Coredump detected for PID {pid}, saving "/proc/{pid}/task" info to "{output_path}" ...')
+        _log.debug(f'Coredump detected for PID {pid} ({program_name}), saving thread name info for {num_threads} {thread_s} from "/proc/{pid}/task" to "{output_path}" ...')
         try:
             with open(output_path, 'w') as f:
                 f.write(f'# Thread info captured at {timestamp}\n')
@@ -536,8 +565,9 @@ class ThreadNamesCrashLogCapturer(object):
                     # https://www.man7.org/linux/man-pages/man5/proc_pid_task.5.html
                     f.write(f'# WARNING: No threads found under /proc/{pid}/task (maybe main thread exited before the crash).\n')
                 else:
-                    f.write(f'# Number of threads: {len(thread_info)}\n')
+                    f.write(f'# Number of threads: {num_threads}\n')
                     f.write(f'# PID: {pid}\n')
+                    f.write(f'# Program name: {program_name}\n')
                     f.write('\n')
                     f.write(f'{"LWP/TID":<12} {"Thread Name"}\n')
                     f.write(f'{"-"*12} {"-"*20}\n')
@@ -576,10 +606,16 @@ class GDBCrashLogStartupHandler(object):
 
     def _maybe_remove_file_if_old(self, path):
         # Define old as "more than 30 minutes"
-        is_old = (time.time() - os.path.getmtime(path)) > 1800
+        mtime = CrashLogUtils.safe_getmtime(path)
+        if mtime is None:
+            return  # already gone (another worker cleaned it)
+        is_old = (time.time() - mtime) > 1800
         if is_old:
             _log.debug(f'Cleaning old file at: {path}')
-            os.remove(path)
+            try:
+                os.remove(path)
+            except OSError:
+                pass  # likely another worker already removed it
         else:
             _log.debug(f'Skipping non-old file at: {path}')
 
@@ -620,7 +656,7 @@ class GDBCrashLogStartupHandler(object):
     def clean_old_coredumps(self):
         candidate_coredumps = [os.path.join(self._coredump_directory, f) for f in os.listdir(self._coredump_directory) if os.path.isfile(os.path.join(self._coredump_directory, f))]
         pattern_re = re.compile(CrashLogUtils.core_pattern_to_regex(self._coredump_pattern))
-        candidate_coredumps = [f for f in candidate_coredumps if pattern_re.fullmatch(os.path.basename(f))]
+        candidate_coredumps = [f for f in candidate_coredumps if pattern_re.fullmatch(os.path.basename(f)) or os.path.basename(f).startswith(CrashLogUtils.CLAIMED_COREDUMP_PREFIX)]
         for coredump in candidate_coredumps:
             self._maybe_remove_file_if_old(coredump)
 
@@ -734,7 +770,9 @@ class GDBCrashLogGenerator(object):
     def _pick_most_recent(self, candidates, **warning_kwargs):
         if not candidates:
             return None
-        coredump_match_candidate = max(candidates, key=os.path.getmtime)
+        coredump_match_candidate = CrashLogUtils.most_recent_existing(candidates)
+        if coredump_match_candidate is None:
+            return None  # all candidates were deleted by another worker
         m = self._regex_for_core_pattern.fullmatch(os.path.basename(coredump_match_candidate))
         if not m:
             return None
@@ -745,9 +783,9 @@ class GDBCrashLogGenerator(object):
     def _get_coredump_path_with_core_pattern_method(self):
         can_match_by_pid = self._pid_is_valid() and self._coredump_pattern_has_pid_format_string()
         for try_number in range(2):
-            candidate_coredumps = [os.path.join(self._coredump_directory, f) for f in os.listdir(self._coredump_directory) if os.path.isfile(os.path.join(self._coredump_directory, f))]
+            candidate_coredumps = [os.path.join(self._coredump_directory, f) for f in os.listdir(self._coredump_directory) if os.path.isfile(os.path.join(self._coredump_directory, f)) and not f.startswith(CrashLogUtils.CLAIMED_COREDUMP_PREFIX)]
             pattern_re = re.compile(CrashLogUtils.core_pattern_to_regex(self._coredump_pattern))
-            candidate_coredumps = [f for f in candidate_coredumps if pattern_re.fullmatch(os.path.basename(f)) and (not self.newer_than or os.path.getmtime(f) > self.newer_than)]
+            candidate_coredumps = [f for f in candidate_coredumps if pattern_re.fullmatch(os.path.basename(f)) and (not self.newer_than or ((mt := CrashLogUtils.safe_getmtime(f)) is not None and mt > self.newer_than))]
 
             # If we have a pid number then return the last file that matches the pid number ignoring the other format specifiers from core_pattern (if any)
             if can_match_by_pid:
@@ -758,8 +796,10 @@ class GDBCrashLogGenerator(object):
                         pid_matches.append(coredump)
 
                 if pid_matches:
-                    self._effective_coredump_pid = self.pid
-                    return max(pid_matches, key=os.path.getmtime), self._build_warning_msg(pid_found=True)
+                    chosen = CrashLogUtils.most_recent_existing(pid_matches)
+                    if chosen is not None:
+                        self._effective_coredump_pid = self.pid
+                        return chosen, self._build_warning_msg(pid_found=True)
 
                 # If match by pid doesn't happen then sleep and retry once.
                 # This may help if the system is under high stress and this code runs before the kernel starts to write the coredump to disk
@@ -941,17 +981,22 @@ class GDBCrashLogGenerator(object):
             hmsg = hmsg.replace(tip_msg, 'No coredump was generated. Environment seems correctly configured for coredump generation. Cause unknown.\n')
         return hmsg
 
-    def _get_thread_info_for_effective_pid(self):
+    def _get_thread_info_for_effective_pid(self, coredump_found_matches_pid):
         if self._effective_coredump_pid:
             thread_info_file = os.path.join(self._webkit_thread_info_crashlog_dir, CrashLogUtils.get_thread_info_file_name(self._effective_coredump_pid))
-            if os.path.isfile(thread_info_file):
+            try:
                 with open(thread_info_file, 'r') as f:
                     thread_info_content = f.read()
-                # Clean it: we only need it once
-                os.remove(thread_info_file)
-                return thread_info_content
-            return f"Thread names not available: could not find thread naming info for pid {self._effective_coredump_pid}.\n" +\
-                   f"The thread_info_file was not found at {thread_info_file}\n"
+            except OSError as e:
+                # Not written yet, or removed by another worker that selected the same coredump.
+                return f"Thread names not available: could not find thread naming info for pid {self._effective_coredump_pid}.\n" +\
+                       f"Unable to open thread_info_file at {thread_info_file}: {e}\n"
+            try:
+                if coredump_found_matches_pid:
+                    os.remove(thread_info_file)
+            except OSError:
+                pass
+            return thread_info_content
         return f"Thread names not available: could not find the effective pid for the coredump."
 
     def _pid_representation(self):
@@ -1022,17 +1067,43 @@ class GDBCrashLogGenerator(object):
 
         coredump_path, warnings_found = self._get_coredump_path()
         coredump_path_was_found = coredump_path and os.path.isfile(coredump_path)
+        coredump_found_matches_pid = coredump_path_was_found and self._pid_is_valid() and str(self.pid) == str(self._effective_coredump_pid)
         if coredump_path_was_found:
-            coredump_hr_size = CrashLogUtils.human_readable_size(coredump_path)
-            should_delete_coredump = self._coredump_method == CoreDumpMethod.Coredumpctl or os.environ.get(CrashLogEnvVars.core_dumps_autodelete, '0') == '1'
+            coredump_removed_during_processing = False
             try:
-                gdb_backtrace, gdb_stderr, time_output = self._get_gdb_output(coredump_path)
-            finally:
-                if should_delete_coredump:
+                coredump_hr_size = CrashLogUtils.human_readable_size(coredump_path)
+            except OSError:
+                # The core vanished after selection (deleted by another worker that selected
+                # the same name/fallback match, or by the periodic cleanup). We already know
+                # it's gone, so don't claim it by renaming nor spawn gdb on a missing file.
+                coredump_hr_size = "unknown (coredump removed during processing)"
+                coredump_removed_during_processing = True
+            should_delete_coredump = self._coredump_method == CoreDumpMethod.Coredumpctl or (os.environ.get(CrashLogEnvVars.core_dumps_autodelete, '0') == '1' and coredump_found_matches_pid)
+
+            if coredump_removed_during_processing:
+                gdb_backtrace = "Coredump was found during selection but removed (by another worker or the periodic cleanup) before it could be processed.\n"
+            else:
+                gdb_coredump_path = coredump_path
+                if should_delete_coredump and self._coredump_method == CoreDumpMethod.Abspath and coredump_found_matches_pid:
+                    # We are sure this coredump is ours (matched by pid) and we are going to delete it after processing.
+                    # Claim it by renaming it out of the way before the slow gdb run, so no other concurrent worker wastes time selecting it.
+                    # Only for the abspath method (coredumpctl method already dumps to a private temp file).
+                    claimed_path = os.path.join(os.path.dirname(coredump_path), CrashLogUtils.CLAIMED_COREDUMP_PREFIX + os.path.basename(coredump_path))
                     try:
-                        os.remove(coredump_path)
+                        os.rename(coredump_path, claimed_path)
+                        gdb_coredump_path = claimed_path
                     except OSError as e:
-                        _log.error(f'Could not remove {coredump_path}: {e}')
+                        # e.g. the dir spans a different filesystem (EXDEV) or it vanished. Not
+                        # fatal: just process it in place as before.
+                        _log.warning(f'Could not claim coredump {coredump_path} by renaming it to {claimed_path}: {e}. Processing it in place.')
+                try:
+                    gdb_backtrace, gdb_stderr, time_output = self._get_gdb_output(gdb_coredump_path)
+                finally:
+                    if should_delete_coredump:
+                        try:
+                            os.remove(gdb_coredump_path)
+                        except OSError as e:
+                            _log.error(f'Could not remove {gdb_coredump_path}: {e}')
 
         if test_stderr:
             test_stderr = self._filter_with_cppfilt(test_stderr)
@@ -1044,7 +1115,7 @@ class GDBCrashLogGenerator(object):
         if not gdb_backtrace:
             gdb_backtrace = self._get_help_message()
 
-        thread_info_data = self._get_thread_info_for_effective_pid()
+        thread_info_data = self._get_thread_info_for_effective_pid(coredump_found_matches_pid)
 
         seconds_elapsed = time.monotonic() - timestamp_start
         # All data gathered, now print it
