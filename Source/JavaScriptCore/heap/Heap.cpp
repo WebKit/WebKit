@@ -1231,6 +1231,10 @@ void Heap::clearConcurrentRetainedDataIfPossible()
 
     if (!m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.size())
         return;
+
+    // The mutator needs to be fenced while marking and marker threads can access StringImpl::costDuringGC so we have to keep the Impls alive.
+    if (mutatorShouldBeFenced())
+        return;
 #if ENABLE(JIT)
     auto* worklist = JITWorklist::existingGlobalWorklistOrNull();
     // We need to make sure no JIT thread could be looking at one of our old strings. Any thread that starts after
