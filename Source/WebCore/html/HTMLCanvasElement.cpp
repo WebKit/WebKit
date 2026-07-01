@@ -623,8 +623,6 @@ void HTMLCanvasElement::didUpdateSizeProperties()
     // If the size of an existing buffer matches, we can just clear it instead of reallocating.
     // This optimization is only done for 2D canvases for now.
     if (hasCreatedImageBuffer() && oldSize == newSize && m_context && m_context->is2d() && buffer() && m_context->colorSpace() == buffer()->colorSpace() && m_context->pixelFormat() == buffer()->pixelFormat()) {
-        if (!m_didClearImageBuffer)
-            clearImageBuffer();
         return;
     }
 
@@ -899,7 +897,6 @@ void HTMLCanvasElement::createImageBuffer() const
     ASSERT(!hasCreatedImageBuffer());
 
     const_cast<HTMLCanvasElement*>(this)->setHasCreatedImageBuffer(true);
-    m_didClearImageBuffer = true;
     setImageBuffer(allocateImageBuffer());
 
 #if USE(CA) || USE(SKIA)
@@ -947,24 +944,9 @@ Image* HTMLCanvasElement::copiedImage() const
     return m_copiedImage.get();
 }
 
-void HTMLCanvasElement::clearImageBuffer() const
-{
-    ASSERT(hasCreatedImageBuffer());
-    ASSERT(!m_didClearImageBuffer);
-    ASSERT(m_context);
-
-    m_didClearImageBuffer = true;
-
-    if (RefPtr canvas = dynamicDowncast<CanvasRenderingContext2D>(*m_context)) {
-        // No need to undo transforms/clip/etc. because we are called right after the context is reset.
-        canvas->clearRect(0, 0, width(), height());
-    }
-}
-
 void HTMLCanvasElement::clearCopiedImage() const
 {
     m_copiedImage = nullptr;
-    m_didClearImageBuffer = false;
 }
 
 bool HTMLCanvasElement::virtualHasPendingActivity() const

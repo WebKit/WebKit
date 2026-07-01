@@ -177,7 +177,6 @@ private:
     void didUpdateSizeProperties();
 
     void createImageBuffer() const final;
-    void clearImageBuffer() const;
 
     bool usesContentsAsLayerContents() const;
 
@@ -189,7 +188,6 @@ private:
     std::optional<FloatRect> computeDirtyRectangleIfNeeded(const std::optional<FloatRect>&) const;
 
     bool m_ignoreDidUpdateSizeProperties { false };
-    mutable bool m_didClearImageBuffer { false };
 #if ENABLE(WEBGL)
     bool m_hasRelevantWebGLEventListener { false };
 #endif
