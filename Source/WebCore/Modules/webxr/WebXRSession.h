@@ -192,6 +192,10 @@ private:
     std::unique_ptr<EndPromise> m_endPromise;
     Vector<WeakPtr<WebXRSessionListener>> m_sessionListeners;
 
+<<<<<<< HEAD
+=======
+    WeakPtr<WebXRSystem, WeakPtrImplWithEventTargetData> m_xrSystem;
+>>>>>>> 99867d817a6d ([WebXR] Use-after-free when ending an XRSession whose owning WebXRSystem has been garbage collected)
     XRSessionMode m_mode;
     ThreadSafeWeakPtr<PlatformXR::Device> m_device;
     FeatureList m_requestedFeatures;
