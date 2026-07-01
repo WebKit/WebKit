@@ -106,7 +106,11 @@ void JSArrayBuffer::clearAssociatedWasmMemoryWrapper()
 template<typename Visitor>
 void JSArrayBuffer::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
+<<<<<<< HEAD
     auto* thisObject = uncheckedDowncast<JSArrayBuffer>(cell);
+=======
+    auto* thisObject = jsCast<JSArrayBuffer*>(cell);
+>>>>>>> 095fa99180ff ([JSC] Keep JSWebAssemblyMemory alive from wasm-originated JSArrayBuffers)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 #if ENABLE(WEBASSEMBLY)

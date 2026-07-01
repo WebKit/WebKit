@@ -364,6 +364,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
             // We create a memory when it's a memory definition.
             auto* jsMemory = JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
 
+<<<<<<< HEAD
             RefPtr<Memory> memory = Memory::tryCreate(vm, mem.initial(), mem.maximum(), mem.isShared() ? MemorySharingMode::Shared : MemorySharingMode::Default, mem.addressType(), std::nullopt,
                 [&vm, jsMemory](Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) {
                     jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount);
@@ -371,6 +372,13 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
             );
             if (!memory)
                 return exception(createOutOfMemoryError(globalObject));
+=======
+        RefPtr<Memory> memory = Memory::tryCreate(vm, moduleInformation.memory.initial(), moduleInformation.memory.maximum(), moduleInformation.memory.isShared() ? MemorySharingMode::Shared: MemorySharingMode::Default, std::nullopt,
+            [&vm, jsMemory](Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); }
+        );
+        if (!memory)
+            return exception(createOutOfMemoryError(globalObject));
+>>>>>>> 095fa99180ff ([JSC] Keep JSWebAssemblyMemory alive from wasm-originated JSArrayBuffers)
 
             jsMemory->adopt(memory.releaseNonNull());
             jsInstance->setMemory(vm, i, jsMemory);

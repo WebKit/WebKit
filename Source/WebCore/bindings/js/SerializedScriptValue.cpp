@@ -4105,10 +4105,17 @@ public:
                     fail();
                     return JSValue();
                 }
+<<<<<<< HEAD
                 memory = Wasm::Memory::create(contents.releaseNonNull(), result->memory().addressType(), WTF::move(handler));
             } else {
                 // zero size & max-size.
                 memory = Wasm::Memory::createZeroSized(JSC::MemorySharingMode::Shared, result->memory().addressType(), WTF::move(handler));
+=======
+                memory = Wasm::Memory::create(contents.releaseNonNull(), WTF::move(handler));
+            } else {
+                // zero size & max-size.
+                memory = Wasm::Memory::createZeroSized(JSC::MemorySharingMode::Shared, WTF::move(handler));
+>>>>>>> 095fa99180ff ([JSC] Keep JSWebAssemblyMemory alive from wasm-originated JSArrayBuffers)
             }
 
             result->adopt(memory.releaseNonNull());

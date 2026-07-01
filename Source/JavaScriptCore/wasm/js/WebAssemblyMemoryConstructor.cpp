@@ -141,8 +141,15 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
 
     auto* jsMemory = JSWebAssemblyMemory::create(vm, webAssemblyMemoryStructure);
 
+<<<<<<< HEAD
     RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(vm, initialPageCount, maximumPageCount, sharingMode, addressType, desiredMemoryMode,
         [&vm, jsMemory] (Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); });
+=======
+    RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(vm, initialPageCount, maximumPageCount, sharingMode, desiredMemoryMode,
+        [&vm, jsMemory] (Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) {
+            jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount);
+        });
+>>>>>>> 095fa99180ff ([JSC] Keep JSWebAssemblyMemory alive from wasm-originated JSArrayBuffers)
     if (!memory) {
         throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
         return { };
