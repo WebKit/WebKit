@@ -75,7 +75,7 @@ private:
     CachedResourceHandle<CachedImage> m_cachedImage;
 };
 
-class MediaMetadata final : public RefCounted<MediaMetadata> {
+class MediaMetadata final : public RefCountedAndCanMakeWeakPtr<MediaMetadata> {
 public:
     static ExceptionOr<Ref<MediaMetadata>> create(ScriptExecutionContext&, std::optional<MediaMetadataInit>&&);
     static Ref<MediaMetadata> create(MediaSession&, Vector<URL>&&);

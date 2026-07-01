@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useDollarVM=true ] -->
+<html>
+<head>
+    <script>
+        if (globalThis.testRunner) {
+            globalThis.testRunner.waitUntilDone();
+            globalThis.testRunner.dumpAsText();
+        }
+
+        let delays = [10, 50, 100];
+        let iteration = 0;
+        let innerBase64 = 'A'.repeat(64 * 1024);
+        let inner = 'data:image/png;base64,' + innerBase64;
+
+        function armNext() {
+            if (iteration >= delays.length) {
+                setTimeout(() => {
+                    if (globalThis.testRunner)
+                        globalThis.testRunner.notifyDone();
+                }, 500);
+                return;
+            }
+
+            let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">` +
+                      `<image href="${inner}" width="200" height="200"/>`.repeat(4) +
+                      `</svg>`;
+            let outer = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+            let m = new MediaMetadata({ artwork: [{ src: outer, sizes: 'any', type: 'image/svg+xml' }] });
+            navigator.mediaSession.metadata = m;
+
+            setTimeout(() => {
+                navigator.mediaSession.metadata = null;
+                m = null;
+                if (globalThis.$vm)
+                    $vm.gc();
+
+                setTimeout(armNext, 500);
+            }, delays[iteration++]);
+        }
+
+        window.onload = armNext;
+    </script>
+</head>
+<body>
+This test passes if it doesn't crash.
+</body>
+</html>
