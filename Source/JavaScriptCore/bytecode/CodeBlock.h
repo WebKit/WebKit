@@ -731,6 +731,7 @@ public:
     uint32_t osrExitCounter() const { return m_osrExitCounter; }
 
     void countOSRExit() { m_osrExitCounter++; }
+    void resetOSRExitCounter() { m_osrExitCounter = 0; }
 
     static constexpr ptrdiff_t offsetOfOSRExitCounter() { return OBJECT_OFFSETOF(CodeBlock, m_osrExitCounter); }
 

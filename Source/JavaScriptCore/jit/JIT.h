@@ -191,6 +191,11 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static UncheckedKeyHashMap<CString, Seconds> compileTimeStats();
         JS_EXPORT_PRIVATE static Seconds NODELETE totalCompileTime();
+        JS_EXPORT_PRIVATE static void resetCompileTimeStats();
+        JS_EXPORT_PRIVATE static Seconds totalDFGCompileTimeValue();
+        JS_EXPORT_PRIVATE static Seconds totalFTLCompileTimeValue();
+        JS_EXPORT_PRIVATE static Seconds totalFTLDFGCompileTimeValue();
+        JS_EXPORT_PRIVATE static Seconds totalFTLB3CompileTimeValue();
 
     private:
         void privateCompileMainPass();
