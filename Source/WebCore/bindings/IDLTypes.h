@@ -299,6 +299,7 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
 };
 
 template<typename T> struct IDLSequence : IDLType<Vector<typename T::InnerParameterType>> {
+    static_assert(!std::is_same_v<T, IDLAny>, "sequence<any> is insecure; use a concrete type");
     using InnerType = T;
 
     using ParameterType = const Vector<typename T::InnerParameterType>&;
@@ -306,6 +307,7 @@ template<typename T> struct IDLSequence : IDLType<Vector<typename T::InnerParame
 };
 
 template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::InnerParameterType>> {
+    static_assert(!std::is_same_v<T, IDLAny>, "FrozenArray<any> is insecure; use a concrete type");
     using InnerType = T;
 
     using ParameterType = const Vector<typename T::InnerParameterType>&;
