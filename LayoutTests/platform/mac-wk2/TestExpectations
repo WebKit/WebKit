@@ -2519,6 +2519,15 @@ webkit.org/b/308325 [ Debug ] http/wpt/cache-storage/cache-in-stopped-context.ht
 
 webkit.org/b/308326 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.any.html [ Pass Failure ]
 
-webkit.org/b/308430 webanimations/threaded-animations/accelerated-timeline-preservation-during-update.html [ Pass Crash ]
-
 webkit.org/b/308334 [ Tahoe Debug ] http/tests/webgpu/webgpu/api/validation/gpu_external_texture_expiration.html [ Skip ]
+
+# rdar://181152256 (Mass gardening on the safari-7624.5-branch)
+fast/css/font-face-multiple-faces.html [ Failure ]
+[ Sequoia+ ] fast/html/details-writing-mode-mixed.html [ Failure ]
+[ Sequoia+ ] fast/html/details-writing-mode.html  [ Failure ]
+fast/repaint/block-in-inline-with-margin-repaint.html [ Failure ]
+fast/speechsynthesis/speech-synthesis-speak-fuzzer-crash.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-synthetic-events.html [ Failure ]
+[ Tahoe ] tables/mozilla/bugs/bug44505.html [ Failure ]
+[ Tahoe ] tables/mozilla_expected_failures/bugs/bug2479-5.html  [ Failure ]
+[ Tahoe ] webanimations/threaded-animations/accelerated-timeline-preservation-during-update.html [ Timeout ]
