@@ -168,18 +168,21 @@ class InlineMediaControls extends MediaControls
         this.playPauseButton.style = Button.Styles.Bar;
         this.leftContainer.children = this.leftContainerButtons();
         this.rightContainer.children = this.rightContainerButtons();
-        this.rightContainer.children.concat(this.leftContainer.children).forEach(button => delete button.dropped);
+        for (let button of this.leftContainer.children)
+            delete button.dropped;
+        for (let button of this.rightContainer.children)
+            delete button.dropped;
         this.muteButton.style = this.preferredMuteButtonStyle;
         this.overflowButton.clearExtraContextMenuOptions();
+
+        // Ensure both button containers reflect the reset dropped state before we evaluate widths.
+        this.leftContainer.layout();
+        this.rightContainer.layout();
 
         for (let button of this.droppableButtons()) {
             // If the button is not enabled, we can skip it.
             if (!button.enabled)
                 continue;
-
-            // Ensure button containers are laid out with latest constraints.
-            this.leftContainer.layout();
-            this.rightContainer.layout();
 
             // Nothing left to do if the combined width of both containers and the time control is shorter than the available width.
             if (this.leftContainer.width + minimumCenterControlWidth + this.rightContainer.width < this.bottomControlsBar.width)
@@ -187,6 +190,12 @@ class InlineMediaControls extends MediaControls
 
             // This button must now be dropped.
             button.dropped = true;
+
+            // Only the container that owns the dropped button changed size, so lay out just that one.
+            if (this.leftContainer.children.includes(button))
+                this.leftContainer.layout();
+            else
+                this.rightContainer.layout();
 
             if (button !== this.overflowButton)
                 this.overflowButton.addExtraContextMenuOptions(button.contextMenuOptions);
