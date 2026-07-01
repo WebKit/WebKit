@@ -137,7 +137,6 @@ public:
 
     bool shouldPerformDownload() const { return m_lastNavigationAction && !m_lastNavigationAction->downloadAttribute.isNull(); }
 
-    bool treatAsSameOriginNavigation() const { return m_lastNavigationAction && m_lastNavigationAction->treatAsSameOriginNavigation; }
     bool hasOpenedFrames() const { return m_lastNavigationAction && m_lastNavigationAction->hasOpenedFrames; }
     bool openedByDOMWithOpener() const { return m_lastNavigationAction && m_lastNavigationAction->openedByDOMWithOpener; }
     bool isInitialFrameSrcLoad() const { return m_lastNavigationAction && m_lastNavigationAction->isInitialFrameSrcLoad; }

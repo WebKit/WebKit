@@ -398,7 +398,6 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint { },
         { }, /* redirectResponse */
         navigationAction.isRequestFromClientOrUserInput(),
-        false, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
         navigationAction.newFrameOpenerPolicy() == NewFrameOpenerPolicy::Allow, /* hasOpener */

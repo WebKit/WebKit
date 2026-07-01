@@ -498,7 +498,6 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         { }, /* clickLocationInRootViewCoordinates */
         { }, /* redirectResponse */
         false, /* isRequestFromClientOrUserInput */
-        true, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
         !!localFrame->opener(), /* hasOpener */
@@ -1006,7 +1005,6 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
         { }, /* redirectResponse */
         false, /* isRequestFromClientOrUserInput */
-        false, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
         navigationAction.newFrameOpenerPolicy() == NewFrameOpenerPolicy::Allow, /* hasOpener */
