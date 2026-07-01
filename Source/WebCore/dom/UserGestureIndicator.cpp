@@ -91,8 +91,10 @@ UserGestureToken::UserGestureToken(IsProcessingUserGesture isProcessingUserGestu
         if (!localFrame)
             continue;
         RefPtr frameDocument = localFrame->document();
+        if (!frameDocument)
+            continue;
         Ref frameOrigin = frameDocument->securityOrigin();
-        if (frameDocument && documentOrigin->isSameOriginDomain(frameOrigin.get()))
+        if (documentOrigin->isSameOriginDomain(frameOrigin))
             m_documentsImpactedByUserGesture.add(*frameDocument);
     }
 }
