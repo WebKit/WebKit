@@ -32,7 +32,6 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkImage.h>
-#include <skia/core/SkPath.h>
 #include <skia/effects/SkDashPathEffect.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/CompletionHandler.h>
@@ -59,9 +58,6 @@ public:
 
     void beginRecording();
     SkiaImageToFenceMap endRecording();
-
-    void enableStateReplayTracking();
-    void replayStateOnCanvas(SkCanvas&) const;
 
     void didUpdateState(GraphicsContextState&) final;
     void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
@@ -146,51 +142,26 @@ private:
     sk_sp<SkImageFilter> createDropShadowFilterIfNeeded(ShadowStyle) const;
     bool drawOutsetShadow(SkPaint&, Function<void(const SkPaint&)>&&);
 
-    void pushSkiaState();
-    void popSkiaState();
-
     void drawSkiaRect(const SkRect&, SkPaint&);
     void drawSkiaPath(const SkPath&, SkPaint&);
     bool drawPathAsSingleElement(const Path&, SkPaint&);
 
-    struct ClipRecord {
-        enum class Type : uint8_t {
-            Rect,
-            Path,
-            Shader
-        };
+    class SkiaState {
+    public:
+        SkiaState() = default;
 
-        Type type { Type::Rect };
-        SkMatrix matrix;
-        SkClipOp op { SkClipOp::kIntersect };
-        bool antialias { false };
-        SkRect rect;
-        SkPath path;
-        sk_sp<SkShader> shader;
-    };
-
-    struct SkiaState {
-        // Stroke properties (saved/restored across all frames).
         struct {
             SkScalar miter { SkFloatToScalar(4) };
             SkPaint::Cap cap { SkPaint::kButt_Cap };
             SkPaint::Join join { SkPaint::kMiter_Join };
             sk_sp<SkPathEffect> dash;
-        } stroke;
-
-        // Layer-specific (only meaningful when isLayer is true).
-        bool isLayer { false };
-        std::optional<CompositeMode> compositeMode;
-        float alpha { 1.0f };
-
-        // State replay (only populated when m_enableStateReplayTracking).
-        SkMatrix matrix;
-        std::optional<SkRect> layerBounds;
-        std::optional<SkPaint> layerPaint;
-        Vector<ClipRecord> clips;
+        } m_stroke;
     };
 
-    void recordClipIfNeeded(ClipRecord&&);
+    struct LayerState {
+        CompositeMode compositeMode;
+        float opacity;
+    };
 
     SkCanvas& m_canvas;
     ContextMode m_contextMode { ContextMode::PaintingMode };
@@ -199,9 +170,8 @@ private:
     CompletionHandler<void()> m_destroyNotify;
     SkiaState m_skiaState;
     Vector<SkiaState, 1> m_skiaStateStack;
+    Vector<LayerState, 1> m_layerStateStack;
     SkiaImageToFenceMap m_imageToFenceMap;
-    bool m_enableStateReplayTracking : 1 { false };
-
     const DestinationColorSpace m_colorSpace;
 };
 
