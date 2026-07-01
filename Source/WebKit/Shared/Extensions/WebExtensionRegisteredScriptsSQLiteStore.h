@@ -62,7 +62,7 @@ private:
 
     Vector<Ref<JSON::Object>> getScriptsWithErrorMessage(String& errorMessage);
     Vector<Ref<JSON::Object>> getKeysAndValuesFromRowIterator(Ref<WebExtensionSQLiteRowEnumerator> rows);
-    void insertScript(const JSON::Object& script, Ref<WebExtensionSQLiteDatabase>, String& errorMessage);
+    void insertScript(const String& scriptID, const String& scriptData, Ref<WebExtensionSQLiteDatabase>, String& errorMessage);
 
     void migrateData();
 };
