@@ -129,6 +129,12 @@ public:
     void setIsInPreparationForDisplayOrFlush(bool flag) { m_isInPreparationForDisplayOrFlush = flag; }
     bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }
 
+    void updateMemoryCostOnAllocation(bool hasNewBuffer);
+    size_t memoryCost() const;
+#if ENABLE(RESOURCE_USAGE)
+    size_t externalMemoryCost() const;
+#endif
+
 protected:
     enum class Type : uint8_t {
         CanvasElement2D,
@@ -159,6 +165,8 @@ protected:
     void checkOrigin(const URL&);
     void checkOrigin(const CSSStyleImageValue&);
 
+    mutable std::atomic<size_t> m_memoryCost { 0 };
+
     bool m_isInPreparationForDisplayOrFlush { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };
 
@@ -167,6 +175,7 @@ private:
 
     WeakRef<CanvasBase> m_canvas;
     const Type m_type;
+
 };
 
 } // namespace WebCore

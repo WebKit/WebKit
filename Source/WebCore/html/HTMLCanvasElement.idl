@@ -38,8 +38,6 @@ typedef (
     ActiveDOMObject,
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
-    ReportExtraMemoryCost,
-    ReportExternalMemoryCost,
     Exposed=Window
 ] interface HTMLCanvasElement : HTMLElement {
     [CEReactions=NotNeeded, CallTracer=InspectorCanvasCallTracer] attribute unsigned long width;

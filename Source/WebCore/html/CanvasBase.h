@@ -79,11 +79,6 @@ public:
 
     RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
 
-    size_t memoryCost() const;
-#if ENABLE(RESOURCE_USAGE)
-    size_t externalMemoryCost() const;
-#endif
-
     void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }
     bool originClean() const { return m_originClean; }
@@ -160,7 +155,6 @@ private:
 
     mutable IntSize m_size;
     mutable RefPtr<ImageBuffer> m_imageBuffer;
-    mutable std::atomic<size_t> m_imageBufferMemoryCost { 0 };
     mutable std::unique_ptr<CSSParserContext> m_cssParserContext;
 
     String m_lastFillText;

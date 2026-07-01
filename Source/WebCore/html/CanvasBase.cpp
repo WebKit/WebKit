@@ -101,21 +101,6 @@ RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostPro
     return buffer();
 }
 
-size_t CanvasBase::memoryCost() const
-{
-    // May be called from GC threads.
-    return m_imageBufferMemoryCost.load(std::memory_order_relaxed);
-}
-
-#if ENABLE(RESOURCE_USAGE)
-size_t CanvasBase::externalMemoryCost() const
-{
-    // For the purposes of Web Inspector, external memory means memory reported as 1) being traceable from JS objects, i.e. GC owned memory
-    // 2) not allocated from "Page" category, e.g. from bmalloc.
-    return memoryCost();
-}
-#endif
-
 static inline size_t maxCanvasArea()
 {
     if (maxCanvasAreaForTesting)
@@ -255,11 +240,8 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         returnBuffer->context().restore();
 
     IntSize oldSize = m_size;
-    size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order_relaxed);
-    size_t newMemoryCost = 0;
     if (RefPtr imageBuffer = m_imageBuffer) {
         m_size = imageBuffer->truncatedLogicalSize();
-        newMemoryCost = imageBuffer->memoryCost();
         auto& context = imageBuffer->context();
         context.setShadowsIgnoreTransforms(true);
         context.setImageInterpolationQuality(defaultInterpolationQuality);
@@ -268,18 +250,11 @@ RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) con
         // Will be made more localized when the ImageBuffer is moved to 2D rendering context.
         context.save();
     }
-    m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order_relaxed);
-    if (newMemoryCost) {
-        if (RefPtr scriptExecutionContext = this->scriptExecutionContext()) {
-            JSC::JSLockHolder lock(scriptExecutionContext->vm());
-            scriptExecutionContext->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
-        }
-    }
     if (RefPtr context = renderingContext()) {
         if (oldSize != m_size)
             InspectorInstrumentation::didChangeCanvasSize(*context);
-        if (oldMemoryCost != newMemoryCost)
-            InspectorInstrumentation::didChangeCanvasMemory(*context);
+        const bool hasNewBuffer = m_imageBuffer;
+        context->updateMemoryCostOnAllocation(hasNewBuffer);
     }
     return returnBuffer;
 }

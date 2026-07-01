@@ -423,7 +423,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
     if (auto attributes = buildObjectForCanvasContextAttributes(m_context.get()))
         canvas->setContextAttributes(attributes.releaseNonNull());
 
-    if (size_t memoryCost = m_context->canvasBase().memoryCost())
+    if (size_t memoryCost = m_context->memoryCost())
         canvas->setMemoryCost(memoryCost);
 
     if (captureBacktrace) {
