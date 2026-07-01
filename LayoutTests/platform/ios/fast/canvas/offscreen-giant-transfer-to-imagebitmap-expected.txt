@@ -1,8 +1,5 @@
 CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 67108864).
 CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 67108864).
-CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 67108864).
-CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 67108864).
-CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 67108864).
 Testing height: 100 type: none
 Got exception: "InvalidStateError: The object is in an invalid state."
 Testing height: 100 type: 2d
@@ -27,10 +24,10 @@ Got context: "[object OffscreenCanvasRenderingContext2D]"
 Got exception: "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
 Testing height: 100000000 type: webgl
 Got context: "[object WebGLRenderingContext]"
-Got exception: "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
+Got result with size: 100x8192
 Testing height: 100000000 type: webgl2
 Got context: "[object WebGL2RenderingContext]"
-Got exception: "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
+Got result with size: 100x8192
 Testing height: 100000000 type: webgpu
 Got context: "[object GPUCanvasContext]"
 Got exception: "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."

@@ -833,7 +833,13 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 
 RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
 {
-    auto buffer = protectedCanvasBase()->allocateImageBuffer();
+    RefPtr scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+    const auto size = m_defaultFramebuffer->size();
+    if (size.isEmpty())
+        return nullptr;
+    RefPtr buffer = ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, scriptExecutionContext->graphicsClient());
     if (!buffer)
         return nullptr;
     if (compositingResultsNeedUpdating())

@@ -32,6 +32,7 @@
 #include "GPUPresentationContext.h"
 #include "GPUPresentationContextDescriptor.h"
 #include "GPUTextureDescriptor.h"
+#include "GraphicsClient.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerEnums.h"
 #include "ImageBitmap.h"
@@ -341,7 +342,13 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
 
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
 {
-    auto buffer = canvasBase().allocateImageBuffer();
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+    const auto size = canvasBase().size();
+    if (size.isEmpty())
+        return nullptr;
+    RefPtr buffer = ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, scriptExecutionContext->graphicsClient());
     if (!buffer)
         return nullptr;
     Ref<ImageBuffer> bufferRef = buffer.releaseNonNull();
