@@ -539,7 +539,7 @@ class ThreadNamesCrashLogCapturer(object):
                     f.write(f'# Number of threads: {len(thread_info)}\n')
                     f.write(f'# PID: {pid}\n')
                     f.write('\n')
-                    f.write(f'{"TID":<12} {"Thread Name"}\n')
+                    f.write(f'{"LWP/TID":<12} {"Thread Name"}\n')
                     f.write(f'{"-"*12} {"-"*20}\n')
                     for tid, name in sorted(thread_info.items(), key=lambda x: int(x[0])):
                         f.write(f'{tid:<12} {name}\n')
