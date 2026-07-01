@@ -1751,8 +1751,16 @@ void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const We
 
 void NetworkStorageManager::establishTransaction(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
-        connection->establishTransaction(transactionInfo);
+    RefPtr databaseConnection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection);
+    if (!databaseConnection)
+        return;
+
+    // FIXME: consider converting this early return to MESSAGE_CHECK.
+    CheckedPtr database = databaseConnection->database();
+    if (database && database->isVersionChangeTransactionActive(*databaseConnection))
+        return;
+
+    databaseConnection->establishTransaction(transactionInfo);
 }
 
 void NetworkStorageManager::databaseConnectionPendingClose(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)

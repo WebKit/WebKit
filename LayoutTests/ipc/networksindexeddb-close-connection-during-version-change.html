@@ -1,0 +1,117 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>This test passes if it does not crash.</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.setTimeout(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+
+    const { ArgumentSerializer, IPCWireTap } = await import('./coreipc.js');
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    const origin = {
+        topOrigin: {
+            data: { variantIndex: 0, variant: { protocol: 'http', host: '127.0.0.1', port: {} } },
+        },
+        clientOrigin: {
+            data: { variantIndex: 0, variant: { protocol: 'http', host: '127.0.0.1', port: {} } },
+        },
+    };
+
+    function resId(connId, resourceNum) {
+        return {
+            m_idbConnectionIdentifier: { optionalValue: { alias: connId } },
+            m_resourceNumber: { optionalValue: resourceNum },
+        };
+    }
+
+    function mkReq(connId, resNum, reqType) {
+        return {
+            m_serverConnectionIdentifier: { alias: connId },
+            m_requestIdentifier: resId(connId, resNum),
+            m_databaseIdentifier: {
+                m_databaseName: 'crashdb',
+                m_origin: origin,
+                m_isTransient: false,
+            },
+            m_requestedVersion: 1n,
+            m_requestType: reqType,
+        };
+    }
+
+    function sendMessage(messageDesc, destinationID, args) {
+        const connection = IPC.connectionForProcessTarget('Networking');
+        const serializedArguments = ArgumentSerializer.serializeArguments(messageDesc.arguments, args);
+        connection.sendMessage(destinationID, messageDesc.name, serializedArguments);
+    }
+
+    const CONN = 42n;
+
+    // Wiretap to capture databaseConnectionIdentifier
+    let dbConnIds = [];
+    const inTap = new IPCWireTap("Networking", "Incoming");
+    inTap.tapAll((process, connID, name, typed, result) => {
+        if (!result) return;
+        const r = result.result;
+        if (!r) return;
+        if (r.m_databaseConnectionIdentifier && r.m_databaseConnectionIdentifier.optionalValue) {
+            let id = BigInt(String(r.m_databaseConnectionIdentifier.optionalValue).replace('n',''));
+            dbConnIds.push(id);
+        }
+    });
+
+    // Step 1: Open DB with version change (0 -> 1)
+    sendMessage(IPC.messages.NetworkStorageManager_OpenDatabase, 0n, {
+        requestData: mkReq(CONN, 1n, 0),
+    });
+    await sleep(300);
+
+    let vc1ConnId = dbConnIds[0];
+    if (!vc1ConnId) { console.log('FAIL: no dbConnId captured'); return; }
+
+    // Step 2: Queue Open #2 behind VC1
+    sendMessage(IPC.messages.NetworkStorageManager_OpenDatabase, 0n, {
+        requestData: mkReq(CONN, 2n, 0),
+    });
+    await sleep(50);
+
+    // Step 3: Establish a regular transaction on VC1's connection.
+    sendMessage(IPC.messages.NetworkStorageManager_EstablishTransaction, 0n, {
+        databaseConnectionIdentifier: vc1ConnId,
+        info: {
+            identifier: resId(CONN, 100n),
+            mode: 1, // ReadWrite
+            durability: 0,
+            newVersion: 0n,
+            objectStores: ['store1'],
+            originalDatabaseInfo: {},
+        },
+    });
+    await sleep(50);
+
+    // Step 4: Close VC1's connection via DatabaseConnectionClosed.
+    sendMessage(IPC.messages.NetworkStorageManager_DatabaseConnectionClosed, 0n, {
+        databaseConnectionIdentifier: vc1ConnId,
+    });
+    await sleep(300);
+
+    // Step 5: Cancel Open #2
+    sendMessage(IPC.messages.NetworkStorageManager_OpenDBRequestCancelled, 0n, {
+        requestData: mkReq(CONN, 2n, 0),
+    });
+    await sleep(300);
+
+    // Cancel Open #1 in case it's still pending
+    sendMessage(IPC.messages.NetworkStorageManager_OpenDBRequestCancelled, 0n, {
+        requestData: mkReq(CONN, 1n, 0),
+    });
+    await sleep(1000);
+
+    window.testRunner?.notifyDone();
+}, 10);
+</script>
