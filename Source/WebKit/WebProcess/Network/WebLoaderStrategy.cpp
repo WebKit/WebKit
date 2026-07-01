@@ -557,8 +557,6 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         }
     }
 
-    loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
-
     loadParameters.isMainFrameNavigation = isMainFrameNavigation;
     if (loadParameters.isMainFrameNavigation && document)
         loadParameters.sourceCrossOriginOpenerPolicy = document->crossOriginOpenerPolicy();
@@ -853,7 +851,6 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? webFrame->protectedCoreLocalFrame().get() : nullptr);
-    loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
 
     loadParameters.options = options;
     loadParameters.sourceOrigin = document->securityOrigin();
@@ -935,7 +932,7 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
     loadParameters.options = options;
     loadParameters.originalRequestHeaders = originalRequestHeaders;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(&frame);
-    loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
+
     if (policyCheck == ContentSecurityPolicyImposition::DoPolicyCheck && !document->shouldBypassMainWorldContentSecurityPolicy()) {
         if (CheckedPtr contentSecurityPolicy = document->contentSecurityPolicy())
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
@@ -1015,7 +1012,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     parameters.parentPID = legacyPresentingApplicationPID();
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
-    parameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
+
     // FIXME: Use the proper destination once all fetch options are passed.
     parameters.options.destination = FetchOptions::Destination::EmptyString;
 #if ENABLE(APP_BOUND_DOMAINS)
