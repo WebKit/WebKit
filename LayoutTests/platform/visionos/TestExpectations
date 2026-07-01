@@ -83,6 +83,8 @@ overlay-region [ Pass ]
 platform/visionos/transforms [ Pass ]
 fast/images/spatial-image-controls-rtl.html [ Pass ]
 
+ipc/dynamic-content-scaling-display-list-during-prepare-for-display.html [ Pass ]
+
 imported/w3c/web-platform-tests/webxr [ Pass ]
 http/wpt/webxr [ Pass ]
 webxr [ Pass ]
