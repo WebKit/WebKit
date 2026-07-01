@@ -1,0 +1,23 @@
+
+PASS Check that ascent-override: normal is valid
+PASS Check that ascent-override: 0% is valid
+PASS Check that ascent-override: 50% is valid
+PASS Check that ascent-override: 110% is valid
+PASS Check that ascent-override: 100000000000% is valid
+PASS Check that ascent-override: -1% is invalid
+PASS Check that ascent-override: 10px is invalid
+PASS Check that descent-override: normal is valid
+PASS Check that descent-override: 0% is valid
+PASS Check that descent-override: 50% is valid
+PASS Check that descent-override: 110% is valid
+PASS Check that descent-override: 100000000000% is valid
+PASS Check that descent-override: -1% is invalid
+PASS Check that descent-override: 10px is invalid
+PASS Check that line-gap-override: normal is valid
+PASS Check that line-gap-override: 0% is valid
+PASS Check that line-gap-override: 50% is valid
+PASS Check that line-gap-override: 110% is valid
+PASS Check that line-gap-override: 100000000000% is valid
+PASS Check that line-gap-override: -1% is invalid
+PASS Check that line-gap-override: 10px is invalid
+

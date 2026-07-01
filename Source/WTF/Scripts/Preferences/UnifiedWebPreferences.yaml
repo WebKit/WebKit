@@ -1156,6 +1156,20 @@ CSSFieldSizingEnabled:
     WebCore:
       default: true
 
+CSSFontFaceMetricOverrideDescriptorsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS @font-face metric override descriptors"
+  humanReadableDescription: "Enable CSS @font-face metric override descriptors"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSFontSynthesisStyleObliqueOnlyEnabled:
   type: bool
   status: preview
