@@ -2056,6 +2056,12 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
         auto baseUA = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
         return makeStringByReplacingAll(baseUA, "like Gecko"_s, "like Gecko, like Chrome/136."_s);
     }
+
+    // mms.pinduoduo.com https://bugs.webkit.org/b/318201
+    if (url.host() == "mms.pinduoduo.com"_s) {
+        auto baseUA = currentUserAgent.isEmpty() ? standardUserAgentWithApplicationName(applicationNameForUserAgent) : currentUserAgent;
+        return makeStringByReplacingAll(baseUA, "like Gecko"_s, "like Gecko, like Chrome/149."_s);
+    }
 #else
     UNUSED_PARAM(applicationNameForUserAgent);
     UNUSED_PARAM(currentUserAgent);
