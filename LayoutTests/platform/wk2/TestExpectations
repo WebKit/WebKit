@@ -589,9 +589,12 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 [ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
+<<<<<<< HEAD
 [ Debug ] http/tests/ipc/web-authenticator-get-assertion-spoofed-origin-crash.html [ Skip ]
 [ Debug ] http/tests/ipc/web-authenticator-make-credential-spoofed-origin-crash.html [ Skip ]
 [ Debug ] ipc/media-containment-bypass-create-player.html [ Crash ]
+=======
+>>>>>>> 3927a3556654 (REGRESSION(298821@main): [iOS] RequestPointerLock IPC twice in succession can produce use-after-free of unretained GCMouseMoved block in WKMouseInteraction)
 [ Debug ] ipc/pointer-lock-double-lock-uaf.html [ Skip ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
