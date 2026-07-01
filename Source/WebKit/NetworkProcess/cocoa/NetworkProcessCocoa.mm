@@ -224,13 +224,11 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
     }).get());
 }
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
     [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorageFromIdentifyingData(identifier).get()]).get()];
 }
-#endif
 
 void NetworkProcess::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
