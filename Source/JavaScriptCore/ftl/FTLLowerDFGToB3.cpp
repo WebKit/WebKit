@@ -8646,12 +8646,12 @@ IGNORE_CLANG_WARNINGS_END
                     setInt32(vmCall(Int32, operationArrayIndexOfValueDouble, storage, lowJSValue(searchElementEdge), startIndex));
                 return;
             case Array::Contiguous:
-                // We have to keep base alive since that keeps content of storage alive.
-                ensureStillAliveHere(base);
                 if (isArrayIncludes)
                     setBoolean(vmCall(Int32, operationArrayIncludesValueInt32OrContiguous, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex));
                 else
                     setInt32(vmCall(Int32, operationArrayIndexOfValueInt32OrContiguous, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex));
+                // We have to keep base alive since that keeps content of storage alive.
+                ensureStillAliveHere(base);
                 return;
             case Array::Int32:
                 if (isArrayIncludes)
