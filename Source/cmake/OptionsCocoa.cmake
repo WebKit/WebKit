@@ -82,7 +82,19 @@ file(WRITE "${_availability_overlay_yaml}.tmp"
 ")
 file(COPY_FILE "${_availability_overlay_yaml}.tmp" ${_availability_overlay_yaml} ONLY_IF_DIFFERENT)
 add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:SHELL:-ivfsoverlay ${_availability_overlay_yaml}>")
-add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
+# The overlay strips API_UNAVAILABLE off SPI declarations, but the legacy
+# NS_CLASS_AVAILABLE/CF_AVAILABLE class attributes expand straight to
+# __attribute__((availability(ios,...))) and are not routed through any macro
+# the overlay stubs redefine. On iOS this leaves classes such as
+# CoreBluetooth's CBClassicPeer marked unavailable while their (now-available)
+# members reference them -- a hard error when the Swift ClangImporter emits the
+# framework's private module (e.g. CoreBluetooth_Private) against the internal
+# SDK. Keep the overlay off Swift on iOS, matching the non-Swift-only scoping
+# used before 316413@main; other Cocoa platforms are unaffected (the classic
+# Bluetooth classes are available on macOS).
+if (NOT CMAKE_OSX_SYSROOT MATCHES "iPhone")
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-vfsoverlay ${_availability_overlay_yaml}>")
+endif ()
 unset(_availability_overlay_dir)
 unset(_availability_overlay_yaml)
 
