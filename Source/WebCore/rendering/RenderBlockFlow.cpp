@@ -1456,7 +1456,7 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
     // floats in the parent that overhang |child|'s new logical top.
     auto logicalTopIntrudesIntoFloat = logicalTop < beforeCollapseLogicalTop;
     if (logicalTopIntrudesIntoFloat && containsFloats() && !child.avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
-        child.setNeedsLayout();
+        child.setNeedsLayout(MarkOnlyThis);
     return logicalTop;
 }
 
