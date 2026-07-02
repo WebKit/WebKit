@@ -71,7 +71,9 @@ protected:
     static inline LayoutUnit ascentForChild(const RenderBox& child);
 
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
+    void updateLogicalWidth() override;
     void computeAndSetBlockDirectionMarginsOfChildren();
+    void resetInlineMarginsToSpecified(RenderBox& child) const;
     void insertPositionedChildrenIntoContainingBlock();
     void layoutFloatingChildren();
 

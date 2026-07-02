@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>-webkit-left/right/center on mtd must align MathML content, not spread it</title>
+<link rel="help" href="https://w3c.github.io/mathml-core/#tabular-math-mtable-mtr-mtd">
+<!--
+  A cell wider than its content gives the alignment room to act. The legacy
+  -webkit-right / -webkit-center text-align values must align the math the same
+  way the standard right / center values do, rather than synthesizing per-child
+  block-alignment margins that spread the row's content.
+  See Also: https://github.com/w3c/mathml-core/issues/156
+-->
+<style>
+  mtd { width: 30em; }
+  #a { text-align: -webkit-right; }
+  #b { text-align: -webkit-center; }
+</style>
+</head>
+<body>
+<math display="block"><mtable><mtr><mtd id="a"><mrow><mi>m</mi><mo>+</mo><mi>n</mi></mrow></mtd></mtr></mtable></math>
+<math display="block"><mtable><mtr><mtd id="b"><mrow><mi>m</mi><mo>+</mo><mi>n</mi></mrow></mtd></mtr></mtable></math>
+</body>
+</html>

@@ -44,6 +44,7 @@
 #include "RenderTableInlines.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -178,6 +179,9 @@ void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *child);
         child->layoutIfNeeded();
 
+        // Covers the anonymous block wrapping a token's text, which is laid out by generic CSS.
+        resetInlineMarginsToSpecified(*child);
+
         LayoutUnit childVerticalMarginBoxExtent;
         childVerticalMarginBoxExtent = child->borderBoxHeight() + child->verticalMarginExtent();
 
@@ -228,6 +232,34 @@ void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
 {
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->computeAndSetBlockDirectionMargins(*this);
+}
+
+void RenderMathMLBlock::resetInlineMarginsToSpecified(RenderBox& child) const
+{
+    // MathML lays out and offsets its own in-flow children, so resolve their inline margins to the
+    // specified values (auto resolves to zero) rather than letting generic CSS layout distribute
+    // leftover inline space into auto / legacy -webkit-* text-align margins.
+    auto& childStyle = child.style();
+    auto availableWidth = child.containingBlockLogicalWidthForContent();
+    const auto& zoomFactor = childStyle.usedZoomForLength();
+    child.setMarginStart(Style::evaluateMinimum<LayoutUnit>(childStyle.marginStart(writingMode()), availableWidth, zoomFactor));
+    child.setMarginEnd(Style::evaluateMinimum<LayoutUnit>(childStyle.marginEnd(writingMode()), availableWidth, zoomFactor));
+}
+
+void RenderMathMLBlock::updateLogicalWidth()
+{
+    RenderBlock::updateLogicalWidth();
+
+    // Reset our inline margins when our containing block is a MathML box that lays us out. Math
+    // embedded in non-MathML content (e.g. a <math> with margin:auto inside a <div>) is left to
+    // regular CSS. The anonymous block wrapping a token's text is not a RenderMathMLBlock and is
+    // handled in RenderMathMLBlock::layoutItems instead.
+    if (isFloatingOrOutOfFlowPositioned())
+        return;
+    CheckedPtr containingBlock = dynamicDowncast<RenderMathMLBlock>(this->containingBlock());
+    if (!containingBlock)
+        return;
+    containingBlock->resetInlineMarginsToSpecified(*this);
 }
 
 void RenderMathMLBlock::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
