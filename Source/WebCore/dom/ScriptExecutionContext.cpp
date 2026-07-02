@@ -1079,11 +1079,8 @@ bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrack
     if (!page)
         return true;
 
-    if (category == ScriptTrackingPrivacyCategory::NetworkRequests && !page->settings().scriptTrackingPrivacyNetworkRequestBlockingEnabled())
-        return false;
-
     bool shouldApplyConsistently = (category == ScriptTrackingPrivacyCategory::QueryParameters && document->quirks().needsConsistentQueryParameterFilteringQuirk(taintedURL))
-        || (category != ScriptTrackingPrivacyCategory::NetworkRequests && document->quirks().mayBenefitFromFingerprintingProtectionQuirk(taintedURL));
+        || document->quirks().mayBenefitFromFingerprintingProtectionQuirk(taintedURL);
     if (!shouldEnableScriptTrackingPrivacy(category, advancedPrivacyProtections(), shouldApplyConsistently))
         return false;
 

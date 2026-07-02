@@ -7208,21 +7208,7 @@ ScriptTrackingPrivacyNetworkRequestBlockingEnabled:
   type: bool
   status: internal
   humanReadableName: "Script Tracking Privacy Network Requests Blocking"
-  humanReadableDescription: "Block network requests made from tracking scripts"
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-ScriptTrackingPrivacyNetworkRequestBlockingLatchEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Script Tracking Privacy Network Requests Blocking Latch"
-  humanReadableDescription: "Block multiple network requests made to tracking domains"
+  humanReadableDescription: "Block network requests to known tracking domains"
   exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:

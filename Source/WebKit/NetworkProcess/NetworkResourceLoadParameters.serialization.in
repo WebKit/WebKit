@@ -49,7 +49,7 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     bool hadMainFrameMainResourcePrivateRelayed;
     bool allowPrivacyProxy;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
-    std::optional<bool> mayBlockNetworkRequest;
+    bool mayBlockNetworkRequest;
     uint64_t requiredCookiesVersion;
 
     Markable<WebCore::ResourceLoaderIdentifier> identifier;

@@ -648,11 +648,6 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     if (MixedContentChecker::shouldBlockRequest(*frame, requestURL))
         return;
 
-    if (document->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::NetworkRequests)) {
-        logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, requestURL, "Blocked by script tracking privacy protection"_s, ResourceError::Type::AccessControl));
-        return;
-    }
-
     RefPtr<SharedBuffer> data;
     ResourceError error;
     ResourceResponse response;

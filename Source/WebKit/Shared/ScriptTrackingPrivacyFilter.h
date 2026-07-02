@@ -66,7 +66,6 @@ public:
 
     bool matches(const URL&, const WebCore::SecurityOrigin& topOrigin);
     bool shouldAllowAccess(const URL&, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory);
-    bool shouldBlockRequest(const URL&, const WebCore::SecurityOrigin& topOrigin);
 
 private:
     struct LookupResult {

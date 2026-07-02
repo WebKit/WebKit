@@ -97,34 +97,11 @@ bool ScriptTrackingPrivacyFilter::shouldAllowAccess(const URL& url, const WebCor
     if (url.isEmpty())
         return false;
 
-#if PLATFORM(COCOA)
-    if (category == WebCore::ScriptTrackingPrivacyCategory::NetworkRequests && !isTaintedScriptURLBlockable(url))
-        return true;
-#endif
-
     auto categoryFlag = WebCore::scriptCategoryAsFlag(category);
     if (!m_categoriesWithAllowedHosts.contains(categoryFlag))
         return false;
 
     return lookup(url, topOrigin).allowedCategories.contains(categoryFlag);
-}
-
-bool ScriptTrackingPrivacyFilter::shouldBlockRequest(const URL& url, const WebCore::SecurityOrigin& topOrigin)
-{
-    if (url.isEmpty())
-        return true;
-
-#if PLATFORM(COCOA)
-    if (!isTaintedScriptURLBlockable(url))
-        return false;
-#endif
-
-    auto categoryFlag = WebCore::scriptCategoryAsFlag(WebCore::ScriptTrackingPrivacyCategory::NetworkRequests);
-    if (!m_categoriesWithAllowedHosts.contains(categoryFlag))
-        return true;
-
-    auto result = lookup(url, topOrigin);
-    return result.foundMatch && !result.allowedCategories.contains(categoryFlag);
 }
 
 } // namespace WebKit
