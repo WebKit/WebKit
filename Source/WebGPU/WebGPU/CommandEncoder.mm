@@ -153,7 +153,7 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
                     auto& value = keyValuePair.second;
                     apiBuffer->takeSlowIndexValidationPath(commandBuffer, key.firstIndex, key.indexCount, key.indexType(), key.primitiveOffset(), value);
                     commandBuffer.addPostCommitHandler([bufferIdentifier, device = protect(commandBuffer.device())](id<MTLCommandBuffer>) {
-                        if (auto* apiBuffer = device->lookupBuffer(bufferIdentifier))
+                        if (RefPtr apiBuffer = device->lookupBuffer(bufferIdentifier))
                             apiBuffer->clearMustTakeSlowIndexValidationPath();
                     });
                 }
