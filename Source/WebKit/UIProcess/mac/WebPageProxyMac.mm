@@ -839,12 +839,6 @@ RetainPtr<NSView> WebPageProxy::inspectorAttachmentView()
     return pageClient ? pageClient->inspectorAttachmentView() : nullptr;
 }
 
-_WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
-{
-    RefPtr pageClient = this->pageClient();
-    return pageClient ? pageClient->remoteObjectRegistry() : nullptr;
-}
-
 #if ENABLE(CONTEXT_MENUS)
 
 NSMenu *WebPageProxy::activeContextMenu() const

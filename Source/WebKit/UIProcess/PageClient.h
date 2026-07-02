@@ -555,7 +555,6 @@ public:
     virtual void setShouldSuppressFirstResponderChanges(bool) = 0;
 
     virtual RetainPtr<NSView> inspectorAttachmentView() = 0;
-    virtual _WKRemoteObjectRegistry *remoteObjectRegistry() = 0;
 
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) = 0;
 

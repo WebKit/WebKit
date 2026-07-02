@@ -284,7 +284,6 @@ private:
 #endif
 
     RetainPtr<NSView> inspectorAttachmentView() override;
-    _WKRemoteObjectRegistry *remoteObjectRegistry() override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     WebCore::WebMediaSessionManager& mediaSessionManager() final;
