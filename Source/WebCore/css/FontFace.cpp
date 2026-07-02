@@ -361,7 +361,7 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
 auto FontFace::loadForBindings() -> LoadedPromise&
 {
     m_mayLoadedPromiseBeScriptObservable = true;
-    m_backing->load();
+    protect(m_backing)->load();
     return m_loadedPromise.get();
 }
 
