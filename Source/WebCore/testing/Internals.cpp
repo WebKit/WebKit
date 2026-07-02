@@ -49,6 +49,7 @@
 #include "CacheStorageConnection.h"
 #include "CacheStorageProvider.h"
 #include "CachedImage.h"
+#include "CachedMatchFinder.h"
 #include "CanvasBase.h"
 #include "CertificateInfo.h"
 #include "Chrome.h"
@@ -622,6 +623,8 @@ void Internals::resetToConsistentState(Page& page)
 {
     page.setPageScaleFactor(1, IntPoint(0, 0));
     page.setPagination(Pagination());
+
+    CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
 
     page.setDefersLoading(false);
     page.setResourceCachingDisabledByWebInspector(false);
@@ -3350,6 +3353,11 @@ ExceptionOr<unsigned> Internals::countMatchesForText(const String& text, const V
 
     bool mark = markMatches == "mark"_s;
     return document->editor().countMatchesForText(text, std::nullopt, parsedOptions.releaseReturnValue(), 1000, mark, nullptr);
+}
+
+void Internals::setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount)
+{
+    CachedMatchFinder::setMaximumRunCountForTesting(maximumRunCount);
 }
 
 ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vector<String>& findOptions)
