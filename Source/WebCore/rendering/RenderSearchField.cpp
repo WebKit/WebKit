@@ -95,6 +95,8 @@ void RenderSearchField::showPopup()
     if (m_searchPopupIsVisible)
         return;
 
+
+
     if (!m_searchPopup)
         m_searchPopup = page().chrome().createSearchPopupMenu(downcast<SearchInputType>(*inputElement().inputType()));
 

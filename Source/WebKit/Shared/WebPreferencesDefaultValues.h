@@ -198,8 +198,6 @@ bool defaultScreenTimeEnabled();
 bool defaultIFrameResourceMonitoringEnabled();
 #endif
 
-bool defaultSearchInputResultsAttributeEnabled();
-
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
 bool defaultPreferSpatialAudioExperience();
 #endif
