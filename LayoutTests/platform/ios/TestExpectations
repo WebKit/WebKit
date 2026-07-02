@@ -8011,7 +8011,6 @@ webkit.org/b/296202 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/296209 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
 
 # rdar://156353464 ☂️Bug for iOS26 reproduction and expectations
-compositing/layer-creation/sticky-overlap-extent.html [ Failure ]
 editing/pasteboard/copy-paste-bidi.html [ Failure ]
 editing/selection/ios/show-selection-in-transformed-container-2.html [ Failure ]
 fast/mediastream/play-newly-added-audio-track.html [ Failure ]
