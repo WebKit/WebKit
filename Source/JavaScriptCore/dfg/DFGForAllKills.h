@@ -34,10 +34,6 @@
 
 namespace JSC { namespace DFG {
 
-namespace ForAllKillsInternal {
-constexpr bool verbose = false;
-}
-
 // Utilities for finding the last points where a node is live in DFG SSA. This accounts for liveness due
 // to OSR exit. This is usually used for enumerating over all of the program points where a node is live,
 // by exploring all blocks where the node is live at tail and then exploring all program points where the
@@ -168,34 +164,6 @@ void forAllKilledNodesAtNodeIndex(
                     return result;
                 });
         });
-}
-
-// Tells you all of the places to start searching from in a basic block. Gives you the node index at which
-// the value is either no longer live. This pretends that nodes are dead at the end of the block, so that
-// you can use this to do per-basic-block analyses.
-template<typename Functor>
-void forAllKillsInBlock(
-    Graph& graph, const CombinedLiveness& combinedLiveness, BasicBlock* block,
-    const Functor& functor)
-{
-    for (Node* node : combinedLiveness.liveAtTail[block])
-        functor(block->size(), node);
-    
-    LocalOSRAvailabilityCalculator localAvailability(graph);
-    localAvailability.beginBlock(block);
-    // Start running functor at the second node, because the functor is expected to only inspect nodes from the start of
-    // the block up to nodeIndex (exclusive), so if nodeIndex is zero then the functor has nothing to do.
-    for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-        dataLogLnIf(ForAllKillsInternal::verbose, "local availability at index: ", nodeIndex, " ", localAvailability.m_availability);
-        if (nodeIndex) {
-            forAllKilledNodesAtNodeIndex(
-                graph, localAvailability.m_availability, block, nodeIndex,
-                [&] (Node* node) {
-                    functor(nodeIndex, node);
-                });
-        }
-        localAvailability.executeNode(block->at(nodeIndex));
-    }
 }
 
 } } // namespace JSC::DFG

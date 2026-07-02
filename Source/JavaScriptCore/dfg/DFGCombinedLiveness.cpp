@@ -62,6 +62,13 @@ NodeSet liveNodesAtHead(Graph& graph, BasicBlock* block)
     return seen;
 }
 
+NodeSet bytecodeLivenessAtTerminal(Graph& graph, BasicBlock* block)
+{
+    NodeSet seen;
+    addBytecodeLiveness(graph, block->ssa->availabilityAtTail, seen, block->last());
+    return seen;
+}
+
 CombinedLiveness::CombinedLiveness(Graph& graph)
     : liveAtHead(graph)
     , liveAtTail(graph)
@@ -81,11 +88,8 @@ CombinedLiveness::CombinedLiveness(Graph& graph)
         // Unreachable
         //
         // And things may definitely be live in bytecode at that point in the program.
-        if (!block->numSuccessors()) {
-            NodeSet seen;
-            addBytecodeLiveness(graph, block->ssa->availabilityAtTail, seen, block->last());
-            liveAtTail[block] = seen;
-        }
+        if (!block->numSuccessors())
+            liveAtTail[block] = bytecodeLivenessAtTerminal(graph, block);
     }
     
     // Now compute the liveAtTail by unifying the liveAtHead of the successors.
