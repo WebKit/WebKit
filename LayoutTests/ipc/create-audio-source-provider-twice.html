@@ -1,0 +1,48 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() { window.testRunner?.notifyDone(); }
+
+async function run() {
+    const { CoreIPC, IPCWireTap } = await import('./coreipc.js');
+
+    let playerId = null;
+    const playerIdPromise = new Promise(resolve => {
+        const tap = new IPCWireTap('GPU', 'Outgoing');
+        tap.tapNext(CoreIPC.messages['RemoteMediaPlayerManagerProxy_CreateMediaPlayer'].name,
+            (proc, connId, msgName, typed, parsed) => {
+                playerId = parsed.identifier;
+                resolve();
+            });
+    });
+
+    const video = document.createElement('video');
+    video.src = '../media/content/test.mp4';
+    document.body.appendChild(video);
+    const metadataPromise = new Promise(resolve =>
+        video.addEventListener('loadedmetadata', resolve, { once: true }));
+
+    const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 10000));
+
+    await Promise.race([Promise.all([playerIdPromise, metadataPromise]), timeout]);
+
+    for (let i = 0; i < 5; i++) {
+        CoreIPC.GPU.RemoteMediaPlayerProxy.SetShouldEnableAudioSourceProvider(playerId, { shouldEnable: true });
+        CoreIPC.GPU.RemoteMediaPlayerProxy.CreateAudioSourceProvider(playerId, {});
+        await new Promise(resolve => setTimeout(resolve, 20));
+    }
+
+    done();
+}
+
+if (!window.IPC)
+    done();
+else
+    run().catch(done);
+</script>
