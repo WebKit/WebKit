@@ -99,3 +99,26 @@ async function checkClipboardItemString(item, type, expectedString)
     else
         testFailed(`getType("${type}") resolved to "${observedString}; expected "${expectedString}"`);
 }
+
+// Calls navigator.clipboard.read() with a fresh user activation, as required by the W3C
+// Clipboard API spec. Adds a transient button to the document, activates it, and reads the
+// clipboard inside the click handler so that the relevant global object has transient
+// activation when read() is invoked.
+async function readClipboardWithUserActivation()
+{
+    return new Promise((resolve, reject) => {
+        const button = document.createElement("button");
+        button.textContent = "Read clipboard";
+        document.body.appendChild(button);
+        button.addEventListener("click", async () => {
+            try {
+                resolve(await navigator.clipboard.read());
+            } catch (error) {
+                reject(error);
+            } finally {
+                button.remove();
+            }
+        }, { once: true });
+        UIHelper.activateElement(button);
+    });
+}
