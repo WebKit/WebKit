@@ -408,6 +408,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdDirectOptimize, EncodedJSValue, (Encode
 
 static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue thisValue, CacheableIdentifier identifier, GetByKind kind)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto* uid = identifier.uid();
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
 
@@ -416,7 +418,7 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
         if (!baseValue.isString()) [[unlikely]] {
             if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
                 repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-            return baseValue.get(globalObject, uid, slot);
+            RELEASE_AND_RETURN(scope, baseValue.get(globalObject, uid, slot));
         }
 
         baseObject = globalObject->stringPrototype();
@@ -430,8 +432,10 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
         if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object->type() != DerivedStringObjectType && object != globalObject->arrayPrototype()) [[unlikely]] {
             if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
                 repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
-            if (object->getNonIndexPropertySlot(globalObject, uid, slot))
-                return slot.getValue(globalObject, uid);
+            bool hasProperty = object->getNonIndexPropertySlot(globalObject, uid, slot);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (hasProperty)
+                RELEASE_AND_RETURN(scope, slot.getValue(globalObject, uid));
             return jsUndefined();
         }
 
@@ -456,7 +460,7 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
                 if (shouldGiveUp && propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
                     repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
             }
-            return slot.getValue(globalObject, uid);
+            RELEASE_AND_RETURN(scope, slot.getValue(globalObject, uid));
         }
 
         if (!structure->propertyAccessesAreCacheableForAbsence()) {
