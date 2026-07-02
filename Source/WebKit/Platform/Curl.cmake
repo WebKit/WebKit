@@ -1,3 +1,4 @@
+# Touch to force a CMake re-run so Win/PlayStation incremental builds pick up new Sources.txt files.
 list(APPEND WebKit_SOURCES
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
