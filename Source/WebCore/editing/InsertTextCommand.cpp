@@ -176,6 +176,18 @@ bool InsertTextCommand::applySmartListsIfNeeded()
         return false;
     }
 
+    auto lineEnd = logicalEndOfLine(endingSelection().visibleBase());
+    if (lineEnd.isNull() || lineEnd.isOrphan())
+        return false;
+
+    auto fullLineRange = VisibleSelection { lineStart, lineEnd }.firstRange();
+    if (!fullLineRange)
+        return false;
+
+    auto fullLineText = plainText(*fullLineRange);
+    if (fullLineText.find(' ') != notFound)
+        return false;
+
     // Create and parse the smart list for the previous line, if possible.
 
     auto smartListRangeForPreviousLine = [&] -> std::optional<SimpleRange> {
