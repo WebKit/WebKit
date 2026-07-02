@@ -25,6 +25,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/HashTraits.h>
 
 namespace WebCore {
 
@@ -51,3 +52,10 @@ SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(const WTF::
 
 } // namespace Style
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct DefaultHash<WebCore::Style::SingleAnimationRangeName> : IntHash<WebCore::Style::SingleAnimationRangeName> { };
+template<> struct HashTraits<WebCore::Style::SingleAnimationRangeName> : StrongEnumHashTraits<WebCore::Style::SingleAnimationRangeName> { };
+
+} // namespace WTF

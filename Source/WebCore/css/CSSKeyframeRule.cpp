@@ -27,6 +27,7 @@
 #include "CSSKeyframeRule.h"
 
 #include "CSSKeyframesRule.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyParserConsumer+Animations.h"
 #include "CSSSerializationContext.h"
 #include "CSSStyleProperties.h"
@@ -38,23 +39,23 @@
 
 namespace WebCore {
 
-void StyleRuleKeyframe::Key::writeToString(StringBuilder& str) const
+void StyleRuleKeyframe::Key::writeToString(StringBuilder& builder) const
 {
     if (rangeName == CSSValueContain)
-        str.append("contain "_s);
+        builder.append("contain "_s);
     else if (rangeName == CSSValueCover)
-        str.append("cover "_s);
+        builder.append("cover "_s);
     else if (rangeName == CSSValueEntry)
-        str.append("entry "_s);
+        builder.append("entry "_s);
     else if (rangeName == CSSValueEntryCrossing)
-        str.append("entry-crossing "_s);
+        builder.append("entry-crossing "_s);
     else if (rangeName == CSSValueExit)
-        str.append("exit "_s);
+        builder.append("exit "_s);
     else if (rangeName == CSSValueExitCrossing)
-        str.append("exit-crossing "_s);
+        builder.append("exit-crossing "_s);
     else if (rangeName == CSSValueScroll)
-        str.append("scroll "_s);
-    str.append(offset * 100, '%');
+        builder.append("scroll "_s);
+    CSS::serializationForCSS(builder, CSS::defaultSerializationContext(), offset);
 }
 
 StyleRuleKeyframe::StyleRuleKeyframe(Ref<StyleProperties>&& properties)
@@ -75,7 +76,7 @@ Ref<StyleRuleKeyframe> StyleRuleKeyframe::create(Ref<StyleProperties>&& properti
     return adoptRef(*new StyleRuleKeyframe(WTF::move(properties)));
 }
 
-Ref<StyleRuleKeyframe> StyleRuleKeyframe::create(Vector<std::pair<CSSValueID, double>>&& keys, Ref<StyleProperties>&& properties)
+Ref<StyleRuleKeyframe> StyleRuleKeyframe::create(Vector<std::pair<CSSValueID, CSS::Percentage<>>>&& keys, Ref<StyleProperties>&& properties)
 {
     auto keyStructs = keys.map([](auto& pair) -> Key {
         return { pair.first, pair.second };

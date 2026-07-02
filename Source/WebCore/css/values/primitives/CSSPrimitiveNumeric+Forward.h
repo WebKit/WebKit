@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +24,36 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumeric+Forward.h"
-#include <wtf/Forward.h>
+#include <WebCore/CSSPrimitiveNumericRange.h>
 
 namespace WebCore {
-
-class CSSParserTokenRange;
-class CSSValue;
-enum CSSValueID : uint16_t;
-struct CSSParserContext;
-
 namespace CSS {
-struct PropertyParserState;
-}
 
-namespace CSSPropertyParserHelpers {
+// MARK: Integer Primitive
 
-// MARK: <keyframe-selector> consuming
-// https://drafts.csswg.org/css-animations-1/#typedef-keyframe-selector
-Vector<std::pair<CSSValueID, CSS::Percentage<>>> consumeKeyframeKeyList(CSSParserTokenRange&, CSS::PropertyParserState&);
+template<Range = All, typename = int> struct Integer;
 
-// MARK: <keyframe-selector> parsing
-// https://drafts.csswg.org/css-animations-1/#typedef-keyframe-selector
-Vector<std::pair<CSSValueID, CSS::Percentage<>>> parseKeyframeKeyList(const String&, const CSSParserContext&);
+// MARK: Number Primitive
 
-// MARK: <keyframes-name> consuming
-// https://drafts.csswg.org/css-animations/#typedef-keyframes-name
-RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange&, CSS::PropertyParserState&);
+template<Range = All, typename = double> struct Number;
 
-} // namespace CSSPropertyParserHelpers
+// MARK: Percentage Primitive
+
+template<Range = All, typename = double> struct Percentage;
+
+// MARK: Dimension Primitives
+
+template<Range = All, typename = double> struct Angle;
+template<Range = All, typename = float> struct Length;
+template<Range = All, typename = double> struct Time;
+template<Range = All, typename = double> struct Frequency;
+template<Range = Nonnegative, typename = double> struct Resolution;
+template<Range = All, typename = double> struct Flex;
+
+// MARK: Dimension + Percentage Primitives
+
+template<Range = All, typename = float> struct AnglePercentage;
+template<Range = All, typename = float> struct LengthPercentage;
+
+} // namespace CSS
 } // namespace WebCore
