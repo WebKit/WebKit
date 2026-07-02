@@ -1073,6 +1073,8 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
         if (CheckedPtr container = dynamicDowncast<LegacyRenderSVGResourceContainer>(renderer()))
             container->idChanged();
+        else if (CheckedPtr container = dynamicDowncast<RenderSVGResourceContainer>(renderer()))
+            container->idChanged();
         if (isConnected())
             buildPendingResourcesIfNeeded();
         invalidateInstances();

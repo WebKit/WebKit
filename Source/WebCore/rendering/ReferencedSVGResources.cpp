@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ReferencedSVGResources.h"
 
+#include "ContainerNodeInlines.h"
 #include "DocumentView.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGResourceContainerInlines.h"
@@ -35,6 +36,9 @@
 #include "RenderLayerModelObject.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGPath.h"
+#include "RenderSVGResourceGradient.h"
+#include "RenderSVGResourcePaintServer.h"
+#include "RenderSVGResourcePattern.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
@@ -83,6 +87,14 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (!m_clientRenderer->document().settings().layerBasedSVGEngineEnabled()) {
         m_clientRenderer->repaint();
         return;
+    }
+
+    // A gradient or pattern change can leave the cached fill or stroke paint server stale, so drop
+    // it before the needsLayout() return below, because layout never touches the cache. Other
+    // resource types are not paint servers, so they leave it alone.
+    if (is<RenderSVGResourceGradient>(element.renderer()) || is<RenderSVGResourcePattern>(element.renderer())) {
+        if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get()))
+            layerModelObject->invalidateSVGPaintServerCache();
     }
 
     if (m_clientRenderer->needsLayout())
@@ -143,6 +155,25 @@ void ReferencedSVGResources::removeClientForTarget(const AtomString& targetID)
     auto entry = m_elementClients.take(targetID);
     if (RefPtr targetElement = entry.targetElement)
         targetElement->removeReferencingCSSClient(protect(*entry.client));
+}
+
+RenderSVGResourcePaintServer* ReferencedSVGResources::cachedFillPaintServer() const
+{
+    return m_cachedFillPaintServer.get();
+}
+
+RenderSVGResourcePaintServer* ReferencedSVGResources::cachedStrokePaintServer() const
+{
+    return m_cachedStrokePaintServer.get();
+}
+
+void ReferencedSVGResources::setCachedPaintServer(SVGPaintType paintType, RenderSVGResourcePaintServer& paintServer)
+{
+    ASSERT(paintType == SVGPaintType::Fill || paintType == SVGPaintType::Stroke);
+    if (paintType == SVGPaintType::Fill)
+        m_cachedFillPaintServer = paintServer;
+    else
+        m_cachedStrokePaintServer = paintServer;
 }
 
 ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const Style::ComputedStyle& style, const Document& document)

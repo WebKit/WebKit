@@ -42,6 +42,7 @@ class SVGGraphicsElement;
 
 namespace Style {
 struct SVGMarkerResource;
+struct SVGPaint;
 enum class TransformResolverOption : uint8_t;
 }
 
@@ -56,6 +57,8 @@ enum class ContentChangeType : uint8_t {
     FullScreen,
     Model
 };
+
+enum class SVGPaintType : bool { Fill, Stroke };
 
 class RenderLayerModelObject : public RenderElement {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerModelObject);
@@ -125,6 +128,8 @@ public:
     RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const Style::ComputedStyle&) const;
     RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const Style::ComputedStyle&) const;
 
+    void invalidateSVGPaintServerCache() const;
+
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceFilter* svgFilterResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
@@ -180,6 +185,8 @@ private:
     void removeOnlyThisLayerWithRepaint();
 
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
+
+    RenderSVGResourcePaintServer* svgPaintServerResourceFromStyle(const Style::SVGPaint&, const Style::ComputedStyle&, SVGPaintType) const;
 
     UniquelyOwnedPtr<RenderLayer> m_layer;
 

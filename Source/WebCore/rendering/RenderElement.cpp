@@ -2504,6 +2504,14 @@ ReferencedSVGResources& RenderElement::ensureReferencedSVGResources()
     return *rareData.referencedSVGResources;
 }
 
+ReferencedSVGResources* RenderElement::referencedSVGResources() const
+{
+    if (!hasRareData())
+        return nullptr;
+
+    return rareData().referencedSVGResources.get();
+}
+
 void RenderElement::clearReferencedSVGResources()
 {
     if (!hasRareData())

@@ -294,6 +294,7 @@ public:
     void setPseudoElementRenderer(PseudoElementType, RenderBlockFlow&);
 
     ReferencedSVGResources& ensureReferencedSVGResources();
+    ReferencedSVGResources* referencedSVGResources() const;
 
     Overflow NODELETE effectiveOverflowX() const;
     Overflow NODELETE effectiveOverflowY() const;
