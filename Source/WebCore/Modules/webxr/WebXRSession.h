@@ -168,7 +168,7 @@ private:
     bool m_shouldServiceRequestVideoFrameCallbacks { false };
     std::unique_ptr<EndPromise> m_endPromise;
 
-    WebXRSystem& m_xrSystem;
+    WeakPtr<WebXRSystem, WeakPtrImplWithEventTargetData> m_xrSystem;
     XRSessionMode m_mode;
     ThreadSafeWeakPtr<PlatformXR::Device> m_device;
     FeatureList m_requestedFeatures;

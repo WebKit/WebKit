@@ -398,7 +398,9 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 
     // 3. If the active immersive session is equal to session, set the active immersive session to null.
     // 4. Remove session from the list of inline sessions.
-    m_xrSystem.sessionEnded(*this);
+    RefPtr xrSystem = m_xrSystem.get();
+    if (xrSystem)
+        xrSystem->sessionEnded(*this);
 
     m_inputSources->clear();
 
