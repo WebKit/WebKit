@@ -8484,3 +8484,18 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-option-hover-styles.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-pseudo-open.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-synthetic-events.html [ Skip ]
+
+# rdar://181152256 (Mass gardening on the safari-7624.5-branch)
+compositing/overflow/ancestor-overflow.html  [ Failure ]
+fast/css/font-face-locally-installed.html [ Failure ]
+fast/css/word-space-extra.html [ Failure ]
+fast/inline/inline-continuation-borders.html [ Failure ]
+fast/repaint/block-in-inline-with-margin-repaint.html [ Failure ]
+fast/speechsynthesis/speech-synthesis-speak-fuzzer-crash.html [ Failure ]
+tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
+tables/mozilla_expected_failures/bugs/bug9879-1.html [ Failure ]
+tables/mozilla/bugs/bug9879-1.html [ Failure ]
+tables/mozilla/bugs/bug30332-1.html [ Failure ]
+tables/mozilla/bugs/bug30332-2.html [ Failure ]
+tables/mozilla/bugs/bug44505.html [ Failure ]
+webanimations/threaded-animations/accelerated-timeline-preservation-during-update.html [ Timeout ]
