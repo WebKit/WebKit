@@ -133,6 +133,9 @@ private:
 template<typename T, size_t Extent>
 inline void Encoder::encodeSpan(std::span<T, Extent> span)
 {
+    // An empty span encodes nothing, not even alignment padding.
+    if (span.empty())
+        return;
     auto bytes = asBytes(span);
     constexpr size_t alignment = alignof(T);
     ASSERT(!(reinterpret_cast<uintptr_t>(bytes.data()) % alignment));

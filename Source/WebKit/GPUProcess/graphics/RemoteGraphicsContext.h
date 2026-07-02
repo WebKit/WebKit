@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ArrayReferenceTuple.h"
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
@@ -35,6 +34,7 @@
 #include "RemoteRenderingBackend.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
+#include "UnsafeSpanTuple.h"
 #include <WebCore/ControlFactory.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
@@ -98,7 +98,7 @@ public:
     void clipPath(const WebCore::Path&, WebCore::WindRule);
     void clipCachedPath(RemotePathImplIdentifier, WebCore::WindRule);
     void resetClip();
-    void drawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize>, WebCore::FloatPoint localAnchor, WebCore::FontSmoothingMode);
+    void drawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::UnsafeSpanTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize>, WebCore::FloatPoint localAnchor, WebCore::FontSmoothingMode);
     void drawDisplayList(RemoteDisplayListIdentifier);
     void drawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, Ref<WebCore::Filter>&&);
     virtual void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);

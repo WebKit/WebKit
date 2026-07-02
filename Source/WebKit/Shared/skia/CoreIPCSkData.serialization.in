@@ -25,7 +25,7 @@
 additional_forward_declaration: class SkData;
 headers: "CoreIPCSkData.h"
 [Wrapper=WebKit::CoreIPCSkData, CreateUsing=create, AdditionalEncoder=StreamConnectionEncoder] class sk_sp<SkData> {
-    std::span<const uint8_t> dataReference();
+    IPC::UnsafeSpan<const uint8_t> dataReference();
 }
 
 #endif // USE(SKIA)

@@ -1010,7 +1010,13 @@ def check_type_members(type, checking_parent_class):
     for member in type.members:
         if member.condition is not None:
             result.append(f'#if {member.condition}')
-        result.append(f'    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.{member.name})>, {member.type}>);')
+        if member.type.startswith('IPC::UnsafeSpan') or 'IPC::UnsafeSpan' in member.type:
+            # UnsafeSpan is decoded in place; the member accessor returns a std::span (possibly
+            # wrapped, e.g. std::optional<std::span>) that is only required to be convertible to the
+            # declared UnsafeSpan type, not identical to it.
+            result.append(f'    static_assert(std::is_convertible_v<std::remove_cvref_t<decltype(instance.{member.name})>, {member.type}>);')
+        else:
+            result.append(f'    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.{member.name})>, {member.type}>);')
         if member.condition is not None:
             result.append('#endif')
     for member in type.dictionary_members:
@@ -1290,7 +1296,15 @@ def construct_type(type, specialization, indentation):
         member = serialized_members[i]
         if member.condition is not None:
             result.append(f'#if {member.condition}')
-        result.append(f'{indent(indentation + 1)}WTF::move({"" if member.optional_tuple_bit() else "*"}{sanitize_string_for_variable_name(member.name)}){"" if i == len(serialized_members) - 1 else ","}')
+        decoded = f'WTF::move({"" if member.optional_tuple_bit() else "*"}{sanitize_string_for_variable_name(member.name)})'
+        # UnsafeSpan decodes in place; hand the underlying std::span to the constructor so it binds
+        # with a single user-defined conversion (UnsafeSpan -> std::span -> destination type).
+        if member.type.startswith('IPC::UnsafeSpan'):
+            decoded = f'{decoded}.span()'
+        elif 'IPC::UnsafeSpan' in member.type:
+            # Wrapped, e.g. std::optional<IPC::UnsafeSpan<...>>: map each UnsafeSpan to its std::span.
+            decoded = f'{decoded}.transform([](auto&& unsafeSpan) {{ return unsafeSpan.span(); }})'
+        result.append(f'{indent(indentation + 1)}{decoded}{"" if i == len(serialized_members) - 1 else ","}')
         if member.condition is not None:
             result.append('#endif')
     for i in range(len(type.dictionary_members)):

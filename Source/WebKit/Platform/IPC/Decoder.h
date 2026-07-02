@@ -34,6 +34,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
@@ -131,8 +132,15 @@ public:
             m_bufferDeallocator(WTF::move(buffer));
     }
 
+    // Decoder -specific function, callers are expected to check isValid().
     template<typename T>
     [[nodiscard]] std::span<const T> decodeSpan(size_t);
+
+    // Raw in-place span; never copies, even for stream decoders. Used where the data is not
+    // retained past decode (decodeObject copies by value; IPC::UnsafeSpan opts into in-place).
+    // Decoder -specific function, callers are expected to check isValid().
+    template<typename T>
+    [[nodiscard]] std::span<const T> decodeSpanInPlace(size_t);
 
     template<typename T>
     [[nodiscard]] std::optional<T> decodeObject();
@@ -211,6 +219,11 @@ private:
 
     Vector<uint32_t> m_indicesOfObjectsFailingDecoding;
 
+    // For decoders that view sender-writable shared memory (Stream connections; null
+    // m_bufferDeallocator), decodeSpan() copies span data into these owned, alignof(T)-aligned
+    // buffers so the returned spans are stable against concurrent sender writes (TOCTOU).
+    Vector<MallocSpan<uint8_t, FastAlignedMalloc>> m_streamSpanCopies;
+
 #if ENABLE(IPC_TESTING_API)
     ASCIILiteral m_errorString;
 #endif
@@ -232,10 +245,15 @@ inline bool alignedBufferIsLargeEnoughToContain(size_t bufferSize, const size_t 
 }
 
 template<typename T>
-inline std::span<const T> Decoder::decodeSpan(size_t size)
+inline std::span<const T> Decoder::decodeSpanInPlace(size_t size)
 {
-    if (size > std::numeric_limits<size_t>::max() / sizeof(T))
+    if (!size)
         return { };
+
+    if (size > std::numeric_limits<size_t>::max() / sizeof(T)) {
+        markInvalid();
+        return { };
+    }
 
     const size_t alignedBufferPosition = static_cast<size_t>(std::distance(m_buffer.data(), roundUpToMultipleOf<alignof(T)>(std::to_address(m_bufferPosition))));
     const size_t bytesNeeded = size * sizeof(T);
@@ -249,11 +267,27 @@ inline std::span<const T> Decoder::decodeSpan(size_t size)
 }
 
 template<typename T>
+inline std::span<const T> Decoder::decodeSpan(size_t size)
+{
+    auto inPlace = decodeSpanInPlace<T>(size);
+    // A decoder that owns no deallocator views sender-writable shared memory (Stream connections).
+    // Copy the data into an owned, alignof(T)-aligned buffer so the returned span is stable against
+    // concurrent sender writes (TOCTOU). Owning (kernel-copied) decoders return in place, zero-copy.
+    if (!inPlace.data() || inPlace.empty() || m_bufferDeallocator)
+        return inPlace;
+    auto holder = MallocSpan<uint8_t, FastAlignedMalloc>::alignedMalloc(alignof(T), inPlace.size_bytes());
+    memcpySpan(holder.mutableSpan(), asBytes(inPlace)); // single read out of shared memory
+    auto result = spanReinterpretCast<const T>(holder.span());
+    m_streamSpanCopies.append(WTF::move(holder));
+    return result;
+}
+
+template<typename T>
 inline std::optional<T> Decoder::decodeObject()
 {
     static_assert(std::is_trivially_copyable_v<T>);
 
-    auto data = decodeSpan<T>(1);
+    auto data = decodeSpanInPlace<T>(1);
     if (!data.data())
         return std::nullopt;
 
@@ -261,3 +295,4 @@ inline std::optional<T> Decoder::decodeObject()
 }
 
 } // namespace IPC
+

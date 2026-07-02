@@ -81,7 +81,7 @@ header: "CoreIPCSecTrust.h"
 #endif
 #if !HAVE(WK_SECURE_CODING_SECTRUST)
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCSecTrust {
-    std::span<const uint8_t> dataReference();
+    IPC::UnsafeSpan<const uint8_t> dataReference();
 }
 #endif
 

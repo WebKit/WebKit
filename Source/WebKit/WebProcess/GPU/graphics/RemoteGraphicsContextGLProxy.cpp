@@ -58,18 +58,18 @@ using namespace WebCore;
 namespace {
 
 template<typename... Types, typename... SpanTupleTypes, size_t... Indices>
-IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<SpanTupleTypes...>& spanTuple, std::index_sequence<Indices...>)
+IPC::SpanTuple<Types...> toSpanTuple(const GCGLSpanTuple<SpanTupleTypes...>& spanTuple, std::index_sequence<Indices...>)
 {
-    return IPC::ArrayReferenceTuple<Types...> {
+    return IPC::SpanTuple<Types...> {
         reinterpret_cast<const std::tuple_element_t<Indices, std::tuple<Types...>>*>(spanTuple.template data<Indices>())...,
         spanTuple.bufSize };
 }
 
 template<typename... Types, typename... SpanTupleTypes>
-IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<SpanTupleTypes...>& spanTuple)
+IPC::SpanTuple<Types...> toSpanTuple(const GCGLSpanTuple<SpanTupleTypes...>& spanTuple)
 {
     static_assert(sizeof...(Types) == sizeof...(SpanTupleTypes));
-    return toArrayReferenceTuple<Types...>(spanTuple, std::index_sequence_for<Types...> { });
+    return toSpanTuple<Types...>(spanTuple, std::index_sequence_for<Types...> { });
 }
 
 }
@@ -421,7 +421,7 @@ inlineCase:
 void RemoteGraphicsContextGLProxy::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawArraysANGLE(mode, toArrayReferenceTuple<int32_t, int32_t>(firstsAndCounts)));
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawArraysANGLE(mode, toSpanTuple<int32_t, int32_t>(firstsAndCounts)));
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     }
@@ -430,7 +430,7 @@ void RemoteGraphicsContextGLProxy::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanT
 void RemoteGraphicsContextGLProxy::multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawArraysInstancedANGLE(mode, toArrayReferenceTuple<int32_t, int32_t, int32_t>(firstsCountsAndInstanceCounts)));
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawArraysInstancedANGLE(mode, toSpanTuple<int32_t, int32_t, int32_t>(firstsCountsAndInstanceCounts)));
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     }
@@ -439,7 +439,7 @@ void RemoteGraphicsContextGLProxy::multiDrawArraysInstancedANGLE(GCGLenum mode, 
 void RemoteGraphicsContextGLProxy::multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawElementsANGLE(mode, toArrayReferenceTuple<int32_t, int32_t>(countsAndOffsets), type));
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawElementsANGLE(mode, toSpanTuple<int32_t, int32_t>(countsAndOffsets), type));
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     }
@@ -448,7 +448,7 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsANGLE(GCGLenum mode, GCGLSpa
 void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawElementsInstancedANGLE(mode, toArrayReferenceTuple<int32_t, int32_t, int32_t>(countsOffsetsAndInstanceCounts), type));
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawElementsInstancedANGLE(mode, toSpanTuple<int32_t, int32_t, int32_t>(countsOffsetsAndInstanceCounts), type));
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     }
@@ -457,7 +457,7 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE(GCGLenum mode
 void RemoteGraphicsContextGLProxy::multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint> firstsCountsInstanceCountsAndBaseInstances)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawArraysInstancedBaseInstanceANGLE(mode, toArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>(firstsCountsInstanceCountsAndBaseInstances)));
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawArraysInstancedBaseInstanceANGLE(mode, toSpanTuple<int32_t, int32_t, int32_t, uint32_t>(firstsCountsInstanceCountsAndBaseInstances)));
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     }
@@ -466,7 +466,7 @@ void RemoteGraphicsContextGLProxy::multiDrawArraysInstancedBaseInstanceANGLE(GCG
 void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, GCGLenum type)
 {
     if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, toArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances), type));
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, toSpanTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances), type));
         if (sendResult != IPC::Error::NoError)
             markContextLost();
     }

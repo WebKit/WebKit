@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,40 @@
 
 #pragma once
 
-#include <wtf/Vector.h>
+#include <span>
+#include <wtf/StdLibExtras.h>
 
 namespace IPC {
 
-template<typename... Types>
-class ArrayReferenceTuple {
+// A span argument for IPC data that can be referred to in place, without a copy preventing TOCTOU.
+// Should be only used for data that is not validated at all, such as pixel value data, or
+// values that are copied out in the decoder, like matrix values copied to matrix members.
+// Decoding std::span is always safe.
+// Decoding IPC::UnsafeSpan should be used as an optimization if the decoder is manually
+// verified as being safe against simultaneous modifications to the underlying buffer data.
+template<typename T, size_t Extent = std::dynamic_extent>
+class UnsafeSpan {
 public:
-    ArrayReferenceTuple() = default;
+    using SpanType = std::span<T, Extent>;
 
-    ArrayReferenceTuple(const Types*... data, size_t size)
-        : m_size(size)
+    UnsafeSpan() = default;
+    UnsafeSpan(SpanType span)
+        : m_span(span)
     {
-        if (m_size)
-            m_data = { data... };
     }
 
-    bool isEmpty() const { return !m_size; }
-    size_t size() const { return m_size; }
+    SpanType span() const LIFETIME_BOUND { return m_span; }
 
-    template<unsigned I>
-    auto data() const
-    {
-        return std::get<I>(m_data);
-    }
-
-    template<unsigned I>
-    auto span() const
-    {
-        return unsafeMakeSpan(std::get<I>(m_data), m_size);
-    }
+    auto data() const LIFETIME_BOUND { return m_span.data(); }
+    size_t size() const { return m_span.size(); }
+    size_t size_bytes() const { return m_span.size_bytes(); } // NOLINT
+    bool empty() const { return m_span.empty(); }
+    auto begin() const LIFETIME_BOUND { return m_span.begin(); }
+    auto end() const LIFETIME_BOUND { return m_span.end(); }
+    decltype(auto) operator[](size_t i) const LIFETIME_BOUND { return m_span[i]; }
 
 private:
-    size_t m_size { 0 };
-    std::tuple<const Types*...> m_data;
+    SpanType m_span;
 };
 
-}
+} // namespace IPC
