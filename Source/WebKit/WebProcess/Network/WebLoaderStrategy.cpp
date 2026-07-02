@@ -1246,6 +1246,11 @@ ResourceError WebLoaderStrategy::httpNavigationWithHTTPSOnlyError(const Resource
     return WebKit::httpNavigationWithHTTPSOnlyError(request);
 }
 
+bool WebLoaderStrategy::isHttpNavigationWithHTTPSOnlyError(const WebCore::ResourceError& error) const
+{
+    return WebKit::isHttpNavigationWithHTTPSOnlyError(error);
+}
+
 ResourceError WebLoaderStrategy::pluginWillHandleLoadError(const ResourceResponse& response) const
 {
     return WebKit::pluginWillHandleLoadError(response);

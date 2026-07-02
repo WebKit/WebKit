@@ -103,3 +103,8 @@ WebCore::ResourceError WebResourceLoadScheduler::httpNavigationWithHTTPSOnlyErro
 {
     RELEASE_ASSERT_NOT_REACHED(); // This error should never be created in WebKit1 because HTTPSOnly/First aren't available.
 }
+
+bool WebResourceLoadScheduler::isHttpNavigationWithHTTPSOnlyError(const WebCore::ResourceError& error) const
+{
+    RELEASE_ASSERT_NOT_REACHED(); // This error should never be created in WebKit1 because HTTPSOnly/First aren't available.
+}
