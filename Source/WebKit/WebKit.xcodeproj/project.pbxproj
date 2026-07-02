@@ -1961,6 +1961,8 @@
 		9979659E25310A4900B31AE3 /* WebInspectorUIExtensionControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979659A25310A4800B31AE3 /* WebInspectorUIExtensionControllerMessages.h */; };
 		997965A3253128C700B31AE3 /* _WKInspectorExtensionHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 997965A2253128C700B31AE3 /* _WKInspectorExtensionHost.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9979CA58237F49F10039EC05 /* _WKInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979CA57237F49F00039EC05 /* _WKInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99657F74FE484682A7055097 /* BidiDigitalCredentialsAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = BA0937229E9E469B9278ED67 /* BidiDigitalCredentialsAgent.h */; };
+		2790DB2B37644A61AA0AD21E /* BidiDigitalCredentialsAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 277A87492B55413CB027FECA /* BidiDigitalCredentialsAgent.cpp */; };
 		997EB9DA2E5544FC002CFED7 /* BidiPermissionsAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 997EB9D82E5544FC002CFED7 /* BidiPermissionsAgent.h */; };
 		997EB9DB2E5544FC002CFED7 /* BidiPermissionsAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 997EB9D92E5544FC002CFED7 /* BidiPermissionsAgent.cpp */; };
 		99996A9F25004BCC004F7559 /* _WKInspectorPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 99996A9D25004BCB004F7559 /* _WKInspectorPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7647,6 +7649,8 @@
 		9979659B25310A4800B31AE3 /* WebInspectorUIExtensionControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUIExtensionControllerMessageReceiver.cpp; sourceTree = "<group>"; };
 		997965A2253128C700B31AE3 /* _WKInspectorExtensionHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorExtensionHost.h; sourceTree = "<group>"; };
 		9979CA57237F49F00039EC05 /* _WKInspectorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorPrivate.h; sourceTree = "<group>"; };
+		BA0937229E9E469B9278ED67 /* BidiDigitalCredentialsAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiDigitalCredentialsAgent.h; sourceTree = "<group>"; };
+		277A87492B55413CB027FECA /* BidiDigitalCredentialsAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiDigitalCredentialsAgent.cpp; sourceTree = "<group>"; };
 		997EB9D82E5544FC002CFED7 /* BidiPermissionsAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiPermissionsAgent.h; sourceTree = "<group>"; };
 		997EB9D92E5544FC002CFED7 /* BidiPermissionsAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiPermissionsAgent.cpp; sourceTree = "<group>"; };
 		997EB9DC2E554524002CFED7 /* BidiPermissions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiPermissions.json; sourceTree = "<group>"; };
@@ -15491,6 +15495,8 @@
 				F3EEEE572DB318270038CC1D /* BidiBrowserAgent.h */,
 				F3272B7D2DB997C6007B3A9A /* BidiBrowsingContextAgent.cpp */,
 				F3272B7C2DB997C6007B3A9A /* BidiBrowsingContextAgent.h */,
+				277A87492B55413CB027FECA /* BidiDigitalCredentialsAgent.cpp */,
+				BA0937229E9E469B9278ED67 /* BidiDigitalCredentialsAgent.h */,
 				5EEC72532DC1B32400D012DD /* BidiEventNames.h */,
 				997EB9D92E5544FC002CFED7 /* BidiPermissionsAgent.cpp */,
 				997EB9D82E5544FC002CFED7 /* BidiPermissionsAgent.h */,
@@ -18217,6 +18223,7 @@
 				95C943912523C0D00054F3D5 /* BaseBoardSPI.h in Headers */,
 				F3EEEE592DB318270038CC1D /* BidiBrowserAgent.h in Headers */,
 				F3272B822DB997C6007B3A9A /* BidiBrowsingContextAgent.h in Headers */,
+				99657F74FE484682A7055097 /* BidiDigitalCredentialsAgent.h in Headers */,
 				5EEC72542DC1B32500D012DD /* BidiEventNames.h in Headers */,
 				997EB9DA2E5544FC002CFED7 /* BidiPermissionsAgent.h in Headers */,
 				F3272B832DB997C6007B3A9A /* BidiScriptAgent.h in Headers */,
@@ -22093,6 +22100,7 @@
 				413E5C9229B0CF7C002F4987 /* BackgroundFetchStateCocoa.mm in Sources */,
 				F3EEEE5A2DB318270038CC1D /* BidiBrowserAgent.cpp in Sources */,
 				F3272B802DB997C6007B3A9A /* BidiBrowsingContextAgent.cpp in Sources */,
+				2790DB2B37644A61AA0AD21E /* BidiDigitalCredentialsAgent.cpp in Sources */,
 				997EB9DB2E5544FC002CFED7 /* BidiPermissionsAgent.cpp in Sources */,
 				F3272B812DB997C6007B3A9A /* BidiScriptAgent.cpp in Sources */,
 				5EEC72502DC1B32100D012DD /* BidiSessionAgent.cpp in Sources */,

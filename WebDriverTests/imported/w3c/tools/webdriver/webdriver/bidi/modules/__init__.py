@@ -3,6 +3,7 @@
 from .bluetooth import Bluetooth
 from .browser import Browser
 from .browsing_context import BrowsingContext
+from .digital_credentials import DigitalCredentials
 from .emulation import Emulation
 from .input import Input
 from .network import Network

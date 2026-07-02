@@ -333,6 +333,12 @@
 #include "WebBackForwardListSwiftUtilities.h"
 #endif
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "BidiDigitalCredentialsAgent.h"
+#include "WebDriverBidiProcessor.h"
+#include "WebDriverBidiProtocolObjects.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "RemoteScrollingCoordinatorMessages.h"
 #include "RemoteScrollingCoordinatorProxy.h"
@@ -11184,7 +11190,7 @@ void WebPageProxy::showContactPicker(IPC::Connection& connection, ContactsReques
 }
 
 #if ENABLE(WEB_AUTHN)
-void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, const WebCore::DigitalCredentialsRequestData& requestData, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
+void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, std::optional<WebCore::FrameIdentifier>&& frameID, const WebCore::DigitalCredentialsRequestData& requestData, CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     WTF::switchOn(requestData,
         [&](const auto& requestData) {
@@ -11194,6 +11200,50 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, co
                 connection,
                 completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials feature is disabled by preference."_s }))
             );
+
+#if ENABLE(WEBDRIVER_BIDI)
+            if (isControlledByAutomation()) {
+                if (RefPtr automationSession = configuration().processPool().automationSession()) {
+                    auto& agent = automationSession->bidiProcessor().digitalCredentialsAgent();
+                    // Per the Digital Credentials spec (§13.2 "Handle Virtual Wallet Behavior"),
+                    // the behavior is looked up for the requesting global's browsing context,
+                    // falling back to the session default. Resolve the requesting frame to its
+                    // BiDi browsing-context id; this matches the id-space SET uses. The
+                    // end-to-end iframe-scoped test lands with the WKTR actuation bridge
+                    // (webkit.org/b/306292).
+                    String contextID;
+                    if (frameID) {
+                        if (RefPtr frame = WebFrameProxy::webFrame(*frameID); frame && frame->page() == this)
+                            contextID = automationSession->effectiveHandleForWebFrameProxy(*frame);
+                    } else
+                        contextID = automationSession->handleForWebPageProxy(*this);
+                    const auto walletBehavior = agent.behaviorForContext(contextID);
+                    if (walletBehavior) {
+                        using VirtualWalletAction = Inspector::Protocol::BidiDigitalCredentials::VirtualWalletAction;
+                        switch (walletBehavior->action) {
+                        case VirtualWalletAction::Wait:
+                            // FIXME: A concurrent request from a site-isolated cross-origin iframe (separate
+                            // process) can clobber this single slot; only same-process concurrency is
+                            // serialized by prepareCredentialRequests (webkit.org/b/318408).
+                            ASSERT(!m_pendingDigitalCredentialsWaitContextID);
+                            m_pendingDigitalCredentialsWaitContextID = contextID;
+                            agent.holdPendingHandler(contextID, WTF::move(completionHandler));
+                            return;
+                        case VirtualWalletAction::Decline:
+                            completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "Virtual wallet declined the request."_s }));
+                            return;
+                        case VirtualWalletAction::Respond:
+                            completionHandler(WebCore::DigitalCredentialsResponseData { walletBehavior->protocol, walletBehavior->responseJSON });
+                            return;
+                        case VirtualWalletAction::Clear:
+                            // 'clear' removes the stored behavior in the agent, so it is never a stored action here.
+                            ASSERT_NOT_REACHED();
+                            break;
+                        }
+                    }
+                }
+            }
+#endif
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
             MESSAGE_CHECK_COMPLETION_BASE(
@@ -11227,6 +11277,12 @@ void WebPageProxy::dismissDigitalCredentialsChooser(IPC::Connection& connection,
         completionHandler(false)
     );
 #if ENABLE(WEB_AUTHN)
+#if ENABLE(WEBDRIVER_BIDI)
+    if (auto contextID = std::exchange(m_pendingDigitalCredentialsWaitContextID, std::nullopt)) {
+        if (RefPtr automationSession = configuration().processPool().automationSession())
+            automationSession->bidiProcessor().digitalCredentialsAgent().releasePendingHandler(*contextID);
+    }
+#endif
     protect(pageClient())->dismissDigitalCredentialsChooser(WTF::move(completionHandler));
 #else
     completionHandler(false);

@@ -45,7 +45,7 @@ Ref<DummyCredentialRequestCoordinatorClient> DummyCredentialRequestCoordinatorCl
     return adoptRef(*new DummyCredentialRequestCoordinatorClient);
 }
 
-void DummyCredentialRequestCoordinatorClient::showDigitalCredentialsChooser(DigitalCredentialsRawRequests&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&& completionHandler)
+void DummyCredentialRequestCoordinatorClient::showDigitalCredentialsChooser(std::optional<FrameIdentifier>, DigitalCredentialsRawRequests&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&& completionHandler)
 {
     completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Empty client."_s }));
 }

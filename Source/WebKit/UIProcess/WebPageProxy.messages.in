@@ -84,10 +84,10 @@ messages -> WebPageProxy {
 
 #if ENABLE(WEB_AUTHN)
 #if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-    [EnabledBy=DigitalCredentialsEnabled] ShowDigitalCredentialsChooser(Variant<WebCore::DigitalCredentialsMobileDocumentRequestData, WebCore::DigitalCredentialsMobileDocumentRequestDataWithRequestInfo> requestData) -> (Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
+    [EnabledBy=DigitalCredentialsEnabled] ShowDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier> frameID, Variant<WebCore::DigitalCredentialsMobileDocumentRequestData, WebCore::DigitalCredentialsMobileDocumentRequestDataWithRequestInfo> requestData) -> (Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
 #endif
 #if !ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
-    [EnabledBy=DigitalCredentialsEnabled] ShowDigitalCredentialsChooser(Variant<WebCore::DigitalCredentialsMobileDocumentRequestData> requestData) -> (Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
+    [EnabledBy=DigitalCredentialsEnabled] ShowDigitalCredentialsChooser(std::optional<WebCore::FrameIdentifier> frameID, Variant<WebCore::DigitalCredentialsMobileDocumentRequestData> requestData) -> (Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
 #endif
     [EnabledBy=DigitalCredentialsEnabled] DismissDigitalCredentialsChooser() -> (bool didDismiss)
 #endif

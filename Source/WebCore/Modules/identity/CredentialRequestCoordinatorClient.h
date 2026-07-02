@@ -29,6 +29,7 @@
 
 #include <WebCore/DigitalCredentialsProtocols.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMalloc.h>
@@ -52,7 +53,7 @@ class CredentialRequestCoordinatorClient : public RefCounted<CredentialRequestCo
 public:
     CredentialRequestCoordinatorClient() = default;
     virtual ~CredentialRequestCoordinatorClient() = default;
-    virtual void showDigitalCredentialsChooser(DigitalCredentialsRawRequests&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&&) = 0;
+    virtual void showDigitalCredentialsChooser(std::optional<FrameIdentifier>, DigitalCredentialsRawRequests&&, const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&&) = 0;
     virtual void dismissDigitalCredentialsChooser(CompletionHandler<void(bool)>&&) = 0;
     virtual ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&) = 0;
 

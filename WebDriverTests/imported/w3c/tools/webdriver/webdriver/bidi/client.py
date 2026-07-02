@@ -93,6 +93,7 @@ class BidiSession:
         self.bluetooth = modules.Bluetooth(self)
         self.browser = modules.Browser(self)
         self.browsing_context = modules.BrowsingContext(self)
+        self.digital_credentials = modules.DigitalCredentials(self)
         self.emulation = modules.Emulation(self)
         self.input = modules.Input(self)
         self.network = modules.Network(self)

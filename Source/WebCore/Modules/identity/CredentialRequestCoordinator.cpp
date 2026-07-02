@@ -44,6 +44,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "JSValueInWrappedObjectInlines.h"
+#include "LocalFrame.h"
 #include "Page.h"
 #include "SecurityOriginData.h"
 #include <JavaScriptCore/JSObject.h>
@@ -175,7 +176,12 @@ void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& 
 
     auto [requestData, rawRequests] = requestDataAndRawRequests.releaseReturnValue();
 
+    std::optional<FrameIdentifier> requestingFrameID;
+    if (RefPtr frame = document.frame())
+        requestingFrameID = frame->frameID();
+
     m_client->showDigitalCredentialsChooser(
+        requestingFrameID,
         WTF::move(rawRequests),
         requestData,
         [weakThis = WeakPtr { *this }, signal](Expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException) {
@@ -191,6 +197,11 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(Expected<Dig
         abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { signal->reason().getValue() });
         return;
     }
+
+    // A parked "wait" reply released during abort/teardown can arrive after the
+    // request already left Requesting; it is moot, so return before the guard.
+    if (m_interactionState != InteractionState::Requesting)
+        return;
 
     InteractionStateGuard guard(*this);
 

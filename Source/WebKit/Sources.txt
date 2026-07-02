@@ -590,6 +590,7 @@ UIProcess/Authentication/WebProtectionSpace.cpp
 
 UIProcess/Automation/BidiBrowserAgent.cpp @no-unify-when(bundle<=8)
 UIProcess/Automation/BidiBrowsingContextAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiDigitalCredentialsAgent.cpp @no-unify-when(bundle<=8)
 UIProcess/Automation/BidiPermissionsAgent.cpp @no-unify-when(bundle<=8)
 UIProcess/Automation/BidiScriptAgent.cpp @no-unify-when(bundle<=8)
 UIProcess/Automation/BidiSessionAgent.cpp @no-unify-when(bundle<=8)

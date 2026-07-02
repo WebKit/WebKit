@@ -33,6 +33,7 @@
 
 #include "BidiBrowserAgent.h"
 #include "BidiBrowsingContextAgent.h"
+#include "BidiDigitalCredentialsAgent.h"
 #include "BidiPermissionsAgent.h"
 #include "BidiScriptAgent.h"
 #include "BidiSessionAgent.h"
@@ -56,6 +57,7 @@ WebDriverBidiProcessor::WebDriverBidiProcessor(WebAutomationSession& session)
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_browserAgent(makeUniqueRef<BidiBrowserAgent>(session, m_backendDispatcher))
     , m_browsingContextAgent(makeUniqueRef<BidiBrowsingContextAgent>(session, m_backendDispatcher))
+    , m_digitalCredentialsAgent(makeUniqueRef<BidiDigitalCredentialsAgent>(session, m_backendDispatcher))
     , m_permissionsAgent(makeUniqueRef<BidiPermissionsAgent>(session, m_backendDispatcher))
     , m_scriptAgent(makeUniqueRef<BidiScriptAgent>(session, m_backendDispatcher))
     , m_sessionAgent(makeUniqueRef<BidiSessionAgent>(session, m_backendDispatcher))
