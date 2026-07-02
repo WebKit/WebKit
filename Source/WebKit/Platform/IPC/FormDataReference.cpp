@@ -26,10 +26,13 @@
 #include "config.h"
 #include "FormDataReference.h"
 
+<<<<<<< HEAD
 #if PLATFORM(COCOA)
 #include "PathsBlockedForSandboxExtensions.h"
 #endif
 
+=======
+>>>>>>> 2427c3fef353 (FormDataReference validator accepts invalid sandbox extensions)
 namespace IPC {
 
 FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<WebKit::SandboxExtensionHandle>&& sandboxExtensionHandles)
@@ -38,20 +41,28 @@ FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<We
     if (!m_data)
         return;
 
+<<<<<<< HEAD
     unsigned fileCount = 0;
     for (auto& element : m_data->elements()) {
         if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
             ++fileCount;
 #if PLATFORM(COCOA)
+=======
+    for (auto& element : m_data->elements()) {
+        if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
+>>>>>>> 2427c3fef353 (FormDataReference validator accepts invalid sandbox extensions)
             const String& path = fileData->filename;
             if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
                 RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8().data());
                 m_data = nullptr;
                 break;
             }
+<<<<<<< HEAD
 #else
             UNUSED_VARIABLE(fileData);
 #endif // !PLATFORM(COCOA)
+=======
+>>>>>>> 2427c3fef353 (FormDataReference validator accepts invalid sandbox extensions)
         }
     }
 
@@ -64,7 +75,11 @@ FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<We
             consumedExtensions++;
     }
 
+<<<<<<< HEAD
     if (consumedExtensions != fileCount) {
+=======
+    if (consumedExtensions != m_data->filesCount()) {
+>>>>>>> 2427c3fef353 (FormDataReference validator accepts invalid sandbox extensions)
         RELEASE_LOG_ERROR(IPC, "FormDataReference: dropping body because a file sandbox extension could not be consumed");
         m_data = nullptr;
     }
@@ -78,12 +93,18 @@ Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensionHandle
     return WTF::compactMap(m_data->elements(), [](auto& element) -> std::optional<WebKit::SandboxExtensionHandle> {
         if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
             const String& path = fileData->filename;
+<<<<<<< HEAD
 #if PLATFORM(COCOA)
+=======
+>>>>>>> 2427c3fef353 (FormDataReference validator accepts invalid sandbox extensions)
             if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
                 RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8().data());
                 return std::nullopt;
             }
+<<<<<<< HEAD
 #endif // PLATFORM(COCOA)
+=======
+>>>>>>> 2427c3fef353 (FormDataReference validator accepts invalid sandbox extensions)
             if (auto handle = WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly))
                 return { WTF::move(*handle) };
         }
