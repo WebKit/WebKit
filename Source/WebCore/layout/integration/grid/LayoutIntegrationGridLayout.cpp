@@ -190,6 +190,15 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutCon
         orderIteratorPopulator.collectChild(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) });
 }
 
+// updateFormattingContextRootRenderer may mutate bits of RenderGrid to properly reflect
+// the state and result of layout since certain clients may query this information
+// (see RenderGrid::paintChildren). Undo this state if we are falling back to legacy
+// so that we run a full layout.
+void GridLayout::invalidateFormattingContextRootRenderer(RenderGrid& renderGrid)
+{
+    renderGrid.currentGrid().setNeedsItemsPlacement(true);
+}
+
 std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
 {
     auto gridFormattingContext = Layout::GridFormattingContext { gridBox(), layoutState() };

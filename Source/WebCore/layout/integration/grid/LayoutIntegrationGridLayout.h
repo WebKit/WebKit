@@ -53,6 +53,11 @@ public:
 
     void layout();
 
+    // A GFC layout marks the legacy grid as placed without populating it, since the GFC path does not
+    // rely on the legacy grid state. Reverts that stale state so a subsequent legacy (non-GFC) layout
+    // treats the grid as needing a fresh layout, for example re-placing items to rebuild its tracks.
+    static void invalidateFormattingContextRootRenderer(RenderGrid&);
+
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidths();
 
     friend WTF::TextStream& operator<<(WTF::TextStream&, const GridLayout&);
