@@ -1,0 +1,132 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html><body>
+<p>Test that WebPageProxy::createNewPage rejects request bodies referencing files for which the WebContent process has no sandbox extension.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.preventPopupWindows();
+}
+const log = (s) => { document.getElementById("log").textContent += s + "\n"; };
+
+if (!window.IPC) {
+    log("PASS: createNewPage rejected unauthorized EncodedFileData");
+    if (window.testRunner)
+        testRunner.notifyDone();
+} else {
+    import('./coreipc.js').then(({ CoreIPC }) => {
+        CoreIPC.default_timeout = 30;
+
+        const NULLOPT = {};
+        const frameID = IPC.frameID[0];
+        const url = location.href;
+
+        function makeURL(s) { return { string: s }; }
+        function makeRequest(u) {
+            return {
+                getRequestDataToSerialize: {
+                    variantType: 'WebCore::ResourceRequest::RequestData',
+                    variant: {
+                        m_url: makeURL(u), m_firstPartyForCookies: makeURL(''),
+                        m_timeoutInterval: 0.0, m_httpMethod: 'GET',
+                        m_httpHeaderFields: { commonHeaders: [], uncommonHeaders: [] },
+                        m_responseContentDispositionEncodingFallbackArray: [],
+                        m_cachePolicy: 0, m_sameSiteDisposition: 0, m_priority: 2, m_requester: 0,
+                        m_allowCookies: false, m_isTopSite: false, m_isAppInitiated: false,
+                        m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                        m_useAdvancedPrivacyProtections: false, m_didFilterLinkDecoration: false,
+                        m_isPrivateTokenUsageByThirdPartyAllowed: false,
+                        m_wasSchemeOptimisticallyUpgraded: false, m_targetAddressSpace: 0,
+                    }
+                },
+                shouldBlockThirdPartyStorage: false, hiddenFromInspector: false,
+            };
+        }
+        function makeOrigin() {
+            return { data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: { protocol: location.protocol.slice(0, -1), host: location.hostname, port: location.port ? { optionalValue: Number(location.port) } : NULLOPT }
+            } };
+        }
+        function makeFrameInfo() {
+            return {
+                isMainFrame: true, frameType: 0, request: makeRequest(url),
+                securityOrigin: makeOrigin(), topOrigin: makeOrigin(), frameName: '', frameID: frameID,
+                webPageProxyID: NULLOPT,
+                parentFrameID: NULLOPT, documentID: NULLOPT,
+                certificateInfo: { trust: NULLOPT },
+                processID: { alias: 0 }, isFocused: false, errorOccurred: false,
+                frameMetrics: { isScrollable: 0, contentSize: { width: 0, height: 0 },
+                    visibleContentSize: { width: 0, height: 0 },
+                    visibleContentSizeExcludingScrollbars: { width: 0, height: 0 } }
+            };
+        }
+
+        try {
+            CoreIPC.UI.WebPageProxy.CreateNewPage(IPC.webPageProxyID, {
+                windowFeatures: {
+                    hasAdditionalFeatures: false,
+                    x: NULLOPT, y: NULLOPT, width: NULLOPT, height: NULLOPT,
+                    popup: NULLOPT, menuBarVisible: NULLOPT, statusBarVisible: NULLOPT,
+                    toolBarVisible: NULLOPT, locationBarVisible: NULLOPT, scrollbarsVisible: NULLOPT,
+                    resizable: NULLOPT, fullscreen: NULLOPT, dialog: NULLOPT,
+                    noopener: { optionalValue: true },
+                },
+                navigationActionData: {
+                    navigationType: 5, modifiers: 0, mouseButton: 254, syntheticClickType: 0,
+                    userGestureTokenIdentifier: NULLOPT, userGestureAuthorizationToken: NULLOPT,
+                    canHandleRequest: true, shouldOpenExternalURLsPolicy: 0,
+                    downloadAttribute: '',
+                    clickLocationInRootViewCoordinates: { x: 0.0, y: 0.0 },
+                    redirectResponse: { getResponseData: NULLOPT },
+                    isRequestFromClientOrUserInput: false, treatAsSameOriginNavigation: false,
+                    hasOpenedFrames: false, openedByDOMWithOpener: false, hasOpener: false,
+                    navigationUpgradeToHTTPSBehavior: 0,
+                    isInitialFrameSrcLoad: false, isContentRuleListRedirect: false,
+                    openedMainFrameName: '',
+                    targetBackForwardItemIdentifier: NULLOPT, sourceBackForwardItemIdentifier: NULLOPT,
+                    lockHistory: 0, lockBackForwardList: 0, clientRedirectSourceForHistory: '',
+                    effectiveSandboxFlags: { alias: 0 }, effectiveReferrerPolicy: 0,
+                    ownerPermissionsPolicy: NULLOPT, privateClickMeasurement: NULLOPT,
+                    advancedPrivacyProtections: 0, originatorAdvancedPrivacyProtections: NULLOPT,
+                    webHitTestResultData: NULLOPT,
+                    originatingFrameInfoData: makeFrameInfo(),
+                    originatingPageID: { optionalValue: IPC.webPageProxyID },
+                    frameInfo: makeFrameInfo(), navigationID: NULLOPT,
+                    originalRequest: makeRequest(url), request: makeRequest(url),
+                    requestBody: {
+                        data: { optionalValue: {
+                            m_elements: [ { data: {
+                                variantType: 'WebCore::FormDataElement::EncodedFileData',
+                                variant: { filename: '/private/etc/passwd', fileStart: 0, fileLength: -1, expectedFileModificationTime: NULLOPT }
+                            } } ],
+                            m_identifier: 0, m_alwaysStream: false, m_boundary: []
+                        } },
+                        sandboxExtensionHandles: [ { takeImpl: NULLOPT } ]
+                    },
+                    invalidURLString: '', requester: NULLOPT,
+                }
+            }, () => { });
+        } catch (e) {
+            log("send threw: " + e);
+        }
+
+        CoreIPC.UI.WebProcessProxy.TakeInvalidMessageStringForTesting(0, {}, (reply) => {
+            const error = reply ? String(reply.error || "") : "";
+            if (error.includes("hasGrantedSandboxExtensionForFile"))
+                log("PASS: createNewPage rejected unauthorized EncodedFileData");
+            else
+                log("FAIL: expected MESSAGE_CHECK on hasGrantedSandboxExtensionForFile, got: " + JSON.stringify(reply));
+        });
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }).catch((e) => {
+        log("import failed: " + e);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}
+</script>
+</body></html>
