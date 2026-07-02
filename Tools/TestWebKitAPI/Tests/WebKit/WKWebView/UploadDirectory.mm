@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC)
-
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
@@ -67,6 +65,8 @@
 }
 
 @end
+
+#if PLATFORM(MAC)
 
 TEST(WebKit, UploadDirectory)
 {
@@ -176,4 +176,56 @@ TEST(WebKit, BlockedUploadDirectory)
     EXPECT_FALSE(error);
 }
 
-#endif
+#endif // PLATFORM(MAC)
+
+TEST(WebKit, AllowTempUploadDirectory)
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error = nil;
+    NSURL *directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"/UploadDirectory"] isDirectory:YES];
+    [fileManager removeItemAtPath:directory.path error:nil];
+    EXPECT_TRUE([fileManager createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:nil error:&error]);
+    EXPECT_FALSE(error);
+    NSData *testData = [@"testdata" dataUsingEncoding:NSUTF8StringEncoding];
+    EXPECT_TRUE([fileManager createFileAtPath:[directory.path stringByAppendingPathComponent:@"testfile"] contents:testData attributes:nil]);
+
+    {
+        using namespace TestWebKitAPI;
+        HTTPServer server([] (Connection connection) {
+            connection.receiveHTTPRequest([=](Vector<char>&&) {
+                constexpr auto response =
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/html\r\n"
+                "Content-Length: 133\r\n\r\n"
+                "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input id='file' type='file' name='testname'></form>"_s;
+                connection.send(response, [=] {
+                    connection.receiveHTTPRequest([=](Vector<char>&& request) {
+                        EXPECT_TRUE(contains(request.span(), "Content-Length: 192\r\n"_span));
+                        size_t headerEnd = find(request.span(), "\r\n\r\n"_span);
+                        EXPECT_TRUE(headerEnd != notFound);
+                        EXPECT_EQ(request.size() - (headerEnd + strlen("\r\n\r\n")), 192u);
+                        constexpr auto secondResponse =
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Length: 0\r\n\r\n"_s;
+                        connection.send(secondResponse);
+                    });
+                });
+            });
+        });
+
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+        RetainPtr delegate = adoptNS([[UploadDelegate alloc] initWithDirectory:directory]);
+        [webView setUIDelegate:delegate.get()];
+
+        [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+
+        [webView clickOnElementID:@"file"];
+        while (![delegate sentDirectory])
+            TestWebKitAPI::Util::spinRunLoop();
+        [webView evaluateJavaScript:@"document.getElementById('form').submit()" completionHandler:nil];
+        [webView _test_waitForDidFinishNavigation];
+    }
+
+    EXPECT_TRUE([fileManager removeItemAtPath:directory.path error:&error]);
+    EXPECT_FALSE(error);
+}
