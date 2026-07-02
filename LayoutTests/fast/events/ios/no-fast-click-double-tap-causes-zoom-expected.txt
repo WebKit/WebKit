@@ -1,0 +1,2 @@
+PASS: Double tap caused zoom.
+This document is set up to disable fast clicks. Double tapping on the rectangle above should zoom, not send a click event.

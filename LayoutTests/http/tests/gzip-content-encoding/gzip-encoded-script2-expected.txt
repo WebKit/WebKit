@@ -1,0 +1,1 @@
+PASS did execute gzip-encoded JavaScript script.

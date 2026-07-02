@@ -1,0 +1,8 @@
+
+PASS Dangling Markup in target is not reset when set by window.open
+PASS Dangling Markup with "\n" in target is reset when set by <a> tag
+PASS Dangling Markup with "\r" in target is reset when set by <a> tag
+PASS Dangling Markup with "\t" in target is reset when set by <a> tag
+PASS Dangling Markup in target is reset when set by <form> tag
+PASS Dangling Markup in target is reset when set by <base> tag
+

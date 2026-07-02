@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description("Verifies window.open with a target name correctly reuses a main frame");
+jsTestIsAsync = true;
+
+function runTest() {
+    firstOpenedWindow = window.open("http://localhost:8000/site-isolation/resources/post-message-to-opener.html", "frameName");
+}
+
+function runTestIfInTestRunner() { if (window.testRunner) { runTest() } }
+
+addEventListener("message", (event) => {
+    if (event.data == 'initial ping') {
+        secondOpenedWindow = window.open("http://localhost:8000/site-isolation/resources/post-message-to-opener-2.html", "frameName");
+    } else if (event.data == 'second ping') {
+        firstOpenedWindow.postMessage('sent to first window, which should be reused', '*')
+    } else if (event.data.startsWith('opened window received')) {
+        testFailed("first opened window should have been reused");
+        finishJSTest();
+    } else if (event.data.startsWith('second opened window received')) {
+        shouldBe("event.data", "'second opened window received: sent to first window, which should be reused'");
+        finishJSTest();
+    }
+});
+</script>
+<body onload="runTestIfInTestRunner()">
+<button onclick="runTest()">click to run test manually in a browser</button>
+</body>

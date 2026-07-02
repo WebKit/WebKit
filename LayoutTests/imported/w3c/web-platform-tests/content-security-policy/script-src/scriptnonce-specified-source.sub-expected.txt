@@ -1,0 +1,5 @@
+
+PASS CSP with both source and nonce should allow matching source
+PASS CSP with both source and nonce should allow both matching nonce and source
+PASS No CSP violation should fire and all scripts should load
+

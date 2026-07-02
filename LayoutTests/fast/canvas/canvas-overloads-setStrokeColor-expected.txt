@@ -1,0 +1,54 @@
+Test the behavior of CanvasRenderingContext2D.setStrokeColor() when called with different numbers of arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.setStrokeColor() threw exception TypeError: Not enough arguments.
+PASS ctx.strokeStyle is '#000000'
+
+
+undefined setStrokeColor(DOMString color, optional unrestricted float alpha)
+
+PASS ctx.setStrokeColor('red') is undefined
+PASS ctx.strokeStyle is '#ff0000'
+PASS ctx.setStrokeColor('red', .5) is undefined
+PASS ctx.strokeStyle is 'rgba(255, 0, 0, 0.5)'
+PASS ctx.setStrokeColor('red', NaN) is undefined
+PASS ctx.strokeStyle is 'rgba(255, 0, 0, 0.5)'
+
+
+undefined setStrokeColor(unrestricted float grayLevel, optional unrestricted float alpha = 1)
+
+PASS ctx.setStrokeColor(.25) is undefined
+PASS ctx.strokeStyle is '#404040'
+PASS ctx.setStrokeColor(.25, .5) is undefined
+PASS ctx.strokeStyle is 'rgba(64, 64, 64, 0.5)'
+PASS ctx.setStrokeColor(NaN, .5) is undefined
+PASS ctx.strokeStyle is 'rgba(64, 64, 64, 0.5)'
+PASS ctx.setStrokeColor(.25, NaN) is undefined
+PASS ctx.strokeStyle is 'rgba(64, 64, 64, 0.5)'
+
+
+undefined setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a)
+
+PASS ctx.setStrokeColor(.1, .2, .3) threw exception TypeError: Type error.
+PASS ctx.setStrokeColor(.1, .2, .3, .4) is undefined
+PASS ctx.strokeStyle is 'rgba(26, 51, 77, 0.4)'
+PASS ctx.setStrokeColor(NaN, .2, .3, .4) is undefined
+PASS ctx.strokeStyle is 'rgba(26, 51, 77, 0.4)'
+PASS ctx.setStrokeColor(.1, NaN, .3, .4) is undefined
+PASS ctx.strokeStyle is 'rgba(26, 51, 77, 0.4)'
+PASS ctx.setStrokeColor(.1, .2, NaN, .4) is undefined
+PASS ctx.strokeStyle is 'rgba(26, 51, 77, 0.4)'
+PASS ctx.setStrokeColor(.1, .2, .3, NaN) is undefined
+PASS ctx.strokeStyle is 'rgba(26, 51, 77, 0.4)'
+PASS ctx.setStrokeColor(.5, .4, .3, .2, .1) is undefined
+PASS ctx.strokeStyle is 'rgba(128, 102, 77, 0.2)'
+PASS ctx.setStrokeColor(1, .4, .3, .2, .1, 0) is undefined
+PASS ctx.strokeStyle is 'rgba(255, 102, 77, 0.2)'
+PASS ctx.setStrokeColor(1.5, 10, -0.1, -100) is undefined
+PASS ctx.strokeStyle is 'rgba(255, 255, 0, 0)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

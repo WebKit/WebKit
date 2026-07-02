@@ -1,0 +1,18 @@
+Within a column flex container, the grid-lanes container normally has an automatic minimum block size that is equal to its min-content block size. (100px, for our example) However, if the grid-lanes container has a scrollable overflow value in the block axis, the automatic minimum block size is set to zero.
+
+
+PASS .masonry 1
+PASS .masonry 2
+FAIL .masonry 3 assert_equals:
+<div class="masonry rows x-scroller" data-expected-width="100" data-expected-height="100">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 0
+PASS .masonry 4
+PASS .masonry 5
+FAIL .masonry 6 assert_equals:
+<div class="masonry columns x-scroller" data-expected-width="100" data-expected-height="100">
+    <div class="content"></div>
+  </div>
+height expected 100 but got 0
+

@@ -1,0 +1,11 @@
+
+Test that WebM VP8 is supported when the VP9 decoder is not available.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+Forcing VP9 decoder to be enabled.
+EXPECTED (MediaSource.isTypeSupported('video/webm; codecs=vp8') == 'true') OK
+Forcing VP9 decoder to be disabled.
+EXPECTED (MediaSource.isTypeSupported('video/webm; codecs=vp8.0') == 'true') OK
+END OF TEST
+

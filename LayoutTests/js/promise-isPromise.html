@@ -1,0 +1,32 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--usePromiseIsPromise=true ] -->
+<html>
+<head>
+<title>Growable SharedArrayBuffers should be serializable</title>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("IDL promises should work with Promise.isPromise");
+window.jsTestIsAsync = true;
+
+window.addEventListener("unhandledrejection", (event) => {
+    shouldBeTrue(`Promise.isPromise(event.promise)`);
+
+    setTimeout(finishJSTest, 0);
+});
+
+shouldBeTrue(`Promise.isPromise((new Blob).text())`);
+shouldBeTrue(`Promise.isPromise((new Blob).arrayBuffer())`);
+shouldBeTrue(`Promise.isPromise((new Blob).bytes())`);
+
+shouldBeTrue(`Promise.isPromise(document.createElement("img").decode())`);
+
+shouldBeTrue(`Promise.isPromise((new ReadableStream).cancel())`);
+shouldBeTrue(`Promise.isPromise((new ReadableStream).pipeTo(new WritableStream))`);
+
+shouldBeTrue(`Promise.isPromise((new WritableStream).abort())`);
+shouldBeTrue(`Promise.isPromise((new WritableStream).close())`);
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

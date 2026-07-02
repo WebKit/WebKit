@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<script>
+
+function download(blobURL)
+{
+    let downloadAnchor = document.createElement("a");
+    downloadAnchor.href = blobURL;
+    downloadAnchor.download = "testBlobFileName";
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+}
+
+if (window.location.search) {
+    let params = new URLSearchParams(document.location.search);
+    let blobURL = decodeURI(params.get("url"));
+
+    download(blobURL);
+    window.top.postMessage({ "from": "iframe", "status": "done", "message": "iframe: downloading blob", "url": blobURL }, "*");;
+} else {
+    const documentContent = 'Downloaded!';
+    let blob = new Blob([documentContent], { "type" : "text/html" });
+    window.top.postMessage({ "from": "iframe", "status": "done", "message": "iframe: created blob", "url": URL.createObjectURL(blob) }, "*");;
+}
+</script>
+</body>
+</html>

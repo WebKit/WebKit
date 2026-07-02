@@ -1,0 +1,10 @@
+
+FAIL Property path-length value 'none' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value '0' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value '0.5' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value '1' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value '100' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value '3.14' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value 'calc(1 + 2)' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+FAIL Property path-length value 'calc(-1)' assert_true: path-length doesn't seem to be supported in the computed style expected true got false
+

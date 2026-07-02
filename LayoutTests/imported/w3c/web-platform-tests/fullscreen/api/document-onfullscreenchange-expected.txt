@@ -1,0 +1,3 @@
+
+PASS Checks that the fullscreenchange event is fired when entering fullscreen
+

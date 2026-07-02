@@ -1,0 +1,4 @@
+
+PASS Changing a large target's snap alignment shouldn't make the scroller resnap if the scroller is already in a valid snap position.
+PASS Changing the current (non-covering) target's snap alignment should make the scroller snap according to the new alignment.
+

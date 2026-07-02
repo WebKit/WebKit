@@ -1,0 +1,10 @@
+Canvas should not be tainted if a data url image with a data url <feimage> which has a <foreignObject> is drawn into the canvas.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.ctx.getImageData(0, 0, 1, 1) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

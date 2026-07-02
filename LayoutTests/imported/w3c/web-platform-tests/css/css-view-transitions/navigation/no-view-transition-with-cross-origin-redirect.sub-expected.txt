@@ -1,0 +1,3 @@
+
+PASS navigation with a  same-origin final url with cross-origin redirects
+

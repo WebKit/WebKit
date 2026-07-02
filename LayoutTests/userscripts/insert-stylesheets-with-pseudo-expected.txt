@@ -1,0 +1,13 @@
+PASS getComputedStyle(testElement).backgroundColor is not 'rgb(255, 0, 0)'
+
+Adding author CSS...
+PASS getComputedStyle(testElement).backgroundColor is 'rgb(255, 0, 0)'
+
+Adding user CSS...
+PASS getComputedStyle(testElement).backgroundColor is 'rgb(0, 0, 255)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test requires testRunner and window.internals.
+
+

@@ -1,0 +1,7 @@
+PASS snapped to second snap offset
+PASS snapped to third snap offset
+PASS snapped back to second snap offset
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

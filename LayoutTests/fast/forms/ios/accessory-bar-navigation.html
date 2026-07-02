@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=0.75, user-scalable=no">
+    <style>
+        input[type="text"] {
+            display: block;
+            margin: 400px 20px;
+        }
+        #input2 {
+            margin-top: 800px;
+        }
+        button {
+            display: block;
+        }
+    </style>
+    
+    <script src="resources/zooming-test-utils.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+    async function doTest()
+    {
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('input'));
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect('After focus first field');
+
+        await UIHelper.moveToNextByKeyboardAccessoryBar();
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect('After move to second field');
+
+        await UIHelper.moveToPreviousByKeyboardAccessoryBar();
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+        await dumpScaleAndVisibleRect('After move to first field');
+
+        testRunner.notifyDone();
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>Tests zooming into a text input on tap.</p>
+
+<input id="input" type="text">
+<input id="input2" type="text">
+
+</body>
+</html>

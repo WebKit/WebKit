@@ -1,0 +1,459 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/tmp"
+    ],
+    "infra_step": true,
+    "name": "makedirs tmp_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/skia/infra/bots/assets/lottie-samples/VERSION",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "Get lottie-samples VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@VERSION@42@@@",
+      "@@@STEP_LOG_END@VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "42",
+      "[START_DIR]/tmp/LOTTIE_VERSION"
+    ],
+    "infra_step": true,
+    "name": "write LOTTIE_VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@LOTTIE_VERSION@42@@@",
+      "@@@STEP_LOG_END@LOTTIE_VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "rmtree [SWARM_OUT_DIR]"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs [SWARM_OUT_DIR]"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[START_DIR]/lotties_with_assets"
+    ],
+    "infra_step": true,
+    "name": "list lottie files",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lotties_with_assets/skottie_asset_000@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lotties_with_assets/skottie_asset_001@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lotties_with_assets/skottie_asset_002@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/symbolize_stack_trace.py",
+      "[START_DIR]",
+      "[START_DIR]/build/dm",
+      "--resourcePath",
+      "[START_DIR]/skia/resources",
+      "--lotties",
+      "[START_DIR]/lotties_with_assets/skottie_asset_000",
+      "--src",
+      "lottie",
+      "--nonativeFonts",
+      "--verbose",
+      "--traceMatch",
+      "skottie",
+      "--trace",
+      "[START_DIR]/[SWARM_OUT_DIR]/1.json",
+      "--match",
+      "^data.json$",
+      "--config",
+      "gles",
+      "--nocpu"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "LD_LIBRARY_PATH": "[START_DIR]/mesa_intel_driver_linux",
+      "LIBGL_DRIVERS_PATH": "[START_DIR]/mesa_intel_driver_linux",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]",
+      "VK_ICD_FILENAMES": "[START_DIR]/mesa_intel_driver_linux/intel_icd.x86_64.json"
+    },
+    "name": "symbolized dm"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/[SWARM_OUT_DIR]/1.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read [START_DIR]/[SWARM_OUT_DIR]/1.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@1.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::infra]/resources/parse_skottie_trace.py",
+      "\n[{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":452,\"dur\":2.57,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void SkCanvas::drawPaint(const SkPaint &)\",\"ts\":473,\"dur\":2.67e+03,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":3.15e+03,\"dur\":2.25,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::render(SkCanvas *, const SkRect *, RenderFlags) const\",\"ts\":3.15e+03,\"dur\":216,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void SkCanvas::drawPath(const SkPath &, const SkPaint &)\",\"ts\":3.35e+03,\"dur\":15.1,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":3.37e+03,\"dur\":1.17,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::render(SkCanvas *, const SkRect *, RenderFlags) const\",\"ts\":3.37e+03,\"dur\":140,\"tid\":1,\"pid\":0}]\n",
+      "skottie_asset_000",
+      "/path/to/tmp/json",
+      "skottie::Animation::seek",
+      "skottie::Animation::render",
+      "25"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "parse skottie_asset_000 trace",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[START_DIR]/[SWARM_OUT_DIR]/1.json"
+    ],
+    "infra_step": true,
+    "name": "remove [START_DIR]/[SWARM_OUT_DIR]/1.json"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/symbolize_stack_trace.py",
+      "[START_DIR]",
+      "[START_DIR]/build/dm",
+      "--resourcePath",
+      "[START_DIR]/skia/resources",
+      "--lotties",
+      "[START_DIR]/lotties_with_assets/skottie_asset_001",
+      "--src",
+      "lottie",
+      "--nonativeFonts",
+      "--verbose",
+      "--traceMatch",
+      "skottie",
+      "--trace",
+      "[START_DIR]/[SWARM_OUT_DIR]/2.json",
+      "--match",
+      "^data.json$",
+      "--config",
+      "gles",
+      "--nocpu"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "LD_LIBRARY_PATH": "[START_DIR]/mesa_intel_driver_linux",
+      "LIBGL_DRIVERS_PATH": "[START_DIR]/mesa_intel_driver_linux",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]",
+      "VK_ICD_FILENAMES": "[START_DIR]/mesa_intel_driver_linux/intel_icd.x86_64.json"
+    },
+    "name": "symbolized dm (2)"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/[SWARM_OUT_DIR]/2.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read [START_DIR]/[SWARM_OUT_DIR]/2.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@2.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::infra]/resources/parse_skottie_trace.py",
+      "\n[{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":452,\"dur\":2.57,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void SkCanvas::drawPaint(const SkPaint &)\",\"ts\":473,\"dur\":2.67e+03,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":3.15e+03,\"dur\":2.25,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::render(SkCanvas *, const SkRect *, RenderFlags) const\",\"ts\":3.15e+03,\"dur\":216,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void SkCanvas::drawPath(const SkPath &, const SkPaint &)\",\"ts\":3.35e+03,\"dur\":15.1,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":3.37e+03,\"dur\":1.17,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::render(SkCanvas *, const SkRect *, RenderFlags) const\",\"ts\":3.37e+03,\"dur\":140,\"tid\":1,\"pid\":0}]\n",
+      "skottie_asset_001",
+      "/path/to/tmp/json",
+      "skottie::Animation::seek",
+      "skottie::Animation::render",
+      "25"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "parse skottie_asset_001 trace",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[START_DIR]/[SWARM_OUT_DIR]/2.json"
+    ],
+    "infra_step": true,
+    "name": "remove [START_DIR]/[SWARM_OUT_DIR]/2.json"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::flavor]/resources/symbolize_stack_trace.py",
+      "[START_DIR]",
+      "[START_DIR]/build/dm",
+      "--resourcePath",
+      "[START_DIR]/skia/resources",
+      "--lotties",
+      "[START_DIR]/lotties_with_assets/skottie_asset_002",
+      "--src",
+      "lottie",
+      "--nonativeFonts",
+      "--verbose",
+      "--traceMatch",
+      "skottie",
+      "--trace",
+      "[START_DIR]/[SWARM_OUT_DIR]/3.json",
+      "--match",
+      "^data.json$",
+      "--config",
+      "gles",
+      "--nocpu"
+    ],
+    "cwd": "[START_DIR]/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "LD_LIBRARY_PATH": "[START_DIR]/mesa_intel_driver_linux",
+      "LIBGL_DRIVERS_PATH": "[START_DIR]/mesa_intel_driver_linux",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]",
+      "VK_ICD_FILENAMES": "[START_DIR]/mesa_intel_driver_linux/intel_icd.x86_64.json"
+    },
+    "name": "symbolized dm (3)"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/[SWARM_OUT_DIR]/3.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "read [START_DIR]/[SWARM_OUT_DIR]/3.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_END@3.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::infra]/resources/parse_skottie_trace.py",
+      "\n[{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":452,\"dur\":2.57,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void SkCanvas::drawPaint(const SkPaint &)\",\"ts\":473,\"dur\":2.67e+03,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":3.15e+03,\"dur\":2.25,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::render(SkCanvas *, const SkRect *, RenderFlags) const\",\"ts\":3.15e+03,\"dur\":216,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void SkCanvas::drawPath(const SkPath &, const SkPaint &)\",\"ts\":3.35e+03,\"dur\":15.1,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::seek(SkScalar)\",\"ts\":3.37e+03,\"dur\":1.17,\"tid\":1,\"pid\":0},{\"ph\":\"X\",\"name\":\"void skottie::Animation::render(SkCanvas *, const SkRect *, RenderFlags) const\",\"ts\":3.37e+03,\"dur\":140,\"tid\":1,\"pid\":0}]\n",
+      "skottie_asset_002",
+      "/path/to/tmp/json",
+      "skottie::Animation::seek",
+      "skottie::Animation::render",
+      "25"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "parse skottie_asset_002 trace",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "remove",
+      "[START_DIR]/[SWARM_OUT_DIR]/3.json"
+    ],
+    "infra_step": true,
+    "name": "remove [START_DIR]/[SWARM_OUT_DIR]/3.json"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]/resources/get_env_var.py",
+      "SWARMING_BOT_ID"
+    ],
+    "name": "get swarming bot id"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]/resources/get_env_var.py",
+      "SWARMING_TASK_ID"
+    ],
+    "name": "get swarming task id"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs perf_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n    \"gitHash\": \"abc123\",\n    \"key\": {\n        \"arch\": \"x86_64\",\n        \"bench_type\": \"tracing\",\n        \"compiler\": \"Clang\",\n        \"configuration\": \"Release\",\n        \"cpu_or_gpu\": \"GPU\",\n        \"cpu_or_gpu_value\": \"IntelIris640\",\n        \"extra_config\": \"SkottieTracing\",\n        \"model\": \"NUC7i5BNK\",\n        \"os\": \"Debian10\",\n        \"source_type\": \"skottie\"\n    },\n    \"renderer\": \"skottie\",\n    \"results\": {\n        \"skottie_asset_000\": {\n            \"gles\": {\n                \"frame_avg_us\": 179.71,\n                \"frame_max_us\": 218.25,\n                \"frame_min_us\": 141.17\n            }\n        },\n        \"skottie_asset_001\": {\n            \"gles\": {\n                \"frame_avg_us\": 179.71,\n                \"frame_max_us\": 218.25,\n                \"frame_min_us\": 141.17\n            }\n        },\n        \"skottie_asset_002\": {\n            \"gles\": {\n                \"frame_avg_us\": 179.71,\n                \"frame_max_us\": 218.25,\n                \"frame_min_us\": 141.17\n            }\n        }\n    },\n    \"swarming_bot_id\": \"\",\n    \"swarming_task_id\": \"\"\n}",
+      "[START_DIR]/[SWARM_OUT_DIR]/perf_abc123_1337000001.json"
+    ],
+    "infra_step": true,
+    "name": "write output JSON",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@{@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"gitHash\": \"abc123\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"key\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"arch\": \"x86_64\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"bench_type\": \"tracing\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"compiler\": \"Clang\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"configuration\": \"Release\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"cpu_or_gpu\": \"GPU\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"cpu_or_gpu_value\": \"IntelIris640\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"extra_config\": \"SkottieTracing\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"model\": \"NUC7i5BNK\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"os\": \"Debian10\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"source_type\": \"skottie\"@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"renderer\": \"skottie\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"skottie_asset_000\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            \"gles\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"skottie_asset_001\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            \"gles\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"skottie_asset_002\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            \"gles\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"swarming_bot_id\": \"\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"swarming_task_id\": \"\"@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@}@@@",
+      "@@@STEP_LOG_END@perf_abc123_1337000001.json@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

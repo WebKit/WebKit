@@ -1,0 +1,5 @@
+2d.text.lang.default
+
+
+FAIL OffscreenCanvas test: 2d.text.lang.default assert_equals: ctx.lang === 'inherit' (got [undefined], expected inherit[string]) expected (string) "inherit" but got (undefined) undefined
+

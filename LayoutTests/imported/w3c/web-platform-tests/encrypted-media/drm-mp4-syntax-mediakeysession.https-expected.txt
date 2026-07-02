@@ -1,0 +1,9 @@
+
+PASS drm test MediaKeySession generateRequest() exceptions.
+PASS drm test MediaKeySession load() exceptions.
+PASS drm test if MediaKeySession generateRequest() resolves for various sessions
+PASS drm test MediaKeySession update() exceptions.
+PASS drm test MediaKeySession close() exceptions.
+PASS drm test MediaKeySession remove() exceptions.
+PASS drm test MediaKeySession attribute syntax.
+

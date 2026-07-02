@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="submit" tabindex="0" id="submitButton1">
+<input type="submit" tabindex="0" id="submitButton2" value="non-default value">
+
+<script>
+    var testOutput = "This tests that a submit button will return its default value as the title.\n\n";
+
+    if (window.accessibilityController) {
+        var button = accessibilityController.accessibleElementById("submitButton1");
+        testOutput += expect("button.title", "'AXTitle: Submit'");
+
+        button = accessibilityController.accessibleElementById("submitButton2");
+        testOutput += expect("button.title", "'AXTitle: non-default value'");
+
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+

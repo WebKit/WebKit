@@ -1,0 +1,7 @@
+
+PASS lineHeight responsive to style changes
+PASS lineHeight clamped to 0px on keyframes
+PASS lineHeight responsive to inherited changes from keyword
+PASS lineHeight responsive to inherited changes from number
+PASS lineHeight responsive to inherited changes from length
+

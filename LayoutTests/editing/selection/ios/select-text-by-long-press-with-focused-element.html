@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.target {
+    font-size: 40px;
+    width: 300px;
+}
+
+input {
+    display: block;
+    margin-top: 40px;
+    width: 300px;
+    height: 80px;
+    font-size: 40px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+description("Verifies that long-pressing non-editable text while a separate editable element is focused starts a selection and dismisses the keyboard (mirrors UIKit TextField behavior: focus and non-editable selection are mutually exclusive). Requires WebKitTestRunner.");
+
+addEventListener("load", async () => {
+    const input = document.querySelector("input");
+    const inputRect = input.getBoundingClientRect();
+    await UIHelper.activateAndWaitForInputSessionAt(inputRect.left + inputRect.width / 2, inputRect.top + inputRect.height / 2);
+
+    window.keyboardWasShowing = await UIHelper.isShowingKeyboard();
+    shouldBeTrue("keyboardWasShowing");
+    window.focusedElementWasInput = document.activeElement === input;
+    shouldBeTrue("focusedElementWasInput");
+
+    await UIHelper.longPressElement(document.querySelector(".target"));
+    await shouldBecomeEqual("getSelection().toString()", "'Hello'");
+
+    await UIHelper.waitForKeyboardToHide();
+    window.keyboardDismissed = !(await UIHelper.isShowingKeyboard());
+    shouldBeTrue("keyboardDismissed");
+    window.focusedElementBlurred = document.activeElement !== input;
+    shouldBeTrue("focusedElementBlurred");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <span class="target">Hello</span>
+    <input>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test specifying Apple Pay errors in response to the shippingaddresschange event.");
+
+window.jsTestIsAsync = true;
+
+async function runTests()
+{
+    debug("Testing PaymentDetailsUpdate with null payment method errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.paymentMethodErrors = null;
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "0");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with invalid payment method errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.paymentMethodErrors = [
+        { },
+        null,
+        new Promise(() => { }),
+    ];
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "0");
+    debug("");
+
+    debug("Testing PaymentDetailsUpdate with Apple Pay payment method errors.");
+    var detailsUpdate = validPaymentDetails();
+    detailsUpdate.paymentMethodErrors = [
+        new ApplePayError("addressUnserviceable"),
+        new ApplePayError("shippingContactInvalid", "phoneticName", "Apple Pay error"),
+    ];
+    await updateDetailsOnShippingAddressChange(validPaymentDetails(), { }, detailsUpdate);
+    shouldBe("internals.mockPaymentCoordinator.errors.length", "2");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].code", "'addressUnserviceable'");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].message", "''");
+    shouldBe("internals.mockPaymentCoordinator.errors[0].contactField", "undefined");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].code", "'shippingContactInvalid'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].message", "'Apple Pay error'");
+    shouldBe("internals.mockPaymentCoordinator.errors[1].contactField", "'phoneticName'");
+    debug("");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

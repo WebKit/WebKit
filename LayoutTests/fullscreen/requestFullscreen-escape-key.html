@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="result"></div>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    addEventListener("keydown", (e) => {
+        const promise = document.documentElement.requestFullscreen().then(() => {
+            result.textContent = "FAIL - Fullscreen through Escape key was allowed.";
+            testRunner.notifyDone();
+        }, () => {
+            result.textContent = "PASS - Fullscreen through Escape key was rejected.";
+            testRunner.notifyDone();
+        });
+        e.preventDefault();
+    });
+    if (window.eventSender)
+        eventSender.keyDown("escape");
+</script>
+</body>
+</html>

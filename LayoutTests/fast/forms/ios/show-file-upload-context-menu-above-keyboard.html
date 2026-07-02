@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true shouldHandleRunOpenPanel=false ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+async function waitForContextMenuToBePresentedAboveInputView()
+{
+    while (true) {
+        await UIHelper.delayFor(50);
+
+        let contextMenuRect = await UIHelper.contextMenuRect();
+        let inputViewBounds = await UIHelper.inputViewBounds();
+        if (!contextMenuRect || !inputViewBounds)
+            continue;
+
+        if (contextMenuRect.top + contextMenuRect.height < inputViewBounds.top)
+            return;
+    }
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that when programmatically clicking a file input while focusing an editable control with a software keyboard attached, the file upload context menu is presented above the software keyboard. To manually test, click the 'Show file picker' button without a hardware keyboard attached, and verify that the context menu is visible.");
+
+    let fileInput = document.querySelector("input[type=file]");
+    let textInput = document.querySelector("input[type=text]");
+    let chooseFileButton = document.querySelector("button");
+    chooseFileButton.addEventListener("click", async () => {
+        fileInput.click();
+        textInput.focus();
+    });
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.activateElementAndWaitForInputSession(chooseFileButton);
+    await waitForContextMenuToBePresentedAboveInputView();
+    testPassed("Context menu was presented above the keyboard");
+    await UIHelper.dismissMenu();
+    textInput.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+<style>
+input[type="text"] {
+    font-size: 16px;
+}
+
+input[type="file"] {
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+button {
+    border: 1px solid black;
+    position: fixed;
+    bottom: 100px;
+    left: 1em;
+    width: 180px;
+    height: 44px;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<input type="text" /><input type="file" />
+<button>Show file picker</button>
+</body>
+</html>

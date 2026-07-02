@@ -1,0 +1,5 @@
+
+PASS ":focus-visible" should be a valid selector
+PASS "a:focus-visible" should be a valid selector
+PASS ":focus:not(:focus-visible)" should be a valid selector
+

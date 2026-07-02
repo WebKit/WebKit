@@ -1,0 +1,4 @@
+
+FAIL Synchronous script execution in HTMLScriptElement during moveBefore should be blocked assert_false: <html:script> does not define moving steps which allow script execution. expected false got true
+FAIL Synchronous script execution in SVGScriptElement during moveBefore should be blocked assert_false: <svg:script> does not define moving steps which allow script execution. expected false got true
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-audio-switch</title>
+    <meta name="timeout" content="long">
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var oldTime = -1;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+            sourceBuffer.appendBuffer(loader.mediaSegment(i));
+            await waitFor(sourceBuffer, 'update', true);
+        }
+        consoleWrite('Appended all media segments')
+
+        consoleWrite('RUN(video.play())')
+        await video.play();
+        testExpected('video.paused', false);
+
+        async function timeUpdated() {
+            if (oldTime <= video.currentTime) {
+                oldTime = video.currentTime;
+                if (video.currentTime >= 5) {
+                    consoleWrite('');
+                    testExpected('video.currentTime', 5, '>=')
+                    endTest();
+                }
+                return;
+            }
+            consoleWrite('');
+            consoleWrite("oldTime " + oldTime);
+            consoleWrite("video.currentTime " + video.currentTime);
+            failTest('oldTime <= video.currentTime');
+        }
+
+        async function audioSwitch() {
+            if (video.currentTime < 4)
+                return;
+            video.removeEventListener("timeupdate", audioSwitch);
+            video.addEventListener("timeupdate", timeUpdated);
+
+            consoleWrite('');
+            testExpected('video.currentTime', 4, '>=');
+
+            run('video.pause()');
+            testExpected('video.paused', true);
+
+            run('sourceBuffer.remove(0, 15)');
+            await waitFor(sourceBuffer, 'update');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+                sourceBuffer.appendBuffer(loader.mediaSegment(i));
+                await waitFor(sourceBuffer, 'update', true);
+            }
+            consoleWrite('Appended all media segments')
+
+            consoleWrite('RUN(video.play())')
+            await video.play();
+            testExpected('video.paused', false);
+        }
+
+        function seek() {
+            if (video.currentTime < 1)
+                return;
+
+            video.removeEventListener("timeupdate", seek);
+            video.addEventListener("timeupdate", audioSwitch);
+            consoleWrite('');
+            testExpected('video.currentTime', 1, '>=');
+            run('video.currentTime = 3');
+        }
+        video.addEventListener("timeupdate", seek);
+    });
+
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+PASS :debug_group_balanced:encoderType="non-pass"
+PASS :debug_group_balanced:encoderType="compute%20pass"
+PASS :debug_group_balanced:encoderType="render%20pass"
+PASS :debug_group_balanced:encoderType="render%20bundle"
+PASS :debug_group:encoderType="non-pass"
+PASS :debug_group:encoderType="compute%20pass"
+PASS :debug_group:encoderType="render%20pass"
+PASS :debug_group:encoderType="render%20bundle"
+PASS :debug_marker:encoderType="non-pass"
+PASS :debug_marker:encoderType="compute%20pass"
+PASS :debug_marker:encoderType="render%20pass"
+PASS :debug_marker:encoderType="render%20bundle"
+

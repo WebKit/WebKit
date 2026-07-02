@@ -1,0 +1,4 @@
+
+PASS XMLHttpRequest: setRequestHeader() - headers that differ in case
+FAIL XMLHttpRequest: setRequestHeader() - headers that differ in case 1 assert_array_equals: expected property 0 to be "content-TYPE" but got "Content-Type" (expected array ["content-TYPE"] got ["Content-Type"])
+

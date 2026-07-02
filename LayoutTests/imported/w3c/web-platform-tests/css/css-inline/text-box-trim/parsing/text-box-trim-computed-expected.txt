@@ -1,0 +1,6 @@
+
+PASS Property text-box-trim value 'none'
+PASS Property text-box-trim value 'trim-start'
+PASS Property text-box-trim value 'trim-end'
+PASS Property text-box-trim value 'trim-both'
+

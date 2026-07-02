@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body::after {
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+body::before {
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+}
+
+body::before, body::after {
+    position: fixed;
+    display: block;
+    content: " ";
+    width: 128px;
+    height: 128px;
+    background-image: url(../images/resources/green-256x256.png);
+    background-repeat: no-repeat;
+    background-size: 128px 128px;
+}
+</style>
+</head>
+<body>This test requires WebKitTestRunner</body>
+<script>
+addEventListener("load", async event => {
+    testRunner.waitUntilDone();
+    const firstSelector = await UIHelper.adjustVisibilityForFrontmostTarget(64, 64);
+    const secondSelector = await UIHelper.adjustVisibilityForFrontmostTarget(innerWidth - 64, innerHeight - 64);
+
+    if (firstSelector.toLowerCase() !== "body::after")
+        document.writeln(`FAIL: first selector was ${firstSelector}`);
+
+    if (secondSelector.toLowerCase() !== "body::before")
+        document.writeln(`FAIL: second selector was ${secondSelector}`);
+    testRunner.notifyDone();
+});
+</script>
+</html>

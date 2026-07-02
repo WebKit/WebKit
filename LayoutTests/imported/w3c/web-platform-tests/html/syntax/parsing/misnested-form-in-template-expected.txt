@@ -1,0 +1,4 @@
+AH
+
+PASS Testing parsing of misnested <form> tags inside <template>
+

@@ -1,0 +1,22 @@
+x
+x
+
+PASS abspos containing block, height: 100%, child top: 50%
+PASS abspos containing block, height: 50%, child top: 50%
+PASS abspos containing block, height: stretch, child top: 50%
+PASS abspos containing block, height: calc(100% - 0px), child top: 50%
+PASS abspos containing block, height: calc(50% + 50px), child top: 50%
+PASS abspos containing block, height: 100%, display: inline, child top: 50%
+PASS abspos containing block, height: 100%, display: inline-block, child top: 50%
+PASS abspos containing block in auto-height ancestor, height: 100%, child top: 50%
+PASS abspos containing block in auto-height ancestor, height: 100%, display: inline, child top: 100%
+PASS Nested abspos containing blocks, child top: 50%
+PASS abspos containing block inside abspos with fixed height, child top: 50%
+PASS abspos containing block in percentage chain, child top: 50%
+PASS abspos containing block with top: 0 only (auto height), child top: 50%
+PASS abspos containing block with min-height: 100% only (auto height), child top: 50%
+PASS abspos containing block with all-auto sizing, child top: 50%
+PASS abspos containing block, height: 100%, child bottom: 50%
+PASS abspos containing block, height: 50%, child bottom: 50%
+PASS abspos containing block, height: stretch, child bottom: 50%
+

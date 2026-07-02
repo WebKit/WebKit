@@ -1,0 +1,4 @@
+
+PASS setRemoteDescription with a codec in the range 96-127 works
+PASS setRemoteDescription with a codec in the range 35-63 works
+

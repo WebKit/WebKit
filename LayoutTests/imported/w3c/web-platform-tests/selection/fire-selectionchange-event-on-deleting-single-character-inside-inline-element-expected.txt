@@ -1,0 +1,5 @@
+
+PASS selectionchange fires for single character deletion from contenteditable inline element
+FAIL selectionchange fires for single character deletion from nested contenteditable elements assert_equals: Text should be deleted from nested element expected "" but got "Y"
+FAIL selectionchange fires for multi-character deletion from contenteditable inline element (baseline) assert_greater_than: selectionchange should fire when deleting multiple characters from inline contenteditable expected a number greater than 1 but got 1
+

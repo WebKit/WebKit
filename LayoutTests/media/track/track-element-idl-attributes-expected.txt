@@ -1,0 +1,12 @@
+
+PASS kind: missing value default is 'subtitles'
+PASS kind: empty value reflects as 'metadata' (invalid value default, not missing value default)
+PASS kind: IDL getter canonicalizes known values (case-insensitive)
+PASS kind: invalid value reflects as 'metadata' (invalid value default)
+PASS kind: IDL setter writes through to content attribute
+PASS label: IDL attribute reflects content attribute
+PASS default: IDL attribute reflects boolean content attribute
+PASS track.track returns the corresponding TextTrack object (stable identity)
+PASS each text track has its own TextTrack object
+PASS TextTrack.kind/.label update when the track element's attributes change
+

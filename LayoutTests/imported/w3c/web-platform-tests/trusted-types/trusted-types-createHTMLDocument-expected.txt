@@ -1,0 +1,15 @@
+
+PASS Trusted Type assignment is blocked. (document)
+PASS Trusted Type instances created in the main doc can be used. (document)
+PASS Trusted Type assignment is blocked. (createHTMLDocument)
+PASS Trusted Type instances created in the main doc can be used. (createHTMLDocument)
+PASS Trusted Type assignment is blocked. (DOMParser)
+PASS Trusted Type instances created in the main doc can be used. (DOMParser)
+PASS Trusted Type assignment is blocked. (XHR)
+PASS Trusted Type instances created in the main doc can be used. (XHR)
+PASS Install default policy.
+PASS Default policy applies. (document)
+PASS Default policy applies. (createHTMLDocument)
+PASS Default policy applies. (DOMParser)
+PASS Default policy applies. (XHR)
+

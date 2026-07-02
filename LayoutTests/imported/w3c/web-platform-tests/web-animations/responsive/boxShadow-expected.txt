@@ -1,0 +1,3 @@
+
+PASS boxShadow responsive to style changes
+

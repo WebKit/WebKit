@@ -1,0 +1,39 @@
+<head>
+    <meta name="viewport" content="user-scalable=no, width=device-width">
+    <style type="text/css" media="screen">
+        
+        * {
+            transform-origin: top left;
+        }
+
+        div {
+            transform: scale(0.75);
+        }
+
+        video {
+            width: 600px;
+            height: 300px;
+            border: 20px solid blue;
+            box-sizing: border-box;
+            background-color: red;
+            transform: scale(0.5);
+        }
+        
+    </style>
+</head>
+<body>
+    <div>
+        <video controls autoplay></video>
+    </div>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script type="text/javascript">
+
+        const media = document.querySelector("video");
+        const shadowRoot = window.internals.shadowRoot(media);
+        const mediaControls = shadowRoot.querySelector(".media-controls");
+        shouldBeEqualToString("mediaControls.style.width", "560px"); // width - (2 * border)
+        shouldBeEqualToString("mediaControls.style.height", "260px"); // height - (2 * border)
+        
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>

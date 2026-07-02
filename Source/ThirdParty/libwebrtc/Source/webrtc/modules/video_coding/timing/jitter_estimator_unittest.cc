@@ -1,0 +1,341 @@
+/*  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "modules/video_coding/timing/jitter_estimator.h"
+
+#include <cstdint>
+#include <optional>
+#include <string>
+
+#include "api/field_trials.h"
+#include "api/units/data_size.h"
+#include "api/units/frequency.h"
+#include "api/units/time_delta.h"
+#include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
+#include "test/gtest.h"
+
+namespace webrtc {
+namespace {
+
+constexpr TimeDelta kInterArrivalTime = TimeDelta::Millis(33);
+// From jitter_estimator.cc.
+constexpr double kRttMult = 0.9;
+constexpr TimeDelta kRttMultAddCap = TimeDelta::Millis(200);
+
+// Generates some simple test data in the form of a sawtooth wave.
+class ValueGenerator {
+ public:
+  explicit ValueGenerator(int32_t amplitude)
+      : amplitude_(amplitude), counter_(0) {}
+
+  virtual ~ValueGenerator() = default;
+
+  TimeDelta Delay() const {
+    return TimeDelta::Millis((counter_ % 11) - 5) * amplitude_;
+  }
+
+  DataSize FrameSize() const {
+    return DataSize::Bytes(1000 + Delay().ms() / 5);
+  }
+
+  void Advance() { ++counter_; }
+
+ private:
+  const int32_t amplitude_;
+  int64_t counter_;
+};
+
+class JitterEstimatorTest : public ::testing::Test {
+ protected:
+  explicit JitterEstimatorTest(const std::string& field_trials)
+      : fake_clock_(0),
+        field_trials_(CreateTestFieldTrials(field_trials)),
+        estimator_(&fake_clock_, field_trials_) {}
+  JitterEstimatorTest() : JitterEstimatorTest("") {}
+  ~JitterEstimatorTest() override {}
+
+  void Run(int duration_s, int framerate_fps, ValueGenerator& gen) {
+    TimeDelta tick = 1 / Frequency::Hertz(framerate_fps);
+    for (int i = 0; i < duration_s * framerate_fps; ++i) {
+      estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+      fake_clock_.AdvanceTime(tick);
+      gen.Advance();
+    }
+  }
+
+  SimulatedClock fake_clock_;
+  FieldTrials field_trials_;
+  JitterEstimator estimator_;
+};
+
+TEST_F(JitterEstimatorTest, SteadyStateConvergence) {
+  ValueGenerator gen(10);
+  Run(/*duration_s=*/60, /*framerate_fps=*/30, gen);
+  EXPECT_EQ(estimator_.GetEstimate().ms(), 54);
+}
+
+TEST_F(JitterEstimatorTest,
+       SizeOutlierIsNotRejectedAndIncreasesJitterEstimate) {
+  ValueGenerator gen(10);
+
+  // Steady state.
+  Run(/*duration_s=*/60, /*framerate_fps=*/30, gen);
+  TimeDelta steady_state_jitter = estimator_.GetEstimate();
+
+  // A single outlier frame size...
+  estimator_.UpdateEstimate(gen.Delay(), 10 * gen.FrameSize());
+  TimeDelta outlier_jitter = estimator_.GetEstimate();
+
+  // ...changes the estimate.
+  EXPECT_GT(outlier_jitter.ms(), 1.25 * steady_state_jitter.ms());
+}
+
+TEST_F(JitterEstimatorTest, LowFramerateDisablesJitterEstimator) {
+  ValueGenerator gen(10);
+  // At 5 fps, we disable jitter delay altogether.
+  TimeDelta time_delta = 1 / Frequency::Hertz(5);
+  for (int i = 0; i < 60; ++i) {
+    estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+    fake_clock_.AdvanceTime(time_delta);
+    if (i > 2)
+      EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Zero());
+    gen.Advance();
+  }
+}
+
+// By default, the `JitterEstimator` is not robust against single large frames.
+TEST_F(JitterEstimatorTest, Single2xFrameSizeImpactsJitterEstimate) {
+  ValueGenerator gen(10);
+
+  // Steady state.
+  Run(/*duration_s=*/60, /*framerate_fps=*/30, gen);
+  TimeDelta steady_state_jitter = estimator_.GetEstimate();
+
+  // A single outlier frame size...
+  estimator_.UpdateEstimate(gen.Delay(), 2 * gen.FrameSize());
+  TimeDelta outlier_jitter = estimator_.GetEstimate();
+
+  // ...impacts the estimate.
+  EXPECT_GT(outlier_jitter.ms(), steady_state_jitter.ms());
+}
+
+// Under the default config, congested frames are used when calculating the
+// noise variance, meaning that they will impact the final jitter estimate.
+TEST_F(JitterEstimatorTest, CongestedFrameImpactsJitterEstimate) {
+  ValueGenerator gen(10);
+
+  // Steady state.
+  Run(/*duration_s=*/10, /*framerate_fps=*/30, gen);
+  TimeDelta steady_state_jitter = estimator_.GetEstimate();
+
+  // Congested frame...
+  estimator_.UpdateEstimate(-10 * gen.Delay(), 0.1 * gen.FrameSize());
+  TimeDelta outlier_jitter = estimator_.GetEstimate();
+
+  // ...impacts the estimate.
+  EXPECT_GT(outlier_jitter.ms(), steady_state_jitter.ms());
+}
+
+TEST_F(JitterEstimatorTest, EmptyFieldTrialsParsesToUnsetConfig) {
+  JitterEstimator::Config config = estimator_.GetConfigForTest();
+  EXPECT_FALSE(config.avg_frame_size_median);
+  EXPECT_FALSE(config.max_frame_size_percentile.has_value());
+  EXPECT_FALSE(config.frame_size_window.has_value());
+  EXPECT_FALSE(config.num_stddev_delay_clamp.has_value());
+  EXPECT_FALSE(config.num_stddev_delay_outlier.has_value());
+  EXPECT_FALSE(config.num_stddev_size_outlier.has_value());
+  EXPECT_FALSE(config.congestion_rejection_factor.has_value());
+  EXPECT_TRUE(config.estimate_noise_when_congested);
+}
+
+class FieldTrialsOverriddenJitterEstimatorTest : public JitterEstimatorTest {
+ protected:
+  FieldTrialsOverriddenJitterEstimatorTest()
+      : JitterEstimatorTest(
+            "WebRTC-JitterEstimatorConfig/"
+            "avg_frame_size_median:true,"
+            "max_frame_size_percentile:0.9,"
+            "frame_size_window:30,"
+            "num_stddev_delay_clamp:1.1,"
+            "num_stddev_delay_outlier:2,"
+            "num_stddev_size_outlier:3.1,"
+            "congestion_rejection_factor:-1.55,"
+            "estimate_noise_when_congested:false,"
+            "nack_limit:2,"
+            "nack_count_timeout:100ms/") {}
+  ~FieldTrialsOverriddenJitterEstimatorTest() override {}
+};
+
+TEST_F(FieldTrialsOverriddenJitterEstimatorTest, FieldTrialsParsesCorrectly) {
+  JitterEstimator::Config config = estimator_.GetConfigForTest();
+  EXPECT_TRUE(config.avg_frame_size_median);
+  EXPECT_EQ(*config.max_frame_size_percentile, 0.9);
+  EXPECT_EQ(*config.frame_size_window, 30);
+  EXPECT_EQ(*config.num_stddev_delay_clamp, 1.1);
+  EXPECT_EQ(*config.num_stddev_delay_outlier, 2.0);
+  EXPECT_EQ(*config.num_stddev_size_outlier, 3.1);
+  EXPECT_EQ(*config.congestion_rejection_factor, -1.55);
+  EXPECT_FALSE(config.estimate_noise_when_congested);
+  EXPECT_EQ(*config.nack_limit, 2);
+  EXPECT_EQ(*config.nack_count_timeout, TimeDelta::Millis(100));
+}
+
+TEST_F(FieldTrialsOverriddenJitterEstimatorTest,
+       DelayOutlierIsRejectedAndMaintainsJitterEstimate) {
+  ValueGenerator gen(10);
+
+  // Steady state.
+  Run(/*duration_s=*/60, /*framerate_fps=*/30, gen);
+  TimeDelta steady_state_jitter = estimator_.GetEstimate();
+
+  // A single outlier frame size...
+  estimator_.UpdateEstimate(10 * gen.Delay(), gen.FrameSize());
+  TimeDelta outlier_jitter = estimator_.GetEstimate();
+
+  // ...does not change the estimate.
+  EXPECT_EQ(outlier_jitter.ms(), steady_state_jitter.ms());
+}
+
+// The field trial is configured to be robust against the `(1 - 0.9) = 10%`
+// largest frames over a window of length `30`.
+TEST_F(FieldTrialsOverriddenJitterEstimatorTest,
+       Four2xFrameSizesImpactJitterEstimate) {
+  ValueGenerator gen(10);
+
+  // Steady state.
+  Run(/*duration_s=*/60, /*framerate_fps=*/30, gen);
+  TimeDelta steady_state_jitter = estimator_.GetEstimate();
+
+  // Three outlier frames do not impact the jitter estimate.
+  for (int i = 0; i < 3; ++i) {
+    estimator_.UpdateEstimate(gen.Delay(), 2 * gen.FrameSize());
+  }
+  TimeDelta outlier_jitter_3x = estimator_.GetEstimate();
+  EXPECT_EQ(outlier_jitter_3x.ms(), steady_state_jitter.ms());
+
+  // Four outlier frames do impact the jitter estimate.
+  estimator_.UpdateEstimate(gen.Delay(), 2 * gen.FrameSize());
+  TimeDelta outlier_jitter_4x = estimator_.GetEstimate();
+  EXPECT_GT(outlier_jitter_4x.ms(), outlier_jitter_3x.ms());
+}
+
+// When so configured, congested frames are NOT used when calculating the
+// noise variance, meaning that they will NOT impact the final jitter estimate.
+TEST_F(FieldTrialsOverriddenJitterEstimatorTest,
+       CongestedFrameDoesNotImpactJitterEstimate) {
+  ValueGenerator gen(10);
+
+  // Steady state.
+  Run(/*duration_s=*/10, /*framerate_fps=*/30, gen);
+  TimeDelta steady_state_jitter = estimator_.GetEstimate();
+
+  // Congested frame...
+  estimator_.UpdateEstimate(-10 * gen.Delay(), 0.1 * gen.FrameSize());
+  TimeDelta outlier_jitter = estimator_.GetEstimate();
+
+  // ...does not impact the estimate.
+  EXPECT_EQ(outlier_jitter.ms(), steady_state_jitter.ms());
+}
+
+TEST_F(FieldTrialsOverriddenJitterEstimatorTest,
+       NackedFramesIncreaseEstimateWithinTimeoutWindow) {
+  ValueGenerator gen(10);
+  constexpr TimeDelta kRtt = TimeDelta::Millis(100);
+  const TimeDelta kNackCountTimeout =
+      estimator_.GetConfigForTest().nack_count_timeout.value();
+  estimator_.UpdateRtt(kRtt);
+
+  // Ten perfect frames stabilize the estimate.
+  for (int i = 0; i < 10; ++i) {
+    fake_clock_.AdvanceTime(kInterArrivalTime);
+    estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+    gen.Advance();
+  }
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11));
+
+  // RTT is added to estimate after two NACKed frames.
+  fake_clock_.AdvanceTime(kInterArrivalTime);
+  estimator_.FrameNacked();
+  estimator_.UpdateEstimate(gen.Delay() + kRtt, gen.FrameSize());
+  gen.Advance();
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11));
+  fake_clock_.AdvanceTime(kInterArrivalTime);
+  estimator_.FrameNacked();
+  estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+  gen.Advance();
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11) + kRtt * kRttMult);
+
+  // RTT is removed from estimate after timeout has passed with no NACKed
+  // frames.
+  fake_clock_.AdvanceTime(kNackCountTimeout);
+  estimator_.UpdateEstimate(gen.Delay() - kRtt, gen.FrameSize());
+  gen.Advance();
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11) + kRtt * kRttMult);
+
+  fake_clock_.AdvanceTime(TimeDelta::Millis(1));
+  estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+  gen.Advance();
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11));
+}
+
+TEST_F(FieldTrialsOverriddenJitterEstimatorTest, AppliesRttMultiplierCap) {
+  ValueGenerator gen(10);
+  constexpr TimeDelta kRtt = kRttMultAddCap * 2;
+  estimator_.UpdateRtt(kRtt);
+
+  // Ten perfect frames stabilize the estimate.
+  for (int i = 0; i < 10; ++i) {
+    fake_clock_.AdvanceTime(kInterArrivalTime);
+    estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+    gen.Advance();
+  }
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11));
+
+  // Capped RTT should be added to estimate after two NACKed frames.
+  fake_clock_.AdvanceTime(kInterArrivalTime);
+  estimator_.FrameNacked();
+  estimator_.UpdateEstimate(gen.Delay() + kRtt, gen.FrameSize());
+  gen.Advance();
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11));
+  fake_clock_.AdvanceTime(kInterArrivalTime);
+  estimator_.FrameNacked();
+  estimator_.UpdateEstimate(gen.Delay(), gen.FrameSize());
+  gen.Advance();
+  EXPECT_EQ(estimator_.GetEstimate(), TimeDelta::Millis(11) + kRttMultAddCap);
+}
+
+class MisconfiguredFieldTrialsJitterEstimatorTest : public JitterEstimatorTest {
+ protected:
+  MisconfiguredFieldTrialsJitterEstimatorTest()
+      : JitterEstimatorTest(
+            "WebRTC-JitterEstimatorConfig/"
+            "max_frame_size_percentile:-0.9,"
+            "frame_size_window:-1,"
+            "num_stddev_delay_clamp:-1.9,"
+            "num_stddev_delay_outlier:-2,"
+            "num_stddev_size_outlier:-23.1,"
+            "nack_limit:-1,"
+            "nack_count_timeout:0s/") {}
+  ~MisconfiguredFieldTrialsJitterEstimatorTest() override {}
+};
+
+TEST_F(MisconfiguredFieldTrialsJitterEstimatorTest, FieldTrialsAreValidated) {
+  JitterEstimator::Config config = estimator_.GetConfigForTest();
+  EXPECT_EQ(*config.max_frame_size_percentile, 0.0);
+  EXPECT_EQ(*config.frame_size_window, 1);
+  EXPECT_EQ(*config.num_stddev_delay_clamp, 0.0);
+  EXPECT_EQ(*config.num_stddev_delay_outlier, 0.0);
+  EXPECT_EQ(*config.num_stddev_size_outlier, 0.0);
+  EXPECT_FALSE(config.nack_limit.has_value());
+  EXPECT_FALSE(config.nack_count_timeout.has_value());
+}
+
+}  // namespace
+}  // namespace webrtc

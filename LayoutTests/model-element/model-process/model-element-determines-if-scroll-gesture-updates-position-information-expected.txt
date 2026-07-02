@@ -1,0 +1,16 @@
+ensurePositionInformationIsUpToDate should only be called when a scroll gesture occurs if a model element exists in the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was true, expected true
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was false, expected false
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was true, expected true
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was true, expected true
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was false, expected false
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was true, expected true
+PASS didCallEnsurePositionInformationIsUpToDateSinceLastCheck was false, expected false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

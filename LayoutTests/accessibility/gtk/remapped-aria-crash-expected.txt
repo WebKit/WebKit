@@ -1,0 +1,9 @@
+Test to ensure a remapped ARIA role does not produce a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

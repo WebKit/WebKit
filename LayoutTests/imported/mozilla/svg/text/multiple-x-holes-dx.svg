@@ -1,0 +1,9 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200">
+  <g transform="translate(100,100)" style="font: 16px sans-serif">
+    <text x='90 200' dx='10'>hel<tspan x='280' dx='20'>l</tspan>o</text>
+  </g>
+</svg>

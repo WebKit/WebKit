@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<head>
+<title>This tests repainting with subpixel height values.</title>
+<style>
+body { 
+    margin: 0px;
+}
+
+.container {
+    border: 1px solid green;
+    width: 20px;
+}
+
+#foobar {
+    background: blue;
+    width: 1px;
+    position: relative;
+	font: 99% Ahem;
+	height: 3em;
+}
+
+</style>
+</head>
+<body>
+<div class=container><div id=foobar></div></div>
+<script>
+setTimeout(function() { 
+    if (window.internals)
+        internals.startTrackingRepaints();
+    document.getElementById("foobar").style.height = "200px";
+    document.body.offsetWidth;
+
+    if (window.internals) {
+        document.body.innerText = window.internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+    }
+    finishJSTest();
+}, 0);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

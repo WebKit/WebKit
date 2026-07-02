@@ -1,0 +1,6 @@
+
+
+
+
+FAIL Both forward and backward focus navigation target the radio group first element. assert_equals: expected Element node <input type="radio" name="radio" id="a"></input> but got Element node <input type="radio" name="radio" id="c"></input>
+

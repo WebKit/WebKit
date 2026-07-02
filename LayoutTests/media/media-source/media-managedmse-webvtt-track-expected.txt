@@ -1,0 +1,21 @@
+
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.audioTracks.length == '1') OK
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (video.textTracks[0].language == 'eng') OK
+EXPECTED (video.textTracks[0].kind == 'captions') OK
+RUN(video.textTracks[0].mode = 'showing')
+RUN(video.play())
+RUN(video.pause())
+RUN(track = video.textTracks[0])
+RUN(cues = track.cues)
+EXPECTED (cues.length == '13') OK
+RUN(video.currentTime = 1.1)
+EXPECTED (cues[0].text == 'Bip!') OK
+EXPECTED (track.activeCues.length == '1') OK
+RUN(video.play())
+RUN(video.pause())
+EXPECTED (cues[1].text == 'Bop!') OK
+EXPECTED (track.activeCues.length == '1') OK
+END OF TEST
+

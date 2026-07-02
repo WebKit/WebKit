@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+<p>Tests that eval() is blocked in a subframe that disallows eval() when the parent frame allows eval().</p>
+<iframe src="eval-blocked.html"></iframe>
+</body>
+</html>

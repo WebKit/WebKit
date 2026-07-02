@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/document-leak-test.js"></script>
+<script>
+
+description("Tests that the RemotePlayback.watchAvailability callback does not leak the Document object.");
+onload = () => runDocumentLeakTest({ frameURL: "./resources/remoteplayback-watch-availability-frame.html", framesToCreate: 20 });
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

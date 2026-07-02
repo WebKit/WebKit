@@ -1,0 +1,8 @@
+Tests that wheel events in the passive region are non-cancelable
+PASS windowScrollEventCount > 0 is true
+PASS wasCancelable is false
+PASS wasCanceled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+This directory contains the imported TG4 source map tests
+
+  - URL: https://github.com/tc39/source-map-tests.git
+  - Commit: 73e6c123c71b4dae17e3b81c46b29225731258f9
+
+To update the tests, run the script at Tools/Scripts/import-source-map-tests
+with no arguments. This will checkout out the repo above and copy the new
+tests over. You can also specify a different repo and branch (see usage
+info with the -h flag).

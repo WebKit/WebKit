@@ -1,0 +1,3 @@
+
+FAIL once trigger respects animation-play-state. assert_true: expected true got false
+

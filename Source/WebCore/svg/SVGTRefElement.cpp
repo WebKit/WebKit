@@ -1,0 +1,269 @@
+/*
+ * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "SVGTRefElement.h"
+
+#include "ElementRareData.h"
+#include "EventListener.h"
+#include "EventNames.h"
+#include "LegacyRenderSVGResource.h"
+#include "MutationEvent.h"
+#include "RenderSVGInline.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGElementInlines.h"
+#include "SVGNames.h"
+#include "ScriptDisallowedScope.h"
+#include "ShadowRoot.h"
+#include "Text.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTRefElement);
+
+Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document& document)
+{
+    Ref element = adoptRef(*new SVGTRefElement(tagName, document));
+    element->ensureUserAgentShadowRoot();
+    return element;
+}
+
+class SVGTRefTargetEventListener final : public EventListener {
+public:
+    static Ref<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
+    {
+        return adoptRef(*new SVGTRefTargetEventListener(trefElement));
+    }
+
+    void attach(RefPtr<Element>&& target);
+    void detach();
+    bool NODELETE isAttached() const { return m_target.get(); }
+
+private:
+    explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
+
+    void handleEvent(ScriptExecutionContext&, Event&) final;
+    bool operator==(const EventListener&) const final;
+
+    WeakRef<SVGTRefElement, WeakPtrImplWithEventTargetData> m_trefElement;
+    RefPtr<Element> m_target;
+};
+
+SVGTRefTargetEventListener::SVGTRefTargetEventListener(SVGTRefElement& trefElement)
+    : EventListener(SVGTRefTargetEventListenerType)
+    , m_trefElement(trefElement)
+{
+}
+
+void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
+{
+    ASSERT(!isAttached());
+    ASSERT(target.get());
+    ASSERT(target->isConnected());
+
+    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this);
+    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this);
+    m_target = WTF::move(target);
+}
+
+void SVGTRefTargetEventListener::detach()
+{
+    if (!isAttached())
+        return;
+
+    RefPtr target = m_target;
+    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, { .capture = false });
+    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, { .capture = false });
+    m_target = nullptr;
+}
+
+bool SVGTRefTargetEventListener::operator==(const EventListener& listener) const
+{
+    if (auto* targetListener = dynamicDowncast<SVGTRefTargetEventListener>(listener))
+        return &m_trefElement == &targetListener->m_trefElement;
+    return false;
+}
+
+void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& event)
+{
+    if (!isAttached())
+        return;
+
+    if (event.type() == eventNames().DOMSubtreeModifiedEvent && m_trefElement.ptr() != event.target())
+        protect(m_trefElement)->updateReferencedText(protect(m_target).get());
+    else if (event.type() == eventNames().DOMNodeRemovedFromDocumentEvent)
+        protect(m_trefElement)->detachTarget();
+}
+
+inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
+    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+    , SVGURIReference(this)
+    , m_targetListener(SVGTRefTargetEventListener::create(*this))
+{
+    ASSERT(hasTagName(SVGNames::trefTag));
+}
+
+SVGTRefElement::~SVGTRefElement()
+{
+    protect(m_targetListener)->detach();
+}
+
+void SVGTRefElement::updateReferencedText(Element* target)
+{
+    String textContent;
+    if (target)
+        textContent = target->textContent();
+
+    RefPtr root = userAgentShadowRoot();
+    ASSERT(root);
+    ScriptDisallowedScope::EventAllowedScope allowedScope(*root);
+    if (!root->firstChild())
+        root->appendChild(Text::create(protect(document()), WTF::move(textContent)));
+    else {
+        ASSERT(root->firstChild()->isTextNode());
+        protect(root->firstChild())->setTextContent(WTF::move(textContent));
+    }
+}
+
+void SVGTRefElement::detachTarget()
+{
+    // Remove active listeners and clear the text content.
+    protect(m_targetListener)->detach();
+
+    ASSERT(shadowRoot());
+    RefPtr container = shadowRoot()->firstChild();
+    if (container)
+        container->setTextContent(String { });
+
+    if (!isConnected())
+        return;
+
+    // Mark the referenced ID as pending.
+    auto target = SVGURIReference::targetElementFromIRIString(href(), protect(document()));
+    if (!target.identifier.isEmpty())
+        treeScopeForSVGReferences().addPendingSVGResource(target.identifier, protect(*this));
+}
+
+void SVGTRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
+{
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGTextPositioningElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+}
+
+void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGTextPositioningElement::svgAttributeChanged(attrName);
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
+        buildPendingResource();
+        updateSVGRendererForElementChange();
+    }
+}
+
+RenderPtr<RenderElement> SVGTRefElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+{
+    return createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, *this, WTF::move(style));
+}
+
+bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const
+{
+    return child.isInShadowTree();
+}
+
+bool SVGTRefElement::rendererIsNeeded(const Style::ComputedStyle& style)
+{
+    if (parentNode()
+        && (parentNode()->hasTagName(SVGNames::aTag)
+            || parentNode()->hasTagName(SVGNames::altGlyphTag)
+            || parentNode()->hasTagName(SVGNames::textTag)
+            || parentNode()->hasTagName(SVGNames::textPathTag)
+            || parentNode()->hasTagName(SVGNames::tspanTag)))
+        return StyledElement::rendererIsNeeded(style);
+
+    return false;
+}
+
+void SVGTRefElement::clearTarget()
+{
+    protect(m_targetListener)->detach();
+}
+
+void SVGTRefElement::buildPendingResource()
+{
+    // Remove any existing event listener.
+    protect(m_targetListener)->detach();
+
+    // If we're not yet in a document, this function will be called again from insertionSteps().
+    if (!isConnected())
+        return;
+
+    auto target = SVGURIReference::targetElementFromIRIString(href(), protect(treeScopeForSVGReferences()));
+    if (!target.element) {
+        if (target.identifier.isEmpty())
+            return;
+
+        treeScopeForSVGReferences().addPendingSVGResource(target.identifier, protect(*this));
+        ASSERT(hasPendingResources());
+        return;
+    }
+
+    // Don't set up event listeners if this is a shadow tree node.
+    // SVGUseElement::transferEventListenersToShadowTree() handles this task, and addEventListener()
+    // expects every element instance to have an associated shadow tree element - which is not the
+    // case when we land here from SVGUseElement::buildShadowTree().
+    if (!isInShadowTree())
+        protect(m_targetListener)->attach(target.element.copyRef());
+
+    updateReferencedText(target.element.get());
+}
+
+Node::NeedsPostConnectionSteps SVGTRefElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    auto result = SVGElement::insertionSteps(insertionType, parentOfInsertedTree);
+    if (insertionType.connectedToDocument)
+        return NeedsPostConnectionSteps::Yes;
+    return result;
+}
+
+void SVGTRefElement::postConnectionSteps()
+{
+    SVGTextPositioningElement::postConnectionSteps();
+    buildPendingResource();
+}
+
+void SVGTRefElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    SVGElement::removingSteps(removalType, oldParentOfRemovedTree);
+    if (removalType.disconnectedFromDocument)
+        protect(m_targetListener)->detach();
+}
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGTRefTargetEventListener)
+    static bool NODELETE isType(const WebCore::EventListener& listener)
+    {
+        return listener.type() == WebCore::EventListener::SVGTRefTargetEventListenerType;
+    }
+SPECIALIZE_TYPE_TRAITS_END()

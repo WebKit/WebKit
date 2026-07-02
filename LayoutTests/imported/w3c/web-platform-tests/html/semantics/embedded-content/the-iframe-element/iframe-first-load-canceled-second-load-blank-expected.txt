@@ -1,0 +1,4 @@
+
+
+PASS about:blank navigation is asynchronous, even if the initial one is canceled.
+

@@ -1,0 +1,40 @@
+<style>
+#container {
+  height: 500px;
+  width: 500px;
+  overflow: scroll;
+  border: 1px solid black;
+}
+
+.nested {
+  height: 300px;
+  background-color: cyan;
+}
+
+.scrolly {
+  width: 100px;
+  height: 600px;
+  background-color: blue;
+  border-bottom: 10px solid green;
+}
+
+.relative {
+  bottom: 0px;
+  position: relative;
+  width: 100px;
+  height: 110px;
+  background-color: yellow;
+}
+
+</style>
+PASS if the green border is visible at the bottom of the red box.
+<div id=container>
+  <div class=nested>
+      <div class=scrolly></div>
+      <div class=relative></div>
+  </div>
+</div>
+
+<script>
+container.scrollTo(0, 240);
+</script>

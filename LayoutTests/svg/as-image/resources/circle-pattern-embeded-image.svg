@@ -1,0 +1,13 @@
+<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="lavender"/>
+    <rect x="5" y="5" width="40" height="40" fill="url(#pattern)"/>
+    <defs>
+        <pattern id="pattern" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use href="#image" transform="scale(0.0025)"/>
+        </pattern>
+        <image id="image" height="400" width="400" preserveAspectRatio="none" href="data:image/svg+xml,
+            &lt;svg width='400' height='400' xmlns='http://www.w3.org/2000/svg'&gt;
+                &lt;circle cx='50%' cy='50%' r='50%' fill='green'/&gt;
+            &lt;/svg&gt;"/>
+    </defs>
+</svg>

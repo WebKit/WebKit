@@ -1,0 +1,19 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  onload = async () => {
+    document.createElement('audio').src = 'data:';
+    for (let i = 0; i < 1000; i++) {
+      new Worker('');
+      await navigator.storage.persist();
+    }
+    setTimeout(() => {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }, 50);
+  };
+</script>

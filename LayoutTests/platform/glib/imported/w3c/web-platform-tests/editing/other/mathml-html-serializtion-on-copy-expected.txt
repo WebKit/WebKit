@@ -1,0 +1,15 @@
+x
++
+1
+a
+2
+b
+1
+1
+2
+x
+text	string
+x+1a2b112xtextstring
+
+FAIL MathML elements should preserve structure and content during copy-paste assert_not_equals: MathML element should be pasted got disallowed value null
+

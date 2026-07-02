@@ -1,0 +1,51 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Input: github_emails, bugzilla_emails.
+  # This template will not be called when bugzilla_emails.size == 1
+  # or when both github_emails.size == 0 && bugzilla_emails.size == 0
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Choose Account"
+%]
+
+[% IF bugzilla_users %]
+  <h1>Choose Account</h1>
+
+  <p>It seems that there is more than one WebKit [% terms.Bugzilla %] account connected to
+    your GitHub account. Choose an account to log in with by clicking one of the links below.</p>
+
+  <ul class="bugzilla_emails">
+    [% FOREACH bz_user IN bugzilla_users %]
+      <li><a href="[% choose_email(bz_user.email) FILTER html %]">[% bz_user.email FILTER html %]</a></li>
+    [% END %]
+  </ul>
+[% ELSE %]
+  <h1>Create [% terms.Bugzilla %] Account</h1>
+
+  [% IF github_emails.size == 1 %]
+    <p>The email '[% github_emails.0 FILTER html %]' was not found in WebKit [% terms.Bugzilla %] and will need to be created for you to log in.</p>
+
+    <p class="center-align"><a href="[% choose_email(github_emails.0) FILTER html %]" class="button button-primary">Create Account and Log In</a></p>
+  [% ELSE %]
+  <p>You have multiple email addresses associated with your GitHub account.
+    Which one should be used to create your [% terms.Bugzilla %] account?</p>
+    
+    <ul class="github_emails">
+    [% FOREACH email IN github_emails %]
+      <li><a href="[% choose_email(email) FILTER html %]">[% email FILTER html %]</a></li>
+    [% END %]
+    </ul>
+  [% END %]
+
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

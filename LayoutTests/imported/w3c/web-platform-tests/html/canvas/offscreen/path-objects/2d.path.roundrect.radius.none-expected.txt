@@ -1,0 +1,7 @@
+2d.path.roundrect.radius.none
+
+Check that roundRect throws an RangeError if radii is an empty array.
+
+
+PASS Check that roundRect throws an RangeError if radii is an empty array.
+

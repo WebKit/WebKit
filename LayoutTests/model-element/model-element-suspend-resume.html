@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UsesBackForwardCache=true ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<title>&lt;model> state after suspend and resume</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-utils.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    internals.disableModelLoadDelaysForTesting();
+
+    var lastRecordedCurrentTime;
+
+    window.addEventListener("pageshow", async () => {
+        assert_equals(document.visibilityState, "visible");
+
+        if (!event.persisted)
+            return;
+
+        // This page was restored from the page cache.
+        assert_true(document.getElementById("test-model").currentTime < lastRecordedCurrentTime + 0.2, "Model's animation current time shouldn't have progressed much since navigating away (it takes 0.5 seconds for go-back-on-load.html to navigate back)");
+        lastRecordedCurrentTime = document.getElementById("test-model").currentTime;
+
+        // Wait a little bit since the reload of suspended model
+        // is not synchronous.
+        await sleepForSeconds(0.5);
+
+        // This page was restored from the page cache. Make sure
+        // the animation is still running and progressing.
+        assert_false(document.getElementById("test-model").paused, "Model's animation should be running after resume");
+        assert_true(document.getElementById("test-model").currentTime > lastRecordedCurrentTime, "Model's animation current time should progress after resume");
+
+        document.getElementById("result").innerText = "PASSED: model is resumed after being suspended";
+        testRunner.dumpAsText();
+        testRunner.notifyDone();
+    }, false);
+
+    window.addEventListener("pagehide", function(event) {
+        assert_true(event.persisted, "Page should have entered the page cache");
+    }, false);
+
+    window.addEventListener('load', async () => {
+        const model = document.getElementById("test-model");
+        assert_true(!!model, "Model element should exist");
+        await model.ready;
+        model.playbackRate = 2;
+
+        await sleepForSeconds(0.5);
+        assert_false(model.paused, "Model animation should autoplay");
+
+        lastRecordedCurrentTime = model.currentTime;
+        assert_true(lastRecordedCurrentTime > 0, "Model animation's current time should have progressed");
+
+        window.location.href = "resources/go-back-on-load.html";
+    }, false);
+</script>
+<body>
+    <model id='test-model' autoplay loop>
+        <source src='resources/stopwatch-60s.usdz'/>
+    </model>
+    <div id="result"></div>
+</body>
+</html>

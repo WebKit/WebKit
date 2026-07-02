@@ -1,0 +1,4 @@
+
+
+FAIL Mouse behavior for base appearance <select multiple size=1> assert_true: Select should be open after clicking it. expected true got false
+

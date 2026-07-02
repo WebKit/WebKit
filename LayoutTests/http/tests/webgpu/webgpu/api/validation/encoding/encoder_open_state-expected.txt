@@ -1,0 +1,90 @@
+
+PASS :non_pass_commands:command="beginComputePass"
+PASS :non_pass_commands:command="beginRenderPass"
+PASS :non_pass_commands:command="clearBuffer"
+PASS :non_pass_commands:command="copyBufferToBuffer"
+PASS :non_pass_commands:command="copyBufferToTexture"
+PASS :non_pass_commands:command="copyTextureToBuffer"
+PASS :non_pass_commands:command="copyTextureToTexture"
+PASS :non_pass_commands:command="insertDebugMarker"
+PASS :non_pass_commands:command="popDebugGroup"
+PASS :non_pass_commands:command="pushDebugGroup"
+PASS :non_pass_commands:command="resolveQuerySet"
+PASS :render_pass_commands:command="draw"
+PASS :render_pass_commands:command="drawIndexed"
+PASS :render_pass_commands:command="drawIndexedIndirect"
+PASS :render_pass_commands:command="drawIndirect"
+PASS :render_pass_commands:command="multiDrawIndexedIndirect"
+PASS :render_pass_commands:command="multiDrawIndirect"
+PASS :render_pass_commands:command="setIndexBuffer"
+PASS :render_pass_commands:command="setBindGroup"
+PASS :render_pass_commands:command="setVertexBuffer"
+PASS :render_pass_commands:command="setPipeline"
+PASS :render_pass_commands:command="setViewport"
+PASS :render_pass_commands:command="setScissorRect"
+PASS :render_pass_commands:command="setBlendConstant"
+PASS :render_pass_commands:command="setStencilReference"
+PASS :render_pass_commands:command="setImmediates"
+PASS :render_pass_commands:command="beginOcclusionQuery"
+PASS :render_pass_commands:command="endOcclusionQuery"
+PASS :render_pass_commands:command="executeBundles"
+FAIL :render_pass_commands:command="pushDebugGroup" assert_unreached:
+  - (in subcase: finishBeforeCommand="no") INFO: subcase ran
+  - (in subcase: finishBeforeCommand="pass") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:327:26
+  - (in subcase: finishBeforeCommand="pass") INFO: subcase ran
+  - (in subcase: finishBeforeCommand="encoder") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:327:26
+  - (in subcase: finishBeforeCommand="encoder") INFO: subcase ran
+ Reached unreachable code
+FAIL :render_pass_commands:command="popDebugGroup" assert_unreached:
+  - (in subcase: finishBeforeCommand="no") INFO: subcase ran
+  - (in subcase: finishBeforeCommand="pass") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:327:26
+  - (in subcase: finishBeforeCommand="pass") INFO: subcase ran
+  - (in subcase: finishBeforeCommand="encoder") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:327:26
+  - (in subcase: finishBeforeCommand="encoder") INFO: subcase ran
+ Reached unreachable code
+FAIL :render_pass_commands:command="insertDebugMarker" assert_unreached:
+  - (in subcase: finishBeforeCommand="no") INFO: subcase ran
+  - (in subcase: finishBeforeCommand="pass") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:327:26
+  - (in subcase: finishBeforeCommand="pass") INFO: subcase ran
+  - (in subcase: finishBeforeCommand="encoder") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_open_state.spec.js:327:26
+  - (in subcase: finishBeforeCommand="encoder") INFO: subcase ran
+ Reached unreachable code
+PASS :render_bundle_commands:command="draw"
+PASS :render_bundle_commands:command="drawIndexed"
+PASS :render_bundle_commands:command="drawIndexedIndirect"
+PASS :render_bundle_commands:command="drawIndirect"
+PASS :render_bundle_commands:command="setPipeline"
+PASS :render_bundle_commands:command="setBindGroup"
+PASS :render_bundle_commands:command="setIndexBuffer"
+PASS :render_bundle_commands:command="setVertexBuffer"
+PASS :render_bundle_commands:command="setImmediates"
+PASS :render_bundle_commands:command="pushDebugGroup"
+PASS :render_bundle_commands:command="popDebugGroup"
+PASS :render_bundle_commands:command="insertDebugMarker"
+PASS :compute_pass_commands:command="setBindGroup"
+PASS :compute_pass_commands:command="setPipeline"
+PASS :compute_pass_commands:command="setImmediates"
+PASS :compute_pass_commands:command="dispatchWorkgroups"
+PASS :compute_pass_commands:command="dispatchWorkgroupsIndirect"
+PASS :compute_pass_commands:command="pushDebugGroup"
+PASS :compute_pass_commands:command="popDebugGroup"
+PASS :compute_pass_commands:command="insertDebugMarker"
+

@@ -1,0 +1,10 @@
+Clearing the querySelectorAll result cache under memory pressure must also clear each node's HasValidQuerySelectorAllResults flag. Otherwise a still-alive node keeps claiming it has cached results while the document's map no longer has an entry for it, and a later class-attribute change asserts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash changing a class after the cache was cleared under memory pressure.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

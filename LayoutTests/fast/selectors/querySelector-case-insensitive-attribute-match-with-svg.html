@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+    <div id=div1 style="background-color: red; position: absolute; left:0; width:50px; height:50px"  lang="FooBar"></div>
+    <div id=div2 style="background-color: red; position: absolute; left:50px; width:50px; height:50px" link="FooBar"></div>
+    <div id=div3 style="background-color: red; position: absolute; left:100px; width:50px; height:50px" lang="foobar"></div>
+    <div id=div4 style="background-color: red; position: absolute; left:150px; width:50px; height:50px" link="foobar"></div>
+    
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="margin-top:50px">
+        <rect id=rect1 x="50" y="0" width="50" height="50" lang="FooBar" style="fill:green" />
+        <rect id=rect2 x="0" y="0" width="50" height="50" link="FooBar" style="fill:green" />
+        <rect id=rect3 x="0" y="50" width="50" height="50" lang="foobar" style="fill:red" />
+        <rect id=rect4 x="50" y="50" width="50" height="50" link="foobar" style="fill:red" />
+    </svg>
+</div>
+</body>
+<script>
+description('Some attribute needs case insensitive value matching with HTML. This test we do not incorrectly match SVG.');
+
+shouldBe('document.querySelectorAll("[lang=foobar]").length', '3');
+shouldBeEqualToString('document.querySelectorAll("[lang=foobar]")[0].id', 'div1');
+shouldBeEqualToString('document.querySelectorAll("[lang=foobar]")[1].id', 'div3');
+shouldBeEqualToString('document.querySelectorAll("[lang=foobar]")[2].id', 'rect3');
+
+shouldBe('document.querySelectorAll("[link=foobar]").length', '3');
+shouldBeEqualToString('document.querySelectorAll("[link=foobar]")[0].id', 'div2');
+shouldBeEqualToString('document.querySelectorAll("[link=foobar]")[1].id', 'div4');
+shouldBeEqualToString('document.querySelectorAll("[link=foobar]")[2].id', 'rect4');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

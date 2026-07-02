@@ -1,0 +1,15 @@
+Test that deleteFramebuffer() on the draw framebuffer alone does not unbind the read framebuffer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 6 PASS, 0 FAIL
+
+PASS getError was expected value: NO_ERROR : deleteFramebuffer(drawFB) succeeds
+PASS gl.getParameter(gl.READ_FRAMEBUFFER_BINDING) is readFB
+PASS gl.getParameter(gl.DRAW_FRAMEBUFFER_BINDING) is null
+PASS gl.checkFramebufferStatus(gl.READ_FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS read green after delete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

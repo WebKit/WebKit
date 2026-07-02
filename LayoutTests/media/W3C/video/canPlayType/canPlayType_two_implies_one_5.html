@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+ <head>
+  <title>video.canPlayType() - codecs parameter logic</title>
+  <script src="../../w3cwrapper.js"></script>
+ </head>
+ <body>
+  <p><a href="http://dev.w3.org/html5/spec/Overview.html#mime-types">spec reference</a></p>
+  <video id="v">
+  </video>
+  <div id="log"></div>
+  <script>
+test(function() {
+ var v = document.getElementById("v");
+ if (v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') == "probably") {
+  assert_equals(
+   v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"'),
+   v.canPlayType('video/ogg; codecs="avc1.42E01E"'),
+   "ability to play two codecs implies the ability to play one");
+ }
+});
+  </script>
+ </body>
+</html>

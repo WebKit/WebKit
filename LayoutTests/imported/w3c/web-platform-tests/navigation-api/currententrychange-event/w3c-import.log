@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/anchor-click.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/history-back-same-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/history-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/history-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/location-api.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank-same-doc-popup.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank-same-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-back-forward-cross-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-back-forward-same-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-cross-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-replace-cross-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-replace-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-replace-same-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-same-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-reload-cross-doc.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-reload-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-updateCurrentEntry.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/not-on-load.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/currententrychange-event/properties.html

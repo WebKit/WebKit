@@ -1,0 +1,29 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # mailing_bugid: The bug ID that email is being sent for.
+  # sent_bugmail: The results of Bugzilla::BugMail::Send().
+  #%]
+
+<dl>
+  <dt>Email sent to:</dt>
+  <dd>
+  [% IF user.can_see_bug(mailing_bugid) %]
+    [% IF sent_bugmail.sent.size %]
+      [% FOREACH name = sent_bugmail.sent %]
+        <code>[% name FILTER html %]</code>[% ", " UNLESS loop.last() %]
+      [% END %]
+    [% ELSE %]
+      no one
+    [% END %]
+  [% ELSE %]
+    (list of e-mails not available)
+  [% END %]
+  </dd>
+</dl>

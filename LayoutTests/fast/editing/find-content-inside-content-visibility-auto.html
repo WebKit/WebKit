@@ -1,0 +1,23 @@
+<style>
+.container {
+  border: 1px solid black;
+  height: 100px;
+  width: 300px;
+  overflow: scroll;
+  white-space: pre;
+}
+</style>
+<div class=container>make sure the last line is scrolled off
+and use find-in-page to search for it.
+some text here
+to make sure
+the last line
+is really
+scrolled off.
+<div style="content-visibility: auto;">find me</div>
+</div>
+<pre id=result></pre>
+<script>
+window.testRunner?.dumpAsText();
+result.innerText = "window.find('find me') says: " + window.find("find me");
+</script>

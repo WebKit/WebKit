@@ -1,0 +1,309 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ParentalControlsURLFilter.h"
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+
+#if HAVE(WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST)
+#import "DeprecatedGlobalSettings.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebContentRestrictionsInternalSPI.h>
+#endif
+
+#import "Logging.h"
+#import "ParentalControlsURLFilterParameters.h"
+#import <wtf/CompletionHandler.h>
+#import <wtf/MainThread.h>
+#import <wtf/URL.h>
+#import <wtf/WorkQueue.h>
+#import <wtf/cf/NotificationCenterCF.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+#import <pal/cocoa/WebContentRestrictionsSoftLink.h>
+
+namespace WebCore {
+
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+
+static bool wcrBrowserEngineClientEnabled(const String& path)
+{
+    if (!path.isEmpty())
+        return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLsForConfigurationAtPath:path.createNSString().get()];
+
+    return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLs];
+}
+
+static HashMap<String, Ref<ParentalControlsURLFilter>>& allFiltersWithConfigurationPath()
+{
+    static MainThreadNeverDestroyed<HashMap<String, Ref<ParentalControlsURLFilter>>> map;
+    return map;
+}
+
+ParentalControlsURLFilter& ParentalControlsURLFilter::filterWithConfigurationPath(const String& path)
+{
+    // Coalesce null string into the empty string.
+    String key = path.isEmpty() ? emptyString() : path;
+
+    auto& map = allFiltersWithConfigurationPath();
+    auto iterator = map.find(key);
+    if (iterator != map.end())
+        return iterator->value;
+
+    return map.set(key, adoptRef(*new ParentalControlsURLFilter(path))).iterator->value.get();
+}
+
+ParentalControlsURLFilter::ParentalControlsURLFilter(const String& configurationPath)
+    : m_configurationPath(configurationPath)
+{
+}
+
+#else
+
+static bool wcrBrowserEngineClientEnabled()
+{
+    return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLs];
+}
+
+static RefPtr<ParentalControlsURLFilter>& NODELETE globalFilter()
+{
+    static MainThreadNeverDestroyed<RefPtr<ParentalControlsURLFilter>> filter;
+    return filter.get();
+}
+
+ParentalControlsURLFilter& ParentalControlsURLFilter::singleton()
+{
+    if (!globalFilter())
+        setGlobalFilter(adoptRef(*new ParentalControlsURLFilter));
+
+    return *globalFilter();
+}
+
+void ParentalControlsURLFilter::setGlobalFilter(Ref<ParentalControlsURLFilter>&& filter)
+{
+    RELEASE_ASSERT(!globalFilter());
+    globalFilter() = WTF::move(filter);
+}
+
+bool ParentalControlsURLFilter::hasGlobalFilter()
+{
+    return !!globalFilter();
+}
+
+#endif
+
+void ParentalControlsURLFilter::setFilterForTesting(Ref<ParentalControlsURLFilter>&& filter)
+{
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    allFiltersWithConfigurationPath().set(emptyString(), WTF::move(filter));
+#else
+    setGlobalFilter(WTF::move(filter));
+#endif
+}
+
+ParentalControlsURLFilter::ParentalControlsURLFilter() = default;
+
+WorkQueue& ParentalControlsURLFilter::workQueueSingleton()
+{
+    static MainThreadNeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("ParentalControlsContentFilter queue"_s);
+    return queue.get();
+}
+
+static void webContentFilterTypeDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    for (auto& filter : allFiltersWithConfigurationPath().values())
+        filter->resetIsEnabled();
+#else
+    ParentalControlsURLFilter::singleton().resetIsEnabled();
+#endif
+}
+
+UNUSED_FUNCTION static void registerNotificationForWebContentFilterTypeChange()
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), nullptr, &webContentFilterTypeDidChange, CFSTR("com.apple.ManagedConfiguration.webContentFilterTypeChanged"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenterSingleton(), nullptr, &webContentFilterTypeDidChange, CFSTR("com.apple.WebKit.WebContentRestrictionsChanged"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    });
+}
+
+void ParentalControlsURLFilter::resetIsEnabled()
+{
+    m_isEnabled = std::nullopt;
+}
+
+ParentalControlsURLFilter::~ParentalControlsURLFilter() = default;
+
+bool ParentalControlsURLFilter::isEnabledImpl() const
+{
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    return wcrBrowserEngineClientEnabled(m_configurationPath);
+#else
+    return wcrBrowserEngineClientEnabled();
+#endif
+}
+
+bool ParentalControlsURLFilter::isEnabled() const
+{
+#if PLATFORM(MAC)
+    // FIXME: This can be removed after rdar://159207397 is fixed.
+    static std::optional<bool> cachedWcrFilterEnabled;
+    bool wcrFilterEnabled = isEnabledImpl();
+
+    if (cachedWcrFilterEnabled != wcrFilterEnabled) {
+        RELEASE_LOG(ContentFiltering, "%p - ParentalControlsURLFilter::isEnabled %d", this, wcrFilterEnabled);
+        cachedWcrFilterEnabled = wcrFilterEnabled;
+    }
+
+    return wcrFilterEnabled;
+#else
+    if (!m_isEnabled) {
+        m_isEnabled = isEnabledImpl();
+        RELEASE_LOG(ContentFiltering, "%p - ParentalControlsURLFilter::isEnabled %d", this, *m_isEnabled);
+    }
+
+    registerNotificationForWebContentFilterTypeChange();
+
+    return *m_isEnabled;
+#endif
+}
+
+void ParentalControlsURLFilter::isURLAllowed(IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, ParentalControlsContentFilter& filter)
+{
+    isURLAllowedImpl(isMainFrame, mainDocumentURL, url, { [protectedThis = Ref { *this }, weakFilter = ThreadSafeWeakPtr { filter }] (bool allowed, NSData *replacementData) mutable {
+        ASSERT(!isMainThread());
+        if (RefPtr filter = weakFilter.get())
+            filter->didReceiveAllowDecisionOnQueue(allowed, replacementData);
+    }, CompletionHandlerCallThread::AnyThread });
+}
+
+void ParentalControlsURLFilter::isURLAllowed(IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+{
+    isURLAllowedImpl(isMainFrame, mainDocumentURL, url, { [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (bool allowed, NSData *replacementData) mutable {
+        ASSERT(!isMainThread());
+        callOnMainRunLoop([completionHandler = WTF::move(completionHandler), allowed, replacementData = RetainPtr { replacementData }]() mutable {
+            completionHandler(allowed, replacementData.get());
+        });
+    }, CompletionHandlerCallThread::AnyThread });
+}
+
+void ParentalControlsURLFilter::isURLAllowedImpl(IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+{
+    UNUSED_PARAM(isMainFrame);
+    ASSERT(isMainThread());
+
+    RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
+    if (!wcrBrowserEngineClient) {
+        workQueueSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(true, nullptr);
+        });
+        return;
+    }
+
+#if HAVE(WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST)
+    if (DeprecatedGlobalSettings::webContentRestrictionsTransitiveTrustEnabled()
+        && [wcrBrowserEngineClient respondsToSelector:@selector(evaluateURL:mainDocumentURL:withCompletion:onCompletionQueue:)]) {
+        [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() mainDocumentURL:mainDocumentURL.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+        completionHandler(!shouldBlock, replacementData);
+        }).get() onCompletionQueue:workQueueSingleton().dispatchQueue()];
+        return;
+    }
+#endif
+    UNUSED_PARAM(mainDocumentURL);
+    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+        completionHandler(!shouldBlock, replacementData);
+        }).get() onCompletionQueue:workQueueSingleton().dispatchQueue()];
+}
+
+void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(isMainThread());
+
+    RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
+    if (!wcrBrowserEngineClient)
+        return completionHandler(true);
+
+    [wcrBrowserEngineClient allowURL:url.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
+        ASSERT(isMainThread());
+        RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::allowURL result %d.\n", didAllow);
+        completionHandler(didAllow);
+    }).get()];
+}
+
+void ParentalControlsURLFilter::allowURL(const ParentalControlsURLFilterParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+{
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    Ref filter = WebCore::ParentalControlsURLFilter::filterWithConfigurationPath(parameters.configurationPath);
+#else
+    Ref filter = WebCore::ParentalControlsURLFilter::singleton();
+#endif
+    filter->allowURL(parameters.urlToAllow, WTF::move(completionHandler));
+}
+
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const URL& referrerURL, CompletionHandler<void(bool)>&& completionHandler
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+    , CocoaView*
+#endif
+)
+{
+    ASSERT(isMainThread());
+
+    RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
+    if (!wcrBrowserEngineClient)
+        return completionHandler(true);
+
+#if __has_include(<WebKitAdditions/WebContentRestrictionsInternalSPI.h>)
+    MAYBE_REQUEST_PERMISSION_WCR_ASK_TO
+#endif
+
+    RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::requestPermissionForURL falls back to allow.");
+    return completionHandler(true);
+}
+#endif
+
+WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClient()
+{
+    if (!isEnabled())
+        return nullptr;
+
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    if (!m_wcrBrowserEngineClient && !m_configurationPath.isEmpty())
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
+#endif
+
+    if (!m_wcrBrowserEngineClient)
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]));
+
+    return m_wcrBrowserEngineClient.get();
+}
+
+} // namespace WebCore
+
+#endif // HAVE(WEBCONTENTRESTRICTIONS)

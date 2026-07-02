@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.UndoRedo");
+
+    let frameTarget = null;
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.UndoRedo.UndoEmptyStack",
+        description: "undo on an empty history stack should succeed without error.",
+        async test() {
+            await frameTarget.DOMAgent.undo();
+            InspectorTest.pass("undo() on an empty stack should not reject.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.UndoRedo.RedoEmptyStack",
+        description: "redo on an empty history stack should succeed without error.",
+        async test() {
+            await frameTarget.DOMAgent.redo();
+            InspectorTest.pass("redo() on an empty stack should not reject.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.UndoRedo.MarkUndoableState",
+        description: "markUndoableState should succeed.",
+        async test() {
+            await frameTarget.DOMAgent.markUndoableState();
+            InspectorTest.pass("markUndoableState() should not reject.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that FrameDOMAgent exposes undo, redo, and markUndoableState. Functional undo/redo coverage lands alongside DOM editing commands in a follow-up.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

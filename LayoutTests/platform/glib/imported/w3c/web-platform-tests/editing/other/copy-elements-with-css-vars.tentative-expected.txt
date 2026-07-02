@@ -1,0 +1,8 @@
+Span text
+Row 1, Cell 1	Row 1, Cell 2
+Span text
+Row 1, Cell 1	Row 1, Cell 2
+
+PASS Test serialized html on copy has resolved css values
+FAIL Test for resolving css variables on copy assert_equals: Span font-size should be 18px expected "18px" but got ""
+

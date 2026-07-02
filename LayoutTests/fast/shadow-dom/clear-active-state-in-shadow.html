@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div><span>click here</span></div>
+<style>
+div {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background: green;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+var div = document.querySelector('div');
+div.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    a, ::slotted(*) {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    a:active {
+        background: red;
+    }
+    </style>
+    <a href="#" onclick="this.style.color = this.matches(':active') ? 'black' : 'green'"><slot></slot></a>`;
+
+if (window.testRunner)
+    UIHelper.wait(UIHelper.activateAt(div.offsetLeft + 5, div.offsetTop + 5));
+
+</script>
+</body>
+</html>

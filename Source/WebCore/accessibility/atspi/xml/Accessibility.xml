@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spec xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="Accessible.xml" parse="xml"/>
+  <xi:include href="Action.xml" parse="xml"/>
+  <xi:include href="Application.xml" parse="xml"/>
+  <xi:include href="Collection.xml" parse="xml"/>
+  <xi:include href="Component.xml" parse="xml"/>
+  <xi:include href="Document.xml" parse="xml"/>
+  <xi:include href="Hypertext.xml" parse="xml"/>
+  <xi:include href="Hyperlink.xml" parse="xml"/>
+  <xi:include href="Image.xml" parse="xml"/>
+  <xi:include href="Selection.xml" parse="xml"/>
+  <xi:include href="Table.xml" parse="xml"/>
+  <xi:include href="TableCell.xml" parse="xml"/>
+  <xi:include href="Text.xml" parse="xml"/>
+  <xi:include href="EditableText.xml" parse="xml"/>
+  <xi:include href="Cache.xml" parse="xml"/>
+  <xi:include href="Value.xml" parse="xml"/>
+  <xi:include href="Registry.xml" parse="xml"/>
+  <xi:include href="DeviceEventController.xml" parse="xml"/>
+  <xi:include href="DeviceEventListener.xml" parse="xml"/>
+</spec>

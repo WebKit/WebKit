@@ -1,0 +1,551 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import difflib
+import json
+import logging
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import time
+from pathlib import Path
+from typing import IO
+
+log = logging.getLogger('measure-build-time')
+
+SCRIPTS = Path(__file__).parent
+
+# --- Tests and subtests -----------------------------------------------------
+
+class Task:
+    name: str
+    description: str
+    depends: list[type[Task]] = []
+    subtest_of: str | None = None
+
+    build_command: str
+    stdout_filter: str | None
+    build_dir: Path
+    source_dir: Path
+
+    result: TestResult | None
+
+    def __init__(self, args: Arguments):
+        self.build_command = args.build_command
+        self.stdout_filter = args.stdout_filter
+        self.source_dir = args.source_dir
+        self.build_dir = args.build_dir
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
+
+    def run(self):
+        log.info('--- %s %s', self.name, '-' * (74 - len(self.name)))
+        with self:
+            self.result = run_test(self.name, self.build_command, self.stdout_filter)
+        return self.result
+
+
+class CleanBuild(Task):
+    name = 'clean'
+    description = 'Delete the build directory and run a full build from scratch.'
+
+    def __init__(self, args: Arguments):
+        super().__init__(args)
+        if args.configure_command:
+            self.build_command = f'{args.configure_command} && {self.build_command}'
+
+    def __enter__(self):
+        if self.build_dir.exists():
+            if sys.stdin.isatty():
+                # Prompt for confirmation when being run interactively.
+                if input(f'OK to delete {self.build_dir}? [yN] ').lower() != 'y':
+                    sys.exit('Clean build aborted, exiting')
+            subprocess.run(('rm', '-r', self.build_dir), check=True)
+
+
+class PatchIncrementalBuild(Task):
+    depends = [CleanBuild]
+    subtest_of = 'incremental'
+
+    patch: str
+
+    def __init__(self, args: Arguments):
+        super().__init__(args)
+        self.unapply_patch = args.unapply_patch
+
+
+    def __enter__(self):
+        log.info('Apply patch: git -C %s apply -3 --numstat --apply', str(self.source_dir))
+        git = subprocess.run(('git', '-C', self.source_dir, 'apply', '-3', '--numstat', '--apply'),
+                             capture_output=True, input=self.patch, text=True)
+        if git.returncode:
+            sys.exit(git.stderr)
+        self.paths_patched = [
+            # Parse --numstat output lines like:
+            # "1D\t1\tSource/WebKit/UIProcess/WebBackForwardList.cpp"
+            # to track the lines changed by the patch.
+            self.source_dir / line.split('\t', maxsplit=3)[2]
+            for line in git.stdout.splitlines()
+        ]
+
+    def __exit__(self, *args):
+        if not self.unapply_patch:
+            return
+        before_apply = [(path, path.stat()) for path in self.paths_patched]
+        log.info('Reverse patch: git -C %s apply -3 --reverse', str(self.source_dir))
+        git = subprocess.run(('git', '-C', self.source_dir, 'apply', '-3', '--reverse'),
+                             capture_output=True, input=self.patch, text=True)
+        log.info('Reset file modification times for: %s',
+                 ', '.join(map(str, self.paths_patched)))
+        for path, info in before_apply:
+            os.utime(path, ns=(info.st_atime_ns, info.st_mtime_ns))
+        if git.returncode:
+            sys.exit(git.stderr)
+        subprocess.run(('git', '-C', self.source_dir, 'update-index', '--remove', *self.paths_patched),
+                       check=True)
+
+
+def make_unified_diff(path: str, original: str, modified: str) -> str:
+    """Generate a `git apply`-compatible unified diff for a single file."""
+    body = ''.join(difflib.unified_diff(
+        original.splitlines(keepends=True),
+        modified.splitlines(keepends=True),
+        fromfile=f'a/{path}',
+        tofile=f'b/{path}',
+    ))
+    return f'diff --git a/{path} b/{path}\n' + body
+
+
+class ContentEditIncrementalBuild(PatchIncrementalBuild):
+    """Modify a file's content at runtime to invalidate content-based build caching.
+
+    Subclasses set `path` and override `modify_content()`. The patch is computed
+    from the file's current content so it always applies cleanly.
+    """
+
+    @property
+    def path(self) -> str:
+        raise NotImplementedError
+
+    def modify_content(self, content: str) -> str:
+        raise NotImplementedError
+
+    def __enter__(self):
+        full_path = self.source_dir / self.path
+        original = full_path.read_text()
+        modified = self.modify_content(original)
+        if modified == original:
+            sys.exit(f'modify_content() did not change {self.path}')
+        self.patch = make_unified_diff(self.path, original, modified)
+        super().__enter__()
+
+
+class HeaderCommentIncrementalBuild(ContentEditIncrementalBuild):
+    """Append a C++-style comment to a header file."""
+
+    def modify_content(self, content: str) -> str:
+        if not content.endswith('\n'):
+            content += '\n'
+        return content + '// Edit by measure-build-time to invalidate content-based caching.\n'
+
+
+class HashCommentIncrementalBuild(ContentEditIncrementalBuild):
+    """Append a hash-style comment to a definition file (e.g. .serialization.in)."""
+
+    def modify_content(self, content: str) -> str:
+        if not content.endswith('\n'):
+            content += '\n'
+        return content + '# Edit by measure-build-time to invalidate content-based caching.\n'
+
+
+class SourceWTFLogIncrementalBuild(ContentEditIncrementalBuild):
+    """Insert a WTFLogAlways call at the top of an arbitrary function body."""
+
+    def modify_content(self, content: str) -> str:
+        # WebKit style places a function body's opening brace on its own line, so
+        # the first lone `{` line in a source file is reliably the start of a
+        # function body (rather than e.g. a class or namespace declaration, which
+        # keep their `{` at the end of the signature line).
+        match = re.search(r'\n\{\n', content)
+        if not match:
+            sys.exit(f'No function body opening brace found in {self.path}')
+        insert_at = match.end()
+        return (content[:insert_at]
+                + '    WTFLogAlways("Edit by measure-build-time");\n'
+                + content[insert_at:])
+
+
+# NOTE: Many of these paths are chosen somewhat arbitrarily based on recent changes to the codebase.
+# To reevaluate, run a log command like:
+#
+#     git log --name-only --pretty=format: --after=2026-01-01 '*.serialization.in' | sort | uniq -c | sort -rg
+#
+# with different path patterns.
+
+class IncrementalBuild1(HeaderCommentIncrementalBuild):
+    name = 'webcore-header'
+    description = 'Append a comment to a widely-included WebCore header (Document.h) and rebuild.'
+    path = 'Source/WebCore/dom/Document.h'
+
+
+class IncrementalBuild2(HeaderCommentIncrementalBuild):
+    name = 'jsc-offlineasm-header'
+    description = 'Append a comment to a JavaScriptCore header consumed by offlineasm (WasmCallee.h) and rebuild.'
+    path = 'Source/JavaScriptCore/wasm/WasmCallee.h'
+
+
+class IncrementalBuild3(HeaderCommentIncrementalBuild):
+    name = 'webkit-header'
+    description = 'Append a comment to a widely-included WebKit header (WebPageProxy.h) and rebuild.'
+    path = 'Source/WebKit/UIProcess/WebPageProxy.h'
+
+
+class IncrementalBuild4(SourceWTFLogIncrementalBuild):
+    name = 'jsc-cpp-source'
+    description = 'Insert a WTFLogAlways call into a JavaScriptCore C++ source file (FTLLowerDFGToB3.cpp) and rebuild.'
+    path = 'Source/JavaScriptCore/ftl/FTLLowerDFGToB3.cpp'
+
+
+class IncrementalBuild5(SourceWTFLogIncrementalBuild):
+    name = 'webcore-mm-source'
+    description = 'Insert a WTFLogAlways call into a WebCore Objective-C++ source file (WebAccessibilityObjectWrapperMac.mm) and rebuild.'
+    path = 'Source/WebCore/accessibility/mac/WebAccessibilityObjectWrapperMac.mm'
+
+
+class IncrementalBuild6(PatchIncrementalBuild):
+    name = 'webkit-swift-interface'
+    description = 'Apply a small patch that changes a Swift-C++ class\'s public initializer and rebuild.'
+    patch = '''\
+diff --git a/Source/WebKit/UIProcess/WebBackForwardList.cpp b/Source/WebKit/UIProcess/WebBackForwardList.cpp
+index 73419fbf4994..12e9c6ebda40 100644
+--- a/Source/WebKit/UIProcess/WebBackForwardList.cpp
++++ b/Source/WebKit/UIProcess/WebBackForwardList.cpp
+@@ -990,7 +990,7 @@ void WebBackForwardList::didReceiveProvisionalMessage(IPC::Connection& connectio
+ #else // ENABLE(BACK_FORWARD_LIST_SWIFT)
+ 
+ WebBackForwardListWrapper::WebBackForwardListWrapper(WebPageProxy& webPageProxy)
+-    : m_impl(WTF::makeUniqueWithoutFastMallocCheck<WebBackForwardList>(WebBackForwardList::init(webPageProxy)))
++    : m_impl(WTF::makeUniqueWithoutFastMallocCheck<WebBackForwardList>(WebBackForwardList::init(webPageProxy, true)))
+     , m_messageForwarder(m_impl->getMessageReceiver())
+ {
+ }
+diff --git a/Source/WebKit/UIProcess/WebBackForwardList.swift b/Source/WebKit/UIProcess/WebBackForwardList.swift
+index 7556b716bef9..24e1cf8098e1 100644
+--- a/Source/WebKit/UIProcess/WebBackForwardList.swift
++++ b/Source/WebKit/UIProcess/WebBackForwardList.swift
+@@ -141,7 +141,8 @@ final class WebBackForwardList {
+ 
+     // @used ensures these are retained even under -O -wmo: rdar://179098545
+     @used
+-    init(page: WebKit.WeakPtrWebPageProxy) {
++    init(page: WebKit.WeakPtrWebPageProxy, addedByMeasureBuildTimeDoNotCommit: Bool = true) {
++        print(addedByMeasureBuildTimeDoNotCommit)
+         self.page = page
+         self.messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
+         backForwardLog("(Back/Forward) Created WebBackForwardList \(ObjectIdentifier(self))")
+'''
+
+
+class IncrementalBuild7(HashCommentIncrementalBuild):
+    name = 'serialization-file'
+    description = 'Append a comment to an IPC serialization definition file (WebCoreArgumentCoders.serialization.in) and rebuild.'
+    path = 'Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in'
+
+
+class NullBuild(Task):
+    name = 'null'
+    description = 'Re-run the build immediately after all other builds, with no source changes.'
+    depends = [CleanBuild, IncrementalBuild1, IncrementalBuild2,
+               IncrementalBuild3, IncrementalBuild4, IncrementalBuild5,
+               IncrementalBuild6, IncrementalBuild7]
+
+
+AVAILABLE_TESTS = [
+    CleanBuild,
+    NullBuild,
+    IncrementalBuild1,
+    IncrementalBuild2,
+    IncrementalBuild3,
+    IncrementalBuild4,
+    IncrementalBuild5,
+    IncrementalBuild6,
+    IncrementalBuild7,
+]
+
+
+# --- Test execution and result parsing ---------------------------------------
+
+TIMING_ENTRY_RE = re.compile(
+    r'^(.+?)\s+\(\d+\s+tasks?\)\s+\|\s+([\d.]+)\s+seconds$',
+    re.MULTILINE,
+)
+
+XCODE_TIMING_SUMMARY_RE = re.compile(
+    r'^Build Timing Summary$(.+?)(?=^\*\* BUILD|\Z)',
+    re.MULTILINE | re.DOTALL,
+)
+
+TestResult = dict
+
+
+def sanitize_phase_name(task_name: str) -> str:
+    sanitized = task_name.replace('+', 'Plus')
+    return re.sub(r'[^a-zA-Z0-9]', '', sanitized)
+
+
+def parse_timing_summary(log_fd: IO[bytes]) -> dict[str, int]:
+    """Extract per-phase timing from Xcode's Build Timing Summary section."""
+
+    # The build log might be very long, but the timing summary is always at
+    # the end. Only search the final 1MB of the log.
+    log_fd.seek(0, os.SEEK_END)
+    size = log_fd.tell()
+    log_fd.seek(max(0, size - 2**20))
+    match = XCODE_TIMING_SUMMARY_RE.search(log_fd.read().decode('utf-8', errors='replace'))
+    if not match:
+        return {}
+    section = match.group(1)
+    timing: dict[str, int] = {}
+    for m in TIMING_ENTRY_RE.finditer(section):
+        timing[m.group(1)] = int(float(m.group(2)) * 1000)
+    return timing
+
+
+def build_type_result(wall_time_ms: int, timing_summary: dict[str, int]) -> dict:
+    result: dict = {
+        'metrics': {
+            'Time': {'current': [wall_time_ms]},
+        },
+    }
+    if timing_summary:
+        phase_tests: dict = {}
+        for task_name, task_ms in timing_summary.items():
+            phase_tests[sanitize_phase_name(task_name)] = {
+                'metrics': {'Time': {'current': [task_ms]}},
+            }
+        result['tests'] = {
+            'Phases': {
+                'metrics': {
+                    'CPUTime': {'current': [sum(timing_summary.values())]},
+                },
+                'tests': phase_tests,
+            },
+        }
+    return result
+
+
+def run_build(command: str, stdout_filter: str | None = None) -> tuple[int, int, IO[bytes]]:
+    """Run the build command, capturing output. Returns (exit_code, wall_time_ms, log_fd)."""
+    log_fd = tempfile.NamedTemporaryFile(prefix='measure-build-time-')
+    filter_cmd = stdout_filter if stdout_filter else 'cat'
+    full_command = f'set -o pipefail; ({command}) 2>&1 | tee {log_fd.name} | {filter_cmd}'
+
+    start = time.monotonic()
+    proc = subprocess.run(full_command, shell=True, executable='/bin/bash')
+    elapsed_ms = int((time.monotonic() - start) * 1000)
+
+    log_fd.seek(0)
+    return proc.returncode, elapsed_ms, log_fd
+
+
+def run_test(name: str, command: str, stdout_filter: str | None = None) -> TestResult | None:
+    log.info('Build: %s', command)
+    rc, wall_time_ms, stdout_fd = run_build(command, stdout_filter)
+    if rc != 0:
+        log.error('%s build failed with exit code %d', name, rc)
+        return None
+    timing_summary = parse_timing_summary(stdout_fd)
+    log.info('%s build: %dms wall, %d phases parsed', name, wall_time_ms, len(timing_summary))
+    log.info('-' * 79)
+    return build_type_result(wall_time_ms, timing_summary)
+
+
+# --- Test runner ------------------------------------------------------------
+
+DEFAULT_MAKE_COMMAND = (
+    'make -C {workspace_dir} {configuration} ARGS=-showBuildTimingSummary'
+)
+DEFAULT_CMAKE_BUILD_COMMAND = (
+    'xcrun ninja -C {build_dir}'
+)
+DEFAULT_CMAKE_CONFIGURE_COMMAND = (
+    'xcrun cmake -S {source_dir} -B {build_dir} --preset {preset}'
+)
+
+class Arguments(argparse.Namespace):
+    build_command: str
+    configure_command: str | None
+    make: bool
+    cmake: bool
+    configuration: str
+
+    build_dir: Path
+    source_dir: Path
+
+    tests: list[str]
+    unapply_patch: bool
+    keep_going: bool
+
+    stdout_filter: str | None
+    output: str
+
+def get_args() -> Arguments:
+    test_list = '\n'.join(f'  {T.name:<24}{T.description}' for T in AVAILABLE_TESTS)
+    parser = argparse.ArgumentParser(
+        description='Measure build time and emit perf metrics JSON.',
+        epilog=f'available tests:\n{test_list}',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
+    parser.add_argument('--build-command',
+                        help='Shell command to run the build')
+    parser.add_argument('--configure-command',
+                        help='Shell command to configure the build')
+    parser.add_argument('--make', action='store_true',
+                        help='Use a default Make invocation to build WebKit with Xcode.')
+    parser.add_argument('--cmake', action='store_true',
+                        help='Use a default CMake invocation to build WebKit with Ninja.')
+
+    parser.add_argument('--build-dir', type=Path,
+                        help='Path to top-level build directory (deleted by `clean` test)')
+    parser.add_argument('--source-dir', type=Path,
+                        help='Path to WebKit checkout used for incremental build testing')
+    parser.add_argument('--configuration', default='debug',
+                        help='Build configuration to use (default: debug)')
+    parser.add_argument('--tests', nargs='+', default=[t.name for t in AVAILABLE_TESTS],
+                        choices=[t.name for t in AVAILABLE_TESTS],
+                        help='Which tests to run (default: all). Will skip test dependencies which are not listed.')
+    parser.add_argument('--unapply-patch', action=argparse.BooleanOptionalAction, default=False,
+                        help='Whether to undo changes made to the source directory between tests')
+    parser.add_argument('--keep-going', action=argparse.BooleanOptionalAction, default=True,
+                        help='Continue benchmarking after a build command has failed')
+    parser.add_argument('--metric-key',
+                        help='Top-level test key in the results. '
+                        'Can be omitted, but must be provided when emitting a real benchmark score.')
+    parser.add_argument('--stdout-filter', default=None,
+                        help='Shell command to filter build stdout through (e.g. filter-build-webkit)')
+    parser.add_argument('--output', '-o', default='build-time-results.json',
+                        help='Output JSON file path (default: build-time-results.json)')
+
+    args = parser.parse_args(namespace=Arguments())
+
+    if not args.build_dir:
+        args.build_dir = Path(subprocess.check_output(
+            (SCRIPTS / 'webkit-build-directory', '--top-level'),
+            text=True
+        ).rstrip())
+    if not args.source_dir:
+        args.source_dir = SCRIPTS.parent.parent
+
+    if sum((
+        1 if args.make else 0,
+        1 if args.cmake else 0,
+        1 if args.build_command or args.configure_command else 0,
+    )) > 1:
+        parser.error('cannot mix --cmake or --make with a custom build or '
+                     'configure command')
+    if not any((args.make, args.cmake, args.build_command)):
+        parser.error('one of --make, --cmake, or --build-command is required')
+    if args.configure_command and not args.build_command:
+        parser.error('--build-command must be provided when using a custom '
+                     '--configure-command')
+
+    if args.make:
+        internal_dir = args.source_dir / '../Internal/WebKit'
+        args.build_command = DEFAULT_MAKE_COMMAND.format(
+            configuration=args.configuration.lower(),
+            workspace_dir=str(internal_dir if internal_dir.exists() else args.source_dir)
+        )
+    elif args.cmake:
+        args.build_command = DEFAULT_CMAKE_BUILD_COMMAND.format(
+            build_dir=str(args.build_dir),
+        )
+        cmake_preset = {
+            'debug': 'mac-dev-debug',
+            'release': 'mac-dev-release',
+        }.get(args.configuration.lower(), args.configuration)
+        args.configure_command = DEFAULT_CMAKE_CONFIGURE_COMMAND.format(
+            build_dir=str(args.build_dir),
+            source_dir=str(args.source_dir),
+            preset=cmake_preset,
+        )
+    if not args.metric_key:
+        # e.g. "BuildTime-Debug"
+        args.metric_key = f'BuildTime-{args.configuration.capitalize()}'
+    return args
+
+def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+    )
+
+    args = get_args()
+
+    # Read each test's `depends` lists to compute a topological order to run
+    # all the tests. Ties are broken by AVAILABLE_TESTS order, so the plan is
+    # deterministic. Does NOT perform cycle detection.
+    plan: list[type[Task]] = []
+    roots = [T for T in AVAILABLE_TESTS if not T.depends]
+    edges = {T: set(T.depends) for T in AVAILABLE_TESTS}
+
+    while roots:
+        T = roots.pop(0)
+        plan.append(T)
+        for T2 in AVAILABLE_TESTS:
+            if T in edges[T2]:
+                edges[T2].remove(T)
+                if not edges[T2]:
+                    roots.append(T2)
+
+    tests: dict[str, TestResult] = {}
+    for T in plan:
+        if T.name not in args.tests:
+            continue
+        if any(T2.name not in (tests.get(T2.subtest_of, {}).get('tests', {})
+                               if T2.subtest_of else tests)
+               for T2 in T.depends
+               if T2.name in args.tests):
+            log.info('Skipping %s build due to failed dependencies', T.name)
+            continue
+        result = T(args).run()
+        if not result:
+            if args.keep_going:
+                continue
+            sys.exit('Build failed, exiting due to --no-keep-going.')
+        if T.subtest_of:
+            aggregate_result = tests.setdefault(T.subtest_of, {
+                'metrics': {'Time': ['Geometric']},
+                'tests': {}
+            })
+            aggregate_result['tests'][T.name] = result
+        else:
+            tests[T.name] = result
+
+    if not tests:
+        raise sys.exit('All tests failed, exiting.')
+
+    results = {
+        args.metric_key: {
+            'tests': tests,
+        },
+    }
+
+    output_json = json.dumps(results, indent=2)
+
+    with open(args.output, 'w') as f:
+        f.write(output_json)
+        f.write('\n')
+
+    print(output_json)
+
+
+if __name__ == '__main__':
+    main()

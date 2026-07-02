@@ -1,0 +1,29 @@
+<style>
+.container {
+  width: 450px;
+  outline: 1px solid black;
+}
+
+.float {
+  float: left;
+  height: 100px;
+  width: 100px;
+  background-color: green;
+}
+
+.block_with_margin {
+  height: 50px;
+  width: 130px;
+  background-color: blue;
+  margin-bottom: 50px;
+}
+</style>
+<body>
+
+<div class="float"></div>
+<div class=container>
+  <span>
+    <div class=block_with_margin></div>
+  </span>
+  PASS if this is under the green box.
+</div>

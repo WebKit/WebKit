@@ -1,0 +1,11 @@
+PASS templateWithIsindex.innerHTML is containerWithIsindex.innerHTML
+PASS templateWithFormInsideForm.innerHTML is '<form><input></form>'
+PASS formInsideTemplate = templateWithFormInsideForm.content.firstChild; formInsideTemplate.localName is 'form'
+PASS inputInsideTemplate = templateWithFormInsideForm.content.querySelector('input'); inputInsideTemplate.form is formInsideTemplate
+PASS formInsideTemplate.elements[0] is inputInsideTemplate
+PASS templateWithNestedForms.innerHTML is '<form><form></form></form>'
+PASS templateWithIsindexInsideForm.innerHTML is '<form>' + containerWithIsindex.innerHTML + '</form>'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

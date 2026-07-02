@@ -1,0 +1,10 @@
+<p>This tests for a bug where content pasted at the end of a paragraph would be inserted into the next paragraph.  You should see 'helloworld' below.</p>
+<div id="div" contenteditable="true">hello</div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "word");
+document.execCommand("InsertHTML", false, "<span><div>world</div></span>");
+</script>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+#horizontal, #horizontal-empty, #vertical, #vertical-empty {
+    font-size: 20px;
+    line-height: 100px;
+    outline: none;
+}
+
+#horizontal {
+    border: 1px solid tomato;
+}
+
+#horizontal-empty {
+    border: 1px solid lightblue;
+}
+
+#vertical {
+    border: 1px solid orange;
+}
+
+#vertical-empty {
+    margin-top: 1em;
+    height: 44px;
+    border: 1px solid cyan;
+}
+</style>
+</head>
+<body>
+<p id="horizontal" contenteditable>Foo</p>
+<p id="horizontal-empty" contenteditable></p>
+<div id="vertical" style="writing-mode: vertical-lr;" contenteditable>Bar</div>
+<div id="vertical-empty" style="writing-mode: vertical-lr;" contenteditable></div>
+<script>
+function logicalHeightOfRect(element, rect) {
+    return getComputedStyle(element).writingMode.startsWith("vertical") ? rect.width : rect.height;
+}
+
+function testLogicalHeightOfSelection(elementID) {
+    const element = document.getElementById(elementID);
+    element.focus();
+    document.execCommand("SelectAll");
+
+    const height = logicalHeightOfRect(element, internals.selectionBounds());
+    if (height < 25)
+        testPassed(`Logical selection height in #${elementID} did not extend to line height.`);
+    else
+        testFailed(`Logical selection height in #${elementID} was too tall (observed: ${height}).`);
+    element.blur();
+}
+
+function testLogicalHeightOfCaret(elementID) {
+    const element = document.getElementById(elementID);
+    element.focus();
+
+    const height = logicalHeightOfRect(element, internals.absoluteCaretBounds());
+    if (height < 25)
+        testPassed(`Logical caret height in #${elementID} did not extend to line height.`);
+    else
+        testFailed(`Logical caret height in #${elementID} was too tall (observed: ${height}).`);
+    element.blur();
+}
+
+description("This test verifies that caret and selection heights do not extend to match line height (or part of line height). To run the test manually, focus each of the editable elements and make sure that the caret roughly matches the font size in each editable element. Then select text in each of the elements with text and verify that the selection height also matches the font size.");
+if (window.testRunner) {
+    testLogicalHeightOfSelection("horizontal");
+    testLogicalHeightOfSelection("vertical");
+    testLogicalHeightOfCaret("horizontal");
+    testLogicalHeightOfCaret("horizontal-empty");
+    testLogicalHeightOfCaret("vertical");
+    testLogicalHeightOfCaret("vertical-empty");
+}
+</script>
+</body>
+</html>

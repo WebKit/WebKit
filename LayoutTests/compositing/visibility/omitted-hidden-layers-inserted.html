@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+  <div id="container" style="position: absolute; width: 200px; height: 200px; background: red; visibility:hidden"></div>
+  <div id="visible" style="background: green; visibility:visible; width: 200px; height: 200px;"></div>
+
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+window.onload = async () => {
+    await new Promise(requestAnimationFrame);
+    
+    document.getElementById("container").append(document.getElementById("visible"));
+    
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</html>

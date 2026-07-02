@@ -1,0 +1,10 @@
+X
+This tests that native elements and ARIA overrides result in the expected role, subrole and role description.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

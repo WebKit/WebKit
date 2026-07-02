@@ -1,0 +1,27 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+:focus { color: green }
+:focus::placeholder { color: blue }
+</style>
+
+<div id=host tabindex=1></div>
+
+<script>
+var host = document.getElementById('host');
+var shadow = host.attachShadow({mode: 'closed'});
+shadow.innerHTML = `
+    <div>shadow</div>
+`;
+
+test(() => {
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+
+    host.focus();
+
+    var div = shadow.querySelector("div");
+    assert_equals(internals.styleChangeType(host), "InlineStyleChange");
+    assert_equals(internals.styleChangeType(div), "NoStyleChange");
+}, "Author shadow tree is not invalidated in presence of user agent shadow tree targeting pseudo elements");
+
+</script>

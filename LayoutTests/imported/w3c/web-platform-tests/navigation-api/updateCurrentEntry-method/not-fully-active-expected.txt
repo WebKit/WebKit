@@ -1,0 +1,3 @@
+
+PASS updateCurrentEntry() must throw if the document is not fully active
+

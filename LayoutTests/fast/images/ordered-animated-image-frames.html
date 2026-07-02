@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>    
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            internals.clearMemoryCache();
+            testRunner.waitUntilDone();
+        }
+
+        var image = new Image;
+        image.onload = draw;
+        image.src = "resources/animated-red-green-blue.gif";
+        var drawCount = 0;
+
+        function draw()
+        {   
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+
+            setTimeout(function() {
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                if (++drawCount == 2)
+                    testRunner.notifyDone();
+                else
+                    draw();
+            }, 100);
+        }
+    </script>
+</body>
+</html>

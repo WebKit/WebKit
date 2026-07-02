@@ -1,0 +1,4 @@
+item1 item2
+
+FAIL When the focus is set on a focusgroup item, an arrow key press should move the focus to the next item. assert_equals: expected Element node <span id="item2" tabindex="-1">item2</span> but got Element node <span id="item1" tabindex="0">item1</span>
+

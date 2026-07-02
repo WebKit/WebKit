@@ -1,0 +1,14 @@
+
+
+Harness Error (FAIL), message = Error: assert_equals: expected Element node <video id="b"></video> but got Element node <body><div id="a">A</div>
+<video>
+  <video id="b"></video...
+
+TIMEOUT selection have the same anchor and focus nodes because b and c are in different tree scopes. Test timed out
+
+Harness Error (FAIL), message = Error: assert_equals: expected Element node <video id="b"></video> but got Element node <body><div id="a">A</div>
+<video>
+  <video id="b"></video...
+
+TIMEOUT selection have the same anchor and focus nodes because b and c are in different tree scopes. Test timed out
+

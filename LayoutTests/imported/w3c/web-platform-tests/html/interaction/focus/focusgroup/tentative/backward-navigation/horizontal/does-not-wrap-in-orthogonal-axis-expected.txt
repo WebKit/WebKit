@@ -1,0 +1,4 @@
+item1 item2 item3
+
+PASS When the focus is set on the first item of a focusgroup that wraps and supports only the orthogonal axis of the pressed arrow key, a backward arrow key press shouldn't move the focus.
+

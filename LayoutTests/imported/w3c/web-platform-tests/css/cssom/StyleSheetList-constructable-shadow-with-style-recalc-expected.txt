@@ -1,0 +1,3 @@
+
+PASS shadowRoot.styleSheets does not include adopted style sheets
+

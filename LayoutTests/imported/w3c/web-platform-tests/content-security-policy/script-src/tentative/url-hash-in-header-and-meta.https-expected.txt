@@ -1,0 +1,9 @@
+
+
+PASS url-hash in meta tag should not relax policy set by header
+PASS meta tag can restrict policy set by header
+FAIL more lax meta tag should still allow script assert_equals: expected "SCRIPT_RAN" but got "CSP_VIOLATION"
+PASS multiple meta tags should apply most strict policy - lax first
+PASS multiple meta tags should apply most strict policy - strict first
+FAIL multiple meta tags should apply most strict policy - both lax assert_equals: expected "SCRIPT_RAN" but got "CSP_VIOLATION"
+

@@ -1,0 +1,4 @@
+
+PASS CSSStyleDeclaration.removeProperty("all")
+PASS CSSStyleDeclaration.removeProperty("all") 1
+

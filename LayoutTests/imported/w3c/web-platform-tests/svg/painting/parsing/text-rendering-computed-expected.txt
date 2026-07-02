@@ -1,0 +1,6 @@
+
+PASS Property text-rendering value 'auto'
+PASS Property text-rendering value 'optimizespeed'
+PASS Property text-rendering value 'optimizelegibility'
+PASS Property text-rendering value 'geometricprecision'
+

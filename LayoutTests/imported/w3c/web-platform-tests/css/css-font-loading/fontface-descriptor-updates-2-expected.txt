@@ -1,0 +1,5 @@
+
+FAIL FontFace descriptor mutations are reflected in FontFaceSet assert_in_array: ranges: expected U+20-7F to be present value "U+20-7F" not in array ["U+0-10ffff", "U+0-10ffff", "U+20-7f", "U+0-10ffff", "U+0-10ffff", "U+0-10ffff", "U+0-10ffff"]
+FAIL Descriptor mutations before adding to FontFaceSet are correctly reflected assert_false: weights: expected 700 to be absent expected false got true
+PASS Font matching uses updated style and family name
+

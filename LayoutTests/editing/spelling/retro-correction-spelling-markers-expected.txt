@@ -1,0 +1,7 @@
+PASS internals.hasSpellingMarker(5, 4) became true
+PASS !internals.sentenceRetroCorrectionEnabled || internals.hasSpellingMarker(10, 2) is true
+PASS !internals.sentenceRetroCorrectionEnabled || internals.hasSpellingMarker(18, 3) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+It's muhc to late too finish this.

@@ -1,0 +1,9 @@
+DrawImage with a source of a single pixel should draw one uniform color throughout. Neighboring pixels in the source image shouldn't affect the destination rect's output pixels
+
+(Bugzilla: https://bugs.webkit.org/show_bug.cgi?id=58267) (Radar: rdar://problem/9148473)
+
+This canvas should be uniformly one color
+
+PASSED
+
+

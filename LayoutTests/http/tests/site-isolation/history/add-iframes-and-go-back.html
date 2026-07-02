@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that using history.back() while recursively creating iframes does not increase history.length.");
+jsTestIsAsync = true;
+
+onload = async () => {
+    if (sessionStorage.didNavigate) {
+        delete sessionStorage.didNavigate;
+        shouldBe("history.length", "2");
+        finishJSTest();
+    } else {
+        await testRunner?.clearBackForwardList();
+        sessionStorage.didNavigate = true;
+        location.href = 'http://127.0.0.1:8000/site-isolation/history/resources/add-recursive-iframes-then-go-back.html';
+    }
+}
+</script>

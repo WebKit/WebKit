@@ -1,0 +1,3 @@
+
+PASS outerHTML replaces element within DocumentFragment parent.
+

@@ -1,0 +1,11 @@
+Dedicated Web Worker Tests - Uncaught Exception in Single-Page Test
+
+Demonstrates running testharness based tests inside a dedicated web worker.
+
+The test harness is expected to pass despite an uncaught exception in a worker because that worker is a single-page test.
+
+
+PASS Browser supports Workers
+PASS Test running on main document.
+FAIL worker-uncaught-single Error: This failure is expected.
+

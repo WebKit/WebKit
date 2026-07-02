@@ -1,0 +1,9 @@
+{
+	"url": "content/test-vp9-23.976fps.webm",
+	"type": "video/webm; codecs=\"vp09.00.10.08\"",
+	"init": { "offset": 0, "size": 903 },
+	"duration": 10,
+	"media": [
+		{ "offset": 903,    "size": 666096, "timestamp": 0,     "duration": 10}
+	]
+}

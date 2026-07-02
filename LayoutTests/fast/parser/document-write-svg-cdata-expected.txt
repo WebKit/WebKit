@@ -1,0 +1,10 @@
+| <html>
+|   <head>
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "\n"
+|     <script>
+|       "\ndocument.write("<svg>");\n"
+|   <body>
+|     <svg svg>
+|       "\n\nThis should <strong>not</strong> be bold!\n\n"

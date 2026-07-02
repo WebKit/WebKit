@@ -1,0 +1,16 @@
+
+FAIL e.style['corner-block-start'] = "10px bevel" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner-block-start'] = "round 10% / 2rem squircle" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner-block-start'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner-block-start'] = "4px 2% round / bevel 1em" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['corner-block-start'] = "10px bevel" should set border-start-end-radius assert_equals: border-start-end-radius should be canonical expected "10px" but got ""
+FAIL e.style['corner-block-start'] = "10px bevel" should set border-start-start-radius assert_equals: border-start-start-radius should be canonical expected "10px" but got ""
+FAIL e.style['corner-block-start'] = "10px bevel" should set corner-start-end-shape assert_equals: corner-start-end-shape should be canonical expected "bevel" but got ""
+FAIL e.style['corner-block-start'] = "10px bevel" should set corner-start-start-shape assert_equals: corner-start-start-shape should be canonical expected "bevel" but got ""
+FAIL e.style['corner-block-start'] = "10px bevel" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set border-start-end-radius assert_equals: border-start-end-radius should be canonical expected "1em" but got ""
+FAIL e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set border-start-start-radius assert_equals: border-start-start-radius should be canonical expected "4px 2%" but got ""
+FAIL e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set corner-start-end-shape assert_equals: corner-start-end-shape should be canonical expected "bevel" but got ""
+FAIL e.style['corner-block-start'] = "4px 2% round / 1em bevel" should set corner-start-start-shape assert_equals: corner-start-start-shape should be canonical expected "round" but got ""
+FAIL e.style['corner-block-start'] = "4px 2% round / 1em bevel" should not set unrelated longhands assert_true: expected true got false
+

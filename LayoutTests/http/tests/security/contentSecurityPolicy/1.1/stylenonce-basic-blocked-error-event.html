@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Style element has error on bad style nonce</title>
+    <meta http-equiv="Content-Security-Policy" content="style-src 'nonce-nonceynonce'">
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+    <script>
+        function verifyStep1() {
+            var color = window.getComputedStyle(document.querySelector('p')).color;
+            assert_equals(color, "rgb(0, 128, 0)", "The color of the paragraph is still green after initial style.");
+        }
+
+        function setupStep2() {
+            var sty = document.createElement("style");
+            sty.nonce = "notavalidnonce";
+            sty.innerHTML = "p { color: red; }";
+            sty.onerror = styleError;
+            document.body.appendChild(sty);
+        }
+        function verifyStep2() {
+            var color = window.getComputedStyle(document.querySelector('p')).color;
+            assert_equals(color, "rgb(0, 128, 0)", "The color of the paragraph is still green after inserted style.");
+        }
+
+        function setupStep3() {
+            var e = document.getElementById('style1');
+            e.innerHTML = "p { color: blue; }";
+        }
+        function verifyStep3() {
+            var color = window.getComputedStyle(document.querySelector('p')).color;
+            assert_equals(color, "rgb(0, 128, 0)", "The color of the paragraph is still green after changing style.");
+            test.done();
+        }
+
+        var verifySteps = [ verifyStep1, verifyStep2, verifyStep3 ];
+        var setupSteps = [ setupStep2, setupStep3 ];
+
+        var test = async_test("Test that paragraph remains green and error events received.");
+
+        function styleError() {
+            test.step(function() {
+                verifySteps.shift()();
+                var nextSetup = setupSteps.shift();
+                if (nextSetup)
+                    nextSetup();
+            });
+        }
+    </script>
+</head>
+<body>
+    <style nonce="nonceynonce">p { color: green; }</style>
+    <style id="style1" nonce="notavalidnonce" onerror="styleError();">p { color: red; }</style>
+    <p>A test paragraph</p>
+</body>
+</html>

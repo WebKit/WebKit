@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Reference: HTML divs replicating the foreignObject interleaving test.
+     Outer SVG is 400x200 viewBox 1:1. -->
+<div style="position: absolute; overflow: hidden; width: 400px; height: 200px; background: #f0f0f0;">
+  <!-- circle cx=80 cy=100 r=60 → bbox (20,40) 120x120 -->
+  <div style="position: absolute; left: 20px; top: 40px; width: 120px; height: 120px; background: #e74c3c; border-radius: 50%;"></div>
+  <!-- foreignObject (120,30) 160x140 -->
+  <div style="position: absolute; left: 120px; top: 30px; width: 160px; height: 140px; background: rgba(52, 152, 219, 0.8);"></div>
+  <!-- circle cx=320 cy=100 r=60 → bbox (260,40) 120x120 -->
+  <div style="position: absolute; left: 260px; top: 40px; width: 120px; height: 120px; background: #2ecc71; border-radius: 50%;"></div>
+  <!-- rect (260,60) 80x80 rotate(10deg), origin at SVG (0,0) -->
+  <div style="position: absolute; left: 260px; top: 60px; width: 80px; height: 80px; background: rgba(155, 89, 182, 0.7); transform: rotate(10deg); transform-origin: -260px -60px;"></div>
+</div>
+</body>
+</html>

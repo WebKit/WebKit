@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/common.js"></script>
+<script src="../../../../resources/accessibility-helper.js.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="datetime-local" value="2020-09-16T10:45"/>
+
+<script>
+window.jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that an accessibility press can activate the date picker.");
+
+    // Press via the accessibility API.
+    accessibilityController.accessibleElementById("input").press();
+
+    while (!(await UIHelper.isShowingDateTimePicker()))
+        await new Promise(resolve => setTimeout(resolve, 20));
+
+    UIHelper.keyDown("escape");
+    await UIHelper.ensurePresentationUpdate();
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeFalse("showingPicker");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
+

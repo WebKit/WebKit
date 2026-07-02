@@ -1,0 +1,15 @@
+<style>
+div {
+  font-family: ahem;
+  width: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: green;
+}
+
+span {
+  background-color: yellow;
+}
+</style>
+<!-- hanging content does not contribute to scrollable overlfow -->
+<div>should-not-scroll<span>                                              </span></div>

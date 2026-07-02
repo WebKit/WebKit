@@ -1,0 +1,10 @@
+
+PASS global setup
+FAIL The streaming request body is readable in the service worker. promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL Network fallback for streaming upload. promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+FAIL When the streaming request body is used, network fallback fails. promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: ReadableStream uploading is not supported" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Running clone() in the service worker does not prevent network fallback. promise_test: Unhandled rejection with value: object "NotSupportedError: ReadableStream uploading is not supported"
+PASS restore global state
+

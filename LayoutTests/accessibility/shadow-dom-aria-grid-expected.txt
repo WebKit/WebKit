@@ -1,0 +1,22 @@
+This tests that ARIA grids correctly recognize rows in shadow DOM, including after dynamic changes.
+
+Initial shadow DOM grid state:
+PASS: shadowGrid.rowCount === 2
+PASS: shadowGrid.columnCount === 2
+PASS: shadowGrid.width >= 2 === true
+PASS: shadowGrid.height >= 2 === true
+PASS: shadowGrid.cellForColumnAndRow(0, 0).role.toLowerCase().includes('cell') === true
+
+Adding a third row dynamically to shadow DOM...
+PASS: shadowGrid.rowCount === 3
+PASS: shadowGrid.columnCount === 2
+PASS: cell.role.toLowerCase().includes('cell') === true
+
+Removing the first row from shadow DOM...
+PASS: shadowGrid.rowCount === 2
+PASS: shadowGrid.columnCount === 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

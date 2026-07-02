@@ -1,0 +1,8 @@
+
+PASS RTP header extension urn:ietf:params:rtp-hdrext:ssrc-audio-level is present in offer
+PASS RTP header extension urn:ietf:params:rtp-hdrext:sdes:mid is present in offer
+PASS RTP header extension urn:3gpp:video-orientation is present in offer
+PASS RTP header extension urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id is present in offer
+PASS RTP header extension urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id is present in offer
+PASS RTP header extension reassignment causes failure
+

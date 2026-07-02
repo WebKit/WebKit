@@ -1,0 +1,67 @@
+<!--
+Copyright (c) 2022 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="webkit-test-runner-options" content="runSingly=true">
+<title>WebGL conformance test for WebGL1 and WebGL2 context sequentially</title>
+<link rel="stylesheet" href="../../../webgl_test_files/resources/js-test-style.css"/>
+<script src="../../../webgl_test_files/js/js-test-pre.js"></script>
+<script src="../../../webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas1" style="width: 50px; height: 50px;"> </canvas>
+<canvas id="canvas2" style="width: 50px; height: 50px;"> </canvas>
+<script>
+"use strict";
+description("This test ensures that WebGL2 context instantiated after WebGL1 context works.");
+
+debug("");
+
+function runTest() {
+  assertMsg(window.WebGL2RenderingContext,
+            "WebGL2RenderingContext should be a member of window");
+  assertMsg('WebGL2RenderingContext' in window,
+            "WebGL2RenderingContext should be 'in' window");
+
+  const wtu = WebGLTestUtils;
+  let canvas1 = document.getElementById("canvas1");
+  let gl1 = wtu.create3DContext(canvas1, null, 1);
+  if (!gl1) {
+    testFailed("Could not fetch WebGL 1.0 context");
+    return;
+  }
+  testPassed("Fetched WebGL 1.0 context successfully");
+  debug("Checking WebGL1 context type");
+  assertMsg(gl1 instanceof WebGLRenderingContext,
+            "context type should be WebGLRenderingContext");
+
+  let canvas2 = document.getElementById("canvas2");
+  let gl2 = wtu.create3DContext(canvas2, null, 2);
+  if (!gl2) {
+    testFailed("Could not fetch WebGL 2.0 context");
+    return;
+  }
+  testPassed("Fetched WebGL2 context successfully");
+
+  debug("Checking WebGL2 context type");
+  assertMsg(gl2 instanceof WebGL2RenderingContext,
+            "context type should be WebGL2RenderingContext");
+}
+
+runTest();
+debug("");
+
+var successfullyParsed = true;
+</script>
+<script src="../../../webgl_test_files/js/js-test-post.js"></script>
+
+</body>
+</html>

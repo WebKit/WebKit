@@ -1,0 +1,3 @@
+
+PASS SVGStyleElement interface should include LinkStyle
+

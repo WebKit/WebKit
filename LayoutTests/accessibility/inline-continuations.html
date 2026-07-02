@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+<title>Inline continuations - accessibility tree linkage</title>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<h2>Inline continuations - accessibility tree linkage</h2>
+
+<p>This test checks that the right accessibility tree is generated in
+   the presence of inline continuations. Each of the five numbers
+   below should be visited only ones traversing the accessibility
+   tree.</p>
+
+<div contentEditable="true" id="test"><span>1<div role="group">2</div>3</span><span>4</span><div role="group">5</div></div>
+
+<div id="console"></div>
+
+<script>
+function nonGroupDescendants(elt)
+{
+    var result = 0;
+    var count = elt.childrenCount;
+    for (var i = 0; i < count; ++i) {
+        var child = elt.childAtIndex(i);
+        if (!child.role.match(/group/i))
+            result++;
+        result += nonGroupDescendants(child);
+    }
+    return result;
+}
+
+if (window.accessibilityController) {
+    var result = document.getElementById("result");
+    document.getElementById("test").focus();
+    shouldBe("nonGroupDescendants(accessibilityController.focusedElement)", "5");
+
+    // This should pass (and is a simpler test than above) if anonymous blocks were not in the AX tree
+    // shouldBe("accessibilityController.focusedElement.childrenCount", "5");
+}
+
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>

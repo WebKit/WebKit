@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=false ] -->
+<html>
+<head>
+<script src="../resources/ui-helper.js"></script>
+<style>
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: darkgray;
+}
+
+pre {
+    font-size: 10px;
+}
+</style>
+<script>
+window.testRunner?.waitUntilDone();
+
+async function waitForFullScreenChange(performActions) {
+    await new Promise(resolve => {
+        addEventListener("fullscreenchange", resolve, { once: true });
+        performActions();
+    });
+}
+
+addEventListener("load", async () => {
+    await UIHelper.setObscuredInsets(50, 0, 0, 0);
+    await UIHelper.ensurePresentationUpdate();
+    await waitForFullScreenChange(() => {
+        internals.withUserGesture(() => document.getElementById("target").requestFullscreen());
+    });
+
+    const options = internals.LAYER_TREE_INCLUDES_CLIPPING | internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS;
+    document.getElementById("output").innerText = internals.layerTreeAsText(document, options);
+
+    await waitForFullScreenChange(() => document.webkitExitFullscreen());
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+    <pre id="output"></pre>
+    <div id="target"></div>
+</body>
+</html>

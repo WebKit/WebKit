@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebGPURenderPassDepthStencilAttachment.h"
+
+#if ENABLE(GPU_PROCESS)
+
+#include "RemoteImageBufferGraphicsContext.h"
+#include "WebGPUConvertFromBackingContext.h"
+#include "WebGPUConvertToBackingContext.h"
+#include <WebCore/WebGPURenderPassDepthStencilAttachment.h>
+#include <WebCore/WebGPUTexture.h>
+#include <WebCore/WebGPUTextureView.h>
+
+namespace WebKit::WebGPU {
+
+static WebGPUIdentifier getIdentifier(ConvertToBackingContext& convertToBacking, const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+{
+    if (RefPtr view = renderPassDepthStencilAttachment.textureView())
+        return convertToBacking.convertToBacking(*view);
+
+    return convertToBacking.convertToBacking(*protect(renderPassDepthStencilAttachment.texture()));
+}
+std::optional<RenderPassDepthStencilAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+{
+    auto identifier = getIdentifier(*this, renderPassDepthStencilAttachment);
+
+    return { { identifier, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
+}
+
+std::optional<WebCore::WebGPU::RenderPassDepthStencilAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassDepthStencilAttachment& renderPassDepthStencilAttachment)
+{
+    WeakPtr view = convertTextureViewFromBacking(renderPassDepthStencilAttachment.view);
+    WeakPtr texture = view ? nullptr : convertTextureFromBacking(renderPassDepthStencilAttachment.view);
+    if (!view && !texture)
+        return std::nullopt;
+
+    WebCore::WebGPU::RenderPassDepthAttachmentView viewTextureVariant = [&] -> WebCore::WebGPU::RenderPassDepthAttachmentView {
+        if (view)
+            return *view;
+
+        return *texture;
+    }();
+    return { { viewTextureVariant, renderPassDepthStencilAttachment.depthClearValue, renderPassDepthStencilAttachment.depthLoadOp, renderPassDepthStencilAttachment.depthStoreOp, renderPassDepthStencilAttachment.depthReadOnly, renderPassDepthStencilAttachment.stencilClearValue, renderPassDepthStencilAttachment.stencilLoadOp, renderPassDepthStencilAttachment.stencilStoreOp, renderPassDepthStencilAttachment.stencilReadOnly } };
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(GPU_PROCESS)

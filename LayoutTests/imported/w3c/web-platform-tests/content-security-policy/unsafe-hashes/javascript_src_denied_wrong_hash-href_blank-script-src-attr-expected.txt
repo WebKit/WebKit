@@ -1,0 +1,3 @@
+
+PASS javascript: navigation using <a href target=_blank> should be allowed (script-src-attr should not be used)
+

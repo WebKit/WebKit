@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="content">
+  <div id="test1" tabindex="0" role="application">
+    <div id="child1" role="group">test</div>
+  </div>
+  <div id="test2" tabindex="0" role="searchbox">
+    <div id="child2" role="group">test</div>
+  </div>
+  <div id="test3" tabindex="0" role="group">
+    <div id="child3" role="checkbox">test</div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+description("This tests that changing the aria-activedescendant value results in a state-changed notification.");
+
+if (window.testRunner && window.accessibilityController) {
+    accessibilityController.addNotificationListener(function(element, notification) {
+        if (notification != "AXFocusedUIElementChanged")
+            return;
+        debug(notification + ": " + element.role);
+    });
+
+    for (var i = 1; i <= 3; i++) {
+        var container = document.getElementById("test" + i);
+        container.focus();
+        container.setAttribute("aria-activedescendant", "child" + i);
+    }
+
+    document.getElementById("content").style.visibility = "hidden";
+
+    window.setTimeout(function() {
+        accessibilityController.removeNotificationListener();
+        finishJSTest();
+    }, 0);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

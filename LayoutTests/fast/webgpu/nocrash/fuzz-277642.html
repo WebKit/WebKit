@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: [ 30, 2 ], dimension: '3d', format: 'r8sint', usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    let textureView = texture.createView();
+    let shaderModule = device.createShaderModule({ code: `
+        @fragment fn fragment0() -> @location(0) vec2<i32> {
+            return vec2();
+        }
+        struct VertexOutput0 {
+            @builtin(position) f14: vec4<f32>,
+        }
+        @vertex fn vertex0() -> VertexOutput0 {
+            return VertexOutput0();
+        }
+    `});
+    let commandEncoder = device.createCommandEncoder();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: []});
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [
+            { view: textureView, depthSlice: 0, loadOp: 'clear', storeOp: 'store' }
+        ]
+    });
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'r8sint' }] },
+        vertex: { module: shaderModule }
+    });
+    renderPassEncoder.setPipeline(pipeline);
+    renderPassEncoder.draw(10530, 519, 4_294_967_295)
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

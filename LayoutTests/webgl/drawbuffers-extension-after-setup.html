@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test that draw buffers work when extension is enabled after framebuffer setup</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that framebuffer rendering works correctly when WEBGL_draw_buffers extension is enabled after framebuffer setup.");
+
+var wtu = WebGLTestUtils;
+
+function runTest()
+{
+    var canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    document.body.appendChild(canvas);
+
+    var gl = wtu.create3DContext(canvas, undefined, 1);
+
+    if (!gl) {
+        testFailed("WebGL1 context does not exist");
+        finishTest();
+        return;
+    }
+    testPassed("WebGL1 context created");
+
+    var vertexShaderSource = `
+        attribute vec4 vPosition;
+        void main() {
+            gl_Position = vPosition;
+        }`;
+
+    var fragmentShaderSource = `
+        precision mediump float;
+        void main() {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }`;
+
+    var program = wtu.setupProgram(gl, [vertexShaderSource, fragmentShaderSource], ["vPosition"]);
+    if (!program) {
+        testFailed("Failed to create program");
+        finishTest();
+        return;
+    }
+    wtu.setupUnitQuad(gl);
+
+    // Create framebuffer and attach texture BEFORE enabling extension
+    var fb = gl.createFramebuffer();
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        testFailed("Framebuffer is not complete");
+        finishTest();
+        return;
+    }
+    testPassed("Framebuffer created and texture attached BEFORE extension enabled");
+
+    // Enable WEBGL_draw_buffers extension
+    var ext = gl.getExtension("WEBGL_draw_buffers");
+    if (!ext) {
+        testPassed("WEBGL_draw_buffers extension not available - skipping test");
+        gl.deleteFramebuffer(fb);
+        gl.deleteTexture(texture);
+        gl.deleteProgram(program);
+        finishTest();
+        return;
+    }
+    testPassed("WEBGL_draw_buffers extension enabled AFTER framebuffer setup");
+
+    // Draw to the framebuffer without calling drawBuffersWEBGL
+    gl.viewport(0, 0, 16, 16);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    wtu.drawUnitQuad(gl);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "draw should succeed");
+
+    // Verify the draw rendered red pixels
+    wtu.checkCanvas(gl, [255, 0, 0, 255], "framebuffer should contain red pixels after draw", 1);
+
+    // Cleanup
+    gl.deleteFramebuffer(fb);
+    gl.deleteTexture(texture);
+    gl.deleteProgram(program);
+    finishTest();
+}
+</script>
+</body>
+</html>

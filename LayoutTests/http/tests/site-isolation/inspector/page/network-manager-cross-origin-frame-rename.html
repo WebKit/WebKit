@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/rename-then-navigate-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.NetworkManager.CrossOriginFrameRename");
+
+    suite.addTestCase({
+        name: "SiteIsolation.NetworkManager.CrossOriginFrameRename.NamePropagates",
+        description: "When a cross-origin child changes its window.name and then navigates, the updated name should be reflected in WI.networkManager.frames. The live Page.frameNavigated resolves the empty cross-origin name from the authoritative UIProcess WebFrameProxy tree, which tracks the rename under Site Isolation.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let frameTarget = (await targetAddedPromise).data.target;
+
+            // The child commits rename-then-navigate-frame.html (first appearing as "child-frame"),
+            // sets window.name = "renamed-child" (frameNameChanged -> WebFrameProxy under Site
+            // Isolation), then navigates to resource-tree-frame.html, whose Page.frameNavigated
+            // resolves the now-updated name. Poll until the frame settles on that final url.
+            let child;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                child = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith("/resource-tree-frame.html"));
+                if (child)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectThat(!!child, "Cross-origin child frame should appear in WI.networkManager.frames after navigating.");
+            if (!child)
+                return;
+
+            InspectorTest.expectThat(child.parentFrame === WI.networkManager.mainFrame, "Cross-origin child's parent should be the main frame.");
+            InspectorTest.expectEqual(child.name, "renamed-child", "Cross-origin child's updated window.name should propagate to the frame model on the subsequent navigation.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a cross-origin child's window.name change propagates to the frontend frame model under Site Isolation.</p>
+</body>

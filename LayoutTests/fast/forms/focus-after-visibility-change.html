@@ -1,0 +1,9 @@
+<div id=log>PASS</div>
+<input id=input onfocus="log.textContent = 'FAIL';">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetLeft;
+input.style.visibility="hidden";
+input.focus();
+</script>

@@ -1,0 +1,24 @@
+<html>
+<head>
+<style>
+html, body { 
+    background: url() fixed;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    var range = document.createRange();
+    range.setEnd(span, 1);
+    range.extractContents();
+    window.scrollBy(0, 100);
+    document.body.style.display = "none";
+}
+</script>
+</head>
+<body onload=runTest()>
+<span id=span>Pass if no crash or assert.</span>
+</body>
+</html>

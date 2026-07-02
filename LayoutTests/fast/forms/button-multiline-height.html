@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    function runTest()
+    {
+        description("Test that the height of a button that contains multiple lines of text is greater than the height of a button that contains a single line of text.");
+
+        shouldBeTrue("multipleLinesBtn.offsetHeight > singleLineBtn.offsetHeight");
+    }
+    </script>
+</head>
+<body onload="runTest()">
+<button id="singleLineBtn">Line 1</button>
+<br>
+<button id="multipleLinesBtn">
+    <div>Line 1</div>
+    <div>Line 2</div>
+</button>
+</body>
+</html>

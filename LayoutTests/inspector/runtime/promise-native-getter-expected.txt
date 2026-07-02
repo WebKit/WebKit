@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: [object Promise]
+CONSOLE MESSAGE: unhandledrejection - "test"
+CONSOLE MESSAGE: Unhandled Promise Rejection: test
+CONSOLE MESSAGE: caught - "test"
+CONSOLE MESSAGE: rejectionhandled - "test"
+Tests that the injected script only `.then()`s promises if they are returned by native getters.

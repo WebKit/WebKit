@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests MediaStreamTrack::onended callback.");
+
+            function error() {
+                testFailed('Stream generation failed.');
+                finishJSTest();
+            }
+
+            function getUserMedia(dictionary, callback) {
+                try {
+                    navigator.webkitGetUserMedia(dictionary, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishJSTest();
+                }
+            }
+
+            var stream;
+
+            function streamEnded2() {
+                debug("");
+                testPassed('streamEnded2 was called.');
+                shouldBeTrue('track.readyState == "ended"');
+                shouldBeTrue('trackClone.readyState == "ended"');
+                finishJSTest();
+            }
+
+            function gotStream2(s) {
+                debug("");
+                testPassed('gotStream2 was called.');
+                stream = new MediaStream(s);
+                track = stream.getAudioTracks()[0];
+                trackClone = track.clone();
+                shouldBeFalse('track.readyState == "ended"');
+                shouldBeFalse('trackClone.readyState == "ended"');
+                try {
+                    trackClone.onended = streamEnded2;
+                    track.stop();
+                } catch (e) {
+                    testFailed('MediaStream threw exception :' + e);
+                    finishJSTest();
+                }
+            }
+
+            function streamEnded() {
+                debug("");
+                testPassed('streamEnded was called.');
+                shouldBeTrue('track.readyState == "ended"');
+                shouldBeTrue('trackClone.readyState == "ended"');
+
+                getUserMedia({audio:true, video:true}, gotStream2);
+            }
+
+            function gotStream(s) {
+                debug("");
+                testPassed('gotStream was called.');
+                stream = s;
+                // A second track is required as calling stop will not fire the ended
+                // event on the object it was called.
+                track = stream.getAudioTracks()[0];
+                trackClone = track.clone();
+                shouldBeFalse('track.readyState == "ended"');
+                shouldBeFalse('trackClone.readyState == "ended"');
+                try {
+                    trackClone.onended = streamEnded;
+                    track.stop();
+                } catch (e) {
+                    testFailed('MediaStream threw exception :' + e);
+                    finishJSTest();
+                }
+            }
+
+            getUserMedia({audio:true, video:true}, gotStream);
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

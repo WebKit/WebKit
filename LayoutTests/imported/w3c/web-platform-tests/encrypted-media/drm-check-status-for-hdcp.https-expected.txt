@@ -1,0 +1,4 @@
+
+PASS drm support for empty HDCP version.
+PASS drm support for HDCP 1.0.
+

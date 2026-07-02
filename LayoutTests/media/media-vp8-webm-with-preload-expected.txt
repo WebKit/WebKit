@@ -1,0 +1,7 @@
+
+EXPECTED (video.readyState <= '1') OK
+EXPECTED (video.readyState == '1') OK
+RUN(video.play())
+EVENT(playing)
+RUN(video.currentTime = video.duration - 0.02)
+

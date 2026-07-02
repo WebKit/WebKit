@@ -1,0 +1,4 @@
+
+PASS Meta color-scheme applies.
+PASS Initial value after removing head including meta color-scheme.
+

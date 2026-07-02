@@ -1,0 +1,47 @@
+Checking Web Inspector protocol (specifically aria-current attribute) for the Accessibility Node Inspector.
+
+Total elements to be tested: 16.
+
+<a data-expected="step" href="/" aria-current="  step ">Nav16</a>
+    current: step
+
+<a data-expected="page" href="/" aria-current="page ">Nav15</a>
+    current: page
+
+<a data-expected="true" href="/" aria-current="page step">Nav14</a>
+    current: true
+
+<a data-expected="true" href="/" aria-current="sometext">Nav13</a>
+    current: true
+
+<a data-expected="true" href="/" aria-current="true">Nav12</a>
+    current: true
+
+<a data-expected="time" href="/" aria-current="time">Nav11</a>
+    current: time
+
+<a data-expected="date" href="/" aria-current="date">Nav10</a>
+    current: date
+
+<a data-expected="location" href="/" aria-current="location">Nav9</a>
+    current: location
+
+<a data-expected="step" href="/" aria-current="step">Nav8</a>
+    current: step
+
+<a data-expected="page" href="/" aria-current="page">Nav7</a>
+    current: page
+
+<a data-expected="false" href="/" aria-current="
+    ">Nav6</a>
+
+<a data-expected="false" href="/" aria-current="	">Nav5</a>
+
+<a data-expected="false" href="/" aria-current=" ">Nav4</a>
+
+<a data-expected="false" href="/" aria-current="">Nav3</a>
+
+<a data-expected="false" href="/" aria-current="false">Nav2</a>
+
+<a data-expected="false" href="/">Nav1</a>
+

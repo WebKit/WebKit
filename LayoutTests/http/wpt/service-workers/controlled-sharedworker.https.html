@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("skipFetchEvent-worker.js", { scope : 'resources' });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Register service worker");
+
+promise_test(async (test) => {
+    worker = new SharedWorker('resources/controlled-sharedworker.js');
+    const event = await new Promise(resolve => worker.port.onmessage = resolve);
+    assert_true(event.data.isControlled);
+}, "Verify shared worker is controlled");
+
+promise_test(async (test) => {
+    worker.port.postMessage('ping');
+    const event = await new Promise(resolve => worker.port.onmessage = resolve);
+    assert_equals(event.data, 'pong');
+}, "Verify shared worker can post message to its service worker");
+</script>
+</body>
+</html>

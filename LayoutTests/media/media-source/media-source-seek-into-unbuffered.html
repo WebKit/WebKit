@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-into-unbuffered</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    window.addEventListener('load', async event => {
+        try {
+            mediaElement = video = document.querySelector('video');
+
+            loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+            await loader.load();
+
+            source = new MediaSource();
+            video.src = URL.createObjectURL(source);
+            await waitFor(source, 'sourceopen');
+
+            source.duration = loader.duration();
+            sourceBuffer = source.addSourceBuffer(loader.type());
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(video, 'canplay');
+
+            run('video.currentTime = video.buffered.end(0) + 0.5');
+            waitFor(video, 'seeked').then(() => { failTest('Should not issue "seeked" event'); });
+
+            await sleepFor(100);
+
+            logResult(Success, 'Did not issue "seeked" event');
+
+            endTest();
+        } catch(e) {
+            failTest(e);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video muted playsinline></video>
+    <div id="canvases"></canvas>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/js-test-resources/js-test.js"></script>
+    <style>
+        iframe, #target {
+            width: 300px;
+            height: 150px;
+        }
+
+        #target {
+            background-color: green;
+            color: white;
+        }
+
+        #result {
+            color: green;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+        progress = 0;
+
+        function checkProgress() {
+            if (++progress == 2)
+                finishJSTest();
+        }
+
+        description("This test verifies that tap in the top document is recognized as a click after touching inside a cross-origin subframe. To manually test, touch anywhere in the top iframe, and then tap the green box on the bottom. The text 'Clicked' should appear.")
+
+        addEventListener("load", async event => {
+            addEventListener("message", message => testPassed(message.data));
+            document.getElementById("target").addEventListener("click", () => {
+                document.getElementById("result").textContent = "Clicked";
+                testPassed("Clicked");
+                checkProgress();
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(document.querySelector("iframe"));
+            await UIHelper.activateElement(document.getElementById("target"));
+            checkProgress();
+        });
+    </script>
+</head>
+<body>
+    <p id="description"></p>
+    <iframe src="https://localhost:8443/events/touch/ios/resources/touch-target.html"></iframe>
+    <div id="target">Then click here.</div>
+    <pre id="result"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

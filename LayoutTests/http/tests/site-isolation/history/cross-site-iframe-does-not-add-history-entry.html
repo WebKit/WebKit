@@ -1,0 +1,36 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that navigating a subframe to a cross-site URL does not create an extra back/forward list entry.");
+jsTestIsAsync = true;
+
+onload = async () => {
+    if (sessionStorage.step === "check") {
+        delete sessionStorage.step;
+
+        // We navigated here from step 1, so history.length should be 2.
+        // Now add an iframe and navigate it cross-site via JS.
+        const iframe = document.createElement("iframe");
+        let loadCount = 0;
+        iframe.onload = () => {
+            loadCount++;
+            if (loadCount === 1) {
+                // First load is about:blank. Now navigate cross-site.
+                iframe.contentWindow.location.href = "http://localhost:8000/site-isolation/resources/simple.html";
+            } else {
+                // Cross-site iframe has loaded. Check history.length.
+                shouldBe("history.length", "2");
+                finishJSTest();
+            }
+        };
+        document.body.appendChild(iframe);
+        return;
+    }
+
+    await testRunner?.clearBackForwardList();
+
+    // Step 1: Navigate to this same test but with a different query string.
+    sessionStorage.step = "check";
+    location.href = location.pathname + "?step2";
+}
+</script>

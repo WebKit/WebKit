@@ -1,0 +1,9 @@
+This test verifies that quadratic and cubic curves in SVG paths are correctly converted to NSBezierPath for the AXPath attribute.
+
+PASS: quadCurveCount > 0 === true
+PASS: cubicCurveCount > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

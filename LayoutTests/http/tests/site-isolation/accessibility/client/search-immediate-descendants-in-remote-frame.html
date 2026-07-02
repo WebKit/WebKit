@@ -1,0 +1,86 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+/* Force the page to be tall enough to produce a vertical ScrollBar, which
+   becomes a child of the root ScrollArea alongside the WebArea. Without a
+   ScrollBar, the parent search returns 0 results trivially. */
+body { height: 5000px; }
+</style>
+</head>
+<body>
+
+<h1 id="heading-before">Content Before Iframe</h1>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-list-mock-parent-search.html"></iframe>
+
+<h2 id="heading-after">Content After Iframe</h2>
+
+<script>
+var output = "Tests that immediateDescendantsOnly search inside a remote frame's list does not return results from the parent frame (which is very obviously not an immediate descendant).\n";
+output += "Without the fix, the parent search returns the main page's ScrollBar, causing VoiceOver to loop.\n\n";
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+function findElementByRole(element, roleSubstring, maxDepth) {
+    if (!element || maxDepth <= 0)
+        return null;
+    if (element.role && element.role.includes(roleSubstring))
+        return element;
+
+    var count = element.childrenCount;
+    for (var i = 0; i < count; i++) {
+        var result = findElementByRole(element.childAtIndex(i), roleSubstring, maxDepth - 1);
+        if (result)
+            return result;
+    }
+    return null;
+}
+
+var list, lastListItem, results, resultCount, listChildCount;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    await waitForElements([
+        (element) => element.role && element.role.includes("List"),
+    ]);
+
+    var root = accessibilityController.rootElement;
+    var webArea = root.childAtIndex(0);
+
+    // Find the list inside the remote iframe by traversing the AX tree.
+    list = findElementByRole(webArea, "List", 6);
+    output += expect("list !== null", "true");
+    output += expect("list.role.includes('List')", "true");
+
+    // Get the last item in the list.
+    listChildCount = list.childrenCount;
+    lastListItem = list.childAtIndex(listChildCount - 1);
+    output += expect("listChildCount", "3");
+    output += expect("lastListItem != null", "true");
+
+    // Search forward from the last list item with immediateDescendantsOnly=true.
+    // The anchor is the list, the start element is the last item.
+    // Without the fix, the parent frame search returns a ScrollBar, which leaks
+    // into the results. With the fix, the parent search is skipped entirely,
+    // and the search correctly returns 0 results (the list has no more immediate descendants).
+    results = list.uiElementsForSearchPredicate(lastListItem, true, "AXAnyTypeSearchKey", "", false, true, 10);
+    output += "\nSearch forward from last list item (immediateDescendantsOnly=true):\n";
+    // Verify no results were returned, as the list has no more immediate descendants.
+    output += expect("results.length", "0");
+    for (var i = 0; i < results.length; i++) {
+        // If we did erroneously get results, let's log what they were to help debugging.
+        output += `  ${i + 1}: ${results[i].role}\n`;
+    }
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

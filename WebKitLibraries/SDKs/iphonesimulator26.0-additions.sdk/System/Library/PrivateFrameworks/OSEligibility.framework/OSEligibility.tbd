@@ -1,0 +1,11 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/OSEligibility.framework/OSEligibility
+current-version: 286.2.1
+compatibility-version: 0
+swift-abi-version: 7
+exports:
+-       targets: [x86_64-ios-simulator, arm64-ios-simulator]
+        objc-classes: [OSEligibilityQuery]
+...

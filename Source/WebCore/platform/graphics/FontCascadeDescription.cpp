@@ -1,0 +1,196 @@
+/*
+ * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "FontCascadeDescription.h"
+
+#include "Font.h"
+#include <wtf/text/StringHash.h>
+#include <wtf/text/TextStream.h>
+
+#if USE(CORE_TEXT)
+#include "FontCascade.h"
+#endif
+
+namespace WebCore {
+
+struct SameSizeAsFontCascadeDescription {
+    Vector<void*> vector;
+    Vector<void*> vector2;
+    FontPalette palette;
+    FontSizeAdjust sizeAdjust;
+    FontVariantAlternates alternates;
+    AtomString string;
+    AtomString string2;
+    int16_t fontSelectionRequest[3];
+    float size;
+    float zoom;
+    TextSpacingTrim textSpacingTrim;
+    TextAutospace textAutospace;
+    unsigned bitfields1;
+    unsigned bitfields2 : 22;
+    void* array;
+    float size2;
+    unsigned bitfields3 : 10;
+};
+static_assert(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), "FontCascadeDescription should stay small");
+
+FontCascadeDescription::FontCascadeDescription()
+    : m_families(RefCountedFixedVector<FontFamily>::create(1))
+    , m_isAbsoluteSize(false)
+    , m_kerning(std::to_underlying(Kerning::Auto))
+    , m_keywordSize(0)
+    , m_fontSmoothing(std::to_underlying(FontSmoothingMode::Auto))
+    , m_hasAuthorSpecifiedNonGenericPrimaryFont(false)
+{
+}
+
+FontSelectionValue FontCascadeDescription::lighterWeight(FontSelectionValue weight)
+{
+    if (weight < FontSelectionValue(100))
+        return weight;
+    if (weight < FontSelectionValue(550))
+        return FontSelectionValue(100);
+    if (weight < FontSelectionValue(750))
+        return FontSelectionValue(400);
+    return FontSelectionValue(700);
+}
+
+FontSelectionValue FontCascadeDescription::bolderWeight(FontSelectionValue weight)
+{
+    if (weight < FontSelectionValue(350))
+        return FontSelectionValue(400);
+    if (weight < FontSelectionValue(550))
+        return FontSelectionValue(700);
+    if (weight < FontSelectionValue(900))
+        return FontSelectionValue(900);
+    return weight;
+}
+
+#if ENABLE(TEXT_AUTOSIZING)
+
+bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const
+{
+    unsigned thisFamilyCount = familyCount();
+    unsigned otherFamilyCount = other.familyCount();
+
+    if (thisFamilyCount != otherFamilyCount)
+        return false;
+
+    for (unsigned i = 0; i < thisFamilyCount; ++i) {
+        if (!familyNamesAreEqual(familyAt(i).name, other.familyAt(i).name))
+            return false;
+    }
+
+    return true;
+}
+
+#endif // ENABLE(TEXT_AUTOSIZING)
+
+bool FontCascadeDescription::familyNamesAreEqual(const AtomString& family1, const AtomString& family2)
+{
+#if PLATFORM(COCOA)
+    if (family1.startsWith('.'))
+        return family1 == family2;
+#endif
+    return ASCIICaseInsensitiveHash::equal(family1, family2);
+}
+
+unsigned FontCascadeDescription::familyNameHash(const AtomString& family)
+{
+#if PLATFORM(COCOA)
+    if (family.startsWith('.'))
+        return family.existingHash();
+#endif
+    return ASCIICaseInsensitiveHash::hash(family);
+}
+
+String FontCascadeDescription::foldedFamilyName(const String& family)
+{
+#if PLATFORM(COCOA)
+    if (family.startsWith('.'))
+        return family;
+#endif
+    return family.convertToASCIILowercase();
+}
+
+FontSmoothingMode FontCascadeDescription::usedFontSmoothing() const
+{
+    auto fontSmoothingMode = fontSmoothing();
+#if USE(CORE_TEXT)
+    if (FontCascade::shouldDisableFontSubpixelAntialiasingForTesting() && (fontSmoothingMode == FontSmoothingMode::Auto || fontSmoothingMode == FontSmoothingMode::SubpixelAntialiased))
+        return FontSmoothingMode::Antialiased;
+#endif
+    return fontSmoothingMode;
+}
+
+void FontCascadeDescription::resolveFontSizeAdjustFromFontIfNeeded(const Font& font)
+{
+    const auto& fontSizeAdjust = this->fontSizeAdjust();
+    if (!fontSizeAdjust.shouldResolveFromFont())
+        return;
+
+    auto aspectValue = fontSizeAdjust.resolve(computedSize(), font.fontMetrics());
+    setFontSizeAdjust({ fontSizeAdjust.metric, FontSizeAdjust::ValueType::FromFont, aspectValue });
+}
+
+TextStream& operator<<(TextStream& ts, const FontFamily& family)
+{
+    ts << family.name;
+    if (family.isGeneric())
+        ts << " (generic)"_s;
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const FontCascadeDescription& fontCascadeDescription)
+{
+    bool first = true;
+    for (auto& family : fontCascadeDescription.families()) {
+        if (!first)
+            ts << ", "_s;
+        ts << family;
+        first = false;
+    }
+
+    ts << ", specified size "_s << fontCascadeDescription.specifiedSize();
+    ts << ", computed size "_s << fontCascadeDescription.computedSize();
+    ts << ", is absolute size "_s << fontCascadeDescription.isAbsoluteSize();
+    if (fontCascadeDescription.kerning() != Kerning::Auto)
+        ts << ", kerning "_s << fontCascadeDescription.kerning();
+
+    if (fontCascadeDescription.fontSmoothing() != FontSmoothingMode::Auto)
+        ts << ", font smoothing "_s << fontCascadeDescription.fontSmoothing();
+
+    ts << ", keyword size "_s << fontCascadeDescription.keywordSize();
+    ts << ", has author specified non-generic primary font "_s << fontCascadeDescription.hasAuthorSpecifiedNonGenericPrimaryFont();
+
+    return ts;
+}
+
+} // namespace WebCore

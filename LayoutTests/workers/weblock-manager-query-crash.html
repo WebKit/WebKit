@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+const workerSrc = `
+  for (let i = 0; i < 500; i++) self.navigator.locks.query();
+  self.postMessage("ready");
+  for (let i = 0; i < 500; i++) self.navigator.locks.query();
+`;
+const blob = new Blob([workerSrc], {type: "text/javascript"});
+const url = URL.createObjectURL(blob);
+
+function log(msg) {
+    if (globalThis.$vm) $vm.print(msg);
+    console.log(msg);
+}
+
+let iterations = 0;
+function spawn() {
+    if (iterations++ > 50) {
+        globalThis.testRunner?.notifyDone();
+        return;
+    }
+    let w = new Worker(url);
+    w.onmessage = () => {
+        w.terminate();
+        w = null;
+        if (globalThis.$vm) $vm.gc();
+        setTimeout(spawn, 0);
+    };
+}
+
+window.onload = spawn;
+</script>
+</head>
+<body>
+This test passes if it doesn't crash.
+</body>
+</html>

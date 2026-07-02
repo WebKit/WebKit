@@ -1,0 +1,4 @@
+Some text
+
+PASS A moved script should keep its render-blocking state
+

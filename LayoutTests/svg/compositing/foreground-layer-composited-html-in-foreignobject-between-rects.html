@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-100" />
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 400px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Test: A composited HTML div inside foreignObject between non-composited SVG rects.
+     The will-change on the div makes the foreignObject subtree composited.
+     All SVG rects (before and after) must paint correctly. -->
+<svg viewBox="0 0 400 200">
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <foreignObject x="110" y="10" width="80" height="80">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="will-change: transform; width: 80px; height: 80px; background: green;"></div>
+    </foreignObject>
+    <rect x="210" y="10" width="80" height="80" fill="red"/>
+</svg>
+</body>
+</html>

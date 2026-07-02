@@ -1,0 +1,4 @@
+Two consecutive lines whose markers differ (bullet then dash) should not trigger smart-list conversion: the marker types must match.
+| "* Hello"
+| <div>
+|   "- World<#selection-caret>"

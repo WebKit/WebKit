@@ -1,0 +1,5 @@
+
+FAIL Navigations to about:srcdoc via window.location must be blocked promise_test: Unhandled rejection with value: object "Error: Received message "srcdoc ready" but expected to receive no message"
+FAIL Navigations to about:srcdoc?query via window.location within an about:srcdoc document must be blocked promise_test: Unhandled rejection with value: object "Error: Received message "srcdoc ready" but expected to receive no message"
+FAIL Navigations to about:srcdoc via window.open() must be blocked promise_test: Unhandled rejection with value: object "Error: Received message "srcdoc ready" but expected to receive no message"
+

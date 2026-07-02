@@ -1,0 +1,16 @@
+Name: The LLVM Project
+Short Name: llvm
+URL: https://github.com/llvm/llvm-project
+Revision: fd9a1dcc01766c71932898e9643ce28bf2801bad
+Version: N/A
+Update Mechanism: Manual
+Security Critical: no
+Shipped: no
+License: Apache-2.0
+License File: src/LICENSE.TXT
+
+Description:
+The LLVM Project is a collection of modular and reusable compiler and toolchain technologies.
+
+Local Modifications:
+No modifications.

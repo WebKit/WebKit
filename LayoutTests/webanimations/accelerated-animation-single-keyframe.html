@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+
+    #target {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+    }
+
+</style>
+<div id="target"></div>
+<script>
+
+promise_test(async t => {
+    // Start an animation with an implicit from keyframe.
+    const animation = document.getElementById("target").animate({ transform: "translateX(600px)" }, { duration: 1000 * 1000 });
+
+    // Wait two frames for the accelerated animation to be committed.
+    await animation.ready;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1, "There should be an accelerated animation.");
+}, "A transform animation with a single keyframe should be able to run accelerated.");
+
+</script>
+</body>

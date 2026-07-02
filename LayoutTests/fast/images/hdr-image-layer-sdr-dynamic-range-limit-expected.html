@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .image-box {
+        width: 200px;
+        height: 200px;
+    }
+    .box {
+        display: inline-block;
+    }
+    .standard { 
+        dynamic-range-limit: standard;
+    }
+    .no-limit { 
+        dynamic-range-limit: no-limit;
+    }
+    .composited {
+        will-change: transform;
+    }
+</style>
+<body>
+    <div class="composited">
+        <div class="standard box">
+            <div class="image-box" style="background-color: red;"></div>
+        </div>
+        <div class="no-limit box">
+            <div class="image-box" style="background-color: color(srgb-linear 0 2.5 0); will-change: transform;"></div>
+        </div>
+    </div>
+</body>
+</html>

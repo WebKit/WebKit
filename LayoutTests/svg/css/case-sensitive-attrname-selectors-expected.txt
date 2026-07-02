@@ -1,0 +1,7 @@
+PASS window.getComputedStyle(document.getElementById("div1")).color is "rgb(0, 128, 0)"
+PASS window.getComputedStyle(document.getElementById("path1")).color is "rgb(0, 128, 0)"
+PASS window.getComputedStyle(document.getElementById("path2")).color is "rgb(0, 128, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a SPKI ECDSA key where index equals keyData.size()");
+
+// This test verifies that importing a malformed SPKI key where the computed
+// index exactly equals the buffer size is rejected gracefully.
+// After stripping the header, there would be zero bytes left for the key data.
+//
+// Key structure (26 bytes):
+// - Offset 0-22: Valid SPKI header with IdEcPublicKey + Secp256r1 OIDs
+// - Offset 23: 0x03 (BIT STRING mark)
+// - Offset 24: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 25: 0x00 (InitialOctet placeholder, consumed by +1)
+//
+// index computation:
+// After parsing header: index = 24
+// bytesUsedToEncodedLength(0x00) = 1
+// index = 24 + 1 + 1 = 26
+// index == keyData.size(), zero bytes remain for key data
+
+var extractable = true;
+
+// 26 bytes: valid SPKI header, but no key data remains after parsing
+var emptyKeyDataSpki = hexStringToUint8Array("3000300006072a8648ce3d020106082a8648ce3d030107030000");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("spki", emptyKeyDataSpki, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["verify"])');
+
+</script>
+
+</body>
+</html>

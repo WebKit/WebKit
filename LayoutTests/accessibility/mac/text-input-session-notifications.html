@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<input id="editable" type="text">
+<script type="text/javascript">
+description("This test ensures that accessibility receives the proper notifications for when input sessions begin and end.");
+editable.focus();
+
+var gotSessionStart = false;
+var gotValueChanged = false;
+var gotSessionEnd = false;
+function notificationCallback(notification) {
+    if (notification === "AXTextInputMarkingSessionBegan")
+        gotSessionStart = true;
+
+    if (notification === "AXValueChanged" && gotSessionStart)
+        gotValueChanged = true;
+
+    if (notification === "AXTextInputMarkingSessionEnded") {
+        if (!gotSessionStart)
+            debug("FAIL: Got AXTextInputMarkingSessionEnded before AXTextInputMarkingSessionBegan");
+        gotSessionEnd = true;
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.accessibleElementById("editable").addNotificationListener(notificationCallback);
+    setTimeout(async () => {
+        textInputController.setMarkedText("test");
+        await waitFor(() => gotSessionStart && gotValueChanged);
+        debug("Got session start and value change notifications.");
+
+        textInputController.unmarkText();
+        await waitFor(() => gotSessionEnd);
+        debug("Got session end notification.");
+
+        accessibilityController.accessibleElementById("editable").removeNotificationListener();
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

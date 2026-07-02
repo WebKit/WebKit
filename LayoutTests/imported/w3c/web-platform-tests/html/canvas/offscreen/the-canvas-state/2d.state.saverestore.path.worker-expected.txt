@@ -1,0 +1,3 @@
+
+PASS save()/restore() does not affect the current path
+

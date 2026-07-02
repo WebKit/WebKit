@@ -1,0 +1,20 @@
+<p>Cross-origin iframe that fetches then aborts a resource.</p>
+
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data.type === "TriggerAbortedFetch")
+        triggerAbortedFetch();
+});
+
+function triggerAbortedFetch() {
+    let controller = new AbortController();
+    let url = "slow-response.py?" + Math.random();
+    fetch(url, {signal: controller.signal}).then(() => {
+        window.parent.postMessage({type: "FetchComplete"}, "*");
+    }).catch((error) => {
+        window.parent.postMessage({type: "FetchAborted", error: error.message}, "*");
+    });
+    // Abort after a short delay to ensure the request is in-flight.
+    setTimeout(() => controller.abort(), 50);
+}
+</script>

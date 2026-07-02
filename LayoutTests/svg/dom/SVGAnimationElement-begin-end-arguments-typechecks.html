@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<svg>
+  <animate></animate>
+</svg>
+<script>
+description('Check that invalid values of arguments throw TypeError.');
+
+var animateElement = document.querySelector('animate');
+
+debug('SVGAnimationElement');
+
+debug('');
+debug('beginElementAt(float offset)');
+shouldNotThrow('animateElement.beginElementAt(0)');
+shouldThrow('animateElement.beginElementAt(NaN)');
+shouldThrow('animateElement.beginElementAt(Infinity)');
+shouldThrow('animateElement.beginElementAt()');
+
+debug('');
+debug('endElementAt(float offset)');
+shouldNotThrow('animateElement.endElementAt(0)');
+shouldThrow('animateElement.endElementAt(NaN)');
+shouldThrow('animateElement.endElementAt(Infinity)');
+shouldThrow('animateElement.endElementAt()');
+</script>

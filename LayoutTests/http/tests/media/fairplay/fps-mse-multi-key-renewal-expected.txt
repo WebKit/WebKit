@@ -1,0 +1,28 @@
+Initiate a multi-key key request and verify that a renewal does not revoke any usable keys.
+PROMISE: requestMediaKeySystemAccess resolved
+PROMISE: createMediaKeys resolved
+FETCH: server certificate recieved
+PROMISE: arrayBuffer resolved
+PROMISE: setServerCertificate resolved
+
+Issue a multi-key request
+EVENT(message)
+Requesting key.
+PROMISE: licenseResponse resolved
+Requesting key.
+PROMISE: licenseResponse resolved
+Requesting key.
+PROMISE: licenseResponse resolved
+Requesting key.
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+EXPECTED (session.keyStatuses.size == '4') OK
+
+Issue a single key renewal
+EVENT(message)
+Requesting key.
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+EXPECTED (session.keyStatuses.size == '4') OK
+END OF TEST
+

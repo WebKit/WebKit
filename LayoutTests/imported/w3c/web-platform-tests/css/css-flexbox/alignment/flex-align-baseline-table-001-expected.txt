@@ -1,0 +1,26 @@
+top
+
+
+
+
+bottom
+top
+
+
+
+
+bottom
+
+PASS .target > * 1
+PASS .target > * 2
+PASS .target > * 3
+PASS .target > * 4
+FAIL .target > * 5 assert_equals:
+<div data-offset-y="20"><span></span></div>
+offsetTop expected 20 but got 80
+PASS .target > * 6
+FAIL .target > * 7 assert_equals:
+<div data-offset-y="70"><span></span></div>
+offsetTop expected 70 but got 80
+PASS .target > * 8
+

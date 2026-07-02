@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <title>requiredExtensions</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <p>This test passes if four green squares are displayed:</p>
+
+    <svg width="100px" height="100px">
+      <foreignObject height="100" width="100">
+        <span style="display: inline-block; width: 100px; height: 100px; background: green"></span>
+      </foreignObject>
+    </svg>
+
+    <svg width="100px" height="100px">
+      <foreignObject requiredExtensions="http://www.w3.org/1998/Math/MathML" height="100" width="100">
+        <math>
+          <mspace width="100px" height="100px" mathbackground="green"/>
+        </math>
+      </foreignObject>
+    </svg>
+
+    <svg width="100px" height="100px">
+      <foreignObject requiredExtensions="http://www.w3.org/1998/Math/MathML http://www.w3.org/1999/xhtml" height="100" width="100">
+        <span style="display: inline-block; width: 100px; height: 100px;">
+          <math>
+            <mspace width="100px" height="100px" mathbackground="green"/>
+          </math>
+        </span>
+      </foreignObject>
+    </svg>
+
+    <!-- This tests an unknown required extension. -->
+    <svg width="100px" height="100px">
+      <rect width="100" height="100" fill="green"/>
+    </svg>
+
+  </body>
+</html>

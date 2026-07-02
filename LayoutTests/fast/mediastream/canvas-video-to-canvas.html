@@ -1,0 +1,26 @@
+<div>
+<canvas id="canvas1" width=100 height=100></canvas>
+<canvas id="canvas2" width=100 height=100></canvas>
+<video id="video" width=100 height=100></video>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function test()
+{
+     const context1 = canvas1.getContext('2d');
+     setInterval(() => {
+        context1.fillStyle = "green";
+        context1.fillRect(0, 0, 100, 100);
+    }, 100);
+    video.srcObject = canvas1.captureStream();
+    await video.play();
+    video.style.visibility = 'hidden';
+    await new Promise(resolve => setTimeout(resolve, 500));
+    canvas2.getContext('2d').drawImage(video, 0, 0);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>

@@ -1,0 +1,188 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "TransformStream.h"
+
+#include "JSDOMConvertObject.h"
+#include "JSDOMConvertSequences.h"
+#include "JSReadableStream.h"
+#include "JSTransformStream.h"
+#include "JSValueInWrappedObjectInlines.h"
+#include "JSWritableStream.h"
+#include "MessagePort.h"
+#include "StreamTransferUtilities.h"
+#include "WebCoreJSClientData.h"
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/TopExceptionScope.h>
+
+namespace WebCore {
+
+struct CreateInternalTransformStreamResult {
+    JSC::JSValue transform;
+    Ref<ReadableStream> readable;
+    Ref<WritableStream> writable;
+};
+
+static ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(JSDOMGlobalObject&, JSC::JSValue transformer, JSC::JSValue writableStrategy, JSC::JSValue readableStrategy);
+
+ExceptionOr<Ref<TransformStream>> TransformStream::create(JSC::JSGlobalObject& globalObject, JSC::Strong<JSC::JSObject>&& transformer, JSC::Strong<JSC::JSObject>&& writableStrategy, JSC::Strong<JSC::JSObject>&& readableStrategy)
+{
+    JSC::JSValue transformerValue = JSC::jsUndefined();
+    if (transformer)
+        transformerValue = transformer.get();
+
+    JSC::JSValue writableStrategyValue = JSC::jsUndefined();
+    if (writableStrategy)
+        writableStrategyValue = writableStrategy.get();
+
+    JSC::JSValue readableStrategyValue = JSC::jsUndefined();
+    if (readableStrategy)
+        readableStrategyValue = readableStrategy.get();
+
+    auto result = createInternalTransformStream(downcast<JSDOMGlobalObject>(globalObject), transformerValue, writableStrategyValue, readableStrategyValue);
+    if (result.hasException())
+        return result.releaseException();
+
+    auto transformResult = result.releaseReturnValue();
+    return adoptRef(*new TransformStream(downcast<JSDOMGlobalObject>(globalObject), transformResult.transform, WTF::move(transformResult.readable), WTF::move(transformResult.writable)));
+}
+
+Ref<TransformStream> TransformStream::create(Ref<ReadableStream>&& readable, Ref<WritableStream>&& writable)
+{
+    return adoptRef(*new TransformStream(WTF::move(readable), WTF::move(writable)));
+}
+
+TransformStream::TransformStream(Ref<ReadableStream>&& readable, Ref<WritableStream>&& writable)
+    : m_readable(WTF::move(readable))
+    , m_writable(WTF::move(writable))
+{
+}
+
+TransformStream::TransformStream(JSC::JSGlobalObject& globalObject, JSC::JSValue internalTransformStream, Ref<ReadableStream>&& readable, Ref<WritableStream>&& writable)
+    : m_internalTransformStream(globalObject, internalTransformStream)
+    , m_readable(WTF::move(readable))
+    , m_writable(WTF::move(writable))
+{
+}
+
+TransformStream::~TransformStream() = default;
+
+// https://streams.spec.whatwg.org/#ts-transfer
+bool TransformStream::canTransfer() const
+{
+    return m_readable->canTransfer() && m_writable->canTransfer();
+}
+
+ExceptionOr<DetachedTransformStream> TransformStream::runTransferSteps(JSDOMGlobalObject& globalObject)
+{
+    ASSERT(canTransfer());
+
+    auto detachedReadableStreamOrException = m_readable->runTransferSteps(globalObject);
+    if (detachedReadableStreamOrException.hasException())
+        return detachedReadableStreamOrException.releaseException();
+
+    auto detachedWritableStreamOrException = m_writable->runTransferSteps(globalObject);
+    if (detachedWritableStreamOrException.hasException())
+        return detachedWritableStreamOrException.releaseException();
+
+    return DetachedTransformStream { detachedReadableStreamOrException.releaseReturnValue().readableStreamPort, detachedWritableStreamOrException.releaseReturnValue().writableStreamPort };
+}
+
+ExceptionOr<Ref<TransformStream>> TransformStream::runTransferReceivingSteps(JSDOMGlobalObject& globalObject, DetachedTransformStream&& detachedTransformStream)
+{
+    auto readableOrException = setupCrossRealmTransformReadable(globalObject, detachedTransformStream.readablePort.get());
+    if (readableOrException.hasException())
+        return readableOrException.releaseException();
+
+    auto writableOrException = setupCrossRealmTransformWritable(globalObject, detachedTransformStream.writablePort.get());
+    if (writableOrException.hasException())
+        return writableOrException.releaseException();
+
+    return create(readableOrException.releaseReturnValue(), writableOrException.releaseReturnValue());
+}
+
+static ExceptionOr<JSC::JSValue> invokeTransformStreamFunction(JSC::JSGlobalObject& globalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
+{
+    JSC::VM& vm = globalObject.vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+
+    auto function = globalObject.get(&globalObject, identifier);
+    ASSERT(function.isCallable());
+    scope.assertNoExceptionExceptTermination();
+
+    auto callData = JSC::getCallData(function);
+
+    auto result = call(&globalObject, function, callData, JSC::jsUndefined(), arguments);
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+
+    return result;
+}
+
+ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(JSDOMGlobalObject& globalObject, JSC::JSValue transformer, JSC::JSValue writableStrategy, JSC::JSValue readableStrategy)
+{
+    auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().transformStreamInternalsBuiltins().createInternalTransformStreamFromTransformerPrivateName();
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(transformer);
+    arguments.append(writableStrategy);
+    arguments.append(readableStrategy);
+    ASSERT(!arguments.hasOverflowed());
+
+    auto result = invokeTransformStreamFunction(globalObject, privateName, arguments);
+    if (result.hasException()) [[unlikely]]
+        return result.releaseException();
+
+    JSC::VM& vm = globalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto resultsConversionResult = convert<IDLSequence<IDLObject>>(globalObject, result.returnValue());
+    if (resultsConversionResult.hasException(scope)) [[unlikely]]
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    auto results = resultsConversionResult.releaseReturnValue();
+    if (results.size() != 3) [[unlikely]]
+        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned an unexpected number of values"_s };
+
+    auto* readable = dynamicDowncast<JSReadableStream>(results[1].get());
+    auto* writable = dynamicDowncast<JSWritableStream>(results[2].get());
+    if (!readable || !writable) [[unlikely]]
+        return Exception { ExceptionCode::TypeError, "Internal TransformStream creation returned values of unexpected types"_s };
+
+    return CreateInternalTransformStreamResult { results[0].get(), readable->wrapped(), writable->wrapped() };
+}
+
+template<typename Visitor>
+void JSTransformStream::visitAdditionalChildrenInGCThread(Visitor& visitor)
+{
+    wrapped().internalTransformStream().visitInGCThread(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSTransformStream);
+
+} // namespace WebCore

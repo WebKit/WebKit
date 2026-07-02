@@ -1,0 +1,17 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+
+     internals.settings.setMediaSessionCaptureToggleAPIEnabled(false);
+     assert_throws_js(TypeError, () => navigator.mediaSession.setActionHandler("togglecamera", () => { }));
+     assert_throws_js(TypeError, () => navigator.mediaSession.setActionHandler("togglemicrophone", () => { }));
+     assert_throws_js(TypeError, () => navigator.mediaSession.setActionHandler("togglescreenshare", () => { }));
+}, "setting toggle actions should fail if mediaSessionCaptureToggleAPIEnabled is false");
+</script>
+</body>
+</html>

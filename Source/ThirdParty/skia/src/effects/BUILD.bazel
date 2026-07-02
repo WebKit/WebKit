@@ -1,0 +1,53 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+EFFECTS_FILES = [
+    "Sk1DPathEffect.cpp",
+    "Sk2DPathEffect.cpp",
+    "SkBlenders.cpp",
+    "SkColorMatrix.cpp",
+    "SkColorMatrixFilter.cpp",
+    "SkCornerPathEffect.cpp",
+    "SkDashImpl.h",
+    "SkDashPathEffect.cpp",
+    "SkDiscretePathEffect.cpp",
+    "SkEmbossMask.cpp",
+    "SkEmbossMask.h",
+    "SkEmbossMaskFilter.cpp",
+    "SkEmbossMaskFilter.h",
+    "SkHighContrastFilter.cpp",
+    "SkShaderMaskFilterImpl.cpp",
+    "SkShaderMaskFilterImpl.h",
+    "SkTableMaskFilter.cpp",
+    "SkTrimPE.h",
+    "SkTrimPathEffect.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "effects",
+    files = EFFECTS_FILES,
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        ":effects_hdrs",
+        "//src/effects/colorfilters:colorfilter_hdrs",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        ":effects_srcs",
+        "//src/effects/colorfilters:colorfilter_srcs",
+        "//src/effects/imagefilters:srcs",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)

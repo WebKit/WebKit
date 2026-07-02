@@ -1,0 +1,3 @@
+
+PASS event and promise ordering for navigation.navigate() intercepted by intercept() but then stopped using window.stop()
+

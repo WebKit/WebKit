@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function test()
+{
+    processor = new XSLTProcessor();
+    docType = document.implementation.createDocumentType("xml:test", "-//test//Test 1.0//EN", "M/");
+    processor.importStylesheet(docType);
+    processor.transformToFragment(node1, document);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="test()">
+<span id="node1">PASS if no crash</span>
+</body>
+</html>

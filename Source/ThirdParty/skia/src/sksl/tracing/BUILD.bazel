@@ -1,0 +1,91 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# In own group for exporting to sksl.gni:skia_sksl_tracing_sources.
+skia_filegroup(
+    name = "enabled_srcs",
+    srcs = ["SkSLDebugTracePlayer.cpp"],
+)
+
+# In own group for exporting to sksl.gni:skia_sksl_tracing_sources.
+skia_filegroup(
+    name = "enabled_hdrs",
+    srcs = ["SkSLDebugTracePlayer.h"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkSLDebugTracePriv.cpp",
+        "SkSLTraceHook.cpp",
+        ":enabled_srcs",
+    ],
+    visibility = ["//src/sksl:__pkg__"],
+)
+
+skia_filegroup(
+    name = "skopts_hdrs",
+    srcs = [
+        "SkSLTraceHook.h",
+    ],
+    visibility = [
+        "//src:__pkg__",
+        "//src/opts:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkSLDebugTracePriv.h",
+        ":enabled_hdrs",
+        ":skopts_hdrs",
+    ],
+    visibility = ["//src/sksl:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        "SkSLDebugTracePriv.h",
+        "SkSLTraceHook.h",
+    ],
+    visibility = ["//src/sksl:__pkg__"],
+)
+
+skia_filegroup(
+    name = "opts_srcs",
+    srcs = [
+        "SkSLTraceHook.h",
+    ],
+    visibility = ["//src/opts:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        "SkSLDebugTracePriv.cpp",
+        "SkSLTraceHook.cpp",
+    ],
+    visibility = ["//src/sksl:__pkg__"],
+)
+
+skia_cc_library(
+    name = "player",
+    srcs = [
+        "SkSLDebugTracePlayer.cpp",
+    ],
+    hdrs = [
+        "SkSLDebugTracePlayer.h",
+    ],
+    visibility = ["//tools/viewer:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/core:core_priv",
+    ],
+)

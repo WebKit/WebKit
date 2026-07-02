@@ -1,0 +1,106 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    const log = console.log;
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+    let promise0 = navigator.gpu.requestAdapter();
+    let adapter0 = await promise0;
+    let device0 = await adapter0.requestDevice({
+        requiredFeatures: [
+            'texture-compression-astc',
+        ],
+        requiredLimits: {},
+    });
+    let veryExplicitBindGroupLayout0 = device0.createBindGroupLayout({
+        entries: [
+            {
+                binding: 8,
+                visibility: GPUShaderStage.VERTEX,
+                sampler: {},
+            },
+            {
+                binding: 115,
+                visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+                buffer: {
+                    type: 'read-only-storage',
+                },
+            },
+        ],
+    });
+    let shaderModule0 = device0.createShaderModule({ code: `
+
+@group(1) @binding(115) var<storage, read> buffer4: array<array<f16, 142>, 1>;
+@group(0) @binding(115) var<storage, read> buffer3: array<array<f16, 142>>;
+
+struct FragmentInput0 {
+    @builtin(front_facing) front_facing: bool,
+}
+
+struct FragmentInput1 {
+    @builtin(sample_index) sample_index: u32,
+}
+
+struct FragmentOutput0 {
+    @location(0) location_0: vec4u,
+    // @builtin(sample_mask) sample_mask: u32,
+}
+
+@vertex fn vertex0() -> @builtin(position) vec4f {
+    var out: vec4f;
+    return out;
+}
+
+@fragment fn fragment0(@builtin(position) position: vec4f, a2: FragmentInput1) -> FragmentOutput0 {
+    var out: FragmentOutput0;
+    if bool(buffer4[0][0]) {
+        return out;
+    }
+    // out.sample_mask = a2.sample_index;
+    out.location_0 = vec4u(u32((*&buffer3)[arrayLength(&(*&buffer3))][0]));
+    return out;
+}
+
+`,
+    });
+    let pipelineLayout1 = device0.createPipelineLayout({
+        bindGroupLayouts: [veryExplicitBindGroupLayout0, veryExplicitBindGroupLayout0]
+    });
+    device0.createRenderPipelineAsync({
+        layout: pipelineLayout1,
+        multisample: {
+            count: 4,
+            mask: 0x6c84794
+        },
+        fragment: {
+            module: shaderModule0,
+            targets: [{
+                format: 'rgb10a2uint'
+            }]
+        },
+        vertex: {
+            module: shaderModule0,
+            buffers: [{
+                arrayStride: 64,
+                attributes: [
+                ],
+            }, ],
+        },
+    });
+
+    await device0.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+onload = async function() {
+ try {
+     await window0();
+ } catch (e) {
+     if (e instanceof GPUPipelineError) {
+         if (e.name === 'OperationError') {}
+     }
+ }
+};
+</script>

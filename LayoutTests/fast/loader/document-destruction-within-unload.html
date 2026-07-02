@@ -1,0 +1,17 @@
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<iframe src="resources/document-destruction-within-unload-iframe.html"></iframe>
+<p>For the test to pass there should be no crash.</p>
+</body>
+</html>

@@ -1,0 +1,174 @@
+/*
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/IndexedDB.h>
+#include <WebCore/ThreadSafeDataBuffer.h>
+#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace JSC {
+class JSArrayBuffer;
+class JSArrayBufferView;
+}
+
+namespace WebCore {
+
+class IDBKey : public RefCounted<IDBKey> {
+    WTF_MAKE_TZONE_ALLOCATED(IDBKey);
+public:
+    static Ref<IDBKey> createInvalid()
+    {
+        return adoptRef(*new IDBKey());
+    }
+
+    static Ref<IDBKey> createNumber(double number)
+    {
+        return adoptRef(*new IDBKey(IndexedDB::KeyType::Number, number));
+    }
+
+    static Ref<IDBKey> createString(const String& string)
+    {
+        return adoptRef(*new IDBKey(string));
+    }
+
+    static Ref<IDBKey> createDate(double date)
+    {
+        return adoptRef(*new IDBKey(IndexedDB::KeyType::Date, date));
+    }
+
+    static Ref<IDBKey> createArray(Vector<Ref<IDBKey>>&& array)
+    {
+        size_t sizeEstimate = 0;
+        for (auto& key : array)
+            sizeEstimate += key->m_sizeEstimate;
+
+        return adoptRef(*new IDBKey(WTF::move(array), sizeEstimate));
+    }
+
+    static Ref<IDBKey> createBinary(const ThreadSafeDataBuffer&);
+    static Ref<IDBKey> createBinary(JSC::JSArrayBuffer&);
+    static Ref<IDBKey> createBinary(JSC::JSArrayBufferView&);
+
+    WEBCORE_EXPORT ~IDBKey();
+
+    IndexedDB::KeyType type() const { return m_type; }
+    WEBCORE_EXPORT bool isValid() const;
+
+    const Vector<Ref<IDBKey>>& array() const
+    {
+        ASSERT(m_type == IndexedDB::KeyType::Array);
+        return std::get<Vector<Ref<IDBKey>>>(m_value);
+    }
+
+    const String& string() const LIFETIME_BOUND
+    {
+        ASSERT(m_type == IndexedDB::KeyType::String);
+        return std::get<String>(m_value);
+    }
+
+    double date() const
+    {
+        ASSERT(m_type == IndexedDB::KeyType::Date);
+        return std::get<double>(m_value);
+    }
+
+    double number() const
+    {
+        ASSERT(m_type == IndexedDB::KeyType::Number);
+        return std::get<double>(m_value);
+    }
+
+    const ThreadSafeDataBuffer& binary() const LIFETIME_BOUND
+    {
+        ASSERT(m_type == IndexedDB::KeyType::Binary);
+        return std::get<ThreadSafeDataBuffer>(m_value);
+    }
+
+    std::weak_ordering compare(const IDBKey& other) const;
+    bool isLessThan(const IDBKey& other) const;
+    bool isEqual(const IDBKey& other) const;
+
+    size_t sizeEstimate() const { return m_sizeEstimate; }
+
+#if !LOG_DISABLED
+    String loggingString() const;
+#endif
+
+private:
+    IDBKey()
+        : m_type(IndexedDB::KeyType::Invalid)
+        , m_sizeEstimate(OverheadSize)
+    {
+    }
+
+    IDBKey(IndexedDB::KeyType, double number);
+    explicit IDBKey(const String& value);
+    IDBKey(Vector<Ref<IDBKey>>&& keyArray, size_t arraySize);
+    explicit IDBKey(const ThreadSafeDataBuffer&);
+
+    const IndexedDB::KeyType m_type;
+    Variant<Vector<Ref<IDBKey>>, String, double, ThreadSafeDataBuffer> m_value;
+
+    const size_t m_sizeEstimate;
+
+    // Very rough estimate of minimum key size overhead.
+    enum { OverheadSize = 16 };
+};
+
+inline std::strong_ordering compareBinaryKeyData(const Vector<uint8_t>& a, const Vector<uint8_t>& b)
+{
+    size_t length = std::min(a.size(), b.size());
+
+    for (size_t i = 0; i < length; ++i) {
+        if (auto result = a[i] <=> b[i]; is_neq(result))
+            return result;
+    }
+
+    return a.size() <=> b.size();
+}
+
+inline std::strong_ordering compareBinaryKeyData(const ThreadSafeDataBuffer& a, const ThreadSafeDataBuffer& b)
+{
+    auto* aData = a.data();
+    auto* bData = b.data();
+
+    // Covers the cases where both pointers are null as well as both pointing to the same buffer.
+    if (aData == bData)
+        return std::strong_ordering::equal;
+
+    if (!bData)
+        return std::strong_ordering::greater;
+    if (!aData)
+        return std::strong_ordering::less;
+
+    return compareBinaryKeyData(*aData, *bData);
+}
+
+} // namespace WebCore

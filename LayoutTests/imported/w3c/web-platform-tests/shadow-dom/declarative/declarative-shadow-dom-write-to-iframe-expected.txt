@@ -1,0 +1,4 @@
+
+
+PASS `document.write` on inner iframe handles declarative shadow DOM
+

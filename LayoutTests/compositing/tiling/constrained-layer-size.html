@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css" media="screen">
+        body {
+            margin: 0;
+            background-color: red;
+            overflow: hidden;
+        }
+        #container {
+          width: 5000px;
+          height: 27000px;
+          background-color: green;
+          -webkit-transform:translateZ(0);
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function testOnLoad()
+        {
+            // Wait for a layer update and the tiled layer to fill in.
+            window.setTimeout(function() {
+                window.setTimeout(function() {
+                    testRunner.notifyDone();
+                }, 0);
+            }, 0);
+        }
+      
+        window.addEventListener('load', testOnLoad, false);
+    </script>
+  </head>
+  <body>
+    <!-- The green div should be top-left in the viewport. No red should be visible. -->
+    <div id="container"></div>
+  </body>
+</html>

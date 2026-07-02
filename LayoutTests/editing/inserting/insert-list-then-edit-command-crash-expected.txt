@@ -1,0 +1,1 @@
+Tests inserting list followed by an edit command. The test passes if WebKit doesn't crash or hit an assertion.

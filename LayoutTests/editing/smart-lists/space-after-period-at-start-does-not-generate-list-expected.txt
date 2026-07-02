@@ -1,0 +1,2 @@
+Typing ". Hi" should not trigger smart-list conversion: a bare period is not a recognized ordered-list marker.
+| ". Hi<#selection-caret>"

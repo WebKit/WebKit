@@ -1,0 +1,7 @@
+
+FAIL The referrer URL is origin when a
+                                 document served over http requires an https
+                                 sub-resource via script-tag using the attr-referrer
+                                 delivery method with swap-origin-redirect and when
+                                 the target request is same-origin. assert_equals: Reported Referrer URL is 'origin'. expected "http://localhost:8800/" but got "http://localhost:8800/referrer-policy/origin-when-cross-origin/attr-referrer/same-origin/http-https/script-tag/swap-origin-redirect/same-origin-insecure.http.html"
+

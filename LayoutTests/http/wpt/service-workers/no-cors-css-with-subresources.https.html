@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+<script>
+var scope = "test";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("no-cors-css-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(JSON.parse(event.data));
+        });
+    });
+
+    const link = get_host_info().HTTPS_REMOTE_ORIGIN +  "/WebKit/service-workers/resources/loading-subresources.css";
+    const iframe = await with_iframe(scope + "?" + link);
+    assert_true(!!iframe.contentWindow.navigator.serviceWorker.controller);
+
+    activeWorker.postMessage("get-fetches");
+    var result = await promise;
+
+    assert_array_equals(result, [link]);
+}, "Subresources of an opaque CSS should not be visible to service worker");
+</script>
+</body>
+</html>

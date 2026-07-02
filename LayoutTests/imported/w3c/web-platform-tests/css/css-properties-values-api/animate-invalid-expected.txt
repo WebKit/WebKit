@@ -1,0 +1,3 @@
+
+PASS Do not crash when animating to unresolved var()
+

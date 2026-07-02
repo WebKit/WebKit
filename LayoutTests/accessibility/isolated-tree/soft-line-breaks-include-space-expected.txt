@@ -1,0 +1,13 @@
+This test ensures that with the isolated tree text markers, we include the trimmed space at soft line breaks.
+
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'Good '
+PASS: paragraph.indexForTextMarker(startOfLine) === 0
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'morning '
+PASS: paragraph.indexForTextMarker(startOfLine) === 5
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'world.'
+PASS: paragraph.indexForTextMarker(startOfLine) === 13
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Good morning world.

@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script>
+        function run() {
+            document.requestStorageAccess().then(
+                function() {
+                    window.parent.postMessage({
+                        type: "storage-access-result",
+                        result: "resolved",
+                        error: null
+                    }, "*");
+                },
+                function(e) {
+                    window.parent.postMessage({
+                        type: "storage-access-result",
+                        result: "rejected",
+                        error: e.toString()
+                    }, "*");
+                }
+            );
+        }
+    </script>
+</head>
+<body onload="run()">
+</body>
+</html>

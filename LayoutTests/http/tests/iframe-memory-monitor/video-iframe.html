@@ -1,0 +1,16 @@
+<style>
+    body { margin: 0; padding: 0; overflow: hidden; }
+    video { width: 100%; height: 100%; object-fit: cover; }
+</style>
+<script>
+    window.internals?.setTopDocumentURLForQuirks("https://dailymail.co.uk");
+    window.internals?.lowerAllFrameMemoryMonitorLimits();
+
+    window.unload = () => {
+        console.log('Should not be run');
+        window.parent.postMessage({ message: 'Bye from iframe' }, '*');
+    };
+</script>
+<body>
+    <video id="vid" src="http://127.0.0.1:8000/media/resources/serve_video.py?name=test.mp4&type=video&chunkSize=8" controls autoplay muted loop playsinline></video>
+</body>

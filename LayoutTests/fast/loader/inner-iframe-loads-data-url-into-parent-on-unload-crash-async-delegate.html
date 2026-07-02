@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+var parentFrame = document.body.appendChild(document.createElement("iframe"));
+parentFrame.src = "data:text/html,";
+
+var childFrame = parentFrame.contentDocument.body.appendChild(document.createElement("iframe"));
+childFrame.contentWindow.onunload = function () {
+    var link = parentFrame.contentDocument.createElement("a");
+    link.href = "data:text/html,PASS did not crash.<script>window.testRunner && window.testRunner.notifyDone()</" + "script>";
+    link.click(); // Navigates parentFrame
+}
+</script>
+</body>
+</html>

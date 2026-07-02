@@ -1,0 +1,39 @@
+<!-- webkit-test-runner [ StorageBlockingPolicy=1 ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cross-origin IndexedDB is transient under BlockThirdParty</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) {
+    document.getElementById("output").textContent += message + "\n";
+}
+
+window.addEventListener("message", event => {
+    if (event.data === "stored") {
+        log("Third-party iframe stored data in IndexedDB; terminating network process.");
+        if (window.testRunner)
+            testRunner.terminateNetworkProcess();
+        return;
+    }
+    if (event.data === "TRANSIENT")
+        log("PASS: Third-party IndexedDB did not persist across network process restart.");
+    else if (event.data === "PERSISTENT")
+        log("FAIL: Third-party IndexedDB persisted across network process restart; BlockThirdParty was not enforced.");
+    else
+        log(event.data);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<p>Tests that when the storage blocking policy is BlockThirdParty, IndexedDB opened by a third-party iframe is transient.</p>
+<pre id="output"></pre>
+<iframe src="http://localhost:8000/security/resources/cross-origin-iframe-for-indexeddb-transience.html"></iframe>
+</body>
+</html>

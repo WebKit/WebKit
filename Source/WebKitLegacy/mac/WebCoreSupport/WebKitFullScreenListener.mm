@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "WebKitFullScreenListener.h"
+
+#import <WebCore/Element.h>
+#import <WebCore/ExceptionOr.h>
+#import <WebCore/NodeDocument.h>
+
+#if ENABLE(FULLSCREEN_API)
+
+#import <WebCore/DocumentFullscreen.h>
+
+
+@implementation WebKitFullScreenListener
+
+- (id)initWithElement:(WebCore::Element*)element initialCompletionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)initialCompletionHandler finalCompletionHandler:(CompletionHandler<void(bool)>&&)finalCompletionHandler
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _element = element;
+    _initialCompletionHandler = WTF::move(initialCompletionHandler);
+    _finalCompletionHandler = WTF::move(finalCompletionHandler);
+    return self;
+}
+
+- (void)webkitWillEnterFullScreen
+{
+    if (_element && _initialCompletionHandler)
+        _initialCompletionHandler(_element->document().fullscreen().willEnterFullscreen(*_element, WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard));
+}
+
+- (void)webkitDidEnterFullScreen
+{
+    if (_finalCompletionHandler)
+        _finalCompletionHandler(true);
+}
+
+- (void)webkitWillExitFullScreen
+{
+    if (_element)
+        _element->document().fullscreen().willExitFullscreen();
+}
+
+- (void)webkitDidExitFullScreen
+{
+    if (_initialCompletionHandler)
+        _initialCompletionHandler({ });
+}
+
+@end
+#endif

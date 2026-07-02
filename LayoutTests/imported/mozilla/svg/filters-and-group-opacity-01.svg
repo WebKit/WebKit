@@ -1,0 +1,17 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+
+  <title>Test that filters and group opacity are applied in the correct order on an element</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=524104 -->
+
+  <filter id="filter" filterUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%"> 
+    <feFlood in="SourceGraphic" flood-color="blue"/>
+  </filter>
+
+  <rect width="1" height="1" filter="url(#filter)" opacity=".5"/>
+
+</svg>

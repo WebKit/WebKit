@@ -1,0 +1,31 @@
+<style>
+test {
+    transition: 5s;
+    display: block;
+    height: 100px;
+    border: 2px solid green;
+    transition-timing-function: steps(2, start);
+}
+.animate { display:inline-block; height:10px; width:10px; }
+</style>
+<test></test>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const test = document.querySelector("test");
+
+function tryComplete()
+{
+    if (test.offsetHeight < 100) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    setTimeout(tryComplete, 10);
+}
+
+test.offsetWidth;
+test.className = "animate";
+tryComplete();
+</script>

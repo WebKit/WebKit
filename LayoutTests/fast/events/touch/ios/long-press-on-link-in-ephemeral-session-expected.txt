@@ -1,0 +1,12 @@
+Verifies that long pressing an app store URL in an ephemeral browsing session does not show a full link preview. Requires WebKitTestRunner (though you can test manually in Safari, using Private Browsing mode).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS contextMenuPreviewRectForAppStoreLink.height is <= fullLinkPreviewHeightThreshold
+PASS contextMenuPreviewRectForRegularLink.height is >= fullLinkPreviewHeightThreshold
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Download Keynote
+WebKit Home Page

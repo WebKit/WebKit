@@ -1,0 +1,7 @@
+
+
+FAIL Default "private-state-token-redemption" permissions policy ["self"] allows the top-level document. assert_unreached: Reached unreachable code
+FAIL Default "private-state-token-redemption" permissions policy ["self"] allows same-origin iframes. assert_equals: Private state token redemption expected 4 but got 2
+FAIL Default "private-state-token-redemption" permissions policy ["self"] allows cross-origin iframes. assert_equals: Private state token redemption expected 4 but got 2
+FAIL Default "private-state-token-redemption" permissions policy ["self"] and allow="private-state-token-redemption 'none'" disallows cross-origin iframes. assert_equals: Private State Token issuance request expected 0 but got 2
+

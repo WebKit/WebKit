@@ -1,0 +1,9 @@
+
+PASS moveBefore(): about:blank iframe's document is preserved
+PASS moveBefore(): simple same-origin document is preserved
+PASS moveBefore(): cross-origin iframe is preserved: remove new parent
+PASS moveBefore(): cross-origin iframe is preserved: remove self
+PASS moveBefore(): cross-origin iframe is preserved: remove self via replaceChildren()
+PASS moveBefore(): cross-origin iframe is preserved: remove self via innerHTML
+PASS window.frames ordering does not change due to moveBefore()
+

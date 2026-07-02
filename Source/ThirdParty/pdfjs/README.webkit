@@ -1,0 +1,29 @@
+This directory contains an official PDF.js release version, distributed at: https://github.com/mozilla/pdf.js
+
+=======================================================================
+
+Since April 2024, the version of PDF.js is frozen due to the discovery of binary code. Please do not
+update PDF.js until we have removed the binary code:
+
+https://bugs.webkit.org/show_bug.cgi?id=273435
+
+=======================================================================
+
+To update to a newer version:
+
+1. Delete existing files except for this README.webkit.
+2. Grab a new official release (pdfjs-*-dist.zip, non-legacy version) distributed at GitHub and extract everything into this directory.
+3. Delete the sourcemap (.js.map) files (currently viewer.js.map, pdf.js.map, pdf.worker.js.map, and pdf.sandbox.js.map).
+4. Delete the example PDF file, compressed.tracemonkey-pldi-09.pdf.
+5. From top source dir, run: 'Tools/glib/generate-pdfjs-resource-manifest.py --cmake --input=Source/ThirdParty/pdfjs --output=Source/ThirdParty/pdfjs/PdfJSFiles.cmake'
+6. Build WebKit, your favorite port will do
+7. Sanity-check:
+  * Load https://www.irs.gov/pub/irs-pdf/i1040gi.pdf (a big PDF)
+  * Test downloading the PDF
+  * Test opening the print dialog
+
+Because the build process for PDF.js depends on a large number of Node.js dependencies, we choose
+to build from upstream's prebuilt "dist" releases rather than the original source code. This is not
+ideal and possibly violates the packaging requirements of most major Linux distributions. However,
+requiring a huge number of Node.js packages would surely result in most distributions disabling the
+PDF support altogether. The .mjs files are not minified or obfuscated, so using them is pragmatic.

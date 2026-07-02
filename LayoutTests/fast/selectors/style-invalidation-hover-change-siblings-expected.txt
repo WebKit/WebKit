@@ -1,0 +1,10 @@
+PASS .target styleChangeType was InlineStyleChange
+PASS .container styleChangeType was NoStyleChange
+PASS .inert styleChangeType was NoStyleChange
+PASS .target styleChangeType was InlineStyleChange
+PASS .container styleChangeType was NoStyleChange
+PASS .inert styleChangeType was NoStyleChange
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

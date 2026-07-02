@@ -1,0 +1,170 @@
+START
+Test the :not(:active) and :not(:hover) selector when the document is in strict mode. To test manually, make sure not to move the cursor over the green rectangle and press the gray START div until the test is finished.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("testing:not(:active)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("#target:not(:active)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)#target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("#target:not(:active)#target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass:not(:active)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active).aClass").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass:not(:active).otherClass").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id]:not(:active)[webkit]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id=target]:not(:active)[webkit=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit^=ro]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit^=ro]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id^=ta]:not(:active)[webkit^=ro]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit$=ks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit$=ks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id$=et]:not(:active)[webkit$=ks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit*=ck]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit*=ck]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id*=rg]:not(:active)[webkit*=ck]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit~=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit~=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id~=target]:not(:active)[webkit~=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit|=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:active)[webkit|=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id|=target]:not(:active)[webkit|=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:nth-child(1):not(:active)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:not(:active):nth-child(1)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:nth-child(1):not(:active):nth-child(1)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":nth-child(n):not(:active) > #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":not(:active):nth-child(n) > #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":nth-child(n):not(:active):nth-child(n) > #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":nth-child(n):not(:active) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":not(:active):nth-child(n) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":nth-child(n):not(:active):nth-child(n) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":-webkit-any(:not(:active)) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll("*").length - document.querySelectorAll(":not(:active)").length is 3
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("*").length - document.querySelectorAll("*:not(:active)").length is 3
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:not(:hover)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("#target:not(:hover)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)#target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("#target:not(:hover)#target").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass:not(:hover)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover).aClass").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass:not(:hover).otherClass").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id]:not(:hover)[webkit]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id=target]:not(:hover)[webkit=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit^=ro]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit^=ro]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id^=ta]:not(:hover)[webkit^=ro]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit$=ks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit$=ks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id$=et]:not(:hover)[webkit$=ks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit*=ck]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit*=ck]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id*=rg]:not(:hover)[webkit*=ck]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit~=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit~=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id~=target]:not(:hover)[webkit~=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(".aClass[webkit|=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":not(:hover)[webkit|=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("[id|=target]:not(:hover)[webkit|=rocks]").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:nth-child(1):not(:hover)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:not(:hover):nth-child(1)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("testing:nth-child(1):not(:hover):nth-child(1)").length is 1
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll(":nth-child(n):not(:hover) > #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":not(:hover):nth-child(n) > #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":nth-child(n):not(:hover):nth-child(n) > #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":nth-child(n):not(:hover) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":not(:hover):nth-child(n) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":nth-child(n):not(:hover):nth-child(n) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll(":-webkit-any(:not(:hover)) #target").length is 0
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(1, 2, 3)"
+PASS document.querySelectorAll("*").length - document.querySelectorAll(":not(:hover)").length is 3
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS document.querySelectorAll("*").length - document.querySelectorAll("*:not(:hover)").length is 3
+PASS getComputedStyle(document.getElementById("target")).color is "rgb(4, 5, 6)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

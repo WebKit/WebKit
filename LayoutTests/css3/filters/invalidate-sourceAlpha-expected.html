@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            width: 400px;
+            border: 20px solid blue;
+            background-color: rgba(0, 128, 0, 0.2);
+            filter: url(#filter);
+            -webkit-clip-path: inset(30px 320px 30px 30px); /* work around webkit.org/b/189896 */
+        }
+    
+        #box {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            margin-left: 300px;
+        }
+        </style>
+</head>
+<body>
+    <svg style="display: none">
+        <filter id="filter">
+            <femorphology operator="dilate" radius="10" in="SourceAlpha" result="morphology"></femorphology>
+            <femerge result="merge">
+                <femergenode in="morphology"></femergenode>
+                <femergenode in="SourceGraphic"></femergenode>
+            </femerge>
+        </filter>
+    </svg>
+
+    <div class="container">
+        <div id="box"></div>
+    </div>
+</body>
+</html>
+

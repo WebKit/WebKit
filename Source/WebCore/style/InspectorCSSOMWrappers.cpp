@@ -1,0 +1,167 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
+ * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "InspectorCSSOMWrappers.h"
+
+#include "CSSContainerRule.h"
+#include "CSSImportRule.h"
+#include "CSSLayerBlockRule.h"
+#include "CSSLayerStatementRule.h"
+#include "CSSMediaRule.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSRule.h"
+#include "CSSScopeRule.h"
+#include "CSSStartingStyleRule.h"
+#include "CSSStyleRule.h"
+#include "CSSStyleSheet.h"
+#include "CSSSupportsRule.h"
+#include "Document.h"
+#include "ExtensionStyleSheets.h"
+#include "StyleScope.h"
+#include "StyleSheetContents.h"
+#include "UserAgentStyle.h"
+
+namespace WebCore {
+namespace Style {
+
+void InspectorCSSOMWrappers::collectFromStyleSheetIfNeeded(CSSStyleSheet& styleSheet)
+{
+    if (!m_styleRuleToCSSOMWrapperMap.isEmpty())
+        collect(&styleSheet);
+}
+
+template <class ListType>
+void InspectorCSSOMWrappers::collect(ListType* listType)
+{
+    if (!listType)
+        return;
+    unsigned size = listType->length();
+    for (unsigned i = 0; i < size; ++i) {
+        RefPtr cssRule = listType->item(i);
+        if (!cssRule)
+            continue;
+
+        switch (cssRule->styleRuleType()) {
+        case StyleRuleType::Container:
+            collect(uncheckedDowncast<CSSContainerRule>(cssRule.get()));
+            break;
+        case StyleRuleType::Import:
+            collect<CSSStyleSheet>(protect(uncheckedDowncast<CSSImportRule>(*cssRule).styleSheet()));
+            break;
+        case StyleRuleType::LayerBlock:
+            collect(uncheckedDowncast<CSSLayerBlockRule>(cssRule.get()));
+            break;
+        case StyleRuleType::Media:
+            collect(uncheckedDowncast<CSSMediaRule>(cssRule.get()));
+            break;
+        case StyleRuleType::Supports:
+            collect(uncheckedDowncast<CSSSupportsRule>(cssRule.get()));
+            break;
+        case StyleRuleType::Scope:
+            collect(uncheckedDowncast<CSSScopeRule>(cssRule.get()));
+            break;
+        case StyleRuleType::StartingStyle:
+            collect(uncheckedDowncast<CSSStartingStyleRule>(cssRule.get()));
+            break;
+        case StyleRuleType::Style:
+            m_styleRuleToCSSOMWrapperMap.add(&uncheckedDowncast<CSSStyleRule>(*cssRule).styleRule(), uncheckedDowncast<CSSStyleRule>(*cssRule));
+
+            // Eagerly collect rules nested in this style rule.
+            collect(uncheckedDowncast<CSSStyleRule>(cssRule.get()));
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void InspectorCSSOMWrappers::collectFromStyleSheetContents(StyleSheetContents* styleSheet)
+{
+    if (!styleSheet)
+        return;
+    auto styleSheetWrapper = CSSStyleSheet::create(*styleSheet);
+    m_styleSheetCSSOMWrapperSet.add(styleSheetWrapper.copyRef());
+    collect(styleSheetWrapper.ptr());
+}
+
+void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<Ref<CSSStyleSheet>>& sheets)
+{
+    for (auto& sheet : sheets)
+        collect(sheet.ptr());
+}
+
+void InspectorCSSOMWrappers::maybeCollectFromStyleSheets(const Vector<Ref<CSSStyleSheet>>& sheets)
+{
+    for (auto& sheet : sheets) {
+        if (!m_styleSheetCSSOMWrapperSet.contains(sheet)) {
+            m_styleSheetCSSOMWrapperSet.add(sheet.copyRef());
+            collect(sheet.ptr());
+        }
+    }
+}
+
+void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& extensionStyleSheets)
+{
+    if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
+        collectFromStyleSheetContents(protect(UserAgentStyle::defaultStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::quirksStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::svgStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::mathMLStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::mathMLCoreExtrasStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::mathMLCoreMathvariantStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::mathMLFontSizeMathStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::mathMLLegacyFontSizeMathStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::horizontalFormControlsStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::viewTransitionsStyleSheet));
+        collectFromStyleSheetContents(protect(UserAgentStyle::htmlSwitchControlStyleSheet));
+#if ENABLE(FULLSCREEN_API)
+        collectFromStyleSheetContents(protect(UserAgentStyle::fullscreenStyleSheet));
+#endif
+        collectFromStyleSheetContents(protect(UserAgentStyle::mediaQueryStyleSheet));
+
+        collect<CSSStyleSheet>(protect(extensionStyleSheets.pageUserSheet()));
+        collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());
+        collectFromStyleSheets(extensionStyleSheets.documentUserStyleSheets());
+        collectFromStyleSheets(extensionStyleSheets.injectedAuthorStyleSheets());
+        collectFromStyleSheets(extensionStyleSheets.authorStyleSheetsForTesting());
+    }
+}
+
+void InspectorCSSOMWrappers::collectScopeWrappers(Scope& styleScope)
+{
+    maybeCollectFromStyleSheets(styleScope.activeStyleSheets());
+}
+
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(const StyleRule* rule)
+{
+    return m_styleRuleToCSSOMWrapperMap.get(rule);
+}
+
+} // namespace Style
+} // namespace WebCore

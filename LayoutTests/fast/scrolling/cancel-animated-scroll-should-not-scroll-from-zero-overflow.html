@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            width: 300px;
+            height: 300px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+        
+        .content {
+            height: 2000px;
+            background-image: repeating-linear-gradient(transparent, silver 200px);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        description('When canceling an animated scroll, we should not trigger a scroll from zero.');
+        window.addEventListener('load', async () => {
+            let scroller = document.getElementsByClassName('scroller')[0];
+
+            const startingScrollOffset = 400;
+            scroller.scrollTo(0, startingScrollOffset);
+
+            scroller.addEventListener('scroll', () => {
+                if (scroller.scrollTop < startingScrollOffset)
+                    testFailed(`We should never see a scroll offset less than ${startingScrollOffset} - saw ${scroller.scrollTop}`);
+            }, false);
+
+            setTimeout(() => {
+                scroller.scrollTo({ top: 500, behavior: 'smooth' });
+            }, 10);
+
+            await UIHelper.startMonitoringWheelEvents();
+            
+            setTimeout(() => {
+                scroller.scrollTo({ top: 520, behavior: 'smooth' });
+            }, 60);
+
+            await UIHelper.waitForScrollCompletion();
+            finishJSTest();
+
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

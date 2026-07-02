@@ -1,0 +1,5 @@
+
+FAIL Accessing a cross-origin child global by name returns undefined assert_equals: window.frame1 should be undefined for cross-origin iframes expected (undefined) undefined but got (object) [stringifying object threw SecurityError: Blocked a frame with origin "http://web-platform.test:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match. with type object]
+FAIL Child accessing its own global through a cross-origin parent's WindowProxy throws an exception assert_equals: Accessing `window.parent.frame1` from the child throws a SecurityError expected "SecurityError" but got "No exception"
+FAIL Child accessing its own global (through a changed name) on the cross-origin parent's WindowProxy throws an exception assert_equals: window.new_name should be undefined for cross-origin iframes expected (undefined) undefined but got (object) [stringifying object threw SecurityError: Blocked a frame with origin "http://web-platform.test:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match. with type object]
+

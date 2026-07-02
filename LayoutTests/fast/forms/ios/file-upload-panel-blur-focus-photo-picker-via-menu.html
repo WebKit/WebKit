@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true shouldHandleRunOpenPanel=false ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/window-blur-focus-utils.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("blur", (e) => {
+    debug("BLUR");
+});
+
+addEventListener("focus", (e) => {
+    debug("FOCUS");
+});
+
+addEventListener("load", async () => {
+    description("This test verifies that presenting a menu and then a photo picker for file inputs correctly dispatches blur and focus events.");
+
+    await UIHelper.activateElement(fileInput);
+    await UIHelper.waitForContextMenuToShow();
+    await waitForWindowBlur();
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.chooseMenuAction("Photo Library");
+    await UIHelper.dismissFilePicker();
+    await waitForWindowFocus();
+    await UIHelper.ensurePresentationUpdate();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<input id="fileInput" type="file">
+</body>
+</html>

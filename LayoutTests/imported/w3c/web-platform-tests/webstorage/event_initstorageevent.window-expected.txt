@@ -1,0 +1,7 @@
+
+PASS initStorageEvent with 0 arguments
+PASS initStorageEvent with 1 argument
+PASS initStorageEvent with 8 sensible arguments
+PASS initStorageEvent with 8 null arguments
+PASS initStorageEvent with 8 undefined arguments
+

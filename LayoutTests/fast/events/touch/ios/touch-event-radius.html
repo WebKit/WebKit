@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+    This test requires UIScriptController to run.
+</div>
+<script>
+    jsTestIsAsync = true;
+
+    let target = document.getElementById("target");
+    target.addEventListener('touchstart', function(event) {
+        radiusX = Math.round(event.touches[0].radiusX * 10) / 10;
+        radiusY = Math.round(event.touches[0].radiusY * 10) / 10;
+        expected = Math.round(0.1 * window.screen.height * 10) / 10;
+        shouldBe("radiusX", "expected");
+        shouldBe("radiusY", "expected");
+        target.remove();
+        finishJSTest();
+    });
+
+    window.addEventListener('load', () => {
+        if (!testRunner.runUIScript)
+            return;
+
+        testRunner.runUIScript(`
+            uiController.touchDownAtPointWithMajorRadius(20, 40, 0.1, 0.01, function() {
+                uiController.uiScriptComplete();
+            });`);
+    });
+</script>
+</body>
+</html>

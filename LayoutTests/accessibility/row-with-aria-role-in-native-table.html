@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table id="table">
+<thead>
+<tr role="row"><th>Item 1</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests if a native tr element uses the 'row' role, but forgets to add role='grid' to the native table element, the table still exposes the right numbers of rows/cells.");
+
+    if (window.accessibilityController) {
+        var table = accessibilityController.accessibleElementById("table");
+        shouldBe("table.rowCount", "1");
+        shouldBe("table.columnCount", "1");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

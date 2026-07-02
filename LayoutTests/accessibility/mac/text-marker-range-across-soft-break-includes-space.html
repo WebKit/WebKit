@@ -1,0 +1,46 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+Renders as:
+ 
+```
+  Good
+  morning
+  world.
+```
+-->
+
+
+<p id="paragraph" style="width: 80px">
+Good morning world.
+</p>
+
+<script>
+
+if (window.accessibilityController) {
+    var output = "This test ensures that spaces that were trimmed when rendering soft line breaks are included in ranges that span over them.\n\n";
+
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var textMarkerRange = paragraph.textMarkerRangeForElement(paragraph)
+    var startMarker = paragraph.startTextMarkerForTextMarkerRange(textMarkerRange); // Position before "Good"
+    var endMarker = paragraph.textMarkerForIndex(12); // Position after "morning".
+
+    var range = paragraph.textMarkerRangeForMarkers(startMarker, endMarker);
+    output += expect("paragraph.stringForTextMarkerRange(range)", "'Good morning'");
+
+    endMarker = paragraph.textMarkerForIndex(18); // Position after "world".
+    range = paragraph.textMarkerRangeForMarkers(startMarker, endMarker);
+    output += expect("paragraph.stringForTextMarkerRange(range)", "'Good morning world'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

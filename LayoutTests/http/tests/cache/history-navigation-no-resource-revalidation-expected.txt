@@ -1,0 +1,12 @@
+Test that we don't attempt to revalidate the cached main resource on history navigation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS no-cache subresource was cached and used for a back navigation
+PASS no-cache subresource was refetched with a reload
+PASS no-cache subresource was refetched with a normal navigation
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+
+PASS Listed form element form owner is reset when a new form is moved closer before the listed element
+

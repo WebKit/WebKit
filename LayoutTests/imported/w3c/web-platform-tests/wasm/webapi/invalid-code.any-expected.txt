@@ -1,0 +1,6 @@
+
+PASS Invalid code (0x0000): compileStreaming
+PASS Invalid code (0xCAFE): compileStreaming
+PASS Invalid code (0x0000): instantiateStreaming
+PASS Invalid code (0xCAFE): instantiateStreaming
+

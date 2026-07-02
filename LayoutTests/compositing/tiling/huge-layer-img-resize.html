@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+#container {
+    width: 2500px;
+    height: 2000px;
+}
+#layer {
+    width: 100%;
+    height: 100%;
+    -webkit-transform:translateZ(0);
+}
+img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script type="text/javascript" charset="utf-8">
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function testOnLoad()
+{
+    var canvas = document.createElement('canvas');
+    var img = document.getElementById("image");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var context = canvas.getContext('2d');
+
+    const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, "white");
+    gradient.addColorStop(1, "black");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.moveTo(0, canvas.height);
+    context.lineTo(canvas.width, 0);
+    context.moveTo(0, 0);
+    context.lineTo(canvas.width, canvas.height);
+    context.lineWidth = 20;
+    context.strokeStyle = "red";
+    context.stroke();
+
+    img.src = canvas.toDataURL();
+}
+
+function onImageLoad()
+{
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (window.internals)
+            window.internals.startTrackingRepaints();
+        document.getElementById('container').style.width = "3400px";
+        if (window.internals) {
+            document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+            window.internals.stopTrackingRepaints();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }));
+}
+
+window.addEventListener('load', testOnLoad, false);
+</script>
+</head>
+<body>
+    <!--
+    If the size of image changes, it should trigger full repaint.
+    The repaint issue is only revealed on tiled layer, for untiled layer,
+    a full repaint is triggered by GraphicsLayerCA::shouldRepaintOnSizeChange.
+    -->
+    <div id="container">
+        <div id="layer">
+            <img onload="onImageLoad()" id="image">
+        </div>
+    </div>
+    <pre id="layers">Layer tree including repaint rects appears here in DRT.</pre>
+</body>
+</html>

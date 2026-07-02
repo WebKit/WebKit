@@ -1,0 +1,7 @@
+arg 1
+1
+undefined
+arg 1
+inner
+inner
+eval is not a function. (In 'eval("z")', 'eval' is an instance of RegExp)

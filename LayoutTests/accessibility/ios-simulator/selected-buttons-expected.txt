@@ -1,0 +1,17 @@
+button 1
+button 2
+tab 1
+tab 2
+This tests that aria-selected behaves as expected (by returning the right traits) on tabs and buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button1.isSelected is true
+PASS button2.isSelected is false
+PASS tab1.isSelected is true
+PASS tab2.isSelected is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

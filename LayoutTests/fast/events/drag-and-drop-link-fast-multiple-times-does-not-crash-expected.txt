@@ -1,0 +1,35 @@
+HTML hyperlink
+
+This test checks that quickly attempting a drag'n'drop operation multiple times over the same element does not crash the web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Dragging HTML hyperlink around. Attempt #1
+Dragging HTML hyperlink around. Attempt #2
+Dragging HTML hyperlink around. Attempt #3
+Dragging HTML hyperlink around. Attempt #4
+Dragging HTML hyperlink around. Attempt #5
+Dragging HTML hyperlink around. Attempt #6
+Dragging HTML hyperlink around. Attempt #7
+Dragging HTML hyperlink around. Attempt #8
+Dragging HTML hyperlink around. Attempt #9
+Dragging HTML hyperlink around. Attempt #10
+Dragging HTML hyperlink around. Attempt #11
+Dragging HTML hyperlink around. Attempt #12
+Dragging HTML hyperlink around. Attempt #13
+Dragging HTML hyperlink around. Attempt #14
+Dragging HTML hyperlink around. Attempt #15
+Dragging HTML hyperlink around. Attempt #16
+Dragging HTML hyperlink around. Attempt #17
+Dragging HTML hyperlink around. Attempt #18
+Dragging HTML hyperlink around. Attempt #19
+Dragging HTML hyperlink around. Attempt #20
+
+
+PASS dragHasStarted is true
+PASS dragHasEnded is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

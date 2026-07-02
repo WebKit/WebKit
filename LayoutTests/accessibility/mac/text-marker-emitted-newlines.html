@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="all">
+  <ul>
+    <li>One</li>
+  </ul>
+  <h2 id="element">Two</h2>
+  <a href="#"><img src="#"></a>
+  <div>Three</div>
+</div>
+
+<script>
+var output = "This tests that text marker ranges include emitted newlines in the string for range, even when the emitted newline is at the beginning or the only character in the range.\n\n";
+
+if (window.accessibilityController) {
+    var element = accessibilityController.accessibleElementById("element");
+    var elementRange = element.textMarkerRangeForElement(element);
+
+    outputRange();
+
+    elementRange = incrementEndMarker(elementRange);
+    outputRange();
+
+    for (var i = 0; i < 3; i++) {
+        elementRange = incrementStartMarker(elementRange);
+        outputRange();
+    }
+
+    for (var i = 0; i < 3; i++) {
+        elementRange = incrementEndMarker(elementRange);
+        outputRange();
+    }
+
+    debug(output);
+    document.getElementById('all').hidden = true;
+
+    function outputRange() {
+        str = element.stringForTextMarkerRange(elementRange);
+        str = replaceAttachmentsAndNewlinesInString(str);
+        output += `String for text marker range: "${str}"\n`;
+    }
+
+    function incrementEndMarker(textMarkerRange) {
+        output += 'Incrementing end marker\n';
+        const startMarker = element.startTextMarkerForTextMarkerRange(textMarkerRange);
+        const endMarker = element.endTextMarkerForTextMarkerRange(textMarkerRange);
+        const newEndMarker = element.nextTextMarker(endMarker);
+        return element.textMarkerRangeForMarkers(startMarker, newEndMarker);
+    }
+
+    function incrementStartMarker(textMarkerRange) {
+        output += 'Incrementing start marker\n';
+        const startMarker = element.startTextMarkerForTextMarkerRange(textMarkerRange);
+        const endMarker = element.endTextMarkerForTextMarkerRange(textMarkerRange);
+        const newStartMarker = element.nextTextMarker(startMarker);
+        return element.textMarkerRangeForMarkers(newStartMarker, endMarker);
+    }
+
+    function replaceAttachmentsAndNewlinesInString(str) {
+        // FIXME: ITM outputs attachment characters, live tree does not
+        str = str.replaceAll(String.fromCharCode(65532), "");
+
+        // FIXME: ITM and live tree output different numbers of newlines sometimes
+        str = str.replaceAll(/\n+/g, "[NEWLINE]");
+        return str;
+    }
+}
+</script>
+
+</body>
+</html>

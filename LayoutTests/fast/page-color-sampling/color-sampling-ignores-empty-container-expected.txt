@@ -1,0 +1,8 @@
+PASS colors.top is null
+PASS colors.left is null
+PASS colors.right is null
+PASS colors.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Sign up for free

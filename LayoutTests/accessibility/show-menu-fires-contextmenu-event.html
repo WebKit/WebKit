@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="target">Show my context menu</button>
+<iframe id="iframe" srcdoc="<button id='iframe-target'>Iframe button</button>"></iframe>
+
+<script>
+var output = "This test ensures that the ShowMenu accessibility action fires a contextmenu DOM event on elements in the main frame and inside iframes.\n\n";
+
+var contextMenuEvent = null;
+var iframeContextMenuEvent = null;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.getElementById("target").addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        contextMenuEvent = event;
+    });
+
+    // Show the context menu via the accessibility API (simulating an AT performing the action).
+    accessibilityController.accessibleElementById("target").showMenu();
+    setTimeout(async function() {
+        output += await expectAsync("contextMenuEvent !== null", "true");
+        output += await expectAsync("contextMenuEvent.type", "'contextmenu'");
+        output += await expectAsync("contextMenuEvent.target.id", "'target'");
+
+        // Now test with an element inside an iframe.
+        var iframeDoc = document.getElementById("iframe").contentDocument;
+        iframeDoc.getElementById("iframe-target").addEventListener("contextmenu", function(event) {
+            event.preventDefault();
+            iframeContextMenuEvent = event;
+        });
+
+        var axIframeButton = await waitForElementById("iframe-target");
+        axIframeButton.showMenu();
+
+        output += await expectAsync("iframeContextMenuEvent !== null", "true");
+        output += await expectAsync("iframeContextMenuEvent.type", "'contextmenu'");
+        output += await expectAsync("iframeContextMenuEvent.target.id", "'iframe-target'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    display: block;
+    width: 200px;
+    height: 30px;
+    font-size: 16px;
+    margin: 8px;
+}
+</style>
+</head>
+<body>
+<input type="email" id="user" autocomplete="username">
+<input type="password" id="password" autocomplete="current-password">
+<pre id="description"></pre>
+<pre id="console"></pre>
+<script>
+description("Tests that UIHelper.insertAutofillSuggestion fills the focused username and password inputs in a same-origin login form on iOS.");
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    const userField = document.getElementById("user");
+    const userRect = userField.getBoundingClientRect();
+    await UIHelper.activateAndWaitForInputSessionAt(userRect.left + userRect.width / 2, userRect.top + userRect.height / 2);
+
+    await UIHelper.insertAutofillSuggestion("frederik", "famos");
+
+    window.userValue = document.getElementById("user").value;
+    window.passwordValue = document.getElementById("password").value;
+    shouldBeEqualToString("userValue", "frederik");
+    shouldBeEqualToString("passwordValue", "famos");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

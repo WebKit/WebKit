@@ -1,0 +1,5 @@
+
+PASS Iteration skips elements removed while iterating
+PASS Removing elements already iterated over causes an element to be skipped during iteration
+PASS Appending a value pair during iteration causes it to be reached during iteration
+

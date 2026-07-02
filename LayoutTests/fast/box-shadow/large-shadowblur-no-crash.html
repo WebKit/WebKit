@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div {
+            box-shadow: blue 1.76px 0px 10px 24px inset;
+            width: 33554432px;
+            height: 33554432px;
+            border-radius: 5px;
+            filter: sepia(1);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+            testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <div></div>
+    <p>This test passes if test doesn't crash.</p>
+</body>
+</html>

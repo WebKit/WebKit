@@ -1,0 +1,313 @@
+; Copyright (C) 2014-2024 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "Shared/Sandbox/iOS/common.sb"
+#include "Shared/Sandbox/iOS/networking-defines.sb"
+
+#if USE(SANDBOX_VERSION_3)
+(allow system-fcntl (system-fcntl-allowed))
+
+(allow file-link)
+
+(allow system-necp-client-action)
+(allow necp-client-open)
+
+(allow socket-ioctl)
+
+(allow socket-option-set (with telemetry) (with report))
+(allow socket-option-get (with telemetry) (with report))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name
+            SO_NREAD
+            SO_SNDBUF)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 25)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 125)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name 262 SO_REUSEPORT)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IP)
+        (socket-option-name 7 20 27)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_TCP)
+        (socket-option-name 513)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 27 35 36 61 62)))
+
+(allow socket-option-set
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name
+            0 ;; Replace with 131072 when 32 bit size is supported
+            SO_DELEGATED
+            SO_MARK_KNOWN_TRACKER
+            SO_MARK_KNOWN_TRACKER_NON_APP_INITIATED
+            SO_NECP_ATTRIBUTES
+            SO_NECP_CLIENTUUID
+            SO_NECP_LISTENUUID
+            SO_NOSIGPIPE
+            SO_RCVBUF
+            SO_REUSEADDR
+            SO_REUSEPORT
+            SO_TIMESTAMP)))
+
+(deny network-outbound (literal "/private/var/run/mDNSResponder"))
+(deny network-outbound (remote tcp) (remote udp))
+
+(with-filter (mac-policy-name "vnguard")
+    (allow system-mac-syscall (mac-syscall-number 1)))
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
+
+(allow file-link
+    (subpath "/private/var/mobile/Containers/Data/Application"))
+
+(allow iokit-open-service
+    (iokit-registry-entry-class "AppleKeyStore"))
+
+(allow darwin-notification-post (darwin-notification-post-allowed))
+(allow darwin-notification-post (darwin-notification-post-prefix-allowed))
+
+(allow file-clone
+    (subpath
+        "/private/var/mobile/Containers/Data"
+        "/private/var/mobile/Library/Caches"
+        "/private/var/mobile/Library/WebClips"))
+#endif
+
+(allow system-privilege (with grant)
+    (require-all
+        (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
+        (require-entitlement "com.apple.private.network.socket-delegate")))
+
+(deny file-map-executable)
+(deny file-write-mount file-write-unmount)
+(allow file-read-metadata 
+    (vnode-type DIRECTORY))
+
+(rules-with-elevated-precedence)
+
+(with-elevated-precedence
+    (deny file-read-metadata
+        (home-literal "/Library/Caches/powerlog.launchd"))
+    (with-filter (global-name-prefix "")
+        (deny mach-lookup
+            (extension "com.apple.security.exception.mach-lookup.global-name")))
+    (with-filter (local-name-prefix "")
+        (deny mach-lookup
+            (extension "com.apple.security.exception.mach-lookup.local-name"))))
+
+(with-filter (system-attribute apple-internal)
+    (internal-debugging-support))
+
+(allow file-read*
+    required-etc-files)
+
+(allow file-read* (with message "Allowing read access to root")
+    (literal "/"))
+
+(allow mach-lookup
+    (mach-lookup-allowed))
+
+(allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
+(allow mach-lookup (with telemetry) (global-name "com.apple.webkit.webpushd.service"))
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name
+            "com.apple.aggregated"
+            "com.apple.analyticsd"
+            "com.apple.hangtracerd"
+            "com.apple.networkscored"
+            "com.apple.osanalytics.osanalyticshelper")))
+
+(allow system-sched
+    (require-entitlement "com.apple.private.kernel.override-cpumon"))
+
+(with-filter (system-attribute apple-internal)
+    (allow sysctl-read
+           (sysctl-name "kern.dtrace.dof_mode"))
+    (allow sysctl-read sysctl-write
+           (sysctl-name "vm.footprint_suspend")))
+
+;; Needed by WebKit LOG macros and ASL logging.
+(deny file-read-metadata
+       (literal "/private/var/run/syslog"))
+
+;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
+(with-filter (system-attribute apple-internal)
+    (allow network-outbound
+        (literal "/private/var/run/syslog")))
+
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
+
+(managed-configuration-read-public)
+
+(deny system-info NO_REPORT
+    (info-type "net.link.addr"))
+
+(allow mach-task-name (target self))
+
+(deny process-info*)
+(allow process-info-pidinfo)
+(allow process-info-pidfdinfo (target self))
+(allow process-info-pidfileportinfo (target self))
+(allow process-info-setcontrol (target self))
+(allow process-info-dirtycontrol (target self))
+(allow process-info-rusage (target self))
+(allow process-info-codesignature (target self))
+(allow process-info-codesignature (target others))
+
+(deny mach-lookup (xpc-service-name-prefix ""))
+
+(deny lsopen)
+
+(deny sysctl* )
+(allow sysctl-read (sysctl-read-allowed))
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>
+(allow file-issue-extension (require-all
+    (extension "com.apple.app-sandbox.read-write")
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
+
+;; App sandbox extensions
+(allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
+(allow file-read* (extension "com.apple.app-sandbox.read"))
+
+(network-client)
+
+;; <rdar://problem/12620714>
+(deny file-write-create NO_REPORT
+      (home-prefix "/Library/Logs/CrashReporter/CFNetwork_"))
+
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+(allow file-read-data
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
+
+(deny file-write-create
+    (vnode-type SYMLINK))
+
+(deny file-read* NO_REPORT
+    (literal "/private/etc/group"))
+
+;; FIXME should be removed when <rdar://problem/30498072> is fixed.
+(allow network* 
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+
+;;; <rdar://problem/9876970>
+(deny network-outbound
+    (remote tcp "localhost:62078"))
+
+(log-streaming)
+
+;; <rdar://problem/103895412>
+(allow file-read*
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_WebContentRestrictions"))
+
+(allow ipc-posix-sem-open
+    (ipc-posix-name "containermanagerd.fb_check"))
+
+(allow file-read*
+    (literal "/dev/urandom"))
+
+(if (system-attribute apple-internal)
+    (allow file-read* file-write-data file-ioctl 
+        (literal "/dev/dtracehelper"))
+; else
+    (deny NO_REPORT file-read* file-write-data file-ioctl
+        (literal "/dev/dtracehelper")))
+
+(allow file-read*
+    (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+(allow iokit-get-properties
+    (iokit-property "IORegistryEntryPropertyKeys"))
+
+(deny syscall-unix (with telemetry))
+(when (defined? 'SYS_crossarch_trap)
+    (deny syscall-unix NO_REPORT (syscall-number
+        SYS_crossarch_trap)))
+(deny syscall-unix NO_REPORT (syscall-number
+    SYS___nexus_set_opt))
+(allow syscall-unix (syscall-unix-allowed))
+
+(deny syscall-mach (with telemetry))
+(allow syscall-mach (syscall-mach-allowed))
+        
+(deny syscall-mig (with telemetry))
+(kernel-mig-allowed)
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+#endif
+
+#if ENABLE(SYSTEM_SERVICES_SANDBOX_RULES)
+#include <WebKitAdditions/SystemServicesSandbox-ios.defs>
+#endif
+
+;; Allow re-issuing file extensions we were vended
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.app-sandbox.read" "com.apple.app-sandbox.read-write")
+        (extension "com.apple.app-sandbox.read-write")))
+
+#if HAVE(ENHANCED_SECURITY_LINKS) && __has_include(<WebKitAdditions/EnhancedSecurityLinks-ios.sb>)
+#include <WebKitAdditions/EnhancedSecurityLinks-ios.sb>
+#endif

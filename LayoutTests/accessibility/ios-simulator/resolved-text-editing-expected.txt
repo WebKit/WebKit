@@ -1,0 +1,12 @@
+This tests that we can retrieve resolved editing styles from the editable text area.
+
+{
+    bold = 0;
+    fontsize = 6;
+    italic = 1;
+    underline = 0;
+}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a

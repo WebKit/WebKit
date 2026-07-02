@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-allowed-containers</title>
+    <script src="video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('Requires window.internals');
+            return;
+        }
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaContainerTypes(null)');
+        testExpected('video.canPlayType("audio/mp3")', 'maybe');
+        testExpected('video.canPlayType("video/mp4")', 'maybe');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'canplay'), waitForAndFail(video, 'error')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaContainerTypes("audio/mp3")');
+        testExpected('video.canPlayType("audio/mp3")', 'maybe');
+        testExpected('video.canPlayType("video/mp4")', '');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'error'), waitForAndFail(video, 'canplay')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaContainerTypes("video/mp4")');
+        testExpected('video.canPlayType("audio/mp3")', '');
+        testExpected('video.canPlayType("video/mp4")', 'maybe');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'canplay'), waitForAndFail(video, 'error')]);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

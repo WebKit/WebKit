@@ -1,0 +1,53 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+VK_FILES = [
+    "VulkanExtensions.cpp",
+    "VulkanInterface.cpp",
+    "VulkanInterface.h",
+    "VulkanMemory.cpp",
+    "VulkanMemory.h",
+    "VulkanPreferredFeatures.cpp",
+    "VulkanUtilsPriv.cpp",
+    "VulkanUtilsPriv.h",
+    "VulkanMutableTextureStatePriv.h",
+    "VulkanMutableTextureState.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "_vk",
+    files = VK_FILES,
+)
+
+skia_cc_library(
+    name = "vk",
+    srcs = [
+        ":_vk_srcs",
+    ],
+    hdrs = [
+        ":_vk_hdrs",
+        "//include/gpu/vk:shared_public_hdrs",
+        "//include/private/gpu/vk:private_hdrs",
+    ],
+    features = ["layering_check"],
+    implementation_deps = [
+        "//include/third_party/vulkan",
+    ],
+    local_defines = ["SK_USE_INTERNAL_VULKAN_HEADERS"],
+    visibility = [
+        "//src/gpu/ganesh/vk:__pkg__",
+        "//src/gpu/graphite/vk:__pkg__",
+        "//src/gpu/vk/vulkanmemoryallocator:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/gpu",
+        "//src/sksl/codegen:spirv",
+    ],
+)

@@ -1,0 +1,11 @@
+
+
+PASS @media(width:100cqw) applies
+PASS @media(width:100cqi) applies
+PASS @media(width:100cqmax) applies
+PASS @media(height:100cqh) applies
+PASS @media(height:100cqb) applies
+PASS @media(height:100cqmin) applies
+PASS @media(width:90cqw) does not apply
+PASS @media(height:90cqh) does not apply
+

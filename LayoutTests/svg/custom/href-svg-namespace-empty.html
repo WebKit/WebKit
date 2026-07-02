@@ -1,0 +1,29 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        description("Test the possible cases of the svg href attribute value: null string, empty string and non-empty string.");
+
+        window.element = document.createElementNS("http://www.w3.org/2000/svg", "a");
+        shouldBeNull("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')");
+        shouldBeNull("window.element.getAttribute('href')");
+
+        window.element.setAttributeNS("http://www.w3.org/1999/xlink", "href", "www.webkit.org");
+        shouldBeEqualToString("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')", "www.webkit.org");
+        shouldBeEqualToString("window.element.getAttribute('href')",  "www.webkit.org");
+
+        window.element.setAttributeNS("http://www.w3.org/1999/xlink", "href", "");
+        shouldBeEmptyString("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')");
+        shouldBeEmptyString("window.element.getAttribute('href')");
+
+        window.element.setAttribute("href", "www.build.webkit.org");
+        shouldBeEqualToString("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')", "www.build.webkit.org");
+        shouldBeEqualToString("window.element.getAttribute('href')",  "www.build.webkit.org");
+
+        window.element.setAttribute("href", "");
+        shouldBeEmptyString("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')");
+        shouldBeEmptyString("window.element.getAttribute('href')");
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

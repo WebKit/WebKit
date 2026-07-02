@@ -1,0 +1,3 @@
+
+FAIL Extend selection in shadow tree promise_test: Unhandled rejection with value: object "InvalidStateError: extend() requires a Range to be added to the Selection"
+

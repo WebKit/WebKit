@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#ellipsizedText {
+    font-size: 300%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 50px;
+}
+</style>
+</head>
+<body>
+<p>Tests that computing the caret rectangle with respect to a fully truncated inline text box does not cause an assertion failure in a debug build. To run by hand, click the '...' (below). The test PASSED if we do not crash.</p>
+<div id="ellipsizedText">abc</div>
+<pre id="result">PASS did not crash.</pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    var ellipsizedText = document.getElementById("ellipsizedText");
+    UIHelper.wait(UIHelper.activateAt(ellipsizedText.offsetLeft, ellipsizedText.offsetTop));
+}
+</script>
+</body>
+</html>

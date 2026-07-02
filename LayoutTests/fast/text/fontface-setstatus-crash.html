@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style id="s">
+@font-face { font-family: x; src: url(nonexistent-font.woff); unicode-range: U+0042; }
+</style>
+</head>
+<body>
+<p>This tests that FontFaceSet.load does not crash when resolving the loaded
+promise triggers a thenable check whose getter removes a font-face rule.<br>
+WebKit should not crash or hit any assertions under ASAN.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    // JS-created face with a local source so it resolves synchronously.
+    let A = new FontFace('x', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+    document.fonts.add(A);
+
+    // Register a DeferredPromise on A.
+    void A.loaded;
+
+    let fired = false;
+    Object.defineProperty(FontFace.prototype, 'then', {
+        configurable: true,
+        get() {
+            if (!fired && this === A) {
+                fired = true;
+                // Allocate to help ASAN detect freed memory reuse.
+                new FontFace('y', 'local(Helvetica Bold)', { unicodeRange: 'U+0041' });
+                new FontFace('z', 'local(Helvetica Italic)', { unicodeRange: 'U+0041' });
+                // Remove the CSS @font-face rule and force style recalc.
+                // This frees the CSS-backed CSSFontFace while FontFaceSet::load
+                // still holds a raw reference to it in matchingFaces.
+                document.getElementById('s').sheet.deleteRule(0);
+                document.body.offsetTop;
+            }
+            return undefined;
+        }
+    });
+
+    // Loading 'AB' needs both U+0041 (from A) and U+0042 (from the CSS rule).
+    // A resolves synchronously, firing the thenable check getter above.
+    document.fonts.load('1em x', 'AB');
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+};
+</script>
+</body>
+</html>

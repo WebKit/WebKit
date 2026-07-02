@@ -1,0 +1,6 @@
+
+PASS Blob.stream() returns [NewObject]
+PASS Blob.text() returns [NewObject]
+PASS Blob.arrayBuffer() returns [NewObject]
+PASS Blob.bytes() returns [NewObject]
+

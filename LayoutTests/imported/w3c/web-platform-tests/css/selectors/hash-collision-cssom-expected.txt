@@ -1,0 +1,4 @@
+x x x x
+
+PASS Test string hash collision in bucketing
+

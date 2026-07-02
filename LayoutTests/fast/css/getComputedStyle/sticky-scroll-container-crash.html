@@ -1,0 +1,13 @@
+<style>
+#target {
+    position: -webkit-sticky;
+    top: 5%;
+}
+</style>
+<div id=target>This test passes if it doesn't crash</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+getComputedStyle(target).top;
+</script>

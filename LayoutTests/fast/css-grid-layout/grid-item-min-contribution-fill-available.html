@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="../css-intrinsic-dimensions/resources/width-keyword-classes.css" rel="stylesheet">
+<link href="resources/grid.css" rel="stylesheet">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<style>
+.inline-grid {
+    grid-template-columns: minmax(auto, 50px);
+}
+
+.content {
+    width: 100px;
+    height: 25px;
+}
+</style>
+</head>
+<body onload="checkLayout('.inline-grid')">
+<div class="inline-grid" data-expected-width="50">
+    <div class="fill-available"><div class="content"></div></div>
+</div>
+
+</body>
+</html>

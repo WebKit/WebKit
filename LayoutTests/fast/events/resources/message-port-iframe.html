@@ -1,0 +1,40 @@
+<script>
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+var port;
+function onMessage(evt) {
+    if (evt.data == "ping")
+        port.postMessage("pong");
+    else if (evt.data == "newPort")
+        evt.ports[0].postMessage("yo");
+    else if (evt.data == "newConversation")
+        if (evt.origin == "")
+            evt.ports[0].postMessage("hey");
+        else
+            alert("Incorrect security origin in conversation: '" + evt.origin + "'.");
+    else if (/alert.+/.test(evt.data))
+        alert(evt.data.substr(6));
+    else if (evt.data == "freeze")
+        while (1) {}
+    else if (evt.data == "closePort")
+        this.close();
+    else if (evt.data == "closeFrame") {
+        frameElement.parentNode.removeChild(frameElement);
+        gc();
+    }
+}
+
+window.addEventListener("message", function(evt) {
+    port = evt.ports[0];
+    port.onmessage = onMessage;
+    port.start();
+}, false);
+</script>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<p id="p1">This is a test.</p>
+<p id="p2">Second paragraph.</p>
+
+<script>
+if (accessibilityController) {
+    let output = "Tests that using the WebArea to retrieve AttributedStrings from element TextMarkerRanges works properly.\n\n";
+
+    let webArea = accessibilityController.rootElement.childAtIndex(0);
+    let text = accessibilityController.accessibleElementById("p1").childAtIndex(0);
+    let range1 = webArea.textMarkerRangeForElement(text);
+    output += `"${webArea.attributedStringForTextMarkerRange(range1)}"\n`;
+
+    // Include the word Second in p2.
+    let end = webArea.endTextMarkerForTextMarkerRange(range1);
+    for (let i = 0; i < 7; ++i)
+        end = webArea.nextTextMarker(end);
+    let range = webArea.textMarkerRangeForMarkers(webArea.startTextMarkerForTextMarkerRange(range1), end);
+    output += `"${webArea.attributedStringForTextMarkerRange(range)}"\n`;
+
+    // Get the string for both paragraphs together.
+    text = accessibilityController.accessibleElementById("p2").childAtIndex(0);
+    let range2 = webArea.textMarkerRangeForElement(text);
+    range = webArea.textMarkerRangeForMarkers(webArea.startTextMarkerForTextMarkerRange(range1), webArea.endTextMarkerForTextMarkerRange(range2));
+    output += `"${webArea.attributedStringForTextMarkerRange(range)}"\n`;
+
+    debug(output);
+}
+</script>
+</body>
+</html>

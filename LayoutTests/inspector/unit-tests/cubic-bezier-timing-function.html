@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("WI.CubicBezierTimingFunction");
+
+    suite.addTestCase({
+        name: "WI.CubicBezierTimingFunction.fromString.Valid",
+        test() {
+            let test = (inputString, expectedString) => {
+                expectedString ||= inputString;
+                InspectorTest.expectEqual(WI.CubicBezierTimingFunction.fromString(inputString).toString(), expectedString, `Should parse '${inputString}' as '${expectedString}'.`);
+            };
+
+            test("cubic-bezier(1, 2, 3, 4)");
+            test("cubic-bezier(0.1, 0.2, 0.3, 0.4)");
+            test("cubic-bezier(0.25, 0.1, 0.25, 1)", "ease");
+            test("cubic-bezier(0.42, 0, 1, 1)", "ease-in");
+            test("cubic-bezier(0, 0, 0.58, 1)", "ease-out");
+            test("cubic-bezier(0.42, 0, 0.58, 1)", "ease-in-out");
+            test("cubic-bezier(0, 0, 1, 1)", "linear");
+            test("ease");
+            test("ease-in");
+            test("ease-out");
+            test("ease-in-out");
+            test("linear");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.CubicBezierTimingFunction.fromString.Invalid",
+        test() {
+            let test = (inputString) => {
+                InspectorTest.expectNull(WI.CubicBezierTimingFunction.fromString(inputString), `Should not parse invalid '${inputString}'.`);
+            };
+
+            test("cubic-bezier()");
+            test("cubic-bezier(0)");
+            test("cubic-bezier(0, 1)");
+            test("cubic-bezier(0, 1, 2)");
+            test("cubic-bezier(\"test\")");
+            test("cubic-bezier(0, \"test\")");
+            test("cubic-bezier(0, 1, \"test\")");
+            test("cubic-bezier(0, 1, 2, \"test\")");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for WI.CubicBezierTimingFunction.</p>
+</body>
+</html>

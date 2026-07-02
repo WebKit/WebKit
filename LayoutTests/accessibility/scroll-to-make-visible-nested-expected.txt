@@ -1,0 +1,15 @@
+Tests that scrolling to make an element visible successfully scrolls multiple nested scrolling views'.
+
+PASS: window.pageYOffset === 0
+PASS: outerContainer.scrollTop === 0
+PASS: innerContainer.scrollTop === 0
+PASS: target.getBoundingClientRect().top >= 15000 === true
+PASS: window.innerHeight >= target.getBoundingClientRect().bottom === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+5000-pixel box
+5000-pixel box
+5000-pixel box
+Target

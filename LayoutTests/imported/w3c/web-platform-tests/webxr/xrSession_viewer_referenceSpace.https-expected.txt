@@ -1,0 +1,6 @@
+
+PASS Identity reference space provides correct poses for inline sessions - webgl
+PASS Identity reference space provides correct poses for inline sessions - webgl2
+PASS Identity reference space provides correct poses for immersive sessions - webgl
+PASS Identity reference space provides correct poses for immersive sessions - webgl2
+

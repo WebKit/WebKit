@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.eventSender) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            var divTarget = document.getElementById('target');
+            var divTargetBounds = divTarget.getBoundingClientRect();
+
+            divTarget.addEventListener('wheel', function() {
+                // Removing the div during event firing causes crash.
+                if (divTarget.parentNode)
+                    divTarget.parentNode.removeChild(divTarget);
+            });
+
+            if (!window.eventSender)
+                return;
+
+            await UIHelper.mouseWheelScrollAt(divTargetBounds.left + 10, divTargetBounds.top + 10, 0, -1, 0, -1);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <p>This test should not crash.<p>
+    <div id="parent" style="height: 2000px; width: 2000px;">
+        <div id="holder" class="scrollable_region">
+            <div id="target" style='overflow-y: auto; overflow-x: hidden; max-height: 350px;'>
+                <div style='height:1000px'>Wheel Here.</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

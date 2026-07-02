@@ -1,0 +1,3 @@
+
+PASS Test self.name in a shared worker
+

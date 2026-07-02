@@ -1,0 +1,33 @@
+# DEPS file for unit tests.
+
+deps = {
+  # === ANDROID_DEPS Generated Code Start ===
+
+  # Version must be updated.
+  'src/third_party/android_deps/libs/android_arch_core_common': {
+	  'packages': [
+	  {
+		  'package': 'chromium/third_party/android_deps/libs/android_arch_core_common',
+		  'version': 'version:0.9.0',
+	  },
+	  ],
+	  'condition': 'checkout_android',
+	  'dep_type': 'cipd',
+  },
+
+  # Missing here: android_arch_lifecycle_common. Must be added automatically.
+
+  # Missing in ref DEPS, must be removed automatically.
+  'src/third_party/android_deps/libs/android_arch_lifecycle_runtime': {
+      'packages': [
+          {
+              'package': 'chromium/third_party/android_deps/libs/android_arch_lifecycle_runtime',
+              'version': 'version:1.0.0-cr0',
+          },
+      ],
+      'condition': 'checkout_android',
+      'dep_type': 'cipd',
+  },
+  # === ANDROID_DEPS Generated Code End ===
+}
+

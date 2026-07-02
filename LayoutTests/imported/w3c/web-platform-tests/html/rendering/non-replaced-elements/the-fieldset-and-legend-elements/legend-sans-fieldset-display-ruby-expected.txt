@@ -1,0 +1,6 @@
+rubyrt
+rubyrt
+
+FAIL .ruby assert_equals: .ruby display expected "ruby" but got "block"
+FAIL .rt assert_equals: .rt display expected "ruby-text" but got "block"
+

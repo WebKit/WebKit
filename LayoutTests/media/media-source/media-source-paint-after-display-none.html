@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-stalled-holds-sleep-assertion</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+
+    var canvas;
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function requestVideoFramePromise(video) {
+        return new Promise(resolve => {
+            video.requestVideoFrameCallback(info => {
+                resolve(info);
+            });
+        });
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        var response = await fetch('content/test-red-3s-480x360.mp4');
+        let redMedia = await response.arrayBuffer();
+
+        response = await fetch('content/test-green-6s-320x240.mp4');
+        let greenMedia = await response.arrayBuffer();
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer('video/mp4');
+        sourceBuffer.appendBuffer(redMedia);
+        await Promise.all([
+            waitFor(sourceBuffer, 'update', true),
+            waitFor(video, 'canplay')
+        ]);
+
+        let createCanvas = () => {
+            canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth / 2;
+            canvas.height = video.videoHeight / 2;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas;
+        }
+
+        canvas = createCanvas();
+        await runUntil(
+            () => canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height),
+            () => canvas.getContext("2d").getImageData(1, 1, 1, 1).data[0] != 0,
+            5000);
+
+        testExpected('canvas.getContext("2d").getImageData(1, 1, 1, 1).data[0]', '128', '>');
+        testExpected('canvas.getContext("2d").getImageData(1, 1, 1, 1).data[1]', '128', '<');
+
+        run('video.style.display = "none"');
+        sourceBuffer.remove(0, video.duration);
+        await waitFor(sourceBuffer, 'update', true);
+
+        sourceBuffer.appendBuffer(greenMedia);
+        await Promise.all([
+            waitFor(sourceBuffer, 'update', true),
+            waitFor(video, 'canplay')
+        ]);
+
+
+        video.play();
+        await waitFor(video, 'playing');
+
+        canvas = createCanvas();
+        await runUntil(
+            () => canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height),
+            () => canvas.getContext("2d").getImageData(1, 1, 1, 1).data[1] != 0,
+            5000);
+
+        testExpected('canvas.getContext("2d").getImageData(1, 1, 1, 1).data[0]', '128', '<');
+        testExpected('canvas.getContext("2d").getImageData(1, 1, 1, 1).data[1]', '128', '>');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video muted playsinline></video>
+    <div id="canvases"></canvas>
+</body>
+</html>

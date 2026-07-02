@@ -1,0 +1,11 @@
+
+FAIL SVGLength DOM interface with CSS variable containing px unit assert_equals: expected 0 but got 1
+FAIL SVGLength DOM interface with CSS variable containing number assert_equals: expected 0 but got 1
+FAIL SVGLength DOM interface with CSS variable containing percentage assert_equals: expected 0 but got 1
+FAIL SVGLength DOM interface with invalid CSS variable assert_equals: expected 0 but got 1
+FAIL SVGLength DOM interface methods with CSS variables assert_equals: expected "var(--length-100px)" but got "0"
+FAIL SVGLength.convertToSpecifiedUnits with CSS variables assert_equals: expected "var(--length-100px)" but got "0"
+PASS SVGLength.newValueSpecifiedUnits with CSS variables
+FAIL SVGLength should handle detached elements gracefully for CSS variables assert_equals: expected 0 but got 1
+FAIL SVGLength should handle standalone lengths gracefully for CSS variables The string did not match the expected pattern.
+

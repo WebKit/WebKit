@@ -1,0 +1,5 @@
+
+FAIL selectionchange fires for single character deletion from contenteditable inline element assert_greater_than: selectionchange should fire when deleting single character from inline contenteditable expected a number greater than 1 but got 1
+FAIL selectionchange fires for single character deletion from nested contenteditable elements assert_greater_than: selectionchange should fire when deleting single character from nested contenteditable expected a number greater than 1 but got 1
+FAIL selectionchange fires for multi-character deletion from contenteditable inline element (baseline) assert_greater_than: selectionchange should fire when deleting multiple characters from inline contenteditable expected a number greater than 1 but got 1
+

@@ -1,0 +1,10 @@
+spec reference
+
+
+
+PASS default object size is 300x150
+FAIL default height is still 150 assert_equals: expected "150px" but got "200px"
+FAIL default width is still 300 assert_equals: expected "300px" but got "200px"
+PASS default object size after src is removed
+PASS default object size after poster is removed
+

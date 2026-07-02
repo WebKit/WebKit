@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+        var eventCount = 0;
+
+        function go()
+        {
+            findMediaElement();
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('video.src = findMediaFile("video", "content/test")');
+            waitForEventOnce('canplaythrough', canPlayThrough);
+        }
+
+        function canPlayThrough()
+        {
+            runWithKeyDown('video.play()');
+            runWithKeyDown('video.webkitSetPresentationMode("inline")');
+            runWithKeyDown('video.webkitSetPresentationMode("inline")');
+            endTest();
+        }
+    </script>
+</head>
+<body onload="go()">
+    <div>This tests that setting the presentation mode of a video element to inline when it is in inline will not crash.</div>
+    <video controls></video>
+</body>
+</html>

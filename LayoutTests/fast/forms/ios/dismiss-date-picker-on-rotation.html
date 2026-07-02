@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input type="date"></input>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that rotation dismisses a presented date picker.");
+
+    await UIHelper.activateElement(document.querySelector("input"));
+    await UIHelper.waitForContextMenuToShow();
+    testPassed("Presented date picker");
+
+    await UIHelper.rotateDevice("landscape-right");
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.waitForContextMenuToHide();
+    testPassed("Dismissed date picker on rotation");
+
+    await UIHelper.rotateDevice("portrait");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

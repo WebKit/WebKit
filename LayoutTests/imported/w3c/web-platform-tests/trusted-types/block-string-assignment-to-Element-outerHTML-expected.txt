@@ -1,0 +1,9 @@
+
+PASS outerHTML with html assigned via policy (successful HTML transformation).
+PASS `outerHTML = TrustedHTML` throws NoModificationAllowedError when parent is a document.
+PASS `outerHTML = string` throws.
+PASS `outerHTML = string` throws TypeError even when parent is a document.
+PASS `outerHTML = null` throws.
+PASS `outerHTML = string` assigned via default policy (successful HTML transformation).
+PASS `outerHTML = null` assigned via default policy does not throw
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html contenteditable="True">
+<head>
+<style type="text/css">
+
+@font-face {
+    font-family: FilicudiDummy-Barber;
+    src:url('FilicudiDummy-Barber.otf') format('opentype');
+}
+
+body {
+    height: 100%;
+    font-size: 100%;
+    /*font-size: 6em;*/
+    padding: 1em;
+    margin: 0px;
+}
+
+.code {
+    font-size: 1em;
+    font-family: 'SourceCodePro-Regular', 'Courier';
+}
+
+.example {
+    font-size: 4em;
+    /*letter-spacing: 5px;   /* For FF*/
+    margin: 0;
+    font-family: 'FilicudiDummy-Barber', 'Courier New';
+}
+
+
+
+</style>
+
+</head>
+<body>
+
+<p class="code">font-variant-ligatures: contextual; -moz-font-feature-settings: "calt";  -webkit-font-feature-settings: "calt"; font-feature-settings: "calt";</p>
+<p class="example" style='font-variant-ligatures: contextual; -moz-font-feature-settings: "calt";  -webkit-font-feature-settings: "calt"; font-feature-settings: "calt";'; >test test test test test test</p>
+<hr>
+
+<p class="code";>-moz-font-feature-settings: "calt";  -webkit-font-feature-settings: "calt"; font-feature-settings: "calt";</p>
+<p class="example" style='-moz-font-feature-settings: "calt";  -webkit-font-feature-settings: "calt"; font-feature-settings: "calt"'; >test test test test test test</p>
+<hr>
+
+<p class="code">font-variant-ligatures: contextual;</p>
+<p class="example", style='font-variant-ligatures: contextual;'; >test test test test test test</p>
+<hr>
+
+<p class="code">font-variant: contextual-alt-values;</p>
+<p class="example", style='font-variant: contextual-alt-values'; >test test test test test test</p>
+<hr>
+
+<p class="code">everything off</p>
+<p class="example">test test test test test test</p>
+<hr>
+
+</body>
+</html>
+
+
+
+    

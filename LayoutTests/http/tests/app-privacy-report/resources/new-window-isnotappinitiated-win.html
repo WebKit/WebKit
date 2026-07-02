@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+function askForAttribution() {
+    var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+    var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+    if (!didLoadNonAppInitiatedRequest) {
+        console.log("FAIL: Did not load non-app initiated request");
+        finishJSTest();
+        return;
+    }
+
+    if (didLoadAppInitiatedRequest) {
+        console.log("FAIL: Did load app initiated request");
+        finishJSTest();
+        return;
+    }
+
+    console.log("PASS: Successfully loaded only non-app-initiated window content");
+
+    finishJSTest();
+}
+
+onload = function() {
+    if (window.opener)
+        console.log("PASS: New window should have an opener");
+    else
+        console.log("FAIL: New window should have an opener");
+
+    openerByName = open("", "opener"); // Should return the opener.
+    if (openerByName === opener)
+        console.log("PASS: New window should be able to look up opener by name");
+    else
+        console.log("FAIL: New window should be able to look up opener by name");
+
+    askForAttribution();
+};
+</script>
+</body>
+</html>

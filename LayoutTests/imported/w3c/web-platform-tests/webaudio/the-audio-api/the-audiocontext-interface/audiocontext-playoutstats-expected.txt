@@ -1,0 +1,6 @@
+
+FAIL Test that the stats increase during playout promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'stats.totalFramesDuration')"
+FAIL Test that toJSON reflects the current stats promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'stats.totalFramesDuration')"
+FAIL Test PlayoutStats.resetLatency() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'stats.totalFramesDuration')"
+FAIL Test that stats are unchanged within the same execution cycle. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'stats.totalFramesDuration')"
+

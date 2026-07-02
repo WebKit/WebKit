@@ -1,0 +1,3 @@
+
+FAIL Disconnecting and reconnecting host during async fetch still applies styles. assert_equals: Before disconnection: expected 1 placeholder(s). expected 1 but got 0
+

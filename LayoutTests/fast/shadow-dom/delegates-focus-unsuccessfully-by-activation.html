@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+</head>
+<body>
+<p>This tests delegating focus in a shadow tree without a focusable element. WebKit should not crash.</p>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+
+const shadowRoot = host.attachShadow({mode: 'closed', delegatesFocus: true});
+shadowRoot.innerHTML = `hello`;
+host.addEventListener('click', complete);
+
+async function runTest() {
+    const hostRect = host.getBoundingClientRect();
+    await UIHelper.activateAt(hostRect.x + 5, hostRect.y + 5);
+    await UIHelper.ensurePresentationUpdate();
+    await new Promise(requestAnimationFrame);
+}
+
+function complete() {
+    host.outerHTML = 'PASS - WebKit did not crash';
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    UIHelper.wait(runTest());
+}
+
+</script>
+</body>
+</html>

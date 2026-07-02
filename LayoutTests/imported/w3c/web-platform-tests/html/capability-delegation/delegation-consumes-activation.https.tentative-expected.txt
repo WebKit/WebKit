@@ -1,0 +1,7 @@
+Test that capability delegation consumes transient user activation. https://wicg.github.io/capability-delegation/spec.html
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Capability delegation consumes transient user activation
+

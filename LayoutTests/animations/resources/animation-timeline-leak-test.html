@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+  @keyframes expand {
+    from { width: 100px; }
+    to { width: 200px; }
+  }
+
+  .test {
+    width: 0px;
+    animation-name: expand;
+    animation-duration: 1s;
+  }
+
+  #element_unknown_timeline {
+    animation-timeline: --unknown_timeline;
+  }
+</style>
+<div class=test id=element_unknown_timeline></div>
+<script>
+let elem = document.getElementById('element_unknown_timeline');
+getComputedStyle(elem).width;
+onload = () => parent.postMessage("iframeLoaded");
+</script>
+</body>
+</html>

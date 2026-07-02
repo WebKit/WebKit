@@ -1,0 +1,5 @@
+
+
+PASS Calling blur() on shadow host with delegatesFocus should remove the focus.
+PASS Calling blur() on shadow host with delegatesFocus when the focus is on a slotted element should not remove the focus.
+

@@ -1,0 +1,3 @@
+
+PASS Test that stream processing drains autorelease pool if needed for the platform
+

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Make sure that the same script URL can be loaded as a classic script after it was loaded as a module and failed decoding</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+setup({allow_uncaught_exception: true});
+</script>
+<script type="module" src="/html/semantics/scripting-1/the-script-element/serve-with-content-type.py?fn=resources/bom-utf-16be.js&ct=text/javascript"></script> <!-- Should fail decoding -->
+<script src="/html/semantics/scripting-1/the-script-element/serve-with-content-type.py?fn=resources/bom-utf-16be.js&ct=text/javascript"></script> <!-- Should succeed decoding -->
+<script type="module" src="/html/semantics/scripting-1/the-script-element/serve-with-content-type.py?fn=resources/bom-utf-16le.js&ct=text/javascript"></script> <!-- Should fail decoding -->
+<script>
+test(function() {
+  assert_not_equals(window.executed_utf16be_bom, undefined,
+                    'The bom-utf-16be.js classic script should have run');
+}, 'UTF-16 module script with UTF-16BE BOM, then loaded as classic script (sync)');
+
+async_test(function(t) {
+  let script = document.createElement("script");
+  script.src = "/html/semantics/scripting-1/the-script-element/serve-with-content-type.py?fn=resources/bom-utf-16le.js&ct=text/javascript"
+  script.onload = t.step_func_done(() => {
+    assert_not_equals(window.executed_utf16le_bom, undefined,
+                      'The bom-utf-16le.js classic script should have run');
+  });
+  document.body.append(script);
+}, 'UTF-16 module script with UTF-16LE BOM, then loaded as classic script (async)');
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+This test ensures we calculate the frame correctly for checkboxes (inclusive of switches) and radio buttons.
+
+#test-checkbox-without-label: {width: 12, height: 12}
+#test-radio-without-label: {width: 12, height: 12}
+#test-switch-without-label: {width: 41, height: 18}
+#test-checkbox: {width: 784, height: 19}
+#test-checkbox: {width: 784, height: 19}
+#test-checkbox-switch: {width: 784, height: 22}
+#test-role-checkbox: {width: 784, height: 18}
+#test-role-radio: {width: 784, height: 18}
+#test-role-switch: {width: 784, height: 18}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+Fake control.
+Fake control.
+Fake control.

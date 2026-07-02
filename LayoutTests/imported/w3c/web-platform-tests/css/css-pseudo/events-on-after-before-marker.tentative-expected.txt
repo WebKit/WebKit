@@ -1,0 +1,10 @@
+Test after
+Test before
+Test marker
+other element
+
+FAIL click on ::before/::after/::marker sets event.pseudoTarget promise_test: Unhandled rejection with value: object "TypeError: target.pseudo is not a function. (In 'target.pseudo(pseudoType)', 'target.pseudo' is undefined)"
+FAIL nested ::after::marker: click sets pseudoTarget and parent chain is correct promise_test: Unhandled rejection with value: object "TypeError: target.pseudo is not a function. (In 'target.pseudo("::after")', 'target.pseudo' is undefined)"
+FAIL click from ::after::marker to ::after fires on ::after with pseudoTarget promise_test: Unhandled rejection with value: object "TypeError: target.pseudo is not a function. (In 'target.pseudo("::after")', 'target.pseudo' is undefined)"
+FAIL click exiting ::after gives LCA as target and null pseudoTarget promise_test: Unhandled rejection with value: object "TypeError: afterHost.pseudo is not a function. (In 'afterHost.pseudo("::after")', 'afterHost.pseudo' is undefined)"
+

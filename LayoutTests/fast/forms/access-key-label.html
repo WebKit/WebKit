@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>accessKeyLabel attribute</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<button id="b1" accesskey="1"></button>
+<input id="i1" type="text" accessKey="e"></input>
+<input id="i2" type="text" accessKey="E"></input>
+<label id="l1" accessKey="a"></label>
+<button id="no-access-key"></button>
+<button id="empty-access-key" accesskey=""></button>
+<script>
+var element;
+var modifiers;
+if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+    modifiers = ["\u2303\u2325"];
+else
+    modifiers = ["Alt+"];
+
+function testElement(id, key) {
+    shouldBe(`document.getElementById("${id}").accessKeyLabel`, `modifiers + "${document.getElementById(id).accessKey}"`)
+}
+
+description("This test checks to see that accessKeyLabel attribute corresponds to the accessKey attribute");
+testElement("b1")
+testElement("i1")
+testElement("i2")
+testElement("l1")
+shouldBeEqualToString("document.getElementById('no-access-key').accessKeyLabel", '');
+shouldBeEqualToString("document.getElementById('empty-access-key').accessKeyLabel", '');
+</script>
+<p id="description"></p>
+<div id="console"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

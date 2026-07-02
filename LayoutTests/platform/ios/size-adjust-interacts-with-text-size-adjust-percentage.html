@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="match" href="size-adjust-interacts-with-text-size-adjust-percentage-ref.html">
+<title>Tests -webkit-text-size-adjust (percentage value) interaction with @font-face size-adjust.</title>
+<script>
+  if (window.internals) {
+      internals.settings.setTextAutosizingEnabled(true);
+  }
+</script>
+<style>
+@font-face {
+  font-family: base-font;
+  src: local(Ahem), url(/fonts/Ahem.ttf), local(Times);
+  size-adjust: 100%;
+}
+
+@font-face {
+  font-family: adjusted-font;
+  src: local(Ahem), url(/fonts/Ahem.ttf), local(Times);
+  size-adjust: 200%;
+}
+span {
+  font-size: 60px;
+}
+
+.base {
+  font-family: base-font;
+}
+.ffsa {
+  font-family: adjusted-font;
+}
+.tsa {
+    -webkit-text-size-adjust: 200%;
+}
+</style>
+
+<p>Without size-adjust or -webkit-text-size-adjust applied.</p>
+<div>
+  <span class="base">x</span>
+</div>
+
+<p>With size-adjust applied and -webkit-text-size-adjust not applied.</p>
+<div>
+  <span class="ffsa">x</span>
+</div>
+
+<p>With both size-adjust and -webkit-text-size-adjust applied.</p>
+<div>
+  <span class="ffsa tsa">x</span>
+</div>

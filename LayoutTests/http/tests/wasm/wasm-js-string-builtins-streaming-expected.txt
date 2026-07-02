@@ -1,0 +1,17 @@
+Test that WebAssembly.compileStreaming and .instantiateStreaming can accept compile options for JS String Builtins
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS compileStreaming with builtins option succeeded
+PASS instantiateStreaming with builtins option succeeded
+PASS compileStreaming without builtins, import via importObject succeeded
+PASS instantiateStreaming without builtins, import via importObject succeeded
+PASS compileStreaming with invalid options threw TypeError
+PASS instantiateStreaming with invalid options threw TypeError
+PASS compileStreaming with wrong builtin signature threw CompileError
+PASS instantiateStreaming with wrong builtin signature threw CompileError
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

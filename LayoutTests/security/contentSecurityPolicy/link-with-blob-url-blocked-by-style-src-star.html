@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test {
+    background-color: green;
+    height: 128px;
+    width: 128px;
+}
+</style>
+<meta http-equiv="Content-Security-Policy" content="style-src *">
+<script>
+function createLinkElementWithStylesheet(stylesheetURL)
+{
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = stylesheetURL;
+    return link;
+}
+
+var blobURL = window.URL.createObjectURL(new Blob(["#test { background-color: red !important; }"], {type: "text/css"}));
+document.head.appendChild(createLinkElementWithStylesheet(blobURL));
+</script>
+</head>
+<body>
+<p>This tests that loading a stylesheet with a blob URL is blocked when the page has Content Security Policy &quot;style-src *&quot;. This test PASSED if you see a green square below. Otherwise, it FAILED.</p>
+<div id="test"></div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        html::-webkit-scrollbar {
+            background: lightblue;
+            width: 50px;
+            height: 50px;
+        }
+        html::-webkit-scrollbar-thumb {
+            background: green;
+        }
+        html {
+            background: lightblue;
+            width: 500%;
+            height: 500%;
+            overflow: scroll;
+        }
+        p {
+            width: 300px;
+            will-change: transform;
+        }
+    </style>
+    <p>The scrollbar tracks should be the same color with the document background color (lightblue) if the main frame supports the custom scrollbar.</p>
+</html>

@@ -1,0 +1,80 @@
+/*
+ * Copyright (C) 2012 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@INJECTED_BUNDLE_API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitWebProcessExtension_h
+#define WebKitWebProcessExtension_h
+
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserMessage.h>
+#include <@API_INCLUDE_PREFIX@/WebKitWebPage.h>
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_WEB_PROCESS_EXTENSION            (webkit_web_process_extension_get_type())
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebProcessExtension, webkit_web_process_extension, WEBKIT, WEB_PROCESS_EXTENSION, GObject)
+
+/**
+ * WebKitWebProcessExtensionInitializeFunction:
+ * @extension: a #WebKitWebProcessExtension
+ *
+ * Type definition for a function that will be called to initialize
+ * the web extension when the web process starts.
+ *
+ * Since: 2.40
+ */
+typedef void (* WebKitWebProcessExtensionInitializeFunction) (WebKitWebProcessExtension *extension);
+
+/**
+ * WebKitWebProcessExtensionInitializeWithUserDataFunction:
+ * @extension: a #WebKitWebProcessExtension
+ * @user_data: a #GVariant
+ *
+ * Type definition for a function that will be called to initialize
+ * the web extensions when the web process starts, and which receives
+ * as additional argument the user data set with
+ * webkit_web_context_set_web_process_extensions_initialization_user_data().
+ *
+ * Since: 2.40
+ */
+typedef void (* WebKitWebProcessExtensionInitializeWithUserDataFunction) (WebKitWebProcessExtension *extension,
+                                                                          const GVariant            *user_data);
+
+WEBKIT_API WebKitWebPage *
+webkit_web_process_extension_get_page                       (WebKitWebProcessExtension *extension,
+                                                             guint64                    page_id);
+
+WEBKIT_API void
+webkit_web_process_extension_send_message_to_context        (WebKitWebProcessExtension *extension,
+                                                             WebKitUserMessage         *message,
+                                                             GCancellable              *cancellable,
+                                                             GAsyncReadyCallback        callback,
+                                                             gpointer                   user_data);
+
+WEBKIT_API WebKitUserMessage *
+webkit_web_process_extension_send_message_to_context_finish (WebKitWebProcessExtension  *extension,
+                                                             GAsyncResult               *result,
+                                                             GError                    **error);
+
+G_END_DECLS
+
+#endif

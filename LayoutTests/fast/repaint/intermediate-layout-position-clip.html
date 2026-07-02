@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        .float { float: right; height: 40px; width: 40px; }
+        .test { height: 200px; background-color: aliceblue }
+    </style>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
+            document.getElementById('target').style.height='20px';
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+    <div id="scroller" style="overflow: hidden; height: 40px">
+        <div class="test">
+            <div class="float"></div>
+            <div style="clear: right; padding-bottom: 10px;">
+                <div style="height: 40px; width: 40px; background-color: red;" id="target">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>scroller.scrollTop = 60;</script>
+</body>
+</html>

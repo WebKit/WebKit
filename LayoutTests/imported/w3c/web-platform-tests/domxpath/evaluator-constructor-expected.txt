@@ -1,0 +1,4 @@
+
+PASS Constructor with 'new'
+PASS Constructor without 'new'
+

@@ -1,0 +1,421 @@
+load("@rules_license//rules:license.bzl", "license")
+load("//bazel:gen_compile_flags_txt_linux_amd64.bzl", "gen_compile_flags_txt_linux_amd64")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+# https://opensource.google/documentation/reference/thirdparty/new_license_rules
+# https://github.com/bazelbuild/rules_license/blob/bcffeb0c481d178cbee69bdc7e23ef22d3a087b1/rules/license.bzl
+license(
+    name = "license",
+    license_kinds = ["@rules_license//licenses/generic:notice"],
+    license_text = "LICENSE",
+)
+
+licenses(["notice"])
+
+alias(
+    name = "core",
+    actual = "//src/core:core",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "pathops",
+    actual = "//src/pathops:pathops",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "mac_utils",
+    actual = "//src/utils/mac:mac_utils",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "ganesh_gl",
+    actual = "//src/gpu/ganesh/gl:ganesh_gl",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_egl_factory",
+    actual = "//src/gpu/ganesh/gl/egl:egl_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_epoxy_factory",
+    actual = "//src/gpu/ganesh/gl/epoxy:epoxy_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_glx_factory",
+    actual = "//src/gpu/ganesh/gl/glx:glx_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_ios_factory",
+    actual = "//src/gpu/ganesh/gl/iOS:ios_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_mac_factory",
+    actual = "//src/gpu/ganesh/gl/mac:mac_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_webgl_factory",
+    actual = "//src/gpu/ganesh/gl/webgl:webgl_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_gl_win_factory",
+    actual = "//src/gpu/ganesh/gl/win:win_factory",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_metal",
+    actual = "//src/gpu/ganesh/mtl:ganesh_metal",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ganesh_vulkan",
+    actual = "//src/gpu/ganesh/vk:ganesh_vulkan_novma",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "graphite_native_metal",
+    actual = "//src/gpu/graphite/mtl:graphite_native_metal",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "graphite_native_vulkan",
+    actual = "//src/gpu/graphite/vk:graphite_native_vulkan",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "bmp_decode_codec",
+    actual = "//src/codec:bmp_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "gif_decode_codec",
+    actual = "//src/codec:gif_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ico_decode_codec",
+    actual = "//src/codec:ico_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "jpeg_encode_codec",
+    actual = "//src/encode:jpeg_encode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "jpeg_decode_codec",
+    actual = "//src/codec:jpeg_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "jpegxl_decode_codec",
+    actual = "//src/codec:jpegxl_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_decode_codec",
+    actual = ":png_decode_libpng",
+    deprecation = "Please use the `png_decode_libpng` target instead.",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_decode_libpng",
+    actual = "//src/codec:png_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_decode_rust",
+    actual = "//src/codec:rust_png_decoder",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_encode_codec",
+    actual = ":png_encode_libpng",
+    deprecation = "Please use the `png_encode_libpng` target instead.",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_encode_libpng",
+    actual = "//src/encode:png_encode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "png_encode_rust",
+    actual = "//src/encode:rust_png_encoder",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "wbmp_decode_codec",
+    actual = "//src/codec:wbmp_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "webp_decode_codec",
+    actual = "//src/codec:webp_decode",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "webp_encode_codec",
+    actual = "//src/encode:webp_encode",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "fontmgr_empty_freetype",
+    actual = "//src/ports:fontmgr_empty_freetype",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_coretext",
+    actual = "//src/ports:fontmgr_coretext",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_data_freetype",
+    actual = "//src/ports:fontmgr_data_freetype",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_directory_freetype",
+    actual = "//src/ports:fontmgr_directory_freetype",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "freetype_support",
+    actual = "//src/ports:freetype_support",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_fontconfig",
+    actual = "//src/ports:fontmgr_fontconfig",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_android",
+    actual = "//src/ports:fontmgr_android",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fontmgr_empty_fontations",
+    actual = "//src/ports:fontmgr_fontations_empty",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "typeface_coretext",
+    actual = "//src/ports:coretext_typeface",
+    visibility = ["//visibility:public"],
+)
+###
+
+alias(
+    name = "pdf_writer",
+    actual = "//src/pdf:pdf",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "pdf_jpeg_helpers",
+    actual = "//src/pdf:jpeg_helpers",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skottie",
+    actual = "//modules/skottie:skottie",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skparagraph_harfbuzz_skunicode",
+    actual = "//modules/skparagraph:skparagraph_harfbuzz_skunicode",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skshaper_core",
+    actual = "//modules/skshaper:skshaper_core_and_utils",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "skshaper_coretext",
+    actual = "//modules/skshaper:skshaper_coretext",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "skshaper_harfbuzz",
+    actual = "//modules/skshaper:skshaper_harfbuzz",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "skshaper_unicode",
+    actual = "//modules/skshaper:skshaper_unicode",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skresources",
+    actual = "//modules/skresources:skresources",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+# Allows Skia to take an SVG in as an input
+alias(
+    name = "svg_renderer",
+    actual = "//modules/svg:svg_renderer",
+    visibility = ["//visibility:public"],
+)
+
+# Allows Skia to draw to an SVG
+alias(
+    name = "svg_writer",
+    actual = "//src/svg:svg",
+    visibility = ["//visibility:public"],
+)
+
+###
+
+alias(
+    name = "skunicode_core",
+    actual = "//modules/skunicode:skunicode_core",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "skunicode_icu",
+    actual = "//modules/skunicode:skunicode_icu",
+    visibility = ["//visibility:public"],
+)
+
+# Load bearing comment below - gazelle looks here (and not in any other BUILD.bazel files)
+# for a special comment indicating the prefix.
+# gazelle:prefix go.skia.org/skia
+
+test_suite(
+    name = "all_go_tests",
+    tests = [
+        # Go tests in this list will be tested in CI. Please add any new Go tests to this suite.
+        "//bazel/device_specific_configs:device_specific_configs_test",
+        "//bazel/exporter:exporter_test",
+        "//infra/bots/task_drivers/common:common_test",
+        "//infra/bots/task_drivers/perf_puppeteer_canvas:perf_puppeteer_canvas_test",
+        "//infra/bots/task_drivers/perf_puppeteer_render_skps:perf_puppeteer_render_skps_test",
+        "//infra/bots/task_drivers/perf_puppeteer_skottie_frames:perf_puppeteer_skottie_frames_test",
+    ],
+)
+
+# Generates a compile_flags.txt file for use with clangd against the Bazel-downloaded Linux AMD64
+# clang hermetic toolchain.
+#
+# This command prints to standard output a compile_flags.txt file that can be used with clangd to
+# enable autocompletion on editors that support it. See:
+# https://clangd.llvm.org/design/compile-commands.
+#
+# Note that this is implemented on a best effort basis. The produced compile_flags.txt file will
+# contain the subset of flags used by most targets, but some targets might require additional
+# flags. If that's the case, please manually add them to your compile_flags.txt file.
+#
+# Sample usage:
+#
+#     $ bazel run //:gen_compile_flags_txt_linux_amd64 > compile_flags.txt
+#
+# Invoke with --config=<some config> to generate flags with the defines and includes required for
+# your build. For example, if you build your binary as follows:
+#
+#     $ bazel build //path/to:binary --config=gl_ganesh
+#
+# Then your compile_flags.txt file should be generated with:
+#
+#     $ bazel run //:gen_compile_flags_txt_linux_amd64 --config=gl_ganesh > compile_flags.txt
+#
+# This was tested with Visual Studio Code and the clangd extension:
+# https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.vscode-clangd.
+gen_compile_flags_txt_linux_amd64(
+    name = "gen_compile_flags_txt_linux_amd64",
+)
+
+######
+# go #
+######
+
+# Sample usage: "bazel run //:go -- generate ./...".
+alias(
+    name = "go",
+    actual = "@rules_go//go",
+    visibility = ["//visibility:public"],
+)
+
+##############
+# buildifier #
+##############
+
+# Sample usage: "bazel run //:buildifier".
+alias(
+    name = "buildifier",
+    actual = "//bazel:buildifier",
+)

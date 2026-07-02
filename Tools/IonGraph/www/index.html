@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<head>
+  <title>iongraph</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./standalone.css">
+</head>
+
+<body>
+  <script type="module">
+    import { WebUI } from "./main.js";
+
+    new EventSource('/esbuild').addEventListener('change', () => location.reload());
+
+    const ui = new WebUI();
+    document.body.appendChild(ui.root);
+
+    console.log("To show the tweaks panel, run showTweaks().");
+    window.showTweaks = () => {
+      document.querySelector("body").appendChild(window.tweaks.container);
+    };
+  </script>
+</body>

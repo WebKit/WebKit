@@ -1,0 +1,9 @@
+This test ensures we report the proper speech hints after dynamic page changes.
+
+PASS: text.speakAs === 'normal'
+PASS: text.speakAs === 'spell-out'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text

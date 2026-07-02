@@ -1,0 +1,3 @@
+PASS: Has selection after long press
+PASS: Selection expanded after dragging handle down
+

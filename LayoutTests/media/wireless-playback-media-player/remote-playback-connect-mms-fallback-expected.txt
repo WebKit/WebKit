@@ -1,0 +1,10 @@
+Test that a 'connect' event is dispatched when a MediaDeviceRoute activates for a video element with an MMS source and an AirPlay-compatible source.
+
+EXPECTED (video.remote.state == 'disconnected') OK
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EVENT(connect)
+END OF TEST
+

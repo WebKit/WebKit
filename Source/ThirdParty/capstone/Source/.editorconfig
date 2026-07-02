@@ -1,0 +1,22 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[*.{py,pyx,pxd}]
+indent_style = space
+indent_size = 4
+
+# Follow Linux kernel coding style
+[*.{c,h,cpp,hpp,inc}]
+indent_style = tab
+indent_size = 8
+
+# OCaml bindings
+[*.ml]
+indent_style = tab
+indent_size = 4
+
+[Makefile]
+indent_style = tab

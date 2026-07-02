@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+.test {
+    display: flex;
+    direction: rtl;
+}
+.content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+<p>Tests that preferred width for content with an empty inline-block is computed correctly.</p>
+<script>
+function test(description, inlineBlockStyle) {
+    var container = document.createElement('div');
+    container.className = 'test';
+    var content = document.createElement('div');
+    content.className = 'content';
+    var inlineBlock = document.createElement('div');
+    inlineBlock.style.cssText = 'display: inline-block;' + (inlineBlockStyle || '');
+    content.appendChild(inlineBlock);
+    content.appendChild(document.createTextNode('mr.'));
+    container.appendChild(content);
+    document.body.appendChild(container);
+
+    document.body.offsetHeight;
+
+    var lines = content.getClientRects();
+    var result = lines.length === 1 ? 'PASS' : 'FAIL (got ' + lines.length + ' lines)';
+    var p = document.createElement('p');
+    p.textContent = result + ': ' + description;
+    document.body.appendChild(p);
+    container.remove();
+}
+
+test('empty inline-block with no styles');
+test('empty inline-block with width: 0', 'width: 0;');
+test('empty inline-block with padding', 'padding: 2px;');
+test('empty inline-block with border', 'border: 1px solid;');
+test('empty inline-block with margin', 'margin: 5px;');
+test('empty inline-block with explicit size 0x0', 'width: 0; height: 0;');
+test('empty inline-block with width: 10px', 'width: 10px;');
+test('empty inline-block with height: 20px', 'height: 20px;');
+test('empty inline-block with width: 50%', 'width: 50%;');
+test('empty inline-block with width: auto', 'width: auto;');
+test('empty inline-block with width: min-content', 'width: min-content;');
+test('empty inline-block with width: max-content', 'width: max-content;');
+test('empty inline-block with width: fit-content', 'width: fit-content;');
+</script>

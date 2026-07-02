@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include "WebPopupItem.h"
+#include <WebCore/PopupMenu.h>
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+class PopupMenuClient;
+}
+
+namespace WebKit {
+
+class WebPage;
+struct PlatformPopupMenuData;
+struct WebPopupItem;
+
+class WebPopupMenu : public WebCore::PopupMenu {
+public:
+    static Ref<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
+    ~WebPopupMenu();
+
+    WebPage* NODELETE page();
+
+    void disconnectFromPage() { m_page = nullptr; }
+#if !PLATFORM(IOS_FAMILY)
+    void didChangeSelectedIndex(int newIndex);
+#endif
+#if !PLATFORM(COCOA)
+    void setTextForIndex(int newIndex);
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    WebCore::PopupMenuClient* client() const { return m_popupClient.get(); }
+#endif
+
+    void show(const WebCore::IntRect&, WebCore::LocalFrameView&, int selectedIndex) override;
+    void hide() override;
+    void updateFromElement() override;
+    void disconnectClient() override;
+
+private:
+    WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);
+
+    Vector<WebPopupItem> populateItems();
+    void setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData&);
+
+    RefPtr<WebCore::PopupMenuClient> m_popupClient;
+    WeakPtr<WebPage> m_page;
+};
+
+} // namespace WebKit

@@ -1,0 +1,37 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Composited
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 2210.00)
+  (visible rect 0.00, 1610.00 800.00 x 600.00)
+  (coverage rect 0.00, 1610.00 800.00 x 600.00)
+  (intersects coverage rect 1)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 2210.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (visible rect 0.00, 1610.00 800.00 x 600.00)
+      (coverage rect 0.00, 1610.00 800.00 x 600.00)
+      (intersects coverage rect 1)
+      (contentsScale 2.00)
+      (children 1
+        (GraphicsLayer
+          (position 0.00 2010.00)
+          (bounds 800.00 200.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 800.00 x 200.00)
+          (coverage rect 0.00, -400.00 800.00 x 600.00)
+          (intersects coverage rect 1)
+          (contentsScale 2.00)
+        )
+      )
+    )
+  )
+)
+

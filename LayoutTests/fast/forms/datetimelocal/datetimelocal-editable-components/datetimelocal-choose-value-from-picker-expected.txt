@@ -1,0 +1,24 @@
+Tests that choosing a value using the date/time picker does not unexpectedly add or remove second and millisecond fields.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing empty input with no step value.
+PASS emptyInput.offsetWidth === emptyInputOriginalWidth is true
+
+Testing empty input with step attribute precise to seconds.
+PASS emptyInputWithSecondStep.offsetWidth === emptyInputWithSecondStepOriginalWidth is true
+
+Testing empty input with step attribute precise to milliseconds.
+PASS emptyInputWithMillisecondStep.offsetWidth === emptyInputWithMillisecondStepOriginalWidth is true
+
+Testing input with a value that contains seconds.
+PASS inputWithSecondsValue.offsetWidth === inputWithSecondsValueOriginalWidth is true
+
+Testing input with a value that contains milliseconds.
+PASS inputWithMillisecondsValue.offsetWidth === inputWithMillisecondsValueOriginalWidth is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

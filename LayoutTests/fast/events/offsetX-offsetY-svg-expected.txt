@@ -1,0 +1,3 @@
+
+PASS MouseEvent.offsetX/offsetY for an SVG element is always relative to the outermost <svg> CSS layout box
+

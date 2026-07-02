@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DETAILS} at (0,0) size 784x42
+        RenderListItem {SUMMARY} at (0,0) size 784x20
+          RenderListMarker at (0,0) size 14x19: "\x{25BE}"
+          RenderText {#text} at (13,0) size 51x19
+            text run at (13,0) width 51: "details1"
+        RenderBlock {SLOT} at (0,20) size 784x22
+          RenderTextControl {INPUT} at (0,0) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DETAILS} at (0,41) size 784x21
+        RenderListItem {SUMMARY} at (0,0) size 784x20
+          RenderListMarker at (0,0) size 14x19: "\x{25B8}"
+          RenderText {#text} at (13,0) size 51x19
+            text run at (13,0) width 51: "details2"
+layer at (15,31) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15

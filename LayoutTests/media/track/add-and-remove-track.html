@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../video-test.js></script>
+        <script>
+            function test()
+            {
+                findMediaElement();
+
+                var tracks = document.querySelectorAll('track');
+                for (var ndx = 0; ndx < tracks.length; ++ndx)
+                    video.removeChild(tracks[ndx]);
+                for (var ndx = 0; ndx < tracks.length; ++ndx)
+                    video.appendChild(tracks[ndx]);
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="test()">
+        <p>Tests that removing a &lt;track&gt; element and adding it again does not crash.</p>
+        <p>If this test does not crash, it passes.</p>
+        <video width="500" height="300" controls>
+            <track src="captions-webvtt/simple-captions.vtt" >
+            <track src="captions-webvtt/simple-captions.vtt" >
+            <track src="captions-webvtt/simple-captions.vtt" >
+            <track src="captions-webvtt/simple-captions.vtt" >
+        </video>
+    </body>
+</html>

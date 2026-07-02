@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script>
+  window.testRunner?.dumpAsText();
+  onload = function() {
+    const numberOfBitsForconnectedSubframeCount = 10;
+    const connectedSubframeCount =
+      (1 << numberOfBitsForconnectedSubframeCount) + 1;
+    for (let i = 0; i < connectedSubframeCount; i++)
+      document.body.insertAdjacentHTML("beforeend", `<iframe srcdoc="" loading="lazy"></iframe>`);
+    document.body.innerHTML = "PASS, if no crash or assertion."
+  }
+</script>

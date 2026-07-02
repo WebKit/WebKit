@@ -1,0 +1,112 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+PDF_FILES = [
+    "SkBitmapKey.h",
+    "SkClusterator.cpp",
+    "SkClusterator.h",
+    "SkDeflate.cpp",
+    "SkDeflate.h",
+    "SkKeyedImage.cpp",
+    "SkKeyedImage.h",
+    "SkPDFBitmap.cpp",
+    "SkPDFBitmap.h",
+    "SkPDFDevice.cpp",
+    "SkPDFDevice.h",
+    "SkPDFDocument.cpp",
+    "SkPDFDocumentPriv.h",
+    "SkPDFFont.cpp",
+    "SkPDFFont.h",
+    "SkPDFFormXObject.cpp",
+    "SkPDFFormXObject.h",
+    "SkPDFGlyphUse.h",
+    "SkPDFGradientShader.cpp",
+    "SkPDFGradientShader.h",
+    "SkPDFGraphicStackState.cpp",
+    "SkPDFGraphicStackState.h",
+    "SkPDFGraphicState.cpp",
+    "SkPDFGraphicState.h",
+    "SkPDFMakeCIDGlyphWidthsArray.cpp",
+    "SkPDFMakeCIDGlyphWidthsArray.h",
+    "SkPDFMakeToUnicodeCmap.cpp",
+    "SkPDFMakeToUnicodeCmap.h",
+    "SkPDFMetadata.cpp",
+    "SkPDFMetadata.h",
+    "SkPDFResourceDict.cpp",
+    "SkPDFResourceDict.h",
+    "SkPDFShader.cpp",
+    "SkPDFShader.h",
+    "SkPDFSubsetFont.cpp",
+    "SkPDFSubsetFont.h",
+    "SkPDFTag.cpp",
+    "SkPDFTag.h",
+    "SkPDFType1Font.cpp",
+    "SkPDFType1Font.h",
+    "SkPDFTypes.cpp",
+    "SkPDFTypes.h",
+    "SkPDFUnion.h",
+    "SkPDFUtils.cpp",
+    "SkPDFUtils.h",
+    "SkUUID.h",
+]
+
+split_srcs_and_hdrs(
+    name = "_pdf",
+    files = PDF_FILES,
+)
+
+skia_cc_library(
+    name = "pdf",
+    srcs = [
+        ":_pdf_hdrs",
+        ":_pdf_srcs",
+    ],
+    hdrs = [
+        "//include/docs:pdf_hdrs",
+    ],
+    features = ["layering_check"],
+    implementation_deps = [
+        "@zlib",
+    ] +
+    # We have this harfbuzz dependency all by itself because we need to turn this into a
+    # select statement when rolling into G3.
+    [
+        "@harfbuzz",
+    ],
+    local_defines = ["SK_PDF_USE_HARFBUZZ_SUBSET"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//:pathops",
+        "//src/codec:codec_support_priv",
+        "//src/encode:icc_support",
+        "//src/core:core_priv",
+        "//src/utils:clip_stack_utils",
+        "//src/utils:float_to_decimal",
+        "//modules/skcms",
+        # TODO(kjlubick) Remove this dependency after migrating clients
+        ":jpeg_helpers",
+    ],
+)
+
+skia_cc_library(
+    name = "jpeg_helpers",
+    hdrs = [
+        "//include/docs:pdf_hdrs",
+        "//include/docs:pdf_jpeg_hdrs",
+    ],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//:jpeg_decode_codec",
+        "//:jpeg_encode_codec",
+        "//src/base",
+    ],
+)

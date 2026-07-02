@@ -1,0 +1,5 @@
+%compile_commands.json
+%h -x
+%h c++-header
+%h --include=config.h
+%cpp --include=config.h

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-abort</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests that abort() properly resets parser state, allowing a new
+    // init segment and media segment to be appended successfully.
+    // This exercises the real SourceBufferParserWebM reset path.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+
+        // First: append init + media normally
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        var media1 = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media1);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.05);
+
+        // Abort resets the parser state
+        run('sourceBuffer.abort()');
+        testExpected('sourceBuffer.updating', false);
+
+        // After abort, re-send init + new media segment
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        var media2 = WebM.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 2000, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media2);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Should now have [0, 4) — original 2s + new 2s contiguous
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.05);
+        testExpected('source.readyState', 'open');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>Tests abort() followed by re-initialization through the real WebM parser pipeline.</div>
+    <video></video>
+</body>
+</html>

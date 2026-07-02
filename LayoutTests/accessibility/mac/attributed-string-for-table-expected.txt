@@ -1,0 +1,26 @@
+This test ensures we return the right attributes for text within tables.
+
+Attributes in range {0, 14}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+AXTable: {present}
+Attributes in range {14, 18}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+Cell 1	Cell 2
+Text outside table
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Cell 1	Cell 2
+Text outside table

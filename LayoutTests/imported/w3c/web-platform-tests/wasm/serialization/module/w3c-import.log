@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/broadcastchannel-success-and-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/broadcastchannel-success.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/cross-origin-module-sharing-fails.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/identity-not-preserved.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/incrementer.wasm
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/no-transferring.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-history.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-idb.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/serialization-via-notifications-api.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/share-module-cross-origin-fails.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/window-domain-success.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/window-messagechannel-success.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/window-serviceworker-failure.https.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/window-sharedworker-failure.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/window-similar-but-cross-origin-success.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/module/window-simple-success.html

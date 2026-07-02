@@ -1,0 +1,8 @@
+Test
+
+PASS Sanity check
+PASS Attribute in null-namespace is substituted
+PASS Fallback is taken when attribute does not exist in null-namespace
+PASS Attribute in null-namespace is substituted (JS)
+PASS Fallback is taken when attribute does not does exist in null-namespace (JS)
+

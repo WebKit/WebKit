@@ -1,0 +1,5 @@
+This tests mutating autocorrect and autocapitalize IDL attributes inside a connected callback.
+WebKit should not hit a release assertion.
+
+PASS
+

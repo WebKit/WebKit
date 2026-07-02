@@ -1,0 +1,5 @@
+
+LCP: Web Font Styled Text Resize
+
+PASS LCP should be not updated if the web font styled text resize occurs after an interaction happens
+

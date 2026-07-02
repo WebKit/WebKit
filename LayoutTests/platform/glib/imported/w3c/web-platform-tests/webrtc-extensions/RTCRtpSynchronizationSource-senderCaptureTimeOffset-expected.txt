@@ -1,0 +1,12 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT [audio] getSynchronizationSources() should not contain senderCaptureTimeOffset if absolute capture time RTP header extension is not offered Test timed out
+NOTRUN [audio] getSynchronizationSources() should not contain senderCaptureTimeOffset if absolute capture time RTP header extension is offered, but not answered
+NOTRUN [audio] getSynchronizationSources() should contain senderCaptureTimeOffset if absolute capture time RTP header extension is negotiated
+NOTRUN [video] getSynchronizationSources() should not contain senderCaptureTimeOffset if absolute capture time RTP header extension is not offered
+NOTRUN [video] getSynchronizationSources() should not contain senderCaptureTimeOffset if absolute capture time RTP header extension is offered, but not answered
+NOTRUN [video] getSynchronizationSources() should contain senderCaptureTimeOffset if absolute capture time RTP header extension is negotiated
+NOTRUN Audio and video RTCRtpSynchronizationSource.senderCaptureTimeOffset must be zero
+

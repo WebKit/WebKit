@@ -1,0 +1,3 @@
+
+FAIL NavigationHistoryEntry properties after detach assert_equals: expected (string) "" but got (object) null
+

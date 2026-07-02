@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that media session interruption does not cause AudioContext.suspend() to throw");
+jsTestIsAsync = true;
+
+let didResolveSuspendPromise = false;
+
+function didEndInterruption()
+{
+    testPassed("Did end interruption");
+    context.onstatechange = null;
+    // Interruption has ended but the script has called suspend() so we should move to "suspended"
+    // state.
+    shouldBeEqualToString("context.state", "suspended");
+    shouldBeTrue("didResolveSuspendPromise");
+
+    setTimeout(() => {
+        shouldBeEqualToString("context.state", "suspended");
+
+        context.resume().then(() => {
+            testPassed("resume() promise was resolved");
+            shouldBeEqualToString("context.state", "running");
+            finishJSTest();
+        }, (e) => {
+            testFailed("context.resume() call after uninterrupted threw an unexpected exception: " + e);
+            finishJSTest();
+        });
+    }, 10);
+}
+
+function didBeginInterruption()
+{
+    testPassed("Did begin interruption");
+    context.onstatechange = null;
+    shouldBeEqualToString("context.state", "interrupted");
+    context.suspend().then(() => {
+        testPassed("context.suspend() promise was resolved");
+        didResolveSuspendPromise = true;
+    }, (e) => {
+        testFailed("context.suspend() call while interrupted threw an unexpected exception: " + e);
+        finishJSTest();
+    });
+
+    shouldBeEqualToString("context.state", "interrupted");
+    shouldBeFalse("didResolveSuspendPromise");
+    setTimeout(() => {
+        shouldBeEqualToString("context.state", "interrupted");
+        shouldBeFalse("didResolveSuspendPromise");
+
+        context.onstatechange = didEndInterruption;
+        if (window.internals)
+            evalAndLog("internals.endMediaSessionInterruption('mayresumeplaying')");
+    }, 10);
+}
+
+function didStartRendering()
+{
+    testPassed("Did start rendering");
+    context.onstatechange = didBeginInterruption;
+    if (window.internals)
+        evalAndLog("internals.beginMediaSessionInterruption('enteringbackground')");
+}
+
+let context = new AudioContext;
+var source = context.createConstantSource();
+source.connect(context.destination);
+
+context.onstatechange = didStartRendering;
+source.start();
+</script>
+</html>

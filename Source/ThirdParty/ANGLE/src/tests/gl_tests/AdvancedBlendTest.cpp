@@ -1,0 +1,565 @@
+//
+// Copyright 2024 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
+#include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
+
+using namespace angle;
+
+constexpr int kPixelColorThreshhold = 8;
+
+class AdvancedBlendTest : public ANGLETest<>
+{
+  protected:
+    AdvancedBlendTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setExtensionsEnabled(false);
+    }
+
+    void callBlendBarrier(APIExtensionVersion usedExtension);
+    void testAdvancedBlendNotAppliedWhenBlendIsDisabled(APIExtensionVersion usedExtension);
+    void testAdvancedBlendDisabledAndThenEnabled(APIExtensionVersion usedExtension);
+    void testAdvancedBlendEnabledAndThenDisabled(APIExtensionVersion usedExtension);
+};
+
+class AdvancedBlendTestES32 : public AdvancedBlendTest
+{};
+
+// Test that advanced blend cannot be used when a non-zero draw buffer is enabled.
+TEST_P(AdvancedBlendTest, NonZeroDrawBufferDisallowed)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    std::array<GLRenderbuffer, 4> rbo;
+    for (uint32_t i = 0; i < 4; ++i)
+    {
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo[i]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 1, 1);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
+                                  rbo[i]);
+    }
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    GLenum enabled[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2,
+                         GL_COLOR_ATTACHMENT3};
+    glDrawBuffers(4, enabled);
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+void main()
+{
+    switch (gl_VertexID)
+    {
+        case 0:  gl_Position = vec4(-1, -1, 0, 1); break;
+        case 1:  gl_Position = vec4( 3, -1, 0, 1); break;
+        default: gl_Position = vec4(-1, 3, 0, 1); break;
+    }
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_KHR_blend_equation_advanced : require
+layout (blend_support_multiply) out;
+precision mediump float;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(1., 0., 0., 1.);
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_MULTIPLY_KHR);
+
+    // Invalid draw because all 4 draw buffers are enabled.
+    ASSERT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    enabled[1] = GL_NONE;
+    enabled[2] = GL_NONE;
+    glDrawBuffers(4, enabled);
+
+    // Still invalid because draw buffer #3 is enabled.
+    ASSERT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    enabled[0] = GL_NONE;
+    enabled[1] = GL_COLOR_ATTACHMENT1;
+    enabled[3] = GL_NONE;
+    glDrawBuffers(4, enabled);
+
+    // Even though a single draw buffer is enabled, it's not index 0 so it's still invalid
+    ASSERT_GL_NO_ERROR();
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    enabled[0] = GL_COLOR_ATTACHMENT0;
+    enabled[1] = GL_NONE;
+    glDrawBuffers(4, enabled);
+
+    // When only color attachment 0 is enabled, the draw is valid.
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // It's also ok to render to multiple attachments if blend is not enabled on the attachment that
+    // has advanced blend..
+    if (EnsureGLExtensionEnabled("GL_OES_draw_buffers_indexed"))
+    {
+        // Enable two attachments
+        enabled[1] = GL_COLOR_ATTACHMENT1;
+        glDrawBuffers(4, enabled);
+
+        // Enable blend only on attachment 0
+        glDisable(GL_BLEND);
+        glEnableiOES(GL_BLEND, 0);
+        glDisableiOES(GL_BLEND, 1);
+
+        // Set advanced blend on the attachment that has blend disabled.  Set a non-advanced blend
+        // on the one that has blend enabled.
+        glBlendEquationiOES(0, GL_FUNC_ADD);
+        glBlendFunciOES(0, GL_ONE, GL_ONE);
+        glBlendEquationiOES(1, GL_MULTIPLY_KHR);
+
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+
+        // If advanced blend is enabled on a NONE attachment, that's also ok.
+        enabled[1] = GL_NONE;
+        glDrawBuffers(4, enabled);
+        glEnableiOES(GL_BLEND, 1);
+
+        glClearColor(0, 0, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+    }
+}
+
+void AdvancedBlendTest::callBlendBarrier(APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::Core || usedExtension == APIExtensionVersion::KHR);
+    if (usedExtension == APIExtensionVersion::KHR)
+    {
+        glBlendBarrierKHR();
+    }
+    else
+    {
+        glBlendBarrier();
+    }
+}
+
+void AdvancedBlendTest::testAdvancedBlendNotAppliedWhenBlendIsDisabled(
+    APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::Core || usedExtension == APIExtensionVersion::KHR);
+
+    constexpr char kGLSLVersion30[] = R"(#version 300 es
+)";
+    constexpr char kGLSLVersion32[] = R"(#version 320 es
+)";
+    constexpr char kBlendKHR[]      = R"(#extension GL_KHR_blend_equation_advanced : require
+)";
+
+    std::string vertSrc;
+    std::string fragSrc;
+
+    if (usedExtension == APIExtensionVersion::KHR)
+    {
+        vertSrc.append(kGLSLVersion30);
+        fragSrc.append(kGLSLVersion30);
+        fragSrc.append(kBlendKHR);
+    }
+    else
+    {
+        vertSrc.append(kGLSLVersion32);
+        fragSrc.append(kGLSLVersion32);
+    }
+
+    constexpr char kVertSrcBody[] = R"(
+        in highp vec4 a_position;
+        in mediump vec4 a_color;
+        out mediump vec4 v_color;
+        void main()
+        {
+            gl_Position = a_position;
+            v_color = a_color;
+        }
+    )";
+    vertSrc.append(kVertSrcBody);
+
+    constexpr char kFragSrcBody[] = R"(
+        in mediump vec4 v_color;
+        layout(blend_support_colorburn) out;
+        layout(location = 0) out mediump vec4 o_color;
+        void main()
+        {
+            o_color = v_color;
+        }
+    )";
+    fragSrc.append(kFragSrcBody);
+
+    ANGLE_GL_PROGRAM(program, vertSrc.c_str(), fragSrc.c_str());
+    glUseProgram(program);
+
+    std::array<GLfloat, 16> attribPosData = {1, 1,  0.5, 1, -1, 1,  0.5, 1,
+                                             1, -1, 0.5, 1, -1, -1, 0.5, 1};
+
+    GLint attribPosLoc = glGetAttribLocation(1, "a_position");
+    ASSERT(attribPosLoc >= 0);
+    glEnableVertexAttribArray(attribPosLoc);
+    glVertexAttribPointer(attribPosLoc, 4, GL_FLOAT, GL_FALSE, 0, attribPosData.data());
+
+    std::array<GLfloat, 16> attribColorData1 = {1, 0.2, 0.5, 1, 1, 0.2, 0.5, 1,
+                                                1, 0.2, 0.5, 1, 1, 0.2, 0.5, 1};
+    GLint attribColorLoc                     = glGetAttribLocation(1, "a_color");
+    ASSERT(attribColorLoc >= 0);
+    glEnableVertexAttribArray(attribColorLoc);
+    glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData1.data());
+
+    glBlendEquation(GL_COLORBURN);
+
+    const uint16_t indices[] = {0, 1, 2, 2, 1, 3};
+    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Disable the blend. The next glDrawElements() should not blend the a_color with clear color
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glDisable(GL_BLEND);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
+    EXPECT_PIXEL_COLOR_NEAR(w / 2, h / 2, GLColor(255, 51, 128, 255), kPixelColorThreshhold);
+}
+
+// Test that when blending is disabled, advanced blend is not applied.
+// Regression test for a bug in the emulation path in the Vulkan backend.
+TEST_P(AdvancedBlendTest, AdvancedBlendNotAppliedWhenBlendIsDisabledKHR)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+    testAdvancedBlendNotAppliedWhenBlendIsDisabled(APIExtensionVersion::KHR);
+}
+
+// Test that when blending is disabled, advanced blend is not applied (using ES 3.2).
+TEST_P(AdvancedBlendTestES32, AdvancedBlendNotAppliedWhenBlendIsDisabled)
+{
+    testAdvancedBlendNotAppliedWhenBlendIsDisabled(APIExtensionVersion::Core);
+}
+
+void AdvancedBlendTest::testAdvancedBlendDisabledAndThenEnabled(APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::Core || usedExtension == APIExtensionVersion::KHR);
+
+    constexpr char kGLSLVersion30[] = R"(#version 300 es
+)";
+    constexpr char kGLSLVersion32[] = R"(#version 320 es
+)";
+    constexpr char kBlendKHR[]      = R"(#extension GL_KHR_blend_equation_advanced : require
+)";
+
+    std::string vertSrc;
+    std::string fragSrc;
+
+    if (usedExtension == APIExtensionVersion::KHR)
+    {
+        vertSrc.append(kGLSLVersion30);
+        fragSrc.append(kGLSLVersion30);
+        fragSrc.append(kBlendKHR);
+    }
+    else
+    {
+        vertSrc.append(kGLSLVersion32);
+        fragSrc.append(kGLSLVersion32);
+    }
+
+    constexpr char kVertSrcBody[] = R"(
+        in highp vec4 a_position;
+        in mediump vec4 a_color;
+        out mediump vec4 v_color;
+        void main()
+        {
+            gl_Position = a_position;
+            v_color = a_color;
+        }
+    )";
+    vertSrc.append(kVertSrcBody);
+
+    constexpr char kFragSrcBody[] = R"(
+        in mediump vec4 v_color;
+        layout(blend_support_colorburn, blend_support_multiply) out;
+        layout(location = 0) out mediump vec4 o_color;
+        void main()
+        {
+            o_color = v_color;
+        }
+    )";
+    fragSrc.append(kFragSrcBody);
+
+    ANGLE_GL_PROGRAM(program, vertSrc.c_str(), fragSrc.c_str());
+    glUseProgram(program);
+
+    std::array<GLfloat, 16> attribPosData = {1, 1,  0.5, 1, -1, 1,  0.5, 1,
+                                             1, -1, 0.5, 1, -1, -1, 0.5, 1};
+
+    GLint attribPosLoc = glGetAttribLocation(1, "a_position");
+    ASSERT(attribPosLoc >= 0);
+    glEnableVertexAttribArray(attribPosLoc);
+    glVertexAttribPointer(attribPosLoc, 4, GL_FLOAT, GL_FALSE, 0, attribPosData.data());
+
+    std::array<GLfloat, 16> attribColorData1 = {1, 0.2, 0.5, 1, 1, 0.2, 0.5, 1,
+                                                1, 0.2, 0.5, 1, 1, 0.2, 0.5, 1};
+    GLint attribColorLoc                     = glGetAttribLocation(1, "a_color");
+    ASSERT(attribColorLoc >= 0);
+    glEnableVertexAttribArray(attribColorLoc);
+    glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData1.data());
+
+    glBlendEquation(GL_COLORBURN);
+
+    const uint16_t indices[] = {0, 1, 2, 2, 1, 3};
+    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Disable the blend. The next glDrawElements() should not blend the a_color with clear color
+    glDisable(GL_BLEND);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h);
+    // Enable the blend. The next glDrawElements() should blend a_color
+    // with the the existing framebuffer output with GL_COLORBURN blend mode
+    glEnable(GL_BLEND);
+    // Test the blend with coherent blend disabled. This make the test cover both devices that
+    // support / do not support GL_KHR_blend_equation_advanced_coherent
+    if (EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced_coherent"))
+    {
+        glDisable(GL_BLEND_ADVANCED_COHERENT_KHR);
+    }
+    callBlendBarrier(usedExtension);
+    std::array<GLfloat, 16> attribColorData2 = {0.5, 0.5, 0, 1, 0.5, 0.5, 0, 1,
+                                                0.5, 0.5, 0, 1, 0.5, 0.5, 0, 1};
+    glEnableVertexAttribArray(attribColorLoc);
+    glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData2.data());
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
+
+    EXPECT_PIXEL_COLOR_NEAR(w / 4, h / 2, GLColor(255, 0, 0, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(3 * w / 4, h / 2, GLColor(255, 51, 128, 255), kPixelColorThreshhold);
+}
+
+// Test that when blending is disabled, advanced blend is not applied, but is applied after
+// it is enabled.
+// Regression test for a bug in the emulation path in the Vulkan backend.
+TEST_P(AdvancedBlendTest, AdvancedBlendDisabledAndThenEnabledKHR)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+    testAdvancedBlendDisabledAndThenEnabled(APIExtensionVersion::KHR);
+}
+
+// Test that when blending is disabled, advanced blend is not applied, but is applied after
+// it is enabled (using ES 3.2).
+TEST_P(AdvancedBlendTestES32, AdvancedBlendDisabledAndThenEnabled)
+{
+    testAdvancedBlendDisabledAndThenEnabled(APIExtensionVersion::Core);
+}
+
+void AdvancedBlendTest::testAdvancedBlendEnabledAndThenDisabled(APIExtensionVersion usedExtension)
+{
+    ASSERT(usedExtension == APIExtensionVersion::Core || usedExtension == APIExtensionVersion::KHR);
+
+    constexpr char kGLSLVersion30[] = R"(#version 300 es
+)";
+    constexpr char kGLSLVersion32[] = R"(#version 320 es
+)";
+    constexpr char kBlendKHR[]      = R"(#extension GL_KHR_blend_equation_advanced : require
+)";
+
+    std::string vertSrc;
+    std::string fragSrc;
+
+    if (usedExtension == APIExtensionVersion::KHR)
+    {
+        vertSrc.append(kGLSLVersion30);
+        fragSrc.append(kGLSLVersion30);
+        fragSrc.append(kBlendKHR);
+    }
+    else
+    {
+        vertSrc.append(kGLSLVersion32);
+        fragSrc.append(kGLSLVersion32);
+    }
+
+    constexpr char kVertSrcBody[] = R"(
+        in highp vec4 a_position;
+        in mediump vec4 a_color;
+        out mediump vec4 v_color;
+        void main()
+        {
+            gl_Position = a_position;
+            v_color = a_color;
+        }
+    )";
+    vertSrc.append(kVertSrcBody);
+
+    constexpr char kFragSrcBody[] = R"(
+        in mediump vec4 v_color;
+        layout(blend_support_colorburn, blend_support_darken) out;
+        layout(location = 0) out mediump vec4 o_color;
+        void main()
+        {
+            o_color = v_color;
+        }
+    )";
+    fragSrc.append(kFragSrcBody);
+
+    ANGLE_GL_PROGRAM(program, vertSrc.c_str(), fragSrc.c_str());
+    glUseProgram(program);
+
+    std::array<GLfloat, 16> attribPosData = {1, 1,  0.5, 1, -1, 1,  0.5, 1,
+                                             1, -1, 0.5, 1, -1, -1, 0.5, 1};
+
+    GLint attribPosLoc = glGetAttribLocation(1, "a_position");
+    ASSERT(attribPosLoc >= 0);
+    glEnableVertexAttribArray(attribPosLoc);
+    glVertexAttribPointer(attribPosLoc, 4, GL_FLOAT, GL_FALSE, 0, attribPosData.data());
+
+    std::array<GLfloat, 16> attribColorData1 = {1, 0.2, 0.5, 1, 1, 0.2, 0.5, 1,
+                                                1, 0.2, 0.5, 1, 1, 0.2, 0.5, 1};
+    GLint attribColorLoc                     = glGetAttribLocation(1, "a_color");
+    ASSERT(attribColorLoc >= 0);
+    glEnableVertexAttribArray(attribColorLoc);
+    glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData1.data());
+
+    glBlendEquation(GL_DARKEN);
+
+    const uint16_t indices[] = {0, 1, 2, 2, 1, 3};
+    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Enable the blend. The next glDrawElements() should blend the a_color with clear color
+    // using the GL_DARKEN blend mode
+    glEnable(GL_BLEND);
+    // Test the blend with coherent blend disabled. This make the test cover both devices that
+    // support / do not support GL_KHR_blend_equation_advanced_coherent
+    if (EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced_coherent"))
+    {
+        glDisable(GL_BLEND_ADVANCED_COHERENT_KHR);
+    }
+    callBlendBarrier(usedExtension);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
+
+    // Disable the blend. The next glDrawElements() should not blend the a_color with
+    // the existing framebuffer output with GL_DARKEN blend mode
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h);
+    glDisable(GL_BLEND);
+    std::array<GLfloat, 16> attribColorData2 = {0.5, 0.5, 0, 1, 0.5, 0.5, 0, 1,
+                                                0.5, 0.5, 0, 1, 0.5, 0.5, 0, 1};
+    glEnableVertexAttribArray(attribColorLoc);
+    glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData2.data());
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
+
+    EXPECT_PIXEL_COLOR_NEAR(w / 4, h / 2, GLColor(128, 128, 0, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(3 * w / 4, h / 2, GLColor(128, 51, 128, 255), kPixelColorThreshhold);
+}
+
+// Test that when blending is enabled, advanced blend is applied, but is not applied after
+// it is disabled.
+// Regression test for a bug in the emulation path in the Vulkan backend.
+TEST_P(AdvancedBlendTest, AdvancedBlendEnabledAndThenDisabledKHR)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+    testAdvancedBlendEnabledAndThenDisabled(APIExtensionVersion::KHR);
+}
+
+// Test that extension blend barrier results in an error if the extension is not enabled.
+TEST_P(AdvancedBlendTest, AdvancedBlendBarrierKHRFailsIfNotSupported)
+{
+    ASSERT_FALSE(IsGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+
+    glBlendBarrierKHR();
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that when blending is enabled, advanced blend is applied, but is not applied after
+// it is disabled (using ES 3.2).
+TEST_P(AdvancedBlendTestES32, AdvancedBlendEnabledAndThenDisabled)
+{
+    testAdvancedBlendEnabledAndThenDisabled(APIExtensionVersion::Core);
+}
+
+// Test that core blend barrier results in no error if the extension is not enabled.
+TEST_P(AdvancedBlendTestES32, AdvancedBlendBarrierAlwaysPasses)
+{
+    ASSERT_FALSE(IsGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+
+    glBlendBarrier();
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test querying advanced blend equation coherent on supported devices (enabled by default).
+TEST_P(AdvancedBlendTest, AdvancedBlendCoherentQuery)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_KHR_blend_equation_advanced_coherent"));
+
+    GLint status = -1;
+    glGetIntegerv(GL_BLEND_ADVANCED_COHERENT_KHR, &status);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(status, 1);
+
+    glDisable(GL_BLEND_ADVANCED_COHERENT_KHR);
+    glGetIntegerv(GL_BLEND_ADVANCED_COHERENT_KHR, &status);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(status, 0);
+
+    glEnable(GL_BLEND_ADVANCED_COHERENT_KHR);
+    glGetIntegerv(GL_BLEND_ADVANCED_COHERENT_KHR, &status);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(status, 1);
+
+    const GLboolean statusBool = glIsEnabled(GL_BLEND_ADVANCED_COHERENT_KHR);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_TRUE(statusBool);
+}
+
+// Test that querying advanced blend equation coherent results in an error as if this enum does not
+// exist.
+TEST_P(AdvancedBlendTest, AdvancedBlendCoherentQueryFailsIfNotSupported)
+{
+    ASSERT_FALSE(IsGLExtensionEnabled("GL_KHR_blend_equation_advanced_coherent"));
+
+    GLint status = -1;
+    glGetIntegerv(GL_BLEND_ADVANCED_COHERENT_KHR, &status);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+
+    glEnable(GL_BLEND_ADVANCED_COHERENT_KHR);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendTest);
+ANGLE_INSTANTIATE_TEST_ES3(AdvancedBlendTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AdvancedBlendTestES32);
+ANGLE_INSTANTIATE_TEST_ES32(AdvancedBlendTestES32);

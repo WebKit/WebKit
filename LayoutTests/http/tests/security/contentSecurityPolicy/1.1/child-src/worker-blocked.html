@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script src="/security/contentSecurityPolicy/resources/child-src-test.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="child-src 'none';">
+</head>
+<body>
+    <script>
+        description("Workers should be governed by 'child-src'.");
+        const isAsync = true;
+        injectWorker("/security/contentSecurityPolicy/resources/alert-fail.js", EXPECT_BLOCK, isAsync);
+    </script>
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

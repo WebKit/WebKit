@@ -1,0 +1,730 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ImageDecoderAVFObjC.h"
+
+#if HAVE(AVASSETREADER)
+
+#import "AVAssetMIMETypeCache.h"
+#import "AffineTransform.h"
+#import "CVUtilities.h"
+#import "ContentType.h"
+#import "FloatQuad.h"
+#import "FloatRect.h"
+#import "FloatSize.h"
+#import "ImageRotationSessionVT.h"
+#import "Logging.h"
+#import "MIMETypeRegistry.h"
+#import "MediaSampleAVFObjC.h"
+#import "SharedBuffer.h"
+#import "UTIUtilities.h"
+#import "WebCoreDecompressionSession.h"
+#import <AVFoundation/AVAsset.h>
+#import <AVFoundation/AVAssetReader.h>
+#import <AVFoundation/AVAssetReaderOutput.h>
+#import <AVFoundation/AVAssetResourceLoader.h>
+#import <AVFoundation/AVAssetTrack.h>
+#import <AVFoundation/AVTime.h>
+#import <VideoToolbox/VTUtilities.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <wtf/MainThread.h>
+#import <wtf/MediaTime.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/Vector.h>
+#import <wtf/cf/TypeCastsCF.h>
+#import <wtf/darwin/DispatchExtras.h>
+
+#import "CoreVideoSoftLink.h"
+#import "VideoToolboxSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
+
+#pragma mark -
+
+@interface WebCoreSharedBufferResourceLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
+    ThreadSafeWeakPtr<WebCore::ImageDecoderAVFObjC> _parent;
+    long long _expectedContentSize;
+    RetainPtr<NSData> _data;
+    bool _complete;
+    Vector<RetainPtr<AVAssetResourceLoadingRequest>> _requests;
+    Lock _dataLock;
+}
+
+// FIXME: This is a safer cpp false positive (rdar://160761983).
+@property (readonly) NSData* data SUPPRESS_UNRETAINED_MEMBER;
+- (id)initWithParent:(WebCore::ImageDecoderAVFObjC*)parent;
+- (void)setExpectedContentSize:(long long)expectedContentSize;
+- (void)updateData:(NSData *)data complete:(BOOL)complete;
+- (BOOL)canFulfillRequest:(AVAssetResourceLoadingRequest *)loadingRequest;
+- (void)enqueueRequest:(AVAssetResourceLoadingRequest *)loadingRequest;
+- (void)fulfillPendingRequests;
+- (void)fulfillRequest:(AVAssetResourceLoadingRequest *)loadingRequest;
+@end
+
+@implementation WebCoreSharedBufferResourceLoaderDelegate
+- (id)initWithParent:(WebCore::ImageDecoderAVFObjC*)parent
+{
+    if (!(self = [super init]))
+        return nil;
+    _parent = parent;
+
+    return self;
+}
+
+- (NSData*)data
+{
+    return _data.get();
+}
+
+- (void)setExpectedContentSize:(long long)expectedContentSize
+{
+    Locker locker { _dataLock };
+    _expectedContentSize = expectedContentSize;
+
+    [self fulfillPendingRequests];
+}
+
+- (void)updateData:(NSData *)data complete:(BOOL)complete
+{
+    Locker locker { _dataLock };
+    _data = data;
+    _complete = complete;
+
+    [self fulfillPendingRequests];
+}
+
+- (BOOL)canFulfillRequest:(AVAssetResourceLoadingRequest *)request
+{
+    if (!request)
+        return NO;
+
+    if (request.finished || request.cancelled)
+        return NO;
+
+    // AVURLAsset's resource loader requires knowing the expected content size
+    // to load sucessfully. That requires either having the complete data for
+    // the resource, or knowing the expected content size. 
+    if (!_complete && !_expectedContentSize)
+        return NO;
+
+    if (RetainPtr<AVAssetResourceLoadingDataRequest> dataRequest = request.dataRequest) {
+        if (dataRequest.get().requestedOffset > static_cast<long long>(_data.get().length))
+            return NO;
+    }
+
+    return YES;
+}
+
+- (void)enqueueRequest:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    ASSERT(!_requests.contains(loadingRequest));
+    _requests.append(loadingRequest);
+}
+
+- (void)fulfillPendingRequests
+{
+    for (auto& request : _requests) {
+        if ([self canFulfillRequest:request.get()])
+            [self fulfillRequest:request.get()];
+    }
+
+    _requests.removeAllMatching([] (auto& request) {
+        return request.get().finished;
+    });
+}
+
+- (void)fulfillRequest:(AVAssetResourceLoadingRequest *)request
+{
+    if (RetainPtr<AVAssetResourceLoadingContentInformationRequest> infoRequest = request.contentInformationRequest) {
+        RefPtr parent = _parent.get();
+        RELEASE_ASSERT(parent);
+        infoRequest.get().contentType = parent->uti().createNSString().get();
+        infoRequest.get().byteRangeAccessSupported = YES;
+        infoRequest.get().contentLength = _complete ? _data.get().length : _expectedContentSize;
+    }
+
+    if (RetainPtr<AVAssetResourceLoadingDataRequest> dataRequest = request.dataRequest) {
+        long long availableLength = _data.get().length - dataRequest.get().requestedOffset;
+        if (availableLength <= 0)
+            return;
+
+        long long requestedLength;
+        if (dataRequest.get().requestsAllDataToEndOfResource)
+            requestedLength = availableLength;
+        else
+            requestedLength = std::min<long long>(availableLength, dataRequest.get().requestedLength);
+
+        auto range = NSMakeRange(static_cast<NSUInteger>(dataRequest.get().requestedOffset), static_cast<NSUInteger>(requestedLength));
+        RetainPtr<NSData> requestedData = [_data subdataWithRange:range];
+        if (!requestedData)
+            return;
+
+        [dataRequest respondWithData:requestedData.get()];
+
+        if (dataRequest.get().requestsAllDataToEndOfResource) {
+            if (!_complete)
+                return;
+        } else if (dataRequest.get().requestedOffset + dataRequest.get().requestedLength > dataRequest.get().currentOffset)
+            return;
+    }
+
+    [request finishLoading];
+}
+
+- (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    Locker locker { _dataLock };
+
+    UNUSED_PARAM(resourceLoader);
+
+    if ([self canFulfillRequest:loadingRequest]) {
+        [self fulfillRequest:loadingRequest];
+        if (loadingRequest.finished)
+            return YES;
+    }
+
+    [self enqueueRequest:loadingRequest];
+    return YES;
+}
+
+- (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    Locker locker { _dataLock };
+
+    UNUSED_PARAM(resourceLoader);
+    _requests.removeAll(loadingRequest);
+}
+@end
+
+namespace WebCore {
+
+#pragma mark - Static Methods
+
+static NSURL *customSchemeURLSingleton()
+{
+    static NeverDestroyed<RetainPtr<NSURL>> url = adoptNS([[NSURL alloc] initWithString:@"custom-imagedecoderavfobjc://resource"]);
+    return url.get().get();
+}
+
+static NSDictionary *imageDecoderAssetOptionsSingleton()
+{
+    static NeverDestroyed<RetainPtr<NSDictionary>> options = @{
+        AVURLAssetReferenceRestrictionsKey: @(AVAssetReferenceRestrictionForbidAll),
+        AVURLAssetUsesNoPersistentCacheKey: @YES,
+    };
+    return options.get().get();
+}
+
+class ImageDecoderAVFObjCSample : public MediaSampleAVFObjC {
+public:
+    static Ref<ImageDecoderAVFObjCSample> create(RetainPtr<CMSampleBufferRef>&& sampleBuffer)
+    {
+        return adoptRef(*new ImageDecoderAVFObjCSample(WTF::move(sampleBuffer)));
+    }
+
+    CGImageRef NODELETE image() const { return m_image.get(); }
+    void setImage(RetainPtr<CGImageRef>&& image)
+    {
+        m_image = WTF::move(image);
+        if (!m_image) {
+            m_hasAlpha = false;
+            return;
+        }
+
+        auto alphaInfo = CGImageGetAlphaInfo(m_image.get());
+        m_hasAlpha = alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst;
+    }
+
+    std::optional<ByteRange> byteRange() const final
+    {
+        if (PAL::CMSampleBufferGetDataBuffer(m_sample.get())
+            || PAL::CMSampleBufferGetImageBuffer(m_sample.get())
+            || !PAL::CMSampleBufferDataIsReady(m_sample.get()))
+            return std::nullopt;
+
+        return byteRangeForAttachment(PAL::kCMSampleBufferAttachmentKey_SampleReferenceByteOffset);
+    }
+
+    SampleFlags flags() const override
+    {
+        return (SampleFlags)(MediaSampleAVFObjC::flags() | (m_hasAlpha ? HasAlpha : 0));
+    }
+
+private:
+    ImageDecoderAVFObjCSample(RetainPtr<CMSampleBufferRef>&& sample)
+        : MediaSampleAVFObjC(WTF::move(sample))
+    {
+    }
+
+    bool isImageDecoderAVFObjCSample() const final { return true; }
+
+    std::optional<ByteRange> byteRangeForAttachment(CFStringRef key) const
+    {
+        RetainPtr byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
+        if (!byteOffsetCF)
+            return std::nullopt;
+
+        int64_t byteOffset = 0;
+        if (!CFNumberGetValue(byteOffsetCF.get(), kCFNumberSInt64Type, &byteOffset))
+            return std::nullopt;
+
+        CMItemCount sizeArrayEntries = 0;
+        PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, &sizeArrayEntries);
+        if (sizeArrayEntries != 1)
+            return std::nullopt;
+
+        size_t singleSizeEntry = 0;
+        PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
+        return { { CheckedSize(byteOffset), singleSizeEntry } };
+    }
+
+    RetainPtr<CGImageRef> m_image;
+    bool m_hasAlpha { false };
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImageDecoderAVFObjCSample)
+    static bool isType(const WebCore::MediaSample& sample) { return sample.isImageDecoderAVFObjCSample(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace WebCore {
+
+static ImageDecoderAVFObjCSample* NODELETE toSample(const PresentationOrderSampleMap::value_type& pair)
+{
+    return downcast<ImageDecoderAVFObjCSample>(pair.second.ptr());
+}
+
+template <typename Iterator>
+ImageDecoderAVFObjCSample* NODELETE toSample(Iterator iter)
+{
+    return downcast<ImageDecoderAVFObjCSample>(iter->second.ptr());
+}
+
+#pragma mark - ImageDecoderAVFObjC
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderAVFObjC);
+
+RefPtr<ImageDecoderAVFObjC> ImageDecoderAVFObjC::create(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption, ProcessIdentity resourceOwner)
+{
+    ASSERT(canDecodeType(mimeType));
+
+    // AVFoundation may not be available at runtime.
+    if (!AVAssetMIMETypeCache::singleton().isAvailable())
+        return nullptr;
+
+    if (!canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
+        return nullptr;
+
+    return adoptRef(*new ImageDecoderAVFObjC(data, mimeType, alphaOption, gammaAndColorProfileOption, WTF::move(resourceOwner)));
+}
+
+ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner)
+    : ImageDecoder()
+    , m_mimeType(mimeType)
+    , m_uti(WebCore::UTIFromMIMEType(mimeType))
+    , m_asset(adoptNS([PAL::allocAVURLAssetInstance() initWithURL:customSchemeURLSingleton() options:imageDecoderAssetOptionsSingleton()]))
+    , m_loader(adoptNS([[WebCoreSharedBufferResourceLoaderDelegate alloc] initWithParent:this]))
+    , m_decompressionSession(WebCoreDecompressionSession::createRGB())
+    , m_resourceOwner(WTF::move(resourceOwner))
+{
+    m_decompressionSession->setResourceOwner(m_resourceOwner);
+    [m_loader updateData:data.makeContiguous()->createNSData().get() complete:NO];
+
+    [retainPtr(m_asset.get().resourceLoader) setDelegate:m_loader.get() queue:globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+    [m_asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:[protectedThis = Ref { *this }] () mutable {
+        callOnMainThread([protectedThis = WTF::move(protectedThis)] {
+            protectedThis->setTrack(protect(protectedThis->firstEnabledTrack()).get());
+        });
+    }];
+}
+
+ImageDecoderAVFObjC::~ImageDecoderAVFObjC() = default;
+
+bool ImageDecoderAVFObjC::supportsMediaType(MediaType type)
+{
+    return type == MediaType::Video && AVAssetMIMETypeCache::singleton().isAvailable();
+}
+
+bool ImageDecoderAVFObjC::supportsContainerType(const String& type)
+{
+    return AVAssetMIMETypeCache::singleton().supportsContainerType(type);
+}
+
+bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
+{
+    return AVAssetMIMETypeCache::singleton().canDecodeType(mimeType) != MediaPlayerEnums::SupportsType::IsNotSupported;
+}
+
+AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()
+{
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    RetainPtr<NSArray<AVAssetTrack *>> videoTracks = [m_asset tracksWithMediaCharacteristic:AVMediaCharacteristicVisual];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    NSUInteger firstEnabledIndex = [videoTracks indexOfObjectPassingTest:^(AVAssetTrack *track, NSUInteger, BOOL*) {
+        return track.enabled;
+    }];
+
+    if (firstEnabledIndex == NSNotFound) {
+        LOG(Images, "ImageDecoderAVFObjC::firstEnabledTrack(%p) - asset has no enabled video tracks", this);
+        return nil;
+    }
+
+    return [videoTracks objectAtIndex:firstEnabledIndex];
+}
+
+void ImageDecoderAVFObjC::readSamples()
+{
+    if (!m_sampleData.empty())
+        return;
+
+    auto assetReader = adoptNS([PAL::allocAVAssetReaderInstance() initWithAsset:m_asset.get() error:nil]);
+    auto referenceOutput = adoptNS([PAL::allocAVAssetReaderSampleReferenceOutputInstance() initWithTrack:m_track.get()]);
+
+    referenceOutput.get().alwaysCopiesSampleData = NO;
+    [assetReader addOutput:referenceOutput.get()];
+    [assetReader startReading];
+
+    while (auto sampleBuffer = adoptCF([referenceOutput copyNextSampleBuffer])) {
+        // NOTE: Some samples emitted by the AVAssetReader simply denote the boundary of edits
+        // and do not carry media data.
+        if (!(PAL::CMSampleBufferGetNumSamples(sampleBuffer.get())))
+            continue;
+        m_sampleData.addSample(ImageDecoderAVFObjCSample::create(WTF::move(sampleBuffer)).get());
+    }
+
+    if (m_encodedDataStatusChangedCallback)
+        m_encodedDataStatusChangedCallback(encodedDataStatus());
+}
+
+void ImageDecoderAVFObjC::readTrackMetadata()
+{
+    AffineTransform finalTransform = CGAffineTransformConcat(m_asset.get().preferredTransform, m_track.get().preferredTransform);
+    auto size = expandedIntSize(FloatSize(m_track.get().naturalSize));
+    if (finalTransform.isIdentity()) {
+        m_size = size;
+        m_imageRotationSession = nullptr;
+        return;
+    }
+
+    if (!m_imageRotationSession
+        || !m_imageRotationSession->transform()
+        || m_imageRotationSession->transform().value() != finalTransform
+        || m_imageRotationSession->size() != size)
+        m_imageRotationSession = makeUnique<ImageRotationSessionVT>(WTF::move(finalTransform), size, ImageRotationSessionVT::IsCGImageCompatible::Yes);
+
+    m_size = expandedIntSize(m_imageRotationSession->rotatedSize());
+}
+
+bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
+{
+    auto pixelBuffer = m_decompressionSession->decodeSampleSync(sampleBuffer);
+    if (!pixelBuffer) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not decode sampleBuffer", this);
+        return false;
+    }
+
+    // Set the ownership of the original even though we might end up using the rotated.
+    // For some duration, the original is alive and it has to be attributed to the owner.
+    if (m_resourceOwner)
+        setOwnershipIdentityForCVPixelBuffer(pixelBuffer.get(), m_resourceOwner);
+
+    auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer));
+    auto iter = m_sampleData.presentationOrder().findSampleWithPresentationTime(presentationTime);
+    if (iter == m_sampleData.presentationOrder().end()) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not find sample buffer entry with specified presentation time", this);
+        return false;
+    }
+
+    if (m_imageRotationSession) {
+        pixelBuffer = m_imageRotationSession->rotate(pixelBuffer.get());
+        setOwnershipIdentityForCVPixelBuffer(pixelBuffer.get(), m_resourceOwner);
+    }
+
+    CGImageRef rawImage = nullptr;
+    if (noErr != VTCreateCGImageFromCVPixelBuffer(pixelBuffer.get(), nullptr, &rawImage)) {
+        RELEASE_LOG_ERROR(Images, "ImageDecoderAVFObjC::storeSampleBuffer(%p) - could not create CGImage from pixelBuffer", this);
+        return false;
+    }
+
+    // FIXME(rdar://115887662): The pixel buffer being passed to the VTCreateCGImageFromCVPixelBuffer may
+    // not be the pixel buffer that will be used. It is unclear if the request to
+    // obtain RGBA IOSurface-backed CVPixelBuffer from the decoding session is enough
+    // to ensure the pixel buffer is not replaced in VTCreateCGImageFromCVPixelBuffer.
+
+    protect(toSample(iter))->setImage(adoptCF(rawImage));
+
+    return true;
+}
+
+void ImageDecoderAVFObjC::advanceCursor()
+{
+    if (m_cursor == m_sampleData.decodeOrder().end() || ++m_cursor == m_sampleData.decodeOrder().end())
+        m_cursor = m_sampleData.decodeOrder().begin();
+}
+
+void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
+{
+    if (m_track == track)
+        return;
+    m_track = track;
+
+    Locker locker { m_sampleGeneratorLock };
+    m_sampleData.clear();
+    m_size.reset();
+    m_cursor = m_sampleData.decodeOrder().end();
+    m_imageRotationSession = nullptr;
+
+    [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = Ref { *this }] () mutable {
+        callOnMainThread([protectedThis = WTF::move(protectedThis)] {
+            protectedThis->readTrackMetadata();
+            protectedThis->readSamples();
+        });
+    }];
+}
+
+void ImageDecoderAVFObjC::setEncodedDataStatusChangeCallback(WTF::Function<void(EncodedDataStatus)>&& callback)
+{
+    m_encodedDataStatusChangedCallback = WTF::move(callback);
+}
+
+EncodedDataStatus ImageDecoderAVFObjC::encodedDataStatus() const
+{
+    if (!m_sampleData.empty())
+        return EncodedDataStatus::Complete;
+    if (m_size)
+        return EncodedDataStatus::SizeAvailable;
+    if (m_track)
+        return EncodedDataStatus::TypeAvailable;
+    return EncodedDataStatus::Unknown;
+}
+
+IntSize ImageDecoderAVFObjC::size() const
+{
+    if (m_size)
+        return m_size.value();
+    return IntSize();
+}
+
+size_t ImageDecoderAVFObjC::frameCount() const
+{
+    return m_sampleData.size();
+}
+
+RepetitionCount ImageDecoderAVFObjC::repetitionCount() const
+{
+    // In the absence of instructions to the contrary, assume all media formats repeat infinitely.
+    // FIXME: Future media formats may embed repeat count information, and when that is available
+    // through AVAsset, account for it here.
+    return frameCount() > 1 ? RepetitionCountInfinite : RepetitionCountNone;
+}
+
+String ImageDecoderAVFObjC::uti() const
+{
+    return m_uti;
+}
+
+String ImageDecoderAVFObjC::filenameExtension() const
+{
+    return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType);
+}
+
+IntSize ImageDecoderAVFObjC::frameSizeAtIndex(size_t, SubsamplingLevel) const
+{
+    return size();
+}
+
+bool ImageDecoderAVFObjC::frameIsCompleteAtIndex(size_t index) const
+{
+    RefPtr sampleData = sampleAtIndex(index);
+    return sampleData && sampleIsComplete(*sampleData);
+}
+
+Seconds ImageDecoderAVFObjC::frameDurationAtIndex(size_t index) const
+{
+    RefPtr sampleData = sampleAtIndex(index);
+    if (!sampleData)
+        return { };
+
+    return Seconds(sampleData->duration().toDouble());
+}
+
+bool ImageDecoderAVFObjC::frameHasAlphaAtIndex(size_t index) const
+{
+    RefPtr sampleData = sampleAtIndex(index);
+    return sampleData && sampleData->hasAlpha();
+}
+
+Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
+{
+    if (m_sampleData.empty())
+        return { };
+
+    return WTF::map(m_sampleData.presentationOrder(), [](auto& sample) {
+        Ref imageSample = downcast<ImageDecoderAVFObjCSample>(sample.second.get());
+        return ImageDecoder::FrameInfo { imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble()) };
+    });
+}
+
+PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
+{
+    Locker locker { m_sampleGeneratorLock };
+
+    RefPtr sampleData = sampleAtIndex(index);
+    if (!sampleData)
+        return nullptr;
+
+    if (RetainPtr image = sampleData->image())
+        return image.get();
+
+    if (m_cursor == m_sampleData.decodeOrder().end())
+        m_cursor = m_sampleData.decodeOrder().begin();
+
+    auto decodeTime = sampleData->decodeTime();
+
+    if (decodeTime < Ref { m_cursor->second }->decodeTime()) {
+        // Rewind cursor to the last sync sample to begin decoding
+        m_cursor = m_sampleData.decodeOrder().findSyncSamplePriorToDecodeKey({ decodeTime, sampleData->presentationTime() });
+        if (m_cursor == m_sampleData.decodeOrder().end())
+            return nullptr;
+    }
+
+    while (true) {
+        if (decodeTime < Ref { m_cursor->second }->decodeTime())
+            return nullptr;
+
+        RefPtr cursorSample = toSample(m_cursor);
+        if (!cursorSample)
+            return nullptr;
+
+        if (!sampleIsComplete(*cursorSample))
+            return nullptr;
+
+        if (auto byteRange = cursorSample->byteRange()) {
+            auto& byteRangeValue = byteRange.value();
+            RetainPtr<NSData> data = m_loader.get().data;
+            CMBlockBufferCustomBlockSource source {
+                0,
+                nullptr,
+                [](void* refcon, void*, size_t) {
+                    [(id)refcon release];
+                },
+                [data retain]
+            };
+            CMBlockBufferRef rawBlockBuffer = nullptr;
+            if (noErr != PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, const_cast<void*>(data.get().bytes), data.get().length, nullptr, &source, byteRangeValue.byteOffset, byteRangeValue.byteLength, 0, &rawBlockBuffer))
+                return nullptr;
+
+            if (!rawBlockBuffer)
+                return nullptr;
+
+            RetainPtr blockBuffer = adoptCF(rawBlockBuffer);
+            RetainPtr cursorSampleBuffer = cursorSample->sampleBuffer();
+            if (noErr != PAL::CMSampleBufferSetDataBuffer(cursorSampleBuffer.get(), blockBuffer.get()))
+                return nullptr;
+
+            PAL::CMRemoveAttachment(cursorSampleBuffer.get(), PAL::kCMSampleBufferAttachmentKey_SampleReferenceByteOffset);
+            PAL::CMRemoveAttachment(cursorSampleBuffer.get(), PAL::kCMSampleBufferAttachmentKey_SampleReferenceURL);
+        }
+
+        RetainPtr cursorSampleBuffer = cursorSample->sampleBuffer();
+        if (!cursorSampleBuffer)
+            break;
+
+        if (!storeSampleBuffer(cursorSampleBuffer.get()))
+            break;
+
+        advanceCursor();
+        if (RetainPtr image = sampleData->image())
+            return image.get();
+    }
+
+    advanceCursor();
+    return nullptr;
+}
+
+void ImageDecoderAVFObjC::setExpectedContentSize(long long expectedContentSize)
+{
+    m_loader.get().expectedContentSize = expectedContentSize;
+}
+
+void ImageDecoderAVFObjC::setData(const FragmentedSharedBuffer& data, bool allDataReceived)
+{
+    [m_loader updateData:data.makeContiguous()->createNSData().get() complete:allDataReceived];
+
+    if (allDataReceived) {
+        m_isAllDataReceived = true;
+
+        if (!m_track)
+            setTrack(protect(firstEnabledTrack()).get());
+
+        if (!m_track)
+            return;
+
+        readTrackMetadata();
+        readSamples();
+    }
+}
+
+void ImageDecoderAVFObjC::clearFrameBufferCache(size_t index)
+{
+    size_t i = 0;
+    for (auto& samplePair : m_sampleData.presentationOrder()) {
+        protect(toSample(samplePair))->setImage(nullptr);
+        if (++i > index)
+            break;
+    }
+}
+
+const ImageDecoderAVFObjCSample* ImageDecoderAVFObjC::sampleAtIndex(size_t index) const
+{
+    if (index >= m_sampleData.presentationOrder().size())
+        return nullptr;
+
+    // FIXME: std::map is not random-accessible; this can get expensive if callers repeatedly call
+    // with monotonically increasing indexes. Investigate adding an O(1) side structure to make this
+    // style of access faster.
+    auto iter = m_sampleData.presentationOrder().begin();
+    for (size_t i = 0; i != index; ++i)
+        ++iter;
+
+    return toSample(iter);
+}
+
+bool ImageDecoderAVFObjC::sampleIsComplete(const ImageDecoderAVFObjCSample& sample) const
+{
+    if (auto byteRange = sample.byteRange()) {
+        auto& byteRangeValue = byteRange.value();
+        return byteRangeValue.byteOffset + byteRangeValue.byteLength <= m_loader.get().data.length;
+    }
+
+    return PAL::CMSampleBufferDataIsReady(protect(sample.sampleBuffer()).get());
+}
+
+}
+
+#endif

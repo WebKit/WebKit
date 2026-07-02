@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<body>
+<div id='testElement' style='display: none'>TEST</div>
+<script>
+setInterval(function() {
+  // Change the style of a display:none element.
+  var testElement = document.getElementById("testElement");
+  testElement.style["left"] = "" + Math.floor((Math.random() * 10) + 1) + "px";
+}, 0);
+</script>
+</body>

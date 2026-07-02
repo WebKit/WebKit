@@ -1,0 +1,8 @@
+
+PASS i31ref conversion to Number
+PASS Number conversion to i31ref
+PASS Check i31ref argument type
+PASS Numbers in i31 range are i31ref, not hostref
+PASS i31ref global
+PASS i31ref table
+

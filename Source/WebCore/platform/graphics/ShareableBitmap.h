@@ -1,0 +1,235 @@
+/*
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/CopyImageOptions.h>
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ImageTypes.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/PlatformImage.h>
+#include <WebCore/SharedMemory.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/DebugHeap.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+#if USE(SKIA)
+#include <skia/core/SkImageInfo.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkSurface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
+#if USE(CG)
+#include <WebCore/ShareableGainMap.h>
+#endif
+
+namespace WebCore {
+
+class GraphicsContext;
+class Image;
+class NativeImage;
+
+inline constexpr auto defaultCopyOnWrite = SharedMemory::CopyOnWrite::No;
+
+class ShareableBitmapConfiguration {
+public:
+    ShareableBitmapConfiguration() = default;
+    explicit ShareableBitmapConfiguration(const ShareableBitmapConfiguration&) = default;
+    ShareableBitmapConfiguration(ShareableBitmapConfiguration&&) = default;
+
+    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace> = std::nullopt, Headroom = Headroom::None, bool isOpaque = false);
+    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace>, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
+#if USE(CG)
+        , CGBitmapInfo
+        , std::optional<ShareableGainMap>&&
+#endif
+    );
+#if USE(CG)
+    ShareableBitmapConfiguration(const NativeImage&);
+#endif
+
+    ShareableBitmapConfiguration& operator=(ShareableBitmapConfiguration&&) = default;
+
+    IntSize size() const { return m_size; }
+    const DestinationColorSpace& colorSpace() const { return m_colorSpace ? *m_colorSpace : DestinationColorSpace::SRGB(); }
+    PlatformColorSpaceValue platformColorSpace() const { return colorSpace().platformColorSpace(); }
+    Headroom baseImageHeadroom() const { return m_baseImageHeadroom; }
+    bool isOpaque() const { return m_isOpaque; }
+
+    unsigned bitsPerComponent() const { ASSERT(!m_bitsPerComponent.hasOverflowed()); return m_bitsPerComponent; }
+    unsigned bytesPerPixel() const { ASSERT(!m_bytesPerPixel.hasOverflowed()); return m_bytesPerPixel; }
+    unsigned bytesPerRow() const { ASSERT(!m_bytesPerRow.hasOverflowed()); return m_bytesPerRow; }
+#if USE(CG)
+    CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
+    std::optional<ShareableGainMap> shareableGainMap() const { return m_shareableGainMap; }
+#endif
+#if USE(SKIA)
+    const SkImageInfo& imageInfo() const LIFETIME_BOUND { return m_imageInfo; }
+#endif
+
+    CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
+
+    WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, const DestinationColorSpace&);
+    WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, const DestinationColorSpace&);
+
+private:
+    friend struct IPC::ArgumentCoder<ShareableBitmapConfiguration>;
+
+    static std::optional<DestinationColorSpace> validateColorSpace(std::optional<DestinationColorSpace>);
+    static CheckedUint32 calculateBitsPerComponent(const DestinationColorSpace&);
+    static CheckedUint32 calculateBytesPerPixel(const DestinationColorSpace&);
+#if USE(CG)
+    static CGBitmapInfo calculateBitmapInfo(const DestinationColorSpace&, bool isOpaque);
+#endif
+
+    IntSize m_size;
+    std::optional<DestinationColorSpace> m_colorSpace;
+    Headroom m_baseImageHeadroom { Headroom::None };
+    bool m_isOpaque { false };
+
+    CheckedUint32 m_bitsPerComponent;
+    CheckedUint32 m_bytesPerPixel;
+    CheckedUint32 m_bytesPerRow;
+#if USE(CG)
+    CGBitmapInfo m_bitmapInfo { 0 };
+    std::optional<ShareableGainMap> m_shareableGainMap;
+#endif
+#if USE(SKIA)
+    SkImageInfo m_imageInfo;
+#endif
+};
+
+class ShareableBitmapHandle  {
+public:
+    ShareableBitmapHandle(ShareableBitmapHandle&&) = default;
+    explicit ShareableBitmapHandle(const ShareableBitmapHandle&) = default;
+    WEBCORE_EXPORT ShareableBitmapHandle(SharedMemory::Handle&&, const ShareableBitmapConfiguration&);
+
+    ShareableBitmapHandle& operator=(ShareableBitmapHandle&&) = default;
+
+    SharedMemory::Handle& handle() LIFETIME_BOUND { return m_handle; }
+
+    // Take ownership of the memory for process memory accounting purposes.
+    WEBCORE_EXPORT void takeOwnershipOfMemory(MemoryLedger) const;
+    // Transfer ownership of the memory for process memory accounting purposes.
+    WEBCORE_EXPORT void setOwnershipOfMemory(const ProcessIdentity&, MemoryLedger) const;
+
+private:
+    friend struct IPC::ArgumentCoder<ShareableBitmapHandle>;
+    friend class ShareableBitmap;
+
+    SharedMemory::Handle m_handle;
+    ShareableBitmapConfiguration m_configuration;
+};
+
+class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
+public:
+    using Handle = ShareableBitmapHandle;
+
+    // Create a shareable bitmap whose backing memory can be shared with another process.
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&);
+
+    // Create a shareable bitmap from an already existing shared memory block.
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
+
+    // Create a shareable bitmap from a NativeImage.
+#if USE(CG)
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImagePixels(const NativeImage&);
+#endif
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const DestinationColorSpace&);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const DestinationColorSpace&, const IntSize&);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const DestinationColorSpace&, const IntSize& destinationSize, const IntSize& sourceSize);
+
+    // Create a shareable bitmap from a handle.
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite, SharedMemory::CopyOnWrite = defaultCopyOnWrite);
+
+    // Create a shareable bitmap from a ReadOnly handle.
+    WEBCORE_EXPORT static std::optional<Ref<ShareableBitmap>> createReadOnly(std::optional<Handle>&&);
+
+    WEBCORE_EXPORT std::optional<Handle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+
+    // Create a ReadOnly handle.
+    WEBCORE_EXPORT std::optional<Handle> createReadOnlyHandle() const;
+
+    WEBCORE_EXPORT void setOwnershipOfMemory(const ProcessIdentity&);
+
+    IntSize size() const { return m_configuration.size(); }
+    IntRect bounds() const { return IntRect(IntPoint(), size()); }
+
+    WEBCORE_EXPORT std::span<const uint8_t> NODELETE span() const LIFETIME_BOUND;
+    WEBCORE_EXPORT std::span<uint8_t> NODELETE mutableSpan() LIFETIME_BOUND;
+    size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
+    size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
+    const DestinationColorSpace& colorSpace() const { return  m_configuration.colorSpace(); }
+
+    // Create a graphics context that can be used to paint into the backing store.
+    WEBCORE_EXPORT std::unique_ptr<GraphicsContext> createGraphicsContext();
+
+    // Paint the backing store into the given context.
+    WEBCORE_EXPORT void paint(GraphicsContext&, const IntPoint& destination, const IntRect& source);
+    WEBCORE_EXPORT void paint(GraphicsContext&, float scaleFactor, const IntPoint& destination, const IntRect& source);
+
+    // This creates a bitmap image that directly references the shared bitmap data.
+    // This is only safe to use when we know that the contents of the shareable bitmap won't change.
+    WEBCORE_EXPORT RefPtr<Image> createImage();
+
+    WEBCORE_EXPORT PlatformImagePtr createBasePlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
+
+    WEBCORE_EXPORT PlatformImagePtr createPlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
+
+#if USE(CAIRO)
+    // This creates a BitmapImage that directly references the shared bitmap data.
+    // This is only safe to use when we know that the contents of the shareable bitmap won't change.
+    WEBCORE_EXPORT RefPtr<cairo_surface_t> createPersistentCairoSurface();
+    WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
+#endif
+
+#if USE(SKIA)
+    WEBCORE_EXPORT sk_sp<SkSurface> createSurface();
+#endif
+
+private:
+    ShareableBitmap(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
+
+#if USE(CG)
+    static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
+#endif
+
+#if USE(CAIRO)
+    static void releaseSurfaceData(void* typelessBitmap);
+#endif
+
+    ShareableBitmapConfiguration m_configuration;
+    const Ref<SharedMemory> m_sharedMemory;
+#if USE(CG)
+    std::optional<SharedMemoryHandle> m_ownershipHandle;
+    bool m_releaseBitmapContextDataCalled : 1 { false };
+#endif
+};
+
+} // namespace WebCore

@@ -1,0 +1,6 @@
+
+FAIL Evaled the script via eval, successful import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+PASS Evaled the script via eval, failed import
+FAIL Evaled the script via Function, successful import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+PASS Evaled the script via Function, failed import
+

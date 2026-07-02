@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x97
+  RenderBlock {HTML} at (0,0) size 800x97
+    RenderBody {BODY} at (8,8) size 784x81
+      RenderTable {TABLE} at (0,0) size 60x81
+        RenderTableSection {TBODY} at (0,0) size 60x81
+          RenderTableRow {TR} at (0,2) size 60x54
+            RenderTableCell {TD} at (2,2) size 47x54 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,42) size 5x11
+                text run at (1,42) width 5: "#"
+              RenderImage {IMG} at (6,1) size 40x50
+            RenderTableCell {TD} at (51,43) size 7x13 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 5x11
+                text run at (1,1) width 5: "#"
+          RenderTableRow {TR} at (0,58) size 60x21
+            RenderTableCell {TD} at (2,58) size 56x21 [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (5,5) size 15x11
+                text run at (5,5) width 15: "###"

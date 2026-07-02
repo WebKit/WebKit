@@ -1,0 +1,3 @@
+
+PASS Making a snap container not scrollable should promote the next scrollable ancestor to become a snap container.
+

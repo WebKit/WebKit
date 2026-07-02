@@ -1,0 +1,7 @@
+2d.path.stroke.prune.rect
+
+Zero-length line segments from rect and strokeRect are removed before stroking
+
+
+PASS Zero-length line segments from rect and strokeRect are removed before stroking
+

@@ -1,0 +1,9 @@
+Using significant resources and eligible for resource monitoring.
+Resource is cached in disk cache so there's no network usage.
+
+<script>
+    fetch(`../generate-byte.py?size=20480&seed=cached-resource.html`).then(async (response) => {
+        const body = await response.blob();
+        parent.postMessage(body.size, "*");
+    });
+</script>

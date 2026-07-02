@@ -1,0 +1,24 @@
+foo
+
+PASS input[type=text] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=text] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=text] in horizontal-tb: typing characters in input should not change location of elements within container.
+PASS input[type=password] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=password] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=password] in horizontal-tb: typing characters in input should not change location of elements within container.
+PASS input[type=search] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=search] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=search] in horizontal-tb: typing characters in input should not change location of elements within container.
+PASS input[type=number] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=number] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=number] in horizontal-tb: typing characters in input should not change location of elements within container.
+PASS input[type=email] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=email] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=email] in horizontal-tb: typing characters in input should not change location of elements within container.
+PASS input[type=tel] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=tel] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=tel] in horizontal-tb: typing characters in input should not change location of elements within container.
+PASS input[type=url] in vertical-lr: typing characters in input should not change location of elements within container.
+PASS input[type=url] in vertical-rl: typing characters in input should not change location of elements within container.
+PASS input[type=url] in horizontal-tb: typing characters in input should not change location of elements within container.
+

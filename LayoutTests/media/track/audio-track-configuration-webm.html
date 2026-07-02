@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>video-track-configuration</title>
+	<script src="../video-test.js"></script>
+	<script>
+    window.addEventListener('load', async event => {
+      findMediaElement();
+      const timeout = 100;
+      run('video.src = "../media-source/content/test-vorbis.webm"');
+      await waitFor(video, 'canplay');
+      await testExpectedEventually('video.audioTracks.length', 0, '>', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration', null, '!=', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.codec', 'vorbis', '==', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.sampleRate', 44100, '==', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.numberOfChannels', 1, '==', timeout);
+      endTest();
+	  });
+	</script>
+</head>
+<body>
+	<video controls muted></video>
+</body>
+</html>

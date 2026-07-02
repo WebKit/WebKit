@@ -1,0 +1,27 @@
+<style>
+*:first-of-type { position: fixed; }
+*:first-child { -webkit-column-count: 1; }
+*:nth-last-child(odd) { position: static;}
+*:only-child { perspective: 0.56em;overflow-y: -webkit-paged-y;writing-mode: tb-rl; }
+* { column-count: 6381;-webkit-border-before: ridge }
+.class0 {column-span: all}
+</style>
+}
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function main() {
+    v27 = document.defaultView.getSelection();
+    x23.prepend(x28);
+    v27.collapse(x49);
+    document.execCommand("insertOrderedList",false,null);
+}
+</script>
+<body onload="main()">
+This test passes if it doesn't crash.
+<div contenteditable="true">
+<li id="x23" class="class0">
+<br>
+<div>
+<div id="x28">
+<div id="x49">

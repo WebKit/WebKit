@@ -1,0 +1,5 @@
+bar
+foo
+
+PASS insert-list-into-list-crash
+

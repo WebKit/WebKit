@@ -1,0 +1,23 @@
+Test queries with the :is selectors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.querySelectorAll('#area1 > :is(div, p)').length is 6
+PASS document.body.querySelectorAll('#area1 > :is(p, span)').length is 2
+PASS document.body.querySelectorAll('#area1 > :is(div, p, span)').length is 7
+PASS document.body.querySelectorAll('#area1 > :is(:not(div), :not(p))').length is 8
+PASS document.body.querySelectorAll('#area1 > :is(.cocoa, .cappuccino)').length is 4
+PASS document.body.querySelectorAll('#area2 :is(p > .cocoa, p > .cappuccino)').length is 2
+PASS document.body.querySelectorAll('#area2 :is(.cocoa, p > .cappuccino)').length is 2
+PASS document.body.querySelectorAll('#area2 :is(div > .cocoa, p > .cappuccino)').length is 1
+PASS document.body.querySelectorAll('#area2 :is(.cappuccino, p) > span').length is 3
+PASS document.body.querySelectorAll('#area3 :is(.cocoa .cappuccino, .tea)').length is 3
+PASS document.body.querySelectorAll('#area3 :is(.cocoa > .cappuccino, .tea)').length is 1
+PASS document.body.querySelectorAll('#area4 :is(.cocoa + .cappuccino)').length is 1
+PASS document.body.querySelectorAll('#area4 :is(.cocoa ~ .cappuccino)').length is 2
+PASS document.body.querySelectorAll('#area4 :is(.cocoa ~ :is(.cocoa, .cappuccino))').length is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

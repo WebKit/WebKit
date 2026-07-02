@@ -1,0 +1,14 @@
+Tests that -internal-inset outline-offset resolves correctly with various outline widths, styles, and zoom.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS defaultOffset == "-3px" || defaultOffset == "-2px" is true
+PASS actualOffset is "-2px"
+PASS actualOffset is "-10px"
+PASS zoomedOffset == "-3px" || zoomedOffset == "-2px" is true
+PASS actualOffset is "-5px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

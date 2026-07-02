@@ -1,0 +1,12 @@
+
+PASS nested @supports serialize properly
+PASS @keyframes nested in @supports serialize properly
+PASS The style sheet structure is properly represented
+PASS Deleting the top level of a nested structue works
+PASS Rule insertion works in nested @supports rules
+PASS Insertion @supports rules into another @supports rule works
+PASS Deletion of a nested @supports rule works
+PASS Inserting @font-face inside @supports works
+PASS 'and' arguments in @supports serialize in the correct order and with extra parentheses
+PASS 'or' arguments in @supports serialize in the correct order and with extra parentheses
+

@@ -1,0 +1,33 @@
+
+PASS fetch() with value %00
+PASS fetch() with value %01
+PASS fetch() with value %02
+PASS fetch() with value %03
+PASS fetch() with value %04
+PASS fetch() with value %05
+PASS fetch() with value %06
+PASS fetch() with value %07
+PASS fetch() with value %08
+PASS fetch() with value %09
+PASS fetch() with value %0A
+PASS fetch() with value %0D
+PASS fetch() with value %0E
+PASS fetch() with value %0F
+PASS fetch() with value %10
+PASS fetch() with value %11
+PASS fetch() with value %12
+PASS fetch() with value %13
+PASS fetch() with value %14
+PASS fetch() with value %15
+PASS fetch() with value %16
+PASS fetch() with value %17
+PASS fetch() with value %18
+PASS fetch() with value %19
+PASS fetch() with value %1A
+PASS fetch() with value %1B
+PASS fetch() with value %1C
+PASS fetch() with value %1D
+PASS fetch() with value %1E
+PASS fetch() with value %1F
+PASS fetch() with value %20
+

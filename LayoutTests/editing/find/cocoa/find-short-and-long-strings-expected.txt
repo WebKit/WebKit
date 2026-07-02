@@ -1,0 +1,10 @@
+PASS textContent.innerText.length is 2**16
+PASS window.find('b') is false
+PASS window.find('a'.repeat(2**5)) is true
+PASS window.find('a'.repeat(2**16 - 1)) is true
+PASS window.find('a'.repeat(2**16)) is false
+PASS window.find('a'.repeat(2**30)) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,15 @@
+<body>
+    <h2>This test ensures that calling reset() after starting a layer with a filter does not crash.</h2>
+    <canvas id="canvas" width="100" height="50"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext('2d');
+
+        ctx.filter = 'drop-shadow(10px 10px 0px green)';
+        ctx.beginLayer();
+        ctx.reset();
+    </script>
+</body>

@@ -1,0 +1,151 @@
+
+{
+ "SDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIDocumentBrowserActionAvailabilityMenu"},
+      {"access": "public", "name": "UIDocumentBrowserActionAvailabilityNavigationBar"}
+     ],
+     "introduced": "11",
+     "name": "UIDocumentBrowserActionAvailability"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIDocumentBrowserErrorGeneric"},
+      {"access": "public", "introduced": "12", "name": "UIDocumentBrowserErrorNoLocationAvailable"}
+     ],
+     "introduced": "11",
+     "name": "UIDocumentBrowserErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIDocumentBrowserImportModeNone"},
+      {"access": "public", "name": "UIDocumentBrowserImportModeCopy"},
+      {"access": "public", "name": "UIDocumentBrowserImportModeMove"}
+     ],
+     "introduced": "11",
+     "name": "UIDocumentBrowserImportMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "UIDocumentBrowserUserInterfaceStyleWhite"},
+      {"access": "public", "name": "UIDocumentBrowserUserInterfaceStyleLight"},
+      {"access": "public", "name": "UIDocumentBrowserUserInterfaceStyleDark"}
+     ],
+     "introduced": "11",
+     "name": "UIDocumentBrowserUserInterfaceStyle"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_UIDocumentBrowserErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithIdentifier:localizedTitle:availability:handler:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "UIDocumentBrowserAction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedTitle", "name": "localizedTitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availability", "name": "availability"},
+      {"access": "public", "getter": "image", "name": "image", "setter": "setImage:"},
+      {"access": "public", "getter": "supportedContentTypes", "name": "supportedContentTypes", "setter": "setSupportedContentTypes:"},
+      {"access": "public", "getter": "supportsMultipleItems", "name": "supportsMultipleItems", "setter": "setSupportsMultipleItems:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "UIDocumentBrowserTransitionController",
+     "properties": [
+      {"access": "public", "getter": "loadingProgress", "name": "loadingProgress", "setter": "setLoadingProgress:"},
+      {"access": "public", "getter": "targetView", "name": "targetView", "setter": "setTargetView:"}
+     ],
+     "protocols": [
+      "UIViewControllerAnimatedTransitioning"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "initForOpeningFilesWithContentTypes:"},
+      {"access": "public", "introduced": "14", "name": "initForOpeningContentTypes:"},
+      {"access": "public", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "name": "revealDocumentAtURL:importIfNeeded:completion:"},
+      {"access": "public", "name": "importDocumentAtURL:nextToDocumentAtURL:mode:completionHandler:"},
+      {"access": "public", "introduced": "16", "name": "renameDocumentAtURL:proposedName:completionHandler:"},
+      {"access": "public", "introduced": "12", "name": "transitionControllerForDocumentAtURL:"},
+      {"access": "public", "introduced": "11", "name": "transitionControllerForDocumentURL:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "UIDocumentBrowserViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "allowsDocumentCreation", "name": "allowsDocumentCreation", "setter": "setAllowsDocumentCreation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeDocumentCreationIntent", "introduced": "18", "name": "activeDocumentCreationIntent"},
+      {"access": "public", "getter": "allowsPickingMultipleItems", "name": "allowsPickingMultipleItems", "setter": "setAllowsPickingMultipleItems:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowedContentTypes", "introduced": "11", "name": "allowedContentTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recentDocumentsContentTypes", "introduced": "11", "name": "recentDocumentsContentTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentTypesForRecentDocuments", "introduced": "14", "name": "contentTypesForRecentDocuments"},
+      {"access": "public", "getter": "shouldShowFileExtensions", "introduced": "13", "name": "shouldShowFileExtensions", "setter": "setShouldShowFileExtensions:"},
+      {"access": "public", "getter": "additionalLeadingNavigationBarButtonItems", "name": "additionalLeadingNavigationBarButtonItems", "setter": "setAdditionalLeadingNavigationBarButtonItems:"},
+      {"access": "public", "getter": "additionalTrailingNavigationBarButtonItems", "name": "additionalTrailingNavigationBarButtonItems", "setter": "setAdditionalTrailingNavigationBarButtonItems:"},
+      {"access": "public", "getter": "customActions", "name": "customActions", "setter": "setCustomActions:"},
+      {"access": "public", "getter": "browserUserInterfaceStyle", "name": "browserUserInterfaceStyle", "setter": "setBrowserUserInterfaceStyle:"},
+      {"access": "public", "getter": "localizedCreateDocumentActionTitle", "introduced": "13", "name": "localizedCreateDocumentActionTitle", "setter": "setLocalizedCreateDocumentActionTitle:"},
+      {"access": "public", "getter": "defaultDocumentAspectRatio", "introduced": "13", "name": "defaultDocumentAspectRatio", "setter": "setDefaultDocumentAspectRatio:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIViewController"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "11", "name": "documentBrowser:didPickDocumentURLs:", "optional": true},
+      {"access": "public", "introduced": "12", "name": "documentBrowser:didPickDocumentsAtURLs:", "optional": true},
+      {"access": "public", "name": "documentBrowser:didRequestDocumentCreationWithHandler:", "optional": true},
+      {"access": "public", "name": "documentBrowser:didImportDocumentAtURL:toDestinationURL:", "optional": true},
+      {"access": "public", "name": "documentBrowser:failedToImportDocumentAtURL:error:", "optional": true},
+      {"access": "public", "name": "documentBrowser:applicationActivitiesForDocumentURLs:", "optional": true},
+      {"access": "public", "name": "documentBrowser:willPresentActivityViewController:", "optional": true}
+     ],
+     "introduced": "11",
+     "name": "UIDocumentBrowserViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "UIDocumentBrowserActionAvailability"},
+    {"access": "public", "name": "UIDocumentBrowserErrorCode"},
+    {"access": "public", "name": "UIDocumentBrowserImportMode"},
+    {"access": "public", "name": "UIDocumentBrowserUserInterfaceStyle"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

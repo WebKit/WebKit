@@ -1,0 +1,22 @@
+This tests that text marker ranges include emitted newlines in the string for range, even when the emitted newline is at the beginning or the only character in the range.
+
+String for text marker range: "Two"
+Incrementing end marker
+String for text marker range: "Two[NEWLINE]"
+Incrementing start marker
+String for text marker range: "wo[NEWLINE]"
+Incrementing start marker
+String for text marker range: "o[NEWLINE]"
+Incrementing start marker
+String for text marker range: "[NEWLINE]"
+Incrementing end marker
+String for text marker range: "[NEWLINE]T"
+Incrementing end marker
+String for text marker range: "[NEWLINE]Th"
+Incrementing end marker
+String for text marker range: "[NEWLINE]Thr"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

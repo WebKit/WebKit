@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <script>
+      if (window.testRunner)
+        testRunner.dumpAsText();
+    </script>
+
+   </head>
+   <body>
+     <!-- This previously tried to read the size of the image when
+          ImageDecoder::m_failed was true, triggering either an assert or a
+          read of random memory. Thanks to Robert Swiecki for the test case. -->
+     <img src="resources/size-failure.gif">
+     <p>PASS</p>
+   </body>
+ </html>

@@ -1,0 +1,4 @@
+
+
+PASS Delayed load of poster should overwrite intrinsic size of video.
+

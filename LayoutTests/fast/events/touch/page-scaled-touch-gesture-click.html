@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style type="text/css">
+#touchtarget {
+  width: 100px;
+  height: 100px;
+  background: blue;
+}
+</style>
+</head>
+<body>
+<div id="touchtarget">
+<div id="endTestDiv">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+window.jsTestIsAsync = true;
+window.addEventListener('load', async () => {
+    await runTest();
+});
+
+var expectedMouseEvents = 4;
+var mouseEventsReceived = 0;
+var eventTypes = [ 'mousemove', 'mousedown', 'mouseup', 'click' ];
+
+function gestureEventCallback(event)
+{
+    if (window.eventSender) {
+        shouldBeEqualToString('event.type', eventTypes[mouseEventsReceived]);
+        shouldBe('event.clientX', '20');
+        shouldBe('event.clientY', '24');
+        shouldBe("event.shiftKey", "false");
+        shouldBe("event.altKey", "false");
+        shouldBe("event.ctrlKey", "false");
+        shouldBe("event.metaKey", "false");
+        mouseEventsReceived++;
+    } else {
+        debug(event.type);
+        debug(event.clientX);
+        debug(event.clientY);
+    }
+}
+
+// Because we may not have a gesture recognizer, we send a key press
+// event to end the test without temporal flakiness.
+function quitKeyToEndTest(event) {
+    endTest();
+}
+
+function endTest()
+{
+    if (mouseEventsReceived < expectedMouseEvents) {
+        debug('Gesture manager not implemented on this platform.');
+    }
+    // Bail.
+    isSuccessfullyParsed();
+    finishJSTest();
+}
+
+async function runTest() {
+    window.testRunner?.dumpAsText();
+    await window.testRunner?.setPageScaleFactor(0.5, 0, 0);
+
+    var tapTarget = document.getElementById('touchtarget');
+    tapTarget.addEventListener("mousedown", gestureEventCallback, false);
+    tapTarget.addEventListener("click", gestureEventCallback, false);
+    tapTarget.addEventListener("mouseup", gestureEventCallback, false);
+    tapTarget.addEventListener("mousemove", gestureEventCallback, false);
+    var endTarget = document.getElementById('endTestDiv');
+    endTarget.addEventListener("mousedown", () => { endTest() }, false);
+
+    if (window.eventSender) {
+        description("This tests basic single touch gesture generation.");
+        await UIHelper.activateElement(tapTarget);
+        await UIHelper.activateElement(endTarget);
+    } else {
+        debug("This test requires DumpRenderTree.  Tap on the blue rect to log.")
+    }
+}
+</script>
+</body>
+</html>

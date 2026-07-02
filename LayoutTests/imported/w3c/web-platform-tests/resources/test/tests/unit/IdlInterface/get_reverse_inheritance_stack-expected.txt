@@ -1,0 +1,7 @@
+
+PASS should return an array that includes itself.
+PASS should throw for interfaces which inherit from another interface which wasn't added to the IdlArray
+PASS should return an array of interfaces in order of inheritance, starting with the base interface
+PASS should throw when inheritance is circular
+PASS should throw when multiple inheritances defined
+

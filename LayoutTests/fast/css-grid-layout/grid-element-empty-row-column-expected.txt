@@ -1,0 +1,4 @@
+This test checks that a grid element with row(s) (resp. column(s)) but no column (resp. row) is properly laid out.
+
+PASS
+PASS

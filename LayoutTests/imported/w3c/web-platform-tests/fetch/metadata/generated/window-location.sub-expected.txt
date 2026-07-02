@@ -1,0 +1,62 @@
+
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - location assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - location.href assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - location.assign assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-origin destination - location.replace assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - location assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - location.href assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - location.assign assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy same-site destination - location.replace assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - location assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - location.href assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - location.assign assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - Not sent to non-trustworthy cross-site destination - location.replace assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - location assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - location.href assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - location.assign assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-origin destination - location.replace assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - location assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - location.href assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - location.assign assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy same-site destination - location.replace assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - location assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - location.href assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - location.assign assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-mode - Not sent to non-trustworthy cross-site destination - location.replace assert_not_own_property: unexpected property "sec-fetch-mode" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - location assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - location.href assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - location.assign assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-origin destination - location.replace assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - location assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - location.href assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - location.assign assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy same-site destination - location.replace assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - location assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - location.href assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - location.assign assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+FAIL sec-fetch-dest - Not sent to non-trustworthy cross-site destination - location.replace assert_not_own_property: unexpected property "sec-fetch-dest" is found on object
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - location
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - location.href
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - location.assign
+PASS sec-fetch-user - Not sent to non-trustworthy same-origin destination - location.replace
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - location
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - location.href
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - location.assign
+PASS sec-fetch-user - Not sent to non-trustworthy same-site destination - location.replace
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - location
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - location.href
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - location.assign
+PASS sec-fetch-user - Not sent to non-trustworthy cross-site destination - location.replace
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - location assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - location.href assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - location.assign assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+FAIL sec-fetch-site - HTTPS downgrade (header not sent) - location.replace assert_not_own_property: unexpected property "sec-fetch-site" is found on object
+PASS sec-fetch-site - HTTPS upgrade - location
+PASS sec-fetch-site - HTTPS upgrade - location.href
+FAIL sec-fetch-site - HTTPS upgrade - location.assign assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - HTTPS upgrade - location.replace assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+PASS sec-fetch-site - HTTPS downgrade-upgrade - location
+PASS sec-fetch-site - HTTPS downgrade-upgrade - location.href
+FAIL sec-fetch-site - HTTPS downgrade-upgrade - location.assign assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+FAIL sec-fetch-site - HTTPS downgrade-upgrade - location.replace assert_array_equals: expected property 0 to be "cross-site" but got "none" (expected array ["cross-site"] got ["none"])
+

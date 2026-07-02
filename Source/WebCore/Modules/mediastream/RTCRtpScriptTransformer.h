@@ -1,0 +1,100 @@
+/*
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEB_RTC)
+
+#include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/RTCRtpTransformBackend.h>
+#include <wtf/Deque.h>
+#include <wtf/ObjectIdentifier.h>
+#include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebCore {
+
+class FrameRateMonitor;
+class MessagePort;
+class RTCEncodedStreamProducer;
+class RTCRtpTransformBackend;
+class ReadableStream;
+class ScriptExecutionContext;
+class SerializedScriptValue;
+class WritableStream;
+
+struct MessageWithMessagePorts;
+
+template<typename> class ExceptionOr;
+
+class RTCRtpScriptTransformer
+    : public RefCounted<RTCRtpScriptTransformer>
+    , public ActiveDOMObject {
+public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
+    ~RTCRtpScriptTransformer();
+
+    ReadableStream& NODELETE readable();
+    WritableStream& NODELETE writable();
+    JSC::JSValue options(JSC::JSGlobalObject&);
+
+    void generateKeyFrame(const String&, Ref<DeferredPromise>&&);
+    void sendKeyFrameRequest(Ref<DeferredPromise>&&);
+
+    void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
+    void start(Ref<RTCRtpTransformBackend>&&);
+
+    enum class ClearCallback : bool { No, Yes };
+    void clear(ClearCallback);
+
+private:
+    RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Vector<Ref<MessagePort>>&&, Ref<RTCEncodedStreamProducer>&&);
+
+    // ActiveDOMObject.
+    void stop() final { stopPendingActivity(); }
+
+    void stopPendingActivity() { auto pendingActivity = WTF::move(m_pendingActivity); }
+
+    void enqueueFrame(ScriptExecutionContext&, Ref<RTCRtpTransformableFrame>&&);
+
+    const Ref<SerializedScriptValue> m_options;
+    Vector<Ref<MessagePort>> m_ports;
+
+    const Ref<RTCEncodedStreamProducer> m_streamProducer;
+
+    RefPtr<RTCRtpTransformBackend> m_backend;
+    RefPtr<PendingActivity<RTCRtpScriptTransformer>> m_pendingActivity;
+
+    bool m_isSender { false };
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC)

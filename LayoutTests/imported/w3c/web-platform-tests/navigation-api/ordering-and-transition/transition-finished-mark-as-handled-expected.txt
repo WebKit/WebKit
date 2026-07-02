@@ -1,0 +1,3 @@
+
+PASS navigation.transition.finished must not trigger unhandled rejections
+

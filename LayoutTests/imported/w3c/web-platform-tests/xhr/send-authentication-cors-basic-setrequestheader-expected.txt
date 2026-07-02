@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: send() - "Basic" authenticated CORS request using setRequestHeader() (expects to succeed)
+

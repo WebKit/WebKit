@@ -1,0 +1,3 @@
+
+FAIL SVGGeometryElement.getTotalLength: 'display:none' assert_equals: expected 40 but got 0
+

@@ -1,0 +1,7 @@
+Bug 134184: getBBox on path with no d attribute should return (0,0,0,0) and should not contribute to parent bbox
+
+For this test to pass, you should see 'Passed' twice below.
+
+Passed; Passed;
+
+

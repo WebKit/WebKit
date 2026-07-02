@@ -1,0 +1,1 @@
+Test editing a paragraph that is user-select:none and dir:rtl. The test passes if WebKit doesn't crash or hit an assertion.

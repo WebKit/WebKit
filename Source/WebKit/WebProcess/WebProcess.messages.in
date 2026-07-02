@@ -1,0 +1,260 @@
+# Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
+    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters) -> (WebCore::ProcessIdentity processIdentity)
+    SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
+
+    CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
+    CountWebPagesForTesting() -> (unsigned count)
+
+    PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
+
+    # Global preferences.
+    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel)
+
+    RegisterURLSchemeAsEmptyDocument(String scheme)
+    RegisterURLSchemeAsSecure(String scheme)
+    RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
+    SetDomainRelaxationForbiddenForURLScheme(String scheme)
+    RegisterURLSchemeAsLocal(String scheme)
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
+    RegisterURLSchemeAsNoAccess(String scheme)
+#endif
+    RegisterURLSchemeAsDisplayIsolated(String scheme)
+    RegisterURLSchemeAsCORSEnabled(String scheme)
+    RegisterURLSchemeAsCachePartitioned(String scheme)
+    RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    RegisterURLSchemeAsWebExtension(String scheme)
+#endif
+
+    SetDefaultRequestTimeoutInterval(double timeoutInterval)
+    SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+    SetDisableFontSubpixelAntialiasingForTesting(bool disable)
+    SetTrackingPreventionEnabled(bool enabled);
+    ClearResourceLoadStatistics();
+    UserPreferredLanguagesChanged(Vector<String> languages)
+    FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+    UpdateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    SetOptInCookiePartitioningEnabled(bool enabled);
+#endif
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    SetHasMouseDevice(bool hasMouseDevice)
+#endif
+
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+    SetHasStylusDevice(bool hasStylusDevice)
+#endif
+
+    void StartMemorySampler(WebKit::SandboxExtensionHandle sampleLogFileHandle, String sampleLogFilePath, double interval);
+    void StopMemorySampler();
+
+    SetTextCheckerState(OptionSet<WebKit::TextCheckerState> textCheckerState)
+
+    SetEnhancedAccessibility(bool flag)
+    BindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data);
+
+    GarbageCollectJavaScriptObjects()
+    GetStorageAreaMapCountForTesting() -> (uint64_t storageAreaMapCount)
+    SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
+
+    SetInjectedBundleParameter(String parameter, std::span<const uint8_t> value);
+    SetInjectedBundleParameters(std::span<const uint8_t> parameters);
+    HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
+
+    FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)
+    DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> ()
+    DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
+    DeleteWebsiteDataForOrigin(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, struct WebCore::ClientOrigin origin) -> ()
+    ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
+    DeleteAllCookies() -> ()
+
+    [DeferSendingIfSuspended] SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
+
+    SetMemoryCacheDisabled(bool disabled);
+
+#if ENABLE(SERVICE_CONTROLS)
+    SetEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices)
+#endif
+
+    EnsureAutomationSessionProxy(String sessionIdentifier)
+    DestroyAutomationSessionProxy()
+
+    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
+    ProcessDidResume()
+
+    BackgroundResponsivenessPing()
+
+#if ENABLE(GAMEPAD)
+    SetInitialGamepads(Vector<std::optional<WebKit::GamepadData>> gamepadDatas)
+    GamepadConnected(WebKit::GamepadData gamepadData, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
+    GamepadDisconnected(unsigned index)
+#endif
+
+    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:uint8_t WebKit::RemoteWorkerType workerType, WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::Site site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData, enum:bool WebCore::CrossOriginEmbedderPolicyValue workerCrossOriginEmbedderPolicy) -> ()
+
+    RegisterServiceWorkerClients() -> (bool isSuccess)
+
+    SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);
+    SetIsInProcessCache(bool isInProcessCache) -> ()
+    MarkIsNoLongerPrewarmed()
+    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
+
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+    [DeferSendingIfSuspended] SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+#endif
+#if PLATFORM(MAC)
+    ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    UserInterfaceIdiomDidChange(enum:uint8_t PAL::UserInterfaceIdiom idiom)
+#endif
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    [DeferSendingIfSuspended] BacklightLevelDidChange(float backlightLevel)
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    ColorPreferencesDidChange()
+#endif
+
+    IsJITEnabled() -> (bool enabled)
+    IsEnhancedSecurityEnabled() -> (bool enabled)
+
+#if PLATFORM(COCOA)
+    SetMediaMIMETypes(Vector<String> types)
+#if ENABLE(REMOTE_INSPECTOR)
+    EnableRemoteWebInspector();
+#endif
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    AddMockMediaDevice(struct WebCore::MockMediaDevice device);
+    ClearMockMediaDevices();
+    RemoveMockMediaDevice(String persistentId);
+    SetMockMediaDeviceIsEphemeral(String persistentId, bool isEphemeral);
+    ResetMockMediaDevices();
+
+#if ENABLE(SANDBOX_EXTENSIONS)
+    GrantUserMediaDeviceSandboxExtensions(WebKit::MediaDeviceSandboxExtensions sandboxExtensions)
+    RevokeUserMediaDeviceSandboxExtensions(Vector<String> sandboxExtensionIDs)
+#endif
+#endif
+
+    ClearCurrentModifierStateForTesting()
+
+    SetBackForwardCacheCapacity(unsigned capacity);
+    ClearCachedPage(WebCore::BackForwardFrameItemIdentifier backForwardFrameItemID) -> ()
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
+    SetAvailableInputDevices(OptionSet<WebKit::AvailableInputDevices> availableInputDevices)
+#endif
+
+    SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> ()
+    SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
+    SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
+    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domains) -> ()
+    SendResourceLoadStatisticsDataImmediately() -> ()
+
+    UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
+    UpdateScriptTrackingPrivacyFilter(struct WebKit::ScriptTrackingPrivacyRules rules)
+    UpdateConsistentPrivacyQuirkFilter(struct WebKit::ScriptTrackingPrivacyRules rules)
+
+    GrantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle> assetServicesHandles)
+    RevokeAccessToAssetServices()
+#if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+    SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles)
+#endif
+#if PLATFORM(COCOA)
+    DisableURLSchemeCheckInDataDetectors()
+    UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtensionHandle> handleArray)
+    PowerSourceDidChange(bool hasAC)
+#endif
+
+#if PLATFORM(COCOA)
+    DidWriteToPasteboardAsynchronously(String pasteboardName) CanDispatchOutOfOrder
+#endif
+
+#if HAVE(DISPLAY_LINK)
+    DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update)
+#endif
+
+#if PLATFORM(MAC)
+    SystemWillPowerOn()
+    SystemWillSleep()
+    SystemDidWake()
+#endif
+
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    ConsumeAudioComponentRegistrations(IPC::SharedBufferReference registrationData)
+#endif
+
+#if PLATFORM(COCOA)
+    AccessibilityPreferencesDidChange(struct WebKit::AccessibilityPreferences accessibilityPreferences)
+#endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    SetMediaAccessibilityPreferences(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode displayMode, Vector<String> languages)
+    SetMediaAccessibilityPreferredLanguages(Vector<String> languages)
+    SetMediaAccessibilityPreferredCaptionDisplayMode(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode displayMode)
+#endif
+
+#if PLATFORM(MAC)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtensionHandle handle, WebKit::SandboxExtensionHandle machBootstrapHandle)
+#endif
+
+    ReleaseMemory() -> ()
+
+    JSHandleDestroyed(WebCore::JSHandleIdentifier identifier);
+
+#if ENABLE(NOTIFY_BLOCKING)
+    [DeferSendingIfSuspendedWithCoalescingKeys=(message)] PostNotification(String message, std::optional<uint64_t> state)
+    [DeferSendingIfSuspended] PostObserverNotification(String message)
+    GetNotifyStateForTesting(String notificationName) -> (std::optional<uint64_t> state)
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    [DeferSendingIfSuspended] SetResourceMonitorContentRuleList(WebKit::WebCompiledContentRuleListData ruleListData)
+    SetResourceMonitorContentRuleListAsync(WebKit::WebCompiledContentRuleListData ruleListData) -> ()
+#endif
+
+#if PLATFORM(COCOA)
+    RegisterAdditionalFonts(struct WebKit::AdditionalFonts fonts)
+    RegisterFontMap(HashMap<String, URL> fonts, HashMap<String, Vector<String>> fontFamilyMap, Vector<WebKit::SandboxExtensionHandle> sandboxExtensions)
+#endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    InitializeAccessibility(Vector<WebKit::SandboxExtensionHandle> handles);
+#endif
+
+    ContentWorldDestroyed(WebKit::ContentWorldIdentifier identifier)
+}

@@ -1,0 +1,34 @@
+Tests for Event Listener breakpoints.
+
+
+== Running test suite: DOMDebugger.Event.Listener
+-- Running test case: DOMDebugger.Event.Listener.AddMultipleBreakpoints
+Creating "click" Event Breakpoint...
+Adding "listener:click" Event Breakpoint...
+Firing "click" on div#x...
+PASS: Should pause before event handler is run.
+CALL STACK:
+0: [F] handleX_click
+1: [F] clickX
+2: [P] Global Code
+PASS: Should pause before event handler is run.
+CALL STACK:
+0: [F] handleBody_click
+1: [F] clickX
+2: [P] Global Code
+PASS: Should have paused twice.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.Event.Listener.DisableBetweenDispatches
+Creating "click" Event Breakpoint...
+Adding "listener:click" Event Breakpoint...
+Firing "click" on div#x...
+PASS: Should pause before event handler is run.
+CALL STACK:
+0: [F] handleX_click
+1: [F] clickX
+2: [P] Global Code
+Disabling breakpoints...
+PASS: Should have paused once.
+-- Running test teardown.
+

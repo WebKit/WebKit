@@ -1,0 +1,4 @@
+
+
+PASS SpeechRecognition and friends should not exist in insecure context
+

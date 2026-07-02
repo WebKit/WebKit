@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>ImageCapture grabFrame for canvas capture</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <canvas id=canvas width=100 height=100></canvas>
+    <script>
+promise_test(async (test) => {
+    const stream = canvas.captureStream(30);
+    const context = canvas.getContext('2d');
+    context.fillStyle = "red";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+
+    const image = await imageCapture.grabFrame();
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const data = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    for (let i = 0; i < canvas.width * canvas.height; i = i + 4) {
+         assert_equals(data[0], 255, "r");
+         assert_equals(data[1], 0, "g");
+         assert_equals(data[2], 0, "b");
+         assert_equals(data[3], 255, "r");
+    }
+}, "grabFrame on canvas track");
+    </script>
+</body>
+</html>

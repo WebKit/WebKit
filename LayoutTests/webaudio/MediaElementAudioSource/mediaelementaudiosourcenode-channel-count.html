@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MediaElementAudioSourceNode: output channel count matches the media element's audio</title>
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#MediaElementAudioSourceNode">
+<script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+function waitFor(element, type) {
+    return new Promise(resolve => element.addEventListener(type, resolve, { once: true }));
+}
+
+function sleepFor(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function setupSplitGraph(audio, context) {
+    const source = context.createMediaElementSource(audio);
+    const splitter = context.createChannelSplitter(2);
+    const analyserA = context.createAnalyser();
+    const analyserB = context.createAnalyser();
+    for (const a of [analyserA, analyserB]) {
+        a.fftSize = 2048;
+        a.smoothingTimeConstant = 0;
+        a.minDecibels = -40;
+        a.maxDecibels = 0;
+    }
+
+    const gain = context.createGain();
+    gain.gain.value = 0;
+
+    source.connect(splitter);
+    splitter.connect(analyserA, 0);
+    splitter.connect(analyserB, 1);
+    analyserA.connect(gain);
+    analyserB.connect(gain);
+    gain.connect(context.destination);
+
+    return { source, splitter, analyserA, analyserB };
+}
+
+function dbAtFrequency(analyser, frequency, sampleRate) {
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(buf);
+    return buf[Math.round(frequency * analyser.fftSize / sampleRate)];
+}
+
+async function waitForPlayback(audio, target = 0.3) {
+    let attempts = 0;
+    while (audio.currentTime < target) {
+        if (++attempts >= 30)
+            throw new Error(`element.currentTime stuck at ${audio.currentTime}`);
+        await sleepFor(50);
+    }
+    await sleepFor(100);
+}
+
+promise_test(async t => {
+    const audio = new Audio("../resources/media/stereo-440L-880R.wav");
+    waitFor(audio, "error").then(event => {
+        throw new Error(`audio element error: code=${event.target.error?.code}`);
+    });
+    audio.loop = true;
+
+    const context = new AudioContext({sampleRate: 48000});
+    t.add_cleanup(() => context.close());
+
+    const { analyserA, analyserB } = setupSplitGraph(audio, context);
+
+    context.resume();
+    audio.play();
+    await waitForPlayback(audio);
+
+    assert_greater_than(dbAtFrequency(analyserA, 440, context.sampleRate), 0,
+        "splitter output 0 (L) has 440Hz signal");
+    assert_equals(dbAtFrequency(analyserA, 880, context.sampleRate), 0,
+        "splitter output 0 (L) does not contain 880Hz (R is isolated)");
+
+    assert_greater_than(dbAtFrequency(analyserB, 880, context.sampleRate), 0,
+        "splitter output 1 (R) has 880Hz signal");
+    assert_equals(dbAtFrequency(analyserB, 440, context.sampleRate), 0,
+        "splitter output 1 (R) does not contain 440Hz (L is isolated)");
+
+    audio.pause();
+}, "MediaElementAudioSourceNode output is 2 channels for a stereo media element");
+
+promise_test(async t => {
+    const audio = new Audio("../resources/media/sine440.mp3");
+    waitFor(audio, "error").then(event => {
+        throw new Error(`audio element error: code=${event.target.error?.code}`);
+    });
+    audio.loop = true;
+
+    const context = new AudioContext({sampleRate: 48000});
+    t.add_cleanup(() => context.close());
+
+    const { analyserA, analyserB } = setupSplitGraph(audio, context);
+
+    context.resume();
+    audio.play();
+    await waitForPlayback(audio);
+
+    assert_greater_than(dbAtFrequency(analyserA, 440, context.sampleRate), 0,
+        "splitter output 0 has 440Hz from the mono source");
+    assert_equals(dbAtFrequency(analyserB, 440, context.sampleRate), 0,
+        "splitter output 1 is silent (mono source has no second channel)");
+
+    audio.pause();
+}, "MediaElementAudioSourceNode output is 1 channel for a mono media element");
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<style>
+.top-container {
+  padding: 20px;
+  margin: 3px;
+}
+
+.intermediate-container {
+    height: 50px;
+    width: 50px;
+    clip-path: inset(0);
+    background: green;
+}
+
+.hittest_candidate {
+    height: 20px;
+    width: 20px;
+    clip-path: inset(0);
+    background: blue;
+}
+
+iframe {
+  width: 200px;
+  height: 200px;
+  border: none;
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+<pre id=result>hittest result: </pre>
+
+<!-- simple hittest -->
+<div class=top-container>
+  <div class=intermediate-container>
+    <div class=hittest_candidate id=candidate1></div>
+  </div>
+</div>
+<script>
+let rect1 = candidate1.getBoundingClientRect();
+result.innerText += "\n" + document.elementFromPoint(rect1.left, rect1.top).id;
+</script>
+
+<!-- non-top level paint root hittest -->
+<div style="border: 4px solid green; transform: translateZ(0)">
+  <div class=top-container>
+    <div class=intermediate-container>
+      <div class=hittest_candidate id=candidate2></div>
+    </div>
+  </div>
+</div>
+<script>
+let rect2 = candidate2.getBoundingClientRect();
+result.innerText += "\n" + document.elementFromPoint(rect2.left, rect2.top).id;
+</script>
+
+<!-- multi-level non-top level paint root hittest -->
+<div style="margin: 4px; border: 1px solid cyan; transform: translateZ(0)">
+  <div style="height: 11px;"></div>
+  <div style="border: 4px solid green; transform: translateZ(0)">
+    <div class=top-container>
+      <div class=intermediate-container>
+        <div class=hittest_candidate id=candidate3></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+let rect3 = candidate3.getBoundingClientRect();
+result.innerText += "\n" + document.elementFromPoint(rect3.left, rect3.top).id;
+</script>

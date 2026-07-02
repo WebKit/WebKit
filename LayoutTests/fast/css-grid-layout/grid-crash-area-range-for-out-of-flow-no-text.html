@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <style>
+            #mgrid {
+                position:relative;
+                display: grid;
+            }
+            #childgrid {
+                display: grid;
+            }
+            #childblock {
+                position: absolute;
+                padding-bottom: 0%;
+                grid-column-end: flex-start;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="mgrid">
+            <div id="gridbody">
+                <div id="childgrid""></div>
+                <div id="childblock"></div>
+            </div>
+        </div>
+        <script>
+            testRunner?.dumpAsText();
+        </script>
+    </body>
+</html>

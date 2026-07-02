@@ -1,0 +1,75 @@
+<script>
+const stuff = new Map([['Window', [new WeakRef(globalThis)]]]);
+try {
+  function storeObject(key, o) {
+  if (o === undefined) {
+  }
+  let weak = new WeakRef(o);
+  let entriesForKey = stuff.get(key) ?? [];
+  entriesForKey.push(weak);
+  stuff.set(key, entriesForKey);
+}
+  function getObject(key) {
+  let entriesForKey = stuff.get(key);
+  if (!entriesForKey) {
+  }
+  while (entriesForKey.length) {
+ nextEntry = entriesForKey.shift();
+  let theObject = nextEntry.deref();
+  if (theObject) {
+  entriesForKey.push(nextEntry);
+  return theObject;
+  }
+  }
+}
+} catch (e) {
+}
+  (async () => {
+globalThis.testRunner?.waitUntilDone();
+(() => {
+})();
+try { storeObject('CSSKeyframesRule', (()=> {
+  let idx = ss0?.insertRule(`@keyframes a6 {
+}`, sr0?.length);
+})()); } catch {}
+try { (() => {
+})(); } catch {}
+try { storeObject('Document', await (()=>{ let html = `\u803d\u4da1\u046e\u0b9e\u{1fda9}`; return Document.parseHTMLUnsafe(html) })()); storeObject('MathMLElement', await (()=>{ let namespaceURI = qualifiedName = 'munder'; return getObject('Document').createElementNS(namespaceURI, qualifiedName) })()); } catch {}
+try { (() => {
+})(); } catch {}
+try { storeObject('CSSImportRule', (() => {
+ url = cssUrl('data', `svg|image }
+@layer l6;`);
+})()); } catch {}
+try { (() => {
+})(); } catch {}
+try { storeObject('ScrollTimeline', (()=>{ let options = { source: getObject('MathMLElement') }; return new ScrollTimeline(options) })()); } catch {}
+try { (() => {
+})(); } catch {}
+try { (() => {
+  new AbortController().signal.addEventListener('abort', async ev => { try { storeObject('BigInt64Array', (()=>{ let iterable = [0x4444444, 5, 8, 3]; return new BigInt64Array(iterable) })()); } catch {} try { storeObject('ArrayBuffer', await getObject('BigInt64Array').buffer); } catch {} }, { capture: true, once: true });
+})(); (() => {
+})(); } catch {}
+try { storeObject('CSSStyleRule', {
+})(); } catch {}
+try { await (()=>{ return history.back() })() } catch {}
+try { (() => {
+})(); } catch {}
+try { (()=> {
+})(); } catch {}
+try { storeObject('CSSFontFaceRule', (()=> {
+})()); } catch {}
+(() => {
+  let svgContents = (() => {
+  })();
+})();
+try {
+} catch {}
+try { storeObject('Animation', (()=>{ return new Animation() })()); } catch {}
+try { await (()=>{ return getObject('Animation').pause() })() } catch {}
+try { getObject('Animation').timeline = getObject('ScrollTimeline'); } catch {}
+try { storeObject('Animation', await getObject('Animation').ready); } catch {}
+try {
+} catch {}
+})();
+</script>

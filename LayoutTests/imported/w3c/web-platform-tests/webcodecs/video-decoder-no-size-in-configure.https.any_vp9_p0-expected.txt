@@ -1,0 +1,3 @@
+
+PASS Test configure() without setting width and height
+

@@ -1,0 +1,28 @@
+
+(fill-composited-rect
+  (rect at (0,0) size 104x104)
+  (color #008000)
+  (composite-operation source-over)
+  (blend-mode normal))
+(set-state
+  (change-flags [fill-brush, stroke-style, should-antialias])
+  (fill-brush
+    (color #0000FF))
+  (stroke-style no-stroke)
+  (should-antialias 0))
+(draw-rect
+  (rect at (0,0) size 104x2)
+  (border-thickness 1.00))
+(draw-rect
+  (rect at (0,102) size 104x2)
+  (border-thickness 1.00))
+(draw-rect
+  (rect at (0,0) size 2x104)
+  (border-thickness 1.00))
+(draw-rect
+  (rect at (102,0) size 2x104)
+  (border-thickness 1.00))
+(set-state
+  (change-flags [stroke-style, should-antialias])
+  (stroke-style solid-stroke)
+  (should-antialias 1))

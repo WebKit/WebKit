@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            cursor: url('cursor12x12.png') 0 0, auto;
+        }
+
+        #element {
+            position: absolute;
+            left: 20px;
+            top: 60px;
+            width: 100px;
+            height: 50px;
+            cursor: url('cursor13x13.png') 0 0, auto;
+        }
+
+        #scroller {
+            position: absolute;
+            left: 0;
+            top: 130px;
+            width: 350px;
+            height: 100px;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        #scroller-content {
+            width: 1200px;
+            height: 80px;
+            position: relative;
+        }
+
+        #overflow-element {
+            position: absolute;
+            left: 1000px;
+            top: 10px;
+            width: 80px;
+            height: 60px;
+            cursor: url('cursor14x14.png') 0 0, auto;
+        }
+
+        #edge-element {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 100px;
+            height: 100px;
+            cursor: url('cursor14x14.png') 0 0, auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="element"></div>
+    <div id="scroller">
+        <div id="scroller-content">
+            <div id="overflow-element"></div>
+        </div>
+    </div>
+    <div id="edge-element"></div>
+    <script>
+        function preloadImages(urls) {
+            return Promise.all(urls.map(url => new Promise(resolve => {
+                const img = new Image();
+                img.onload = img.onerror = resolve;
+                img.src = url;
+            })));
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data === 'scroll') {
+                const scroller = document.getElementById('scroller');
+                scroller.scrollLeft = scroller.scrollWidth - scroller.clientWidth;
+                requestAnimationFrame(() => {
+                    window.parent.postMessage('nested-scrolled', '*');
+                });
+            }
+        });
+
+        preloadImages(['cursor12x12.png', 'cursor13x13.png', 'cursor14x14.png']).then(() => {
+            window.parent.postMessage('nested-ready', '*');
+        });
+    </script>
+</body>
+</html>

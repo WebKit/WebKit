@@ -1,0 +1,19 @@
+Name: WebRTC
+URL: This is the canonical repository
+Version: DEPS
+CPEPrefix: cpe:/a:webrtc_project:webrtc
+License: BSD-3-Clause
+License File: LICENSE
+Shipped: yes
+Security Critical: yes
+Update Mechanism: Manual
+Mitigated: CVE-2022-2294
+CVE-2022-2294: Fixed by https://crbug.com/40060120.
+
+Description:
+WebRTC provides real time voice and video processing
+functionality to enable the implementation of
+PeerConnection/MediaStream.
+
+Third party code used in this project is described
+in the file LICENSE_THIRD_PARTY.

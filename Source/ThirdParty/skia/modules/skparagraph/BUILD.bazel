@@ -1,0 +1,25 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "skparagraph_harfbuzz_skunicode",
+    srcs = ["//modules/skparagraph/src:srcs"],
+    hdrs = ["//modules/skparagraph/include:hdrs"],
+    features = ["layering_check"],
+    visibility = [
+        "//:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//modules/skshaper:skshaper_harfbuzz",
+        "//modules/skshaper:skshaper_unicode",
+        "//modules/skunicode:skunicode_core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)

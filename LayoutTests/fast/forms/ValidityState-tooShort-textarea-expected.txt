@@ -1,0 +1,26 @@
+Tests for tooShort flag with <textarea> elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No minlength and no value
+PASS textarea.validity.tooShort is false
+
+Dirty value and longer than minLength
+PASS textarea.value.length is 3
+PASS textarea.validity.tooShort is true
+PASS textarea.validity.tooShort is false
+
+Dirty value and longer than minLength (with "readonly" attribute)
+PASS textarea.value.length is 3
+PASS textarea.validity.tooShort is true
+PASS textarea.validity.tooShort is false
+
+Dirty value and longer than minLength (with "disabled" attribute)
+PASS textarea.value.length is 3
+PASS textarea.validity.tooShort is true
+PASS textarea.validity.tooShort is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+	i = document.body.appendChild(document.createElement("iframe"));
+    i.contentWindow.addEventListener("message", (event) => {
+        if (event.data.startsWith("opener info:")) {
+            i.contentWindow.document.body.appendChild(
+                i.contentWindow.document.createTextNode("\n\nopened window reported " + event.data)
+            )
+            window.testRunner?.notifyDone();
+        } 
+    });
+    i.contentWindow.open("http://127.0.0.1:8000/site-isolation/resources/post-opener-info-message-to-opener.html", "frameName");
+}
+
+</script>
+<body onload="runTest()">
+This test passes if WebKit doesn't crash and the opened window returns the correct opener url and origin
+</body>

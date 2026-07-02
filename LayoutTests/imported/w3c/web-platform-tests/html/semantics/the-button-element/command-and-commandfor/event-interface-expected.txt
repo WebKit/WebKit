@@ -1,0 +1,25 @@
+
+
+PASS command is a readonly defaulting to ''
+PASS source is readonly defaulting to null
+PASS command reflects initialized attribute
+PASS command set to undefined
+PASS command set to null
+PASS command set to false
+PASS command explicitly set to empty string
+PASS command set to true
+PASS command set to a number
+PASS command set to []
+PASS command set to [1, 2, 3]
+PASS command set to an object
+PASS command set to an object with a toString function
+PASS CommandEventInit properties set value
+PASS CommandEventInit properties set value 2
+PASS CommandEventInit properties set value 3
+PASS source set to undefined
+PASS source set to null
+PASS source set to false
+PASS source set to true
+PASS source set to {}
+PASS source set to non-Element EventTarget
+

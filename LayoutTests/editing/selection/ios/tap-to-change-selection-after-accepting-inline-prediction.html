@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+}
+
+#start {
+    width: 100%;
+    height: 120px;
+    border: 1px solid orange;
+}
+
+#target {
+    padding: 4px;
+    border: 1px solid tomato;
+    box-sizing: border-box;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+function targetContainsCaretSelection()
+{
+    if (getSelection().type !== "Caret")
+        return false;
+
+    let target = document.getElementById("target");
+    let container = getSelection().getRangeAt(0).startContainer;
+    while (container) {
+        if (container === target)
+            return true;
+        container = container.parentElement;
+    }
+    return false;
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that you can change an editable selection with a tap gesture after accepting an inline prediction. This test accepts an inline completion, taps the red box below, and verifies that the selection is correctly set. Requires WebKitTestRunner.");
+    getSelection().setPosition(document.body, 0);
+
+    console.log("1. Focusing editor");
+    await UIHelper.activateElementAndWaitForInputSession(document.getElementById("start"));
+
+    console.log("2. Typing in editor");
+    for (let character of [..."i want to c"]) {
+        await UIHelper.callFunctionAndWaitForEvent(async () => {
+            await UIHelper.typeCharacter(character);
+            await UIHelper.ensurePresentationUpdate();
+        }, document.body, "keyup");
+        await UIHelper.delayFor(100);
+    }
+
+    console.log("3. Setting inline prediction");
+    await UIHelper.setInlinePrediction("elebrate");
+    await UIHelper.ensurePresentationUpdate();
+
+    console.log("4. Accepting inline prediction");
+    await UIHelper.acceptInlinePrediction();
+    await UIHelper.ensurePresentationUpdate();
+
+    console.log("5. Verifying text content");
+    await UIHelper.waitForCondition(() => document.body.textContent.includes("I want to c"));
+
+    console.log("6. Tapping target element");
+    await UIHelper.activateElement(document.getElementById("target"));
+
+    console.log("7. Waiting for caret selection");
+    await shouldBecomeEqual("targetContainsCaretSelection()", "true");
+
+    console.log("8. Dismissing keyboard");
+    document.getElementById("editor").blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="editor" contenteditable>
+        <div id="start"><br></div>
+        <p id="description"></p>
+        <div id="target"><br></div>
+    </div>
+</body>
+</html>

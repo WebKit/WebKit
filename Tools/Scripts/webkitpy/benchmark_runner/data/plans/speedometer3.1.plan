@@ -1,0 +1,33 @@
+{
+    "timeout": 600,
+    "count": 4,
+    "git_repository": {"url": "https://github.com/WebKit/Speedometer.git", "branch": "release/3.1"},
+    "webserver_benchmark_patch": "data/patches/webserver/Speedometer3.patch",
+    "signpost_patch": "data/patches/signposts/Speedometer3.patch",
+    "entry_point": "index.html",
+    "subtest_entry_point": "index.html?developerMode=&suites=",
+    "output_file": "speedometer3.result",
+    "subtest_url_format": "${SUITE},",
+    "subtests": {
+        "TodoMVC-JavaScript-ES5": [""],
+        "TodoMVC-JavaScript-ES6-Webpack-Complex-DOM": [""],
+        "TodoMVC-WebComponents": [""],
+        "TodoMVC-React-Complex-DOM": [""],
+        "TodoMVC-React-Redux": [""],
+        "TodoMVC-Backbone": [""],
+        "TodoMVC-Angular-Complex-DOM": [""],
+        "TodoMVC-Vue": [""],
+        "TodoMVC-jQuery": [""],
+        "TodoMVC-Preact-Complex-DOM": [""],
+        "TodoMVC-Svelte-Complex-DOM": [""],
+        "TodoMVC-Lit-Complex-DOM": [""],
+        "NewsSite-Next": [""],
+        "NewsSite-Nuxt": [""],
+        "Editor-CodeMirror": [""],
+        "Editor-TipTap": [""],
+        "Charts-observable-plot": [""],
+        "Charts-chartjs": [""],
+        "React-Stockcharts-SVG": [""],
+        "Perf-Dashboard": [""]
+    }
+}

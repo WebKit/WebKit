@@ -1,0 +1,16 @@
+External scripts with matching SRI hash should be allowed.
+
+
+PASS Load all the tests.
+PASS matching integrity
+PASS matching integrity (case-insensitive algorithm)
+PASS multiple matching integrity
+PASS no integrity
+PASS matching plus unsupported integrity
+PASS mismatched integrity
+PASS multiple mismatched integrity
+PASS partially matching integrity
+PASS crossorigin no integrity but allowed host
+PASS crossorigin mismatched integrity but allowed host
+PASS External script in a script tag with matching SRI hash should run.
+

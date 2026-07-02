@@ -1,0 +1,124 @@
+/*
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/ProcessIdentifier.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/Hasher.h>
+#include <wtf/Markable.h>
+
+namespace WebCore {
+
+class IDBRequest;
+
+namespace IDBClient {
+class IDBConnectionProxy;
+}
+
+namespace IDBServer {
+class IDBConnectionToClient;
+}
+
+using IDBConnectionIdentifier = ProcessIdentifier;
+struct IDBResourceIdentifierHashTraits;
+
+enum class IDBResourceObjectIdentifierType { };
+using IDBResourceObjectIdentifier = AtomicObjectIdentifier<IDBResourceObjectIdentifierType>;
+
+class IDBResourceIdentifier {
+public:
+    explicit IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&);
+    IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
+    explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
+
+    bool isEmpty() const
+    {
+        return !m_resourceNumber && !m_idbConnectionIdentifier;
+    }
+
+    friend bool operator==(const IDBResourceIdentifier&, const IDBResourceIdentifier&) = default;
+    
+    std::optional<IDBConnectionIdentifier> connectionIdentifier() const { return m_idbConnectionIdentifier; }
+
+    WEBCORE_EXPORT IDBResourceIdentifier NODELETE isolatedCopy() const;
+
+    WEBCORE_EXPORT String loggingString() const;
+
+    WEBCORE_EXPORT IDBResourceIdentifier();
+private:
+    friend struct IPC::ArgumentCoder<IDBResourceIdentifier>;
+    friend struct IDBResourceIdentifierHashTraits;
+    friend void add(Hasher&, const IDBResourceIdentifier&);
+
+    WEBCORE_EXPORT IDBResourceIdentifier(std::optional<IDBConnectionIdentifier>, std::optional<IDBResourceObjectIdentifier>);
+
+    Markable<IDBConnectionIdentifier> m_idbConnectionIdentifier;
+    Markable<IDBResourceObjectIdentifier> m_resourceNumber;
+};
+
+inline void add(Hasher& hasher, const IDBResourceIdentifier& identifier)
+{
+    add(hasher, identifier.m_idbConnectionIdentifier, identifier.m_resourceNumber);
+}
+
+struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdentifier> {
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static constexpr bool emptyValueIsZero = false;
+    static constexpr uint64_t resourceNumberDeletedValue = -1;
+
+    static IDBResourceIdentifier emptyValue()
+    {
+        return { };
+    }
+
+    static bool isEmptyValue(const IDBResourceIdentifier& identifier)
+    {
+        return identifier.isEmpty();
+    }
+
+    static void constructDeletedValue(IDBResourceIdentifier& identifier)
+    {
+        new (NotNull, &identifier.m_resourceNumber) IDBResourceObjectIdentifier(WTF::HashTableDeletedValue);
+    }
+
+    static bool isDeletedValue(const IDBResourceIdentifier& identifier)
+    {
+        return identifier.m_resourceNumber && identifier.m_resourceNumber->isHashTableDeletedValue();
+    }
+};
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct HashTraits<WebCore::IDBResourceIdentifier> : WebCore::IDBResourceIdentifierHashTraits { };
+
+inline WebCore::IDBConnectionIdentifier crossThreadCopy(WebCore::IDBConnectionIdentifier identifier)
+{
+    return identifier;
+}
+
+} // namespace WTF

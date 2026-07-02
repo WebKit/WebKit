@@ -1,0 +1,4 @@
+
+PASS IntersectionObserver observing elements with css zoom
+PASS Validate intersection rect
+

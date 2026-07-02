@@ -1,0 +1,5 @@
+hittest result:
+candidate1
+candidate2
+candidate3
+

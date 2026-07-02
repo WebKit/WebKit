@@ -1,0 +1,5 @@
+AnchorTagWithHREF
+AnchorTagWithHREF
+
+PASS Attribute href is missing after copy paste of anchor tag
+

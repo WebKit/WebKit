@@ -1,0 +1,4 @@
+X
+
+PASS integrity() with correct hash allows font loading
+

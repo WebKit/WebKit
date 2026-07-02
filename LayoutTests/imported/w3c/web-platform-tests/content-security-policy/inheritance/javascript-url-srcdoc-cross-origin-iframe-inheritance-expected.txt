@@ -1,0 +1,4 @@
+
+
+PASS Nested cross-origin iframe should be blocked by frame-src 'self'.
+

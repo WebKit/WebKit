@@ -1,0 +1,13 @@
+
+PASS e.style['pointer-events'] = "auto" should set the property value
+PASS e.style['pointer-events'] = "bounding-box" should set the property value
+PASS e.style['pointer-events'] = "visiblePainted" should set the property value
+PASS e.style['pointer-events'] = "visibleFill" should set the property value
+PASS e.style['pointer-events'] = "visibleStroke" should set the property value
+PASS e.style['pointer-events'] = "visible" should set the property value
+PASS e.style['pointer-events'] = "painted" should set the property value
+PASS e.style['pointer-events'] = "fill" should set the property value
+PASS e.style['pointer-events'] = "stroke" should set the property value
+PASS e.style['pointer-events'] = "all" should set the property value
+PASS e.style['pointer-events'] = "none" should set the property value
+

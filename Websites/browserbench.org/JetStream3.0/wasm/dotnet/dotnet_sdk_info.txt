@@ -1,0 +1,80 @@
+.NET SDK:
+ Version:           9.0.300
+ Commit:            15606fe0a8
+ Workload version:  9.0.300-manifests.183aaee6
+ MSBuild version:   17.14.5+edd3bbf37
+
+Runtime Environment:
+ OS Name:     Windows
+ OS Version:  10.0.26100
+ OS Platform: Windows
+ RID:         win-x64
+ Base Path:   .dotnet\sdk\9.0.300\
+
+.NET workloads installed:
+ [wasm-tools]
+   Installation Source: SDK 9.0.300
+   Manifest Version:    9.0.7/9.0.100
+   Manifest Path:       .dotnet\sdk-manifests\9.0.100\microsoft.net.workload.mono.toolchain.current\9.0.7\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [aspire]
+   Installation Source: VS 17.14.36301.6, VS 17.14.36119.2
+   Manifest Version:    8.2.2/8.0.100
+   Manifest Path:       .dotnet\sdk-manifests\8.0.100\microsoft.net.sdk.aspire\8.2.2\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [maui-windows]
+   Installation Source: VS 17.14.36119.2
+   Manifest Version:    9.0.51/9.0.100
+   Manifest Path:       .dotnet\sdk-manifests\9.0.100\microsoft.net.sdk.maui\9.0.51\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [maccatalyst]
+   Installation Source: VS 17.14.36119.2
+   Manifest Version:    18.5.9207/9.0.100
+   Manifest Path:       .dotnet\sdk-manifests\9.0.100\microsoft.net.sdk.maccatalyst\18.5.9207\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [ios]
+   Installation Source: VS 17.14.36119.2
+   Manifest Version:    18.5.9207/9.0.100
+   Manifest Path:       .dotnet\sdk-manifests\9.0.100\microsoft.net.sdk.ios\18.5.9207\WorkloadManifest.json
+   Install Type:        FileBased
+
+ [android]
+   Installation Source: VS 17.14.36119.2
+   Manifest Version:    35.0.78/9.0.100
+   Manifest Path:       .dotnet\sdk-manifests\9.0.100\microsoft.net.sdk.android\35.0.78\WorkloadManifest.json
+   Install Type:        FileBased
+
+Configured to use loose manifests when installing new manifests.
+
+Host:
+  Version:      9.0.5
+  Architecture: x64
+  Commit:       e36e4d1a8f
+
+.NET SDKs installed:
+  9.0.300 [.dotnet\sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 9.0.5 [.dotnet\shared\Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 9.0.5 [.dotnet\shared\Microsoft.NETCore.App]
+  Microsoft.WindowsDesktop.App 9.0.5 [.dotnet\shared\Microsoft.WindowsDesktop.App]
+
+Other architectures found:
+  x86   [C:\Program Files (x86)\dotnet]
+    registered at [HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x86\InstallLocation]
+
+Environment variables:
+  DOTNET_ROOT       [.dotnet]
+
+global.json file:
+  Not found
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download

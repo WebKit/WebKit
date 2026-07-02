@@ -1,0 +1,308 @@
+{
+    "domain": "BidiScript",
+    "exposedAs": "script",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The script module contains commands and events relating to script realms and execution.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-script",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/script",
+    "types": [
+        {
+            "id": "EvaluateResultType",
+            "description": "Whether a script evaluation was successful or had thrown an exception.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-EvaluateResult",
+            "type": "string",
+            "enum": [ "success", "exception" ]
+        },
+        {
+            "id": "ExceptionDetails",
+            "description": "Represents the details of a JavaScript exception.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-ExceptionDetails",
+            "type": "object",
+            "properties": [
+                { "name": "lineNumber", "type": "number" },
+                { "name": "columnNumber", "type": "number" },
+                { "name": "text", "type": "string" },
+                { "name": "exception", "$ref": "BidiScript.RemoteValue" },
+                { "name": "stackTrace", "$ref": "BidiScript.StackTrace" }
+            ]
+        },
+        {
+            "id": "Handle",
+            "description": "Represents a handle to an object owned by the ECMAScript runtime. The handle is only valid in a specific <code>BidiScript.Realm</code>.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-Handle",
+            "type": "string"
+        },
+        {
+            "id": "InternalId",
+            "description": "Represents the id of a previously serialized <code>BidiScript.RemoteValue</code> during serialization.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-InternalId",
+            "type": "string"
+        },
+        {
+            "id": "LocalValue",
+            "description": "Represents a value which can be deserialized into ECMAScript. This includes both primitive and non-primitive values as well as remote references (<code>BidiScript.RemoteReference</code>) and channels (<code>BidiScript.Channel</code>).",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-LocalValue",
+            "type": "object",
+            "properties": [
+                { "name": "type", "$ref": "BidiScript.LocalValueType" },
+                { "name": "value", "type": "any" }
+            ]
+        },
+        {
+            "id": "LocalValueType",
+            "description": "Represents the concrete type of a <code>BidiScript.LocalValue</code>",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-LocalValue",
+            "type": "string",
+            "enum": [
+                "array",
+                "date",
+                "map",
+                "object",
+                "set"
+            ]
+        },
+        {
+            "id": "Realm",
+            "description": "Unique identifier for a script realm as defined at <https://tc39.es/ecma262/#realm>.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-Realm",
+            "type": "string"
+        },
+        {
+            "id": "RealmInfo",
+            "description": "Contains information about a JavaScript realm.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-RealmInfo",
+            "type": "object",
+            "properties": [
+                { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the realm." },
+                { "name": "origin", "type": "string", "description": "The serialized origin of the realm." },
+                { "name": "type", "$ref": "BidiScript.RealmType", "description": "The type of the realm." },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." }
+            ]
+        },
+        {
+            "id": "RealmType",
+            "description": "The type of a JavaScript realm. Currently only 'window' is supported; worker and worklet types will be added in future implementations.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-RealmType",
+            "type": "string",
+            "enum": [
+                "window"
+            ]
+        },
+        {
+            "id": "RemoteValue",
+            "description": "A mirror object that is used to introspect values accessible from the ECMAScript runtime. The fields used and their semantics depends on the value's type (<cod>BidiScript.RemoteValueType</code>)",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-RemoteValue",
+            "type": "object",
+            "properties": [
+                { "name": "type", "$ref": "BidiScript.RemoteValueType" },
+                { "name": "value", "type": "any", "optional": true },
+                { "name": "handle", "$ref": "BidiScript.Handle", "optional": true, "description": "Represents a reference to a remote Node. Applicable if `type` property is `node`, `nodelist`, `htmlcollection`." },
+                { "name": "internalId", "$ref": "BidiScript.InternalId", "optional": true, "description": "Represents a reference to a remote script value. If both `handle` and `internalId` are specified, `internalId` takes precedence." }
+            ]
+        },
+        {
+            "id": "RemoteValueType",
+            "description": "The type of a mirror object that represents a value accessible from the ECMAScript runtime.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-RemoteValue",
+            "type": "string",
+            "enum": [
+                "array",
+                "arraybuffer",
+                "bigint",
+                "boolean",
+                "date",
+                "error",
+                "function",
+                "generator",
+                "htmlcollection",
+                "map",
+                "node",
+                "nodelist",
+                "null",
+                "number",
+                "object",
+                "promise",
+                "proxy",
+                "regexp",
+                "set",
+                "string",
+                "symbol",
+                "typedarray",
+                "undefined",
+                "weakmap",
+                "weakset",
+                "window"
+            ]
+        },
+        {
+            "id": "ResultOwnership",
+            "description": "Specifies whether a serialized value will be treated as a global root (and therefore except from garbage collection).",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-ResultOwnership",
+            "type": "string",
+            "enum": [ "root", "none" ]
+        },
+        {
+            "id": "SerializationOptions",
+            "description": "Describes options to be used when serializing JavaScript objects.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-SerializationOptions",
+            "type": "object",
+            "properties": [
+                { "name": "maxDomDepth", "type": "number", "optional": true },
+                { "name": "maxObjectDepth", "type": "number", "optional": true },
+                { "name": "includeShadowTree", "type": "string", "enum": ["none", "open", "all"], "optional": true }
+            ]
+        },
+        {
+            "id": "StackFrame",
+            "description": "Represents a single call frame within a <code>BidiScript.StackTrace</code>.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-StackFrame",
+            "type": "object",
+            "properties": [
+                { "name": "lineNumber", "type": "number" },
+                { "name": "columnNumber", "type": "number" },
+                { "name": "functionName", "type": "string" },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "id": "StackTrace",
+            "description": "Represents the JavaScript stack at a point in script execution.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-StackTrace",
+            "type": "object",
+            "properties": [
+                { "name": "callFrames", "type": "array", "items": { "$ref": "BidiScript.StackFrame" }, "description": "An array of stack frames on the JavaScript call stack, beginning with the most recent caller." }
+            ]
+        },
+        {
+            "id": "Target",
+            "description": "A type that represents a place to evaluate JavaScript. It is either a <code>BidiBrowsingContext.BrowsingContext</code> or a <code>BidiScript.Realm</code>.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-Target",
+            "type": "object",
+            "properties": [
+                { "name": "realm", "$ref": "BidiScript.Realm", "optional": true },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true },
+                { "name": "sandbox", "type": "string", "optional": true }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "addPreloadScript",
+            "description": "Adds a preload script to be evaluated on new document creation.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-script-addPreloadScript",
+            "async": true,
+            "parameters": [
+                { "name": "functionDeclaration", "type": "string" },
+                { "name": "arguments", "type": "array", "items": { "$ref": "BidiScript.LocalValue" }, "optional": true },
+                { "name": "contexts", "type": "array", "items": { "$ref": "BidiBrowsingContext.BrowsingContext" }, "optional": true },
+                { "name": "sandbox", "type": "string", "optional": true },
+                { "name": "userContexts", "type": "array", "items": { "$ref": "BidiBrowser.UserContext" }, "optional": true }
+            ],
+            "returns": [
+                { "name": "script", "type": "string" }
+            ]
+        },
+        {
+            "name": "removePreloadScript",
+            "description": "Removes a preload script.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-script-removePreloadScript",
+            "async": true,
+            "parameters": [
+                { "name": "script", "type": "string" }
+            ]
+        },
+        {
+            "name": "callFunction",
+            "description": "Calls a provided function with given arguments in a given realm.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-script-callFunction",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/script/call_function",
+            "async": true,
+            "parameters": [
+                { "name": "functionDeclaration", "type": "string" },
+                { "name": "awaitPromise", "type": "boolean" },
+                { "name": "target", "$ref": "BidiScript.Target" },
+                { "name": "arguments", "type": "array", "items": { "$ref": "BidiScript.LocalValue" }, "optional": true },
+                { "name": "resultOwnership", "$ref": "BidiScript.ResultOwnership", "optional": true },
+                { "name": "serializationOptions", "$ref": "BidiScript.SerializationOptions", "optional": true },
+                { "name": "this", "$ref": "BidiScript.LocalValue", "optional": true },
+                { "name": "userActivation", "type": "boolean", "optional": true }
+            ],
+            "returns": [
+                { "name": "type", "$ref": "BidiScript.EvaluateResultType" },
+                { "name": "realm", "$ref": "BidiScript.Realm" },
+                { "name": "result", "$ref": "BidiScript.RemoteValue", "optional": true },
+                { "name": "exceptionDetails", "$ref": "BidiScript.ExceptionDetails", "optional": true }
+            ]
+        },
+        {
+            "name": "evaluate",
+            "description": "Evaluates a provided expression with given arguments in a given realm.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-script-evaluate",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/script/evaluate",
+            "async": true,
+            "parameters": [
+                { "name": "expression", "type": "string" },
+                { "name": "awaitPromise", "type": "boolean" },
+                { "name": "target", "$ref": "BidiScript.Target" },
+                { "name": "resultOwnership", "$ref": "BidiScript.ResultOwnership", "optional": true },
+                { "name": "serializationOptions", "$ref": "BidiScript.SerializationOptions", "optional": true },
+                { "name": "userActivation", "type": "boolean", "optional": true }
+            ],
+            "returns": [
+                { "name": "type", "$ref": "BidiScript.EvaluateResultType" },
+                { "name": "realm", "$ref": "BidiScript.Realm" },
+                { "name": "result", "$ref": "BidiScript.RemoteValue", "optional": true },
+                { "name": "exceptionDetails", "$ref": "BidiScript.ExceptionDetails", "optional": true }
+            ]
+        },
+        {
+            "name": "disown",
+            "description": "Disowns the given handles. This removes the handles from the realm, allowing the garbage collector to reclaim the associated objects.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-script-disown",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/script/disown",
+            "bug": "https://bugs.webkit.org/show_bug.cgi?id=288059",
+            "async": true,
+            "parameters": [
+                { "name": "handles", "type": "array", "items": { "$ref": "BidiScript.Handle" }, "description": "The handles to disown." },
+                { "name": "target", "$ref": "BidiScript.Target", "description": "The target realm or context where the handles are located." }
+            ],
+            "returns": []
+        },
+        {
+            "name": "getRealms",
+            "description": "Returns a list of all realms.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-script-getRealms",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/script/get_realms",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "If specified, only realms belonging to this browsing context will be returned." },
+                { "name": "type", "$ref": "BidiScript.RealmType", "optional": true, "description": "If specified, only realms of this type will be returned." }
+            ],
+            "returns": [
+                { "name": "realms", "type": "array", "items": { "$ref": "BidiScript.RealmInfo" }, "description": "List of realms." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "realmCreated",
+            "description": "Event fired when a script realm is created.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-script-realmCreated",
+            "parameters": [
+                { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the realm." },
+                { "name": "origin", "type": "string", "description": "The serialized origin of the realm." },
+                { "name": "type", "$ref": "BidiScript.RealmType", "description": "The type of the realm." },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." }
+            ]
+        },
+        {
+            "name": "realmDestroyed",
+            "description": "Event fired when a script realm is destroyed.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-script-realmDestroyed",
+            "parameters": [
+                { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the destroyed realm." },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." }
+            ]
+        }
+    ]
+}

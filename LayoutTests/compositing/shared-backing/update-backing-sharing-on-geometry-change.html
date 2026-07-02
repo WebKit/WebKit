@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            background-color: white;
+            color: black;
+        }
+
+        .transformed-container {
+            transform: translate3d(0px, 0px, 0px);
+            border: 1px solid black;
+            padding: 10px;
+            /* width: 200px; */
+        }
+
+        .fixed {
+            position: fixed;
+            top: 20px;
+            right: 320px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid red;
+            transform: translate3d(300px, 0px, 0px);
+        }
+
+        .above {
+            position: absolute;
+            z-index: 1;
+            height: 50px;
+            width: 50px;
+            top: 20px;
+            left: 20px;
+            background-color: green;
+        }
+
+        .translated {
+            transform: translateX(-100%);
+            width: 100px;
+            height: 100px;
+        }
+
+        .slide-left {
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            transform: translateX(100%);
+            background-color: rgba(255, 255, 128, 0.85);
+        }
+
+        .slide-right {
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            transform: translateX(200%);
+        }
+    </style>
+</head>
+
+<script>
+    function waitAndResizeContainers() {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            containerShrinking.style = "width: 150px";
+            containerGrowing.style = "width: 200px";
+            document.documentElement.classList.remove("reftest-wait");
+        }));
+    }
+</script>
+
+<body onload="waitAndResizeContainers()">
+    <div id="containerShrinking" style="width: 200px">
+        <div class="transformed-container">
+            <div class="fixed"></div>
+            <div class="above"></div>
+            <div class="translated">
+                <div class="slide-left"></div>
+                <div class="slide-right"></div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div id="containerGrowing" style="width: 150px">
+        <div class="transformed-container">
+            <div class="fixed"></div>
+            <div class="above"></div>
+            <div class="translated">
+                <div class="slide-left"></div>
+                <div class="slide-right"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<p>When the red square overlaps the yellow box, the inside box should be green.</p>
+
+</html>

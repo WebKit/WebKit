@@ -1,0 +1,27 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+.float {
+  float: left; 
+  width: 50px;
+  height: 50px;
+  background-color: blue;
+}
+.container {
+  font-family: Ahem;
+  font-size: 10px;
+  color: green;
+  background-color: green;
+  width: 300px;
+}
+</style>
+<div style="width: 300px;">
+<div class="float"></div>
+<div class=container>foobar<br style="clear: left"></div>
+
+<div class="float" style="float: right; height: 60px;"></div>
+<div class=container>foobar<br style="clear: right"></div>
+
+<div class="float"></div>
+<div class="float" style="float: right; height: 60px;"></div>
+<div class=container>foobar<br style="clear: both"></div>
+</div>

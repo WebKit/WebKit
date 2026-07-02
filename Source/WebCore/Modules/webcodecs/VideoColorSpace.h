@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(VIDEO)
+
+#include "VideoColorPrimaries.h"
+#include "VideoColorSpaceInit.h"
+#include "VideoMatrixCoefficients.h"
+#include "VideoTransferCharacteristics.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class VideoColorSpace : public RefCounted<VideoColorSpace> {
+    WTF_MAKE_TZONE_ALLOCATED(VideoColorSpace);
+public:
+    static Ref<VideoColorSpace> create() { return adoptRef(*new VideoColorSpace()); };
+    static Ref<VideoColorSpace> create(const VideoColorSpaceInit& init) { return adoptRef(*new VideoColorSpace(init)); }
+    static Ref<VideoColorSpace> create(VideoColorSpaceInit&& init) { return adoptRef(*new VideoColorSpace(WTF::move(init))); }
+
+    void setState(const VideoColorSpaceInit& state) { m_state = state; }
+
+    const std::optional<VideoColorPrimaries>& primaries() const LIFETIME_BOUND { return m_state.primaries; }
+    void setPrimaries(std::optional<VideoColorPrimaries>&& primaries) { m_state.primaries = WTF::move(primaries); }
+
+    const std::optional<VideoTransferCharacteristics>& transfer() const LIFETIME_BOUND { return m_state.transfer; }
+    void setTransfer(std::optional<VideoTransferCharacteristics>&& transfer) { m_state.transfer = WTF::move(transfer); }
+
+    const std::optional<VideoMatrixCoefficients>& matrix() const LIFETIME_BOUND { return m_state.matrix; }
+    void setMatrix(std::optional<VideoMatrixCoefficients>&& matrix) { m_state.matrix = WTF::move(matrix); }
+
+    const std::optional<bool>& fullRange() const LIFETIME_BOUND { return m_state.fullRange; }
+    void setfFullRange(std::optional<bool>&& fullRange) { m_state.fullRange = WTF::move(fullRange); }
+
+    VideoColorSpaceInit state() const { return m_state; }
+
+    Ref<JSON::Object> toJSON() const;
+
+private:
+    VideoColorSpace() = default;
+    VideoColorSpace(const VideoColorSpaceInit& init)
+        : m_state(init)
+    {
+    }
+    VideoColorSpace(VideoColorSpaceInit&& init)
+        : m_state(WTF::move(init))
+    {
+    }
+
+    VideoColorSpaceInit m_state { };
+};
+
+}
+
+#endif

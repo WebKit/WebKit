@@ -1,0 +1,76 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_address.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_align.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_bit_shift.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_bitwise.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_boolean.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_const.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_conversions.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_cmp.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_pmin_pmax.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_rounding.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_cmp.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_pmin_pmax.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_rounding.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_arith2.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_cmp.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_extadd_pairwise_i8x16.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_extmul_i8x16.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_q15mulr_sat_s.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i16x8_sat_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_arith2.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_cmp.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_dot_i16x8.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_extadd_pairwise_i16x8.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_extmul_i16x8.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_trunc_sat_f32x4.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i32x4_trunc_sat_f64x2.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i64x2_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i64x2_arith2.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i64x2_cmp.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i64x2_extmul_i32x4.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i8x16_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i8x16_arith2.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i8x16_cmp.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_i8x16_sat_arith.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_int_to_int_extend.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_linking.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load16_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load32_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load64_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load8_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load_extend.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load_splat.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_load_zero.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_memory-multi.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_select.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_splat.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_store.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_store16_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_store32_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_store64_lane.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/simd/simd_store8_lane.wast.js.html

@@ -1,0 +1,30 @@
+<style>
+.flex-container { 
+  display: flex; 
+  flex-direction: column; 
+}
+
+.fixed-flex-item {
+  position: fixed;
+  height: 200px;
+}
+.heigh-percentage-descendant {
+  height: 100%;
+}
+
+.sibling {
+  height: 100%; 
+}
+
+</style>
+PASS if no crash or assert.
+<div class=flex-container>
+  <div class=fixed-flex-item>
+    <div class=heigh-percentage-descendant></div>
+  </div>
+  <div class=sibling></div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

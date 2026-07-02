@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-allowed.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-no-url-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-allowed.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-allowed.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-embed-blocked.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-redirect-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-redirect-allowed.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/object-src/object-src-url-redirect-blocked.sub.html

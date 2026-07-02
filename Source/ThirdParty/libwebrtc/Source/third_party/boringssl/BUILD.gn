@@ -1,0 +1,372 @@
+# Copyright 2014 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/config.gni")
+import("//build/config/arm.gni")
+import("//build/config/compiler/compiler.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build_overrides/build.gni")
+import("//testing/libfuzzer/fuzzer_test.gni")
+import("BUILD.generated.gni")
+import("BUILD.generated_tests.gni")
+
+if (enable_rust) {
+  import("//build/rust/cargo_crate.gni")
+  import("//build/rust/rust_bindgen.gni")
+}
+
+# Config for us and everybody else depending on BoringSSL.
+config("external_config") {
+  include_dirs = [ "src/include" ]
+  if (is_component_build) {
+    defines = [ "BORINGSSL_SHARED_LIBRARY" ]
+  }
+}
+
+# The config used by the :boringssl component itself, and the fuzzer copies.
+config("component_config") {
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  configs = [ ":internal_config" ]
+  defines = [ "BORINGSSL_IMPLEMENTATION" ]
+}
+
+# This config is used by anything that consumes internal headers. Tests consume
+# this rather than :component_config.
+config("internal_config") {
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  defines = [
+    "BORINGSSL_ALLOW_CXX_RUNTIME",
+    "BORINGSSL_NO_STATIC_INITIALIZER",
+    "OPENSSL_SMALL",
+  ]
+}
+
+config("no_asm_config") {
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  defines = [ "OPENSSL_NO_ASM" ]
+}
+
+all_sources = crypto_sources + ssl_sources
+all_headers = crypto_headers + ssl_headers
+
+if (enable_rust_boringssl) {
+  rust_bindgen("raw_bssl_sys_bindings") {
+    header = "src/rust/bssl-sys/wrapper.h"
+    deps = [ ":boringssl" ]
+    bindgen_flags = [
+      "no-derive-default",
+      "enable-function-attribute-detection",
+      "use-core",
+      "default-macro-constant-type=signed",
+      "rustified-enum=point_conversion_form_t",
+      "allowlist-file=.*[[:punct:]]include[[:punct:]]openssl[[:punct:]].*\\.h",
+      "allowlist-file=.*[[:punct:]]rust_wrapper\\.h",
+    ]
+    visibility = [ ":*" ]  # private, should only be exposed through bssl_crypto
+  }
+
+  # Low level, bindgen generates system bindings to boringssl
+  cargo_crate("bssl_sys") {
+    crate_type = "rlib"
+    crate_root = "src/rust/bssl-sys/src/lib.rs"
+    sources = [ "src/rust/bssl-sys/src/lib.rs" ]
+    edition = "2021"
+    deps = [
+      ":boringssl",
+      ":raw_bssl_sys_bindings",
+    ]
+    visibility = [ ":*" ]  # private, should only be exposed through bssl_crypto
+
+    _bindgen_output = get_target_outputs(":raw_bssl_sys_bindings")
+    rustenv = [ "BINDGEN_RS_FILE=" + rebase_path(_bindgen_output[0]) ]
+  }
+
+  # Rust bindings to boringssl
+  cargo_crate("bssl_crypto") {
+    crate_type = "rlib"
+    crate_root = "src/rust/bssl-crypto/src/lib.rs"
+    sources = [ "src/rust/bssl-crypto/src/lib.rs" ]
+    edition = "2021"
+    deps = [ ":bssl_sys" ]
+  }
+}
+
+# Windows' assembly is built with NASM. The other platforms use the platform
+# assembler. Exclude Windows ARM64 because NASM targets x86 and x64 only.
+if (is_win && !is_msan && current_cpu != "arm64") {
+  import("//third_party/nasm/nasm_assemble.gni")
+  nasm_assemble("boringssl_asm") {
+    if (current_cpu == "x64") {
+      sources = crypto_sources_win_x86_64
+    } else if (current_cpu == "x86") {
+      sources = crypto_sources_win_x86
+    }
+  }
+} else {
+  # This has no sources on some platforms so must be a source_set.
+  source_set("boringssl_asm") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+
+    sources = []
+    asmflags = []
+    include_dirs = [ "src/include" ]
+
+    if (is_msan) {
+      public_configs = [ ":no_asm_config" ]
+    } else if (current_cpu == "x64") {
+      if (is_apple) {
+        sources += crypto_sources_apple_x86_64
+      } else if (is_linux || is_chromeos || is_android) {
+        sources += crypto_sources_linux_x86_64
+      } else {
+        public_configs = [ ":no_asm_config" ]
+      }
+    } else if (current_cpu == "x86") {
+      if (is_apple) {
+        sources += crypto_sources_apple_x86
+      } else if (is_linux || is_chromeos || is_android) {
+        sources += crypto_sources_linux_x86
+      } else {
+        public_configs = [ ":no_asm_config" ]
+      }
+    } else if (current_cpu == "arm") {
+      if (is_linux || is_chromeos || is_android) {
+        sources += crypto_sources_linux_arm
+      } else if (is_apple) {
+        sources += crypto_sources_apple_arm
+      } else {
+        public_configs = [ ":no_asm_config" ]
+      }
+    } else if (current_cpu == "arm64") {
+      if (is_linux || is_chromeos || is_android) {
+        sources += crypto_sources_linux_aarch64
+      } else if (is_apple) {
+        sources += crypto_sources_apple_aarch64
+      } else if (is_win) {
+        sources += crypto_sources_win_aarch64
+      } else {
+        public_configs = [ ":no_asm_config" ]
+      }
+    } else {
+      public_configs = [ ":no_asm_config" ]
+    }
+  }
+}
+
+component("boringssl") {
+  sources = all_sources
+  public = all_headers
+  friend = [ ":*" ]
+  deps = [ "//third_party/boringssl/src/third_party/fiat:fiat_license" ]
+
+  # Mark boringssl_asm as a public dependency so the OPENSSL_NO_ASM
+  # config is forwarded to callers. In particular, boringssl_crypto_tests
+  # requires it.
+  public_deps = [ ":boringssl_asm" ]
+
+  public_configs = [ ":external_config" ]
+  configs += [ ":component_config" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+
+  if (is_nacl) {
+    deps += [ "//native_client_sdk/src/libraries/nacl_io" ]
+  }
+
+  if (!is_debug && !optimize_for_size) {
+    configs -= [ "//build/config/compiler:default_optimization" ]
+    configs += [ "//build/config/compiler:optimize_max" ]
+  }
+
+  if (is_linux && is_component_build) {
+    version_script = "boringssl.map"
+    inputs = [ version_script ]
+    ldflags = [ "-Wl,--version-script=" +
+                rebase_path(version_script, root_build_dir) ]
+  }
+}
+
+if (build_with_chromium) {
+  # These targets are named "_tests" rather than "_test" to avoid colliding with
+  # a historical "boringssl_ssl_test" target. This works around a bug with the
+  # iOS build rules.
+
+  bundle_data("boringssl_crypto_tests_bundle_data") {
+    sources = crypto_test_data
+    testonly = true
+    outputs = [ "{{bundle_resources_dir}}/" +
+                "{{source_root_relative_dir}}/{{source_file_part}}" ]
+  }
+
+  test("boringssl_crypto_tests") {
+    sources = crypto_test_sources + test_support_sources
+    data = crypto_test_data
+    deps = [
+      ":boringssl",
+      ":boringssl_crypto_tests_bundle_data",
+      "//testing/gtest",
+    ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      ":internal_config",
+      "//build/config/compiler:no_chromium_code",
+    ]
+
+    # Chromium infrastructure does not support GTest, only the //base wrapper.
+    sources -= [ "src/crypto/test/gtest_main.cc" ]
+    sources += [
+      "gtest_main_chromium.cc",
+      "test_data_chromium.cc",
+    ]
+    deps += [ "//base/test:test_support" ]
+
+    if (is_fuchsia) {
+      additional_manifest_fragments =
+          [ "//build/config/fuchsia/test/network.shard.test-cml" ]
+    }
+  }
+
+  test("boringssl_ssl_tests") {
+    sources = ssl_test_sources + test_support_sources
+    deps = [
+      ":boringssl",
+      "//testing/gtest",
+    ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      ":internal_config",
+      "//build/config/compiler:no_chromium_code",
+    ]
+
+    # Chromium infrastructure does not support GTest, only the //base wrapper.
+    sources -= [ "src/crypto/test/gtest_main.cc" ]
+    sources += [ "gtest_main_chromium.cc" ]
+    deps += [ "//base/test:test_support" ]
+  }
+
+  config("fuzzer_config") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+    defines = [
+      "BORINGSSL_UNSAFE_FUZZER_MODE",
+      "BORINGSSL_UNSAFE_DETERMINISTIC_MODE",
+    ]
+  }
+
+  # The same as boringssl, but builds with BORINGSSL_UNSAFE_FUZZER_MODE.
+  # TODO(https://crbug.com/boringssl/258): Fold this into the normal target.
+  component("boringssl_fuzzer") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+
+    sources = all_sources
+    deps = [ "//third_party/boringssl/src/third_party/fiat:fiat_license" ]
+
+    # Mark boringssl_asm as a public dependency so the OPENSSL_NO_ASM
+    # config is forwarded to callers. In particular, boringssl_crypto_tests
+    # requires it.
+    public_deps = [ ":boringssl_asm" ]
+
+    public_configs = [
+      ":external_config",
+      ":fuzzer_config",
+    ]
+    configs += [ ":component_config" ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+
+    if (is_nacl) {
+      deps += [ "//native_client_sdk/src/libraries/nacl_io" ]
+    }
+  }
+
+  foreach(fuzzer, fuzzers) {
+    fuzzer_test("boringssl_${fuzzer}_fuzzer") {
+      sources = [
+        "src/fuzz/${fuzzer}.cc",
+        "src/ssl/test/fuzzer.h",
+        "src/ssl/test/fuzzer_tags.h",
+      ]
+      additional_configs = [ ":internal_config" ]
+      deps = [ ":boringssl_fuzzer" ]
+      seed_corpus = "src/fuzz/${fuzzer}_corpus"
+
+      if ("cert" == fuzzer) {
+        libfuzzer_options = [ "max_len=3072" ]
+      } else if ("client" == fuzzer) {
+        libfuzzer_options = [ "max_len=20000" ]
+      } else if ("pkcs8" == fuzzer) {
+        libfuzzer_options = [ "max_len=2048" ]
+      } else if ("privkey" == fuzzer) {
+        libfuzzer_options = [ "max_len=2048" ]
+      } else if ("read_pem" == fuzzer) {
+        libfuzzer_options = [ "max_len=512" ]
+      } else if ("session" == fuzzer) {
+        libfuzzer_options = [ "max_len=8192" ]
+      } else if ("server" == fuzzer) {
+        libfuzzer_options = [ "max_len=4096" ]
+      } else if ("spki" == fuzzer) {
+        libfuzzer_options = [ "max_len=1024" ]
+      } else if ("ssl_ctx_api" == fuzzer) {
+        libfuzzer_options = [ "max_len=256" ]
+      }
+    }
+  }
+
+  config("fuzzer_no_fuzzer_mode_config") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+    defines = [ "BORINGSSL_UNSAFE_DETERMINISTIC_MODE" ]
+  }
+
+  # The same as boringssl, but builds with BORINGSSL_UNSAFE_DETERMINISTIC_MODE.
+  # TODO(https://crbug.com/boringssl/258): Fold this into the normal target.
+  component("boringssl_fuzzer_no_fuzzer_mode") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+
+    sources = all_sources
+    deps = [ "//third_party/boringssl/src/third_party/fiat:fiat_license" ]
+
+    # Mark boringssl_asm as a public dependency so the OPENSSL_NO_ASM
+    # config is forwarded to callers. In particular, boringssl_crypto_tests
+    # requires it.
+    public_deps = [ ":boringssl_asm" ]
+
+    public_configs = [
+      ":external_config",
+      ":fuzzer_no_fuzzer_mode_config",
+    ]
+    configs += [ ":component_config" ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+
+    if (is_nacl) {
+      deps += [ "//native_client_sdk/src/libraries/nacl_io" ]
+    }
+  }
+
+  fuzzer_test("boringssl_client_no_fuzzer_mode_fuzzer") {
+    sources = [
+      "src/fuzz/client.cc",
+      "src/ssl/test/fuzzer.h",
+      "src/ssl/test/fuzzer_tags.h",
+    ]
+    additional_configs = [ ":internal_config" ]
+    deps = [ ":boringssl_fuzzer_no_fuzzer_mode" ]
+    seed_corpus = "src/fuzz/client_corpus_no_fuzzer_mode"
+  }
+
+  fuzzer_test("boringssl_server_no_fuzzer_mode_fuzzer") {
+    sources = [
+      "src/fuzz/server.cc",
+      "src/ssl/test/fuzzer.h",
+      "src/ssl/test/fuzzer_tags.h",
+    ]
+    additional_configs = [ ":internal_config" ]
+    deps = [ ":boringssl_fuzzer_no_fuzzer_mode" ]
+    seed_corpus = "src/fuzz/server_corpus_no_fuzzer_mode"
+  }
+}

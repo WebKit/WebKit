@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .outer {
+                width: 100px;
+                height: 100px;
+                -webkit-box-reflect: below 10px;
+            }
+
+            .inner {
+                width: 100px;
+                height: 100px;
+                -webkit-box-reflect: right 10px;
+                background-color: green;
+                will-change: transform;
+                -webkit-mask-image: linear-gradient(-45deg, black, transparent);
+                mask-image: linear-gradient(-45deg, black, transparent);
+            }
+        </style>
+    </head>
+    <body>
+        <p>You should see four mirrored square boxes with linear gradient green.</p>
+        <div class="outer">
+            <div class="inner">
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS shapeOutside responsive to style changes
+PASS shapeOutside responsive to inherited shapeOutside changes
+

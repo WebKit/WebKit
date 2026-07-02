@@ -1,0 +1,29 @@
+<h1>Shared Worker Example</h1>
+
+<p>When get message, it ask shared worker to load requested size.</p>
+
+<script>
+    // Initialize the shared worker
+    const worker = new SharedWorker("./shared-worker.js");
+
+    worker.port.start();
+    console.log("Launched shared worker");
+
+    // Handle messages from the worker
+    worker.port.onmessage = async (e) => {
+        if (e.data instanceof Blob) {
+            window.parent.postMessage(true, '*');
+        }
+    };
+
+    window.addEventListener('message', (e) => {
+        console.log("Get message from parent window");
+        if (typeof e.data === 'number') {
+            console.log("Send fetch request to worker");
+            worker.port.postMessage(e.data);
+        }
+    });
+
+    console.log("iframe is ready");
+    window.parent.postMessage(true, '*');
+</script>

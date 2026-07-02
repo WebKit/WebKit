@@ -1,0 +1,7 @@
+Tests that the scroll-snap feature works properly in overflow regions.
+rtlrtlltrrtlltrrtl
+Scroll-snap offsets for horizontalTarget: horizontal = { 0, 200, 500, 800, 1000, 1300 }
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

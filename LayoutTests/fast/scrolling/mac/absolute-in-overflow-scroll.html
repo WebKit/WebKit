@@ -1,0 +1,111 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .container {
+            position: absolute; /* Containing block for the inner absolute */
+            top: 10px;
+            left: 10px;
+        }
+        .scroller {
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow: scroll;
+            opacity: 0.8; /* Force stacking context */
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+        .absolute {
+            position: absolute;
+            top: 100px;
+            left: 50px;
+            height: 200px;
+            width: 200px;
+            background-color: gray;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 0);
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            overflowScrollEventCount = 0;
+            windowScrollEventCount = 0;
+        }
+        
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test scroll over content');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(50, 50);
+
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount == 0', 'true');
+        }
+
+        async function testScrollOverAbsolute()
+        {
+            debug('');
+            debug('Test scroll over absolute element');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(100, 150);
+            
+            shouldBe('overflowScrollEventCount == 0', 'true');
+            shouldBe('windowScrollEventCount > 0', 'true');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            await testScrollOverAbsolute();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="content">
+                <div class="absolute">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

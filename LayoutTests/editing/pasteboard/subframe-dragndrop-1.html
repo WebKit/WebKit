@@ -1,0 +1,45 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+     
+function runTest() {
+    var frame = frames[0];
+    var doc = frame.document;
+    var sel = frame.getSelection();
+    sel.setPosition(doc.body, 0);
+    doc.execCommand("InsertText", false, "foo bar baz");
+    
+    if (window.testRunner) {
+        // Attempt to put the mouse over the word 'bar'.  The proper way to do this 
+        // would be to put 'bar' inside an id'd span so that we'd know it's coordinates exactly.
+        var x = 50;
+        var y = 15;
+        eventSender.mouseMoveTo(x, y);
+
+        // Select 'bar'
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        
+        // Pause so that the mouse down will start a drag instead of a triple click.
+        eventSender.leapForward(1500);
+        
+        eventSender.mouseDown();
+        eventSender.leapForward(1000);
+        
+        x += 100;
+        // Drop it like it's hot.
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseUp();
+        
+        window.testRunner.notifyDone();
+    }
+}
+if (window.testRunner)
+    window.testRunner.waitUntilDone();         
+</script>
+<body style="margin: 0px; padding: 0px;">
+<iframe style="margin: 0; padding: 0; height: 300px; width: 300px;" src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>
+<p>This test uses the eventSender to do drag and drop. To run it manually, drag the word selected in the above subframe and drop it after 'baz'.  The result should be 'foo baz bar'.</p>
+</body>

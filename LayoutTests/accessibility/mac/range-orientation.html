@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input id="range1" type="range" aria-orientation="vertical" />
+<input id="range2" type="range" aria-orientation="horizontal" />
+<input id="range3" type="range"/>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("Validate orientation on range types.");
+
+    if (window.accessibilityController) {
+        var range1 = accessibilityController.accessibleElementById("range1");
+        shouldBe("range1.orientation", "'AXOrientation: AXVerticalOrientation'");
+
+        var range2 = accessibilityController.accessibleElementById("range2");
+        shouldBe("range2.orientation", "'AXOrientation: AXHorizontalOrientation'");
+
+        var range3 = accessibilityController.accessibleElementById("range3");
+        shouldBe("range3.orientation", "'AXOrientation: AXHorizontalOrientation'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

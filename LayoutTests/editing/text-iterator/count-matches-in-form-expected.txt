@@ -1,0 +1,5 @@
+PASS internals.countMatchesForText('rule', ['CaseInsensitive', 'AtWordStarts', 'TreatMedialCapitalAsWordStart', 'WrapAround'], '') is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

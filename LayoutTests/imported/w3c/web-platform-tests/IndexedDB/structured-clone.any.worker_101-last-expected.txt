@@ -1,0 +1,26 @@
+
+PASS SyntaxError: SyntaxError: ghi
+PASS TypeError: TypeError
+PASS TypeError: TypeError: ghi
+PASS URIError: URIError
+PASS URIError: URIError: ghi
+PASS Array:
+PASS Array: 1,2,3
+PASS Array: foo,bar,,,,,,,,,true,false,,,,,,,,,123,456,,,,,,,,,
+PASS Array: foo,bar
+PASS Object: [object Object]
+PASS DOMMatrix: [object DOMMatrix]
+PASS DOMMatrixReadOnly: [object DOMMatrixReadOnly]
+PASS DOMPoint: [object DOMPoint]
+PASS DOMPointReadOnly: [object DOMPointReadOnly]
+PASS DOMRect: [object DOMRect]
+PASS DOMRectReadOnly: [object DOMRectReadOnly]
+PASS ImageData: [object ImageData]
+PASS Blob: [object Blob]
+PASS File: [object File]
+PASS Not serializable: function: function() {}
+PASS Not serializable: symbol: Symbol(desc)
+PASS Not serializable: DedicatedWorkerGlobalScope: [object DedicatedWorkerGlobalScope]
+PASS Not serializable: Event: [object Event]
+PASS Not serializable: MessageChannel: [object MessageChannel]
+

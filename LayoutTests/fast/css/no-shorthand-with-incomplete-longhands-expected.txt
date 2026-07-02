@@ -1,0 +1,19 @@
+Tests that setting a longhand property does not produces a valid shorthand value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Setting style="background-image: url(foo.png)" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-position-x: 10px" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-position-y: 10px" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-size: cover" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-repeat-x: no-repeat" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-repeat-y: no-repeat" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-attachment: scroll" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-origin: padding-box" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-clip: padding-box" should not return a value for element.style.getPropertyValue("background").
+PASS Setting style="background-color: green" should not return a value for element.style.getPropertyValue("background").
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

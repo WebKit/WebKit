@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<style>
+.fixed-position-containing-block {
+  width: 300px;
+  transform: translateZ(0);
+}
+.css-mpsq7l-5e6d46e3--DivBrowserModeContainer {
+  display: flex;
+  position: fixed;
+  inset: 0;
+}
+
+.css-syysv3-5e6d46e3--DivVideoContainer {
+  height: 100px;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.css-yhb7qp-5e6d46e3--DivContentContainer {
+  width: 500px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+</style>
+<body>
+<div class="fixed-position-containing-block">
+  <div class="css-mpsq7l-5e6d46e3--DivBrowserModeContainer">
+    <div class="css-syysv3-5e6d46e3--DivVideoContainer">
+      <div style="width: 400px; height: 100px; background-color: green;"></div>
+    </div>
+    <div class="css-yhb7qp-5e6d46e3--DivContentContainer">
+      <div>
+        this is a long comment and should hopefully get wrapped
+      </div>
+      <div style="font-size: 50px">largemincontentcontribution</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+

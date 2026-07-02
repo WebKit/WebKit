@@ -1,0 +1,12 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+PASS: Correct Selection
+

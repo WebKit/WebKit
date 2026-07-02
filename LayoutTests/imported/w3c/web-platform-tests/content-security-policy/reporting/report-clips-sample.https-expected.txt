@@ -1,0 +1,9 @@
+
+PASS Unsafe eval violation sample is clipped to 40 characters.
+PASS Unsafe indirect eval violation sample is clipped to 40 characters.
+PASS Function constructor - the other kind of eval - is clipped.
+PASS Async Function constructor is also clipped.
+PASS Generator Function constructor is also clipped.
+PASS AsyncGenerator Function constructor is also clipped.
+PASS Trusted Types violation sample is clipped to 40 characters excluded the sink name.
+

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     shape-rendering="crispEdges">
+  <g fill="blue" stroke="red" stroke-width="10" transform="translate(10 10)">
+    <!-- Squares -->
+    <rect x="0" width="40" height="40"/>
+    <rect x="60" width="40" height="40">
+      <set attributeName="rx" to="0"/>
+    </rect>
+    <rect x="120" width="40" height="40" rx="20">
+      <set attributeName="rx" to="0"/>
+    </rect>
+    <rect x="180" width="40" height="40" rx="20" ry="20">
+      <set attributeName="rx" to="0"/>
+      <set attributeName="ry" to="0"/>
+    </rect>
+
+    <!-- rx=0 ry=20 -->
+    <rect x="0" y="60" width="40" height="40" rx="0" ry="20"/>
+    <rect x="60" y="60" width="40" height="40" ry="20">
+      <set attributeName="rx" to="0"/>
+    </rect>
+    <rect x="120" y="60" width="40" height="40" rx="20" ry="20">
+      <set attributeName="rx" to="0"/>
+    </rect>
+    <rect x="180" y="60" width="40" height="40">
+      <set attributeName="rx" to="0"/>
+      <set attributeName="ry" to="20"/>
+    </rect>
+    <rect x="240" y="60" width="40" height="40" id="a">
+      <set attributeName="ry" to="20"/>
+      <!-- rx.baseVal will be set to 0 by script -->
+    </rect>
+
+    <!-- rx=20 (hence ry=20) -->
+    <rect x="0" y="120" width="40" height="40" rx="20"/>
+    <rect x="60" y="120" width="40" height="40">
+      <set attributeName="rx" to="20"/>
+    </rect>
+    <rect x="120" y="120" width="40" height="40" rx="0">
+      <set attributeName="rx" to="20"/>
+    </rect>
+    <rect x="180" y="120" width="40" height="40" rx="10">
+      <set attributeName="rx" to="20"/>
+    </rect>
+    <rect x="240" y="120" width="40" height="40" ry="0" id="b">
+      <set attributeName="rx" to="20"/>
+      <!-- ry attribute will be removed by script -->
+    </rect>
+    <!-- rx.baseVal attribute will be set by script -->
+    <rect x="300" y="120" width="40" height="40" id="c"/>
+  </g>
+  <script xlink:href="smil-util.js" type="text/javascript"/>
+  <script type="text/javascript">
+    document.getElementById('a').rx.baseVal.value = 0;
+    document.getElementById('b').removeAttribute('ry');
+    document.getElementById('c').rx.baseVal.value = 20;
+    // We can get very minor rendering differences on Windows due to the
+    // presence of animation in the document, even on un-animated content.
+    // This is most likely due to interaction with layers so we forcibly seek
+    // the animation timeline to try to produce a steady state for snapshot.
+    setTimeAndSnapshot(0.0, true);
+  </script>
+</svg>

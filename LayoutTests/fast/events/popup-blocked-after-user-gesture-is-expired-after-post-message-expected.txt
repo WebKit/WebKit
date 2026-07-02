@@ -1,0 +1,4 @@
+This tests opening a window after a series of postMessage with a delay. WebKit should prevent a popup window from being opened after 1s.
+
+Start test
+PASS

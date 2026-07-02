@@ -1,0 +1,4 @@
+
+FAIL adoptedStyleSheets is populated from a <template> element's shadowrootadoptedstylesheets attribute. assert_equals: The shadowrootadoptedstylesheets will declaratively import all space-separated specifiers into the adoptedStyleSheets array. expected 2 but got 0
+FAIL Styles from the sheets applied via shadowrootadoptedstylesheets are applied to elements. assert_equals: The first specifier's style was applied. expected "rgb(0, 0, 255)" but got "rgb(0, 0, 0)"
+

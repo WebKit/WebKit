@@ -1,0 +1,3 @@
+
+PASS iterationComposite can be updated while an animation is in progress
+

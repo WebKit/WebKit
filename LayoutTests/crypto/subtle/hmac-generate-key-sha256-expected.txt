@@ -1,0 +1,17 @@
+Test generating a HMAC key with sha-256.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Generating a key...
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'HMAC'
+PASS key.algorithm.length is 512
+PASS key.algorithm.hash.name is 'SHA-256'
+PASS key.usages is ["sign", "verify"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

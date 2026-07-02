@@ -1,0 +1,805 @@
+/*
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "Helpers/cocoa/EditingTestHarness.h"
+#import "InstanceMethodSwizzler.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestCocoa.h"
+#import "TestInputDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/ios/UserInterfaceSwizzler.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFeature.h>
+#import <wtf/Vector.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPIForTesting.h"
+#endif
+
+#if PLATFORM(MAC)
+#import "Helpers/mac/AppKitSPI.h"
+#endif
+
+static void* const SelectionAttributesObservationContext = (void*)&SelectionAttributesObservationContext;
+
+@interface SelectionChangeObserver : NSObject
+- (instancetype)initWithWebView:(TestWKWebView *)webView;
+@property (nonatomic, readonly) TestWKWebView *webView;
+@property (nonatomic, readonly) _WKSelectionAttributes currentSelectionAttributes;
+@end
+
+@implementation SelectionChangeObserver {
+    RetainPtr<TestWKWebView> _webView;
+    Vector<_WKSelectionAttributes> _observedSelectionAttributes;
+}
+
+- (instancetype)initWithWebView:(TestWKWebView *)webView
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _webView = webView;
+    [_webView addObserver:self forKeyPath:@"_selectionAttributes" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:SelectionAttributesObservationContext];
+    return self;
+}
+
+- (TestWKWebView *)webView
+{
+    return _webView.get();
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
+{
+    if (context == SelectionAttributesObservationContext) {
+        if (!_observedSelectionAttributes.isEmpty())
+            EXPECT_EQ(_observedSelectionAttributes.last(), [change[NSKeyValueChangeOldKey] unsignedIntValue]);
+        _observedSelectionAttributes.append([change[NSKeyValueChangeNewKey] unsignedIntValue]);
+        return;
+    }
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
+
+- (_WKSelectionAttributes)currentSelectionAttributes
+{
+    return _observedSelectionAttributes.isEmpty() ? _WKSelectionAttributeNoSelection : _observedSelectionAttributes.last();
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+static RetainPtr<EditingTestHarness> setUpEditorStateTestHarness()
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr testHarness = adoptNS([[EditingTestHarness alloc] initWithWebView:webView.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"editor-state-test-harness"];
+    return testHarness;
+}
+
+TEST(EditorStateTests, TypingAttributesBold)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+
+    [testHarness insertHTML:@"<b>first</b>" andExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness toggleBold];
+    [testHarness insertText:@" second" andExpectEditorStateWith:@{ @"bold": @NO }];
+    [testHarness insertHTML:@"<span style='font-weight: 700'> third</span>" andExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness insertHTML:@"<span style='font-weight: 300'> fourth</span>" andExpectEditorStateWith:@{ @"bold": @NO }];
+    [testHarness insertHTML:@"<span style='font-weight: 800'> fifth</span>" andExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness insertHTML:@"<span style='font-weight: 400'> sixth</span>" andExpectEditorStateWith:@{ @"bold": @NO }];
+    [testHarness insertHTML:@"<span style='font-weight: 900'> seventh</span>" andExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness toggleBold];
+    [testHarness insertText:@" eighth" andExpectEditorStateWith:@{ @"bold": @NO }];
+    [testHarness insertHTML:@"<strong> ninth</strong>" andExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness deleteBackwardAndExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"bold": @NO }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"bold": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"bold": @NO }];
+    [testHarness selectAllAndExpectEditorStateWith:@{ @"bold": @YES }];
+    EXPECT_WK_STREQ("first second third fourth fifth sixth seventh eighth ninth", [[testHarness webView] stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(EditorStateTests, TypingAttributesItalic)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+
+    [testHarness insertHTML:@"<i>first</i>" andExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness toggleItalic];
+    [testHarness insertText:@" second" andExpectEditorStateWith:@{ @"italic": @NO }];
+    [testHarness insertHTML:@"<span style='font-style: italic'> third</span>" andExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness toggleItalic];
+    [testHarness insertText:@" fourth" andExpectEditorStateWith:@{ @"italic": @NO }];
+    [testHarness toggleItalic];
+    [testHarness insertText:@" fifth" andExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness insertHTML:@"<span style='font-style: normal'> sixth</span>" andExpectEditorStateWith:@{ @"italic": @NO }];
+    [testHarness insertHTML:@"<span style='font-style: oblique'> seventh</span>" andExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness deleteBackwardAndExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"italic": @NO }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"italic": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"italic": @NO }];
+
+    [testHarness selectAllAndExpectEditorStateWith:@{ @"italic": @YES }];
+    EXPECT_WK_STREQ("first second third fourth fifth sixth seventh", [[testHarness webView] stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(EditorStateTests, TypingAttributesUnderline)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+
+    [testHarness insertHTML:@"<u>first</u>" andExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness toggleUnderline];
+    [testHarness insertText:@" second" andExpectEditorStateWith:@{ @"underline": @NO }];
+    [testHarness insertHTML:@"<span style='text-decoration: underline'> third</span>" andExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness insertHTML:@"<span style='text-decoration: line-through'> fourth</span>" andExpectEditorStateWith:@{ @"underline": @NO }];
+    [testHarness insertHTML:@"<span style='text-decoration: underline overline line-through'> fifth</span>" andExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness insertHTML:@"<span style='text-decoration: none'> sixth</span>" andExpectEditorStateWith:@{ @"underline": @NO }];
+    [testHarness toggleUnderline];
+    [testHarness insertText:@" seventh" andExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness deleteBackwardAndExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"underline": @NO }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"underline": @YES }];
+    [testHarness moveWordBackwardAndExpectEditorStateWith:@{ @"underline": @NO }];
+
+    [testHarness selectAllAndExpectEditorStateWith:@{ @"underline": @YES }];
+    EXPECT_WK_STREQ("first second third fourth fifth sixth seventh", [[testHarness webView] stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(EditorStateTests, TypingAttributesTextAlignmentAbsoluteAlignmentOptions)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+    TestWKWebView *webView = [testHarness webView];
+
+    [webView stringByEvaluatingJavaScript:@"document.body.style.direction = 'ltr'"];
+
+    [testHarness insertHTML:@"<div style='text-align: right;'>right</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+
+    [testHarness insertText:@"justified" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness alignJustifiedAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentJustified) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentJustified) }];
+
+    [testHarness alignCenterAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
+    [testHarness insertText:@"center" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
+
+    [testHarness insertHTML:@"<span id='left'>left</span>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(left.childNodes[0], 0, left.childNodes[0], 4)"];
+    [testHarness alignLeftAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+
+    [testHarness selectAllAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    EXPECT_WK_STREQ("right\njustified\ncenter\nleft", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(EditorStateTests, TypingAttributesTextAlignmentStartEnd)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+    TestWKWebView *webView = [testHarness webView];
+
+    [webView stringByEvaluatingJavaScript:@"document.styleSheets[0].insertRule('.start { text-align: start; }')"];
+    [webView stringByEvaluatingJavaScript:@"document.styleSheets[0].insertRule('.end { text-align: end; }')"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style.direction = 'rtl'"];
+
+    [testHarness insertHTML:@"<div class='start'>rtl start</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+
+    [testHarness insertHTML:@"<div class='end'>rtl end</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+
+    [[testHarness webView] stringByEvaluatingJavaScript:@"document.body.style.direction = 'ltr'"];
+    [testHarness insertHTML:@"<div class='start'>ltr start</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+
+    [testHarness insertHTML:@"<div class='end'>ltr end</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+}
+
+TEST(EditorStateTests, TypingAttributesTextAlignmentDirectionalText)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+    [[testHarness webView] stringByEvaluatingJavaScript:@"document.body.setAttribute('dir', 'auto')"];
+
+    [testHarness insertHTML:@"<div>מקור השם עברית</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertHTML:@"<div dir='ltr'>מקור השם עברית</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertHTML:@"<div dir='rtl'>מקור השם עברית</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+
+    [testHarness insertHTML:@"<div dir='auto'>This is English text</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertHTML:@"<div dir='rtl'>This is English text</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentRight) }];
+    [testHarness insertHTML:@"<div dir='ltr'>This is English text</div>" andExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentLeft) }];
+}
+
+TEST(EditorStateTests, TypingAttributesTextColor)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+
+    [testHarness setForegroundColor:@"rgb(255, 0, 0)"];
+    [testHarness insertText:@"red" andExpectEditorStateWith:@{ @"text-color": @"rgb(255, 0, 0)" }];
+
+    [testHarness insertHTML:@"<span style='color: rgb(0, 255, 0)'>green</span>" andExpectEditorStateWith:@{ @"text-color": @"rgb(0, 255, 0)" }];
+    [testHarness insertParagraphAndExpectEditorStateWith:@{ @"text-color": @"rgb(0, 255, 0)" }];
+
+    [testHarness setForegroundColor:@"rgb(0, 0, 255)"];
+    [testHarness insertText:@"blue" andExpectEditorStateWith:@{ @"text-color": @"rgb(0, 0, 255)" }];
+}
+
+TEST(EditorStateTests, TypingAttributesMixedStyles)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+
+    [testHarness alignCenterAndExpectEditorStateWith:@{ @"text-alignment": @(NSTextAlignmentCenter) }];
+    [testHarness setForegroundColor:@"rgb(128, 128, 128)"];
+    [testHarness toggleBold];
+    [testHarness toggleItalic];
+    [testHarness toggleUnderline];
+    NSDictionary *expectedAttributes = @{
+        @"bold": @YES,
+        @"italic": @YES,
+        @"underline": @YES,
+        @"text-color": @"rgb(128, 128, 128)",
+        @"text-alignment": @(NSTextAlignmentCenter)
+    };
+    BOOL containsProperties = [testHarness latestEditorStateContains:expectedAttributes];
+    EXPECT_TRUE(containsProperties);
+    if (!containsProperties)
+        NSLog(@"Expected %@ to contain %@", [testHarness latestEditorState], expectedAttributes);
+}
+
+TEST(EditorStateTests, TypingAttributeLinkColor)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+    [testHarness insertHTML:@"<a href='https://www.apple.com/'>This is a link</a>" andExpectEditorStateWith:@{ @"text-color": @"rgb(0, 0, 238)" }];
+    [testHarness selectAllAndExpectEditorStateWith:@{ @"text-color": @"rgb(0, 0, 238)" }];
+    EXPECT_WK_STREQ("https://www.apple.com/", [[testHarness webView] stringByEvaluatingJavaScript:@"document.querySelector('a').href"]);
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+static void checkContentViewHasTextWithFailureDescription(TestWKWebView *webView, BOOL expectedToHaveText, NSString *description)
+{
+    BOOL hasText = webView.textInputContentView.hasText;
+    if (expectedToHaveText)
+        EXPECT_TRUE(hasText);
+    else
+        EXPECT_FALSE(hasText);
+
+    if (expectedToHaveText != hasText)
+        NSLog(@"Expected -[%@ hasText] to be %@, but observed: %@ (%@)", [webView.textInputContentView class], expectedToHaveText ? @"YES" : @"NO", hasText ? @"YES" : @"NO", description);
+}
+
+TEST(EditorStateTests, ContentViewHasTextInContentEditableElement)
+{
+    auto testHarness = setUpEditorStateTestHarness();
+    TestWKWebView *webView = [testHarness webView];
+
+    checkContentViewHasTextWithFailureDescription(webView, NO, @"before inserting any content");
+    [testHarness insertHTML:@"<img src='icon.png'></img>"];
+    checkContentViewHasTextWithFailureDescription(webView, NO, @"after inserting an image element");
+    [testHarness insertText:@"A"];
+    checkContentViewHasTextWithFailureDescription(webView, YES, @"after inserting text");
+    [testHarness selectAll];
+    checkContentViewHasTextWithFailureDescription(webView, YES, @"after selecting everything");
+    [testHarness deleteBackwards];
+    checkContentViewHasTextWithFailureDescription(webView, NO, @"after deleting everything");
+    [testHarness insertParagraph];
+    checkContentViewHasTextWithFailureDescription(webView, YES, @"after inserting a newline");
+    [testHarness deleteBackwards];
+    checkContentViewHasTextWithFailureDescription(webView, NO, @"after deleting the newline");
+    [testHarness insertText:@"B"];
+    checkContentViewHasTextWithFailureDescription(webView, YES, @"after inserting text again");
+    [webView stringByEvaluatingJavaScript:@"document.body.blur()"];
+    [webView waitForNextPresentationUpdate];
+    checkContentViewHasTextWithFailureDescription(webView, NO, @"after losing focus");
+}
+
+TEST(EditorStateTests, ContentViewHasTextInTextarea)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr testHarness = adoptNS([[EditingTestHarness alloc] initWithWebView:webView.get()]);
+    [webView synchronouslyLoadHTMLString:@"<textarea id='textarea'></textarea>"];
+    [webView stringByEvaluatingJavaScript:@"textarea.focus()"];
+    [webView waitForNextPresentationUpdate];
+
+    checkContentViewHasTextWithFailureDescription(webView.get(), NO, @"before inserting any content");
+    [testHarness insertText:@"A"];
+    checkContentViewHasTextWithFailureDescription(webView.get(), YES, @"after inserting text");
+    [testHarness selectAll];
+    checkContentViewHasTextWithFailureDescription(webView.get(), YES, @"after selecting everything");
+    [testHarness deleteBackwards];
+    checkContentViewHasTextWithFailureDescription(webView.get(), NO, @"after deleting everything");
+    [testHarness insertParagraph];
+    checkContentViewHasTextWithFailureDescription(webView.get(), YES, @"after inserting a newline");
+    [testHarness deleteBackwards];
+    checkContentViewHasTextWithFailureDescription(webView.get(), NO, @"after deleting the newline");
+    [testHarness insertText:@"B"];
+    checkContentViewHasTextWithFailureDescription(webView.get(), YES, @"after inserting text again");
+    [webView stringByEvaluatingJavaScript:@"textarea.blur()"];
+    [webView waitForNextPresentationUpdate];
+    checkContentViewHasTextWithFailureDescription(webView.get(), NO, @"after losing focus");
+}
+
+TEST(EditorStateTests, CaretColorInContentEditable)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<body style=\"caret-color: red;\" contenteditable=\"true\"></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView waitForNextPresentationUpdate];
+    UIView<UITextInputTraits_Private> *textInput = (UIView<UITextInputTraits_Private> *) [webView textInputContentView];
+    UIColor *insertionPointColor = textInput.insertionPointColor;
+    UIColor *redColor = [UIColor redColor];
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB));
+    RetainPtr cgInsertionPointColor = adoptCF(CGColorCreateCopyByMatchingToColorSpace(colorSpace.get(), kCGRenderingIntentDefault, insertionPointColor.CGColor, NULL));
+    RetainPtr cgRedColor = adoptCF(CGColorCreateCopyByMatchingToColorSpace(colorSpace.get(), kCGRenderingIntentDefault, redColor.CGColor, NULL));
+    EXPECT_TRUE(CGColorEqualToColor(cgInsertionPointColor.get(), cgRedColor.get()));
+}
+
+TEST(EditorStateTests, ObserveSelectionAttributeChanges)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr editor = adoptNS([[EditingTestHarness alloc] initWithWebView:webView.get()]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+
+    RetainPtr observer = adoptNS([[SelectionChangeObserver alloc] initWithWebView:webView.get()]);
+
+    [webView evaluateJavaScript:@"document.body.focus()" completionHandler:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor insertText:@"Hello"];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor insertText:@"."];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor moveBackward];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor moveForward];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor deleteBackwards];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor insertParagraph];
+    EXPECT_EQ(_WKSelectionAttributeIsCaret, [observer currentSelectionAttributes]);
+
+    [editor selectAll];
+    EXPECT_EQ(_WKSelectionAttributeIsRange, [observer currentSelectionAttributes]);
+
+    [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(_WKSelectionAttributeNoSelection, [observer currentSelectionAttributes]);
+}
+
+TEST(EditorStateTests, ParagraphBoundary)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable><p>Hello world.</p></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView waitForNextPresentationUpdate];
+
+    auto textInput = [webView textInputContentView];
+    RetainPtr editor = adoptNS([[EditingTestHarness alloc] initWithWebView:webView.get()]);
+    [editor selectAll];
+
+    EXPECT_TRUE([textInput isPosition:textInput.selectedTextRange.start atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionBackward]);
+    EXPECT_TRUE([textInput isPosition:textInput.selectedTextRange.end atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionForward]);
+
+    [editor moveForward];
+    [editor moveBackward];
+    [editor moveBackward];
+
+    EXPECT_FALSE([textInput isPosition:textInput.selectedTextRange.start atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionBackward]);
+    EXPECT_FALSE([textInput isPosition:textInput.selectedTextRange.end atBoundary:UITextGranularityParagraph inDirection:UITextStorageDirectionForward]);
+}
+
+TEST(EditorStateTests, SelectedText)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_GT([[webView textInputContentView] selectedText].length, 0U);
+}
+
+namespace EditorStateTests {
+
+constexpr unsigned glyphWidth { 25 }; // pixels
+
+NSString *applyAhemStyle(NSString *htmlString)
+{
+    return [NSString stringWithFormat:@"<style>@font-face { font-family: Ahem; src: url(Ahem.ttf); } body { margin: 0; } * { font: %upx/1 Ahem; -webkit-text-size-adjust: none; }</style><meta name='viewport' content='width=980, initial-scale=1.0'>%@", EditorStateTests::glyphWidth, htmlString];
+}
+
+}
+
+TEST(EditorStateTests, SelectedTextRange_CaretSelectionWithZoom)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+    RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:EditorStateTests::applyAhemStyle(@"<input id='input' value='.' style='margin-top: 100px;'>")]; // . is dummy to force Ahem to load
+
+    [webView stringByEvaluatingJavaScript:@"input.focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Test"];
+
+    [webView waitForNextVisibleContentRectUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    CGFloat zoomScale = 4;
+    [webView setZoomScaleSimulatingUserTriggeredZoom:zoomScale];
+
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr contentView = [webView textInputContentView];
+    RetainPtr selectedTextRange = [contentView selectedTextRange];
+
+    EXPECT_EQ([[contentView layer] transform].m11, zoomScale);
+
+#if ENABLE(FORM_CONTROL_REFRESH)
+    CGRect caretRect = CGRectMake(137, 107, 2, EditorStateTests::glyphWidth);
+#else
+    CGRect caretRect = CGRectMake(137, 106, 3, EditorStateTests::glyphWidth);
+#endif
+    EXPECT_EQ(caretRect, [contentView caretRectForPosition:[selectedTextRange start]]);
+    EXPECT_EQ(caretRect, [contentView caretRectForPosition:[selectedTextRange end]]);
+}
+
+TEST(EditorStateTests, MarkedTextRange_HorizontalCaretSelection)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:EditorStateTests::applyAhemStyle(@"<body contenteditable='true'>.</body>")]; // . is dummy to force Ahem to load
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    auto *contentView = [webView textInputContentView];
+    [contentView setMarkedText:@"hello" selectedRange:NSMakeRange(0, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    UITextRange *markedTextRange = [contentView markedTextRange];
+    NSArray<UITextSelectionRect *> *rects = [contentView selectionRectsForRange:markedTextRange];
+    EXPECT_EQ(1U, rects.count);
+    EXPECT_EQ(CGRectMake(0, 0, 5 * EditorStateTests::glyphWidth, EditorStateTests::glyphWidth), rects[0].rect);
+    EXPECT_EQ(CGRectMake(0, 0, 2, EditorStateTests::glyphWidth), [contentView caretRectForPosition:markedTextRange.start]);
+    EXPECT_EQ(CGRectMake(124, 0, 2, EditorStateTests::glyphWidth), [contentView caretRectForPosition:markedTextRange.end]);
+    EXPECT_FALSE(rects[0].isVertical);
+}
+
+TEST(EditorStateTests, MarkedTextRange_HorizontalRangeSelection)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:EditorStateTests::applyAhemStyle(@"<body contenteditable='true'>.</body>")]; // . is dummy to force Ahem to load
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
+
+    auto *contentView = [webView textInputContentView];
+    [webView selectWordBackwardForTesting];
+    [contentView setMarkedText:@"world" selectedRange:NSMakeRange(0, 5)];
+    [webView waitForNextPresentationUpdate];
+
+    UITextRange *markedTextRange = [contentView markedTextRange];
+    NSArray<UITextSelectionRect *> *rects = [contentView selectionRectsForRange:markedTextRange];
+    EXPECT_EQ(1U, rects.count);
+    EXPECT_EQ(CGRectMake(150, 0, 5 * EditorStateTests::glyphWidth, EditorStateTests::glyphWidth), rects[0].rect);
+    EXPECT_EQ(CGRectMake(149, 0, 2, EditorStateTests::glyphWidth), [contentView caretRectForPosition:markedTextRange.start]);
+    EXPECT_EQ(CGRectMake(274, 0, 2, EditorStateTests::glyphWidth), [contentView caretRectForPosition:markedTextRange.end]);
+    EXPECT_FALSE(rects[0].isVertical);
+}
+
+TEST(EditorStateTests, MarkedTextRange_VerticalCaretSelection)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:EditorStateTests::applyAhemStyle(@"<body style='writing-mode: vertical-lr' contenteditable='true'>.</body>")]; // . is dummy to force Ahem to load
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    auto *contentView = [webView textInputContentView];
+    [contentView setMarkedText:@"hello" selectedRange:NSMakeRange(0, 0)];
+    [webView waitForNextPresentationUpdate];
+
+    UITextRange *markedTextRange = [contentView markedTextRange];
+    NSArray<UITextSelectionRect *> *rects = [contentView selectionRectsForRange:markedTextRange];
+    EXPECT_EQ(1U, rects.count);
+    EXPECT_EQ(CGRectMake(0, 0, EditorStateTests::glyphWidth, 5 * EditorStateTests::glyphWidth), rects[0].rect);
+    EXPECT_EQ(CGRectMake(0, 0, EditorStateTests::glyphWidth, 2), [contentView caretRectForPosition:markedTextRange.start]);
+    EXPECT_EQ(CGRectMake(0, 124, EditorStateTests::glyphWidth, 2), [contentView caretRectForPosition:markedTextRange.end]);
+    EXPECT_TRUE(rects[0].isVertical);
+}
+
+TEST(EditorStateTests, MarkedTextRange_VerticalRangeSelection)
+{
+    IPhoneUserInterfaceSwizzler userInterfaceSwizzler;
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:EditorStateTests::applyAhemStyle(@"<body style='writing-mode: vertical-lr' contenteditable='true'>.</body>")]; // . is dummy to force Ahem to load
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _synchronouslyExecuteEditCommand:@"InsertText" argument:@"Hello world"];
+
+    auto *contentView = [webView textInputContentView];
+    [webView selectWordBackwardForTesting];
+    [contentView setMarkedText:@"world" selectedRange:NSMakeRange(0, 5)];
+    [webView waitForNextPresentationUpdate];
+
+    UITextRange *markedTextRange = [contentView markedTextRange];
+    NSArray<UITextSelectionRect *> *rects = [contentView selectionRectsForRange:markedTextRange];
+    EXPECT_EQ(1U, rects.count);
+    EXPECT_EQ(CGRectMake(0, 150, EditorStateTests::glyphWidth, 5 * EditorStateTests::glyphWidth), rects[0].rect);
+    EXPECT_EQ(CGRectMake(0, 149, EditorStateTests::glyphWidth, 2), [contentView caretRectForPosition:markedTextRange.start]);
+    EXPECT_EQ(CGRectMake(0, 274, EditorStateTests::glyphWidth, 2), [contentView caretRectForPosition:markedTextRange.end]);
+    EXPECT_TRUE(rects[0].isVertical);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+
+static RetainPtr<WKWebViewConfiguration> configurationWithTextInputClientSelectionUpdatesEnabled()
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"TextInputClientSelectionUpdatesEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+    return configuration;
+}
+
+TEST(EditorStateTests, UnionRectInVisibleSelectedRangeAndDocumentVisibleRect)
+{
+    __block unsigned didUpdateSelectionCount = 0;
+    __block bool willStartScrollingOrZooming = false;
+    __block bool didEndScrollingOrZooming = false;
+
+    InstanceMethodSwizzler didUpdateSelectionSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidUpdateSelection),
+        imp_implementationWithBlock(^{
+            didUpdateSelectionCount++;
+        })
+    };
+
+    InstanceMethodSwizzler willStartScrollingOrZoomingSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientWillStartScrollingOrZooming),
+        imp_implementationWithBlock(^{
+            willStartScrollingOrZooming = true;
+        })
+    };
+
+    InstanceMethodSwizzler didEndScrollingOrZoomingSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidEndScrollingOrZooming),
+        imp_implementationWithBlock(^{
+            didEndScrollingOrZooming = true;
+        })
+    };
+
+    RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
+
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body style='height: 500vh;'>Hello world, this is a test.</body>"];
+    [webView waitForNextPresentationUpdate];
+    [webView mouseDownAtPoint:NSMakePoint(15, 390) simulatePressure:NO];
+    [webView mouseDragToPoint:NSMakePoint(300, 390)];
+    [webView mouseUpAtPoint:NSMakePoint(300, 390)];
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    [webView stringByEvaluatingJavaScript:@"document.execCommand('selectAll', true)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto isInDocumentVisibleRect = [&](NSRect rectInScreen) {
+        return NSContainsRect([webView documentVisibleRect], rectInScreen);
+    };
+
+    auto isInView = [&](NSRect rectInScreen) {
+        RetainPtr window = [webView window];
+        auto rectInWindow = [window convertRectFromScreen:rectInScreen];
+        auto rectInView = [webView convertRect:rectInWindow fromView:nil];
+        return NSContainsRect([webView bounds], rectInView);
+    };
+
+    EXPECT_TRUE(isInDocumentVisibleRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_FALSE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_GT(didUpdateSelectionCount, 0u);
+    EXPECT_TRUE(isInView([webView unionRectInVisibleSelectedRange]));
+
+    [webView stringByEvaluatingJavaScript:@"scrollBy(0, 2000)"];
+    [webView waitForNextPresentationUpdate];
+
+    Util::run(&willStartScrollingOrZooming);
+    Util::run(&didEndScrollingOrZooming);
+    EXPECT_FALSE(isInDocumentVisibleRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_FALSE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_FALSE(isInView([webView unionRectInVisibleSelectedRange]));
+
+    auto countBeforeClearingSelection = didUpdateSelectionCount;
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_GT(didUpdateSelectionCount, countBeforeClearingSelection);
+    EXPECT_TRUE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+}
+
+TEST(EditorStateTests, UnionRectInVisibleSelectedRangeForEditableCaretSelection)
+{
+    __block unsigned didUpdateSelectionCount = 0;
+
+    InstanceMethodSwizzler didUpdateSelectionSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidUpdateSelection),
+        imp_implementationWithBlock(^{
+            didUpdateSelectionCount++;
+        })
+    };
+
+    RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
+
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body>Hello world.</body>"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView mouseDownAtPoint:NSMakePoint(50, 390) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(50, 390)];
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 0)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto caretRect = [webView unionRectInVisibleSelectedRange];
+    EXPECT_EQ(caretRect.size.width, 0);
+    EXPECT_GT(caretRect.size.height, 0);
+    EXPECT_GT(caretRect.origin.x, 0);
+    EXPECT_GT(caretRect.origin.y, 0);
+    EXPECT_TRUE(NSPointInRect(caretRect.origin, [webView documentVisibleRect]));
+    EXPECT_GT(didUpdateSelectionCount, 0u);
+
+    auto countBeforeClearingSelection = didUpdateSelectionCount;
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_GT(didUpdateSelectionCount, countBeforeClearingSelection);
+    EXPECT_TRUE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+}
+
+TEST(EditorStateTests, UnionRectInVisibleSelectedRangeForNonEditableRangeSelection)
+{
+    __block unsigned didUpdateSelectionCount = 0;
+
+    InstanceMethodSwizzler didUpdateSelectionSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidUpdateSelection),
+        imp_implementationWithBlock(^{
+            didUpdateSelectionCount++;
+        })
+    };
+
+    RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
+
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body>Hello world<br>this is a test.</body>"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView mouseDownAtPoint:NSMakePoint(15, 390) simulatePressure:NO];
+    [webView mouseDragToPoint:NSMakePoint(50, 390)];
+    [webView mouseUpAtPoint:NSMakePoint(50, 390)];
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    [webView stringByEvaluatingJavaScript:@"document.execCommand('selectAll', true)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto selectionRect = [webView unionRectInVisibleSelectedRange];
+    EXPECT_FALSE(NSIsEmptyRect(selectionRect));
+    EXPECT_TRUE(NSContainsRect([webView documentVisibleRect], selectionRect));
+    EXPECT_GT(didUpdateSelectionCount, 0u);
+
+    __block RetainPtr<NSAttributedString> attributedSubstring;
+    __block bool gotAttributedSubstring = false;
+    [(id<NSTextInputClient_Async>)webView.get() attributedSubstringForProposedRange:NSMakeRange(0, NSUIntegerMax) completionHandler:^(NSAttributedString *string, NSRange actualRange) {
+        attributedSubstring = string;
+        gotAttributedSubstring = true;
+    }];
+    TestWebKitAPI::Util::run(&gotAttributedSubstring);
+    EXPECT_TRUE([[attributedSubstring string] containsString:@"Hello world"]);
+
+    auto countBeforeClearingSelection = didUpdateSelectionCount;
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_GT(didUpdateSelectionCount, countBeforeClearingSelection);
+    EXPECT_TRUE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+}
+
+TEST(EditorStateTests, NotifyTextInputClientAfterMagnificationChange)
+{
+    __block unsigned didUpdateSelectionCount = 0;
+
+    InstanceMethodSwizzler didUpdateSelectionSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidUpdateSelection),
+        imp_implementationWithBlock(^{
+            didUpdateSelectionCount++;
+        })
+    };
+
+    RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    [webView setAllowsMagnification:YES];
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body>Hello world.</body>"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView mouseDownAtPoint:NSMakePoint(50, 390) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(50, 390)];
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    auto countBeforeFirstMagnification = didUpdateSelectionCount;
+    [webView setMagnification:2.0];
+    [webView waitForNextPresentationUpdate];
+
+    Util::waitForConditionWithLogging(^{
+        return didUpdateSelectionCount > countBeforeFirstMagnification;
+    }, 3, @"Timed out waiting for first call to -textInputClientDidUpdateSelection");
+
+    auto countBeforeSecondMagnification = didUpdateSelectionCount;
+    [webView setMagnification:1.0];
+    [webView waitForNextPresentationUpdate];
+
+    Util::waitForConditionWithLogging(^{
+        return didUpdateSelectionCount > countBeforeSecondMagnification;
+    }, 3, @"Timed out waiting for second call to -textInputClientDidUpdateSelection");
+}
+
+#endif // PLATFORM(MAC)
+
+} // namespace TestWebKitAPI

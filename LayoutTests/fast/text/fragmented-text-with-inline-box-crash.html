@@ -1,0 +1,19 @@
+<style>
+html {
+ column-count: 10;
+ widows: 9;
+ }
+
+span {
+  overflow-wrap: anywhere;
+  float: inline-end;
+}
+</style>
+PASS_if_no_crash_or_assert.<div>
+<script>
+window.testRunner?.dumpAsText();
+
+document.designMode = "on";
+document.execCommand("selectAll");
+document.execCommand("justifyRight");
+</script>

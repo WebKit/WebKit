@@ -1,0 +1,23 @@
+<style>
+body {
+  margin: 0px;
+}
+.container {
+  width: 50px;
+}
+
+.block-in-inline {
+  height: 50px;
+}
+</style>
+<div class=container>
+  <span id=target>
+    <div class=block-in-inline></div>
+  </span>
+</div>
+<pre id=log></pre>
+<script>
+window.testRunner?.dumpAsText();
+for (const rect of target.getClientRects())
+  log.textContent += rect.x + " " + rect.y + " " + rect.width + " " + rect.height + "\n";
+</script>

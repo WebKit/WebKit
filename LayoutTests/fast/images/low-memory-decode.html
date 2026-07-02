@@ -1,0 +1,24 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    internals.settings.setLargeImageAsyncDecodingEnabled(true);
+	internals.beginSimulatedMemoryPressure();
+}
+function tryFinish() {
+    const decodeCount = internals.imageDecodeCount(image);
+    if (decodeCount < 1)
+        return;
+    log.innerHTML = `Image decode count: ${internals.imageDecodeCount(image)}`;
+    internals.endSimulatedMemoryPressure();
+    testRunner.notifyDone()
+}
+
+function test() {
+    if (!window.testRunner)
+        return;
+    setInterval(tryFinish, 100);
+}
+</script>
+<div id=log style="height:1000px"></div>
+<img id=image src="resources/flowchart.jpg" width="1000" height="1000" onload="test()">

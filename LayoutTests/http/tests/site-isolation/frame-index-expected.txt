@@ -1,0 +1,10 @@
+
+frames length 2
+firstFrame with query ?1, is first child true
+secondFrame with query ?2, is first child false
+window.frames[0] with query ?1, is first child true
+window.frames[1] with query ?2, is first child false
+window.frames[0] after navigating to cross-site with query ?1, is first child true
+window.frames[0] after navigating back to same-site with query ?1, is first child true
+complete
+

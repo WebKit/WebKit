@@ -1,0 +1,35 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+GEOMETRY_FILES = [
+    "GrAAConvexTessellator.cpp",
+    "GrAAConvexTessellator.h",
+    "GrAATriangulator.cpp",
+    "GrAATriangulator.h",
+    "GrInnerFanTriangulator.h",
+    "GrPathUtils.cpp",
+    "GrPathUtils.h",
+    "GrQuad.cpp",
+    "GrQuad.h",
+    "GrQuadBuffer.h",
+    "GrQuadUtils.cpp",
+    "GrQuadUtils.h",
+    "GrRect.h",
+    "GrShape.cpp",
+    "GrShape.h",
+    "GrStyledShape.cpp",
+    "GrStyledShape.h",
+    "GrTriangulator.cpp",
+    "GrTriangulator.h",
+]
+
+split_srcs_and_hdrs(
+    name = "geometry",
+    files = GEOMETRY_FILES,
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)

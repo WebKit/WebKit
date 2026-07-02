@@ -1,0 +1,148 @@
+--- a/resources/debug-runner/tests.js	2026-03-25 10:54:32.366303243 +0100
++++ b/resources/debug-runner/tests.js	2026-03-25 10:54:49.803597112 +0100
+@@ -456,3 +456,48 @@
+         }
+     ]
+ ));
++
++Suites.push(new Suite("Composition suite",
++    [
++        {
++            url: "dom/compositing-transforms.html?particleWidth=50&particleHeight=50&filters=yes",
++            name: "Transforms with filters"
++        },
++        {
++            url: "dom/compositing-transforms.html?particleWidth=50&particleHeight=50",
++            name: "Transforms no filters"
++        },
++        {
++            url: "dom/particles.html?composited=yes",
++            name: "DOM Particles"
++        },
++        {
++            url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=12&particleHeight=12&shape=circle&composited=yes",
++            name: "Bouncing circles"
++        },
++        {
++            url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=40&particleHeight=40&shape=rect&clip=star&composited=yes",
++            name: "Bouncing clipped rects"
++        },
++        {
++            url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=80&particleHeight=80&shape=circle&blend&composited=yes",
++            name: "Bouncing blend circles"
++        },
++        {
++            url: "bouncing-particles/bouncing-css-shapes.html?particleWidth=80&particleHeight=80&shape=circle&filter&composited=yes",
++            name: "Bouncing filter circles"
++        },
++        {
++            url: "dom/leaves.html?style=simple&composited=yes",
++            name: "Leaves translate"
++        },
++        {
++            url: "dom/leaves.html?style=scale&composited=yes",
++            name: "Leaves translate + scale"
++        },
++        {
++            url: "dom/leaves.html?style=opacity&composited=yes",
++            name: "Leaves translate + opacity"
++        }
++    ]
++));
+--- a/tests/bouncing-particles/resources/bouncing-css-shapes.js	2026-03-25 10:54:32.991549419 +0100
++++ b/tests/bouncing-particles/resources/bouncing-css-shapes.js	2026-03-25 10:55:41.472435136 +0100
+@@ -28,6 +28,7 @@
+     function(stage)
+     {
+         BouncingParticle.call(this, stage);
++        this.composited = stage.composited;
+ 
+         this.element = this._createSpan(stage);
+ 
+@@ -64,7 +65,10 @@
+ 
+     _move: function()
+     {
+-        this.element.style.transform = "translate(" + this.position.x + "px," + this.position.y + "px)" + this.rotater.rotateZ();
++        if (this.composited)
++            this.element.style.transform = "translate3d(" + this.position.x + "px," + this.position.y + "px, 0)" + this.rotater.rotateZ();
++        else
++            this.element.style.transform = "translate(" + this.position.x + "px," + this.position.y + "px)" + this.rotater.rotateZ();
+     },
+ 
+     animate: function(timeDelta)
+@@ -85,6 +89,7 @@
+     {
+         BouncingParticlesStage.prototype.initialize.call(this, benchmark, options);
+         this.parseShapeParameters(options);
++        this.composited = options["composited"] == "yes";
+     },
+ 
+     createParticle: function()
+--- a/tests/dom/resources/dom-particles.js	2026-03-25 10:54:32.552230424 +0100
++++ b/tests/dom/resources/dom-particles.js	2026-03-25 10:55:16.422573676 +0100
+@@ -29,6 +29,7 @@
+     {
+         this.element = document.createElement("div");
+         stage.element.appendChild(this.element);
++        this.composited = stage.composited;
+ 
+         Particle.call(this, stage);
+     }, {
+@@ -51,7 +52,10 @@
+ 
+     move: function()
+     {
+-        this.element.style.transform = "translate(" + this.position.x + "px, " + this.position.y + "px)" + this.rotater.rotateZ();
++        if (this.composited)
++            this.element.style.transform = "translate3d(" + this.position.x + "px, " + this.position.y + "px, 0)" + this.rotater.rotateZ();
++        else
++            this.element.style.transform = "translate(" + this.position.x + "px, " + this.position.y + "px)" + this.rotater.rotateZ();
+     }
+ });
+ 
+@@ -72,6 +76,7 @@
+             new Point(this.size.x * .75, this.size.y * .333)
+         ];
+         this.colorOffset = Stage.randomInt(0, 359);
++        this.composited = (new URLSearchParams(window.location.search)).get("composited") === "yes";
+     },
+ 
+     createParticle: function()
+--- a/tests/dom/resources/leaves.js	2026-03-25 10:54:32.757080390 +0100
++++ b/tests/dom/resources/leaves.js	2026-03-25 10:55:26.708337854 +0100
+@@ -25,6 +25,7 @@
+ (function() {
+ 
+ var SuperLeaf = window.Leaf;
++var composited = (new URLSearchParams(window.location.search)).get("composited") === "yes";
+ var SimpleLeaf = Utilities.createSubclass(SuperLeaf,
+     function(stage)
+     {
+@@ -37,7 +38,7 @@
+ 
+     move: function()
+     {
+-        this.element.style.transform = "translate(" + this._position.x + "px, " + this._position.y + "px)" + this.rotater.rotateZ();
++        this.element.style.transform = (composited ? "translate3d(" + this._position.x + "px, " + this._position.y + "px, 0)" : "translate(" + this._position.x + "px, " + this._position.y + "px)") + this.rotater.rotateZ();
+     }
+ });
+ 
+@@ -53,7 +54,7 @@
+ 
+     move: function()
+     {
+-        this.element.style.transform = "translate(" + this._position.x + "px, " + this._position.y + "px)" + this.rotater.rotateZ();
++        this.element.style.transform = (composited ? "translate3d(" + this._position.x + "px, " + this._position.y + "px, 0)" : "translate(" + this._position.x + "px, " + this._position.y + "px)") + this.rotater.rotateZ();
+     }
+ });
+ 
+@@ -69,7 +70,7 @@
+ 
+     move: function()
+     {
+-        this.element.style.transform = "translate(" + this._position.x + "px, " + this._position.y + "px)" + this.rotater.rotateZ();
++        this.element.style.transform = (composited ? "translate3d(" + this._position.x + "px, " + this._position.y + "px, 0)" : "translate(" + this._position.x + "px, " + this._position.y + "px)") + this.rotater.rotateZ();
+         this.element.style.opacity = this._opacity;
+     }
+ });

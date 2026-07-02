@@ -1,0 +1,7 @@
+2d.filter.canvasFilterObject.componentTransfer.linear.tentative
+
+Test pixels on CanvasFilter() componentTransfer with linear type
+
+
+FAIL Test pixels on CanvasFilter() componentTransfer with linear type Can't find variable: CanvasFilter
+

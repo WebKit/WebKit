@@ -1,0 +1,40 @@
+Tests that using the WebArea to retrieve AttributedStrings from element TextMarkerRanges works properly.
+
+"Attributes in range {0, 15}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+This is a test."
+"Attributes in range {0, 23}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+This is a test.
+
+Second"
+"Attributes in range {0, 34}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+This is a test.
+
+Second paragraph."
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a test.
+
+Second paragraph.

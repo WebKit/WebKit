@@ -1,0 +1,13 @@
+Spelling should ignore whitespace. To test manually, type 'hello, wellcome home.', select ' wellcome '. The test succeeds when 'wellcome' has spelling marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.markerCountForNode(destination.childNodes[0], "spelling") became different from 0
+PASS spellingMarkerRange.toString() is "wellcome"
+PASS window.getSelection().toString() is " wellcome "
+PASS spellingMarkerRange.toString() became "wellcome"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello, wellcome home.

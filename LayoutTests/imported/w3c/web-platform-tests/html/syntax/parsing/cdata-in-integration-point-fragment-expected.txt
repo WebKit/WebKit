@@ -1,0 +1,11 @@
+
+PASS CDATA not allowed when fragment-parsing with <mi> context (MathML text integration point)
+PASS CDATA not allowed when fragment-parsing with <mo> context (MathML text integration point)
+PASS CDATA not allowed when fragment-parsing with <mn> context (MathML text integration point)
+PASS CDATA not allowed when fragment-parsing with <ms> context (MathML text integration point)
+PASS CDATA not allowed when fragment-parsing with <mtext> context (MathML text integration point)
+PASS CDATA not allowed when fragment-parsing with <foreignObject> context (SVG HTML integration point)
+PASS CDATA not allowed when fragment-parsing with <desc> context (SVG HTML integration point)
+PASS CDATA not allowed when fragment-parsing with <title> context (SVG HTML integration point)
+PASS CDATA allowed when fragment-parsing with <path> context (non-integration-point SVG element)
+

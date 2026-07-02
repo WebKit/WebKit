@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="run()">
+<script>
+    description("Tests that a no-gesture requestStorageAccess() rejection in a popup's cross-site iframe does not fabricate user interaction that silently grants storage access under the opener.");
+    jsTestIsAsync = true;
+
+    function finishTest() {
+        setEnableFeature(false, finishJSTest);
+    }
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    const thirdPartyOrigin = "https://localhost:8443";
+    const resourcePath = "/storageAccess/resources";
+    const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
+    const firstPartyCookieName = "firstPartyCookie";
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName;
+    var newWin;
+
+    function receiveMessage(event) {
+        if (event.origin === thirdPartyOrigin && event.data && event.data.type === "popup-result") {
+            if (event.data.storageAccessResult === "rejected")
+                testPassed("requestStorageAccess() was rejected without a user gesture in the popup iframe.");
+            else
+                testFailed("requestStorageAccess() was not rejected. Result: " + event.data.storageAccessResult);
+
+            newWin.close();
+
+            openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should not receive first-party cookie.", finishTest);
+        }
+    }
+
+    function run() {
+        setEnableFeature(true, function() {
+            window.addEventListener("message", receiveMessage, false);
+
+            testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                    testFailed("Host did not get set as prevalent resource.");
+                testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
+                    if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
+                        testFailed("Host did not get logged for user interaction.");
+                    testRunner.dumpChildFramesAsText();
+
+                    testRunner.statisticsUpdateCookieBlocking(function() {
+                        newWin = window.open(thirdPartyOrigin + resourcePath + "/request-storage-access-without-gesture-and-report-back.html#https://127.0.0.1:8443", "testWindow");
+                    });
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>

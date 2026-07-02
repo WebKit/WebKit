@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<div style="display: flex; background-color: #ddd; font-size: 24pt">
+   <div style="width: 100px">
+    <span id="a">aaa</span><br>
+    <span id="b">bbb</span>
+   </div>
+   <div style="width: 100px">
+    <span id="c">ccc</span>
+    <span id="d">ddd</span>
+   </div>
+</div>
+<script>
+    var b = document.querySelector('#b'),
+        d = document.querySelector('#d');
+    getSelection().setBaseAndExtent(b.firstChild, 0, d.firstChild, 2);
+    focus();
+</script>

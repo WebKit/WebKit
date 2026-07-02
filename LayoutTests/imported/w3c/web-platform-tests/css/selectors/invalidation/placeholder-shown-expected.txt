@@ -1,0 +1,7 @@
+
+
+PASS Initially no placeholder text
+PASS Added placeholder text
+PASS Set placeholder text to empty string
+PASS Removed placeholder attribute
+

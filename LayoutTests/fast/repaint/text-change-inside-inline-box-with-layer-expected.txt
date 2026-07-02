@@ -1,0 +1,7 @@
+pass
+(repaint rects
+  (rect 48 48 704 23)
+  (rect 48 48 704 23)
+  (rect 48 18 48 23)
+)
+

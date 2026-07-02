@@ -1,0 +1,30 @@
+This tests observing a custom element, which observes "style" content attribute, with a MutationObserver.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS observer.takeRecords().length is 0
+PASS attributeChanges.length is 0
+element = document.createElement("some-element"); observer.observe(element, {attributes: true});
+element.style.width = "100px";
+PASS records = observer.takeRecords(); records.length is 1
+PASS records[0].target is element
+PASS records[0].type is "attributes"
+PASS records[0].oldValue is null
+PASS attributeChanges.length is 1
+PASS attributeChanges[0].name is "style"
+PASS attributeChanges[0].oldValue is null
+PASS attributeChanges[0].newValue is "width: 100px;"
+element.style.color = "red";
+PASS records = observer.takeRecords(); records.length is 1
+PASS records[0].target is element
+PASS records[0].type is "attributes"
+PASS records[0].oldValue is null
+PASS attributeChanges.length is 2
+PASS attributeChanges[1].name is "style"
+PASS attributeChanges[1].oldValue is "width: 100px;"
+PASS attributeChanges[1].newValue is "width: 100px; color: red;"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

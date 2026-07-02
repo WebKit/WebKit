@@ -1,0 +1,36 @@
+
+PASS Margin properties on the children of a
+PASS Margin properties on the children of menclose
+PASS Margin properties on the children of merror
+PASS Margin properties on the children of mfrac
+PASS Margin properties on the children of mmultiscripts
+PASS Margin properties on the children of mover
+PASS Margin properties on the children of mpadded
+PASS Margin properties on the children of mphantom
+PASS Margin properties on the children of mroot
+PASS Margin properties on the children of mrow
+PASS Margin properties on the children of msqrt
+PASS Margin properties on the children of mstyle
+PASS Margin properties on the children of msub
+PASS Margin properties on the children of msubsup
+PASS Margin properties on the children of msup
+PASS Margin properties on the children of munder
+PASS Margin properties on the children of munderover
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

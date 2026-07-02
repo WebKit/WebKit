@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id=video autoplay playsinline muted></video>
+<script>
+async function validateNV12Frame(test, frame, testName)
+{
+    if (frame.format != 'NV12')
+        return;
+
+    const widthU = Math.ceil(frame.codedWidth / 2);
+    const heightU = Math.ceil(frame.codedHeight / 2);
+
+    assert_equals(frame.allocationSize(), frame.codedWidth * frame.codedHeight + 2 * (widthU * heightU), testName + " allocation size");
+
+    const buffer = new Uint8Array(frame.allocationSize());
+    const layout = await frame.copyTo(buffer);
+
+    assert_equals(layout.length, 2, testName + " layout length");
+
+    assert_equals(layout[0].offset, 0, testName + " layout offset 0");
+    assert_equals(layout[0].stride, frame.codedWidth, testName + " laout stride 0");
+
+    assert_equals(layout[1].offset, frame.codedWidth * frame.codedHeight, testName + " layout offset 1");
+    assert_equals(layout[1].stride, widthU * 2, testName + " laout stride 1");
+}
+
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width:99, height: 97 } });
+    const track = stream.getVideoTracks()[0];
+    t.add_cleanup(() => track.stop());
+
+    video.srcObject = stream;
+    await video.play();
+
+    const frame1 = new VideoFrame(video);
+    t.add_cleanup(() => frame1.close());
+
+    assert_equals(frame1.codedWidth, 99);
+    assert_equals(frame1.codedHeight, 97);
+    await validateNV12Frame(t, frame1, "frame1");
+
+    track.applyConstraints({ width: 99, height: 96 });
+
+    while (video.videoHeight != 96)
+       await new Promise(resolve => setTimeout(resolve, 50));
+
+    const frame2 = new VideoFrame(video);
+    t.add_cleanup(() => frame2.close());
+
+    assert_equals(frame2.codedWidth, 99);
+    assert_equals(frame2.codedHeight, 96);
+    await validateNV12Frame(t, frame2, "frame2");
+
+    track.applyConstraints({ width: 98, height: 95 });
+
+    while (video.videoHeight != 95)
+       await new Promise(resolve => setTimeout(resolve, 50));
+
+    const frame3 = new VideoFrame(video);
+    t.add_cleanup(() => frame3.close());
+
+    assert_equals(frame3.codedWidth, 98);
+    assert_equals(frame3.codedHeight, 95);
+    await validateNV12Frame(t, frame3, "frame3");
+
+},'Test camera video frame with odd size');
+</script>
+</body>
+</html>

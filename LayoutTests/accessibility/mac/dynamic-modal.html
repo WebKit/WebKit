@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<style>
+*[role="dialog"] { border: 1px solid black; padding: 1em; margin: 1em; }
+:focus { outline: 3px solid #ccf; outline-offset: 3px; }
+</style>
+<body>
+
+<p>
+    <button id="show" autofocus>Show</button>
+</p>
+
+<div id="wrapper"></div>
+
+<script>
+document.getElementById("show").addEventListener("click", () => {
+    let dialog = document.createElement('div');
+    dialog.role = "dialog";
+    dialog.id = "dynamic_dialog";
+    dialog.ariaModal = true;
+    dialog.innerHTML = "<h2>Inside dialog</h2><button id='dialog_ok'>OK</button>";
+    document.getElementById("wrapper").appendChild(dialog);
+    setTimeout(() => {
+        document.getElementById("dialog_ok").focus();
+    }, 0);
+});
+
+var output = "This tests nested aria-modal dialogs\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async () => {
+        await waitFor(() => {
+            focus = accessibilityController.focusedElement;
+            return focus && focus.domIdentifier;
+        });
+        output += `Initial focus: ${focus.domIdentifier}\n`;
+        output += `Show button reachable: ${accessibilityController.accessibleElementById("show") != null}\n`;
+
+        output += "\nClicking on show button\n\n";
+        document.getElementById("show").click();
+
+        output += await expectAsync("accessibilityController.focusedElement?.domIdentifier === 'dialog_ok'", "true");
+        // The show button should be inaccessible.
+        output += await expectAsync("!!accessibilityController.accessibleElementById('show')", "false");
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

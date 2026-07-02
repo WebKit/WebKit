@@ -1,0 +1,4 @@
+
+PASS If a transceiver is stopped, transceivers, senders and receivers should disappear after offer/answer
+PASS If a transceiver is stopped, transceivers should end up in state stopped
+

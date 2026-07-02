@@ -1,0 +1,11 @@
+12.10-0-9 (TestCases/chapter12/12.10/12.10-0-9.js) with introduces scope - name lookup finds outer variable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

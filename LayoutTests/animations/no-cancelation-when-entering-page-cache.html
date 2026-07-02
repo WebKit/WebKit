@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<style>
+
+body {
+    /* make the page scrollable */
+    height: 5000px;
+}
+
+@keyframes move {
+    to { margin-left: 100px }
+}
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    animation: move auto;
+    animation-timeline: scroll();
+}
+
+</style>
+
+<p>
+    This tests that CSS Animations do not get canceled when restored from the page cache.
+</p>
+
+<div id="target"></div>
+<div id="results"></div>
+
+<script>
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+const finish = message => {
+    document.getElementById("results").innerText = message;
+    window.testRunner?.notifyDone();
+}
+
+const animation = document.getAnimations()[0];
+
+requestAnimationFrame(() => {
+    // We need to wait a frame for animations to have been updated and the current time to be resolved.
+    if (!animation.currentTime)
+        finish("FAIL: animation was not initially running.");
+
+    setTimeout(() => window.location.href = "resources/page-cache-helper.html", 200);
+});
+
+var enteredPageCache = false;
+document.addEventListener("visibilitychange", event => {
+    if (document.hidden)
+        enteredPageCache = true;
+    else if (enteredPageCache) {
+        // We need to wait a frame for animations to have been updated and for the current time
+        // to be unresolved in case the animation was canceled during render tree tear down when
+        // entering the page cache.
+        requestAnimationFrame(() => {
+            if (animation.currentTime)
+                finish("PASS: animation was not canceled when restored from the page cache.")
+            else
+                finish("FAIL: animation was canceled when restored from the page cache.")
+        });
+    }
+});
+
+</script>

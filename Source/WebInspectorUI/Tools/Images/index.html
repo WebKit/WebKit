@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Preview</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <h1>Image Preview</h1>
+
+    <!-- Controls -->
+    <div class="flex">
+        <button id="clear">Clear</button>
+        <input id="image-picker" type="file" multiple webkitdirectory accept="image/png, image/svg+xml">
+    </div>
+    <div class="flex">
+        <textarea id="image-input"></textarea>
+    </div>
+    <div class="flex">
+        Size:
+        <input id="image-size-slider" type="range" min="0" max="1024">
+        <input id="image-size-input" type="number" min="0">
+    </div>
+
+    <!-- Output -->
+    <div id="preview"></div>
+
+    <script src="index.js"></script>
+</body>
+</html>

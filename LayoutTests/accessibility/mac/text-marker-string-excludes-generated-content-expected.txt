@@ -1,0 +1,10 @@
+::before / ::after generated content has no DOM node, so it must be excluded from the text-marker string of a containing range, matching the live tree (and TextIterator), which never emits generated content. Regression test for the isolated tree caching generated-content text runs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.stringForTextMarkerRange(range) is 'middle'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+middle

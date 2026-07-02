@@ -1,0 +1,6 @@
+
+
+PASS sizes=auto→500px: prior sizes=auto must not override new sizes value
+PASS loading=lazy removed: prior loading=lazy must not override 100vw fallback for loading=eager
+PASS picture source removal: new selector must not fall back to 100vw
+

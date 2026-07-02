@@ -1,0 +1,29 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% FOR i IN [ 0 .. data.0.0.max ] %]
+  [% data.0.0.$i = display_value(col_field, data.0.0.$i) %]
+[% END %]
+
+[% FILTER null;
+  USE graph = GD.Graph.pie(width, height);
+
+  graph.set(title          => field_descs.$col_field || col_field,
+            pie_height     => 20,
+            suppress_angle => 2,
+            start_angle    => 180);
+  END;
+-%]
+
+[% IF Param("font_file") %]
+  [% graph.set_title_font(Param("font_file"), 10);
+     graph.set_value_font(Param("font_file"), 9);
+  %]
+[% END %]
+
+[% graph.plot(data.0).png | stdout(1) %]

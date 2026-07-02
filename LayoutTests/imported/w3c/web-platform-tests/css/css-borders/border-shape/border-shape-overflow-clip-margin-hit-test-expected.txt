@@ -1,0 +1,6 @@
+
+FAIL Hit testing child with border-shape circle + overflow-clip-margin assert_equals: Point at 65px from center should hit child (inside expanded circle radius of 70px due to 20px overflow-clip-margin) expected Element node <div id="target"></div> but got Element node <body><div id="outer">
+  <div id="target"></div>
+</div>
+<...
+

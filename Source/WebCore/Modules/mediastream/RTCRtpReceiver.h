@@ -1,0 +1,123 @@
+/*
+ * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer
+ *    in the documentation and/or other materials provided with the
+ *    distribution.
+ * 3. Neither the name of Ericsson nor the names of its contributors
+ *    may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEB_RTC)
+
+#include "MediaStream.h"
+#include "RTCDtlsTransport.h"
+#include "RTCRtpReceiverBackend.h"
+#include "RTCRtpSynchronizationSource.h"
+#include "RTCRtpTransform.h"
+#include "ScriptWrappable.h"
+
+namespace WebCore {
+
+class DeferredPromise;
+class PeerConnectionBackend;
+class RTCDtlsTransportBackend;
+class RTCEncodedStreamProducer;
+class RTCRtpTransformBackend;
+
+struct RTCEncodedStreams;
+struct RTCRtpCapabilities;
+
+class RTCRtpReceiver final : public RefCounted<RTCRtpReceiver>
+    , public ScriptWrappable
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+    {
+    WTF_MAKE_TZONE_ALLOCATED(RTCRtpReceiver);
+public:
+    static Ref<RTCRtpReceiver> create(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, UniqueRef<RTCRtpReceiverBackend>&& backend)
+    {
+        return adoptRef(*new RTCRtpReceiver(connection, WTF::move(track), WTF::move(backend)));
+    }
+    virtual ~RTCRtpReceiver();
+
+    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
+
+    void stop();
+
+    RTCRtpParameters getParameters() { return m_backend->getParameters(); }
+    Vector<RTCRtpContributingSource> getContributingSources() const { return m_backend->getContributingSources(); }
+    Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return m_backend->getSynchronizationSources(); }
+
+    MediaStreamTrack& track() { return m_track.get(); }
+
+    RTCDtlsTransport* transport() { return m_transport.get(); }
+    void setTransport(RefPtr<RTCDtlsTransport>&& transport) { m_transport = WTF::move(transport); }
+
+    RTCRtpReceiverBackend& backend() LIFETIME_BOUND { return m_backend.get(); }
+    std::unique_ptr<RTCDtlsTransportBackend> dtlsTransportBackend();
+    Ref<RTCRtpTransformBackend> rtcRtpTransformBackend();
+    void getStats(Ref<DeferredPromise>&&);
+
+    std::optional<RTCRtpTransform::Internal> transform();
+    ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
+
+    ExceptionOr<RTCEncodedStreams> createEncodedStreams(ScriptExecutionContext&);
+
+    const Vector<WeakPtr<MediaStream>>& associatedStreams() const LIFETIME_BOUND { return m_associatedStreams; }
+    void setAssociatedStreams(Vector<WeakPtr<MediaStream>>&& streams) { m_associatedStreams = WTF::move(streams); }
+
+    std::optional<double> jitterBufferTarget() const { return m_jitterBufferTarget; }
+    ExceptionOr<void> setJitterBufferTarget(std::optional<double>);
+
+private:
+    RTCRtpReceiver(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, UniqueRef<RTCRtpReceiverBackend>&&);
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
+    ASCIILiteral logClassName() const final { return "RTCRtpReceiver"_s; }
+    WTFLogChannel& NODELETE logChannel() const final;
+#endif
+
+    bool m_isStopped { false };
+    const Ref<MediaStreamTrack> m_track;
+    RefPtr<RTCDtlsTransport> m_transport;
+    const UniqueRef<RTCRtpReceiverBackend> m_backend;
+    WeakPtr<PeerConnectionBackend> m_connection;
+    std::unique_ptr<RTCRtpTransform> m_transform;
+    const RefPtr<RTCEncodedStreamProducer> m_encodedStreamProducer;
+    Vector<WeakPtr<MediaStream>> m_associatedStreams;
+    std::optional<double> m_jitterBufferTarget;
+#if !RELEASE_LOG_DISABLED
+    const Ref<const Logger> m_logger;
+    uint64_t m_logIdentifier { 0 };
+#endif
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC)

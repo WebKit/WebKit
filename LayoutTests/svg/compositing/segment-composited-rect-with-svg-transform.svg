@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Composited child carrying an SVG transform attribute, which must be preserved when the child becomes a segment anchor. -->
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <rect style="will-change: transform" transform="translate(50,50)" x="50" y="50" width="80" height="80" fill="green"/>
+    <rect x="200" y="10" width="80" height="80" fill="red"/>
+</svg>

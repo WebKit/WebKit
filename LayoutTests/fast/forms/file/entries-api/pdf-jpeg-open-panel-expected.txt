@@ -1,0 +1,12 @@
+OPEN FILE PANEL
+Tests that a PDF file, chosen via the file picker which accepts PDF files and JPEG images, has a non-zero file size. To test manually, click on the file input and select a PDF file.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fileList.length is 1
+PASS file.size is 10820
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

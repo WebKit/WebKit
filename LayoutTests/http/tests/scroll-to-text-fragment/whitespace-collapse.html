@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - white space between words</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="This test checks whitespace that is collapsed on rendering is correctly highlighted.">
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-1500" />
+
+<p>The test passes if the following word has a yellow background.</p>
+<div>Hello          World</div>
+
+<script>
+  location.href = "#:~:text=Hello%20World";
+</script>
+</html>
+
+

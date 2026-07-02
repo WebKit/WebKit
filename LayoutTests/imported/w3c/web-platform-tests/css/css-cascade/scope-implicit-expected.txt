@@ -1,0 +1,13 @@
+
+PASS @scope without prelude implicitly scopes to parent of owner node
+PASS :scope can style implicit root
+PASS @scope works with two identical stylesheets
+PASS @scope with effectively empty :is() must not match anything
+PASS Implicit @scope has implicitly added :scope descendant combinator
+PASS Implicit @scope with inner relative selector
+PASS Implicit @scope with inner nesting selector
+PASS Implicit @scope with limit
+PASS Proximity calculation of multiple implicit @scope
+PASS Implicit @scope sandwiched between non-implicit scopes
+PASS Implicit @scope sandwiched right under an explicit scope
+

@@ -1,0 +1,3 @@
+This tests changing the password field's type to text while the accessibility tree is turned on. WebKit should not crash.
+
+PASS - WebKit did not crash.

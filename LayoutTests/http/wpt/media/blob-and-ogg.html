@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<audio controls muted id=audio></audio>
+<script>
+async function validateAudioPlayback(url)
+{
+    audio.src = url;
+    return audio.play();
+}
+
+async function doOggTest(test, contentType)
+{
+    const audioConfig = {
+      type: "file",
+      audio: {
+        contentType: 'audio/ogg; codecs="vorbis"',
+        channels: '2'
+      }
+    };
+    const result = await navigator.mediaCapabilities.decodingInfo(audioConfig);
+    if (!result.supported)
+        return;
+
+    const response = await fetch("resources/ogg-file.py?contentType=${contentType}");
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    test.add_cleanup(() => URL.revokeObjectURL(blobUrl));
+
+    return validateAudioPlayback(blobUrl);
+}
+
+promise_test(test => {
+    return doOggTest(test, "audio/ogg");
+}, "Playing audio/ogg with blobs should succeed");
+
+promise_test(test => {
+    return doOggTest(test, "application/ogg");
+}, "Playing application/ogg with blobs should succeed");
+
+promise_test(test => {
+   return doOggTest(test, "video/ogg");
+}, "Playing video/ogg with blobs should succeed");
+
+promise_test(test => {
+    return doOggTest(test, "bogus/ogg");
+}, "Playing bogus/ogg with blobs should succeed");
+
+promise_test(test => {
+    return doOggTest(test, "resources/ogg-file.py");
+}, "Playing ogg without content type with blobs should succeed");
+</script>
+</body>
+</html>

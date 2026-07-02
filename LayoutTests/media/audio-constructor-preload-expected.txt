@@ -1,0 +1,16 @@
+Test that Audio() sets 'preload' attribute.
+
+RUN(mediaElement = new Audio())
+
+++ Test initial attribute value
+EXPECTED (mediaElement.getAttribute('preload') == 'auto') OK
+EXPECTED (mediaElement.preload == 'auto') OK
+
+RUN(mediaElement.src = 'content/test.wav')
+RUN(mediaElement.load())
+
+++ Test after 'canplaythrough' event
+EXPECTED (mediaElement.getAttribute('preload') == 'auto') OK
+EXPECTED (mediaElement.preload == 'auto') OK
+END OF TEST
+

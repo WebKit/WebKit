@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCPeerConnection in have-local-offer state.");
+
+            var pc = null;
+
+            function requestSucceeded5()
+            {
+                testPassed('setRemoteDescription succeeded.');
+                check("offer", "local", "answer", "remote", '"stable"');
+                finishJSTest();
+            }
+
+            function requestSucceeded4()
+            {
+                testPassed('setLocalDescription succeeded.');
+                check("offer", "local", "", "", '"have-local-offer"');
+                sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded5, finishIfFailed);');
+            }
+
+            function requestSucceeded3()
+            {
+                testPassed('setRemoteDescription succeeded.');
+                check("offer", "local", "pranswer", "remote", '"have-remote-pranswer"');
+                pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+                check("", "", "", "", '"stable"');
+                sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded4, finishIfFailed);');
+            }
+
+            function requestSucceeded2()
+            {
+                testPassed('setLocalDescription succeeded.');
+                check("offer", "local", "", "", '"have-local-offer"');
+                sessionDescription = new RTCSessionDescription({type:"pranswer", sdp:"remote"});
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded3, finishIfFailed);');
+            }
+
+            function requestFailed3(reason)
+            {
+                errorReason = reason;
+                testPassed('setRemoteDescription failed.');
+                shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
+                check("offer", "local", "", "", '"have-local-offer"');
+                sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded2, finishIfFailed);');
+            }
+
+            function requestFailed2(reason)
+            {
+                errorReason = reason;
+                testPassed('setLocalDescription failed.');
+                shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
+                check("offer", "local", "", "", '"have-local-offer"');
+                sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(finishIfSucceeded, requestFailed3);');
+            }
+
+            function requestFailed1(reason)
+            {
+                errorReason = reason;
+                testPassed('setLocalDescription failed.');
+                shouldBe('errorReason.name', '"InvalidSessionDescriptionError"');
+                check("offer", "local", "", "", '"have-local-offer"');
+                sessionDescription = new RTCSessionDescription({type:"pranswer", sdp:"local"});
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed2);');
+            }
+
+            function requestSucceeded1()
+            {
+                testPassed('setLocalDescription succeeded.');
+                check("offer", "local", "", "", '"have-local-offer"');
+                sessionDescription = new RTCSessionDescription({type:"answer", sdp:"local"});
+                shouldNotThrow('pc.setLocalDescription(sessionDescription).then(finishIfSucceeded, requestFailed1);');
+            }
+
+            function finishIfSucceeded()
+            {
+                testFailed('setRemoteDescription succeeded.');
+                finishJSTest();
+            }
+
+            function finishIfFailed()
+            {
+                testFailed('setRemoteDescription failed.');
+                finishJSTest();
+            }
+
+            function check(localType, localSdp, remoteType, remoteSdp, signalingState)
+            {
+                if (localType !== "" && localSdp !== "") {
+                    shouldBeEqualToString('pc.localDescription.type', localType);
+                    shouldBeEqualToString('pc.localDescription.sdp', localSdp);
+                } else {
+                    shouldThrow('pc.localDescription');
+                }
+                if (remoteType !== "" && remoteSdp !== "") {
+                    shouldBeEqualToString('pc.remoteDescription.type', remoteType);
+                    shouldBeEqualToString('pc.remoteDescription.sdp', remoteSdp);
+                } else {
+                    shouldThrow('pc.remoteDescription');
+                }
+                shouldBe('pc.signalingState', signalingState);
+            }
+
+            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            shouldBe('pc.signalingState', '"stable"');
+            var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
+            shouldNotThrow('pc.setLocalDescription(sessionDescription).then(requestSucceeded1, finishIfFailed);');
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

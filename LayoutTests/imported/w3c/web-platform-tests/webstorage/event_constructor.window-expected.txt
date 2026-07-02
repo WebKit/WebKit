@@ -1,0 +1,7 @@
+
+PASS constructor with no arguments
+PASS constructor with just type argument
+PASS constructor with sensible type argument and members
+PASS constructor with null type argument and members
+PASS constructor with undefined type argument and members
+

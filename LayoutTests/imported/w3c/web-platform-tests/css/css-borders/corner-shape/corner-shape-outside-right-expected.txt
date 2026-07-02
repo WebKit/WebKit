@@ -1,0 +1,10 @@
+
+FAIL corner-shape: notch with shape-outside assert_array_approx_equals: property 0, expected 120 +/- 2, expected 120 but got 72
+FAIL corner-shape: bevel with shape-outside assert_array_approx_equals: property 0, expected 96 +/- 2, expected 96 but got 72
+FAIL corner-shape: notch bevel with shape-outside assert_array_approx_equals: property 0, expected 120 +/- 2, expected 120 but got 72
+PASS corner-shape: round with shape-outside
+FAIL corner-shape: square with shape-outside assert_array_approx_equals: property 0, expected 60 +/- 2, expected 60 but got 72
+FAIL corner-shape: scoop with shape-outside assert_array_approx_equals: property 0, expected 114 +/- 2, expected 114 but got 72
+FAIL corner-shape: superellipse(1.5) with shape-outside assert_array_approx_equals: property 0, expected 65 +/- 2, expected 65 but got 72
+FAIL corner-shape: superellipse(-.8) with shape-outside assert_array_approx_equals: property 0, expected 112 +/- 2, expected 112 but got 72
+

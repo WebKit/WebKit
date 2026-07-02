@@ -1,0 +1,17 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+if (testRunner)
+    testRunner.dumpAsText();
+
+let animatedString = (() => {
+    return (new Document).createElementNS('http://www.w3.org/2000/svg', 'text').className;
+})();
+
+if (window.GCController)
+    GCController.collect();
+
+animatedString.baseVal = 'foo';
+let newValue = animatedString.baseVal;
+document.write(newValue == 'foo' ? 'PASS' : `FAIL - ${newValue}`);
+
+</script>

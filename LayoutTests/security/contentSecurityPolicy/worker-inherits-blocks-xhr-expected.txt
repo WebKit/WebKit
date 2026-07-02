@@ -1,0 +1,3 @@
+This tests that the Content Security Policy (CSP) of the owner document (this page) blocks a file-URL Web Worker from making an XHR request because the parent's CSP contains "connect-src 'none'"
+
+PASS threw exception NetworkError:  A network error occurred..

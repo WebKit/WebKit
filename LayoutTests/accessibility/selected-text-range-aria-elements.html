@@ -1,0 +1,29 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+    <input id="combo" type="text" role="combobox" value="Hello World"> 
+    
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+ 
+        var node = document.getElementById("combo");
+        node.focus();
+        node.setSelectionRange(4, 6); 
+
+        if (window.accessibilityController) {
+            description("This test makes sure that a native text control with a text-like ARIA value returns selectedTextRange");
+
+            var element = accessibilityController.accessibleElementById("combo");
+            debug("Text range: " + element.selectedTextRange);
+        }
+    </script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS The URL after mapping violates CSP (but not the URL before mapping)
+PASS The URL before mapping violates CSP (but not the URL after mapping)
+

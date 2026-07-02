@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests that we _do_not_ fire mouseout on synthetic click by default.</title>
+<script src="../../../../../resources/ui-helper.js"></script>
+<style>
+#tapThis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#becomesVisible {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    await UIHelper.activateElement(tapThis);
+}
+</script>
+</head>
+<body onload="test()">
+<button id=tapThis>PASS if 'mouseout' text is NOT shown below.</button>
+<div id=becomesVisible></div>
+<pre id=result></pre>
+<script>
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapThis.addEventListener("mouseout", function( event ) {   
+    result.innerHTML = result.innerHTML + " mouseout triggered ";
+}, false);
+
+tapThis.addEventListener("click", function( event ) {   
+    result.innerHTML = result.innerHTML + " clicked ";
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 50);
+}, false);
+</script>
+</body>
+</html>

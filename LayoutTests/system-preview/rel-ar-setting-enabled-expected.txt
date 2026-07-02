@@ -1,0 +1,3 @@
+
+PASS a.relList.supports("ar") should be true when SystemPreviewEnabled is true.
+

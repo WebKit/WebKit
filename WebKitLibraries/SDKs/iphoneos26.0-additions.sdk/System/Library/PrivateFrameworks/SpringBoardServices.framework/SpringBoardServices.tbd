@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices
+current-version: 4557.0.10
+exports:
+-       targets: [arm64-ios, arm64e-ios]
+        symbols: [_SBSCreateOpenApplicationService]
+...

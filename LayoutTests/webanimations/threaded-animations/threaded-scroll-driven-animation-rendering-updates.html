@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+</style>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    window.internals?.setSpeculativeTilingDelayDisabledForTesting(true);
+
+    const target = createDiv(t);
+    const timeline = new ScrollTimeline({ source : document.documentElement });
+    const animation = target.animate({ opacity: [0, 1] }, { timeline });
+
+    await threadedAnimationsCommit();
+
+    window.internals?.startTrackingRenderingUpdates();
+
+    // Wait for the equivalent of 10 rendering frames.
+    const numberOfFrames = 10;
+    const frameDuration = 1000 / 60;
+    await new Promise(resolve => setTimeout(resolve, numberOfFrames * frameDuration));
+
+    // Check we got not even half of those.
+    assert_less_than(window.internals?.renderingUpdateCount(), numberOfFrames / 2);
+}, "A threaded scroll-driven animation should not yield rendering updates.");
+
+</script>
+</body>

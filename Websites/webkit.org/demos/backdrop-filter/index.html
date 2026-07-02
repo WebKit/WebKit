@@ -1,0 +1,148 @@
+<html>
+<head>
+    <title>backdrop-filter property example</title>
+    <style>
+    body {
+        font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+        font-size: 120%;
+        line-height: 1.5;
+        margin: 2em 2em;
+        padding: 0;
+        background-color: #E2E6F5;
+    }
+
+    .backdrop {
+        position: relative;
+        margin: 50px auto 50px auto;
+    }
+
+    .backdrop img, .backdrop video {
+        display: block;
+        margin: 0px auto;
+        width: 800px;
+    }
+
+    .backdrop p {
+        position: absolute;
+        top: 140px;
+        left: 0px;
+        right: 0px;
+        line-height: 100px;
+        width: 600px;
+        display: block;
+        text-align: center;
+        font-size: 60px;
+        padding: 15px 30px;
+        margin: 0px auto;
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 1px solid white;
+        text-shadow: 0px 0px 3px black;
+        font-family: "Myriad Set Pro";
+        color: white;
+    }
+
+    #simpleBlur {
+        -webkit-backdrop-filter: blur(10px);
+        background-color: transparent;
+    }
+
+    #invertedColor {
+        top: 180px;
+        -webkit-backdrop-filter: invert();
+    }
+
+    #multiple {
+        top: 180px;
+        -webkit-backdrop-filter: sepia() hue-rotate(120deg);
+        background-color: transparent;
+    }
+
+    #dynamic {
+        top: 350px;
+        font-size: 30px;
+        line-height: 40px;
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    pre {
+        padding: 1em 3em;
+        border: 1px solid #ccc;
+        background-color: #ddd;
+    }
+
+    code {
+        font-size: 115%;
+        font-weight: bold;
+        color: #0F5426;
+    }
+    </style>
+</head>
+<body>
+
+<h1>
+    The <code>backdrop-filter</code> Property.
+</h1>
+
+<p>
+    The following are a series of image (<code>img</code>) elements, each with a <code>div</code> positioned
+    on top. Each of these <code>div</code>s is styled using a different type of backdrop filter.
+</p>
+
+<h2>
+    A simple blur effect.
+</h2>
+<div class="backdrop">
+    <img src="simple_blur.jpg">
+    <p id="simpleBlur">backdrop-filter: blur(10px)</p>
+</div>
+<p>
+    The CSS for the above image is:
+</p>
+<pre>
+-webkit-backdrop-filter: blur(10px);
+</pre>
+
+<h2>
+    Inverted color.
+</h2>
+<div class="backdrop">
+    <img src="inverted_color.jpg">
+    <p id="invertedColor">backdrop-filter: invert()</p>
+</div>
+<p>
+    The CSS for the above image is:
+</p>
+<pre>
+-webkit-backdrop-filter: invert();
+</pre>
+
+<h2>
+    Multiple filters.
+</h2>
+<div class="backdrop">
+    <img src="multiple.jpg">
+    <p id="multiple">backdrop-filter: sepia() hue-rotate(120deg)</p>
+</div>
+<p>
+    The CSS for the above image is:
+</p>
+<pre>
+-webkit-backdrop-filter: sepia() hue-rotate(120deg);
+</pre>
+
+<h2>
+    Dynamic backdrop.
+</h2>
+<div class="backdrop">
+    <video src="dynamic_source.m4v" loop="loop" controls="controls" autoplay muted poster="dynamic_poster.jpg"></video>
+    <p id="dynamic">Dynamic Background</p>
+</div>
+<p>
+    The CSS for the above image is:
+</p>
+<pre>
+-webkit-backdrop-filter: blur(10px);
+</pre>
+
+</body>
+</html>

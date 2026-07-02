@@ -1,0 +1,19 @@
+Testing the volume slider container behavior when controls are disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Mute button is enabled
+mediaControls._volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+mediaControls.muteButton.parent.constructor.name: MacOSInlineMediaControls
+
+Mute button is disabled
+mediaControls._volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+mediaControls.muteButton.parent.constructor.name: LayoutNode
+
+Disabling play/pause button (this actually hides the volume container)
+PASS mediaControls._volumeSliderContainer.parent is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

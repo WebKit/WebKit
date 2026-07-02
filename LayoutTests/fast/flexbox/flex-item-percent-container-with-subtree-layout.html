@@ -1,0 +1,31 @@
+<style>
+.flex-box {
+  display: flex;
+  flex-flow: column;
+  width: 100px;
+  height: 100px;
+}
+
+.flex-item {
+  flex: 1;
+  width: 100px;
+  height: 50px;
+  overflow: hidden;
+}
+
+.child {
+  height: 100%;
+  background-color: green;
+}
+</style>
+<div class=flex-box>
+  <div class=flex-item>
+    <div class=child>
+      <div id=change_this></div>
+    </div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+change_this.style.width="300px";
+</script>

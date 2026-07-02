@@ -1,0 +1,30 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onmessage = function(evt)
+{
+    if (evt.data == "setHistoryLength") {
+        setHistoryLength();
+        return;
+    } else
+        console.log("Unknown message.");
+}
+
+function setHistoryLength()
+{
+    alert("About to shadow child window's history object: " + window.history);
+    window.history = "";
+    if (window.history === "")
+        console.log("FAIL: Shadowed child window's history object: " + window.history);
+    else
+        console.log("PASS: Could not shadow child window's history object: " + window.history);
+    parent.window.postMessage("done", "*");
+}
+
+</script>
+<body>
+HELLO THERE
+</body>
+</html>

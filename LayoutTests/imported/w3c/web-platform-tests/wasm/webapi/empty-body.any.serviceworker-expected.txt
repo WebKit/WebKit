@@ -1,0 +1,10 @@
+
+PASS compileStreaming: no body
+PASS compileStreaming: no body in a promise
+PASS compileStreaming: empty body
+PASS compileStreaming: empty body in a promise
+PASS instantiateStreaming: no body
+PASS instantiateStreaming: no body in a promise
+PASS instantiateStreaming: empty body
+PASS instantiateStreaming: empty body in a promise
+

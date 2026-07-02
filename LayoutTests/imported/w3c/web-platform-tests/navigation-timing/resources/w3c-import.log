@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank-page-green-with-onunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank-page-green.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank-page-meta-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank-page-unload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank-page-yellow-with-onunload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank-page-yellow.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank_page_prefetch.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/blank_page_prefetch.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/coop-response-start.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/coop-response-start.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/iframe-prefetch-transfer-size.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/navigation-type-post-back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/navigation_type_post_back.py
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/performance-attribute-sender.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/redirect-tao-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/redirect-tao.py
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/respond-slowly.py
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/secure-connection-interim.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/secure-connection-interim.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/secure-connection-test.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/resources/webperftestharness.js

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<div id="log"></div>
+<script>
+
+function doLog(msg)
+{
+    log.innerHTML += msg + '<br>';
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function endTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startsWith(str, prefix) {
+    return str.indexOf(prefix) == 0;
+}
+
+var worker = new Worker("resources/upgrade-worker.js");
+worker.onmessage = function (event)
+{
+    var message = event.data;
+    doLog(message);
+    if (startsWith(message, "PASS") || startsWith(message, "FAIL"))
+		endTest();
+};
+</script>

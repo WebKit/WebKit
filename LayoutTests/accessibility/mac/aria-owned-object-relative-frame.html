@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#row1 {
+    /* Some arbitrary margins to move the fake row. */
+    margin-left: 50px;
+    margin-top: 50px;
+    /* These styles are only to help visual users imagine the fake row. */
+    border: 3px solid red;
+    height: 100px;
+    width: 80%;
+}
+</style>
+</head>
+<body id="body" role="group">
+
+<div id="table" aria-label="Files" role="grid" tabindex="0" aria-rowcount="2" aria-colcount="2">
+    <div id="row1-cell1" aria-rowindex="1" aria-colindex="1" role="gridcell" tabindex="0">Foo</div>
+    <div id="row1-cell2" aria-rowindex="1" aria-colindex="2" role="gridcell" tabindex="0">Bar</div>
+    <div id="row1" role="row" aria-owns="row1-cell1 row1-cell2"></div>
+</div>
+
+<script>
+window.jsTestIsAsync = true;
+// This test is useful because it ensures we compute the correct frame, even when the AX tree doesn't exactly
+// match the render tree (as is in the case of aria-owns).
+var output = "This test ensures we compute the relative frame of aria-owned objects correctly.\n\n";
+
+function logRelativeFrameForIds(ids) {
+    for (id of ids) {
+        const axElement = accessibilityController.accessibleElementById(id);
+        output += `\n{ ${axElement.role} #${id} } has AXRelativeFrame: ${axElement.stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+    }
+}
+
+if (window.accessibilityController) {
+    logRelativeFrameForIds(["body", "table", "row1", "row1-cell1", "row1-cell2"]);
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

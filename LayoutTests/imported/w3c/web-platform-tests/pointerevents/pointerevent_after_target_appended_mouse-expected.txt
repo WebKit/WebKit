@@ -1,0 +1,12 @@
+child
+done
+
+PASS pointer events from mouse received before/after child attached at pointerdown
+PASS pointer events from mouse received before/after child attached at pointerup
+PASS pointer events from mouse received before/after child moved at pointerdown
+PASS pointer events from mouse received before/after child moved at pointerup
+PASS mouse events from mouse received before/after child attached at mousedown
+PASS mouse events from mouse received before/after child attached at mouseup
+PASS mouse events from mouse received before/after child moved at mousedown
+PASS mouse events from mouse received before/after child moved at mouseup
+

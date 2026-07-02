@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="select">
+    <option id="opt1">Option 1</option>
+    <option id="opt2">Option 2</option>
+    <option id="opt3">Option 3</option>
+</select>
+<script>
+description("Tests that option elements in a base-select have a negative outline-offset equal to the outline width when focus-visible.");
+
+jsTestIsAsync = true;
+
+(async () => {
+    const select = document.getElementById("select");
+    const opt1 = document.getElementById("opt1");
+
+    // Open the picker via keyboard (Space) to trigger focus-visible on the option.
+    select.focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+
+    window.outlineOffset = getComputedStyle(opt1).outlineOffset;
+    shouldBeTrue('outlineOffset == "-3px" || outlineOffset == "-2px"');
+
+    // Close the picker — option should not have focus-visible outline.
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+
+    shouldBe('getComputedStyle(opt1).outlineOffset', '"0px"');
+
+    // Open via mouse click — option should not have focus-visible outline.
+    await UIHelper.activateElement(select);
+    await UIHelper.animationFrame();
+
+    shouldBe('getComputedStyle(opt1).outlineOffset', '"0px"');
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

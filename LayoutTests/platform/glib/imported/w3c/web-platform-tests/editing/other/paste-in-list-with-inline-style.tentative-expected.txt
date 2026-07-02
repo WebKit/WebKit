@@ -1,0 +1,5 @@
+copy this
+copy this
+
+PASS This tests for a bug in ReplaceSelectionCommand where styles are lost during paste.
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
+<div id="target"></div>
+<script>
+
+promise_test(async () => {
+    const keyframes = { transform: ["translateX(50px)", "translateX(100px)"] };
+    const timing = { duration: 50, fill: "forwards" };
+
+    await document.getElementById("target").animate(keyframes, timing).finished;
+
+    const numberOfTimelineInvalidationsWhenFinished = internals.numberOfAnimationTimelineInvalidations();
+    await renderingFrames(3);
+    assert_less_than_equal(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsWhenFinished + 1);
+}, "There should not be more than one update made to the timeline after a forward-filling accelerated animation completes.");
+
+</script>
+</body>
+</html>

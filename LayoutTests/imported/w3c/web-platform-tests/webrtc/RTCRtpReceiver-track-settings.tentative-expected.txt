@@ -1,0 +1,3 @@
+
+FAIL RTCRtpReceiver.track.getSettings() contains resolution entries assert_equals: Receive track width setting is updated after resolution change expected 240 but got 640
+

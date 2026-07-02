@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?token=" + token();
+
+promise_test(async (test) => {
+    return setupActivatedButNotRunningServiceWorker("/WebKit/service-workers/fetch-service-worker-preload-worker.js", url);
+}, "Setup activated but not running worker");
+
+promise_test(async (test) => {
+    await fetch(url + "&value=use-preload", { method: 'POST' });
+
+    // Load iframe, with worker is not running, so only preload will start.
+    const promise = withIframe(url);
+
+    const frame = await promise;
+    assert_equals(frame.contentWindow.value, "use-preload");
+
+    // We should have only one GET fetch to url: the service worker preload
+    const response = await fetch(url + "&count=True");
+    assert_equals(await response.text(), "1");
+}, "Service worker load uses preload through calling fetch on the fetch event request");
+</script>
+</body>
+</html>

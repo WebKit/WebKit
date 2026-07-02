@@ -1,0 +1,4 @@
+
+PASS Animation does not apply when the timeline is inactive because there is no scroll range
+PASS Animation does not apply when timeline becomes inactive
+

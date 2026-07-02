@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<head>
+<script>
+function setup() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    iframe.src = "data:text/html,foo";
+    h1.onsuspend = eventH1;
+    div = document.createElement("div");
+    window.requestIdleCallback(eventWindow, {});
+}
+function eventH1() {
+    document.all[0].appendChild(select);
+}
+function eventSelect() {
+    document.all[0].appendChild(iframe);
+}
+function eventWindow() {
+    window[0].focus();
+    window[0].onpagehide = h1.onsuspend;
+    select.autofocus = true;
+}
+</script>
+</head>
+<body onload=setup()>
+This test passes if we do not crash. PASS
+<iframe id="iframe"></iframe>
+<dl>
+<dt>
+<h1 id="h1">
+<select id="select" onfocus="eventSelect()">-</select>
+</h1>
+</dt>
+</dl>
+</body>
+</html>

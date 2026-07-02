@@ -1,0 +1,39 @@
+<html style="-webkit-writing-mode: horizontal-bt;">
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .origin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: blue;
+        }
+        
+        #indicator {
+            position: absolute;
+            left: 0;
+            top: -500px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    <script>
+    function runTest()
+    {
+        document.scrollingElement.scrollTop = -500;
+    }
+    
+    window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="origin"></div>
+    <div id="indicator"></div>
+    <div id="result"></div>
+</body>
+</html>

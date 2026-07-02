@@ -1,0 +1,8 @@
+item2
+item4
+
+FAIL When the focus is set on a focusgroup item that is an ancestor to an extending focusgroup, the focus should move to the next element inside that extending focusgroup even if it's not a direct child. assert_equals: expected Element node <span id="item2" tabindex="-1">item2<span>
+      </span><... but got Element node <div id="item1" tabindex="0">
+    <div>
+      <div focusg...
+

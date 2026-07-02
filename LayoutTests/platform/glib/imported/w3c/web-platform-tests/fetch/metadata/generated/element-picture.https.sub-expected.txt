@@ -1,0 +1,63 @@
+
+
+PASS sec-fetch-site - img[src] - Same origin, no attributes
+PASS sec-fetch-site - img[srcset] - Same origin, no attributes
+PASS sec-fetch-site - source[srcset] - Same origin, no attributes
+PASS sec-fetch-site - img[src] - Cross-site, no attributes
+PASS sec-fetch-site - img[srcset] - Cross-site, no attributes
+PASS sec-fetch-site - source[srcset] - Cross-site, no attributes
+PASS sec-fetch-site - img[src] - Same site, no attributes
+PASS sec-fetch-site - img[srcset] - Same site, no attributes
+PASS sec-fetch-site - source[srcset] - Same site, no attributes
+PASS sec-fetch-site - img[src] - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Origin -> Cross-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - img[src] - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Origin -> Same-Site -> Same-Origin redirect, no attributes
+PASS sec-fetch-site - img[src] - Cross-Site -> Same Origin, no attributes
+PASS sec-fetch-site - img[srcset] - Cross-Site -> Same Origin, no attributes
+PASS sec-fetch-site - source[srcset] - Cross-Site -> Same Origin, no attributes
+PASS sec-fetch-site - img[src] - Cross-Site -> Same-Site, no attributes
+PASS sec-fetch-site - img[srcset] - Cross-Site -> Same-Site, no attributes
+PASS sec-fetch-site - source[srcset] - Cross-Site -> Same-Site, no attributes
+PASS sec-fetch-site - img[src] - Cross-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - img[srcset] - Cross-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - source[srcset] - Cross-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - img[src] - Same-Origin -> Same Origin, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Origin -> Same Origin, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Origin -> Same Origin, no attributes
+PASS sec-fetch-site - img[src] - Same-Origin -> Same-Site, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Origin -> Same-Site, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Origin -> Same-Site, no attributes
+PASS sec-fetch-site - img[src] - Same-Origin -> Cross-Site, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Origin -> Cross-Site, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Origin -> Cross-Site, no attributes
+PASS sec-fetch-site - img[src] - Same-Site -> Same Origin, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Site -> Same Origin, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Site -> Same Origin, no attributes
+PASS sec-fetch-site - img[src] - Same-Site -> Same-Site, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Site -> Same-Site, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Site -> Same-Site, no attributes
+PASS sec-fetch-site - img[src] - Same-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - img[srcset] - Same-Site -> Cross-Site, no attributes
+PASS sec-fetch-site - source[srcset] - Same-Site -> Cross-Site, no attributes
+PASS sec-fetch-mode - img[src] - no attributes
+PASS sec-fetch-mode - img[srcset] - no attributes
+PASS sec-fetch-mode - source[srcset] - no attributes
+PASS sec-fetch-mode - img[src] - attributes: crossorigin
+PASS sec-fetch-mode - img[srcset] - attributes: crossorigin
+PASS sec-fetch-mode - source[srcset] - attributes: crossorigin
+PASS sec-fetch-mode - img[src] - attributes: crossorigin=anonymous
+PASS sec-fetch-mode - img[srcset] - attributes: crossorigin=anonymous
+PASS sec-fetch-mode - source[srcset] - attributes: crossorigin=anonymous
+PASS sec-fetch-mode - img[src] - attributes: crossorigin=use-credentials
+PASS sec-fetch-mode - img[srcset] - attributes: crossorigin=use-credentials
+PASS sec-fetch-mode - source[srcset] - attributes: crossorigin=use-credentials
+PASS sec-fetch-dest - img[src] - no attributes
+PASS sec-fetch-dest - img[srcset] - no attributes
+PASS sec-fetch-dest - source[srcset] - no attributes
+PASS sec-fetch-user - img[src] - no attributes
+PASS sec-fetch-user - img[srcset] - no attributes
+PASS sec-fetch-user - source[srcset] - no attributes
+

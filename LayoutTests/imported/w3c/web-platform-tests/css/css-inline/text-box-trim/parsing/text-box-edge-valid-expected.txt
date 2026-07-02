@@ -1,0 +1,28 @@
+
+PASS e.style['text-box-edge'] = "auto" should set the property value
+PASS e.style['text-box-edge'] = "text" should set the property value
+PASS e.style['text-box-edge'] = "cap" should set the property value
+PASS e.style['text-box-edge'] = "ex" should set the property value
+PASS e.style['text-box-edge'] = "ideographic" should set the property value
+PASS e.style['text-box-edge'] = "ideographic-ink" should set the property value
+PASS e.style['text-box-edge'] = "text text" should set the property value
+PASS e.style['text-box-edge'] = "text alphabetic" should set the property value
+PASS e.style['text-box-edge'] = "text ideographic" should set the property value
+PASS e.style['text-box-edge'] = "text ideographic-ink" should set the property value
+PASS e.style['text-box-edge'] = "cap text" should set the property value
+PASS e.style['text-box-edge'] = "cap alphabetic" should set the property value
+PASS e.style['text-box-edge'] = "cap ideographic" should set the property value
+PASS e.style['text-box-edge'] = "cap ideographic-ink" should set the property value
+PASS e.style['text-box-edge'] = "ex text" should set the property value
+PASS e.style['text-box-edge'] = "ex alphabetic" should set the property value
+PASS e.style['text-box-edge'] = "ex ideographic" should set the property value
+PASS e.style['text-box-edge'] = "ex ideographic-ink" should set the property value
+PASS e.style['text-box-edge'] = "ideographic text" should set the property value
+PASS e.style['text-box-edge'] = "ideographic alphabetic" should set the property value
+PASS e.style['text-box-edge'] = "ideographic ideographic" should set the property value
+PASS e.style['text-box-edge'] = "ideographic ideographic-ink" should set the property value
+PASS e.style['text-box-edge'] = "ideographic-ink text" should set the property value
+PASS e.style['text-box-edge'] = "ideographic-ink alphabetic" should set the property value
+PASS e.style['text-box-edge'] = "ideographic-ink ideographic" should set the property value
+PASS e.style['text-box-edge'] = "ideographic-ink ideographic-ink" should set the property value
+

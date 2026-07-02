@@ -1,0 +1,8 @@
+
+EVENT(webkitneedkey)
+EVENT(webkitkeymessage)
+EVENT(load)
+EVENT(webkitkeyadded)
+EVENT(canplay)
+END OF TEST
+

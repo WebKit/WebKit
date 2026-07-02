@@ -1,0 +1,4 @@
+
+PASS Lock attributes reflect requested properties (exclusive)
+PASS Lock attributes reflect requested properties (shared)
+

@@ -1,0 +1,59 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #   field: a Bugzilla::Field object
+  #   product: (optional) a Bugzilla::Product object. When specified,
+  #            components are restricted to this product.
+  #%]
+
+[% FOREACH controlled_field = field.controls_visibility_of %]
+  [% vis_names = [] %]
+  [% FOREACH visibility_value = controlled_field.visibility_values %]
+    [%# Exclude non-enterable products and components outside the current product. %]
+    [% NEXT IF field.name == "product"
+               && visibility_value.id != product.id
+               && !user.can_enter_product(visibility_value) %]
+    [% NEXT IF field.name == "component" && visibility_value.product_id != product.id %]
+    [% vis_names.push(visibility_value.name) %]
+  [% END %]
+
+  [% NEXT UNLESS vis_names.size %]
+
+  showFieldWhen('[% controlled_field.name FILTER js %]',
+                '[% field.name FILTER js %]', [
+                [%~ FOREACH vis_name = vis_names ~%]
+                  '[% vis_name FILTER js %]'[% "," UNLESS loop.last %]
+                [%~ END ~%]
+  ]);
+[% END %]
+
+[% legal_values = [] %]
+[% IF field.name == "component" AND product %]
+  [% legal_values = product.components %]
+[% ELSE %]
+  [% legal_values = field.legal_values %]
+[% END %]
+
+[% FOREACH legal_value = legal_values %]
+  [% FOREACH controlled_field = legal_value.controlled_values.keys %]
+    [% SET cont_ids = [] %]
+    [% FOREACH val = legal_value.controlled_values.$controlled_field %]
+      [% NEXT IF !val.is_active %]
+      [% cont_ids.push(val.id) %]
+    [% END %]
+    [% NEXT IF !cont_ids.size %]
+    showValueWhen('[% controlled_field FILTER js %]',
+                  [[% cont_ids.join(',') FILTER js %]],
+                  '[% field.name FILTER js %]',
+                  [% legal_value.id FILTER js %]);
+  [% END %]
+[% END %]
+[% IF field.name == 'classification' %]
+  YAHOO.util.Event.on('product', 'change', setClassification);
+[% END %]

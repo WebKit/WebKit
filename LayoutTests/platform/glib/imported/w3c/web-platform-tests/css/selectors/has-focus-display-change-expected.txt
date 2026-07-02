@@ -1,0 +1,5 @@
+A
+B
+
+PASS :has(:focus) doesn't cause focusability to be lost
+

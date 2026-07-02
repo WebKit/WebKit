@@ -1,0 +1,15 @@
+Test the name conversion when invoking Objective-C from JavaScript.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS objCPlugin['testConversionColon_'](1) is "testConversionColon:(int)useless"
+PASS objCPlugin['testConversionEscapeChar$$a$_b$$$__'](2) is "testConversionEscapeChar$a_b$_:(int)useless"
+PASS objCPlugin['tes$tCo$nver$sion$Col$on_'](1) is "testConversionColon:(int)useless"
+PASS objCPlugin['testC$onv$ersi$onEs$capeC$har$$a$_b$$$__'](2) is "testConversionEscapeChar$a_b$_:(int)useless"
+PASS objCPlugin['testConversionColon_$'](1) is "testConversionColon:(int)useless"
+PASS objCPlugin['testConversionEscapeChar$$a$_b$$$__$'](2) is "testConversionEscapeChar$a_b$_:(int)useless"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

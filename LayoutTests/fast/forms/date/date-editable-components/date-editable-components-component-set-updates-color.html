@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="input" type="date">
+<script>
+jsTestIsAsync = true;
+var field;
+
+internals.allowAutofillForCurrentWorld();
+
+window.addEventListener("webkitbeforefocus", event => {
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+}, true);
+
+addEventListener("load", async () => {
+    // The middle field should be the placeholder color.
+    field = internals.shadowRoot(input).querySelectorAll("[role=spinbutton]")[1];
+    shouldNotBeEqualToString("getComputedStyle(field).color", "rgb(0, 0, 0)");
+
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.isShowingDateTimePicker();
+    await UIHelper.chooseDateTimePickerValue();
+
+    // The middle field should now be solid black, because the input has a value.
+    field = internals.shadowRoot(input).querySelectorAll("[role=spinbutton]")[1];
+    shouldBeEqualToString("getComputedStyle(field).color", "rgb(0, 0, 0)");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

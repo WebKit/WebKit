@@ -1,0 +1,3 @@
+
+PASS updateCurrentEntry() works as expected
+

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test for WebGL preserve drawing buffer being affected by scissor.</title>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"> </script>
+<style type=text/css>
+body { margin: 0 }
+</style>
+</head>
+<body>
+<canvas style="width: 300px; height: 150px" id="c"></canvas>
+<script>
+"use strict";
+var wtu = WebGLTestUtils;
+var c = document.getElementById("c");
+var scale = window.devicePixelRatio;
+c.width = Math.floor(300. * scale);
+c.height = Math.floor(150. * scale);
+var gl = wtu.create3DContext(c, { preserveDrawingBuffer: true, antialias: false });
+gl.enable(gl.SCISSOR_TEST);
+gl.clearColor(0., 1., 0., 1);
+gl.scissor(0, 0, 300. * scale, 50. * scale);
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.scissor(125 * scale, 50 * scale, 50 * scale, 50 * scale);
+gl.clear(gl.COLOR_BUFFER_BIT);
+if (window.testRunner)
+    window.testRunner.dumpAsText(true);
+</script>
+</body>
+</html>
+

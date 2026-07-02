@@ -1,0 +1,13 @@
+Test that the IDL extensions for CanvasRenderingContext2D work correctly.
+
+
+== Running test suite: IDLExtensions.CanvasRenderingContext2D
+-- Running test case: IDLExtensions.CanvasRenderingContext2D.getPath.Isolated
+PASS: Should not modify X after getting path.
+PASS: Should not modify Y after getting path.
+PASS: Should not modify X after moving copied path.
+PASS: Should not modify Y after moving copied path.
+
+-- Running test case: IDLExtensions.CanvasRenderingContext2D.getPath.NewObject
+PASS: Should not return the same object twice.
+

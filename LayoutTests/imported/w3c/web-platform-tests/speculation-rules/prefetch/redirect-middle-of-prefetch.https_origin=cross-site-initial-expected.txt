@@ -1,0 +1,4 @@
+
+PASS Navigate to the final URL of the prefetch
+PASS Navigation is redirected to the final URL of the prefetch
+

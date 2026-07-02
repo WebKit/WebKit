@@ -1,0 +1,85 @@
+
+PASS :no_direct_recursion:target="a"
+PASS :no_direct_recursion:target="b"
+PASS :no_indirect_recursion:target="a"
+PASS :no_indirect_recursion:target="b"
+PASS :id:case="min"
+PASS :id:case="max"
+PASS :id:case="neg"
+PASS :id:case="too_large"
+PASS :id:case="duplicate"
+PASS :type:case="bool"
+PASS :type:case="i32"
+PASS :type:case="u32"
+PASS :type:case="f32"
+PASS :type:case="f16"
+PASS :type:case="abs_int_conversion"
+PASS :type:case="abs_float_conversion"
+PASS :type:case="vec2_bool"
+PASS :type:case="vec2i"
+PASS :type:case="vec3u"
+PASS :type:case="vec4f"
+PASS :type:case="mat2x2f"
+PASS :type:case="matrix"
+PASS :type:case="array"
+PASS :type:case="struct"
+PASS :type:case="atomic"
+PASS :initializer:case="no_init_no_type"
+PASS :initializer:case="no_init"
+PASS :initializer:case="no_type"
+PASS :initializer:case="init_matching_type"
+PASS :initializer:case="init_mismatch_type"
+PASS :initializer:case="init_mismatch_vector"
+PASS :initializer:case="abs_int_init_convert"
+PASS :initializer:case="abs_float_init_convert"
+PASS :initializer:case="init_const_expr"
+PASS :initializer:case="init_override_expr"
+PASS :initializer:case="init_runtime_expr"
+PASS :initializer:case="const_func_init"
+PASS :initializer:case="non_const_func_init"
+PASS :initializer:case="mix_order_init"
+PASS :initializer:case="logical_lhs_override"
+PASS :initializer:case="logical_rhs_override"
+PASS :initializer:case="logical_both_override"
+PASS :function_scope:
+PASS :array_size:case="workgroup_var";stage="const"
+PASS :array_size:case="workgroup_var";stage="override"
+PASS :array_size:case="private_var";stage="const"
+PASS :array_size:case="private_var";stage="override"
+PASS :array_size:case="uniform_var";stage="const"
+PASS :array_size:case="uniform_var";stage="override"
+PASS :array_size:case="storage_var";stage="const"
+PASS :array_size:case="storage_var";stage="override"
+PASS :array_size:case="function_var";stage="const"
+PASS :array_size:case="function_var";stage="override"
+PASS :array_size:case="workgroup_ptr_param";stage="const"
+PASS :array_size:case="workgroup_ptr_param";stage="override"
+PASS :array_size:case="private_ptr_param";stage="const"
+FAIL :array_size:case="private_ptr_param";stage="override" assert_unreached:
+  - EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+
+    override size = 1;
+    fn f(a: ptr<private, array<u32, size>>) {}
+
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:680:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
+ Reached unreachable code
+PASS :array_size:case="workgroup_ptr_let";stage="const"
+PASS :array_size:case="workgroup_ptr_let";stage="override"
+PASS :array_size:case="private_ptr_let";stage="const"
+PASS :array_size:case="private_ptr_let";stage="override"
+PASS :array_size:case="array_in_struct";stage="const"
+PASS :array_size:case="array_in_struct";stage="override"
+PASS :array_size:case="array_in_array";stage="const"
+PASS :array_size:case="array_in_array";stage="override"
+PASS :array_size:case="construct_array";stage="const"
+PASS :array_size:case="construct_array";stage="override"
+

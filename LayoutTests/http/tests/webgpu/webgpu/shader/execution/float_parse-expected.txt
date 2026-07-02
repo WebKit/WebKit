@@ -1,0 +1,7 @@
+
+PASS :valid:value="small_pos_zero_exp"
+PASS :valid:value="small_pos_non_zero_exp"
+PASS :valid:value="pos_exp_neg_result"
+PASS :valid:value="no_exp"
+PASS :valid:value="large_number_small_exp"
+

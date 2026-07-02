@@ -1,0 +1,11 @@
+This tests that MutationRecord keeps the disconnected roots of previousSibling and nextSibling alive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS records[0].previousSibling.getRootNode().localName is "prev-root"
+PASS records[0].nextSibling.getRootNode().localName is "next-root"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

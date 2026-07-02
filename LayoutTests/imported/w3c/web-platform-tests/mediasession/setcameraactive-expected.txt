@@ -1,0 +1,3 @@
+
+PASS Test that setCameraActive() can be executed for boolean values
+

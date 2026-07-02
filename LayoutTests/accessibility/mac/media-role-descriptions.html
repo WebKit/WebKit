@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="group">
+
+<video id="video" controls></video>
+<audio id="audio" controls></audio>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that video and audio tags are identified distinctly with their own subrole and role description");
+
+    if (window.accessibilityController) {
+
+          var video = accessibilityController.accessibleElementById("video");
+          debug(video.role);
+          debug(video.subrole);
+          debug(video.roleDescription);
+          debug(video.title);
+
+          var audio = accessibilityController.accessibleElementById("audio");
+          debug(audio.role);
+          debug(audio.subrole);
+          debug(audio.roleDescription);
+          debug(audio.title);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

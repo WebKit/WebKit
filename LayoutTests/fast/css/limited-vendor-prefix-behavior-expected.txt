@@ -1,0 +1,23 @@
+Testing updated vendor-prefix behavior (bug 42093), removal of -khtml and limitation of -apple.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('test-no-khtml').style.getPropertyValue('-khtml-line-clamp') is null
+PASS document.getElementById('test-no-khtml').style.getPropertyValue('-webkit-line-clamp') is null
+PASS document.getElementById('test-no-khtml').style.getPropertyValue('-khtml-user-drag') is null
+PASS document.getElementById('test-no-khtml').style.getPropertyValue('-webkit-user-drag') is null
+PASS document.getElementById('test-no-khtml').style.khtmlLineClamp is undefined
+PASS document.getElementById('test-no-khtml').style.khtmlUserDrag is undefined
+PASS document.getElementById('test-no-khtml').style.lineClamp is undefined
+PASS document.getElementById('test-no-khtml').style.userDrag is undefined
+PASS document.getElementById('test-limited-apple').style.getPropertyValue('-apple-line-clamp') is '10%'
+PASS document.getElementById('test-limited-apple').style.getPropertyValue('-webkit-line-clamp') is '10%'
+PASS document.getElementById('test-limited-apple').style.getPropertyValue('-apple-user-drag') is null
+PASS document.getElementById('test-limited-apple').style.getPropertyValue('-webkit-user-drag') is null
+PASS document.getElementById('test-limited-apple').style.appleLineClamp is '10%'
+PASS document.getElementById('test-limited-apple').style.appleUserDrag is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

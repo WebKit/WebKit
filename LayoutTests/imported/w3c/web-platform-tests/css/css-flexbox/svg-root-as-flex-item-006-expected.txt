@@ -1,0 +1,4 @@
+The test passes if you see a 600x300 blue rectangle.
+
+PASS svg 1
+

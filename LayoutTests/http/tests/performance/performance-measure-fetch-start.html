@@ -1,0 +1,25 @@
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    
+    window.addEventListener("message", (event) => {
+        document.write(event.data);
+        if (window.testRunner) { testRunner.notifyDone() }
+    }, false);
+    
+    function addIframe() {
+        var iframe = document.createElement('iframe');
+        const js = ''
+        + 'try{'
+        + '    performance.measure("fetchStart", "fetchStart", "fetchStart");'
+        + '    window.parent.postMessage("PASS - performance.measure did not throw", "*")'
+        + '} catch(e) {'
+        + '    window.parent.postMessage("FAIL - performance.measure did throw", "*")'
+        + '}';
+        iframe.src = 'data:text/html;charset=utf-8,' + encodeURI('<script>' + js + '</scri' + 'pt>');
+        document.body.appendChild(iframe);
+    }
+</script>
+<body onload='addIframe()'/>

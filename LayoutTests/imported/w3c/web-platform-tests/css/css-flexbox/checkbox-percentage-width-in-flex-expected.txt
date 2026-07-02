@@ -1,0 +1,8 @@
+
+
+
+PASS Checkbox with percentage width in flex container should shrink to allow siblings to render
+PASS Checkbox with percentage width should participate in flex shrink
+PASS Radio with percentage width in flex container should shrink to allow siblings to render
+PASS Radio with percentage width should participate in flex shrink
+

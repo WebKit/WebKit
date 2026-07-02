@@ -1,0 +1,5 @@
+
+PASS scroll properties for elements with css zoom
+PASS scroll{Width, Height}
+PASS scroll{Top, Left}
+

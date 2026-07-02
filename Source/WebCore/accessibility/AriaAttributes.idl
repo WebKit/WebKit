@@ -1,0 +1,84 @@
+/*
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// https://w3c.github.io/aria/#idl-interface
+interface mixin AriaAttributes {
+    // https://github.com/w3c/aria/pull/2484
+    // ARIA attributes that use [ReflectSetter] will become enumerated and thus, use custom getters to facilitate the
+    // EnumeratedARIAAttributeReflectionEnabled flag to manually handle enumerated reflection.
+    // FIXME: Use [Reflect, Enumerated] for ARIA enumerated attributes when the feature flag is no longer needed.
+    [CEReactions=Needed, Reflect="aria-activedescendant"] attribute Element? ariaActiveDescendantElement;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-actions", EnabledBySetting=ARIAActionsSupportEnabled] attribute FrozenArray<Element>? ariaActionsElements;
+    [CEReactions=Needed, ReflectSetter="aria-atomic"] attribute [AtomString] DOMString? ariaAtomic;
+    [CEReactions=Needed, ReflectSetter="aria-autocomplete"] attribute [AtomString] DOMString? ariaAutoComplete;
+    [CEReactions=Needed, Reflect="aria-braillelabel"] attribute DOMString? ariaBrailleLabel;
+    [CEReactions=Needed, Reflect="aria-brailleroledescription"] attribute DOMString? ariaBrailleRoleDescription;
+    [CEReactions=Needed, ReflectSetter="aria-busy"] attribute [AtomString] DOMString? ariaBusy;
+    [CEReactions=Needed, ReflectSetter="aria-checked"] attribute [AtomString] DOMString? ariaChecked;
+    [CEReactions=Needed, Reflect="aria-colcount"] attribute DOMString? ariaColCount;
+    [CEReactions=Needed, Reflect="aria-colindex"] attribute DOMString? ariaColIndex;
+    [CEReactions=Needed, Reflect="aria-colindextext"] attribute DOMString? ariaColIndexText;
+    [CEReactions=Needed, Reflect="aria-colspan"] attribute DOMString? ariaColSpan;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-controls"] attribute FrozenArray<Element>? ariaControlsElements;
+    [CEReactions=Needed, ReflectSetter="aria-current"] attribute [AtomString] DOMString? ariaCurrent;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-describedby"] attribute FrozenArray<Element>? ariaDescribedByElements;
+    [CEReactions=Needed, Reflect="aria-description"] attribute DOMString? ariaDescription;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-details"] attribute FrozenArray<Element>? ariaDetailsElements;
+    [CEReactions=Needed, ReflectSetter="aria-disabled"] attribute [AtomString] DOMString? ariaDisabled;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-errormessage"] attribute FrozenArray<Element>? ariaErrorMessageElements;
+    [CEReactions=Needed, ReflectSetter="aria-expanded"] attribute [AtomString] DOMString? ariaExpanded;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-flowto"] attribute FrozenArray<Element>? ariaFlowToElements;
+    [CEReactions=Needed, ReflectSetter="aria-haspopup"] attribute [AtomString] DOMString? ariaHasPopup;
+    [CEReactions=Needed, ReflectSetter="aria-hidden"] attribute [AtomString] DOMString? ariaHidden;
+    [CEReactions=Needed, ReflectSetter="aria-invalid"] attribute [AtomString] DOMString? ariaInvalid;
+    [CEReactions=Needed, Reflect="aria-keyshortcuts"] attribute DOMString? ariaKeyShortcuts;
+    [CEReactions=Needed, Reflect="aria-label"] attribute DOMString? ariaLabel;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-labelledby"] attribute FrozenArray<Element>? ariaLabelledByElements;
+    [CEReactions=Needed, Reflect="aria-level"] attribute DOMString? ariaLevel;
+    [CEReactions=Needed, ReflectSetter="aria-live"] attribute [AtomString] DOMString? ariaLive;
+    [CEReactions=Needed, ReflectSetter="aria-modal"] attribute [AtomString] DOMString? ariaModal;
+    [CEReactions=Needed, ReflectSetter="aria-multiline"] attribute [AtomString] DOMString? ariaMultiLine;
+    [CEReactions=Needed, ReflectSetter="aria-multiselectable"] attribute [AtomString] DOMString? ariaMultiSelectable;
+    [CEReactions=Needed, ReflectSetter="aria-orientation"] attribute [AtomString] DOMString? ariaOrientation;
+    [CEReactions=Needed, CustomGetter, Reflect="aria-owns"] attribute FrozenArray<Element>? ariaOwnsElements;
+    [CEReactions=Needed, Reflect="aria-placeholder"] attribute DOMString? ariaPlaceholder;
+    [CEReactions=Needed, Reflect="aria-posinset"] attribute DOMString? ariaPosInSet;
+    [CEReactions=Needed, ReflectSetter="aria-pressed"] attribute [AtomString] DOMString? ariaPressed;
+    [CEReactions=Needed, ReflectSetter="aria-readonly"] attribute [AtomString] DOMString? ariaReadOnly;
+    [CEReactions=Needed, Reflect="aria-relevant"] attribute DOMString? ariaRelevant;
+    [CEReactions=Needed, ReflectSetter="aria-required"] attribute [AtomString] DOMString? ariaRequired;
+    [CEReactions=Needed, Reflect="aria-roledescription"] attribute DOMString? ariaRoleDescription;
+    [CEReactions=Needed, Reflect="aria-rowcount"] attribute DOMString? ariaRowCount;
+    [CEReactions=Needed, Reflect="aria-rowindex"] attribute DOMString? ariaRowIndex;
+    [CEReactions=Needed, Reflect="aria-rowindextext"] attribute DOMString? ariaRowIndexText;
+    [CEReactions=Needed, Reflect="aria-rowspan"] attribute DOMString? ariaRowSpan;
+    [CEReactions=Needed, ReflectSetter="aria-selected"] attribute [AtomString] DOMString? ariaSelected;
+    [CEReactions=Needed, Reflect="aria-setsize"] attribute DOMString? ariaSetSize;
+    [CEReactions=Needed, ReflectSetter="aria-sort"] attribute [AtomString] DOMString? ariaSort;
+    [CEReactions=Needed, Reflect="aria-valuemax"] attribute DOMString? ariaValueMax;
+    [CEReactions=Needed, Reflect="aria-valuemin"] attribute DOMString? ariaValueMin;
+    [CEReactions=Needed, Reflect="aria-valuenow"] attribute DOMString? ariaValueNow;
+    [CEReactions=Needed, Reflect="aria-valuetext"] attribute DOMString? ariaValueText;
+};

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<canvas id="canvas" tabindex="-1"></canvas>
+
+<script>
+var output = "This test makes sure that AccessibilityNodeObjects are properly detached when the node they point to is deleted.\n\n";
+
+
+if (window.testRunner && window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var canvas = document.getElementById("canvas");
+    // Create an ordinary button on the page, focus it and get its accessibility role.
+    var button = document.createElement("button");
+    document.body.appendChild(button);
+    button.focus();
+
+    var detachedRole = null;
+    var buttonRole = null;
+    var axCanvas = null;
+    setTimeout(async function() {
+        await waitFor(() => {
+            axButton = accessibilityController.focusedElement;
+            if (!axButton)
+                return false;
+            buttonRole = axButton.role;
+            return buttonRole.toLowerCase().includes("button");
+        });
+
+        // Now remove the button from the tree and get the role of the detached accessibility object.
+        document.body.removeChild(button);
+        await waitFor(() => {
+            detachedRole = axButton.role;
+            return detachedRole !== buttonRole;
+        });
+
+        // This time create a button that's a child of a canvas element. It will be focusable but not rendered.
+        // In particular, this will create an AccessibilityNodeObject rather than an AccessibilityRenderObject.
+        button = document.createElement("button");
+        canvas.appendChild(button);
+
+        // Note: Focusing the button and using that to get its accessibility object creates an extra
+        // reference to the button and it won't get deleted when we want it to. So instead we focus the
+        // canvas and get its first child.
+        canvas.focus();
+
+        await waitFor(() => {
+            axCanvas = accessibilityController.accessibleElementById("canvas");
+            axButton = axCanvas?.childAtIndex(0);
+            return axButton && axButton.role === buttonRole;
+        });
+
+        // Now delete the last reference to the button.
+        canvas.removeChild(button);
+        // Explicitly run garbage collection now. Since there are no more references to the button,
+        // it will be destroyed.
+        gc();
+
+        // Ensure that the accessibility object is detached by checking its role.
+        detachedCanvasButtonRole = axButton.role;
+        output += await expectAsync("axButton.role", "detachedRole");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

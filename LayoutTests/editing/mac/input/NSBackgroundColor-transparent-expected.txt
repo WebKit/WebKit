@@ -1,0 +1,4 @@
+Test that an NSAttributedString from a range with transparent background color does not include the NSBackgroundColor attribute.
+
+PASS: Attributes did not include NSBackgroundColor
+

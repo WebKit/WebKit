@@ -1,0 +1,185 @@
+/*
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "SimulatedClick.h"
+
+#include "DOMRect.h"
+#include "DataTransfer.h"
+#include "Document.h"
+#include "Element.h"
+#include "EventNames.h"
+#include "MouseEvent.h"
+#include "NodeDocument.h"
+#include "PointerEvent.h"
+#include "PointerID.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+class SimulatedMouseEvent : public MouseEvent {
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedMouseEvent);
+public:
+    static Ref<SimulatedMouseEvent> create(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
+    {
+        return adoptRef(*new SimulatedMouseEvent(eventType, WTF::move(view), WTF::move(underlyingEvent), target, source));
+    }
+
+private:
+    SimulatedMouseEvent(
+        const AtomString& eventType,
+        RefPtr<WindowProxy>&& view,
+        RefPtr<Event>&& underlyingEvent,
+        Element& target,
+        SimulatedClickSource source
+    )
+        : MouseEvent(
+            EventInterfaceType::MouseEvent,
+            eventType,
+            CanBubble::Yes,
+            IsCancelable::Yes,
+            IsComposed::Yes,
+            underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(),
+            WTF::move(view),
+            /* detail */ 0,
+            { },
+            { },
+            0,
+            0,
+            modifiersFromUnderlyingEvent(underlyingEvent),
+            MouseButton::Left,
+            0,
+            nullptr,
+            0,
+            SyntheticClickType::NoTap,
+            { },
+            { },
+            std::nullopt,
+            IsSimulated::Yes,
+            source == SimulatedClickSource::UserAgent ? IsTrusted::Yes : IsTrusted::No
+        )
+    {
+        setUnderlyingEvent(underlyingEvent.get());
+
+        if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(this->underlyingEvent())) {
+            setScreenLocation(mouseEvent->screenLocation());
+            initCoordinates(mouseEvent->clientLocation());
+        } else if (source == SimulatedClickSource::UserAgent) {
+            // If there is no underlying event, we only populate the coordinates for events coming
+            // from the user agent (e.g. accessibility). For those coming from JavaScript (e.g.
+            // (element.click()), the coordinates will be 0, similarly to Firefox and Chrome.
+            // Note that the call to screenRect() causes a synchronous IPC with the UI process.
+            setScreenLocation(target.screenRect().center());
+            initCoordinates(target.boundingClientRect().center());
+        }
+    }
+
+    static OptionSet<Modifier> modifiersFromUnderlyingEvent(const RefPtr<Event>& underlyingEvent)
+    {
+        RefPtr keyStateEvent = findEventWithKeyState(underlyingEvent.get());
+        if (!keyStateEvent)
+            return { };
+        return keyStateEvent->modifierKeys();
+    }
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedMouseEvent);
+
+// https://www.w3.org/TR/pointerevents3/#pointerevent-interface
+class SimulatedPointerEvent final : public PointerEvent {
+    WTF_MAKE_TZONE_ALLOCATED(SimulatedPointerEvent);
+public:
+    static Ref<SimulatedPointerEvent> create(const AtomString& type, const SimulatedMouseEvent& event, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
+    {
+        return adoptRef(*new SimulatedPointerEvent(type, event, WTF::move(underlyingEvent), target, source));
+    }
+
+private:
+    // If the device type cannot be detected by the user agent, then the value MUST be an empty string.
+    static constexpr auto pointerType = ASCIILiteral { ""_s };
+
+    // The pointerId value of -1 MUST be reserved and used to indicate events that were generated by something other than a pointing device.
+    static constexpr auto pointerID = static_cast<PointerID>(-1);
+
+    SimulatedPointerEvent(const AtomString& type, const SimulatedMouseEvent& event, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
+        : PointerEvent(type, MouseButton::Left, event, pointerID, pointerType, PointerEvent::typeCanBubble(type), PointerEvent::typeIsCancelable(type), PointerEvent::typeIsComposed(type))
+    {
+        setUnderlyingEvent(underlyingEvent.get());
+
+        if (RefPtr pointerEvent = dynamicDowncast<PointerEvent>(this->underlyingEvent())) {
+            setScreenLocation(pointerEvent->screenLocation());
+            initCoordinates(pointerEvent->clientLocation());
+        } else if (source == SimulatedClickSource::UserAgent) {
+            // If there is no underlying event, we only populate the coordinates for events coming
+            // from the user agent (e.g. accessibility). For those coming from JavaScript (e.g.
+            // (element.click()), the coordinates will be 0, similarly to Firefox and Chrome.
+            // Note that the call to screenRect() causes a synchronous IPC with the UI process.
+            setScreenLocation(target.screenRect().center());
+            initCoordinates(target.boundingClientRect().center());
+        }
+    }
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SimulatedPointerEvent);
+
+static void simulateMouseEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
+{
+    element.dispatchEvent(SimulatedMouseEvent::create(eventType, protect(element.document().windowProxy()).get(), underlyingEvent, element, source));
+}
+
+static void simulatePointerEvent(const AtomString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
+{
+    Ref mouseEvent = SimulatedMouseEvent::create(eventType, protect(element.document().windowProxy()).get(), underlyingEvent, element, source);
+    Ref pointerEvent = SimulatedPointerEvent::create(eventType, mouseEvent.get(), underlyingEvent, element, source);
+
+    element.dispatchEvent(pointerEvent.get());
+}
+
+bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions, SimulatedClickSource creationOptions)
+{
+    if (element.isDisabledFormControl())
+        return false;
+
+    static MainThreadNeverDestroyed<HashSet<Ref<Element>>> elementsDispatchingSimulatedClicks;
+    if (!elementsDispatchingSimulatedClicks.get().add(element).isNewEntry)
+        return false;
+
+    auto& eventNames = WebCore::eventNames();
+    if (mouseEventOptions != SendNoEvents)
+        simulateMouseEvent(eventNames.mousedownEvent, element, underlyingEvent, creationOptions);
+    if (mouseEventOptions != SendNoEvents || visualOptions == ShowPressedLook)
+        element.setActive(true);
+    if (mouseEventOptions != SendNoEvents)
+        simulateMouseEvent(eventNames.mouseupEvent, element, underlyingEvent, creationOptions);
+    element.setActive(false);
+
+    simulatePointerEvent(eventNames.clickEvent, element, underlyingEvent, creationOptions);
+
+    elementsDispatchingSimulatedClicks.get().remove(element);
+    return true;
+}
+
+} // namespace WebCore

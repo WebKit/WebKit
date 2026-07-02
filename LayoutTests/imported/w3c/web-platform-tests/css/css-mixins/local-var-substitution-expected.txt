@@ -1,0 +1,6 @@
+
+PASS Fallback directly in result
+PASS Fallback via present, but invalid local
+PASS Fallback is locally resolved (result)
+PASS Fallback is locally resolved (local var)
+

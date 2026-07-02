@@ -1,0 +1,15 @@
+۲۸۴۷۴۸۵۸۳۸۵۸۴۹ Hello
+
+Verifies that 'Hello' does not get visually unselected while extending the selection handle across Indic numerals
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS visuallyContiguousBeforeEndingSelection is true
+PASS visuallyContiguousAfterEndingSelection is true
+PASS selectionRectAfterEndingSelection.left is selectionRectBeforeEndingSelection.left
+PASS selectionRectAfterEndingSelection.width is > selectionRectBeforeEndingSelection.width
+PASS getSelection().toString() is "۲۸۴۷۴۸۵۸۳۸۵۸۴۹ Hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

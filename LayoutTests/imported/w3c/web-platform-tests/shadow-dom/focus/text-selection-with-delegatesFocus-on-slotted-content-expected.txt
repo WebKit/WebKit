@@ -1,0 +1,6 @@
+Try to select the text in the dialog...
+
+Slotted content
+
+PASS select slotted text in shadow root with delegatesFocus.
+

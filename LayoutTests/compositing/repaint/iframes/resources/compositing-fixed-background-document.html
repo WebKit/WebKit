@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            overflow: hidden;
+            height: 1000px;
+        }
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .background-fixed {
+ 	        background-image: linear-gradient(blue, green);
+ 	        background-size: 100% 100px;
+            background-attachment: fixed;
+        }
+        
+        .composited {
+            -webkit-transform: translate3d(100px, 0, 0);
+        }
+    </style>
+</head>
+<body>
+<div class="background-fixed box">
+</div>
+<div class="composited box">
+</div>
+</body>
+</html>

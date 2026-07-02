@@ -1,0 +1,14 @@
+
+PASS :switch:preventValueOptimizations=true
+PASS :switch:preventValueOptimizations=false
+PASS :switch_multiple_case:preventValueOptimizations=true
+PASS :switch_multiple_case:preventValueOptimizations=false
+PASS :switch_multiple_case_default:preventValueOptimizations=true
+PASS :switch_multiple_case_default:preventValueOptimizations=false
+PASS :switch_default:preventValueOptimizations=true
+PASS :switch_default:preventValueOptimizations=false
+PASS :switch_default_only:preventValueOptimizations=true
+PASS :switch_default_only:preventValueOptimizations=false
+PASS :switch_inside_loop_with_continue:preventValueOptimizations=true
+PASS :switch_inside_loop_with_continue:preventValueOptimizations=false
+

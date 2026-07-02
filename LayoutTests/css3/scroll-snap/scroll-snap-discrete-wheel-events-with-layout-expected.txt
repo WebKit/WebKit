@@ -1,0 +1,10 @@
+This test verifies that discrete wheel events trigger scroll snapping in overflow areas, even if layout occurs during scrolling. To manually run the test, scroll using a physical mouse wheel and verify that a single scroll tick animates to the next snap point, such that only the green box is visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.scrollTop became 300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

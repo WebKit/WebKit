@@ -1,0 +1,22 @@
+<style>
+html { 
+  -webkit-transition-delay: 20s;
+  position: absolute;
+  column-count: 2;
+}
+
+html:focus-within { 
+  transform: translateZ(0px);
+}
+
+body, div { 
+  column-count: 2;
+  position: fixed;
+}
+</style>
+PASS if no crash or assert.
+<textarea id=move_this autofocus=""></textarea><div id=before_this></div>
+<script>
+window.testRunner?.dumpAsText();
+before_this.before(move_this);
+</script>

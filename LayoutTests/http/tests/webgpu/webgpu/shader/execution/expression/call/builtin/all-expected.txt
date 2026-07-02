@@ -1,0 +1,18 @@
+
+PASS :bool:inputSource="const";overload="scalar"
+PASS :bool:inputSource="const";overload="vec2"
+PASS :bool:inputSource="const";overload="vec3"
+PASS :bool:inputSource="const";overload="vec4"
+PASS :bool:inputSource="uniform";overload="scalar"
+PASS :bool:inputSource="uniform";overload="vec2"
+PASS :bool:inputSource="uniform";overload="vec3"
+PASS :bool:inputSource="uniform";overload="vec4"
+PASS :bool:inputSource="storage_r";overload="scalar"
+PASS :bool:inputSource="storage_r";overload="vec2"
+PASS :bool:inputSource="storage_r";overload="vec3"
+PASS :bool:inputSource="storage_r";overload="vec4"
+PASS :bool:inputSource="storage_rw";overload="scalar"
+PASS :bool:inputSource="storage_rw";overload="vec2"
+PASS :bool:inputSource="storage_rw";overload="vec3"
+PASS :bool:inputSource="storage_rw";overload="vec4"
+

@@ -1,0 +1,11 @@
+foo
+
+PASS display:block should support align-content
+PASS display:flow should support align-content
+PASS display:flow-root should support align-content
+PASS display:inline-block should support align-content
+PASS display:list-item should support align-content
+PASS display:flow-root list-item should support align-content
+PASS display:table-caption should support align-content
+FAIL display:ruby-text should not support align-content assert_not_equals: got disallowed value 20
+

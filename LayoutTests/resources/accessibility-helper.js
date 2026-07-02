@@ -1,0 +1,775 @@
+function axDebug(msg)
+{
+    var log = document.getElementById("log");
+    if (!log)
+        log = document.getElementById("console");
+    if (!log) {
+        log = document.createElement("div");
+        log.id = "console";
+        document.body.insertBefore(log, document.body.firstChild);
+    }
+    log.innerText += `${msg}\n`;
+}
+
+// This function is necessary when printing AX attributes that are stringified with angle brackets:
+//    AXChildren: <array of size 0>
+// `debug` outputs to the `innerHTML` of a generated element, so these brackets must be escaped to be printed.
+function debugEscaped(message) {
+    debug(escapeHTML(message));
+}
+
+// Dumps the AX table by using the table cellForColumnAndRow API (which is what some ATs use).
+function dumpAXTable(axElement, options) {
+    let output = "";
+    const rowCount = axElement.rowCount;
+    const columnCount = axElement.columnCount;
+
+    for (let row = 0; row < rowCount; row++) {
+        for (let column = 0; column < columnCount; column++)
+            output += `#${axElement.domIdentifier} cellForColumnAndRow(${column}, ${row}).domIdentifier is ${axElement.cellForColumnAndRow(column, row).domIdentifier}\n`;
+    }
+    return output;
+}
+
+// Dumps the result of a traversal via the UI element search API (which is what some ATs use).
+// `options` is an object with these keys:
+//
+//   * `excludeRoles`: Array of strings representing roles you don't want to include in the output.
+//                     Case insensitive, partial match is fine, e.g. "scrollbar" will exclude "AXScrollBar".
+//
+//   * `visibleOnly`: Specify true if only elements visible in the viewport should be returned.
+//
+//   * `includeAccessibilityText`: Specify true if you want the accessibility text of each element to be included in the output.
+function dumpAXSearchTraversal(axElement, options = { }) {
+    let output = "";
+    let searchResult = null;
+    const { visibleOnly = false } = options;
+    const { includeAccessibilityText = false } = options;
+    while (true) {
+        searchResult = axElement.uiElementForSearchPredicate(searchResult, /* directionIsNext */ true, "AXAnyTypeSearchKey", /* searchText */ "", visibleOnly);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+
+        let excluded = false;
+        if (Array.isArray(options?.excludeRoles)) {
+            for (const excludedRole of options.excludeRoles) {
+                if (role.toLowerCase().includes(excludedRole.toLowerCase())) {
+                    excluded = true;
+                    break;
+                }
+            }
+        }
+
+        if (excluded)
+            continue;
+
+        const id = searchResult.domIdentifier;
+        let resultDescription = `${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText"))
+            resultDescription += ` ${accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue}`;
+
+        if (includeAccessibilityText)
+            resultDescription += `\n${platformTextAlternatives(searchResult)}\n`;
+
+        output += `\n{${resultDescription}}\n`;
+    }
+    return output;
+}
+
+function platformStaticTextValue(axElement) {
+    if (!axElement)
+        return "";
+
+    if (!axElement.role.toLowerCase().includes("statictext"))
+        return `FAIL: platformStaticTextValue called on a non-text object (role was ${axElement.role}).\n`;
+    return accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue;
+}
+
+function stripAXPrefix(string) {
+    return string.replace(/^AX[A-Za-z]+:\s*/, "");
+}
+
+function expectStaticTextValue(axElement, expectedValue) {
+    if (!axElement)
+        return "";
+
+    if (!axElement.role.toLowerCase().includes("statictext"))
+        return `FAIL: platformStaticTextValue called on a non-text object (role was ${axElement.role}).\n`;
+
+    function pass(expected) {
+        return `PASS: Static text value was "${expected}"\n`;
+    }
+    function fail(expected, actual) {
+        return `FAIL: Static text value was not "${expected}" — was ${stripAXPrefix(actual)}`;
+    }
+
+    var textValue;
+    if (accessibilityController.platformName === "ios") {
+        textValue = axElement.description;
+        if (textValue === `AXLabel: ${expectedValue}`)
+            return pass(expectedValue);
+        return fail(expectedValue, textValue)
+    }
+
+    textValue = axElement.stringValue;
+    if (textValue === `AXValue: ${expectedValue}`)
+        return pass(expectedValue);
+    return fail(expectedValue, textValue)
+}
+
+// Dumps the accessibility tree hierarchy for the given accessibilityObject into
+// an element with id="tree", e.g., <pre id="tree"></pre>. In addition, it
+// returns a two element array with the first element [0] being false if the
+// traversal of the tree was stopped at the stopElement, and second element [1],
+// the string representing the accessibility tree.
+function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttributesIfNeeded, getValueFromTitle, includeSubrole) {
+    var str = "";
+    var i = 0;
+
+    for (i = 0; i < indent; i++)
+        str += "    ";
+    str += accessibilityObject.role;
+    if (includeSubrole === true && accessibilityObject.subrole)
+        str += " " + accessibilityObject.subrole;
+    str += " " + (getValueFromTitle === true ? accessibilityObject.title : accessibilityController.platformName === "ios" ? accessibilityObject.description : accessibilityObject.stringValue);
+    str += allAttributesIfNeeded && accessibilityObject.role == '' ? accessibilityObject.allAttributes() : '';
+    str += "\n";
+
+    var outputTree = document.getElementById("tree");
+    if (outputTree)
+        outputTree.innerText += str;
+
+    if (stopElement && stopElement.isEqual(accessibilityObject))
+        return [false, str];
+
+    var count = accessibilityObject.childrenCount;
+    for (i = 0; i < count; ++i) {
+        childRet = dumpAccessibilityTree(accessibilityObject.childAtIndex(i), stopElement, indent + 1, allAttributesIfNeeded, getValueFromTitle, includeSubrole);
+        if (!childRet[0])
+            return [false, str];
+        str += childRet[1];
+    }
+
+    return [true, str];
+}
+
+function touchAccessibilityTree(accessibilityObject) {
+    var count = accessibilityObject.childrenCount;
+    for (var i = 0; i < count; ++i) {
+        if (!touchAccessibilityTree(accessibilityObject.childAtIndex(i)))
+            return false;
+    }
+
+    return true;
+}
+
+function visibleRange(axElement, {width, height, scrollTop}) {
+    document.body.scrollTop = scrollTop;
+    testRunner.setViewSize(width, height);
+    return `Range with view ${width}x${height}, scrollTop ${scrollTop}: ${axElement.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+}
+
+async function verifyVisibleRange(axElement, {width, height, scrollTop}, allowedRangeStrings) {
+    testRunner.setViewSize(width, height);
+    document.body.scrollTop = scrollTop;
+    await waitFor(() => {
+        const visibleRange = axElement.stringDescriptionOfAttributeValue("AXVisibleCharacterRange");
+        for (let i = 0; i < allowedRangeStrings.length; i++) {
+            if (visibleRange.includes(allowedRangeStrings[i]))
+                return true;
+        }
+        return false;
+    });
+    return `Got expected visible-character-range for window width ${width}px, height ${height}px, scrollTop ${scrollTop}px\n`;
+}
+
+function platformValueForW3CName(accessibilityObject, includeSource=false) {
+    var result;
+    if (accessibilityController.platformName == "atspi")
+        result = accessibilityObject.title
+    else
+        result = accessibilityObject.description
+
+    if (!includeSource) {
+        var splitResult = result.split(": ");
+        return splitResult[1];
+    }
+
+    return result;
+}
+
+function platformValueForW3CDescription(accessibilityObject, includeSource=false) {
+    var result;
+    if (accessibilityController.platformName == "atspi")
+        result = accessibilityObject.description
+    else
+        result = accessibilityObject.helpText;
+
+    if (!includeSource) {
+        var splitResult = result.split(": ");
+        return splitResult[1];
+    }
+
+    return result;
+}
+
+function platformTextAlternatives(accessibilityObject, includeTitleUIElement=false) {
+    if (!accessibilityObject)
+        return "Element not exposed";
+
+    if (accessibilityController.platformName === "ios")
+        return `\t${accessibilityObject.description}`;
+
+    result = "\t" + accessibilityObject.title + "\n\t" + accessibilityObject.description;
+    if (accessibilityController.platformName == "mac")
+       result += "\n\t" + accessibilityObject.helpText;
+    if (includeTitleUIElement)
+        result += "\n\tAXTitleUIElement: " + (accessibilityObject.titleUIElement() ? "non-null" : "null");
+    return result;
+}
+
+function platformRoleForComboBox() {
+    return accessibilityController.platformName == "atspi" ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
+}
+
+function platformRoleForStaticText() {
+    return accessibilityController.platformName == "atspi" ? "AXRole: AXStatic" : "AXRole: AXStaticText";
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function waitFor(condition)
+{
+    return new Promise((resolve, reject) => {
+        // Schedule a timeout after 3 seconds if condition is never met.
+        let timeoutID = setTimeout(() => {
+            clearInterval(intervalID);
+
+            // Output a message to indicate that this call is timing out and avoid masking any possible failure.
+            let conditionString = condition.toString();
+            if (conditionString.length > 80)
+                conditionString = `${conditionString.substring(0, 80)}...`;
+            axDebug(`Condition '${conditionString}' was not satisfied in 3s, timing out.`);
+
+            resolve(false);
+        }, 3000);
+
+        // Repeatedly poll for the condition to be true.
+        let intervalID = setInterval(() => {
+            try {
+                if (condition()) {
+                    clearTimeout(timeoutID);
+                    clearInterval(intervalID);
+                    resolve(true);
+                }
+            } catch (error) {
+                clearTimeout(timeoutID);
+                clearInterval(intervalID);
+                reject(error);
+            }
+        }, 0);
+    });
+}
+
+async function waitForFrameGeometryReady() {
+    await waitFor(() => {
+        return accessibilityController.rootElement.isFrameGeometryInitialized;
+    });
+}
+
+// Waits for an iframe's frame geometry to be initialized and for the target
+// element to be accessible. Returns the target element.
+async function waitForIframeAccessibilityReady(iframeContainerID, targetID) {
+    let target;
+    await waitFor(() => {
+        let container = accessibilityController.accessibleElementById(iframeContainerID);
+        if (!container)
+            return false;
+        let scrollView = container.childAtIndex(0);
+        if (!scrollView || !scrollView.isFrameGeometryInitialized)
+            return false;
+        target = accessibilityController.accessibleElementById(targetID);
+        return target;
+    });
+    return target;
+}
+
+async function waitForElementById(id) {
+    let element;
+    await waitFor(() => {
+        element = accessibilityController.accessibleElementById(id);
+        return element;
+    });
+    return element;
+}
+
+async function waitUntilIDHasPathWith(id, minimumCount, pathComponent) {
+    await waitFor(() => {
+        var element = accessibilityController.accessibleElementById(id);
+        if (!element)
+            return false;
+        var matches = element.pathDescription.match(new RegExp(pathComponent, "g"));
+        return matches && matches.length >= minimumCount;
+    });
+}
+
+function pathSegmentCountOfID(id, segmentType) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element)
+        return 0;
+    return (element.pathDescription.match(new RegExp(segmentType, "g")) || []).length;
+}
+
+// Parses a pathAsBounds string "{{x, y}, {w, h}}" into an object {x, y, width, height}.
+// Returns null if the element has no path or the string can't be parsed.
+function pathAsBoundsOfID(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element || !element.pathAsBounds)
+        return null;
+    var match = element.pathAsBounds.match(/\{\{([^,]+),\s*([^}]+)\},\s*\{([^,]+),\s*([^}]+)\}\}/);
+    if (!match)
+        return null;
+    return { x: parseFloat(match[1]), y: parseFloat(match[2]), width: parseFloat(match[3]), height: parseFloat(match[4]) };
+}
+
+// Finds the popover Menu for a base-appearance select. On macOS, the menu is a
+// child of the select. On iOS, it is reparented to be a sibling, as both the menu
+// and menu items need to be isAccessibilityElement=YES at the same time (the menu
+// so it can be expanded and collapsed, and menu items so they can be selected).
+function findBaseSelectMenu(select) {
+    for (var i = 0; i < select.childrenCount; i++) {
+        var child = select.childAtIndex(i);
+        var childRole = child ? child.role : null;
+        if (childRole && childRole.toLowerCase().includes("menu"))
+            return child;
+    }
+
+    var parent = select.parentElement();
+    if (parent) {
+        for (var i = 0; i < parent.childrenCount; i++) {
+            var sibling = parent.childAtIndex(i);
+            var siblingRole = sibling ? sibling.role : null;
+            if (siblingRole && siblingRole.toLowerCase().includes("menu"))
+                return sibling;
+        }
+    }
+    return null;
+}
+
+// Executes the operation and waits until an accessibility notification of the provided
+// `notificationName` is received. A notification listener is added to the passed
+// AccessibilityUIElement if not null, or a global listener is installed, before
+// the operation is executed. The `operation` is expected to be a function,
+// which can optionally be async.
+async function waitForNotification(axElement, notificationName, operation) {
+    var received = false;
+
+    function elementListener(notification) {
+        if (notification != notificationName)
+            return;
+        received = true;
+        axElement.removeNotificationListener(elementListener);
+    }
+
+    function globalListener(element, notification) {
+        if (notification != notificationName)
+            return;
+        received = true;
+        accessibilityController.removeNotificationListener(globalListener);
+    }
+
+    if (axElement)
+        axElement.addNotificationListener(elementListener);
+    else
+        accessibilityController.addNotificationListener(globalListener);
+
+    await operation();
+    await waitFor(() => { return received; });
+}
+
+// Executes the passed operation function and waits for expectedCount number of
+// notifications of the given name. It takes a notificationHandler function to
+// be executed when the proper notifications are received. Similarly to
+// waitForNotification, the listener can be added to the given AccessibilityUIElement
+// or globally.
+async function waitForNotifications(axElement, notificationName, expectedCount, operation, notificationHandler) {
+    var receivedCount = 0;
+
+    function elementListener(notification) {
+        if (notification != notificationName)
+            return;
+        ++receivedCount;
+
+        notificationHandler(axElement, notification);
+
+        if (receivedCount == expectedCount)
+            axElement.removeNotificationListener(elementListener);
+    }
+
+    function globalListener(element, notification) {
+        if (notification != notificationName)
+            return;
+        ++receivedCount;
+
+        notificationHandler(element, notification);
+
+        if (receivedCount == expectedCount)
+            accessibilityController.removeNotificationListener(globalListener);
+    }
+
+    if (axElement)
+        axElement.addNotificationListener(elementListener);
+    else
+        accessibilityController.addNotificationListener(globalListener);
+
+    await operation();
+    await waitFor(() => { return receivedCount == expectedCount; });
+}
+
+// Expect an expression to equal a value and return the result as a string.
+// This is essentially the more ubiquitous `shouldBe` function from js-test,
+// but returns the result as a string rather than `debug`ing to a console DOM element.
+function expect(expression, expectedValue) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expect() should be a string.");
+
+    const evalExpression = `${expression} === ${expectedValue}`;
+    if (eval(evalExpression))
+        return `PASS: ${evalExpression}\n`;
+    return `FAIL: ${expression} !== ${expectedValue}, was ${eval(expression)}\n`;
+}
+
+function expectNumber(expression, expectedValue, allowedVariance = 0) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expect() should be a string.");
+
+    const actualValue = eval(expression);
+    if (Math.abs(actualValue - expectedValue) <= allowedVariance)
+        return `PASS: ${expression} was ${allowedVariance === 0 ? "equal" : "equal or approximately equal"} to ${expectedValue}.\n`;
+    return `FAIL: ${expression} varied more than allowed variance ${allowedVariance}. Was: ${actualValue}, expected ${expectedValue}\n`;
+}
+
+function expectRectWithVariance(expression, x, y, width, height, allowedVariance) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expectRectWithVariance() must be a string.");
+    if (typeof x !== "number" || typeof y !== "number" || typeof width !== "number" || typeof height !== "number" || typeof allowedVariance !== "number")
+        debug("WARN: The x, y, width, height, and allowedVariance arguments in expectRectWithVariance must be numbers.");
+
+    const expectedRect = `(x: ${x}, y: ${y}, w: ${width}, h: ${height})`;
+
+    const result = eval(expression);
+    const parsedResult = result
+        .replaceAll(/{|}/g, '') // Eliminate curly braces because they break parseFloat.
+        .split(/[ ,]+/) // Split on whitespace and commas.
+        .map(token => parseFloat(token))
+        .filter(float => !isNaN(float));
+
+    if (parsedResult.length !== 4)
+        debug(`FAIL: Expression ${expression} didn't produce a string result with four numbers (was ${result}).\n`);
+    else if (Math.abs(x - parsedResult[0])      > allowedVariance ||
+             Math.abs(y - parsedResult[1])      > allowedVariance ||
+             Math.abs(width - parsedResult[2])  > allowedVariance ||
+             Math.abs(height - parsedResult[3]) > allowedVariance)
+        return `FAIL: ${expression} varied more than allowed variance ${allowedVariance}. Was: ${result}, expected ${expectedRect}\n`;
+    else
+        return `PASS: ${expression} was ${allowedVariance === 0 ? "equal" : "equal or approximately equal"} to ${expectedRect}.\n`;
+}
+
+// Draws a drawFocusIfNeeded focus ring on a canvas descendant element at the
+// given canvas-local coordinates, waits for accessibility bounds to update,
+// then verifies the reported page position and size match expectations.
+async function verifyCanvasFocusBounds({
+    canvasId, canvasDescendantId,
+    focusX, focusY, focusWidth, focusHeight,
+    expectedPageX, expectedPageY,
+    expectedWidth, expectedHeight,
+    variance = 0,
+}) {
+    var canvas = document.getElementById(canvasId);
+    var canvasContext = canvas.getContext("2d");
+    var descendant = document.getElementById(canvasDescendantId);
+
+    descendant.focus();
+
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.beginPath();
+    canvasContext.rect(focusX, focusY, focusWidth, focusHeight);
+    canvasContext.drawFocusIfNeeded(descendant);
+
+    var axDescendant = accessibilityController.accessibleElementById(canvasDescendantId);
+
+    await waitFor(() => {
+        return Math.abs(axDescendant.width - expectedWidth) <= variance
+            && Math.abs(axDescendant.height - expectedHeight) <= variance
+            && Math.abs(axDescendant.pageX - expectedPageX) <= variance
+            && Math.abs(axDescendant.pageY - expectedPageY) <= variance;
+    });
+
+    var output = "";
+    var checks = [
+        { name: "pageX", actual: axDescendant.pageX, expected: expectedPageX },
+        { name: "pageY", actual: axDescendant.pageY, expected: expectedPageY },
+        { name: "width", actual: axDescendant.width, expected: expectedWidth },
+        { name: "height", actual: axDescendant.height, expected: expectedHeight },
+    ];
+    for (var check of checks) {
+        if (Math.abs(check.actual - check.expected) <= variance)
+            output += `PASS: ${check.name} was ${variance === 0 ? "equal" : "equal or approximately equal"} to ${check.expected}.\n`;
+        else
+            output += `FAIL: ${check.name} was ${check.actual}, expected ${check.expected} (variance ${variance}).\n`;
+    }
+    return output;
+}
+
+async function expectAsync(expression, expectedValue) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expectAsync should be a string.");
+
+    const evalExpression = `${expression} === ${expectedValue}`;
+    return await waitFor(() => {
+        return eval(evalExpression);
+    }).then((success) => {
+        if (success) {
+            return `PASS: ${evalExpression}\n`;
+        } else {
+            return `FAIL: ${evalExpression}\n`;
+        }
+    }).catch((error) => {
+        return `FAIL: ${error}\n`;
+    });
+}
+
+async function expectAsyncExpression(expression, expectedValue) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in waitForExpression() should be a string.");
+
+    const evalExpression = `${expression} === ${expectedValue}`;
+    await waitFor(() => {
+        return eval(evalExpression);
+    }).then((success) => {
+        if (success) {
+            debug(`PASS ${evalExpression}`);
+        } else {
+            debug(`FAIL ${evalExpression}`);
+        }
+    }).catch((error) => {
+        debug(`FAIL ${error}`);
+    });
+}
+
+async function waitForFocus(id) {
+    document.getElementById(id).focus();
+    let focusedElement;
+    await waitFor(() => {
+        focusedElement = accessibilityController.focusedElement;
+        return focusedElement && focusedElement.domIdentifier === id;
+    });
+    return focusedElement;
+}
+
+// Selects text within the element with the given ID, and returns the global selected `TextMarkerRange` after doing so.
+// Optionally takes the AccessibilityUIElement associated with the web area as an argument. If not passed, we'll
+// retrieve it in the function.
+// NOTE: Only available for WK2.
+async function selectElementTextById(id, axWebArea) {
+    const webArea = axWebArea ? axWebArea : accessibilityController.rootElement.childAtIndex(0);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    await waitFor(() => {
+        const selectedRange = webArea.selectedTextMarkerRange();
+        return !webArea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById(id));
+    selection.addRange(range);
+
+    let selectedRange;
+    await waitFor(() => {
+        selectedRange = webArea.selectedTextMarkerRange();
+        return webArea.isTextMarkerRangeValid(selectedRange);
+    });
+    return selectedRange;
+}
+
+// Selects a range of text delimited by the `startIndex` and `endIndex` within the element with the given ID,
+// and returns the global selected `TextMarkerRange` after doing so. Optionally takes the AccessibilityUIElement
+// associated with the web area as an argument. If not passed, we'll retrieve it in the function.
+// NOTE: Only available for WK2.
+async function selectPartialElementTextById(id, startIndex, endIndex, axWebArea) {
+    const webArea = axWebArea ? axWebArea : accessibilityController.rootElement.childAtIndex(0);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    await waitFor(() => {
+        const selectedRange = webArea.selectedTextMarkerRange();
+        return !webArea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    const element = document.getElementById(id);
+    if (element.setSelectionRange) {
+        // For textarea and input elements.
+        element.focus();
+        element.setSelectionRange(startIndex, endIndex);
+    } else {
+        // For contenteditable elements.
+        const range = document.createRange();
+        range.setStart(element.firstChild, startIndex);
+        range.setEnd(element.firstChild, endIndex);
+        selection.addRange(range);
+    }
+
+    let selectedRange;
+    await waitFor(() => {
+        selectedRange = webArea.selectedTextMarkerRange();
+        return webArea.isTextMarkerRangeValid(selectedRange);
+    });
+
+    return selectedRange;
+}
+
+function evalAndReturn(expression) {
+    if (typeof expression !== "string")
+        debug("FAIL: evalAndReturn() expects a string argument");
+
+    eval(expression);
+    return `${expression}\n`;
+}
+
+function outputSelectedChildren(axElement) {
+    const children = axElement.selectedChildren();
+    output += "    selectedChildren: [ ";
+    for (let i = 0; i < children.length; ++i) {
+        if (i > 0)
+            output += ", ";
+        output += children[i].domIdentifier;
+    }
+    output += " ]\n";
+}
+
+function resetActiveElementAndSelectedChildren(id) {
+    Array.from(document.getElementById(id).children).forEach((child) => {
+        child.removeAttribute("aria-activedescendant");
+        child.removeAttribute("aria-selected");
+    });
+}
+
+function findFirstPageDescendant(startObject) {
+    if (!startObject || startObject.role == "AXRole: AXPage")
+        return startObject;
+
+    for (let i = 0; i < startObject.childrenCount; i++) {
+        let result = findFirstPageDescendant(startObject.childAtIndex(i));
+        if (result)
+            return result;
+    }
+
+    return null;
+}
+
+function traverseChildrenToFirstStaticText(startObject) {
+    if (!startObject || startObject.role == "AXRole: AXStaticText")
+        return startObject;
+
+    for (let i = 0; i < startObject.childrenCount; i++) {
+        let result = traverseChildrenToFirstStaticText(startObject.childAtIndex(i));
+        if (result)
+            return result;
+    }
+    return null;
+}
+
+function formatAriaNotifyUserInfo(userInfo) {
+    var result = "";
+    result += `AnnouncementKey: ${userInfo["AXAnnouncementKey"]}\n`;
+    result += `AXARIAAnnouncementInterruptBehavior: ${userInfo["AXARIAAnnouncementInterruptBehavior"]}\n`;
+    result += `AXARIAAnnouncementPriority: ${userInfo["AXARIAAnnouncementPriority"]}\n`;
+    result += `AXAnnouncementLanguageKey: ${userInfo["AXAnnouncementLanguageKey"]}\n\n`
+    return result;
+}
+
+function formatAnnouncementUserInfo(userInfo) {
+    var result = "";
+    result += `AnnouncementKey: ${userInfo["AXAnnouncementKey"]}\n`;
+    result += `AXPriorityKey: ${userInfo["AXPriorityKey"]}\n`;
+    result += `AXAnnouncementIsLiveRegionKey: ${userInfo["AXAnnouncementIsLiveRegionKey"]}\n`;
+    return result;
+}
+
+// Checks that text alternatives include all expected values and exclude all unexpected values.
+// Returns a string with PASS/FAIL results for each check.
+function checkTextAlternatives(axElement, { expected = [], unexpected = [] }) {
+    var alternatives = platformTextAlternatives(axElement);
+    var result = "";
+    for (var i = 0; i < expected.length; i++) {
+        if (alternatives.includes(expected[i]))
+            result += `PASS: Text alternatives include '${expected[i]}'\n`;
+        else
+            result += `FAIL: Text alternatives should include '${expected[i]}' but got:\n${alternatives}\n`;
+    }
+    for (var i = 0; i < unexpected.length; i++) {
+        if (!alternatives.includes(unexpected[i]))
+            result += `PASS: Text alternatives do not include '${unexpected[i]}'\n`;
+        else
+            result += `FAIL: Text alternatives should NOT include '${unexpected[i]}' but got:\n${alternatives}\n`;
+    }
+    return result;
+}
+
+// Keep walking the tree, calling the given elementTests on each element, until each returns true on at least one element.
+function waitForElements(elementTests) {
+    // Recursively searches all elements from element returns true if elementTests each pass on
+    // at least one element. The passes array is used to keep track of which tests have passed
+    // so far and doesn't need to be passed in.
+    function checkElementTests(element, elementTests, passes) {
+        if (!element || !element.role) {
+            return false;
+        }
+
+        if (passes === undefined) {
+            passes = Array(elementTests.length).fill(false);
+        }
+
+        for (let i = 0; i < elementTests.length; i++) {
+            if (!passes[i] && elementTests[i](element)) {
+                passes[i] = true;
+            }
+        }
+        const childrenCount = element.childrenCount;
+        for (let i = 0; i < childrenCount; i++) {
+            checkElementTests(element.childAtIndex(i), elementTests, passes);
+        }
+
+        // Return if all tests passed
+        return passes.every(Boolean);
+    }
+
+    return new Promise((resolve, reject) => {
+        // Schedule a timeout after 3 seconds if condition is never met.
+        let timeoutID = setTimeout(() => {
+            clearInterval(intervalID);
+            reject("Timed out");
+        }, 3000);
+
+        // Repeatedly poll until all elementTests pass or we time out.
+        let intervalID = setInterval(() => {
+            try {
+                let root = accessibilityController.rootElement;
+                if (checkElementTests(root, elementTests)) {
+                    clearTimeout(timeoutID);
+                    clearInterval(intervalID);
+                    resolve(true);
+                }
+            } catch (error) {
+                clearTimeout(timeoutID);
+                clearInterval(intervalID);
+                reject(error);
+            }
+        }, 0);
+    });
+}

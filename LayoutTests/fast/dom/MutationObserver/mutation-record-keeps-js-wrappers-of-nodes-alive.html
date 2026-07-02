@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that JS wrappers of nodes enqueued to a mutation observer do not get collected.</p>
+<pre id="log"></pre>
+<script src="../../../resources/gc.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const nodeCount = 5;
+const iterationCount = 5;
+
+let elementsMap;
+
+async function observe() {
+    let container = document.createElement('div');
+    container.myState = 'live';
+
+    const observer = new MutationObserver(() => { });
+    observer.observe(container, {subtree: true, childList: true, attributes: true});
+    for (let i = 0; i < nodeCount; ++i) {
+        const child = document.createElement('span');
+        child.myState = 'live';
+        container.appendChild(child);
+    }
+    container.setAttribute('title', 'foo');
+    container.setAttribute('title', 'bar');
+    container.textContent = '';
+
+    return observer.takeRecords();
+}
+
+function check(recordList) {
+    let deadCount = 0;
+    for (const record of recordList) {
+        if (record.target.myState != 'live')
+            deadCount++;
+        for (const node of record.addedNodes) {
+            if (node.myState != 'live')
+                deadCount++;
+        }
+        for (const node of record.removedNodes) {
+            if (node.myState != 'live')
+                deadCount++;
+        }
+    }
+    document.getElementById('log').textContent += (deadCount ? `FAIL - ${deadCount} nodes lost JS wrappers` : 'PASS') + '\n';
+}
+
+async function runAll() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    for (let j = 0; j < iterationCount; ++j) {
+        const records = await observe();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        gc();
+        check(records);
+    }
+
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runAll();
+
+</script>
+</body>
+</html>

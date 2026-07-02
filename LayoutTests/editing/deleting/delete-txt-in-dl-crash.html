@@ -1,0 +1,10 @@
+<body><div contentEditable=true><dl role="img">
+<dt id=dt>a</dt></dl>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.getSelection().setPosition(dt);
+    document.execCommand("delete", false);
+    document.body.innerText = "Tests deleting text in description list. The test passes if WebKit doesn't crash or hit an ssertion.";
+</script>

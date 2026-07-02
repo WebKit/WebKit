@@ -1,0 +1,19 @@
+ALERT: typeof(objCPlugin)=object
+ALERT: objCPlugin()=TypeError
+ALERT: typeof(objCPluginFunction)=function
+ALERT: objCPluginFunction()=test
+ALERT: hello = hello (same)
+ALERT: string = string (same)
+ALERT: 42 = 42 (same)
+ALERT: number = number (same)
+ALERT: null = undefined (same)
+ALERT: object = undefined (different)
+ALERT: undefined = undefined (same)
+ALERT: undefined = undefined (same)
+ALERT: one,two = one,two (same)
+ALERT: object = object (same)
+ALERT: String Hello == Hello
+ALERT: String Not Hello != Hello
+This page tests invoking as functions JavaScript objects that are provided by objective-c plugins.
+
+

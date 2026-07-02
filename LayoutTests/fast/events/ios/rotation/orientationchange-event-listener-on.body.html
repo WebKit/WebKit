@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script src="../../../../resources/js-test.js"></script>
+</head>
+<body onorientationchange="bodyOrientationChange()" onresize="bodyResize()">
+    <script>
+        description("Tests the behavior of the resize / orientationchange event listeners on both the body and the window.");
+        jsTestIsAsync = true;
+
+        function getRotationUIScript()
+        {
+            return `
+            (function() {
+                uiController.simulateRotation('landscape-right', function() {
+                    uiController.doAfterVisibleContentRectUpdate(function () {
+                        uiController.uiScriptComplete();
+                    })
+                });
+            })();`
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            debug("Triggering rotation...");
+            testRunner.runUIScript(getRotationUIScript(), function(result) { });
+            shouldBecomeEqual("gotAllEvents()", "true", finishJSTest);
+        }
+
+        didFireResizeEventOnWindow = false;
+        didFireResizeEventOnBody = false;
+        didFireOrientationChangeEventOnWindow = false;
+        didFireOrientationChangeEventOnBody = false;
+
+        function gotAllEvents()
+        {
+            return didFireResizeEventOnWindow && didFireResizeEventOnBody && didFireOrientationChangeEventOnWindow && didFireOrientationChangeEventOnBody;
+        }
+
+        window.addEventListener('resize', function() {
+            didFireResizeEventOnWindow = true;
+        }, false);
+
+        window.addEventListener('orientationchange', function() {
+            didFireOrientationChangeEventOnWindow = true;
+        }, false);
+
+        document.body.addEventListener('resize', function() {
+            testFailed("In body's resize event listener");
+        }, false);
+
+        document.body.addEventListener('orientationchange', function() {
+            testFailed("In body's orientationchange event listener");
+        }, false);
+
+        function bodyOrientationChange()
+        {
+            didFireOrientationChangeEventOnBody = true;
+        }
+
+        function bodyResize()
+        {
+            didFireResizeEventOnBody = true;
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    Rotation test.
+</body>
+</html>

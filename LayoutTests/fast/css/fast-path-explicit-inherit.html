@@ -1,0 +1,10 @@
+<style>
+.c { background-color: red; color: yellow; }
+.t { background-color: inherit }
+.fastpath-mutation { background-color: green; color: blue; }
+</style>
+<div id=c class=c><div id=t class=t>Text</div></div>
+<script>
+document.body.offsetLeft;
+c.classList.add("fastpath-mutation");
+</script>

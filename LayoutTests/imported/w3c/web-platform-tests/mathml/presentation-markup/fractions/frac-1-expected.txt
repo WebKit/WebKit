@@ -1,0 +1,11 @@
+
+PASS Fraction axis is aligned on the math axis
+PASS Vertical positions of numerator and denominator
+PASS Horizontal alignments of numerator and denominator
+PASS Dimension of mfrac elements
+PASS Preferred width of mfrac elements
+
+
+
+
+

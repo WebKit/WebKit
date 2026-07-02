@@ -1,0 +1,11 @@
+This tests that visibleCharacterRange returns expected visible ranges with various view height values.
+
+Got expected visible-character-range for window width 300px, height 100px, scrollTop 198px
+Got expected visible-character-range for window width 300px, height 200px, scrollTop 198px
+Got expected visible-character-range for window width 300px, height 300px, scrollTop 198px
+Got expected visible-character-range for window width 300px, height 700px, scrollTop 198px
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

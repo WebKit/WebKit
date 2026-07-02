@@ -1,0 +1,77 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("congestion_controller") {
+  visibility = [ "*" ]
+  sources = [
+    "include/receive_side_congestion_controller.h",
+    "receive_side_congestion_controller.cc",
+    "remb_throttler.cc",
+    "remb_throttler.h",
+  ]
+
+  deps = [
+    "..:module_api",
+    "../../api:rtp_parameters",
+    "../../api:sequence_checker",
+    "../../api/environment",
+    "../../api/units:data_rate",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base/containers:flat_map",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "../remote_bitrate_estimator",
+    "../remote_bitrate_estimator:congestion_control_feedback_generator",
+    "../remote_bitrate_estimator:transport_sequence_number_feedback_generator",
+    "../rtp_rtcp:rtp_rtcp_format",
+    "rtp:congestion_controller_feedback_stats",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:nullability",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("congestion_controller_unittests") {
+    testonly = true
+
+    sources = [
+      "receive_side_congestion_controller_unittest.cc",
+      "remb_throttler_unittest.cc",
+    ]
+    deps = [
+      ":congestion_controller",
+      "../../api:field_trials",
+      "../../api:rtp_parameters",
+      "../../api/environment:environment_factory",
+      "../../api/test/network_emulation",
+      "../../api/test/network_emulation:create_cross_traffic",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:buffer",
+      "../../system_wrappers",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+      "../../test/scenario",
+      "../rtp_rtcp:rtp_rtcp_format",
+      "goog_cc:goog_cc_unittests",
+      "goog_cc_scream_network_controller:goog_cc_scream_network_controller_unittests",
+      "pcc:pcc_unittests",
+      "rtp:congestion_controller_unittests",
+      "scream:scream_unittests",
+      "scream/test:cc_feedback_generator_unittests",
+    ]
+  }
+}

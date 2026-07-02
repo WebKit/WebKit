@@ -1,0 +1,6 @@
+Test after
+Test before
+Test marker
+
+FAIL CSS Test: :hover on ::after, ::before, and ::marker pseudo-elements promise_test: Unhandled rejection with value: object "TypeError: afterTarget.pseudo is not a function. (In 'afterTarget.pseudo("::after")', 'afterTarget.pseudo' is undefined)"
+

@@ -1,0 +1,6 @@
+
+PASS Before adding 'a' to #host: Check #subject1 color
+PASS Before adding 'a' to #host: Check #subject2 color
+PASS After adding 'a' to #host: Check #subject1 color
+PASS After adding 'a' to #host: Check #subject2 color
+

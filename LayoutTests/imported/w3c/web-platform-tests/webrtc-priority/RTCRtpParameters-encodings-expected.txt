@@ -1,0 +1,9 @@
+
+PASS sender.getParameters() should return sendEncodings set by addTransceiver()
+PASS setParameters() with modified encoding.active should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.active should succeed without RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.priority should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.priority should succeed without RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.networkPriority should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.networkPriority should succeed without RTCRtpTransceiverInit
+

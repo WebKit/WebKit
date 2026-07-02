@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/inner-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/noscript-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/popup-from-initial-empty-sandboxed-document.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-allow-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-allow-scripts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-scripts-via-unsandboxed-popup.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-scripts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-document-open.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-inherited-from-initiator-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-inherited-from-initiator-response.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-inherited-from-required-csp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-initial-empty-document-toward-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-javascript-window-open.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-navigation-timing-iframe.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-navigation-timing.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-new-execution-context-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-new-execution-context.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-parse-noscript.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-window-open-srcdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/sandboxing/window-open-blank-from-different-initiator.html

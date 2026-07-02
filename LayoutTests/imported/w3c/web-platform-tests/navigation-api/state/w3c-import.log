@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/cross-document-away-and-back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/cross-document-getState-undefined.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/cross-document-getState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/cross-document-location-api.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/history-pushState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/history-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/location-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/same-document-away-and-back-location-api.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/state/same-document-away-and-back-navigation-api.html

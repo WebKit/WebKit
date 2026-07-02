@@ -1,0 +1,26 @@
+This test creates a new database with the default version, commits that versionchange transaction, and then reopens it at different versions to make sure the IDBOpenDBRequests behave appropriately.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+upgradeneeded (firstPhase): old version - 0 new version - 1
+[object IDBTransaction]
+Version change complete (firstPhase). Database version is now - 1
+[object IDBOpenDBRequest] (secondPhase)
+Open request error (firstPhase) AbortError
+Successfully opened database at version 1 (secondPhase)
+[object IDBOpenDBRequest] (thirdPhase)
+upgradeneeded (thirdPhase): old version - 1 new version - 2
+[object IDBTransaction]
+Version change complete (thirdPhase). Database version is now - 2
+[object IDBOpenDBRequest] (fourthPhase)
+Open request error (thirdPhase) AbortError
+Expected error (fourthPhase) - VersionError
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

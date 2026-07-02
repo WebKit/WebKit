@@ -1,0 +1,7 @@
+
+PASS <mtd> relies on mrow algorithm to layout its children
+PASS <mtable> layout does not change if children of <mtd> elements are wrapped in an explicit <mrow>
+
+
+
+

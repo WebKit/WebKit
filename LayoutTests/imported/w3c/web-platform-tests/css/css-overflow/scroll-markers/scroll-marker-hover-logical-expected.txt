@@ -1,0 +1,4 @@
+
+
+FAIL CSS Test: ::scroll-marker changes on hover via logical selectors assert_equals: not hovered ::scroll-marker is styled via logical :not(:hover) expected "rgb(0, 128, 0)" but got ""
+

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test that assistiveTechnologyMakeFirstResponder works correctly.");
+    window.jsTestIsAsync = true;
+        
+    function makeWindowFirstResponderUIScript() {
+        return `(function() {
+            uiController.makeWindowContentViewFirstResponder();
+        })();`;
+    }
+
+    function isWindowFirstResponderScript() {
+        return `(function() {
+            return uiController.isWindowContentViewFirstResponder;
+        })();`;
+    }
+    
+    function setfirstResponderSuppressionUIScript(x) {
+        return `(function() {
+            return uiController.firstResponderSuppressionForWebView(${x});
+        })();`;
+    }
+
+    function doTest() {
+        // 1. Make window first responder and suppress the first responder change for web content
+        if (window.testRunner) {
+            testRunner.runUIScript(makeWindowFirstResponderUIScript(), function() {
+                testRunner.runUIScript(setfirstResponderSuppressionUIScript(true), function() {
+                    testSuppressFirstResponderChange();
+                });
+            });
+        }
+    }
+    
+    function testSuppressFirstResponderChange() {
+        var input = document.getElementById("input");
+        debug("DOM focus");
+        input.focus();
+        // Give it some delay for the IPC to happen.
+        setTimeout(function(){ 
+            testRunner.runUIScript(isWindowFirstResponderScript(), function(result) {
+                debug("Window is still the first responder: " + result);
+                input.blur();
+                // 2. Now make sure accessibility focus will make web content the first responder.
+                testAccessibilityMakeFirstResonder();
+            });
+        }, 100);
+    }
+    
+    function testAccessibilityMakeFirstResonder() {
+        if (window.accessibilityController) {
+            var inputObj = accessibilityController.accessibleElementById("input");
+            debug("Accessibility focus")
+            inputObj.takeFocus();
+            // Give it some delay for the IPC to happen.
+            setTimeout(function(){ 
+                testRunner.runUIScript(isWindowFirstResponderScript(), function(result) {
+                    debug("Window is still the first responder: " + result);
+                    finishTest();
+                });
+            }, 100);
+        }
+    }
+    
+    function finishTest() {
+        // Reset _setShouldSuppressFirstResponderChanges
+        testRunner.runUIScript(setfirstResponderSuppressionUIScript(false), function() {
+            finishJSTest();
+        });
+    }
+        
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Should be green Should be green Should be green Should be green Should be green Should be green Should be green
+
+PASS CSS Selectors Test: :placeholder-shown matching
+PASS CSS Selectors Test: :placeholder-shown matching 1
+PASS CSS Selectors Test: :placeholder-shown matching 2
+PASS CSS Selectors Test: :placeholder-shown matching 3
+PASS CSS Selectors Test: :placeholder-shown matching 4
+PASS CSS Selectors Test: :placeholder-shown matching 5
+PASS CSS Selectors Test: :placeholder-shown matching 6
+

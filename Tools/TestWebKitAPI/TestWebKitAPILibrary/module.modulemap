@@ -1,0 +1,17 @@
+module TestWebKitAPILibrary {
+    explicit module Helpers {
+        umbrella "../Helpers"
+
+        explicit module * {
+            export *
+        }
+    }
+
+    explicit module InjectedBundle {
+        umbrella "../InjectedBundle"
+        
+        explicit module * {
+            export *
+        }
+    }
+}

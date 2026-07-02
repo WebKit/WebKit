@@ -1,0 +1,6 @@
+Test passes if font variation settings are correctly sorted in serialization.
+
+Sample text
+
+PASS Check if font variation settings serialization is sorted.
+

@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/basic.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/css-import-in-worker.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/empty-module.css
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/empty-module.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/serviceworker.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/ticker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/with-import-assertions.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/worklet-ref.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/worklet.https-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/microtasks/worklet.https.html

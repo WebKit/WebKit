@@ -1,0 +1,5 @@
+
+PASS getBBox() returns instance of SVGRect
+PASS getCTM() returns instance of SVGMatrix
+PASS getScreenCTM() returns instance of SVGMatrix
+

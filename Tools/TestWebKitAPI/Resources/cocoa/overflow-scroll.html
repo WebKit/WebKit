@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        .scroller {
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 200%;
+        }
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .box.appear {
+            display: none;
+        }
+        .content.changed .box.appear {
+            display: block;
+        }
+
+        .box.disappear {
+            display: block;
+        }
+        .content.changed .box.disappear {
+            display: none;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        function changeScrollerSubviews()
+        {
+            document.getElementById('scroll-content').classList.add('changed');
+        }
+    </script>
+</head>
+<body>
+    <div class="composited scroller">
+        <div id="scroll-content" class="content">
+            Content
+            <div class="composited box appear">appear</div>
+            <div class="composited box disappear">disappear</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<!DOCTYPE HTML>
+<!-- Test to ensure that "isolation:isolate" creates a stacking context, thus preventing blending with the parent element. -->
+<link rel="stylesheet" href="resources/blending-style.css">
+<div class="gray7 bigbox">
+    <div class="isolating yellow box" style="margin-left: 30px;">
+        <div class="aqua box multiply" style="margin-left: 30px;"></div>
+    </div>
+</div>

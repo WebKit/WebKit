@@ -1,0 +1,9 @@
+<body>
+<svg><g id="g" mask="url(#mask)" /></svg>
+<svg><mask id="mask"><pattern pointsAtY="0"><use href="#g" /></pattern></mask></svg>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.querySelector('g').getBoundingClientRect();
+document.body.textContent = 'PASS - WebKit did not crash';
+</script>

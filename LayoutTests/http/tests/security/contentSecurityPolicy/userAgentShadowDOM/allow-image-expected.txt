@@ -1,0 +1,4 @@
+Tests that a HTML image element, in a user agent shadow tree, is allowed to load when the page has CSP policy: img-src 'none'.
+
+PASS image did load.
+

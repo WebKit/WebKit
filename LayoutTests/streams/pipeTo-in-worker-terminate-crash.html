@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+function startPipeInWorker() {
+    const readable = new ReadableStream({
+        start(controller) {
+            controller.enqueue(new Uint8Array(1));
+        }
+    });
+    const writable = new WritableStream({
+        write() {
+            return new Promise(() => { });
+        }
+    });
+    readable.pipeTo(writable).catch(() => { });
+    self.postMessage("");
+}
+
+function createWorker() {
+    const worker = new Worker('data:application/javascript;charset=utf-8,' + startPipeInWorker.toString() + ';startPipeInWorker()');
+    return new Promise(resolve => {
+        worker.onmessage = () => {
+            worker.terminate();
+            resolve();
+        };
+    });
+}
+
+promise_test(async () => {
+    const pending = [];
+    for (let i = 0; i < 100; ++i)
+        pending.push(createWorker());
+    await Promise.all(pending);
+    await new Promise(resolve => setTimeout(resolve, 100));
+}, "Terminating a worker while pipeTo is in flight should not crash");
+</script>

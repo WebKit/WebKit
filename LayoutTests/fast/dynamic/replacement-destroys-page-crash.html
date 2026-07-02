@@ -1,0 +1,13 @@
+<style>
+div {
+  position: sticky;
+}
+</style>
+PASS if no crash or assert.
+<div contenteditable="plaintext-only"><span id=span><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+window.getSelection().setPosition(span); 
+document.execCommand("insertHTML", false, "text");
+</script>

@@ -1,0 +1,35 @@
+
+PASS basic with click()
+PASS basic with dispatchEvent()
+PASS basic with wrong event class
+PASS look at parents only when event bubbles
+PASS look at parents when event bubbles
+PASS pick the first with activation behavior <input type=checkbox>
+PASS pick the first with activation behavior <a href>
+PASS pick the first with activation behavior <input type=radio>
+PASS event state during post-click handling
+PASS redispatch during post-click handling
+PASS disabled checkbox still has activation behavior
+PASS disabled checkbox still has activation behavior, part 2
+PASS disabled radio still has activation behavior
+PASS disconnected checkbox should be checked
+PASS disconnected radio should be checked
+PASS disconnected checkbox should be checked from dispatchEvent(new MouseEvent('click'))
+PASS disconnected radio should be checked from dispatchEvent(new MouseEvent('click'))
+PASS disabled checkbox should be checked from dispatchEvent(new MouseEvent("click"))
+PASS disabled radio should be checked from dispatchEvent(new MouseEvent("click"))
+PASS disabled checkbox should fire onclick
+PASS disabled radio should fire onclick
+PASS disabled checkbox should get legacy-canceled-activation behavior
+PASS disabled radio should get legacy-canceled-activation behavior
+PASS disabled checkbox should get legacy-canceled-activation behavior 2
+PASS disabled radio should get legacy-canceled-activation behavior 2
+PASS disabling checkbox in onclick listener shouldn't suppress oninput
+PASS disabling checkbox in onclick listener shouldn't suppress onchange
+PASS disabling radio in onclick listener shouldn't suppress oninput
+PASS disabling radio in onclick listener shouldn't suppress onchange
+PASS disconnected form should not submit
+PASS disabled submit button should not activate
+PASS submit button should not activate if the event listener disables it
+PASS submit button that morphed from checkbox should not activate
+

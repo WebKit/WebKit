@@ -1,0 +1,53 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #   bug: a Bugzilla::Bug object
+  #   user: the Bugzilla::User object to which this template is addressed.
+  #         If not set, the currently logged in user object is used.
+  #   link_text: the text that we're highlighting.
+  #   use_alias: boolean; If true, we display the bug's alias as the link
+  #              text instead of link_text.
+  #   comment_num: If defined, make this a link to that comment on the bug.
+  #   full_url: boolean; If true, generate links that include the full
+  #             urlbase. (This is for emails, mostly.)
+  #%]
+
+[% IF !bug %]
+  &lt;missing&gt;
+  [% RETURN %]
+[% END %]
+
+[%# We use "FILTER none" here because link_title is filtered down below. %]
+[% link_title = BLOCK %]
+  [% display_value('bug_status', bug.bug_status) FILTER none %]
+  [% IF bug.resolution %]
+    [%+ display_value('resolution', bug.resolution) FILTER none %]
+  [% END %]
+[% END %]
+
+[% IF user.can_see_bug(bug) %]
+  [% link_title = link_title _ ' - ' _ bug.short_desc %]
+
+  [% IF use_alias && bug.alias.size %]
+    [% link_text = bug.alias.join(', ') %]
+  [% END %]
+[% END %]
+
+[% SET anchor = '' %]
+[% IF comment_num.defined %]
+  [% anchor = "#c$comment_num" %]
+[% END %]
+
+<a class="bz_bug_link 
+          bz_status_[% bug.bug_status FILTER css_class_quote %] 
+          [% ' bz_closed' IF !bug.isopened %]"
+   title="[% link_title FILTER collapse FILTER html %]"
+   href="[% urlbase FILTER html IF full_url %]show_bug.cgi?id=
+         [%~ bug.id FILTER uri %][% anchor FILTER html %]">
+  [%~ link_text FILTER html %]</a>

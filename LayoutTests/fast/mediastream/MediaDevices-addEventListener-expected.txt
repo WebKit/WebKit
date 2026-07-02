@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: A MediaStreamTrack ended due to a capture failure
+
+PASS Testing MediaDevices addEventListener/removeEventListener
+PASS Capture 'devicechange' event with addEventListener
+

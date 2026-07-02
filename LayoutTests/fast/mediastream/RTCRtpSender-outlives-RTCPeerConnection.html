@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that we do not crash when calling replaceTrack on a sender that outlives its RTCPeerConnection.");
+let audioContext = new AudioContext();
+let stream = audioContext.createMediaStreamDestination().stream;
+let track = stream.getTracks()[0];
+let connection = new RTCPeerConnection();
+let sender = connection.addTrack(track);
+connection = undefined;
+gc();
+sender.replaceTrack(undefined);
+testPassed("Because there was no crash");
+</script>
+</body>
+</html>

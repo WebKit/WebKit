@@ -1,0 +1,4 @@
+
+
+FAIL CSS Test (Selectors): :focus-visible after click and input type change assert_equals: Type change to text might cause :focus-visible to start matching expected false but got true
+

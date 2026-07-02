@@ -1,0 +1,83 @@
+
+
+PASS button -> text true
+PASS text -> button true
+PASS button -> text false
+PASS text -> button false
+PASS checkbox -> text true
+PASS text -> checkbox true
+PASS checkbox -> text false
+PASS text -> checkbox false
+PASS color -> text true
+PASS text -> color true
+PASS color -> text false
+PASS text -> color false
+FAIL date -> text true assert_true: date input should match :focus-visible expected true got false
+PASS text -> date true
+FAIL date -> text false assert_true: date input should match :focus-visible expected true got false
+PASS text -> date false
+FAIL datetime-local -> text true assert_true: datetime-local input should match :focus-visible expected true got false
+PASS text -> datetime-local true
+FAIL datetime-local -> text false assert_true: datetime-local input should match :focus-visible expected true got false
+PASS text -> datetime-local false
+PASS email -> text true
+PASS text -> email true
+PASS email -> text false
+PASS text -> email false
+PASS file -> text true
+PASS text -> file true
+PASS file -> text false
+PASS text -> file false
+PASS image -> text true
+PASS text -> image true
+PASS image -> text false
+PASS text -> image false
+FAIL month -> text true assert_true: month input should match :focus-visible expected true got false
+PASS text -> month true
+FAIL month -> text false assert_true: month input should match :focus-visible expected true got false
+PASS text -> month false
+PASS number -> text true
+PASS text -> number true
+PASS number -> text false
+PASS text -> number false
+PASS password -> text true
+PASS text -> password true
+PASS password -> text false
+PASS text -> password false
+PASS radio -> text true
+PASS text -> radio true
+PASS radio -> text false
+PASS text -> radio false
+PASS range -> text true
+PASS text -> range true
+PASS range -> text false
+PASS text -> range false
+PASS reset -> text true
+PASS text -> reset true
+PASS reset -> text false
+PASS text -> reset false
+PASS search -> text true
+PASS text -> search true
+PASS search -> text false
+PASS text -> search false
+PASS submit -> text true
+PASS text -> submit true
+PASS submit -> text false
+PASS text -> submit false
+PASS tel -> text true
+PASS text -> tel true
+PASS tel -> text false
+PASS text -> tel false
+FAIL time -> text true assert_true: time input should match :focus-visible expected true got false
+PASS text -> time true
+FAIL time -> text false assert_true: time input should match :focus-visible expected true got false
+PASS text -> time false
+PASS url -> text true
+PASS text -> url true
+PASS url -> text false
+PASS text -> url false
+PASS week -> text true
+PASS text -> week true
+PASS week -> text false
+PASS text -> week false
+

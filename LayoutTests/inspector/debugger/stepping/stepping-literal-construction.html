@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function a() {
+    return 1;
+}
+
+function b() {
+    return 2;
+}
+
+function entryObjectConstruction() {
+    debugger;
+    var o = {
+        p1: true,
+        p2: a(),
+        p3: true,
+        ["p4"]: true,
+        [b()]: true,
+    };
+}
+
+function entryArrayConstruction() {
+    debugger;
+    var arr = [
+        true,
+        a(),
+        true,
+        b(),
+    ];
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.literal-construction");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ObjectConstructionStepOver",
+        description: "Should be able to step over object construction.",
+        expression: "setTimeout(entryObjectConstruction)",
+        steps: [
+            "over",
+                "over", // complete statement - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ObjectConstructionStepIn",
+        description: "Should be able to step through object literal construction.",
+        expression: "setTimeout(entryObjectConstruction)",
+        steps: [
+            "over",
+                "in",  // into a for p2
+                "out", // out of a - before b()
+                "in",  // into b for computed property
+                "out", // out of b - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ArrayConstructionStepOver",
+        description: "Should be able to step over array literal construction.",
+        expression: "setTimeout(entryArrayConstruction)",
+        steps: [
+            "over",
+                "over", // complete statement - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ArrayConstructionStepIn",
+        description: "Should be able to step through array literal construction.",
+        expression: "setTimeout(entryArrayConstruction)",
+        steps: [
+            "over",
+                "in",  // into a
+                "out", // out of a - before b()
+                "in",  // into b
+                "out", // out of b - leaving entry
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over object and array literal construction.</p>
+</body>
+</html>

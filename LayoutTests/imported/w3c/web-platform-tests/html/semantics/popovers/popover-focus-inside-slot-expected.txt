@@ -1,0 +1,6 @@
+Open popover    Close popover This button is where focus should land after traversing this popover
+
+FAIL Focus behavior of popover elements inside slot assert_equals: Focus should move forward from invoker to target1 expected Element node <input type="checkbox" id="target1"></input> but got Element node <body><div>
+
+  <button slot="invoker" popovertarget="po...
+

@@ -1,0 +1,3 @@
+
+PASS rolloffFactor clamping for linear distance model
+

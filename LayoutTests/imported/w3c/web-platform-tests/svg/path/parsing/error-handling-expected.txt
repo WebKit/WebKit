@@ -1,0 +1,14 @@
+
+PASS Error: Invalid command letter 'X' stops rendering
+PASS Error: Incomplete coordinate pair stops rendering
+PASS Error: Odd number of coordinates renders last complete pair
+PASS Error: Incomplete curveto (missing coordinates)
+PASS Error: Invalid arc flag (must be 0 or 1)
+PASS Edge case: Path without initial moveto
+PASS Empty path data string
+PASS Path data value 'none' disables rendering
+PASS Error: Multiple errors - stops at first one
+PASS Error: Incomplete second curveto
+PASS Error: Valid commands after error are ignored
+PASS Error: Invalid command letter (case-sensitive)
+

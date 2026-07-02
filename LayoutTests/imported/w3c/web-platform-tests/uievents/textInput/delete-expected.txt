@@ -1,0 +1,9 @@
+Press Delete (Fn+Backspace for macOS) in each text field below.
+
+
+ac
+
+PASS textInput: delete, <input>
+PASS textInput: delete, <textarea>
+PASS textInput: delete, <div contenteditable="true">
+

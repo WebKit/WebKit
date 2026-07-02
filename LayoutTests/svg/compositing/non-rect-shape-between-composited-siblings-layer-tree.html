@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            document.getElementById('a').setAttribute('class', 'anchor');
+            document.getElementById('c').setAttribute('class', 'anchor');
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+</script>
+</head>
+<body>
+<!-- Plain circle between two composited anchors gets no layer. The container backing grows one "(svg segment N)" overlay. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g id="a"><rect x="10" y="10" width="120" height="120" fill="red"/></g>
+    <circle cx="100" cy="100" r="60" fill="green"/>
+    <g id="c"><rect x="70" y="70" width="120" height="120" fill="blue"/></g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

@@ -1,0 +1,59 @@
+:has(> .trigger) with compound peer .c1
+  Traversal count: 7
+:has(.trigger) with compound peer .c2
+  Traversal count: 13
+:has(> .trigger3) without compound peer
+  Traversal count: 7
+:has(> .trigger) in non-subject position with compound peer .c4
+  Traversal count: 7
+:has(+ .trigger) with compound peer .c5
+  Traversal count: 1
+:has(:is(.trigger + .other)) with compound peer .c6
+  Traversal count: 13
+:has(.trigger) non-subject with scope-bounded traversal .c7
+  Traversal count: 7
+:not(:has(.trigger)) inside :not() with compound peer .c8
+  Traversal count: 7
+:is(:has(.trigger)) inside :is() with compound peer .c9
+  Traversal count: 7
+:is(.other :has(.trigger)) inside :is() with complex selector and compound peer .c10
+  Traversal count: 7
+(Parent, DirectSibling) .c11:has(+ .trigger11) > .target
+  Traversal count: 6
+(Parent, IndirectSibling) .c12:has(~ .trigger12) > .target
+  Traversal count: 6
+(Ancestor, DirectSibling) .c13:has(+ .trigger13) .target
+  Traversal count: 6
+(Ancestor, IndirectSibling) .c14:has(~ .trigger14) .target
+  Traversal count: 6
+(Parent, SiblingChild) .c15:has(~ .other15 > .trigger15) > .target
+  Traversal count: 17
+(Parent, SiblingDescendant) .c16:has(~ .other16 .trigger16) > .target
+  Traversal count: 17
+(Ancestor, SiblingChild) .c17:has(~ .other17 > .trigger17) .target
+  Traversal count: 17
+(Ancestor, SiblingDescendant) .c18:has(~ .other18 .trigger18) .target
+  Traversal count: 17
+:is(.other:has(.trigger)) with merged scope .c19.other
+  Traversal count: 7
+:is(div:has(.trigger)) with type in inner compound - scope stays .c20
+  Traversal count: 7
+.c21 div:is(.other:has(.trigger)) with type in outer compound
+  Traversal count: 7
+.c22:has(.trigger22) .target with no .c22 ancestor - skip invalidation
+  Traversal count: 0
+.c22:has(.trigger22) .target class toggle with no .c22 ancestor - skip invalidation
+  Traversal count: 0
+.c23:has(#trigger23) .target id toggle with no .c23 ancestor - skip invalidation
+  Traversal count: 0
+.c24:has([data-trigger24]) .target attribute toggle with no .c24 ancestor - skip invalidation
+  Traversal count: 0
+.c25:has(:checked) .target pseudo-class toggle with no .c25 ancestor - skip invalidation
+  Traversal count: 1
+.c26:has(.trigger26) .target class toggle with .c26 ancestor - bounded invalidation
+  Traversal count: 7
+.c28:has([data-trigger28]) .target attribute toggle with .c28 ancestor - bounded invalidation
+  Traversal count: 14
+.c29:has(:checked) .target pseudo-class toggle with .c29 ancestor - bounded invalidation
+  Traversal count: 8
+

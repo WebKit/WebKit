@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<title>Test that CanvasRenderingContext2d.font does not fail with "normal" line height value</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext("2d");
+
+  test(function() {
+    ctx.font = 'normal normal 400 normal 12px/normal Arial, Helvetica, sans-serif';
+    assert_equals(ctx.font, '12px Arial, Helvetica, sans-serif');
+  }, `With "normal" line-height`);
+
+  test(function() {
+    ctx.font = 'normal normal 400 normal 12px Arial, Helvetica, sans-serif';
+    assert_equals(ctx.font, '12px Arial, Helvetica, sans-serif');
+  }, `Without line-height (equates to "normal")`);
+
+  test(function() {
+    ctx.font = 'normal normal 400 normal 12px/14px Arial, Helvetica, sans-serif';
+    assert_equals(ctx.font, '12px Arial, Helvetica, sans-serif');
+  }, `With non-"normal" line-height value`);
+</script>

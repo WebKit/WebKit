@@ -1,0 +1,7 @@
+Text
+
+PASS Element.getBoundingClientRect() returns the actual rendered location
+PASS Range.getBoundingClientRect() returns the actual rendered location
+PASS Element.offset* return adjusted offsets
+PASS IntersectionObserver should fire when anchored element is moved into visible area
+

@@ -1,0 +1,16 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "valid-processor-data"
+PASS Executing "empty-option"
+PASS Audit report
+PASS > [valid-processor-data]
+PASS   |description| field in processorOptions from processor("foo") is equal to the field in node constructor options ("foo").
+PASS   |payload| array in processorOptions from processor([0,1,2,3]) is identical to the array the array in node constructor options ([0,1,2,3]).
+PASS < [valid-processor-data] All assertions passed. (total 2 assertions)
+PASS > [empty-option]
+PASS   Number of properties in data from processor is equal to 2.
+PASS   |numberOfInputs| field in data from processor is equal to 1.
+PASS   |numberOfOutputs| field in data from processor is identical to the array 1.
+PASS < [empty-option] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

@@ -1,0 +1,5 @@
+
+FAIL SVGAnimationElement.getStartTime() returns the start time of the current interval. assert_throws_dom: no interval @ 4 function "() => {
+    animationElements[0].getStartTime()
+  }" did not throw
+

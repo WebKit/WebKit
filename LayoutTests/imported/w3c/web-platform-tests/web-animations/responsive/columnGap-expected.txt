@@ -1,0 +1,5 @@
+
+PASS column-gap responsive to style changes
+PASS column-gap clamped to 0px on keyframes
+PASS column-gap responsive to inherited changes
+

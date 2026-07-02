@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when the tap target node is a form control element but it triggers synchronous actionable visibility change -> "fast" hover.</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#becomesVisible {
+    visibility: hidden;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+	transition-property: opacity, left;
+	transition-duration: 100ms, 200ms;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+PASS if 'clicked' text is NOT shown below.<br>
+<input type="button" value="tap this button" id=tapthis>
+<div id=becomesVisible></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mousemove", function( event ) {
+    becomesVisible.style.visibility = "visible";
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 50);
+}, false);
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

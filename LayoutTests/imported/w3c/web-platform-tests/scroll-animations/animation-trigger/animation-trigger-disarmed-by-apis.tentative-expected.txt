@@ -1,0 +1,3 @@
+
+FAIL cancel disables animation trigger promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+

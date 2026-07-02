@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("HTMLFontElement face attribute test");
+
+function fontFaceAttributeEffect(value)
+{
+    var element = document.createElement("font");
+    element.setAttribute("face", value);
+    var outerElement = document.createElement("p");
+    outerElement.setAttribute("style", "font-family: whatever");
+    document.body.appendChild(outerElement);
+    outerElement.appendChild(element);
+    var computedStyle = getComputedStyle(element, "");
+    var result = computedStyle.fontFamily;
+    document.body.removeChild(outerElement);
+    return result === "whatever" ? null : result;
+}
+
+shouldBe('fontFaceAttributeEffect("")', 'null');
+shouldBe('fontFaceAttributeEffect(" ")', 'null');
+shouldBe('fontFaceAttributeEffect(",")', 'null');
+shouldBe('fontFaceAttributeEffect(" ,")', 'null');
+shouldBe('fontFaceAttributeEffect(" , ")', 'null');
+shouldBe('fontFaceAttributeEffect(",,")', 'null');
+
+shouldBe('fontFaceAttributeEffect("serif")', '"serif"');
+shouldBe('fontFaceAttributeEffect("serif ")', '"serif"');
+shouldBe('fontFaceAttributeEffect(",serif,")', 'null');
+shouldBe('fontFaceAttributeEffect(" serif ")', '"serif"');
+shouldBe('fontFaceAttributeEffect(" serif")', '"serif"');
+shouldBe('fontFaceAttributeEffect("serif ,")', 'null');
+shouldBe('fontFaceAttributeEffect("serif , ")', 'null');
+shouldBe('fontFaceAttributeEffect("serif,,")', 'null');
+
+shouldBe('fontFaceAttributeEffect("Serif")', '"serif"');
+shouldBe('fontFaceAttributeEffect(" Serif")', '"serif"');
+shouldBe('fontFaceAttributeEffect(" Serif ")', '"serif"');
+shouldBe('fontFaceAttributeEffect(",Serif ")', 'null');
+
+shouldBe('fontFaceAttributeEffect("Inherited")', '"Inherited"');
+shouldBe('fontFaceAttributeEffect(",foo + foo,serif")', 'null');
+shouldBe('fontFaceAttributeEffect("serif,foo + foo,")', 'null');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

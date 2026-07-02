@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-1.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-2.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-3-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-3.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-4-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-4.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-5-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-5-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-5.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-img-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-img-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-img.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-document-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-document-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-document.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-root-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-root.html

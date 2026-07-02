@@ -1,0 +1,138 @@
+/*
+ * Copyright 2024 Google LLC
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+#include "include/gpu/graphite/PrecompileContext.h"
+
+#include "include/core/SkTypes.h"
+#include "src/gpu/GpuTypesPriv.h"
+#include "src/gpu/graphite/GlobalCache.h"
+#include "src/gpu/graphite/ResourceProvider.h"
+#include "src/gpu/graphite/SerializationUtils.h"
+#include "src/gpu/graphite/SharedContext.h"
+
+#if defined(SK_ENABLE_PRECOMPILE)
+#include "src/gpu/graphite/ContextUtils.h"
+#include "src/gpu/graphite/GraphicsPipelineDesc.h"
+#include "src/gpu/graphite/GraphicsPipelineHandle.h"
+#include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/PipelineCreationTask.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
+#include "src/gpu/graphite/RendererProvider.h"
+#include "src/gpu/graphite/RuntimeEffectDictionary.h"
+#endif
+
+#include <cstddef>
+
+namespace skgpu::graphite {
+
+#define ASSERT_SINGLE_OWNER SKGPU_ASSERT_SINGLE_OWNER(&fSingleOwner)
+
+PrecompileContext::~PrecompileContext() {
+    ASSERT_SINGLE_OWNER
+}
+
+PrecompileContext::PrecompileContext(sk_sp<SharedContext> sharedContext)
+    : fSharedContext(sharedContext) {
+
+    // ResourceProviders are not thread-safe. Here we create a ResourceProvider
+    // specifically for the thread on which precompilation will occur.
+    static constexpr size_t kEmptyBudget = 0;
+    fResourceProvider =
+            fSharedContext->makeResourceProvider(&fSingleOwner, SK_InvalidGenID, kEmptyBudget);
+}
+
+void PrecompileContext::purgePipelinesNotUsedInMs(std::chrono::milliseconds msNotUsed) {
+    ASSERT_SINGLE_OWNER
+
+    auto purgeTime = skgpu::StdSteadyClock::now() - msNotUsed;
+
+    fSharedContext->globalCache()->purgePipelinesNotUsedSince(purgeTime);
+}
+
+void PrecompileContext::reportPipelineStats(StatOptions option) {
+    ASSERT_SINGLE_OWNER
+
+    if (option == StatOptions::kPrecompile) {
+        fSharedContext->globalCache()->reportPrecompileStats();
+    } else {
+        fSharedContext->globalCache()->reportCacheStats();
+    }
+}
+
+bool PrecompileContext::precompile(sk_sp<SkData> serializedPipelineKey) {
+#if defined(SK_ENABLE_PRECOMPILE)
+    sk_sp<RuntimeEffectDictionary> rtEffectDict = sk_make_sp<RuntimeEffectDictionary>();
+    const Caps* caps = fSharedContext->caps();
+
+    GraphicsPipelineDesc pipelineDesc;
+    RenderPassDesc renderPassDesc;
+
+    if (!DataToPipelineDesc(caps,
+                            fSharedContext->shaderCodeDictionary(),
+                            serializedPipelineKey.get(),
+                            &pipelineDesc,
+                            &renderPassDesc)) {
+        return false;
+    }
+
+    GraphicsPipelineHandle handle = fResourceProvider->createGraphicsPipelineHandle(
+            pipelineDesc,
+            renderPassDesc,
+            PipelineCreationFlags::kForPrecompilation);
+    fResourceProvider->startPipelineCreationTask(rtEffectDict, handle);
+
+    return true;
+#else
+    return false;
+#endif
+}
+
+std::string PrecompileContext::getPipelineLabel(sk_sp<SkData> serializedPipelineKey,
+                                                uint32_t* uniqueHash) {
+    if (uniqueHash) { *uniqueHash = 0; }
+#if defined(SK_ENABLE_PRECOMPILE)
+    GraphicsPipelineDesc pipelineDesc;
+    RenderPassDesc renderPassDesc;
+
+    // Deep in deserialize_graphics_pipeline_desc, this will have unpacked the PaintParamsKey
+    // and then registered it with the ShaderCodeDictionary to get this session's
+    // UniquePaintParamsID for it.
+    if (!DataToPipelineDesc(fSharedContext->caps(),
+                            fSharedContext->shaderCodeDictionary(),
+                            serializedPipelineKey.get(),
+                            &pipelineDesc,
+                            &renderPassDesc)) {
+        return "";
+    }
+
+    const RendererProvider* rendererProvider = fSharedContext->rendererProvider();
+
+    const RenderStep* renderStep = rendererProvider->lookup(pipelineDesc.renderStepID());
+    if (!renderStep) {
+        return "";
+    }
+
+    if (uniqueHash) {
+        const Caps* caps = fSharedContext->caps();
+
+        // This will make use of the UniquePaintParamsID registered in DataToPipelineDesc.
+        UniqueKey pipelineKey = caps->makeGraphicsPipelineKey(pipelineDesc, renderPassDesc);
+
+        *uniqueHash = pipelineKey.hash();
+    }
+
+    return GetPipelineLabel(fSharedContext->caps(),
+                            fSharedContext->shaderCodeDictionary(),
+                            renderPassDesc,
+                            renderStep,
+                            pipelineDesc.paintParamsID());
+#else
+    return "";
+#endif
+}
+
+
+} // namespace skgpu::graphite

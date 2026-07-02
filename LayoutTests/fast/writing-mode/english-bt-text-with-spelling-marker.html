@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-85; totalPixels=0-148" />
+<script src="../../editing/editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+body {
+    -webkit-writing-mode: horizontal-bt;
+    font: 20px/1 Ahem;
+    line-height: 1.2;
+}
+
+#test {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+}
+</style>
+</head>
+<body>
+<div id="test" contenteditable="true"></div>
+<script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+var test = document.getElementById("test");
+
+testRunner.waitUntilDone();
+typeText("a mispelled", test).then(() => {
+    queueCommand(() => window.internals && internals.updateEditorUINowIfScheduled()); // Trigger spell checking
+});
+
+async function typeText(text, element)
+{
+    await UIHelper.setSpellCheckerResults({
+        "a mispelled": [
+            { "type": "spelling", "from": 2, "to": 11 }
+        ]
+    });
+    element.focus();
+    for (const c of text)
+        typeCharacterCommand(c);
+    element.blur();
+}
+</script>
+</body>
+</html>

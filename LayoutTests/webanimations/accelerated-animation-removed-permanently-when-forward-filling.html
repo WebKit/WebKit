@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
+<div id="target"></div>
+
+<script>
+
+promise_test(async () => {
+    const target = document.getElementById("target");
+    const fill = "both";
+    const duration = 2000;
+
+    const transform = target.animate(
+        { transform: "none" },
+        { duration, fill }
+    );
+
+    const opacity = target.animate(
+        { opacity: [0, 1] },
+        { duration: 1, fill }
+    );
+
+    target.animate(
+        { opacity: [1, 0] },
+        { duration, fill }
+    );
+
+    // Wait until the replaced opacity animation has finished and then terminate
+    // the transform animation on the next frame.
+    await opacity.finished;
+    await renderingFrames(1);
+    transform.finish();
+
+    // Wait another frame for the accelerated changes to be committed.
+    await renderingFrames(1);
+
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1, "There should be one single accelerated animation.");
+}, "Accelerated animations are no longer accelerated when forward-filling, even if other animations in the stack are running accelerated.");
+
+</script>
+</body>
+</html>

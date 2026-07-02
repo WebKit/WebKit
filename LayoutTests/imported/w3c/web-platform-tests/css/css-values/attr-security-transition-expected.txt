@@ -1,0 +1,4 @@
+div
+
+PASS background-image value should be attr-tainted
+

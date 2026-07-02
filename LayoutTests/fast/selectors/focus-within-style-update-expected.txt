@@ -1,0 +1,77 @@
+Check the basic features of the :focus-within pseudo class
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial State
+PASS elementsStyledWithFocusWithinSelector() is []
+PASS elementsMatchingFocusWithinSelector() is []
+Focus target1
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+Focus target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+Set display none on target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS target2.matches(":focus") is true
+Focus target1
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+Try to focus target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS target1.matches(":focus") is true
+PASS target2.matches(":focus") is false
+Set display back on target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+Focus target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+Set display none on container2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS target2.matches(":focus") is true
+Focus target1
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+Try to focus target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS target1.matches(":focus") is true
+PASS target2.matches(":focus") is false
+Set display back on container2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container1", "sibling2", "target1"]
+Detach container1 from the document
+PASS elementsStyledWithFocusWithinSelector() is []
+PASS elementsMatchingFocusWithinSelector() is []
+PASS container1.querySelectorAll(":focus-within").length is 0
+PASS target1.matches(":focus") is false
+PASS target2.matches(":focus") is false
+Try to focus target1
+PASS elementsStyledWithFocusWithinSelector() is []
+PASS elementsMatchingFocusWithinSelector() is []
+PASS container1.querySelectorAll(":focus-within").length is 0
+PASS target1.matches(":focus") is false
+PASS target2.matches(":focus") is false
+Focus target2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+Attach container1 in container2
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "sibling5", "target2"]
+Focus target1
+PASS elementsStyledWithFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "container1", "sibling2", "target1"]
+PASS elementsMatchingFocusWithinSelector() is ["html", "body", "webkit-test", "container2", "container1", "sibling2", "target1"]
+Move target1 in container2
+PASS elementsStyledWithFocusWithinSelector() is []
+PASS elementsMatchingFocusWithinSelector() is []
+PASS target1.matches(":focus") is false
+PASS target2.matches(":focus") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

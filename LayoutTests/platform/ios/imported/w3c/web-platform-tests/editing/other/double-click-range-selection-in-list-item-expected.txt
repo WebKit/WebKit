@@ -1,0 +1,7 @@
+First
+Second
+This is some atomicinline text.
+
+FAIL Double click on one list item should not select more than one list item assert_equals: Selected Text Should be equal to first list item expected "First" but got ""
+FAIL Double click on one text item should select only one text item assert_equals: Selected Text Should be equal to atomicinline expected "atomicinline" but got ""
+

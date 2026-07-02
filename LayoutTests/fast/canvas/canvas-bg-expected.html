@@ -1,0 +1,24 @@
+<html>
+ <head>
+  <script type="application/x-javascript">
+function draw() {
+ var ctx = document.getElementById('c').getContext('2d');
+
+ ctx.fillStyle = "rgb(200,0,0)";
+ ctx.fillRect (10, 10, 55, 50);
+ ctx.fillRect (310, 10, 55, 50);
+ ctx.fillRect (10, 310, 55, 50);
+ ctx.fillRect (310, 310, 55, 50);
+
+ ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+ ctx.fillRect (30, 30, 55, 50);
+ ctx.fillRect (330, 30, 55, 50);
+ ctx.fillRect (30, 330, 55, 50);
+ ctx.fillRect (330, 330, 55, 50);
+}
+  </script>
+ </head>
+ <body onload="draw();">
+   <canvas id="c" width="600" height="600"></div>
+ </body>
+</html>

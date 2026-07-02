@@ -1,0 +1,3 @@
+
+PASS 'background-clip' stays set after animation style has been applied
+

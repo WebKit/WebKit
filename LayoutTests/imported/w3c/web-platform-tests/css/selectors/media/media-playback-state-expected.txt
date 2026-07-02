@@ -1,0 +1,8 @@
+
+
+PASS Test :pseudo-class syntax is supported without throwing a SyntaxError
+PASS Test :playing pseudo-class
+PASS Test :paused pseudo-class
+PASS Test :seeking pseudo-class
+PASS Test that non-media elements do not match :playing, :paused, or :seeking
+

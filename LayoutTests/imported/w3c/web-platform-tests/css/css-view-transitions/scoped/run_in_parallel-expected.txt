@@ -1,0 +1,5 @@
+
+FAIL Concurrent transition keeps running after transition skipped promise_test: Unhandled rejection with value: object "TypeError: target1.startViewTransition is not a function. (In 'target1.startViewTransition(() => {})', 'target1.startViewTransition' is undefined)"
+FAIL Concurrent transition keeps running after transition finished promise_test: Unhandled rejection with value: object "TypeError: target1.startViewTransition is not a function. (In 'target1.startViewTransition(() => {})', 'target1.startViewTransition' is undefined)"
+FAIL Concurrent transition keeps running after transition canceled promise_test: Unhandled rejection with value: object "TypeError: target1.startViewTransition is not a function. (In 'target1.startViewTransition(() => {})', 'target1.startViewTransition' is undefined)"
+

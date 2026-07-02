@@ -1,0 +1,96 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+  window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+    function runTest() {
+        if (window.IPC) {
+            import('./coreipc.js').then(({
+                CoreIPC
+            }) => {
+                window.CoreIPC = CoreIPC;
+                const longStr = "A".repeat(16384);
+                CoreIPC.Networking.NetworkStorageManager.ConnectToStorageArea(0, {
+                    type: 1,
+                    sourceIdentifier: 262153,
+                    namespaceIdentifier: {
+                        optionalValue: 262156
+                    },
+                    origin: {
+                        topOrigin: {
+                            data: {
+                                variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                                variant: {
+                                    object: 262144,
+                                    processIdentifier: 262154
+                                }
+                            }
+                        },
+                        clientOrigin: {
+                            data: {
+                                variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                                variant: {
+                                    object: 262144,
+                                    processIdentifier: 262154
+                                }
+                            }
+                        }
+                    }
+                }, (parsedResult) => {
+                    o99 = parsedResult.identifier.optionalValue;
+                    CoreIPC.Networking.NetworkStorageManager.ConnectToStorageArea(0, {
+                        type: 1,
+                        sourceIdentifier: 262153,
+                        namespaceIdentifier: {
+                            optionalValue: 262156
+                        },
+                        origin: {
+                            topOrigin: {
+                                data: {
+                                    variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                                    variant: {
+                                        object: 262144,
+                                        processIdentifier: 262154
+                                    }
+                                }
+                            },
+                            clientOrigin: {
+                                data: {
+                                    variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified',
+                                    variant: {
+                                        object: 262144,
+                                        processIdentifier: 262157
+                                    }
+                                }
+                            }
+                        }
+                    }, (parsedResult2) => {
+                        o109 = parsedResult2.identifier.optionalValue;
+                        CoreIPC.Networking.NetworkStorageManager.DisconnectFromStorageArea(0, {
+                            identifier: o109
+                        });
+                    });
+                    CoreIPC.Networking.NetworkStorageManager.SetItem(0, {
+                        identifier: o99,
+                        implIdentifier: 262150,
+                        key: 'abc',
+                        value: longStr,
+                        urlString: location.href
+                    });
+                    let reloadCount = parseInt(sessionStorage.getItem('reloadCount') || '0', 10);
+
+                    if (reloadCount < 10) {
+                        sessionStorage.setItem('reloadCount', reloadCount + 1);
+                        window.location.reload();
+                    } else {
+                        window.testRunner?.notifyDone();
+                    }
+                });
+            });
+        } else {
+            window.testRunner?.notifyDone();
+        }
+    }
+</script>
+<body onload="runTest()">
+  <p>This test passes if WebKit does not crash</p>
+</body>

@@ -1,0 +1,7 @@
+
+PASS Biquad k-rate AudioParams (all)
+PASS Biquad k-rate Q
+PASS Biquad k-rate detune
+PASS Biquad k-rate frequency
+PASS Biquad k-rate gain
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        video {
+            width: 480px;
+            height: 320px;
+            position: absolute;
+        }
+
+        button {
+            top: 320px;
+            left: 20px;
+            position: absolute;
+        }
+
+        body {
+            margin: 0;
+        }
+    </style>
+    <script>
+        function playing() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("playing");
+                } catch(e) {
+                }
+            }, 0);
+        }
+
+        if (window.internals)
+            window.internals.setTopDocumentURLForQuirks('https://twitch.tv');
+    </script>
+</head>
+<body>
+    <video autoplay title="foo" onplaying=playing()><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>

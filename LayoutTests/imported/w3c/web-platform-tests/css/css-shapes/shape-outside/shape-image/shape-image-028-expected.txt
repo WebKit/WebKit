@@ -1,0 +1,6 @@
+Verify that an image valued shape-outside layout is updated after the image has been loaded. This test checks that the left edge of the "Hello World" text span is defined by the 200px wide float before shape-outside image has been loaded and by the 100px wide image segment after it has been loaded.
+
+Hello World
+
+FAIL 'shape-outside' layout is updated after the image has been loaded assert_equals: image loaded expected 100 but got 101
+

@@ -1,0 +1,24 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(loadeddata)
+Test that default media element action will be run when no media session handlers exist for that action.
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.paused == 'true') OK
+RUN(video.currentTime = 0)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.currentTime == '1') OK
+EXPECTED (video.currentTime == '6') OK
+EXPECTED (video.currentTime == '1') OK
+Test that if an action handler is defined, the default action won't be called
+ACTION: play
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.paused == 'false') OK
+ACTION: pause
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.paused == 'true') OK
+ACTION: seekto
+EXPECTED (video.currentTime == '1') OK
+EXPECTED (video.currentTime == '5') OK
+END OF TEST
+

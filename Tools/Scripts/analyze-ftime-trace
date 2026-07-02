@@ -1,0 +1,530 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Analyze -ftime-trace JSON files from a WebKit build.
+
+Companion to ClangBuildAnalyzer (CBA). Both tools consume the same -ftime-trace
+JSON files. This script overlaps with CBA in several areas but adds exclusive
+(self) time analysis for headers, which CBA does not provide.
+
+Comparison with ClangBuildAnalyzer
+----------------------------------
+Matching sections (numbers align closely):
+  --slowest-tu   <->  CBA "Files that took longest to parse/codegen"
+  --templates    <->  CBA "Templates that took longest to instantiate"
+  --summary      <->  CBA "Time summary"
+
+Differences:
+  - Template sets: this script counts all instantiations; CBA filters by a
+    minimum duration threshold, so our totals run higher for high-frequency /
+    low-cost templates.
+  - Functions: this script sums both CodeGen Function and OptFunction events;
+    CBA uses CodeGen Function only.
+
+Unique to this script (not in CBA):
+  - Exclusive (self) header parse time: the default mode computes both
+    inclusive and exclusive time per header, revealing where parse time is
+    actually spent vs. merely transited through an include chain. This is the
+    primary reason the script exists.
+  - --trace-header: drill into the include nesting of a specific header in a
+    single TU.
+  - --filter: restrict header output to names matching a substring.
+
+Unique to CBA (not replicated here):
+  - Include-chain visualisation ("included via: ...") showing the N most
+    common paths through which an expensive header is pulled in.
+  - Binary format capture file (faster repeated analysis).
+
+Implementation note -- event ordering
+--------------------------------------
+clang's -ftime-trace JSON does NOT guarantee events are sorted by timestamp.
+Source events use begin/end pairs (ph: "b" / "e") that nest as a stack, but
+the pairs can appear in arbitrary order in the array. This script sorts Source
+events by timestamp before processing to reconstruct the correct nesting. An
+earlier version of this script did not sort, which produced incorrect exclusive
+times (every header appeared to have inclusive == exclusive).
+
+Usage:
+    analyze-ftime-trace <trace-dir> [options]
+
+The trace directory should contain .json files produced by clang's -ftime-trace
+flag (searched recursively), typically found at:
+    WebKitBuild/WebCore.build/Release/WebCore.build/Objects-normal/arm64e/
+or for CMake builds:
+    WebKitBuild/cmake-mac/Release/Source/WebCore/CMakeFiles/WebCore.dir/
+
+Examples:
+    # Show top 30 headers by exclusive (self) parse time
+    analyze-ftime-trace <dir>
+
+    # Show top 50 headers
+    analyze-ftime-trace <dir> --top 50
+
+    # Filter to headers matching a pattern
+    analyze-ftime-trace <dir> --filter RenderStyle
+
+    # Show template instantiation hotspots
+    analyze-ftime-trace <dir> --templates
+
+    # Show functions that took longest to compile
+    analyze-ftime-trace <dir> --functions
+
+    # Show TUs that took longest to compile
+    analyze-ftime-trace <dir> --slowest-tu
+
+    # Show detailed nesting for a specific header in one TU
+    analyze-ftime-trace <dir> --trace-header StyleComputedStyleBase+GettersInlines.h --tu UnifiedSource500
+
+    # Show overall build time breakdown
+    analyze-ftime-trace <dir> --summary
+
+    # Show top event categories (ParseClass, InstantiateFunction, etc.)
+    analyze-ftime-trace <dir> --categories
+"""
+
+import argparse
+import json
+import glob
+import os
+import re
+import sys
+
+
+def load_trace(path):
+    """Load a -ftime-trace JSON file, returning its event list."""
+    with open(path) as f:
+        data = json.load(f)
+    events = data if isinstance(data, list) else data.get("traceEvents", [])
+    # Guard against non-ftime-trace JSON files that happen to be lists.
+    if events and not isinstance(events[0], dict):
+        return []
+    return events
+
+
+def compute_header_times(trace_dir, header_filter=None):
+    """Compute inclusive and exclusive (self) time per header across all TUs.
+
+    Returns (inclusive, exclusive, tu_count) dicts keyed by header basename.
+    Times are in microseconds.
+    """
+    files = sorted(glob.glob(os.path.join(trace_dir, "**", "*.json"), recursive=True))
+
+    inclusive = {}
+    exclusive = {}
+    tu_count = {}
+
+    for f in files:
+        try:
+            events = load_trace(f)
+        except Exception:
+            continue
+
+        # Source events use begin/end pairs (ph: b/e) that nest as a stack.
+        # IMPORTANT: Events in the JSON are NOT necessarily sorted by timestamp.
+        # We must sort Source events by timestamp for correct stack-based nesting.
+        source_events = sorted(
+            [e for e in events if e.get("name") == "Source"],
+            key=lambda e: e["ts"],
+        )
+
+        stack = []  # (ts_begin, header_basename, child_time_accum)
+
+        for evt in source_events:
+            ph = evt.get("ph")
+
+            if ph == "b":
+                detail = evt.get("args", {}).get("detail", "")
+                basename = detail.rsplit("/", 1)[-1] if "/" in detail else detail
+                stack.append((evt["ts"], basename, 0))
+            elif ph == "e" and stack:
+                ts_begin, basename, child_time = stack.pop()
+                dur = evt["ts"] - ts_begin
+                excl = dur - child_time
+
+                if header_filter is None or header_filter in basename:
+                    inclusive[basename] = inclusive.get(basename, 0) + dur
+                    exclusive[basename] = exclusive.get(basename, 0) + excl
+                    tu_count[basename] = tu_count.get(basename, 0) + 1
+
+                if stack:
+                    p_ts, p_name, p_child = stack[-1]
+                    stack[-1] = (p_ts, p_name, p_child + dur)
+
+    return inclusive, exclusive, tu_count
+
+
+def print_header_table(inclusive, exclusive, tu_count, top_n=30):
+    """Print a formatted table of header parse times."""
+    fmt_header = f"{'Header':<65} {'Inclusive':>10} {'Exclusive':>10} {'TUs':>6} {'Excl/TU':>10}"
+    fmt_units = f"{'':65s} {'(min)':>10} {'(min)':>10} {'':>6} {'(ms)':>10}"
+    sep = "-" * 105
+
+    print(fmt_header)
+    print(fmt_units)
+    print(sep)
+
+    for h in sorted(exclusive.keys(), key=lambda x: -exclusive[x])[:top_n]:
+        inc_min = inclusive.get(h, 0) / 60_000_000
+        exc_min = exclusive.get(h, 0) / 60_000_000
+        tus = tu_count.get(h, 0)
+        per_tu_ms = exclusive.get(h, 0) / tus / 1000 if tus else 0
+        print(f"{h:<65} {inc_min:>10.1f} {exc_min:>10.1f} {tus:>6} {per_tu_ms:>10.1f}")
+
+    print(sep)
+    total_exc = sum(exclusive.values()) / 60_000_000
+    total_inc = sum(inclusive.values()) / 60_000_000
+    print(f"{'Total (all matched headers)':<65} {total_inc:>10.1f} {total_exc:>10.1f}")
+
+
+def print_summary(trace_dir):
+    """Print overall build time breakdown."""
+    files = sorted(glob.glob(os.path.join(trace_dir, "**", "*.json"), recursive=True))
+
+    totals = {}
+    tu_count = 0
+
+    for f in files:
+        try:
+            events = load_trace(f)
+        except Exception:
+            continue
+        tu_count += 1
+        for evt in events:
+            name = evt.get("name", "")
+            dur = evt.get("dur", 0)
+            if name.startswith("Total ") or name in ("ExecuteCompiler", "Frontend", "Backend", "Optimizer"):
+                totals[name] = totals.get(name, 0) + dur
+
+    print(f"Translation units: {tu_count}")
+    print()
+    print(f"{'Category':<55} {'Cumulative':>12}")
+    print(f"{'':55s} {'(min)':>12}")
+    print("-" * 70)
+    for name in sorted(totals.keys(), key=lambda x: -totals[x])[:30]:
+        print(f"{name:<55} {totals[name] / 60_000_000:>12.1f}")
+
+
+def print_categories(trace_dir, top_n=30):
+    """Print top event categories by cumulative time."""
+    files = sorted(glob.glob(os.path.join(trace_dir, "**", "*.json"), recursive=True))
+
+    totals = {}
+
+    for f in files:
+        try:
+            events = load_trace(f)
+        except Exception:
+            continue
+        for evt in events:
+            name = evt.get("name", "")
+            dur = evt.get("dur", 0)
+            if name.startswith("Total ") and dur > 0:
+                totals[name] = totals.get(name, 0) + dur
+
+    print(f"{'Category':<65} {'Cumulative':>12}")
+    print(f"{'':65s} {'(min)':>12}")
+    print("-" * 80)
+    for name in sorted(totals.keys(), key=lambda x: -totals[x])[:top_n]:
+        print(f"{name:<65} {totals[name] / 60_000_000:>12.1f}")
+
+
+def trace_header_in_tu(trace_dir, header_name, tu_name):
+    """Show detailed nesting for a specific header in a specific TU."""
+    # Try flat path first, then search recursively for CMake-style layouts.
+    tu_path = os.path.join(trace_dir, tu_name + ".json")
+    if not os.path.exists(tu_path):
+        matches = glob.glob(os.path.join(trace_dir, "**", tu_name + ".json"), recursive=True)
+        if not matches:
+            print(f"Error: {tu_name}.json not found under {trace_dir}", file=sys.stderr)
+            sys.exit(1)
+        tu_path = matches[0]
+
+    events = load_trace(tu_path)
+
+    # Sort Source events by timestamp for correct nesting.
+    source_events = sorted(
+        [e for e in events if e.get("name") == "Source"],
+        key=lambda e: e["ts"],
+    )
+
+    in_target = False
+    target_depth = 0
+    stack = []
+
+    for evt in source_events:
+        ph = evt.get("ph")
+
+        if ph == "b":
+            detail = evt.get("args", {}).get("detail", "")
+            basename = detail.rsplit("/", 1)[-1] if "/" in detail else detail
+            stack.append((evt["ts"], basename, detail))
+
+            if header_name in basename and not in_target:
+                in_target = True
+                target_depth = len(stack)
+                indent = "  " * (len(stack) - target_depth)
+                print(f"{indent}BEGIN {basename}  ts={evt['ts']}")
+            elif in_target:
+                indent = "  " * (len(stack) - target_depth)
+                print(f"{indent}BEGIN {basename}")
+
+        elif ph == "e" and stack:
+            ts_begin, basename, detail = stack.pop()
+            dur_ms = (evt["ts"] - ts_begin) / 1000
+
+            if in_target:
+                indent = "  " * (len(stack) + 1 - target_depth)
+                print(f"{indent}END   {basename}  dur={dur_ms:.1f}ms")
+
+            if in_target and len(stack) < target_depth:
+                in_target = False
+
+
+def _collapse_template_name(name):
+    """Collapse template arguments to '$' for grouping, like ClangBuildAnalyzer."""
+    result = []
+    depth = 0
+    for ch in name:
+        if ch == "<":
+            if depth == 0:
+                result.append("<$>")
+            depth += 1
+        elif ch == ">":
+            depth -= 1
+        elif depth == 0:
+            result.append(ch)
+    return "".join(result)
+
+
+def _truncate(s, maxlen=100):
+    return s if len(s) <= maxlen else s[: maxlen - 3] + "..."
+
+
+def print_templates(trace_dir, top_n=30):
+    """Print templates that took longest to instantiate, individually and grouped."""
+    files = sorted(glob.glob(os.path.join(trace_dir, "**", "*.json"), recursive=True))
+
+    # Individual: (detail, total_dur_us, count)
+    individual = {}
+    # Grouped by collapsed name: (collapsed, total_dur_us, count)
+    grouped = {}
+
+    for f in files:
+        try:
+            events = load_trace(f)
+        except Exception:
+            continue
+
+        for evt in events:
+            name = evt.get("name", "")
+            if name not in ("InstantiateClass", "InstantiateFunction"):
+                continue
+            dur = evt.get("dur", 0)
+            if dur <= 0:
+                continue
+            detail = evt.get("args", {}).get("detail", "")
+            if not detail:
+                continue
+
+            if detail in individual:
+                t, c = individual[detail]
+                individual[detail] = (t + dur, c + 1)
+            else:
+                individual[detail] = (dur, 1)
+
+            collapsed = _collapse_template_name(detail)
+            if collapsed in grouped:
+                t, c = grouped[collapsed]
+                grouped[collapsed] = (t + dur, c + 1)
+            else:
+                grouped[collapsed] = (dur, 1)
+
+    print("**** Templates that took longest to instantiate:")
+    print()
+    for detail in sorted(individual.keys(), key=lambda x: -individual[x][0])[:top_n]:
+        total_us, count = individual[detail]
+        avg_ms = total_us / count / 1000
+        print(
+            f" {total_us / 1000:>7.0f} ms: {_truncate(detail)} ({count} times, avg {avg_ms:.0f} ms)"
+        )
+
+    print()
+    print("**** Template sets that took longest to instantiate:")
+    print()
+    for collapsed in sorted(grouped.keys(), key=lambda x: -grouped[x][0])[:top_n]:
+        total_us, count = grouped[collapsed]
+        avg_ms = total_us / count / 1000
+        print(
+            f"{total_us / 1000:>7.0f} ms: {_truncate(collapsed)} ({count} times, avg {avg_ms:.0f} ms)"
+        )
+
+
+def print_functions(trace_dir, top_n=30):
+    """Print functions that took longest to compile (backend codegen)."""
+    files = sorted(glob.glob(os.path.join(trace_dir, "**", "*.json"), recursive=True))
+
+    # Individual functions
+    individual = {}
+    # Grouped by collapsed name
+    grouped = {}
+
+    for f in files:
+        try:
+            events = load_trace(f)
+        except Exception:
+            continue
+
+        tu_name = os.path.basename(f).replace(".json", "")
+
+        for evt in events:
+            name = evt.get("name", "")
+            if name not in ("CodeGen Function", "OptFunction"):
+                continue
+            dur = evt.get("dur", 0)
+            if dur <= 0:
+                continue
+            detail = evt.get("args", {}).get("detail", "")
+            if not detail:
+                continue
+
+            key = (detail, tu_name)
+            if key in individual:
+                individual[key] = individual[key] + dur
+            else:
+                individual[key] = dur
+
+            collapsed = _collapse_template_name(detail)
+            if collapsed in grouped:
+                t, c = grouped[collapsed]
+                grouped[collapsed] = (t + dur, c + 1)
+            else:
+                grouped[collapsed] = (dur, 1)
+
+    print("**** Functions that took longest to compile:")
+    print()
+    for (detail, tu) in sorted(individual.keys(), key=lambda x: -individual[x])[:top_n]:
+        dur_us = individual[(detail, tu)]
+        print(f"  {dur_us / 1000:>6.0f} ms: {_truncate(detail, 80)} ({tu})")
+
+    print()
+    print("**** Function sets that took longest to compile / optimize:")
+    print()
+    for collapsed in sorted(grouped.keys(), key=lambda x: -grouped[x][0])[:top_n]:
+        total_us, count = grouped[collapsed]
+        avg_ms = total_us / count / 1000
+        print(
+            f"  {total_us / 1000:>6.0f} ms: {_truncate(collapsed, 80)} ({count} times, avg {avg_ms:.0f} ms)"
+        )
+
+
+def print_slowest_tu(trace_dir, top_n=10):
+    """Print TUs that took longest to compile (frontend and backend separately)."""
+    files = sorted(glob.glob(os.path.join(trace_dir, "**", "*.json"), recursive=True))
+
+    frontend_times = {}
+    backend_times = {}
+
+    for f in files:
+        try:
+            events = load_trace(f)
+        except Exception:
+            continue
+
+        tu_name = os.path.basename(f).replace(".json", "")
+
+        for evt in events:
+            name = evt.get("name", "")
+            dur = evt.get("dur", 0)
+            if name == "Frontend":
+                frontend_times[tu_name] = frontend_times.get(tu_name, 0) + dur
+            elif name == "Backend":
+                backend_times[tu_name] = backend_times.get(tu_name, 0) + dur
+
+    print("**** Files that took longest to parse (compiler frontend):")
+    for tu in sorted(frontend_times.keys(), key=lambda x: -frontend_times[x])[:top_n]:
+        print(f" {frontend_times[tu] / 1000:>7.0f} ms: {tu}")
+
+    print()
+    print("**** Files that took longest to codegen (compiler backend):")
+    for tu in sorted(backend_times.keys(), key=lambda x: -backend_times[x])[:top_n]:
+        print(f" {backend_times[tu] / 1000:>7.0f} ms: {tu}")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Analyze -ftime-trace JSON files from a WebKit build.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=__doc__,
+    )
+    parser.add_argument("trace_dir", help="Directory containing .json trace files")
+    parser.add_argument("--top", type=int, default=30, help="Number of headers to show (default: 30)")
+    parser.add_argument("--filter", type=str, default=None, help="Only show headers matching this substring")
+    parser.add_argument("--summary", action="store_true", help="Show overall build time breakdown")
+    parser.add_argument("--categories", action="store_true", help="Show top event categories")
+    parser.add_argument("--templates", action="store_true", help="Show template instantiation hotspots")
+    parser.add_argument("--functions", action="store_true", help="Show functions that took longest to compile")
+    parser.add_argument("--slowest-tu", action="store_true", help="Show TUs that took longest to compile")
+    parser.add_argument("--trace-header", type=str, default=None, help="Show detailed nesting for this header")
+    parser.add_argument("--tu", type=str, default=None, help="TU name for --trace-header (e.g. UnifiedSource500)")
+
+    args = parser.parse_args()
+
+    if not os.path.isdir(args.trace_dir):
+        print(f"Error: {args.trace_dir} is not a directory", file=sys.stderr)
+        sys.exit(1)
+
+    if args.summary:
+        print_summary(args.trace_dir)
+        return
+
+    if args.categories:
+        print_categories(args.trace_dir, args.top)
+        return
+
+    if args.templates:
+        print_templates(args.trace_dir, args.top)
+        return
+
+    if args.functions:
+        print_functions(args.trace_dir, args.top)
+        return
+
+    if args.slowest_tu:
+        print_slowest_tu(args.trace_dir, args.top)
+        return
+
+    if args.trace_header:
+        if not args.tu:
+            print("Error: --trace-header requires --tu", file=sys.stderr)
+            sys.exit(1)
+        trace_header_in_tu(args.trace_dir, args.trace_header, args.tu)
+        return
+
+    inclusive, exclusive, tu_count = compute_header_times(args.trace_dir, args.filter)
+    print_header_table(inclusive, exclusive, tu_count, args.top)
+
+
+if __name__ == "__main__":
+    main()

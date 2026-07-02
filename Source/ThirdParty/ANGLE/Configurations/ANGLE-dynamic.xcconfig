@@ -1,0 +1,70 @@
+// Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "../../../../Configurations/SDKVariant.xcconfig"
+#include "BaseTarget.xcconfig"
+
+PRODUCT_NAME = ANGLE-shared;
+EXECUTABLE_PREFIX = lib;
+
+ANGLE_OTHER_LDFLAGS = $(ANGLE_ALLOWABLE_CLIENTS) -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) -Wl;
+ANGLE_OTHER_LDFLAGS_iphoneos = -lz;
+ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_watchsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
+ANGLE_OTHER_LDFLAGS_appletvos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_appletvsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
+ANGLE_OTHER_LDFLAGS_xros = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_xrsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
+ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit -lz;
+ANGLE_OTHER_LDFLAGS_macosx = -framework IOKit -lz;
+
+// Allow fuzzers to link to libANGLE-shared.dylib.
+ANGLE_ALLOWABLE_CLIENTS = $(ANGLE_ALLOWABLE_CLIENTS_$(WK_NOT_$(ENABLE_LIBFUZZER)));
+ANGLE_ALLOWABLE_CLIENTS_YES = -allowable_client WebCore -allowable_client WebCoreTestSupport;
+
+// Allow fuzzers to link to any symbol in libANGLE-shared.dylib.
+GCC_SYMBOLS_PRIVATE_EXTERN = $(WK_NOT_$(ENABLE_LIBFUZZER));
+
+INSTALL_PATH = $(WEBCORE_LIBRARY_DIR);
+
+DYLIB_INSTALL_NAME_BASE = $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/Frameworks;
+DYLIB_INSTALL_NAME_BASE[sdk=macosx*] = $(DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_$(WK_RELOCATABLE_FRAMEWORKS));
+DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_ = $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/Versions/A/Frameworks;
+DYLIB_INSTALL_NAME_BASE_WK_RELOCATABLE_FRAMEWORKS_YES = @loader_path/../../../;
+
+ANGLE_HEADERS_FOLDER_PATH = $(WK_LIBRARY_HEADERS_FOLDER_PATH)/ANGLE;
+
+PUBLIC_HEADERS_FOLDER_PATH = $(ANGLE_HEADERS_FOLDER_PATH);
+PUBLIC_HEADERS_FOLDER_PATH[sdk=macosx*] = $(PUBLIC_HEADERS_FOLDER_PATH_$(WK_PLATFORM_NAME));
+PUBLIC_HEADERS_FOLDER_PATH_macosx = $(ANGLE_HEADERS_FOLDER_PATH);
+PUBLIC_HEADERS_FOLDER_PATH_maccatalyst = $(WK_ALTERNATE_FRAMEWORKS_DIR)/$(ANGLE_HEADERS_FOLDER_PATH);
+
+DEAD_CODE_STRIPPING = YES;
+DEAD_CODE_STRIPPING[config=Debug] = NO;
+
+STRIP_INSTALLED_PRODUCT = YES;
+STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
+
+INSTALLHDRS_SCRIPT_PHASE = YES;
+APPLY_RULES_IN_COPY_HEADERS = YES;

@@ -1,0 +1,9 @@
+
+PASS Initial axis
+PASS Vertical axis
+PASS Horizontal axis
+PASS Block axis in horizontal writing-mode
+PASS Inline axis in horizontal writing-mode
+PASS Block axis in vertical writing-mode
+PASS Inline axis in vertical writing-mode
+

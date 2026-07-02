@@ -1,0 +1,37 @@
+<script></script>
+<script type="module"></script>
+
+<script>(function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()</script>
+<script type="module">import{a,b,c}from"module";let x=a+b+c;</script>
+
+<div>
+<script>(function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()</script><script type="module">import{a,b,c}from"module";let x=a+b+c;</script>
+</div>
+
+<!-- Script is: `<a><b></a></b>` -->
+<script><a><b></a></b></script>
+
+<!-- Script is: `let str = "` -->
+<script>let str = "</script>";<p>Test</p></script>
+
+<script>
+`A
+B
+C`;
+let a=1,b=2,c=3;
+test`A
+${a}
+B
+${b}
+C
+${c}`;
+a=1,b=2,c=3;
+`ABC`;
+a=1,b=2,c=3;
+/*
+* Multi-line comment
+*/
+a=1,b=2,c=3;
+// Inline comment
+a=1,b=2,c=3;
+</script>

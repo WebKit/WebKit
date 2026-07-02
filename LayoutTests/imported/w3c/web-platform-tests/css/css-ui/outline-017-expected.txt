@@ -1,0 +1,5 @@
+
+PASS outline-color is animated as a color
+PASS outline-width is animated as a length
+PASS outline-offset is animated as a length
+

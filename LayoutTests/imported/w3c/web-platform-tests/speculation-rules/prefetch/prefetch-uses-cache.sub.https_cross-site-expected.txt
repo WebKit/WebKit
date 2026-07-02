@@ -1,0 +1,3 @@
+
+FAIL Test that prefetches use/store responses to/from the HTTP cache. assert_equals: Navigation should have used the prefetch expected "navigational-prefetch" but got "cache"
+

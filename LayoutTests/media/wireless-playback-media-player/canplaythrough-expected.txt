@@ -1,0 +1,10 @@
+
+Test that a 'canplaythrough' event is dispatched when a MediaDeviceRoute becomes ready after loading a URL.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+END OF TEST
+

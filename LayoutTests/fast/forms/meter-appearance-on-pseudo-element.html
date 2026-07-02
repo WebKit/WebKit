@@ -1,0 +1,14 @@
+<style>
+    dialog::backdrop {
+        appearance: meter;
+    }
+ </style>
+<body>
+    <dialog id="dialog"></dialog>
+    <p>This test passes if it does not crash.</p>
+    <script>
+        dialog.showModal();
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</body>

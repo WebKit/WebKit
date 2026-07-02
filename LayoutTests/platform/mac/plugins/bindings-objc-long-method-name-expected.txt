@@ -1,0 +1,10 @@
+Test invoking a method with a long name does not cause crash or memory leak.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS objCPlugin[methodName]() is "methodMappedToLongName"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,56 @@
+<head>
+    <meta name="viewport" content="width=device-width">
+    <title>This tests that an element clips its backdrop according to the border-radius property.</title>
+    <style>
+
+    .background {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 200px;
+        height: 200px;
+        background-color: lightgray;
+    }
+
+    .stencil {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .stencil > div {
+        position: absolute;
+        background-color: black;
+    }
+
+    .stencil > div:nth-of-type(1) {
+        width: 200px;
+        height: 20px;
+    }
+
+    .stencil > div:nth-of-type(2) {
+        width: 160px;
+        height: 200px;
+    }
+
+    .stencil > div:nth-of-type(3) {
+        left: 180px;
+        width: 20px;
+        height: 200px;
+    }
+
+    .stencil > div:nth-of-type(4) {
+        top: 40px;
+        width: 200px;
+        height: 160px;
+    }
+
+    </style>
+</head>
+<div class="background"></div>
+<div class="stencil">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>

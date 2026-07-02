@@ -1,0 +1,10 @@
+Check that SVGElement.xmlbase does not exist.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS svgElement.xmlbase is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

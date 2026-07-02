@@ -1,0 +1,6 @@
+
+PASS CSP check precedes X-Frame-Options check
+PASS CSP check precedes COEP check - CSP header first
+PASS CSP check precedes COEP check - COEP header first
+PASS COEP check precedes X-Frame-Options check
+

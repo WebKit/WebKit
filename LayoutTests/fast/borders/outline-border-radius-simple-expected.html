@@ -1,0 +1,65 @@
+<style>
+div {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 2px solid green;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  position: relative;
+  top: -2px;
+  left: -2px;
+}
+
+.container {
+  display: block;
+  margin: 0px;
+  width: auto;
+  height: auto;
+  border: none;
+}
+
+#outline-width > div {
+  border-width: 5px;
+  top: -3px;
+}
+
+#outline-offset > div {
+  top: -8px;
+  width: 54px;
+  height: 54px
+}
+
+</style>
+<div style="border-radius: 12px;"></div>
+<div style="border-radius: 17px;"></div>
+<div style="border-radius: 22px;"></div>
+<div style="border-radius: 27px;"></div>
+<div style="border-radius: 32px;"></div>
+<br>
+<div style="border-radius: 12px 32px;"></div>
+<div style="border-radius: 17px 27px;"></div>
+<div style="border-radius: 22px 22px;"></div>
+<div style="border-radius: 27px 17px;"></div>
+<div style="border-radius: 32px 12px;"></div>
+<br>
+<div style="border-radius: 0px 12px 32px 27px;"></div>
+<div style="border-radius: 12px 17px 27px 22px;"></div>
+<div style="border-radius: 17px 22px 22px 17px;"></div>
+<div style="border-radius: 22px 27px 17px 12px;"></div>
+<div style="border-radius: 27px 32px 12px 0px;"></div>
+<br>
+<div class=container id=outline-width>
+<div style="left: -3px; border-radius: 0px 15px 35px 30px;"></div>
+<div style="left: -9px; border-radius: 15px 20px 30px 25px;"></div>
+<div style="left: -15px; border-radius: 20px 25px 25px 20px;"></div>
+<div style="left: -21px; border-radius: 25px 30px 20px 15px;"></div>
+<div style="left: -27px; border-radius: 30px 35px 15px 0px;"></div>
+</div>
+<div class=container id=outline-offset>
+<div style="left: -2px; border-radius: 0px 14px 34px 29px;"></div>
+<div style="left: -6px; border-radius: 14px 19px 29px 24px;"></div>
+<div style="left: -10px; border-radius: 19px 24px 24px 19px;"></div>
+<div style="left: -14px; border-radius: 24px 29px 19px 14px;"></div>
+<div style="left: -18px; border-radius: 29px 34px 14px 0px;"></div>
+</div>

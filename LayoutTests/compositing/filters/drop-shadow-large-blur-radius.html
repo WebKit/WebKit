@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-480000" />
+<style>
+    div {
+        background: green;
+        width: 100px;
+        height: 100px;
+        will-change: transform;
+        // A black drop-shadow with a very large blur radius looks like almost no drop-shadow with slightly dark background.
+        filter: drop-shadow(0 0 1000000px);
+    }
+</style>
+<div></div>

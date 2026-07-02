@@ -1,0 +1,5 @@
+
+PASS If the index is deleted, throw InvalidStateError
+PASS If the transaction has been aborted, throw TransactionInactiveError
+PASS If the index is deleted by an aborted upgrade, throw InvalidStateError
+

@@ -1,0 +1,13 @@
+<style>
+#target { cursor:url(file:///non-existent.png), auto; }
+</style>
+<div id=target></div>
+<pre id=log></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const cursorValue = getComputedStyle(target).getPropertyCSSValue("cursor");
+
+log.innerText = cursorValue.item(0).cssText;
+</script>

@@ -1,0 +1,14 @@
+<script>
+function runTest()
+{
+    try {
+        document.domain = 'localhost';
+        window.top.performedDomainChange("Allowed to set document.domain", true);
+    } catch (e) {
+        window.top.performedDomainChange("Denied: " + e.message, false);
+    }
+}
+</script>
+<body onload="runTest();">
+    TEST CONTENT
+</body>

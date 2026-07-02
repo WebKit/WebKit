@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that cancel() does not drop utterances queued after it is called. Regression test for https://bugs.webkit.org/show_bug.cgi?id=191745");
+
+
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
+    window.jsTestIsAsync = true;
+
+    var u1 = new SpeechSynthesisUtterance("First utterance");
+    var u2Events = [];
+    var u3Events = [];
+
+    u1.onstart = function(event) {
+       debug("u1: start");
+    }
+
+    u1.onerror = function(event) {
+       debug("u1: error (canceled)");
+    }
+
+    var u2 = new SpeechSynthesisUtterance("Second utterance");
+    u2.onstart = function(event) {
+       u2Events.push("start");
+       debug("u2: start");
+    }
+
+    u2.onend = function(event) {
+       u2Events.push("end");
+       debug("u2: end");
+    }
+
+    u2.onerror = function(event) {
+       u2Events.push("error");
+       debug("u2: error");
+    }
+
+    var u3 = new SpeechSynthesisUtterance("Third utterance");
+    u3.onstart = function(event) {
+       u3Events.push("start");
+       debug("u3: start");
+    }
+
+    u3.onend = function(event) {
+       u3Events.push("end");
+       debug("u3: end");
+       // All done - verify events
+       shouldBe("u2Events.length", "2");
+       shouldBe("u2Events[0]", "'start'");
+       shouldBe("u2Events[1]", "'end'");
+       shouldBe("u3Events.length", "2");
+       shouldBe("u3Events[0]", "'start'");
+       shouldBe("u3Events[1]", "'end'");
+       finishJSTest();
+    }
+
+    u3.onerror = function(event) {
+       u3Events.push("error");
+       debug("u3: error");
+    }
+
+    // Queue the first job which will start speaking immediately.
+    speechSynthesis.speak(u1);
+
+    // Cancel u1 (with async callback in mock)
+    speechSynthesis.cancel();
+
+    // Queue u2 and u3 after cancel - these should NOT be dropped
+    speechSynthesis.speak(u2);
+    speechSynthesis.speak(u3);
+
+    debug("Called cancel and queued u2, u3");
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        video.srcObject = source;
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        testExpected('sourceBuffer.changeType', undefined, '!=');
+
+        endTest()
+    }
+
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+    <video></video>
+</body>
+</html>

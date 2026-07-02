@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that JS wrappers of targets enqueued to be delivered to an intersection observer do not get collected.</p>
+<pre id="log"></pre>
+<script src="../resources/gc.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const targetCount = 5;
+const iterationCount = 5;
+var deadCount = 0;
+
+async function runAll() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    for (let i = 0; i < iterationCount; ++i) {
+        runTest();
+        gc();
+        await new Promise((resolve) => requestAnimationFrame(resolve))
+    }
+
+    document.getElementById('log').textContent = (deadCount ? `FAIL - ${deadCount} targets lost JS wrappers` : 'PASS') + '\n';
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest() {
+    document.querySelectorAll('div').forEach(target => { target.remove(); });
+
+    for (let i = 0; i < targetCount; ++i) {
+        let target = document.createElement('div');
+        target.myState = 'live';
+        document.body.appendChild(target);
+    }
+
+    document.querySelectorAll('div').forEach(target => { observer.observe(target); });
+}
+
+const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+        if (entry.target.myState != 'live')
+            deadCount++;
+    }
+});
+
+runAll();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+
+
+
+
+
+
+
+FAIL .target > * 1 assert_equals:
+<span data-offset-x="60"></span>
+offsetLeft expected 60 but got 45
+PASS .target > * 2
+PASS .target > * 3
+FAIL .target > * 4 assert_equals:
+<textarea data-offset-x="10" class="inner">X X X X X</textarea>
+offsetLeft expected 10 but got 25
+PASS .target > * 5
+FAIL .target > * 6 assert_equals:
+<textarea data-offset-x="10" class="inner" placeholder="X X X X X"></textarea>
+offsetLeft expected 10 but got 25
+FAIL .target > * 7 assert_equals:
+<span data-offset-x="25"></span>
+offsetLeft expected 25 but got 60
+FAIL .target > * 8 assert_equals:
+<textarea data-offset-x="10" class="inner" style="font-size: 100px;"></textarea>
+offsetLeft expected 10 but got 25
+FAIL .target > * 9 assert_equals:
+<span data-offset-x="25"></span>
+offsetLeft expected 25 but got 45
+PASS .target > * 10
+FAIL .target > * 11 assert_equals:
+<span data-offset-x="25"></span>
+offsetLeft expected 25 but got 45
+PASS .target > * 12
+

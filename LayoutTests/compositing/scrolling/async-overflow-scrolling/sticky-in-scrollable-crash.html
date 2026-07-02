@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script>
+  window.testRunner?.dumpAsText();
+</script>
+<style>
+  .c {
+      overflow: scroll;
+      block-size: 100px;
+      background: pink;
+  }
+  .x {
+      overflow: scroll;
+      position: sticky;
+      top: 0;
+      block-size: 200px;
+      background: green;
+  }
+  .y {
+      block-size: 500px;
+      inline-size: 500px;
+      background: cyan;
+  }
+</style>
+
+<p>PASS if no crash.</p>
+
+<div class=c>
+  <div class=x>
+    <div class=y></div>
+  </div>
+</div>
+

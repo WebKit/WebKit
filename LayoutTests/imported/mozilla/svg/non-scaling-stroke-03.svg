@@ -1,0 +1,25 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Test non-scaling-stroke repainting when ancestor transforms change</title>
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=875069 -->
+  <g id="g">
+    <line x1="50" y1="50" x2="50" y2="100" stroke="blue" stroke-width="10"
+          style="vector-effect:non-scaling-stroke;"/>
+  </g>
+  
+  <script>
+    function doTest() {
+      document.getElementById("g").setAttribute("transform", "scale(2)");
+      document.documentElement.removeAttribute('class');
+      if (window.testRunner)
+          testRunner.notifyDone();
+    }
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+    setTimeout(doTest, 100);    
+  </script>
+
+</svg>

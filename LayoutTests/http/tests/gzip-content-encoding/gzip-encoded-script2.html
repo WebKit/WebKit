@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<script src="resources/script.js.gz"></script>
+</head>
+<body>
+<p><span id="result">FAIL did not</span> execute gzip-encoded JavaScript script.</p>
+<script>
+if (didExecuteScript !== undefined)
+    document.getElementById("result").textContent = "PASS did";
+</script>
+</body>
+</html>

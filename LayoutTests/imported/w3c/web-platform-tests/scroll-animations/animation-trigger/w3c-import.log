@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-addAnimation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-alternate.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-animation-target-removed-listener.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-calc-with-zoom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-disarmed-by-apis.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-none.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-none.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-late-attached-timeline.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-multiple-animations.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-multiple-triggers.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-once-play-state.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-once.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-play.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-range-px-roundtrip.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-repeat.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-replay.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-state.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-timeline-subject-removed.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-untriggered-animations-exposed.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-trigger-source-starts-in-trigger-range.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-trigger-toggle.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-add.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-in-scope-source.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-named.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-oof.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-out-of-scope-source.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-scoped-tree-order.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-tree-order-ancestor-chain.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/animation-trigger/trigger-scope-unscoped-tree-order.tentative.html

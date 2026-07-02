@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that containing block changes are reflected when going fullscreen</title>
+</head>
+<body>
+    <span style="position: relative">
+      <!-- will-change: transform creates a containing-block for fixed positioned elements, but the top layer overrides it --->
+      <div style="height: 400px; width: 400px; will-change: transform;">
+          <!-- container-type: size triggers layout during style resolution -->
+          <div style="container-type: size; background-color: lightgreen; width: 100%; height: 100%;" id="target">
+              <p>Test passes if the greenyellow/lightgreen area fills the screen after going fullscreen.</p>
+              <button onclick="target.requestFullscreen()">Go fullscreen</button>
+              <!-- Add extra positioned child to make sure descendants are also properly laid out-->
+              <div id=child style="position: absolute; left: 0; right: 0; top: 100px; bottom: 0; background-color: greenyellow;"></div>
+          </div>
+      </div>
+    </span>
+    <script src="full-screen-test.js"></script>
+    <script>
+        async function test() {
+            await new Promise((resolve) => {
+                addEventListener("fullscreenchange", resolve, { once: true });
+                runWithKeyDown(() => {
+                    target.requestFullscreen();
+                });
+            });
+
+            testExpected("target.offsetWidth > 400", true);
+            testExpected("target.offsetHeight > 400", true);
+            testExpected("child.offsetWidth > 400", true);
+            testExpected("child.offsetHeight > 400", true);
+            endTest();
+        }
+
+        test();
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+uniform half4 colorGreen, colorRed;
+
+inline bool test(half4 v) {
+    return bool(v.g);
+}
+
+half4 main(float2 coords) {
+    return test(colorGreen) ? colorGreen : colorRed;
+}

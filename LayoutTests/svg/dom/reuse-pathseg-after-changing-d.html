@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+	<p>This should not crash.</p>
+	<script>
+    	if (window.testRunner)
+        	testRunner.dumpAsText();
+    	const svgns = "http://www.w3.org/2000/svg";
+    	let path = document.createElementNS(svgns, "path");
+    	let pathSegList = path.pathSegList;
+    	let pathSeg = path.createSVGPathSegCurvetoCubicSmoothAbs(0, 0, 1, 1);
+    	pathSegList.insertItemBefore(pathSeg, 1);
+    	path.setAttribute("d", "M 0 0");
+    	pathSegList.insertItemBefore(pathSeg, 0);
+	</script>
+</body>

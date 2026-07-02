@@ -1,0 +1,64 @@
+# Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> PlaybackSessionManager {
+    Play(WebCore::MediaPlayerClientIdentifier contextId)
+    Pause(WebCore::MediaPlayerClientIdentifier contextId)
+    TogglePlayState(WebCore::MediaPlayerClientIdentifier contextId)
+    BeginScrubbing(WebCore::MediaPlayerClientIdentifier contextId)
+    EndScrubbing(WebCore::MediaPlayerClientIdentifier contextId)
+#if HAVE(PIP_SKIP_PREROLL)
+    SkipAd(WebCore::MediaPlayerClientIdentifier contextId)
+#endif
+    SeekToTime(WebCore::MediaPlayerClientIdentifier contextId, double time, double toleranceBefore, double toleranceAfter)
+    FastSeek(WebCore::MediaPlayerClientIdentifier contextId, double time)
+    BeginScanningForward(WebCore::MediaPlayerClientIdentifier contextId)
+    BeginScanningBackward(WebCore::MediaPlayerClientIdentifier contextId)
+    EndScanning(WebCore::MediaPlayerClientIdentifier contextId)
+    SetDefaultPlaybackRate(WebCore::MediaPlayerClientIdentifier contextId, float defaultPlaybackRate)
+    SetPlaybackRate(WebCore::MediaPlayerClientIdentifier contextId, float playbackRate)
+    SelectAudioMediaOption(WebCore::MediaPlayerClientIdentifier contextId, uint64_t index)
+    SelectLegibleMediaOption(WebCore::MediaPlayerClientIdentifier contextId, uint64_t index)
+    HandleControlledElementIDRequest(WebCore::MediaPlayerClientIdentifier contextId)
+    TogglePictureInPicture(WebCore::MediaPlayerClientIdentifier contextId)
+    EnterFullscreen(WebCore::MediaPlayerClientIdentifier contextId)
+    SetPlayerIdentifierForVideoElement(WebCore::MediaPlayerClientIdentifier contextId)
+    ExitFullscreen(WebCore::MediaPlayerClientIdentifier contextId)
+    EnterInWindow(WebCore::MediaPlayerClientIdentifier contextId)
+    ExitInWindow(WebCore::MediaPlayerClientIdentifier contextId)
+    ToggleMuted(WebCore::MediaPlayerClientIdentifier contextId)
+    SetMuted(WebCore::MediaPlayerClientIdentifier contextId, bool muted)
+    SetVolume(WebCore::MediaPlayerClientIdentifier contextId, double volume)
+    SetPlayingOnSecondScreen(WebCore::MediaPlayerClientIdentifier contextId, bool value)
+    SendRemoteCommand(WebCore::MediaPlayerClientIdentifier contextId, enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType type, struct WebCore::PlatformMediaSessionRemoteCommandArgument argument)
+    SetSoundStageSize(WebCore::MediaPlayerClientIdentifier contextId, enum:uint8_t WebCore::AudioSessionSoundStageSize size)
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    SetSpatialTrackingLabel(WebCore::MediaPlayerClientIdentifier contextId, String label)
+#endif
+}
+#endif

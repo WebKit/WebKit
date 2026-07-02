@@ -1,0 +1,17 @@
+<style>
+  body {
+    font-size: 2000px;
+  }
+
+  ::-webkit-scrollbar {
+    block-size: 10000000px;
+  }
+</style>
+<p>PASS if no crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.body.append('');
+  };
+</script>

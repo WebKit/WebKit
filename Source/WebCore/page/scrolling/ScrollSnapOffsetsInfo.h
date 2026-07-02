@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/FloatRect.h>
+#include <WebCore/LayoutRect.h>
+#include <WebCore/LayoutUnit.h>
+#include <WebCore/NodeIdentifier.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/ScrollTypes.h>
+#include <utility>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class ScrollableArea;
+class RenderBox;
+class Element;
+
+namespace Style {
+class ComputedStyle;
+}
+
+template <typename T>
+struct SnapOffset {
+    T offset;
+    ScrollSnapStop stop;
+    bool hasSnapAreaLargerThanViewport;
+    bool isFocused;
+    bool isTarget;
+    Markable<NodeIdentifier> snapTargetID;
+    Vector<size_t, 1> snapAreaIndices;
+};
+
+template <typename UnitType, typename RectType>
+struct ScrollSnapOffsetsInfo {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ScrollSnapOffsetsInfo);
+    std::optional<ScrollSnapStrictness> strictness { };
+    Vector<SnapOffset<UnitType>> horizontalSnapOffsets;
+    Vector<SnapOffset<UnitType>> verticalSnapOffsets;
+    Vector<RectType> snapAreas;
+    Vector<NodeIdentifier> snapAreasIDs;
+
+    bool isEqual(const ScrollSnapOffsetsInfo<UnitType, RectType>& other) const
+    {
+        return strictness == other.strictness && horizontalSnapOffsets == other.horizontalSnapOffsets && verticalSnapOffsets == other.verticalSnapOffsets && snapAreas == other.snapAreas;
+    }
+
+    bool isEmpty() const
+    {
+        return horizontalSnapOffsets.isEmpty() && verticalSnapOffsets.isEmpty();
+    }
+
+    Vector<SnapOffset<UnitType>> offsetsForAxis(ScrollEventAxis axis) const
+    {
+        return axis == ScrollEventAxis::Vertical ? verticalSnapOffsets : horizontalSnapOffsets;
+    }
+
+    // From https://drafts.csswg.org/css-scroll-snap-1/#snap-overflow: if a snap area is larger than
+    // the snapport in an axis, then any scroll position in which the snap area covers the snapport is
+    // a valid snap position in that axis. Returns true if any of the snap offset's areas is larger
+    // than the snapport and covers it at the given offset.
+    bool snapOffsetCoversSnapport(const SnapOffset<UnitType>&, ScrollEventAxis, UnitType axisOffset, UnitType viewportLength) const;
+
+    template<typename OutputType> OutputType convertUnits(float deviceScaleFactor = 0.0) const;
+    template<typename SizeType, typename PointType>
+    WEBCORE_EXPORT std::pair<UnitType, std::optional<unsigned>> closestSnapOffset(ScrollEventAxis, const SizeType& viewportSize, PointType scrollDestinationOffset, float velocity, std::optional<UnitType> originalPositionForDirectionalSnapping = std::nullopt) const;
+};
+
+template<typename UnitType> inline bool operator==(const SnapOffset<UnitType>& a, const SnapOffset<UnitType>& b)
+{
+    return a.offset == b.offset && a.stop == b.stop && a.snapAreaIndices == b.snapAreaIndices;
+}
+
+using LayoutScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<LayoutUnit, LayoutRect>;
+using FloatScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<float, FloatRect>;
+using FloatSnapOffset = SnapOffset<float>;
+
+template <> template <>
+LayoutScrollSnapOffsetsInfo FloatScrollSnapOffsetsInfo::convertUnits(float /* unusedScaleFactor */) const;
+template <> template <>
+WEBCORE_EXPORT std::pair<float, std::optional<unsigned>> FloatScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis, const FloatSize& viewportSize, FloatPoint scrollDestinationOffset, float velocity, std::optional<float> originalPositionForDirectionalSnapping) const;
+
+
+template <> template <>
+FloatScrollSnapOffsetsInfo LayoutScrollSnapOffsetsInfo::convertUnits(float deviceScaleFactor) const;
+template <> template <>
+WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis, const LayoutSize& viewportSize, LayoutPoint scrollDestinationOffset, float velocity, std::optional<LayoutUnit> originalPositionForDirectionalSnapping) const;
+
+// Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the StyleComputedStyle
+// which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
+// the scrolling container's border box.
+bool NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
+void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const Style::ComputedStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element* focusedElement, Element* targetElement);
+
+template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
+{
+    ts << offset.offset << " snapTargetID: "_s <<  offset.snapTargetID << " isFocused: "_s << offset.isFocused << " isTarget: "_s << offset.isTarget << " snapAreaIndices: " << offset.snapAreaIndices;
+    if (offset.stop == ScrollSnapStop::Always)
+        ts << " (always)"_s;
+    return ts;
+}
+
+}; // namespace WebCore

@@ -1,0 +1,12 @@
+This test verifies that base-appearance select options with border-radius correctly support AXPath.
+
+PASS: select.isExpanded === true
+PASS: pathSegmentCountOfID('opt1', 'Curve to') > 0 === true
+PASS: pathSegmentCountOfID('opt2', 'Curve to') > 0 === true
+PASS: pathSegmentCountOfID('opt3', 'Curve to') > 0 === true
+PASS: select.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

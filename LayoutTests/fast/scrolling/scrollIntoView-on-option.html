@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #scroller {
+            width: 300px;
+            height: 200px;
+            border: 2px solid black;
+            overflow: scroll;
+            margin: 10px;
+        }
+    
+        select {
+            font-family: sans-serif;
+            font-size: 22px;
+            margin: 500px 100px;
+            border: 3px solid gray;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        let scroller;
+        let listbox;
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                let option = document.getElementById('target');
+                option.scrollIntoView();
+                
+                listbox = document.getElementById('listbox');
+                scroller = document.getElementById('scroller');
+                shouldBeCloseTo('scroller.scrollTop', 790, 10);
+                shouldBeCloseTo('listbox.scrollTop', 52, 2);
+
+                finishJSTest();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <select id="listbox" size=12>
+            <optgroup label="Group">
+            	<option>option</option>
+            	<option>option</option>
+            	<option>option</option>
+            	<option>option</option>
+            	<option>option</option>
+            	<option>option</option>
+            	<option>option</option>
+            </optgroup>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option id="target">Visible item</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        	<option>option</option>
+        </select>
+    </div>
+    <div id="console"></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

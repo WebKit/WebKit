@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body style="max-width: 500px; font-size: 18px; line-height: 1.6;">
+
+<p id="test" style="font-size: 38px">This is a paragraph of plain static text that spans several lines in this narrow container.</p>
+
+<script>
+var output = "This test verifies that multi-line static text has a non-empty AXPath.\n\n";
+
+if (window.accessibilityController) {
+    var p = accessibilityController.accessibleElementById("test");
+    var child = p.childAtIndex(0);
+    var supportsPath = child.isAttributeSupported("AXPath");
+    output += expect("supportsPath", "true");
+
+    var pathDescription = child.pathDescription;
+    // Verify the path is non-empty and contains curve or line segments (not just "Start Path").
+    var hasPathSegments = pathDescription.indexOf("Line to") !== -1 || pathDescription.indexOf("Curve to") !== -1;
+    output += expect("hasPathSegments", "true");
+    debug(output);
+}
+</script>
+</body>
+</html>

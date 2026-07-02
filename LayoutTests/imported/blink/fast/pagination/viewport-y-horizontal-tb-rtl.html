@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Paged Y overflow, top to bottom block flow, rtl inline flow</title>
+    </head>
+    <body style="margin:0; -webkit-writing-mode:horizontal-tb; direction:rtl; overflow:-webkit-paged-y; overflow:paged-y; -webkit-column-gap:0;">
+        <div style="-webkit-writing-mode:horizontal-tb; display:table; direction:ltr;">
+            This text should be at the top right of the first page<br>
+            There should be two pages<br>
+            The second page should be below this one<br>
+        </div>
+        <div style="height:110vh;"></div>
+    </body>
+</html>

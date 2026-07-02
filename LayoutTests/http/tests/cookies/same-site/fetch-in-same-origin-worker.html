@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that Same-Site cookies for 127.0.0.1 are sent with a Web Worker initiated XHR.");
+
+// Swizzle finishJSTest() so that we reset cookies before calling finishJSTest().
+var savedFinishJSTest = finishJSTest;
+window.finishJSTest = () => resetCookies().then(savedFinishJSTest);
+
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "12", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "12", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "12", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "12", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    startWorker("resources/fetch-in-same-origin-worker.js");
+}
+runTest();
+</script>
+</body>
+</html>

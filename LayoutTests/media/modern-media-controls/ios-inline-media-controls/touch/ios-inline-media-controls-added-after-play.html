@@ -1,0 +1,47 @@
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../resources/media-controls-utils.js"></script>
+<body>
+<video src="../../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 400px;" muted playsinline autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Check that tapping the start button pauses the video if controls are added after it has started playing.");
+
+const media = document.querySelector("video");
+let shadowRoot = null;
+
+media.addEventListener("play", async () => {
+    debug("'play' event.");
+
+    if (media.controls)
+        return;
+
+    media.controls = true;
+
+    shouldBeFalse("media.paused");
+
+    shadowRoot = window.internals.shadowRoot(media);
+
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.play-pause')", "null");
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.play-pause').getBoundingClientRect().width", "0");
+
+    debug("Tapping start button...");
+    pressOnElement(shadowRoot.querySelector("button.play-pause"));
+
+    debug("Waiting for pause...");
+    await shouldBecomeEqual("media.paused", "true");
+
+    // Wait to see if the video is still paused.
+    debug("Checking again...");
+    setTimeout(() => {
+        shouldBeTrue("media.paused");
+
+        media.remove();
+        finishJSTest();
+    });
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

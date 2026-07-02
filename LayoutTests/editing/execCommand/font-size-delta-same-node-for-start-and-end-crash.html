@@ -1,0 +1,21 @@
+<body style="-webkit-text-security: disc;">
+  <div></div>A
+  <script></script>
+  <div id="element"></div>
+  <script>
+    if (window.testRunner)
+        testRunner.dumpAsText()
+    console.log('This test passes if it does not crash.');
+    document.addEventListener("DOMCharacterDataModified", () => {
+        document.body.innerHTML = "B";
+    });
+    document.body.removeChild(document.getElementById('element'));
+    document.designMode = "on";
+    document.execCommand("SelectAll");
+    document.execCommand("FontSizeDelta", false, 3);
+  </script>
+  <script>
+    document.body.insertBefore(document.createElement("div"), document.body.firstChild);
+    document.execCommand("FontSizeDelta", false, 3);
+  </script>
+</body>

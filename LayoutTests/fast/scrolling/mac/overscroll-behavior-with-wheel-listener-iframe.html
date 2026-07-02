@@ -1,0 +1,41 @@
+<!doctype html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/overscroll-behavior-support.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<link rel="help" href="https://drafts.csswg.org/css-overscroll-behavior">
+<style>
+    body {
+        height: 5000px;
+    }
+    iframe {
+        width: 300px;
+        height: 300px;
+        border: none;
+    }
+</style>
+<iframe id="frame" srcdoc="
+    <style>
+        :root { overscroll-behavior: contain; }
+        body { height: 5000px; }
+    </style>
+    <script>
+        window.addEventListener('wheel', () => {}, { passive: false });
+    </script>
+"></iframe>
+<script>
+    const frame = document.getElementById('frame');
+    frame.addEventListener('load', () => {
+        promise_test(async () => {
+            window.scrollTo(0, 0);
+            frame.contentWindow.scrollTo(0, 0);
+            const rect = frame.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            const delta = getDeltas("down");
+            await mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y);
+            assert_greater_than(frame.contentWindow.scrollY, 0, 'Subframe should have scrolled');
+            assert_equals(window.scrollY, 0, 'Main frame should not have scrolled');
+        }, 'Subframe with overscroll-behavior: contain and a non-passive wheel listener should scroll without propagating to the main frame');
+    });
+</script>

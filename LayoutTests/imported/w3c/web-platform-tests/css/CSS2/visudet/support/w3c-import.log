@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/height-25-no-ratio.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/height-25-ratio-2.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/height-25-width-50.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/no-ratio.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/ratio-2.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/width-50-no-ratio.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/visudet/support/width-50-ratio-2.svg

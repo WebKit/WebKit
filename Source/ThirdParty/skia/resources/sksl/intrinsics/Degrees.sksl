@@ -1,0 +1,18 @@
+uniform float4 testInputs;  // equals (-1.25, 0, 0.75, 2.25)
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    const float4 constVal = half4(-1.25, 0, 0.75, 2.25);
+    const float4 expected = constVal * 57.2957795131;
+    const float4 allowedDelta = float4(0.05);
+
+    return (   (        (abs(degrees(testInputs.x)     - expected.x)   < allowedDelta.x))     &&
+            all(lessThan(abs(degrees(testInputs.xy)    - expected.xy),   allowedDelta.xy))    &&
+            all(lessThan(abs(degrees(testInputs.xyz)   - expected.xyz),  allowedDelta.xyz))   &&
+            all(lessThan(abs(degrees(testInputs.xyzw)  - expected.xyzw), allowedDelta.xyzw))  &&
+               (        (abs(degrees(constVal.x)       - expected.x)   < allowedDelta.x))     &&
+            all(lessThan(abs(degrees(constVal.xy)      - expected.xy),   allowedDelta.xy))    &&
+            all(lessThan(abs(degrees(constVal.xyz)     - expected.xyz),  allowedDelta.xyz))   &&
+            all(lessThan(abs(degrees(constVal.xyzw)    - expected.xyzw), allowedDelta.xyzw)))
+                ? colorGreen : colorRed;
+}

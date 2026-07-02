@@ -1,0 +1,16 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(video.currentTime = 1.5)
+Generate an error by appending an initialization segment with a different number of tracks, which will cause the MediaSource to detach.
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+RUN(video.currentTime = 2)
+END OF TEST
+

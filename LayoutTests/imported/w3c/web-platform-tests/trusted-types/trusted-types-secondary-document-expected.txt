@@ -1,0 +1,99 @@
+
+PASS HTMLElement innerHTML throws with a plain string
+PASS HTMLElement setHTMLUnsafe throws with a plain string
+PASS ShadowRoot innerHTML throws with a plain string
+PASS ShadowRoot setHTMLUnsafe throws with a plain string
+PASS HTMLIFrameElement srcdoc throws with a plain string
+PASS HTMLScriptElement textContent throws with a plain string
+PASS HTMLScriptElement innerText throws with a plain string
+PASS HTMLScriptElement text throws with a plain string
+PASS Element insertAdjacentHTML throws with a plain string
+PASS Document execCommand throws with a plain string
+PASS Range createContextualFragment throws with a plain string
+PASS HTMLElement innerHTML works with a TrustedHTML
+PASS HTMLElement setHTMLUnsafe works with a TrustedHTML
+PASS ShadowRoot innerHTML works with a TrustedHTML
+PASS ShadowRoot setHTMLUnsafe works with a TrustedHTML
+PASS HTMLIFrameElement srcdoc works with a TrustedHTML
+PASS HTMLScriptElement textContent works with a TrustedScript
+PASS HTMLScriptElement innerText works with a TrustedScript
+PASS HTMLScriptElement text works with a TrustedScript
+PASS Element insertAdjacentHTML works with a TrustedHTML
+PASS Document execCommand works with a TrustedHTML
+PASS Trusted Type assignment required for Range createContextualFragment
+PASS Element.setAttribute throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Element.setAttribute throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Element.setAttribute throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Element.setAttribute throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Element.setAttribute throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Element.setAttribute throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Element.setAttributeNS throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Element.setAttributeNode throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Element.setAttributeNodeNS throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Attr.value throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Node.nodeValue throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a plain string
+PASS Node.textContent throws for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a TrustedScript input.
+PASS Element.setAttribute works for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a TrustedScript input.
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a TrustedScript input.
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a TrustedHTML input.
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a TrustedScriptURL input.
+PASS Element.setAttribute works for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a TrustedScriptURL input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV,  attrName=onclick with a TrustedScript input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=g,  attrName=ondblclick with a TrustedScript input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow,  attrName=onmousedown with a TrustedScript input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME,  attrName=srcdoc with a TrustedHTML input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT,  attrName=src with a TrustedScriptURL input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=script,  attrName=href with a TrustedScriptURL input.
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink,  attrName=href with a TrustedScriptURL input.
+

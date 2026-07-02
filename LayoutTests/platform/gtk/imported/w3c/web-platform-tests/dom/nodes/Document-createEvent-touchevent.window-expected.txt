@@ -1,0 +1,11 @@
+
+FAIL document.createEvent('TouchEvent') should throw if 'expose legacy touch event APIs' is false assert_throws_dom: function "() => {
+        document.createEvent(variant);
+      }" did not throw
+FAIL document.createEvent('touchevent') should throw if 'expose legacy touch event APIs' is false assert_throws_dom: function "() => {
+        document.createEvent(variant);
+      }" did not throw
+FAIL document.createEvent('TOUCHEVENT') should throw if 'expose legacy touch event APIs' is false assert_throws_dom: function "() => {
+        document.createEvent(variant);
+      }" did not throw
+

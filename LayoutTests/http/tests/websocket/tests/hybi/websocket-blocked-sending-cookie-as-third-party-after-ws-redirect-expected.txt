@@ -1,0 +1,19 @@
+Tests WebSocket cookie behavior for third-parties with existing cookies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.location.host is "127.0.0.1:8000"
+
+Setting first-party cookie and sending through cross-origin WebSocket handshake is blocked.
+Created a socket to 'ws://127.0.0.1:8000/resources/redirect.py?cookie=setAsFirstPartyHTTP%3Dvalue&url=ws%3A%2F%2Flocalhost%3A8880%2Fwebsocket%2Ftests%2Fhybi%2Fwebsocket-blocked-sending-cookie-as-third-party'; readyState 0.
+PASS Connection was allowed (request did not contain cookies).
+PASS document.location.host is "127.0.0.1:8000"
+
+Setting and sending third-party cookie through cross-origin WebSocket handshake is blocked.
+Created a socket to 'ws://localhost:8000/resources/redirect.py?cookie=setAsThirdPartyHTTP%3Dvalue&url=ws%3A%2F%2Flocalhost%3A8880%2Fwebsocket%2Ftests%2Fhybi%2Fwebsocket-blocked-sending-cookie-as-third-party'; readyState 0.
+PASS Connection was allowed (request did not contain cookies).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

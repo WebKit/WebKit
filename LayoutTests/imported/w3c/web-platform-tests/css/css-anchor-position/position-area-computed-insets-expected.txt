@@ -1,0 +1,3 @@
+
+PASS position-area does not affect insets at computed value time
+

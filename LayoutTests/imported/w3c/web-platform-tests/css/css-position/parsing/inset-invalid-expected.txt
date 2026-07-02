@@ -1,0 +1,24 @@
+
+PASS e.style['inset-block-start'] = "0deg" should not set the property value
+PASS e.style['inset-block-start'] = "calc(20deg)" should not set the property value
+PASS e.style['inset-block-start'] = "10" should not set the property value
+PASS e.style['inset-block-end'] = "0deg" should not set the property value
+PASS e.style['inset-block-end'] = "calc(20deg)" should not set the property value
+PASS e.style['inset-block-end'] = "10" should not set the property value
+PASS e.style['inset-inline-start'] = "0deg" should not set the property value
+PASS e.style['inset-inline-start'] = "calc(20deg)" should not set the property value
+PASS e.style['inset-inline-start'] = "10" should not set the property value
+PASS e.style['inset-inline-end'] = "0deg" should not set the property value
+PASS e.style['inset-inline-end'] = "calc(20deg)" should not set the property value
+PASS e.style['inset-inline-end'] = "10" should not set the property value
+PASS e.style['inset-block'] = "0deg" should not set the property value
+PASS e.style['inset-block'] = "calc(20deg)" should not set the property value
+PASS e.style['inset-block'] = "10" should not set the property value
+PASS e.style['inset-block'] = "inherit auto" should not set the property value
+PASS e.style['inset-block'] = "inherit inherit" should not set the property value
+PASS e.style['inset-inline'] = "0deg" should not set the property value
+PASS e.style['inset-inline'] = "calc(20deg)" should not set the property value
+PASS e.style['inset-inline'] = "10" should not set the property value
+PASS e.style['inset-inline'] = "inherit auto" should not set the property value
+PASS e.style['inset-inline'] = "inherit inherit" should not set the property value
+

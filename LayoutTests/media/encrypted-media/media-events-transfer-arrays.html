@@ -1,0 +1,23 @@
+<script>
+ try
+ {
+     let arr = new Uint8Array();
+     arr.buffer.transfer();
+     let event = new WebKitMediaKeyNeededEvent('', { initData: arr});
+     event.initData;
+ }
+ catch {};
+ try {
+     let arr = new Uint8Array();
+     arr.buffer.transfer();
+     let event = new WebKitMediaKeyMessageEvent('', { message: arr, destinationURL: ""});
+     event.message;
+ }
+ catch {};
+
+ if (window.testRunner)
+     testRunner.dumpAsText();
+</script>
+<body>
+    This test passes if it doesn't crash.
+</body>

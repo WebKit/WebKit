@@ -1,0 +1,7 @@
+
+PASS e.style['content-visibility'] = "visible auto" should not set the property value
+PASS e.style['content-visibility'] = "foo-bar" should not set the property value
+PASS e.style['content-visibility'] = "foo bar baz" should not set the property value
+PASS e.style['content-visibility'] = "hidden visible" should not set the property value
+PASS e.style['content-visibility'] = "invisible invisible invisible" should not set the property value
+

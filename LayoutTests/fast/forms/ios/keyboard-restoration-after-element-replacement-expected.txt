@@ -1,0 +1,19 @@
+Test keyboard restoration when input elements are replaced during the same presentation update.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isShowingKeyboard is true
+PASS isShowingKeyboard is true
+PASS isShowingKeyboard is false
+PASS isShowingKeyboard is true
+PASS isShowingKeyboard is false
+PASS isShowingKeyboard is true
+PASS isShowingKeyboard is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

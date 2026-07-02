@@ -1,0 +1,17 @@
+Tests for the WI.DOMNode model object.
+
+
+== Running test suite: WI.DOMNode
+-- Running test case: WI.DOMNode.attributes
+id="test-id"
+class="test-class"
+data-item="test-data"
+
+-- Running test case: WI.DOMNode.querySelector
+Calling querySelector("#test-id") on document node.
+PASS: `querySelector("#test-id")` should return a WI.DOMNode
+Calling querySelector("#non-existent-id") on document node.
+PASS: `querySelector("#non-existent-id")` should return null.
+Calling querySelector("^\_(invalid selector)_/^") on document node.
+PASS: `querySelector` with an invalid selector should throw a SyntaxError.
+

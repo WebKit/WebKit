@@ -1,0 +1,74 @@
+/*
+ *  Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "modules/congestion_controller/rtp/control_handler.h"
+
+#include <optional>
+
+#include "api/sequence_checker.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "modules/pacing/pacing_controller.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+
+namespace webrtc {
+
+void CongestionControlHandler::SetTargetRate(
+    TargetTransferRate new_target_rate) {
+  RTC_DCHECK_RUN_ON(&sequenced_checker_);
+  RTC_CHECK(new_target_rate.at_time.IsFinite());
+  last_incoming_ = new_target_rate;
+}
+
+void CongestionControlHandler::SetNetworkAvailability(bool network_available) {
+  RTC_DCHECK_RUN_ON(&sequenced_checker_);
+  network_available_ = network_available;
+}
+
+void CongestionControlHandler::SetPacerQueue(TimeDelta expected_queue_time) {
+  RTC_DCHECK_RUN_ON(&sequenced_checker_);
+  pacer_expected_queue_ms_ = expected_queue_time.ms();
+}
+
+std::optional<TargetTransferRate> CongestionControlHandler::GetUpdate() {
+  RTC_DCHECK_RUN_ON(&sequenced_checker_);
+  if (!last_incoming_.has_value())
+    return std::nullopt;
+  TargetTransferRate new_outgoing = *last_incoming_;
+  DataRate log_target_rate = new_outgoing.target_rate;
+  bool pause_encoding = false;
+  if (!network_available_) {
+    pause_encoding = true;
+  } else if (pacer_expected_queue_ms_ >
+             PacingController::kMaxExpectedQueueLength.ms()) {
+    pause_encoding = true;
+  }
+  if (pause_encoding)
+    new_outgoing.target_rate = DataRate::Zero();
+  if (!last_reported_ ||
+      last_reported_->target_rate != new_outgoing.target_rate ||
+      (!new_outgoing.target_rate.IsZero() &&
+       (last_reported_->network_estimate.loss_rate_ratio !=
+            new_outgoing.network_estimate.loss_rate_ratio ||
+        last_reported_->network_estimate.round_trip_time !=
+            new_outgoing.network_estimate.round_trip_time))) {
+    if (encoder_paused_in_last_report_ != pause_encoding)
+      RTC_LOG(LS_INFO) << "Bitrate estimate state changed, BWE: "
+                       << ToString(log_target_rate) << ".";
+    encoder_paused_in_last_report_ = pause_encoding;
+    last_reported_ = new_outgoing;
+    return new_outgoing;
+  }
+  return std::nullopt;
+}
+
+}  // namespace webrtc

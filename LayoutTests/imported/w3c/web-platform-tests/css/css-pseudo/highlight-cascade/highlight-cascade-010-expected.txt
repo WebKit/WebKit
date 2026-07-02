@@ -1,0 +1,4 @@
+Text wth a spelling error
+
+PASS the custom property receives its initial value from a deferred registration
+

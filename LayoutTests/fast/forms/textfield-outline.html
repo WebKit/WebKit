@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <script type="text/javascript" src="../../resources/ui-helper.js"></script>
+        <script>
+        async function test()
+        {
+            var tf = document.getElementById('tf');
+            tf.focus();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                await UIHelper.keyDown("a");
+                await UIHelper.keyDown("b");
+                await UIHelper.keyDown("c");
+                testRunner.notifyDone();
+            }
+        }
+        </script>
+    </head>
+    <body onload="test()">
+        This tests that a negative outline-offset won't get in the way of a cursor in a text control.<br>
+        <input id="tf" style="font-size: 20px; border: solid thin black;" value="This tests that typing doesn't cut holes in the focus outline"></input>
+    </body>
+</html>

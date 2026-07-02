@@ -1,0 +1,13 @@
+This tests text alternative calculation from label with an embedded listbox.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test 1: AXTitle: Flash the screen 2 times.
+Test 2: AXTitle: Flash the screen 2 times.
+Test 3: AXTitle: Flash the screen 2 times.
+Test 4: AXTitle: Flash the screen 2 times.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

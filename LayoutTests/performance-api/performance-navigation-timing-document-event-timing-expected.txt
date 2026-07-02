@@ -1,0 +1,19 @@
+PerformanceNavigationTiming document event timing attributes should be non-zero after load.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS entries.length is 1
+PASS nav.domInteractive is >= 1
+PASS nav.domContentLoadedEventStart is >= 1
+PASS nav.domContentLoadedEventEnd is >= 1
+PASS nav.domComplete is >= 1
+PASS nav.loadEventStart is >= 1
+PASS nav.domContentLoadedEventStart is >= nav.domInteractive
+PASS nav.domContentLoadedEventEnd is >= nav.domContentLoadedEventStart
+PASS nav.domComplete is >= nav.domContentLoadedEventEnd
+PASS nav.loadEventStart is >= nav.domComplete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

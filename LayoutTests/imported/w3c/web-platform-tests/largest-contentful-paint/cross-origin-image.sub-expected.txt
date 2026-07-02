@@ -1,0 +1,4 @@
+
+
+PASS Cross-origin image is observable, with renderTime equal to 0.
+

@@ -1,0 +1,18 @@
+<style>
+#popover {
+  display: block;
+  position: static;
+}
+
+#popover:popover-open {
+  position: fixed;
+}
+</style>
+<div id="popover" popover>PASS if no crash in debug</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+popover.showPopover();
+</script>

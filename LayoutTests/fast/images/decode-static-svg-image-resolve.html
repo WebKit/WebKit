@@ -1,0 +1,36 @@
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+</style>
+<body>
+    <p>This tests passes if two green rectangles are drawn.</p>
+    <svg width="100" height="100">
+        <image width="100%" height="100%"/>
+    </svg>
+    <canvas></canvas>
+    <script>
+        function drawImageToCanvas(image, canvas) {
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+        if (window.internals && window.testRunner) {
+            testRunner.waitUntilDone();
+            internals.clearMemoryCache();
+        }
+
+        (async () => {
+            let image = document.querySelector('image');
+            image.setAttribute("href", "resources/green-400x400.png");
+
+            await image.decode();
+            drawImageToCanvas(image, document.querySelector("canvas"));
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        })();
+    </script>
+</body>

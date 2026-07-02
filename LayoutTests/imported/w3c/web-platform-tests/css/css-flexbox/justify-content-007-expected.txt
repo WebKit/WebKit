@@ -1,0 +1,5 @@
+Pass condition: orange square is vertically centered in the black box.
+Chrome 112 and Safari 16.4 fail. Firefox 111 passes.
+
+PASS .flexitem + .flexitem 1
+

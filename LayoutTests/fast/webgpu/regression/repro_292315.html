@@ -1,0 +1,59 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  async function window0() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let vertexModule = device.createShaderModule({
+      code: `
+@group(0) @binding(10) var sam0: sampler;
+@group(0) @binding(50) var sam1: sampler;
+
+@vertex
+fn vertex0() -> @builtin(position) vec4f {
+  _ = sam0;
+  _ = sam1;
+  return vec4();
+}
+`,
+    });
+    let fragmentModule = device.createShaderModule({
+      code: `
+@group(0) @binding(0) var<storage, read_write> buffer0: array<u32>;
+@group(0) @binding(9) var sam0: sampler;
+
+@fragment
+fn fragment0() -> @location(0) vec4f {
+  _ = buffer0[0];
+  _ = sam0;
+  return vec4();
+}
+`,
+    });
+    let pipeline = device.createRenderPipeline({
+      layout: 'auto',
+      fragment: {module: fragmentModule, targets: [{format: 'bgra8unorm'}]},
+      vertex: {module: vertexModule},
+    });
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+  }
+
+  onload = async () => {
+    try {
+      await window0();
+    } catch (e) {
+      log('error');
+      log(e);
+    }
+    globalThis.testRunner?.dumpAsText();
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

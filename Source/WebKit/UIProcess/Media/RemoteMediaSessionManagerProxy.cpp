@@ -1,0 +1,309 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RemoteMediaSessionManagerProxy.h"
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
+#include "MessageSenderInlines.h"
+#include "RemoteMediaSessionManagerMessages.h"
+#include "RemoteMediaSessionManagerProxyMessages.h"
+#include "RemoteMediaSessionProxy.h"
+#include "RemoteMediaSessionState.h"
+#include "SharedPreferencesForWebProcess.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+#include <WebCore/PlatformMediaSessionInterface.h>
+#include <WebCore/PlatformMediaSessionManager.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+
+#if PLATFORM(COCOA)
+class RemoteMediaSessionManagerAudioHardwareListener final
+    : public WebCore::AudioHardwareListener
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaSessionManagerAudioHardwareListener> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManagerAudioHardwareListener);
+public:
+    static Ref<RemoteMediaSessionManagerAudioHardwareListener> create(WebCore::AudioHardwareListener::Client& client)
+    {
+        return adoptRef(*new RemoteMediaSessionManagerAudioHardwareListener(client));
+    }
+    ~RemoteMediaSessionManagerAudioHardwareListener() = default;
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+
+    RemoteMediaSessionManagerAudioHardwareListener(WebCore::AudioHardwareListener::Client& client)
+        : WebCore::AudioHardwareListener(client)
+    {
+    }
+
+    void audioHardwareDidBecomeActive()
+    {
+        setHardwareActivity(WebCore::AudioHardwareActivityType::IsActive);
+        m_client.audioHardwareDidBecomeActive();
+    }
+
+    void audioHardwareDidBecomeInactive()
+    {
+        setHardwareActivity(WebCore::AudioHardwareActivityType::IsInactive);
+        m_client.audioHardwareDidBecomeInactive();
+    }
+
+    void audioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
+    {
+        setSupportedBufferSizes({ bufferSizeMinimum, bufferSizeMaximum });
+        m_client.audioOutputDeviceChanged();
+    }
+};
+#endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerAudioHardwareListener);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerProxy);
+
+RefPtr<RemoteMediaSessionManagerProxy> RemoteMediaSessionManagerProxy::create(WebPageProxy& page)
+{
+    return adoptRef(new RemoteMediaSessionManagerProxy(page));
+}
+
+RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy(WebPageProxy& page)
+    : REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS(page.webPageIDInMainFrameProcess())
+    , m_page(page)
+    , m_pageID(page.webPageIDInMainFrameProcess())
+    , m_process(page.legacyMainFrameProcess())
+{
+#if USE(AUDIO_SESSION)
+    AudioSession::setSharedSession(*this);
+#endif
+
+#if PLATFORM(COCOA)
+    WebCore::AudioHardwareListener::setCreationFunction([protectedThis = Ref { *this }] (WebCore::AudioHardwareListener::Client& client) {
+        return protectedThis->ensureAudioHardwareListenerProxy(client);
+    });
+#endif
+
+    m_process->addMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_pageID, *this);
+}
+
+RemoteMediaSessionManagerProxy::~RemoteMediaSessionManagerProxy()
+{
+    m_process->removeMessageReceiver(Messages::RemoteMediaSessionManagerProxy::messageReceiverName(), m_pageID);
+}
+
+void RemoteMediaSessionManagerProxy::addMediaSession(RemoteMediaSessionState&& state)
+{
+    auto addResult = m_sessionProxies.ensure(state.sessionIdentifier, [&] {
+        return RemoteMediaSessionProxy::create(state, *this);
+    });
+
+    Ref session = addResult.iterator->value.get();
+    if (!addResult.isNewEntry)
+        session->updateState(state);
+
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
+}
+
+void RemoteMediaSessionManagerProxy::removeMediaSession(RemoteMediaSessionState&& state)
+{
+    if (RefPtr session = findAndUpdateSession(state))
+        removeSession(*session);
+}
+
+void RemoteMediaSessionManagerProxy::setCurrentMediaSession(RemoteMediaSessionState&& state)
+{
+    if (RefPtr session = findAndUpdateSession(state))
+        setCurrentSession(*session);
+}
+
+void RemoteMediaSessionManagerProxy::updateMediaSessionState()
+{
+    updateSessionState();
+}
+
+void RemoteMediaSessionManagerProxy::mediaSessionStateChanged(WebKit::RemoteMediaSessionState&& state)
+{
+    findAndUpdateSession(state);
+}
+
+void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSessionInterface& session)
+{
+    if (!m_isInSetCurrentSession) {
+        SetForScope isInSetCurrentSessionRestorer(m_isInSetCurrentSession, true);
+
+        RefPtr sessionProxy = m_sessionProxies.get(session.mediaSessionIdentifier());
+        ASSERT(sessionProxy);
+        if (!sessionProxy)
+            return;
+
+        RefPtr page = m_page.get();
+        if (!page)
+            return;
+
+        page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            std::optional<WebCore::MediaSessionIdentifier> sessionIdentifier;
+            if (sessionProxy->pageIdentifier() == pageID)
+                sessionIdentifier = session.mediaSessionIdentifier();
+            webProcess.send(Messages::RemoteMediaSessionManager::SetCurrentMediaSession(sessionIdentifier), pageID);
+        });
+    }
+
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
+}
+
+void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(RemoteMediaSessionState&& state, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr session = findAndUpdateSession(state);
+    if (!session) {
+        completionHandler(false);
+        return;
+    }
+
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(completionHandler));
+}
+
+void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addRestriction(type, restrictions);
+}
+
+void RemoteMediaSessionManagerProxy::removeMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::removeRestriction(type, restrictions);
+}
+
+void RemoteMediaSessionManagerProxy::resetMediaSessionRestrictions()
+{
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::resetRestrictions();
+}
+
+#if USE(AUDIO_SESSION)
+void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
+{
+    m_audioConfiguration = WTF::move(configuration);
+}
+
+void RemoteMediaSessionManagerProxy::setCategory(CategoryType type, Mode mode, WebCore::RouteSharingPolicy policy)
+{
+#if PLATFORM(COCOA)
+    if (type == m_category && mode == m_mode && policy == m_routeSharingPolicy)
+        return;
+
+    m_category = type;
+    m_mode = mode;
+    m_routeSharingPolicy = policy;
+
+    send(Messages::RemoteMediaSessionManager::SetAudioSessionCategory(type, mode, policy), { });
+#else
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(policy);
+#endif
+}
+
+Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool active)
+{
+    if (active && m_isInterruptedForTesting)
+        return SetActivePromise::createAndReject();
+
+/*
+    FIXME: A call to `AudioSession::singleton().tryToSetActive` in the WebProcess ends up in
+    FIXME: `RemoteAudioSession::tryToSetActiveInternal`, which sends async IPC to the GPU process.
+    FIXME: Now that the chain is async, we could restructure to send async IPC from the UI process
+    FIXME: to the WebProcess as well.
+    auto sendResult = sendSync(Messages::RemoteMediaSessionManager::TryToSetAudioSessionActive(active), { });
+    auto [succeeded] = sendResult.takeReplyOr(false);
+ */
+    return SetActivePromise::createAndResolve();
+}
+
+void RemoteMediaSessionManagerProxy::setPreferredBufferSize(size_t size)
+{
+    if (m_audioConfiguration.preferredBufferSize == size)
+        return;
+
+    m_audioConfiguration.preferredBufferSize = size;
+    send(Messages::RemoteMediaSessionManager::SetAudioSessionPreferredBufferSize(size), { });
+}
+#endif
+
+#if PLATFORM(COCOA)
+void RemoteMediaSessionManagerProxy::remoteAudioHardwareDidBecomeActive()
+{
+    if (m_audioHardwareListenerProxy)
+        Ref { *m_audioHardwareListenerProxy }->audioHardwareDidBecomeActive();
+}
+
+void RemoteMediaSessionManagerProxy::remoteAudioHardwareDidBecomeInactive()
+{
+    if (m_audioHardwareListenerProxy)
+        Ref { *m_audioHardwareListenerProxy }->audioHardwareDidBecomeInactive();
+}
+
+void RemoteMediaSessionManagerProxy::remoteAudioOutputDeviceChanged(uint64_t bufferSizeMinimum, uint64_t bufferSizeMaximum)
+{
+    if (m_audioHardwareListenerProxy)
+        Ref { *m_audioHardwareListenerProxy }->audioOutputDeviceChanged(bufferSizeMinimum, bufferSizeMaximum);
+}
+
+Ref<RemoteMediaSessionManagerAudioHardwareListener> RemoteMediaSessionManagerProxy::ensureAudioHardwareListenerProxy(WebCore::AudioHardwareListener::Client& client)
+{
+    if (!m_audioHardwareListenerProxy)
+        m_audioHardwareListenerProxy = RemoteMediaSessionManagerAudioHardwareListener::create(client);
+    return *m_audioHardwareListenerProxy;
+}
+#endif
+
+RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManagerProxy::findAndUpdateSession(RemoteMediaSessionState& state)
+{
+    RefPtr session = firstSessionMatching([&state](auto& session) {
+        return session.mediaSessionIdentifier() == state.sessionIdentifier;
+    }).get();
+
+    if (session)
+        downcast<RemoteMediaSessionProxy>(session)->updateState(state);
+
+    return session;
+}
+
+IPC::Connection* RemoteMediaSessionManagerProxy::messageSenderConnection() const
+{
+    return &m_process->connection();
+}
+
+uint64_t RemoteMediaSessionManagerProxy::messageSenderDestinationID() const
+{
+    return m_pageID.toUInt64();
+}
+
+std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionManagerProxy::sharedPreferencesForWebProcess() const
+{
+    return m_process->sharedPreferencesForWebProcess();
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

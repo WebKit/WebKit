@@ -1,0 +1,11 @@
+This test verifies that unparenting, reparenting and then making the web view first responder while immediately after focusing an input field does not either cause a crash, or a hang when subsequently attempting to interact with the page. To test manually, tap the top field, dismiss the keyboard, and then tap the bottom field. The test passes if the UI process does not crash or hang.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is normalInput
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

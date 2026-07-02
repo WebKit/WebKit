@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "HTMLSlotElement.h"
+#include "ShadowRoot.h"
+#include "StyleResolver.h"
+#include "StyleScope.h"
+#include "StyleScopeRuleSets.h"
+
+namespace WebCore {
+namespace Style {
+
+template <typename TraverseFunction>
+inline void traverseRuleFeaturesInShadowTree(Element& element, TraverseFunction&& function)
+{
+    if (!element.shadowRoot())
+        return;
+
+    auto& shadowRuleSets = element.shadowRoot()->styleScope().resolver().ruleSets();
+    bool hasHostPseudoClassRule = shadowRuleSets.hasMatchingUserOrAuthorStyle([&] (auto& style) {
+        return !style.hostPseudoClassRules().isEmpty() || style.hasHostPseudoClassRulesMatchingInShadowTree();
+    });
+    if (!hasHostPseudoClassRule)
+        return;
+
+    function(shadowRuleSets.features(), false);
+}
+
+template <typename TraverseFunction>
+inline void traverseRuleFeaturesForSlotted(Element& element, TraverseFunction&& function)
+{
+    auto assignedShadowRoots = assignedShadowRootsIfSlotted(element);
+    for (auto& assignedShadowRoot : assignedShadowRoots) {
+        auto& ruleSets = assignedShadowRoot->styleScope().resolver().ruleSets();
+        if (!ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return !style.slottedPseudoElementRules().isEmpty(); }))
+            continue;
+
+        function(ruleSets.features(), false);
+    }
+}
+
+template <typename TraverseFunction>
+inline void traverseRuleFeatures(Element& element, TraverseFunction&& function)
+{
+    auto& ruleSets = element.styleResolver().ruleSets();
+
+    auto mayAffectShadowTree = [&] {
+        if (element.shadowRoot() && element.shadowRoot()->isUserAgentShadowRoot()) {
+            if (ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return style.hasUserAgentPartRules(); }))
+                return true;
+#if ENABLE(VIDEO)
+            if (element.isMediaElement() && ruleSets.hasMatchingUserOrAuthorStyle([] (auto& style) { return !style.cuePseudoRules().isEmpty(); }))
+                return true;
+#endif
+        }
+        return false;
+    };
+
+    function(ruleSets.features(), mayAffectShadowTree());
+
+    traverseRuleFeaturesInShadowTree(element, function);
+    traverseRuleFeaturesForSlotted(element, function);
+
+    // Ensure that the containing tree resolver also exists so it doesn't get created in the middle of invalidation.
+    if (element.isInShadowTree() && element.containingShadowRoot()) {
+        auto& host = *element.containingShadowRoot()->host();
+        if (host.isConnected())
+            Style::Scope::forNode(host).resolver();
+    }
+}
+
+}
+}
+

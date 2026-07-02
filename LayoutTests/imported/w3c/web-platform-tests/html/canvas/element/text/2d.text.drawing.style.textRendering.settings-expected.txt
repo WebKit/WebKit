@@ -1,0 +1,6 @@
+2d.text.drawing.style.textRendering.settings
+Testing basic functionalities of textRendering in Canvas
+Actual output:
+
+FAIL Testing basic functionalities of textRendering in Canvas assert_equals: ctx.textRendering === "auto" (got [undefined], expected auto[string]) expected (string) "auto" but got (undefined) undefined
+

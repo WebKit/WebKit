@@ -1,0 +1,24 @@
+one
+two
+three
+four
+one
+two
+three
+four
+
+ one
+ two
+
+ three
+ four
+
+ one
+  two
+
+   three
+    four
+
+PASS innerText should be the same for the pre-line and pre examples
+FAIL innerText has collapsed whitespace but preserved newlines with pre-line assert_equals: expected "\none\ntwo\n\nthree\nfour\n" but got "\n one\n two\n \n three\n four\n"
+

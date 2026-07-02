@@ -1,0 +1,10 @@
+There was a bug that users could input text longer than maxlength via IME. This test confirms it was fixed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value.substring(input.selectionStart, input.selectionEnd) is "ab"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

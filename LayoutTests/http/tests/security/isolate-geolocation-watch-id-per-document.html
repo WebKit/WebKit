@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that when the website's data is cleared, the watchID is reset, too.");
+
+function initGeolocation() {
+    if (window.testRunner) {
+        testRunner.setGeolocationPermission(true);
+        testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
+    }
+}
+
+// watchId is 1-indexed, so we initialize index 0 as true
+let watchPositionsSuccessful = [ true, false, false ];
+let popup;
+let popupCount = 0;
+
+const iframeResource = "resources/popup-watchid.html";
+
+let i = 0;
+
+function maybeOpenPopup() {
+    if (watchPositionsSuccessful.every((success) => success))
+        popup = window.open(iframeResource);
+}
+
+function getWatchPosition(i) {
+    return navigator.geolocation.watchPosition(function() {
+        testPassed(`Success callback ${i} invoked`);
+        watchPositionsSuccessful[i] = true;
+        maybeOpenPopup();
+    }, function(err) {
+        testFailed(`Error callback ${i} invoked unexpectedly`);
+        finishJSTest();
+    });
+}
+
+initGeolocation();
+
+let watchId1 = getWatchPosition(++i);
+let watchId2 = getWatchPosition(++i);
+expectTrue(watchId2 == 2, `watchID should increment for every request: ${watchId2} vs 2`);
+
+window.addEventListener("message", (e) => {
+    expectTrue(e.data == 1, `Every Document should get its own watchID counter: ${e.data} vs 1`);
+    popup.close();
+    switch (popupCount) {
+    case 0: {
+        popup = window.open(iframeResource);
+        break;
+    }
+    case 1: {
+        popup = window.open(`http://localhost:8000/security/${iframeResource}`);
+        break;
+    }
+    case 2: {
+        finishJSTest();
+        break;
+    }
+    }
+    popupCount++;
+});
+
+window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

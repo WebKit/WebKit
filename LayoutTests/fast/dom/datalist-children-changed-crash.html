@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function runTest() {
+    document.all.length;
+    document.all[0];
+    span.cloneNode(false);
+    document.getElementById('datalist').innerHTML = '';
+    if (window.GCController)
+        GCController.collect();
+    document.all.length;
+    document.body.innerHTML = 'This test passes if WebKit does not hit any ASAN assertions.<br>PASS';
+}
+</script>
+<body onload=runTest()><span id="span">U<datalist id="datalist"><span>

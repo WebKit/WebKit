@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <div id="text" slot="slot-name" contenteditable="true">
+        <span id="target1">The</span> quick brown <span id="target2">fox</span> jumps over the lazy <span id="target3">dog.</span>
+    </div>
+</div>
+<script>
+const content  = document.getElementById("test-content");
+const shadow = content.attachShadow({ mode: "open" });
+const slot = document.createElement("slot");
+slot.name = "slot-name";
+shadow.appendChild(slot);
+</script>
+
+<script>
+// https://bugs.webkit.org/show_bug.cgi?id=285848
+var output = "Tests that a Replace text operation correctly replaces text in a slotted light DOM div rendered via the shadow DOM.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text = accessibilityController.accessibleElementById("text");
+    var operationResult;
+    setTimeout(async function() {
+        // Validate that the correct replacement is performed at the start of the contenteditable.
+        var markers = [await selectElementTextById("target1")];
+        await waitForNotification(text, "AXSelectedTextChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, "THE", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'THE'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: THE quick brown fox jumps over the lazy dog.'");
+
+        // Validate that the correct replacement is performed in the middle of the contenteditable.
+        markers = [await selectElementTextById("target2")];
+        await waitForNotification(text, "AXSelectedTextChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, "fox named Finn", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'fox named Finn'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: THE quick brown fox named Finn jumps over the lazy dog.'");
+
+        // Validate that the correct replacement is performed at the end of the contenteditable.
+        markers = [await selectElementTextById("target3")];
+        await waitForNotification(text, "AXSelectedTextChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, "koala.", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'koala.'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: THE quick brown fox named Finn jumps over the lazy koala.'");
+
+        document.getElementById("test-content").remove();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

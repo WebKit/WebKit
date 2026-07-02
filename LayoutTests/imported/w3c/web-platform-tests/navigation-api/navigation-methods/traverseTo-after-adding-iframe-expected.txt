@@ -1,0 +1,4 @@
+
+
+PASS navigation.traverseTo() should work in an iframe that is not present in all history entries
+

@@ -1,0 +1,29 @@
+Testing the MacOSInlineMediaControls handling of placards.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+By default, no placard is shown.
+PASS mediaControls.placard is null
+mediaControls.children: ControlsBar, ControlsBar
+
+Showing the Airplay placard
+mediaControls.placard.constructor.name AirplayPlacard
+mediaControls.children: AirplayPlacard, ControlsBar, ControlsBar, LayoutNode
+
+Showing the Invalid placard, hides the controls bar
+mediaControls.placard.constructor.name InvalidPlacard
+mediaControls.children: InvalidPlacard, LayoutNode
+
+Showing the PiP placard, hides the controls bar
+mediaControls.placard.constructor.name PiPPlacard
+mediaControls.children: PiPPlacard, LayoutNode
+
+Hide placard
+PASS mediaControls.placard is null
+mediaControls.children: ControlsBar, ControlsBar, LayoutNode
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

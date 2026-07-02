@@ -1,0 +1,4 @@
+
+
+PASS scroller selects targeted area among multiple aligned areas on both axes
+

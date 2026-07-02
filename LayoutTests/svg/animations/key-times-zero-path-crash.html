@@ -1,0 +1,16 @@
+<script>
+testRunner?.waitUntilDone();
+function runTest() {
+  requestAnimationFrame(() => { requestAnimationFrame(() => { requestAnimationFrame(() => { testRunner?.notifyDone(); }) }) });
+}
+</script>
+<body onload=runTest()>
+<svg id="svg">
+  <path d="M0 0 q1 26 0 0" />
+</svg>
+<svg>
+  <use href="#svg" >
+   <animateMotion keyTimes="0;0" dur="1s" keyPoints="1;0" path="M 0,1 1,0" />
+  </use>
+</svg>
+</body>

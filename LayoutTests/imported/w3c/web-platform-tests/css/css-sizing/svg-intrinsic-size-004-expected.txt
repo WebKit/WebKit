@@ -1,0 +1,12 @@
+No intrinsic attributes:
+viewBox and height:
+viewBox and width:
+viewBox, width, height:
+Just viewBox:
+
+PASS svg 1
+PASS svg 2
+PASS svg 3
+PASS svg 4
+PASS svg 5
+

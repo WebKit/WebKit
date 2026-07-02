@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let shaderModule = device.createShaderModule({ code: `
+    struct FragmentOutput0 {
+        @location(0) f0: vec4<i32>,
+    }
+    @fragment fn fragment0() -> FragmentOutput0 {
+        return FragmentOutput0();
+    }
+    @vertex fn vertex0() -> @builtin(position) vec4f {
+        return vec4f();
+    }
+    `});
+    let sampler = device.createSampler();
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: 0, sampler: {} },
+            { binding: 1, visibility: GPUShaderStage.VERTEX, sampler: {} },
+        ],
+    });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let sampler2 = device.createSampler();
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [
+                { format: 'rgba32sint', writeMask: 0 },
+            ]
+        },
+        vertex: { module: shaderModule, buffers: [] },
+    });
+    let pipeline2 = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [
+                { format: 'rgba32sint', writeMask: 0 },
+            ]
+        },
+        vertex: { module: shaderModule, buffers: [] },
+    });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 0, resource: sampler },
+            { binding: 1, resource: sampler2 }
+        ],
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['rgba32sint'] });
+    renderBundleEncoder.setPipeline(pipeline);
+    renderBundleEncoder.setBindGroup(0, bindGroup);
+    renderBundleEncoder.setPipeline(pipeline2);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

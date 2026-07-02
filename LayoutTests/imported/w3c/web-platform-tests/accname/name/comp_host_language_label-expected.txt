@@ -1,0 +1,188 @@
+AccName: Host Language Label Tests
+
+Tests the #comp_host_language_label portions of the AccName Name Computation algorithm.
+
+HTML input with value, alt, etc.
+
+
+HTML input label/for
+
+checkbox label
+checkbox label with non-empty value
+checkbox label checked
+checkbox label checked with non-empty value
+color label
+color label with non-empty value
+date label
+date label with non-empty value
+datetime-local label
+datetime-local label with non-empty value
+email label
+email label with non-empty value
+month label
+month label with non-empty value
+number label
+number label with non-empty value
+password label
+password label with non-empty value
+radio label
+radio label with non-empty value
+range label
+range label with non-empty value
+search label
+search label with non-empty value
+tel label
+tel label with non-empty value
+textfield label
+textfield label with non-empty value
+time label
+time label with non-empty value
+url label
+url label with non-empty value
+week label
+week label with non-empty value
+HTML input label encapsulation
+
+checkbox label
+checkbox label with non-empty value
+checkbox label checked
+checkbox label checked with non-empty value
+color label
+color label with non-empty value
+date label
+date label with non-empty value
+datetime-local label
+datetime-local label with non-empty value
+email label
+email label with non-empty value
+month label
+month label with non-empty value
+number label
+number label with non-empty value
+password label
+password label with non-empty value
+radio label
+radio label with non-empty value
+range label
+range label with non-empty value
+search label
+search label with non-empty value
+tel label
+tel label with non-empty value
+textfield label
+textfield label with non-empty value
+time label
+time label with non-empty value
+url label
+url label with non-empty value
+week label
+week label with non-empty value
+HTML select
+
+select label
+select label
+HTML img/picture
+
+
+HTML fieldset/legend
+
+fieldset legend label
+
+HTML table/caption
+
+table caption label
+a	b	c
+1	2	3
+HTML input with multiple label/for
+
+textfield label 1 textfield label 2
+
+PASS html: input[type=button]
+PASS html: input[type=image]
+PASS html: input[type=reset]
+PASS html: input[type=submit]
+PASS html: label[for] input[type=checkbox]
+PASS html: label[for] input[type=checkbox][value='test']
+PASS html: label[for] input[type=checkbox][checked]
+PASS html: label[for] input[type=checkbox][checked][value='test']
+PASS html: label[for] input[type=color]
+PASS html: label[for] input[type=color][value='#999999']
+PASS html: label[for] input[type=date]
+PASS html: label[for] input[type=date][value='2025-01-01']
+PASS html: label[for] input[type=datetime-local]
+PASS html: label[for] input[type=datetime-local][value='2025-01-01T00:01']
+PASS html: label[for] input[type=email]
+PASS html: label[for] input[type=email][value='test@test.com']
+PASS html: label[for] input[type=month]
+PASS html: label[for] input[type=month][value='2025-01']
+PASS html: label[for] input[type=number]
+PASS html: label[for] input[type=number][value=2025]
+PASS html: label[for] input[type=password]
+PASS html: label[for] input[type=password][value='test']
+PASS html: label[for] input[type=radio]
+PASS html: label[for] input[type=radio][value='test']
+PASS html: label[for] input[type=range]
+PASS html: label[for] input[type=range][min=0][max=10][value=5]
+PASS html: label[for] input[type=search]
+PASS html: label[for] input[type=search][value='test']
+PASS html: label[for] input[type=tel]
+PASS html: label[for] input[type=tel][value='123-45-678']
+PASS html: label[for] input[type=text]
+PASS html: label[for] input[type=text][value='test']
+PASS html: label[for] input[type=time]
+PASS html: label[for] input[type=time][value='00:01']
+PASS html: label[for] input[type=url]
+PASS html: label[for] input[type=url][value='https://www.w3.org']
+PASS html: label[for] input[type=week]
+PASS html: label[for] input[type=week][value='2025-W01']
+PASS html: label input[type=checkbox] encapsulation
+PASS html: label input[type=checkbox][value='test'] encapsulation
+PASS html: label input[type=checkbox][checked] encapsulation
+PASS html: label input[type=checkbox][value='test'][checked] encapsulation
+PASS html: label input[type=color] encapsulation
+PASS html: label input[type=color][value='#999999'] encapsulation
+PASS html: label input[type=date] encapsulation
+PASS html: label input[type=date][value='2025-01-01'] encapsulation
+PASS html: label input[type=datetime-local] encapsulation
+PASS html: label input[type=datetime-local][value='2025-01-01T00:01'] encapsulation
+PASS html: label input[type=email] encapsulation
+PASS html: label input[type=email][value='test@test.com'] encapsulation
+PASS html: label input[type=month] encapsulation
+PASS html: label input[type=month][value='2025-01'] encapsulation
+PASS html: label input[type=number] encapsulation
+PASS html: label input[type=number][value=1] encapsulation
+PASS html: label input[type=password] encapsulation
+PASS html: label input[type=password][value='test'] encapsulation
+PASS html: label input[type=radio] encapsulation
+PASS html: label input[type=radio][value='test'] encapsulation
+PASS html: label input[type=range] encapsulation
+PASS html: label input[type=range][value='5'][min='0'][max='10'] encapsulation
+PASS html: label input[type=search] encapsulation
+PASS html: label input[type=search][value='test'] encapsulation
+PASS html: label input[type=tel] encapsulation
+PASS html: label input[type=tel][value='123-45-678'] encapsulation
+PASS html: label[for] input[type=text] encapsulation
+PASS html: label[for] input[type=text][value='test'] encapsulation
+PASS html: label input[type=time] encapsulation
+PASS html: label input[type=time][value='00:01'] encapsulation
+PASS html: label input[type=url] encapsulation
+PASS html: label input[type=url][value='https://www.w3.org'] encapsulation
+PASS html: label input[type=week] encapsulation
+PASS html: label input[type=week][value='2025-W01'] encapsulation
+PASS html: select for/id
+PASS html: select encapsulation
+PASS html: img[alt] (non-empty)
+PASS html: picture > img[alt] (non-empty)
+PASS img[alt] with single space character as name
+PASS img[alt] with single tab as name
+PASS img[alt] with new line as name
+PASS img[alt] with single space character and tab as name
+PASS img[alt] with form feed as name
+PASS img[alt] with interior single tab in the name
+PASS img[alt] with interior new line in the name
+PASS img[alt] with interior single space and tab in the name
+PASS img[alt] with interior form feed in the name
+PASS html: fieldset > legend
+PASS html: table > caption
+PASS html: multiple label elements[for]
+

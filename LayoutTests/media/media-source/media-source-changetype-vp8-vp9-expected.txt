@@ -1,0 +1,8 @@
+
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EXPECTED (video.currentTime >= '0.6') OK
+END OF TEST
+

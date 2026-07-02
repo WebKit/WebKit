@@ -1,0 +1,26 @@
+
+PASS "scrollbars" should set BarProp visibility to false
+PASS "scrollbars=yes" should set BarProp visibility to false
+PASS "scrollbars=true" should set BarProp visibility to false
+PASS "scrollbars=no" should set BarProp visibility to false
+PASS "status" should set BarProp visibility to false
+PASS "status=yes" should set BarProp visibility to false
+PASS "status=true" should set BarProp visibility to false
+PASS "status=no" should set BarProp visibility to false
+PASS "titlebar" should set BarProp visibility to false
+PASS "titlebar=yes" should set BarProp visibility to false
+PASS "titlebar=true" should set BarProp visibility to false
+PASS "titlebar=no" should set BarProp visibility to false
+PASS "close" should set BarProp visibility to false
+PASS "close=yes" should set BarProp visibility to false
+PASS "close=true" should set BarProp visibility to false
+PASS "close=no" should set BarProp visibility to false
+PASS "minimizable" should set BarProp visibility to false
+PASS "minimizable=yes" should set BarProp visibility to false
+PASS "minimizable=true" should set BarProp visibility to false
+PASS "minimizable=no" should set BarProp visibility to false
+PASS "personalbar" should set BarProp visibility to false
+PASS "personalbar=yes" should set BarProp visibility to false
+PASS "personalbar=true" should set BarProp visibility to false
+PASS "personalbar=no" should set BarProp visibility to false
+

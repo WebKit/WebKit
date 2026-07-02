@@ -1,0 +1,6 @@
+2d.text.measure.fillTextCluster-options.tentative
+Test that fillTextCluster() correctly applies the options passed as a dictionary.
+Actual output:
+
+FAIL Test that fillTextCluster() correctly applies the options passed as a dictionary. promise_test: Unhandled rejection with value: object "TypeError: tm.getTextClusters is not a function. (In 'tm.getTextClusters()', 'tm.getTextClusters' is undefined)"
+

@@ -1,0 +1,4 @@
+
+PASS Ensure XREquirectLayer init and setter parameters are validated - webgl
+PASS Ensure XREquirectLayer init and setter parameters are validated - webgl2
+

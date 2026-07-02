@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        objc-classes: [BSAuditToken]
+...

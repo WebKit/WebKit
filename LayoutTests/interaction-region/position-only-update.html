@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; padding: 0; }
+
+    .header {
+        position: relative;
+        width: 100%;
+        z-index: 1000;
+        overflow: hidden;
+    }
+    .move .header {
+        position: fixed;
+    }
+
+    .menu {
+        height: 40px;
+    }
+    .move .menu {
+        height: 0;
+    }
+
+    .content {
+        position: relative;
+        line-height: 100px;
+    }
+
+    .spacer {
+        position: fixed;
+        height: 140px;
+    }
+    .move .spacer {
+        position: relative;
+    }
+
+    .compositing {
+        position: absolute;
+        top: 200px;
+        left: 0;
+        transform: translate3d(500px, 50px, 0);
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<div class="header">
+    <div class="menu">
+    </div>
+    <div class="content">
+        Sometimes fixed
+        <a href="#">with a link!</a>
+        <div class="compositing">
+            compositing
+        </div>
+    </div>
+</div>
+<div class="spacer">
+</div>
+<div class="compositing">
+    compositing
+</div>
+
+<pre id="results"></pre>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    (async function () {
+        await UIHelper.renderingUpdate();
+        document.body.classList.add("move");
+        await UIHelper.renderingUpdate();
+        document.body.classList.remove("move");
+        await UIHelper.renderingUpdate();
+
+        if (window.internals)
+            results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    })();
+</script>
+</body>
+</html>

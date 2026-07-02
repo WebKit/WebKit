@@ -1,0 +1,12 @@
+<script>
+window.internals.settings.setScreenCaptureEnabled(true);
+var streamPromise = null;
+window.internals.withUserGesture(() => {
+    streamPromise = navigator.mediaDevices.getDisplayMedia({ video: true });
+});
+streamPromise
+    .then((stream) => {
+         window.parent.postMessage('success', '*');
+         stream.getTracks().forEach(track => track.stop());
+     }).catch(error => { window.parent.postMessage(`fail (${error})`, '*'); });
+</script>

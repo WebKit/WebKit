@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<script src="full-screen-test.js"></script>
+<iframe id="iframe"></iframe>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    addEventListener("load", async () => {
+        function loadiframe() {
+            return new Promise(function(resolve) {
+                var frame = document.getElementById('iframe');
+                frame.srcdoc = '<button id="iframebutton" onclick="document.webkitCancelFullScreen();parent.iframe.remove();">Cancel fullscreen</button>';
+                frame.onload = () => {
+                    internals.withUserGesture(() => {
+                        frame.contentWindow.document.getElementById("iframebutton").click();
+                        resolve();
+                    });
+                };
+            });
+        }
+
+        function gofullscreen() {
+            return new Promise(function(resolve) {
+                internals.withUserGesture(async () => {
+                    await document.documentElement.requestFullscreen();
+                    await loadiframe();
+                    setTimeout(resolve, 100);
+                });
+            });
+        }
+        await gofullscreen();
+
+        consoleWrite("iframe closed with no crash");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; padding: 0; }
+#input {
+    position: absolute;
+    left: 50px;
+    top: 30px;
+    width: 200px;
+    height: 30px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+#submit {
+    position: absolute;
+    left: 50px;
+    top: 80px;
+}
+</style>
+</head>
+<body>
+<form id="form">
+    <input id="input" type="text" required>
+    <input id="submit" type="submit" value="Submit">
+</form>
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data === "submit") {
+        document.getElementById("submit").click();
+        requestAnimationFrame(() => parent.postMessage("submitted", "*"));
+    }
+});
+</script>
+</body>
+</html>

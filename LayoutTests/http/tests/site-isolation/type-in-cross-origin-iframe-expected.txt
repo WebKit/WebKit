@@ -1,0 +1,11 @@
+Tests that focusing an input field inside a cross-origin iframe brings up the keyboard and allows typing when site isolation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Keyboard is visible after tapping input in cross-origin iframe.
+PASS typedValue is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

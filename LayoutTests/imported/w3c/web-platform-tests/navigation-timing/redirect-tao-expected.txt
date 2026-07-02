@@ -1,0 +1,9 @@
+
+
+FAIL Exposed when a cross-origin redirect opts in to the destination origin assert_equals: redirectCount expected 1 but got 0
+FAIL Exposed when a cross-origin redirect opts in with a wildcard assert_equals: redirectCount expected 1 but got 0
+FAIL Exposed when every redirect in the chain opts in to the destination origin assert_equals: redirectCount expected 2 but got 0
+PASS Hidden when the redirect opts in to a non-destination origin
+PASS Hidden when only part of the chain opts in to the destination origin
+PASS Hidden for a no-referrer navigation even when the redirect opts in
+

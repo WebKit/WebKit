@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<script>
+    description("This tests that we can get synthesizer voices.");
+
+    window.jsTestIsAsync = true;
+
+    var speech = window.speechSynthesis;
+    var timeoutID;
+
+    function runTest() {
+        clearTimeout(timeoutID);
+        var list = speech.getVoices();
+
+        foundDefaultVoice = false;
+        foundEnglishVoice = false;
+        voiceCount = list.length;
+
+        for (let k = 0; k < list.length; k++) {
+            let voice = list[k];
+            if (voice.lang == "en-US")
+                foundEnglishVoice = true;
+            if (voice.default)
+                foundDefaultVoice = true;
+        }
+
+        shouldBeTrue(`voiceCount >= ${window.internals.minimumExpectedVoiceCount}`);
+        shouldBeTrue("foundEnglishVoice");
+        shouldBeTrue("foundDefaultVoice");
+
+        finishJSTest();
+    }
+
+    speech.onvoiceschanged = runTest;
+
+    var list = speech.getVoices();
+    if (list.length > 0)
+        runTest();
+    else
+        timeoutID = setTimeout(runTest, 1000);
+
+</script>
+
+</body>
+</html>

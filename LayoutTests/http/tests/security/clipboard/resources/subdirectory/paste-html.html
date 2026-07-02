@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+let loadedContent = new Map();
+onmessage = function (event) {
+    if (event.data.type == 'paste') {
+        document.body.focus();
+        document.execCommand('selectAll');
+        if (window.testRunner)
+            document.execCommand('paste');
+    } else if (event.data.type == 'contentLoaded') {
+        for (const frame of Array.from(document.body.querySelectorAll('iframe'))) {
+            if (frame.contentWindow === event.source) {
+                loadedContent.set(frame, event.data);
+                break;
+            }
+        }
+        checkIfLoadCompleted();
+    }
+}
+
+function doPaste(event) {
+    top.postMessage({type: 'pasted', html: event.clipboardData.getData('text/html')}, '*');
+}
+
+function checkIfLoadCompleted() {
+    const frames = Array.from(document.body.querySelectorAll('iframe'));
+    if (loadedContent.size < frames.length)
+        return;
+
+    top.postMessage({
+        type: 'checkedState',
+        html: document.body.innerHTML,
+        frames: frames.map((frame) => {
+            const content = loadedContent.get(frame);
+            return {
+                src: frame.src,
+                class: frame.className,
+                canAccessContentDocument: !!frame.contentDocument,
+                imageSrc: content.imageSrc,
+                imageWidth: content.imageWidth,
+            }
+        })}, '*');
+}
+
+</script>
+<body onpaste="doPaste(event)" contenteditable>
+Paste here.
+</body>
+</html>

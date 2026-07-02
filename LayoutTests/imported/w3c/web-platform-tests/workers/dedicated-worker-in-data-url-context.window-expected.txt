@@ -1,0 +1,6 @@
+
+PASS Create a dedicated worker in a data url frame
+PASS Create a dedicated worker in a data url dedicated worker
+PASS Create a data url dedicated worker in a data url frame
+PASS Create a data url dedicated worker in a data url dedicated worker
+

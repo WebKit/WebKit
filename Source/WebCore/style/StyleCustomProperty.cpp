@@ -1,0 +1,245 @@
+/*
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleCustomProperty.h"
+
+#include "CSSPrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSSerializationContext.h"
+#include "CSSStringValue.h"
+#include "CSSSubstitutionValue.h"
+#include "CSSTokenizer.h"
+#include "CSSValueList.h"
+#include "CSSValuePool.h"
+#include "DeprecatedCSSOMValueList.h"
+#include "StyleComputedStyle.h"
+#include "StylePrimitiveNumericTypes+CSSValueCreation.h"
+#include "StylePrimitiveNumericTypes+DeprecatedCSSOMValueCreation.h"
+#include "StylePrimitiveNumericTypes+Serialization.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/NeverDestroyed.h>
+
+namespace WebCore {
+namespace Style {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomProperty);
+
+bool CustomProperty::operator==(const CustomProperty& other) const
+{
+    return m_isAttrTainted == other.m_isAttrTainted && valueEquals(other);
+}
+
+bool CustomProperty::valueEquals(const CustomProperty& other) const
+{
+    if (m_name != other.m_name || m_value.index() != other.m_value.index())
+        return false;
+
+    return WTF::switchOn(m_value,
+        [&](const GuaranteedInvalid&) {
+            return true;
+        },
+        [&](const Ref<CSSVariableData>& value) {
+            return arePointingToEqualData(value, std::get<Ref<CSSVariableData>>(other.m_value));
+        },
+        [&](const Value& value) {
+            return value == std::get<Value>(other.m_value);
+        },
+        [&](const ValueList& value) {
+            return value == std::get<ValueList>(other.m_value);
+        }
+    );
+}
+
+Ref<CSSValue> CustomProperty::propertyValue(CSSValuePool& pool, const Style::ComputedStyle& style) const
+{
+    auto convertValue = [&](const Value& value) {
+        return WTF::switchOn(value,
+            [&](const auto& value) -> Ref<CSSValue> {
+                return createCSSValue(pool, style, value);
+            }
+        );
+    };
+
+    return WTF::switchOn(m_value,
+        [&](const GuaranteedInvalid&) -> Ref<CSSValue> {
+            return CSSStringValue::create(CSS::String { emptyString() });
+        },
+        [&](const Ref<CSSVariableData>& variableData) -> Ref<CSSValue> {
+            return CSSSubstitutionValue::create(variableData.copyRef());
+        },
+        [&](const Value& value) -> Ref<CSSValue> {
+            return convertValue(value);
+        },
+        [&](const ValueList& valueList) -> Ref<CSSValue> {
+            CSSValueListBuilder builder;
+            for (auto& value : valueList.values)
+                builder.append(convertValue(value));
+            switch (valueList.separator) {
+            case CSSValue::SpaceSeparator:
+                return CSSValueList::createSpaceSeparated(WTF::move(builder));
+            case CSSValue::CommaSeparator:
+                return CSSValueList::createCommaSeparated(WTF::move(builder));
+            case CSSValue::SlashSeparator:
+                return CSSValueList::createSlashSeparated(WTF::move(builder));
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    );
+}
+
+Ref<DeprecatedCSSOMValue> CustomProperty::propertyValueDeprecatedCSSOMWrapper(CSSValuePool& pool, CSSStyleDeclaration& owner, const Style::ComputedStyle& style) const
+{
+    auto convertValue = [&](const Value& value) {
+        return WTF::switchOn(value,
+            [&](const auto& value) -> Ref<DeprecatedCSSOMValue> {
+                return createDeprecatedCSSOMValue(pool, style, owner, value);
+            }
+        );
+    };
+
+    return WTF::switchOn(m_value,
+        [&](const GuaranteedInvalid&) -> Ref<DeprecatedCSSOMValue> {
+            return CSS::createDeprecatedCSSOMValue(pool, owner, CSS::String { emptyString() });
+        },
+        [&](const Ref<CSSVariableData>& variableData) -> Ref<DeprecatedCSSOMValue> {
+            return CSS::makeCustomDeprecatedCSSOMValue([copy = variableData.copyRef()](const CSS::SerializationContext&) {
+                return copy->serialize();
+            }, owner);
+        },
+        [&](const Value& value) -> Ref<DeprecatedCSSOMValue> {
+            return convertValue(value);
+        },
+        [&](const ValueList& valueList) -> Ref<DeprecatedCSSOMValue> {
+            DeprecatedCSSOMValueListBuilder builder;
+            for (auto& value : valueList.values)
+                builder.append(convertValue(value));
+            return DeprecatedCSSOMValueList::create(WTF::move(builder), valueList.separator, owner);
+        }
+    );
+}
+
+WTF::String CustomProperty::propertyValueSerialization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+{
+    StringBuilder builder;
+    propertyValueSerialization(builder, context, style);
+    return builder.toString();
+}
+
+void CustomProperty::propertyValueSerialization(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+{
+    auto serializeValue = [&](StringBuilder& builder, const Value& value) {
+        WTF::switchOn(value,
+            [&](const auto& value) {
+                serializationForCSS(builder, context, style, value);
+            }
+        );
+    };
+
+    WTF::switchOn(m_value,
+        [&](const GuaranteedInvalid&) {
+            // "The guaranteed-invalid value serializes as the empty string".
+            // https://drafts.csswg.org/css-variables-2/#guaranteed-invalid
+            builder.append(emptyString());
+        },
+        [&](const Ref<CSSVariableData>& value) {
+            builder.append(value->serialize());
+        },
+        [&](const Value& value) {
+            serializeValue(builder, value);
+        },
+        [&](const ValueList& valueList) {
+            builder.append(interleave(valueList.values, [&](auto& builder, const auto& value) {
+                serializeValue(builder, value);
+            }, CSSValue::separatorCSSText(valueList.separator)));
+        }
+    );
+}
+
+WTF::String CustomProperty::propertyValueSerializationForTokenization(const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+{
+    StringBuilder builder;
+    propertyValueSerializationForTokenization(builder, context, style);
+    return builder.toString();
+}
+
+void CustomProperty::propertyValueSerializationForTokenization(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style) const
+{
+    // `propertyValueSerializationForTokenization` differs from `propertyValueSerialization` only in how it handles custom `color`
+    // values:
+    //
+    //   `propertyValueSerialization`: serializes the used/resolved value of `color` values (needed for getComputedStyle)
+    //   `propertyValueSerializationForTokenization`: serializes the computed value of `color` values (needed for style building)
+
+    auto serializeValue = [&](StringBuilder& builder, const Value& value) {
+        WTF::switchOn(value,
+            [&](const Color& value) {
+                serializationForCSSTokenization(builder, context, value);
+            },
+            [&](const auto& value) {
+                serializationForCSS(builder, context, style, value);
+            }
+        );
+    };
+
+    WTF::switchOn(m_value,
+        [&](const GuaranteedInvalid&) {
+            // "The guaranteed-invalid value serializes as the empty string".
+            // https://drafts.csswg.org/css-variables-2/#guaranteed-invalid
+            builder.append(emptyString());
+        },
+        [&](const Ref<CSSVariableData>& value) {
+            builder.append(value->serialize());
+        },
+        [&](const Value& value) {
+            serializeValue(builder, value);
+        },
+        [&](const ValueList& valueList) {
+            builder.append(interleave(valueList.values, [&](auto& builder, const auto& value) {
+                serializeValue(builder, value);
+            }, CSSValue::separatorCSSText(valueList.separator)));
+        }
+    );
+}
+
+const Vector<CSSParserToken>& CustomProperty::tokens() const
+{
+    static NeverDestroyed<Vector<CSSParserToken>> emptyTokens;
+
+    return WTF::switchOn(m_value,
+        [&](const Ref<CSSVariableData>& value) -> const Vector<CSSParserToken>& {
+            return value->tokens();
+        },
+        [&](auto&) -> const Vector<CSSParserToken>& {
+            if (!m_cachedTokens) {
+                CSSTokenizer tokenizer { propertyValueSerializationForTokenization(CSS::defaultSerializationContext(), Style::ComputedStyle::defaultStyleSingleton()) };
+                m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange(), m_isAttrTainted);
+            }
+            return m_cachedTokens->tokens();
+        }
+    );
+}
+
+} // namespace Style
+} // namespace WebCore

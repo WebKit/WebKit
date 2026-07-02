@@ -1,0 +1,378 @@
+Tests that relList works on anchor, area and link elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Tests relList for anchor element
+PASS element.relList == null is false
+PASS element.relList == undefined is false
+PASS element.relList instanceof DOMTokenList is true
+PASS element.relList.length is 3
+PASS element.relList.contains("a") is true
+PASS element.relList.contains("b") is true
+PASS element.relList.contains("c") is true
+PASS element.relList.contains("d") is false
+PASS element.relList.length is 3
+PASS element.relList.contains("foo") is true
+PASS element.relList.contains("bar") is true
+PASS element.relList.contains("chocolate") is true
+PASS element.relList.contains("orange") is false
+PASS element.relList.length is 0
+PASS element.relList.length is 0
+PASS element.relList.length is 2
+PASS element.relList.contains("marshmallow") is true
+PASS element.relList.contains("chips") is true
+PASS element.relList.contains("orange") is false
+PASS String(element.relList) is "y"
+PASS element.relList.length is 0
+PASS element.relList.length is 1
+PASS element.relList.length is 1
+PASS element.relList.length is 2
+PASS element.rel is "x"
+PASS element.rel is "x"
+PASS element.rel is "x"
+PASS element.rel is "y x"
+PASS element.rel is ""
+PASS element.rel is ""
+PASS element.rel is "y"
+PASS element.rel is "y"
+Ensure that we can handle empty rel correctly
+PASS element.relList.toggle('x') is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x') is false
+PASS element.rel is ""
+PASS element.relList.contains("x") is false
+PASS element.relList[1] is undefined.
+PASS element.relList.contains("x") is false
+PASS element.relList.contains("x") is true
+Test toggle with force argument
+PASS element.relList.toggle('x', true) is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x', true) is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x', false) is false
+PASS element.rel is ""
+PASS element.relList.toggle('x', false) is false
+PASS element.rel is ""
+PASS element.relList.toggle("", true) threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.toggle("x y", false) threw exception InvalidCharacterError: The string contains invalid characters..
+Testing add in presence of trailing white spaces.
+PASS element.rel is "x y"
+PASS element.rel is "x y"
+PASS element.rel is "y"
+Test invalid tokens
+PASS element.relList.contains("") is false
+PASS element.relList.contains("x y") is false
+PASS element.relList.add("") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.add("x y") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.relList.remove("") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.remove("x y") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.relList.toggle("") threw exception SyntaxError: The string did not match the expected pattern..
+Indexing
+PASS element.relList[0] is "x"
+PASS element.relList.item(0) is "x"
+PASS element.relList[1] is undefined.
+PASS element.relList.item(1) is null
+PASS element.relList[1] is "y"
+PASS element.relList.item(1) is "y"
+PASS element.relList[0] is undefined.
+PASS element.relList.item(0) is null
+PASS element.relList[4] is undefined.
+PASS element.relList.item(4) is null
+PASS element.relList[-1] is undefined.
+PASS element.relList.item(-1) is null
+PASS element.relList.item() threw exception TypeError: Not enough arguments.
+Test case since DOMTokenList is case sensitive
+PASS element.relList.contains("x") is true
+PASS element.relList.contains("X") is false
+PASS element.relList[0] is "x"
+PASS element.relList.contains() threw exception TypeError: Not enough arguments.
+PASS element.relList.contains("X") is true
+PASS element.relList.contains("x") is false
+PASS element.relList[0] is "X"
+Testing whitespace
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+DOMTokenList presence and type
+PASS 'undefined' != typeof DOMTokenList is true
+PASS typeof DOMTokenList.prototype is "object"
+PASS typeof element.relList is "object"
+PASS element.relList.constructor is DOMTokenList
+PASS element.relList === element.relList is true
+Variadic calls
+PASS element.rel is "a b"
+PASS element.rel is "a b c"
+PASS element.rel is "a b c null d undefined 0 false"
+PASS element.rel is "a b"
+PASS element.relList.add("a", "b", "") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.rel is ""
+PASS element.relList.add("a", "b", "c d") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.rel is ""
+PASS element.relList.add("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.rel is ""
+PASS element.relList.add() did not throw exception.
+PASS observer.takeRecords().length is 1
+PASS element.rel is "b d"
+PASS element.rel is "d"
+PASS element.rel is "a b c"
+PASS element.relList.remove("a", "b", "") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.rel is "a b"
+PASS element.relList.remove("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.rel is "a b"
+PASS element.relList.remove("a", "b", "c d") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.rel is "a b"
+PASS element.relList.remove() did not throw exception.
+PASS observer.takeRecords().length is 1
+Tests relList for area element
+PASS element.relList == null is false
+PASS element.relList == undefined is false
+PASS element.relList instanceof DOMTokenList is true
+PASS element.relList.length is 3
+PASS element.relList.contains("a") is true
+PASS element.relList.contains("b") is true
+PASS element.relList.contains("c") is true
+PASS element.relList.contains("d") is false
+PASS element.relList.length is 3
+PASS element.relList.contains("foo") is true
+PASS element.relList.contains("bar") is true
+PASS element.relList.contains("chocolate") is true
+PASS element.relList.contains("orange") is false
+PASS element.relList.length is 0
+PASS element.relList.length is 0
+PASS element.relList.length is 2
+PASS element.relList.contains("marshmallow") is true
+PASS element.relList.contains("chips") is true
+PASS element.relList.contains("orange") is false
+PASS String(element.relList) is "y"
+PASS element.relList.length is 0
+PASS element.relList.length is 1
+PASS element.relList.length is 1
+PASS element.relList.length is 2
+PASS element.rel is "x"
+PASS element.rel is "x"
+PASS element.rel is "x"
+PASS element.rel is "y x"
+PASS element.rel is ""
+PASS element.rel is ""
+PASS element.rel is "y"
+PASS element.rel is "y"
+Ensure that we can handle empty rel correctly
+PASS element.relList.toggle('x') is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x') is false
+PASS element.rel is ""
+PASS element.relList.contains("x") is false
+PASS element.relList[1] is undefined.
+PASS element.relList.contains("x") is false
+PASS element.relList.contains("x") is true
+Test toggle with force argument
+PASS element.relList.toggle('x', true) is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x', true) is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x', false) is false
+PASS element.rel is ""
+PASS element.relList.toggle('x', false) is false
+PASS element.rel is ""
+PASS element.relList.toggle("", true) threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.toggle("x y", false) threw exception InvalidCharacterError: The string contains invalid characters..
+Testing add in presence of trailing white spaces.
+PASS element.rel is "x y"
+PASS element.rel is "x y"
+PASS element.rel is "y"
+Test invalid tokens
+PASS element.relList.contains("") is false
+PASS element.relList.contains("x y") is false
+PASS element.relList.add("") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.add("x y") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.relList.remove("") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.remove("x y") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.relList.toggle("") threw exception SyntaxError: The string did not match the expected pattern..
+Indexing
+PASS element.relList[0] is "x"
+PASS element.relList.item(0) is "x"
+PASS element.relList[1] is undefined.
+PASS element.relList.item(1) is null
+PASS element.relList[1] is "y"
+PASS element.relList.item(1) is "y"
+PASS element.relList[0] is undefined.
+PASS element.relList.item(0) is null
+PASS element.relList[4] is undefined.
+PASS element.relList.item(4) is null
+PASS element.relList[-1] is undefined.
+PASS element.relList.item(-1) is null
+PASS element.relList.item() threw exception TypeError: Not enough arguments.
+Test case since DOMTokenList is case sensitive
+PASS element.relList.contains("x") is true
+PASS element.relList.contains("X") is false
+PASS element.relList[0] is "x"
+PASS element.relList.contains() threw exception TypeError: Not enough arguments.
+PASS element.relList.contains("X") is true
+PASS element.relList.contains("x") is false
+PASS element.relList[0] is "X"
+Testing whitespace
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+DOMTokenList presence and type
+PASS 'undefined' != typeof DOMTokenList is true
+PASS typeof DOMTokenList.prototype is "object"
+PASS typeof element.relList is "object"
+PASS element.relList.constructor is DOMTokenList
+PASS element.relList === element.relList is true
+Variadic calls
+PASS element.rel is "a b"
+PASS element.rel is "a b c"
+PASS element.rel is "a b c null d undefined 0 false"
+PASS element.rel is "a b"
+PASS element.relList.add("a", "b", "") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.rel is ""
+PASS element.relList.add("a", "b", "c d") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.rel is ""
+PASS element.relList.add("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.rel is ""
+PASS element.relList.add() did not throw exception.
+PASS observer.takeRecords().length is 1
+PASS element.rel is "b d"
+PASS element.rel is "d"
+PASS element.rel is "a b c"
+PASS element.relList.remove("a", "b", "") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.rel is "a b"
+PASS element.relList.remove("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.rel is "a b"
+PASS element.relList.remove("a", "b", "c d") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.rel is "a b"
+PASS element.relList.remove() did not throw exception.
+PASS observer.takeRecords().length is 1
+Tests relList for link element
+PASS element.relList == null is false
+PASS element.relList == undefined is false
+PASS element.relList instanceof DOMTokenList is true
+PASS element.relList.length is 3
+PASS element.relList.contains("a") is true
+PASS element.relList.contains("b") is true
+PASS element.relList.contains("c") is true
+PASS element.relList.contains("d") is false
+PASS element.relList.length is 3
+PASS element.relList.contains("foo") is true
+PASS element.relList.contains("bar") is true
+PASS element.relList.contains("chocolate") is true
+PASS element.relList.contains("orange") is false
+PASS element.relList.length is 0
+PASS element.relList.length is 0
+PASS element.relList.length is 2
+PASS element.relList.contains("marshmallow") is true
+PASS element.relList.contains("chips") is true
+PASS element.relList.contains("orange") is false
+PASS String(element.relList) is "y"
+PASS element.relList.length is 0
+PASS element.relList.length is 1
+PASS element.relList.length is 1
+PASS element.relList.length is 2
+PASS element.rel is "x"
+PASS element.rel is "x"
+PASS element.rel is "x"
+PASS element.rel is "y x"
+PASS element.rel is ""
+PASS element.rel is ""
+PASS element.rel is "y"
+PASS element.rel is "y"
+Ensure that we can handle empty rel correctly
+PASS element.relList.toggle('x') is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x') is false
+PASS element.rel is ""
+PASS element.relList.contains("x") is false
+PASS element.relList[1] is undefined.
+PASS element.relList.contains("x") is false
+PASS element.relList.contains("x") is true
+Test toggle with force argument
+PASS element.relList.toggle('x', true) is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x', true) is true
+PASS element.rel is "x"
+PASS element.relList.toggle('x', false) is false
+PASS element.rel is ""
+PASS element.relList.toggle('x', false) is false
+PASS element.rel is ""
+PASS element.relList.toggle("", true) threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.toggle("x y", false) threw exception InvalidCharacterError: The string contains invalid characters..
+Testing add in presence of trailing white spaces.
+PASS element.rel is "x y"
+PASS element.rel is "x y"
+PASS element.rel is "y"
+Test invalid tokens
+PASS element.relList.contains("") is false
+PASS element.relList.contains("x y") is false
+PASS element.relList.add("") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.add("x y") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.relList.remove("") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.relList.remove("x y") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.relList.toggle("") threw exception SyntaxError: The string did not match the expected pattern..
+Indexing
+PASS element.relList[0] is "x"
+PASS element.relList.item(0) is "x"
+PASS element.relList[1] is undefined.
+PASS element.relList.item(1) is null
+PASS element.relList[1] is "y"
+PASS element.relList.item(1) is "y"
+PASS element.relList[0] is undefined.
+PASS element.relList.item(0) is null
+PASS element.relList[4] is undefined.
+PASS element.relList.item(4) is null
+PASS element.relList[-1] is undefined.
+PASS element.relList.item(-1) is null
+PASS element.relList.item() threw exception TypeError: Not enough arguments.
+Test case since DOMTokenList is case sensitive
+PASS element.relList.contains("x") is true
+PASS element.relList.contains("X") is false
+PASS element.relList[0] is "x"
+PASS element.relList.contains() threw exception TypeError: Not enough arguments.
+PASS element.relList.contains("X") is true
+PASS element.relList.contains("x") is false
+PASS element.relList[0] is "X"
+Testing whitespace
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+PASS element.relList.length is 2
+DOMTokenList presence and type
+PASS 'undefined' != typeof DOMTokenList is true
+PASS typeof DOMTokenList.prototype is "object"
+PASS typeof element.relList is "object"
+PASS element.relList.constructor is DOMTokenList
+PASS element.relList === element.relList is true
+Variadic calls
+PASS element.rel is "a b"
+PASS element.rel is "a b c"
+PASS element.rel is "a b c null d undefined 0 false"
+PASS element.rel is "a b"
+PASS element.relList.add("a", "b", "") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.rel is ""
+PASS element.relList.add("a", "b", "c d") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.rel is ""
+PASS element.relList.add("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.rel is ""
+PASS element.relList.add() did not throw exception.
+PASS observer.takeRecords().length is 1
+PASS element.rel is "b d"
+PASS element.rel is "d"
+PASS element.rel is "a b c"
+PASS element.relList.remove("a", "b", "") threw exception SyntaxError: The string did not match the expected pattern..
+PASS element.rel is "a b"
+PASS element.relList.remove("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.rel is "a b"
+PASS element.relList.remove("a", "b", "c d") threw exception InvalidCharacterError: The string contains invalid characters..
+PASS element.rel is "a b"
+PASS element.relList.remove() did not throw exception.
+PASS observer.takeRecords().length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

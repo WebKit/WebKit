@@ -1,0 +1,4 @@
+
+PASS DOMParser and XMLSerializer should round trip with CDATA sections: large CDATA
+PASS DOMParser and XMLSerializer should round trip with CDATA sections: multiple CDATAs
+

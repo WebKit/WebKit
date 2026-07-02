@@ -1,0 +1,13 @@
+
+PASS lspace/voffset shifts don't affect mpadded preferred width
+PASS lspace/voffset shifts don't affect mpadded size
+PASS content is shifted by the specified lspace/voffset
+PASS content is shifted by the specified lspace/voffset (RTL)
+PASS dynamic changes of lspace/voffset
+
+
+
+
+
+
+

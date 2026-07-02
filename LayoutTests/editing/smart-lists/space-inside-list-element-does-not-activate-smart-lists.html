@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Smart-list conversion should not fire when the selection is already inside a list element. After typing two bulleted items, typing "1. Hi" on a third list item inserts the literal text into the existing list rather than creating a new ordered list.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'* A\n* B\n1. Hi'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

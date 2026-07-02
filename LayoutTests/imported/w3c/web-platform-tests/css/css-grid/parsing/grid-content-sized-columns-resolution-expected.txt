@@ -1,0 +1,134 @@
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXX
+XXXX XXXX
+XX XX XX
+XXXX XXXX
+XXX XXX
+XXXXXXX
+XXXXX XX
+XXX
+XXXXX
+XXXX XXXX
+X X
+XXXX
+XXXX XXXX
+XXXX XXXX
+XX XX
+XXXX
+XXX XXX
+XX XX XX XX
+XXXXXX XXXXXX
+XXXX XXXX
+XXX XXX
+XXXXX
+XXX XXX
+XXXX XXXX
+XXXX XXXX
+XX
+XXXX XXXX
+XX XX XX XX
+XXXXXXX
+XXXX XXXX
+XXXX XXXX
+XXXX XXXX
+XXX
+XXXX XXXX
+XX XX XX XX
+XXXX XXXX
+XXX XXX
+XXXXXXX
+XXXXX XX
+XXX
+XXXXX
+XXXX XXXX
+X X
+XXXX
+XXXX XXXX
+XXXX XXXX
+XX XX
+XXXX
+XXX XXX
+XX XX XX XX
+XXXXXX XXXXXX
+XXXX XXXX
+XXX XXX
+XXXXX
+XXX XXX
+XXXX XXXX
+XXXX XXXX
+XX
+XXXX XXXX
+XX XX XX XX
+XXXXXXX
+XXXX XXXX
+XXXXXXXXXXX
+XXXX XXXX
+XXXXXXXXXXXXXXX
+XXXX XXXX
+XXXXXXXXXX
+XXXX XXXX
+XXXXXXXXXXXXXXX
+X X X
+X X
+XX XX XX XX XX
+XX
+XXXXXXXXXXXXXXX
+XXX XXX
+
+PASS Element 'gridMinContentFixedAndAuto' grid-template-columns value computes to '15px 75px'
+PASS Element 'gridAutoAndAuto' grid-template-columns value computes to '45px 45px'
+PASS Element 'gridMinContentAndMinContentFixed' grid-template-columns value computes to '20px 30px'
+PASS Element 'gridMaxContentAndMinContent' grid-template-columns value computes to '70px 20px'
+PASS Element 'gridFixedMinContentAndMaxContent' grid-template-columns value computes to '10px 80px'
+PASS Element 'gridFixedMaxContentAndMinContent' grid-template-columns value computes to '60px 30px'
+PASS Element 'gridMinContentAndMaxContentFixed' grid-template-columns value computes to '20px 70px'
+PASS Element 'gridMaxContentFixedAndAuto' grid-template-columns value computes to '65px 25px'
+PASS Element 'gridAutoMinContent' grid-template-columns value computes to '70px 20px'
+PASS Element 'gridAutoMaxContent' grid-template-columns value computes to '20px 70px'
+PASS Element 'gridMaxContentAndMinContentFixed' grid-template-columns value computes to '70px 20px'
+PASS Element 'gridMaxContentAndMaxContentFixed' grid-template-columns value computes to '55px 35px'
+PASS Element 'gridMinContentFixedAndAutoUnsortedConstrained' grid-template-columns value computes to '0px 40px'
+PASS Element 'gridAutoAndAutoUnsortedConstrained' grid-template-columns value computes to '10px 30px'
+PASS Element 'gridMinContentAndMinContentFixedUnsortedConstrained' grid-template-columns value computes to '0px 40px'
+PASS Element 'gridMaxContentAndMinContentUnsortedConstrained' grid-template-columns value computes to '0px 70px'
+PASS Element 'gridFixedMinContentAndMaxContentUnsortedConstrained' grid-template-columns value computes to '10px 70px'
+PASS Element 'gridFixedMaxContentAndMinContentUnsortedConstrained' grid-template-columns value computes to '10px 40px'
+PASS Element 'gridMinContentAndMaxContentFixedUnsortedConstrained' grid-template-columns value computes to '0px 90px'
+PASS Element 'gridMaxContentFixedAndAutoUnsortedConstrained' grid-template-columns value computes to '10px 40px'
+PASS Element 'gridAutoMinContentUnsortedConstrained' grid-template-columns value computes to '0px 60px'
+PASS Element 'gridAutoMaxContentUnsortedConstrained' grid-template-columns value computes to '0px 90px'
+PASS Element 'gridMaxContentAndMinContentFixedUnsortedConstrained' grid-template-columns value computes to '50px 40px'
+PASS Element 'gridMaxContentAndMaxContentFixedUnsortedConstrained' grid-template-columns value computes to '40px 70px'
+PASS Element 'gridMinContentFixedAndAutoUnsorted' grid-template-columns value computes to '15px 90px'
+PASS Element 'gridAutoAndAutoUnsorted' grid-template-columns value computes to '60px 30px'
+PASS Element 'gridMinContentAndMinContentFixedUnsorted' grid-template-columns value computes to '0px 40px'
+PASS Element 'gridMaxContentAndMinContentUnsorted' grid-template-columns value computes to '0px 70px'
+PASS Element 'gridFixedMinContentAndMaxContentUnsorted' grid-template-columns value computes to '10px 70px'
+PASS Element 'gridFixedMaxContentAndMinContentUnsorted' grid-template-columns value computes to '50px 40px'
+PASS Element 'gridMinContentAndMaxContentFixedUnsorted' grid-template-columns value computes to '0px 90px'
+PASS Element 'gridMaxContentFixedAndAutoUnsorted' grid-template-columns value computes to '15px 70px'
+PASS Element 'gridAutoMinContentUnsorted' grid-template-columns value computes to '50px 60px'
+PASS Element 'gridAutoMaxContentUnsorted' grid-template-columns value computes to '0px 90px'
+PASS Element 'gridMaxContentAndMinContentFixedUnsorted' grid-template-columns value computes to '50px 40px'
+PASS Element 'gridMaxContentAndMaxContentFixedUnsorted' grid-template-columns value computes to '40px 70px'
+PASS Element 'gridMinContentFixedAndAutoAboveLimits' grid-template-columns value computes to '15px 95px'
+PASS Element 'gridMaxContentFixedAndAutoAboveLimits' grid-template-columns value computes to '15px 135px'
+PASS Element 'gridMinContentFixedAndFixedFixedAndAuto' grid-template-columns value computes to '20px 20px 60px'
+PASS Element 'gridAutoAndFixedFixedAndMaxContentFixed' grid-template-columns value computes to '110px 20px 20px'
+PASS Element 'gridMaxContentAndMaxContentFixedAndMaxContent' grid-template-columns value computes to '70px 20px 50px'
+PASS Element 'gridAutoAndMinContentFixedAndMinContent' grid-template-columns value computes to '55px 30px 65px'
+

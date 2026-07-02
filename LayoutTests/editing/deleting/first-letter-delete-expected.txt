@@ -1,0 +1,10 @@
+Test that deleting characters in a contenteditable element with ::first-letter updates the first letter correctly.
+
+1
+1
+
+test1: PASS
+test2: PASS
+test3: PASS
+test4: PASS
+

@@ -1,0 +1,5 @@
+PASS range.commonAncestorContainer is colorInputElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

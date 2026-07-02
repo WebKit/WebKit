@@ -1,0 +1,16 @@
+Tests that scrolling to make an element visible successfully scrolls an arbitrary HTML element that has CSS overflow set to 'scroll'.
+
+PASS: container.scrollTop === 0
+PASS: container.scrollTop >= minYOffset === true
+PASS: container.scrollTop <= maxYOffset === true
+PASS: container.scrollTop >= minYOffset === true
+PASS: container.scrollTop <= maxYOffset === true
+PASS: container.scrollTop >= minYOffset === true
+PASS: container.scrollTop <= maxYOffset === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Upper Target
+5000-pixel box
+Lower Target

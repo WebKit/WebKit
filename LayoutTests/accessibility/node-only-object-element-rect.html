@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="toolbar" role="toolbar" style="display: contents;">
+    <div>
+        <button>Foo</button>
+    </div>
+</div>
+
+<div role="toolbar">
+    <div id="group" role="group" style="display: contents;">
+        <button>Foo</button>
+    </div>
+</div>
+
+<div role="toolbar">
+    <div>
+        <button id="button" style="display: contents;">Foo</button>
+    </div>
+</div>
+
+<script>
+    var testOutput = "This test ensures we calculate the frame correctly for objects that don't have a renderer (like display: contents elements).\n\n";
+
+    function logSize(id) {
+        const axElement = accessibilityController.accessibleElementById(id);
+        testOutput += `#${id}: {width: ${axElement.width}, height: ${axElement.height}}\n`;
+    }
+
+    if (window.accessibilityController) {
+        logSize("toolbar");
+        logSize("group");
+        logSize("button");
+
+        debug(testOutput);
+    }
+</script>
+</body>
+</html>
+

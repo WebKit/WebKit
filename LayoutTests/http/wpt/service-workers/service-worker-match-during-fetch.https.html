@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+const script = "service-worker-match-during-fetch-worker.js"
+promise_test(async (test) => {
+    const scope = "test1";
+    const registration = await navigator.serviceWorker.register(script + "?matchall", { scope });
+    const worker = registration.installing;
+    if (worker)
+        await waitForState(worker, "activated");
+
+    const frame = await withIframe(scope);
+    assert_equals(frame.contentWindow.result, "none");
+}, "List controlled clients via matchAll at fetch event time");
+
+promise_test(async (test) => {
+    const scope = "test2";
+    const registration = await navigator.serviceWorker.register(script + "?get", { scope });
+    const worker = registration.installing;
+    if (worker)
+        await waitForState(worker, "activated");
+
+    const frame = await withIframe(scope);
+    assert_true(frame.contentWindow.result.includes(scope));
+}, "Get resulting client id at fetch event time");
+
+promise_test(async (test) => {
+    const scope = "test3";
+    const registration = await navigator.serviceWorker.register(script + "?postmessage", { scope });
+    const worker = registration.installing;
+    if (worker)
+        await waitForState(worker, "activated");
+
+    const frame = await withIframe(scope);
+    await new Promise((resolve, reject)  => {
+        frame.contentWindow.navigator.serviceWorker.addEventListener('message', resolve)
+        setTimeout(() => reject("message timed out"), 1000);
+    });
+    assert_true(frame.contentWindow.result.includes(scope));
+}, "Post message to resulting client at fetch event time");
+</script>
+</body>
+</html>

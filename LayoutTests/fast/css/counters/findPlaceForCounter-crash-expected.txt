@@ -1,0 +1,4 @@
+This tests an element with CSS counter having a parent with display: contents.
+
+The test passes if WebKit doesn't crash or hit an assertion.
+

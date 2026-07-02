@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            float: left;
+            margin: 5px;
+            width: 100px;
+            height: 100px;
+            outline: 1px solid black;
+            background-image: linear-gradient(green, green);
+            background-size: 20px 20px;
+            background-repeat: no-repeat;
+        }
+        
+    </style>
+    
+</head>
+<body>
+    <div class="box"></div>
+    <div class="box" style="background-position: left top"></div>
+    <div class="box" style="background-position: 20% 25%"></div>
+    <div class="box" style="background-position: bottom 20% right 20%"></div>
+    <div class="box" style="background-position: calc(100% / 4) calc(100% / 4)"></div>
+    <div class="box" style="background-position: bottom calc(100% / 4) right calc(100% / 4)"></div>
+    <div class="box" style="background-position-x: right 20%; background-position-y: bottom 20%;"></div>
+    <div class="box" style="background-position-x: right 20%; background-position-y: bottom 20%;"></div>
+    <div class="box" style="background-position-x: calc(100% / 4); background-position-y: calc(100% / 4);"></div>
+    <div class="box" style="background-position-x: right calc(100% / 4); background-position-y:  bottom calc(100% / 4);"></div>
+</body>
+</html>

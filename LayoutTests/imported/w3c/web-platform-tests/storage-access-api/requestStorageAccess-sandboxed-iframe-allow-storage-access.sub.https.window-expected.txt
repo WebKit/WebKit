@@ -1,0 +1,5 @@
+
+PASS `allow-storage-access-by-user-activation` sandbox attribute is supported
+PASS [sandboxed-iframe-allow-storage-access-by-user-activation] document.requestStorageAccess() should resolve even without a user gesture when already granted.
+PASS [sandboxed-iframe-allow-storage-access-by-user-activation] document.requestStorageAccess() should resolve with a user gesture
+

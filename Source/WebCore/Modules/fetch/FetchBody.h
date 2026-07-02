@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2016 Canon Inc.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted, provided that the following conditions
+ * are required to be met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Canon Inc. nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY CANON INC. AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL CANON INC. AND ITS CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "DOMFormData.h"
+#include "FetchBodyConsumer.h"
+#include "FormData.h"
+#include "ReadableStream.h"
+#include "URLSearchParams.h"
+
+namespace WebCore {
+
+class DeferredPromise;
+class FetchBodyOwner;
+class FetchBodySource;
+class ScriptExecutionContext;
+
+template<typename> class ExceptionOr;
+
+class FetchBody {
+public:
+    void arrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void blob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void bytes(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void json(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void formData(FetchBodyOwner&, Ref<DeferredPromise>&&);
+
+    void consumeAsStream(FetchBodyOwner&, FetchBodySource&);
+
+    using Init = Variant<Ref<Blob>, Ref<ArrayBufferView>, Ref<ArrayBuffer>, Ref<DOMFormData>, Ref<URLSearchParams>, Ref<ReadableStream>, String>;
+    static ExceptionOr<FetchBody> extract(Init&&, String&);
+    FetchBody() = default;
+    FetchBody(FetchBody&&) = default;
+    WEBCORE_EXPORT ~FetchBody();
+    FetchBody& operator=(FetchBody&&) = default;
+
+    explicit FetchBody(String&& data)
+        : m_data(WTF::move(data))
+    {
+    }
+
+    WEBCORE_EXPORT static std::optional<FetchBody> fromFormData(ScriptExecutionContext&, Ref<FormData>&&);
+
+    void loadingFailed(const Exception&);
+    void loadingSucceeded(const String& contentType);
+
+    RefPtr<FormData> bodyAsFormData() const;
+
+    using TakenData = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+    TakenData take();
+
+    void setAsFormData(Ref<FormData>&& data) { m_data = WTF::move(data); }
+    FetchBodyConsumer& consumer() LIFETIME_BOUND;
+
+    void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
+
+    void cleanConsumer()
+    {
+        if (CheckedPtr consumer = m_consumer.get())
+            consumer->clean();
+    }
+
+    // Can't create a CheckedPtr since this function can be called in a GC thread.
+    bool hasConsumerPendingActivity() const { SUPPRESS_UNCHECKED_ARG return m_consumer && m_consumer->hasPendingActivity(); }
+
+    FetchBody clone(JSDOMGlobalObject&);
+    FetchBody createProxy(JSDOMGlobalObject&);
+
+    bool hasReadableStream() const { return !!m_readableStream; }
+    const ReadableStream* readableStream() const { return m_readableStream.get(); }
+    ReadableStream* readableStream() { return m_readableStream.get(); }
+    void setReadableStream(Ref<ReadableStream>&& stream)
+    {
+        ASSERT(!m_readableStream);
+        m_readableStream = WTF::move(stream);
+    }
+
+    void convertReadableStreamToArrayBuffer(FetchBodyOwner&, CompletionHandler<void(std::optional<Exception>&&)>&&);
+
+    bool isBlob() const { return std::holds_alternative<Ref<Blob>>(m_data); }
+    bool isFormData() const { return std::holds_alternative<Ref<FormData>>(m_data); }
+    bool isReadableStream() const { return std::holds_alternative<Ref<ReadableStream>>(m_data); }
+
+private:
+    explicit FetchBody(Ref<Blob>&& data) : m_data(WTF::move(data)) { }
+    explicit FetchBody(Ref<ArrayBuffer>&& data) : m_data(WTF::move(data)) { }
+    explicit FetchBody(Ref<ArrayBufferView>&& data) : m_data(WTF::move(data)) { }
+    explicit FetchBody(Ref<FormData>&& data) : m_data(WTF::move(data)) { }
+    explicit FetchBody(Ref<URLSearchParams>&& data) : m_data(WTF::move(data)) { }
+    explicit FetchBody(Ref<ReadableStream>&& stream) : m_data(stream), m_readableStream(WTF::move(stream)) { }
+    explicit FetchBody(UniqueRef<FetchBodyConsumer>&& consumer) : m_consumer(consumer.moveToUniquePtr()) { }
+
+    void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
+
+    void consumeArrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void consumeArrayBufferView(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void consumeText(FetchBodyOwner&, Ref<DeferredPromise>&&, const String&);
+    void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void consumeFormData(FetchBodyOwner&, Ref<DeferredPromise>&&);
+
+    bool isArrayBuffer() const { return std::holds_alternative<Ref<ArrayBuffer>>(m_data); }
+    bool isArrayBufferView() const { return std::holds_alternative<Ref<ArrayBufferView>>(m_data); }
+    bool isURLSearchParams() const { return std::holds_alternative<Ref<URLSearchParams>>(m_data); }
+    bool isText() const { return std::holds_alternative<String>(m_data); }
+
+    Blob& blobBody() const { return std::get<Ref<Blob>>(m_data).get(); }
+    FormData& formDataBody() const { return std::get<Ref<FormData>>(m_data).get(); }
+    ArrayBuffer& arrayBufferBody() const { return std::get<Ref<ArrayBuffer>>(m_data).get(); }
+    ArrayBufferView& arrayBufferViewBody() const { return std::get<Ref<ArrayBufferView>>(m_data).get(); }
+    String& textBody() LIFETIME_BOUND { return std::get<String>(m_data); }
+    const String& textBody() const LIFETIME_BOUND { return std::get<String>(m_data); }
+    URLSearchParams& urlSearchParamsBody() const { return std::get<Ref<URLSearchParams>>(m_data).get(); }
+
+    using Data = Variant<std::nullptr_t, Ref<Blob>, Ref<FormData>, Ref<ArrayBuffer>, Ref<ArrayBufferView>, Ref<URLSearchParams>, String, Ref<ReadableStream>>;
+    Data m_data { nullptr };
+
+    std::unique_ptr<FetchBodyConsumer> m_consumer;
+    RefPtr<ReadableStream> m_readableStream;
+};
+
+struct FetchBodyWithType {
+    FetchBody body;
+    String type;
+};
+
+} // namespace WebCore

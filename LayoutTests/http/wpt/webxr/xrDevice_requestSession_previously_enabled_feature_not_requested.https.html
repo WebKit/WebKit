@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<body>
+  <script src=/resources/testharness.js></script>
+  <script src=/resources/testharnessreport.js></script>
+  <script src="resources/webxr_util.js"></script>
+  <script src="resources/webxr_test_constants_single_view.js"></script>
+  <script src="../../webxr/resources/webxr_test_asserts.js"></script>
+  <script>
+    let testName = "requestSession should not grant previously enabled features if not requested"
+    
+    let testFunction = function(session, fakeDeviceController, t, sessionObject) {
+        
+        let input_source = fakeDeviceController.simulateInputSourceConnection({
+          handedness: "none",
+          targetRayMode: "tracked-pointer",
+          pointerOrigin: VALID_POINTER_TRANSFORM,
+          profiles: [],
+          handJoints: VALID_HAND_JOINTS,
+        });
+        
+        return session.requestReferenceSpace('local')
+          .then((referenceSpace) => new Promise((resolve) => {
+
+            function onFrame(time, xrFrame) {
+              assert_not_equals(session.inputSources.length, 0);
+              let hand = session.inputSources[0].hand
+              assert_equals(hand, null);
+
+              resolve();
+            }
+            session.requestAnimationFrame(onFrame);
+        }));
+    };
+
+    xr_session_promise_test(
+        testName, testFunction, TRACKED_IMMERSIVE_DEVICE_WITH_HAND_TRACKING, 'immersive-vr', {}
+    );
+  </script>
+</body>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<meta name="fuzzy" content="maxDifference=0-40; totalPixels=0-80000" />
+<style>
+    .image-box {
+        width: 200px;
+        height: 200px;
+    }
+    .box {
+        display: inline-block;
+    }
+    .standard { 
+        dynamic-range-limit: standard;
+    }
+    .no-limit { 
+        dynamic-range-limit: no-limit;
+    }
+    .composited {
+        will-change: transform;
+    }
+</style>
+<body>
+    <div class="composited">
+        <div class="standard box">
+            <img class="image-box">
+        </div>
+        <div class="no-limit box">
+            <img class="image-box">
+        </div>
+    </div>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.waitUntilDone();
+        }
+
+        var image = new Image;
+        image.onload = (() => {
+            if (window.internals)
+                internals.setHasHDRContentForTesting(image);
+
+            const elements = document.querySelectorAll("img");
+
+            elements.forEach((element) => {
+                element.src = image.src;
+            });
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+        image.src = "resources/gainmap-red-green-1920x1920.jpg";
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+py_binary(
+    name = "compile_sksl_tests",
+    srcs = [
+        "compile_sksl_tests.py",
+    ],
+    visibility = ["//tools/skslc:__pkg__"],
+)
+
+py_binary(
+    name = "minify_sksl",
+    srcs = [
+        "minify_sksl.py",
+    ],
+    visibility = ["//tools/sksl-minify:__pkg__"],
+)
+
+py_binary(
+    name = "minify_sksl_tests",
+    srcs = [
+        "minify_sksl_tests.py",
+    ],
+    visibility = ["//tools/sksl-minify:__pkg__"],
+)

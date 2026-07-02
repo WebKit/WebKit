@@ -1,0 +1,51 @@
+
+PASS Submit input element directionality to FormData, if dirname applies.
+PASS Submit textarea element directionality to FormData.
+PASS Submit input element directionality, if dirname applies.
+PASS Submit textarea element directionality.
+
+
+
+hidden:
+
+text:
+
+search:
+
+tel:
+
+url:
+
+email:
+
+password:
+
+date:
+
+month:
+
+week:
+
+time:
+
+datetime-local:
+
+number:
+
+range:
+
+color:
+
+checkbox:
+
+radio:
+
+file:
+
+image:
+
+reset:
+
+button:
+
+

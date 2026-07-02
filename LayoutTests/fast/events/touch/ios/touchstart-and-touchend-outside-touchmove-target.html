@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="overflow: hidden">
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../pointerevents/utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    const eventTracker = new EventTracker(target, ["touchstart", "touchmove", "touchend"]);
+
+    const one = ui.finger();
+    ui.sequence([
+        one.begin({ x: 10, y: 400 }),
+        one.move({ x: 100, y: 100 }),
+        one.move({ x: 10, y: 400 }),
+        one.end()
+    ]).then(() => {
+        eventTracker.assertMatchesEvents([
+            { type: "touchstart" },
+            { type: "touchmove" },
+            { type: "touchend" }
+        ]);
+        test.done();
+    });
+}, `Testing that starting and ending an interaction outside of an element while touching over it in between correctly dispatches a touchend event.`);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Retrieve the type and name of a member from a serializable type</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+
+    assert_equals(IPC.serializedTypeInfo["WebCore::CharacterRange"][0].type, "uint64_t")
+    assert_equals(IPC.serializedTypeInfo["WebCore::CharacterRange"][0].name, "location")
+
+    assert_equals(IPC.serializedTypeInfo["WebCore::CharacterRange"][1].type, "uint64_t")
+    assert_equals(IPC.serializedTypeInfo["WebCore::CharacterRange"][1].name, "length")
+
+}, "Retrieving the type and name from a known member of a known serializable type");
+
+</script>
+</body>

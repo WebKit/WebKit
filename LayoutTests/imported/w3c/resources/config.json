@@ -1,0 +1,29 @@
+{"browser_host": "web-platform.test",
+ "alternate_hosts": { "alt": "not-web-platform.test" },
+ "ports":{"http":[8800, 8801],
+          "https":[9443, 9444],
+          "h2":[9000],
+          "ws":[49001],
+          "wss":[49002]},
+ "aliases": [
+          {"url-path": "/resources/testharnessreport.js", "local-dir":"../../../resources/"},
+          {"url-path": "/resources/testdriver-vendor.js", "local-dir":"../../../resources/"},
+          {"url-path": "/webkit-test-resources/", "local-dir":"../../../resources/"},
+          {"url-path": "/WebKit/", "local-dir":"../../../http/wpt/"}],
+ "check_subdomains": false,
+ "logging": { "level": "debug" },
+ "bind_address": true,
+ "ssl": {"type": "openssl",
+         "encrypt_after_connect": false,
+         "openssl": {
+             "openssl_binary": "openssl",
+             "base_path": "%CERTS_DIR%",
+             "force_regenerate": false
+         },
+         "pregenerated": {
+             "host_key_path": null,
+             "host_cert_path": null
+         },
+         "none": {}
+        }
+}

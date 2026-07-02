@@ -1,0 +1,11 @@
+
+PASS e.style['background-color'] = "contrast-color()" should not set the property value
+PASS e.style['background-color'] = "contrast-color(1)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(max)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(max max)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(max white)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(white white)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(white max)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(white min)" should not set the property value
+PASS e.style['background-color'] = "contrast-color(white max bar)" should not set the property value
+

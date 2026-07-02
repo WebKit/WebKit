@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var i = 0;
+var context;
+var timeoutId;
+
+function loop()
+{
+   i = (i + 1) % 255;
+   context.fillStyle = "rgb(" + i + ", 0, 0)";
+   context.fillRect(0, 0, 150, 150);
+
+   // 5 iterations should suffice to throttle the timer.
+   if (i == 5) {
+     debug("Timer should still not be throttled because it is drawing on a canvas inside viewport.");
+     shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+     clearInterval(timeoutId);
+     finishJSTest();
+   }
+}
+
+function runTest() {
+  context = document.getElementById("canvas").getContext('2d');
+
+  timeoutId = setInterval(loop, 5);
+  debug("Timer should initially not be throttled.");
+  shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+}
+</script>
+</head>
+<body onload="runTest();">
+<script>
+description("Test that a DOM timer drawing on a canvas inside viewport does not get throttled.");
+jsTestIsAsync = true;
+</script>
+<canvas id="canvas" width=150 height=150></canvas>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

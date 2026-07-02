@@ -1,0 +1,30 @@
+<style>
+  div {
+    column-span: all;
+  }
+  :nth-last-child(2) {
+    float: left;
+  }
+  :read-write::before {
+    content: '';
+  }
+  :scope {
+    column-count: 2;
+  }
+</style>
+<!-- Pass if no crash or assert -->
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    let span0 = document.createElement('span');
+    document.body.appendChild(span0);
+    let div0 = document.createElement('div');
+    div0.appendChild(document.createElement('div'));
+    span0.appendChild(div0);
+    span0.appendChild(document.createElement('div'));
+    document.body.offsetTop;
+    span0.appendChild(document.createElement('div'));
+    document.designMode = 'on';
+  };
+</script>

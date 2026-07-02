@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="testDiv">TEXT</div>
+<script>
+description("Tests that DOM mutation observers are notified when Text.data is set to the same string.");
+jsTestIsAsync = true;
+
+var testDiv = document.getElementById("testDiv");
+var config = { subtree:true, characterData: true, };
+var observer = new MutationObserver(function(mutations) {
+    testPassed("Mutation observer was notified");
+    finishJSTest();
+});
+
+observer.observe(testDiv, config);
+testDiv.firstChild.data += "";
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

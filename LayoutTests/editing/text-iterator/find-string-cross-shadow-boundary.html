@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<body>
+<span id="host">slotted</span>
+<div id="nested-test"><span id="outer-host"><span id="inner-host">deep</span></span></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Tests that cross-shadow-boundary matches are found in flat tree mode but rejected with DoNotTraverseFlatTree.');
+
+var host = document.getElementById('host');
+var shadowRoot = host.attachShadow({ mode: 'closed' });
+shadowRoot.innerHTML = 'shadow-before <slot></slot> shadow-after';
+shadowRoot.id = 'shadow-root';
+
+var outerHost = document.getElementById('outer-host');
+var outerShadow = outerHost.attachShadow({ mode: 'closed' });
+outerShadow.innerHTML = 'outer-before <slot></slot> outer-after';
+outerShadow.id = 'outer-shadow';
+
+var innerHost = document.getElementById('inner-host');
+var innerShadow = innerHost.attachShadow({ mode: 'closed' });
+innerShadow.innerHTML = 'inner-before <slot></slot> inner-after';
+innerShadow.id = 'inner-shadow';
+
+if (!window.internals)
+    testFailed('This test requires internals');
+else {
+    document.getElementById('console').style.display = 'none';
+
+    debug('');
+    debug('Single shadow root with slot');
+
+    debug('');
+    debug('Flat tree mode: cross-boundary matches found');
+    shouldBe("internals.countFindMatches('shadow-before slotted', [])", "1");
+    shouldBe("internals.countFindMatches('slotted shadow-after', [])", "1");
+    shouldBe("internals.countFindMatches('shadow-before slotted shadow-after', [])", "1");
+
+    debug('');
+    debug('DoNotTraverseFlatTree: shadow content not reachable from document scope');
+    shouldBe("internals.countFindMatches('shadow-before slotted', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('slotted shadow-after', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('shadow-before slotted shadow-after', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('shadow-before', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('shadow-after', ['DoNotTraverseFlatTree'])", "0");
+
+    debug('');
+    debug('Light DOM content found in both modes');
+    shouldBe("internals.countFindMatches('slotted', ['DoNotTraverseFlatTree'])", "1");
+    shouldBe("internals.countFindMatches('slotted', [])", "1");
+
+    debug('');
+    debug('Nested shadow roots');
+
+    debug('');
+    debug('Flat tree mode: cross-boundary matches across nesting levels');
+    shouldBe("internals.countFindMatches('outer-before inner-before deep', [])", "1");
+    shouldBe("internals.countFindMatches('deep inner-after outer-after', [])", "1");
+    shouldBe("internals.countFindMatches('outer-before inner-before deep inner-after outer-after', [])", "1");
+
+    debug('');
+    debug('DoNotTraverseFlatTree: nested shadow content not reachable');
+    shouldBe("internals.countFindMatches('outer-before inner-before deep', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('deep inner-after outer-after', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('outer-before', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('inner-before', ['DoNotTraverseFlatTree'])", "0");
+    shouldBe("internals.countFindMatches('deep', ['DoNotTraverseFlatTree'])", "1");
+
+    document.getElementById('console').style.display = null;
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS anchor-name should not leak out of a shadow tree
+PASS anchor() in shadow tree should not match host anchor-name
+

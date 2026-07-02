@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<div contenteditable>
+    <span id=span>span1<div>div<br>div</div>span2</span>
+</div>
+<script>
+getSelection().setPosition(span.lastChild, 3);
+</script>

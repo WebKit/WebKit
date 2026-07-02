@@ -1,0 +1,12 @@
+
+
+PASS Test in the topmost document
+PASS Test in the iframe
+PASS Test in the topmost document: all expected events should be fired
+PASS Test in the topmost document: "pointerdown" event should be fired on expected target
+PASS Test in the topmost document: "mousedown" event should be fired on expected target
+PASS Test in the topmost document: "pointerup" event should be fired on expected target
+PASS Test in the topmost document: "mouseup" event should be fired on expected target
+PASS Test in the topmost document: "click" event should be fired on expected target
+FAIL Test in the iframe: all expected events should be fired assert_array_equals: lengths differ, expected array ["pointerdown", "mousedown", "pointerup", "mouseup", "click"] length 5, got [] length 0
+

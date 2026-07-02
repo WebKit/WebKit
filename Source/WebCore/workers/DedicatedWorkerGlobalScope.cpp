@@ -1,0 +1,158 @@
+/*
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "DedicatedWorkerGlobalScope.h"
+
+#include "ContentSecurityPolicyResponseHeaders.h"
+#include "DedicatedWorkerThread.h"
+#include "EventNames.h"
+#include "EventTargetInterfaces.h"
+#include "ExceptionOr.h"
+#include "JSRTCRtpScriptTransformer.h"
+#include "LocalDOMWindow.h"
+#include "MessageEvent.h"
+#include "RTCTransformEvent.h"
+#include "RequestAnimationFrameCallback.h"
+#include "SecurityOrigin.h"
+#include "StructuredSerializeOptions.h"
+#include "Worker.h"
+#include "WorkerObjectProxy.h"
+#include <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(NOTIFICATIONS)
+#include "WorkerNotificationClient.h"
+#endif
+
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "WorkerAnimationController.h"
+#endif
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DedicatedWorkerGlobalScope);
+
+Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, DedicatedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
+{
+    auto context = adoptRef(*new DedicatedWorkerGlobalScope(params, WTF::move(origin), thread, WTF::move(topOrigin), connectionProxy, socketProvider, WTF::move(workerClient)));
+    context->addToContextsMap();
+    if (!params.shouldBypassMainWorldContentSecurityPolicy)
+        context->applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
+    return context;
+}
+
+DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, DedicatedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<WorkerClient>&& workerClient)
+    : WorkerGlobalScope(WorkerThreadType::DedicatedWorker, params, WTF::move(origin), thread, WTF::move(topOrigin), connectionProxy, socketProvider, WTF::move(workerClient))
+    , m_name(params.name)
+{
+}
+
+DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope()
+{
+    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
+    removeFromContextsMap();
+}
+
+enum EventTargetInterfaceType DedicatedWorkerGlobalScope::eventTargetInterface() const
+{
+    return EventTargetInterfaceType::DedicatedWorkerGlobalScope;
+}
+
+void DedicatedWorkerGlobalScope::prepareForDestruction()
+{
+    WorkerGlobalScope::prepareForDestruction();
+}
+
+ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
+{
+    Vector<Ref<MessagePort>> ports;
+
+    auto message = SerializedScriptValue::create(state, messageValue, WTF::move(options.transfer), ports, SerializationForStorage::No);
+    if (message.hasException())
+        return message.releaseException();
+
+    // Disentangle the port in preparation for sending it to the remote context.
+    auto channels = MessagePort::disentanglePorts(WTF::move(ports));
+    if (channels.hasException())
+        return channels.releaseException();
+
+    if (CheckedPtr workerObjectProxy = thread()->workerObjectProxy())
+        workerObjectProxy->postMessageToWorkerObject({ message.releaseReturnValue(), channels.releaseReturnValue() });
+    return { };
+}
+
+ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    return postMessage(globalObject, messageValue, StructuredSerializeOptions { WTF::move(transfer) });
+}
+
+Ref<DedicatedWorkerThread> DedicatedWorkerGlobalScope::thread()
+{
+    return downcast<DedicatedWorkerThread>(Base::thread());
+}
+
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+CallbackId DedicatedWorkerGlobalScope::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
+{
+    if (!m_workerAnimationController)
+        lazyInitialize(m_workerAnimationController, WorkerAnimationController::create(*this));
+    return m_workerAnimationController->requestAnimationFrame(WTF::move(callback));
+}
+
+void DedicatedWorkerGlobalScope::cancelAnimationFrame(CallbackId callbackId)
+{
+    if (m_workerAnimationController)
+        m_workerAnimationController->cancelAnimationFrame(callbackId);
+}
+#endif
+
+#if ENABLE(WEB_RTC)
+RefPtr<RTCRtpScriptTransformer> DedicatedWorkerGlobalScope::createRTCRtpScriptTransformer(MessageWithMessagePorts&& options)
+{
+    auto transformerOrException = RTCRtpScriptTransformer::create(*this, WTF::move(options));
+    if (transformerOrException.hasException())
+        return nullptr;
+    auto transformer = transformerOrException.releaseReturnValue();
+    dispatchEvent(RTCTransformEvent::create(eventNames().rtctransformEvent, transformer.copyRef(), Event::IsTrusted::Yes));
+    return transformer;
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+NotificationClient* DedicatedWorkerGlobalScope::notificationClient()
+{
+    if (!m_notificationClient)
+        lazyInitialize(m_notificationClient, WorkerNotificationClient::create(*this));
+    return m_notificationClient.get();
+}
+#endif
+
+} // namespace WebCore

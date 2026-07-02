@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=WK_WEB_EXTENSIONS,
+    ReturnsPromiseWhenCallbackIsOmitted,
+] interface WebExtensionAPITest {
+
+    // Notifies that test failed.
+    [NeedsScriptContext] void notifyFail([Optional] DOMString message);
+
+    // Notifies that test passed.
+    [NeedsScriptContext] void notifyPass([Optional] DOMString message);
+
+    // Sends a message to the test harness.
+    [NeedsScriptContext] void sendMessage(DOMString message, [Optional, ValuesAllowed] any argument);
+
+    // Event for receiving messages from the test harness.
+    readonly attribute WebExtensionAPIEvent onMessage;
+
+    // Event for receiving messages from the test harness when a test has started.
+    readonly attribute WebExtensionAPIEvent onTestStarted;
+
+    // Event for receiving messages from the test harness when a test has finished.
+    readonly attribute WebExtensionAPIEvent onTestFinished;
+
+    // Runs the provided function in the context of a user gesture.
+    [NeedsFrame] any runWithUserGesture([ValuesAllowed] any function);
+
+    // Returns if a user gesture is active.
+    boolean isProcessingUserGesture();
+
+    // Logs a message during testing.
+    [NeedsScriptContext] void log([ValuesAllowed] any message);
+
+    // Alias for `assertTrue(false, message)`.
+    [NeedsScriptContext] void fail([Optional] DOMString message);
+
+    // Alias for `assertTrue(true, message)`.
+    [NeedsScriptContext] void succeed([Optional] DOMString message);
+
+    // Asserts the test value is `true`.
+    [RaisesException, NeedsScriptContext] void assertTrue(boolean actualValue, [Optional] DOMString message);
+
+    // Asserts the test value is `false`.
+    [RaisesException, NeedsScriptContext] void assertFalse(boolean actualValue, [Optional] DOMString message);
+
+    // Asserts the test value is deeply equal to the expected value.
+    [RaisesException, NeedsScriptContext] void assertDeepEq([ValuesAllowed] any actualValue, [ValuesAllowed] any expectedValue, [Optional] DOMString message);
+
+    // Asserts the test value is equal to the expected value.
+    [RaisesException, NeedsScriptContext] void assertEq([ValuesAllowed] any actualValue, [ValuesAllowed] any expectedValue, [Optional] DOMString message);
+
+    // Asserts the promise is rejected.
+    [NeedsScriptContext, ProcessArgumentsLeftToRight] any assertRejects(any promise, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
+
+    // Asserts the promise is resolved.
+    [NeedsScriptContext] any assertResolves(any promise, [Optional] DOMString message);
+
+    // Asserts the function throws an exception.
+    [RaisesException, NeedsScriptContext, ProcessArgumentsLeftToRight] void assertThrows(any function, [Optional, ValuesAllowed] any expectedError, [Optional] DOMString message);
+
+    // Asserts the function does not throw an exception.
+    [NeedsScriptContext] any assertSafe(any function, [Optional] DOMString message);
+
+    // Asserts the function does not throw an exception and the result promise is resolved.
+    [NeedsScriptContext] any assertSafeResolve(any function, [Optional] DOMString message);
+
+    // Adds a test represented by a promise. If the promise is resolved, the test passes; if the promise is rejected, the test fails.
+    [NeedsScriptContext] any addTest(any function);
+
+    // Adds multiple tests to the queue to be ran and returns a promise. If all tests pass, the promise is resolved; if any test fails, the promise is rejected.
+    [NeedsScriptContext] any runTests([NSArray=JSValue] array tests);
+
+};

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<input id=emptyOnFirstVisit>
+
+<script>
+jsTestIsAsync = true;
+
+function makeForms(stage) {
+    var beforeForms = '<div id=parent>' +
+        '<input value=initial id=form3-outer1 name=before form=form3>' +
+        (stage == 1 ? '<input value=initial name=before id=noowner1>' : '') +
+        '<input value=initial id=form2-outer1 name=before form=form2>';
+
+    var backForm = '<form action="data:text/html,&lt;script>history.back();&lt;/script>" id=form1>' +
+        '<input value=initial id=form1-control1 name=common-name1>' +
+        '<input value=initial id=form1-control2 name=common-name1>' +
+        '</form>';
+
+    var query = stage == 1 ? "?session=0123456" : "?session=7654321111";
+    var additionalControl = stage == 1 ? '' : '<input name=username id=form2-added value=initial>';
+    var sameActionForm1 = '<form action="http://example.com/foo.cgi' + query + '#bar" id=form2>' +
+        '<input value=initial id=form2-control1 name=common-name1>' +
+        '<input value=initial id=form2-control2 name=name2>' +
+        additionalControl +
+        '</form>';
+
+    var sameActionForm2 = '<form action="http://example.com/foo.cgi?action=login#bar" id=form3>' +
+        '<input value=initial id=form3-control1 name=username>' +
+        '<input value=initial id=form3-control2 name=common-name1>' +
+        '</form>';
+
+    var reorderedFormA = '<form action="PostAction" method="POST">' +
+        '<input type="hidden" name="task" value="AAA">' +
+        '<input name="aaa_input1" value=initial id=aaa_input1>' +
+        '<input name="aaa_input2" value=initial>' +
+        '</form>';
+    var reorderedFormB = '<form action="PostAction" method="POST">' +
+        '<input type="hidden" name="task" value="BBB">' +
+        '<input name="bbb_input1" value=initial id=bbb_input1>' +
+        '<input name="bbb_input2" value=initial>' +
+        '</form>';
+    var reorderedFormC = '<form action="PostAction" method="POST">' +
+        '<input type="hidden" name="task" value="CCC">' +
+        '<input name="ccc_input1" value=initial id=ccc_input1>' +
+        '<input name="ccc_input2" value=initial>' +
+        '</form>';
+    var reorderedSameActionForms = stage == 1 ? reorderedFormA + reorderedFormB + reorderedFormC : reorderedFormC + reorderedFormA;
+
+    var afterForms = (stage == 1 ? '' : '<input value=initial id=noowner2 name=after>') +
+        '<input value=initial id=form3-outer2 name=after form=form3>' +
+        '<input value=initial id=form2-outer2 name=after form=form2>' +
+        '</div>';
+
+    document.write(beforeForms +
+                   (stage == 1 ? backForm + sameActionForm1 : sameActionForm1 + backForm) +
+                   sameActionForm2 +
+                   reorderedSameActionForms +
+                   afterForms);
+}
+
+function runTest()
+{
+    var state = $('emptyOnFirstVisit');
+    if (!state.value) {
+        // First visit.
+        state.value = 'visited';
+        makeForms(1);
+    
+        setTimeout(function() {
+            $('form1-control2').value = 'form1-control2-modified';
+            $('form2-control1').value = 'query-changed-control1-modified';
+            $('form3-control1').value = 'username-modified';
+            $('form3-control2').value = 'form3-control2-modified';
+            $('noowner1').value = 'noowner1-modified';
+            $('form2-outer1').value = 'form2-outer1-modified';
+            $('form3-outer1').value = 'form3-outer1-modified';
+            $('form2-outer2').value = 'form2-outer2-modified';
+            $('form3-outer2').value = 'form3-outer2-modified';
+            $('aaa_input1').value = 'aaa_input1-modified';
+            $('bbb_input1').value = 'bbb_input1-modified';
+            $('ccc_input1').value = 'ccc_input1-modified';
+            $('form1').submit();
+        }, 0);
+    } else {
+        // Second visit.
+        makeForms(2);
+    
+        debug('Confirm we can restore correctly even if the order of forms are changed:');
+        shouldBeEqualToString('$("form1-control1").value', 'initial');
+        shouldBeEqualToString('$("form1-control2").value', 'form1-control2-modified');
+        shouldBeEqualToString('$("form3-control2").value', 'form3-control2-modified');
+
+        debug('\nConfirm we ignore the query part of action URLs:');
+        shouldBeEqualToString('$("form2-control1").value', 'query-changed-control1-modified');
+
+        debug('\nConfirm an additional control in the previous form doesn\'t take a state for the next form:');
+        shouldBeEqualToString('$("form3-control1").value', 'username-modified');
+        shouldBeEqualToString('$("form2-added").value', 'initial');
+
+        debug('\nAssociated controls with form attributes are correctly handled:');
+        // Some of the followings fail. They will be resolved in webkit.org/b/89962.
+        shouldBeEqualToString('$("form3-outer1").value', 'form3-outer1-modified');
+        shouldBeEqualToString('$("form2-outer1").value', 'form2-outer1-modified');
+
+        shouldBeEqualToString('$("noowner2").value', 'initial');
+        shouldBeEqualToString('$("form3-outer2").value', 'form3-outer2-modified');
+        shouldBeEqualToString('$("form2-outer2").value', 'form2-outer2-modified');
+
+        debug('\nControls in forms with an identical action URL. These forms were reordered:');
+        shouldBeEqualToString('$("aaa_input1").value', 'aaa_input1-modified');
+        shouldBeEqualToString('$("ccc_input1").value', 'ccc_input1-modified');
+    
+        $('parent').innerHTML = '';
+        setTimeout(function() { finishJSTest(); }, 0);
+    }
+}
+
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

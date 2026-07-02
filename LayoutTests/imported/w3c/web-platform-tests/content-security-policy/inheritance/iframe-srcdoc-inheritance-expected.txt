@@ -1,0 +1,5 @@
+
+
+PASS First image should be blocked
+PASS Second image should be blocked
+

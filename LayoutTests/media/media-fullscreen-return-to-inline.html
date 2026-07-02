@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-fullscreen-return-to-inline</title>
+
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+
+    <script>
+    function go()
+    {
+        if (!window.internals) {
+            failTest('This test requires window.internals.');
+            return;
+        }
+
+        findMediaElement();
+
+        internals.settings.setAllowsInlineMediaPlayback(false);
+        internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(false);
+        // Disable the Fullscreen API (element fullscreen) support
+        internals.settings.setFullScreenEnabled(false);
+        internals.setMockVideoPresentationModeEnabled(true);
+
+        waitForEventOnce('canplaythrough', canplaythrough);
+        run('video.src = findMediaFile("video", "content/test")');
+    }
+
+    function canplaythrough()
+    {
+        waitForEventOnce('webkitpresentationmodechanged', beginfullscreen1);
+        runWithKeyDown('video.play()');
+    }
+
+    async function beginfullscreen1()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
+        waitForEventOnce('webkitpresentationmodechanged', endfullscreen1);
+        run('video.webkitExitFullscreen()');
+    }
+
+    async function endfullscreen1()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
+        testExpected('video.paused', true);
+
+        internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true);
+
+        waitForEventOnce('webkitpresentationmodechanged', beginfullscreen2);
+        runWithKeyDown('video.play()');
+    }
+
+    async function beginfullscreen2()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
+        waitForEventOnce('webkitpresentationmodechanged', endfullscreen2);
+        run('video.webkitExitFullscreen()');
+    }
+
+    async function endfullscreen2()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
+        testExpected('video.paused', false);
+        endTest();
+    }
+    </script>
+</head>
+
+<body onload="go()">
+    <video controls loop></video>
+    <p>Test that a &lt;video&gt; pauses after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is false.</p>
+</body>
+</html>

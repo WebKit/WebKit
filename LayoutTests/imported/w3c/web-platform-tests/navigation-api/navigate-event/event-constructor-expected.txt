@@ -1,0 +1,8 @@
+
+PASS can't bypass required members by omitting the dictionary entirely
+PASS destination is required
+PASS signal is required
+PASS all properties are reflected back
+PASS defaults are as expected
+PASS hasUAVisualTransition is default false
+

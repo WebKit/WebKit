@@ -1,0 +1,389 @@
+// Copyright 2015 The Chromium Authors. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "config.h"
+#include "CSSSubstitutionParser.h"
+
+#include "CSSCustomPropertySyntax.h"
+#include "CSSCustomPropertyValue.h"
+#include "CSSParserContext.h"
+#include "CSSParserIdioms.h"
+#include "CSSParserToken.h"
+#include "CSSParserTokenRange.h"
+#include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
+#include "CSSSubstitutionValue.h"
+#include "CSSTokenizer.h"
+#include "CSSUnits.h"
+#include "CSSValueKeywords.h"
+#include "StyleCustomProperty.h"
+#include "StyleSheetContents.h"
+#include <stack>
+
+namespace WebCore {
+
+bool CSSSubstitutionParser::isValidCustomPropertyName(const CSSParserToken& token)
+{
+    if (token.type() != IdentToken)
+        return false;
+
+    return isCustomPropertyName(token.value());
+}
+
+static bool NODELETE isValidConstantName(const CSSParserToken& token)
+{
+    return token.type() == IdentToken;
+}
+
+static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidConstantReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidRandomItemReference(CSSParserTokenRange, const CSSParserContext&);
+
+struct ClassifyBlockResult {
+    bool hasSubstitutionFunctions { false };
+    bool hasTopLevelBraceBlockMixedWithOtherValues { false };
+    bool hasEmptyTopLevelBraceBlock { false };
+};
+
+static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    struct ClassifyBlockState {
+        CSSParserTokenRange range;
+        bool isTopLevelBlock = true;
+        bool hasOtherValues = false;
+        unsigned topLevelBraceBlocks = 0;
+        bool doneWithThisRange = false;
+    };
+    ClassifyBlockState initialState { .range = range };
+
+    std::stack<ClassifyBlockState> stack;
+    stack.push(initialState);
+
+    auto result = ClassifyBlockResult { };
+
+    while (!stack.empty()) {
+        auto& current = stack.top();
+        if (current.doneWithThisRange) {
+            // If there is a top level brace block, the value should contains only that.
+            if (current.topLevelBraceBlocks > 1 || (current.topLevelBraceBlocks == 1 && current.hasOtherValues))
+                result.hasTopLevelBraceBlockMixedWithOtherValues = true;
+            stack.pop();
+            continue;
+        }
+
+        if (current.range.atEnd()) {
+            current.doneWithThisRange = true;
+            continue;
+        }
+
+        if (current.isTopLevelBlock) {
+            auto tokenType = current.range.peek().type();
+            if (!CSSTokenizer::isWhitespace(tokenType)) {
+                if (tokenType == LeftBraceToken)
+                    current.topLevelBraceBlocks++;
+                else
+                    current.hasOtherValues = true;
+            }
+        }
+
+        if (current.range.peek().getBlockType() == CSSParserToken::BlockStart) {
+            const CSSParserToken& token = current.range.peek();
+            CSSParserTokenRange block = current.range.consumeBlock();
+            block.consumeWhitespace();
+
+            if (token.type() == LeftBraceToken && current.isTopLevelBlock && block.atEnd())
+                result.hasEmptyTopLevelBraceBlock = true;
+
+            if (token.functionId() == CSSValueVar) {
+                if (!isValidVariableReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueEnv) {
+                if (!isValidConstantReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueAttr && parserContext.cssAttrSubstitutionFunctionEnabled) {
+                if (!isValidAttrReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueRandomItem && parserContext.cssRandomItemFunctionEnabled) {
+                if (!isValidRandomItemReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueInternalAutoBase && parserContext.cssInternalAutoBaseParsingEnabled) {
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.type() == FunctionToken && isCustomPropertyName(token.value()) && parserContext.propertySettings.cssFunctionAtRuleEnabled) {
+                // https://drafts.csswg.org/css-mixins/#typedef-dashed-function
+                if (!isValidDashedFunction(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            stack.push(ClassifyBlockState {
+                .range = block,
+                .isTopLevelBlock = false, // Nested block, not top-level
+            });
+            continue;
+        }
+
+        ASSERT(current.range.peek().getBlockType() != CSSParserToken::BlockEnd);
+
+        const CSSParserToken& token = current.range.consume();
+        switch (token.type()) {
+        case AtKeywordToken:
+            break;
+        case DelimiterToken: {
+            if (token.delimiter() == '!' && current.isTopLevelBlock)
+                return { };
+            break;
+        }
+        case RightParenthesisToken:
+        case RightBraceToken:
+        case RightBracketToken:
+        case BadStringToken:
+        case BadUrlToken:
+            return { };
+        case SemicolonToken:
+            if (current.isTopLevelBlock)
+                return { };
+            break;
+        default:
+            break;
+        }
+
+    }
+
+    return result;
+}
+
+bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+    if (!CSSSubstitutionParser::isValidCustomPropertyName(range.consumeIncludingWhitespace()))
+        return false;
+    if (range.atEnd())
+        return true;
+
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return false;
+    if (range.atEnd())
+        return true;
+
+    return !!classifyBlock(range, parserContext);
+}
+
+bool isValidConstantReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+    if (!isValidConstantName(range.consumeIncludingWhitespace()))
+        return false;
+    if (range.atEnd())
+        return true;
+
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return false;
+    if (range.atEnd())
+        return true;
+
+    return !!classifyBlock(range, parserContext);
+}
+
+// Validates a single comma-separated argument that is a <declaration-value> subject to the
+// comma-containing-production rules: a {}-wrapped block groups internal commas, but may not be
+// mixed with other values, and a bare {} is not a valid value.
+// https://drafts.csswg.org/css-values-5/#component-function-commas
+// `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?#
+// (random-item() items, where an item may be empty).
+static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
+{
+    if (argumentRange.atEnd())
+        return allowEmpty;
+
+    auto result = classifyBlock(argumentRange, parserContext);
+    return result && !result->hasTopLevelBraceBlockMixedWithOtherValues && !result->hasEmptyTopLevelBraceBlock;
+}
+
+bool isValidDashedFunction(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    // <dashed-function> --*( <declaration-value>#? )
+    range.consumeWhitespace();
+
+    unsigned index = 0;
+    while (auto argumentRange = CSSPropertyParserHelpers::consumeArgument(range, index)) {
+        if (!isValidDeclarationValueArgument(*argumentRange, parserContext, /* allowEmpty */ false))
+            return false;
+        ++index;
+    }
+    return true;
+}
+
+// https://drafts.csswg.org/css-values-5/#funcdef-attr
+// <attr-args> = attr( <declaration-value>, <declaration-value>? )
+// Validate using the argument grammar. Detailed parsing of <attr-name> <attr-type>?
+// happens at substitution time.
+bool isValidAttrReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+
+    // Split at the first literal comma into two arguments.
+    auto firstArgStart = range;
+    while (!range.atEnd() && range.peek().type() != CommaToken)
+        range.consumeComponentValue();
+    auto firstArgRange = firstArgStart.rangeUntil(range);
+
+    // The first arg (<declaration-value>) must be non-empty.
+    if (firstArgRange.atEnd())
+        return false;
+
+    if (!classifyBlock(firstArgRange, parserContext))
+        return false;
+
+    // Optional second arg (fallback).
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return range.atEnd();
+    if (range.atEnd())
+        return true;
+
+    return !!classifyBlock(range, parserContext);
+}
+
+// https://drafts.csswg.org/css-values-5/#funcdef-random-item
+// <random-item-args> = random-item( <declaration-value>, [ <declaration-value>? ]# )
+// Validate using the argument grammar. Parsing the first argument as <random-key> and
+// selecting an item happen at substitution time.
+bool isValidRandomItemReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+
+    // The first argument is the required <random-key>. Split at the first literal comma;
+    // commas inside blocks (e.g. {a, b}) are not separators.
+    auto keyStart = range;
+    while (!range.atEnd() && range.peek().type() != CommaToken)
+        range.consumeComponentValue();
+    auto keyRange = keyStart.rangeUntil(range);
+
+    // The <random-key> argument must be non-empty.
+    if (keyRange.atEnd())
+        return false;
+
+    if (!classifyBlock(keyRange, parserContext))
+        return false;
+
+    // A comma must separate the key from the list of items.
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+        return false;
+
+    // [ <declaration-value>? ]# : a comma-separated list of one or more items, each of which
+    // may be empty. Items follow the same comma-containing-production rules as dashed-function
+    // arguments, except an empty item is allowed here.
+    do {
+        auto itemStart = range;
+        while (!range.atEnd() && range.peek().type() != CommaToken)
+            range.consumeComponentValue();
+        auto itemRange = itemStart.rangeUntil(range);
+
+        if (!isValidDeclarationValueArgument(itemRange, parserContext, /* allowEmpty */ true))
+            return false;
+    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+    return range.atEnd();
+}
+
+struct VariableType {
+    std::optional<CSSWideKeyword> cssWideKeyword { };
+    ClassifyBlockResult classifyBlockResult { };
+};
+
+static std::optional<VariableType> classifyVariableRange(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+
+    if (range.peek().type() == IdentToken) {
+        auto rangeCopy = range;
+        CSSValueID id = range.consumeIncludingWhitespace().id();
+        if (auto keyword = parseCSSWideKeyword(id); range.atEnd() && keyword)
+            return VariableType { *keyword };
+        // No fast path, restart with the complete range.
+        range = rangeCopy;
+    }
+
+    auto classifyBlockResult = classifyBlock(range, parserContext);
+    if (!classifyBlockResult)
+        return { };
+
+    return VariableType { { }, WTF::move(*classifyBlockResult) };
+}
+
+bool CSSSubstitutionParser::containsSubstitutionFunctions(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    auto type = classifyVariableRange(range, parserContext);
+    if (!type)
+        return false;
+
+    return type->classifyBlockResult.hasSubstitutionFunctions && !type->classifyBlockResult.hasTopLevelBraceBlockMixedWithOtherValues;
+}
+
+RefPtr<CSSCustomPropertyValue> CSSSubstitutionParser::parseDeclarationValue(const AtomString& variableName, CSSParserTokenRange range, const CSSParserContext& parserContext, const CSSNamespacePrefixMap& namespaceMap)
+{
+    auto type = classifyVariableRange(range, parserContext);
+    if (!type)
+        return nullptr;
+
+    if (type->cssWideKeyword)
+        return CSSCustomPropertyValue::createWithCSSWideKeyword(variableName, *type->cssWideKeyword);
+
+    if (type->classifyBlockResult.hasSubstitutionFunctions)
+        return CSSCustomPropertyValue::createUnresolved(variableName, CSSSubstitutionValue::create(range, namespaceMap, parserContext));
+
+    return CSSCustomPropertyValue::createSyntaxAll(variableName, CSSVariableData::create(range, parserContext));
+}
+
+RefPtr<const Style::CustomProperty> CSSSubstitutionParser::parseInitialValueForUniversalSyntax(const AtomString& variableName, CSSParserTokenRange range)
+{
+    auto type = classifyVariableRange(range, strictCSSParserContext());
+
+    if (!type || type->cssWideKeyword || type->classifyBlockResult.hasSubstitutionFunctions)
+        return nullptr;
+
+    return Style::CustomProperty::createForVariableData(variableName, CSSVariableData::create(range));
+}
+
+} // namespace WebCore

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+
+let buffer = Uint8Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+let blob = new Blob([buffer]);
+let blobURL = URL.createObjectURL(blob);
+
+promise_test(async () => {
+    let response = await fetch(blobURL, {headers: new Headers({'Range': 'bytes=0-1'})});
+    assert_equals(response.status, 206);
+    assert_equals(response.headers.get('Content-Length'), '2');
+    assert_equals(response.headers.get('Content-Range'), 'bytes 0-1/10');
+}, "Bounded range request");
+
+promise_test(async () => {
+    let response = await fetch(blobURL, {headers: new Headers({'Range': 'bytes=8-'})});
+    assert_equals(response.status, 206);
+    assert_equals(response.headers.get('Content-Length'), '2');
+    assert_equals(response.headers.get('Content-Range'), 'bytes 8-9/10');
+}, "Unbounded range request");
+
+</script>

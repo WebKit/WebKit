@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+    <title>BCP Language</title>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+
+    <script>
+        var test = 0;
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', function() {
+            findMediaElement();
+
+            testExpected("internals.textTrackBCP47Language(track1.track)", "zh");
+            testExpected("track1.track.language", "zh");
+
+            track1.setAttribute("srclang", "zh-Hant");
+            testExpected("internals.textTrackBCP47Language(track1.track)", "zh-Hant");
+            testExpected("track1.track.language", "zh-Hant");
+
+            // Set to invalid code (country code must be <= 3)
+            track1.setAttribute("srclang", "zhHant");
+            testExpected("internals.textTrackBCP47Language(track1.track)", "");
+            testExpected("track1.track.language", "zhHant");
+
+            track1.setAttribute("srclang", "zh-cmn-Hans-CN");
+            testExpected("internals.textTrackBCP47Language(track1.track)", "zh-cmn-Hans-CN");
+            testExpected("track1.track.language", "zh-cmn-Hans-CN");
+
+            // <track> srclang attribute is invalid (invalid first character)
+            testExpected("internals.textTrackBCP47Language(track2.track)", "");
+            testExpected("track2.track.language", "-sl");
+
+            track2.setAttribute("srclang", "sl-rozaj-biske");
+            testExpected("internals.textTrackBCP47Language(track2.track)", "sl-rozaj-biske");
+            testExpected("track2.track.language", "sl-rozaj-biske");
+
+            endTest();
+        });
+
+    </script>
+
+    <body>
+        <p>Test that TextTrackBase.validBCP47Language is set and reset correctly.</p>
+        <video width="500" height="300" controls>
+            <track id="track1" kind="captions" srclang="zh" label="" />
+            <track id="track2" kind="captions" srclang="-sl" />
+        </video>
+    </body>
+</html>
+

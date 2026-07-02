@@ -1,0 +1,12 @@
+This test verifies that toggling visibility on an overflow scrolling container's ancestor makes the overflow scrolling container scrollable or non-scrollable. To manually run the test, load the page and scroll the red box.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasOverflowScroller() is false
+PASS hasOverflowScroller() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This box should be scrollable.
+

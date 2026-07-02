@@ -1,0 +1,8 @@
+Button
+
+PASS focus-within should be updated when reparenting focused element directly
+PASS focus-within should be updated when reparenting an element that has focus within
+PASS focus-within should remain the same when moving to the same parent
+PASS :focus-within should be eventually up to date when moving to an inert subtree
+FAIL :focus-within should be eventually up to date when moving to a subtree that would become inert via style assert_array_equals: lengths differ, expected array [] length 0, got ["HTML", "BODY", "inert_when_not_empty_parent", "button"] length 4
+

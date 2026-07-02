@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #target {
+    width: 100px;
+    height: 100px;
+    background: green;
+  }
+</style>
+
+<div id="target"></div>
+
+<script>
+  let options = {
+    threshold: [1]
+  };
+
+  let observer = new IntersectionObserver((observations) => {
+    const lastObservation = observations[observations.length - 1];
+    window.top.postMessage({
+      intersectionRect: {
+        x: lastObservation.intersectionRect.x,
+        y: lastObservation.intersectionRect.y,
+        width: lastObservation.intersectionRect.width,
+        height: lastObservation.intersectionRect.height
+      },
+      isIntersecting: lastObservation.isIntersecting
+    }, "*");
+  }, options);
+
+  observer.observe(target);
+</script>

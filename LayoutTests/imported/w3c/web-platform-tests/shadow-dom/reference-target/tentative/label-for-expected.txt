@@ -1,0 +1,15 @@
+Input 1 Input 2 A F Input 4 Input 5 Input 6 Input 7 - 1 Input 7 - 2
+
+PASS Label for attribute targeting a custom element using shadowrootreferencetarget works for computed name
+FAIL Label for attribute targeting a custom element using shadowrootreferencetarget works for .labels property assert_array_equals: lengths differ, expected array [Element node <label id="label1" for="x-input1">Input 1</label>] length 1, got [] length 0
+PASS Label for attribute targeting a custom element using shadowrootreferencetarget inside multiple layers of shadow roots works for computed name
+FAIL Label for attribute targeting a custom element using shadowrootreferencetarget inside multiple layers of shadow roots works for .labels property assert_array_equals: lengths differ, expected array [Element node <label id="label2" for="x-outer2">Input 2</label>] length 1, got [] length 0
+PASS Multiple labels targeting a custom element using shadowrootreferencetarget inside multiple layers of shadow roots works for computed name
+FAIL Multiple labels targeting a custom element using shadowrootreferencetarget inside multiple layers of shadow roots works for .labels property assert_array_equals: lengths differ, expected array [Element node <label id="label3-A" for="x-outer3">A</label>, Element node <label id="label3-B" for="x-inner3">B</label>, Element node <label id="label3-C" for="input3">C</label>, Element node <label id="label3-D" for="input3">D</label>, Element node <label id="label3-E" for="x-inner3">E</label>, Element node <label id="label3-F" for="x-outer3">F</label>] length 6, got [Element node <label id="label3-C" for="input3">C</label>, Element node <label id="label3-D" for="input3">D</label>] length 2
+PASS Setting .htmlFor property to target a custom element using shadowrootreferencetarget works for computed name
+FAIL Setting .htmlFor property to target a custom element using shadowrootreferencetarget works for .labels assert_array_equals: lengths differ, expected array [Element node <label id="label-input4" for="x-input4">Input 4</label>] length 1, got [] length 0
+PASS Modifying the reference target changes the computed label when using label/for
+FAIL Modifying the reference target changes .labels when using label/for assert_array_equals: input1 before changing reference target lengths differ, expected array [Element node <label id="label-input6" for="x-input6-outer">Input 6</la...] length 1, got [] length 0
+FAIL Moving an input from one shadow root to another causes its .labels to be updated assert_array_equals: input before changing shadow root lengths differ, expected array [Element node <label id="label-input7-1" for="x-input7-1">Input 7 - 1</...] length 1, got [] length 0
+FAIL Attaching a shadow root, inserting and removing a shadow host, and changing reference targets all cause label association to be updated assert_array_equals: after inserting light input in container lengths differ, expected array [Element node <label id="outer-label8" for="outer-input8"></label>] length 1, got [] length 0
+

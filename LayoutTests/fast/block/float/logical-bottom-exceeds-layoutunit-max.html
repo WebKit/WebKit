@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<style> #float { float:left; height: 33554431px; width: 83866px; }</style>
+<script src="../../../resources/check-layout.js"></script>
+<body onload="checkLayout('#table')">
+Elements should avoid floats even if they are as high as LayoutUnit::max()
+<div id="float"> </div>
+<table data-offset-y=33554431 id="table">
+<td>a</td>
+</table>
+</body>

@@ -1,0 +1,3 @@
+
+PASS Same-site window.open with noopener uses the same process
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            html {
+                background: black;
+                color: white;
+            }
+            div {
+                position: absolute;
+                width: 200px;
+                height: 200px;
+                filter: invert();
+                will-change: transform;
+            }
+            .y {
+                transform:  translate(300px, 30px) rotate(20deg);
+            }
+        </style>
+    </head>
+    <body>
+        You should see no white boxes bellow.
+        <div class="x">
+        </div>
+        <div class="y">
+        </div>
+    </body>
+</html>

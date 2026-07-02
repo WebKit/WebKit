@@ -1,0 +1,112 @@
+
+PASS `SAMEORIGIN;SAMEORIGIN` allows same-origin framing
+PASS `SAMEORIGIN;SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN;sameOrigin` allows same-origin framing
+PASS `sameOrigin;SAMEORIGIN` allows same-origin framing
+PASS `SAMEORIGIN,sameOrigin` allows same-origin framing
+PASS `sameOrigin,SAMEORIGIN` allows same-origin framing
+PASS `SAMEORIGIN;sameOrigin` blocks cross-origin framing
+PASS `sameOrigin;SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN,sameOrigin` blocks cross-origin framing
+PASS `sameOrigin,SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN;DENY` blocks same-origin framing
+PASS `DENY;SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN,DENY` blocks same-origin framing
+PASS `DENY,SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN;DENY` blocks cross-origin framing
+PASS `DENY;SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN,DENY` blocks cross-origin framing
+PASS `DENY,SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN;INVALID` blocks same-origin framing
+PASS `INVALID;SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN,INVALID` blocks same-origin framing
+PASS `INVALID,SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN;INVALID` blocks cross-origin framing
+PASS `INVALID;SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN,INVALID` blocks cross-origin framing
+PASS `INVALID,SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN;ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL;SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN,ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL,SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN;ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL;SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN,ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL,SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN;"DENY"` blocks same-origin framing
+PASS `"DENY";SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN,"DENY"` blocks same-origin framing
+PASS `"DENY",SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN;"DENY"` blocks cross-origin framing
+PASS `"DENY";SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN,"DENY"` blocks cross-origin framing
+PASS `"DENY",SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN;` blocks same-origin framing
+PASS `(the empty string);SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN,(the empty string)` blocks same-origin framing
+PASS `(the empty string),SAMEORIGIN` blocks same-origin framing
+PASS `SAMEORIGIN;` blocks cross-origin framing
+PASS `(the empty string);SAMEORIGIN` blocks cross-origin framing
+PASS `SAMEORIGIN,(the empty string)` blocks cross-origin framing
+PASS `(the empty string),SAMEORIGIN` blocks cross-origin framing
+PASS `DENY;DENY` blocks same-origin framing
+PASS `DENY;DENY` blocks cross-origin framing
+PASS `DENY;INVALID` blocks same-origin framing
+PASS `INVALID;DENY` blocks same-origin framing
+PASS `DENY,INVALID` blocks same-origin framing
+PASS `INVALID,DENY` blocks same-origin framing
+PASS `DENY;INVALID` blocks cross-origin framing
+PASS `INVALID;DENY` blocks cross-origin framing
+PASS `DENY,INVALID` blocks cross-origin framing
+PASS `INVALID,DENY` blocks cross-origin framing
+PASS `DENY;ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL;DENY` blocks same-origin framing
+PASS `DENY,ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL,DENY` blocks same-origin framing
+PASS `DENY;ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL;DENY` blocks cross-origin framing
+PASS `DENY,ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL,DENY` blocks cross-origin framing
+PASS `DENY;"SAMEORIGIN"` blocks same-origin framing
+PASS `"SAMEORIGIN";DENY` blocks same-origin framing
+PASS `DENY,"SAMEORIGIN"` blocks same-origin framing
+PASS `"SAMEORIGIN",DENY` blocks same-origin framing
+PASS `DENY;"SAMEORIGIN"` blocks cross-origin framing
+PASS `"SAMEORIGIN";DENY` blocks cross-origin framing
+PASS `DENY,"SAMEORIGIN"` blocks cross-origin framing
+PASS `"SAMEORIGIN",DENY` blocks cross-origin framing
+PASS `ALLOWALL;INVALID` blocks same-origin framing
+PASS `INVALID;ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL,INVALID` blocks same-origin framing
+PASS `INVALID,ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL;INVALID` blocks cross-origin framing
+PASS `INVALID;ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL,INVALID` blocks cross-origin framing
+PASS `INVALID,ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL;` blocks same-origin framing
+PASS `(the empty string);ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL,(the empty string)` blocks same-origin framing
+PASS `(the empty string),ALLOWALL` blocks same-origin framing
+PASS `ALLOWALL;` blocks cross-origin framing
+PASS `(the empty string);ALLOWALL` blocks cross-origin framing
+PASS `ALLOWALL,(the empty string)` blocks cross-origin framing
+PASS `(the empty string),ALLOWALL` blocks cross-origin framing
+PASS `allowAll;INVALID` blocks same-origin framing
+PASS `INVALID;allowAll` blocks same-origin framing
+PASS `allowAll,INVALID` blocks same-origin framing
+PASS `INVALID,allowAll` blocks same-origin framing
+PASS `allowAll;INVALID` blocks cross-origin framing
+PASS `INVALID;allowAll` blocks cross-origin framing
+PASS `allowAll,INVALID` blocks cross-origin framing
+PASS `INVALID,allowAll` blocks cross-origin framing
+PASS `INVALID;INVALID` allows same-origin framing
+PASS `INVALID;INVALID` allows cross-origin framing
+PASS `INVALID;` allows same-origin framing
+PASS `(the empty string);INVALID` allows same-origin framing
+PASS `INVALID,(the empty string)` allows same-origin framing
+PASS `(the empty string),INVALID` allows same-origin framing
+PASS `INVALID;` allows cross-origin framing
+PASS `(the empty string);INVALID` allows cross-origin framing
+PASS `INVALID,(the empty string)` allows cross-origin framing
+PASS `(the empty string),INVALID` allows cross-origin framing
+

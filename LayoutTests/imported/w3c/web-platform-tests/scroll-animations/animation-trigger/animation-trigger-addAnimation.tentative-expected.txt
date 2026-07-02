@@ -1,0 +1,5 @@
+
+FAIL Animation attached to tripped (default) trigger plays. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+FAIL Animation attached to untripped trigger is paused initially. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+FAIL Animation attached to tripped trigger is played immediately. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+

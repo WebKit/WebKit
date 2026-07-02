@@ -1,0 +1,15 @@
+Verify the Cross-Origin Embedder Policy for Shared Workers by performing a cross-domain "fetch" request for a resource that does not specify a COEP. Only Shared Workers with the default COEP should be able to successfully perform this operation.
+
+
+PASS default policy (derived from response)
+PASS "require-corp" (derived from response)
+PASS default policy (derived from owner set due to use of local scheme - blob URL)
+PASS require-corp (derived from blob URL creator)
+FAIL "require-corp" (derived from owner set due to use of local scheme - blob URL) assert_equals: expected "failure" but got "success"
+PASS default policy (derived from owner set due to use of local scheme - data URL)
+PASS default policy (not derived from data URL creator)
+FAIL "require-corp" (derived from owner set due to use of local scheme - data URL) assert_equals: expected "failure" but got "success"
+FAIL default policy (derived from owner set due to use of local scheme - filesystem URL) assert_equals: url creation error expected (undefined) undefined but got (string) "unimplemented"
+FAIL require-corp (derived from filesystem URL creator) assert_equals: url creation error expected (undefined) undefined but got (string) "unimplemented"
+FAIL "require-corp" (derived from owner set due to use of local scheme - filesystem URL) assert_equals: url creation error expected (undefined) undefined but got (string) "unimplemented"
+

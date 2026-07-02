@@ -1,0 +1,7 @@
+PASS
+
+PASS Initial state
+PASS Test that visibility inherits via container after mutation
+PASS Return to initial state
+PASS Test that visibility inherits from container after mutation
+

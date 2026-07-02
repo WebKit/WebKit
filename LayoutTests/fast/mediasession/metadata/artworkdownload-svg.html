@@ -1,0 +1,22 @@
+<!doctype html>
+<img id=result src="" style="image-rendering: pixelated;">
+<script>
+if (window.internals && window.testRunner) {
+  testRunner.waitUntilDone();
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 200;
+  canvas.height = 200;
+  const context = canvas.getContext('2d');
+
+  context.fillStyle = "red";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  internals.loadArtworkImage("../../../svg/as-image/resources/image-with-nested-data-uri-images.svg").then(data => {
+    context.drawImage(data, 0, 0);
+    const image = document.getElementById("result");
+    image.src = canvas.toDataURL();
+    image.onload = () => testRunner.notifyDone();
+  });
+}
+</script>

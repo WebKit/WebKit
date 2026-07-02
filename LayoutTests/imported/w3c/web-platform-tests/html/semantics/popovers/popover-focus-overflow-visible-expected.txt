@@ -1,0 +1,4 @@
+Invoker After Focus me
+
+FAIL Popover focus navigation with overflow:visible assert_equals: Focus should not be trapped inside overflow:visible popover: Step 2 expected Element node <a id="a" href="#">Focus me</a> but got Element node <input id="input"></input>
+

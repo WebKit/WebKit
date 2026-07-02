@@ -1,0 +1,7 @@
+
+FAIL inherit() refers to parent stack frame (element) assert_equals: expected "PASS" but got "inherit(--x)"
+FAIL inherit() refers to parent stack frame (other function call) assert_equals: expected "PASS" but got "inherit(--x)"
+FAIL inherit() referring to guaranteed-invalid in parent frame assert_equals: expected "PASS" but got "inherit(--x, PASS)"
+FAIL inherit() referring to cycle in parent frame assert_equals: expected "PASS" but got "inherit(--x, PASS)"
+FAIL inherit() referring to typed value in parent frame assert_equals: expected "42px" but got "inherit(--x)"
+

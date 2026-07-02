@@ -1,0 +1,3 @@
+
+FAIL Duplicate bare specifiers via import map are deduplicated and applied. assert_equals: Duplicate bare specifiers via import map should be deduplicated. expected 1 but got 0
+

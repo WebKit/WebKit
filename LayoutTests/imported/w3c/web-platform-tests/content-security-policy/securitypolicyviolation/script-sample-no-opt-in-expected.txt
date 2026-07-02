@@ -1,0 +1,9 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Inline script should not have a sample.
+PASS Inline event handlers should not have a sample.
+TIMEOUT JavaScript URLs in iframes should not have a sample. Test timed out
+PASS eval()-alikes should not have a sample.
+

@@ -1,0 +1,18 @@
+
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] >= '12'), OBSERVED '0' FAIL
+EXPECTED (pixelData[1] >= '12'), OBSERVED '0' FAIL
+EXPECTED (pixelData[2] >= '12'), OBSERVED '0' FAIL
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] >= '12') OK
+EXPECTED (pixelData[1] >= '12') OK
+EXPECTED (pixelData[2] >= '12') OK
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] >= '12') OK
+EXPECTED (pixelData[1] >= '12') OK
+EXPECTED (pixelData[2] >= '12') OK
+EVENT(loadedmetadata)
+EXPECTED (pixelData[0] >= '12') OK
+EXPECTED (pixelData[1] >= '12') OK
+EXPECTED (pixelData[2] >= '12') OK
+

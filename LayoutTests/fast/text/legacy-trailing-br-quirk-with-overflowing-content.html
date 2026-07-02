@@ -1,0 +1,19 @@
+<style>
+div {
+  width: 100px;
+  background-color: blue;
+  font-family: Ahem;
+  font-size: 20px;
+  color: green;
+}
+
+span {
+  display: inline-block;
+  width: 100px;
+  height: 90px;
+  background-color: green;
+}
+</style>
+<!-- overflowing content should not trigger legacy's "do not trim trailing whitespace" mode -->
+<div><span></span>
+<br>XXXXX</div>

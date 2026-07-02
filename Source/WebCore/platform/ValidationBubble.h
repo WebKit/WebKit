@@ -1,0 +1,113 @@
+/*
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/IntRect.h>
+#include <wtf/Forward.h>
+#include <wtf/Platform.h>
+#include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <WebCore/CocoaView.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakObjCPtr.h>
+#endif
+
+#if PLATFORM(MAC)
+OBJC_CLASS NSPopover;
+#elif PLATFORM(IOS_FAMILY)
+OBJC_CLASS UIViewController;
+OBJC_CLASS WebValidationBubbleDelegate;
+OBJC_CLASS WebValidationBubbleTapRecognizer;
+OBJC_CLASS WebValidationBubbleViewController;
+#endif
+
+#if PLATFORM(COCOA)
+using PlatformView = CocoaView;
+#elif !PLATFORM(GTK)
+using PlatformView = void;
+#endif
+
+namespace WebCore {
+
+class ValidationBubble : public RefCounted<ValidationBubble> {
+public:
+    struct Settings {
+        double minimumFontSize { 0 };
+    };
+
+#if PLATFORM(GTK)
+    // ValidationBubbleGtk is inherited from ValidationBubble.
+    virtual ~ValidationBubble() = default;
+#else
+    static Ref<ValidationBubble> create(PlatformView* view, String&& message, const Settings& settings)
+    {
+        return adoptRef(*new ValidationBubble(view, WTF::move(message), settings));
+    }
+
+    WEBCORE_EXPORT ~ValidationBubble();
+#endif
+
+    const String& message() const LIFETIME_BOUND { return m_message; }
+    double fontSize() const { return m_fontSize; }
+    const IntRect& anchorRect() const { return m_anchorRect; }
+
+#if PLATFORM(IOS_FAMILY)
+    WEBCORE_EXPORT void setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController = nullptr);
+    WEBCORE_EXPORT void setShouldSuppressPresentation(bool);
+    WEBCORE_EXPORT void show();
+#elif PLATFORM(GTK)
+    WEBCORE_EXPORT virtual void showRelativeTo(const IntRect&) = 0;
+#else
+    WEBCORE_EXPORT void showRelativeTo(const IntRect& anchorRect);
+#endif
+
+protected:
+#if !PLATFORM(GTK)
+    WEBCORE_EXPORT ValidationBubble(PlatformView*, String&& message, const Settings&);
+#endif
+
+#if PLATFORM(COCOA)
+    WeakObjCPtr<PlatformView> m_view;
+#elif !PLATFORM(GTK)
+    PlatformView* m_view;
+#endif
+    String m_message;
+    double m_fontSize { 0 };
+    IntRect m_anchorRect;
+#if PLATFORM(MAC)
+    RetainPtr<NSPopover> m_popover;
+#elif PLATFORM(IOS_FAMILY)
+    RetainPtr<WebValidationBubbleViewController> m_popoverController;
+    RetainPtr<WebValidationBubbleTapRecognizer> m_tapRecognizer;
+    RetainPtr<WebValidationBubbleDelegate> m_popoverDelegate;
+    WeakObjCPtr<UIViewController> m_presentingViewController;
+    bool m_startingToPresentViewController { false };
+    bool m_shouldSuppressPresentation { false };
+#endif
+};
+
+}

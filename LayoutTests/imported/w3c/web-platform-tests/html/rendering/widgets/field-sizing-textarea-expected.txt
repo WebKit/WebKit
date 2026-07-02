@@ -1,0 +1,12 @@
+
+
+PASS Empty value
+PASS Empty value with cols/rows
+PASS Auto width and auto height with a long text
+PASS Explicit width and heigth
+PASS Explicit width and auto height
+PASS Explicit height and auto width
+PASS Text caret is taller than the placeholder
+PASS Text caret is shorter than the placeholder
+PASS Update field-sizing property dynamically
+

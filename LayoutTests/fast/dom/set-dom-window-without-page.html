@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); console.log("this test passes if it does not crash") }
+function start() {
+  window.firstFrame = document.createElement('iframe');
+  document.body.appendChild(window.firstFrame);
+  window.secondFrame = document.createElement('iframe');
+  window.firstFrame.contentDocument.documentElement.appendChild(window.secondFrame);
+  window.secondFrame.contentWindow.onunload = function() {
+    document.documentElement.removeChild(window.bodyEl);
+  };
+  window.firstFrame.src = 'javascript:"";';
+}
+</script><body id="bodyEl"onload="start()">

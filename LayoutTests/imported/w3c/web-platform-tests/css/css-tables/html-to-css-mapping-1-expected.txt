@@ -1,0 +1,22 @@
+HTML-2-CSS Mapping
+
+Checks that browsers implement properly the html2css stylesheet (rules without attributes)
+
+You should see a 5 2px blue square here, separated by 2px each:
+Because of the lack of the table element, border-spacing is 0; padding on each td should be 1px on each side. 1px*2*5=10px.
+
+You should see a 10px blue square here:
+Because of the lack of the table element, border-spacing is 0; padding on each td should be 1px on each side. 1px*2*5=10px.
+
+You should see a 12px blue square here:
+The table has the background; x-td elements have no padding, only the border-spacing remains. 6*2px=12px.
+
+You shouldn't see anything here:
+The table has the background but is empty; it does not apply border-spacing in this case.
+
+
+PASS HTML -> CSS Mapping is applied correctly on proper table markup (border-spacing, padding)
+FAIL HTML -> CSS Mapping is applied correctly on improper table markup (no table => no border-spacing, but padding) assert_equals: expected 10 but got 0
+PASS HTML -> CSS Mapping is applied correctly on improper table markup (no td => border-spacing, but no padding)
+PASS HTML -> CSS Mapping is applied correctly on empty table markup (no content => no border-spacing, no padding)
+

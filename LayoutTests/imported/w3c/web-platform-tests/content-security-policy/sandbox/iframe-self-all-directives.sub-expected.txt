@@ -1,0 +1,4 @@
+
+
+PASS Expecting logs: ["PASS script-src self", "PASS img-src self", "PASS style-src self", "PASS frame-src self"]
+

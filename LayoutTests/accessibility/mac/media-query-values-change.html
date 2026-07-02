@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<style>
+
+    @media (prefers-contrast: no-preference) {
+        .contrastNo {
+            visibility: visible;
+        }
+        .contrastMore {
+            visibility: hidden;
+        }
+    }
+    @media (prefers-contrast: more) {
+        .contrastNo {
+            visibility: hidden;
+        }
+        .contrastMore {
+            visibility: visible;
+        }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .motionNo {
+           visibility: visible;
+        }
+        .motionReduce {
+            visibility: hidden;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .motionNo {
+            visibility: hidden;
+        }
+        .motionReduce {
+            visibility: visible;
+        }
+    }
+
+</style>
+</head>
+<body>
+
+<div id="no-contrast" class="contrastNo">no contrast</div>
+<div id="more-contrast" class="contrastMore">more</div>
+
+<div id="no-motion" class="motionNo">no motion</div>
+<div id="reduce-motion" class="motionReduce">reduce</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that CSS Accessibility media queries get updates when settings change");
+
+    window.jsTestIsAsync = true;
+
+    function visibility(domId) {
+        return getComputedStyle(document.getElementById(domId)).visibility;
+    }
+
+    var defaultVisibility;
+    var updatedVisibility;
+    function testVisibility(defaultId, updatedId, key, endTest) {
+        defaultVisibility = visibility(defaultId);
+        updatedVisibility = visibility(updatedId);
+
+        shouldBe("defaultVisibility", "'visible'");
+        shouldBe("updatedVisibility", "'hidden'");
+        accessibilityController.injectAccessibilityPreference("com.apple.universalaccess", key, "1");
+
+        setTimeout(async () => {
+            await waitFor(() => {
+               return visibility(updatedId) == 'visible';
+            });
+
+            defaultVisibility = visibility(defaultId);
+            updatedVisibility = visibility(updatedId);
+            shouldBe("defaultVisibility", "'hidden'");
+            shouldBe("updatedVisibility", "'visible'");
+            accessibilityController.injectAccessibilityPreference("com.apple.universalaccess", key, "0");
+            if (endTest) {
+                finishJSTest();
+            }
+        }, 0);
+    }
+
+    function handleContrast(endTest) {
+        testVisibility("no-contrast", "more-contrast", "increaseContrast", endTest);
+    }
+
+    function handleMotion(endTest) {
+        testVisibility("no-motion", "reduce-motion", "reduceMotion", endTest);
+    }
+
+    if (window.accessibilityController) {
+        handleContrast(false);
+        handleMotion(true);
+    }
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

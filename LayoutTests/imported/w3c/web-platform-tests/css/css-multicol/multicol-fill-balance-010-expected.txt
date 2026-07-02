@@ -1,0 +1,9 @@
+Test passes if there is a filled green square below.
+
+
+FAIL #container 1 assert_equals:
+<div id="container" data-expected-height="100">
+  <div style="padding-top:50px; border-top:50px solid green;"></div>
+</div>
+height expected 100 but got 50
+

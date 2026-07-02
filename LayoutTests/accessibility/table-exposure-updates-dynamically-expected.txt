@@ -1,0 +1,28 @@
+This test ensures a table's "exposed" state (whether it is an accessibility data table, vs. just a layout table) updates in response to dynamic page changes.
+
+
+Before updating attribute aria-rowcount of #table to 1, #table AXRole: null AXUIElement, #cellOne AXRole: AXGroup.
+After updating attribute aria-rowcount of #table to 1, #table AXRole: AXTable, #cellOne AXRole: AXCell.
+
+Before updating attribute aria-colcount of #table to 10, #table AXRole: null AXUIElement, #cellOne AXRole: AXGroup.
+After updating attribute aria-colcount of #table to 10, #table AXRole: AXTable, #cellOne AXRole: AXCell.
+
+Before updating attribute aria-colindex of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne AXRole: AXGroup.
+After updating attribute aria-colindex of #cellOne to 1, #table AXRole: AXTable, #cellOne AXRole: AXCell.
+
+Before updating attribute aria-rowindex of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne AXRole: AXGroup.
+After updating attribute aria-rowindex of #cellOne to 1, #table AXRole: AXTable, #cellOne AXRole: AXCell.
+
+Before updating attribute aria-colspan of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne AXRole: AXGroup.
+After updating attribute aria-colspan of #cellOne to 1, #table AXRole: AXTable, #cellOne AXRole: AXCell.
+
+Before updating attribute aria-rowspan of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne AXRole: AXGroup.
+After updating attribute aria-rowspan of #cellOne to 1, #table AXRole: AXTable, #cellOne AXRole: AXCell.
+
+Before adding 20 rows, state is #table AXRole: null AXUIElement #cellOne AXRole: AXGroup.
+After adding 20 rows, state is #table AXRole: AXTable #cellOne AXRole: AXCell.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

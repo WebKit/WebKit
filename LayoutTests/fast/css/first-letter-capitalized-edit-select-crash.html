@@ -1,0 +1,20 @@
+<style>
+.writable{-webkit-user-modify:read-write;}
+.list{content:normal;display:list-item;}
+*:first-letter{stroke-linecap:round;}
+*:only-child{-webkit-font-variant-ligatures:common-ligatures;text-transform:capitalize;</style>
+</style>
+Pass if no crash or assert in debug
+<span class="writable" id="span">
+<label class="list">
+<code>
+<object></object>
+</code></label></span>
+<script>
+window.onload=function()
+{
+    document.getElementById('span').focus();
+    if (window.testRunner)
+        testRunner.dumpAsText();
+};
+</script>

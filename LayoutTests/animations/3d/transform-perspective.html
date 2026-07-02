@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css">
+    .box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+    }
+    
+    #box {
+      -webkit-animation: anim 2s linear;
+    }
+    
+    #box2 {
+      -webkit-animation: anim2 2s linear;
+    }
+
+    @-webkit-keyframes anim {
+        from { -webkit-transform: perspective(100px); }
+        to   { -webkit-transform: perspective(200px); }
+    }
+
+    @-webkit-keyframes anim2 {
+        from { -webkit-transform: perspective(1000px); }
+        to   { -webkit-transform: none; }
+    }
+  </style>
+  <script src="../resources/animation-test-helpers.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      ["anim",  0.5, "box",  "webkitTransform", [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.0075, 0, 0, 0, 1], 0.002],
+      ["anim2", 0.5, "box2", "webkitTransform", [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.00199, 0, 0, 0, 1], 0.002],
+    ];
+    
+    function setupTest()
+    {
+      var box = document.getElementById('box');
+      box.style.webkitTransform = 'perspective(1000px) rotateX(90deg)';
+    }
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="box"></div>
+<div class="box" id="box2"></div>
+<div id="result"></div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+PASS One element anchor, two pseudo-element anchors (::before, ::after)
+PASS One pseudo-element anchor in one host element, two pseudo-element anchors (::before, ::after) in another host element
+PASS Two pseudo-element anchors in the same host
+PASS Two sibling anchors, ::before and an element
+PASS Two sibling anchors, an element and ::after
+

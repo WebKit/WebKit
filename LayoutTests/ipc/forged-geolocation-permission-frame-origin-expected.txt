@@ -1,0 +1,1 @@
+Tests that a forged FrameInfoData::securityOrigin in RequestGeolocationPermissionForFrame is ignored by the UI process. Passes if it does not crash.

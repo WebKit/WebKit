@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/gc.js"></script>
+<script>
+    description("This test asserts that NodeIterator's callback is kept alive while NodeIterator is alive even if all JS references go away.")
+    var callbackWasTriggered = false;
+    var callback = function(node) {
+        callbackWasTriggered = true;
+        return NodeFilter.FILTER_ACCEPT;
+    };
+    var nodeIterator = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, callback, false);
+    gc();
+    callback = null;
+    gc();
+    nodeIterator.nextNode();
+    shouldBeTrue('callbackWasTriggered');
+    nodeIterator = null;
+    gc();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

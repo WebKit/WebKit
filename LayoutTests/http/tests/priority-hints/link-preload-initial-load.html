@@ -1,0 +1,108 @@
+<script src=../resources/testharness.js></script>
+<script src=../resources/testharnessreport.js></script>
+<script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=100"></script>
+<script src="http://127.0.0.1:8000/resources/checkResourcePriority.js"></script>
+
+<script>
+const priority_tests = [
+  {
+    url: new URL('../resources/dummy.css?lpil', location), expected_priority: "ResourceLoadPriorityMedium",
+    description: 'low fetchpriority on <link rel=preload as=style> must be fetched with medium resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.css?lpil1', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'missing fetchpriority on <link rel=preload as=style> must have no effect on resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.css?lpil2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
+    description: 'high fetchpriority on <link rel=preload as=style> must be fetched with very high resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?lpil', location), expected_priority: "ResourceLoadPriorityMedium",
+    description: 'low fetchpriority on <link rel=preload as=script> must be fetched with medium resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?lpil1', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'missing fetchpriority on <link rel=preload as=script> must have no effect on resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.js?lpil2', location), expected_priority: "ResourceLoadPriorityVeryHigh",
+    description: 'high fetchpriority on <link rel=preload as=script> must be fetched with very high resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.txt?lpil', location), expected_priority: "ResourceLoadPriorityLow",
+    description: 'low fetchpriority on <link rel=preload as=fetch> must be fetched with low resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.txt?lpil1', location), expected_priority: "ResourceLoadPriorityMedium",
+    description: 'missing fetchpriority on <link rel=preload as=fetch> must have no effect on resource load priority'
+  },
+  {
+    url: new URL('../resources/dummy.txt?lpil2', location), expected_priority: "ResourceLoadPriorityHigh",
+    description: 'high fetchpriority on <link rel=preload as=fetch> must be fetched with high resource load priority'
+  },
+  {
+    url: new URL('../resources/square.png?lpil', location), expected_priority: "ResourceLoadPriorityVeryLow",
+    description: 'low fetchpriority on <link rel=preload as=image> must be fetched with very low resource load priority'
+  },
+  {
+    url: new URL('../resources/square.png?lpil1', location), expected_priority: "ResourceLoadPriorityLow",
+    description: 'missing fetchpriority on <link rel=preload as=image> must have no effect on resource load priority'
+  },
+  {
+    url: new URL('../resources/square.png?lpil2', location), expected_priority: "ResourceLoadPriorityMedium",
+    description: 'high fetchpriority on <link rel=preload as=image> must be fetched with medium resource load priority'
+  }
+];
+</script>
+
+<!-- as=style -->
+<!-- don't need to test for invalid and explicit auto fetchpriority here, since we already do that in the other link test -->
+<link id=link1 fetchpriority=low rel=preload as=style href=../resources/dummy.css?lpil>
+<link id=link2 rel=preload as=style href=../resources/dummy.css?lpil1>
+<link id=link3 fetchpriority=high rel=preload as=style href=../resources/dummy.css?lpil2>
+
+<!-- as=script-->
+<link id=link4 fetchpriority=low rel=preload as=script href=../resources/dummy.js?lpil>
+<link id=link5 rel=preload as=script href=../resources/dummy.js?lpil1>
+<link id=link6 fetchpriority=high rel=preload as=script href=../resources/dummy.js?lpil2>
+
+<!-- as=fetch-->
+<link id=link7 fetchpriority=low rel=preload as=fetch href=../resources/dummy.txt?lpil>
+<link id=link8 rel=preload as=fetch href=../resources/dummy.txt?lpil1>
+<link id=link9 fetchpriority=high rel=preload as=fetch href=../resources/dummy.txt?lpil2>
+
+<!-- as=image-->
+<link id=link10 fetchpriority=low rel=preload as=image href=../resources/square.png?lpil>
+<link id=link11 rel=preload as=image href=../resources/square.png?lpil1>
+<link id=link12 fetchpriority=high rel=preload as=image href=../resources/square.png?lpil2>
+
+<script>
+  promise_test(async (t) => {
+    await new Promise(resolve => {
+      addEventListener('DOMContentLoaded', resolve);
+    });
+
+    const base_msg = ' was fetched by the preload scanner';
+    assert_true(internals.isPreloaded(link1.href), link1.href + base_msg);
+    assert_true(internals.isPreloaded(link2.href), link2.href + base_msg);
+    assert_true(internals.isPreloaded(link3.href), link3.href + base_msg);
+    assert_true(internals.isPreloaded(link4.href), link4.href + base_msg);
+    assert_true(internals.isPreloaded(link5.href), link5.href + base_msg);
+    assert_true(internals.isPreloaded(link6.href), link6.href + base_msg);
+    assert_true(internals.isPreloaded(link7.href), link7.href + base_msg);
+    assert_true(internals.isPreloaded(link8.href), link8.href + base_msg);
+    assert_true(internals.isPreloaded(link9.href), link9.href + base_msg);
+    assert_true(internals.isPreloaded(link10.href), link10.href + base_msg);
+    assert_true(internals.isPreloaded(link11.href), link11.href + base_msg);
+    assert_true(internals.isPreloaded(link12.href), link12.href + base_msg);
+  }, 'all preloads must be fetched by the preload scanner');
+
+  // Setup the tests described by |priority_tests|.
+  for (const test of priority_tests) {
+    async_test(t => {
+      checkResourcePriority(test.url, test.expected_priority, test.description);
+      t.done();
+    });
+  }
+</script>

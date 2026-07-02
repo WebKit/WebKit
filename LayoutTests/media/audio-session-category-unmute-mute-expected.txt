@@ -1,0 +1,13 @@
+
+Test that silent, autoplaying videos with audio tracks do not interrupt other system audio
+RUN(video.muted = true)
+RUN(video.src = findMediaFile("video", "content/audio-tracks"))
+EVENT(loadedmetadata)
+RUN(video.play())
+RUN(video.pause())
+RUN(video.muted = false)
+RUN(video.muted = true)
+RUN(video.play())
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+END OF TEST
+

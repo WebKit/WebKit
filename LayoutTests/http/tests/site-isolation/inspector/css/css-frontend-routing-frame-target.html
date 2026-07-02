@@ -1,0 +1,120 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.FrontendRouting.FrameTarget");
+
+        let mainFrameTarget;
+        let childFrameTarget;
+        let targetNode;
+
+        // FIXME: Simplify this by using DOM.querySelector once it's implemented for frame targets.
+        async function findParagraphInFrame(target) {
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+            if (!frameDoc) {
+                let event = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = event.data.document;
+            }
+            await target.DOMAgent.requestChildNodes(frameDoc.backendNodeId, -1);
+            let body = frameDoc.children[0].children[1]; // html > body
+            return body.children.find((node) => node.nodeName() === "P");
+        }
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.FrontendRouting.FrameTarget.Setup",
+            description: "Find the child frame target and a paragraph node inside it.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+
+                targetNode = await findParagraphInFrame(childFrameTarget);
+                InspectorTest.expectNotNull(targetNode, "Should find the target paragraph node.");
+                InspectorTest.expectEqual(targetNode.owningTarget, childFrameTarget, "Target node's owningTarget should be the child frame target.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.FrontendRouting.FrameTarget.StyleSheetsTrackedPerTarget",
+            description: "WI.cssManager should track stylesheets from the child frame target with owningTarget set.",
+            async test() {
+                let frameSheets = WI.cssManager.styleSheets.filter((s) => s.owningTarget === childFrameTarget);
+                InspectorTest.expectGreaterThanOrEqual(frameSheets.length, 1, "Child frame should contribute at least one tracked stylesheet to WI.cssManager.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.FrontendRouting.FrameTarget.StyleSheetIdentifierIsScoped",
+            description: "styleSheetForIdentifier with different targets should return distinct WI.CSSStyleSheet instances even for the same raw id.",
+            async test() {
+                let { styleSheetId: pageStylesheetId } = await mainFrameTarget.CSSAgent.createStyleSheet(WI.networkManager.mainFrame.id);
+                let { styleSheetId: frameStylesheetId } = await childFrameTarget.CSSAgent.createStyleSheet("");
+
+                let pageSheet = WI.cssManager.styleSheetForIdentifier(pageStylesheetId, null);
+                let frameSheet = WI.cssManager.styleSheetForIdentifier(frameStylesheetId, childFrameTarget);
+                InspectorTest.expectNotEqual(pageSheet, frameSheet, "Sheets from different targets must be distinct WI.CSSStyleSheet instances.");
+                InspectorTest.expectNotEqual(pageSheet.owningTarget, childFrameTarget, "Page-target sheet should not be tagged as owned by the child frame target.");
+                InspectorTest.expectEqual(frameSheet.owningTarget, childFrameTarget, "Frame-target sheet's owningTarget should be the child frame target.");
+                InspectorTest.expectEqual(pageSheet.id, pageStylesheetId, "Page-target sheet's id getter should return the raw protocol id.");
+                InspectorTest.expectEqual(frameSheet.id, frameStylesheetId, "Frame-target sheet's id getter should return the raw protocol id.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.FrontendRouting.FrameTarget.StylesForNodeRoutesToFrameTarget",
+            description: "WI.cssManager.stylesForNode(nodeInFrame).refresh() should route through the frame target's CSSAgent and tag rules with the right owning target.",
+            async test() {
+                let nodeStyles = WI.cssManager.stylesForNode(targetNode);
+                await nodeStyles.refresh();
+
+                let matchedRules = nodeStyles.matchedRules;
+                InspectorTest.expectGreaterThan(matchedRules.length, 0, "Should have matched CSS rules from the frame target.");
+
+                let testClassRule = matchedRules.find((rule) => rule.selectors.some((sel) => sel.text === ".test-class"));
+                InspectorTest.expectNotNull(testClassRule, "Should have a rule matching .test-class from the frame target's stylesheet.");
+
+                InspectorTest.expectEqual(testClassRule.ownerStyleSheet.owningTarget, childFrameTarget, "Matched rule's ownerStyleSheet.owningTarget should be the child frame target (verifies styleSheetForIdentifier lookup with target).");
+
+                let colorProperty = testClassRule.style.properties.find((p) => p.name === "color");
+                InspectorTest.expectNotNull(colorProperty, ".test-class rule should have a color property.");
+                InspectorTest.expectEqual(colorProperty.value, "red", "Initial color value should be 'red'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.FrontendRouting.FrameTarget.ChangeStyleTextRoutesToFrameTarget",
+            description: "Editing a style declaration via WI.DOMNodeStyles.changeStyleText should land on the frame target's stylesheet.",
+            async test() {
+                let nodeStyles = WI.cssManager.stylesForNode(targetNode);
+                let testClassRule = nodeStyles.matchedRules.find((rule) => rule.selectors.some((sel) => sel.text === ".test-class"));
+                InspectorTest.expectNotNull(testClassRule, "Should still have the .test-class rule.");
+
+                await new Promise((resolve, reject) => {
+                    nodeStyles.changeStyleText(testClassRule.style, "color: blue; font-size: 16px;", (error) => {
+                        if (error)
+                            reject(error);
+                        else
+                            resolve();
+                    });
+                });
+
+                // Re-fetch matched styles directly from the frame agent to confirm the edit landed on the frame target's backend.
+                let { matchedCSSRules } = await childFrameTarget.CSSAgent.getMatchedStylesForNode(targetNode.backendNodeId);
+                let testClassFromAgent = matchedCSSRules.find((m) => m.rule.selectorList.selectors.some((s) => s.text === ".test-class"));
+                InspectorTest.expectNotNull(testClassFromAgent, "Frame target should still have the .test-class rule.");
+
+                let colorProperty = testClassFromAgent.rule.style.cssProperties.find((p) => p.name === "color");
+                InspectorTest.expectEqual(colorProperty.value, "blue", "Color value on the frame target should be 'blue' after the frontend edit.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that the Web Inspector frontend routes CSS commands and events to a cross-origin iframe's FrameCSSAgent under site isolation.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>

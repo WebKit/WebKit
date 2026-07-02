@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test media files loaded via redirect are marked app initiated");
+
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+    }
+
+    function test()
+    {
+        var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+        var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+        if (didLoadNonAppInitiatedRequest) {
+            log("FAIL did load non app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        if (!didLoadAppInitiatedRequest) {
+            log("FAIL did not load app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        log("PASS successfully loaded only app initiated requests");
+
+        finishJSTest();
+    }
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", test);
+    video.src = `/resources/redirect.py?url=http://localhost:8000/resources/test.mp4`;
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

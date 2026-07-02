@@ -1,0 +1,10 @@
+Hello World
+HelloWorld
+
+Hello World
+
+FAIL Type space key in <button contenteditable> should be handled by the <button> assert_equals: The button label shouldn't be changed expected "HelloWorld" but got "Hello World"
+PASS Type space key in editable <button> shouldn't be handled by the <button> when it's not focused
+PASS Type space key in editable <button> should be handled by the <button> when it's focused
+FAIL Type space key in editable element in <button> shouldn't be handled by the <button> assert_equals: Click event should not be fired on the <button> expected null but got object "[object PointerEvent]"
+

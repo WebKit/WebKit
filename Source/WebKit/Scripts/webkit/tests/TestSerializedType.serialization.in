@@ -1,0 +1,372 @@
+# test comment
+
+headers: "HeaderWithoutCondition"
+
+#if ENABLE(TEST_FEATURE)
+headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
+[AdditionalEncoder=OtherEncoder, CustomHeader, DebugDecodingFailure] struct Namespace::Subnamespace::StructName {
+    FirstMemberType firstMemberName
+    #if ENABLE(SECOND_MEMBER)
+    SecondMemberType secondMemberName;
+    #endif
+    RetainPtr<CFTypeRef> nullableTestMember;
+}
+#endif
+
+[Nested] class Namespace::OtherClass {
+    int a
+    [BitField] bool b
+    [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClassSingleton()]] RetainPtr<NSArray> dataDetectorResults;
+}
+
+[Nested] class Namespace::ClassWithMemberPrecondition {
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClassSingleton()]] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+}
+
+[RefCounted] class Namespace::ReturnRefClass {
+    double functionCall().member1
+    double functionCall().member2
+    std::unique_ptr<int> uniqueMember
+}
+
+[LegacyPopulateFromEmptyConstructor] struct Namespace::EmptyConstructorStruct {
+    int m_int;
+    double m_double;
+}
+
+[LegacyPopulateFromEmptyConstructor] class Namespace::EmptyConstructorWithIf {
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
+    MemberType m_type;
+    OtherMemberType m_value;
+#endif
+}
+
+class WithoutNamespace {
+    int a;
+}
+
+[AdditionalEncoder=OtherEncoder] class WithoutNamespaceWithAttributes {
+    int a;
+}
+
+class WebCore::InheritsFrom : WithoutNamespace {
+    float b;
+}
+
+class WebCore::InheritanceGrandchild : WebCore::InheritsFrom {
+    double c;
+}
+
+#if ENABLE(BOOL_ENUM)
+enum class EnumNamespace::BoolEnumType : bool
+#endif
+
+enum class EnumWithoutNamespace : uint8_t {
+    Value1,
+    Value2,
+    Value3
+}
+
+#if ENABLE(UINT16_ENUM)
+enum class EnumNamespace::EnumType : uint16_t {
+    FirstValue,
+#if ENABLE(ENUM_VALUE_CONDITION)
+    SecondValue
+#endif
+}
+#endif
+
+[OptionSet, Nested] enum class EnumNamespace2::OptionSetEnumType : uint8_t {
+    OptionSetFirstValue,
+#if ENABLE(OPTION_SET_SECOND_VALUE)
+    OptionSetSecondValue,
+#else
+    OptionSetSecondValueElse,
+#endif
+    OptionSetThirdValue
+}
+
+class WTF::Seconds {
+    double value()
+}
+
+[CreateUsing=fromDouble] class WTF::CreateUsingClass {
+    double value
+}
+
+[Alias=class ScrollSnapOffsetsInfo<float,double>] alias WebCore::FloatBoxExtent {
+    float top()
+    float right()
+    float bottom()
+    float left()
+};
+
+struct SoftLinkedMember {
+    [SecureCodingAllowed=[PAL::getDDActionContextClassSingleton()]] RetainPtr<DDActionContext> firstMember;
+    [SecureCodingAllowed=[PAL::getDDActionContextClassSingleton()]] RetainPtr<DDActionContext> secondMember;
+}
+
+[RefCounted] class WebCore::TimingFunction subclasses {
+    WebCore::LinearTimingFunction,
+    WebCore::CubicBezierTimingFunction,
+#if CONDITION
+    WebCore::StepsTimingFunction,
+#endif
+    WebCore::SpringTimingFunction
+}
+
+[OptionSet] enum class OptionSetEnumFirstCondition : uint32_t {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+    OptionSetFirstValue,
+#endif
+    OptionSetSecondValue,
+    OptionSetThirdValue,
+}
+
+[OptionSet] enum class OptionSetEnumLastCondition : uint32_t {
+    OptionSetFirstValue,
+    OptionSetSecondValue,
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+    OptionSetThirdValue,
+#endif
+}
+
+[OptionSet] enum class OptionSetEnumAllCondition : uint32_t {
+#if ENABLE(OPTION_SET_FIRST_VALUE)
+    OptionSetFirstValue,
+#endif
+#if ENABLE(OPTION_SET_SECOND_VALUE)
+    OptionSetSecondValue,
+#endif
+#if ENABLE(OPTION_SET_THIRD_VALUE)
+    OptionSetThirdValue,
+#endif
+}
+
+using WebCore::SharedStringHash = uint32_t
+using WebCore::UsingWithSemicolon = uint32_t;
+
+#if ENABLE(TEST_FEATURE)
+headers: "CommonHeader.h"
+[CustomHeader] class Namespace::ConditionalCommonClass {
+    int value;
+}
+#endif
+
+headers: "CommonHeader.h"
+[CustomHeader] class Namespace::CommonClass {
+    int value;
+    WebCore::TimingFunction nonRefMemberWithSubclasses;
+}
+
+headers: "CommonHeader.h"
+[CustomHeader, RefCounted] class Namespace::AnotherCommonClass {
+    int value;
+    [NotSerialized] double notSerialized;
+}
+
+[RValue] class WebCore::MoveOnlyBaseClass subclasses {
+    WebCore::MoveOnlyDerivedClass,
+}
+
+[RValue] class WebCore::MoveOnlyDerivedClass {
+    int firstMember;
+    int secondMember;
+}
+
+webkit_platform_headers: "PlatformClass.h"
+[CustomHeader, WebKitPlatform] class WebKit::PlatformClass {
+  int value;
+};
+
+[CustomEncoder] class WebKit::CustomEncoded {
+  int value;
+};
+
+[LegacyPopulateFromEmptyConstructor] class WebKit::LayerProperties {
+    [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties
+    [NotSerialized] int nonSerializedMember
+    [OptionalTupleBit=WebKit::LayerChange::NameChanged] String name;
+#if ENABLE(FEATURE)
+    [OptionalTupleBit=WebKit::LayerChange::TransformChanged] std::unique_ptr<WebCore::TransformationMatrix> featureEnabledMember;
+#endif
+    [OptionalTupleBit=WebKit::LayerChange::FeatureEnabledMember, BitField] bool bitFieldMember;
+};
+
+#if OS(WINDOWS)
+using WTF::ProcessID = int;
+#else
+using WTF::ProcessID = pid_t;
+#endif
+
+template: class WebKit::Fabulous
+template: struct WebCore::Amazing
+template: enum class JSC::Incredible
+template: enum class Testing::StorageSize : uint8_t
+class WebKit::TemplateTest {
+  bool value;
+}
+
+[RefCounted] class WebCore::ScrollingStateFrameHostingNode {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+}
+
+[RefCounted] class WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple {
+    WebCore::ScrollingNodeID scrollingNodeID()
+    Vector<Ref<WebCore::ScrollingStateNode>> children()
+    [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Other] bool otherMember
+    int memberAfterTuple
+}
+
+struct RequestEncodedWithBody {
+    [EncodeRequestBody] WebCore::ResourceRequest request;
+};
+
+[RValue] struct RequestEncodedWithBodyRValue {
+    [EncodeRequestBody] WebCore::ResourceRequest request;
+};
+
+#if USE(AVFOUNDATION)
+secure_coding_header: <pal/cocoa/AVFoundationSoftLink.h>
+[WebKitSecureCodingClass=PAL::getAVOutputContextClassSingleton(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
+    AVOutputContextSerializationKeyContextID: String
+    AVOutputContextSerializationKeyContextType: String
+}
+#endif // USE(AVFOUNDATION)
+
+webkit_secure_coding NSSomeFoundationType {
+    StringKey: String
+    NumberKey: Number
+    OptionalNumberKey: Number?
+    ArrayKey: Array
+    OptionalArrayKey: Array?
+    DictionaryKey: Dictionary
+    OptionalDictionaryKey: Dictionary?
+}
+
+[SupportWKKeyedCoder] webkit_secure_coding class NSSomeOtherFoundationType {
+    DictionaryKey: Dictionary
+}
+
+#if ENABLE(DATA_DETECTION)
+# Test a comment
+secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
+[WebKitSecureCodingClass=PAL::getDDScannerResultClassSingleton()] webkit_secure_coding DDScannerResult {
+    StringKey: String
+    NumberKey: Number
+    OptionalNumberKey: Number?
+    ArrayKey: Array<DDScannerResult>
+    OptionalArrayKey: Array<DDScannerResult>?
+    DictionaryKey: Dictionary<String, Number>
+    OptionalDictionaryKey: Dictionary<String, DDScannerResult>?
+    DataArrayKey: Array<Data>
+    SecTrustArrayKey: Array<SecTrustRef>
+}
+#endif
+
+CFFooRef wrapped by WebKit::FooWrapper {
+}
+
+#if USE(CFBAR)
+additional_forward_declaration: typedef struct __CFBar * CFBarRef
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebKit::BarWrapper::createFromCF, ToCFMethod=createCFBar(*result)] CFBarRef wrapped by WebKit::BarWrapper {
+}
+#endif
+
+#if USE(CFSTRING)
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
+}
+#endif
+
+#if USE(SKIA)
+[Wrapper=CoreIPCSkFooBar, AdditionalEncoder=OtherEncoder] class SkFooBar {
+    int foo();
+    double bar();
+}
+#endif
+
+[RValue] class WebKit::RValueWithFunctionCalls {
+    SandboxExtensionHandle callFunction()
+}
+
+additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierReference; }
+additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierWriteReference; }
+additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
+
+header: "RemoteVideoFrameIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReference<RemoteVideoFrameIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteVideoFrameReference {
+    WebKit::RemoteVideoFrameIdentifier identifier();
+    uint64_t version();
+};
+
+header: "RemoteVideoFrameIdentifier.h"
+[Alias=class IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteVideoFrameWriteReference {
+    IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier> reference();
+    uint64_t pendingReads();
+};
+
+#if ENABLE(OUTER_CONDITION)
+class Namespace::OuterClass {
+    int outerValue;
+};
+
+#if ENABLE(INNER_CONDITION)
+enum class EnumNamespace::InnerEnumType : uint8_t {
+    InnerValue,
+#if ENABLE(INNER_INNER_CONDITION)
+    InnerInnerValue,
+#else
+    OtherInnerInnerValue,
+#endif
+}
+#else
+enum class EnumNamespace::InnerBoolType : bool
+#endif
+
+#else
+class Namespace::OtherOuterClass {
+    int outerValue;
+};
+#endif
+
+#if USE(APPKIT)
+header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted, ConstructSubclass=ScrollbarTrackCornerSystemImageMac] class WebCore::AppKitControlSystemImage {
+    [NotSerialized] WebCore::AppKitControlSystemImageType m_controlType;
+    WebCore::Color m_tintColor;
+    bool m_useDarkAppearance;
+}
+#endif // USE(APPKIT)
+
+#if USE(PASSKIT)
+PKPaymentMethod wrapped by CoreIPCPKPaymentMethod
+#endif
+NSNull wrapped by CoreIPCNull
+
+[CustomHeader] class WebCore::RectEdges<bool> {
+    bool top();
+    bool right();
+    bool bottom();
+    bool left();
+}
+
+class WebCore::OpaqueTypeObject {
+    NotDispatchableFromWebContent member
+}
+
+using WebCore::AliasOpaqueTypeWrapper = Variant<int, Vector<uint8_t>>
+
+using WebCore::ConditionalVariant = Variant<
+    int,
+#if USE(CHAR)
+    char,
+#endif
+    double
+>;
+
+using WebCore::NonConditionalVariant = Variant<int, double>

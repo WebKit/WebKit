@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <rect id="red" width="100" height="100" fill="red"/>
+        <rect id="green" width="100" height="100" fill="green"/>
+    </defs>
+    <use x="10" y="10" width="100" height="100">
+        <animate attributeName="xlink:href" from="#red" dur="50ms" to="#green" fill="freeze"/>
+    </use>
+    <use x="120" y="10" width="100" height="100" xlink:href="#red">
+        <animate attributeName="xlink:href" from="#red" dur="60ms" to="#green" fill="freeze"/>
+    </use>
+    <use x="230" y="10" width="100" height="100">
+        <animate attributeName="href" from="#red" dur="70ms" to="#green" fill="freeze"/>
+    </use>
+    <use x="340" y="10" width="100" height="100" href="#red">
+        <animate attributeName="href" from="#red" dur="80ms" to="#green" fill="freeze"/>
+    </use>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var elements = document.querySelectorAll("animate");
+        var count = elements.length;
+
+        for (var i = count; i--; )
+            elements[i].addEventListener("endEvent", endAnimate, false);
+
+        function endAnimate() {
+            if (--count === 0) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+    </script>
+</svg>

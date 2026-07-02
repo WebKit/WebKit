@@ -1,0 +1,9 @@
+
+
+PASS Check key: leftControl - event.key: Control
+PASS Check key: rightControl - event.key: Control
+PASS Check key: leftAlt - event.key: Alt
+PASS Check key: rightAlt - event.key: Alt
+PASS Check key: leftShift - event.key: Shift
+PASS Check key: rightShift - event.key: Shift
+

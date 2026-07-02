@@ -1,0 +1,5 @@
+
+PASS AudioParam: Each method returns the same object to allow chaining
+PASS AudioParam: Chaining with invalid operations does not apply later effects
+PASS AudioParam: Chaining of envelope methods schedules values as expected
+

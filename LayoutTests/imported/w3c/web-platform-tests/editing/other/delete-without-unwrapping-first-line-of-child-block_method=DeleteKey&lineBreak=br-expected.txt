@@ -1,0 +1,38 @@
+Xdef
+ghi
+
+FAIL Delete at abc<br>{<br><div id="child">]def<br>ghi</div> assert_in_array: Delete at abc<br>{<br><div id="child">]def<br>ghi</div> should delete only the preceding empty line of the child <div> value "abc<br>def<br><div id=\"child\">ghi</div>" not in array ["abc<br><div id=\"child\">def<br>ghi</div>", "abc<div id=\"child\">def<br>ghi</div>"]
+FAIL Typing "X" at abc<br>{<br><div id="child">]def<br>ghi</div> assert_in_array: Typing "X" at abc<br>{<br><div id="child">]def<br>ghi</div> should not unwrap the first line of the child <div> value "abc<br>Xdef<br><div id=\"child\">ghi</div>" not in array ["abc<br><div id=\"child\">Xdef<br>ghi</div>", "abc<div id=\"child\">Xdef<br>ghi</div>"]
+PASS Delete at <br>[abc<br><div id="child">]def<br>ghi</div>
+PASS Typing "X" at <br>[abc<br><div id="child">]def<br>ghi</div>
+FAIL Delete at <br>{<br><div id="child">]def<br>ghi</div> assert_equals: Delete at <br>{<br><div id="child">]def<br>ghi</div> should delete only the preceding empty line of the child <div> expected "<br><div id=\"child\">def<br>ghi</div>" but got "<br>def<br><div id=\"child\">ghi</div>"
+FAIL Typing "X" at <br>{<br><div id="child">]def<br>ghi</div> assert_equals: Typing "X" at <br>{<br><div id="child">]def<br>ghi</div> should not unwrap the first line of the child <div> expected "<br><div id=\"child\">Xdef<br>ghi</div>" but got "<br>Xdef<br><div id=\"child\">ghi</div>"
+FAIL Delete at {<br><br><div id="child">]def<br>ghi</div> assert_equals: Delete at {<br><br><div id="child">]def<br>ghi</div> should delete only the preceding empty line of the child <div> expected "<div id=\"child\">def<br>ghi</div>" but got "def<br><div id=\"child\">ghi</div>"
+FAIL Typing "X" at {<br><br><div id="child">]def<br>ghi</div> assert_equals: Typing "X" at {<br><br><div id="child">]def<br>ghi</div> should not unwrap the first line of the child <div> expected "<div id=\"child\">Xdef<br>ghi</div>" but got "Xdef<br><div id=\"child\">ghi</div>"
+PASS Delete at [abc<br><br><div id="child">]def<br>ghi</div>
+PASS Typing "X" at [abc<br><br><div id="child">]def<br>ghi</div>
+FAIL Delete at abc<br>{<br><div id="child">d]ef<br>ghi</div> assert_in_array: Delete at abc<br>{<br><div id="child">d]ef<br>ghi</div> should delete only the preceding empty line of the child <div> and selected text in the <div> value "abc<br>ef<br><div id=\"child\">ghi</div>" not in array ["abc<br><div id=\"child\">ef<br>ghi</div>", "abc<div id=\"child\">ef<br>ghi</div>"]
+FAIL Typing "X" at abc<br>{<br><div id="child">d]ef<br>ghi</div> assert_in_array: Typing "X" at abc<br>{<br><div id="child">d]ef<br>ghi</div> should not unwrap the first line of the child <div> value "abc<br>Xef<br><div id=\"child\">ghi</div>" not in array ["abc<br><div id=\"child\">Xef<br>ghi</div>", "abc<div id=\"child\">Xef<br>ghi</div>"]
+PASS Delete at <br>[abc<br><div id="child">d]ef<br>ghi</div>
+PASS Typing "X" at <br>[abc<br><div id="child">d]ef<br>ghi</div>
+FAIL Delete at <br>{<br><div id="child">d]ef<br>ghi</div> assert_equals: Delete at <br>{<br><div id="child">d]ef<br>ghi</div> should delete only the preceding empty line of the child <div> and selected content in the <div> expected "<br><div id=\"child\">ef<br>ghi</div>" but got "<br>ef<br><div id=\"child\">ghi</div>"
+FAIL Typing "X" at <br>{<br><div id="child">d]ef<br>ghi</div> assert_equals: Typing "X" at <br>{<br><div id="child">d]ef<br>ghi</div> should not unwrap the first line of the child <div> expected "<br><div id=\"child\">Xef<br>ghi</div>" but got "<br>Xef<br><div id=\"child\">ghi</div>"
+FAIL Delete at {<br><br><div id="child">d]ef<br>ghi</div> assert_equals: Delete at {<br><br><div id="child">d]ef<br>ghi</div> should delete only the preceding empty line of the child <div> and selected content in the <div> expected "<div id=\"child\">ef<br>ghi</div>" but got "ef<br><div id=\"child\">ghi</div>"
+FAIL Typing "X" at {<br><br><div id="child">d]ef<br>ghi</div> assert_equals: Typing "X" at {<br><br><div id="child">d]ef<br>ghi</div> should not unwrap the first line of the child <div> expected "<div id=\"child\">Xef<br>ghi</div>" but got "Xef<br><div id=\"child\">ghi</div>"
+PASS Delete at [abc<br><br><div id="child">d]ef<br>ghi</div>
+PASS Typing "X" at [abc<br><br><div id="child">d]ef<br>ghi</div>
+FAIL Delete at abc<br>{}<br><div id="child">def<br>ghi</div> assert_in_array: Delete at abc<br>{}<br><div id="child">def<br>ghi</div> should delete only the preceding empty line of the child <div> value "abc<br>def<br><div id=\"child\">ghi</div>" not in array ["abc<br><div id=\"child\">def<br>ghi</div>", "abc<div id=\"child\">def<br>ghi</div>"]
+FAIL Delete at <br>{}<br><div id="child">def<br>ghi</div> assert_equals: Delete at <br>{}<br><div id="child">def<br>ghi</div> should delete only the preceding empty line of the child <div> expected "<br><div id=\"child\">def<br>ghi</div>" but got "<br>def<br><div id=\"child\">ghi</div>"
+FAIL Delete at {}<br><div id="child">def<br>ghi</div> assert_equals: Delete at {}<br><div id="child">def<br>ghi</div> should delete only the preceding empty line of the child <div> expected "<div id=\"child\">def<br>ghi</div>" but got "def<br><div id=\"child\">ghi</div>"
+FAIL Delete at <b>abc<br>{}<br></b></b><div id="child">def<br>ghi</div> assert_in_array: Delete at <b>abc<br>{}<br></b></b><div id="child">def<br>ghi</div> should delete only the preceding empty line of the child <div> (<b> should stay) value "<b>abc<br></b>def<b><br></b><div id=\"child\">ghi</div>" not in array ["<b>abc<br></b><div id=\"child\">def<br>ghi</div>", "<b>abc</b><div id=\"child\">def<br>ghi</div>"]
+PASS Delete at <b>{}<br></b><div id="child">def<br>ghi</div>
+FAIL getTargetRanges() for Delete at <br>[abc<br><div id="child">]def<br>ghi</div> should return a range before the child <div> assert_in_array: value "[{(#text \"abc\", 0) - (<div id=\"child\">, 0)}]" not in array ["[{(#text \"abc\", 0) - (<div contenteditable=\"\">, 3)}]"]
+FAIL getTargetRanges() for Typing "X" at <br>[abc<br><div id="child">]def<br>ghi</div> should return a range ending in the child <div> assert_in_array: value "[{(#text \"abc\", 0) - (<div id=\"child\">, 0)}]" not in array ["[{(#text \"abc\", 0) - (#text \"Xdef\", 0)}]"]
+FAIL getTargetRanges() for Delete at [abc<br><br><div id="child">]def<br>ghi</div> should return a range before the child <div> assert_in_array: value "[{(#text \"abc\", 0) - (<div id=\"child\">, 0)}]" not in array ["[{(#text \"abc\", 0) - (<div contenteditable=\"\">, 3)}]"]
+FAIL getTargetRanges() for Typing "X" at [abc<br><br><div id="child">]def<br>ghi</div> should return a range ending in the child <div> assert_in_array: value "[{(#text \"abc\", 0) - (<div id=\"child\">, 0)}]" not in array ["[{(#text \"abc\", 0) - (#text \"Xdef\", 0)}]"]
+PASS getTargetRanges() for Delete at <br>[abc<br><div id="child">d]ef<br>ghi</div> should return a range ends at start of the child <div>
+PASS getTargetRanges() for Typing "X" at <br>[abc<br><div id="child">d]ef<br>ghi</div> should return a range ends at start of the child <div>
+PASS getTargetRanges() for Delete at [abc<br><br><div id="child">d]ef<br>ghi</div> should return a range ends at start of the child <div>
+PASS getTargetRanges() for Typing "X" at [abc<br><br><div id="child">d]ef<br>ghi</div> should return a range ends at start of the child <div>
+FAIL getTargetRanges() for Delete at <b>{}<br></b><div id="child">def<br>ghi</div> should return a range before the child <div> assert_in_array: value "[{(<b>, 0) - (<div id=\"child\">, 0)}]" not in array ["[{(<div contenteditable=\"\">, 0) - (<div contenteditable=\"\">, 1)}]"]
+

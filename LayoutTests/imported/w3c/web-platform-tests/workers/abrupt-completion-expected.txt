@@ -1,0 +1,4 @@
+
+PASS DedicatedWorker should correctly handle abrupt completion
+PASS SharedWorker should correctly handle abrupt completion
+

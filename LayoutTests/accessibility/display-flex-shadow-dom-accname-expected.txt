@@ -1,0 +1,14 @@
+This test ensures that we compute the correct accessible name for shadow DOM elements with display:flex.
+
+	AXTitle: block test
+	AXDescription:
+	AXHelp:
+
+	AXTitle: flex test
+	AXDescription:
+	AXHelp:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

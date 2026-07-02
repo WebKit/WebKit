@@ -1,0 +1,5 @@
+
+PASS Body sizes in a regular pass-through
+PASS Body sizes in a pass-through with non html content
+FAIL Body sizes in a regular pass-through with gzip assert_equals: Navigation timing should have equal decodedBodySize and encodedBodySize. expected 41 but got 57
+

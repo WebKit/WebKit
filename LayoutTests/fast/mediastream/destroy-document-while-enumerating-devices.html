@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that we do not crash when destroying the document while a request to enumerate devices is ongoing.");
+jsTestIsAsync = true;
+
+function destroyFrame()
+{
+    frame.remove();
+    frame = null;
+    gc();
+    setTimeout(function() {
+        gc();
+        finishJSTest();
+    }, 0);
+}
+
+frame = document.createElement("iframe");
+frame.src = "resources/enumerate-devices-frame.html";
+document.body.appendChild(frame);
+</script>
+</body>
+</html>

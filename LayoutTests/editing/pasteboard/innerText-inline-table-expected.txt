@@ -1,0 +1,5 @@
+hello 1 world
+foo  2  bar
+
+PASS Checks that the text iterator is emitting a space before and after an inline table
+

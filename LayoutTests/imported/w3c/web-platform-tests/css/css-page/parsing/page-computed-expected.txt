@@ -1,0 +1,8 @@
+
+FAIL Property page value 'auto' assert_equals: expected "auto" but got ""
+FAIL Property page value 'AUTO' assert_equals: expected "auto" but got ""
+FAIL Property page value 'blablabla' assert_equals: expected "blablabla" but got ""
+FAIL Property page value 'BLABLABLA' assert_equals: expected "BLABLABLA" but got ""
+FAIL Property page value 'table' assert_equals: expected "table" but got ""
+FAIL Property page value 'TABLE' assert_equals: expected "TABLE" but got ""
+

@@ -1,0 +1,257 @@
+/*
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "APIObject.h"
+#include "APIWebsitePolicies.h"
+#include "FrameInfoData.h"
+#include "NavigationActionData.h"
+#include "ProcessActivityGroup.h"
+#include "ProcessThrottler.h"
+#include "WebBackForwardListItem.h"
+#include "WebContentMode.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/NavigationIdentifier.h>
+#include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/SubstituteData.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/Ref.h>
+#include <wtf/Variant.h>
+
+namespace WebCore {
+enum class FrameLoadType : uint8_t;
+class ResourceResponse;
+}
+
+namespace WebKit {
+class BrowsingWarning;
+class FrameProcess;
+class WebBackForwardListFrameItem;
+}
+
+namespace API {
+
+struct SubstituteData {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SubstituteData);
+
+    SubstituteData(Vector<uint8_t>&& content, const WTF::String& MIMEType, const WTF::String& encoding, const WTF::String& baseURL, API::Object* userData, WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility = WebCore::SubstituteData::SessionHistoryVisibility::Hidden)
+        : content(WTF::move(content))
+        , MIMEType(MIMEType)
+        , encoding(encoding)
+        , baseURL(baseURL)
+        , userData(userData)
+        , sessionHistoryVisibility(sessionHistoryVisibility)
+    { }
+
+    SubstituteData(Vector<uint8_t>&& content, const WebCore::ResourceResponse&, WebCore::SubstituteData::SessionHistoryVisibility);
+
+    Vector<uint8_t> content;
+    WTF::String MIMEType;
+    WTF::String encoding;
+    WTF::String baseURL;
+    RefPtr<API::Object> userData;
+    WebCore::SubstituteData::SessionHistoryVisibility sessionHistoryVisibility { WebCore::SubstituteData::SessionHistoryVisibility::Hidden };
+};
+
+class Navigation : public ObjectImpl<Object::Type::Navigation> {
+    WTF_MAKE_NONCOPYABLE(Navigation);
+public:
+    static Ref<Navigation> create(WebCore::ProcessIdentifier processID, RefPtr<WebKit::WebBackForwardListItem>&& currentAndTargetItem)
+    {
+        return adoptRef(*new Navigation(processID, WTF::move(currentAndTargetItem)));
+    }
+
+    static Ref<Navigation> create(WebCore::ProcessIdentifier processID, Ref<WebKit::WebBackForwardListFrameItem>&& targetFrameItem, RefPtr<WebKit::WebBackForwardListItem>&& fromItem, WebCore::FrameLoadType backForwardFrameLoadType)
+    {
+        return adoptRef(*new Navigation(processID, WTF::move(targetFrameItem), WTF::move(fromItem), backForwardFrameLoadType));
+    }
+
+    static Ref<Navigation> create(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, RefPtr<WebKit::WebBackForwardListItem>&& fromItem)
+    {
+        return adoptRef(*new Navigation(processID, WTF::move(request), WTF::move(fromItem)));
+    }
+
+    static Ref<Navigation> create(WebCore::ProcessIdentifier processID, std::unique_ptr<SubstituteData>&& substituteData)
+    {
+        return adoptRef(*new Navigation(processID, WTF::move(substituteData)));
+    }
+
+    static Ref<Navigation> create(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, RefPtr<WebKit::WebBackForwardListItem>&& fromItem)
+    {
+        return adoptRef(*new Navigation(processID, WTF::move(simulatedRequest), WTF::move(substituteData), WTF::move(fromItem)));
+    }
+
+    virtual ~Navigation();
+
+    WebCore::NavigationIdentifier navigationID() const { return m_navigationID; }
+
+    const WebCore::ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
+    void setCurrentRequest(WebCore::ResourceRequest&&);
+    void upgradeCurrentInsecureRequest();
+    const WebCore::ResourceRequest& currentRequest() const LIFETIME_BOUND { return m_currentRequest; }
+
+    bool currentRequestIsRedirect() const { return m_lastNavigationAction && !m_lastNavigationAction->redirectResponse.isNull(); }
+    bool currentRequestIsCrossSiteRedirect() const;
+
+    WebKit::WebBackForwardListItem* targetItem() const;
+    WebKit::WebBackForwardListFrameItem* targetFrameItem() const { return m_targetFrameItem.get(); }
+    WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
+    std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
+    WebKit::WebBackForwardListItem* reloadItem() const { return m_reloadItem.get(); }
+
+    void appendRedirectionURL(const WTF::URL&);
+    Vector<WTF::URL> takeRedirectChain() { return WTF::move(m_redirectChain); }
+    size_t redirectChainIndex(const WTF::URL&);
+
+    bool wasUserInitiated() const { return m_lastNavigationAction && !!m_lastNavigationAction->userGestureTokenIdentifier; }
+    bool NODELETE isRequestFromClientOrUserInput() const;
+    bool isFromAPIClientRequest() const { return m_requestIsFromClientInput; }
+    void NODELETE markRequestAsFromClientInput();
+    void markAsFromLoadData() { m_isFromLoadData = true; }
+    bool isFromLoadData() const { return m_isFromLoadData; }
+
+    bool shouldPerformDownload() const { return m_lastNavigationAction && !m_lastNavigationAction->downloadAttribute.isNull(); }
+
+    bool hasOpenedFrames() const { return m_lastNavigationAction && m_lastNavigationAction->hasOpenedFrames; }
+    bool openedByDOMWithOpener() const { return m_lastNavigationAction && m_lastNavigationAction->openedByDOMWithOpener; }
+    bool isInitialFrameSrcLoad() const { return m_lastNavigationAction && m_lastNavigationAction->isInitialFrameSrcLoad; }
+    WebCore::SecurityOriginData requesterOrigin() const;
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_lastNavigationAction ? m_lastNavigationAction->shouldOpenExternalURLsPolicy : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow; }
+
+    void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
+    bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
+
+    WebCore::LockHistory lockHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->lockHistory : WebCore::LockHistory::No; }
+    WebCore::LockBackForwardList lockBackForwardList() const { return m_lastNavigationAction ? m_lastNavigationAction->lockBackForwardList : WebCore::LockBackForwardList::No; }
+
+    WTF::String clientRedirectSourceForHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->clientRedirectSourceForHistory : WTF::String(); }
+    std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy() const { return m_lastNavigationAction ? m_lastNavigationAction->ownerPermissionsPolicy : std::nullopt; }
+
+    void setLastNavigationAction(const WebKit::NavigationActionData& navigationAction) { m_lastNavigationAction = navigationAction; }
+    const std::optional<WebKit::NavigationActionData>& lastNavigationAction() const LIFETIME_BOUND { return m_lastNavigationAction; }
+
+    void setOriginatingFrameInfo(const WebKit::FrameInfoData& frameInfo) { m_originatingFrameInfo = frameInfo; }
+    const std::optional<WebKit::FrameInfoData>& originatingFrameInfo() const LIFETIME_BOUND { return m_originatingFrameInfo; }
+
+    void setDestinationFrameSecurityOrigin(const WebCore::SecurityOriginData& origin) { m_destinationFrameSecurityOrigin = origin; }
+    const WebCore::SecurityOriginData& destinationFrameSecurityOrigin() const LIFETIME_BOUND { return m_destinationFrameSecurityOrigin; }
+
+    void setEffectiveContentMode(WebKit::WebContentMode mode) { m_effectiveContentMode = mode; }
+    WebKit::WebContentMode effectiveContentMode() const { return m_effectiveContentMode; }
+
+#if !LOG_DISABLED
+    WTF::String loggingString() const;
+#endif
+
+    const std::unique_ptr<SubstituteData>& substituteData() const LIFETIME_BOUND { return m_substituteData; }
+
+    const WebCore::PrivateClickMeasurement* privateClickMeasurement() const { return m_lastNavigationAction && m_lastNavigationAction->privateClickMeasurement ? &*m_lastNavigationAction->privateClickMeasurement : nullptr; }
+    void setClientNavigationActivity(Variant<std::monostate, Ref<WebKit::ProcessThrottler::TimedActivity>, Ref<WebKit::ProcessActivityGroup>>&& activity) { m_clientNavigationActivity = WTF::move(activity); }
+    void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
+    bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
+
+    void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTF::move(policies); }
+    API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
+
+    void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
+    void setSafeBrowsingCheckOngoing(size_t, bool);
+    bool NODELETE safeBrowsingCheckOngoing(size_t);
+    bool NODELETE safeBrowsingCheckOngoing();
+    void setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&&);
+    RefPtr<WebKit::BrowsingWarning> NODELETE safeBrowsingWarning();
+    void whenSafeBrowsingCheckCompletes(Function<void()>&&);
+    void fireSafeBrowsingCheckCompletionCallbacks();
+    bool hadSafeBrowsingWarning() const { return m_hadSafeBrowsingWarning; }
+    MonotonicTime requestStart() const { return m_requestStart; }
+    void resetRequestStart();
+
+    WebCore::ProcessIdentifier processID() const { return m_processID; }
+    void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
+
+    void setPendingSharedProcess(WebKit::FrameProcess&);
+
+    void NODELETE setHasStorageForCurrentSite(bool);
+    bool hasStorageForCurrentSite() const { return m_hasStorageForCurrentSite; }
+
+    void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }
+    bool isEnhancedSecurityLinkForCurrentSite() const { return m_isEnhancedSecurityLinkForCurrentSite; }
+
+    WebKit::FrameState* backForwardFrameState() const { return m_backForwardFrameState.get(); }
+    void setBackForwardFrameState(RefPtr<WebKit::FrameState>&& frameState) { m_backForwardFrameState = WTF::move(frameState); }
+
+    static constexpr Seconds navigationActivityTimeout { 30_s };
+
+    unsigned processActivityGroupSizeForTesting() const;
+
+private:
+    Navigation(WebCore::ProcessIdentifier);
+    Navigation(WebCore::ProcessIdentifier, RefPtr<WebKit::WebBackForwardListItem>&&);
+    Navigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, RefPtr<WebKit::WebBackForwardListItem>&& fromItem);
+    Navigation(WebCore::ProcessIdentifier, Ref<WebKit::WebBackForwardListFrameItem>&& targetItem, RefPtr<WebKit::WebBackForwardListItem>&& fromItem, WebCore::FrameLoadType);
+    Navigation(WebCore::ProcessIdentifier, std::unique_ptr<SubstituteData>&&);
+    Navigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, std::unique_ptr<SubstituteData>&&, RefPtr<WebKit::WebBackForwardListItem>&& fromItem);
+
+    WebCore::NavigationIdentifier m_navigationID;
+    WebCore::ProcessIdentifier m_processID;
+    WebCore::ResourceRequest m_originalRequest;
+    WebCore::ResourceRequest m_currentRequest;
+    Vector<WTF::URL> m_redirectChain;
+
+    const RefPtr<WebKit::WebBackForwardListFrameItem> m_targetFrameItem;
+    RefPtr<WebKit::WebBackForwardListItem> m_fromItem;
+    RefPtr<WebKit::WebBackForwardListItem> m_reloadItem;
+    std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
+    std::unique_ptr<SubstituteData> m_substituteData;
+    std::optional<WebKit::NavigationActionData> m_lastNavigationAction;
+    std::optional<WebKit::FrameInfoData> m_originatingFrameInfo;
+    WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
+    WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
+    Variant<std::monostate, Ref<WebKit::ProcessThrottler::TimedActivity>, Ref<WebKit::ProcessActivityGroup>> m_clientNavigationActivity;
+    bool m_userContentExtensionsEnabled : 1 { true };
+    bool m_isLoadedWithNavigationShared : 1 { false };
+    bool m_requestIsFromClientInput : 1 { false };
+    bool m_isFromLoadData : 1 { false };
+    bool m_hadSafeBrowsingWarning : 1 { false };
+    bool m_hasStorageForCurrentSite : 1 { false };
+    bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
+    RefPtr<API::WebsitePolicies> m_websitePolicies;
+    std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
+    MonotonicTime m_requestStart { MonotonicTime::now() };
+    RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
+    ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
+    Vector<Function<void()>> m_safeBrowsingCheckCompletionCallbacks;
+    RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
+    RefPtr<WebKit::FrameState> m_backForwardFrameState;
+};
+
+} // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(Navigation);

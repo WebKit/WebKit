@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x480
+  RenderBlock {html} at (0,0) size 800x480
+    RenderBody {body} at (8,16) size 784x456
+      RenderBlock {p} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 243x17
+          text run at (0,0) width 243: "Test passes if each pair of \"x\" and \"z\" "
+        RenderInline {strong} at (0,0) size 187x17
+          RenderText {#text} at (242,0) size 187x17
+            text run at (242,0) width 187: "letters have the same height"
+        RenderText {#text} at (428,0) size 773x35
+          text run at (428,0) width 345: "; the thin wide and bright green horizontal lines are not"
+          text run at (0,18) width 565: "part of this test and only serve to help visually compare the height of tested pairs of letters."
+      RenderBlock {div} at (0,52) size 784x202
+        RenderImage {img} at (0,78) size 784x1
+        RenderImage {img} at (0,169) size 784x1
+        RenderText {#text} at (0,-9) size 50x221
+          text run at (0,-9) width 50: " "
+        RenderInline {span} at (0,0) size 118x233
+          RenderText {#text} at (50,-17) size 118x233
+            text run at (50,-17) width 118: "x"
+        RenderText {#text} at (168,-9) size 50x221
+          text run at (168,-9) width 50: " "
+        RenderInline {span} at (0,0) size 100x221
+          RenderText {#text} at (218,-9) size 100x221
+            text run at (218,-9) width 100: "x"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {div} at (0,254) size 784x202
+        RenderImage {img} at (0,78) size 784x1
+        RenderImage {img} at (0,169) size 784x1
+        RenderText {#text} at (0,-9) size 50x221
+          text run at (0,-9) width 50: " "
+        RenderInline {span} at (0,0) size 105x233
+          RenderText {#text} at (50,-17) size 105x233
+            text run at (50,-17) width 105: "z"
+        RenderText {#text} at (155,-9) size 50x221
+          text run at (155,-9) width 50: " "
+        RenderInline {span} at (0,0) size 89x221
+          RenderText {#text} at (205,-9) size 89x221
+            text run at (205,-9) width 89: "z"
+        RenderText {#text} at (0,0) size 0x0
+        

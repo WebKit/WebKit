@@ -1,0 +1,8 @@
+Test that paddings and borders are added to a grid element's size.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

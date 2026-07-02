@@ -1,0 +1,6 @@
+Tests zooming into a text input on tap.
+
+Click to focus input
+
+scale	0.750
+visibleRect	{ left: 0, top: 381, width: 520, height: 1063 }

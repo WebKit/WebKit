@@ -1,0 +1,12 @@
+
+PASS Initial color
+PASS add .parent to subject
+PASS add .child to direct_child
+PASS remove .child from direct_child
+PASS add .parent to subject for .descendant test
+PASS add .descendant to direct_child
+PASS remove .descendant from direct_child
+PASS add .deep-child to grandchild
+PASS add .deep-parent to direct_child
+PASS remove .deep-parent from direct_child
+

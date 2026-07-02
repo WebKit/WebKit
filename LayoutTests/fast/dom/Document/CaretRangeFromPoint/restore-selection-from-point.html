@@ -1,0 +1,58 @@
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Monospace';
+            font-size: 11pt;
+            font-weight: 400;
+            font-style: normal;
+            -webkit-line-break: after-white-space;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var x = 0;
+        var y = 0;
+
+        function saveOffset(element)
+        {
+            var offsetParent = element;
+            while (offsetParent !== document.body) {
+                x += offsetParent.offsetLeft;
+                y += offsetParent.offsetTop;
+                offsetParent = offsetParent.offsetParent;
+            }
+        }
+
+        window.onload = function()
+        {
+            var start = document.getElementById("selection-start")
+            var end = document.getElementById("selection-end")
+
+            var range = document.createRange()
+            range.setStartAfter(start)
+            saveOffset(start)
+            start.remove()
+            range.setEndBefore(end)
+            end.remove()
+            window.getSelection().removeAllRanges()
+            window.getSelection().addRange(range)
+
+            document.execCommand("SelectAll", false, "")
+
+            range = document.caretRangeFromPoint(x,y)
+            window.getSelection().removeAllRanges()
+            window.getSelection().addRange(range)
+
+            document.body.innerHTML = (window.getSelection().anchorNode.textContent == document.getElementById("second-line").textContent) ?
+                "PASS" : "FAIL - selection was restored on wrong line - see <a href=\"https://bugs.webkit.org/149703\">bug 149703</a>"
+        }
+    </script>
+</head>
+<body contenteditable>
+    <div style="width: 72ch; word-wrap: normal;" >12</div>
+    <div id="second-line" style="width: 72ch; word-wrap: normal;" >34<span id="selection-start"></span><span id="selection-end"></span></div>
+</body>
+</html>

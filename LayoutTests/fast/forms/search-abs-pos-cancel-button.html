@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>Search Field with Transform</title>
+    <script src="resources/common.js"></script>
+</head>
+<body>
+    <p>
+        Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=24503">https://bugs.webkit.org/show_bug.cgi?id=24503</a>:<br>
+        Can't click the clear button of an absolutely positioned search field.
+    </p>
+    <input type="search" id="target" results="5" value="Search me" style="position: absolute; left: 50px; top: 50px;">
+    <p id="result" style="margin-top: 60px;">
+        Clicking the (x) button should clear the field.
+    </p>
+    <script>
+        onload = async () => {
+            if (!window.testRunner)
+                return;
+
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+            if (window.eventSender) {
+                var target = document.getElementById("target");
+                var cancelPos = searchCancelButtonPosition(target);
+                await eventSender.asyncMouseMoveTo(cancelPos.x, cancelPos.y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
+                var result = document.getElementById("result");
+                if (target.value == "")
+                    result.innerText = "PASS";
+                else
+                    result.innerText = "FAIL";
+                
+                target.value = "Some other text";
+            }
+            testRunner.notifyDone();
+        }
+    </script>
+</body>
+</html>

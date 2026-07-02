@@ -1,0 +1,7 @@
+
+PASS Property hyphenate-character value 'auto'
+PASS Property hyphenate-character value '"="'
+PASS Property hyphenate-character value '"/-/"'
+PASS Property hyphenate-character value '"\1400"'
+PASS Property hyphenate-character value '""'
+

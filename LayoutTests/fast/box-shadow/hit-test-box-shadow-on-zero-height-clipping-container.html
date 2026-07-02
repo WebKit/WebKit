@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+body {
+    margin: 0;
+}
+
+body > div {
+    position: absolute;
+    width: 500px;
+    height: 0;
+
+    /* box-shadow should not be accounted for to specify the clipping bounds */
+    box-shadow: 100px 100px 0px blue;
+    overflow-y: hidden;
+}
+
+#container-with-height {
+    height: 300px;
+    background-color: red;
+}
+
+#container-with-height:hover {
+    background-color: green;
+}
+
+#clipped-child {
+    width: 100%;
+    height: 100px;
+}
+
+</style>
+</head>
+<body>
+    <div id="container-with-height"></div>
+    <div id="container-without-height">
+        <div id="clipped-child"></div>
+    </div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const result = document.body.appendChild(document.createElement("span"));
+const hitTestElement = document.elementFromPoint(50, 50);
+const pass = hitTestElement.id == "container-with-height";
+result.textContent = `${pass ? "PASS" : "FAIL"}: target element is #${hitTestElement.id}`;
+
+</script>
+</body>
+</html>

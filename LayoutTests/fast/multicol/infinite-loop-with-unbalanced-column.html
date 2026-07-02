@@ -1,0 +1,15 @@
+<style>
+.verticalContainer { 
+  writing-mode: vertical-rl;
+  column-count: 2;
+}
+.spanner {
+  column-span: all;
+}
+</style>
+PASS if the test finishes.
+<sup><h1><div class=verticalContainer><meter></meter><div dir='RTL' class=spanner></div></div></h1></sup>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

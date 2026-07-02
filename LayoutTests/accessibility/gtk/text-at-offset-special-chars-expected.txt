@@ -1,0 +1,19 @@
+« This is a paragraph with “special” characters inside. »
+
+List item with some text that wraps across different lines.
+List item with some text that wraps across different lines.
+
+This tests the ability to get element text for different granularities and offsets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS paragraph.lineAtOffset(0) is 'Â«Â This is a paragraph with âspecialâ characters inside.Â Â», 0, 57'
+PASS listitem.lineAtOffset(3) is 'â¢ List item , 0, 12'
+PASS listitem.lineAtOffset(13) is 'with some , 12, 22'
+PASS listitem.lineAtOffset(3) is 'â¢ List item , 0, 12'
+PASS listitem.lineAtOffset(13) is 'with some , 12, 22'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

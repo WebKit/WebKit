@@ -1,0 +1,8 @@
+
+FAIL inherit() on value set on parent assert_equals: expected "2" but got "auto"
+FAIL inherit() on value set on ancestor assert_equals: expected "2" but got "auto"
+FAIL inherit(), no value set on parent assert_equals: expected "4" but got "auto"
+FAIL inherit(), accumulating values assert_equals: expected "e3 e2 e1" but got "e3 inherit(--v)"
+FAIL inherit(), accumulating font-size assert_equals: expected "15px" but got "0px"
+FAIL inherit() can be used within if() assert_equals: expected "4" but got "auto"
+

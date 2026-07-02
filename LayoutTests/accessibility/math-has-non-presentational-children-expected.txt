@@ -1,0 +1,10 @@
+This test ensures that role="math" elements are not considered to have presentational children. This was the case in WAI-ARIA 1.1 (https://www.w3.org/TR/wai-aria-1.1/#math-0), but changed in WAI-ARIA 1.2 (https://www.w3.org/TR/wai-aria-1.2/#math).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mathElement.childrenCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

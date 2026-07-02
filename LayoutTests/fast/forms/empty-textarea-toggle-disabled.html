@@ -1,0 +1,26 @@
+<p>Tests that toggling disabled state in a textarea leaves the textarea typeable.
+To Test manually, load this page and type in the textarea. If you can type, then
+the test succeeded.<p>
+<textarea id="ta" disabled="disabled"></textarea>
+
+<script type="text/javascript">
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(function() {
+    ta.disabled = false;
+    ta.focus();
+    if (window.eventSender) {
+        eventSender.keyDown('a', []);
+        var result = ta.value;
+        if (result == "a")
+            document.write("<pre>SUCCESS</pre>");
+        else
+            document.write("<pre>FAIL, result was '" + result + "'.</pre>");
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>

@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div role="presentation">Presentation role</div>
+<div role="none">None role</div>
+<div role="generic">Generic role</div>
+<div role="group" aria-label="Test group">
+    <span>Grouped content</span>
+</div>
+<div role="rowgroup">Rowgroup role</div>
+<div role="directory">Directory role</div>
+
+<article role="article"><p>Article content</p></article>
+<nav role="navigation" aria-label="Site navigation">
+    <a href="https://example.com/">Home</a>
+</nav>
+<button role="button">Native button</button>
+
+<div role="banner"><p>Banner content</p></div>
+<main role="main"><p>Main content</p></main>
+<div role="button" tabindex="0">Custom button</div>
+<div role="status" aria-live="polite">Status message</div>
+<div role="img" aria-label="Decorative image">*</div>
+<div role="complementary"><p>Sidebar content</p></div>
+<footer role="contentinfo"><p>Footer content</p></footer>
+<div role="textbox" contenteditable="true">Editable content</div>
+<div role="dialog" aria-label="Test dialog"><p>Dialog content</p></div>
+<ul role="tree">
+    <li role="treeitem">Tree item 1</li>
+    <li role="treeitem">Tree item 2</li>
+</ul>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

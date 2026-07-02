@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks that Permissions::query() works for service workers")
+
+jsTestIsAsync = true;
+
+var expectedData = null;
+var receivedPostMessageResponse = true;
+
+navigator.serviceWorker.register('permissions-query-service-worker.js');
+navigator.serviceWorker.addEventListener('message', (message) => {
+    window.message = message;
+    shouldBeEqualToString("message.data", expectedData);
+    receivedPostMessageResponse = true;
+});
+
+async function defaultTest()
+{
+    receivedPostMessageResponse = false;
+    expectedData = "prompt";
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.active.postMessage(1);
+    });
+    await shouldBecomeEqual("receivedPostMessageResponse", "true");
+}
+
+async function grantTest() 
+{   
+    receivedPostMessageResponse = false;
+    expectedData = "granted";
+    testRunner.setGeolocationPermission(true);
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.active.postMessage(2);
+    });
+    await shouldBecomeEqual("receivedPostMessageResponse", "true");
+}
+
+async function denyTest() 
+{
+    receivedPostMessageResponse = false;
+    expectedData = "prompt";
+    testRunner.setGeolocationPermission(false);
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.active.postMessage(3);
+    });
+    await shouldBecomeEqual("receivedPostMessageResponse", "true");
+}
+
+(async function () {
+    await defaultTest();
+    await grantTest();
+    await denyTest();
+    finishJSTest();
+})();
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

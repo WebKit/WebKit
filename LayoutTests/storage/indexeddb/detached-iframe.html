@@ -1,0 +1,16 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+description("IndexedDB edge case with a detached iframe.");
+function detachIframe() {
+    document.getElementById('testIframe').remove();
+}
+</script>
+<script src="resources/detached-iframe.js"></script>
+<iframe src="resources/detached-iframe.html" id="testIframe"></iframe>
+</body>
+</html>

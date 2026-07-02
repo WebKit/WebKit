@@ -1,0 +1,4 @@
+
+PASS speechSynthesis.speak() fires start and end events with empty utterance
+PASS speechSynthesis.speak() fires start and end events
+

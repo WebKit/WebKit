@@ -1,0 +1,19 @@
+<body style="margin:0">
+<canvas id="c"></canvas>
+<script>
+onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let canvas = new OffscreenCanvas(10, 10); // Would reliably crash with this size.
+    let context = canvas.getContext('webgpu');
+    const format = "rgba8unorm";
+    context.configure({ device, format });
+    const encoder = device.createCommandEncoder({});
+    const pass = encoder.beginRenderPass({colorAttachments: [{clearValue: [0.0, 1.0, 0.0, 1], loadOp: 'clear', storeOp: 'store', view: context.getCurrentTexture().createView()}]});
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+    let b = await createImageBitmap(canvas);
+    c.getContext("2d").drawImage(b, 0, 0);
+};
+</script>
+</body>

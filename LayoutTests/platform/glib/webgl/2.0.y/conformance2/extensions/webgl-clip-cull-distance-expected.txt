@@ -1,0 +1,272 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/conformance2/extensions/webgl-clip-cull-distance.html?webglVersion=2
+
+[ 0: PASS ] context exists
+[ 1: PASS ] gl.getParameter(0x0D32 /* MAX_CLIP_DISTANCES_WEBGL */) is null
+[ 2: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 3: PASS ] gl.getParameter(0x82F9 /* MAX_CULL_DISTANCES_WEBGL */) is null
+[ 4: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 5: PASS ] gl.getParameter(0x82FA /* MAX_COMBINED_CLIP_AND_CULL_DISTANCES_WEBGL */) is null
+[ 6: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 7: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 8: PASS ] gl.isEnabled(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 9: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 10: PASS ] gl.getParameter(12288 /* CLIP_DISTANCE0_WEBGL */) is null
+[ 11: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 12: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 13: PASS ] gl.isEnabled(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 14: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 15: PASS ] gl.getParameter(12288 /* CLIP_DISTANCE0_WEBGL */) is null
+[ 16: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 17: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 18: PASS ] gl.isEnabled(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 19: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 20: PASS ] gl.getParameter(12288 /* CLIP_DISTANCE0_WEBGL */) is null
+[ 21: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 22: PASS ] gl.isEnabled(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 23: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 24: PASS ] gl.getParameter(12289 /* CLIP_DISTANCE1_WEBGL */) is null
+[ 25: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 26: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 27: PASS ] gl.isEnabled(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 28: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 29: PASS ] gl.getParameter(12289 /* CLIP_DISTANCE1_WEBGL */) is null
+[ 30: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 31: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 32: PASS ] gl.isEnabled(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 33: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 34: PASS ] gl.getParameter(12289 /* CLIP_DISTANCE1_WEBGL */) is null
+[ 35: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 36: PASS ] gl.isEnabled(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 37: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 38: PASS ] gl.getParameter(12290 /* CLIP_DISTANCE2_WEBGL */) is null
+[ 39: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 40: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 41: PASS ] gl.isEnabled(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 42: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 43: PASS ] gl.getParameter(12290 /* CLIP_DISTANCE2_WEBGL */) is null
+[ 44: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 45: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 46: PASS ] gl.isEnabled(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 47: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 48: PASS ] gl.getParameter(12290 /* CLIP_DISTANCE2_WEBGL */) is null
+[ 49: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 50: PASS ] gl.isEnabled(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 51: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 52: PASS ] gl.getParameter(12291 /* CLIP_DISTANCE3_WEBGL */) is null
+[ 53: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 54: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 55: PASS ] gl.isEnabled(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 56: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 57: PASS ] gl.getParameter(12291 /* CLIP_DISTANCE3_WEBGL */) is null
+[ 58: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 59: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 60: PASS ] gl.isEnabled(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 61: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 62: PASS ] gl.getParameter(12291 /* CLIP_DISTANCE3_WEBGL */) is null
+[ 63: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 64: PASS ] gl.isEnabled(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 65: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 66: PASS ] gl.getParameter(12292 /* CLIP_DISTANCE4_WEBGL */) is null
+[ 67: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 68: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 69: PASS ] gl.isEnabled(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 70: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 71: PASS ] gl.getParameter(12292 /* CLIP_DISTANCE4_WEBGL */) is null
+[ 72: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 73: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 74: PASS ] gl.isEnabled(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 75: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 76: PASS ] gl.getParameter(12292 /* CLIP_DISTANCE4_WEBGL */) is null
+[ 77: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 78: PASS ] gl.isEnabled(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 79: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 80: PASS ] gl.getParameter(12293 /* CLIP_DISTANCE5_WEBGL */) is null
+[ 81: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 82: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 83: PASS ] gl.isEnabled(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 84: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 85: PASS ] gl.getParameter(12293 /* CLIP_DISTANCE5_WEBGL */) is null
+[ 86: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 87: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 88: PASS ] gl.isEnabled(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 89: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 90: PASS ] gl.getParameter(12293 /* CLIP_DISTANCE5_WEBGL */) is null
+[ 91: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 92: PASS ] gl.isEnabled(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 93: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 94: PASS ] gl.getParameter(12294 /* CLIP_DISTANCE6_WEBGL */) is null
+[ 95: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 96: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 97: PASS ] gl.isEnabled(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 98: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 99: PASS ] gl.getParameter(12294 /* CLIP_DISTANCE6_WEBGL */) is null
+[ 100: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 101: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 102: PASS ] gl.isEnabled(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 103: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 104: PASS ] gl.getParameter(12294 /* CLIP_DISTANCE6_WEBGL */) is null
+[ 105: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 106: PASS ] gl.isEnabled(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 107: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 108: PASS ] gl.getParameter(12295 /* CLIP_DISTANCE7_WEBGL */) is null
+[ 109: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 110: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 111: PASS ] gl.isEnabled(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 112: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 113: PASS ] gl.getParameter(12295 /* CLIP_DISTANCE7_WEBGL */) is null
+[ 114: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 115: PASS ] getError was expected value: INVALID_ENUM : capability unknown without enabling the extension
+[ 116: PASS ] gl.isEnabled(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 117: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 118: PASS ] gl.getParameter(12295 /* CLIP_DISTANCE7_WEBGL */) is null
+[ 119: PASS ] getError was expected value: INVALID_ENUM : parameter unknown without enabling the extension
+[ 120: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 121: PASS ] WEBGL_clip_cull_distance listed as supported and getExtension succeeded
+[ 122: PASS ] ext.MAX_CLIP_DISTANCES_WEBGL is 0x0D32
+[ 123: PASS ] ext.MAX_CULL_DISTANCES_WEBGL is 0x82F9
+[ 124: PASS ] ext.MAX_COMBINED_CLIP_AND_CULL_DISTANCES_WEBGL is 0x82FA
+[ 125: PASS ] ext.CLIP_DISTANCE0_WEBGL is 0x3000
+[ 126: PASS ] ext.CLIP_DISTANCE1_WEBGL is 0x3001
+[ 127: PASS ] ext.CLIP_DISTANCE2_WEBGL is 0x3002
+[ 128: PASS ] ext.CLIP_DISTANCE3_WEBGL is 0x3003
+[ 129: PASS ] ext.CLIP_DISTANCE4_WEBGL is 0x3004
+[ 130: PASS ] ext.CLIP_DISTANCE5_WEBGL is 0x3005
+[ 131: PASS ] ext.CLIP_DISTANCE6_WEBGL is 0x3006
+[ 132: PASS ] ext.CLIP_DISTANCE7_WEBGL is 0x3007
+[ 133: PASS ] gl.getParameter(ext.MAX_CLIP_DISTANCES_WEBGL) is >= 8
+[ 134: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 135: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 136: PASS ] Optional cull distance support
+[ 137: PASS ] gl.getParameter(ext.MAX_COMBINED_CLIP_AND_CULL_DISTANCES_WEBGL) is >= 8
+[ 138: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 139: PASS ] gl.isEnabled(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 140: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 141: PASS ] gl.getParameter(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 142: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 143: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 144: PASS ] gl.isEnabled(12288 /* CLIP_DISTANCE0_WEBGL */) is true
+[ 145: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 146: PASS ] gl.getParameter(12288 /* CLIP_DISTANCE0_WEBGL */) is true
+[ 147: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 148: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 149: PASS ] gl.isEnabled(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 150: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 151: PASS ] gl.getParameter(12288 /* CLIP_DISTANCE0_WEBGL */) is false
+[ 152: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 153: PASS ] gl.isEnabled(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 154: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 155: PASS ] gl.getParameter(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 156: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 157: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 158: PASS ] gl.isEnabled(12289 /* CLIP_DISTANCE1_WEBGL */) is true
+[ 159: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 160: PASS ] gl.getParameter(12289 /* CLIP_DISTANCE1_WEBGL */) is true
+[ 161: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 162: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 163: PASS ] gl.isEnabled(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 164: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 165: PASS ] gl.getParameter(12289 /* CLIP_DISTANCE1_WEBGL */) is false
+[ 166: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 167: PASS ] gl.isEnabled(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 168: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 169: PASS ] gl.getParameter(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 170: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 171: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 172: PASS ] gl.isEnabled(12290 /* CLIP_DISTANCE2_WEBGL */) is true
+[ 173: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 174: PASS ] gl.getParameter(12290 /* CLIP_DISTANCE2_WEBGL */) is true
+[ 175: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 176: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 177: PASS ] gl.isEnabled(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 178: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 179: PASS ] gl.getParameter(12290 /* CLIP_DISTANCE2_WEBGL */) is false
+[ 180: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 181: PASS ] gl.isEnabled(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 182: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 183: PASS ] gl.getParameter(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 184: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 185: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 186: PASS ] gl.isEnabled(12291 /* CLIP_DISTANCE3_WEBGL */) is true
+[ 187: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 188: PASS ] gl.getParameter(12291 /* CLIP_DISTANCE3_WEBGL */) is true
+[ 189: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 190: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 191: PASS ] gl.isEnabled(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 192: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 193: PASS ] gl.getParameter(12291 /* CLIP_DISTANCE3_WEBGL */) is false
+[ 194: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 195: PASS ] gl.isEnabled(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 196: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 197: PASS ] gl.getParameter(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 198: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 199: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 200: PASS ] gl.isEnabled(12292 /* CLIP_DISTANCE4_WEBGL */) is true
+[ 201: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 202: PASS ] gl.getParameter(12292 /* CLIP_DISTANCE4_WEBGL */) is true
+[ 203: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 204: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 205: PASS ] gl.isEnabled(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 206: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 207: PASS ] gl.getParameter(12292 /* CLIP_DISTANCE4_WEBGL */) is false
+[ 208: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 209: PASS ] gl.isEnabled(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 210: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 211: PASS ] gl.getParameter(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 212: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 213: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 214: PASS ] gl.isEnabled(12293 /* CLIP_DISTANCE5_WEBGL */) is true
+[ 215: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 216: PASS ] gl.getParameter(12293 /* CLIP_DISTANCE5_WEBGL */) is true
+[ 217: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 218: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 219: PASS ] gl.isEnabled(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 220: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 221: PASS ] gl.getParameter(12293 /* CLIP_DISTANCE5_WEBGL */) is false
+[ 222: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 223: PASS ] gl.isEnabled(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 224: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 225: PASS ] gl.getParameter(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 226: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 227: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 228: PASS ] gl.isEnabled(12294 /* CLIP_DISTANCE6_WEBGL */) is true
+[ 229: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 230: PASS ] gl.getParameter(12294 /* CLIP_DISTANCE6_WEBGL */) is true
+[ 231: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 232: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 233: PASS ] gl.isEnabled(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 234: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 235: PASS ] gl.getParameter(12294 /* CLIP_DISTANCE6_WEBGL */) is false
+[ 236: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 237: PASS ] gl.isEnabled(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 238: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 239: PASS ] gl.getParameter(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 240: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 241: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 242: PASS ] gl.isEnabled(12295 /* CLIP_DISTANCE7_WEBGL */) is true
+[ 243: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 244: PASS ] gl.getParameter(12295 /* CLIP_DISTANCE7_WEBGL */) is true
+[ 245: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 246: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 247: PASS ] gl.isEnabled(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 248: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 249: PASS ] gl.getParameter(12295 /* CLIP_DISTANCE7_WEBGL */) is false
+[ 250: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 251: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 252: PASS ] should be blue
+[ 253: PASS ] should be red
+[ 254: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 255: PASS ] should be red
+[ 256: PASS ] should be green
+[ 257: FAIL ] should be red at (8, 0) expected: 255,0,0,255 was 0,255,0,255
+[ 258: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 259: PASS ] Correct clip distance interpolation
+[ 260: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 261: PASS ] should be red
+[ 262: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 263: PASS ] Correct cull distance operation
+[ 264: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 265: PASS ] Correct cull distance interpolation
+[ 266: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported

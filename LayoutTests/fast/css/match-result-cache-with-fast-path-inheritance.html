@@ -1,0 +1,17 @@
+<style>
+.hidden { visibility: hidden }
+.square { width: 100px; height: 100px; }
+</style>
+<div id=c class=hidden>
+    <div id=t class=square></div>
+</div>
+<script>
+// Save to match result cache.
+t.style.backgroundColor = "red";
+document.body.offsetLeft;
+// Trigger fast-path inheritance.
+c.classList.remove("hidden");
+document.body.offsetLeft;
+// Retrieve from match result cache.
+t.style.backgroundColor = "green";
+</script>

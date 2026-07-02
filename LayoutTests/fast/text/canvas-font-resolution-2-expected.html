@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that canvas2d's text functions don't crash when passed unexpected font strings.
+The test passes if you see "Hello" in Helvetica, followed by "Hello" in Times.
+<div><canvas id="c" width="400" height="400"></canvas></div>
+<script>
+var context = document.getElementById("c").getContext("2d");
+context.font = "32px 'Helvetica'";
+context.fillText("Hello", 0, 100);
+context.font = "32px 'Times'";
+context.fillText("Hello", 0, 200);
+</script>
+</body>
+</html>
+</script>
+</body>
+</html>

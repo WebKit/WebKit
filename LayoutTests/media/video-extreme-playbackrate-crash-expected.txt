@@ -1,0 +1,6 @@
+
+Test that passing extreme playback rate does not cause crash.
+
+EVENT(canplaythrough)
+END OF TEST
+

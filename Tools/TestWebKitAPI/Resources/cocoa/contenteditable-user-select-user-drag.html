@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width">
+<head>
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    #editor {
+        width: 200px;
+        height: 200px;
+        outline: 1px solid black;
+    }
+
+    #draggable {
+        background-color: red;
+        width: 200px;
+        height: 200px;
+        -webkit-user-select: all;
+        -webkit-user-drag: element;
+        display: inline-block;
+    }
+</style>
+</head>
+
+<div id="draggable" draggable="true">This text should not be draggable without a red background.</div>
+<div id="editor" contenteditable=""></div>
+
+<div><code>To manually test, attempt to drag the colored block.</code></div>
+
+<script>
+draggable.addEventListener("dragstart", event => {
+    event.dataTransfer.setData("text/plain", "Text");
+});
+</script>
+</html>
+

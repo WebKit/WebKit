@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <canvas id="canvas" width=100 height=100></div>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+
+        var imageData;
+
+        function loadImage(src) {
+            return new Promise(resolve => {
+                let image = new Image;
+                image.src = src;
+                return image.decode().then(() => { resolve(image); });
+            });
+        }
+
+        async function testImage(image, colors, frameRate)
+        {
+            let canvas = document.getElementById('canvas');
+            var previousValue = null;
+
+            while (colors.length) {
+                let color = colors.shift();
+                previousValue = await shouldBecome(image, canvas, color, previousValue, frameRate);
+            }
+        }
+
+        function shouldBecome(image, canvas, color, previousValue, frameRate)
+        {
+            return new Promise(resolve => {
+                let referenceData = colorToImageData(color);
+
+                var test = () => {
+                    let context = canvas.getContext('2d');
+                    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                    let imageData = context.getImageData(0, 0, 1, 1).data;
+
+                    if (arraysAreApproximatelyEqual(imageData, referenceData, 2)) {
+                        testPassed(`Image eventually became ${ color }`);
+                        resolve(imageData);
+                        return;
+                    }
+
+                    if (previousValue && !arraysAreApproximatelyEqual(imageData, previousValue, 2)) {
+                        testFailed(`Image changed to an unexpected value (was ${ imageData.toString() }, expected ${ color })`);
+                        resolve(imageData);
+                        return;
+                    }
+
+                    setTimeout(test, 1000 / frameRate);
+                };
+
+                test();
+            });
+        }
+
+        function colorToImageData(color)
+        {
+            let canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 1;
+            let context = canvas.getContext('2d');
+            context.fillStyle = color;
+            context.fillRect(0, 0, 1, 1);
+            return context.getImageData(0, 0, 1, 1).data;
+        }
+
+        function arraysAreApproximatelyEqual(test, target, tolerance)
+        {
+            if (test.length != target.length)
+                return false;
+
+            for (let i = 0; i < test.length; ++i) {
+                if (Math.abs(test[i] - target[i]) > tolerance)
+                    return false;
+            }
+
+            return true;
+        }
+
+        function endTest() {
+            finishJSTest();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        description('Test that an mp4 media file loaded as an image can be painted in a canvas.')
+
+        loadImage("resources/animated-red-green-blue.mp4").then(image => {
+            testImage(image, ['red', 'green', 'blue', 'red', 'green', 'blue', 'red'], 100).then(endTest, endTest);
+        });
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

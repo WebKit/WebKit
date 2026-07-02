@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function handleIntersect(entries, observer)
+{
+}
+
+onunload = () => {
+    if (!window.IntersectionObserver)
+        return;
+
+    observer = new IntersectionObserver(handleIntersect);
+    observer.observe(document.body);
+};
+
+onload = () => {
+    opener.popupDocumentWasCreated(document);
+    close();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+/*
+ * Copyright (C) 2013 Cable Television Laboratories, Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+
+#include "VideoTrackPrivateGStreamer.h"
+
+#include "GStreamerCommon.h"
+#include "MediaPlayerPrivateGStreamer.h"
+#include "VP9Utilities.h"
+#include <gst/pbutils/pbutils.h>
+#include <wtf/Scope.h>
+#include <wtf/glib/GMallocString.h>
+#include <wtf/text/StringToIntegerConversion.h>
+
+namespace WebCore {
+
+GST_DEBUG_CATEGORY(webkit_video_track_debug);
+#define GST_CAT_DEFAULT webkit_video_track_debug
+
+static void ensureVideoTrackDebugCategoryInitialized()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_video_track_debug, "webkitvideotrack", 0, "WebKit Video Track");
+    });
+}
+
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, WTF::move(pad), shouldHandleStreamStartEvent)
+{
+    ensureVideoTrackDebugCategoryInitialized();
+}
+
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, WTF::move(pad), trackId)
+{
+    ensureVideoTrackDebugCategoryInitialized();
+}
+
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstStream>&& stream)
+    : TrackPrivateBaseGStreamer(WTF::move(player), GStreamerTrackType::Video, this, index, WTF::move(stream))
+{
+    ensureVideoTrackDebugCategoryInitialized();
+
+    GRefPtr caps = adoptGRef(gst_stream_get_caps(m_data->m_stream.get()));
+    updateConfigurationFromCaps(WTF::move(caps));
+
+    GRefPtr tags = adoptGRef(gst_stream_get_tags(m_data->m_stream.get()));
+    updateConfigurationFromTags(WTF::move(tags));
+}
+
+void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&& caps)
+{
+    ASSERT(isMainThread());
+    updateConfigurationFromCaps(WTF::move(caps));
+
+    RefPtr player = m_data->m_player.get();
+    if (!player)
+        return;
+
+    auto codec = player->codecForStreamId(streamId);
+    if (codec.isEmpty())
+        return;
+
+    auto configuration = this->configuration();
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting codec to %s", codec.ascii().data());
+    configuration.codec = WTF::move(codec);
+    setConfiguration(WTF::move(configuration));
+}
+
+void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>&& tags)
+{
+    ASSERT(isMainThread());
+    if (!tags)
+        return;
+
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
+    if (m_data->updateTrackIDFromTags(tags)) {
+        GST_DEBUG_OBJECT(m_data->objectForLogging(), "Video track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_data->m_trackID);
+        notifyClients([trackID = *m_data->m_trackID](auto& client) {
+            client.idChanged(trackID);
+        });
+    }
+
+    unsigned bitrate;
+    if (!gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+        return;
+
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Setting bitrate to %u", bitrate);
+    auto configuration = this->configuration();
+    configuration.bitrate = bitrate;
+    setConfiguration(WTF::move(configuration));
+}
+
+void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& caps)
+{
+    ASSERT(isMainThread());
+    if (!caps || !gst_caps_is_fixed(caps.get()))
+        return;
+
+    GST_DEBUG_OBJECT(m_data->objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
+    auto configuration = this->configuration();
+    auto scopeExit = makeScopeExit([&] {
+        setConfiguration(WTF::move(configuration));
+    });
+
+#if GST_CHECK_VERSION(1, 20, 0)
+    auto mimeCodec = GMallocString::unsafeAdoptFromUTF8(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    if (!mimeCodec.isEmpty()) {
+        String codec(mimeCodec.span());
+        if (!gst_check_version(1, 22, 8)) {
+            // The gst_codec_utils_caps_get_mime_codec() function will return all the codec parameters,
+            // including the default ones, so to strip them away, re-parse the returned string, using
+            // WebCore VPx codec string parser.
+            // This workaround is needed only for GStreamer versions older than 1.22.8. Merge-request:
+            // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/5716
+            if (codec.startsWith("vp09"_s) && codec.endsWith(".01.01.01.01.00"_s)) {
+                auto parsedRecord = parseVPCodecParameters(codec);
+                ASSERT(parsedRecord);
+                codec = createVPCodecParametersString(*parsedRecord);
+            }
+        }
+        configuration.codec = WTF::move(codec);
+    }
+#endif
+
+    int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
+    double frameRate;
+    IntSize originalSize;
+    GstVideoFormat format;
+    PlatformVideoColorSpace colorSpace;
+    if (!getVideoSizeAndFormatFromCaps(caps.get(), originalSize, format, pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride, frameRate, colorSpace)) {
+        GST_WARNING("Failed to get size and format from caps: %" GST_PTR_FORMAT, caps.get());
+        return;
+    }
+
+    configuration.width = originalSize.width();
+    configuration.height = originalSize.height();
+    configuration.framerate = frameRate;
+    configuration.colorSpace = colorSpace;
+}
+
+VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
+{
+    if (m_data->m_stream && gst_stream_get_stream_flags(m_data->m_stream.get()) & GST_STREAM_FLAG_SELECT)
+        return VideoTrackPrivate::Kind::Main;
+
+    return VideoTrackPrivate::kind();
+}
+
+void VideoTrackPrivateGStreamer::setSelected(bool selected)
+{
+    if (selected == this->selected())
+        return;
+    VideoTrackPrivate::setSelected(selected);
+
+    RefPtr player = m_data->m_player.get();
+    if (!player)
+        return;
+
+    // On MSE, the player holds its own set of tracks, independent from the ones SourceBuffer
+    // reported to HTMLMediaElement. We need to synchronize the enabled status of the player
+    // mirror when the element one changed. Fortunately, both share the same trackId.
+    player->mirrorEnabledVideoTrackIfNeeded(*this);
+    player->updateEnabledVideoTrack();
+}
+
+int VideoTrackPrivateGStreamer::trackIndex() const
+{
+    return m_data->m_index;
+}
+
+TrackID VideoTrackPrivateGStreamer::id() const
+{
+    return m_data->m_trackID.value_or(m_data->m_id);
+}
+
+std::optional<String> VideoTrackPrivateGStreamer::trackUID() const
+{
+    auto player = m_data->m_player.get();
+    if (player && player->isMediaStreamPlayer())
+        return m_data->m_gstStreamId;
+
+    return std::nullopt;
+}
+
+String VideoTrackPrivateGStreamer::label() const
+{
+    return m_data->m_label;
+}
+
+String VideoTrackPrivateGStreamer::language() const
+{
+    return m_data->m_language;
+}
+
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<body/>
+<script src="../../../../../resources/testharness.js"></script>
+<script src="../../../../../resources/testharnessreport.js"></script>
+
+<!-- This test is run with normal layout tests with passiveEventListeners
+     enabled and in virtual/stable with passiveEventListeners disabled -->
+<script>
+
+function testTwoArgumentRegister() {
+  var handler = function handler(e) {
+    e.preventDefault();
+  }
+  document.addEventListener('test', handler);
+  assert_equals(false, document.body.dispatchEvent(new Event('test', {'bubbles': true, 'cancelable': true})));
+  document.removeEventListener('test', handler);
+  assert_equals(true, document.body.dispatchEvent(new Event('test', {'bubbles': true, 'cancelable': true})));
+}
+
+function testPassiveValue(registerValue, expectedValue, test) {
+  var handler = function handler(e) {
+    e.preventDefault();
+  }
+  document.addEventListener('test', handler, registerValue);
+  var event = new Event('test', {'bubbles': true, 'cancelable': true});
+  assert_equals(expectedValue, document.body.dispatchEvent(event));
+  assert_equals(!expectedValue, event.defaultPrevented);
+  document.removeEventListener('test', handler, registerValue);
+  assert_equals(true, document.body.dispatchEvent(new Event('test', {'bubbles': true, 'cancelable': true})));
+  test.done();
+}
+
+function testTwoHandlers() {
+  var passive_called = undefined;
+  var blocking_called = undefined;
+  var passive_handler = function handler(e) {
+    passive_called = true;
+  }
+  var blocking_handler = function handler(e) {
+    blocking_called = true;
+    e.preventDefault();
+  }
+  document.addEventListener('test', passive_handler, {"passive" : true});
+  document.addEventListener('test', blocking_handler, {"passive" : false});
+  var event = new Event('test', {'bubbles': true, 'cancelable': true});
+  document.body.dispatchEvent(event);
+  assert_true(passive_called);
+  assert_true(blocking_called);
+  assert_true(event.defaultPrevented);
+  document.removeEventListener('test', passive_handler, {});
+  document.removeEventListener('test', blocking_handler, {});
+}
+
+test(testTwoArgumentRegister, "Two argument register");
+test(function(t) { testPassiveValue(false, false, t); }, "Prevent default capture false");
+test(function(t) { testPassiveValue(true, false, t); }, "Prevent default capture true");
+test(function(t) { testPassiveValue({}, false, t); }, "Prevent default with empty object");
+test(function(t) { testPassiveValue({passive: false}, false, t); }, "Prevent default with passive false");
+test(function(t) { testPassiveValue({passive: true}, true, t); }, "Prevent default with passive true ");
+test(testTwoHandlers, "Passive and Blocking Registered Handlers");
+
+</script>

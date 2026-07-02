@@ -1,0 +1,153 @@
+/*
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "JSErrorHandler.h"
+
+#include "Document.h"
+#include "ErrorEvent.h"
+#include "Event.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertStrings.h"
+#include "JSDOMWindow.h"
+#include "JSErrorEvent.h"
+#include "JSEvent.h"
+#include "JSExecState.h"
+#include "JSExecStateInstrumentation.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/VMEntryScopeInlines.h>
+#include <wtf/Ref.h>
+#include <wtf/Scope.h>
+
+namespace WebCore {
+using namespace JSC;
+
+inline JSErrorHandler::JSErrorHandler(JSObject& listener, JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
+    : JSEventListener(&listener, &wrapper, isAttribute, CreatedFromMarkup::No, world)
+{
+}
+
+Ref<JSErrorHandler> JSErrorHandler::create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
+{
+    return adoptRef(*new JSErrorHandler(listener, wrapper, isAttribute, world));
+}
+
+JSErrorHandler::~JSErrorHandler() = default;
+
+void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event)
+{
+    auto* errorEvent = dynamicDowncast<ErrorEvent>(event);
+    if (!errorEvent)
+        return JSEventListener::handleEvent(scriptExecutionContext, event);
+
+    VM& vm = scriptExecutionContext.vm();
+    JSLockHolder lock(vm);
+
+    JSObject* jsFunction = this->ensureJSFunction(scriptExecutionContext);
+    if (!jsFunction)
+        return;
+
+    RefPtr isolatedWorld = this->isolatedWorld();
+    if (!isolatedWorld) [[unlikely]]
+        return;
+
+    auto* globalObject = toJSDOMGlobalObject(scriptExecutionContext, *isolatedWorld);
+    if (!globalObject)
+        return;
+
+    auto callData = JSC::getCallData(jsFunction);
+    if (callData.type != CallData::Type::None) {
+        Ref<JSErrorHandler> protectedThis(*this);
+
+        RefPtr<Event> savedEvent;
+        auto* jsFunctionWindow = dynamicDowncast<JSDOMWindow>(jsFunction->realm());
+        if (jsFunctionWindow) {
+            savedEvent = jsFunctionWindow->currentEvent();
+
+            // window.event should not be set when the target is inside a shadow tree, as per the DOM specification.
+            if (!errorEvent->currentTargetIsInShadowTree())
+                jsFunctionWindow->setCurrentEvent(errorEvent);
+        }
+
+        auto restoreCurrentEventOnExit = makeScopeExit([&] {
+            if (jsFunctionWindow)
+                jsFunctionWindow->setCurrentEvent(savedEvent.get());
+        });
+
+        auto exception = ([&] -> NakedPtr<JSC::Exception> {
+            VM& vm = globalObject->vm();
+
+            MarkedArgumentBuffer args;
+            args.append(toJS<IDLDOMString>(*globalObject, errorEvent->message()));
+            args.append(toJS<IDLUSVString>(*globalObject, errorEvent->filename()));
+            args.append(toJS<IDLUnsignedLong>(errorEvent->lineno()));
+            args.append(toJS<IDLUnsignedLong>(errorEvent->colno()));
+
+            {
+                auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+                auto* jsErrorEvent = downcast<JSErrorEvent>(toJS(globalObject, globalObject, *errorEvent));
+                if (auto* exception = scope.exception()) [[unlikely]] {
+                    scope.clearException();
+                    return exception;
+                }
+                auto error = jsErrorEvent->error(*globalObject);
+                if (auto* exception = scope.exception()) [[unlikely]] {
+                    scope.clearException();
+                    return exception;
+                }
+                args.append(error);
+                ASSERT(!args.hasOverflowed());
+            }
+
+            VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
+
+            JSExecState::instrumentFunction(&scriptExecutionContext, callData);
+
+            NakedPtr<JSC::Exception> exception;
+            JSValue returnValue = JSExecState::profiledCall(globalObject, JSC::ProfilingReason::Other, jsFunction, callData, globalObject, args, exception);
+
+            InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
+
+            if (exception) [[unlikely]]
+                return exception;
+
+            if (returnValue.isTrue())
+                errorEvent->preventDefault();
+
+            return nullptr;
+        }());
+        if (exception)
+            reportException(jsFunction->realm(), exception);
+    }
+}
+
+} // namespace WebCore

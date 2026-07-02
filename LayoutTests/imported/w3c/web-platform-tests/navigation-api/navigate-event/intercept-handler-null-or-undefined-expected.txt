@@ -1,0 +1,4 @@
+
+PASS event.intercept() should throw if the handler is null
+PASS event.intercept() should not throw if the handler is explicit undefined
+

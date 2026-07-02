@@ -1,0 +1,12 @@
+Test that animated gif in a frame outside viewport does not trigger repaint.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS repaintRectsAfterScroll is ""
+PASS repaintRectsAfterScrollBack is not ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

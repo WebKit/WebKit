@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div contenteditable id="div"><div>He</div></div>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+var count = 0;
+div.addEventListener("DOMSubtreeModified", function () {
+    count++;
+    if (count == 2) {
+        div.contenteditable = false;
+        document.body.removeChild(div);
+    }
+});
+
+document.getSelection().collapse(div.firstChild.firstChild, 2)
+if (window.eventSender) {
+    eventSender.keyDown('backspace');
+    eventSender.keyDown('backspace');
+}
+document.body.innerText = "PASS if not crashed";
+</script>
+</body>
+</html>

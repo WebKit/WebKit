@@ -1,0 +1,5 @@
+Received ServiceWorker Console Message: doTest: {"type":"PUSHEVENT","message":"SHOWNOTIFICATION-SYNC"}
+Received ServiceWorker Console Message: doPush: SHOWNOTIFICATION-SYNC
+
+PASS push with sync showNotification call
+

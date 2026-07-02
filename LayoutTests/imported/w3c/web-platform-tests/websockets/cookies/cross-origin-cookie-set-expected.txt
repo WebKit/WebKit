@@ -1,0 +1,5 @@
+WebSocket - Set Cross-origin cookie
+
+
+FAIL Cookie should be set assert_true: expected true got false
+

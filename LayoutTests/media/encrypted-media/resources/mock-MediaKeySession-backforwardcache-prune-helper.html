@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+// Helper for mock-MediaKeySession-backforwardcache-prune-crash.html. The previous page (with an open
+// MediaKeySession) is now in the BackForwardCache. Prune it -- which synchronously destroys the cached page and
+// tears down its still-open session -- and report the result here, since the pruned page is gone.
+//
+// This is a crash test: the success condition is "tearing down a back/forward-cached MediaKeySession page does not
+// crash". That holds whether the page was actually pruned or never entered the cache at all, so both outcomes
+// report the same PASS. Reporting PASS on non-entry keeps the test from flaking when the environment denies
+// caching: BackForwardCache::canCache() refuses entry while the process is under memory pressure (e.g. the WK2
+// Stress bot). A regression still aborts the process when the prune path is exercised, independent of this text.
+const PASS_MESSAGE = "PASS: pruning a back/forward-cached MediaKeySession page does not crash.";
+
+function finish(message) {
+    document.body.textContent = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function prune(retries = 0) {
+    // The previous page enters the cache as part of this navigation's commit; give it a few ticks if needed so we
+    // exercise the real prune path whenever caching is allowed.
+    if (internals.backForwardCacheSize() < 1) {
+        if (retries < 50) {
+            setTimeout(() => prune(retries + 1), 10);
+            return;
+        }
+        // Page never entered the cache (e.g. denied under memory pressure): nothing to prune, no crash.
+        finish(PASS_MESSAGE);
+        return;
+    }
+
+    // Synchronously destroys the cached page -> Document teardown -> MediaKeySession::stop(). Before the fix this
+    // crashed here; now it must return cleanly.
+    internals.clearBackForwardCache();
+    finish(PASS_MESSAGE);
+}
+
+window.addEventListener("load", () => {
+    if (!window.internals || !window.testRunner) {
+        finish("FAIL: this test requires window.internals and window.testRunner.");
+        return;
+    }
+    prune();
+});
+</script>
+</body>
+</html>

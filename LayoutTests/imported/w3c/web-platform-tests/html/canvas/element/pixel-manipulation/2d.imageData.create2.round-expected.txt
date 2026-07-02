@@ -1,0 +1,6 @@
+2d.imageData.create2.round
+createImageData(w, h) is rounded the same as getImageData(0, 0, w, h)
+Actual output:
+
+PASS createImageData(w, h) is rounded the same as getImageData(0, 0, w, h)
+

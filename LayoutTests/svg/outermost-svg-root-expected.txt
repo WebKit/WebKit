@@ -1,0 +1,11 @@
+PASS extractSVGRootRenderers('svg') is ['RenderSVGRoot {svg}','RenderSVGRoot {svg}']
+PASS extractSVGRootRenderers('mathml') is ['RenderSVGRoot {svg}']
+PASS extractSVGRootRenderers('non_svg') is ['RenderSVGRoot {svg}']
+PASS extractSVGRootRenderers('svg_use') is ['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']
+PASS extractSVGRootRenderers('svg_child_of_use') is ['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']
+PASS extractSVGRootRenderers('svg_in_shadow_tree') is ['RenderSVGRoot {svg}','RenderSVGRoot {svg}']
+PASS extractSVGRootRenderers('mathml_in_shadow_tree') is ['RenderSVGRoot {svg}']
+PASS extractSVGRootRenderers('non_svg_in_shadow_tree') is ['RenderSVGRoot {svg}']
+PASS extractSVGRootRenderers('svg_use_in_shadow_tree') is ['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']
+PASS extractSVGRootRenderers('svg_child_of_use_in_shadow_tree') is ['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']
+

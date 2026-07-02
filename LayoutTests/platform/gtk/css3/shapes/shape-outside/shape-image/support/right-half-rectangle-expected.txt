@@ -1,0 +1,5 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 100x100
+  RenderSVGRoot {svg} at (50,0) size 50x100
+    RenderSVGPath {path} at (50,0) size 50x100 [fill={[type=SOLID] [color=#006400]}] [data="M 50 0 L 100 0 C 100 33.3 100 66.7 100 100 L 50 100 L 50 0 Z"]

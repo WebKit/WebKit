@@ -1,0 +1,4 @@
+
+PASS No violation reported for ServiceWorkerContainer register with TrustedScriptURL.
+PASS Violation report for ServiceWorkerContainer register with plain string.
+

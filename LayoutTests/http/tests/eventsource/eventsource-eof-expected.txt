@@ -1,0 +1,7 @@
+Test that EventSource discards event data if there is no newline before eof. Should print a series of PASS messages followed by DONE.
+
+PASS: got event with expected data, lastEventId, and type
+PASS: got event with expected data, lastEventId, and type
+PASS: got event with expected data, lastEventId, and type
+DONE
+

@@ -1,0 +1,6 @@
+
+
+PASS Test that the www1 image is allowed to load
+PASS Test that the www2 image is not allowed to load
+PASS Test that the www2 image throws a violation event
+

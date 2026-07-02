@@ -1,0 +1,457 @@
+
+PASS :values:stage="constant";type="vec3%3Cabstract-int%3E"
+PASS :values:stage="constant";type="vec3%3Cabstract-float%3E"
+PASS :values:stage="constant";type="vec3%3Cf32%3E"
+FAIL :values:stage="constant";type="vec3%3Cf16%3E" assert_unreached:
+  - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h));
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
+  - (in subcase: a=-65504;b=-65504) INFO: subcase ran
+  - (in subcase: a=-65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(-63.96875h, -63.96875h, -63.96875h));
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
+    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
+  - (in subcase: a=-65504;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-65504;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-65504;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-65504;b=0) INFO: subcase ran
+  - (in subcase: a=-65504;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-65504;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-65504;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(63.96875h, 63.96875h, 63.96875h));
+      at (elided: only 2 shown)
+  - (in subcase: a=-65504;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-65504;b=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(-65504.0h, -65504.0h, -65504.0h), vec3(65504.0h, 65504.0h, 65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=-65504;b=65504) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-63.96875;b=-65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(-63.96875h, -63.96875h, -63.96875h), vec3(-65504.0h, -65504.0h, -65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=-63.96875;b=-65504) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-63.96875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-63.96875;b=0) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=-63.96875;b=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(-63.96875h, -63.96875h, -63.96875h), vec3(65504.0h, 65504.0h, 65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=-63.96875;b=65504) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-65504) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=0) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=65504) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-65504) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=0) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=65504) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-65504) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=0) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=65504) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-65504) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-63.96875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a="_negzero_";b="_negzero_") INFO: subcase ran
+  - (in subcase: a="_negzero_";b=0) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=63.96875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=65504) INFO: subcase ran
+  - (in subcase: a=0;b=-65504) INFO: subcase ran
+  - (in subcase: a=0;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=0;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=0;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=0;b=0) INFO: subcase ran
+  - (in subcase: a=0;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=0;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0;b=63.96875) INFO: subcase ran
+  - (in subcase: a=0;b=65504) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-65504) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=0) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=63.96875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=65504) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-65504) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=0) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=63.96875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=65504) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-65504) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=0) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=65504) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=63.96875;b=-65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(63.96875h, 63.96875h, 63.96875h), vec3(-65504.0h, -65504.0h, -65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=63.96875;b=-65504) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=63.96875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=63.96875;b=0) INFO: subcase ran
+  - (in subcase: a=63.96875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=63.96875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=63.96875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=63.96875;b=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(63.96875h, 63.96875h, 63.96875h), vec3(65504.0h, 65504.0h, 65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=63.96875;b=65504) INFO: subcase ran
+  - (in subcase: a=65504;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=-65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(65504.0h, 65504.0h, 65504.0h), vec3(-65504.0h, -65504.0h, -65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=-65504) INFO: subcase ran
+  - (in subcase: a=65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=-63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(65504.0h, 65504.0h, 65504.0h), vec3(-63.96875h, -63.96875h, -63.96875h));
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=65504;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=65504;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=65504;b=0) INFO: subcase ran
+  - (in subcase: a=65504;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=65504;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=65504;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(65504.0h, 65504.0h, 65504.0h), vec3(63.96875h, 63.96875h, 63.96875h));
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
+  - (in subcase: a=65504;b=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
+
+
+    ---- shader ----
+    enable f16;
+    const v  = cross(vec3(65504.0h, 65504.0h, 65504.0h), vec3(65504.0h, 65504.0h, 65504.0h));
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=65504) INFO: subcase ran
+ Reached unreachable code
+PASS :values:stage="override";type="vec3%3Cf32%3E"
+FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
+  - (in subcase: a=-65504;b=-65504) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/cross.spec.js:71:37
+  - (in subcase: a=-65504;b=-65504) INFO: subcase ran
+  - (in subcase: a=-65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectGPUError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1163:34
+    expectPipelineResult@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:216:24
+    validateConstOrOverrideBuiltinEval@http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/const_override_validation.js:194:31
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/expression/call/builtin/cross.spec.js:71:37
+  - (in subcase: a=-65504;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-65504;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-65504;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-65504;b=0) INFO: subcase ran
+  - (in subcase: a=-65504;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-65504;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-65504;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-65504;b=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=-65504;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-65504;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=-65504;b=65504) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=-63.96875;b=-65504) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-63.96875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-63.96875;b=0) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-63.96875;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=-63.96875;b=65504) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-65504) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=0) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-0.062469482421875;b=65504) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-65504) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=0) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006103515625;b=65504) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-65504) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=0) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=63.96875) INFO: subcase ran
+  - (in subcase: a=-0.00006097555160522461;b=65504) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-65504) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-63.96875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a="_negzero_";b="_negzero_") INFO: subcase ran
+  - (in subcase: a="_negzero_";b=0) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=63.96875) INFO: subcase ran
+  - (in subcase: a="_negzero_";b=65504) INFO: subcase ran
+  - (in subcase: a=0;b=-65504) INFO: subcase ran
+  - (in subcase: a=0;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=0;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=0;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=0;b=0) INFO: subcase ran
+  - (in subcase: a=0;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=0;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0;b=63.96875) INFO: subcase ran
+  - (in subcase: a=0;b=65504) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-65504) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=0) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=63.96875) INFO: subcase ran
+  - (in subcase: a=5.960464477539063e-8;b=65504) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-65504) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=0) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=63.96875) INFO: subcase ran
+  - (in subcase: a=0.00006103515625;b=65504) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-65504) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=0) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=65504) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=63.96875;b=-65504) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=63.96875;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=63.96875;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=63.96875;b=0) INFO: subcase ran
+  - (in subcase: a=63.96875;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=63.96875;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=63.96875;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=63.96875) INFO: subcase ran
+  - (in subcase: a=63.96875;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=63.96875;b=65504) INFO: subcase ran
+  - (in subcase: a=65504;b=-65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=-65504) INFO: subcase ran
+  - (in subcase: a=65504;b=-63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=-63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=-0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=-0.00006103515625) INFO: subcase ran
+  - (in subcase: a=65504;b=-0.00006097555160522461) INFO: subcase ran
+  - (in subcase: a=65504;b="_negzero_") INFO: subcase ran
+  - (in subcase: a=65504;b=0) INFO: subcase ran
+  - (in subcase: a=65504;b=5.960464477539063e-8) INFO: subcase ran
+  - (in subcase: a=65504;b=0.00006103515625) INFO: subcase ran
+  - (in subcase: a=65504;b=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=65504;b=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=63.96875) INFO: subcase ran
+  - (in subcase: a=65504;b=65504) EXPECTATION FAILED: Expected validation error
+      at (elided: only 2 shown)
+  - (in subcase: a=65504;b=65504) INFO: subcase ran
+ Reached unreachable code
+PASS :args:arg="good"
+PASS :args:arg="bad_no_parens"
+PASS :args:arg="bad_0args"
+PASS :args:arg="bad_1arg"
+PASS :args:arg="bad_3arg"
+PASS :args:arg="bad_vec2"
+PASS :args:arg="bad_vec4"
+PASS :args:arg="bad_0bool"
+PASS :args:arg="bad_0array"
+PASS :args:arg="bad_0struct"
+PASS :args:arg="bad_1bool"
+PASS :args:arg="bad_1array"
+PASS :args:arg="bad_1struct"
+PASS :must_use:use=true
+PASS :must_use:use=false
+

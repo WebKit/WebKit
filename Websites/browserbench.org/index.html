@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>BrowserBench.org &mdash; Browser Benchmarks</title>
+    <link rel="stylesheet" href="resources/main.css">
+    <script>
+    function chooseAsset(img) {
+        var ratio = window.devicePixelRatio;
+        var srcset = img.getAttribute('srcset');
+        if (!srcset)
+            return null;
+        var tokens = srcset.split(/\s*,\s*/);
+        for (var i = 0; i < tokens.length; i++) {
+            var parsedToken = tokens[i].match(/(.+)\s+(\d)x/);
+            if (parsedToken && parseInt(parsedToken[2]) == ratio)
+                return parsedToken[1];
+        }
+        return null;
+    }
+
+    if (!HTMLImageElement.prototype.hasOwnProperty("srcset")) {
+        window.addEventListener('DOMContentLoaded', function () {
+            var images = document.querySelectorAll('img');
+            for (var i = 0; i < images.length; i++) {
+                if (!images[i].srcset)
+                    images[i].src = chooseAsset(images[i]);
+            }
+        });
+    }
+    </script>
+</head>
+<body class="benchmark-index">
+<main>
+
+<div id="logo">
+<a href="/"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span></a>
+</div>
+
+<hr>
+
+<a class="benchmark" href="Speedometer3.1" tabindex="0">
+<img id="speedometer-logo"
+    srcset="resources/Speedometer-Logo.png 1x, resources/Speedometer-Logo@2x.png 2x" alt="Speedometer">
+<p>Speedometer is a browser benchmark that measures the responsiveness of web applications.<br>
+It's maintained by major browser engine developers under an open governance model.</p>
+</a>
+
+<hr>
+
+<section class="benchmarks">
+
+<a class="benchmark" href="JetStream3.0" tabindex="0">
+<img id="jetstream-logo"
+    srcset="resources/JetStream3-Logo.png 1x, resources/JetStream3-Logo@2x.png 2x" alt="JetStream3">
+<p>JetStream 3.0 is a JavaScript and WebAssembly benchmark suite focused on advanced web applications.</p>
+</a>
+
+<a class="benchmark" href="MotionMark1.3.2" tabindex="0">
+<img id="motionmark-logo" srcset="resources/MotionMark-Logo.png 1x, resources/MotionMark-Logo@2x.png 2x" alt="MotionMark">
+<p>MotionMark is a benchmark designed to put browser graphics systems to the test.</p>
+</a>
+
+</section>
+
+<hr>
+
+<section class="announcements">
+    <a href="announcements"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span> <span>announcements</span></a>
+</section>
+
+</main>
+</body>
+</html>

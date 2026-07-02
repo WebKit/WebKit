@@ -1,0 +1,8 @@
+Test for WebKitBug 139390
+
+A block level element inserted into an inline element should be properly displayed in a multicol element.
+
+On success you should see 2 rectangles in the right column, one green and one orange and no assert.
+
+
+

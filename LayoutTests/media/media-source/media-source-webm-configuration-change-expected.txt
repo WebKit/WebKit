@@ -1,0 +1,26 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader1.type()))
+RUN(sourceBuffer.appendBuffer(loader1.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader1.mediaSegment(0)))
+EVENT(update)
+EXPECTED (video.videoTracks[0].configuration.codec == 'vp09.00.10.08') OK
+EXPECTED (video.videoTracks[0].configuration.width == '640') OK
+EXPECTED (video.videoTracks[0].configuration.height == '480') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix == 'bt709') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries == 'bt709') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer == 'bt709') OK
+RUN(sourceBuffer.appendBuffer(loader2.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader2.mediaSegment(1)))
+EVENT(update)
+EXPECTED (video.videoTracks[0].configuration.codec == 'vp09.02.10.10.01.09.16.09.01') OK
+EXPECTED (video.videoTracks[0].configuration.width == '720') OK
+EXPECTED (video.videoTracks[0].configuration.height == '480') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix == 'bt2020-ncl') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries == 'bt2020') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer == 'pq') OK
+END OF TEST
+

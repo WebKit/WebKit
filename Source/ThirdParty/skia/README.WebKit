@@ -1,0 +1,19 @@
+This directory contains a copy of Skia from the official repository.
+
+  - URL: https://skia.googlesource.com/skia
+  - Commit: 0e98a9c635bb1395ce9551d0812c7c4afb0f9776
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/skia
+  cp -ar ../path/to/skia Source/ThirdParty/
+  rm -rf Source/ThirdParty/skia/.git/
+  git checkout -- \
+      Source/ThirdParty/skia/README.WebKit \
+      Source/ThirdParty/skia/CMakeLists.txt \
+      Source/ThirdParty/skia/WebKitSkiaConfig.h
+  git add -A Source/ThirdParty/skia/
+
+Then check whether the updated sources require any changes to the CMake
+build system, and update the Skia commit identifier in this file.

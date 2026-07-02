@@ -1,0 +1,29 @@
+Bug 86390: Expose FrameSelection::absoluteCaretBounds via window.internals
+
+This test demonstrates the usage of window.internals.absoluteCaretBounds()
+
+abcd
+PASS caretRects[0].left is 8
+PASS caretRects[0].top is 160
+FAIL caretRects[0].width should be 1. Was 2.
+PASS caretRects[0].height is 20
+FAIL caretRects[1].left should be 28. Was 27.
+PASS caretRects[1].top is 160
+FAIL caretRects[1].width should be 1. Was 2.
+PASS caretRects[1].height is 20
+FAIL caretRects[2].left should be 48. Was 47.
+PASS caretRects[2].top is 160
+FAIL caretRects[2].width should be 1. Was 2.
+PASS caretRects[2].height is 20
+FAIL caretRects[3].left should be 68. Was 67.
+PASS caretRects[3].top is 160
+FAIL caretRects[3].width should be 1. Was 2.
+PASS caretRects[3].height is 20
+FAIL caretRects[4].left should be 88. Was 87.
+PASS caretRects[4].top is 160
+FAIL caretRects[4].width should be 1. Was 2.
+PASS caretRects[4].height is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

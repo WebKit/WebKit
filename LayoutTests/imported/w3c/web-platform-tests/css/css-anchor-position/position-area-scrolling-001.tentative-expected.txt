@@ -1,0 +1,5 @@
+
+PASS Initial scroll position
+PASS Scroll to 40,60
+PASS Redisplay at 40,60
+

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="startCapture()">
+    <script>
+async function startCapture()
+{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true, video: true});
+    parent.startCapture(stream);
+}
+    </script>
+</body>
+</html>

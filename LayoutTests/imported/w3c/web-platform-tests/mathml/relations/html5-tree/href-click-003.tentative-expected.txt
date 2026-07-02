@@ -1,0 +1,7 @@
+To test manually, click the blue rectangle.
+
+
+DON'T CLICK ME
+
+PASS Click element with href
+

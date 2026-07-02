@@ -1,0 +1,158 @@
+Test that HTMLDocumentParserFastPath correctly caches whitespace (newline + 0-32 spaces) when using innerHTML. This test does not check utilization of the cache. It just verifies that generated text nodes have the correct number of spaces once parsed and constructed into the DOM. There is currently no observable way to detect that the cache has been utilized, or a side effect of using the cache to detect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing case 1: Newline only (0 spaces)
+HTML: "Before\nAfter"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n"
+"\n"
+PASS Newline only (0 spaces) - Found exact cached whitespace with 0 spaces
+Testing case 2: Newline + 1 space
+HTML: "Before\n After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n "
+"\n "
+PASS Newline + 1 space - Found exact cached whitespace with 1 spaces
+Testing case 3: Newline + 4 spaces
+HTML: "Before\n    After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n    "
+"\n    "
+PASS Newline + 4 spaces - Found exact cached whitespace with 4 spaces
+Testing case 4: Newline + 8 spaces
+HTML: "Before\n        After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n        "
+"\n        "
+PASS Newline + 8 spaces - Found exact cached whitespace with 8 spaces
+Testing case 5: Newline + 16 spaces
+HTML: "Before\n                After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n                "
+"\n                "
+PASS Newline + 16 spaces - Found exact cached whitespace with 16 spaces
+Testing case 6: Newline + 16 spaces + content at end
+HTML: "Before\n                heyAfter"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n                hey"
+"\n                hey"
+PASS Newline + 16 spaces + content at end - Non-cached case parsed successfully
+Testing case 7: Single span with newline + text
+HTML: "Before\nJAfter"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\nJ"
+"\nJ"
+PASS Single span with newline + text - Non-cached case parsed successfully
+Testing case 8: Newline + 32 spaces (max)
+HTML: "Before\n                                After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n                                "
+"\n                                "
+PASS Newline + 32 spaces (max) - Found exact cached whitespace with 32 spaces
+Testing case 9: Newline + 33 spaces (over max)
+HTML: "Before\n                                 After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n                                 "
+"\n                                 "
+PASS Newline + 33 spaces (over max) - Non-cached case parsed successfully
+Testing case 10: Mixed whitespace (tab+spaces)
+HTML: "Before\n\t  After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n\t  "
+"\n\t  "
+PASS Mixed whitespace (tab+spaces) - Non-cached case parsed successfully
+Testing case 11: No leading newline
+HTML: "Before    After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"    "
+"    "
+PASS No leading newline - Non-cached case parsed successfully
+Testing case 12: Text content mixed in
+HTML: "Before\n    text contentAfter"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n    text content"
+"\n    text content"
+PASS Text content mixed in - Non-cached case parsed successfully
+Testing case 13: Escaped entity in whitespace
+HTML: "Before\n    &After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n    &"
+"\n    &"
+PASS Escaped entity in whitespace - Non-cached case parsed successfully
+Testing case 14: Carriage return in whitespace
+HTML: "Before\n\r  After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+"\n\n  "
+"\n\n  "
+PASS Carriage return in whitespace - Non-cached case parsed successfully
+Testing case 15: HTML entity only
+HTML: "Before After"
+Created 3 child nodes
+PASS testDiv.childNodes.length is 3
+PASS textNode.nodeType is 3
+Text node content actual vs expected
+" "
+" "
+PASS HTML entity only - Non-cached case parsed successfully
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before After
+Before After
+Before After
+Before After
+Before After
+Before heyAfter
+Before JAfter
+Before After
+Before After
+Before After
+Before After
+Before text contentAfter
+Before &After
+Before After
+Before After

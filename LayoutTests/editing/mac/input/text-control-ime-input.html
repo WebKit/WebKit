@@ -1,0 +1,53 @@
+<html>
+<head>
+<title></title>
+</head>
+<body>
+<p>This tests that IME keypresses modify textarea and input values before and after they are confirmed.
+To test, switch to an IME. Type some text and see that the underlined text shows up in the textarea's and
+input's values.</p>
+
+<textarea id="textarea" cols="40" rows="10"></textarea>
+<ul id="console"></ul>
+
+<script language="javascript" type="text/javascript">
+function log(str) {
+   var li = document.createElement('li');
+   li.appendChild(document.createTextNode(str));
+   var console = document.getElementById('console');
+   console.appendChild(li);
+}
+
+function setMarkedText(textarea, text, start, end) {
+    // Update the text of a composition node, i.e. call Editor::setComposition().
+    textInputController.setMarkedText(text, start, end);
+    // Verify the value of the <textarea> element is the same as the given text.
+    if (textarea.value == text)
+        log('SUCCEEDED');
+    else
+        log('FAILED: expected="' + text + '", actual="' + textarea.value + '"');
+}
+
+function insertText(textarea, text) {
+    // Update the text of a composition node and finish an ongoing composition, i.e. call
+    // Editor::completeComposition().
+    textInputController.insertText(text);
+    // Verify the value of the <textarea> element is the same as the given text.
+    if (textarea.value == text)
+        log('SUCCEEDED');
+    else
+        log('FAILED: expected="' + text + '", actual="' + textarea.value + '"');
+}
+
+var textarea = document.getElementById('textarea');
+textarea.focus();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    setMarkedText(textarea, '\u314E', 0, 1);
+    setMarkedText(textarea, '\uD638', 0, 1);
+    setMarkedText(textarea, '\uD64D', 0, 1);
+    insertText(textarea, '\uD64D');
+}
+</script>
+</body>
+</html>

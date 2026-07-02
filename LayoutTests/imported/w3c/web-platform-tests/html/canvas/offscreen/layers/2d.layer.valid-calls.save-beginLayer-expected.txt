@@ -1,0 +1,7 @@
+2d.layer.valid-calls.save-beginLayer
+
+No exception raised on save() + beginLayer().
+
+
+PASS No exception raised on save() + beginLayer().
+

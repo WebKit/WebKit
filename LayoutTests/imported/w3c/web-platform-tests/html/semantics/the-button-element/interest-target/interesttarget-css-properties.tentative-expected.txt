@@ -1,0 +1,78 @@
+
+FAIL Property interest-target-show-delay value '0s' assert_true: interest-target-show-delay doesn't seem to be supported in the computed style expected true got false
+FAIL Property interest-target-show-delay value '0ms' assert_true: interest-target-show-delay doesn't seem to be supported in the computed style expected true got false
+FAIL Property interest-target-show-delay value '32s' assert_true: interest-target-show-delay doesn't seem to be supported in the computed style expected true got false
+FAIL Property interest-target-show-delay value '123ms' assert_true: interest-target-show-delay doesn't seem to be supported in the computed style expected true got false
+FAIL e.style['interest-target-show-delay'] = "0s" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-show-delay'] = "0ms" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-show-delay'] = "32s" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-show-delay'] = "123ms" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-show-delay'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['interest-target-show-delay'] = "0" should not set the property value
+PASS e.style['interest-target-show-delay'] = "foo" should not set the property value
+PASS e.style['interest-target-show-delay'] = "-1s" should not set the property value
+PASS e.style['interest-target-show-delay'] = "none" should not set the property value
+PASS e.style['interest-target-show-delay'] = "auto" should not set the property value
+FAIL CSS Transitions: property <interest-target-show-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-show-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-show-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-show-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-show-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-show-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-show-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-show-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-show-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-show-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-show-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-show-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-show-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL Property interest-target-hide-delay value '0s' assert_true: interest-target-hide-delay doesn't seem to be supported in the computed style expected true got false
+FAIL Property interest-target-hide-delay value '0ms' assert_true: interest-target-hide-delay doesn't seem to be supported in the computed style expected true got false
+FAIL Property interest-target-hide-delay value '32s' assert_true: interest-target-hide-delay doesn't seem to be supported in the computed style expected true got false
+FAIL Property interest-target-hide-delay value '123ms' assert_true: interest-target-hide-delay doesn't seem to be supported in the computed style expected true got false
+FAIL e.style['interest-target-hide-delay'] = "0s" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-hide-delay'] = "0ms" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-hide-delay'] = "32s" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-hide-delay'] = "123ms" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['interest-target-hide-delay'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['interest-target-hide-delay'] = "0" should not set the property value
+PASS e.style['interest-target-hide-delay'] = "foo" should not set the property value
+PASS e.style['interest-target-hide-delay'] = "-1s" should not set the property value
+PASS e.style['interest-target-hide-delay'] = "none" should not set the property value
+PASS e.style['interest-target-hide-delay'] = "auto" should not set the property value
+FAIL CSS Transitions: property <interest-target-hide-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-hide-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-hide-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-hide-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-hide-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <interest-target-hide-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-hide-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-hide-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-hide-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-hide-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-hide-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <interest-target-hide-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (-1.5) should be [0s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (-0.3) should be [0.7s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (0) should be [1s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (0.5) should be [1.5s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (1) should be [2s] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <interest-target-hide-delay> from [1s] to [2000ms] at (1.5) should be [2.5s] assert_true: 'from' value should be supported expected true got false
+

@@ -1,0 +1,162 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/ScrollView.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class Frame;
+class RenderElement;
+enum class FrameOwnerElementAppearance : uint8_t;
+enum class RenderAsTextFlag : uint16_t;
+
+class FrameView : public ScrollView {
+    WTF_MAKE_TZONE_ALLOCATED(FrameView);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameView);
+public:
+    enum class Type : bool { Local, Remote };
+    virtual Type viewType() const = 0;
+    virtual void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) = 0;
+    virtual Frame& frame() const = 0;
+
+    WEBCORE_EXPORT int headerHeight() const final;
+    WEBCORE_EXPORT int footerHeight() const final;
+
+    WEBCORE_EXPORT FloatBoxExtent obscuredContentInsets(InsetType = InsetType::WebCoreInset) const final;
+    CornerRadii scrollbarAvoidanceCornerRadii() const override;
+
+    float visibleContentScaleFactor() const final;
+
+    HostWindow* hostWindow() const final;
+    WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
+    bool isActive() const final;
+    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+    IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
+
+    void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
+
+    // Coordinate systems:
+    //
+    // "View"
+    //     Top left is top left of the FrameView/ScrollView/Widget. Size is Widget::boundsRect().size().
+    //
+    // "TotalContents"
+    //    Relative to ScrollView's scrolled contents, including headers and footers. Size is totalContentsSize().
+    //
+    // "Contents"
+    //    Relative to ScrollView's scrolled contents, excluding headers and footers, so top left is top left of the scroll view's
+    //    document, and size is contentsSize().
+    //
+    // "Absolute"
+    //    Relative to the document's scroll origin (non-zero for RTL documents), but affected by page zoom and page scale. Mostly used
+    //    in rendering code.
+    //
+    // "Document"
+    //    Relative to the document's scroll origin, but not affected by page zoom or page scale. Size is equivalent to CSS pixel dimensions.
+    //    FIXME: some uses are affected by page zoom (e.g. layout and visual viewports).
+    //
+    // "Client"
+    //    Relative to the visible part of the document (or, more strictly, the layout viewport rect), and with the same scaling
+    //    as Document coordinates, i.e. matching CSS pixels. Affected by scroll origin.
+    //
+    // "LayoutViewport"
+    //    Similar to client coordinates, but affected by page zoom (but not page scale).
+    //
+
+    // Methods to convert points and rects between the coordinate space of the renderer, and this view.
+    WEBCORE_EXPORT IntPoint convertFromRendererToContainingView(const RenderElement*, IntPoint) const;
+    WEBCORE_EXPORT FloatPoint convertFromRendererToContainingView(const RenderElement*, FloatPoint) const;
+    WEBCORE_EXPORT IntRect convertFromRendererToContainingView(const RenderElement*, const IntRect&) const;
+    WEBCORE_EXPORT FloatRect convertFromRendererToContainingView(const RenderElement*, const FloatRect&) const;
+
+    WEBCORE_EXPORT IntPoint convertFromContainingViewToRenderer(const RenderElement*, IntPoint) const;
+    WEBCORE_EXPORT FloatPoint convertFromContainingViewToRenderer(const RenderElement*, FloatPoint) const;
+    WEBCORE_EXPORT DoublePoint convertFromContainingViewToRenderer(const RenderElement*, DoublePoint) const;
+    WEBCORE_EXPORT IntRect convertFromContainingViewToRenderer(const RenderElement*, const IntRect&) const;
+    WEBCORE_EXPORT FloatRect convertFromContainingViewToRenderer(const RenderElement*, const FloatRect&) const;
+
+    WEBCORE_EXPORT FloatPoint absoluteToLayoutViewportPoint(FloatPoint) const;
+    FloatPoint layoutViewportToAbsolutePoint(FloatPoint) const;
+
+    WEBCORE_EXPORT FloatRect absoluteToLayoutViewportRect(FloatRect) const;
+    FloatRect layoutViewportToAbsoluteRect(FloatRect) const;
+
+    // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
+    IntPoint convertToContainingView(IntPoint) const final;
+    FloatPoint convertToContainingView(FloatPoint) const final;
+    IntRect convertToContainingView(const IntRect&) const final;
+    FloatRect convertToContainingView(const FloatRect&) const final;
+
+    IntPoint convertFromContainingView(IntPoint) const final;
+    FloatPoint convertFromContainingView(FloatPoint) const final;
+    DoublePoint convertFromContainingView(DoublePoint) const final;
+    IntRect convertFromContainingView(const IntRect&) const final;
+    FloatRect convertFromContainingView(const FloatRect&) const final;
+
+    WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
+
+    // Computes the visible area of a child frame in this frame as a rectangle.
+    // std::nullopt is returned if the child frame is entirely invisible, or
+    // the visible area is not computable. The given child frame must be a
+    // direct child of this frame.
+    virtual std::optional<LayoutRect> visibleRectOfChild(const Frame&) const = 0;
+
+    // Returns the appearance info of the child frame's owner element (which is
+    // in this frame). Note that this is _different_ from the child frame's
+    // document's appearance, and they can be different (e.g the owner element
+    // uses dark appearance, but the child frame's document is light).
+    virtual OptionSet<FrameOwnerElementAppearance> appearanceOfOwnerElementOfChildFrame(const Frame&) const = 0;
+
+    // Returns the offset of the content box of the child's frame owner content box
+    // from its border box. This can be non-zero due to padding or border.
+    virtual LayoutPoint childFrameOwnerContentBoxLocation(const Frame&) const = 0;
+
+    // Return the transformation matrix to convert a point/rect from the coordinate
+    // system of the child's frame owner to this FrameView's RenderView. Note this
+    // does not correspond to the absolute coordinate of this FrameView, as it doesn't
+    // include the page scale transform on the RenderView (if page is scaled).
+    virtual TransformationMatrix childFrameOwnerToRootContentTransform(const Frame&) const = 0;
+
+    // Returns the transformation matrix to project from this frame view's absolute coordinate
+    // to a child frame's owner renderer's local coordinate.
+    virtual TransformationMatrix absoluteToChildFrameOwnerLocalTransform(const Frame&) const = 0;
+
+private:
+    ScrollableArea* enclosingScrollableArea() const final;
+
+    bool scrollAnimatorEnabled() const final;
+#if ENABLE(FORM_CONTROL_REFRESH)
+    bool formControlRefreshEnabled() const final;
+#endif
+};
+
+}
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FrameView)
+static bool isType(const WebCore::Widget& widget) { return widget.isLocalFrameView() || widget.isRemoteFrameView(); }
+SPECIALIZE_TYPE_TRAITS_END()

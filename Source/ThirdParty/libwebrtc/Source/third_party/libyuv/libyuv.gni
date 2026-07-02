@@ -1,0 +1,33 @@
+# Copyright 2016 The LibYuv Project Authors. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS. All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/arm.gni")
+import("//build/config/loongarch64.gni")
+import("//build/config/mips.gni")
+import("//build_overrides/build.gni")
+
+declare_args() {
+  libyuv_include_tests = !build_with_chromium
+  libyuv_disable_jpeg = false
+  libyuv_disable_rvv = false
+  libyuv_enable_rowwin = false
+  libyuv_use_neon = current_cpu == "arm64" || current_cpu == "arm"
+  libyuv_use_sve = current_cpu == "arm64"
+
+  # Restrict to (is_linux || is_android) to work around undefined symbol linker
+  # errors on Fuchsia, macOS, and compilation errors on Windows.
+  # TODO: bug 359006069 - Remove the restriction after the linker and
+  # compilation errors are fixed.
+  libyuv_use_sme = current_cpu == "arm64" && (is_linux || is_android)
+  libyuv_use_msa =
+      (current_cpu == "mips64el" || current_cpu == "mipsel") && mips_use_msa
+  libyuv_use_mmi =
+      (current_cpu == "mips64el" || current_cpu == "mipsel") && mips_use_mmi
+  libyuv_use_lsx = current_cpu == "loong64" && loongarch64_use_lsx
+  libyuv_use_lasx = current_cpu == "loong64" && loongarch64_use_lasx
+}

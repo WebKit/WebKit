@@ -1,0 +1,300 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebProcessActivityState.h"
+
+#include "APIPageConfiguration.h"
+#include "Logging.h"
+#include "RemotePageProxy.h"
+#include "WebPageProxy.h"
+#include "WebProcessPool.h"
+#include "WebProcessProxy.h"
+#include <wtf/NumberOfCores.h>
+
+namespace WebKit {
+
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+
+static Seconds webProcessSuspensionDelay(const WebPageProxy* page)
+{
+    if (!page)
+        return WebProcessPool::defaultWebProcessSuspensionDelay();
+
+    RefPtr processPool = protect(page->legacyMainFrameProcess())->processPoolIfExists();
+    if (!processPool)
+        return WebProcessPool::defaultWebProcessSuspensionDelay();
+
+    return processPool->webProcessSuspensionDelay();
+}
+
+#endif
+
+WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
+    : m_page(page)
+#if PLATFORM(MAC)
+    , m_wasRecentlyVisibleActivity(ProcessThrottlerTimedActivity::create(webProcessSuspensionDelay(&page)))
+#endif
+{
+}
+
+WebProcessActivityState::WebProcessActivityState(RemotePageProxy& page)
+    : m_page(page)
+#if PLATFORM(MAC)
+    , m_wasRecentlyVisibleActivity(ProcessThrottlerTimedActivity::create(webProcessSuspensionDelay(protect(page.page()).get())))
+#endif
+{
+}
+
+void WebProcessActivityState::takeVisibleActivity()
+{
+    m_isVisibleActivity = protect(protect(process())->throttler())->foregroundActivity("View is visible"_s);
+#if PLATFORM(MAC)
+    m_wasRecentlyVisibleActivity->setActivity(nullptr);
+#endif
+}
+
+void WebProcessActivityState::takeTextExtractionAssertion()
+{
+    auto page = WTF::visit([](auto&& weakPageRef) -> Variant<WeakPtr<WebPageProxy>, WeakPtr<RemotePageProxy>> {
+        return weakPageRef.get();
+    }, m_page);
+
+    auto processID = process().processID();
+    Ref assertion = ProcessAssertion::create(protect(process()), "WebKit text extraction"_s, ProcessAssertionType::Background);
+    m_textExtractionAssertion = assertion.copyRef();
+    assertion->setInvalidationHandler([processID, weakPage = page] {
+        WTF::visit([processID](auto&& weakPage) {
+            RefPtr page = weakPage.get();
+            if (!page)
+                return;
+
+#if RELEASE_LOG_DISABLED
+            UNUSED_PARAM(processID);
+#else
+            RELEASE_LOG(ProcessSuspension, "Text extraction assertion is invalidated (PID=%d)", processID);
+#endif
+            page->processActivityState().m_textExtractionAssertion = nullptr;
+        }, weakPage);
+    });
+}
+
+void WebProcessActivityState::dropTextExtractionAssertion()
+{
+    m_textExtractionAssertion = nullptr;
+}
+
+void WebProcessActivityState::takeAudibleActivity()
+{
+    m_isAudibleActivity = protect(protect(process())->throttler())->foregroundActivity("View is playing audio"_s);
+}
+
+void WebProcessActivityState::takeCapturingActivity()
+{
+    m_isCapturingActivity = protect(protect(process())->throttler())->foregroundActivity("View is capturing media"_s);
+}
+
+void WebProcessActivityState::takeMutedCaptureAssertion()
+{
+    Ref isMutedCaptureAssertion = ProcessAssertion::create(protect(process()), "WebKit Muted Media Capture"_s, ProcessAssertionType::Background);
+    m_isMutedCaptureAssertion = isMutedCaptureAssertion.copyRef();
+
+    auto page = WTF::visit([](auto&& weakPageRef) -> Variant<WeakPtr<WebPageProxy>, WeakPtr<RemotePageProxy>> {
+        return weakPageRef.get();
+    }, m_page);
+
+    isMutedCaptureAssertion->setInvalidationHandler([weakPage = page] {
+        auto invalidateCaptureAssertion = [](auto&& weakPage) {
+            if (auto* page = weakPage.get()) {
+                RELEASE_LOG(ProcessSuspension, "Muted capture assertion is invalidated");
+                page->processActivityState().m_isMutedCaptureAssertion = nullptr;
+            }
+        };
+        WTF::visit(invalidateCaptureAssertion, weakPage);
+    });
+}
+
+void WebProcessActivityState::takeNetworkActivity()
+{
+    RELEASE_LOG(Process, "Taking network activity on WebProcess with PID %d", protect(process())->processID());
+    m_networkActivity = protect(protect(process())->throttler())->backgroundActivity("Page Load"_s);
+}
+
+void WebProcessActivityState::reset()
+{
+    m_isVisibleActivity = nullptr;
+#if PLATFORM(MAC)
+    m_wasRecentlyVisibleActivity->setActivity(nullptr);
+#endif
+    m_isAudibleActivity = nullptr;
+    m_isCapturingActivity = nullptr;
+    m_isMutedCaptureAssertion = nullptr;
+#if PLATFORM(IOS_FAMILY)
+    m_openingAppLinkActivity = nullptr;
+#endif
+}
+
+void WebProcessActivityState::dropVisibleActivity()
+{
+#if PLATFORM(MAC)
+    if (WTF::numberOfProcessorCores() > 4)
+        m_wasRecentlyVisibleActivity->setActivity(protect(protect(process())->throttler())->backgroundActivity("View was recently visible"_s));
+    else
+        m_wasRecentlyVisibleActivity->setActivity(protect(protect(process())->throttler())->foregroundActivity("View was recently visible"_s));
+#endif
+    m_isVisibleActivity = nullptr;
+}
+
+void WebProcessActivityState::dropAudibleActivity()
+{
+    m_isAudibleActivity = nullptr;
+}
+
+void WebProcessActivityState::dropCapturingActivity()
+{
+    m_isCapturingActivity = nullptr;
+}
+
+void WebProcessActivityState::dropMutedCaptureAssertion()
+{
+    m_isMutedCaptureAssertion = nullptr;
+}
+
+void WebProcessActivityState::dropNetworkActivity()
+{
+    RELEASE_LOG(Process, "Dropping network activity on WebProcess with PID %d", protect(process())->processID());
+    m_networkActivity = nullptr;
+}
+
+bool WebProcessActivityState::hasValidVisibleActivity() const
+{
+    return m_isVisibleActivity && m_isVisibleActivity->isValid();
+}
+
+bool WebProcessActivityState::hasValidAudibleActivity() const
+{
+    return m_isAudibleActivity && m_isAudibleActivity->isValid();
+}
+
+bool WebProcessActivityState::hasValidCapturingActivity() const
+{
+    return m_isCapturingActivity && m_isCapturingActivity->isValid();
+}
+
+bool WebProcessActivityState::hasValidNetworkActivity() const
+{
+    return m_networkActivity && m_networkActivity->isValid();
+}
+
+bool WebProcessActivityState::hasValidMutedCaptureAssertion() const
+{
+    return m_isMutedCaptureAssertion;
+}
+
+#if PLATFORM(IOS_FAMILY)
+void WebProcessActivityState::takeOpeningAppLinkActivity()
+{
+    m_openingAppLinkActivity = protect(protect(process())->throttler())->backgroundActivity("Opening AppLink"_s);
+}
+
+void WebProcessActivityState::dropOpeningAppLinkActivity()
+{
+    m_openingAppLinkActivity = nullptr;
+}
+
+bool WebProcessActivityState::hasValidOpeningAppLinkActivity() const
+{
+    return m_openingAppLinkActivity && m_openingAppLinkActivity->isValid();
+}
+#endif
+
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+
+void WebProcessActivityState::updateWebProcessSuspensionDelay()
+{
+    Seconds timeout = WTF::visit(WTF::makeVisitor([&](const WeakRef<WebPageProxy>& page) {
+        return webProcessSuspensionDelay(protect(page).ptr());
+    }, [&] (const WeakRef<RemotePageProxy>& page) {
+        return webProcessSuspensionDelay(protect(page->page()).get());
+    }), m_page);
+    m_wasRecentlyVisibleActivity->setTimeout(timeout);
+}
+
+void WebProcessActivityState::takeAccessibilityActivityWhenInWindow()
+{
+    if (m_takeAccessibilityActivityWhenInWindow)
+        return;
+
+    m_takeAccessibilityActivityWhenInWindow = true;
+
+    bool isCurrentlyInWindow = WTF::switchOn(m_page, [](WeakRef<WebPageProxy> page) -> bool {
+        return page->isInWindow();
+    }, [](WeakRef<RemotePageProxy> remotePage) -> bool {
+        if (auto* page = remotePage->page())
+            return page->isInWindow();
+        return false;
+    });
+
+    if (isCurrentlyInWindow)
+        takeAccessibilityActivity();
+}
+
+void WebProcessActivityState::takeAccessibilityActivity()
+{
+    m_accessibilityActivity = protect(protect(process())->throttler())->backgroundActivity("Remote AX element"_s);
+}
+
+bool WebProcessActivityState::hasAccessibilityActivityForTesting() const
+{
+    return !!m_accessibilityActivity;
+}
+
+void WebProcessActivityState::viewDidEnterWindow()
+{
+    if (m_takeAccessibilityActivityWhenInWindow)
+        takeAccessibilityActivity();
+}
+
+void WebProcessActivityState::viewDidLeaveWindow()
+{
+    m_accessibilityActivity = nullptr;
+}
+
+#endif
+
+WebProcessProxy& WebProcessActivityState::process() const
+{
+    return WTF::visit([](auto& page) -> WebProcessProxy& {
+        using T = std::decay_t<decltype(page)>;
+        if constexpr (std::is_same_v<T, WeakRef<WebPageProxy>>)
+            return page->legacyMainFrameProcess();
+        else if constexpr (std::is_same_v<T, WeakRef<RemotePageProxy>>)
+            return page->process();
+        else
+            static_assert(std::is_same_v<T, std::false_type>, "Unhandled page type in WebProcessActivityState::process");
+    }, m_page);
+}
+
+} // namespace WebKit

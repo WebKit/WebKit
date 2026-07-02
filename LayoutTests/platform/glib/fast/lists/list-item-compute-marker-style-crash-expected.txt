@@ -1,0 +1,6 @@
+This page contains the following errors:
+
+error on line 16 at column 1: Premature end of data in tag html line 2
+Below is a rendering of the page up to the first error.
+
+This test has PASSED if it does not CRASH.

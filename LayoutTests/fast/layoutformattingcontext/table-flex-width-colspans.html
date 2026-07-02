@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+table {
+    font-size: 10px;
+}
+</style>
+<!-- no colspan. -->
+<table>
+<tr><td>###</td><td>#</td><td>#</td></tr>
+<tr><td>#</td><td>#</td><td>###</td></tr>
+<tr><td>#</td><td>###</td><td>#</td></tr>
+</table>
+<!-- colspans but with shorter content. -->
+<table>
+<tr><td>#</td><td>#</td><td>#</td></tr>
+<tr><td colspan=3">#</td></tr>
+<tr><td colspan=2">#</td><td>#</td></tr>
+</table>
+<!-- colspans but with exact length. -->
+<table>
+<tr><td>###</td><td>##</td><td>#</td></tr>
+<tr><td colspan=3">######</td></tr>
+<tr><td colspan=2">#####</td><td>#</td></tr>
+</table>
+<!-- colspans with longer content. -->
+<table>
+<tr><td>#####</td><td>##</td><td>#</td></tr>
+<tr><td colspan=3">#############</td></tr>
+<tr><td colspan=2">#######</td><td>#</td></tr>
+</table>
+<!-- trailing colspans. -->
+<table>
+<tr><td>#####</td><td>##</td><td>#</td></tr>
+<tr><td colspan=3">#############</td></tr>
+<tr><td>#</td><td colspan=2">###</td></tr>
+</table>
+<!-- border spacing -->
+<table style="border-spacing: 20px;">
+<tr><td>###</td><td>#</td><td>#</td></tr>
+<tr><td colspan=3">###</td></tr>
+<tr><td colspan=2">###</td><td>#</td></tr>
+</table>

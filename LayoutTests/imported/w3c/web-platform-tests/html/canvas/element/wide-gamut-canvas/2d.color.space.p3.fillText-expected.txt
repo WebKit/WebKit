@@ -1,0 +1,6 @@
+2d.color.space.p3.fillText
+Test if fillText can be used with a solid display-p3 color
+Actual output:
+
+PASS Test if fillText can be used with a solid display-p3 color
+

@@ -1,0 +1,88 @@
+{
+   "abstract" : "A simple parallel processing fork manager",
+   "author" : [
+      "dLux (Szabó, Balázs) <dlux@dlux.hu>",
+      "Yanick Champoux <yanick@cpan.org>",
+      "Gabor Szabo <gabor@szabgab.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 5.043, CPAN::Meta::Converter version 2.150001, CPAN::Meta::Converter version 2.143240",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : 2
+   },
+   "name" : "Parallel-ForkManager",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Test::More" : "0.96",
+            "Test::PAUSE::Permissions" : "0",
+            "Test::Vars" : "0",
+            "warnings" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Carp" : "0",
+            "File::Path" : "0",
+            "File::Spec" : "0",
+            "File::Temp" : "0",
+            "POSIX" : "0",
+            "Storable" : "0",
+            "perl" : "5.006",
+            "strict" : "0"
+         }
+      },
+      "test" : {
+         "recommends" : {
+            "CPAN::Meta" : "2.120900"
+         },
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0",
+            "File::Spec" : "0",
+            "IO::Handle" : "0",
+            "IPC::Open3" : "0",
+            "Test::More" : "0.94",
+            "Test::Warn" : "0",
+            "warnings" : "0"
+         }
+      }
+   },
+   "provides" : {
+      "Parallel::ForkManager" : {
+         "file" : "lib/Parallel/ForkManager.pm",
+         "version" : "1.19"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/dluxhu/perl-parallel-forkmanager/issues"
+      },
+      "homepage" : "https://github.com/dluxhu/perl-parallel-forkmanager",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/dluxhu/perl-parallel-forkmanager.git",
+         "web" : "https://github.com/dluxhu/perl-parallel-forkmanager"
+      }
+   },
+   "version" : "1.19",
+   "x_authority" : "cpan:DLUX",
+   "x_contributors" : [
+      "Ninebit <kevin@9b.io>",
+      "Shlomi Fish <shlomif@shlomifish.org>"
+   ]
+}

@@ -1,0 +1,13 @@
+Verify that error event is fired when permission is denied.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS recognition = new webkitSpeechRecognition() did not throw exception.
+PASS recognition.start() did not throw exception.
+PASS event.error is "not-allowed"
+PASS event.message is "User permission check has failed"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

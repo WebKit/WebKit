@@ -1,0 +1,4 @@
+
+FAIL Should match the named outer container for --foo:bar assert_equals: expected "yes" but got "no"
+FAIL Match the #combined container for --foo:qux which is also a size container assert_equals: expected "yes" but got "no"
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		@font-face {
+  			font-family: "Ahem";
+  			src: url("resources/Ahem-feature-x-left-spacing.otf") format("opentype");
+		}
+
+		.ahem {
+			font-family: Ahem;
+                        font-size: 48px;
+		}
+
+		.cv01 {
+			font-feature-settings: "cv01" 1;
+			color: green;
+		}
+
+		.XPOS {
+			font-feature-settings: "XPOS" 1;
+			color: green;
+		}
+	</style>
+</head>
+<body>
+        The test passes if you see a green block that has some space to the left of it.
+	<p class="ahem"><span class="XPOS">x</span></p>
+</body>
+</html>

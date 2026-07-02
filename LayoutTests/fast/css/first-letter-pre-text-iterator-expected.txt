@@ -1,0 +1,5 @@
+Hello World
+0-5: "Hello" (expected "Hello")
+1-5: "ello" (expected "ello")
+2-4: "ll" (expected "ll")
+0-11: "Hello World" (expected "Hello World")

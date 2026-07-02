@@ -1,0 +1,24 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+  onload = () => {
+    let img = document.createElement('img');
+    img.onerror = () => {
+      document.execCommand('Undo');
+      document.write('PASS: There was no crash.');
+      testRunner.notifyDone();
+    };
+    img.src = 'data:';
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('InsertImage', false, '#');
+    document.execCommand('SelectAll');
+    document.execCommand('Bold');
+    document.execCommand('Italic');
+    let embed = document.createElement('embed');
+    document.querySelector('i').appendChild(embed);
+    embed.src = 'data:';
+  };
+</script>

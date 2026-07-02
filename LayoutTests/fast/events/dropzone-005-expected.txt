@@ -1,0 +1,12 @@
+This test checks that dragging an image on to a drop zone doesn't match string:url.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Received dragend event
+Received dragend event
+Received dragend event
+Received dragend event
+
+TEST COMPLETE
+

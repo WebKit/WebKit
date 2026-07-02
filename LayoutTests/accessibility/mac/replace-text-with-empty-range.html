@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+    <div id="content-editable-div" contenteditable="true" role="textbox"></div>
+    <input id="text" type="text" value="">
+    <textarea id="textarea"></textarea>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that when we are adding text to empty text fields, the accessibility replace with range API functions as expected.");
+
+    if (window.accessibilityController) {
+        var axContentEditableDiv = accessibilityController.accessibleElementById("content-editable-div");
+        var contentEditableDiv = document.getElementById("content-editable-div");
+        contentEditableDiv.focus();
+        shouldBeTrue("axContentEditableDiv.replaceTextInRange('Hello', 0, 0)");
+        shouldBe("axContentEditableDiv.stringValue", "'AXValue: Hello'");
+        contentEditableDiv.blur();
+
+        var axText = accessibilityController.accessibleElementById("text");
+        var text = document.getElementById("text");
+        text.focus();
+        shouldBeTrue("axText.replaceTextInRange('Hello', 0, 0)");
+        shouldBe("axText.stringValue", "'AXValue: Hello'");
+        text.blur();
+
+        var axTextarea = accessibilityController.accessibleElementById("textarea");
+        var textarea = document.getElementById("textarea");
+        textarea.focus();
+        shouldBeTrue("axTextarea.replaceTextInRange('Hello', 0, 0)");
+        shouldBe("axTextarea.stringValue", "'AXValue: Hello'");
+        textarea.blur();
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+
+</body>
+</html>

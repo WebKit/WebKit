@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+<title>Test Title 1</title>
+</head>
+<body onload="runTest()">
+This test sees if the history delegate is notified of title changes.
+<script>
+function runTest() {
+document.title = "Test Title 2";
+internals.queueTask("DOMManipulation", () => testRunner.notifyDone());
+}
+</script>
+</body>
+</html>

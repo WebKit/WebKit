@@ -1,0 +1,22 @@
+
+PASS default submit action when the input type is changed from text to submit
+PASS default submit action when the input type is changed from search to submit
+PASS default submit action when the input type is changed from tel to submit
+PASS default submit action when the input type is changed from url to submit
+PASS default submit action when the input type is changed from email to submit
+PASS default submit action when the input type is changed from password to submit
+PASS default submit action when the input type is changed from date to submit
+PASS default submit action when the input type is changed from month to submit
+PASS default submit action when the input type is changed from week to submit
+PASS default submit action when the input type is changed from time to submit
+PASS default submit action when the input type is changed from datetime-local to submit
+PASS default submit action when the input type is changed from number to submit
+PASS default submit action when the input type is changed from range to submit
+PASS default submit action when the input type is changed from color to submit
+PASS default submit action when the input type is changed from checkbox to submit
+PASS default submit action when the input type is changed from radio to submit
+PASS default submit action when the input type is changed from file to submit
+PASS default submit action when the input type is changed from image to submit
+PASS default submit action when the input type is changed from reset to submit
+PASS default submit action when the input type is changed from button to submit
+

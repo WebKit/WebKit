@@ -1,0 +1,5 @@
+There should be a repaint rect for the newly visible inner div
+(repaint rects
+  (rect 8 13 100 100)
+)
+

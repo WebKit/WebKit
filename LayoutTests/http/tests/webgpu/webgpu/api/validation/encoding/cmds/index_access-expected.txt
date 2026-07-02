@@ -1,0 +1,60 @@
+
+PASS :out_of_bounds:indexCount=6;firstIndex=0;instanceCount=1
+PASS :out_of_bounds:indexCount=6;firstIndex=0;instanceCount=10000
+PASS :out_of_bounds:indexCount=6;firstIndex=1;instanceCount=1
+PASS :out_of_bounds:indexCount=6;firstIndex=1;instanceCount=10000
+PASS :out_of_bounds:indexCount=6;firstIndex=10000;instanceCount=1
+PASS :out_of_bounds:indexCount=6;firstIndex=10000;instanceCount=10000
+PASS :out_of_bounds:indexCount=5;firstIndex=1;instanceCount=1
+PASS :out_of_bounds:indexCount=5;firstIndex=1;instanceCount=10000
+PASS :out_of_bounds:indexCount=1;firstIndex=5;instanceCount=1
+PASS :out_of_bounds:indexCount=1;firstIndex=5;instanceCount=10000
+PASS :out_of_bounds:indexCount=1;firstIndex=6;instanceCount=1
+PASS :out_of_bounds:indexCount=1;firstIndex=6;instanceCount=10000
+PASS :out_of_bounds:indexCount=0;firstIndex=6;instanceCount=1
+PASS :out_of_bounds:indexCount=0;firstIndex=6;instanceCount=10000
+PASS :out_of_bounds:indexCount=0;firstIndex=7;instanceCount=1
+PASS :out_of_bounds:indexCount=0;firstIndex=7;instanceCount=10000
+PASS :out_of_bounds:indexCount=7;firstIndex=0;instanceCount=1
+PASS :out_of_bounds:indexCount=7;firstIndex=0;instanceCount=10000
+PASS :out_of_bounds:indexCount=10000;firstIndex=0;instanceCount=1
+PASS :out_of_bounds:indexCount=10000;firstIndex=0;instanceCount=10000
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=4294967295;instanceCount=1 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=4294967295;instanceCount=10000 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=2;instanceCount=1 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+FAIL :out_of_bounds:indexCount=4294967295;firstIndex=2;instanceCount=10000 assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+PASS :out_of_bounds:indexCount=2;firstIndex=4294967295;instanceCount=1
+PASS :out_of_bounds:indexCount=2;firstIndex=4294967295;instanceCount=10000
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=3;firstIndex=1;instanceCount=1
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=3;firstIndex=1;instanceCount=10000
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=3;firstIndex=0;instanceCount=1
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=3;firstIndex=0;instanceCount=10000
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=0;firstIndex=1;instanceCount=1
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=0;firstIndex=1;instanceCount=10000
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=0;firstIndex=0;instanceCount=1
+PASS :out_of_bounds_zero_sized_index_buffer:indexCount=0;firstIndex=0;instanceCount=10000
+

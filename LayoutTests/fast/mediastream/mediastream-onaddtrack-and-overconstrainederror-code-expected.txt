@@ -1,0 +1,6 @@
+
+PASS MediaStream.onaddtrack and onremovetrack IDL attributes (existence + default)
+PASS MediaStream.onaddtrack: addtrack event payload (when fired by UA or by script addTrack)
+FAIL OverconstrainedError.code is 0 (no legacy DOMException code mapping) assert_true: OverconstrainedError inherits from DOMException expected true got false
+FAIL OverconstrainedError raised by applyConstraints also has code 0 assert_equals: UA-raised OverconstrainedError.code is also 0 expected (number) 0 but got (undefined) undefined
+

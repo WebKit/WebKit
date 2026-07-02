@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.animated {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div class="animated"></div>
+<div class="animated"></div>
+<script>
+
+promise_test(async () => {
+    for (let element of document.querySelectorAll(".animated"))
+        element.animate({ transform: ["translateX(0)", "translateX(100px)"] }, { duration: 1000, iterations: Infinity });
+
+    // Wait a few frames to make sure the accelerated animations have started.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    window.internals.startTrackingStyleRecalcs();
+
+    // Wait a few more frames to allow time for a style update to occur if the running animations would have triggered one.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    assert_equals(window.internals.styleRecalcCount(), 0);
+}, "There should not be style updates while accelerated JS-originated animations are running on sibling elements with the same CSS class.");
+
+</script>
+</body>
+</html>

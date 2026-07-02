@@ -1,0 +1,3 @@
+
+FAIL The fetch metadata for text module promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+

@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<a href="#" rel="copyright" id="link1">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that the relationship type of a link can be determined.");
+    if (window.accessibilityController) {
+    	var link = accessibilityController.accessibleElementById("link1");
+
+        var relType = link.stringAttributeValue('AXLinkRelationshipType');
+        shouldBe("relType", "'copyright'");
+    }
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

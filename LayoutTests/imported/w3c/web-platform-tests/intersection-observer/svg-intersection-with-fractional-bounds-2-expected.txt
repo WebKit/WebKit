@@ -1,0 +1,8 @@
+
+PASS IntersectionObserver observing an SVG <rect> with fractional bounds element
+PASS Initial Observation
+PASS Changing target y position to -2 (-0.002 in root coordinates)
+PASS Changing target y position to -1 (-0.001 in root coordinates)
+PASS Changing target y position to -4 (-0.004 in root coordinates)
+PASS Changing target y position to 0
+

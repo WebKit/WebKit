@@ -1,0 +1,367 @@
+/*
+ * Copyright (C) 2024 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedCompositionReason.h"
+#include "Damage.h"
+#include "FloatPoint.h"
+#include "FloatPoint3D.h"
+#include "FloatSize.h"
+#include "PlatformLayerIdentifier.h"
+#include "TextureMapperAnimation.h"
+#include "TransformationMatrix.h"
+#include <wtf/EnumSet.h>
+#include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+#if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
+namespace WebCore {
+class CoordinatedAnimatedBackingStoreClient;
+class CoordinatedBackingStore;
+class CoordinatedBackingStoreProxy;
+class CoordinatedImageBackingStore;
+class CoordinatedPlatformLayer;
+class CoordinatedPlatformLayerBuffer;
+class CoordinatedTileBuffer;
+class GraphicsLayerCoordinated;
+class NativeImage;
+class TextureMapperLayer;
+
+#if USE(SKIA)
+class SkiaCompositingLayer;
+class SkiaPaintingEngine;
+class SkiaRecordingResult;
+#endif
+#if USE(CAIRO)
+namespace Cairo {
+class PaintingEngine;
+}
+#endif
+
+class CoordinatedPlatformLayer : public ThreadSafeRefCounted<CoordinatedPlatformLayer> {
+public:
+    // FIXME: remove this client when a subclass is added for the WebProcess.
+    class Client {
+    public:
+        virtual void attachLayer(CoordinatedPlatformLayer&) = 0;
+        virtual void detachLayer(CoordinatedPlatformLayer&) = 0;
+#if USE(CAIRO)
+        virtual Cairo::PaintingEngine& paintingEngine() = 0;
+#elif USE(SKIA)
+        virtual SkiaPaintingEngine& paintingEngine() const = 0;
+#endif
+        virtual Ref<CoordinatedImageBackingStore> imageBackingStore(Ref<NativeImage>&&) = 0;
+        virtual void notifyCompositionRequired() = 0;
+        virtual bool isCompositionRequiredOrOngoing() const = 0;
+        virtual void requestComposition(CompositionReason) = 0;
+        virtual RunLoop* compositingRunLoop() const = 0;
+        virtual int maxTextureSize() const = 0;
+        virtual void willPaintTile() = 0;
+        virtual void didPaintTile() = 0;
+    };
+
+    static Ref<CoordinatedPlatformLayer> create();
+    static Ref<CoordinatedPlatformLayer> create(Client&);
+
+    virtual ~CoordinatedPlatformLayer();
+
+    PlatformLayerIdentifier id() const { return m_id; }
+    Lock& lock() LIFETIME_BOUND { return m_lock; }
+
+    Client& client() const { ASSERT(m_client); return *m_client; }
+    void invalidateClient();
+
+    void setOwner(GraphicsLayerCoordinated*);
+    GraphicsLayerCoordinated* owner() const;
+
+    TextureMapperLayer& ensureTarget();
+#if USE(SKIA)
+    SkiaCompositingLayer& ensureSkiaTarget();
+    sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const;
+#endif
+    void invalidateTarget();
+
+#if ENABLE(DAMAGE_TRACKING)
+    void setDamagePropagationEnabled(bool enabled) { m_damagePropagationEnabled = enabled; }
+    void setDamageInGlobalCoordinateSpace(std::shared_ptr<Damage> damage) { m_damageInGlobalCoordinateSpace = WTF::move(damage); }
+#endif
+
+    void setPosition(FloatPoint&&);
+    void setPositionForScrolling(const FloatPoint&);
+    const FloatPoint& position() const;
+    void setTopLeftPositionForScrolling(const FloatPoint&);
+    FloatPoint topLeftPositionForScrolling();
+    void setBoundsOrigin(const FloatPoint&);
+    void setBoundsOriginForScrolling(const FloatPoint&);
+    const FloatPoint& boundsOrigin() const;
+    void setAnchorPoint(FloatPoint3D&&);
+    const FloatPoint3D& anchorPoint() const;
+    void setSize(FloatSize&&);
+    const FloatSize& size() const;
+    FloatRect bounds() const;
+
+    void setTransform(const TransformationMatrix&);
+    const TransformationMatrix& transform() const;
+    void setChildrenTransform(const TransformationMatrix&);
+    const TransformationMatrix& childrenTransform() const;
+    void didUpdateLayerTransform();
+
+    void setVisibleRect(const FloatRect&);
+    const FloatRect& visibleRect() const;
+    void setTransformedVisibleRect(IntRect&& visibleRect, IntRect&& visibleRectIncludingFuture);
+
+#if ENABLE(SCROLLING_THREAD)
+    void setScrollingNodeID(std::optional<ScrollingNodeID>);
+    const Markable<ScrollingNodeID>& scrollingNodeID() const;
+#endif
+
+    void setDrawsContent(bool);
+    void setMasksToBounds(bool);
+    void setPreserves3D(bool);
+    void setBackfaceVisibility(bool);
+    void setOpacity(float);
+    void setBlendMode(BlendMode);
+
+    void setContentsVisible(bool);
+    bool contentsVisible() const;
+    void setContentsOpaque(bool);
+    void setContentsRect(const FloatRect&);
+    void setContentsRectClipsDescendants(bool);
+    void setContentsClippingRect(const FloatRoundedRect&);
+    void setContentsScale(float);
+    float contentsScale() const;
+    enum class RequireComposition : bool { No, Yes };
+    void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes);
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    void replaceCurrentContentsBufferWithCopy();
+#endif
+    void setContentsBufferNeedsDisplay();
+    void setContentsImage(NativeImage*);
+    void setContentsColor(const Color&);
+    void setContentsTileSize(const FloatSize&);
+    void setContentsTilePhase(const FloatSize&);
+    void setDirtyRegion(Damage&&);
+
+    void setFilters(const FilterOperations&);
+    void setMask(CoordinatedPlatformLayer*);
+    void setReplica(CoordinatedPlatformLayer*);
+    void setBackdrop(CoordinatedPlatformLayer*);
+    void notifyBackdropFiltersChanged();
+    void setBackdropRect(const FloatRoundedRect&);
+    void setIsBackdropRoot(bool);
+
+    void setAnimations(const TextureMapperAnimations&);
+
+    void setChildren(Vector<Ref<CoordinatedPlatformLayer>>&&);
+    const Vector<Ref<CoordinatedPlatformLayer>>& children() const;
+
+    void setEventRegion(const EventRegion&);
+    const EventRegion& eventRegion() const;
+
+    void setClipPath(const Path&, WindRule);
+
+    void setDebugBorder(Color&&, float);
+    void setShowRepaintCounter(bool);
+
+    void updateContents(bool affectedByTransformAnimation);
+    void updateBackingStore();
+
+    void flushPendingState();
+    void flushCompositingState(const OptionSet<CompositionReason>&, bool = false);
+
+    bool hasPendingTilesCreation() const { return m_pendingTilesCreation; }
+    bool hasPendingBackingStoreTileUpdates() const;
+    void processPendingBackingStoreTileUpdates();
+    bool isCompositionRequiredOrOngoing() const;
+    void requestComposition(CompositionReason);
+    RunLoop* compositingRunLoop() const;
+    int maxTextureSize() const;
+
+    Ref<CoordinatedTileBuffer> paint(const IntRect&);
+#if USE(SKIA)
+    Ref<SkiaRecordingResult> record(const IntRect&);
+    Ref<CoordinatedTileBuffer> replay(Ref<SkiaRecordingResult>&&, const IntRect&, const IntRect&);
+#endif
+    void willPaintTile();
+    void didPaintTile();
+    void waitUntilPaintingComplete();
+
+private:
+    explicit CoordinatedPlatformLayer(Client*);
+
+    void notifyCompositionRequired();
+
+    bool needsBackingStore() const;
+    void purgeBackingStores();
+
+    bool hasCommittedContentsBuffer() const;
+
+#if ENABLE(DAMAGE_TRACKING)
+    void addDamage(Damage&&);
+#endif
+
+    void flushCompositingStateOnTarget(const OptionSet<CompositionReason>&, TextureMapperLayer&);
+#if USE(SKIA)
+    void flushCompositingStateOnSkiaTarget(const OptionSet<CompositionReason>&, SkiaCompositingLayer&);
+#endif
+
+    enum class Change : uint8_t {
+        AnchorPoint,
+        Animations,
+        Backdrop,
+        BackdropRect,
+        BackdropRoot,
+        BackfaceVisibility,
+        BackingStore,
+        BlendMode,
+        BoundsOrigin,
+        Children,
+        ChildrenTransform,
+        ClipPath,
+        ContentsBuffer,
+        ContentsClippingRect,
+        ContentsColor,
+        ContentsImage,
+        ContentsOpaque,
+        ContentsRect,
+        ContentsRectClipsDescendants,
+        ContentsTiling,
+        ContentsVisible,
+#if ENABLE(DAMAGE_TRACKING)
+        Damage,
+#endif
+        DebugIndicators,
+        DrawsContent,
+        Filters,
+        Mask,
+        MasksToBounds,
+        Opacity,
+        Position,
+        Preserves3D,
+        Replica,
+#if ENABLE(SCROLLING_THREAD)
+        ScrollingNode,
+#endif
+        Size,
+        Transform,
+    };
+
+    // FIXME: remove the client when a subclass is added for the WebProcess.
+    Client* m_client { nullptr };
+
+    const PlatformLayerIdentifier m_id;
+
+    GraphicsLayerCoordinated* m_owner { nullptr };
+    std::unique_ptr<TextureMapperLayer> m_target;
+#if USE(SKIA)
+    RefPtr<SkiaCompositingLayer> m_skiaTarget;
+#endif
+    bool m_pendingTilesCreation { false };
+    bool m_needsTilesUpdate { false };
+
+#if ENABLE(DAMAGE_TRACKING)
+    bool m_damagePropagationEnabled { false };
+    std::shared_ptr<Damage> m_damageInGlobalCoordinateSpace;
+#endif
+
+    Lock m_lock;
+    EnumSet<Change> m_pendingChanges WTF_GUARDED_BY_LOCK(m_lock);
+    FloatPoint m_position WTF_GUARDED_BY_LOCK(m_lock);
+    FloatPoint3D m_anchorPoint WTF_GUARDED_BY_LOCK(m_lock) { 0.5f, 0.5f, 0 };
+    FloatSize m_size WTF_GUARDED_BY_LOCK(m_lock);
+    FloatPoint m_boundsOrigin WTF_GUARDED_BY_LOCK(m_lock);
+    TransformationMatrix m_transform WTF_GUARDED_BY_LOCK(m_lock);
+    TransformationMatrix m_childrenTransform WTF_GUARDED_BY_LOCK(m_lock);
+    FloatRect m_visibleRect WTF_GUARDED_BY_LOCK(m_lock);
+    IntRect m_transformedVisibleRect WTF_GUARDED_BY_LOCK(m_lock);
+    IntRect m_transformedVisibleRectIncludingFuture WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_drawsContent WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_masksToBounds WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_preserves3D WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_backfaceVisibility WTF_GUARDED_BY_LOCK(m_lock) { true };
+    float m_opacity WTF_GUARDED_BY_LOCK(m_lock) { 1. };
+    BlendMode m_blendMode WTF_GUARDED_BY_LOCK(m_lock) { BlendMode::Normal };
+    bool m_contentsVisible WTF_GUARDED_BY_LOCK(m_lock) { true };
+    bool m_contentsOpaque WTF_GUARDED_BY_LOCK(m_lock) { false };
+    FloatRect m_contentsRect WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_contentsRectClipsDescendants WTF_GUARDED_BY_LOCK(m_lock) { false };
+    FloatRoundedRect m_contentsClippingRect WTF_GUARDED_BY_LOCK(m_lock);
+    Color m_contentsColor WTF_GUARDED_BY_LOCK(m_lock);
+    FloatSize m_contentsTileSize WTF_GUARDED_BY_LOCK(m_lock);
+    FloatSize m_contentsTilePhase WTF_GUARDED_BY_LOCK(m_lock);
+    float m_contentsScale WTF_GUARDED_BY_LOCK(m_lock) { 1. };
+    RefPtr<CoordinatedBackingStoreProxy> m_backingStoreProxy WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedBackingStore> m_backingStore WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient WTF_GUARDED_BY_LOCK(m_lock);
+    struct {
+        RefPtr<CoordinatedImageBackingStore> current;
+        RefPtr<CoordinatedImageBackingStore> committed;
+    } m_imageBackingStore WTF_GUARDED_BY_LOCK(m_lock);
+    struct {
+        std::unique_ptr<CoordinatedPlatformLayerBuffer> pending;
+        std::unique_ptr<CoordinatedPlatformLayerBuffer> committed;
+    } m_contentsBuffer WTF_GUARDED_BY_LOCK(m_lock);
+    struct {
+        Path path;
+        WindRule windRule;
+    } m_clipPath WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<IntRect, 1> m_dirtyRegion WTF_GUARDED_BY_LOCK(m_lock);
+    FilterOperations m_filters WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayer> m_mask WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayer> m_replica WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<CoordinatedPlatformLayer> m_backdrop WTF_GUARDED_BY_LOCK(m_lock);
+    FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
+    TextureMapperAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<Ref<CoordinatedPlatformLayer>> m_children WTF_GUARDED_BY_LOCK(m_lock);
+    EventRegion m_eventRegion WTF_GUARDED_BY_LOCK(m_lock);
+    Color m_debugBorderColor WTF_GUARDED_BY_LOCK(m_lock);
+    float m_debugBorderWidth WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    int m_repaintCount WTF_GUARDED_BY_LOCK(m_lock) { -1 };
+#if ENABLE(DAMAGE_TRACKING)
+    std::optional<Damage> m_damage WTF_GUARDED_BY_LOCK(m_lock);
+#endif
+#if ENABLE(SCROLLING_THREAD)
+    Markable<ScrollingNodeID> m_scrollingNodeID WTF_GUARDED_BY_LOCK(m_lock);
+#endif
+
+    struct {
+        std::optional<FloatPoint> position;
+        std::optional<FloatPoint> positionForScrolling;
+        std::optional<FloatPoint> boundsOrigin;
+        std::optional<FloatPoint> boundsOriginForScrolling;
+    } m_pendingState WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+} // namespace WebCore
+
+#endif // USE(COORDINATED_GRAPHICS)

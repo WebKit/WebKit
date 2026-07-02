@@ -1,0 +1,381 @@
+# Copyright (C) 2022-2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+#if ENABLE(WEB_AUTHN)
+
+[CustomHeader] struct WebCore::AuthenticatorResponseBaseData {
+    RefPtr<JSC::ArrayBuffer> rawId;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs> extensionOutputs;
+};
+
+[CustomHeader] struct WebCore::AuthenticatorAttestationResponseData {
+    RefPtr<JSC::ArrayBuffer> rawId;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs> extensionOutputs;
+    RefPtr<JSC::ArrayBuffer> clientDataJSON;
+    RefPtr<JSC::ArrayBuffer> attestationObject;
+    Vector<WebCore::AuthenticatorTransport> transports;
+};
+
+[CustomHeader] struct WebCore::AuthenticatorAssertionResponseData {
+    RefPtr<JSC::ArrayBuffer> rawId;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs> extensionOutputs;
+    RefPtr<JSC::ArrayBuffer> clientDataJSON;
+    RefPtr<JSC::ArrayBuffer> authenticatorData;
+    RefPtr<JSC::ArrayBuffer> signature;
+    RefPtr<JSC::ArrayBuffer> userHandle;
+};
+
+using WebCore::AuthenticatorResponseDataSerializableForm = Variant<std::nullptr_t, WebCore::AuthenticatorResponseBaseData, WebCore::AuthenticatorAttestationResponseData, WebCore::AuthenticatorAssertionResponseData>;
+
+struct WebCore::AuthenticatorResponseData {
+    WebCore::AuthenticatorResponseDataSerializableForm getSerializableForm();
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs {
+    String support;
+    std::optional<bool> read;
+    std::optional<WebCore::BufferSource> write;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientInputs::PRFValues {
+    WebCore::BufferSource first;
+    std::optional<WebCore::BufferSource> second;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientInputs::PRFInputs {
+    std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFValues> eval;
+    std::optional<Vector<KeyValuePair<String, WebCore::AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
+};
+
+[LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
+    String appid;
+    std::optional<bool> credProps;
+    std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
+    std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
+}
+
+struct WebCore::CredentialPropertiesOutput {
+    bool rk;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs {
+    std::optional<bool> supported;
+    RefPtr<JSC::ArrayBuffer> blob;
+    std::optional<bool> written;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::PRFValues {
+    Ref<JSC::ArrayBuffer> first;
+    RefPtr<JSC::ArrayBuffer> second;
+};
+
+[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::PRFOutputs {
+    std::optional<bool> enabled;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::PRFValues> results;
+};
+
+struct WebCore::AuthenticationExtensionsClientOutputs {
+    std::optional<bool> appid;
+    std::optional<WebCore::CredentialPropertiesOutput> credProps;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs> largeBlob;
+    std::optional<WebCore::AuthenticationExtensionsClientOutputs::PRFOutputs> prf;
+}
+
+struct WebCore::UnknownCredentialOptions {
+    String rpId;
+    String credentialId;
+};
+
+struct WebCore::AllAcceptedCredentialsOptions {
+    String rpId;
+    String userId;
+    Vector<String> allAcceptedCredentialIds;
+};
+
+struct WebCore::CurrentUserDetailsOptions {
+    String rpId;
+    String userId;
+    String name;
+    String displayName;
+};
+
+struct WebCore::AuthenticatorSelectionCriteria {
+    std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
+    std::optional<WebCore::ResidentKeyRequirement> residentKey;
+    bool requireResidentKey;
+    WebCore::UserVerificationRequirement userVerification;
+};
+
+struct WebCore::PublicKeyCredentialEntity {
+    String name;
+    String icon;
+};
+
+struct WebCore::PublicKeyCredentialRpEntity : WebCore::PublicKeyCredentialEntity {
+    String id;
+};
+
+struct WebCore::PublicKeyCredentialUserEntity : WebCore::PublicKeyCredentialEntity {
+    WebCore::BufferSource id;
+    String displayName;
+};
+
+struct WebCore::PublicKeyCredentialDescriptor {
+    WebCore::PublicKeyCredentialType type;
+    WebCore::BufferSource id;
+    Vector<WebCore::AuthenticatorTransport> transports;
+};
+#endif // ENABLE(WEB_AUTHN)
+
+#if ENABLE(WEB_AUTHN)
+enum class WebCore::AttestationConveyancePreference : uint8_t {
+    None,
+    Indirect,
+    Direct,
+    Enterprise
+};
+#endif
+
+#if ENABLE(WEB_AUTHN)
+enum class WebCore::AuthenticatorTransport : uint8_t {
+    Usb,
+    Nfc,
+    Ble,
+    Internal,
+    Cable,
+    Hybrid,
+    SmartCard
+};
+
+enum class WebCore::PublicKeyCredentialType : bool
+#endif
+
+#if ENABLE(WEB_AUTHN)
+enum class WebCore::UserVerificationRequirement : uint8_t {
+    Required,
+    Preferred,
+    Discouraged
+};
+
+enum class WebCore::ResidentKeyRequirement : uint8_t {
+    Required,
+    Preferred,
+    Discouraged
+};
+
+enum class WebCore::AuthenticatorAttachment : uint8_t {
+    Platform,
+    CrossPlatform
+};
+
+#endif // ENABLE(WEB_AUTHN)
+
+#if ENABLE(WEB_AUTHN)
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::UserVerification : uint8_t {
+    No,
+    Yes,
+    Cancel,
+    Presence
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::LocalConfiguration {
+    WebCore::MockWebAuthenticationConfiguration::UserVerification userVerification;
+    bool acceptAttestation;
+    String privateKeyBase64;
+    String userCertificateBase64;
+    String intermediateCACertificateBase64;
+    String preferredCredentialIdBase64;
+};
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::HidStage : bool;
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::HidSubStage : bool;
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::HidError : uint8_t {
+    Success,
+    DataNotSent,
+    EmptyReport,
+    WrongChannelId,
+    MaliciousPayload,
+    UnsupportedOptions,
+    WrongNonce
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::HidConfiguration {
+    Vector<String> payloadBase64;
+    Vector<String> expectedCommandsBase64;
+    bool validateExpectedCommands;
+    WebCore::MockWebAuthenticationConfiguration::HidStage stage;
+    WebCore::MockWebAuthenticationConfiguration::HidSubStage subStage;
+    WebCore::MockWebAuthenticationConfiguration::HidError error;
+    bool isU2f;
+    bool keepAlive;
+    bool fastDataArrival;
+    bool continueAfterErrorData;
+    bool canDowngrade;
+    bool expectCancel;
+    bool supportClientPin;
+    bool supportInternalUV;
+    Vector<uint8_t> pinProtocols;
+    int64_t maxCredentialCountInList;
+    int64_t maxCredentialIdLength;
+};
+
+[Nested] enum class WebCore::MockWebAuthenticationConfiguration::NfcError : uint8_t {
+    Success,
+    NoTags,
+    WrongTagType,
+    NoConnections,
+    MaliciousPayload,
+    HardwareBusy
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::NfcConfiguration {
+    WebCore::MockWebAuthenticationConfiguration::NfcError error;
+    Vector<String> payloadBase64;
+    bool multipleTags;
+    bool multiplePhysicalTags;
+};
+
+[Nested] struct WebCore::MockWebAuthenticationConfiguration::CcidConfiguration {
+    Vector<String> payloadBase64;
+    String appletSelectionResponseBase64;
+    String u2fVersionResponseBase64;
+};
+
+struct WebCore::MockWebAuthenticationConfiguration {
+    bool silentFailure;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::LocalConfiguration> local;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::HidConfiguration> hid;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::NfcConfiguration> nfc;
+    std::optional<WebCore::MockWebAuthenticationConfiguration::CcidConfiguration> ccid;
+};
+
+header: <WebCore/ISO18013.h>
+[Nested] struct WebCore::ISO18013ElementInfo {
+    bool isRetaining;
+};
+
+[Nested] struct WebCore::ISO18013Any {
+    Variant<std::monostate, int, bool, String, Vector<Box<WebCore::ISO18013Any>>, HashMap<String, Box<WebCore::ISO18013Any>>> data;
+};
+
+[Nested] struct WebCore::ISO18013ZkSystemSpec {
+    String zkSystemId;
+    String system;
+};
+
+[Nested] struct WebCore::ISO18013ZkRequest {
+    Vector<WebCore::ISO18013ZkSystemSpec> systemSpecs;
+    bool zkRequired;
+};
+
+[Nested] struct WebCore::ISO18013AlternativeDataElementsSet {
+    HashMap<String, String> requestedElement;
+    Vector<Vector<HashMap<String, String>>> alternativeElementSets;
+};
+
+[Nested] struct WebCore::ISO18013DocumentRequestInfo {
+    std::optional<WebCore::ISO18013AlternativeDataElementsSet> alternativeDataElements;
+    [Validator='!*issuerIdentifiers || (*issuerIdentifiers)->size() <= 1000'] std::optional<Vector<WebCore::X509SubjectKeyIdentifier>> issuerIdentifiers;
+    std::optional<bool> uniqueDocSetRequired;
+    std::optional<uint32_t> maximumResponseSize;
+    std::optional<WebCore::ISO18013ZkRequest> zkRequest;
+    std::optional<String> encryptionParameterBytes;
+    HashMap<String, WebCore::ISO18013Any> extension;
+};
+
+[Nested] struct WebCore::ISO18013DocumentRequest {
+    String documentType;
+    Vector<std::pair<String, Vector<std::pair<String, WebCore::ISO18013ElementInfo>>>> namespaces;
+    std::optional<WebCore::ISO18013DocumentRequestInfo> requestInfo;
+};
+
+[Nested] struct WebCore::ISO18013DocumentRequestSet {
+    Vector<WebCore::ISO18013DocumentRequest> requests;
+};
+
+[Nested] struct WebCore::ISO18013PresentmentRequest {
+    bool isMandatory;
+    Vector<WebCore::ISO18013DocumentRequestSet> documentRequestSets;
+};
+
+header: <WebCore/X509SubjectKeyIdentifier.h>
+struct WebCore::X509SubjectKeyIdentifier {
+    [Validator='!data->isEmpty() && data->size() <= WebCore::X509SubjectKeyIdentifier::maxSize'] Vector<uint8_t> data;
+}
+
+struct WebCore::MobileDocumentRequest {
+    String deviceRequest;
+    String encryptionInfo;
+};
+
+[Nested] struct WebCore::ValidatedMobileDocumentRequest {
+    Vector<WebCore::CertificateInfo> requestAuthentications;
+    Vector<WebCore::ISO18013PresentmentRequest> presentmentRequests;
+};
+
+header: <WebCore/DigitalCredentialsRequestData.h>
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DigitalCredentialsSecurityOriginData {
+    [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
+    [Validator='!documentOrigin->isNull()'] WebCore::SecurityOriginData documentOrigin;
+}
+
+struct WebCore::DigitalCredentialsMobileDocumentRequestData : WebCore::DigitalCredentialsSecurityOriginData {
+    Vector<WebCore::ValidatedMobileDocumentRequest> requests;
+};
+
+#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+[Nested] enum class WebCore::ResponseType : uint8_t {
+    Attestation,
+    Disclosure,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DigitalCredentialsMobileDocumentRequestDataWithRequestInfo : WebCore::DigitalCredentialsSecurityOriginData {
+    WebCore::ResponseType responseType;
+    String matchingHint;
+}
+#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+
+struct WebCore::DigitalCredentialsResponseData {
+    WebCore::DigitalCredentialPresentationProtocol protocol;
+    String responseDataJSON;
+};
+
+[Nested] enum class WebCore::DigitalCredentialPresentationProtocol : uint8_t {
+    OrgIsoMdoc
+};
+
+#endif // ENABLE(WEB_AUTHN)
+
+#if ENABLE(WEB_AUTHN)
+header: <WebCore/MediationRequirement.h>
+enum class WebCore::MediationRequirement : uint8_t {
+    Silent,
+    Optional,
+    Required,
+    Conditional,
+};
+#endif
+

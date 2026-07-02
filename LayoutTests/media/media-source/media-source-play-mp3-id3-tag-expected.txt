@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Appending MP3 with ID3 tags
+CONSOLE MESSAGE: Appended MP3 with ID3 tags. Playing...
+CONSOLE MESSAGE: Played. Success!
+
+EXPECTED (v.currentTime > 0 == 'true') OK
+

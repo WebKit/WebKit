@@ -1,0 +1,18 @@
+Test for the Console.messagesCleared event.
+
+
+== Running test suite: Console.messagesCleared
+-- Running test case: ClearViaConsoleClearMessagesAPI
+PASS: Cleared event should fire.
+
+-- Running test case: ClearViaConsoleAPI
+PASS: Cleared event should fire.
+
+-- Running test case: ClearViaCommandLineAPI
+PASS: Cleared event should fire.
+
+-- Running test case: ClearViaPageReload
+Received `WI.ConsoleManager.Event.SessionStarted` event.
+PASS: Expected `WI.ConsoleManager.Event.SessionStarted` to be a reload-based session start.
+Received `WI.ConsoleManager.Event.Cleared` event.
+

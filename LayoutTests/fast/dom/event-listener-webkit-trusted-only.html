@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests that webkitTrustedOnly getter is not called during addEventListener');
+
+let webkitTrustedOnlyGetterWasCalled = false;
+const options = {
+    get webkitTrustedOnly() {
+        webkitTrustedOnlyGetterWasCalled = true;
+        return false;
+    }
+};
+window.addEventListener('event-name', () => { }, options);
+shouldBeFalse('webkitTrustedOnlyGetterWasCalled');
+
+</script>
+</body>
+</html>

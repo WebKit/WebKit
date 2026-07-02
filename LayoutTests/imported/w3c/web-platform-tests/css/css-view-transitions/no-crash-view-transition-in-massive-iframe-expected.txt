@@ -1,0 +1,4 @@
+
+
+PASS startViewTransition in massive iframe shouldn't crash.
+

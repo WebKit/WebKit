@@ -1,0 +1,157 @@
+
+html,
+body {
+    height: 100%;
+    background-color: white;
+    font-family: system-ui;
+    margin: 0;
+}
+[is="sh-texture-image"], sh-text {
+    display: none;
+}
+#garden::part(mesh) {
+    --cast-shadow: false;
+    --receive-shadow: false;
+}
+#garden::part(waterripple_mat) {
+    --roughness: 0.25;
+    --metalness: 0.6;
+}
+#garden::part(meadow_l1_foliagesg) {
+    --alpha-hash: false;
+    --alpha-to-coverage: true;
+    --alpha-test: 0;
+    --depth-write: true;
+}
+#garden::part(shadow) {
+    --material:#shadowMat;
+    --receive-shadow: true;
+}
+#chess3d::part(mesh) {
+    --quaternion: 0 0 0 1 !important;
+    --grab-target:self;
+    --transition: location 0.5, quaternion 0.5;
+    --grab-hand-location:0 0.04 0;
+    --grab-hand-length:0.16;
+    --grab-hand-handle-visibility:hidden;
+}
+#chess3d::part(mesh held) {
+    --quaternion: none !important; /* this is different to '0 0 0 1' it's essentially do nothing */
+    --magnet-constraint-target: #magnetA;
+    --magnet-constraint-range: 0.0411 0.028575;
+}
+.chesstable::part(pedestal) {
+    --receive-shadow: true;
+}
+.magnet.plane-constraint-active {
+    --visibility: visible;
+}
+.magnet {
+    --visibility: hidden;
+}
+h1 {
+    background: aliceblue;
+    margin: 0;
+    padding: 1.5em;
+}
+main {
+    font-size: 18px;
+    max-width: 1024px;
+    margin: auto;
+    article {
+        --bqcolor: grey;
+
+        margin: 0 1em;
+        container-type: inline-size;
+        .demo {
+            float: right;
+            width: 60cqi;
+            height: 50cqi;
+            padding: 1em;
+            @media screen and (max-width: 800px) {
+                width: 100%;
+            } 
+        }
+        blockquote {
+            margin: auto;
+            width: max-content;
+            max-width: calc(100% - 3em);
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--bqcolor);
+
+            p {
+                font-style: italic;
+            }
+        }
+    }
+}
+#renderer {
+    position: relative;
+    margin: 0 0.5em;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+
+    &::part(canvas) {
+        border-radius: 0.5em;
+        box-shadow: 0 0 0.3em #0005;
+    }
+}
+sh-text, sh-use::part(text) {
+    --font: https://fonts.gstatic.com/s/firasans/v17/va9B4kDNxMZdWfMOD5VnPKruQQ.ttf;
+}
+.auto-text-shape {
+    --scale: 1 1 1;
+    --href:std:text-shape;
+    --padding:0.02;
+    --text-box-radius:0.02;
+
+    &::part(text) {
+        --transition: position 0.5, quaternion 0.5, scale 0.5;
+    }
+    &::part(line) {
+        --visibility: hidden;
+    }
+
+    &.hover {
+        --scale: 0.9 0.9 0.9;
+    }
+
+    &::part(mesh), &::part(line) {
+        --geometry: rect(var(--text-box-width, 0.001) var(--text-box-height, 0.001) var(--text-box-radius, 0) var(--text-box-radius, 0) var(--text-box-left, 0) var(--text-box-top, 0));
+    }
+}
+.ifvravailable :is(#sessionstart, #sessionend) {
+    --visibility: hidden;
+    --will-change: visibility;
+}
+#tools {
+    --visibility: hidden;
+    --will-change: visibility;
+}
+body:has(#xrsession.vr-supported) {
+
+    & #toolpane {
+        --geometry: rect(0.8 0.4 0.04 0.04 -0.4 -0.0);
+    }
+
+    & #sessionstart {
+        --visibility: visible;
+    }
+    & #sessionend {
+        --visibility: hidden;
+    }
+}
+body:has(#xrsession.in-vr) {
+    & #sessionstart {
+        --visibility: hidden;
+    }
+    & #sessionend {
+        --visibility: visible;
+    }
+    #tools {
+        --visibility: visibile;
+    }
+}

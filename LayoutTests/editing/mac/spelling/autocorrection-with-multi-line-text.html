@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests auto-substitution with a multi-line text works.
+To manually test, open Language &amp; Text system preference and setup "helloleworld" to be replaced by
+"hello<br>world" (copy paste it) and reload this page. You should see hello and world in two distinct lines.</p>
+<div id="editor" contenteditable></div>
+<script src="../../../resources/dump-as-markup.js"></script>
+<script>
+
+var editor = document.getElementById('editor');
+document.getElementById('description');
+editor.focus();
+document.execCommand('InsertText', false, 'h');
+document.execCommand('InsertText', false, 'e');
+document.execCommand('InsertText', false, 'l');
+document.execCommand('InsertText', false, 'l');
+document.execCommand('InsertText', false, 'o');
+document.execCommand('InsertText', false, 'l');
+document.execCommand('InsertText', false, 'f');
+document.execCommand('InsertText', false, 'w');
+document.execCommand('InsertText', false, 'o');
+document.execCommand('InsertText', false, 'r');
+document.execCommand('InsertText', false, 'l');
+document.execCommand('InsertText', false, 'd');
+document.execCommand('InsertParagraph');
+
+Markup.description(document.getElementById('description').textContent);
+Markup.dump('editor');
+
+</script>
+</body>
+</html>

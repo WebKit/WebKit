@@ -1,0 +1,5 @@
+
+
+FAIL location.ancestorOrigins snapshot timing of referrerpolicy assert_array_equals: expected property 0 to be "null" but got "http://web-platform.test:8800" (expected array ["null"] got ["http://web-platform.test:8800"])
+FAIL location.ancestorOrigins snapshot timing of referrerpolicy 1 assert_array_equals: expected property 0 to be "null" but got "http://web-platform.test:8800" (expected array ["null"] got ["http://web-platform.test:8800"])
+

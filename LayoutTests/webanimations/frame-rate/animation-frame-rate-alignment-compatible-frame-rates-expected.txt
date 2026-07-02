@@ -1,0 +1,3 @@
+
+PASS Animations that start on consecutive frames with different, but compatible frame rates, eventually resolve in the same frame
+

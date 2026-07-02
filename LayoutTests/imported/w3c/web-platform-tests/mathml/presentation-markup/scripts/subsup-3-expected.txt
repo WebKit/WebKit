@@ -1,0 +1,7 @@
+
+PASS Alignment of the base on the baseline
+PASS Dimensions of the scripted elements
+FAIL Vertical positions of scripts assert_approx_equals: multi2 1 presup script expected 21 +/- 3 but got 26
+PASS Horizontal alignment of scripts
+PASS Horizontal positions of scripts
+

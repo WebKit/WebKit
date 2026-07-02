@@ -1,0 +1,4 @@
+Click me
+
+PASS PerformanceObserver observes events according to its durationThreshold
+

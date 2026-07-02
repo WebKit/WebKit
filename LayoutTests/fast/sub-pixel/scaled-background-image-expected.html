@@ -1,0 +1,18 @@
+<html>
+<head>
+<style type="text/css">
+.norepeat {
+    background: url(../images/resources/exif-orientation-7-rl.jpg);
+	border: 5px solid black;
+	margin: 5px;
+	background-size: 124px 63px;
+	width: 124px;
+    height: 63px;
+}
+</style>
+<body>
+<div class="norepeat"></div>
+<p>This tests that we don't tile background images that are sufficiently close to the renderer size. The background image
+above should not repeat. See <a href="https://bugs.webkit.org/show_bug.cgi?id=94622">bug 94622</a>.</p>
+</body>
+</html>

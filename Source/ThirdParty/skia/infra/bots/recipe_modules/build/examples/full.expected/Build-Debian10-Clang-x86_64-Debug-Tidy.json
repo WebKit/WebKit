@@ -1,0 +1,87 @@
+[
+  {
+    "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-gn"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-gn"
+  },
+  {
+    "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-ninja"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-ninja"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/cache/work/skia/infra/bots/assets/clang_linux/VERSION",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "Get clang_linux VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@VERSION@42@@@",
+      "@@@STEP_LOG_END@VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cache/work/skia/bin/gn",
+      "gen",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Debug-Tidy/Debug",
+      "--args=cc=\"[START_DIR]/clang_linux/bin/clang\" cxx=\"[START_DIR]/cache/work/skia/tools/clang-tidy.sh\" extra_cflags=[\"-B[START_DIR]/clang_linux/bin\", \"-DPLACEHOLDER_clang_linux_version=42\", \"-O1\"] extra_ldflags=[\"-B[START_DIR]/clang_linux/bin\", \"-fuse-ld=lld\", \"-L[START_DIR]/clang_linux/lib\"] is_trivial_abi=true link_pool_depth=2 skia_enable_fontmgr_empty=true skia_enable_graphite=true skia_enable_pdf=true skia_use_client_icu=true skia_use_dawn=true skia_use_expat=true skia_use_freetype=true skia_use_libgrapheme=true skia_use_vulkan=true target_cpu=\"x86_64\" werror=true"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "[START_DIR]/clang_linux/bin:<PATH>:RECIPE_REPO[depot_tools]:[START_DIR]/cache/work/skia/third_party/ninja"
+    },
+    "name": "gn gen"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cache/work/skia/third_party/ninja/ninja",
+      "-C",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Debug-Tidy/Debug"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "[START_DIR]/clang_linux/bin:<PATH>:RECIPE_REPO[depot_tools]:[START_DIR]/cache/work/skia/third_party/ninja"
+    },
+    "name": "ninja"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Debug-Tidy/Debug",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Debug",
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,*.so,*.dll,*.dylib,skottie_tool,lib/*.so,run_testlab"
+    ],
+    "infra_step": true,
+    "name": "copy build products"
+  },
+  {
+    "name": "$result"
+  }
+]

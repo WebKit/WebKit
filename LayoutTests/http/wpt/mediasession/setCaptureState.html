@@ -1,0 +1,190 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+function waitForMuteEvent(track)
+{
+    assert_false(track.muted);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject("waitForMuteEvent failed"), 5000);
+        track.onmute = resolve;
+    });
+}
+
+function waitForUnmuteEvent(track)
+{
+    assert_true(track.muted);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject("waitForUnmuteEvent failed"), 5000);
+        track.onunmute = resolve;
+    });
+}
+
+function waitForAction(action)
+{
+    return new Promise((resolve, reject) => {
+        setTimeout(() => reject("promiseAction timed out"), 5000);
+        navigator.mediaSession.setActionHandler(action, details => {
+            resolve(details.isActivating);
+        });
+    });
+}
+
+function waitForNoAction(action)
+{
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(true), 50);
+        navigator.mediaSession.setActionHandler(action, details => {
+            reject(details.isActivating);
+        });
+    });
+}
+
+async function testTrackMuteUnmute(test, track, action, stateCallback, muteCallback)
+{
+    if (!window.internals)
+        return;
+
+    await stateCallback(false);
+    await Promise.all([
+        waitForMuteEvent(track),
+        waitForNoAction(action)
+    ]);
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = stateCallback(true);
+    });
+    await promise;
+    await Promise.all([
+        waitForUnmuteEvent(track),
+        waitForNoAction(action)
+    ]);
+
+    await muteCallback(true);
+    await waitForAction(action);
+    await waitForMuteEvent(track);
+
+    testRunner.setCameraPermission(false);
+    testRunner.setMicrophonePermission(false);
+
+    internals.withUserGesture(() => {
+        promise = stateCallback(true);
+    });
+    await promise_rejects_dom(test, "NotAllowedError", promise);
+
+    testRunner.setCameraPermission(true);
+    testRunner.setMicrophonePermission(true);
+
+    await muteCallback(false);
+    await waitForAction(action);
+    await waitForUnmuteEvent(track);
+
+    await stateCallback(false);
+    await Promise.all([
+        waitForMuteEvent(track),
+        waitForNoAction(action)
+    ]);
+
+    internals.withUserGesture(() => {
+        promise = stateCallback(true);
+    });
+    await promise;
+    await Promise.all([
+        waitForUnmuteEvent(track),
+        waitForNoAction(action)
+    ]);
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    stream.getTracks()[0].stop();
+    stream.getTracks()[1].stop();
+
+    await navigator.mediaSession.setCameraActive(false);
+    await navigator.mediaSession.setMicrophoneActive(false);
+    await navigator.mediaSession.setScreenshareActive(false);
+
+    if (!window.internals)
+        return;
+
+    await promise_rejects_dom(test, "InvalidStateError", navigator.mediaSession.setCameraActive(true));
+    await promise_rejects_dom(test, "InvalidStateError", navigator.mediaSession.setMicrophoneActive(true));
+    await promise_rejects_dom(test, "InvalidStateError", navigator.mediaSession.setScreenshareActive(true));
+
+    let promise1, promise2, promise3;
+    internals.withUserGesture(() => {
+        promise1 = navigator.mediaSession.setCameraActive(true);
+        promise2 = navigator.mediaSession.setMicrophoneActive(true);
+        promise3 = navigator.mediaSession.setScreenshareActive(true);
+    });
+    return Promise.all([promise1, promise2, promise3]);
+}, "MediaSession setCameraActive, setMicrophoneActive and setScreenshareActive are no ops if document is not capturing anything");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    if (!window.internals)
+        return;
+
+    window.testRunner.setCaptureState(false, false, false);
+
+    await Promise.all([
+       new Promise(resolve => stream.getAudioTracks()[0].onmute = resolve),
+       new Promise(resolve => stream.getVideoTracks()[0].onmute = resolve),
+    ]);
+
+    await navigator.mediaSession.setCameraActive(false);
+    await navigator.mediaSession.setMicrophoneActive(false);
+    await navigator.mediaSession.setScreenshareActive(false);
+
+    await new Promise((resolve, reject) => {
+        stream.getAudioTracks()[0].onmute = () => reject("audio track mute");
+        stream.getAudioTracks()[0].onunmute = () => reject("audio track unmute");
+        stream.getVideoTracks()[0].onmute = () => reject("video track mute");
+        stream.getVideoTracks()[0].onunmute = () => reject("video track unmute");
+        setTimeout(resolve, 100);
+    });
+
+    stream.getTracks()[0].stop();
+    stream.getTracks()[1].stop();
+}, "MediaSession setCameraActive, setMicrophoneActive and setScreenshareActive are no ops if trying to deactivate while capture is already muted");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = stream.getTracks()[0];
+
+    await testTrackMuteUnmute(test, track, "togglecamera", (state) => navigator.mediaSession.setCameraActive(state), mute => window.testRunner.setCaptureState(!mute, true, true));
+
+    track.stop();
+}, "togglecamera and mute/unmute events order");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getTracks()[0];
+
+    await testTrackMuteUnmute(test, track, "togglemicrophone", (state) => navigator.mediaSession.setMicrophoneActive(state), mute => window.testRunner.setCaptureState(true, !mute, true));
+
+    track.stop();
+}, "togglemicrophone and mute/unmute events order");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return;
+
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getDisplayMedia({ video: true });
+    });
+    const stream = await promise;
+    const track = stream.getTracks()[0];
+
+    await testTrackMuteUnmute(test, track, "togglescreenshare", (state) => navigator.mediaSession.setScreenshareActive(state), mute => window.testRunner.setCaptureState(true, true, !mute));
+
+    track.stop();
+}, "togglescreenshare and mute/unmute events order");
+
+</script>
+</body>
+</html>

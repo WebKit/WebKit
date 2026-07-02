@@ -1,0 +1,5 @@
+
+PASS import.meta.resolve resolves URLs relative to the import.meta.url, not relative to the active script when it is called: another global's inline script
+PASS import.meta.resolve still works if its global has been destroyed (by detaching the iframe)
+PASS import.meta.resolve resolves URLs relative to the import.meta.url, not relative to the active script when it is called: another module script
+

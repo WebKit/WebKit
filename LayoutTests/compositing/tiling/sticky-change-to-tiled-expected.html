@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .sticky {
+            position: sticky;
+            top: 0px;
+            left: 100px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            height: 2000px;
+        }
+
+        .green {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+
+        .red {
+            position: absolute;
+            top: 0px;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="red"></div>
+    <div class="sticky">
+        <div class="green"></div>
+    </div>
+</body>
+</html>

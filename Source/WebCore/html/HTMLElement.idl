@@ -1,0 +1,88 @@
+/*
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+// https://html.spec.whatwg.org/multipage/dom.html#htmlelement
+[
+    CustomToJSObject,
+    ExportMacro=WEBCORE_EXPORT,
+    Exposed=Window,
+    GenerateForEachEventHandlerContentAttribute,
+    JSGenerateToNativeObject,
+] interface HTMLElement : Element {
+    [Custom] constructor();
+
+    // metadata attributes
+    [CEReactions=Needed, Reflect] attribute DOMString title;
+    [CEReactions=Needed, Reflect] attribute DOMString lang;
+    [CEReactions=Needed] attribute boolean translate;
+    [CEReactions=Needed, ReflectSetter] attribute [AtomString] DOMString dir;
+
+    // TextTrackCue related
+    [CEReactions=Needed, Reflect] attribute boolean cue;
+    [CEReactions=Needed, Reflect] attribute boolean cuebackground;
+
+    // user interaction
+    [CEReactions=Needed] attribute (boolean or unrestricted double or DOMString)? hidden;
+    undefined click();
+    [CEReactions=Needed, Reflect] attribute DOMString accessKey;
+    readonly attribute DOMString accessKeyLabel;
+    [CEReactions=Needed] attribute boolean draggable;
+    [CEReactions=Needed] attribute boolean spellcheck;
+    [Conditional=AUTOCAPITALIZE, CEReactions=Needed, ReflectSetter] attribute [AtomString] DOMString autocapitalize;
+
+    [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerText;
+
+    ElementInternals attachInternals();
+
+    [CEReactions=Needed, Reflect] attribute boolean inert;
+
+    // The popover API
+    [EnabledBySetting=PopoverAttributeEnabled] undefined showPopover(optional ShowPopoverOptions options = {});
+    [EnabledBySetting=PopoverAttributeEnabled] undefined hidePopover();
+    [EnabledBySetting=PopoverAttributeEnabled] boolean togglePopover(optional (TogglePopoverOptions or boolean) options = {});
+    [CEReactions=Needed, EnabledBySetting=PopoverAttributeEnabled] attribute [AtomString] DOMString? popover;
+
+    // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
+    [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString outerText;
+
+    // Non-standard: iOS extension.
+    [Conditional=AUTOCORRECT, CEReactions=Needed] attribute boolean autocorrect;
+
+    // Non-standard: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
+    [CEReactions=Needed, Reflect] attribute DOMString webkitdropzone;
+
+    [Conditional=WRITING_SUGGESTIONS, CEReactions=Needed, ReflectSetter] attribute [AtomString] DOMString writingSuggestions;
+};
+
+// https://html.spec.whatwg.org/multipage/dom.html#showpopoveroptions
+dictionary ShowPopoverOptions {
+    HTMLElement source;
+};
+
+// https://html.spec.whatwg.org/multipage/dom.html#togglepopoveroptions
+dictionary TogglePopoverOptions : ShowPopoverOptions {
+    boolean force;
+};
+
+HTMLElement includes GlobalEventHandlers;
+HTMLElement includes DocumentAndElementEventHandlers;
+HTMLElement includes ElementContentEditable;
+HTMLElement includes HTMLOrSVGOrMathMLElement;
+HTMLElement includes ElementCSSInlineStyle;

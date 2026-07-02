@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+import sys
+import os
+import subprocess
+from pathlib import Path
+
+def main():
+     for directory in sys.argv[1:]:
+        print(f'Considering directory {directory} for deletion')
+        directoryPath = Path(directory).resolve()
+
+        if not directoryPath.exists():
+            print(f'{directory} does not exist')
+            return 1
+
+        if not directoryPath.is_dir():
+            print(f'{directory} is not a directory')
+            return 1
+
+        tenGigabytesInKiloBytes = 1024 * 1024  * 10
+        
+        # directorySize will be in kilobytes.
+        directorySize = int(subprocess.check_output(['sudo', 'du', '-sk', directoryPath]).decode().strip().split()[0])
+
+        if directorySize >= tenGigabytesInKiloBytes:
+            print(f'{directory} is {directorySize}K in size. Deleting') 
+            subprocess.call(['sudo', 'rm','-rf', directoryPath])
+            print(f'Deleted {directory}')
+        else:
+            print(f'{directory} is {directorySize}K in size. Doing nothing') 
+
+
+if __name__ == '__main__':
+    sys.exit(main())

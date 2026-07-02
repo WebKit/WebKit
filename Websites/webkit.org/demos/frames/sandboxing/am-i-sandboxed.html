@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Am I sandboxed?</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body style="background-color: pink">
+
+    <p style="color: black;">I'm NOT allowed to execute JavaScript.</p>
+
+    <script>
+      document.querySelector('p').textContent = "I can execute JavaScript.";
+      document.body.style.backgroundColor = "lightgreen";
+    </script>
+
+    <p><a href="./am-i-sandboxed.html" target="_blank">Open this page as a popup</a></p>
+
+    <p><button onclick="alert('I can open modal dialog!')">Open an alert dialog</button></p>
+
+    <p><button onclick="top.location='./framebusting-success.html'">Navigate top frame</button></p>
+
+    <p><a href="./framebusting-without-user-activation.html" target="_blank">Open a popup to test top navigation without user activation</a></p>
+
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .page-scroller {
+            height: 500px;
+            width: 500px;
+            overflow: hidden;
+            border: 1px solid black;
+        }
+
+        .relative {
+            position: relative;
+            height: 500px;
+            width: 100%;
+        }
+                
+        .absolute {
+            position: absolute;
+            z-index: 1;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .scroller {
+            overflow-y: auto;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border: 1px solid black;
+        }
+
+        .relative-content {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background-color: green;
+        }
+        .content-sizer {
+            width: 100%;
+            height: 750px;
+            background-color: silver;
+        }
+        
+        .scrollbars-hider {
+            position: absolute;
+            z-index: 2;
+            top: 6px;
+            left: 458px;
+            width: 56px;
+            height: 510px;
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-scroller">
+        <div class="relative">
+            <div class="content-sizer"></div>
+            <div class="absolute">
+                <div class="scroller">
+                    <div class="relative-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="scrollbars-hider"></div>
+</body>
+</html>

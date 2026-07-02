@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK/WPE.
+    alsa-lib
+    autoconf
+    automake
+    bubblewrap
+    cmake
+    file
+    findutils
+    flite
+    gawk
+    gcc
+    gperf
+    grep
+    groff
+    gst-plugins-base-libs
+    gstreamer
+    gtk-doc
+    gzip
+    intltool
+    itstool
+    lcms2
+    libevent
+    libjpeg-turbo
+    libjxl
+    libkate
+    libpng
+    libseccomp
+    libsysprof-capture
+    libsystemd
+    libtasn1
+    libtool
+    libwebp
+    libxslt
+    m4
+    make
+    ninja
+    openjpeg2
+    openxr
+    patch
+    perl-file-copy-recursive
+    pkg-config
+    sed
+    sqlite
+    texinfo
+    volk
+    which
+    woff2
+
+    # These are dependencies necessary for running tests.
+    # Note: ruby-json and ruby-highline are available in the AUR.
+    apache
+    binutils
+    curl
+    gdb
+    psmisc
+    pulseaudio
+    python-legacy-cgi
+    python2-psutil
+    ttf-liberation
+    time
+
+    # These are dependencies necessary for building the jhbuild.
+    # Note: Could not find libegl-mesa.
+    expat
+    git
+    gsettings-desktop-schemas
+    gyp
+    libfdk-aac
+    libproxy
+    libpsl
+    libxcb
+    orc
+    python-setuptools
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    svn
+
+    # These are GStreamer plugins needed to play different media files.
+    gst-plugins-bad
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-ugly
+
+    # These are for generate-bundle script
+    patchelf
+    p11-kit
+
+    # These are required to run the WebKit Container SDK via wkdev-build /
+    # wkdev-sdk. `podman` is the rootless container engine the host wrappers
+    # invoke; `crun` is the runtime we pin podman to (runc does not support
+    # `podman run --init`); `catatonit` is the helper `--init` spawns as
+    # PID 1.
+    catatonit
+    crun
+    podman
+)

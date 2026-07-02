@@ -1,0 +1,251 @@
+/*
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Platform.h>
+
+#if ENABLE(WEBASSEMBLY)
+
+#include <JavaScriptCore/WasmBranchHints.h>
+#include <JavaScriptCore/WasmFormat.h>
+#include <JavaScriptCore/WasmModuleDebugInfo.h>
+
+#include <wtf/FixedBitVector.h>
+#include <wtf/HashMap.h>
+
+namespace JSC {
+
+class WebAssemblyCompileOptions;
+
+namespace Wasm {
+
+struct ModuleDebugInfo;
+
+struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> {
+
+    using BranchHints = UncheckedKeyHashMap<uint32_t, BranchHintMap, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+
+    ModuleInformation();
+    ModuleInformation(const ModuleInformation&) = delete;
+    ModuleInformation(ModuleInformation&&) = delete;
+
+    static Ref<ModuleInformation> create()
+    {
+        return adoptRef(*new ModuleInformation);
+    }
+
+    JS_EXPORT_PRIVATE ~ModuleInformation();
+    
+    size_t functionIndexSpaceSize() const { return importFunctionTypeSignatureIndices.size() + internalFunctionTypeSignatureIndices.size(); }
+    bool isImportedFunctionFromFunctionIndexSpace(FunctionSpaceIndex functionIndex) const
+    {
+        ASSERT(functionIndex < functionIndexSpaceSize());
+        return functionIndex < importFunctionTypeSignatureIndices.size();
+    }
+    TypeSignatureIndex typeSignatureIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndex) const
+    {
+        return isImportedFunctionFromFunctionIndexSpace(functionIndex)
+            ? importFunctionTypeSignatureIndices[functionIndex]
+            : internalFunctionTypeSignatureIndices[functionIndex - importFunctionTypeSignatureIndices.size()];
+    }
+    const RTT& rtt(FunctionSpaceIndex functionIndex) const LIFETIME_BOUND
+    {
+        return rtt(typeSignatureIndexFromFunctionIndexSpace(functionIndex));
+    }
+
+    size_t exceptionIndexSpaceSize() const { return importExceptionTypeSignatureIndices.size() + internalExceptionTypeSignatureIndices.size(); }
+    bool isImportedExceptionFromExceptionIndexSpace(size_t exceptionIndex) const
+    {
+        ASSERT(exceptionIndex < exceptionIndexSpaceSize());
+        return exceptionIndex < importExceptionTypeSignatureIndices.size();
+    }
+    TypeSignatureIndex typeSignatureIndexFromExceptionIndexSpace(size_t exceptionIndex) const
+    {
+        return isImportedExceptionFromExceptionIndexSpace(exceptionIndex)
+            ? importExceptionTypeSignatureIndices[exceptionIndex]
+            : internalExceptionTypeSignatureIndices[exceptionIndex - importExceptionTypeSignatureIndices.size()];
+    }
+    const RTT& rttFromExceptionIndexSpace(size_t exceptionIndex) const LIFETIME_BOUND
+    {
+        return rtt(typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
+    }
+
+    uint32_t importFunctionCount() const { return importFunctionTypeSignatureIndices.size(); }
+    uint32_t internalFunctionCount() const { return internalFunctionTypeSignatureIndices.size(); }
+    uint32_t importExceptionCount() const { return importExceptionTypeSignatureIndices.size(); }
+    uint32_t internalExceptionCount() const { return internalExceptionTypeSignatureIndices.size(); }
+
+    uint32_t typeCount() const { return m_rtts.size(); }
+    const RTT& rtt(TypeSignatureIndex index) const LIFETIME_BOUND { ASSERT(index.rawIndex() < m_rtts.size()); return m_rtts[index.rawIndex()]; }
+
+    // Convert a parsed heap type (int32_t from the binary) to a TypeSignatureIndex.
+    // Only valid when isTypeIndexHeapType(heapType) is true.
+    static TypeSignatureIndex typeSignatureIndexFromHeapType(int32_t heapType) { ASSERT(isTypeIndexHeapType(heapType)); return TypeSignatureIndex(heapType); }
+
+    FunctionCodeIndex toCodeIndex(FunctionSpaceIndex index) const { ASSERT(importFunctionCount() <= index && index < functionIndexSpaceSize()); return FunctionCodeIndex(index - importFunctionCount()); }
+    FunctionSpaceIndex toSpaceIndex(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); return FunctionSpaceIndex(index + importFunctionCount()); }
+
+
+    uint32_t memoryCount() const { return memories.size(); }
+    uint32_t tableCount() const { return tables.size(); }
+    uint32_t elementCount() const { return elements.size(); }
+    uint32_t globalCount() const { return globals.size(); }
+    uint32_t dataSegmentsCount() const { return numberOfDataSegments.value_or(0); }
+
+    const MemoryInformation& memory(unsigned index) const { return memories[index]; }
+    const TableInformation& table(unsigned index) const { return tables[index]; }
+    const GlobalInformation& global(unsigned index) const { return globals[index]; }
+
+    bool isDeclaredFunction(FunctionSpaceIndex index) const { return m_declaredFunctions.contains(index); }
+    void addDeclaredFunction(FunctionSpaceIndex index) { m_declaredFunctions.set(index); }
+
+    bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
+    void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
+
+    size_t functionWasmSizeImportSpace(FunctionSpaceIndex index) const { return functionWasmSize(toCodeIndex(index)); }
+
+    size_t functionWasmSize(FunctionCodeIndex index) const
+    {
+        ASSERT(index < internalFunctionCount());
+        ASSERT(functions[index].finishedValidating);
+        return functions[index].end - functions[index].start;
+    }
+
+    bool usesSIMDImportSpace(FunctionSpaceIndex index) const { return usesSIMD(toCodeIndex(index)); }
+    bool usesSIMD(FunctionCodeIndex index) const
+    {
+        ASSERT(index < internalFunctionCount());
+        ASSERT(functions[index].finishedValidating);
+
+        // See also: B3Procedure::usesSIMD().
+        if (!Options::useWasmSIMD())
+            return false;
+        if (Options::forceAllFunctionsToUseSIMD())
+            return true;
+        ASSERT(Options::useWasmIPInt());
+
+        return functions[index].usesSIMD;
+    }
+    void markUsesSIMD(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
+
+    bool usesExceptions(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
+    void markUsesExceptions(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
+    bool usesAtomics(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
+    void markUsesAtomics(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
+
+    void doneSeeingFunction(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
+
+    bool hasGCObjectTypes() const { return m_hasGCObjectTypes; }
+
+    bool hasMemoryImport() const
+    {
+        for (auto& m : memories) {
+            if (m.isImport())
+                return true;
+        }
+        return false;
+    }
+
+    BranchHint getBranchHint(uint32_t functionOffset, uint32_t branchOffset) const
+    {
+        auto it = branchHints.find(functionOffset);
+        return it == branchHints.end()
+            ? BranchHint::Invalid
+            : it->value.getBranchHint(branchOffset);
+    }
+
+    void setTotalFunctionSize(size_t totalFunctionSize)
+    {
+        m_totalFunctionSize = totalFunctionSize;
+    }
+    size_t totalFunctionSize() const { return m_totalFunctionSize; }
+
+    void applyCompileOptions(const WebAssemblyCompileOptions&);
+    bool importedStringConstantsEquals(const String& expected) const { return m_importedStringConstants && m_importedStringConstants.value() == expected; }
+    bool builtinSetsInclude(const String& qualifiedName) const { return m_qualifiedBuiltinSetNames.contains(qualifiedName); }
+
+    // nameSection is read from compiler threads (lock-free via atomic pointer)
+    // and written from the main thread when the custom "name" section is parsed.
+    NameSection& nameSection() const { return *m_nameSectionPtr.load(std::memory_order_acquire); }
+    void setNameSection(Ref<NameSection>&&);
+
+    // FIXME: These should probably be FixedVectors.
+    Vector<Import> imports;
+    FixedBitVector importShouldBeHidden; // filter imports[i] from the result of Module.imports(moduleObject)
+    Vector<TypeSignatureIndex> importFunctionTypeSignatureIndices;
+    Vector<TypeSignatureIndex> internalFunctionTypeSignatureIndices;
+    Vector<TypeSignatureIndex> importExceptionTypeSignatureIndices;
+    Vector<TypeSignatureIndex> internalExceptionTypeSignatureIndices;
+
+    Vector<MemoryInformation> memories;
+    bool m_hasGCObjectTypes { false };
+    mutable Atomic<bool> m_usesLegacyExceptions { false };
+    mutable Atomic<bool> m_usesModernExceptions { false };
+
+    Vector<FunctionData> functions;
+
+    Vector<Export> exports;
+    std::optional<uint32_t> startFunctionIndexSpace;
+    Vector<std::unique_ptr<Segment>> data;
+    Vector<Element> elements;
+    Vector<TableInformation> tables;
+    Vector<GlobalInformation> globals;
+    unsigned firstInternalGlobal { 0 };
+    uint32_t codeSectionSize { 0 };
+    Vector<CustomSection> customSections;
+    BranchHints branchHints;
+    std::optional<uint32_t> numberOfDataSegments;
+    using ConstantExpressionAndSourceOffset = std::pair<Vector<uint8_t>, size_t>;
+    Vector<ConstantExpressionAndSourceOffset> constantExpressions;
+    Name sourceMappingURL;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;
+#endif
+
+    BitVector m_declaredFunctions;
+    BitVector m_declaredExceptions;
+    size_t m_totalFunctionSize { 0 };
+    uint32_t m_numSmallFunctions { 0 };
+
+private:
+    void populateImportShouldBeHidden();
+
+    friend class SectionParser;
+
+    Vector<Ref<const RTT>> m_rtts;
+
+    std::optional<String> m_importedStringConstants;
+    Vector<String> m_qualifiedBuiltinSetNames;
+    Ref<NameSection> m_nameSection;
+    RefPtr<NameSection> m_retiredNameSection;
+    std::atomic<NameSection*> m_nameSectionPtr { nullptr };
+    bool m_hasCustomNameSection { false };
+};
+
+    
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

@@ -1,0 +1,151 @@
+load("//bazel:skia_rules.bzl", "skia_cc_binary", "skia_cc_library", "skia_filegroup")
+load(":compile_sksl.bzl", "compile_sksl")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_binary(
+    name = "skslc",
+    srcs = [
+        "Main.cpp",
+    ],
+    deps = [
+        ":process_worklist",
+        "//:core",
+        "//src/sksl/codegen:glsl",
+        "//src/sksl/codegen:gpu",
+        "//src/sksl/codegen:hlsl",
+        "//src/sksl/codegen:metal",
+        "//src/sksl/codegen:spirv",
+        "//src/sksl/codegen:spirv_validator",
+        "//src/sksl/codegen:wgsl",
+        "//src/sksl/codegen:wgsl_validator",
+        "@spirv_tools",
+    ],
+)
+
+skia_cc_library(
+    name = "process_worklist",
+    srcs = ["ProcessWorklist.cpp"],
+    hdrs = ["ProcessWorklist.h"],
+    visibility = ["//tools/sksl-minify:__pkg__"],
+    deps = ["//:core"],
+)
+
+skia_filegroup(
+    name = "glsl_tests_with_settings",
+    srcs = [
+        "//resources/sksl:sksl_glsl_settings_tests_sources",
+        "//resources/sksl:sksl_glsl_tests_sources",
+    ],
+)
+
+# Invoke these using:
+#     bazel run //tools/skslc:compile_glsl_tests --config=compile_sksl
+compile_sksl(
+    name = "glsl_tests",
+    inputs = ":glsl_tests_with_settings",
+    lang = "glsl",
+)
+
+compile_sksl(
+    name = "glsl_nosettings_tests",
+    inputs = "//resources/sksl:sksl_glsl_settings_tests_sources",
+    lang = "glsl",
+    settings = "nosettings",
+)
+
+compile_sksl(
+    name = "metal_tests",
+    inputs = "//resources/sksl:sksl_metal_tests_sources",
+    lang = "metal",
+)
+
+compile_sksl(
+    name = "skrp_tests",
+    inputs = "//resources/sksl:sksl_skrp_tests_sources",
+    lang = "skrp",
+)
+
+compile_sksl(
+    name = "stage_tests",
+    inputs = "//resources/sksl:sksl_stage_tests_sources",
+    lang = "stage",
+)
+
+compile_sksl(
+    name = "spirv_tests",
+    inputs = "//resources/sksl:sksl_spirv_tests_sources",
+    lang = "spirv",
+)
+
+compile_sksl(
+    name = "hlsl_tests",
+    inputs = "//resources/sksl:sksl_hlsl_tests_sources",
+    lang = "hlsl",
+)
+
+compile_sksl(
+    name = "wgsl_tests",
+    inputs = "//resources/sksl:sksl_wgsl_tests_sources",
+    lang = "wgsl",
+)
+
+_SKSL_COMPILE_TESTS = """
+import glob
+import os
+import shutil
+import subprocess
+import sys
+
+# https://bazel.build/docs/user-manual#running-executables
+# Note: Bazel eats single quotes, so we must use double quotes.
+os.chdir(os.environ["BUILD_WORKSPACE_DIRECTORY"])
+
+# execpath returns the path to the given label relative to the Skia root.
+# This will be something like:
+#   bazel-out/k8-opt-exec-81C6BA4F/bin/tools/sksl-minify/sksl_minify
+# https://bazel.build/reference/be/make-variables#predefined_label_variables
+# We then find the absolute path because this is easier to debug and more
+# consistent if the script we are calling changes the working directory.
+sksl_compile_exe = os.path.abspath("$(execpath //tools/skslc:skslc)")
+compile_tests_script = os.path.abspath("$(execpath //gn:compile_sksl_tests)")
+
+# The last argument passed in is a file path from the root of the skia dir to a file
+# containing all the tests we want to process.
+input_file = os.path.abspath(sys.argv[-1])
+
+# skslc runs in standalone mode, which means it needs to read in several sksl files
+# instead of them being compiled in. These files need to be copied to the location
+# the executable is in, which is where it expects them.
+for sksl_file in glob.glob("src/sksl/*.sksl"):
+    shutil.copy(sksl_file, os.path.dirname(sksl_compile_exe))
+
+result = subprocess.run([
+    compile_tests_script,
+    sksl_compile_exe,
+] + sys.argv[1:-1] + [input_file], capture_output=True, encoding="utf-8")
+print(result.stdout)
+sys.exit(result.returncode)
+"""
+
+genrule(
+    name = "create_sksl_compile_tests_script",
+    # By putting skslc in srcs, this will be compiled for
+    # the target platform, not the exec platform. Importantly, this means that the
+    # Bazel config (e.g. no_config) will properly be applied to it. This shouldn't
+    # cause any problems unless the outputs of the compilation are
+    # used as the inputs to another step, because then cross-compiling
+    # would break (as we would be unable to, for example, run the
+    # "compiled for android skslc" on the exec machine that
+    # is running the Python script.
+    srcs = [":skslc"],
+    outs = ["sksl_compile_tests.py"],
+    cmd = "echo '%s' > $@" % _SKSL_COMPILE_TESTS,
+    tools = [
+        "//gn:compile_sksl_tests",
+    ],
+)

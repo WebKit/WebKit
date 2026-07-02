@@ -1,0 +1,15 @@
+Checks that attributes are on the prototype are configurable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.eventPhase is 0
+PASS event.__proto__.hasOwnProperty('eventPhase') is true
+PASS properties.configurable is true
+PASS properties.enumerable is true
+PASS delete event.__proto__.eventPhase is true
+PASS event.eventPhase is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

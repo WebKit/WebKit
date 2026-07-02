@@ -1,0 +1,12 @@
+
+FAIL Property text-fit value 'none' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'grow' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'shrink' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'grow consistent' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'grow per-line' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'grow per-line-all' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'grow per-line 200%' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'grow consistent 300%' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'shrink per-line 40%' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-fit value 'shrink consistent 20%' assert_true: text-fit doesn't seem to be supported in the computed style expected true got false
+

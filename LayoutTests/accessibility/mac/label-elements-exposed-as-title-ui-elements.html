@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+    <input type="checkbox" value="true" id="checkbox">
+    <label for="checkbox" id="label1">
+        Yes, I'd like 
+        <a href="#"> TEST .</a>
+    </label>
+
+    <input type="radio" value="true" id="radio">
+    <label for="radio" id="label2">
+        Yes, I'd like 
+        <a href="#"> TEST .</a>
+    </label>
+    
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a radio or checkbox uses a label element, then that label element will be exposed as the title ui element.");
+
+    if (window.accessibilityController) {
+
+        var checkbox = accessibilityController.accessibleElementById("checkbox");
+        var checkBoxTitleElement = checkbox.titleUIElement();
+        shouldBeTrue("checkBoxTitleElement.isEqual(accessibilityController.accessibleElementById('label1'))");
+        debug("Checkbox title UI Element role: " + checkBoxTitleElement.role);
+        debug("Checkbox title UI Element child count: " + checkBoxTitleElement.childrenCount);
+        debug("\n");
+
+        var radio = accessibilityController.accessibleElementById("radio");
+        var radioTitleElement = radio.titleUIElement();
+        shouldBeTrue("radioTitleElement.isEqual(accessibilityController.accessibleElementById('label2'))");
+        debug("Radio title UI Element role: " + radioTitleElement.role);
+        debug("Radio title UI Element child count: " + radioTitleElement.childrenCount);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

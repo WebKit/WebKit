@@ -1,0 +1,483 @@
+# Copyright 2014 The LibYuv Project Authors. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS. All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/features.gni")
+import("//testing/test.gni")
+import("libyuv.gni")
+
+declare_args() {
+  # Set to false to disable building with absl flags.
+  libyuv_use_absl_flags = true
+
+  # When building a shared library using a target in WebRTC or
+  # Chromium projects that depends on libyuv, setting this flag
+  # to true makes libyuv symbols visible inside that library.
+  libyuv_symbols_visible = false
+}
+
+config("libyuv_config") {
+  include_dirs = [ "include" ]
+
+  # Define CHROMIUM to tell cpu_id to avoid sandbox unsafe system calls.
+  defines = [ "CHROMIUM" ]
+  if (libyuv_enable_rowwin) {
+    defines += [ "LIBYUV_ENABLE_ROWWIN=1" ]
+  }
+  if (!libyuv_use_neon) {
+    defines += [ "LIBYUV_DISABLE_NEON" ]
+  }
+  if (!libyuv_use_sve) {
+    defines += [ "LIBYUV_DISABLE_SVE" ]
+  }
+  if (!libyuv_use_sme) {
+    defines += [ "LIBYUV_DISABLE_SME" ]
+  }
+  if (libyuv_disable_rvv) {
+    defines += [ "LIBYUV_DISABLE_RVV" ]
+  }
+  if (!libyuv_use_lsx) {
+    defines += [ "LIBYUV_DISABLE_LSX" ]
+  }
+  if (!libyuv_use_lasx) {
+    defines += [ "LIBYUV_DISABLE_LASX" ]
+  }
+}
+
+# This target is built when no specific target is specified on the command line.
+group("default") {
+  testonly = true
+  deps = [ ":libyuv" ]
+  if (libyuv_include_tests) {
+    deps += [
+      ":compare",
+      ":cpuid",
+      ":i444tonv12_eg",
+      ":libyuv_unittest",
+      ":psnr",
+      ":yuvconstants",
+      ":yuvconvert",
+    ]
+  }
+}
+
+group("libyuv") {
+  all_dependent_configs = [ ":libyuv_config" ]
+  deps = []
+
+  if (is_win && target_cpu == "x64") {
+    # Compile with clang in order to get inline assembly
+    public_deps = [ ":libyuv_internal(//build/toolchain/win:win_clang_x64)" ]
+  } else {
+    public_deps = [ ":libyuv_internal" ]
+  }
+
+  if (libyuv_use_neon) {
+    deps += [ ":libyuv_neon" ]
+  }
+
+  if (libyuv_use_sve) {
+    deps += [ ":libyuv_sve" ]
+  }
+
+  if (libyuv_use_sme) {
+    deps += [ ":libyuv_sme" ]
+  }
+
+  if (libyuv_use_lsx) {
+    deps += [ ":libyuv_lsx" ]
+  }
+
+  if (libyuv_use_lasx) {
+    deps += [ ":libyuv_lasx" ]
+  }
+
+  if (!is_ios && !libyuv_disable_jpeg) {
+    # Make sure that clients of libyuv link with libjpeg. This can't go in
+    # libyuv_internal because in Windows x64 builds that will generate a clang
+    # build of libjpeg, and we don't want two copies.
+    deps += [ "//third_party:jpeg" ]
+  }
+}
+
+static_library("libyuv_internal") {
+  visibility = [ ":*" ]
+
+  sources = [
+    # Headers
+    "include/libyuv.h",
+    "include/libyuv/basic_types.h",
+    "include/libyuv/compare.h",
+    "include/libyuv/compare_row.h",
+    "include/libyuv/convert.h",
+    "include/libyuv/convert_argb.h",
+    "include/libyuv/convert_from.h",
+    "include/libyuv/convert_from_argb.h",
+    "include/libyuv/cpu_id.h",
+    "include/libyuv/loongson_intrinsics.h",
+    "include/libyuv/mjpeg_decoder.h",
+    "include/libyuv/planar_functions.h",
+    "include/libyuv/rotate.h",
+    "include/libyuv/rotate_argb.h",
+    "include/libyuv/rotate_row.h",
+    "include/libyuv/row.h",
+    "include/libyuv/scale.h",
+    "include/libyuv/scale_argb.h",
+    "include/libyuv/scale_rgb.h",
+    "include/libyuv/scale_row.h",
+    "include/libyuv/scale_uv.h",
+    "include/libyuv/version.h",
+    "include/libyuv/video_common.h",
+
+    # Source Files
+    "source/compare.cc",
+    "source/compare_common.cc",
+    "source/compare_gcc.cc",
+    "source/compare_win.cc",
+    "source/convert.cc",
+    "source/convert_argb.cc",
+    "source/convert_from.cc",
+    "source/convert_from_argb.cc",
+    "source/convert_jpeg.cc",
+    "source/convert_to_argb.cc",
+    "source/convert_to_i420.cc",
+    "source/cpu_id.cc",
+    "source/mjpeg_decoder.cc",
+    "source/mjpeg_validate.cc",
+    "source/planar_functions.cc",
+    "source/rotate.cc",
+    "source/rotate_any.cc",
+    "source/rotate_argb.cc",
+    "source/rotate_common.cc",
+    "source/rotate_gcc.cc",
+    "source/rotate_win.cc",
+    "source/row_any.cc",
+    "source/row_common.cc",
+    "source/row_gcc.cc",
+    "source/row_rvv.cc",
+    "source/row_win.cc",
+    "source/scale.cc",
+    "source/scale_any.cc",
+    "source/scale_argb.cc",
+    "source/scale_common.cc",
+    "source/scale_gcc.cc",
+    "source/scale_rgb.cc",
+    "source/scale_rvv.cc",
+    "source/scale_uv.cc",
+    "source/scale_win.cc",
+    "source/video_common.cc",
+  ]
+
+  configs += [ ":libyuv_config" ]
+  defines = []
+  deps = []
+
+  if (libyuv_symbols_visible) {
+    configs -= [ "//build/config/gcc:symbol_visibility_hidden" ]
+    configs += [ "//build/config/gcc:symbol_visibility_default" ]
+  }
+
+  if ((!is_ios || use_blink) && !libyuv_disable_jpeg) {
+    defines += [ "HAVE_JPEG" ]
+
+    # Needed to pull in libjpeg headers. Can't add //third_party:jpeg to deps
+    # because in Windows x64 build it will get compiled with clang.
+    deps += [ "//third_party:jpeg_includes" ]
+  }
+
+  if (!is_debug) {
+    configs -= [ "//build/config/compiler:default_optimization" ]
+
+    # Enable optimize for speed (-O2) over size (-Os).
+    configs += [ "//build/config/compiler:optimize_max" ]
+  }
+
+  # To enable AVX2 or other cpu optimization, pass flag here
+  if (!is_win) {
+    cflags = [
+      # "-mpopcnt",
+      # "-mavx2",
+      # "-mfma",
+      "-ffp-contract=fast",  # Enable fma vectorization for NEON.
+    ]
+  }
+}
+
+if (libyuv_use_neon) {
+  static_library("libyuv_neon") {
+    sources = [
+      # ARM Source Files
+      "source/compare_neon.cc",
+      "source/compare_neon64.cc",
+      "source/rotate_neon.cc",
+      "source/rotate_neon64.cc",
+      "source/row_neon.cc",
+      "source/row_neon64.cc",
+      "source/scale_neon.cc",
+      "source/scale_neon64.cc",
+    ]
+
+    deps = [ ":libyuv_internal" ]
+
+    public_configs = [ ":libyuv_config" ]
+
+    if (current_cpu == "arm64") {
+      # The -march arguments below are incompatible with libc++ modules.
+      use_libcxx_modules = false
+
+      # TODO(thakis): Do we get this from global flags already? Is this needed?
+      cflags = [ "-march=armv8-a+dotprod+i8mm" ]
+    }
+  }
+}
+
+if (libyuv_use_sve) {
+  static_library("libyuv_sve") {
+    sources = [ "source/row_sve.cc" ]
+
+    deps = [ ":libyuv_internal" ]
+
+    public_configs = [ ":libyuv_config" ]
+
+    # The -march arguments below are incompatible with libc++ modules.
+    use_libcxx_modules = false
+
+    # SVE2 is an Armv9-A feature.
+    cflags = [ "-march=armv9-a+i8mm+sve2" ]
+  }
+}
+
+if (libyuv_use_sme) {
+  static_library("libyuv_sme") {
+    sources = [
+      "source/rotate_sme.cc",
+      "source/row_sme.cc",
+      "source/scale_sme.cc",
+    ]
+
+    deps = [ ":libyuv_internal" ]
+
+    public_configs = [ ":libyuv_config" ]
+
+    # The -march arguments below are incompatible with libc++ modules.
+    use_libcxx_modules = false
+
+    # SME is an Armv9-A feature.
+    cflags = [ "-march=armv9-a+i8mm+sme" ]
+  }
+}
+
+if (libyuv_use_lsx) {
+  static_library("libyuv_lsx") {
+    sources = [
+      # LSX Source Files
+      "source/rotate_lsx.cc",
+      "source/row_lsx.cc",
+      "source/scale_lsx.cc",
+    ]
+
+    cflags_cc = [
+      "-mlsx",
+      "-Wno-c++11-narrowing",
+    ]
+
+    deps = [ ":libyuv_internal" ]
+
+    public_configs = [ ":libyuv_config" ]
+  }
+}
+
+if (libyuv_use_lasx) {
+  static_library("libyuv_lasx") {
+    sources = [
+      # LASX Source Files
+      "source/row_lasx.cc",
+    ]
+
+    cflags_cc = [
+      "-mlasx",
+      "-Wno-c++11-narrowing",
+    ]
+
+    deps = [ ":libyuv_internal" ]
+
+    public_configs = [ ":libyuv_config" ]
+  }
+}
+
+if (libyuv_include_tests) {
+  config("libyuv_unittest_warnings_config") {
+    if (!is_win) {
+      cflags = [
+        # TODO(fbarchard): Fix sign and unused variable warnings.
+        "-Wno-sign-compare",
+        "-Wno-unused-variable",
+      ]
+    }
+    if (is_win) {
+      cflags = [
+        "/wd4245",  # signed/unsigned mismatch
+        "/wd4189",  # local variable is initialized but not referenced
+      ]
+    }
+  }
+  config("libyuv_unittest_config") {
+    defines = [ "GTEST_RELATIVE_PATH" ]
+  }
+
+  test("libyuv_unittest") {
+    testonly = true
+
+    sources = [
+      "unit_test/basictypes_test.cc",
+      "unit_test/color_test.cc",
+      "unit_test/compare_test.cc",
+      "unit_test/convert_argb_test.cc",
+      "unit_test/convert_test.cc",
+      "unit_test/cpu_test.cc",
+      "unit_test/cpu_thread_test.cc",
+      "unit_test/math_test.cc",
+      "unit_test/planar_test.cc",
+      "unit_test/rotate_argb_test.cc",
+      "unit_test/rotate_test.cc",
+      "unit_test/scale_argb_test.cc",
+      "unit_test/scale_plane_test.cc",
+      "unit_test/scale_rgb_test.cc",
+      "unit_test/scale_test.cc",
+      "unit_test/scale_uv_test.cc",
+      "unit_test/unit_test.cc",
+      "unit_test/unit_test.h",
+      "unit_test/video_common_test.cc",
+    ]
+
+    deps = [
+      ":libyuv",
+      "//testing/gtest",
+    ]
+
+    defines = []
+    if (libyuv_use_absl_flags) {
+      defines += [ "LIBYUV_USE_ABSL_FLAGS" ]
+      deps += [
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
+    }
+
+    configs += [ ":libyuv_unittest_warnings_config" ]
+
+    public_deps = [ "//testing/gtest" ]
+    public_configs = [ ":libyuv_unittest_config" ]
+
+    if (is_linux || is_chromeos) {
+      cflags = [ "-fexceptions" ]
+
+      # For enabling ASLR.
+      ldflags = [ "-pie" ]
+    }
+    if (is_ios) {
+      configs -= [ "//build/config/compiler:default_symbols" ]
+      configs += [ "//build/config/compiler:symbols" ]
+      cflags = [ "-Wno-sometimes-uninitialized" ]
+    }
+    if (!is_ios && !libyuv_disable_jpeg) {
+      defines += [ "HAVE_JPEG" ]
+    }
+
+    # TODO(YangZhang): These lines can be removed when high accuracy
+    # YUV to RGB to Neon is ported.
+    if (target_cpu == "arm" || target_cpu == "arm64") {
+      defines += [ "LIBYUV_NEON" ]
+    }
+
+    defines += [
+      # Enable the following 3 macros to turn off assembly for specified CPU.
+      # "LIBYUV_DISABLE_X86",
+      # "LIBYUV_DISABLE_NEON",
+      # Enable the following macro to build libyuv as a shared library (dll).
+      # "LIBYUV_USING_SHARED_LIBRARY"
+    ]
+  }
+
+  executable("compare") {
+    sources = [
+      # sources
+      "util/compare.cc",
+    ]
+    deps = [ ":libyuv" ]
+    if (is_linux || is_chromeos) {
+      cflags = [ "-fexceptions" ]
+    }
+  }
+
+  executable("yuvconvert") {
+    sources = [
+      # sources
+      "util/yuvconvert.cc",
+    ]
+    deps = [ ":libyuv" ]
+    if (is_linux || is_chromeos) {
+      cflags = [ "-fexceptions" ]
+    }
+  }
+
+  executable("yuvconstants") {
+    sources = [
+      # sources
+      "util/yuvconstants.c",
+    ]
+    deps = [ ":libyuv" ]
+    if (is_linux || is_chromeos) {
+      cflags = [ "-fexceptions" ]
+    }
+  }
+
+  executable("psnr") {
+    sources = [
+      # sources
+      "util/psnr.cc",
+      "util/psnr_main.cc",
+      "util/ssim.cc",
+    ]
+    deps = [ ":libyuv" ]
+
+    if (!is_ios && !libyuv_disable_jpeg) {
+      defines = [ "HAVE_JPEG" ]
+    }
+  }
+
+  executable("i444tonv12_eg") {
+    sources = [
+      # sources
+      "util/i444tonv12_eg.cc",
+    ]
+    deps = [ ":libyuv" ]
+  }
+
+  executable("cpuid") {
+    sources = [
+      # sources
+      "util/cpuid.c",
+    ]
+    deps = [ ":libyuv" ]
+  }
+}
+
+if (!build_with_chromium) {
+  # GN evaluates each .gn file once per toolchain, so restricting to default
+  # toolchain will ensure write_file() is called only once.
+  if (current_toolchain == default_toolchain) {
+    # Write debug logs to gn_logs.txt.
+    # This is also required for Siso builds.
+    import("//build/gn_logs.gni")
+    lines = [
+              "Generated during 'gn gen' by //BUILD.gn.",
+              "",
+            ] + build_gn_logs
+    write_file("$root_build_dir/gn_logs.txt", lines)
+  }
+}

@@ -1,0 +1,3 @@
+
+PASS Target is sized and laid out before resize observer
+

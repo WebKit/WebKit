@@ -1,0 +1,3 @@
+Meta charset parser should not crash on "charset" followed by whitespace only.
+
+PASS

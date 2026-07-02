@@ -1,0 +1,4 @@
+
+
+PASS navigation.forward() goes to the nearest forward entry
+

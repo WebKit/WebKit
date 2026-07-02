@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 402x52 clip at (9,9) size 400x50
+  RenderBlock {DIV} at (0,0) size 402x52 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 6x14
+      text run at (1,1) width 6: "1"
+    RenderBlock {SPAN} at (17,1) size 17x20 [border: none (1px solid #008000)]
+      RenderText {#text} at (11,0) size 6x14
+        text run at (11,0) width 6: "2"
+    RenderText {#text} at (34,1) size 6x14
+      text run at (34,1) width 6: "3"
+layer at (8,60) size 402x52 clip at (9,61) size 400x50
+  RenderBlock {DIV} at (0,52) size 402x52 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 6x14
+      text run at (1,1) width 6: "1"
+    RenderBlock {SPAN} at (7,1) size 17x20 [border: none (1px solid #FF0000) none]
+      RenderText {#text} at (0,0) size 6x14
+        text run at (0,0) width 6: "2"
+    RenderText {#text} at (34,1) size 6x14
+      text run at (34,1) width 6: "3"
+layer at (8,112) size 402x52 clip at (9,113) size 400x50
+  RenderBlock {DIV} at (0,104) size 402x52 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 6x14
+      text run at (1,1) width 6: "1"
+    RenderBlock {SPAN} at (17,1) size 28x20 [border: none (1px solid #FF0000) none (1px solid #008000)]
+      RenderText {#text} at (11,0) size 6x14
+        text run at (11,0) width 6: "2"
+    RenderText {#text} at (55,1) size 6x14
+      text run at (55,1) width 6: "3"

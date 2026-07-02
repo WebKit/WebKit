@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src *"><img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=a81771d6-1f8e-46b5-b1e6-8d697bfa5a26&amp;encodingcheck=&Gbreve;">
+
+
+
+PASS Speculative parsing, document.write(): meta-csp-img-src-asterisk
+

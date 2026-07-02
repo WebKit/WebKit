@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContactPickerAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            description("This test verifies that navigator.contacts.select requires a user gesture.");
+
+            try {
+                await navigator.contacts.select(["name", "email", "tel"]);
+                testFailed("Presented contact picker without user gesture.");
+            } catch (exception) {
+                window.exception = exception;
+                testPassed("Did not present contact picker.");
+                shouldBeEqualToString("exception.name", "SecurityError");
+            }
+
+            finishJSTest();
+        }
+    </script>
+    <body onload=runTest()></body>
+</html>

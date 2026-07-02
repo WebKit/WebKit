@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg:svg xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns="http://www.w3.org/1999/xhtml">
+<svg:text>This test passes if it does not crash.</svg:text>
+<script><![CDATA[
+if (testRunner)
+    testRunner.dumpAsText();
+class MyElement extends HTMLElement {}
+customElements.define('my-element', MyElement);
+]]></script>
+<my-element></my-element>
+<element-without-definition></element-without-definition>
+<script><![CDATA[
+document.documentElement.insertAdjacentHTML("beforeend", "<my-element></my-element>");
+]]></script>
+</svg:svg>

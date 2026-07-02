@@ -1,0 +1,5 @@
+
+FAIL Callback function, originated in an <iframe>, is invoked if <iframe> is connected promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createIframe"
+FAIL Callback function, originated in an <iframe> via main window's Function constructor, is invoked even if <iframe> is disconnected promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createIframe"
+FAIL Callback function, originated in an <iframe>, is not invoked if <iframe> is disconnected promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createIframe"
+

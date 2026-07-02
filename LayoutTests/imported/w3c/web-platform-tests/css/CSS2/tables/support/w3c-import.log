@@ -1,0 +1,58 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/bar_with_corner_dot.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/blue-orange-rectangle.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/blue15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/border_conflict_example_001.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/border_conflict_example_002.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/frameset-border-spacing-001.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/green15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/repeatable-diagonal-gradient-with-ticks.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/ring.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/ruler-h-200px-400px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/support/test-tr.png

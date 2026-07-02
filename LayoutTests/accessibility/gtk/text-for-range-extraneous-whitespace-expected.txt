@@ -1,0 +1,12 @@
+This paragraph is borked!
+
+This tests the ability to get element text for a specified range.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS paragraph.stringForRange(0, 25) is 'This paragraph is borked!'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

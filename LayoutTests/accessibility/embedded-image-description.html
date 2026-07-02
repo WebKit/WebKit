@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+
+<body id="body">
+
+<img src="resources/embedded-image-description-example.jpg" id="image" onload="runTest();">
+
+<script>
+    description("This tests that the embedded image description can be retrieved.");
+    jsTestIsAsync = true;
+
+    var image;
+    function runTest() {
+       image = accessibilityController.accessibleElementById("image");
+       shouldBe("image.embeddedImageDescription", "'AXEmbeddedImageDescription: Birds Eye View'");
+       finishJSTest();
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+FAIL pointerrawupdate event is fired assert_true: pointerrawupdate received expected true got false
+FAIL onpointerrawupdate is exposed assert_true: Window should have event handler onpointerrawupdate expected true got false
+

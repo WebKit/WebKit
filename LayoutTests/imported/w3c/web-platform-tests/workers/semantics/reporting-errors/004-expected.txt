@@ -1,0 +1,3 @@
+
+PASS shared worker in two documents and window.onerror
+

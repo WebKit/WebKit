@@ -1,0 +1,5 @@
+
+PASS Trusted Type violation report: evaluating a string.
+PASS Trusted Type violation report: evaluating a Trusted Script.
+PASS Trusted Type violation report: default policy runs in report-only mode.
+

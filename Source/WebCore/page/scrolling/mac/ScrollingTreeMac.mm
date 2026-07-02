@@ -1,0 +1,263 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ScrollingTreeMac.h"
+
+#if PLATFORM(MAC)
+
+#import "Logging.h"
+#import "PlatformCALayer.h"
+#import "PlatformCALayerContentsDelayedReleaser.h"
+#import "ScrollingThread.h"
+#import "ScrollingTreeFixedNodeCocoa.h"
+#import "ScrollingTreeFrameHostingNode.h"
+#import "ScrollingTreeFrameScrollingNodeMac.h"
+#import "ScrollingTreeOverflowScrollProxyNodeCocoa.h"
+#import "ScrollingTreeOverflowScrollingNodeMac.h"
+#import "ScrollingTreePluginHostingNode.h"
+#import "ScrollingTreePluginScrollingNodeMac.h"
+#import "ScrollingTreePositionedNodeCocoa.h"
+#import "ScrollingTreeStickyNodeCocoa.h"
+#import "WebCoreCALayerExtras.h"
+#import "WebLayer.h"
+#import "WheelEventTestMonitor.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/text/TextStream.h>
+
+namespace WebCore {
+
+Ref<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator& scrollingCoordinator)
+{
+    return adoptRef(*new ScrollingTreeMac(scrollingCoordinator));
+}
+
+ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator& scrollingCoordinator)
+    : ThreadedScrollingTree(scrollingCoordinator)
+{
+}
+
+Ref<ScrollingTreeNode> ScrollingTreeMac::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+{
+    switch (nodeType) {
+    case ScrollingNodeType::MainFrame:
+    case ScrollingNodeType::Subframe:
+        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
+    case ScrollingNodeType::FrameHosting:
+        return ScrollingTreeFrameHostingNode::create(*this, nodeID);
+    case ScrollingNodeType::PluginScrolling:
+        return ScrollingTreePluginScrollingNodeMac::create(*this, nodeID);
+    case ScrollingNodeType::PluginHosting:
+        return ScrollingTreePluginHostingNode::create(*this, nodeID);
+    case ScrollingNodeType::Overflow:
+        return ScrollingTreeOverflowScrollingNodeMac::create(*this, nodeID);
+    case ScrollingNodeType::OverflowProxy:
+        return ScrollingTreeOverflowScrollProxyNodeCocoa::create(*this, nodeID);
+    case ScrollingNodeType::Fixed:
+        return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
+    case ScrollingNodeType::Sticky:
+        return ScrollingTreeStickyNodeCocoa::create(*this, nodeID);
+    case ScrollingNodeType::Positioned:
+        return ScrollingTreePositionedNodeCocoa::create(*this, nodeID);
+    }
+    ASSERT_NOT_REACHED();
+    return ScrollingTreeFixedNodeCocoa::create(*this, nodeID);
+}
+
+static bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
+{
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
+    if (!platformCALayer)
+        return false;
+
+    // Scrolling changes boundsOrigin on the scroll container layer, but we computed its event region ignoring scroll position, so factor out bounds origin.
+    FloatPoint boundsOrigin = layer.bounds.origin;
+    FloatPoint originRelativePoint = FloatPoint(localPoint) - toFloatSize(boundsOrigin);
+    auto* eventRegion = platformCALayer->eventRegion();
+    return eventRegion && eventRegion->contains(roundedIntPoint(originRelativePoint));
+}
+
+static std::optional<ScrollingNodeID> scrollingNodeIDForLayer(CALayer *layer)
+{
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)layer);
+    return platformCALayer ? platformCALayer->scrollingNodeID() : std::nullopt;
+}
+
+static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNodeID, CALayer *hitLayer)
+{
+    for (RetainPtr<CALayer> layer = hitLayer; layer; layer = [layer superlayer]) {
+        auto nodeID = scrollingNodeIDForLayer(layer.get());
+        if (nodeID == scrollingNodeID)
+            return true;
+
+        RefPtr scrollingNode = tree.nodeForID(nodeID);
+        if (RefPtr proxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(scrollingNode)) {
+            auto actingOverflowScrollingNodeID = proxyNode->overflowScrollingNodeID();
+            if (actingOverflowScrollingNodeID == scrollingNodeID)
+                return true;
+        }
+
+        if (RefPtr positionedNode = dynamicDowncast<ScrollingTreePositionedNode>(scrollingNode)) {
+            if (positionedNode->relatedOverflowScrollingNodes().contains(scrollingNodeID))
+                return false;
+        }
+    }
+
+    return false;
+}
+
+RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint point)
+{
+    RefPtr rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
+        return nullptr;
+
+    Locker locker { m_layerHitTestMutex };
+
+    auto rootContentsLayer = downcast<ScrollingTreeFrameScrollingNodeMac>(rootScrollingNode.get())->rootContentsLayer();
+    FloatPoint scrollOrigin = rootScrollingNode->scrollOrigin();
+    auto pointInContentsLayer = point;
+    pointInContentsLayer.moveBy(scrollOrigin);
+
+    bool hasAnyNonInteractiveScrollingLayers = false;
+    auto layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, rootContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
+#if !LOG_DISABLED
+    for (auto [layer, point] : layersAtPoint)
+        LOG_WITH_STREAM(Scrolling, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer.get()));
+#endif
+
+    if (layersAtPoint.size()) {
+        RetainPtr<CALayer> frontmostInteractiveLayer;
+        for (size_t i = 0 ; i < layersAtPoint.size() ; i++) {
+            auto [layer, point] = layersAtPoint[i];
+
+            if (!layerEventRegionContainsPoint(layer.get(), point))
+                continue;
+
+            if (!frontmostInteractiveLayer)
+                frontmostInteractiveLayer = layer;
+
+            auto scrollingNodeForLayer = [&] (auto layer, auto point) -> RefPtr<ScrollingTreeNode> {
+                UNUSED_PARAM(point);
+                auto nodeID = scrollingNodeIDForLayer(layer.get());
+                RefPtr scrollingNode = nodeForID(nodeID);
+                if (!is<ScrollingTreeScrollingNode>(scrollingNode))
+                    return nullptr;
+                ASSERT(frontmostInteractiveLayer);
+                if (isScrolledBy(*this, *nodeID, frontmostInteractiveLayer.get())) {
+                    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found scrolling node " << nodeID);
+                    return scrollingNode;
+                }
+                return nullptr;
+            };
+
+            if (RefPtr scrollingNode = scrollingNodeForLayer(layer, point))
+                return scrollingNode;
+
+            // This layer may be scrolled by some other layer further back which may itself be non-interactive.
+            if (hasAnyNonInteractiveScrollingLayers) {
+                for (size_t j = i + 1; j < layersAtPoint.size() ; j++) {
+                    auto [behindLayer, behindPoint] = layersAtPoint[j];
+                    if (RefPtr scrollingNode = scrollingNodeForLayer(behindLayer, behindPoint))
+                        return scrollingNode;
+                }
+            }
+            // FIXME: Hit-test scroll indicator layers.
+        }
+    }
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found no scrollable layers; using root node");
+    return rootScrollingNode;
+}
+
+#if ENABLE(WHEEL_EVENT_REGIONS)
+OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesForPoint(FloatPoint point) const
+{
+    RefPtr rootScrollingNode = rootNode();
+    if (!rootScrollingNode)
+        return { };
+
+    Locker locker { m_layerHitTestMutex };
+
+    auto rootContentsLayer = downcast<ScrollingTreeFrameScrollingNodeMac>(rootScrollingNode)->rootContentsLayer();
+
+    Vector<LayerAndPoint, 16> layersAtPoint;
+    collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point, layerEventRegionContainsPoint);
+
+    if (layersAtPoint.isEmpty())
+        return { };
+
+    auto [hitLayer, localPoint] = layersAtPoint.last();
+    if (!hitLayer)
+        return { };
+
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)hitLayer.get());
+    if (!platformCALayer)
+        return { };
+
+    auto* eventRegion = platformCALayer->eventRegion();
+    if (!eventRegion)
+        return { };
+
+    return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(localPoint));
+}
+#endif
+
+void ScrollingTreeMac::didCompleteRenderingUpdate()
+{
+    bool hasActiveCATransaction = [CATransaction currentState];
+    if (!hasActiveCATransaction)
+        renderingUpdateComplete();
+}
+
+void ScrollingTreeMac::didCompletePlatformRenderingUpdate()
+{
+    renderingUpdateComplete();
+}
+
+void ScrollingTreeMac::applyLayerPositionsInternal()
+{
+    if (ScrollingThread::isCurrentThread())
+        registerForPlatformRenderingUpdateCallback();
+
+    ThreadedScrollingTree::applyLayerPositionsInternal();
+}
+
+void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
+{
+    [CATransaction addCommitHandler:[] {
+        PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitWillStart();
+    } forPhase:kCATransactionPhasePreLayout];
+
+    [CATransaction addCommitHandler:[] {
+        PlatformCALayerContentsDelayedReleaser::singleton().scrollingThreadCommitDidEnd();
+    } forPhase:kCATransactionPhasePostCommit];
+}
+
+} // namespace WebCore
+
+#endif // PLATFORM(MAC)

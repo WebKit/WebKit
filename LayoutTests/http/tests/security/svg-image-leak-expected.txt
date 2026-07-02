@@ -1,0 +1,4 @@
+ALERT: PASS
+First we load an image as a control to make sure we can set cookies:
+ Then we load an SVGImage to see if we can issue network requests from inside the image:
+

@@ -1,0 +1,47 @@
+
+PASS Sanity check for testValue length; if this fails, variou absolute offsets in the test below need to be adjusted to be less than testValue.length
+PASS Initial .value set on input-appended should set selectionStart to end of value
+PASS Initial .value set on input-not-appended should set selectionStart to end of value
+PASS Initial .value set on input-appended-prefocused should set selectionStart to end of value
+PASS Initial .value set on input-not-appended-prefocused should set selectionStart to end of value
+PASS Initial .value set on textarea-appended should set selectionStart to end of value
+PASS Initial .value set on textarea-not-appended should set selectionStart to end of value
+PASS Initial .value set on textarea-appended-prefocused should set selectionStart to end of value
+PASS Initial .value set on textarea-not-appended-prefocused should set selectionStart to end of value
+PASS Initial .value set on input-appended should set selectionEnd to end of value
+PASS Initial .value set on input-not-appended should set selectionEnd to end of value
+PASS Initial .value set on input-appended-prefocused should set selectionEnd to end of value
+PASS Initial .value set on input-not-appended-prefocused should set selectionEnd to end of value
+PASS Initial .value set on textarea-appended should set selectionEnd to end of value
+PASS Initial .value set on textarea-not-appended should set selectionEnd to end of value
+PASS Initial .value set on textarea-appended-prefocused should set selectionEnd to end of value
+PASS Initial .value set on textarea-not-appended-prefocused should set selectionEnd to end of value
+PASS onselect should fire when selectionStart is changed
+PASS onselect should fire when selectionStart is changed on input-appended
+PASS onselect should fire when selectionStart is changed on input-not-appended
+PASS onselect should fire when selectionStart is changed on input-appended-prefocused
+PASS onselect should fire when selectionStart is changed on input-not-appended-prefocused
+PASS onselect should fire when selectionStart is changed on textarea-appended
+PASS onselect should fire when selectionStart is changed on textarea-not-appended
+PASS onselect should fire when selectionStart is changed on textarea-appended-prefocused
+PASS onselect should fire when selectionStart is changed on textarea-not-appended-prefocused
+PASS onselect should fire when selectionStart is changed on
+PASS onselect should fire when selectionEnd is changed
+PASS onselect should fire when selectionEnd is changed on input-appended
+PASS onselect should fire when selectionEnd is changed on input-not-appended
+PASS onselect should fire when selectionEnd is changed on input-appended-prefocused
+PASS onselect should fire when selectionEnd is changed on input-not-appended-prefocused
+PASS onselect should fire when selectionEnd is changed on textarea-appended
+PASS onselect should fire when selectionEnd is changed on textarea-not-appended
+PASS onselect should fire when selectionEnd is changed on textarea-appended-prefocused
+PASS onselect should fire when selectionEnd is changed on textarea-not-appended-prefocused
+PASS onselect should fire when selectionEnd is changed on
+PASS Setting selectionStart to a value larger than selectionEnd should increase selectionEnd
+PASS Setting selectionEnd to a value smaller than selectionStart should decrease selectionStart
+PASS selectionStart edge-case values
+PASS selectionEnd edge-case values
+PASS selectionStart should be clamped by the current value length
+PASS selectionEnd should be clamped by the current value length
+PASS setSelectionRange should be clamped by the current value length
+PASS selectionStart and selectionEnd should remain the same when selectionDirection is changed
+

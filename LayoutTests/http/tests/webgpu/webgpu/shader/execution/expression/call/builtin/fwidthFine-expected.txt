@@ -1,0 +1,10 @@
+
+PASS :f32:vectorize="_undef_";non_uniform_discard=false
+PASS :f32:vectorize="_undef_";non_uniform_discard=true
+PASS :f32:vectorize=2;non_uniform_discard=false
+PASS :f32:vectorize=2;non_uniform_discard=true
+PASS :f32:vectorize=3;non_uniform_discard=false
+PASS :f32:vectorize=3;non_uniform_discard=true
+PASS :f32:vectorize=4;non_uniform_discard=false
+PASS :f32:vectorize=4;non_uniform_discard=true
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+p, input {
+    font-family: system-ui;
+    font-size: 18px;
+}
+
+div {
+    margin: 1em;
+}
+
+form {
+    border: 1px solid tomato;
+}
+</style>
+</head>
+<body>
+    <p aria-label="Heading">Hello world</p>
+    <form>
+        <div aria-label="Sign in with email">
+            <input type="email" placeholder="Enter your email" />
+            <a href="javascript:void">Forgot your email?</a>
+        </div>
+        <div>
+            <input type="password" placeholder="Enter your password" />
+        </div>
+    </form>
+    <iframe width="300" height="60"></iframe>
+    <div>
+        <a href="https://www.apple.com/">Link in subframe</a>
+        <br>
+        <img aria-label="Square icon" src="../../resources/square20.jpg" />
+    </div>
+    <script>
+    addEventListener("load", () => {
+        let subframe = document.querySelector("iframe");
+        addEventListener("message", event => {
+            if (event.data === "loaded")
+                window.parent.postMessage("loaded", "*");
+        }, { once: true });
+        subframe.src = "subframe2.html";
+    });
+    </script>
+</body>
+</html>

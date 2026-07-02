@@ -1,0 +1,54 @@
+Test that readPixels with invalid PBO offsets are properly validated and don't cause crashes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 45 PASS, 0 FAIL
+
+PASS getError was expected value: NO_ERROR : offset==0
+PASS pixels is expected
+PASS getError was expected value: NO_ERROR : 32x32, offset=256
+PASS pixels is expected
+PASS pixels is [0, 0, 0, 0]
+PASS getError was expected value: INVALID_VALUE : offset=-1
+PASS getError was expected value: INVALID_OPERATION : offset==4
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize - 1
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFF
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFD
+PASS getError was expected value: NO_ERROR : offset==0
+PASS pixels is expected
+PASS getError was expected value: NO_ERROR : 32x32, offset=256
+PASS pixels is expected
+PASS pixels is [0, 0, 0, 0]
+PASS getError was expected value: INVALID_VALUE : offset=-1
+PASS getError was expected value: INVALID_OPERATION : offset==4
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize - 1
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFF
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFD
+PASS getError was expected value: NO_ERROR : offset==0
+PASS pixels is expectedNoAlpha
+PASS getError was expected value: NO_ERROR : 32x32, offset=256
+PASS pixels is expectedNoAlpha
+PASS pixels is [0, 0, 0, 0]
+PASS getError was expected value: INVALID_VALUE : offset=-1
+PASS getError was expected value: INVALID_OPERATION : offset==4
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize - 1
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFF
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFD
+PASS getError was expected value: NO_ERROR : offset==0
+PASS pixels is expectedNoAlpha
+PASS getError was expected value: NO_ERROR : 32x32, offset=256
+PASS pixels is expectedNoAlpha
+PASS pixels is [0, 0, 0, 0]
+PASS getError was expected value: INVALID_VALUE : offset=-1
+PASS getError was expected value: INVALID_OPERATION : offset==4
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize
+PASS getError was expected value: INVALID_OPERATION : offset==bufferSize - 1
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFF
+PASS getError was expected value: INVALID_OPERATION : offset==0x7FFFFFFD
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

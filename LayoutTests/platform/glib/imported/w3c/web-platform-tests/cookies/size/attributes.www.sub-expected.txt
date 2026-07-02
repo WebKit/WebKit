@@ -1,0 +1,16 @@
+
+PASS Too long path attribute (>1024 bytes) is ignored; previous valid path wins.
+PASS Too long path attribute (>1024 bytes) is ignored; next valid path wins.
+PASS Max size path attribute (1024 bytes) is not ignored
+PASS Too long path attribute (>1024 bytes) is ignored
+PASS Too long domain attribute (>1024 bytes) is ignored; previous valid domain wins.
+PASS Too long domain attribute (>1024 bytes) is ignored; next valid domain wins.
+PASS Max size domain attribute (1024 bytes) is not ignored
+PASS Too long domain attribute (>1024 bytes) is ignored
+PASS Set cookie with max size name/value pair and max size attribute value
+PASS Set cookie with max size name/value pair and multiple max size attributes (>8k bytes total)
+PASS Max length Max-Age attribute value (1024 bytes) doesn't cause cookie rejection
+PASS Too long Max-Age attribute value (>1024 bytes) doesn't cause cookie rejection
+PASS Max length negative Max-Age attribute value (1024 bytes) doesn't get ignored
+PASS Too long negative Max-Age attribute value (>1024 bytes) gets ignored
+

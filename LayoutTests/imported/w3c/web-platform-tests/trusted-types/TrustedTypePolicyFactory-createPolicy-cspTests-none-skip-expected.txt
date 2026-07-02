@@ -1,0 +1,5 @@
+
+PASS Can create policy with name 'SomeName'
+PASS Can create a second policy with name 'SomeName'
+PASS Can create policy with name 'default'
+

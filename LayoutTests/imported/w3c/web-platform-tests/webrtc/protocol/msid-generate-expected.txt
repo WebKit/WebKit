@@ -1,0 +1,14 @@
+
+PASS No media track produces no MSID
+PASS AddTrack without a stream produces MSID with no stream ID
+PASS AddTrack with a stream produces MSID with a stream ID
+PASS AddTrack with two streams produces two MSID lines
+PASS AddTrack with the stream twice produces single MSID with a stream ID
+PASS AddTransceiver without a stream produces MSID with no stream ID
+PASS AddTransceiver with a stream produces MSID with a stream ID
+PASS AddTransceiver with two streams produces two MSID lines
+PASS AddTransceiver with the stream twice produces single MSID with a stream ID
+PASS SetStreams with a stream produces MSID with a stream ID
+PASS SetStreams with two streams produces two MSID lines
+PASS SetStreams with the stream twice produces single MSID with a stream ID
+

@@ -1,0 +1,8 @@
+
+EVENT(encrypted)
+EVENT(message)
+PROMISE: licenseResponse resolved
+EVENT(canplay)
+isBlack is true
+END OF TEST
+

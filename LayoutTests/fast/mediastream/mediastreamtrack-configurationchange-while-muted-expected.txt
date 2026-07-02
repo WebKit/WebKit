@@ -1,0 +1,5 @@
+
+
+PASS configurationchange is deferred while muted and fires after unmute
+PASS multiple configurationchange notifications while muted coalesce into one event on unmute
+

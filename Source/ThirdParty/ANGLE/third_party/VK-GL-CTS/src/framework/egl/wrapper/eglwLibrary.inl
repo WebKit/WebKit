@@ -1,0 +1,64 @@
+/* WARNING: This is auto-generated file. Do not modify, since changes will
+ * be lost! Modify the generating script instead.
+ *
+ * Generated from Khronos EGL API description (egl.xml) revision 682c662d48fbae076c5ed89a1bd5b2aa7e2e4449.
+ */
+virtual EGLBoolean									bindAPI							(EGLenum api) const																								= 0;
+virtual EGLBoolean									bindTexImage					(EGLDisplay dpy, EGLSurface surface, EGLint buffer) const														= 0;
+virtual EGLBoolean									chooseConfig					(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs, EGLint config_size, EGLint *num_config) const	= 0;
+virtual EGLint										clientWaitSync					(EGLDisplay dpy, EGLSync sync, EGLint flags, EGLTime timeout) const												= 0;
+virtual EGLint										clientWaitSyncKHR				(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags, EGLTimeKHR timeout) const										= 0;
+virtual EGLBoolean									copyBuffers						(EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target) const											= 0;
+virtual EGLContext									createContext					(EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint *attrib_list) const					= 0;
+virtual EGLImage									createImage						(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list) const	= 0;
+virtual EGLImageKHR									createImageKHR					(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLint *attrib_list) const		= 0;
+virtual EGLSurface									createPbufferFromClientBuffer	(EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer, EGLConfig config, const EGLint *attrib_list) const	= 0;
+virtual EGLSurface									createPbufferSurface			(EGLDisplay dpy, EGLConfig config, const EGLint *attrib_list) const												= 0;
+virtual EGLSurface									createPixmapSurface				(EGLDisplay dpy, EGLConfig config, EGLNativePixmapType pixmap, const EGLint *attrib_list) const					= 0;
+virtual EGLSurface									createPlatformPixmapSurface		(EGLDisplay dpy, EGLConfig config, void *native_pixmap, const EGLAttrib *attrib_list) const						= 0;
+virtual EGLSurface									createPlatformPixmapSurfaceEXT	(EGLDisplay dpy, EGLConfig config, void *native_pixmap, const EGLint *attrib_list) const						= 0;
+virtual EGLSurface									createPlatformWindowSurface		(EGLDisplay dpy, EGLConfig config, void *native_window, const EGLAttrib *attrib_list) const						= 0;
+virtual EGLSurface									createPlatformWindowSurfaceEXT	(EGLDisplay dpy, EGLConfig config, void *native_window, const EGLint *attrib_list) const						= 0;
+virtual EGLSync										createSync						(EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list) const												= 0;
+virtual EGLSyncKHR									createSyncKHR					(EGLDisplay dpy, EGLenum type, const EGLint *attrib_list) const													= 0;
+virtual EGLSurface									createWindowSurface				(EGLDisplay dpy, EGLConfig config, EGLNativeWindowType win, const EGLint *attrib_list) const					= 0;
+virtual EGLBoolean									destroyContext					(EGLDisplay dpy, EGLContext ctx) const																			= 0;
+virtual EGLBoolean									destroyImage					(EGLDisplay dpy, EGLImage image) const																			= 0;
+virtual EGLBoolean									destroyImageKHR					(EGLDisplay dpy, EGLImageKHR image) const																		= 0;
+virtual EGLBoolean									destroySurface					(EGLDisplay dpy, EGLSurface surface) const																		= 0;
+virtual EGLBoolean									destroySync						(EGLDisplay dpy, EGLSync sync) const																			= 0;
+virtual EGLBoolean									destroySyncKHR					(EGLDisplay dpy, EGLSyncKHR sync) const																			= 0;
+virtual EGLBoolean									getConfigAttrib					(EGLDisplay dpy, EGLConfig config, EGLint attribute, EGLint *value) const										= 0;
+virtual EGLBoolean									getConfigs						(EGLDisplay dpy, EGLConfig *configs, EGLint config_size, EGLint *num_config) const								= 0;
+virtual EGLContext									getCurrentContext				(void) const																									= 0;
+virtual EGLDisplay									getCurrentDisplay				(void) const																									= 0;
+virtual EGLSurface									getCurrentSurface				(EGLint readdraw) const																							= 0;
+virtual EGLDisplay									getDisplay						(EGLNativeDisplayType display_id) const																			= 0;
+virtual EGLint										getError						(void) const																									= 0;
+virtual EGLDisplay									getPlatformDisplay				(EGLenum platform, void *native_display, const EGLAttrib *attrib_list) const									= 0;
+virtual EGLDisplay									getPlatformDisplayEXT			(EGLenum platform, void *native_display, const EGLint *attrib_list) const										= 0;
+virtual __eglMustCastToProperFunctionPointerType	getProcAddress					(const char *procname) const																					= 0;
+virtual EGLBoolean									getSyncAttrib					(EGLDisplay dpy, EGLSync sync, EGLint attribute, EGLAttrib *value) const										= 0;
+virtual EGLBoolean									getSyncAttribKHR				(EGLDisplay dpy, EGLSyncKHR sync, EGLint attribute, EGLint *value) const										= 0;
+virtual EGLBoolean									initialize						(EGLDisplay dpy, EGLint *major, EGLint *minor) const															= 0;
+virtual EGLBoolean									lockSurfaceKHR					(EGLDisplay dpy, EGLSurface surface, const EGLint *attrib_list) const											= 0;
+virtual EGLBoolean									makeCurrent						(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx) const										= 0;
+virtual EGLenum										queryAPI						(void) const																									= 0;
+virtual EGLBoolean									queryContext					(EGLDisplay dpy, EGLContext ctx, EGLint attribute, EGLint *value) const											= 0;
+virtual const char *								queryString						(EGLDisplay dpy, EGLint name) const																				= 0;
+virtual EGLBoolean									querySurface					(EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint *value) const										= 0;
+virtual EGLBoolean									releaseTexImage					(EGLDisplay dpy, EGLSurface surface, EGLint buffer) const														= 0;
+virtual EGLBoolean									releaseThread					(void) const																									= 0;
+virtual EGLBoolean									setDamageRegionKHR				(EGLDisplay dpy, EGLSurface surface, EGLint *rects, EGLint n_rects) const										= 0;
+virtual EGLBoolean									signalSyncKHR					(EGLDisplay dpy, EGLSyncKHR sync, EGLenum mode) const															= 0;
+virtual EGLBoolean									surfaceAttrib					(EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint value) const										= 0;
+virtual EGLBoolean									swapBuffers						(EGLDisplay dpy, EGLSurface surface) const																		= 0;
+virtual EGLBoolean									swapBuffersWithDamageKHR		(EGLDisplay dpy, EGLSurface surface, const EGLint *rects, EGLint n_rects) const									= 0;
+virtual EGLBoolean									swapInterval					(EGLDisplay dpy, EGLint interval) const																			= 0;
+virtual EGLBoolean									terminate						(EGLDisplay dpy) const																							= 0;
+virtual EGLBoolean									unlockSurfaceKHR				(EGLDisplay dpy, EGLSurface surface) const																		= 0;
+virtual EGLBoolean									waitClient						(void) const																									= 0;
+virtual EGLBoolean									waitGL							(void) const																									= 0;
+virtual EGLBoolean									waitNative						(EGLint engine) const																							= 0;
+virtual EGLBoolean									waitSync						(EGLDisplay dpy, EGLSync sync, EGLint flags) const																= 0;
+virtual EGLint										waitSyncKHR						(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags) const															= 0;

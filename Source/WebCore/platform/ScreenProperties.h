@@ -1,0 +1,108 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/FloatRect.h>
+#include <wtf/HashMap.h>
+#include <wtf/Platform.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+enum class ContentsFormat : uint8_t;
+
+using PlatformGPUID = uint64_t; // On MAC, global IOKit registryID that can identify a GPU across process boundaries.
+
+using PlatformDisplayID = uint32_t;
+
+enum class DynamicRangeMode : uint8_t {
+    None,
+    Standard,
+    HLG,
+    HDR10,
+    DolbyVisionPQ,
+};
+
+struct ScreenData {
+    FloatRect screenAvailableRect;
+    FloatRect screenRect;
+    DestinationColorSpace colorSpace { DestinationColorSpace::SRGB() };
+    int screenDepth { 0 };
+    int screenDepthPerComponent { 0 };
+    bool screenSupportsExtendedColor { false };
+    bool screenHasInvertedColors { false };
+    bool screenSupportsHighDynamicRange { false };
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=297729 - Move EDR screen properties to their own container
+    bool suppressEDR { false };
+    float currentEDRHeadroom { 1 };
+    float maxEDRHeadroom { 1 };
+#endif
+#if PLATFORM(MAC)
+    FloatSize screenSize; // In millimeters.
+    bool screenIsMonochrome { false };
+    uint32_t displayMask { 0 };
+    PlatformGPUID gpuID { 0 };
+    DynamicRangeMode preferredDynamicRangeMode { DynamicRangeMode::Standard };
+    WEBCORE_EXPORT double NODELETE screenDPI() const;
+#endif
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+    IntSize screenSize; // In millimeters.
+    double dpi; // Already corrected for device scaling.
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+    float scaleFactor { 1 };
+#endif
+
+#if PLATFORM(MAC)
+    bool reserved { false };
+#endif
+
+    bool operator==(const ScreenData&) const = default;
+};
+
+using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
+
+struct ScreenProperties {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(ScreenProperties, WEBCORE_EXPORT);
+
+    PlatformDisplayID primaryDisplayID { 0 };
+    ScreenDataMap screenDataMap;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    OptionSet<ContentsFormat> screenContentsFormatsForTesting;
+#endif
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(GTK)
+    bool screenHasTouchDevice { true };
+#endif
+
+    bool operator==(const ScreenProperties&) const = default;
+};
+
+} // namespace WebCore

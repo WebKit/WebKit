@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="a" style="color: black">
+    <div id="b" style="color: black">
+        What color is this text?
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that when text color is specified expclitly, it is not overriden by a parent.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var a = document.getElementById("a");
+    var text = accessibilityController.accessibleElementById("b").childAtIndex(0);
+    var markerRange = text.textMarkerRangeForElement(text);
+    output += `${text.attributedStringForTextMarkerRange(markerRange)}\n\n`;
+
+    a.style.color = "red";
+    var expected = `Attributes in range {0, 24}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+What color is this text?`;
+
+    setTimeout(async function() {
+        await waitFor(() => expected === text.attributedStringForTextMarkerRange(markerRange));
+        output += `PASS: The attributed string matched expectations after changing styles.\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

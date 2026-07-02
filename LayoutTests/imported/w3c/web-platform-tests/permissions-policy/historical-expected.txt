@@ -1,0 +1,7 @@
+
+
+PASS document.featurePolicy should not be present (use document.permissionsPolicy instead)
+PASS HTMLIFrameElement.prototype.featurePolicy should not be present
+PASS Permissions-Policy header takes precedence over Feature-Policy header
+PASS iframe allow attribute blocks features using Permissions Policy syntax
+

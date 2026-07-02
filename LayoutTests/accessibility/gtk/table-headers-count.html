@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <table id="table" border="1">
+    <caption id="caption">X</caption>
+    <tr id="row1"><th id="header">R1C1</th><td id="cell1">R1C2</td></tr>
+    <tr id="row2"><td id="cell2">R2C1</td><td id="cell3">R2C2</td></tr>
+  </table>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This verifies rowHeaders() and columnHeaders() handles unexpected roles and lack of headers.");
+    function elementInfo(axElement) {
+        if (!axElement)
+            return "<null>";
+        return "  " + axElement.role + " " + axElement.stringValue;
+    }
+
+    function headerInfo(axElement) {
+        var headers = axElement.rowHeaders();
+        debug("Row Headers: " + headers.length);
+        for (var i = 0; i < headers.length; i++) {
+            debug(elementInfo(headers[i]));
+        }
+
+        headers = axElement.columnHeaders();
+        debug("Column Headers: " + headers.length);
+        for (var i = 0; i < headers.length; i++) {
+            debug(elementInfo(headers[i]));
+        }
+    }
+
+    if (window.accessibilityController) {
+         var axElement = accessibilityController.accessibleElementById("table");
+         debug("\nTable header");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("caption");
+         debug("\nCaption");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("row1");
+         debug("\nRow 1");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("row2");
+         debug("\nRow 2");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("header");
+         debug("\nHeader cell");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("cell1");
+         debug("\nCell 1");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("cell2");
+         debug("\nCell 2");
+         headerInfo(axElement);
+
+         axElement = accessibilityController.accessibleElementById("cell3");
+         debug("\nCell 3");
+         headerInfo(axElement);
+
+         document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

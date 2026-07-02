@@ -1,0 +1,5 @@
+
+PASS e.style['perspective'] = "1000" should not set the property value
+PASS e.style['perspective'] = "-1px" should not set the property value
+PASS e.style['perspective'] = "80%" should not set the property value
+

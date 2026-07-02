@@ -1,0 +1,54 @@
+<html>
+<head></head>
+<body>
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=47422">bug 47422</a>:
+window constructor shouldn't be directly callable.</p>
+<div id="console"></div>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+}
+
+function log(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+    paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+    
+function testConstructorProto()
+{
+    var testName = "Window constructor prototype is window prototype"
+    if (window.constructor.prototype === window.__proto__)
+        log(testName + ": PASS", "green");
+    else
+        log(testName + ": FAIL", "red");
+}
+
+function testConstructorNotCallable()
+{
+    var testName = "Window constructor not callable"
+    
+    var threwExc = false;
+    
+    try {
+        newW = window.constructor()
+    } catch(e) {
+        threwExc = true;
+    }
+
+    if (threwExc) {
+        log(testName + ": PASS", "green");
+    } else {
+        log(testName + ": FAIL", "red");
+    }
+}
+
+testConstructorProto();
+testConstructorNotCallable();
+</script>
+</body>
+</html>

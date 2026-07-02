@@ -1,0 +1,35 @@
+This verifies the exposure of aria-properties via accessible relations.
+
+PASS: owned.domIdentifier === 'owned1'
+PASS: owner.domIdentifier === 'test'
+PASS: owned.domIdentifier === 'owned2'
+PASS: owner.domIdentifier === 'test'
+PASS: controlled.domIdentifier === 'controlled1'
+PASS: controller.domIdentifier === 'test'
+PASS: controlled.domIdentifier === 'controlled2'
+PASS: controller.domIdentifier === 'test'
+PASS: labelledBy.domIdentifier === 'label1'
+PASS: label.domIdentifier === 'test'
+PASS: labelledBy.domIdentifier === 'label2'
+PASS: label.domIdentifier === 'test'
+PASS: description.domIdentifier === 'description1'
+PASS: descriptionFor.domIdentifier === 'test'
+PASS: alsoDescriptionFor.domIdentifier === 'flowto1'
+PASS: description.domIdentifier === 'description2'
+PASS: descriptionFor.domIdentifier === 'test'
+PASS: alsoDescriptionFor.domIdentifier === 'flowto2'
+PASS: flowTo.domIdentifier === 'flowto1'
+PASS: flowFrom.domIdentifier === 'test'
+PASS: flowTo.domIdentifier === 'flowto2'
+PASS: flowFrom.domIdentifier === 'test'
+PASS: details.domIdentifier === 'details'
+PASS: detailsFor.domIdentifier === 'test'
+PASS: error.domIdentifier === 'error'
+PASS: errorFor.domIdentifier === 'test'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

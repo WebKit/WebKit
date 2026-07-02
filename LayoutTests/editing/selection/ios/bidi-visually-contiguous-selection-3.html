@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 18px;
+    font-family: system-ui;
+}
+
+.start {
+    border: 1px solid tomato;
+    padding: 4px;
+}
+
+#paragraph {
+    display: inline-block;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that the text selection appears visually contiguous when selecting with a tap-and-drag gesture across bidi text boundaries.");
+
+    const startPoint = UIHelper.midPointOfRect(document.querySelector(".start").getBoundingClientRect());
+    const paragraphWidth = document.getElementById("paragraph").getBoundingClientRect().width;
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(startPoint.x, startPoint.y)
+        .wait(1.5)
+        .move(startPoint.x + paragraphWidth - 50, startPoint.y, 0.25)
+        .wait(0.25)
+        .end()
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+    await shouldBecomeEqual("getSelection().toString()", "'Arabic text هذه جملة باللغة العربية'");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p id="paragraph"><span class="start">Arabic</span> text هذه جملة باللغة العربية</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

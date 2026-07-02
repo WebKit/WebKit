@@ -1,0 +1,87 @@
+<html>
+<head></head>
+<body>
+This test passes if it does not crash.
+<script>
+
+globalThis.testRunner?.dumpAsText();
+
+const PROCESSOR_CODE = `Object.prototype.__defineSetter__('x', () => {
+    throw 1;
+});
+
+class CustomProcessor extends AudioWorkletProcessor {
+    static get parameterDescriptors() {
+        return [
+            {
+                name: 'x',
+                defaultValue: 1,
+                minValue: 0,
+                maxValue: 1,
+                automationRate: 'a-rate',
+            },
+            {
+                name: '0',
+                defaultValue: 1,
+                minValue: 0,
+                maxValue: 1,
+                automationRate: 'a-rate',
+            },
+            {
+                name: '10000000',
+                defaultValue: 1,
+                minValue: 0,
+                maxValue: 1,
+                automationRate: 'a-rate',
+            },
+            {
+                name: '5',
+                defaultValue: 1,
+                minValue: 0,
+                maxValue: 1,
+                automationRate: 'a-rate',
+            },
+        ];
+    }
+
+    process(inputs, outputs, parameters) {
+        return false;
+    }
+}
+
+registerProcessor('custom-processor', CustomProcessor);
+`;
+
+const PROCESSOR_URL = URL.createObjectURL(new Blob([PROCESSOR_CODE], { type: 'text/javascript' }));
+
+async function trigger() {
+    const context = new OfflineAudioContext(2, 1, 44100);
+    await context.audioWorklet.addModule(PROCESSOR_URL);
+
+    const node = new AudioWorkletNode(context, 'custom-processor');
+
+    const source = context.createBufferSource();
+    source.buffer = context.createBuffer(1, 1, 44100);
+    source.connect(node).connect(context.destination);
+    source.start();
+
+    await context.startRendering();
+}
+
+async function main() {
+    for (let i = 0; i < 30; i++) {
+        await trigger();
+    }
+}
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    console.log(e);
+}).finally(() => {
+    globalThis.testRunner?.notifyDone();
+});
+
+</script>
+</body>
+</html>

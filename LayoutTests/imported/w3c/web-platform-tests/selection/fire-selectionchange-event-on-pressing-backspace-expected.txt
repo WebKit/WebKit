@@ -1,0 +1,5 @@
+
+
+FAIL Selectionchange event is fired after removing the character assert_equals: target.innerHTML should match expected "<p>wo<i id=\"caret\">l</i>d</p>" but got "<p>word</p>"
+FAIL Selectionchange event is fired after removing the range assert_equals: target.innerHTML should match expected "<p>w<i id=\"caret\">l</i>d</p>" but got "<p><br></p>"
+

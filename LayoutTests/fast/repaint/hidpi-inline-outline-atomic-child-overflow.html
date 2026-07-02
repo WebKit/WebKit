@@ -1,0 +1,19 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    body { margin: 20px; }
+</style>
+<div><span id="target"><div style="display: inline-block; width: 45px; height: 41px;"></div></span></div>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest() {
+    await UIHelper.renderingUpdate();
+    document.getElementById("target").style.outline = "3px solid blue";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

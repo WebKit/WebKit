@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+    
+<style>
+    
+iframe {
+    position: absolute;
+    
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    border: none;
+}    
+
+</style>
+    
+<iframe src="resources/scroll-timeline-in-iframe-content.html"></iframe>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const iframe = document.querySelector("iframe");
+
+const target = () => iframe.contentDocument.getElementById("target");
+
+const scrollAndCheckTimeline = async (scroller, progress) => {
+    const maxScrollTop = scroller.scrollHeight - iframe.contentWindow.innerHeight;
+    const scrollTop = progress * maxScrollTop;
+
+    iframe.contentWindow.scrollTo(0, scrollTop);
+    await UIHelper.renderingUpdate();
+
+    const expectedTimelineTime = `${(progress * 100).toFixed(2)}%`;
+
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target());
+    assert_equals(remoteAnimationStack.animations.length, 1);
+    const timelineTime = remoteAnimationStack.animations[0].timeline.currentTime;
+    assert_equals(timelineTime, expectedTimelineTime, `After scrolling to ${scrollTop}, the timeline time is ${expectedTimelineTime}`);
+};
+
+promise_test(async t => {
+    if (!target())
+        await new Promise(resolve => iframe.contentWindow.addEventListener("DOMContentLoaded", resolve));
+
+    const scroller = iframe.contentDocument.documentElement;
+
+    const timeline = new ScrollTimeline({ source : scroller });
+    const animation = target().animate({ opacity: 0 }, { timeline });
+
+    await animationAcceleration(animation);
+
+    await scrollAndCheckTimeline(scroller, 0);
+    await scrollAndCheckTimeline(scroller, 0.5);
+    await scrollAndCheckTimeline(scroller, 1);
+    await scrollAndCheckTimeline(scroller, 0.25);
+    await scrollAndCheckTimeline(scroller, 0.75);
+}, "The timeline current time updates as its source is scrolled with a root scroller within an iframe");
+
+</script>
+</body>

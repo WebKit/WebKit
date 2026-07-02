@@ -1,0 +1,5 @@
+* Sending State to Service Worker
+* Asking Service Worker if it received the state
+* Simulating Service Worker process crash
+PASS: service worker lost the state and responded the postMessage after process termination
+

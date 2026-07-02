@@ -1,0 +1,47 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% DEFAULT 
+  product.maxvotesperbug = constants.DEFAULT_VOTES_PER_BUG
+  product.votesperuser = 0
+  product.votestoconfirm = 0
+%]
+
+<tr>
+  <th>Maximum votes per person:</th>
+  <td><input size="5" maxlength="5" name="votesperuser" id="votesperuser"
+             value="[% product.votesperuser FILTER html %]">
+  </td>
+</tr>
+
+<tr>
+  <th>
+    Maximum votes a person can put on a single [% terms.bug %]:
+  </th>
+  <td><input size="5" maxlength="5" name="maxvotesperbug" id="maxvotesperbug"
+             value="[% product.maxvotesperbug FILTER html %]">
+  </td>
+</tr>
+
+<tr id="votes_to_confirm_container"
+    [%- ' class="bz_default_hidden"' IF !product.allows_unconfirmed %]>
+  <th>
+    Confirm [% terms.abug %] if it gets this many votes:
+  </th>
+  <td>
+    <input size="3" maxlength="5" name="votestoconfirm" id="votestoconfirm"
+           value="[% product.votestoconfirm FILTER html %]">
+    <br>(Setting this to 0 disables auto-confirming [% terms.bugs %]
+    by vote.)
+    <script type="text/javascript">
+        YAHOO.util.Event.addListener('allows_unconfirmed', 'change',
+            function() { bz_toggleClass('votes_to_confirm_container',
+                                        'bz_default_hidden'); });
+    </script>
+  </td>
+</tr>

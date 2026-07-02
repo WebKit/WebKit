@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .line-path {
+        stroke: #444;
+        fill: none;
+        stroke-width: 2;
+    }
+</style>
+</head>
+<body>
+    <svg viewBox="0 0 600 100" width="600" height="100">
+        <defs>
+            <marker id="arrowStart" viewBox="0 0 10 10" refX="5" refY="5"
+                    markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="red"/>
+            </marker>
+            <marker id="arrowMid" viewBox="0 0 10 10" refX="5" refY="5"
+                    markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="green"/>
+            </marker>
+            <marker id="arrowEnd" viewBox="0 0 10 10" refX="5" refY="5"
+                    markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="blue"/>
+            </marker>
+        </defs>
+        <path class="line-path" d="M 20 50 L 180 50" marker-start="url(#arrowStart)"/>
+        <path class="line-path" d="M 220 50 L 300 50 L 380 50" marker-mid="url(#arrowMid)"/>
+        <path class="line-path" d="M 420 50 L 580 50" marker-end="url(#arrowEnd)"/>
+    </svg>
+</body>
+</html>

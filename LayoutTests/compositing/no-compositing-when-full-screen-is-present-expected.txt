@@ -1,0 +1,57 @@
+Test that only elements in fullscreen subtree and the associated backdrop get layer backed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+full screen contentfoobar
+foobar
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 2
+        (GraphicsLayer
+          (preserves3D 1)
+          (backingStoreAttached 0)
+          (children 1
+            (GraphicsLayer
+              (bounds 800.00 600.00)
+              (backingStoreAttached 1)
+              (children 2
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 800.00 600.00)
+                  (backingStoreAttached 1)
+                )
+                (GraphicsLayer
+                  (bounds 800.00 600.00)
+                  (backingStoreAttached 1)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (preserves3D 1)
+          (backingStoreAttached 0)
+          (children 1
+            (GraphicsLayer
+              (bounds 800.00 600.00)
+              (drawsContent 1)
+              (backingStoreAttached 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+Enter fullscreen

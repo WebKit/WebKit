@@ -1,0 +1,7 @@
+
+PASS Property baseline-shift value '-10px'
+PASS Property baseline-shift value '20%'
+PASS Property baseline-shift value 'calc(10px - 0.5em)'
+PASS Property baseline-shift value 'sub'
+PASS Property baseline-shift value 'super'
+

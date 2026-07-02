@@ -1,0 +1,9 @@
+
+א;
+א;
+
+PASS Dynamically changing dir, text on input element
+PASS Dynamically changing dir, text on textarea element
+PASS Dynamically changing dir, text on div element
+PASS Dynamically changing dir, text on pre element
+

@@ -1,0 +1,1 @@
+Test test should not trigger any invalid memory accesses when running under ASan.

@@ -1,0 +1,7 @@
+XYZ X
+
+abc defXYZ 
+
+PASS Pasting text ends with a visible character
+PASS Pasting text ends with a collapsible white-space
+

@@ -1,0 +1,24 @@
+
+PASS :createBindGroup,at_over:limitTest="atDefault";testValueName="atLimit"
+PASS :createBindGroup,at_over:limitTest="atDefault";testValueName="underLimit"
+PASS :createBindGroup,at_over:limitTest="overDefault";testValueName="atLimit"
+PASS :createBindGroup,at_over:limitTest="overDefault";testValueName="underLimit"
+PASS :createBindGroup,at_over:limitTest="betweenDefaultAndMinimum";testValueName="atLimit"
+PASS :createBindGroup,at_over:limitTest="betweenDefaultAndMinimum";testValueName="underLimit"
+PASS :createBindGroup,at_over:limitTest="atMinimum";testValueName="atLimit"
+PASS :createBindGroup,at_over:limitTest="atMinimum";testValueName="underLimit"
+PASS :createBindGroup,at_over:limitTest="underMinimum";testValueName="atLimit"
+PASS :createBindGroup,at_over:limitTest="underMinimum";testValueName="underLimit"
+PASS :setBindGroup,at_over:limitTest="atDefault";testValueName="atLimit"
+PASS :setBindGroup,at_over:limitTest="atDefault";testValueName="underLimit"
+PASS :setBindGroup,at_over:limitTest="overDefault";testValueName="atLimit"
+PASS :setBindGroup,at_over:limitTest="overDefault";testValueName="underLimit"
+PASS :setBindGroup,at_over:limitTest="betweenDefaultAndMinimum";testValueName="atLimit"
+PASS :setBindGroup,at_over:limitTest="betweenDefaultAndMinimum";testValueName="underLimit"
+PASS :setBindGroup,at_over:limitTest="atMinimum";testValueName="atLimit"
+PASS :setBindGroup,at_over:limitTest="atMinimum";testValueName="underLimit"
+PASS :setBindGroup,at_over:limitTest="underMinimum";testValueName="atLimit"
+PASS :setBindGroup,at_over:limitTest="underMinimum";testValueName="underLimit"
+PASS :validate,powerOf2:
+PASS :validate,greaterThanOrEqualTo32:
+

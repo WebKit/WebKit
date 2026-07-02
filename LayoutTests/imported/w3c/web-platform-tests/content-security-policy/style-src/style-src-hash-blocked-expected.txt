@@ -1,0 +1,6 @@
+
+PASS Should load the style with a correct hash
+PASS Should not load style that does not match hash
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum
+Lorem ipsum

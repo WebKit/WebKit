@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBASSEMBLY)
+
+#include "JSObject.h"
+#include "WasmTypeDefinitionInlines.h"
+#include "WebAssemblyGCObjectBase.h"
+#include <wtf/Ref.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+namespace JSC {
+
+class JSWebAssemblyInstance;
+
+class alignas(sizeof(uint64_t)) JSWebAssemblyStruct final : public WebAssemblyGCObjectBase {
+public:
+    using Base = WebAssemblyGCObjectBase;
+    static_assert(StructureFlags == WebAssemblyGCObjectBase::StructureFlags, "WebAssemblyGCObjectBase must have the same StructureFlags as us");
+
+    template<typename CellType, SubspaceAccess mode>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.heap.cellSpace;
+    }
+
+    DECLARE_INFO;
+
+    static inline TypeInfoBlob typeInfoBlob();
+    static inline WebAssemblyGCStructure* createStructure(VM&, Ref<const Wasm::RTT>&&);
+    static JSWebAssemblyStruct* tryCreate(VM&, WebAssemblyGCStructure*);
+    static JSWebAssemblyStruct* create(VM&, WebAssemblyGCStructure*);
+
+    DECLARE_VISIT_CHILDREN;
+
+    uint64_t get(uint32_t) const;
+    v128_t NODELETE getVector(uint32_t) const;
+    void set(uint32_t, uint64_t);
+    void set(uint32_t, v128_t);
+    const Wasm::RTT& structType() const { return gcStructure()->rtt(); }
+    Wasm::FieldType fieldType(uint32_t fieldIndex) const { SUPPRESS_UNCOUNTED_ARG return structType().field(fieldIndex); }
+
+    uint8_t* fieldPointer(uint32_t fieldIndex) { SUPPRESS_UNCOUNTED_ARG return payload() + structType().offsetOfFieldInPayload(fieldIndex); }
+    const uint8_t* fieldPointer(uint32_t fieldIndex) const { return const_cast<JSWebAssemblyStruct*>(this)->fieldPointer(fieldIndex); }
+
+    static constexpr ptrdiff_t offsetOfData()
+    {
+        return WTF::roundUpToMultipleOf<alignof(uint64_t)>(sizeof(JSWebAssemblyStruct));
+    }
+
+    static constexpr size_t allocationSize(unsigned payloadSize)
+    {
+        return offsetOfData() + payloadSize;
+    }
+
+protected:
+    JSWebAssemblyStruct(VM&, WebAssemblyGCStructure*, unsigned payloadSize);
+    DECLARE_DEFAULT_FINISH_CREATION;
+
+private:
+    uint8_t* payload() { return std::bit_cast<uint8_t*>(this) + offsetOfData(); }
+    const uint8_t* payload() const { return std::bit_cast<const uint8_t*>(this) + offsetOfData(); }
+};
+
+
+TypeInfoBlob JSWebAssemblyStruct::typeInfoBlob()
+{
+    return TypeInfoBlob(0, TypeInfo(WebAssemblyGCObjectType, StructureFlags));
+}
+
+WebAssemblyGCStructure* JSWebAssemblyStruct::createStructure(VM& vm, Ref<const Wasm::RTT>&& rtt)
+{
+    RELEASE_ASSERT(rtt->kind() == Wasm::RTTKind::Struct);
+    return WebAssemblyGCStructure::create(vm, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info(), WTF::move(rtt));
+}
+
+} // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // ENABLE(WEBASSEMBLY)

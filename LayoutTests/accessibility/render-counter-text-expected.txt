@@ -1,0 +1,13 @@
+This tests that the text for RenderCounter is exposed correctly.
+
+PASS: line1.childAtIndex(0).stringValue === 'AXValue: 1'
+PASS: line1.childAtIndex(1).stringValue === 'AXValue: :'
+PASS: line1.childAtIndex(2).stringValue === 'AXValue: line1'
+PASS: line2.childAtIndex(0).stringValue === 'AXValue: 2'
+PASS: line2.childAtIndex(1).stringValue === 'AXValue: :'
+PASS: line2.childAtIndex(2).stringValue === 'AXValue: line2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

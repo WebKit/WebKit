@@ -1,0 +1,35 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ jscOptions=--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Checks that window.postMessage shares growable SharedArrayBuffers");
+
+jsTestIsAsync = true;
+
+var sab = new SharedArrayBuffer(4, { maxByteLength: 1024 });
+var memory = new Int32Array(sab);
+var otherMemory;
+
+window.addEventListener("message", function (event) {
+    otherMemory = new Int32Array(event.data);
+    memory[0] = 42;
+    shouldBe("memory[0]", "42");
+    shouldBe("otherMemory[0]", "42");
+    otherMemory[0] = 43;
+    shouldBe("memory[0]", "43");
+    shouldBe("otherMemory[0]", "43");
+    shouldBe("memory.length", "1");
+    shouldBe("otherMemory.length", "1");
+    sab.grow(1024);
+    shouldBe("memory.length", "256");
+    shouldBe("otherMemory.length", "256");
+    finishJSTest();
+});
+
+window.postMessage(sab, "*");
+</script>
+</body>
+</html>

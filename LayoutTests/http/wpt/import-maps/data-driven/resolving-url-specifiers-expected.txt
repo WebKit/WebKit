@@ -1,0 +1,28 @@
+
+
+PASS Test helper: fetching and sanity checking test JSON: url-specifiers.json
+PASS URL-like specifiers: Ordinary URL-like specifiers: https://example.com/lib/foo.mjs
+PASS URL-like specifiers: Ordinary URL-like specifiers: https://///example.com/lib/foo.mjs
+PASS URL-like specifiers: Ordinary URL-like specifiers: /lib/foo.mjs
+PASS URL-like specifiers: Ordinary URL-like specifiers: https://example.com/app/dotrelative/foo.mjs
+PASS URL-like specifiers: Ordinary URL-like specifiers: ../app/dotrelative/foo.mjs
+PASS URL-like specifiers: Ordinary URL-like specifiers: https://example.com/dotdotrelative/foo.mjs
+PASS URL-like specifiers: Ordinary URL-like specifiers: ../dotdotrelative/foo.mjs
+PASS URL-like specifiers: Import map entries just composed from / and .: https://example.com/
+PASS URL-like specifiers: Import map entries just composed from / and .: /
+PASS URL-like specifiers: Import map entries just composed from / and .: ../
+PASS URL-like specifiers: Import map entries just composed from / and .: https://example.com/app/
+PASS URL-like specifiers: Import map entries just composed from / and .: /app/
+PASS URL-like specifiers: Import map entries just composed from / and .: ../app/
+PASS URL-like specifiers: prefix-matched by keys with trailing slashes: /test/foo.mjs
+PASS URL-like specifiers: prefix-matched by keys with trailing slashes: https://example.com/app/test/foo.mjs
+PASS URL-like specifiers: should use the last entry's address when URL-like specifiers parse to the same absolute URL: /test
+PASS URL-like specifiers: backtracking (relative URLs): /test/..
+PASS URL-like specifiers: backtracking (relative URLs): /test/../backtrack
+PASS URL-like specifiers: backtracking (relative URLs): /test/../../backtrack
+PASS URL-like specifiers: backtracking (relative URLs): /test/../../../backtrack
+PASS URL-like specifiers: backtracking (absolute URLs): https://example.com/test/..
+PASS URL-like specifiers: backtracking (absolute URLs): https://example.com/test/../backtrack
+PASS URL-like specifiers: backtracking (absolute URLs): https://example.com/test/../../backtrack
+PASS URL-like specifiers: backtracking (absolute URLs): https://example.com/test/../../../backtrack
+

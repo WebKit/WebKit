@@ -1,0 +1,3 @@
+This tests if removing the iframe, while the iframe's object's beforeload is executed is safe.
+PASS if no crash is observed, while loading iframe.
+

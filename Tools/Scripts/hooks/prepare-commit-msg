@@ -1,0 +1,441 @@
+#!/usr/bin/env {{ python }}
+
+import os
+import re
+import subprocess
+import sys
+
+TOPLEVEL = subprocess.run(['git', 'rev-parse', '--show-toplevel'], encoding='utf-8', capture_output=True, check=True).stdout.strip()
+
+LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
+SPACING = 8
+IDENT = 4
+SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
+PREPARE_CHANGELOG_CMD = [{{ perl }}, os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--git-index']
+CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<hash>[a-f0-9A-F]+)\.$')
+CHERRY_PICK_COMMIT_RE = re.compile(r'^(?P<a>\S+)( \((?P<b>\S+)\))?$')
+REFNAME_RE = re.compile(r'^refs/remotes/(?P<remote>[^/ ]+)/(?P<branch>\S+)$')
+HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
+IDENTIFIER_RE = re.compile(r'(\d+\.)?\d+@\S+')
+PREFER_RADAR = {{ prefer_radar }}
+
+DEFAULT_BRANCH = '{{ default_branch }}'
+SOURCE_REMOTES = {{ source_remotes }}
+TRAILERS_TO_STRIP = {{ trailers_to_strip }}
+
+COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+(\.\d+)?@?([0-9a-zA-z\-\/\.]+[0-9a-zA-z\-\/])?'
+COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
+CHERRY_PICK_RE = [
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]ick {}'.format(COMPOUND_COMMIT_REF)),
+    re.compile(r'\S* ?[Cc]herry[- ][Pp]icked {}'.format(COMPOUND_COMMIT_REF)),
+]
+UNPACK_SECONDARY_RE = re.compile(r' \(({})\)'.format(COMMIT_REF_BASE))
+
+sys.path.append(SCRIPTS)
+from webkitpy.common.checkout.diff_parser import DiffParser
+from webkitbugspy import radar
+
+
+def set_env_variables_from_branch_config():
+    BRANCH = subprocess.run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], encoding='utf-8', capture_output=True, check=True).stdout.strip()
+    for name, data in dict(
+        title=('COMMIT_MESSAGE_TITLE', 1),
+        bug=('COMMIT_MESSAGE_BUG', re.compile(r'^(\D+)\d+$')),
+        cherry_picked=('GIT_WEBKIT_CHERRY_PICKED', 1),
+    ).items():
+        variable, mode = data
+        if variable in os.environ and os.environ[variable]:
+            continue
+        try:
+            value = ''
+            count = 0
+            for line in reversed(subprocess.run(
+                ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
+                capture_output=True,
+                encoding='utf-8',
+                check=True
+            ).stdout.strip().splitlines()):
+                if isinstance(mode, int) and count >= mode:
+                    break
+                elif isinstance(mode, re.Pattern):
+                    match = mode.match(line)
+                    if match and match.group(1) in value:
+                        continue
+
+                if line:
+                    value += line + '\n'
+                    count += 1
+
+            value = value.strip()
+            if value:
+                os.environ[variable] = value
+        except subprocess.CalledProcessError as error:
+            # `1` means that key did not exist, which is valid.
+            if error.returncode != 1:
+                sys.stderr.write(error.stderr)
+
+def get_bugs_string():
+    """Determines what bug URLs to fill or suggest in a WebKit commit message."""
+    need_the_bug_url = 'Need the bug URL (OOPS!).'
+    need_the_radar = 'Include a Radar link (OOPS!).'
+    has_radar = any([bool(regex.match(line))
+                     for line in os.environ.get('COMMIT_MESSAGE_BUG', '').splitlines()
+                     for regex in radar.Tracker.RES])
+
+    if os.environ.get('COMMIT_MESSAGE_BUG'):
+        if has_radar or not bool(radar.Tracker.radarclient()):
+            return os.environ['COMMIT_MESSAGE_BUG']
+        else:
+            return os.environ['COMMIT_MESSAGE_BUG'] + '\n' + need_the_radar
+
+    bugs_string = need_the_bug_url
+    if bool(radar.Tracker.radarclient()):
+        bugs_string += '\n' + need_the_radar
+    return bugs_string
+
+def parseChanges(command, commit_message):
+    dirname = None
+    changes = []
+
+    try:
+        for line in subprocess.run(
+            command,
+            encoding='utf-8',
+            capture_output=True,
+            check=True
+        ).stdout.splitlines():
+            commit_message.append(line[SPACING:])
+            changes.append(line[SPACING:])
+    except subprocess.CalledProcessError:
+        commit_message.append('')
+        return
+    return changes
+
+def message(source=None, sha=None, mention_tests=True):
+    commit_message = []
+    amend_changes = None
+    command = PREPARE_CHANGELOG_CMD
+
+    if not mention_tests:
+        command = command + ["--no-mention-tests"]
+
+    if sha:
+        commit_message.append('Amend changes:')
+        amend_changes = parseChanges(command, commit_message)
+        commit_message.append('')
+
+        commit_message.append('Combined changes:')
+        command += ['--git-commit', 'HEAD']
+
+    combined_changes = parseChanges(command, commit_message)
+
+    revert_msg = os.environ.get('COMMIT_MESSAGE_REVERT', '')
+    if revert_msg:
+        return '''{title}\n{revert}'''.format(
+            title=os.environ.get('COMMIT_MESSAGE_TITLE', ''),
+            revert=revert_msg,
+        ), combined_changes, amend_changes
+    else:
+        bugs_string = get_bugs_string()
+        return '''{title}
+{bugs}
+
+Reviewed by NOBODY (OOPS!).
+
+Explanation of why this fixes the bug (OOPS!).
+
+{content}
+'''.format(
+        title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
+        bugs=bugs_string,
+        content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
+    ), combined_changes, amend_changes
+
+def source_branches():
+    proc = None
+    try:
+        proc = subprocess.Popen(
+            ['git', 'rev-list', 'HEAD'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            encoding='utf-8',
+        )
+        outer_line = proc.stdout.readline()
+        while outer_line:
+            branches = set()
+            for inner_line in subprocess.run(
+                ['git', 'branch', '--contains', outer_line.strip(), '-a', '--format', '%(refname)'],
+                encoding='utf-8',
+                capture_output=True,
+                check=True
+            ).stdout.splitlines():
+                if not inner_line.startswith('refs/remotes'):
+                    continue
+                _, _, remote, branch = inner_line.split('/', 3)
+                if remote in SOURCE_REMOTES and branch != 'HEAD':
+                    branches.add(branch)
+            if branches:
+                return sorted(branches)
+            outer_line = proc.stdout.readline()
+    finally:
+        if proc and proc.poll() is None:
+            proc.kill()
+
+    return []
+
+def cherry_pick(content):
+    cherry_picked = os.environ.get('GIT_WEBKIT_CHERRY_PICKED')
+    bugs = os.environ.get('COMMIT_MESSAGE_BUG', '').splitlines()
+    bug = bugs[0] if bugs else None
+
+    if PREFER_RADAR and not bug:
+        RADAR_RES = [
+            re.compile(r'<?rdar://problem/(?P<id>\d+)>?'),
+            re.compile(r'<?radar://problem/(?P<id>\d+)>?'),
+            re.compile(r'<?rdar:\/\/(?P<id>\d+)>?'),
+            re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
+        ]
+        seen_empty = False
+        for line in content.splitlines():
+            if not line and seen_empty:
+                break
+            elif not line:
+                seen_empty = True
+                continue
+            words = line.split()
+            for word in [words[0], words[-1]] if words[0] != words[-1] else [words[0]]:
+                for regex in RADAR_RES:
+                    if regex.match(word):
+                        bug = word
+                        break
+                if bug:
+                    break
+
+    if not cherry_picked or not bug:
+        LINK_RE = re.compile(r'^\S+:\/\/\S+\d+\S*$')
+
+        last_line = ''
+        for line in content.splitlines():
+            if not line:
+                continue
+            if not line.startswith('#'):
+                last_line = line
+            if not bug and LINK_RE.match(line):
+                bug = line
+            match = None if cherry_picked else CHERRY_PICKING_RE.match(line)
+            if match:
+                cherry_picked = match.group('hash')
+
+            if bug and cherry_picked:
+                break
+
+        if last_line and (not cherry_picked or not IDENTIFIER_RE.search(cherry_picked)):
+            from_last_line = IDENTIFIER_RE.search(last_line)
+            if from_last_line and not cherry_picked:
+                cherry_picked = from_last_line.group(0)
+            elif from_last_line:
+                cherry_picked = '{} ({})'.format(from_last_line.group(0), cherry_picked)
+
+    production_hash = None
+    match = CHERRY_PICK_COMMIT_RE.match(cherry_picked)
+    for candidate in ([match.group('a'), match.group('b')] if match else []):
+        if not candidate:
+            continue
+        if HASH_RE.match(candidate):
+            production_hash = candidate
+
+    if production_hash:
+        try:
+            subprocess.run(
+                ['git', 'merge-base', '--is-ancestor', production_hash, DEFAULT_BRANCH],
+                encoding='utf-8', check=True
+            )
+        except subprocess.CalledProcessError:
+            remotes = set()
+            for line in subprocess.run(
+                ['git', 'branch', '--contains', production_hash, '-a', '--format', '%(refname)'],
+                encoding='utf-8',
+                capture_output=True,
+                check=True
+            ).stdout.splitlines():
+                match = REFNAME_RE.match(line.strip())
+                if not match:
+                    continue
+                remote = match.group('remote')
+                if remote in SOURCE_REMOTES:
+                    remotes.add(match.group('remote'))
+            if not remotes:
+                production_hash = None
+
+    is_trunk_bound = DEFAULT_BRANCH in source_branches()
+    in_suffix = False
+    result = []
+    unindent = False
+
+    lines = list(content.splitlines())
+    for header in CHERRY_PICK_RE:
+        match = header.match(lines[0])
+        if not match:
+            continue
+        cherry_picked = '{}{}'.format(match.group('primary'), match.group('secondary') or '')
+        unindent = True
+        lines = lines[1:]
+        while not lines[0].rstrip():
+            lines = lines[1:]
+        break
+
+    cherry_pick_metadata = '{}. {}'.format(cherry_picked or '???', bug or '<bug>')
+    if not is_trunk_bound:
+        result += ['Cherry-pick {}'.format(cherry_pick_metadata), '']
+
+    for line in lines:
+        line = line.rstrip()
+        if not line:
+            result.append('')
+            continue
+        if unindent and line.startswith(IDENT*' '):
+            line = line[IDENT:]
+
+        if line[0] == '#' and not in_suffix:
+            in_suffix = True
+            if is_trunk_bound and production_hash:
+                while len(result) and not result[-1] or (result[-1].split(':', 1)[0] in TRAILERS_TO_STRIP):
+                    del result[-1]
+                result += ['', 'Originally-landed-as: {}'.format(cherry_pick_metadata)]
+        if line[0] != '#' and not is_trunk_bound and production_hash:
+            result.append(IDENT*' ' + line)
+        else:
+            result.append(line)
+    return '\n'.join(result)
+
+def annotate_deleted_lines(amend_changes, combined_changes):
+    annotated_lines = []
+    for line in amend_changes:
+        if line not in combined_changes:
+            if line.startswith('*'):
+                if not line.endswith('Removed.'):
+                    line += ' Removed.'
+            elif not line.endswith('Deleted.'):
+                line += ' Deleted.'
+        annotated_lines.append(line)
+    return annotated_lines
+
+def amended_message(full_message, combined_changes, amend_changes, update_changelog):
+    if amend_changes and update_changelog:
+        try:
+            from webkitscmpy.commit_parser import CommitMessageParser
+        except ImportError as e:
+            sys.stderr.write(f'{e}: Could not update changelog automatically. Falling back to the default template.\n')
+        else:
+            commit_message_parser = CommitMessageParser()
+        commit_message_parser.parse_message(full_message)
+        updated_changelog_lines = commit_message_parser.reconcile_with_changed_files(combined_changes)
+        reviewed_by_lines = (commit_message_parser.reviewed_by_lines or ['Reviewed by NOBODY (OOPS!).'])
+        description_lines = (commit_message_parser.description_lines or ['Explanation of why this fixes the bug (OOPS!).'])
+        tests_lines = commit_message_parser.tests_lines + [''] if commit_message_parser.tests_lines else []
+        amended_message = commit_message_parser.title_lines + [''] + reviewed_by_lines + [''] + description_lines + [''] + tests_lines + updated_changelog_lines
+        removed_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(annotate_deleted_lines(amend_changes, combined_changes), return_deleted=True)
+        return '''{message_body}
+
+# Your changelog has been updated with the following files/functions:
+{changed_lines}
+# The following lines have been removed from the changelog:
+{removed_lines}
+# To temporarily disable this feature, run `git-webkit commit --amend --no-update`.
+'''.format(message_body='\n'.join(amended_message),
+        changed_lines='\n'.join([f'#    {file}' for file in amend_changes]),
+        removed_lines='\n'.join([f'#    {file}' for file in removed_changelog_lines]))
+
+    commit_message = full_message
+    if not update_changelog:
+        commit_message += '''
+# To automatically update your changelog when amending, run `git-webkit setup`
+# or `git-webkit commit --amend --update` for one-time use.
+'''
+    return commit_message
+
+def main(file_name=None, source=None, sha=None):
+    with open(file_name, 'r') as commit_message_file:
+        content = commit_message_file.read()
+
+    if source not in (None, 'commit', 'template', 'merge'):
+        return 0
+
+    if os.environ.get('COMMIT_MESSAGE_TITLE', '').startswith('Unreviewed, reverting'):
+        pass
+    elif source == 'merge' and content.startswith('Revert'):
+        return 0
+    else:
+        set_env_variables_from_branch_config()
+
+    for line in content.splitlines():
+        if CHERRY_PICKING_RE.match(line):
+            os.environ['GIT_REFLOG_ACTION'] = 'cherry-pick'
+            break
+
+    if source == 'merge' and os.environ.get('GIT_REFLOG_ACTION') == 'cherry-pick':
+        with open(file_name, 'w') as commit_message_file:
+            commit_message_file.write(cherry_pick(content))
+        return 0
+
+    if os.environ.get('GIT_EDITOR', '') == ':':
+        # When there's no editor being launched, do nothing.
+        return 0
+
+    update_changelog = False
+    # Allow for overrides with git-webkit commit --amend [--update/--no-update]
+    if os.environ.get('WKSCMPY_UPDATE_CHANGELOG', '') == 'True':
+        update_changelog = True
+    elif os.environ.get('WKSCMPY_UPDATE_CHANGELOG', '') == 'False':
+        update_changelog = False
+    else:
+        try:
+            update_changelog = subprocess.run(
+                ['git', 'config', '--get', '--type', 'bool', 'webkitscmpy.auto-update-changelog'],
+                encoding='utf-8',
+                capture_output=True,
+                check=True
+            ).stdout.strip()
+            update_changelog = True if update_changelog == 'true' else False
+        except subprocess.CalledProcessError as error:
+            if error.returncode != 1:
+                sys.stderr.write(error.stderr)
+
+    with open(file_name, 'w') as commit_message_file:
+        if sha:
+            generated_msg, combined_changes, amend_changes = message(source=source, sha=sha, mention_tests=False)
+            git_log_msg = subprocess.run(
+                ['git', 'log', sha, '-1', '--pretty=format:%B'],
+                encoding='utf-8',
+                capture_output=True,
+                check=True
+            ).stdout
+            commit_message_file.write(amended_message(git_log_msg, combined_changes, amend_changes, update_changelog))
+        else:
+            generated_msg, combined_changes, amend_changes = message(source=source, sha=sha)
+            commit_message_file.write(generated_msg)
+
+        commit_message_file.write('''
+# Please populate the above commit message. Lines starting with '#'
+# will be ignored. For any files or functions that don't have an
+# associated comment, please remove them from the commit message.
+
+''')
+        if sha:
+            for line in generated_msg.splitlines():
+                commit_message_file.write('# {}\n'.format(line))
+            commit_message_file.write('\n')
+        for line in subprocess.run(
+            ['git', 'status'],
+            encoding='utf-8',
+            capture_output=True,
+            check=True
+        ).stdout.splitlines():
+            commit_message_file.write('# {}\n'.format(line))
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(*sys.argv[1:]))

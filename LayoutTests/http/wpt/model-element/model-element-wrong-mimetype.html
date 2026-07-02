@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<title>&lt;model> with unexpected mimetype</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <model id='test-model'>
+        <source src='resources/cube-wrong-mimetype.usdz'/>
+    </model>
+</body>
+<script>
+    promise_test(async t => {
+        const model = document.getElementById("test-model");
+        assert_true(!!model, "Model element should exist");
+        await model.ready;
+    }, "unexpected MIME type should log warning");
+</script>
+</html>

@@ -1,0 +1,4 @@
+
+PASS onerror should be called
+PASS error while reading body should report zeros for loaded and total
+

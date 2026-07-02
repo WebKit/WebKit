@@ -1,0 +1,21 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This tests the last paragraph in the pasted fragment is merged with the content after the insertion position
+"baz" and "oobar" should be in the same paragraph below
+| <span>
+|   "f"
+| "bar"
+| <span>
+|   <br>
+| "baz<#selection-caret>"
+| <span>
+|   "oo"
+| "bar"

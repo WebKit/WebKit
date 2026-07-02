@@ -1,0 +1,107 @@
+/*
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "RemoteObjectRegistry.h"
+
+#import "MessageSenderInlines.h"
+#import "RemoteObjectInvocation.h"
+#import "RemoteObjectRegistryMessages.h"
+#import "UserData.h"
+#import "WebPage.h"
+#import "WebProcessProxy.h"
+#import "_WKRemoteObjectRegistryInternal.h"
+#import <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteObjectRegistry);
+
+RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry)
+    : m_remoteObjectRegistry(remoteObjectRegistry)
+{
+}
+
+RemoteObjectRegistry::~RemoteObjectRegistry() = default;
+
+template<typename M> void RemoteObjectRegistry::send(M&& message)
+{
+    auto messageSender = this->messageSender();
+    auto messageDestinationID = this->messageDestinationID();
+    if (!messageSender || !messageDestinationID)
+        return;
+
+    WTF::switchOn(*messageSender, [&] (auto sender) {
+        sender.get().send(WTF::move(message), *messageDestinationID);
+    });
+}
+
+void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)
+{
+    if (auto& replyInfo = invocation.replyInfo()) {
+        ASSERT(!m_pendingReplies.contains(replyInfo->replyID));
+        m_pendingReplies.add(replyInfo->replyID, backgroundActivity("RemoteObjectRegistry invocation"_s));
+    }
+
+    send(Messages::RemoteObjectRegistry::InvokeMethod(invocation));
+}
+
+void RemoteObjectRegistry::sendReplyBlock(uint64_t replyID, const UserData& blockInvocation)
+{
+    send(Messages::RemoteObjectRegistry::CallReplyBlock(replyID, blockInvocation));
+}
+
+void RemoteObjectRegistry::sendUnusedReply(uint64_t replyID)
+{
+    send(Messages::RemoteObjectRegistry::ReleaseUnusedReplyBlock(replyID));
+}
+
+void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation)
+{
+    [m_remoteObjectRegistry.get() _invokeMethod:invocation];
+}
+
+void RemoteObjectRegistry::callReplyBlock(IPC::Connection& connection, uint64_t replyID, const UserData& blockInvocation)
+{
+    bool wasRemoved = m_pendingReplies.remove(replyID);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
+    @try {
+        [m_remoteObjectRegistry.get() _callReplyWithID:replyID blockInvocation:blockInvocation];
+    } @catch (NSException *exception) {
+        NSLog(@"Warning: Exception caught during handling of received message, marking message invalid .\nException: %@", exception);
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Exception caught during handling of RemoteObjectRegistry message"_s);
+    }
+}
+
+void RemoteObjectRegistry::releaseUnusedReplyBlock(uint64_t replyID)
+{
+    bool wasRemoved = m_pendingReplies.remove(replyID);
+    ASSERT_UNUSED(wasRemoved, wasRemoved);
+
+    [m_remoteObjectRegistry.get() _releaseReplyWithID:replyID];
+}
+
+} // namespace WebKit

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests the behavior of Accept Headers in Lockdown Mode. We restrict our Accept Headers to only the allowed formats when requested by a secure source.");
+jsTestIsAsync = true;
+
+function test() {
+    if (window.FileSystemHandle == undefined)
+    	testPassed("Confirmed Lockdown Mode process");
+    else
+        testFailed("This is NOT a Lockdown Mode process.");
+
+    const failImage = new Image();
+    failImage.src = "../resources/green-400x400.heic";
+    failImage.decode()
+        .then(() => {
+            testFailed("HEIC cannot decode in Lockdown Mode.");
+            document.body.appendChild(failImage);
+        })
+        .catch((encodingError) => {
+            testPassed("HEIC failed to parse.");
+        });
+
+    const img = new Image();
+    img.src = "../misc/resources/image-heic-accept.py";
+    img.decode()
+        .then(() => {
+            // In Lockdown Mode we present an Accept Header to HTTPS targets that does not include HEIC,
+            // so it should have sent us a PNG. That should decode cleanly.
+            testPassed("Received Lockdown-compatible image.");
+            document.body.appendChild(img);
+            finishJSTest();
+        })
+        .catch((encodingError) => {
+            // We don't expect to get here. In Lockdown Mode we present an Accept Header to HTTPS targets
+            // that does not include HEIC, so it should have sent us a PNG. That should decode cleanly,
+            // so no error.
+            testFailed("Image failed to parse.");
+            finishJSTest();
+        });
+}
+</script>
+</head>
+<body onload="test()">
+</body>
+</html>

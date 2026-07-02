@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SUCCESS! newline inserted AFTER quoted content
+
+Line of text
+
+
+

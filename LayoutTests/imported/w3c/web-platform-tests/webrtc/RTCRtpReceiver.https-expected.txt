@@ -1,0 +1,10 @@
+
+PASS RTCRtpReceiver should have a null transport initially
+PASS RTCRtpReceiver should have a transport after sLD(offer)
+PASS RTCRtpReceiver should have a null transport after rollback of sLD(offer)
+PASS RTCRtpReceiver should have a null transport after sRD(offer)
+PASS RTCRtpReceiver should have the same transport object as its corresponding RTCRtpSender
+PASS RTCRtpReceivers that share a bundle transport should have the same transport object
+PASS RTCRtpReceivers that do not necessarily share a bundle transport should not have the same transport object
+PASS RTCRtpReceiver should have the same transport object after an ICE restart
+

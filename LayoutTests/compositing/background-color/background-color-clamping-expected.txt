@@ -1,0 +1,37 @@
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 769 height: 830])
+  (layer position [x: 392.5 y: 392.5])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer position [x: 110 y: 110])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 200 height: 200])
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(255, 255, 255)))))
+    (
+      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer position [x: 110 y: 110])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 200 height: 200])
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(0, 140, 214)))))
+    (
+      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer position [x: 110 y: 110])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 200 height: 200])
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(0, 255, 184)))))
+    (
+      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer position [x: 110 y: 110])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 200 height: 200])
+          (layer anchorPoint [x: 0 y: 0])
+          (layer background color rgb(0, 255, 166)))))))

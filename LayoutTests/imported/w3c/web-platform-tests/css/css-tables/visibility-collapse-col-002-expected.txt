@@ -1,0 +1,16 @@
+Visibility collapse
+
+Spec
+Setting a column to visibility:collapse changes table width but not height.
+
+row 1	
+row 2	
+row 3	
+Second table is identical to first except both column groups have been collapsed. 5px borders are still visible.
+row 1	
+row 2	
+row 3	
+
+PASS col visibility:collapse doesn't change table height
+PASS col visibility:collapse changes table width
+

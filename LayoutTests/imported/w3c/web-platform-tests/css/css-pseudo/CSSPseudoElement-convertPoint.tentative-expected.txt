@@ -1,0 +1,9 @@
+
+FAIL CSSPseudoElement should have coordinate conversion methods target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL convertPointFromNode returns DOMPoint target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL convertRectFromNode returns DOMQuad target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL convertQuadFromNode returns DOMQuad target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL convertPointFromNode converts coordinates correctly target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL convertPointFromNode works with Document as source target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+FAIL convertPointFromNode works with Element as source target.pseudo is not a function. (In 'target.pseudo("::before")', 'target.pseudo' is undefined)
+

@@ -1,0 +1,4 @@
+
+PASS Event handler IDL attributes must not be implemented
+PASS No events must be fired, at least during the first 100 ms
+       

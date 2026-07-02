@@ -1,0 +1,5 @@
+
+PASS column-width responds to font-size changes
+PASS column-width clamps to 0px
+PASS column-width responds to inherited changes
+

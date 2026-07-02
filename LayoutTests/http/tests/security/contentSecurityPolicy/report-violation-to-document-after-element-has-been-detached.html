@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-test' 'unsafe-eval'">
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+    <script nonce="test">
+        jsTestIsAsync = true;
+
+        description("Tests that a detached element sends a CSP violation report to its document");
+
+        document.addEventListener('securitypolicyviolation', e => {
+            if (e.composed)
+                testPassed("Successfully received violation event");
+            else
+                testFailed("composed value not set on security policy violation");
+
+            finishJSTest();
+        });
+
+        let inlineScript = document.createElement("script");
+        inlineScript.append("alert(FAIL)");
+        (document.head || document.documentElement).appendChild(inlineScript);
+        inlineScript.remove();
+    </script>
+</body>
+</html>

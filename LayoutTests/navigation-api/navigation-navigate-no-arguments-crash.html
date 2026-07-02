@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that navigation.navigate() called with zero arguments returns a valid NavigationResult and does not leak a raw JSC::Exception cell to JavaScript.");
+
+jsTestIsAsync = true;
+
+var result;
+var committedError;
+var finishedError;
+
+window.onload = async () => {
+    // Calling navigate() with zero arguments hits the mandatory-argument check
+    // in the generated bindings, which previously returned a raw encoded
+    // JSC::Exception* cell to JavaScript instead of a NavigationResult. That
+    // cell could then be type-confused as a JSObject (e.g. by setting a
+    // property on it), corrupting its m_value field and crashing GC.
+    result = navigation.navigate();
+
+    shouldBe("typeof result", "'object'");
+    shouldBeTrue("'committed' in result");
+    shouldBeTrue("'finished' in result");
+    shouldBeTrue("result.committed instanceof Promise");
+    shouldBeTrue("result.finished instanceof Promise");
+
+    try {
+        await result.committed;
+        testFailed("committed promise should be rejected");
+    } catch (e) {
+        committedError = e;
+    }
+    shouldBeEqualToString("committedError.constructor.name", "TypeError");
+
+    try {
+        await result.finished;
+        testFailed("finished promise should be rejected");
+    } catch (e) {
+        finishedError = e;
+    }
+    shouldBeEqualToString("finishedError.constructor.name", "TypeError");
+
+    // Set a property on the result and force GC. If a raw JSC::Exception cell
+    // were exposed here, this would corrupt Exception::m_value with a Butterfly
+    // pointer, and the subsequent GC would crash when visitChildren tried to
+    // mark m_value as a JSCell.
+    result.foo = 0xdead;
+    shouldBe("result.foo", "0xdead");
+
+    if (window.GCController)
+        GCController.collect();
+
+    testPassed("did not crash");
+    finishJSTest();
+};
+</script>

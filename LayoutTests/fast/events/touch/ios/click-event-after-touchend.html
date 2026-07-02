@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        const target1 = document.getElementById("target1");
+        const target2 = document.getElementById("target2");
+
+        target1.addEventListener("touchstart", event => {
+            testPassed("touchstart on target1");
+        });
+
+        target1.addEventListener("touchend", event => {
+            event.preventDefault();
+            testPassed("touchend on target1");
+        });
+
+        target1.addEventListener("click", event => {
+            testFailed("click on target1");
+        });
+
+        target2.addEventListener("touchstart", event => {
+            testPassed("touchstart on target2");
+        });
+
+        target2.addEventListener("touchend", event => {
+            testPassed("touchend on target2");
+        });
+
+        target2.addEventListener("click", event => {
+            testPassed("click on target2");
+            finishJSTest();
+        });
+
+        description("This test verifies that calling preventDefault() on touchend event prevents the click event when tapping. To manually test, tap the top square once, and then tap the bottom square once.")
+
+        if (!window.testRunner)
+            return;
+
+        await UIHelper.activateElement(target1);
+        await UIHelper.activateElement(target2);
+    });
+    </script>
+    <style>
+    #target1 {
+        background-color: orange;
+    }
+
+    #target2 {
+        background-color: purple;
+    }
+
+    #target1, #target2 {
+        width: 150px;
+        height: 150px;
+        margin: 1em;
+    }
+    </style>
+</head>
+<body>
+    <div id="target1"></div>
+    <div id="target2"></div>
+    <div id="console"></div>
+</body>
+</html>

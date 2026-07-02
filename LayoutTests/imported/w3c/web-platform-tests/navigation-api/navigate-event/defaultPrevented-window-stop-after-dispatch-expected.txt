@@ -1,0 +1,3 @@
+
+PASS window.stop() doesn't affect navigateEvent.defaultPrevented after dispatch
+

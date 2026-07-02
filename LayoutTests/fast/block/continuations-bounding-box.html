@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            border: 1px solid black;
+            padding: 8px;
+            font-family: ahem;
+        }
+        
+        #target {
+            color: blue;
+            outline: 2px solid blue;
+        }
+        
+        .child {
+            border: 1px solid gray;
+            margin: 10px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div class="container">
+        container pre
+        <span id="target">span before
+            <div class="child">
+                child
+            </div>
+        span after</span>
+        container post
+    </div>
+    <script>
+        const target = document.getElementById('target');
+        const targetBoundingBox = internals.boundingBox(target);
+        const actualBounds = {x: targetBoundingBox.y, y:targetBoundingBox.y, width: targetBoundingBox.width, height: targetBoundingBox.height };
+        debug(`Bounding box is ${JSON.stringify(actualBounds)}`);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

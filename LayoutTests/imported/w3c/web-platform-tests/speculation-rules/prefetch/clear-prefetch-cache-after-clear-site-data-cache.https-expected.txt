@@ -1,0 +1,5 @@
+
+FAIL clear-site-data prefetchCache headers should prevent it from being fetched assert_equals: expected (undefined) undefined but got (string) "prefetch"
+PASS clear-site-data cache headers should prevent it from being fetched
+PASS clear-site-data prefetchCache in same window should clear its prefetch cache
+

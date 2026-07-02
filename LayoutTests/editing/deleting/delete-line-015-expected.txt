@@ -1,0 +1,3 @@
+
+PASS Delete an empty line starting inside a <div>
+

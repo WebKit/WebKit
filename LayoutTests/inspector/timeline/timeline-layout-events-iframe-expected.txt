@@ -1,0 +1,21 @@
+Tests Layout Timeline event records in an iframe.
+
+
+PASS: Should have 4 Layout record.
+PASS: Record 0 should be invalidate-styles.
+PASS: Record 0 should have a DOM node.
+PASS: Record 0 should have a document node.
+PASS: Record 0 should have the iframe's document node.
+PASS: Record 1 should be recalculate-styles.
+PASS: Record 1 should have a DOM node.
+PASS: Record 1 should have a document node.
+PASS: Record 1 should have the iframe's document node.
+PASS: Record 2 should be invalidate-layout.
+PASS: Record 2 should have a DOM node.
+PASS: Record 2 should have a document node.
+PASS: Record 2 should have the iframe's document node.
+PASS: Record 3 should be layout.
+PASS: Record 3 should have a DOM node.
+PASS: Record 3 should have a document node.
+PASS: Record 3 should have the iframe's document node.
+

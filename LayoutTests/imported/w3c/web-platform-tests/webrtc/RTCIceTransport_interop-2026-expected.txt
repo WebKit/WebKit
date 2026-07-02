@@ -1,0 +1,5 @@
+
+PASS RTCIceTransport should transition to "gathering" then "complete", after sLD
+PASS PC.close() should not cause the RTCIceTransport gathering state to transition to "complete"
+PASS RTCIceTransport should transition to "gathering", then "complete" after sLD (DataChannel case)
+

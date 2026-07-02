@@ -1,0 +1,243 @@
+<!-- webkit-test-runner [ MediaSessionCoordinatorEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-mediasession-coordinator</title>
+    <script src="../video-test.js"></script>
+    <script>
+
+    let waiting = false;
+    async function waitForDebugger()
+    {
+        let counter = 0;
+        while (waiting) {
+            await sleepFor(100);
+            counter++;
+        }
+    }
+
+    function changeHandler(change)
+    {
+        window.latestChange = change;
+    }
+
+    window.addEventListener('load', async event => {
+
+        window.latestAction = '';
+        window.latestChange = '';
+
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        let changePromise = () => {
+            return new Promise(resolve => {
+                navigator.mediaSession.coordinator.addEventListener('coordinatorstatechange', (event) => {
+                    consoleWrite(`EVENT(${event.type} STATE(${navigator.mediaSession.coordinator.state})`);
+                    resolve();
+                }, { once: true });
+            });
+        }
+
+        await waitForDebugger();
+
+        consoleWrite('');
+        consoleWrite('** There mediaSession.coordinator.state should be closed initially.');
+
+        testExpected('navigator.mediaSession.coordinator.state', "closed");
+
+        consoleWrite('');
+        consoleWrite('** Test that mediaSession.coordinator.coordinatorstatechange event is fired when it changes.');
+
+        run('internals.registerMockMediaSessionCoordinator(changeHandler)');
+
+        await changePromise();
+
+        ['play', 'pause', 'seekto'].forEach(action => {
+            navigator.mediaSession.setActionHandler(action, actionDetails => {
+                consoleWrite(`ACTION(${actionDetails.action})`);
+                latestAction = actionDetails.action;
+            });
+        });
+
+        let testAction = async (action, func, expectFailure) => {
+            latestAction = '';
+
+            run(`promise = ${func.toString()}`);
+            try {
+                if (expectFailure)
+                    await shouldReject(promise);
+                else
+                    await shouldResolve(promise);
+            } catch(ex) {}
+
+            consoleWrite('');
+        };
+
+        let testReadyStates = async (testCallback) => {
+            let previousState = 'havenothing';
+            navigator.mediaSession.readyState = 'havenothing';
+            for (let state of ['havemetadata', 'havecurrentdata', 'havefuturedata', 'haveenoughdata', 'havenothing']) {
+                testExpected('navigator.mediaSession.readyState', previousState);
+
+                latestChange = '';
+                run(`navigator.mediaSession.readyState = '${state}'`);
+
+                await testCallback()
+
+                testExpected('navigator.mediaSession.readyState', state);
+                previousState = state;
+                consoleWrite('');
+            };
+        }
+
+        let testPlaybackStates = async (testCallback) => {
+            let previousState = 'none';
+            navigator.mediaSession.playbackState = 'none';
+            for (let state of ['paused', 'playing', 'none']) {
+
+                testExpected('navigator.mediaSession.playbackState', previousState);
+
+                latestChange = '';
+                run(`navigator.mediaSession.playbackState = '${state}'`);
+
+                await testCallback()
+
+                testExpected('navigator.mediaSession.playbackState', state);
+                previousState = state;
+                consoleWrite('');
+            };
+        }
+        
+        let actions = [ 
+            { action: 'play', func : 'navigator.mediaSession.coordinator.play()' },
+            { action: 'pause', func : 'navigator.mediaSession.coordinator.pause()' },
+            { action: 'seekto', func : 'navigator.mediaSession.coordinator.seekTo(10)' },
+        ];
+
+        // Before joining
+        consoleWrite('');
+        consoleWrite('** navigator.mediaSession.coordinator.state should be "waiting" initially')
+        testExpected('navigator.mediaSession.coordinator.state', 'waiting');
+
+        consoleWrite('');
+        consoleWrite('** Test that when coordinator methods fail and promises reject before mediaSession.join() is called.')
+        for (let action of actions)
+            await testAction(action.action, action.func, true);
+
+        consoleWrite(`** Test that mediaSession does not notify coordinator when states change before mediaSession.join() is called.`)
+        consoleWrite('* PositionState');
+        latestChange = '';
+        run('navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 })');
+        await sleepFor(20);
+        testExpected('latestChange', '');
+
+        consoleWrite('');
+        consoleWrite('* ReadyState');
+        await testReadyStates(async () => {
+            await sleepFor(20);
+            testExpected('latestChange', '');
+        });
+
+        consoleWrite('* PlaybackState');
+        await testPlaybackStates(async () => {
+            await sleepFor(20);
+            testExpected('latestChange', '');
+        });
+
+        consoleWrite('<br>');
+        consoleWrite('** session.join() should reject on failure');
+        run('internals.setMockMediaSessionCoordinatorCommandsShouldFail(true)');
+        run('promise = navigator.mediaSession.coordinator.join()');
+        await shouldReject(promise).then(() => { }).catch(() => { });
+        testExpected('navigator.mediaSession.coordinator.state', 'waiting');
+        testExpected('latestChange', '');
+
+        consoleWrite('');
+        run('internals.setMockMediaSessionCoordinatorCommandsShouldFail(false)');
+        run('promise = navigator.mediaSession.coordinator.join()');
+        await changePromise();
+        await shouldResolve(promise).then(() => { }).catch(() => { });
+        testExpected('navigator.mediaSession.coordinator.state', 'joined');
+
+        consoleWrite('');
+        consoleWrite('** Test that when coordinator methods succeed, promises resolve and mediaSession action handlers are called.')
+        internals.setMockMediaSessionCoordinatorCommandsShouldFail(false);
+        for (let action of actions)
+            await testAction(action.action, action.func, false);
+
+        consoleWrite('** Test that when coordinator methods fail, promises reject and mediaSession action handlers are not called.')
+        internals.setMockMediaSessionCoordinatorCommandsShouldFail(true);
+        for (let action of actions)
+            await testAction(action.action, action.func, true);
+
+        consoleWrite(`** Test that mediaSession notifies coordinator when positionState changes.`)
+        run('navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 })');
+        await testExpectedEventually('latestChange', 'positionStateChanged', '==', 100);
+
+        consoleWrite('');
+        consoleWrite('** Test that mediaSession notifies coordinator when readyState changes.');
+        await testReadyStates(async () => { await testExpectedEventually('latestChange', 'readyStateChanged', '==', 100); })
+
+        consoleWrite('** Test that mediaSession notifies coordinator when playbackState changes.')
+        await testPlaybackStates(async () => { testExpectedEventually('latestChange', 'playbackStateChanged', '==', 100); });
+
+        // After leaving
+        consoleWrite('<br>');
+        consoleWrite('** Leave the session')
+        run('navigator.mediaSession.coordinator.leave()');
+        await changePromise();
+        testExpected('navigator.mediaSession.coordinator.state', 'closed');
+
+        latestChange = '';
+
+        consoleWrite('');
+        consoleWrite('** Test that when coordinator methods fail and promises reject after mediaSession.leave() has been called.')
+        for (let action of actions)
+            await testAction(action.action, action.func, true);
+
+        consoleWrite(`** Test that mediaSession does not notify coordinator when states change after mediaSession.leave() has been called.`)
+        consoleWrite('* PositionState');
+        latestChange = '';
+        run('navigator.mediaSession.setPositionState({ duration: 1, playbackRate: 1, position: 0 })');
+        await sleepFor(20);
+        testExpected('latestChange', '');
+
+        consoleWrite('');
+        consoleWrite('* ReadyState');
+        await testReadyStates(async () => {
+            await sleepFor(20);
+            testExpected('latestChange', '');
+        });
+
+        consoleWrite('* PlaybackState');
+        await testPlaybackStates(async () => {
+            await sleepFor(20);
+            testExpected('latestChange', '');
+        });
+
+        consoleWrite('<br>');
+        consoleWrite('** It should not be possible to join or leave a closed session');
+        run('promise = navigator.mediaSession.coordinator.join()');
+        await shouldReject(promise).then(() => { }).catch(() => { });
+        
+        let exception;
+        try {
+            navigator.mediaSession.coordinator.leave();
+        } catch (ex) {
+            exception = ex;
+        }
+        let expected = 'InvalidStateError: Unable to leave when state is closed';
+        logResult(exception.toString() == expected, `TEST(navigator.mediaSession.coordinator.leave()) THROWS(${expected})`);
+
+        consoleWrite('');
+        endTest();
+    }, {once: true});
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

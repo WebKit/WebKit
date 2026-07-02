@@ -1,0 +1,36 @@
+<style>
+@font-face {
+    font-family: webfont;
+    src: url(slow-ahem-loading.cgi);
+}
+</style>
+<p>
+This test checks that the fallback font is used for layout while a webfont is loading.
+</p>
+Target:
+<div>
+<span id="target" style="font-family: webfont, Arial;">A text to be measured.</span>
+</div>
+Reference:
+<div>
+<span id="reference" style="font-family: Arial;">A text to be measured.</span>
+</div>
+<div id="result"></div>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+function checkSize() {
+    var targetWidth = document.getElementById('target').offsetWidth;
+    var referenceWidth = document.getElementById('reference').offsetWidth;
+    var result = document.getElementById('result');
+    if (targetWidth == referenceWidth)
+        result.innerText = 'PASS: The width of target text and reference text is the same.';
+    else
+        result.innerText = 'FAIL: The width of target text and reference text is different: ' + targetWidth + ' != ' + referenceWidth;
+}
+
+checkSize();
+</script>

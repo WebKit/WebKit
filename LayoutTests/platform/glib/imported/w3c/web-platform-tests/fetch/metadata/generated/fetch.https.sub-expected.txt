@@ -1,0 +1,22 @@
+
+PASS sec-fetch-site - Same origin, init: mode=no-cors
+PASS sec-fetch-site - Cross-site, init: mode=no-cors
+PASS sec-fetch-site - Same site, init: mode=no-cors
+PASS sec-fetch-site - Same-Origin -> Cross-Site -> Same-Origin redirect, init: mode=no-cors
+PASS sec-fetch-site - Same-Origin -> Same-Site -> Same-Origin redirect, init: mode=no-cors
+PASS sec-fetch-site - Cross-Site -> Same Origin, init: mode=no-cors
+PASS sec-fetch-site - Cross-Site -> Same-Site, init: mode=no-cors
+PASS sec-fetch-site - Cross-Site -> Cross-Site, init: mode=no-cors
+PASS sec-fetch-site - Same-Origin -> Same Origin, init: mode=no-cors
+PASS sec-fetch-site - Same-Origin -> Same-Site, init: mode=no-cors
+PASS sec-fetch-site - Same-Origin -> Cross-Site, init: mode=no-cors
+PASS sec-fetch-site - Same-Site -> Same Origin, init: mode=no-cors
+PASS sec-fetch-site - Same-Site -> Same-Site, init: mode=no-cors
+PASS sec-fetch-site - Same-Site -> Cross-Site, init: mode=no-cors
+PASS sec-fetch-mode - no init
+PASS sec-fetch-mode - init: mode=cors
+PASS sec-fetch-mode - init: mode=no-cors
+PASS sec-fetch-mode - init: mode=same-origin
+PASS sec-fetch-dest - no init
+PASS sec-fetch-user - no init
+

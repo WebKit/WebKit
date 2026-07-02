@@ -1,0 +1,1432 @@
+/*
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestCocoa.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/cocoa/TestWebExtensionsDelegate.h"
+#import "Helpers/cocoa/WebExtensionUtilities.h"
+#import <WebCore/UserGestureIndicator.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKWebExtensionContextPrivate.h>
+#import <WebKit/WKWebExtensionControllerDelegate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <wtf/darwin/DispatchExtras.h>
+
+namespace TestWebKitAPI {
+
+TEST(WKWebExtensionAPIPermissions, Errors)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"alarms", @"activeTab" ],
+        @"optional_permissions": @[ @"webNavigation", @"cookies" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.test.assertRejects(browser.permissions.remove({ permissions: ['webRequest'] }), /only permissions specified in the manifest may be removed/i)",
+        @"await browser.test.assertRejects(browser.permissions.remove({ origins: ['https://example.com/'] }), /only permissions specified in the manifest may be removed/i)",
+
+        @"await browser.test.assertRejects(browser.permissions.remove({ permissions: ['alarms'] }), /required permissions cannot be removed/i)",
+        @"await browser.test.assertRejects(browser.permissions.remove({ origins: ['*://*.apple.com/*'] }), /required permissions cannot be removed/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: ['bad'] }), /'bad' is not a valid permission/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: ['bad'] }), /'bad' is not a valid pattern/i)",
+
+        @"await browser.test.assertRejects(browser.permissions.request({ permissions: ['cookies'] }), /must be called during a user gesture/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains(null), /'permissions' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains('string'), /'permissions' value is invalid, because an object is expected/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains(123), /'permissions' value is invalid, because an object is expected/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 'notAnArray' }), /'permissions' is expected to be an array of strings, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: { name: 'storage' } }), /'permissions' is expected to be an array of strings, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 123 }), /'permissions' is expected to be an array of strings, but a number was provided/i)",
+
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 'notAnArray' }), /'origins' is expected to be an array of strings, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: { domain: 'https://example.com/' } }), /'origins' is expected to be an array of strings, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 123 }), /'origins' is expected to be an array of strings, but a number was provided/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIPermissions, Basics)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"alarms", @"activeTab" ],
+        @"optional_permissions": @[ @"webNavigation", @"cookies" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        // contains() should return true for all named permissions and granted match patterns.
+        @"browser.test.assertTrue(await browser.permissions.contains({'permissions': ['alarms', 'activeTab']}))",
+        @"browser.test.assertTrue(await browser.permissions.contains({'origins': ['*://webkit.org/*']}))",
+
+        // contains() should return false for non granted match patterns.
+        @"browser.test.assertFalse(await browser.permissions.contains({'origins': ['*://apple.com/*']}))",
+
+        // Removing optional permissions should pass.
+        @"browser.test.assertTrue(await browser.permissions.remove({'permissions': ['cookies']}))",
+
+        // Removing functional permissions should fail.
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['alarms']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['alarms', 'activeTab']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['cookies', 'activeTab']}))",
+        @"await browser.test.assertRejects(browser.permissions.remove({'permissions': ['scripting']}))",
+
+        // getAll() should return all named permissions and granted match patterns.
+        @"let permissions = {'origins': ['*://webkit.org/*'], 'permissions': ['activeTab', 'alarms']}",
+        @"const result = await browser.permissions.getAll()",
+        @"browser.test.assertDeepEq(result, permissions)",
+
+        // Finish
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    // Grant "permissions" in the manifest.
+    for (NSString *permission in manager.get().extension.requestedPermissions)
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:permission];
+
+    // Grant extension access to webkit.org.
+    WKWebExtensionMatchPattern *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://webkit.org/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"alarms", @"activeTab" ],
+        @"optional_permissions": @[ @"webNavigation", @"cookies", @"declarativeNetRequest", @"*://*.apple.com/*" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    NSSet<NSString *> *permissions = [NSSet setWithArray:@[ @"declarativeNetRequest" ]];
+    NSSet<WKWebExtensionMatchPattern *> *matchPatterns = [NSSet setWithArray:@[ [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.apple.com/*" ]]];
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Implement the delegate methods that're called when a call to permissions.request() is made.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        EXPECT_EQ(requestedPermissions.count, permissions.count);
+        EXPECT_TRUE([requestedPermissions isEqualToSet:permissions]);
+        callback(requestedPermissions, nil);
+    };
+
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        EXPECT_EQ(requestedMatchPatterns.count, matchPatterns.count);
+        EXPECT_TRUE([requestedMatchPatterns isEqualToSet:matchPatterns]);
+
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            callback(requestedMatchPatterns, nil);
+            requestComplete = true;
+        });
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, DenyPermissionsRequest)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"optional_permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Implement the delegate methods, but don't grant the permissions.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        callback(NSSet.set, NSDate.distantPast);
+    };
+
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        requestComplete = true;
+        callback(NSSet.set, NSDate.distantFuture);
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, AcceptPermissionsDenyMatchPatternsRequest)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"optional_permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Grant the requested permissions.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        callback(requestedPermissions, nil);
+    };
+
+    // Deny the requested match patterns.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        requestComplete = true;
+        callback(NSSet.set, nil);
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, RequestPermissionsOnly)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"optional_permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'permissions': ['declarativeNetRequest']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Grant the requested permissions.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            requestComplete = true;
+            callback(requestedPermissions, nil);
+        });
+    };
+
+    // Match patterns method should not be called.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        ASSERT_NOT_REACHED();
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"optional_permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'origins': ['*://*.apple.com/*']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Permissions method should not be called.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        ASSERT_NOT_REACHED();
+    };
+
+    // Grant the requested match patterns.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            requestComplete = true;
+            callback(requestedMatchPatterns, [NSDate dateWithTimeIntervalSinceNow:10]);
+        });
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, RequestAllURLsMatchPattern)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"<all_urls>" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'origins': ['<all_urls>']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Permissions method should not be called.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        ASSERT_NOT_REACHED();
+        return;
+    };
+
+    // Grant the requested match patterns.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            requestComplete = true;
+            callback(requestedMatchPatterns, [NSDate dateWithTimeIntervalSinceNow:10]);
+        });
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, ImplicitAllHostsAndURLsPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"permissions": @[ @"tabs" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+        @"  browser.test.assertTrue(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:WKWebExtensionMatchPattern.allHostsAndSchemesMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllHostsHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*/*" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertFalse(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertTrue(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllURLsHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"<all_urls>" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertTrue(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertFalse(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllHostsOptionalHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*/*" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertFalse(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertTrue(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllURLsOptionalHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"<all_urls>" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertTrue(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertFalse(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllHostsAndURLsHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*/*", @"<all_urls>" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertTrue(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertTrue(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllHostsAndURLsOptionalHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*/*", @"<all_urls>" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertTrue(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertTrue(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, AllHostsAndURLsOptionalAndHostPermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*/*" ],
+        @"optional_host_permissions": @[ @"<all_urls>" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.onMessage.addListener(async (message, data) => {",
+        @"  if (message != 'Run test') return",
+
+        @"  const permissions = await browser.permissions.getAll()",
+
+        @"  browser.test.assertTrue(permissions.origins.includes('<all_urls>'))",
+        @"  browser.test.assertTrue(permissions.origins.includes('*://*/*'))",
+
+        @"  browser.test.sendMessage('Test done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *allHostsMatchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*/*"];
+    WKWebExtensionMatchPattern *allURLsMatchPattern = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allHostsMatchPattern];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forMatchPattern:allHostsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLsMatchPattern];
+
+    [manager sendTestMessage:@"Run test"];
+    [manager runUntilTestMessage:@"Test done"];
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"optional_permissions": @[ @"declarativeNetRequest", @"alarms" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*.apple.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'permissions': ['alarms', 'declarativeNetRequest']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Grant the requested permissions.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            requestComplete = true;
+            callback(requestedPermissions, nil);
+        });
+    };
+
+    // Match patterns method should not be called.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        ASSERT_NOT_REACHED();
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, GrantOnlySomeMatchPatterns)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"optional_permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"optional_host_permissions": @[ @"*://*.apple.com/*", @"*://*.example.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'origins': ['*://*.apple.com/*', '*://*.example.com/*']}))",
+        @"})"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().webExtensionController = manager.get().controller;
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+    __block bool requestComplete = false;
+
+    // Permissions method should not be called.
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        ASSERT_NOT_REACHED();
+    };
+
+    // Grant only one of the requested match patterns.
+    requestDelegate.get().promptForPermissionMatchPatterns = ^(id<WKWebExtensionTab> tab, NSSet<WKWebExtensionMatchPattern *> *requestedMatchPatterns, void (^callback)(NSSet<WKWebExtensionMatchPattern *> *, NSDate *)) {
+        requestComplete = true;
+        callback([NSSet setWithObject:requestedMatchPatterns.anyObject], NSDate.distantFuture);
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    TestWebKitAPI::Util::run(&requestComplete);
+}
+
+TEST(WKWebExtensionAPIPermissions, ValidMatchPatterns)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"alarms", @"activeTab" ],
+        @"optional_permissions": @[ @"webNavigation", @"cookies" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"*://*.example.com/*" ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Supported Schemes
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ '*://*.example.com/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'http://*.example.com/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'https://*.example.com/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'webkit-extension://*/*' ] }))",
+
+        // Custom Web Extension Schemes
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'test-extension://*/*' ] }))",
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'other-extension://*/*' ] }))",
+
+        // File Scheme (recognized but not granted by default)
+        @"await browser.test.assertSafeResolve(() => browser.permissions.contains({ origins: [ 'file:///*' ] }))",
+
+        // Invalid Schemes
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'ftp://*.example.com/*' ] }), /not a valid pattern/)",
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'data:*' ] }), /not a valid pattern/)",
+        @"await browser.test.assertThrows(() => browser.permissions.contains({ origins: [ 'chrome-extension://*/*' ] }), /not a valid pattern/)",
+
+        // Finish
+        @"browser.test.notifyPass()"
+    ]);
+
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
+    [WKWebExtensionMatchPattern registerCustomURLScheme:@"other-extension"];
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    WKWebExtensionMatchPattern *matchPatternApple = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPatternApple];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIPermissions, ClipboardWrite)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"permissions": @[ @"clipboardWrite" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"await navigator.clipboard.writeText('Test Clipboard Write')",
+
+        @"browser.test.sendMessage('Clipboard Written')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionClipboardWrite];
+
+    [manager runUntilTestMessage:@"Clipboard Written"];
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContent = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContent = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    EXPECT_NS_EQUAL(clipboardContent, @"Test Clipboard Write");
+}
+
+TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithoutPermission)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"try {",
+        @"  await navigator.clipboard.writeText('Attempt Without Permission')",
+
+        @"  browser.test.notifyFail('Should not write to clipboard without permission')",
+        @"} catch (error) {",
+        @"  browser.test.assertTrue(error instanceof DOMException, 'Expect a DOMException for insufficient permissions')",
+
+        @"  browser.test.notifyPass()",
+        @"}"
+    ]);
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContentBefore = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContentBefore = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    [manager run];
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContentAfter = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContentAfter = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    EXPECT_NS_EQUAL(clipboardContentBefore, clipboardContentAfter);
+}
+
+TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Permissions Test",
+        @"description": @"Permissions Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"optional_permissions": @[ @"clipboardWrite" ],
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"try {",
+        @"  await navigator.clipboard.writeText('Initial Attempt Without Permission')",
+        @"} catch (error) {",
+        @"  browser.test.assertTrue(error instanceof DOMException, 'Expect a DOMException for insufficient permissions')",
+        @"}",
+
+        @"const permissionGranted = await browser.test.runWithUserGesture(() => {",
+        @"  return browser.permissions.request({ permissions: [ 'clipboardWrite' ] })",
+        @"})",
+
+        @"if (permissionGranted) {",
+        @"  await navigator.clipboard.writeText('Test Clipboard Write After Permission')",
+
+        @"  browser.test.sendMessage('Clipboard Written')",
+        @"} else {",
+        @"  browser.test.notifyFail('Permission was not granted')",
+        @"}"
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
+
+    requestDelegate.get().promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        EXPECT_EQ(requestedPermissions.count, 1ul);
+        EXPECT_TRUE([requestedPermissions containsObject:WKWebExtensionPermissionClipboardWrite]);
+
+        callback(requestedPermissions, nil);
+    };
+
+    manager.get().controllerDelegate = requestDelegate.get();
+
+    [manager runUntilTestMessage:@"Clipboard Written"];
+
+#if TARGET_OS_IPHONE
+    auto *clipboardContent = UIPasteboard.generalPasteboard.string;
+#else
+    auto *clipboardContent = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#endif
+
+    EXPECT_NS_EQUAL(clipboardContent, @"Test Clipboard Write After Permission");
+}
+
+static auto *corsManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Permissions Test",
+    @"description": @"Permissions Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"optional_host_permissions": @[ @"*://*/*" ]
+};
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = 'http://127.0.0.1:%d/subresource'", server.port()],
+
+        @"try {",
+        @"  const response = await fetch(subresourceURL)",
+        @"  if (response.headers.get('headerName') !== 'headerValue')",
+        @"    throw new Error('CORS failed: Incorrect header value')",
+
+        @"  const json = await response.json()",
+        @"  if (json.testKey !== 'testValue')",
+        @"    throw new Error('CORS failed: Incorrect JSON value')",
+
+        @"  browser.test.notifyPass()",
+        @"} catch (error) {",
+        @"  browser.test.notifyFail('CORS failed unexpectedly: ' + error.message)",
+        @"}"
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    auto *urlRequest = server.request();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"browser.permissions.onAdded.addListener(async () => {",
+        @"  try {",
+        @"    const response = await fetch(subresourceURL)",
+        @"    if (response.headers.get('headerName') !== 'headerValue')",
+        @"      throw new Error('CORS failed: Incorrect header value')",
+
+        @"    const json = await response.json()",
+        @"    if (json.testKey !== 'testValue')",
+        @"      throw new Error('CORS failed: Incorrect JSON value')",
+
+        @"    browser.test.notifyPass()",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('CORS failed unexpectedly after permission was granted: ' + error.message)",
+        @"  }",
+        @"})",
+
+        @"try {",
+        @"  const response = await fetch(subresourceURL)",
+        @"  browser.test.notifyFail('CORS enabled: Fetch succeeded when it should have failed')",
+        @"} catch (error) {",
+        @"  // CORS failed as expected",
+        @"}",
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        completionHandler(requestedURLs, nil);
+    };
+
+    [manager run];
+
+    EXPECT_EQ(promptCount, 1ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutGrantingPermission)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"let fetchAttempt = 0",
+
+        @"async function performFetch() {",
+        @"  try {",
+        @"    const response = await fetch(subresourceURL)",
+        @"    browser.test.notifyFail(`CORS enabled on attempt ${fetchAttempt + 1}, when it should have failed`)",
+        @"  } catch (error) {",
+        @"    if (++fetchAttempt < 2)",
+        @"      performFetch()",
+        @"    else",
+        @"      browser.test.notifyPass()",
+        @"  }",
+        @"}",
+
+        @"performFetch()"
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        completionHandler(NSSet.set, nil);
+    };
+
+    [manager run];
+
+    EXPECT_EQ(promptCount, 2ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = 'http://127.0.0.1:%d/subresource'", server.port()],
+
+        @"const xhr = new XMLHttpRequest()",
+
+        @"xhr.onload = () => {",
+        @"  if (xhr.getResponseHeader('headerName') !== 'headerValue')",
+        @"    return browser.test.notifyFail('CORS failed: Incorrect header value')",
+
+        @"  try {",
+        @"    const json = JSON.parse(xhr.responseText)",
+        @"    if (json.testKey !== 'testValue')",
+        @"      throw new Error('Incorrect JSON value')",
+
+        @"    browser.test.notifyPass()",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('CORS failed: JSON parsing error - ' + error.message)",
+        @"  }",
+        @"}",
+
+        @"xhr.onerror = () => browser.test.notifyFail('CORS failed unexpectedly')",
+
+        @"xhr.open('GET', subresourceURL, true)",
+        @"xhr.send()"
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    auto *urlRequest = server.request();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"browser.permissions.onAdded.addListener(() => {",
+        @"  const xhr = new XMLHttpRequest()",
+
+        @"  xhr.onload = () => {",
+        @"    if (xhr.getResponseHeader('headerName') !== 'headerValue')",
+        @"      return browser.test.notifyFail('CORS failed: Incorrect header value')",
+
+        @"    try {",
+        @"      const json = JSON.parse(xhr.responseText)",
+        @"      if (json.testKey !== 'testValue')",
+        @"        throw new Error('Incorrect JSON value')",
+
+        @"      browser.test.notifyPass()",
+        @"    } catch (error) {",
+        @"      browser.test.notifyFail('CORS failed: JSON parsing error - ' + error.message)",
+        @"    }",
+        @"  }",
+
+        @"  xhr.onerror = () => browser.test.notifyFail('CORS failed unexpectedly after permission was granted')",
+
+        @"  xhr.open('GET', subresourceURL, true)",
+        @"  xhr.send()",
+        @"})",
+
+        @"const xhr = new XMLHttpRequest()",
+
+        @"xhr.onload = () => browser.test.notifyFail('CORS enabled: XHR succeeded when it should have failed')",
+
+        @"xhr.onerror = () => {",
+        @"  // Expected CORS failure",
+        @"}",
+
+        @"xhr.open('GET', subresourceURL, true)",
+        @"xhr.send()"
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        completionHandler(requestedURLs, nil);
+    };
+
+    [manager run];
+
+    EXPECT_EQ(promptCount, 1ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutGrantingPermission)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"let fetchAttempt = 0",
+
+        @"function performXHR() {",
+        @"  const xhr = new XMLHttpRequest()",
+
+        @"  xhr.onload = () => {",
+        @"    browser.test.notifyFail(`CORS enabled on attempt ${fetchAttempt + 1}, when it should have failed`)",
+        @"  }",
+
+        @"  xhr.onerror = () => {",
+        @"    if (++fetchAttempt < 2)",
+        @"      performXHR()",
+        @"    else",
+        @"      browser.test.notifyPass()",
+        @"  }",
+
+        @"  xhr.open('GET', subresourceURL, true)",
+        @"  xhr.send()",
+        @"}",
+
+        @"performXHR()"
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        // Do not grant the permission in the prompt.
+        completionHandler(NSSet.set, nil);
+    };
+
+    [manager run];
+
+    EXPECT_EQ(promptCount, 2ul);
+}
+
+// rdar://154866064 — the CORS-failure auto-prompt in `WebExtensionContext::resourceLoadDidCompleteWithError`
+// should only fire when the failed CORS request comes from a page belonging to this extension, not the webpage.
+TEST(WKWebExtensionAPIPermissions, CORSFailureFromPageDoesNotPromptExtension)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  fetch('http://127.0.0.1:' + location.port + '/subresource')",
+        @"    .then(() => browser.test.notifyFail('Page fetch unexpectedly succeeded; CORS should have blocked it'))",
+        @"    .catch(() => browser.test.notifyPass())",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+        { "/subresource"_s, { { { "Content-Type"_s, "application/json"_s } }, "{ \"testKey\": \"testValue\" }"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
+
+    __block size_t promptCount = 0;
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        ++promptCount;
+        completionHandler(NSSet.set, nil);
+    };
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+
+    EXPECT_EQ(promptCount, 0ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, HasAccessToFileURLsDefaultsToNo)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"<all_urls>" ]
+    };
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": @"" });
+    EXPECT_FALSE(manager.get().context._hasAccessToFileURLs);
+}
+
+TEST(WKWebExtensionAPIPermissions, FileURLPermissionGatedByFlag)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"<all_urls>" ]
+    };
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": @"" });
+
+    auto *allURLs = [WKWebExtensionMatchPattern allURLsMatchPattern];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:allURLs];
+
+    NSURL *fileURL = [NSURL URLWithString:@"file:///foo/bar.html"];
+    NSURL *httpURL = [NSURL URLWithString:@"http://example.com/foo/bar.html"];
+
+    // Flag off: file URL hits the early-out gate even though <all_urls> is granted.
+    EXPECT_EQ([manager.get().context permissionStatusForURL:fileURL], WKWebExtensionContextPermissionStatusUnknown);
+    // <all_urls> is a wildcard host pattern, so non-file URLs come back as GrantedImplicitly.
+    EXPECT_EQ([manager.get().context permissionStatusForURL:httpURL], WKWebExtensionContextPermissionStatusGrantedImplicitly);
+
+    // Flag on: <all_urls> now covers file:// URLs too.
+    manager.get().context._hasAccessToFileURLs = YES;
+    EXPECT_EQ([manager.get().context permissionStatusForURL:fileURL], WKWebExtensionContextPermissionStatusGrantedImplicitly);
+
+    // Flipping the flag back off restores the gate.
+    manager.get().context._hasAccessToFileURLs = NO;
+    EXPECT_EQ([manager.get().context permissionStatusForURL:fileURL], WKWebExtensionContextPermissionStatusUnknown);
+}
+
+TEST(WKWebExtensionAPIPermissions, FilePatternPermissionGatedByFlag)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"file:///*" ]
+    };
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": @"" });
+
+    auto *filePattern = [WKWebExtensionMatchPattern matchPatternWithString:@"file:///*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:filePattern];
+
+    // Flag off: querying the file pattern returns Unknown via the pattern early-out gate.
+    EXPECT_EQ([manager.get().context permissionStatusForMatchPattern:filePattern], WKWebExtensionContextPermissionStatusUnknown);
+
+    // Flag on: explicit grant of the same pattern resolves to GrantedExplicitly.
+    manager.get().context._hasAccessToFileURLs = YES;
+    EXPECT_EQ([manager.get().context permissionStatusForMatchPattern:filePattern], WKWebExtensionContextPermissionStatusGrantedExplicitly);
+}
+
+TEST(WKWebExtensionAPIPermissions, GrantingFilePatternRequiresFlag)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"host_permissions": @[ @"file:///*" ]
+    };
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": @"" });
+
+    auto *filePattern = [WKWebExtensionMatchPattern matchPatternWithString:@"file:///*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:filePattern];
+
+    NSURL *fileURL = [NSURL URLWithString:@"file:///foo/bar.html"];
+
+    // Even with file:///* granted explicitly, the URL early-out gate still blocks file URLs.
+    EXPECT_EQ([manager.get().context permissionStatusForURL:fileURL], WKWebExtensionContextPermissionStatusUnknown);
+
+    // file:///* is a specific (non-wildcard-host) pattern, so it resolves to GrantedExplicitly with the flag on.
+    manager.get().context._hasAccessToFileURLs = YES;
+    EXPECT_EQ([manager.get().context permissionStatusForURL:fileURL], WKWebExtensionContextPermissionStatusGrantedExplicitly);
+}
+
+} // namespace TestWebKitAPI
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

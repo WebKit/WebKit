@@ -1,0 +1,56 @@
+This test verifies that number inputs display the localized decimal separator in the visible text while maintaining the correct DOM value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+German locale (comma decimal separator)
+Typing a localized decimal number using comma separator:
+PASS document.execCommand("InsertText", false, "5,6"); deInput.value is "5.6"
+PASS getVisibleText(deInput) is "5,6"
+
+Typing a number with a period (also accepted as decimal in German):
+PASS document.execCommand("InsertText", false, "5.6"); deInput.value is "5.6"
+PASS getVisibleText(deInput) is "5.6"
+
+Typing a negative decimal number:
+PASS document.execCommand("InsertText", false, "-3,14"); deInput.value is "-3.14"
+PASS getVisibleText(deInput) is "-3,14"
+
+Verifying duplicate decimal separator is rejected:
+PASS document.execCommand("InsertText", false, "1,2,3"); deInput.value is "1.23"
+PASS getVisibleText(deInput) is "1,23"
+
+Setting value attribute displays localized:
+PASS getVisibleText(deInput) is "7,89"
+
+French locale (comma decimal separator)
+PASS document.execCommand("InsertText", false, "1,234"); frInput.value is "1.234"
+PASS getVisibleText(frInput) is "1,234"
+
+English US locale (period decimal separator)
+PASS document.execCommand("InsertText", false, "5.6"); enInput.value is "5.6"
+PASS getVisibleText(enInput) is "5.6"
+
+Duplicate decimal separator rejected in English:
+PASS document.execCommand("InsertText", false, "1.2.3"); enInput.value is "1.23"
+PASS getVisibleText(enInput) is "1.23"
+
+Pasting number with comma group separators in German (period decimal):
+PASS document.execCommand("InsertText", false, "1,327,489.05"); deInput.value is "1327489.05"
+PASS getVisibleText(deInput) is "1327489.05"
+
+Pasting number with period group separators in German (comma decimal):
+PASS document.execCommand("InsertText", false, "1.327.489,05"); deInput.value is "1327489.05"
+PASS getVisibleText(deInput) is "1327489,05"
+
+Pasting number with comma group separators in English (period decimal):
+PASS document.execCommand("InsertText", false, "1,327,489.05"); enInput.value is "1327489.05"
+PASS getVisibleText(enInput) is "1327489.05"
+
+Pasting number with period group separators in English (treated as multiple decimals):
+PASS document.execCommand("InsertText", false, "1.327.489,05"); enInput.value is "1.32748905"
+PASS getVisibleText(enInput) is "1.32748905"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

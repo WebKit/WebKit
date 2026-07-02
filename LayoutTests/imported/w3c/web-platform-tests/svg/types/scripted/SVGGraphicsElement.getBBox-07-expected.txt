@@ -1,0 +1,51 @@
+
+PASS rect with zero width
+PASS rect with zero height
+PASS rect with zero width and height
+PASS rect with no width/height attributes (default auto resolves to 0)
+PASS rect with no attributes at all
+PASS circle with zero radius
+PASS circle with no r attribute (default 0)
+PASS circle with no attributes at all
+PASS ellipse with zero rx (not rendered)
+PASS ellipse with zero ry (not rendered)
+PASS ellipse with zero rx and ry
+PASS ellipse with no attributes (rx/ry auto both â†’ 0)
+PASS line with identical start and end points (zero-length)
+PASS horizontal line (zero height)
+PASS vertical line (zero width)
+PASS line with no attributes (all default to 0)
+PASS rect with both width and height negative
+PASS ellipse with both rx and ry negative
+PASS path with only a MoveTo command
+PASS path with multiple MoveTo commands (last moveto position)
+PASS path with LineTo to the same point as MoveTo
+PASS path with zero-length vertical line
+PASS path with MoveTo then close (no drawing)
+PASS path drawing a horizontal line (zero height)
+PASS path drawing a vertical line (zero width)
+PASS path with degenerate cubic bezier (all points identical)
+PASS path with degenerate quadratic bezier (all points identical)
+PASS path with arc with zero radii (treated as line to endpoint)
+PASS path with arc to same point (zero-length arc)
+PASS polygon with a single point
+PASS polyline with a single point
+PASS polygon with repeated identical points
+PASS polyline with horizontal segment (zero height)
+PASS polygon with vertical segment (zero width)
+PASS polygon with empty points attribute
+PASS polyline with empty points attribute
+PASS empty group element
+PASS group with only zero-dimension children has zero bbox
+PASS group with zero-dim and normal children: zero-dim child does not affect bbox
+PASS use element with unresolved href returns zero bbox
+PASS use element referencing zero-dimension rect returns zero bbox
+FAIL getBBox on rect inside defs does not throw and returns zero bbox assert_equals: x expected 0 but got 10
+FAIL getBBox on circle inside defs does not throw and returns zero bbox assert_equals: x expected 0 but got 25
+FAIL getBBox on rect inside group inside defs does not throw and returns zero bbox assert_equals: width expected 0 but got 30
+FAIL getBBox on rect inside clipPath does not throw and returns zero bbox assert_equals: width expected 0 but got 80
+FAIL getBBox on rect inside mask does not throw and returns zero bbox assert_equals: width expected 0 but got 60
+PASS display:none rect with negative width does not throw and returns zero bbox
+PASS visibility:hidden rect has normal bbox
+PASS opacity:0 rect has normal bbox
+

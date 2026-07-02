@@ -1,0 +1,6 @@
+Test for transition in delay phase
+
+This test works only in DumpRenderTree. It uses an API exposed only there to jump to a particular time in a running transition. Tests bug 59475
+
+PASS - "left" property for "target" element at 0.5s saw something close to: 100
+

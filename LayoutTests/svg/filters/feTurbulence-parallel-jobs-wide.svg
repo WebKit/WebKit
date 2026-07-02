@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="light">
+            <feTurbulence seed="10" type="turbulence" baseFrequency="0.01" numOctaves="1" />
+        </filter>
+    </defs>
+
+    <text y="20">Test passes if it does not assert in debug builds.</text>
+    <rect x="0" y="30" width="10000" height="10" filter="url(#light)"/>
+
+    <script>
+      <![CDATA[
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    ]]>
+    </script>
+</svg>

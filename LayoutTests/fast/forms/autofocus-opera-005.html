@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>testing "autofocus" with dynamic changes (part two)</title>
+<style>
+ input { background:red }
+ input:focus { background:lime }
+</style>
+<script>
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        var input = document.getElementsByTagName('input')[0];
+        var p = document.getElementsByTagName('p')[0];
+        var input = p.removeChild(input);
+        input.autofocus = true;
+        p.appendChild(input);
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        requestAnimationFrame(check);
+    }
+
+    function check() {
+        if (document.activeElement == document.getElementsByTagName("input")[0])
+            log("SUCCESS");
+        else
+            log("FAILURE");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="test()">
+<p>The form control should have a green background: <input/></p>
+<hr/>
+<ol id="console"></ol>
+</body>
+</html>

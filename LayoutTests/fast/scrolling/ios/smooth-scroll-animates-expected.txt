@@ -1,0 +1,6 @@
+PASS window.scrollY < 500 is true
+PASS scrollEventCount > 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

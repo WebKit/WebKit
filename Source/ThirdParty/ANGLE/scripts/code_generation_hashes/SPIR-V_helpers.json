@@ -1,0 +1,14 @@
+{
+  "src/common/spirv/gen_spirv_builder_and_parser.py":
+    "80532eb998b2a9be9724cf5d935c6114",
+  "src/common/spirv/spirv_instruction_builder_autogen.cpp":
+    "a69bebc5451d7ad987d595f1c7e0d144",
+  "src/common/spirv/spirv_instruction_builder_autogen.h":
+    "4995c4d4da5ece8d65e4aa09ad648167",
+  "src/common/spirv/spirv_instruction_parser_autogen.cpp":
+    "2d40d557b7aa1a7670279032a7f27f32",
+  "src/common/spirv/spirv_instruction_parser_autogen.h":
+    "688d1e789d26eefc6db619e4d145ed19",
+  "third_party/spirv-headers/src/include/spirv/unified1/spirv.core.grammar.json":
+    "384602da65c1e289e46b98df9483d571"
+}

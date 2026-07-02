@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>word-break: keep-all should allow breaks at CJK punctuation</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#word-break-property">
+<style>
+div {
+    font: 20px/1 Ahem;
+    width: 0;
+    word-break: keep-all;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>word-break: keep-all should suppress breaks between letter pairs but allow breaks at punctuation.</p>
+<div id="d1">あ、か</div>
+<div id="d2">あ,か</div>
+<div id="d3">あ か</div>
+<div id="d4">a、b</div>
+<div id="d5">a,b</div>
+<div id="d6">a b</div>
+<pre id="result"></pre>
+<script>
+function check(id, expectLines) {
+    var el = document.getElementById(id);
+    var lineHeight = 20;
+    var lines = Math.round(el.offsetHeight / lineHeight);
+    var pass = lines === expectLines;
+    return (pass ? "PASS" : "FAIL") + ": '" + el.textContent + "' lines=" + lines + (pass ? "" : " (expected " + expectLines + ")");
+}
+
+var results = [
+    check("d1", 2),
+    check("d2", 2),
+    check("d3", 2),
+    check("d4", 2),
+    check("d5", 1),
+    check("d6", 2),
+];
+document.getElementById("result").textContent = results.join('\n') + '\n';
+</script>

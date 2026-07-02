@@ -1,0 +1,4 @@
+Test that a WebContent process cannot forge a persistent storage-access grant by sending storageAccessUnderTopFrameDomains via NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated.
+
+PASS: no storage-access grant was created from forged statistics
+

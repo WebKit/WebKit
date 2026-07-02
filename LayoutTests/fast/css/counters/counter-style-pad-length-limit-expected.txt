@@ -1,0 +1,6 @@
+
+PASS Pad under limit generates padded text
+PASS Pad over limit falls back to decimal
+PASS Pad with long symbol under limit generates padded text
+PASS Pad with long symbol over limit falls back to decimal
+

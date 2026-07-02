@@ -1,0 +1,48 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # value: string; the value being inserted/edited.
+  # field: object; the field which the value belongs/belonged to.
+  #
+  # no_XXX_link: boolean; if defined, then don't show the corresponding
+  #                       link. Supported parameters are:
+  #
+  # no_edit_link
+  # no_edit_other_link
+  # no_add_link
+  #%]
+
+<hr>
+
+<p>
+
+[% UNLESS no_add_link %]
+  <a title="Add a value for the '[% field.description FILTER html %]' field."
+     href="editvalues.cgi?action=add&amp;field=
+          [%- field.name FILTER uri %]">Add</a> a value.
+[% END %]
+
+[% IF value.defined && !no_edit_link %]
+  Edit value <a 
+  title="Edit value '[% value.name FILTER html %]' for the '
+         [%- field.name FILTER html %]' field"
+  href="editvalues.cgi?action=edit&amp;field=
+        [%- field.name FILTER uri %]&amp;value=
+        [%- value.name FILTER uri %]">
+        '[% value.name FILTER html %]'</a>.
+[% END %]
+
+[% UNLESS no_edit_other_link %]
+  Edit other values for the <a 
+  href="editvalues.cgi?field=
+        [%- field.name FILTER uri %]">'[% field.description FILTER html %]'</a> field.
+
+[% END %]
+
+</p>

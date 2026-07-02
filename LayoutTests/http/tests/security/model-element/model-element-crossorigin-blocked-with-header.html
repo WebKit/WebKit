@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<title>&lt;model> blocked since Access-Control-Allow-Origin does not match</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.addEventListener('load', async () => {
+        const model = document.getElementById("blocked-model");
+        assert_true(!!model, "Model element should exist");
+        await model.ready.then(
+            value => assert_unreached("Unexpected ready promise resolution."),
+            reason => assert_true(reason.toString().includes("NetworkError"), "The ready promise is rejected with a NetworkError.")
+        );
+        testRunner.notifyDone();
+    }, false);
+</script>
+</head>
+<body>
+    <div>Verify that the model is blocked because the src's allowed origin doesn't match this document's origin</div>
+    <model id='blocked-model'>
+        <source src='http://localhost:8080/security/resources/model-access-control.py?file=cube.usdz&origin=http%3A%2F%2Flocalhost%3A8080'/>
+    </model>
+</body>
+</html>

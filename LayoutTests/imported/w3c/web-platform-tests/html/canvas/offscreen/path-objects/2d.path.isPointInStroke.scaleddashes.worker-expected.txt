@@ -1,0 +1,3 @@
+
+FAIL isPointInStroke() should return correct results on dashed paths at high scale factors assert_equals: ctx.isPointInStroke(3.74*scale, 14.46*scale) === false (got true[boolean], expected false[boolean]) expected false but got true
+

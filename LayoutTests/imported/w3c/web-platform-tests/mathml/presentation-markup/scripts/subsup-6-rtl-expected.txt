@@ -1,0 +1,11 @@
+
+PASS mprescripts RTL coordinates and sizes (rtl 2 postscripts)
+PASS mprescripts RTL coordinates and sizes (rtl 2 prescripts)
+PASS mprescripts RTL coordinates and sizes (rtl 2 prescripts, 4 postscripts)
+PASS mprescripts RTL coordinates and sizes (rtl 4 prescripts, 2 postscripts)
+PASS mprescripts RTL coordinates and sizes (rtl prescripts with padding/border/margin)
+
+
+
+
+

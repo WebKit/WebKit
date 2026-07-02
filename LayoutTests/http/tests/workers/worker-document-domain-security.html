@@ -1,0 +1,43 @@
+<html>
+<body>
+<div id=result></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    window.internals.settings.setTreatIPAddressAsDomain(true);
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+document.domain = "0.0.1";
+
+try {
+    const worker = new Worker("http://0.0.1/worker.js");
+    log("PASS: No exception thrown when accessing a worker from another domain.");
+    worker.onerror = () => {
+        log("PASS: Got error event");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+} catch (error) {
+    log("FAIL: Got error code " + error.code + ". Expected error code 18.");
+}
+
+try {
+    new Worker("resources/non-existent.js");
+    log("PASS: No exception throw when accessing a same-origin URL after setting document.domain.");
+} catch (error) {
+    log("FAIL: Got error code " + error.code + ".");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+        }
+
+        var iframe;
+        var iframeDocument;
+        var iframeScrollTopAfterAnchor = 0;
+
+        async function test()
+        {
+
+            iframe = document.getElementById('NoScrolliFrame');
+            iframeDocument = iframe.contentDocument;
+            iframeScrollTopAfterAnchor = 0;
+
+            var clickme = iframeDocument.getElementById('clickme');
+            var x = iframe.offsetLeft + clickme.offsetLeft + 7;
+            var y = iframe.offsetTop + clickme.offsetTop + 7;
+            if (window.eventSender) {
+                eventSender.dragMode = false;
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
+            }
+            setTimeout(autoscrollTestPart1, 0);
+        }
+
+        async function autoscrollTestPart1()
+        {
+            iframeScrollTopAfterAnchor = iframeDocument.body.scrollTop;
+            if (iframeDocument.body.scrollTop == 0)
+                log("FAILED: anchor clicking within non-scrollable inner frame failed.");
+
+            if (window.eventSender) {
+                var textInIframe = iframeDocument.getElementById('textInFrame');
+                var x = iframe.offsetLeft + textInIframe.offsetLeft - iframeDocument.body.scrollLeft + 7;
+                var y = iframe.offsetTop + textInIframe.offsetTop - iframeDocument.body.scrollTop + 7;
+                eventSender.dragMode = false;
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseMoveTo(x, y - 10);
+                y = iframe.offsetTop;
+                await eventSender.asyncMouseMoveTo(x, y - 5);
+            }
+            setTimeout(autoscrollTestPart2, 100);
+        }
+
+        async function autoscrollTestPart2()
+        {
+            if (window.eventSender)
+                await eventSender.asyncMouseUp();
+
+            if (iframeScrollTopAfterAnchor == iframeDocument.body.scrollTop)
+                log("PASSED: the autoscroll has not happened.");
+            else
+                log("FAILED: the autoscroll has happened.");
+
+            finishJSTest();
+        }
+        </script>
+    </head>
+<body onload="test()">
+    <iframe id="NoScrolliFrame" style="height: 150px; width: 150px" src="resources/big-page-with-overflow-hidden-and-anchor-scroll.html" ></iframe>
+    <div id="console"></div>
+</body>
+</html>
+

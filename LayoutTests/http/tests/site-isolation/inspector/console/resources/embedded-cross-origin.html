@@ -1,0 +1,12 @@
+<p>iframe embedding other cross origin iframe</p>
+
+<script>
+    document.body.onload = function () {
+        console.log(`Hello from ${location.href}`);
+
+        let iframe = document.createElement("iframe");
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/console/resources/console-messages.html`;
+        document.body.appendChild(iframe);
+    };
+</script>

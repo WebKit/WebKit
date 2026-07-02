@@ -1,0 +1,5 @@
+Built on Thu Aug 14 04:47:37 PM CEST 2025
+Cloning into 'wasm_gc_benchmarks'...
+13951e1 Roll new version of flute and regenerate flute-based benchmarks
+Copying files from wasm_gc_benchmarks/ into build/
+Build success

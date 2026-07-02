@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="object-src http://localhost:8000">
+    <script src="../../../resources/dump-as-text.js"></script>
+    <p><br>Test that CSP for manifest V3 extensions allows loopback IP addresses for the object-src directive.</p>
+</head>
+<body>
+    This test passes if there is no console message saying the plugin was blocked.
+    <object data="http://localhost:8000/plugins/resources/mock-plugin.pl"></object>
+</body>
+</html>

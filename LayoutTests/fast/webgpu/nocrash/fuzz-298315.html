@@ -1,0 +1,115 @@
+<script>
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.waitUntilDone();
+  const log = globalThis.debug ?? console.log;
+
+  const format = 'r16unorm';
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({
+      requiredFeatures: ['texture-formats-tier1'],
+    });
+    device.pushErrorScope('validation');
+    let module = device.createShaderModule({
+      code: `
+struct VertexOutput {
+  @builtin(position) position : vec4f,
+  @location(0) @interpolate(flat) vi: u32,
+}
+
+@vertex
+fn v(
+@builtin(vertex_index) vi: u32) -> VertexOutput {
+  var v = VertexOutput();
+  v.vi = vi;
+  v.position = vec4(0, 0, 0, 1);
+  return v;
+}
+
+@group(0) @binding(0) var<storage, read_write> buf: array<vec4u>;
+@group(0) @binding(1) var st0: texture_storage_2d<rg16unorm, write>;
+@group(0) @binding(2) var st1: texture_storage_2d<rg16unorm, read>;
+
+@fragment
+fn f(
+@location(0) @interpolate(flat) vi: u32
+) -> @location(0) vec4f {
+  buf[0].x = 0x414141;
+  buf[1].x = 0x66000000;
+  textureStore(st0, vec2(), vec4f());
+  _ = textureLoad(st1, vec2());
+  return vec4f(3);
+}
+`,
+    });
+    let bindGroupLayout0 = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.FRAGMENT},
+        {binding: 1, storageTexture: {format: 'rg16unorm', access: 'write-only'}, visibility: GPUShaderStage.FRAGMENT},
+        {binding: 2, storageTexture: {format: 'rg16unorm', access: 'read-only'}, visibility: GPUShaderStage.FRAGMENT},
+      ],
+    });
+    let buffer0 = device.createBuffer({
+      size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+    });
+    let storageTexture0 = device.createTexture({
+      usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_SRC,
+      size: [1],
+      format: 'rg16unorm',
+    });
+    let storageTexture1 = device.createTexture({
+      usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_SRC,
+      size: [1],
+      format: 'rg16unorm',
+    });
+    let bindGroup0 = device.createBindGroup({
+      layout: bindGroupLayout0, entries: [
+        {binding: 0, resource: {buffer: buffer0}},
+        {binding: 1, resource: storageTexture0.createView()},
+        {binding: 2, resource: storageTexture1.createView()},
+      ],
+    });
+
+    let pipeline = device.createRenderPipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout0]}),
+      vertex: {
+        module,
+      },
+      fragment: {module, targets: [{format}]},
+      primitive: {topology: 'point-list'},
+    });
+    let texture = device.createTexture({format, size: [1], usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC});
+    let renderPassDescriptor = {colorAttachments: [{view: texture.createView(), clearValue: [0, 0, 0, 0], loadOp: 'clear', storeOp: 'store'}]};
+    let commandEncoder = device.createCommandEncoder();
+    requestAnimationFrame(async () => {
+      let renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+      renderPassEncoder.setPipeline(pipeline);
+      renderPassEncoder.setBindGroup(0, bindGroup0);
+      renderPassEncoder.draw(3, 3);
+      renderPassEncoder.end();
+      let outputBuffer = device.createBuffer({size: 8, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+      commandEncoder.copyTextureToBuffer({texture}, {buffer: outputBuffer}, {width: 1});
+      commandEncoder.copyTextureToBuffer({texture: storageTexture0}, {buffer: outputBuffer}, {width: 1});
+      let outputBuffer2 = device.createBuffer({size: buffer0.size, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+      commandEncoder.copyBufferToBuffer(buffer0, 0, outputBuffer2, 0, buffer0.size);
+      await device.queue.onSubmittedWorkDone();
+      let commandBuffer = commandEncoder.finish();
+      device.queue.submit([commandBuffer]);
+      await device.queue.onSubmittedWorkDone();
+      await outputBuffer.mapAsync(GPUMapMode.READ);
+      log([...new Uint32Array(outputBuffer.getMappedRange())].map(x => x.toString(0x10)));
+      outputBuffer.unmap();
+      await outputBuffer2.mapAsync(GPUMapMode.READ);
+      log([...new Uint32Array(outputBuffer2.getMappedRange())].map(x => x.toString(0x10)));
+      outputBuffer2.unmap();
+      let error = await device.popErrorScope();
+      if (error) {
+        log(error.message);
+      } else {
+        log('no validation error');
+      }
+      globalThis.testRunner?.notifyDone();
+    });
+  };
+</script>

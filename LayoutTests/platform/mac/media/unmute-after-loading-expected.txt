@@ -1,0 +1,10 @@
+
+RUN(video.muted = true)
+RUN(video.src = findMediaFile("video", "../../../media/content/audio-tracks"))
+EVENT(canplaythrough)
+RUN(video.load())
+EVENT(canplaythrough)
+RUN(video.muted = false)
+EXPECTED (internals.privatePlayerMuted(video) == 'false') OK
+END OF TEST
+

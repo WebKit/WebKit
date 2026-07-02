@@ -1,0 +1,5 @@
+Text
+
+
+PASS FCP and LCP are the same when there is a single text element in the page.
+

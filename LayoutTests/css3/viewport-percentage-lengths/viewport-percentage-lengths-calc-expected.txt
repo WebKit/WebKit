@@ -1,0 +1,15 @@
+Test for calc support with viewport units.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS style.getPropertyValue("width") is '400px'
+PASS style.getPropertyValue("height") is '450px'
+PASS style.getPropertyValue("margin-top") is '160px'
+PASS style.getPropertyValue("margin-bottom") is '190px'
+PASS style.getPropertyValue("margin-left") is '400px'
+PASS style.getPropertyValue("margin-right") is '200px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

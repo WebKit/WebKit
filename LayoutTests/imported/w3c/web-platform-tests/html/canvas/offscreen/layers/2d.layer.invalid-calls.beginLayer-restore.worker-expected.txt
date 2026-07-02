@@ -1,0 +1,6 @@
+
+FAIL Raises exception on beginLayer() + restore(). assert_throws_dom: function "function() {
+    ctx.beginLayer();
+    ctx.restore();
+  }" did not throw
+

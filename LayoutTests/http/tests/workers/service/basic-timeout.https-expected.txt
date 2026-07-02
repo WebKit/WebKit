@@ -1,0 +1,13 @@
+Tests various navigation time out cases for service workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frameText(testFrame1) is "Timeout resource fetched from network"
+PASS frameText(testFrame2) is "Not Found"
+PASS frameText(testFrame3) is "Success!"
+PASS frameText(testFrame4) is "Success!"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

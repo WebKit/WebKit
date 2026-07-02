@@ -1,0 +1,42 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the volume slider container behavior when controls are disabled.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 300, height: 250 });
+
+(async function () {
+    debug("Mute button is enabled");
+
+    mediaControls.layout();
+
+    debug("mediaControls._volumeSliderContainer.parent.constructor.name: " + String(mediaControls._volumeSliderContainer.parent.constructor.name));
+    debug("mediaControls.muteButton.parent.constructor.name: " + String(mediaControls._volumeSliderContainer.parent.constructor.name));
+
+    debug("")
+    debug("Mute button is disabled");
+    mediaControls.muteButton.enabled = false;
+    mediaControls.layout();
+    
+    debug("mediaControls._volumeSliderContainer.parent.constructor.name: " + String(mediaControls._volumeSliderContainer.parent.constructor.name));
+    debug("mediaControls.muteButton.parent.constructor.name: " + String(mediaControls.muteButton.parent.constructor.name));
+
+    debug("");
+    debug("Disabling play/pause button (this actually hides the volume container)");
+    
+    mediaControls.playPauseButton.enabled = false;
+    mediaControls.layout();
+
+    shouldBeNull("mediaControls._volumeSliderContainer.parent");
+
+    finishJSTest();
+})();
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

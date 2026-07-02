@@ -1,0 +1,15 @@
+This tests the exposure of aria-level.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXTable level: 1
+AXRole: AXHeading level: 2
+AXRole: AXListItem level: 3
+AXRole: AXTreeGrid level: 4
+AXRole: AXRow level: 5
+AXRole: AXTreeItem level: 6
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

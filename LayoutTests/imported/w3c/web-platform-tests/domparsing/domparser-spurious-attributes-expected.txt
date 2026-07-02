@@ -1,0 +1,4 @@
+
+PASS Using ">" and HTML entities in an attribute creates no unexpected attributes.
+PASS Using ">" and "\r" in an attribute creates no unexpected attributes.
+

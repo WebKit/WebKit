@@ -1,0 +1,34 @@
+This test ensures we compute the right frame for opacity: 0 elements.
+
+PASS: current.role.toLowerCase().includes("statictext") === true
+x: 8
+y: 150
+width: 25
+height: 18
+
+PASS: current.role.toLowerCase().includes("radiobutton") === true
+x: 10
+y: 171
+width: 300
+height: 300
+
+PASS: current.role.toLowerCase().includes("statictext") === true
+x: 8
+y: 474
+width: 96
+height: 18
+
+PASS: current.role.toLowerCase().includes("image") === true
+x: 8
+y: 492
+width: 280
+height: 209
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+
+Opacity: 0 text
+

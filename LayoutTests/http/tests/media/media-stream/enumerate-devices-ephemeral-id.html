@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+<body>
+    <iframe id=iframe allow="camera;microphone"></iframe>
+    <script>
+
+        let firstMessage = true;
+
+        async function sendMessage(isEphemeral, testName)
+        {
+            let handle;
+            const promise = new Promise((resolve, reject) => {
+                window.onmessage = resolve;
+                handle = setTimeout(() => reject(`${testName} test timed out`), 5000);
+            });
+
+            const iframe = document.getElementById('iframe');
+            const message = {
+                'setup': firstMessage, 
+                'cameraId': 'built-in-camera', 
+                'cameraName': 'Extra Fancy Camera', 
+                'isEphemeral': isEphemeral
+            };
+            firstMessage = false;
+            iframe.contentWindow.postMessage(message, '*');
+
+            const event = await promise;
+            clearTimeout(handle);
+            return JSON.parse(event.data);
+        }
+        
+        function loadIframe(url)
+        {
+            const iframe = document.getElementById('iframe');
+            iframe.src = url;
+            return new Promise(resolve => iframe.onload = resolve);
+        }
+
+        promise_test(async () => {
+            
+            const iframeURL = 'resources/enumerate-devices-ephemeral-id-iframe.html';
+            await loadIframe(iframeURL);
+
+            // Ensure camera id is stable when called twice
+            let cameraState1 = await sendMessage(false, 'First non-ephemeral');
+            let cameraState2 = await sendMessage(false, 'Second non-ephemeral');
+            assert_equals(cameraState1.deviceId, cameraState2.deviceId, 'Same persistent id returned in two calls');
+
+            let ephemeralCameraState1 = await sendMessage(true, 'First ephemeral');
+            let ephemeralCameraState2 = await sendMessage(true, 'Second ephemeral');
+            assert_equals(ephemeralCameraState1.deviceId, ephemeralCameraState2.deviceId, 'Same ephemeral id returned in two calls');
+            assert_not_equals(cameraState1.deviceId, ephemeralCameraState1.deviceId, 'Ephemeral id not equal persistent id');
+
+            const iframe = document.getElementById('iframe');
+            const promise = new Promise(resolve => iframe.onload = resolve);
+            iframe.contentWindow.location.reload();
+            await promise;
+
+            let cameraState3 = await sendMessage(false, 'First non-ephemeral after reload');
+            assert_equals(cameraState3.deviceId, cameraState1.deviceId, 'Persistent id is the same after reload');
+
+            let ephemeralCameraState3 = await sendMessage(true, 'First ephemeral after reload');
+            assert_not_equals(ephemeralCameraState1.deviceId, ephemeralCameraState3.deviceId, 'Ephemeral id changed after reload');
+            assert_not_equals(cameraState1.deviceId, ephemeralCameraState3.deviceId, 'Ephemeral id after reload is not equal to persistent id');
+
+        }, 'Ephemeral device IDs');
+
+    </script>
+</body>
+</html>

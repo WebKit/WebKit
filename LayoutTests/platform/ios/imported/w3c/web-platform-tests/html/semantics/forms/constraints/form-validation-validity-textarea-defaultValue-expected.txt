@@ -1,0 +1,8 @@
+
+
+PASS Default validity based on emptiness
+PASS Setting textarea.defaultValue should not trigger validation
+FAIL User keystrokes should trigger validation assert_equals: expected "abcde" but got ""
+FAIL Setting textarea.defaultValue from the input event handler should trigger validation assert_equals: expected "abc" but got ""
+FAIL Calling textarea.replaceChildren() from the input event handler should trigger validation assert_equals: expected "abc" but got ""
+

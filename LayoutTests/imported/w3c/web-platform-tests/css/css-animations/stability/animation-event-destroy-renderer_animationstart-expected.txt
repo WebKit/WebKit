@@ -1,0 +1,3 @@
+
+PASS Triggering the cancel of an animation during event handling does not crash.
+

@@ -1,0 +1,14 @@
+This test ensures that the 'Play All Animations' and 'Pause All Animations' context menu items appear and behave correctly when activated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isImageAnimating(img) became true
+Pausing all animations via the context menu item.
+PASS internals.isImageAnimating(img) became false
+Playing all animations via the context menu item.
+PASS internals.isImageAnimating(img) became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

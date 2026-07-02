@@ -1,0 +1,50 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <style>
+    #outer {
+      font-size: 200%;
+      color: #00F;
+      -webkit-transition: all 1s linear;
+    }
+    
+    #inner {
+      color: #F00;
+    }
+    
+    #outer.changed {
+      color: #0F0;
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance, post-completion callback, should-be-transitioning]
+      [0.5, 'outer', 'color', [0, 127, 127], 2, null, shouldBeTransitioning],
+      [0.5, 'inner', 'color', [255, 0, 0], 2, null, shouldNotBeTransitioning],
+      [0.5, 'inner', '-webkit-text-fill-color', [255, 0, 0], 2, null, shouldNotBeTransitioning],
+    ];
+
+    function setupTest()
+    {
+      document.getElementById('outer').className = 'changed';
+    }
+
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+
+  <div id="outer">
+    <div id="inner">
+      inner
+    </div>
+    outer
+  </div>
+  
+  <div id="result">
+  </div>
+
+</body>
+</html>

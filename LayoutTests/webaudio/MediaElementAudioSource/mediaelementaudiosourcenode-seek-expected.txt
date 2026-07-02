@@ -1,0 +1,3 @@
+
+PASS Seeking the underlying HTMLMediaElement is reflected in MediaElementAudioSourceNode output.
+

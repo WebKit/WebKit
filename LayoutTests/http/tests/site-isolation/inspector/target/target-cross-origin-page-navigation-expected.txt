@@ -1,0 +1,33 @@
+CONSOLE MESSAGE: Hello from leaf-iframe http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+CONSOLE MESSAGE: Hello from leaf-iframe http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+CONSOLE MESSAGE: Hello from leaf-iframe http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+Test that frame targets are properly destroyed and created during a cross-origin page navigation.
+
+
+
+== Running test suite: SiteIsolation.Target.CrossOriginPageNavigation
+-- Running test case: SiteIsolation.Target.CrossOriginPageNavigation.FrameTargetLifetime
+PASS: Should have main, middle, and leaf frame targets before navigation.
+Frame URLs before navigation:
+http://127.0.0.1:8000/site-isolation/inspector/target/resources/middle-iframe.html
+http://127.0.0.1:8000/site-isolation/inspector/target/target-cross-origin-page-navigation.html
+http://localhost:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+Navigating cross-origin...
+PASS: Provisional main frame target gets created.
+PASS: Main frame target is committed.
+PASS: Previous id reported by the commit event should be the old main frame target's id.
+PASS: Should have main, middle, and leaf frame targets after navigation.
+Frame URLs after navigation:
+http://127.0.0.1:8000/site-isolation/inspector/target/resources/leaf-iframe.html
+http://localhost:8000/site-isolation/inspector/target/resources/middle-iframe.html
+http://localhost:8000/site-isolation/inspector/target/target-cross-origin-page-navigation.html
+PASS: Frame targets should be new despite the same page structure.
+
+-- Running test case: SiteIsolation.Target.CrossOriginPageNavigation.ProvisionalLoadCancelsPreviousLoad
+Navigating cross-origin while provisional target is paused...
+PASS: First provisional frame target was created.
+Navigating cross-origin again to cancel previous load...
+PASS: First provisional frame target was removed.
+PASS: Second provisional frame target was committed.
+PASS: Committed target should not be the first provisional.
+

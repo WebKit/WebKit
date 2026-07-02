@@ -1,0 +1,12 @@
+This tests that attributedStringForTextMarkerRange returns the correct text for line ranges inside nested tables where the range crosses table boundaries.
+
+PASS: lineString === 'foo/bar/174211843'
+PASS: attributedString.includes('foo/bar/174211843') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+BRANCHES
+
+foo/bar/174211843
+Second row content

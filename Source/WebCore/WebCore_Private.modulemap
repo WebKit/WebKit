@@ -1,0 +1,19 @@
+framework module WebCore_Private [system] {
+    module PlatformExportMacros {
+        header "PlatformExportMacros.h"
+        export *
+    }
+
+    module Core {
+        // Workaround for rdar://173516139: PrivateHeaders includes a header
+        // "WorkAround173516139.h" that the build system regenerates whenever
+        // the header list changes.
+        umbrella "PrivateHeaders"
+
+        requires cplusplus
+
+        module * {
+            export *
+        }
+    }
+}

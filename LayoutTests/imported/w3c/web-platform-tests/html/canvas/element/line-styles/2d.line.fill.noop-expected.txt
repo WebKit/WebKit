@@ -1,0 +1,6 @@
+2d.line.fill.noop
+Filling a line draws nothing
+Actual output:
+
+PASS Filling a line draws nothing
+

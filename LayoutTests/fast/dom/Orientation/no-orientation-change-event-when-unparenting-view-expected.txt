@@ -1,0 +1,14 @@
+Tests that no orientation change event gets dispatched when unparenting the view
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Start off in landscape mode
+Orientation changed
+* Unparenting view, then re-parenting it...
+* No additional orientation change event should have been fired
+PASS orientationChangeCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

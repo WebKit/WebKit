@@ -1,0 +1,4 @@
+Green
+
+PASS Calling getAnimations updates layout of parent frame if needed
+

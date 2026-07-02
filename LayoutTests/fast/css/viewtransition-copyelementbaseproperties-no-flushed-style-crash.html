@@ -1,0 +1,23 @@
+<style>
+* {
+  content: url(#a);
+  transform: translateZ(0);
+}
+</style>
+<script>
+  testRunner?.waitUntilDone();
+  testRunner?.dumpAsText();
+  window.addEventListener("load", () => {
+    let img = document.createElement("img");
+    img.srcset = "something";
+    document.startViewTransition();
+    iframe.src = location.href;
+    if (self !== top) {
+      console.log("This test passes if WebKit does not crash.");
+      testRunner?.notifyDone();
+    }
+  }, { once: true });
+</script>
+<body>
+  <iframe id="iframe"></iframe>
+</body>

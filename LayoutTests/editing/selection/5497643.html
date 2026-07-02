@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests to make sure that a selection inside a textarea is updated when the textarea is removed from the document.</p>
+<textarea id="textarea"></textarea>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+function nodeIndex(node) {
+    return Array.prototype.slice.call(node.parentNode.childNodes).indexOf(node);
+}
+window.onload = () => {
+    textarea = document.getElementById("textarea");
+    evalAndLog("textareaOffset = nodeIndex(textarea); textarea.focus(); textarea.setSelectionRange(0, 0); textarea.parentNode.removeChild(textarea);");
+    shouldBe("getSelection().type", "'Caret'");
+    shouldBe("getSelection().getRangeAt(0).startContainer", "document.body");
+    shouldBe("getSelection().getRangeAt(0).startOffset", "textareaOffset");
+    finishJSTest();
+};
+</script>
+</body>
+</html>

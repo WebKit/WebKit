@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.square {
+    display: inline-block;
+    height: 128px;
+    width: 128px;
+    background-repeat: no-repeat;
+    border-left: 32px solid #00FF00;
+}
+
+#webkit-background-origin-before-background-origin {
+    background-image: url("../resources/red-square-in-green-square.png");
+    -webkit-background-origin: padding;
+    background-origin: border-box; /* Should override -webkit-background-origin */
+}
+
+#background-origin-before-webkit-background-origin {
+    background-image: url("../resources/red-square-in-green-square.png");
+    background-origin: padding-box;
+    -webkit-background-origin: border; /* Should override background-origin */
+}
+</style>
+</head>
+<body>
+    <!-- Tests that we apply background-origin and -webkit-background-origin in the order they are parsed. -->
+    <div class="square" id="webkit-background-origin-before-background-origin"></div>
+    <div class="square" id="background-origin-before-webkit-background-origin"></div>
+</body>
+</html>

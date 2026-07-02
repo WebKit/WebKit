@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+
+const numberOfIterations = 20;
+const numberOfItems = 5000;
+
+// Delete database(s) for the test ahead of time.
+var databaseName = "objectstore-count-DB";
+indexedDB.deleteDatabase(databaseName).onsuccess = function() {
+    startIteration();
+}
+
+var testGenerator = null;
+var db = null;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: numberOfIterations,
+    unit: 'ms',
+    done: function () {
+        db = null;
+        testGenerator = null;
+        PerfTestRunner.gc();
+    }
+});
+
+function startIteration()
+{
+    testGenerator = runIteration();
+    nextStep();
+}
+
+function nextStep()
+{
+    testGenerator.next();
+}
+
+function *runIteration()
+{
+    var openRequest = indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = function(event) {
+        db = event.target.result;
+        var objectStore = db.createObjectStore('store');
+        for (var i = 0; i < numberOfItems; ++i)
+           objectStore.put("value" + i, i);
+    }
+    openRequest.onsuccess = nextStep;
+
+    yield;
+
+    var startTime = PerfTestRunner.now();
+
+    var objectStore = db.transaction('store').objectStore('store');
+    objectStore.count().onsuccess = function(event) {
+        if (event.target.result != numberOfItems)
+            alert("Expected " + numberOfItems + "items but get " + event.target.result);
+
+        nextStep();
+    }
+
+    yield;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    setTimeout(startIteration, 0);
+}
+</script>
+</body>
+</html>

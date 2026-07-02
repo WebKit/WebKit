@@ -1,0 +1,21 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface Client: original interface defined
+PASS Partial interface Client: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+FAIL Document interface: attribute onfreeze assert_true: The prototype object must have a property "onfreeze" expected true got false
+FAIL Document interface: attribute onresume assert_true: The prototype object must have a property "onresume" expected true got false
+FAIL Document interface: attribute wasDiscarded assert_true: The prototype object must have a property "wasDiscarded" expected true got false
+FAIL Document interface: document must inherit property "onfreeze" with the proper type assert_inherits: property "onfreeze" not found in prototype chain
+FAIL Document interface: document must inherit property "onresume" with the proper type assert_inherits: property "onresume" not found in prototype chain
+FAIL Document interface: document must inherit property "wasDiscarded" with the proper type assert_inherits: property "wasDiscarded" not found in prototype chain
+

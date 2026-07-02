@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Media source play mp3 with ID3 tags</title>
+<script src="../video-test.js"></script>
+<script src="../utilities.js"></script>
+<script>
+    var v, ms, sb;
+
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        v = document.getElementsByTagName('video')[0];
+        v.addEventListener('error', function(event) {
+            console.log("Error on audio element");
+            if (window.testRunner)
+                failTest("Error on audio element");
+        });
+
+        ms = new MediaSource();
+        v.src = URL.createObjectURL(ms);
+        await once(ms, 'sourceopen');
+        sb = ms.addSourceBuffer('audio/mpeg');
+
+        // Shouldn't happen. Appends must be processed properly.
+        sb.addEventListener('error', function(event) {
+            console.log("Error appending");
+            if (window.testRunner)
+                failTest("Error appending");
+        });
+
+        console.log("Appending MP3 with ID3 tags");
+        await Promise.all([fetchAndLoad(sb, '../content/silence_with_id3_tags', [''], '.mp3')]);
+        ms.endOfStream();
+        console.log("Appended MP3 with ID3 tags. Playing...");
+        v.play();
+        await once(v, 'ended');
+        testExpected('v.currentTime > 0', true);
+
+        console.log("Played. Success!");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+
+The MP3 file with ID3 tags must be properly appended and played by MSE.
+</body>
+</html>

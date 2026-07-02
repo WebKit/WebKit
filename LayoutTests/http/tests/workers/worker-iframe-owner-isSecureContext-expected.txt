@@ -1,0 +1,10 @@
+Tests that a worker's isSecureContext flag relies on the owner's top URL, not the owner's URL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isSecureContext is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

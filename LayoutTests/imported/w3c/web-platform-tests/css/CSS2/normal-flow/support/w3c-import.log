@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/1x1-gray.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/black96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/blue15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/blue96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/diamond.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/green-rectangle-50wideBy10tall.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/green.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/green15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/green200x200.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/intrinsic-ratio.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/margin-collapse-2em-space.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-intrinsic-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-intrinsic-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-intrinsic-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-intrinsic-004.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-intrinsic-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-1.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-10.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-11.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-12.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-13.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-14.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-16.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-17.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-18.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-19.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-2.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-3.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-4.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-5.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-6.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-7.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-8.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max-9.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/replaced-min-max.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/ring.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/swatch-aqua.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/swatch-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/support/test-tr.png

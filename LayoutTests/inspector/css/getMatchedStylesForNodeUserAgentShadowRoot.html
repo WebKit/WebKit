@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStylesForNode.UserAgentShadowRoot");
+
+    function nodeForId(id) {
+        return WI.domManager.nodeForId(id)
+    }
+
+    function addTestCase({name, description, resolveTargetDOMNode, expectedSelectors})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let domNode = await resolveTargetDOMNode(documentNode);
+                InspectorTest.assert(domNode, `Should find DOM Node.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                await domNodeStyles.refreshIfNeeded();
+
+                let matchedSelectorTexts = [];
+                for (let rule of domNodeStyles.matchedRules) {
+                    let selectorText = rule.selectorText
+                    matchedSelectorTexts.push(selectorText)
+
+                    // A sign of bad parsing from the backend is a disagreement between the individual selectors and the combined selector text.
+                    for (let selector of rule.selectors)
+                        InspectorTest.assert(selectorText.includes(selector.text), `Should find selector '${selector.text}' in whole selector text '${selectorText}'.`);
+                }
+
+                let matchedSelectors = domNodeStyles.matchedRules.map((rule) => rule.selectorText);
+                for (let expectedSelector of expectedSelectors)
+                    InspectorTest.expectThat(matchedSelectorTexts.includes(expectedSelector), `Should have matched rule for selector '${expectedSelector}'`);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStylesForNode.UserAgentShadowRoot.StyleFollowingNormallyInvalidSelector",
+        description: "Ensure that rules declared after a normaly invalid selector (that is exempted due to being in a UA Shadow Root) are correctly resolved.",
+        async resolveTargetDOMNode(documentNode) {
+            let videoElement = nodeForId(await documentNode.querySelector("#target"));
+            let shadowRoot = videoElement.shadowRoots()[0];
+            return nodeForId(await shadowRoot.querySelector(".time-label"));
+        },
+        expectedSelectors: [
+            ".media-controls .time-label, .media-controls .status-label",
+            ".time-label",
+            ".media-controls-container, .media-controls-container *",
+            ":host(audio), :host(video.media-document.audio), *",
+            "*",
+        ],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStylesForNode command styles inside user-agent shadow roots.</p>
+    <video id="target" loop muted autoplay controls>
+        <source src="../../http/tests/resources/test.mp4" />
+    </video>
+</body>
+</html>

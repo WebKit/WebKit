@@ -1,0 +1,3 @@
+
+FAIL An image should not be refetched upon insertion asynchronously after its Document's base URL changes promise_test: Unhandled rejection with value: "The image must load"
+

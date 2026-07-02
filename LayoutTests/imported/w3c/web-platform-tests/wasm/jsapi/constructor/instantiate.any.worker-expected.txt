@@ -1,0 +1,59 @@
+
+PASS Missing arguments
+PASS Branding
+PASS Invalid arguments
+PASS Promise type
+PASS Empty module without imports argument: BufferSource argument
+PASS Empty module without imports argument: Module argument
+PASS Empty module with undefined imports argument: BufferSource argument
+PASS Empty module with undefined imports argument: Module argument
+PASS Empty module with empty imports argument: BufferSource argument
+PASS Empty module with empty imports argument: Module argument
+PASS getter order for imports object: BufferSource argument
+PASS getter order for imports object: Module argument
+PASS imports: BufferSource argument
+PASS imports: Module argument
+PASS imports with empty module names: BufferSource argument
+PASS imports with empty module names: Module argument
+PASS imports with empty names: BufferSource argument
+PASS imports with empty names: Module argument
+PASS exports with empty name: function: BufferSource argument
+PASS exports with empty name: function: Module argument
+PASS exports with empty name: table: BufferSource argument
+PASS exports with empty name: table: Module argument
+PASS exports with empty name: global: BufferSource argument
+PASS exports with empty name: global: Module argument
+PASS No imports: BufferSource argument
+PASS No imports: Module argument
+PASS exports and imports: BufferSource argument
+PASS exports and imports: Module argument
+PASS i64 exports and imports: BufferSource argument
+PASS i64 exports and imports: Module argument
+PASS import with i32-returning function: BufferSource argument
+PASS import with i32-returning function: Module argument
+PASS import with function that takes and returns i32: BufferSource argument
+PASS import with function that takes and returns i32: Module argument
+PASS import with i64-returning function: BufferSource argument
+PASS import with i64-returning function: Module argument
+PASS import with function that takes and returns i64: BufferSource argument
+PASS import with function that takes and returns i64: Module argument
+PASS import with i32-taking function: BufferSource argument
+PASS import with i32-taking function: Module argument
+PASS import with i64-taking function: BufferSource argument
+PASS import with i64-taking function: Module argument
+PASS export i64-returning function: BufferSource argument
+PASS export i64-returning function: Module argument
+PASS i32 mutable WebAssembly.Global import: BufferSource argument
+PASS i32 mutable WebAssembly.Global import: Module argument
+PASS i64 mutable WebAssembly.Global import: BufferSource argument
+PASS i64 mutable WebAssembly.Global import: Module argument
+PASS Multiple i64 arguments: BufferSource argument
+PASS Multiple i64 arguments: Module argument
+PASS stray argument: BufferSource argument
+PASS stray argument: Module argument
+PASS Synchronous options handling: Buffer argument
+PASS Synchronous options handling: Module argument
+PASS Empty buffer
+PASS Invalid code
+PASS Changing the buffer
+

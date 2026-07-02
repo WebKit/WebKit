@@ -1,0 +1,236 @@
+/*
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+ /* https://w3c.github.io/mathml-core/#user-agent-stylesheet */
+
+#if defined(ENABLE_MATHML) && ENABLE_MATHML
+
+@namespace "http://www.w3.org/1998/Math/MathML";
+
+:any-link {
+    color: -webkit-link;
+    cursor: auto;
+}
+
+:any-link:active {
+    color: -webkit-activelink;
+}
+
+:focus-visible {
+    outline-style: auto;
+}
+
+/* Universal rules */
+* {
+    writing-mode: horizontal-tb !important;
+    /* FIXME: It should be 'display: block math'. (webkit.org/b/278533) */
+    display: block;
+}
+
+/* The <math> element */
+math {
+    direction: ltr;
+    text-indent: 0;
+    letter-spacing: normal;
+    line-height: normal;
+    word-spacing: normal;
+    font-style: normal;
+    font-weight: normal;
+    display: inline;
+    math-shift: normal;
+    math-style: compact;
+    math-depth: 0;
+
+    /*
+    We use the exact bounding boxes of glyphs to avoid excessive gaps in mathematical formulas.
+    FIXME: Should we replace this with a more general handling of ink/logical ascent/descent?
+    See http://webkit.org/b/130326, http://webkit.org/b/156841 and
+    http://www.mathml-association.org/MathMLinHTML5/S3.html#SS1.SSS1
+    */
+    -webkit-line-box-contain: glyphs replaced;
+
+    /*
+    Inheriting the font-family is likely to make MathML use text fonts that are not designed for
+    math layout and thus would cause very poor mathematical rendering. Consequently, the default
+    font-family on the <math> tag is set to the generic math font
+    (https://www.w3.org/TR/css-fonts-4/#valdef-font-family-math).
+    See `Source/WebCore/css/CSSFontSelector.cpp` for the fallback math font list.
+    For best rendering, authors and readers are encouraged to use text and math fonts with consistent
+    style (appearance, size...), see http://trac.webkit.org/wiki/MathML/Fonts#CustomizingMathFont
+    */
+    font-family: math;
+}
+
+math[display="block" i] {
+    /* FIXME: It should be 'display: block math'. (webkit.org/b/278533) */
+    display: block;
+    page-break-inside: avoid;
+    math-style: normal;
+}
+
+math[display="inline" i] {
+    /* FIXME: It should be 'display: inline math'. (webkit.org/b/278533) */
+    display: inline;
+    math-style: compact;
+}
+
+/* <mrow>-like elements */
+merror {
+    border: 1px solid red;
+    background-color: lightYellow;
+}
+
+mphantom {
+    visibility: hidden;
+}
+
+/* Token elements */
+ms, mtext, mi, mn, mo, annotation, mtd {
+    white-space: nowrap !important;
+}
+
+/* Tables */
+mtable {
+    display: inline-table;
+    text-align: center;
+    math-style: compact;
+}
+
+mtr {
+    display: table-row;
+}
+
+mtd {
+    display: table-cell;
+    padding: 0.5ex;
+}
+/* Use inline-block for children so that the text-align property is taken into account */
+mtd > * {
+    display: inline-block;
+}
+
+mtable[columnalign="left"], mtr[columnalign="left"], mtd[columnalign="left"] {
+    text-align: left;
+}
+
+mtable[columnalign="right"], mtr[columnalign="right"], mtd[columnalign="right"] {
+    text-align: right;
+}
+
+mtable[rowalign="top"] mtd, mtable mtr[rowalign="top"] mtd, mtable mtr mtd[rowalign="top"] {
+    vertical-align: top;
+}
+
+mtable[rowalign="bottom"] mtd, mtable mtr[rowalign="bottom"] mtd, mtable mtr mtd[rowalign="bottom"] {
+    vertical-align: bottom;
+}
+
+mtable[rowalign="center"] mtd, mtable mtr[rowalign="center"] mtd, mtable mtr mtd[rowalign="center"] {
+    vertical-align: middle;
+}
+
+mtable[frame="solid"] {
+    border: solid thin;
+}
+
+mtable[frame="dashed"] {
+    border: dashed thin;
+}
+
+mtable[rowlines="solid"], mtable[rowlines="dashed"], mtable[columnlines="solid"], mtable[columnlines="dashed"] {
+    border-collapse: collapse;
+}
+
+mtable[rowlines="solid"] > mtr + mtr {
+    border-top: solid thin;
+}
+
+mtable[rowlines="dashed"] > mtr + mtr {
+    border-top: dashed thin;
+}
+
+mtable[columnlines="solid"] > mtr > mtd + mtd {
+    border-left: solid thin;
+}
+
+mtable[columnlines="dashed"] > mtr > mtd + mtd {
+    border-left: dashed thin;
+}
+
+/* Fractions */
+mfrac {
+    padding-inline: 1px;
+}
+
+mfrac > * {
+    math-depth: auto-add;
+    math-style: compact;
+}
+
+mfrac > :nth-child(2) {
+    math-shift: compact;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+mroot > :not(:first-child) {
+    math-depth: add(2);
+    math-style: compact;
+}
+
+mroot, msqrt {
+    math-shift: compact;
+}
+
+msub > :not(:first-child),
+msup > :not(:first-child),
+msubsup > :not(:first-child),
+mmultiscripts > :not(:first-child),
+munder > :not(:first-child),
+mover > :not(:first-child),
+munderover > :not(:first-child) {
+    math-depth: add(1);
+    math-style: compact;
+}
+
+munder[accentunder="true" i] > :nth-child(2),
+mover[accent="true" i] > :nth-child(2),
+munderover[accentunder="true" i] > :nth-child(2),
+munderover[accent="true" i] > :nth-child(3) {
+  font-size: inherit;
+}
+
+msub > :nth-child(2),
+msubsup > :nth-child(2),
+mmultiscripts > :nth-child(even),
+mmultiscripts > mprescripts ~ :nth-child(odd),
+mover[accent="true" i] > :first-child,
+munderover[accent="true" i] > :first-child {
+  math-shift: compact;
+}
+
+mmultiscripts > mprescripts ~ :nth-child(even) {
+  math-shift: inherit;
+}
+
+#endif

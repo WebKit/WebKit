@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: TypeError: Can only call Response.clone on instances of Response
+CONSOLE MESSAGE: TypeError: The Response.body getter can only be used on instances of Response
+CONSOLE MESSAGE: TypeError: The Request.method getter can only be used on instances of Request
+CONSOLE MESSAGE: TypeError: Can only call Request.clone on instances of Request
+CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.arrayBuffer on instances of Response
+CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.blob on instances of Response
+CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.formData on instances of Response
+CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.json on instances of Response
+CONSOLE MESSAGE: Promise rejected with: TypeError: Can only call Response.text on instances of Response
+
+PASS Exercising TypeError messages in Fetch Request and Response
+

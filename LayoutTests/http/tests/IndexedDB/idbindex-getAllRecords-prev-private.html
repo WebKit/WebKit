@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+description("Test IDBIndex.getAllRecords() with direction 'prev' in private browsing mode.");
+
+function prepareDatabase()
+{
+    db = event.target.result;
+    var store = db.createObjectStore('store');
+    var index = store.createIndex('test_idx', 'indexKey');
+
+    store.put({indexKey: 'A', value: 'alpha'}, 'a');
+    store.put({indexKey: 'B', value: 'beta'}, 'b');
+    store.put({indexKey: 'C', value: 'gamma'}, 'c');
+    store.put({indexKey: 'D', value: 'delta'}, 'd');
+    store.put({indexKey: 'E', value: 'epsilon'}, 'e');
+}
+
+function verifyResults()
+{
+    db = event.target.result;
+    var transaction = db.transaction('store', 'readonly');
+    var store = transaction.objectStore('store');
+    var index = store.index('test_idx');
+
+    var request = index.getAllRecords({direction: 'prev'});
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function(event) {
+        records = event.target.result;
+
+        shouldBe("records.length", "5");
+
+        // Records should be in reverse index key order: E, D, C, B, A.
+        shouldBeEqualToString("records[0].key", "E");
+        shouldBeEqualToString("records[0].primaryKey", "e");
+        shouldBeEqualToString("records[0].value.indexKey", "E");
+        shouldBeEqualToString("records[0].value.value", "epsilon");
+
+        shouldBeEqualToString("records[1].key", "D");
+        shouldBeEqualToString("records[1].primaryKey", "d");
+        shouldBeEqualToString("records[1].value.value", "delta");
+
+        shouldBeEqualToString("records[2].key", "C");
+        shouldBeEqualToString("records[2].primaryKey", "c");
+        shouldBeEqualToString("records[2].value.value", "gamma");
+
+        shouldBeEqualToString("records[3].key", "B");
+        shouldBeEqualToString("records[3].primaryKey", "b");
+        shouldBeEqualToString("records[3].value.value", "beta");
+
+        shouldBeEqualToString("records[4].key", "A");
+        shouldBeEqualToString("records[4].primaryKey", "a");
+        shouldBeEqualToString("records[4].value.value", "alpha");
+
+        finishJSTest();
+    };
+}
+
+indexedDBTest(prepareDatabase, verifyResults);
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+
+
+
+PASS PreventDefaulting form onsubmit should allow submit() to succeed
+PASS PreventDefaulting form onsubmit should allow submit() to succeed and the second submit() which is invalid should not supersede first one
+

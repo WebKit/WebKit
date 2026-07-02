@@ -1,0 +1,129 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/CSSPrimitiveNumericRange.h>
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/Element.h>
+#include <optional>
+#include <wtf/Assertions.h>
+
+namespace WebCore {
+
+class Element;
+class FloatSize;
+class FontCascade;
+class RenderView;
+
+namespace Style {
+class BuilderState;
+class ComputedStyle;
+}
+
+class CSSToLengthConversionData {
+public:
+    CSSToLengthConversionData();
+    CSSToLengthConversionData(const CSSToLengthConversionData&);
+    CSSToLengthConversionData(CSSToLengthConversionData&&);
+
+    // This is used during style building. The 'zoom' property is taken into account.
+    CSSToLengthConversionData(const Style::ComputedStyle&, Style::BuilderState&);
+    // This constructor ignores the `zoom` property.
+    CSSToLengthConversionData(const Style::ComputedStyle&, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr, CSS::RangeZoomOptions = CSS::RangeZoomOptions::Default);
+
+    // Used for resolutions that don't take place during normal style resolution.
+    static std::optional<CSSToLengthConversionData> tryCreateForNonStyleBuildingResolution(Element&);
+    static std::optional<CSSToLengthConversionData> tryCreateForNonStyleBuildingResolution(Element*);
+
+    WEBCORE_EXPORT ~CSSToLengthConversionData();
+
+    const Style::ComputedStyle* style() const { return m_style; }
+    const Style::ComputedStyle* rootStyle() const { return m_rootStyle; }
+    const Style::ComputedStyle* parentStyle() const { return m_parentStyle; }
+    float NODELETE zoom() const;
+    CSS::RangeZoomOptions rangeZoomOption() const { return m_rangeZoomOption; }
+    bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
+    bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
+    CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
+    bool NODELETE evaluationTimeZoomEnabled() const;
+    const RenderView* renderView() const { return m_renderView; }
+    const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
+
+    const FontCascade& NODELETE fontCascadeForFontUnits() const;
+
+    FloatSize defaultViewportFactor() const;
+    FloatSize smallViewportFactor() const;
+    FloatSize largeViewportFactor() const;
+    FloatSize dynamicViewportFactor() const;
+
+    CSSToLengthConversionData copyForFontSize() const
+    {
+        CSSToLengthConversionData copy(*this);
+        copy.m_zoom = 1.f;
+        copy.m_propertyToCompute = CSSPropertyFontSize;
+        return copy;
+    };
+
+    CSSToLengthConversionData copyWithAdjustedZoom(float zoom, CSS::RangeZoomOptions rangeZoomOption = CSS::RangeZoomOptions::Default) const
+    {
+        CSSToLengthConversionData copy(*this);
+        copy.m_zoom = zoom;
+        copy.m_rangeZoomOption = rangeZoomOption;
+        return copy;
+    }
+
+    CSSToLengthConversionData copyForLineHeight(float zoom) const
+    {
+        CSSToLengthConversionData copy(*this);
+        copy.m_zoom = zoom;
+        copy.m_propertyToCompute = CSSPropertyLineHeight;
+        copy.m_rangeZoomOption = CSS::RangeZoomOptions::Unzoomed;
+        return copy;
+    }
+
+    void NODELETE setUsesContainerUnits() const;
+
+    Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
+
+private:
+    const Style::ComputedStyle* m_style { nullptr };
+    const Style::ComputedStyle* m_rootStyle { nullptr };
+    const Style::ComputedStyle* m_parentStyle { nullptr };
+    const RenderView* m_renderView { nullptr };
+    RefPtr<const Element> m_elementForContainerUnitResolution;
+    std::optional<float> m_zoom;
+    std::optional<CSSPropertyID> m_propertyToCompute;
+    CheckedPtr<Style::BuilderState> m_styleBuilderState;
+    CSS::RangeZoomOptions m_rangeZoomOption { CSS::RangeZoomOptions::Default };
+};
+
+} // namespace WebCore

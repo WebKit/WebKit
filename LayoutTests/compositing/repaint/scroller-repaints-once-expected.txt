@@ -1,0 +1,147 @@
+Scrolled contents
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
+  (coverage rect 0.00, 0.00 800.00 x 600.00)
+  (intersects coverage rect 1)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
+      (coverage rect 0.00, 0.00 800.00 x 600.00)
+      (intersects coverage rect 1)
+      (contentsScale 1.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 322.00 322.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 322.00 x 322.00)
+          (coverage rect -8.00, -8.00 800.00 x 600.00)
+          (intersects coverage rect 1)
+          (contentsScale 1.00)
+          (children 2
+            (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
+              (position 1.00 1.00)
+              (bounds 305.00 305.00)
+              (visible rect 0.00, 0.00 305.00 x 305.00)
+              (coverage rect 0.00, 0.00 305.00 x 305.00)
+              (intersects coverage rect 1)
+              (contentsScale 1.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=1 height=1)
+                  (anchor 0.00 0.00)
+                  (bounds 305.00 2100.00)
+                  (drawsContent 1)
+                  (visible rect 0.00, 0.00 305.00 x 305.00)
+                  (coverage rect 0.00, 0.00 817.00 x 817.00)
+                  (intersects coverage rect 1)
+                  (contentsScale 1.00)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 320.00 320.00)
+              (visible rect 0.00, 0.00 320.00 x 320.00)
+              (coverage rect 0.00, 0.00 320.00 x 320.00)
+              (intersects coverage rect 1)
+              (contentsScale 1.00)
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 305.00)
+                  (bounds 305.00 15.00)
+                  (drawsContent 1)
+                  (visible rect 0.00, 0.00 305.00 x 15.00)
+                  (coverage rect 0.00, -305.00 320.00 x 320.00)
+                  (intersects coverage rect 1)
+                  (contentsScale 1.00)
+                )
+                (GraphicsLayer
+                  (position 305.00 0.00)
+                  (bounds 15.00 305.00)
+                  (drawsContent 1)
+                  (visible rect 0.00, 0.00 15.00 x 305.00)
+                  (coverage rect -305.00, 0.00 320.00 x 320.00)
+                  (intersects coverage rect 1)
+                  (contentsScale 1.00)
+                )
+                (GraphicsLayer
+                  (position 305.00 305.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                  (visible rect 0.00, 0.00 15.00 x 15.00)
+                  (coverage rect -305.00, -305.00 320.00 x 320.00)
+                  (intersects coverage rect 1)
+                  (contentsScale 1.00)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 322.00 322.00)
+          (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
+              (position 1.00 1.00)
+              (bounds 305.00 305.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=1 height=1)
+                  (anchor 0.00 0.00)
+                  (bounds 305.00 2100.00)
+                  (drawsContent 1)
+                  (repaint rects
+                    (rect 10.00 2060.00 35.00 30.00)
+                  )
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 320.00 320.00)
+              (children 3
+                (GraphicsLayer
+                  (position 0.00 305.00)
+                  (bounds 305.00 15.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 305.00 0.00)
+                  (bounds 15.00 305.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 305.00 305.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

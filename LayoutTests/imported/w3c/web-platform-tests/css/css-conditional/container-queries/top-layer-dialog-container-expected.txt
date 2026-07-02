@@ -1,0 +1,4 @@
+
+PASS #dialog initially sized by #containing-block
+PASS #dialog sized by viewport
+

@@ -1,0 +1,21 @@
+Typing "* " at the start of two consecutive lines should auto-convert them into an unordered disc list. Both the ASCII asterisk (U+002A) and the bullet character (U+2022) should trigger the same conversion.
+
+Asterisk (U+002A):
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "Hello"
+|     <br>
+|   <li>
+|     "World<#selection-caret>"
+
+Bullet (U+2022):
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "Hello"
+|     <br>
+|   <li>
+|     "World<#selection-caret>"

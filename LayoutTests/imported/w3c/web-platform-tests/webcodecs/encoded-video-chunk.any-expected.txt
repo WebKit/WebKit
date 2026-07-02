@@ -1,0 +1,5 @@
+
+PASS Test we can construct an EncodedVideoChunk.
+PASS Test copyTo() exception if destiation invalid
+PASS Test we can construct an zero-sized EncodedVideoChunk.
+

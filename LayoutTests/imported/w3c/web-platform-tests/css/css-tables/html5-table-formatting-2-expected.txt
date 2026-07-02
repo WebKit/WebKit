@@ -1,0 +1,58 @@
+HTML5 Table Formatting algorithm (row/column grid computation)
+
+Verifies how browsers deal with explicit tracks from which no cell does originate
+
+This should be a 100px by 100px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+This should be a 175px by 175px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px
+
+This should be a 175px by 175px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px
+
+This should be a 175px by 175px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px
+
+This should be a 175px by 175px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px
+
+This should be a 175px by 175px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks are not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px
+
+
+FAIL Explicitely defined columns are not merged assert_equals: expected 100 but got 50
+PASS Explicitely defined rows are not merged
+FAIL Border-spacing is added between any two unmerged columns (1) assert_equals: expected 175 but got 100
+PASS Border-spacing is added between any two unmerged rows (1)
+PASS Border-spacing is added between any two unmerged columns (2)
+PASS Border-spacing is added between any two unmerged rows (2)
+PASS Border-spacing is added between any two unmerged columns (3)
+PASS Border-spacing is added between any two unmerged rows (3)
+PASS Border-spacing is added between any two unmerged columns (4)
+PASS Border-spacing is added between any two unmerged rows (4)
+FAIL Border-spacing is added between any two unmerged columns (5) assert_equals: expected 175 but got 100
+PASS Border-spacing is added between any two unmerged rows (5)
+

@@ -1,0 +1,4 @@
+Shadow on texts
+PASS - "text-shadow" property for "text" element at 0s saw something close to: 255,0,0,-25,-5,15
+PASS - "text-shadow" property for "text" element at 1s saw something close to: 0,128,0,5,5,15
+

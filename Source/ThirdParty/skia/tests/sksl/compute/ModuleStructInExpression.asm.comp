@@ -1,0 +1,100 @@
+               OpCapability Shader
+          %5 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel Logical GLSL450
+               OpEntryPoint GLCompute %main "main"
+               OpExecutionMode %main LocalSize 16 16 1
+
+               ; Debug Information
+               OpName %outX "outX"                  ; id %10
+               OpName %outY "outY"                  ; id %12
+               OpName %outZ "outZ"                  ; id %13
+               OpName %one_i "one_i"                ; id %6
+               OpName %two_i "two_i"                ; id %7
+               OpName %three_i "three_i"            ; id %8
+               OpName %main "main"                  ; id %9
+               OpName %IndirectDispatchArgs "IndirectDispatchArgs"  ; id %25
+               OpMemberName %IndirectDispatchArgs 0 "x"
+               OpMemberName %IndirectDispatchArgs 1 "y"
+               OpMemberName %IndirectDispatchArgs 2 "z"
+
+               ; Annotations
+               OpMemberDecorate %IndirectDispatchArgs 0 Offset 0
+               OpMemberDecorate %IndirectDispatchArgs 1 Offset 4
+               OpMemberDecorate %IndirectDispatchArgs 2 Offset 8
+
+               ; Types, variables and constants
+        %int = OpTypeInt 32 1
+%_ptr_Input_int = OpTypePointer Input %int
+%_ptr_Workgroup_int = OpTypePointer Workgroup %int
+       %outX = OpVariable %_ptr_Workgroup_int Workgroup
+       %outY = OpVariable %_ptr_Workgroup_int Workgroup
+       %outZ = OpVariable %_ptr_Workgroup_int Workgroup
+         %14 = OpTypeFunction %int
+      %int_1 = OpConstant %int 1
+      %int_2 = OpConstant %int 2
+      %int_3 = OpConstant %int 3
+       %void = OpTypeVoid
+         %22 = OpTypeFunction %void
+%IndirectDispatchArgs = OpTypeStruct %int %int %int
+%_ptr_Function_IndirectDispatchArgs = OpTypePointer Function %IndirectDispatchArgs
+      %int_0 = OpConstant %int 0
+%_ptr_Function_int = OpTypePointer Function %int
+
+
+               ; Function one_i
+      %one_i = OpFunction %int None %14
+
+         %15 = OpLabel
+                 OpReturnValue %int_1
+               OpFunctionEnd
+
+
+               ; Function two_i
+      %two_i = OpFunction %int None %14
+
+         %17 = OpLabel
+                 OpReturnValue %int_2
+               OpFunctionEnd
+
+
+               ; Function three_i
+    %three_i = OpFunction %int None %14
+
+         %19 = OpLabel
+                 OpReturnValue %int_3
+               OpFunctionEnd
+
+
+               ; Function main
+       %main = OpFunction %void None %22
+
+         %23 = OpLabel
+         %24 =   OpVariable %_ptr_Function_IndirectDispatchArgs Function
+         %35 =   OpVariable %_ptr_Function_IndirectDispatchArgs Function
+         %42 =   OpVariable %_ptr_Function_IndirectDispatchArgs Function
+         %27 =   OpFunctionCall %int %one_i
+         %28 =   OpFunctionCall %int %two_i
+         %29 =   OpFunctionCall %int %three_i
+         %30 =   OpCompositeConstruct %IndirectDispatchArgs %27 %28 %29
+                 OpStore %24 %30
+         %32 =   OpAccessChain %_ptr_Function_int %24 %int_0
+         %34 =   OpLoad %int %32
+                 OpStore %outX %34
+         %36 =   OpFunctionCall %int %one_i
+         %37 =   OpFunctionCall %int %two_i
+         %38 =   OpFunctionCall %int %three_i
+         %39 =   OpCompositeConstruct %IndirectDispatchArgs %36 %37 %38
+                 OpStore %35 %39
+         %40 =   OpAccessChain %_ptr_Function_int %35 %int_1
+         %41 =   OpLoad %int %40
+                 OpStore %outY %41
+         %43 =   OpFunctionCall %int %one_i
+         %44 =   OpFunctionCall %int %two_i
+         %45 =   OpFunctionCall %int %three_i
+         %46 =   OpCompositeConstruct %IndirectDispatchArgs %43 %44 %45
+                 OpStore %42 %46
+         %47 =   OpAccessChain %_ptr_Function_int %42 %int_2
+         %48 =   OpLoad %int %47
+                 OpStore %outZ %48
+                 OpReturn
+               OpFunctionEnd

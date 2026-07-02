@@ -1,0 +1,5 @@
+p.a: 1
+p.b: Not Found
+proxyDone.foo: true
+proxy.foo: [[foo]]
+proxy.foo (after revoke): true

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.clearMemoryCache();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        function loadCachedImageInIFrame()
+        {
+            var iframe = document.createElement("iframe");
+            document.body.appendChild(iframe);
+            iframe.onload = function() {
+                console.log("This test passes if it does not print 'FAIL'")
+                if (window.testRunner)
+                    setTimeout(() => testRunner.notifyDone(), 0);
+            }
+            iframe.src = "resources/cached-image.html";
+        }
+    </script>
+</head>
+<body>
+    <img src="/misc/resources/compass.jpg" onload="loadCachedImageInIFrame()">
+</body>
+</html>

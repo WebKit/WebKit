@@ -1,0 +1,6 @@
+This text should be green.
+
+PASS Specified variable value appearing in a created element's inline style should work once spliced into the creating document
+PASS Computed variable value appearing in a created element's inline style should work once spliced into the creating document
+PASS Variable reference appearing in a created element's inline style should work once spliced into the creating document
+

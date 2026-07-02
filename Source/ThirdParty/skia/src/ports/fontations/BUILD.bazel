@@ -1,0 +1,70 @@
+load("@rules_rust//rust:defs.bzl", "rust_static_library", "rust_test")
+load("//bazel:rust_cxx_bridge.bzl", "rust_cxx_bridge")
+load(
+    "//bazel:skia_rules.bzl",
+    "skia_cc_library",
+    "skia_filegroup",
+)
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "bridge_rust_side_srcs",
+    srcs = [
+        "src/base.rs",
+        "src/bitmap.rs",
+        "src/colr.rs",
+        "src/ffi.rs",
+        "src/hinting.rs",
+        "src/names.rs",
+        "src/verbs_points_pen.rs",
+    ],
+)
+
+rust_cxx_bridge(
+    name = "fontations_ffi",
+    src = "src/ffi.rs",
+    deps = [":path_bridge_include"],
+)
+
+rust_static_library(
+    name = "bridge_rust_side",
+    srcs = [
+        ":bridge_rust_side_srcs",
+    ],
+    crate_root = "src/ffi.rs",
+    deps = [
+        "@crates//:cxx",
+        "@crates//:font-types",
+        "@crates//:read-fonts",
+        "@crates//:skrifa",
+    ],
+)
+
+skia_cc_library(
+    name = "path_bridge_include",
+    hdrs = [
+        "src/skpath_bridge.h",
+    ],
+)
+
+skia_cc_library(
+    name = "deps",
+    visibility = ["//src/ports:__pkg__"],
+    deps = [
+        ":bridge_rust_side",
+        ":fontations_ffi",
+        ":path_bridge_include",
+    ],
+)
+
+rust_test(
+    name = "test_ffi",
+    timeout = "short",
+    crate = ":bridge_rust_side",
+    data = ["//resources"],
+)

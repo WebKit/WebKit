@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<body>
+  <script src=/resources/testharness.js></script>
+  <script src=/resources/testharnessreport.js></script>
+  <script src="../../webxr/resources/webxr_util.js"></script>
+  <script src="../../webxr/resources/webxr_test_constants.js"></script>
+  <canvas></canvas>
+
+  <script>
+    const testName = "Reject multiple calls to XRSession.end()";
+    const fakeDeviceInitParams = TRACKED_IMMERSIVE_DEVICE;
+
+    let testFunction = function(session, testDeviceController, t) {
+      session.end();
+      return promise_rejects_dom(t, "InvalidStateError", session.end())
+    };
+
+    xr_session_promise_test(testName, testFunction,
+      fakeDeviceInitParams, 'immersive-vr');
+  </script>
+</body>

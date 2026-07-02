@@ -1,0 +1,46 @@
+<!-- this test passes if it doesn't crash -->
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+var myFeedback = [];
+function UpdateFeedback(line, res) { myFeedback.push([line, res]) }
+
+var runcount = {'jsfuzzer':0, 'eventhandler1':0, 'eventhandler2':0, 'eventhandler3':0, 'eventhandler4':0, 'eventhandler5':0}
+
+function GetVariable(fuzzervars, var_type) { if(fuzzervars[var_type]) { return fuzzervars[var_type]; } else { return null; }}
+
+function SetVariable(fuzzervars, var_name, var_type) { fuzzervars[var_type] = var_name; }
+
+function jsfuzzer() {
+
+runcount["jsfuzzer"]++; if(runcount["jsfuzzer"] > 2) { return; }
+
+var fuzzervars = {};
+
+SetVariable(fuzzervars, window, 'Window');
+SetVariable(fuzzervars, document, 'Document');
+try { if (!var00001) { var00001 = GetVariable(fuzzervars, 'GPUTextureFormat'); } else { SetVariable(fuzzervars, var00001, 'GPUTextureFormat');  };  UpdateFeedback(String.raw`if (!var00001) { var00001 = GetVariable(fuzzervars, 'GPUTextureFormat'); } else { SetVariable(fuzzervars, var00001, 'GPUTextureFormat');  }`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`if (!var00001) { var00001 = GetVariable(fuzzervars, 'GPUTextureFormat'); } else { SetVariable(fuzzervars, var00001, 'GPUTextureFormat');  }`, e.name) }
+try { window.releaseEvents();;  UpdateFeedback(String.raw`window.releaseEvents();`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`window.releaseEvents();`, e.name) }
+try { /* newvar{var00025:Element} */ var var00025 = document.firstElementChild;;  UpdateFeedback(String.raw`/* newvar{var00025:Element} */ var var00025 = document.firstElementChild;`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00025:Element} */ var var00025 = document.firstElementChild;`, e.name) }
+try { if (!var00025) { var00025 = GetVariable(fuzzervars, 'Element'); } else { SetVariable(fuzzervars, var00025, 'Element'); SetVariable(fuzzervars, var00025, 'Node;');  };  UpdateFeedback(String.raw`if (!var00025) { var00025 = GetVariable(fuzzervars, 'Element'); } else { SetVariable(fuzzervars, var00025, 'Element'); SetVariable(fuzzervars, var00025, 'Node;');  }`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`if (!var00025) { var00025 = GetVariable(fuzzervars, 'Element'); } else { SetVariable(fuzzervars, var00025, 'Element'); SetVariable(fuzzervars, var00025, 'Node;');  }`, e.name) }
+try { /* newvar{var00023:Element} */ var var00023 = var00024.activeElement;;  UpdateFeedback(String.raw`/* newvar{var00023:Element} */ var var00023 = var00024.activeElement;`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00023:Element} */ var var00023 = var00024.activeElement;`, e.name) }
+try { if (!var00023) { var00023 = GetVariable(fuzzervars, 'Element'); } else { SetVariable(fuzzervars, var00023, 'Element'); SetVariable(fuzzervars, var00023, 'Node;');  };  UpdateFeedback(String.raw`if (!var00023) { var00023 = GetVariable(fuzzervars, 'Element'); } else { SetVariable(fuzzervars, var00023, 'Element'); SetVariable(fuzzervars, var00023, 'Node;');  }`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`if (!var00023) { var00023 = GetVariable(fuzzervars, 'Element'); } else { SetVariable(fuzzervars, var00023, 'Element'); SetVariable(fuzzervars, var00023, 'Node;');  }`, e.name) }
+try { /* newvar{var00031:PressureUpdateCallback} */ var var00031 = function(x){console.log("ok")};;  UpdateFeedback(String.raw`/* newvar{var00031:PressureUpdateCallback} */ var var00031 = function(x){console.log("ok")};`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00031:PressureUpdateCallback} */ var var00031 = function(x){console.log("ok")};`, e.name) }
+try { /* newvar{var00027:object} */ var var00027 = var00028.toJSON();;  UpdateFeedback(String.raw`/* newvar{var00027:object} */ var var00027 = var00028.toJSON();`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00027:object} */ var var00027 = var00028.toJSON();`, e.name) }
+try { /* newvar{var00022:KeyframeEffect} */ var var00022 = new KeyframeEffect(var00023,var00027);;  UpdateFeedback(String.raw`/* newvar{var00022:KeyframeEffect} */ var var00022 = new KeyframeEffect(var00023,var00027);`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00022:KeyframeEffect} */ var var00022 = new KeyframeEffect(var00023,var00027);`, e.name) }
+try { /* newvar{var00021:AnimationEffect} */ var var00021 = var00022;;  UpdateFeedback(String.raw`/* newvar{var00021:AnimationEffect} */ var var00021 = var00022;`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00021:AnimationEffect} */ var var00021 = var00022;`, e.name) }
+try { if (!var00021) { var00021 = GetVariable(fuzzervars, 'AnimationEffect'); } else { SetVariable(fuzzervars, var00021, 'AnimationEffect');  };  UpdateFeedback(String.raw`if (!var00021) { var00021 = GetVariable(fuzzervars, 'AnimationEffect'); } else { SetVariable(fuzzervars, var00021, 'AnimationEffect');  }`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`if (!var00021) { var00021 = GetVariable(fuzzervars, 'AnimationEffect'); } else { SetVariable(fuzzervars, var00021, 'AnimationEffect');  }`, e.name) }
+try { /* newvar{var00019:AnimationEffect} */ var var00019 = var00020.firstChild;;  UpdateFeedback(String.raw`/* newvar{var00019:AnimationEffect} */ var var00019 = var00020.firstChild;`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00019:AnimationEffect} */ var var00019 = var00020.firstChild;`, e.name) }
+try { if (!var00019) { var00019 = GetVariable(fuzzervars, 'AnimationEffect'); } else { SetVariable(fuzzervars, var00019, 'AnimationEffect');  };  UpdateFeedback(String.raw`if (!var00019) { var00019 = GetVariable(fuzzervars, 'AnimationEffect'); } else { SetVariable(fuzzervars, var00019, 'AnimationEffect');  }`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`if (!var00019) { var00019 = GetVariable(fuzzervars, 'AnimationEffect'); } else { SetVariable(fuzzervars, var00019, 'AnimationEffect');  }`, e.name) }
+try { /* newvar{var00033:ScrollTimeline} */ var var00033 = new ScrollTimeline();;  UpdateFeedback(String.raw`/* newvar{var00033:ScrollTimeline} */ var var00033 = new ScrollTimeline();`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00033:ScrollTimeline} */ var var00033 = new ScrollTimeline();`, e.name) }
+try { /* newvar{var00032:AnimationTimeline} */ var var00032 = var00033;;  UpdateFeedback(String.raw`/* newvar{var00032:AnimationTimeline} */ var var00032 = var00033;`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00032:AnimationTimeline} */ var var00032 = var00033;`, e.name) }
+try { /* newvar{var00018:Animation} */ var var00018 = new Animation(var00019,var00032);;  UpdateFeedback(String.raw`/* newvar{var00018:Animation} */ var var00018 = new Animation(var00019,var00032);`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00018:Animation} */ var var00018 = new Animation(var00019,var00032);`, e.name) }
+try { var00018.finish();;  UpdateFeedback(String.raw`var00018.finish();`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`var00018.finish();`, e.name) }
+try { /* newvar{var00395:union_Node1DOMString_} */ var var00395 = String.fromCharCode(120, 92, 51, 86, 32, 81, 57, 63, 39, 65, 32, 81, 116, 65, 37, 39, 49, 116, 74, 107);;  UpdateFeedback(String.raw`/* newvar{var00395:union_Node1DOMString_} */ var var00395 = String.fromCharCode(120, 92, 51, 86, 32, 81, 57, 63, 39, 65, 32, 81, 116, 65, 37, 39, 49, 116, 74, 107);`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`/* newvar{var00395:union_Node1DOMString_} */ var var00395 = String.fromCharCode(120, 92, 51, 86, 32, 81, 57, 63, 39, 65, 32, 81, 116, 65, 37, 39, 49, 116, 74, 107);`, e.name) }
+try { var00025.replaceChildren(var00395);;  UpdateFeedback(String.raw`var00025.replaceChildren(var00395);`, "Valid"); } catch(e) {  UpdateFeedback(String.raw`var00025.replaceChildren(var00395);`, e.name) }
+}
+</script>
+<body onload=jsfuzzer()>
+</body>

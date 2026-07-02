@@ -1,0 +1,4 @@
+
+
+PASS updateCurrentEntry() with unserializable state on the initial about:blank must throw an "InvalidStateError", not a "DataCloneError"
+

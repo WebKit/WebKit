@@ -1,0 +1,7 @@
+2d.fillStyle.CSSRGB
+
+CSSRGB works as color input
+
+
+FAIL CSSRGB works as color input assert_equals: ctx.fillStyle === '#ff00ff' (got #000000[string], expected #ff00ff[string]) expected "#ff00ff" but got "#000000"
+

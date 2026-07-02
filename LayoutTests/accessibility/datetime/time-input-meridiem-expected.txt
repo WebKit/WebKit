@@ -1,0 +1,33 @@
+This test ensures that time input meridiem fields can be controlled via assistive technologies.
+
+PASS: axMeridiemSpinbutton.role === 'AXRole: AXIncrementor'
+PASS: isValidTextValue(axMeridiemSpinbutton.valueDescription) === true
+
+Pressing up arrow.
+PASS: axMeridiemSpinbutton.valueDescription !== lastValueDescription === true
+PASS: axMeridiemSpinbutton.ariaValueNow !== lastIntValue === true
+PASS: isValidTextValue(lastValueDescription) === true
+PASS: isValidIntValue(lastIntValue) === true
+
+Pressing up arrow.
+PASS: axMeridiemSpinbutton.valueDescription !== lastValueDescription === true
+PASS: axMeridiemSpinbutton.ariaValueNow !== lastIntValue === true
+PASS: isValidTextValue(lastValueDescription) === true
+PASS: isValidIntValue(lastIntValue) === true
+
+Incrementing via AX API.
+PASS: axMeridiemSpinbutton.valueDescription !== lastValueDescription === true
+PASS: axMeridiemSpinbutton.ariaValueNow !== lastIntValue === true
+PASS: isValidTextValue(lastValueDescription) === true
+PASS: isValidIntValue(lastIntValue) === true
+
+Decrementing via AX API.
+PASS: axMeridiemSpinbutton.valueDescription !== lastValueDescription === true
+PASS: axMeridiemSpinbutton.ariaValueNow !== lastIntValue === true
+PASS: isValidTextValue(lastValueDescription) === true
+PASS: isValidIntValue(lastIntValue) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

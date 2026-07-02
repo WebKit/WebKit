@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+// https://html.spec.whatwg.org/multipage/semantics.html#htmllinkelement
+[
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
+    Exposed=Window
+] interface HTMLLinkElement : HTMLElement {
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString href;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString? crossOrigin;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString as;
+    [PutForwards=value] readonly attribute DOMTokenList relList;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString media;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
+    [PutForwards=value] readonly attribute DOMTokenList sizes;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString imageSrcset;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString imageSizes;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
+    [PutForwards=value] readonly attribute DOMTokenList blocking;
+    [Reflect] attribute boolean disabled;
+    [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings, ReflectSetter] attribute [AtomString] DOMString fetchPriority;
+
+    // https://html.spec.whatwg.org/multipage/obsolete.html#HTMLLinkElement-partial
+    // FIXME: Move these to their own IDL file HTMLLinkElement+Obsolete.idl.
+    [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rev;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+};
+
+HTMLLinkElement includes LinkStyle;

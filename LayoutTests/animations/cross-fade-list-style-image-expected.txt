@@ -1,0 +1,10 @@
+one
+two
+one
+two
+one
+two
+PASS - "listStyleImage" property for "box" element at 2.5s saw something close to: -webkit-cross-fade(url(blue-100.png), url(green-100.png), 50%)
+PASS - "listStyleImage" property for "box" and "boxStatic" elements at 2.5s are close enough to each other
+PASS - "listStyleImage" property for "boxShorthand" and "boxStatic" elements at 2.5s are close enough to each other
+

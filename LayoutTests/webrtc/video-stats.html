@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id=video autoplay playsinline muted></video>
+        <script src ="routines.js"></script>
+        <script>
+function getStatsType(connection)
+{
+    return connection.getStats().then((report) => {
+        var reportTypes = [];
+        report.forEach((statItem) => {
+            if (reportTypes.indexOf(statItem.type) === -1)
+                reportTypes.push(statItem.type);
+        });
+        return reportTypes.sort();
+    });
+}
+
+function checkStatsReportIterator(report)
+{
+    assert_equals(Object.getOwnPropertyDescriptor(report.__proto__, Symbol.iterator).value, Object.getOwnPropertyDescriptor(report.__proto__, 'entries').value);
+    assert_equals(Object.getOwnPropertyDescriptor(report.__proto__, Symbol.iterator).value.name, "entries");
+    for (let pair of report)
+        assert_equals(pair.length, 2);
+}
+
+function getAudioSourceStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "media-source" && statItem.kind === "audio") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function getVideoSourceStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "media-source" && statItem.kind === "video") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function getInboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "inbound-rtp") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function getRemoteInboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "remote-inbound-rtp") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function getOutboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "outbound-rtp") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function getStatsOfType(connection, type)
+{
+    return connection.getStats().then((report) => {
+        checkStatsReportIterator(report);
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === type) {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function testTimestampDifference(timeStampDifference, numberOfFrames)
+{
+    // Let's ensure timestamp is not in microseconds but milliseconds.
+    return timeStampDifference > 100000 * (numberOfFrames / 30.0);
+}
+
+function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
+{
+    const remoteTrackIds = new Set(secondConnection.getReceivers().map(receiver => receiver.track.id));
+    return getInboundRTPStats(secondConnection).then((stats) => {
+        assert_true("framesDropped" in stats, "framesDropped");
+        assert_true(!!stats.trackIdentifier, "trackIdentifier");
+        assert_true(remoteTrackIds.has(stats.trackIdentifier), "trackIdentifier matches track.id");
+        assert_true(!!stats.kind, "kind");
+        if (stats.framesDecoded > statsSecondConnection.framesDecoded) {
+            if (testTimestampDifference(stats.timestamp - statsSecondConnection.timestamp, stats.framesDecoded - statsSecondConnection.framesDecoded))
+                return Promise.reject("timestamp and frames increment do not match");
+            assert_not_equals(Object.keys(stats).indexOf("codecId"), -1, "codecId");
+            assert_equals(Object.keys(stats).indexOf("trackId"), -1, "trackId");
+            return;
+        }
+        if (++count === 50)
+            return Promise.reject("checking inbound stats frame number increasing timed out");
+        return waitFor(50).then(() => {
+            return checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
+        });
+    });
+}
+
+function checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, count)
+{
+    return getOutboundRTPStats(firstConnection).then((stats) => {
+        if (stats.framesEncoded > statsFirstConnection.framesEncoded) {
+            if (testTimestampDifference(stats.timestamp - statsFirstConnection.timestamp, stats.framesEncoded - statsFirstConnection.framesEncoded))
+                return Promise.reject("timestamp and frames increment do not match");
+            assert_not_equals(Object.keys(stats).indexOf("codecId"), -1, "codecId");
+            assert_equals(Object.keys(stats).indexOf("trackId"), -1, "trackId");
+            return;
+        }
+        if (++count === 50)
+            return Promise.reject("checking outbound stats frame number increasing timed out");
+        return waitFor(50).then(() => {
+            return checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, count)
+        });
+    });
+}
+
+var firstConnection, secondConnection;
+var localStream;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    localStream = await navigator.mediaDevices.getUserMedia({ audio : true, video: true});
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((connection) => {
+            firstConnection = connection;
+            firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (connection) => {
+            secondConnection = connection;
+            secondConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            secondConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = remoteStream;
+    await video.play();
+    document.body.removeChild(video);
+
+    let stats = await getOutboundRTPStats(firstConnection);
+    assert_true(!!stats, "outbound-rtp stats should not be null");
+    assert_true(Number.isInteger(stats.framesEncoded), "framesEncoded should be an integer");
+    assert_true(!stats.qpSum || Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
+    assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
+    statsFirstConnection = stats;
+
+    stats = await getInboundRTPStats(secondConnection);
+    assert_true(!!stats, "inbound-rtp stats should not be null");
+    assert_true(Number.isInteger(stats.framesDecoded), "framesDecoded should be an integer");
+    assert_true(!stats.qpSum || Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
+    assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
+    statsSecondConnection = stats;
+
+    await checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, 0);
+    await checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, 0);
+
+    const expectedTypes = ["candidate-pair", "certificate", "codec", "inbound-rtp", "local-candidate", "media-source", "outbound-rtp", "peer-connection", "remote-candidate", "remote-inbound-rtp", "remote-outbound-rtp", "transport"];
+    let types;
+    do {
+        types = await getStatsType(firstConnection);
+        if (types.length != expectedTypes.length)
+            types = undefined;
+    } while(!types);
+
+    assert_array_equals(types, expectedTypes, "first connection");
+
+    do {
+        types = await getStatsType(secondConnection);
+        if (types.length != expectedTypes.length)
+            types = undefined;
+    } while(!types);
+
+    assert_array_equals(types, expectedTypes, "second connection");
+
+    const audioSourceStats = await getAudioSourceStats(firstConnection);
+    assert_true(!!audioSourceStats, "audio source presence");
+
+    const videoSourceStats = await getVideoSourceStats(firstConnection);
+    assert_true(!!videoSourceStats, "video source presence");
+
+    const remoteInboundStats = await getRemoteInboundRTPStats(firstConnection);
+    assert_true(remoteInboundStats.kind === "audio"|| remoteInboundStats.kind === "video", "kind is present");
+    assert_not_equals(remoteInboundStats.packetsLost, undefined);
+}, "Basic video stats");
+
+promise_test(async (test) => {
+    const report = await firstConnection.getSenders()[0].getStats();
+    checkStatsReportIterator(report);
+    var instats, outstats;
+    report.forEach((statItem) => {
+        if (statItem.type === "outbound-rtp")
+            outstats = statItem;
+        else if (statItem.type === "inbound-rtp")
+            instats = statItem;
+    });
+    assert_true(!!outstats);
+    assert_false(!!instats);
+}, "Sender stats");
+
+promise_test(async (test) => {
+    const report = await secondConnection.getReceivers()[0].getStats();
+    checkStatsReportIterator(report);
+    var instats, outstats;
+    report.forEach((statItem) => {
+        if (statItem.type === "outbound-rtp")
+            outstats = statItem;
+        else if (statItem.type === "inbound-rtp")
+            instats = statItem;
+    });
+    assert_false(!!outstats);
+    assert_true(!!instats);
+
+    assert_greater_than_equal(instats.jitterBufferDelay, 0, "jitterBufferDelay");
+    assert_greater_than_equal(instats.jitterBufferEmittedCount, 0, "jitterBufferEmittedCount");
+    assert_greater_than_equal(instats.concealedSamples, 0, "concealedSamples");
+    assert_greater_than_equal(instats.totalSamplesReceived, 0, "totalSamplesReceived");
+}, "Receiver stats");
+
+async function getStatsIf(connection, type, match)
+{
+    let cptr = 0;
+    let stats = await getStatsOfType(connection, type);
+    while (!match(stats) && ++cptr < 100) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        stats = await getStatsOfType(connection, type);
+    }
+    if (cptr >= 100)
+        throw "unable to get matching stats";
+    return stats;
+}
+
+promise_test(async (test) => {
+    const report = await secondConnection.getReceivers()[0].getStats();
+    let stats = await getStatsIf(secondConnection, "transport", (stats) => stats.dtlsState === "connected");
+
+    assert_equals(stats.dtlsState, "connected");
+    assert_true(!!stats.dtlsCipher, "dtlsCipher");
+    assert_true(!!stats.srtpCipher, "srtpCipher");
+    assert_true(!!stats.tlsVersion, "tlsVersion");
+    assert_true(!!stats.bytesReceived, "bytesReceived");
+    assert_true(!!stats.bytesSent, "bytesSent");
+}, "Transport stats");
+
+promise_test(async (test) => {
+    let instats1, instats2;
+
+    let report1 = await secondConnection.getReceivers()[0].getStats();
+    report1.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            instats1 = statItem;
+    });
+    waitFor(50);
+    let report2 = await secondConnection.getReceivers()[0].getStats();
+    report2.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            instats2 = statItem;
+    });
+    assert_equals(instats1.ssrc, instats2.ssrc);
+}, "Check ssrc is not changing in inbound rtp stats");
+
+promise_test(async (test) => {
+    let stats = await getStatsOfType(secondConnection, "local-candidate");
+
+    assert_true(!!stats.foundation, "foundation");
+}, "Local candidate stats");
+
+promise_test(async (test) => {
+    let stats = await getStatsOfType(secondConnection, "remote-candidate");
+
+    assert_true(!!stats.foundation, "foundation");
+}, "Remote candidate stats");
+
+promise_test(async (test) => {
+    const stats = await getStatsIf(secondConnection, "inbound-rtp", (stats) => stats.rtxSsrc !== undefined);
+    assert_equals(typeof stats.rtxSsrc, "number");
+    assert_not_equals(stats.rtxSsrc, 0);
+}, "Outbound rtp stats - rtx");
+
+promise_test(async (test) => {
+    const stats = await getStatsIf(secondConnection, "inbound-rtp", (stats) => stats.rtxSsrc !== undefined);
+    assert_equals(typeof stats.rtxSsrc, "number");
+    assert_not_equals(stats.rtxSsrc, 0);
+}, "Inbound rtp stats - rtx");
+
+promise_test(async (test) => {
+    test.add_cleanup(() => localStream.getTracks().forEach(track => track.stop()));
+    const pc = new RTCPeerConnection();
+    pc.close();
+    return pc.getStats();
+}, "Stats after pc close");
+        </script>
+    </body>
+</html>

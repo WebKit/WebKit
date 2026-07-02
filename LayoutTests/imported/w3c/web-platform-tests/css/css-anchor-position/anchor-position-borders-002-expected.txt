@@ -1,0 +1,7 @@
+
+PASS anchor-position-borders-002
+PASS anchor-position-borders-002 1
+PASS anchor-position-borders-002 2
+PASS anchor-position-borders-002 3
+PASS anchor-position-borders-002 4
+

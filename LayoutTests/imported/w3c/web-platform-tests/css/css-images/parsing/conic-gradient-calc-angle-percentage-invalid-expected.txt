@@ -1,0 +1,6 @@
+
+PASS e.style['background-image'] = "linear-gradient(red calc(50% + 30deg), blue)" should not set the property value
+PASS e.style['background-image'] = "radial-gradient(red calc(50% + 30deg), blue)" should not set the property value
+PASS e.style['background-image'] = "conic-gradient(from calc(50% + 30deg), red, blue)" should not set the property value
+PASS e.style['background-image'] = "conic-gradient(red calc(50% + 0), blue)" should not set the property value
+

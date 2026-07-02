@@ -1,0 +1,19 @@
+<style>
+div {
+  letter-spacing: 1em;
+  text-wrap: pretty;
+}
+html, div {
+  margin-right: 10000px;
+  display: table-header-group;
+}
+*:last-child {
+  font-family: system-ui;
+}
+</style>
+<script>
+   if (window.testRunner)
+       testRunner.dumpAsText();
+</script>
+<div contenteditable="true"><span>just some long long long long long long long long longlong long long long long long text</span>AAAAAAAAAAAAAAAAAAAA</div>
+This test passes if it doesn't crash.

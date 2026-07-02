@@ -1,0 +1,6 @@
+abc
+
+PASS insertHTML with "<b>abc</b>" into <font color="#0000FF">[]def</font>
+PASS insertHTML with "<b>def</b>" into <font color="#0000FF">abc[]</font>
+PASS insertHTML with "<b>b</b>" into <font color="#0000FF">a[]c</font>
+

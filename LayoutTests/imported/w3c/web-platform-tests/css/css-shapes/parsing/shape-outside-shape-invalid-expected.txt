@@ -1,0 +1,11 @@
+
+PASS e.style['shape-outside'] = "shape(from 20px 40px line to 20px 30px)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px line to 20px 30px,)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px, 40px, line to 20px, 30px)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px, move to 20px 30px, hline to top)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px, move to 20px 30px, vline to left)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px, curve to 20px 20px, using 10px 30px)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px, curve to 20px 20px with 10px 30px 12px 32px)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px, arc by 20px 20px of 10% 20% small large)" should not set the property value
+PASS e.style['shape-outside'] = "shape(from 20px 40px, arc by 20px 20px of 10% 20% cw ccw)" should not set the property value
+

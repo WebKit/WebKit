@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- The UA shadow DOM WebKit renders for date inputs on macOS exposes three spinbuttons for the month, day, and year. -->
+<input type="date" id="date-input">
+
+<script>
+var output = "This test ensures that increment and decrement simulate up and down keypresses for date input spinbuttons.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var axDateFieldWrapper = accessibilityController.accessibleElementById("date-input").childAtIndex(0).childAtIndex(0);
+    var monthSpinbutton = axDateFieldWrapper.childAtIndex(0);
+
+    let lastValue = monthSpinbutton.stringValue;
+    output += `Month spinbutton initial value: ${lastValue}\n`;
+    output += expect("monthSpinbutton.isIncrementActionSupported()", "true");
+    output += expect("monthSpinbutton.isDecrementActionSupported()", "true");
+
+    output += "\nIncrementing the month spinbutton.\n";
+    monthSpinbutton.increment();
+    setTimeout(async () => {
+        await waitFor(() => monthSpinbutton.stringValue !== lastValue);
+        lastValue = monthSpinbutton.stringValue;
+
+        output += `Month spinbutton after increment: ${lastValue}\n`;
+
+        output += "\nDecrementing spinbutton.\n";
+        monthSpinbutton.decrement();
+
+        await waitFor(() => monthSpinbutton.stringValue !== lastValue);
+        output += `Month spinbutton after decrement: ${monthSpinbutton.stringValue}\n`;
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
+</html>

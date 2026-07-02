@@ -1,0 +1,11 @@
+hello world child  hello world child
+
+PASS Testing dblclick events when clicking child of disabled button.
+PASS Testing dblclick events when clicking child of disabled my-control.
+PASS Testing dblclick events when clicking disabled button.
+PASS Testing dblclick events when clicking disabled my-control.
+PASS Testing auxclick events when clicking child of disabled button.
+PASS Testing auxclick events when clicking child of disabled my-control.
+PASS Testing auxclick events when clicking disabled button.
+PASS Testing auxclick events when clicking disabled my-control.
+

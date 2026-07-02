@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><head>
+<title>Test cases for unicode-bidi:isolate</title>
+</head><body>
+No red text should be visible in any of the sections below.
+same-as-base isolate containing &lt;br&gt; surrounded by opposite-to-base text
+<!-- FIXME: This subtest may be invalid, see https://bugs.webkit.org/show_bug.cgi?id=50912#c30 -->
+<div dir="rtl">
+  <div class="reference">
+    <span dir="ltr">things to do: (1) &#x05D0;</span><br><span dir="ltr"> (2) sleep</span>
+  </div>
+</div>
+</body></html>

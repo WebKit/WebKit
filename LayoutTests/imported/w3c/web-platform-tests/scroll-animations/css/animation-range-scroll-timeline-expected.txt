@@ -1,0 +1,6 @@
+
+PASS The animation-range-start CSS property maps to Animation's 'rangeStart' property
+PASS The animation-range-end CSS property maps to Animation's 'rangeEnd' property
+PASS The auto-aligned start time accounts for the animation-range-start property
+PASS The effect duration accounts for the animation-range-* properties
+

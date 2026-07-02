@@ -1,0 +1,4 @@
+
+
+PASS Event targets of clicking a link in an image map
+

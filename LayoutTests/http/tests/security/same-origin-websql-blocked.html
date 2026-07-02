@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ StorageBlockingPolicy=2 ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+<p>This iframe should return a security error:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-iframe-for-websql.html"></iframe>
+</body>
+</html>

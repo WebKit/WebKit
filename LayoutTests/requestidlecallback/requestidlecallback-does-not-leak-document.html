@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/document-leak-test.js"></script>
+<script>
+description("Tests that the requestIdleCallback callback does not leak the document.");
+onload = () => runDocumentLeakTest({ frameURL: "./resources/requestidlecallback-frame.html", framesToCreate: 20 });
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

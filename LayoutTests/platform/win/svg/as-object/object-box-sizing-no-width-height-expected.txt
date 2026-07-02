@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x476
+  RenderBlock {HTML} at (0,0) size 800x476
+    RenderBody {BODY} at (8,8) size 784x460
+      RenderEmbeddedObject {OBJECT} at (0,0) size 230x230 [border: (2px dashed #800000)]
+        layer at (0,0) size 220x220
+          RenderView at (0,0) size 220x220
+        layer at (0,0) size 220x220
+          RenderSVGRoot {svg} at (0,0) size 220x220
+            RenderSVGEllipse {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
+      RenderText {#text} at (230,215) size 4x19
+        text run at (230,215) width 4: " "
+      RenderEmbeddedObject {OBJECT} at (234,0) size 230x230 [border: (2px dashed #800000)]
+        layer at (0,0) size 220x220
+          RenderView at (0,0) size 220x220
+        layer at (0,0) size 220x220
+          RenderSVGRoot {svg} at (0,0) size 220x220
+            RenderSVGEllipse {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
+      RenderText {#text} at (464,215) size 4x19
+        text run at (464,215) width 4: " "
+      RenderEmbeddedObject {OBJECT} at (468,0) size 230x230 [border: (2px dashed #800000)]
+        layer at (0,0) size 220x220
+          RenderView at (0,0) size 220x220
+        layer at (0,0) size 220x220
+          RenderSVGRoot {svg} at (0,0) size 220x220
+            RenderSVGEllipse {circle} at (0,0) size 220x220 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
+      RenderText {#text} at (698,215) size 4x19
+        text run at (698,215) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderEmbeddedObject {OBJECT} at (0,235) size 220x220 [border: (2px dashed #800000)]
+        layer at (0,0) size 210x210
+          RenderView at (0,0) size 210x210
+        layer at (0,0) size 210x210
+          RenderSVGRoot {svg} at (0,0) size 210x210
+            RenderSVGEllipse {circle} at (0,0) size 210x210 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#D9BB7A] [fill rule=EVEN-ODD]}] [cx=110.00] [cy=110.00] [r=110.00]
+      RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,12 @@
+T
+T
+T
+T
+T
+T
+
+PASS Horizontal: getStartPositionOfChar/getEndPositionOfChar not affected by inherited dominant-baseline
+PASS Horizontal: getStartPositionOfChar/getEndPositionOfChar not affected by explicit dominant-baseline on tspan
+PASS Vertical: getStartPositionOfChar/getEndPositionOfChar not affected by dominant-baseline
+PASS Horizontal: x position unaffected by dominant-baseline
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#frame {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    width: 300px;
+    height: 200px;
+    border: none;
+}
+</style>
+<script>
+function getValidationBubble()
+{
+    return new Promise((resolve) => {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                testRunner.runUIScript(`(function() {
+                    return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
+                })();`, function(result) {
+                    resolve(JSON.parse(result).validationBubble);
+                });
+            }, 0);
+        });
+    });
+}
+</script>
+</head>
+<body>
+<script>
+description("Test that validation bubble anchor rect is in main-frame coordinates for cross-origin iframes.");
+jsTestIsAsync = true;
+
+async function runTest() {
+    const iframe = document.getElementById("frame");
+
+    await new Promise((resolve) => {
+        window.addEventListener("message", (event) => {
+            if (event.data === "submitted")
+                resolve();
+        }, { once: true });
+        iframe.contentWindow.postMessage("submit", "*");
+    });
+
+    const bubble = await getValidationBubble();
+
+    window.bubbleMessage = bubble.message;
+    shouldBeEqualToString("bubbleMessage", "Fill out this field");
+
+    // The iframe is positioned at (100, 100). Inside the iframe, the input is
+    // at (50, 30) with size 200x30. After conversion to main-frame coordinates
+    // the anchor rect should be (150, 130, 200, 30).
+    window.anchorX = bubble.anchorRect.x;
+    window.anchorY = bubble.anchorRect.y;
+    window.anchorWidth = bubble.anchorRect.width;
+    window.anchorHeight = bubble.anchorRect.height;
+    shouldBe("anchorX", "150");
+    shouldBe("anchorY", "130");
+    shouldBe("anchorWidth", "200");
+    shouldBe("anchorHeight", "30");
+
+    finishJSTest();
+}
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/validation-message-iframe.html" onload="runTest()"></iframe>
+</body>
+</html>

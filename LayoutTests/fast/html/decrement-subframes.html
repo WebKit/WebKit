@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function main() {
+    span.replaceWith(div);
+    iframe.setAttribute("loading", "lazy");
+    iframe.srcdoc = "AAAAAAAA";
+    console.log("This test passes if it does not crash")
+}
+function f0() {
+    try { template.appendChild(iframe); } catch { }
+}
+</script>
+<body onload="main()">
+<menu tabindex="-1" onfocusin="f0()" autofocus="">
+<div id="div">
+<iframe id="iframe" srcdoc="A"></iframe>
+</div>
+<span id="span">
+<template id="template" draggable="true">

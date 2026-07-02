@@ -1,0 +1,4 @@
+Test for rdar://problem/6764359 Thai word selection misbehaves for the last sentence in the document.
+
+PASS
+ความหมายของหนังสือพิมพ์ และก้าวใหม่ของอินเตอร์ไทย

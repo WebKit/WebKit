@@ -1,0 +1,3 @@
+
+PASS Move the fullscreen element to an inactive document
+

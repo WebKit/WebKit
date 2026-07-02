@@ -1,0 +1,10 @@
+Test for expressions that would hang when evaluated due to exponential matching behavior. If the test does not hang it is a success.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /(?:[^(?!)]||){23}z/.test("/(?:[^(?!)]||){23}z/") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+<h1>Iframe invoking Worker</h1>
+<script>
+    document.body.onload = function () {
+        console.log(`Hello from ${location.href}`);
+
+        let worker1 = new Worker("worker.js");
+        worker1.postMessage(`Hello from ${location.href}`);
+    };
+</script>

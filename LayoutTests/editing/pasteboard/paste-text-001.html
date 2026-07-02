@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">foo bar baz</span>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+var test = document.getElementById('test');
+test.focus();
+window.getSelection().setPosition(root, 0);
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+for (i = 0; i < 4; i++)
+    moveSelectionForwardByCharacterCommand();
+for (i = 0; i < 3; i++)
+    extendSelectionForwardByCharacterCommand();
+copyCommand();
+moveSelectionForwardByCharacterCommand();
+pasteCommand();
+
+Markup.dump('root', 'You should see "foo barbar baz" below');
+
+</script>
+</body>
+</html>

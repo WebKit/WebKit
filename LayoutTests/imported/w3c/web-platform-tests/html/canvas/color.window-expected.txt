@@ -1,0 +1,17 @@
+
+PASS 'rgb(255, 0, 255)' should serialize as '#ff00ff'
+PASS 'rgba(255, 0, 255, 1)' should serialize as '#ff00ff'
+PASS '#ff00ffff' should serialize as '#ff00ff'
+PASS '#ff00ff00' should serialize as 'rgba(255, 0, 255, 0)'
+PASS 'rgba(255, 0, 255,    0)' should serialize as 'rgba(255, 0, 255, 0)'
+PASS 'color(srgb 1 0 1)' should serialize as 'color(srgb 1 0 1)'
+PASS 'color(srgb 1 0 1 / 1)' should serialize as 'color(srgb 1 0 1)'
+PASS 'color(srgb 1 0 1/0)' should serialize as 'color(srgb 1 0 1 / 0)'
+PASS 'color(srgb 1 none 1)' should serialize as 'color(srgb 1 none 1)'
+PASS 'color(srgb none -1 2 / 3)' should serialize as 'color(srgb none -1 2)'
+PASS 'color(display-p3 0.96 0.76  	 0.79)' should serialize as 'color(display-p3 0.96 0.76 0.79)'
+PASS 'lab(29% 39 20)' should serialize as 'lab(29 39 20)'
+PASS 'transparent' should serialize as 'rgba(0, 0, 0, 0)'
+PASS 'rgb(none none none)' should serialize as '#000000'
+PASS 'rgb(300 none 400)' should serialize as '#ff00ff'
+

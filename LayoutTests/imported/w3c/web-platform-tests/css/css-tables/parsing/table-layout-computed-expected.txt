@@ -1,0 +1,4 @@
+
+PASS Property table-layout value 'auto'
+PASS Property table-layout value 'fixed'
+

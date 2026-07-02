@@ -1,0 +1,85 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div[contenteditable] {
+    font-family: monospace;
+    font-size: 32px;
+    width: 100%;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+
+<script>
+jsTestIsAsync = true;
+
+description(`This test verifies that grammar correction UI is triggered when clicking
+    in any word of a multi-word grammar marker, not just the last word in the phrase.
+    This test requires WebKitTestRunner to run.`);
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+async function runTest()
+{
+    const editor = document.getElementById("editor");
+
+    // "in then" is the grammar error (offsets 9-16).
+    const grammarText = "Let's go in then store";
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    document.execCommand("insertText", false, grammarText);
+    document.execCommand("insertParagraph");
+    await UIHelper.ensurePresentationUpdate();
+
+    const selection = window.getSelection();
+    selection.collapse(editor.firstChild, 0);
+
+    // The grammar marker spans "in then" (offset 9 to 16).
+    await shouldBecomeEqual('internals.hasGrammarMarker(9, 7)', 'true');
+
+    // First, click in "store" (outside the grammar marker) to establish an
+    // old selection that is not within the marker.
+    selection.collapse(editor.firstChild, 19);
+    await UIHelper.ensurePresentationUpdate();
+
+    // Now click in "in" — the first word of the multi-word grammar marker.
+    // Before the fix, this would not trigger the grammar correction UI
+    // because the end of "in" (offset 11) does not match the marker's
+    // end offset (16).
+    selection.collapse(editor.firstChild, 10);
+    await shouldBecomeEqual('internals.isAlternativeTextUIActive()', 'true');
+
+    editor.textContent = "";
+    editor.blur();
+    finishJSTest();
+}
+</script>
+<body>
+<div contenteditable="true" id="editor"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+    "Let's go in then store" : [
+        {
+            type: "grammar",
+            from: 9,
+            to: 16,
+            details: [{ from: 0, to: 7, corrections: ["in the"] }]
+        }
+    ],
+    "Let's go in then store\n" : [
+        {
+            type: "grammar",
+            from: 9,
+            to: 16,
+            details: [{ from: 0, to: 7, corrections: ["in the"] }]
+        }
+    ]
+}).then(runTest);
+</script>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>

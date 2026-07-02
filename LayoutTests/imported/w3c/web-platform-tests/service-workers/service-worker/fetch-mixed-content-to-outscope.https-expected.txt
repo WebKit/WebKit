@@ -1,0 +1,4 @@
+
+
+PASS Verify Mixed content of fetch() in a Service Worker
+

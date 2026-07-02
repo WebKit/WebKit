@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+function createReadableStreamAndPort()
+{
+    const channel = new MessageChannel();
+    const stream = internals.readableStreamFromMessagePort(channel.port2);
+    return { stream, port: channel.port1 };
+}
+
+function createReadableStreamReaderFromMessage(message)
+{
+    const { stream, port } = createReadableStreamAndPort();
+    port.postMessage(message);
+    return stream.getReader();
+}
+
+function createWritableStreamAndPort()
+{
+    const channel = new MessageChannel();
+    channel.port1.start();
+    channel.port2.start();
+
+    const stream = internals.writableStreamFromMessagePort(channel.port2);
+    return { stream, port: channel.port1 };
+}
+
+function createWritableStreamWriterFromMessage(message)
+{
+    const { stream, port } = createWritableStreamAndPort();
+    port.postMessage(message);
+    return stream.getWriter();
+}
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const { stream, port } = createReadableStreamAndPort();
+    const reader = stream.getReader();
+
+    port.postMessage({ type:"chunk", value:"test" });
+
+    const chunk = await reader.read();
+    assert_equals(chunk.value, "test");
+
+    port.postMessage({ type:"close" });
+    await reader.closed;
+}, 'Validate readable default behavior');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const { stream, port } = createReadableStreamAndPort();
+    const reader = stream.getReader();
+
+    const channel = new MessageChannel();
+    channel.port1.postMessage(port, [port]);
+    const newPort = await new Promise(resolve => channel.port2.onmessage = e => resolve(e.data));
+
+    newPort.postMessage({ type:"chunk", value:"test1" });
+    newPort.postMessage({ type:"chunk", value:"test2" });
+    newPort.postMessage({ type:"chunk", value:"test3" });
+    newPort.postMessage({ type:"close" });
+
+    let chunk = await reader.read();
+    assert_equals(chunk.value, "test1");
+
+    chunk = await reader.read();
+    assert_equals(chunk.value, "test2");
+
+    chunk = await reader.read();
+    assert_equals(chunk.value, "test3");
+
+    await reader.closed;
+}, 'Validate readable multiple values');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const { stream, port } = createReadableStreamAndPort();
+    const reader = stream.getReader();
+    await promise_rejects_js(t, TypeError, stream.cancel(stream));
+}, 'Cancel should reject if reason is not serializable');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const { stream, port } = createReadableStreamAndPort();
+    const reader = stream.getReader();
+
+    port.postMessage({ type:"ee" });
+    await promise_rejects_js(t, TypeError, reader.closed);
+}, 'Validate readable invalid type');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    let reader = createReadableStreamReaderFromMessage({ });
+    await promise_rejects_dom(t, "DataCloneError", reader.closed);
+
+    reader = createReadableStreamReaderFromMessage(1);
+    await promise_rejects_dom(t, "DataCloneError", reader.closed);
+
+    reader = createReadableStreamReaderFromMessage(undefined);
+    await promise_rejects_dom(t, "DataCloneError", reader.closed);
+
+    reader = createReadableStreamReaderFromMessage(null);
+    await promise_rejects_dom(t, "DataCloneError", reader.closed);
+
+}, 'Validate readable invalid object messages');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const { stream, port } = createWritableStreamAndPort();
+    const writer = stream.getWriter();
+
+    let promise = new Promise(resolve => port.onmessage = e => resolve(e.data));
+    writer.write("test");
+    port.postMessage({ type:"pull" });
+    let result = await promise;
+    assert_equals(result.type, "chunk");
+    assert_equals(result.value, "test");
+
+    promise = new Promise(resolve => port.onmessage = e => resolve(e.data));
+    writer.close();
+    result = await promise;
+    assert_equals(result.type, "close");
+}, 'Validate writable default behavior');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const { stream, port } = createWritableStreamAndPort();
+    const writer = stream.getWriter();
+
+    port.postMessage({ type:"ee" });
+    await promise_rejects_js(t, TypeError, writer.closed);
+}, 'Validate writable invalid type');
+
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    let writer = createWritableStreamWriterFromMessage({ });
+    await promise_rejects_dom(t, "DataCloneError", writer.closed);
+
+    writer = createWritableStreamWriterFromMessage(1);
+    await promise_rejects_dom(t, "DataCloneError", writer.closed);
+
+    writer = createWritableStreamWriterFromMessage(undefined);
+    await promise_rejects_dom(t, "DataCloneError", writer.closed);
+
+    writer = createWritableStreamWriterFromMessage(null);
+    await promise_rejects_dom(t, "DataCloneError", writer.closed);
+
+}, 'Validate writable invalid object messages');
+</script>

@@ -1,0 +1,7 @@
+{
+    // Controls whether the URL matches the current checkout's commit or uses the latest commit.
+    "match_commit": true,
+
+    // Controls whether the URL is automatically opened in the default browser.
+    "automatically_open_in_browser": false,
+}

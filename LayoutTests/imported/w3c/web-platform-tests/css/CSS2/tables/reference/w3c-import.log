@@ -1,0 +1,23 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/no_red_3x3_monospace_colored_table-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/no_red_3x3_monospace_multi_table-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/no_red_3x3_monospace_table-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/no_red_antialiasing_a_bc_d-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/table-anonymous-border-spacing-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/table-anonymous-text-indent-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/reference/table-margin-004-ref.xht

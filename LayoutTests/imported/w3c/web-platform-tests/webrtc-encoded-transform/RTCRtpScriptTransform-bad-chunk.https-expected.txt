@@ -1,0 +1,4 @@
+
+
+PASS Writing bad chunks should error the stream
+

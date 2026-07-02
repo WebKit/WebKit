@@ -1,0 +1,7 @@
+pattern attribute: v flag
+
+
+PASS <input pattern> supports set difference syntax
+PASS <input pattern> supports string literal syntax
+PASS <input pattern> enables the RegExp v flag
+

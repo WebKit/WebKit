@@ -1,0 +1,132 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-streaming</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var ended = false;
+    var audioContext;
+    var analyser;
+    var mediaElementSource;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    const MediaSource = self.ManagedMediaSource || self.MediaSource;
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (MediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            video.disableRemotePlayback = true;
+            source = new MediaSource();
+
+            const sourceOpenPromise = waitFor(source, 'sourceopen');
+            run('video.src = URL.createObjectURL(source)');
+
+            await waitFor(source, 'sourceopen');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            for (var i = 0; i < loader.mediaSegmentsLength(); i++) {
+                sourceBuffer.appendBuffer(loader.mediaSegment(i));
+                await waitFor(sourceBuffer, 'update');
+            }
+            run('source.endOfStream()');
+            await waitFor(source, 'sourceended');
+
+            const audioContext = new AudioContext();
+            const mediaElementSource = audioContext.createMediaElementSource(video);
+
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+
+            mediaElementSource.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            const dataArray = new Uint8Array(analyser.fftSize);
+
+            function isAudible(threshold = 0.01) {
+                analyser.getByteTimeDomainData(dataArray);
+
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    const normalized = (dataArray[i] - 128) / 128;
+                    sum += normalized * normalized;
+                }
+
+                const rms = Math.sqrt(sum / dataArray.length);
+
+                return rms > threshold;
+            }
+
+            async function checkAudioOutput(duration = 200, threshold = 0.01) {
+                const checkInterval = 20; // Check every 20ms
+                const checks = duration / checkInterval;
+                let audibleCount = 0;
+
+                for (let i = 0; i < checks; i++) {
+                    if (isAudible(threshold)) {
+                        audibleCount++;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, checkInterval));
+                }
+
+                const audibleRatio = audibleCount / checks;
+                const isProducingSound = audibleRatio > 0.5;
+                
+                if (isProducingSound) {
+                    consoleWrite(`Audio check: producing sound (${Math.round(audibleRatio * 100)}% audible)`);
+                } else {
+                    consoleWrite(`Audio check: silence (${Math.round(audibleRatio * 100)}% audible)`);
+                }
+                
+                return isProducingSound;
+            }
+
+            run('video.currentTime=3');
+            await waitFor(video, 'seeked');
+            run('video.play()');
+            await Promise.all([waitFor(video, 'playing'), waitFor(video, 'timeupdate')]);
+
+            // Check that audio is being produced at normal playback rate
+            // consoleWrite('Checking audio output at normal playback rate (1.0)...');
+            await checkAudioOutput(200);
+
+            run('video.playbackRate = 0.5');
+            await waitFor(video, 'timeupdate');
+
+            await checkAudioOutput(200);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

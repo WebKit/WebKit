@@ -1,0 +1,28 @@
+
+PASS Initial color
+PASS Add .descendant to #shadow_child
+PASS Remove .descendant from #shadow_child
+PASS Add .descendant to #shadow_descendant
+PASS Add .ancestor to #shadow_child:has(.descendant)
+PASS Remove .ancestor from #shadow_child:has(.descendant)
+PASS Add .child to #shadow_child:has(.descendant)
+PASS Remove .child from #shadow_child:has(.descendant)
+PASS Remove .descendant from #shadow_descendant
+PASS Add .child to #shadow_child
+FAIL Add .grand_child to #shadow_descendant assert_equals: expected "rgb(255, 255, 240)" but got "rgb(0, 0, 255)"
+PASS Add .host_context to #host
+PASS Add .descendant to #shadow_descendant.grand_child
+PASS Remove .descendant from #shadow_descendant.grand_child
+PASS Remove .grand_child from #shadow_descendant
+PASS Remove .child from #shadow_child
+PASS Add .child to #shadow_descendant
+PASS Remove .child from #shadow_descendant
+PASS Insert #first_child.descendant to shadow root
+PASS Remove #first_child.descendant from shadow root
+PASS Insert #last_child.descendant to shadow root
+PASS Remove #last_child.descendant from shadow root
+PASS Insert #child_in_middle.descendant before #shadow_child
+PASS Remove #child_in_middle.descendant from shadow root
+PASS Insert #grand_child.descendant before #shadow_descendant
+PASS Remove #grand_child.descendant from shadow tree
+

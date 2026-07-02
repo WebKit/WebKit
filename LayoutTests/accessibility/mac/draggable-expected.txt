@@ -1,0 +1,21 @@
+This test checks various accessibility attributes and notifications are handled for dragging operations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Drop the red square onto me.
+Items that can be dragged to the drop target:
+
+Square
+PASS accessibilityController.accessibleElementById('dragMe').isAttributeSupported('AXGrabbed') is true
+PASS accessibilityController.accessibleElementById('dropTarget').isAttributeSupported('AXGrabbed') is false
+Target is grabbed: 0
+Dropzone effects: copy
+Target is grabbed during drag: 1
+Target is grabbed after drag: 1
+AXDraggingSourceDragBegan
+AXDraggingDestinationDropAllowed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

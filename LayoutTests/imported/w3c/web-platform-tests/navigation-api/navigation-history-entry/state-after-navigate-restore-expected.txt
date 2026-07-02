@@ -1,0 +1,4 @@
+
+
+PASS entry.getState() is properly restored after cross-document back
+

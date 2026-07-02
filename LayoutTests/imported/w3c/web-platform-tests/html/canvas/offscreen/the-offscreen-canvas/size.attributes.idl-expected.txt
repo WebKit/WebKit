@@ -1,0 +1,7 @@
+size.attributes.idl
+
+Getting/setting width/height IDL attributes
+
+
+PASS Getting/setting width/height IDL attributes
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test ECDSA signing operation with a P-521 private key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var jwkPrivateKey = {
+    kty: "EC",
+    crv: "P-521",
+    x: "ATyYJNg6KbLelgL09FGKksW7qfIEPf4OPCHB7PuoUq4AyiJQaMqWD7TagGc4gwY5lJ7rDRLKGdxGmf19inAT_X1a",
+    y: "AAF1xys7jFj4QkHBC3uF_Kodak7rOkbmpAPKrqzR_akXaCwNfdsjX12_uVkDhyUqF-C5oUYsKLqET8RMm8kg8cX9",
+    d: "APLcP3zg0beau_cHUhnqmoeduWOKTh3Ki7shV0NxvrXTIp4pCUv3RX6do19RD7c4Goh3EGO3UJ9FdhzbeNLzYmmH",
+};
+var ecdsaParams = {
+    name: "ECDSA",
+    hash: "SHA-256",
+}
+var data = asciiToUint8Array("Hello, World!");
+
+crypto.subtle.importKey("jwk", jwkPrivateKey, { name: "ECDSA", namedCurve: "P-521" }, extractable, ["sign"]).then(function(key) {
+    return crypto.subtle.sign(ecdsaParams, key, data);
+}).then(function(result) {
+    signature = result;
+
+    shouldBe("signature.byteLength", "132");
+
+    finishJSTest();
+}, failAndFinishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+
+one
+two
+
+PASS topofdocument: Arrow keys on options should not scroll the document.
+PASS bottomofdocument: Arrow keys on options should not scroll the document.
+

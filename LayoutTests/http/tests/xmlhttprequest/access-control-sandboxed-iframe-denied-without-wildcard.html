@@ -1,0 +1,22 @@
+<html>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+
+</script>
+<body>
+
+    <p>This test verifies that sandboxed iframe does not have XmlHttpRequest access to
+    its server with "Access-Control-Allow-Origin" set to its own origin (127.0.0.1).</p>
+    
+    <p>This test will print &quot;PASS&quot; on success.</p>
+
+    <iframe sandbox="allow-scripts"
+            src="http://127.0.0.1:8000/xmlhttprequest/resources/access-control-sandboxed-iframe-denied-without-wildcard-iframe.html" style="width: 500px;">
+    </iframe>
+    
+</body>
+</html>

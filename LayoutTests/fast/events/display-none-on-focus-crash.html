@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+<style>
+.c3 { padding-top: 200px; }
+.c3:focus { display: none; }
+</style>
+</head>
+<body></body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+var iframe1;
+async function boom() {
+    iframe1 = document.createElement('iframe');
+    document.documentElement.appendChild(iframe1);
+    document.documentElement.appendChild(document.createElement('li'));
+    document.documentElement.appendChild(document.createElement('iframe'));
+    iframe1.setAttribute('class', 'c3');
+    await eventSender.asyncMouseMoveTo(1000, 100);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+    await eventSender.asyncMouseMoveTo(100, 100);
+    await eventSender.asyncMouseDown();
+    document.body.innerHTML = 'Test passes if it does not crash.'
+    testRunner.notifyDone();
+}
+window.onload = boom;
+</script>

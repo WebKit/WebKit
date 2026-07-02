@@ -1,0 +1,9 @@
+Test that a fetch triggered inside a cross-origin iframe produces a WI.Resource associated with the iframe's frame.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.ResourceAddedForFetch
+PASS: Resource should be created.
+PASS: Resource URL should contain 'data.json'.
+PASS: Resource parent frame should not be the main frame.
+

@@ -1,0 +1,12 @@
+
+PASS Descendant can attach to deferred timeline
+PASS Deferred timeline with no attachments
+PASS Inner timeline does not interfere with outer timeline
+PASS Deferred timeline with two attachments
+PASS Dynamically re-attaching
+PASS Dynamically detaching
+PASS Removing/inserting element with attaching timeline
+PASS Ancestor attached element becoming display:none/block
+PASS A deferred timeline appearing dynamically in the ancestor chain
+PASS Animations prefer non-deferred timelines
+

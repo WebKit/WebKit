@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<blockquote>first blockquote level 1</blockquote>
+<blockquote>second blockquote level 1</blockquote>
+<p>plain text paragraph</p>
+<p style="color:black; font-family:sans-serif; font-weight:bold; text-decoration:underline;">sans-serif black bold text with underline</p>
+<p style="color:blue; font-family:serif; font-style:italic;">serif blue italic text</p>
+
+    
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to search for accessible elements by key or text.");
+    
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var containerElement = accessibilityController.focusedElement;
+        var startElement;
+        var resultElement;
+        
+        // Plain text.
+        startElement = containerElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXPlainTextSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
+        shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
+
+        startElement = resultElement;
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXPlainTextSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
+        shouldBe("resultElement.stringValue", "'AXValue: second blockquote level 1'");
+
+        startElement = resultElement;
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXPlainTextSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXStaticText'");
+        shouldBe("resultElement.stringValue", "'AXValue: plain text paragraph'");
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

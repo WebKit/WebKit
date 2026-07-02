@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<title>A style change inside a composited box that an earlier sibling pushed down must repaint in the right place. https://bugs.webkit.org/show_bug.cgi?id=23308</title>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body {
+  margin: 0;
+}
+.repaint-container {
+  transform: translateZ(0);
+}
+#upper {
+  background: yellow;
+}
+#lower {
+  background: red;
+  width: 40px;
+  height: 20px;
+}
+</style>
+<div id=upper></div>
+<div class=repaint-container>
+  <div id=lower></div>
+</div>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest() {
+    await UIHelper.renderingUpdate();
+    upper.style.height = "20px";        // pushes the composited box down
+    lower.style.width = "20px";
+    lower.style.background = "green";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+window.addEventListener('load', runTest);
+</script>

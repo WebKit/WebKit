@@ -1,0 +1,28 @@
+This tests some basic attributes about the details element.
+PASS: details1.role === 'AXRole: AXGroup'
+PASS: details1.subrole === 'AXSubrole: AXDetails'
+PASS: details1.isExpanded === true
+PASS: summary1.role === 'AXRole: AXDisclosureTriangle'
+PASS: summary1.subrole === 'AXSubrole: AXSummary'
+PASS: summary1.title === 'AXTitle: Some open info'
+PASS: details1.isAttributeSettable('AXExpanded') === true
+Got AXExpandedChanged notification for details1 (count 1)
+PASS: details1.isExpanded === false
+PASS: summary1.isExpanded === false
+PASS: details1.isExpanded === false
+PASS: summary1.isExpanded === false
+Got AXExpandedChanged notification for details1 (count 2)
+PASS: details1.isExpanded === true
+PASS: summary1.isExpanded === true
+PASS: details1.isExpanded === true
+PASS: summary1.isExpanded === true
+PASS: details2.subrole === 'AXSubrole: AXDetails'
+PASS: details2.isExpanded === false
+PASS: details3.subrole === 'AXSubrole: AXApplicationGroup'
+PASS: details3.isExpanded === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

@@ -1,0 +1,11 @@
+[
+    {
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": ["child-document"]
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

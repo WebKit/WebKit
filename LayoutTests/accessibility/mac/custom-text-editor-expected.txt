@@ -1,0 +1,24 @@
+Tests that we infer intents when JS is used to move the cursor in a text editor; this practice is common in online code editors.
+
+PASS: addedNotification === true
+Move to 0
+move discontiguous
+Move to 1
+move next character
+Move to 2
+move next character
+Move to 3
+move next character
+Move to 4
+move next character
+Move to 6
+move next character
+Move to 8
+move discontiguous
+Move to 9
+move next character
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

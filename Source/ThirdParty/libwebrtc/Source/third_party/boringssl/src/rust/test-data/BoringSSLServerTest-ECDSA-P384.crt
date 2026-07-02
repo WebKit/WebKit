@@ -1,0 +1,100 @@
+This is generated from
+    openssl ecparam -name secp384r1 -genkey -noout -out BoringSSLServerTest-ECDSA-P384.key
+    openssl req -new -key BoringSSLServerTest-ECDSA-P384.key -out server.csr \
+      -subj '/CN=www.google.com'
+    openssl x509 -req -in server.csr -CA BoringSSLCATest.crt \
+      -CAkey BoringSSLCATest.key -CAcreateserial \
+      -out BoringSSLServerTest-ECDSA-P384.crt -extfile svcconfig -days 730500
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            14:05:09:ad:35:ee:d1:b6:9a:ea:34:fb:2a:27:19:82:39:fd:f8:84
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=DE, ST=Freistaat Bayern, L=Muenchen, O=Google Germany GmbH, OU=ISE Crypto, CN=BoringSSL Authors, emailAddress=boringssl@google.com
+        Validity
+            Not Before: Feb  7 23:39:21 2026 GMT
+            Not After : Feb 22 23:39:21 4026 GMT
+        Subject: CN=www.google.com
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (384 bit)
+                pub:
+                    04:e9:40:b9:49:ce:db:96:7f:94:e1:c0:fe:5a:27:
+                    34:f5:97:df:d6:db:47:18:2f:06:c5:64:4a:65:22:
+                    e1:f9:7d:02:f7:6e:ab:20:52:ee:a2:c3:9f:0c:09:
+                    61:3f:28:72:32:b2:13:d1:88:9a:d5:ba:ee:a6:8f:
+                    61:50:fa:20:b4:49:6c:e3:50:97:3b:10:93:ed:04:
+                    85:6e:bd:15:81:1f:e3:db:60:ec:c2:51:43:ee:65:
+                    75:95:bf:4f:6d:cb:ff
+                ASN1 OID: secp384r1
+                NIST CURVE: P-384
+        X509v3 extensions:
+            X509v3 Authority Key Identifier:
+                EA:1B:59:1E:5D:E3:33:29:41:7F:D7:58:88:63:D4:2A:28:06:78:10
+            X509v3 Basic Constraints:
+                CA:FALSE
+            X509v3 Key Usage:
+                Digital Signature, Non Repudiation, Key Encipherment, Data Encipherment
+            X509v3 Subject Alternative Name:
+                DNS:www.google.com, DNS:localhost
+            X509v3 Subject Key Identifier:
+                05:AA:55:C8:84:9E:CD:8B:04:D8:0A:C4:E7:00:9A:7E:B0:A9:51:D9
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        9b:2b:ad:e3:53:5a:7e:ef:68:0c:34:0b:62:97:a3:da:f9:39:
+        ca:39:d4:67:af:77:72:8f:a8:09:07:bd:29:40:29:1e:78:4c:
+        8e:89:f1:d2:ab:1c:f1:07:1b:1c:8b:e7:25:0b:4f:44:40:b4:
+        16:14:0f:52:15:26:f7:c1:66:87:d0:43:33:61:94:44:05:fb:
+        2f:22:0a:aa:07:cd:cb:16:ca:a1:7f:c5:39:74:58:e2:98:30:
+        71:8c:1a:9c:f2:61:55:58:82:b9:33:26:f9:77:72:25:9e:47:
+        14:d3:4c:cb:c1:9e:b2:b3:cf:eb:60:54:25:f4:68:5e:93:19:
+        79:a5:d8:dc:63:ed:f3:97:2d:98:b5:c2:b5:fc:ee:95:69:f5:
+        05:e7:2f:41:e9:d5:3f:00:33:3c:8f:df:b2:72:fc:27:bd:e4:
+        b6:1d:32:3a:db:3d:80:0f:dc:e6:32:58:66:ac:b4:96:f7:85:
+        11:9d:2d:bc:f6:61:85:a8:2a:a5:4a:74:e8:d8:1f:bd:29:63:
+        34:d7:1c:62:15:7f:d7:4e:e8:36:c1:c3:c0:89:33:97:61:69:
+        44:72:5a:95:68:6c:66:45:a8:47:0d:3e:68:26:42:13:81:0e:
+        d4:a4:fc:ae:ae:b5:b0:1e:13:76:6e:97:f2:1d:48:91:af:a4:
+        68:74:9c:61:f5:9e:d6:97:8e:ff:34:b7:6c:df:06:d8:07:a3:
+        de:3c:43:a6:b0:b2:65:4e:9d:6e:12:68:77:b0:df:9c:46:19:
+        ed:19:18:49:23:ea:15:e2:e8:7f:be:20:ae:12:fa:78:21:1a:
+        15:c0:ba:4d:91:48:b0:0d:af:9e:0f:17:e3:e6:31:9d:1e:dc:
+        e0:d8:74:d9:5c:e2:8f:a5:59:76:67:95:10:0f:a9:ab:1b:28:
+        3d:1e:c3:c5:b3:80:8b:06:9c:20:51:42:12:7f:cd:89:76:54:
+        c1:47:c4:54:e7:54:d0:66:75:64:e6:5d:ff:32:53:39:55:9f:
+        f6:73:04:ea:a8:a4:57:a6:05:0a:47:dc:7a:da:17:55:4e:61:
+        63:a8:9d:54:9e:78:39:a7:af:90:13:72:a5:ef:67:51:83:46:
+        35:be:fc:d7:39:84:77:24:3f:b5:36:81:d7:83:6f:a6:a0:6a:
+        fc:77:0c:f4:d8:9a:8a:d4:98:03:f6:7f:04:30:fe:0f:ac:24:
+        8e:44:b3:ab:ae:c0:bf:4d:8a:51:13:44:14:44:80:d4:ea:09:
+        4a:a7:89:4a:43:64:74:00:99:eb:68:d7:e3:ee:f3:7e:3f:47:
+        d8:71:7e:40:ab:0a:44:8b:e9:66:4e:4c:09:69:17:3b:e8:22:
+        3d:5c:b9:cd:01:f9:2c:ab
+
+-----BEGIN CERTIFICATE-----
+MIIELDCCAhSgAwIBAgIUFAUJrTXu0baa6jT7KicZgjn9+IQwDQYJKoZIhvcNAQEL
+BQAwga8xCzAJBgNVBAYTAkRFMRkwFwYDVQQIDBBGcmVpc3RhYXQgQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEcMBoGA1UECgwTR29vZ2xlIEdlcm1hbnkgR21iSDET
+MBEGA1UECwwKSVNFIENyeXB0bzEaMBgGA1UEAwwRQm9yaW5nU1NMIEF1dGhvcnMx
+IzAhBgkqhkiG9w0BCQEWFGJvcmluZ3NzbEBnb29nbGUuY29tMCAXDTI2MDIwNzIz
+MzkyMVoYDzQwMjYwMjIyMjMzOTIxWjAZMRcwFQYDVQQDDA53d3cuZ29vZ2xlLmNv
+bTB2MBAGByqGSM49AgEGBSuBBAAiA2IABOlAuUnO25Z/lOHA/lonNPWX39bbRxgv
+BsVkSmUi4fl9AvduqyBS7qLDnwwJYT8ocjKyE9GImtW67qaPYVD6ILRJbONQlzsQ
+k+0EhW69FYEf49tg7MJRQ+5ldZW/T23L/6OBgDB+MB8GA1UdIwQYMBaAFOobWR5d
+4zMpQX/XWIhj1CooBngQMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgTwMCQGA1UdEQQd
+MBuCDnd3dy5nb29nbGUuY29tgglsb2NhbGhvc3QwHQYDVR0OBBYEFAWqVciEns2L
+BNgKxOcAmn6wqVHZMA0GCSqGSIb3DQEBCwUAA4ICAQCbK63jU1p+72gMNAtil6Pa
++TnKOdRnr3dyj6gJB70pQCkeeEyOifHSqxzxBxsci+clC09EQLQWFA9SFSb3wWaH
+0EMzYZREBfsvIgqqB83LFsqhf8U5dFjimDBxjBqc8mFVWIK5Myb5d3IlnkcU00zL
+wZ6ys8/rYFQl9Ghekxl5pdjcY+3zly2YtcK1/O6VafUF5y9B6dU/ADM8j9+ycvwn
+veS2HTI62z2AD9zmMlhmrLSW94URnS289mGFqCqlSnTo2B+9KWM01xxiFX/XTug2
+wcPAiTOXYWlEclqVaGxmRahHDT5oJkITgQ7UpPyurrWwHhN2bpfyHUiRr6RodJxh
+9Z7Wl47/NLds3wbYB6PePEOmsLJlTp1uEmh3sN+cRhntGRhJI+oV4uh/viCuEvp4
+IRoVwLpNkUiwDa+eDxfj5jGdHtzg2HTZXOKPpVl2Z5UQD6mrGyg9HsPFs4CLBpwg
+UUISf82JdlTBR8RU51TQZnVk5l3/MlM5VZ/2cwTqqKRXpgUKR9x62hdVTmFjqJ1U
+nng5p6+QE3Kl72dRg0Y1vvzXOYR3JD+1NoHXg2+moGr8dwz02JqK1JgD9n8EMP4P
+rCSORLOrrsC/TYpRE0QURIDU6glKp4lKQ2R0AJnraNfj7vN+P0fYcX5AqwpEi+lm
+TkwJaRc76CI9XLnNAfksqw==
+-----END CERTIFICATE-----

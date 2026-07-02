@@ -1,0 +1,29 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF san_tag == "voting_cache_rebuild_fix" %]
+    <a href="sanitycheck.cgi?rebuild_vote_cache=1&amp;token=
+       [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Click here to
+    rebuild the vote cache</a>
+
+[% ELSIF san_tag == "voting_cache_alert" %]
+    Bad vote cache for [% PROCESS bug_link bug_id = id %]
+
+[% ELSIF san_tag == "voting_count_start" %]
+    Checking cached vote counts.
+
+[% ELSIF san_tag == "voting_count_alert" %]
+    Bad vote sum for [% terms.bug %] [%+ id FILTER html %].
+
+[% ELSIF san_tag == "voting_cache_rebuild_start" %]
+    OK, now rebuilding vote cache.
+
+[% ELSIF san_tag == "voting_cache_rebuild_end" %]
+    Vote cache has been rebuilt
+
+[% END %]

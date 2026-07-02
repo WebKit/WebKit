@@ -1,0 +1,19 @@
+Testing that fullscreen media controls mute button and volume slider do not overlap in RTL mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing RTL mode
+usesLTRUserInterfaceLayoutDirection = false
+Element positions in RTL:
+  Mute button: left=266.00, right=288.00
+  Volume slider: left=198.00, right=258.00
+PASS Mute button is positioned to the right of slider in RTL mode
+PASS Mute button and volume slider do not overlap in RTL mode
+PASS Gap between mute and slider is 8.00px in RTL mode
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

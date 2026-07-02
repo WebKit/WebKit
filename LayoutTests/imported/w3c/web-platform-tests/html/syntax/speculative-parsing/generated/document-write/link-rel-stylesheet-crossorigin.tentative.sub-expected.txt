@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=c141c31e-cadf-4811-bd2e-7cad5a210fbe&amp;encodingcheck=&Gbreve;" crossorigin>
+
+
+
+PASS Speculative parsing, document.write(): link-rel-stylesheet-crossorigin
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>track-with-no-src-loading</title>
+    <script src=../video-test.js></script>
+    <script>
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+
+    async function runTest() {
+        let trackElement = document.querySelector('track');
+        trackElement.track.mode = 'showing';
+
+        await waitForEventWithTimeout(trackElement, 'error', 1000, 'Failed to fire "error" event');
+        testExpected("document.querySelector('track').readyState", HTMLTrackElement.ERROR);
+    }
+    </script>
+</head>
+<body>
+    <video>
+        <track kind="captions">
+    </video>
+</body>
+</html>

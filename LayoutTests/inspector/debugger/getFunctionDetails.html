@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function regular() {}
+regular.displayName = "Regular";
+
+let regularBoundOnce = regular.bind();
+regularBoundOnce.displayName = "RegularBound";
+
+let regularBoundTwice = regularBoundOnce.bind();
+
+let arrow = () => {};
+arrow.displayName = "Arrow";
+
+let arrowBoundOnce = arrow.bind();
+arrowBoundOnce.displayName = "ArrowBound";
+
+let arrowBoundTwice = arrowBoundOnce.bind();
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.getFunctionDetails");
+
+    suite.addTestCase({
+        name: "Debugger.getFunctionDetails.Regular",
+        async test() {
+            let remoteObject = await InspectorTest.evaluateInPage(`regular`, {remoteObjectOnly: true});
+            let {details} = await DebuggerAgent.getFunctionDetails(remoteObject.objectId);
+            InspectorTest.assert(details, "Should get function details.");
+            InspectorTest.expectEqual(details.location.lineNumber, 5, "Should have source code line.");
+            InspectorTest.expectEqual(details.location.columnNumber, 16, "Should have source code column.");
+            InspectorTest.expectEqual(details.name, "regular", "Should have name.");
+            InspectorTest.expectEqual(details.displayName, "Regular", "Should have displayName.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.getFunctionDetails.Regular.Bound.Once",
+        async test() {
+            let remoteObject = await InspectorTest.evaluateInPage(`regularBoundOnce`, {remoteObjectOnly: true});
+            let {details} = await DebuggerAgent.getFunctionDetails(remoteObject.objectId);
+            InspectorTest.assert(details, "Should get function details.");
+            InspectorTest.expectEqual(details.location.lineNumber, 5, "Should have source code line.");
+            InspectorTest.expectEqual(details.location.columnNumber, 16, "Should have source code column.");
+            InspectorTest.expectEqual(details.name, "regular", "Should have name.");
+            InspectorTest.expectEqual(details.displayName, "RegularBound", "Should have displayName.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.getFunctionDetails.Regular.Bound.Twice",
+        async test() {
+            let remoteObject = await InspectorTest.evaluateInPage(`regularBoundTwice`, {remoteObjectOnly: true});
+            let {details} = await DebuggerAgent.getFunctionDetails(remoteObject.objectId);
+            InspectorTest.assert(details, "Should get function details.");
+            InspectorTest.expectEqual(details.location.lineNumber, 5, "Should have source code line.");
+            InspectorTest.expectEqual(details.location.columnNumber, 16, "Should have source code column.");
+            InspectorTest.expectEqual(details.name, "bound regular", "Should have name.");
+            InspectorTest.expectEqual(details.displayName, undefined, "Should not have displayName.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.getFunctionDetails.Arrow",
+        async test() {
+            let remoteObject = await InspectorTest.evaluateInPage(`arrow`, {remoteObjectOnly: true});
+            let {details} = await DebuggerAgent.getFunctionDetails(remoteObject.objectId);
+            InspectorTest.assert(details, "Should get function details.");
+            InspectorTest.expectEqual(details.location.lineNumber, 13, "Should have source code line.");
+            InspectorTest.expectEqual(details.location.columnNumber, 12, "Should have source code column.");
+            InspectorTest.expectEqual(details.name, undefined, "Should not have name.");
+            InspectorTest.expectEqual(details.displayName, "Arrow", "Should have displayName.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.getFunctionDetails.Arrow.Bound.Once",
+        async test() {
+            let remoteObject = await InspectorTest.evaluateInPage(`arrowBoundOnce`, {remoteObjectOnly: true});
+            let {details} = await DebuggerAgent.getFunctionDetails(remoteObject.objectId);
+            InspectorTest.assert(details, "Should get function details.");
+            InspectorTest.expectEqual(details.location.lineNumber, 13, "Should have source code line.");
+            InspectorTest.expectEqual(details.location.columnNumber, 12, "Should have source code column.");
+            InspectorTest.expectEqual(details.name, "arrow", "Should have name.");
+            InspectorTest.expectEqual(details.displayName, "ArrowBound", "Should have displayName.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.getFunctionDetails.Arrow.Bound.Twice",
+        async test() {
+            let remoteObject = await InspectorTest.evaluateInPage(`arrowBoundTwice`, {remoteObjectOnly: true});
+            let {details} = await DebuggerAgent.getFunctionDetails(remoteObject.objectId);
+            InspectorTest.assert(details, "Should get function details.");
+            InspectorTest.expectEqual(details.location.lineNumber, 13, "Should have source code line.");
+            InspectorTest.expectEqual(details.location.columnNumber, 12, "Should have source code column.");
+            InspectorTest.expectEqual(details.name, "bound arrow", "Should have name.");
+            InspectorTest.expectEqual(details.displayName, undefined, "Should not have displayName.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Debugger.getFunctionDetails command.</p>
+</body>
+</html>

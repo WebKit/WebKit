@@ -1,0 +1,11 @@
+Test that network events for a cross-origin iframe fetch carry the iframe's frame ID, not the main frame's.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameFrameId
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.FrameIdMatchesIFrame
+PASS: Resource should be created.
+PASS: Resource frame ID should not equal main frame ID.
+PASS: Resource frame ID should not be null.
+Main frame ID: 0
+Resource frame ID: 1
+

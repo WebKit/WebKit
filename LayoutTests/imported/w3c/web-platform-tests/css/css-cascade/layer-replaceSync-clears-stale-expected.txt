@@ -1,0 +1,3 @@
+
+PASS replaceSync clears stale layer statements
+

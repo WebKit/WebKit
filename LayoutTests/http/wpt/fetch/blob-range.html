@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blob and range request</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+
+promise_test(async () => {
+    const blobSize = [990043, 804394, 1488722, 940287, 796558, 1934954, 951421, 1694735, 416322, 466642];
+    const blobs = blobSize.map(size => new Blob([new ArrayBuffer(size)]));
+    const blob = new Blob(blobs, { type: 'video/mp4' });
+    const url = window.URL.createObjectURL(blob);
+
+    let request = new Request(url, { headers : { "Range" : "bytes=0-1" } });
+    await fetch(request);
+
+    request = new Request(url, { headers : { "Range" : "bytes=0-62470047" } });
+    await fetch(request);
+
+    request = new Request(url, { headers : { "Range" : "bytes=3257139-7195852" } });
+    const response = await fetch(request);
+    assert_equals(response.status, 206);
+    await response.arrayBuffer();
+}, "Do blob range requests");
+    </script>
+  </body>
+</html>

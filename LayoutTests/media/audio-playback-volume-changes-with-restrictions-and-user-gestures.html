@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-playback-volume-changes-with-restrictions-and-user-gestures</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+
+    <script>
+    function runTest()
+    {
+        audio = document.getElementsByTagName('audio')[0];
+        run('internals.setMediaElementRestrictions(audio, "RequireUserGestureForAudioRateChange")');
+
+        run('audio.src = findMediaFile("audio", "content/test")');
+        run('audio.volume = 1');
+        run('audio.play().then(failTest).catch(didPreventPlayback)');
+    }
+
+    function didPreventPlayback()
+    {
+        consoleWrite("Setting volume to 0 to allow playback");
+        run('audio.volume = 0');
+        run('audio.play().then(didPlaySilentAudio).catch(failTest)');
+    }
+    
+    function didPlaySilentAudio()
+    {
+        consoleWrite("Ensure setting volume to non-zero value with a user gesture does not pause media in the presence of audio rate change restrictions");
+        runWithKeyDown(() => {
+            run('audio.volume = 0.2');
+        });
+        testExpected('audio.paused', false);
+        endTest();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <audio controls></audio>
+</body>
+</html>

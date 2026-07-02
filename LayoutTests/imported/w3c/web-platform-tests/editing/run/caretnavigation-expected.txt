@@ -1,0 +1,9 @@
+line 1
+
+line 2
+
+line 2
+
+PASS Move with ArrowLeft to BR following a div
+PASS Move with ArrowLeft to BR following an img
+

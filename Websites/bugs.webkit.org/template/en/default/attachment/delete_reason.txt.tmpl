@@ -1,0 +1,18 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # attachment: object of the attachment the user wants to delete.
+  # reason: string; The reason provided by the user.
+  #%]
+
+The content of attachment [% attachment.id %] has been deleted
+[%~ IF reason %] for the following reason:
+
+[%+ reason %]
+[% END %]

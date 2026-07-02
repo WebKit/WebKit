@@ -1,0 +1,6 @@
+Outer 1Outer placeholder Outer 2Outer 3Outer 4Outer 5
+Inner Placeholder
+Inner 1Inner 2Inner 3Inner 4Inner 5
+
+FAIL first in tree-order is selected as snap target. assert_equals: scroller followed outertarget1 in y axis after layout change expected 250 but got 150
+

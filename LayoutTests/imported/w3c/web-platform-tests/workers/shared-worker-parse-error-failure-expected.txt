@@ -1,0 +1,4 @@
+
+PASS Classic shared worker construction for script with syntax error should dispatch an event named error.
+PASS Static import on classic shared worker should dispatch an event named error.
+

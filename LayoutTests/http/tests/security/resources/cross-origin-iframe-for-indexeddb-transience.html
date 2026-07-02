@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<script>
+const dbname = "cross-origin-indexeddb-transience-test";
+
+function report(message) {
+    parent.postMessage(message, "*");
+}
+
+const deleteRequest = indexedDB.deleteDatabase(dbname);
+deleteRequest.onerror = () => report("FAIL: initial deleteDatabase failed");
+deleteRequest.onsuccess = () => {
+    const openRequest = indexedDB.open(dbname, 1);
+    openRequest.onerror = () => report("FAIL: open failed: " + openRequest.error);
+    openRequest.onupgradeneeded = event => {
+        event.target.result.createObjectStore("s");
+    };
+    openRequest.onsuccess = event => {
+        const db = event.target.result;
+        db.onclose = () => {
+            let upgradeFired = false;
+            const reopenRequest = indexedDB.open(dbname, 1);
+            reopenRequest.onerror = () => report("FAIL: reopen failed: " + reopenRequest.error);
+            reopenRequest.onupgradeneeded = () => { upgradeFired = true; };
+            reopenRequest.onsuccess = () => {
+                report(upgradeFired ? "TRANSIENT" : "PERSISTENT");
+            };
+        };
+        // Force a strict-durability write so the SQLite WAL is checkpointed
+        // to the main database file before we ask the parent to terminate
+        // the network process.
+        const tx = db.transaction("s", "readwrite", { durability: "strict" });
+        tx.onerror = () => report("FAIL: durable write tx failed: " + tx.error);
+        tx.oncomplete = () => report("stored");
+        tx.objectStore("s").put("v", "k");
+    };
+};
+</script>

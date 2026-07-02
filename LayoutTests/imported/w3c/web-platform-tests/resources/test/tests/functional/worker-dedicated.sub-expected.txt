@@ -1,0 +1,18 @@
+Dedicated Web Worker Tests
+
+Demonstrates running testharness based tests inside a dedicated web worker.
+
+The test harness is expected to fail due to an uncaught exception in one worker.
+
+
+Harness Error (FAIL), message = Error: This failure is expected.
+
+PASS Browser supports Workers
+PASS Test running on main document.
+PASS Worker test that completes successfully
+FAIL Worker test that fails ('FAIL') assert_true: Failing test expected true got false
+TIMEOUT Worker test that times out ('TIMEOUT') Test timed out
+NOTRUN Worker test that doesn't run ('NOT RUN')
+PASS Worker async_test that completes successfully
+PASS worker test that completes successfully before exception
+

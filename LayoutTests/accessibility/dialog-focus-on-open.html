@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="showButton" onclick="
+    document.getElementById('dialog').showModal();
+    document.getElementById('heading').focus();
+">Show dialog</button>
+
+<dialog id="dialog">
+    <h2 id="heading" tabindex="-1">Create</h2>
+    <button id="cancel">Cancel</button>
+    <button id="create">Create</button>
+</dialog>
+
+<script>
+var output = "This test verifies that when a dialog opens and a heading inside it is programmatically focused, the focused element reported to assistive technologies is the heading.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var showButton = accessibilityController.accessibleElementById("showButton");
+
+    window.focusedAtNotificationTime = null;
+    accessibilityController.addNotificationListener(function(element, notification) {
+        if (notification === "AXFocusChanged") {
+            var focused = accessibilityController.focusedElement;
+            window.focusedAtNotificationTime = focused ? focused.domIdentifier : "null";
+        }
+    });
+
+    setTimeout(async function() {
+        showButton.press();
+
+        output += await expectAsync("window.focusedAtNotificationTime", "'heading'");
+        output += expect("accessibilityController.focusedElement.domIdentifier", "'heading'");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

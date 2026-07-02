@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../webrtc/routines.js"></script>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var context = new AudioContext();
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+    const audioTrack = stream.getAudioTracks()[0];
+
+    assert_true(await doHumAnalysis(stream, true), "Heard hum from track");
+
+    navigator.mediaSession.setMicrophoneActive(false);
+    await new Promise(resolve => audioTrack.onmute = resolve);
+
+    assert_true(await doHumAnalysis(stream, false), "Do not hear hum from muted track");
+
+    if (!window.internals)
+        return;
+
+    internals.withUserGesture(() => {
+        navigator.mediaSession.setMicrophoneActive(true);
+    });
+
+    await new Promise(resolve => audioTrack.onunmute = resolve);
+
+    assert_true(await doHumAnalysis(stream, true), "Heard hum from muted track");
+}, "Unmuting the audio track should properly restart capture");
+</script>
+</body>
+</html>

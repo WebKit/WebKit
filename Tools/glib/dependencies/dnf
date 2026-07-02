@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK/WPE.
+    alsa-lib-devel
+    at-spi2-atk-devel
+    atk-devel
+    bubblewrap
+    cairo-devel
+    cmake
+    flite-devel
+    gcc-c++
+    gi-docgen
+    gobject-introspection-devel
+    gperf
+    gstreamer1-devel
+    gstreamer1-plugins-bad-free-devel
+    gstreamer1-plugins-base-devel
+    intltool
+    libatomic
+    libavif-devel
+    lcms2-devel
+    libepoxy-devel
+    libevent-devel
+    libgcrypt-devel
+    libjpeg-turbo-devel
+    libjxl-devel
+    libkate-devel
+    libmount-devel
+    libpng-devel
+    libseccomp-devel
+    libsoup3-devel
+    libsqlite3x-devel
+    libsrtp-devel
+    libtasn1-devel
+    libvorbis-devel
+    libv4l-devel
+    libvpx-devel
+    libwebp-devel
+    libwpe-devel
+    libxkbcommon-x11-devel
+    libxslt-devel
+    mesa-libgbm-devel
+    mesa-libGL-devel
+    ninja-build
+    openjpeg2-devel
+    openssl-devel
+    openxr-devel
+    opus-devel
+    patch
+    perl-autouse
+    perl-English
+    perl-File-Copy-Recursive
+    perl-FindBin
+    perl-JSON-PP
+    perl-Time-HiRes
+    perl-version
+    pulseaudio-libs-devel
+    ruby
+    sqlite-devel
+    sysprof-capture-devel
+    systemd-devel
+    unifdef
+    vulkan-volk-devel
+    wayland-devel
+    wayland-protocols-devel
+    woff2-devel
+    wpebackend-fdo-devel
+
+    # These are dependencies necessary for running tests.
+    binutils
+    curl
+    gdb
+    httpd
+    liberation-fonts
+    mod_ssl
+    perl-CGI
+    psmisc
+    python3-legacy-cgi
+    pulseaudio-utils
+    python3-psutil
+    rubygem-highline
+    rubygem-json
+    time
+
+    # These are dependencies necessary for building the jhbuild.
+    expat-devel
+    fdk-aac-free-devel
+    git
+    gnutls-devel
+    gsettings-desktop-schemas-devel
+    gyp
+    itstool
+    libproxy-devel
+    libpsl-devel
+    libtheora-devel
+    libuuid-devel
+    libp11-devel
+    libxcb-devel
+    mesa-libEGL-devel
+    orc-devel
+    perl-XML-LibXML
+    python3-setuptools
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    git-svn
+    subversion
+
+    # These are dependencies necessary for using git-webkit.
+    python3-devel
+
+    # These are GStreamer plugins needed to play different media files.
+    gstreamer1-plugins-bad-free
+    gstreamer1-plugins-bad-free-extras
+    gstreamer1-plugins-base
+    gstreamer1-plugins-good
+    gstreamer1-plugins-good-extras
+    gstreamer1-plugins-ugly-free
+
+    # These are for generate-bundle script
+    patchelf
+    p11-kit
+
+    # These are required to run the WebKit Container SDK via wkdev-build /
+    # wkdev-sdk. `podman` is the rootless container engine the host wrappers
+    # invoke; `crun` is the runtime we pin podman to (runc does not support
+    # `podman run --init`); `catatonit` is the helper `--init` spawns as
+    # PID 1.
+    catatonit
+    crun
+    podman
+)

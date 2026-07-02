@@ -1,0 +1,4 @@
+
+FAIL Access from opener assert_equals: expected (string) "coop" but got (undefined) undefined
+FAIL Access from openee assert_equals: expected (string) "coop" but got (undefined) undefined
+

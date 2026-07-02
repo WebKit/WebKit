@@ -1,0 +1,5 @@
+This test ensures WebKit renders the trailing whitespace properly. You should see PASS thrice below.
+
+test 0: PASS
+test 1: PASS
+test 2: PASS

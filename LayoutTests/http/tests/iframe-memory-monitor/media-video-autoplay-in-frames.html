@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+</body>
+<script>
+
+window.jsTestIsAsync = true;
+
+onload = async () => {
+    stage.innerHTML = `
+        <iframe allow="autoplay; encrypted-media" name="frame1" src="http://localhost:8080/iframe-memory-monitor/video-iframe.html"></iframe>
+    `;
+
+    await waitUntilUnload('frame1');
+
+    shouldNotBe(`document.querySelector('iframe[name=frame1]').srcdoc`, '""');
+
+    finishJSTest();
+}
+
+async function pause(ms) {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(), ms);
+    });
+}
+
+async function waitUntilUnload(name) {
+    const iframe = document.querySelector(`iframe[name=${name}]`);
+    if (!iframe)
+        throw new Error("iframe dosn't exist");
+
+    while (!iframe.srcdoc) {
+        await pause(10);
+    }
+
+    // extra wait time
+    await pause(100);
+    return iframe;
+}
+</script>
+</html>

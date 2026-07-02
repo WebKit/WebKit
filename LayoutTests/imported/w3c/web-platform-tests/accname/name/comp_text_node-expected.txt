@@ -1,0 +1,134 @@
+Tests the #comp_text_node portions of the AccName Name Computation algorithm.
+
+text/element/text nodes, no space
+
+buttonlabel
+headinglabel
+buttonlabel
+headinglabel
+
+linklabel
+text/comment/text nodes, no space
+
+buttonlabel
+headinglabel
+buttonlabel
+headinglabel
+
+linklabel
+text/comment/text nodes, with space
+
+button label
+heading label
+button label
+heading label
+
+link label
+text node, with tab char
+
+button label
+heading label
+button label
+heading label
+
+link label
+text node, with non-breaking space
+
+button label
+heading label
+button label
+heading label
+
+link label
+text node, with extra non-breaking space
+
+button   label
+heading   label
+button   label
+heading   label
+
+link   label
+text node, with leading/trailing non-breaking space
+
+ button label 
+ heading label 
+ button label 
+ heading label 
+
+ link label 
+text node, with mixed space and non-breaking space
+
+button   label
+heading   label
+button   label
+heading   label
+
+link   label
+text nodes, with deeply nested space
+
+button label
+heading label
+button label
+heading label
+
+link label
+text nodes, with single line break
+
+button label
+heading label
+button label
+heading label
+
+link label
+
+PASS span[role=button] with text/element/text nodes, no space
+PASS div[role=heading] with text/element/text nodes, no space
+PASS button with text/element/text nodes, no space
+PASS heading with text/element/text nodes, no space
+PASS link with text/element/text nodes, no space
+PASS span[role=button] with text/comment/text nodes, no space
+PASS div[role=heading] with text/comment/text nodes, no space
+PASS button with text/comment/text nodes, no space
+PASS heading with text/comment/text nodes, no space
+PASS link with text/comment/text nodes, no space
+PASS span[role=button] with text/comment/text nodes, with space
+PASS div[role=heading] with text/comment/text nodes, with space
+PASS button with text/comment/text nodes, with space
+PASS heading with text/comment/text nodes, with space
+PASS link with text/comment/text nodes, with space
+PASS span[role=button] with text node, with tab char
+PASS div[role=heading] with text node, with tab char
+PASS button with text node, with tab char
+PASS heading with text node, with tab char
+PASS link with text node, with tab char
+PASS span[role=button] with text node, with non-breaking space
+PASS div[role=heading] with text node, with non-breaking space
+PASS button with text node, with non-breaking space
+PASS heading with text node, with non-breaking space
+PASS link with text node, with non-breaking space
+PASS span[role=button] with text node, with extra non-breaking space
+PASS div[role=heading] with text node, with extra non-breaking space
+PASS button with text node, with extra non-breaking space
+PASS heading with text node, with extra non-breaking space
+PASS link with text node, with extra non-breaking space
+PASS span[role=button] with text node, with leading/trailing non-breaking space
+PASS div[role=heading] with text node, with leading/trailing non-breaking space
+PASS button with text node, with leading/trailing non-breaking space
+PASS heading with text node, with leading/trailing non-breaking space
+PASS link with text node, with leading/trailing non-breaking space
+PASS span[role=button] with text node, with mixed space and non-breaking space
+PASS div[role=heading] with text node, with mixed space and non-breaking space
+PASS button with text node, with mixed space and non-breaking space
+PASS heading with text node, with mixed space and non-breaking space
+PASS link with text node, with mixed space and non-breaking space
+PASS span[role=button] with text node, with deeply nested space
+PASS div[role=heading] with text node, with deeply nested space
+PASS button with text node, with deeply nested space
+PASS heading with text node, with deeply nested space
+PASS link with text node, with deeply nested space
+PASS span[role=button] with text node, with single line break
+PASS div[role=heading] with text node, with single line break
+PASS button with text node, with single line break
+PASS heading with text node, with single line break
+PASS link with text node, with single line break
+

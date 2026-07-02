@@ -1,0 +1,3 @@
+
+PASS Space characters at the end of a line are NOT collapsed
+

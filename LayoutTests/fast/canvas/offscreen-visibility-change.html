@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ OffscreenCanvasEnabled=true ] -->
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body style="margin:0">
+<canvas id="c" style="background-color: red; image-rendering: crisp-edges;"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+async function runTest() {
+    const offscreen = c.transferControlToOffscreen();
+    let ctx = offscreen.getContext('2d');
+    ctx.fillStyle = "lime";
+    ctx.fillRect(0, 75, 150, 150);
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(150, 0, 300, 75);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    c.style.visibilty = "hidden";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    c.style.visibility = "";
+    await UIHelper.renderingUpdate();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+runTest();
+</script>
+</body>

@@ -1,0 +1,4 @@
+
+PASS Animating <model> should reset playback state after source changed
+PASS Animating <model> should respect previously set attributes that affect playback after source changed
+

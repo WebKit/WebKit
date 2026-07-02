@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests accessing the length after accessing a particular index in HTMLOptionsCollections via HTMLSelectElement\'s item. WebKit should not crash.');
+
+const select = document.createElement('select');
+
+// Need to keep HTMLOptionsCollection alive during the call to item() and until the length getter is called.
+const optionsCollection = select.options;
+
+shouldBe('select.item(500)', 'null');
+shouldBe('select.options.length', '0');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<body>
+    <p>This test ensures an image with decoding="sync" will be decoded synchronously regardless of its size.</p>
+    <img decoding="sync">
+    <script>
+        (function() {
+            if (window.internals && window.testRunner) {
+                internals.clearMemoryCache();
+                internals.settings.setLargeImageAsyncDecodingEnabled(true);
+                testRunner.waitUntilDone();
+            }
+
+            var image = document.querySelector("img");
+            image.onload = (() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+            image.src = "resources/green-400x400.png";
+        })();
+    </script>
+</body>

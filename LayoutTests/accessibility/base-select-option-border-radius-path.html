@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+option {
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="select">
+    <option id="opt1">Alpha</option>
+    <option id="opt2" selected>Bravo</option>
+    <option id="opt3">Charlie</option>
+</select>
+</div>
+
+<script>
+var output = "This test verifies that base-appearance select options with border-radius correctly support AXPath.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        // Open the select to render the options.
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        // Paths are cached during paint in the isolated tree. Wait for them to become available.
+        await waitUntilIDHasPathWith("opt1", 1, "Curve to");
+
+        output += expect("pathSegmentCountOfID('opt1', 'Curve to') > 0", "true");
+        output += expect("pathSegmentCountOfID('opt2', 'Curve to') > 0", "true");
+        output += expect("pathSegmentCountOfID('opt3', 'Curve to') > 0", "true");
+
+        // Close the popover.
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

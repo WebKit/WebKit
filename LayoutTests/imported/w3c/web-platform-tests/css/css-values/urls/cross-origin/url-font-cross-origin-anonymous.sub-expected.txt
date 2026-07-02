@@ -1,0 +1,4 @@
+X
+
+PASS cross-origin(anonymous) allows cross-origin font loading with CORS headers
+

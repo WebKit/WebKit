@@ -1,0 +1,5 @@
+
+PASS "*" should be a valid selector
+PASS "div :first-child" should be a valid selector
+PASS "div *:first-child" should be a valid selector
+

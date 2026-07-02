@@ -1,0 +1,4 @@
+
+PASS history.pushState
+PASS history.replaceState
+

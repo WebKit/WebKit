@@ -1,0 +1,47 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<div role="group" aria-live="polite">
+    <input id="liveButton" type="button" value="Start"/>
+</div>
+
+<script>
+var output = "This tests that button inputs that are in live regions work as expected.\n\n";    
+var testFinished = false;
+var notificationCount = 0;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n${formatAnnouncementUserInfo(userInfo)}\n`;
+        notificationCount++;
+
+        if (notificationCount == 1)
+            document.getElementById("liveButton").setAttribute("value", "End");
+        else
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("liveButton");
+
+    document.getElementById("liveButton").value = "Middle";
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/common/get-host-info.sub.js"></script>
+<body>
+<script>
+  var link = document.createElement("link");
+  link.rel = "prefetch";
+  link.href = get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/prefetched-main-resource-redirect.py";
+  internals.addPrefetchLoadEventListener(link, () => { window.location = get_host_info().HTTP_REMOTE_ORIGIN + "/WebKit/prefetch/resources/prefetched-main-resource-redirect.py" });
+  document.body.appendChild(link);
+</script>
+</body>

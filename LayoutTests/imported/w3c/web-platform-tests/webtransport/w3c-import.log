@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-closed-webtransport-connection-ccns.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-closed-webtransport-connection.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-open-webtransport-connection-ccns.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/back-forward-cache-with-open-webtransport-connection.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/bidirectional-cancel-crash.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/close.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/connect.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/constructor.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/csp-fail.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/csp-pass.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/datagram-bad-chunk.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/datagram-cancel-crash.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/datagrams.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/in-removed-iframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/sendorder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/sendstream-bad-chunk.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/server-certificate-hashes.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/stats.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/streams-close.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.js

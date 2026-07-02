@@ -1,0 +1,16 @@
+
+PASS prerequisites
+PASS default namespace applies to children of namespaced element
+PASS default namespace applies to children of default-namespaced element
+PASS default namespace applies to children of non-namespaced element
+PASS default namespace applies to children of namespaced element with new default namespace
+PASS namespace prefix applies to children of namespaced element
+PASS default namespace prefix applies to descendants of namespaced element
+PASS unsetting default namespace works inside parse of fragment (on element)
+PASS unsetting default namespace works inside parse of fragment (on child of element)
+PASS default namespace applied to sibling of namespace-resetting element in parse of fragment.
+PASS default namespace applied to sibling of namespace-resetting template element in parse of fragment.
+PASS nested default namespace reset works inside parse of fragment
+PASS declaring namespace with prefix inside of fragment parsed by innerHTML
+PASS declaring default namespace inside of fragment parsed by innerHTML
+

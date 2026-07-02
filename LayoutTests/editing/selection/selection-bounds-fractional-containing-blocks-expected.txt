@@ -1,0 +1,13 @@
+Tests selection bounds computation in fractionally offset renderers inside repaint containers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionBounds.width is 113
+PASS selectionBounds.height is 17
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Content
+Content
+Content

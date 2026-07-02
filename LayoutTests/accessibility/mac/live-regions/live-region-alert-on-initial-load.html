@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<!-- This live region shouldn't make any announcement when AX is first initialized -->
+<div id="regular-region" aria-live="polite">Unimportant announcement</div>
+
+<div id="alert-region" role="alert">Important announcement</div>
+
+<script>
+var output = "This tests that when an alert (implicit live region) is initialized, it is announced.\n\n";    
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAnnouncementUserInfo(userInfo);
+        output += `\n`;
+
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("regular-region");
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<title>Cross-origin frame that renames itself</title>
+<script>
+// Change the browsing context name, then navigate. Setting window.name calls
+// LocalFrameLoaderClient::frameNameChanged, which under Site Isolation reports the new name to
+// the UIProcess WebFrameProxy tree. The subsequent navigation emits a fresh Page.frameNavigated
+// whose (empty, cross-origin) name is resolved from that tree -- so the updated name should reach
+// the frontend frame model. See webkit.org/b/316666.
+window.name = "renamed-child";
+location.href = "resource-tree-frame.html";
+</script>
+<p>Cross-origin frame that renames itself, then navigates.</p>

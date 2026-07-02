@@ -1,0 +1,34 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+	moveSelectionForwardByCharacterCommand();
+    typeCharacterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space; ">
+<div contenteditable id="root" class="editing">
+<span id="test">a<span class="Apple-tab-span" style="white-space:pre">			</span>z</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

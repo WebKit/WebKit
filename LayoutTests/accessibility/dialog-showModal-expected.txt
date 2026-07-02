@@ -1,0 +1,34 @@
+This tests that dialog.showModal() makes other elements inert.
+
+Dialog is hidden
+PASS: backgroundAccessible() === true
+Dialog is displaying
+PASS: backgroundAccessible() === false
+Dialog is not displaying
+PASS: backgroundAccessible() === true
+PASS: backgroundAccessible() === true
+PASS: okButton.isIgnored === false
+Dialog is displaying
+PASS: backgroundAccessible() === false
+PASS: okButton.isIgnored === false
+Dialog is displaying and aria-hidden=true
+PASS: backgroundAccessible() === false
+Dialog is displaying and aria-hidden=false
+PASS: backgroundAccessible() === false
+Dialog is displaying and aria-modal=false
+PASS: backgroundAccessible() === false
+Dialog is not displaying with opacity 0
+PASS: backgroundAccessible() === false
+Dialog is displaying with opacity 1
+PASS: backgroundAccessible() === false
+Dialog is removed from DOM
+PASS: backgroundAccessible() === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Other page content with a dummy focusable element
+
+Display a dialog
+
+

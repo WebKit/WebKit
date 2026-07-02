@@ -1,0 +1,3 @@
+
+PASS Scroll-driven and monotonic animations on the same element cannot be accelerated if they affect the same underlying property.
+

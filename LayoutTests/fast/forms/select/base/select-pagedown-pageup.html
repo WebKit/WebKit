@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style id="pickerStyle">
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="select"></select>
+<script>
+description("Tests Page Down and Page Up keyboard navigation in a base-select picker.");
+
+const select = document.getElementById('select');
+const pickerStyle = document.getElementById('pickerStyle');
+const nOptions = 100;
+
+for (let i = 1; i <= nOptions; i++) {
+    const option = document.createElement('option');
+    option.textContent = `Option ${i}`;
+    option.id = `opt${i}`;
+    select.appendChild(option);
+}
+
+function getOption(n) {
+    return document.getElementById(`opt${n}`);
+}
+
+function focusedOptionNumber() {
+    const id = document.activeElement ? document.activeElement.id : '';
+    return id.startsWith('opt') ? parseInt(id.replace('opt', '')) : null;
+}
+
+function isFocusedOptionVisible() {
+    const option = document.activeElement;
+    if (!option || !option.id.startsWith('opt'))
+        return false;
+    const picker = internals.shadowRoot(select).querySelector('[popover]');
+    const pickerRect = picker.getBoundingClientRect();
+    const optionRect = option.getBoundingClientRect();
+    return optionRect.top >= pickerRect.top - 1 && optionRect.bottom <= pickerRect.bottom + 1;
+}
+
+function isOptionVisible(n) {
+    const option = getOption(n);
+    const picker = internals.shadowRoot(select).querySelector('[popover]');
+    const contentTop = picker.getBoundingClientRect().top + picker.clientTop;
+    const contentBottom = contentTop + picker.clientHeight;
+    const optionRect = option.getBoundingClientRect();
+    return optionRect.top >= contentTop - 1 && optionRect.bottom <= contentBottom + 1;
+}
+
+async function openPickerAt(n) {
+    select.value = getOption(n).value;
+    await UIHelper.activateElement(select);
+    await UIHelper.animationFrame();
+}
+
+async function closePicker() {
+    if (select.matches(':open')) {
+        await UIHelper.activateElement(select);
+        await UIHelper.animationFrame();
+    }
+}
+
+jsTestIsAsync = true;
+
+(async () => {
+
+    // Test: Opening the picker at a middle option scrolls it into view.
+    await openPickerAt(50);
+    shouldBe('focusedOptionNumber()', '50');
+    shouldBeTrue('isFocusedOptionVisible()');
+    await closePicker();
+
+    // Test: Page Down from first option moves focus forward.
+    await openPickerAt(1);
+    shouldBe('focusedOptionNumber()', '1');
+    await UIHelper.keyDown("pageDown");
+    shouldBeGreaterThanOrEqual('focusedOptionNumber()', '2');
+    savedValue = select.value;
+    shouldBe('select.value', 'savedValue');
+    await closePicker();
+
+    // Test: Page Up from last option moves focus backward.
+    await openPickerAt(nOptions);
+    shouldBe('focusedOptionNumber()', String(nOptions));
+    await UIHelper.keyDown("pageUp");
+    shouldBeTrue(`focusedOptionNumber() < ${nOptions}`);
+    savedValue = select.value;
+    shouldBe('select.value', 'savedValue');
+    await closePicker();
+
+    // Test: Repeated Page Down then Page Up.
+    await openPickerAt(1);
+    await UIHelper.keyDown("pageDown");
+    firstPageDown = focusedOptionNumber();
+    await UIHelper.keyDown("pageDown");
+    secondPageDown = focusedOptionNumber();
+    shouldBeGreaterThanOrEqual('secondPageDown', 'firstPageDown + 1');
+
+    await UIHelper.keyDown("pageUp");
+    afterPageUp = focusedOptionNumber();
+    shouldBeTrue('afterPageUp < secondPageDown');
+    await closePicker();
+
+    // Test: Page Down at the end stays on last option.
+    await openPickerAt(nOptions);
+    await UIHelper.keyDown("pageDown");
+    shouldBe('focusedOptionNumber()', String(nOptions));
+    await closePicker();
+
+    // Test: Page Up at the start stays on first option.
+    await openPickerAt(1);
+    await UIHelper.keyDown("pageUp");
+    shouldBe('focusedOptionNumber()', '1');
+    await closePicker();
+
+    // Test: Repeated Page Down eventually reaches the last option.
+    await openPickerAt(1);
+    previousOption = 1;
+    for (let i = 0; i < nOptions; i++) {
+        await UIHelper.keyDown("pageDown");
+        currentOption = focusedOptionNumber();
+        if (currentOption === nOptions)
+            break;
+        if (currentOption <= previousOption) {
+            testFailed(`Page Down did not make progress: was ${previousOption}, now ${currentOption}`);
+            break;
+        }
+        previousOption = currentOption;
+    }
+    shouldBe('focusedOptionNumber()', String(nOptions));
+    await closePicker();
+
+    // Test: Repeated Page Up eventually reaches the first option.
+    await openPickerAt(nOptions);
+    previousOption = nOptions;
+    for (let i = 0; i < nOptions; i++) {
+        await UIHelper.keyDown("pageUp");
+        currentOption = focusedOptionNumber();
+        if (currentOption === 1)
+            break;
+        if (currentOption >= previousOption) {
+            testFailed(`Page Up did not make progress: was ${previousOption}, now ${currentOption}`);
+            break;
+        }
+        previousOption = currentOption;
+    }
+    shouldBe('focusedOptionNumber()', '1');
+    await closePicker();
+
+    // Test: Page Down is viewport-based, not focused-item-based.
+    // Use arrow keys to move within the same page without changing the scroll position.
+    await openPickerAt(1);
+    await UIHelper.keyDown("pageDown");
+    pageDownTarget = focusedOptionNumber();
+    await closePicker();
+
+    await openPickerAt(1);
+    await UIHelper.keyDown("ArrowDown");
+    await UIHelper.keyDown("ArrowDown");
+    await UIHelper.keyDown("pageDown");
+    shouldBeTrue('focusedOptionNumber() === pageDownTarget');
+    await closePicker();
+
+    // Test: Page Up is viewport-based.
+    await openPickerAt(nOptions);
+    await UIHelper.keyDown("pageUp");
+    pageUpTarget = focusedOptionNumber();
+    await closePicker();
+
+    await openPickerAt(nOptions);
+    await UIHelper.keyDown("ArrowUp");
+    await UIHelper.keyDown("ArrowUp");
+    await UIHelper.keyDown("pageUp");
+    shouldBeTrue('focusedOptionNumber() === pageUpTarget');
+    await closePicker();
+
+    // Test: With a constrained picker height, Page Down jumps fewer items.
+    pickerStyle.textContent = `select, ::picker(select) { appearance: base-select; }\n::picker(select) { max-height: 150px; }`;
+
+    await openPickerAt(1);
+    await UIHelper.keyDown("pageDown");
+    constrainedTarget = focusedOptionNumber();
+    shouldBeTrue('constrainedTarget > 1');
+    shouldBeTrue('constrainedTarget < pageDownTarget');
+    await closePicker();
+
+    // Test: With a non-evenly-divisible picker height, the partially visible item from
+    // the current page remains visible after Page Down (overlap behavior).
+    pickerStyle.textContent = `select, ::picker(select) { appearance: base-select; }\n::picker(select) { max-height: 170px; }`;
+
+    await openPickerAt(1);
+    picker = internals.shadowRoot(select).querySelector('[popover]');
+    // Use content area edges (excluding border) to find partially visible items.
+    contentTop = picker.getBoundingClientRect().top + picker.clientTop;
+    contentBottom = contentTop + picker.clientHeight;
+    firstPartialItem = null;
+    for (let i = 1; i <= nOptions; i++) {
+        const optRect = getOption(i).getBoundingClientRect();
+        if (optRect.top < contentTop - 1 || optRect.bottom > contentBottom + 1) {
+            firstPartialItem = i;
+            break;
+        }
+    }
+    await UIHelper.keyDown("pageDown");
+    shouldBeTrue('firstPartialItem !== null');
+    shouldBeTrue('isOptionVisible(firstPartialItem)');
+    await closePicker();
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

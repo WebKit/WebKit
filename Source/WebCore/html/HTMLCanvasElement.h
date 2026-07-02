@@ -1,0 +1,212 @@
+/*
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/CanvasBase.h>
+#include <WebCore/Document.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/GraphicsTypes.h>
+#include <WebCore/HTMLElement.h>
+#include <WebCore/PlatformDynamicRangeLimit.h>
+#include <memory>
+#include <wtf/Forward.h>
+
+#if ENABLE(WEBGL)
+#include <WebCore/WebGLContextAttributes.h>
+#endif
+
+namespace WebCore {
+
+class BlobCallback;
+class CanvasRenderingContext;
+class CanvasRenderingContext2D;
+class GPU;
+class GPUCanvasContext;
+class GraphicsContext;
+class Image;
+class ImageBitmapRenderingContext;
+class ImageBuffer;
+class ImageData;
+class MediaStream;
+class OffscreenCanvas;
+class VideoFrame;
+class WebGLRenderingContextBase;
+class WebCoreOpaqueRoot;
+struct CanvasRenderingContext2DSettings;
+struct ImageBitmapRenderingContextSettings;
+struct UncachedString;
+
+class HTMLCanvasElement final : public HTMLElement, public ActiveDOMObject, public CanvasBase {
+    WTF_MAKE_TZONE_ALLOCATED(HTMLCanvasElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLCanvasElement);
+public:
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
+
+    static Ref<HTMLCanvasElement> create(Document&);
+    static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
+    virtual ~HTMLCanvasElement();
+
+
+    WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
+    WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
+
+    CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
+    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
+
+    RefPtr<CanvasRenderingContext> getContext(const String&);
+
+    static bool is2dType(const String&);
+    CanvasRenderingContext2D* createContext2d(const String&, CanvasRenderingContext2DSettings&&);
+    CanvasRenderingContext2D* getContext2d(const String&, CanvasRenderingContext2DSettings&&);
+
+#if ENABLE(WEBGL)
+    static bool isWebGLType(const String&);
+    static WebGLVersion toWebGLVersion(const String&);
+    WebGLRenderingContextBase* createContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
+    RefPtr<WebGLRenderingContextBase> getContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });
+#endif
+
+    static bool isBitmapRendererType(const String&);
+    ImageBitmapRenderingContext* createContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
+    ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
+
+    static bool isWebGPUType(const String&);
+    GPUCanvasContext* createContextWebGPU(const String&, GPU*);
+    GPUCanvasContext* getContextWebGPU(const String&, GPU*);
+
+    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
+    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
+    ExceptionOr<void> toBlob(Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
+#if ENABLE(OFFSCREEN_CANVAS)
+    ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen();
+#endif
+
+    // Used for rendering
+    void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final;
+
+    void paint(GraphicsContext&, const LayoutRect&);
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    // Returns the context drawing buffer as a VideoFrame.
+    RefPtr<VideoFrame> toVideoFrame();
+#endif
+#if ENABLE(MEDIA_STREAM)
+    ExceptionOr<Ref<MediaStream>> captureStream(std::optional<double>&& frameRequestRate);
+#endif
+
+    std::unique_ptr<CSSParserContext> createCSSParserContext() const final;
+
+    Image* copiedImage() const final;
+    void clearCopiedImage() const final;
+    RefPtr<ImageData> getImageData();
+
+    SecurityOrigin* securityOrigin() const final;
+
+    bool needsPreparationForDisplay();
+    void prepareForDisplay();
+    void dynamicRangeLimitDidChange(PlatformDynamicRangeLimit);
+    WEBCORE_EXPORT std::optional<double> getContextEffectiveDynamicRangeLimitValue() const;
+
+    void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
+    bool isSnapshotting() const { return m_isSnapshotting; }
+
+    bool NODELETE isControlledByOffscreen() const;
+
+    void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final;
+    void dispatchEvent(Event&) final;
+
+    // ActiveDOMObject.
+    void ref() const final { HTMLElement::ref(); }
+    void deref() const final { HTMLElement::deref(); }
+
+    using HTMLElement::scriptExecutionContext;
+
+    void setSizeForControllingContext(IntSize) final;
+
+private:
+    HTMLCanvasElement(const QualifiedName&, Document&);
+
+    bool isHTMLCanvasElement() const final { return true; }
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
+
+    // EventTarget.
+    void eventListenersDidChange() final;
+
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+
+    bool canContainRangeEndPoint() const final;
+    bool canStartSelection() const final;
+
+    void didUpdateSizeProperties();
+
+    bool usesContentsAsLayerContents() const;
+
+    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
+
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
+    std::optional<FloatRect> computeDirtyRectangleIfNeeded(const std::optional<FloatRect>&) const;
+
+    bool m_ignoreDidUpdateSizeProperties { false };
+#if ENABLE(WEBGL)
+    bool m_hasRelevantWebGLEventListener { false };
+#endif
+    bool m_isSnapshotting { false };
+
+    std::unique_ptr<CanvasRenderingContext> m_context;
+    PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
+    mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
+};
+
+WebCoreOpaqueRoot root(HTMLCanvasElement*);
+
+} // namespace WebCore
+
+namespace WTF {
+template<typename ArgType> class TypeCastTraits<const WebCore::HTMLCanvasElement, ArgType, false /* isBaseType */> {
+public:
+    static bool isOfType(ArgType& node) { return checkTagName(node); }
+private:
+    static bool checkTagName(const WebCore::CanvasBase& base) { return base.isHTMLCanvasElement(); }
+    static bool checkTagName(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::canvasTag); }
+    static bool checkTagName(const WebCore::Node& node) { return node.hasTagName(WebCore::HTMLNames::canvasTag); }
+    static bool checkTagName(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && checkTagName(*node);
+    }
+};
+}

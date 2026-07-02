@@ -1,0 +1,41 @@
+<style>
+.container {
+  float: left;
+  height: 100px;
+  background:green;
+}
+
+#strech {
+  display: none;
+  width: 100px;
+  height: 10px;
+}
+
+.sibling {
+  width: 10px;
+  height: 10px;
+}
+
+.padding_percent {
+  padding-right: 0%;
+}
+
+.ref {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  z-index: -1;
+  background-color: red;
+}
+</style>
+<div class=container>
+    <div class=padding_percent>
+        <div id=strech></div>
+        <div class=sibling></div>
+    </div>
+</div>
+<div class=ref></div>
+<script>
+    document.body.offsetTop;
+    strech.style.display = "block";
+</script>

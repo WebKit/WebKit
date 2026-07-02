@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<style>
+  :first-of-type {
+    writing-mode: tb-rl;
+  }
+  * {
+    inline-size: 0;
+  }
+  :last-of-type {
+    border-top-left-radius: 1px;
+  }
+  :first-child {
+    border-image: url();
+  }
+  :nth-child(3) {
+    transform: rotateX(0deg);
+  }
+  :last-child {
+    overflow-y: scroll;
+    padding: 0 0 0 1px;
+  }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  onload = () => {
+    document.body.appendChild(document.createElement('div'));
+    
+    setTimeout(() => {
+        document.body.appendChild(document.createElement('div'));
+        document.body.appendChild(document.createElement('form'));
+        document.body.offsetTop;
+        document.designMode = 'on';
+        document.body.appendChild(document.createElement('div'));
+        document.body.offsetTop;
+        document.designMode = 'off';
+    }, 0);
+  };
+</script>
+<body>Test passes if it does not crash.</body>

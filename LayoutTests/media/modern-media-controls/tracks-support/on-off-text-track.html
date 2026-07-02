@@ -1,0 +1,113 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CaptionDisplaySettingsEnabled=true ] -->
+<html>
+<head>
+    <title>on-auto-text-track</title>
+    <style>
+        video { width: 600px; }
+    </style>
+    <script src="../resources/media-controls-utils.js"></script>
+    <script src="../../video-test.js"></script>
+    <script src="../../media-file.js"></script>
+    <script>
+        window.addEventListener('load', event => {
+            runTest().then(endTest)//.catch(failTest)
+        });
+
+        var shadowRoot;
+        var controlsHost;
+        var contextMenu;
+
+        window.internals.setCaptionDisplayMode('automatic');
+        window.internals.settings.setShouldDisplayTrackKind('Captions', true);
+
+        function getContextMenuItems() {
+            const options = { includeLanguages: true, includeSubtitles: true };
+            return controlsHost.mediaControlsContextMenuItems(options)
+        }
+
+        async function runTest() {
+            findMediaElement();
+
+            run('video.src = findMediaFile("audio", "../../content/test")');
+            await waitFor(video, 'loadedmetadata');
+
+            controlsHost = internals.controlsHostForMediaElement(video);
+            contextMenu = getContextMenuItems();
+
+            consoleWrite('--');
+            consoleWrite('Test basic menu structure:');
+            testExpected('contextMenu.length', 7);
+            testExpected('contextMenu[0].title', 'Subtitles');
+            testExpected('contextMenu[1].title', 'On');
+            testExpected('contextMenu[2].title', 'Off');
+            testExpected('contextMenu[3].title', undefined);
+            testExpected('contextMenu[4].title', 'Languages');
+            testExpected('contextMenu[4].children.length', '4');
+            testExpected('contextMenu[4].children[0].title', 'English Captions');
+            testExpected('contextMenu[4].children[1].title', 'French Captions');
+            testExpected('contextMenu[4].children[2].title', 'German Captions');
+            testExpected('contextMenu[4].children[3].title', 'Spanish Captions');
+            testExpected('contextMenu[5].title', undefined);
+            testExpected('contextMenu[6].title', 'Styles');
+
+            consoleWrite('--');
+            consoleWrite('Test default menu selection states');
+            testExpected('contextMenu[1].checked', false);
+            testExpected('contextMenu[2].checked', true);
+            testExpected('contextMenu[4].children[0].checked', true);
+            testExpected('contextMenu[4].children[1].checked', false);
+            testExpected('contextMenu[4].children[2].checked', false);
+            testExpected('contextMenu[4].children[3].checked', false);
+
+            consoleWrite('--');
+            consoleWrite('Test On menu item behavior');
+
+            onItem = controlsHost.captionMenuOnItem;
+            offItem = controlsHost.captionMenuOffItem;
+            autoItem = controlsHost.captionMenuAutomaticItem;
+
+            run('controlsHost.setSelectedTextTrack(onItem)');
+            await testExpectedEventually('video.textTracks[0].mode', 'showing', '==', 100);
+
+            contextMenu = getContextMenuItems();
+            testExpected('contextMenu[1].checked', true);
+            testExpected('contextMenu[2].checked', false);
+            testExpected('internals.captionDisplayMode', 'alwayson');
+
+            consoleWrite('--');
+            consoleWrite('Test Off menu item behavior');
+
+            run('controlsHost.setSelectedTextTrack(offItem)');
+            await testExpectedEventually('video.textTracks[0].mode', 'disabled', '==', 100);
+
+            contextMenu = getContextMenuItems();
+            testExpected('contextMenu[1].checked', false);
+            testExpected('contextMenu[2].checked', true);
+            testExpected('internals.captionDisplayMode', 'forcedonly');
+
+            consoleWrite('--');
+            consoleWrite('Test Language menu item behavior');
+
+            run('controlsHost.setSelectedTextTrack(video.textTracks[1])');
+            await testExpectedEventually('video.textTracks[1].mode', 'showing', '==', 100);
+
+            contextMenu = getContextMenuItems();
+            testExpected('contextMenu[1].checked', true);
+            testExpected('contextMenu[2].checked', false);
+            testExpected('contextMenu[4].children[0].checked', false);
+            testExpected('contextMenu[4].children[1].checked', true);
+            testExpected('contextMenu[4].children[2].checked', false);
+            testExpected('contextMenu[4].children[3].checked', false);
+            testExpected('internals.captionDisplayMode', 'alwayson');
+        }
+    </script>
+</head>
+<body>
+    <video controls muted playsinline disableremoteplayback preload="metadata">
+        <track src="../../content/lorem-ipsum.vtt" kind="captions" srclang="en">
+        <track src="../../content/lorem-ipsum.vtt" kind="captions" srclang="fr">
+        <track src="../../content/lorem-ipsum.vtt" kind="captions" srclang="de">
+        <track src="../../content/lorem-ipsum.vtt" kind="captions" srclang="es">
+    </video>
+</body>
+</html>

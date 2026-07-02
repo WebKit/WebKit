@@ -1,0 +1,10 @@
+
+PASS Property color-scheme has initial value normal
+PASS Property color-scheme inherits
+PASS Property color-adjust has initial value economy
+PASS Property color-adjust inherits
+FAIL Property forced-color-adjust has initial value auto assert_true: forced-color-adjust doesn't seem to be supported in the computed style expected true got false
+FAIL Property forced-color-adjust inherits assert_true: forced-color-adjust doesn't seem to be supported in the computed style expected true got false
+PASS Property print-color-adjust has initial value economy
+PASS Property print-color-adjust inherits
+

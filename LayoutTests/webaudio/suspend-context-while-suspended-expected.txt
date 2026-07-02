@@ -1,0 +1,14 @@
+Tests that calling AudioContext.suspend() while already suspended resolves the promise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did start rendering
+PASS context.state is "running"
+PASS context.state is "suspended"
+PASS Calling suspend() while suspended resolved the promise
+PASS context.state is "suspended"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

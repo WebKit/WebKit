@@ -1,0 +1,6 @@
+
+PASS elementFromPoint(...) on <rect>s, element at (50, 30)
+PASS elementFromPoint(...) on <rect>s, element at (60, 40)
+PASS elementFromPoint(...) on <rect>s, element at (50, 50)
+PASS elementFromPoint(...) on <rect>s, element at (40, 40)
+

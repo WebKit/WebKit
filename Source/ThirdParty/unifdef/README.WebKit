@@ -1,0 +1,5 @@
+This directory contains unifdef 2.12 downloaded from:
+https://dotat.at/prog/unifdef/unifdef-2.12.tar.gz
+
+When updating to a new release please keep this README.WebKit and CMakeLists.txt files in place,
+updated as needed.

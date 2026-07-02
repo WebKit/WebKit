@@ -1,0 +1,4 @@
+Click me
+
+FAIL Event Timing: Orphan keydown should be measured as an interaction. promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+

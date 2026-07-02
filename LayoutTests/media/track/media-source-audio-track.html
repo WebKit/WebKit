@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script src="../utilities.js"></script>
+        <script>
+
+        async function start() {
+            findMediaElement();
+    
+            mediaElement.onerror = () => { failTest("error occurred."); }
+            let fetchResult = await fetch('../content/short--1-track.webm');
+            let arrayBuffer = await fetchResult.arrayBuffer();
+            video.disableRemotePlayback = true;
+            source = new ManagedMediaSource();
+            video.src = URL.createObjectURL(source);
+            await once(source, 'sourceopen');
+            sourceBuffer = source.addSourceBuffer('audio/webm; codecs="opus"');
+            sourceBuffer.appendBuffer(arrayBuffer);
+            await once(video, 'loadedmetadata');
+            testExpected('video.audioTracks.length', '1');
+            testExpected('video.audioTracks[0].enabled', true);
+            testExpected('video.audioTracks[0].id', "18446744073709551615");
+            endTest();
+        };
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video></video>
+    </body>
+</html>

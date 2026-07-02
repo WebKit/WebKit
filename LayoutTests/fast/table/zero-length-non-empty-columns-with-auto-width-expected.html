@@ -1,0 +1,12 @@
+<title>This tests that zero width, but non-empty columns get horizontal space. PASS if the green cell on the right is visible</title>
+<style>
+div {
+  font-size: 20px;
+  font-family: ahem;
+  height: 40px;
+  position: relative;
+}
+</style>
+<div style="background-color: green; width: 200px;"></div>
+<div style="background-color: yellow; width: 400px; top: -40px; left: 200px;">PASS if green is visible-></div>
+<div style="background-color: green; width: 200px; top: -80px; left: 600px;"></div>

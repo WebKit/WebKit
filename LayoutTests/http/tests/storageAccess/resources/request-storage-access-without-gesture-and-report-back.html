@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        document.cookie = "firstPartyCookie=value; SameSite=None; Secure";
+
+        window.addEventListener("message", function(event) {
+            if (event.data && event.data.type === "storage-access-result") {
+                window.opener.postMessage({
+                    type: "popup-result",
+                    storageAccessResult: event.data.result,
+                    storageAccessError: event.data.error
+                }, "https://127.0.0.1:8443");
+            }
+        });
+    </script>
+</head>
+<body>
+    <iframe id="crossSiteFrame"></iframe>
+    <script>
+        var frameOrigin = document.location.hash.substring(1);
+        document.getElementById("crossSiteFrame").src = frameOrigin + "/storageAccess/resources/request-storage-access-without-gesture-in-iframe.html";
+    </script>
+</body>
+</html>

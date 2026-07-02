@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=600">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>WebMetal 2D demo</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="https://webkit.org/wp-content/themes/webkit/style.css">
+<link rel="stylesheet" href="https://www.apple.com/wss/fonts?family=Myriad+Set+Pro&amp;v=1">
+<script src="shared.js"></script>
+<script src="2d.js"></script>
+<script id="library" type="x-shader/x-metal">
+#include <metal_stdlib>
+
+using namespace metal;
+
+struct Vertex
+{
+    float4 position [[position]];
+};
+
+struct Uniform
+{
+    float2 resolution;
+    float time;
+};
+
+vertex Vertex vertex_main(device Vertex *vertices [[buffer(0)]],
+                          constant Uniform *uniforms [[buffer(1)]],
+                          uint vid [[vertex_id]])
+{
+    return vertices[vid];
+}
+
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]], constant Uniform *uniforms [[buffer(0)]])
+{
+    float2 position = vertexIn.position.xy / uniforms->resolution.xy;
+
+    float color = 0.0;
+    float time = uniforms->time;
+    color += sin(position.x * cos(time / 7.0) * 90.0) + cos(position.y * cos(time / 17.0) * 15.0);
+    color += sin(position.y * sin(time / 13.0) * 35.0) + cos(position.x * sin(time / 27.0) * 35.0);
+    color += sin(position.x * sin(time / 5.0) * 15.0) + sin(position.y * sin(time / 31.0) * 90.0);
+    color *= sin(time / 10.0) * 0.5;
+
+    return float4(color, color * 0.5 + sin(time / 10), sin(color + time / 3.0) * 0.75, 1.0);
+}
+</script>
+</head>
+<body>
+<canvas></canvas>
+<div id="error">
+    <h2>WebMetal not available</h2>
+    <p>
+        Make sure you are on a system with WebMetal enabled. In
+        Safari, first make sure the Developer Menu is visible (Preferences →
+        Advanced), then Develop → Experimental Features → Enable WebMetal.
+    </p>
+</div>
+</body>
+</html>

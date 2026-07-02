@@ -1,0 +1,3 @@
+
+PASS CSS Scoping: Shadow host is featureless
+

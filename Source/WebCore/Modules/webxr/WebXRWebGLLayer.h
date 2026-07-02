@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBXR)
+
+#include "CanvasObserver.h"
+#include "FloatRect.h"
+#include "GraphicsTypesGL.h"
+#include "PlatformXR.h"
+#include "WebXRLayer.h"
+#include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class HTMLCanvasElement;
+class IntSize;
+class WebGLFramebuffer;
+class WebGLRenderingContext;
+class WebGLRenderingContextBase;
+class WebGL2RenderingContext;
+class WebXROpaqueFramebuffer;
+class WebXRSession;
+class WebXRView;
+class WebXRViewport;
+struct XRWebGLLayerInit;
+template<typename> class ExceptionOr;
+
+class WebXRWebGLLayer : public WebXRLayer, private CanvasObserver, public CanMakeCheckedPtr<WebXRWebGLLayer> {
+    WTF_MAKE_TZONE_ALLOCATED(WebXRWebGLLayer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebXRWebGLLayer);
+public:
+    using WebXRRenderingContext = Variant<
+        Ref<WebGLRenderingContext>,
+        Ref<WebGL2RenderingContext>
+    >;
+
+    static ExceptionOr<Ref<WebXRWebGLLayer>> create(WebXRSession&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
+    ~WebXRWebGLLayer();
+
+    bool antialias() const;
+    bool ignoreDepthValues() const;
+
+    const WebGLFramebuffer* framebuffer() const;
+    unsigned framebufferWidth() const;
+    unsigned framebufferHeight() const;
+
+    // CanvasObserver.
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
+    ExceptionOr<RefPtr<WebXRViewport>> getViewport(WebXRView&);
+
+    static double getNativeFramebufferScaleFactor(const WebXRSession&);
+
+    const WebXRSession* session();
+
+    bool isCompositionEnabled() const { return m_isCompositionEnabled; }
+
+    HTMLCanvasElement* canvas() const;
+
+    void sessionEnded();
+
+    // WebXRLayer
+    void startFrame(PlatformXR::FrameData&) final;
+    PlatformXR::DeviceLayer endFrame() final;
+    PlatformXR::LayerHandle layerHandle() const final;
+
+private:
+    WebXRWebGLLayer(WebXRSession&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
+
+    bool isWebXRWebGLLayer() const final { return true; }
+
+    void updateViewports();
+    static IntSize computeNativeWebGLFramebufferResolution();
+    static IntSize computeRecommendedWebGLFramebufferResolution();
+
+    void canvasChanged(CanvasBase&, const FloatRect&) final { };
+    void canvasResized(CanvasBase&) final;
+    void canvasDestroyed(CanvasBase&) final { };
+
+    void addConsoleMessage(JSC::MessageLevel, String&&) const;
+
+    WeakPtr<WebXRSession> m_session;
+    WebXRRenderingContext m_context;
+
+    struct ViewportData {
+        Ref<WebXRViewport> viewport;
+        double currentScale { 1.0 };
+    };
+
+    ViewportData m_leftViewportData;
+    ViewportData m_rightViewportData;
+    std::unique_ptr<WebXROpaqueFramebuffer> m_framebuffer;
+    bool m_antialias { false };
+    bool m_ignoreDepthValues { false };
+    bool m_isCompositionEnabled { true };
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebXRWebGLLayer)
+    static bool isType(const WebCore::WebXRLayer& layer) { return layer.isWebXRWebGLLayer(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(WEBXR)

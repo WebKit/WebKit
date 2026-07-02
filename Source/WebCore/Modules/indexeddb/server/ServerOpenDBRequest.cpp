@@ -1,0 +1,99 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ServerOpenDBRequest.h"
+
+#include "IDBResultData.h"
+#include "UniqueIDBDatabaseTransaction.h"
+
+namespace WebCore {
+namespace IDBServer {
+
+Ref<ServerOpenDBRequest> ServerOpenDBRequest::create(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
+{
+    return adoptRef(*new ServerOpenDBRequest(connection, requestData));
+}
+
+ServerOpenDBRequest::ServerOpenDBRequest(IDBConnectionToClient& connection, const IDBOpenRequestData& requestData)
+    : m_connection(connection)
+    , m_requestData(requestData)
+{
+}
+
+bool ServerOpenDBRequest::isOpenRequest() const
+{
+    return m_requestData.isOpenRequest();
+}
+
+bool ServerOpenDBRequest::isDeleteRequest() const
+{
+    return m_requestData.isDeleteRequest();
+}
+
+void ServerOpenDBRequest::maybeNotifyRequestBlocked(uint64_t currentVersion)
+{
+    if (m_notifiedBlocked)
+        return;
+
+    uint64_t requestedVersion = isOpenRequest() ?  m_requestData.requestedVersion() : 0;
+    m_connection->notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, requestedVersion);
+
+    m_notifiedBlocked = true;
+}
+
+void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<IDBDatabaseConnectionIdentifier>&& connectionIdentifiers)
+{
+    ASSERT(!m_notifiedConnectionsOfVersionChange);
+
+    m_notifiedConnectionsOfVersionChange = true;
+    m_connectionsPendingVersionChangeEvent = WTF::move(connectionIdentifiers);
+}
+
+void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(IDBDatabaseConnectionIdentifier connectionIdentifier)
+{
+    m_connectionsPendingVersionChangeEvent.remove(connectionIdentifier);
+}
+
+void ServerOpenDBRequest::setVersionChangeTransaction(UniqueIDBDatabaseTransaction& transaction)
+{
+    m_versionChangeTransaction = &transaction;
+}
+
+void ServerOpenDBRequest::didDeleteDatabase(const IDBResultData& result)
+{
+    m_connection->didDeleteDatabase(result);
+}
+
+void ServerOpenDBRequest::didOpenDatabase(const IDBResultData& result)
+{
+    m_connection->didOpenDatabase(result);
+
+    if (RefPtr transaction = m_versionChangeTransaction)
+        transaction->addOpenRequestResult(result.error());
+}
+
+} // namespace IDBServer
+} // namespace WebCore

@@ -1,0 +1,11 @@
+Link
+Text: ?a=b&c;=d&a0b;=c©=1¬i;=n¬=in∉=∉¬&;& &
+
+Link
+Text: ?a=b&c=d&a0b=c©=1¬i=n¬=in¬in=∉¬&;& &
+
+
+PASS Check number of divs
+FAIL Check div structure: network assert_equals: text network expected "Text: ?a=b&c=d&a0b=c©=1¬i=n¬=in¬in=∉¬&;& &" but got "Text: ?a=b&c;=d&a0b;=c©=1¬i;=n¬=in∉=∉¬&;& &"
+PASS Check div structure: document.write
+

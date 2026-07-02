@@ -1,0 +1,8 @@
+
+PASS :culling:frontFace="ccw";cullMode="none"
+PASS :culling:frontFace="ccw";cullMode="front"
+PASS :culling:frontFace="ccw";cullMode="back"
+PASS :culling:frontFace="cw";cullMode="none"
+PASS :culling:frontFace="cw";cullMode="front"
+PASS :culling:frontFace="cw";cullMode="back"
+

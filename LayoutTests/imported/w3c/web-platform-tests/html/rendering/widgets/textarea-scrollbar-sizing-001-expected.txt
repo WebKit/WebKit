@@ -1,0 +1,6 @@
+
+
+PASS rows=1 doesnt include scrollbar thickness
+PASS rows=1 overflow scroll includes scrollbar thickness
+PASS cols=3 includes scrollbar thickness
+

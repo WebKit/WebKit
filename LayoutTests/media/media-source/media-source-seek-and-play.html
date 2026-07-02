@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="timeout" content="long">
+<script src="media-source-loader.js"></script>
+<script src="../video-test.js"></script>
+<script>
+var loader;
+var source;
+var sourceBuffer;
+var i;
+
+function loaderPromise(loader) {
+    return new Promise((resolve, reject) => {
+        loader.onload = resolve;
+        loader.onerror = reject;
+    });
+}
+
+async function start() {
+
+    findMediaElement();
+
+    let isTestEnded = false;
+    let numberOfInitiatedSeeks = 0;
+    let numberOfCompletedSeeks = 0;
+
+    async function finalCheck() {
+        if (!isTestEnded || numberOfInitiatedSeeks < 2 || numberOfCompletedSeeks < 1) {
+            return;
+        }
+
+        await waitForConditionOrTimeout('!internals.isPlayerPaused(video)', false, 5000, 1000);
+        endTest();
+    }
+
+    video.addEventListener('seeking', event => {
+        numberOfInitiatedSeeks++;
+    });
+
+    video.addEventListener('seeked', event => {
+        numberOfCompletedSeeks++;
+        finalCheck();
+    });
+
+    loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+    await loaderPromise(loader);
+
+    source = new MediaSource();
+    run('video.src = URL.createObjectURL(source)');
+    await waitFor(source, 'sourceopen');
+    waitFor(video, 'error').then(failTest);
+
+    run('sourceBuffer = source.addSourceBuffer(loader.type())');
+    run('sourceBuffer.appendBuffer(loader.initSegment())');
+    await waitFor(sourceBuffer, 'update');
+
+    for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+        sourceBuffer.appendBuffer(loader.mediaSegment(i));
+        await waitFor(sourceBuffer, 'update', true);
+    }
+    consoleWrite('Appended all media segments')
+
+    run('video.currentTime = 0');
+    run('video.play()');
+    await waitFor(video, 'playing');
+    testExpected('video.paused', false);
+
+	  run('video.pause()');
+    await waitFor(video, 'pause');
+    testExpected('video.paused', true);
+
+    run('video.currentTime = 1');
+    run('video.play()');
+	  await waitFor(video, 'play');
+    testExpected('video.paused', false);
+
+    isTestEnded = true;
+    finalCheck();
+}
+</script>
+</head>
+<body onload="start()">
+ 	<video></video>
+</body>
+</html>

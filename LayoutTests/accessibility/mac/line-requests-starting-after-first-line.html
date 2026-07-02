@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="paragraph" style="width: 100px;">Hello world.
+Here is a <a href="#">link</a></p>
+
+<script>
+if (window.accessibilityController) {
+    var output = "This test verifies that requesting the current line range for a line that is not the first line works as expected.\n\n";
+
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var textMarkerRange = paragraph.textMarkerRangeForElement(paragraph)
+    var currentMarker = paragraph.startTextMarkerForTextMarkerRange(textMarkerRange);
+
+    currentMarker = advanceTextMarker(currentMarker, 1, paragraph);
+    var lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    // The expectations for these soft line break line-range strings are trimmed since we added new behavior (isolated tree only) to
+    // include the spaces that were trimmed during rendering. We have a isolated-tree specific test in the isolated-tree/ folder
+    // to validate that behavior.
+    output += expect("paragraph.stringForTextMarkerRange(lineRange).trim()", "'Hello world.'");
+
+    currentMarker = advanceTextMarker(currentMarker, 13, paragraph);
+    lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'Here is a link'");
+
+    debug(output);
+}
+    
+function advanceTextMarker(currentMarker, offset, obj) {
+    var previousMarker = currentMarker;
+    for (var i = 0; i < offset; i++) {
+        previousMarker = currentMarker;
+        currentMarker = obj.nextTextMarker(previousMarker);
+    }
+    return currentMarker;
+}
+</script>
+</body>
+</html>
+

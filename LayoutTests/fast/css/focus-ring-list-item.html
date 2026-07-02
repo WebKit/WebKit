@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel=match href="focus-ring-list-item-expected.html">
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+li {
+    margin-inline-start: 200px;
+    inline-size: 200px;
+    block-size: 30px;
+    color: transparent;
+}
+
+li::marker {
+    font-size: 100px;
+    color: transparent;
+}
+</style>
+</head>
+<body>
+<li tabindex=0 id=target></li>
+<script>
+onload = () => target.focus();
+</script>
+</body>
+</html>

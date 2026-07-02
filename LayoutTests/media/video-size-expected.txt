@@ -1,0 +1,9 @@
+
+
+PASS no 'src' and no 'poster', with 'width' and 'height' attributes
+PASS no 'src' and no 'poster', with no 'width' and 'height' attributes, should be default size
+PASS 'poster' but no 'src', should be 'poster' size
+PASS 'poster' and 'src', should be 'poster' size before play
+PASS 'poster' and 'src', should be 'video' size after play
+PASS 'poster' and invalid 'src', should be 'poster' size
+

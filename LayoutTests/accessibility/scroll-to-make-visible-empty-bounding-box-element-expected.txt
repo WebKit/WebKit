@@ -1,0 +1,12 @@
+This test ensures that elements with empty intrinsic bounding boxes use their nearest-ancestor bounding box, preventing erroneous scrolls to 0,0.
+
+PASS: window.scrollY === 0
+PASS: window.scrollY >= 4000 === true
+PASS: scrollCounter === 1
+PASS: scrollCounter === 1
+PASS: scrollCounter === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Like  Dislike

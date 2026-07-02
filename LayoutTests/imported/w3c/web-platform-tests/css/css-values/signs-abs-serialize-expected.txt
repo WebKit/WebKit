@@ -1,0 +1,18 @@
+
+PASS 'scale(abs(1))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'scale(sign(.1))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'scale(abs(1 + 2 + 3))' as a specified value should serialize as 'scale(calc(6))'.
+PASS 'scale(sign(1 + 2 + 3))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'scale(calc(abs(1) + abs(2)))' as a specified value should serialize as 'scale(calc(3))'.
+PASS 'scale(calc(sign(.1) + sign(.2)))' as a specified value should serialize as 'scale(calc(2))'.
+PASS 'scale(calc(1 + abs(1)))' as a specified value should serialize as 'scale(calc(2))'.
+PASS 'scale(calc(sign(.1) + 1))' as a specified value should serialize as 'scale(calc(2))'.
+PASS 'scale(calc(abs(inFinity)))' as a specified value should serialize as 'scale(calc(infinity))'.
+PASS 'scale(calc(abs(infinity)))' as a specified value should serialize as 'scale(calc(infinity))'.
+PASS 'scale(calc(sign(infinity)))' as a specified value should serialize as 'scale(calc(1))'.
+PASS 'scale(abs(infinity))' as a specified value should serialize as 'scale(calc(infinity))'.
+PASS 'scale(calc(abs(-infinity)))' as a specified value should serialize as 'scale(calc(infinity))'.
+PASS 'scale(calc(sign(-1 * infinity)))' as a specified value should serialize as 'scale(calc(-1))'.
+PASS 'scale(calc(sign(-1 * NaN)))' as a specified value should serialize as 'scale(calc(NaN))'.
+PASS 'scale(calc(sign(1 * NaN)))' as a specified value should serialize as 'scale(calc(NaN))'.
+

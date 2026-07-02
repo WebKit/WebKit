@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function createFrame()
+{
+  let iframe = document.createElement("iframe");
+  iframe.src = "data:text/html,<p>No JavaScript.</p>";
+  document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Runtime.executionContextCreated.ContextWithoutScript");
+
+    suite.addTestCase({
+        name: "Runtime.executionContextCreated.ContextWithoutScript.SubFrame",
+        description: "Test that an execution context is created when a new iframe is added to the page and its document doesn't have any JavaScript.",
+        async test() {
+            let contextInfoPromise;
+
+            if (WI.isSiteIsolationEnabled()) {
+                // Under site isolation, the subframe gets its own frame target that provides the execution context.
+                contextInfoPromise = (async function () {
+                    let { data: { target } } = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+                    InspectorTest.assert(target.type === WI.TargetType.Frame);
+                    await target.ensureTargetExecutionContext();
+                    return { executionContext: target.executionContext, target };
+                })();
+            } else {
+                // Without site isolation, execution contexts are reported on Frame objects, not through a target.
+                contextInfoPromise = (async function () {
+                    let { data: { childFrame } } = await WI.networkManager.mainFrame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded);
+                    await childFrame.ensurePageExecutionContext();
+                    return { executionContext: childFrame.pageExecutionContext, target: WI.mainTarget };
+                })();
+            }
+
+            InspectorTest.evaluateInPage(`createFrame()`);
+
+            let { executionContext, target } = await contextInfoPromise;
+            InspectorTest.expectThat(!!executionContext, "Should receive execution context for script-less subframe.");
+
+            let evaluateResult = await target.RuntimeAgent.evaluate.invoke({
+                expression: `document.URL`,
+                contextId: executionContext.id,
+            });
+
+            InspectorTest.pass("Should be able to evaluate in subframe. Result:");
+            InspectorTest.log(evaluateResult.result.value);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Runtime.executionContextCreated event is fired even for pages without JavaScript.</p>
+</body>
+</html>

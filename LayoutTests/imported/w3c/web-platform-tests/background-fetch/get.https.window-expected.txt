@@ -1,0 +1,5 @@
+
+FAIL BackgroundFetchManager.get() does not require an activated worker assert_equals: expected (undefined) undefined but got (object) null
+FAIL Getting non-existing registrations yields `undefined` assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Getting an existing registration has the expected values
+

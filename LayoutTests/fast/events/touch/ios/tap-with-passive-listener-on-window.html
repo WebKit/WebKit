@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(50, 50, function() {
+                    uiController.uiScriptComplete("Done");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            var output = '';
+            window.addEventListener('touchstart', function(event) {
+                output += 'Received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY + '<br>';
+                event.preventDefault();
+            }, { 'passive': true });
+
+            window.addEventListener('touchend', function(event) {
+                output += 'Received' + (event.cancelable ? ' cancelable' : '') + ' event ' + event.type + '<br>';
+            }, { 'passive': true });
+
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    output += result;
+                    document.getElementById('output').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<style>
+    * { touch-action: manipulation; }
+</style>
+<body>
+    <div id=output>
+    This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

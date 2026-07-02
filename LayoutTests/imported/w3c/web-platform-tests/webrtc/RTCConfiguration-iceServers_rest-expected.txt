@@ -1,0 +1,70 @@
+
+PASS new RTCPeerConnection() should have default configuration.iceServers of []
+PASS new RTCPeerConnection(config) - {} should succeed
+PASS setConfiguration(config) - {} should succeed
+PASS new RTCPeerConnection(config) - { iceServers: null } should throw TypeError
+PASS setConfiguration(config) - { iceServers: null } should throw TypeError
+PASS new RTCPeerConnection(config) - { iceServers: undefined } should succeed
+PASS setConfiguration(config) - { iceServers: undefined } should succeed
+PASS new RTCPeerConnection(config) - { iceServers: [] } should succeed
+PASS setConfiguration(config) - { iceServers: [] } should succeed
+PASS new RTCPeerConnection(config) - { iceServers: [null] } should throw TypeError
+PASS setConfiguration(config) - { iceServers: [null] } should throw TypeError
+PASS new RTCPeerConnection(config) - { iceServers: [undefined] } should throw TypeError
+PASS setConfiguration(config) - { iceServers: [undefined] } should throw TypeError
+PASS new RTCPeerConnection(config) - { iceServers: [{}] } should throw TypeError
+PASS setConfiguration(config) - { iceServers: [{}] } should throw TypeError
+PASS new RTCPeerConnection(config) - with stun server should succeed
+PASS setConfiguration(config) - with stun server should succeed
+PASS new RTCPeerConnection(config) - with stun server array should succeed
+PASS setConfiguration(config) - with stun server array should succeed
+PASS new RTCPeerConnection(config) - with 2 stun servers should succeed
+PASS setConfiguration(config) - with 2 stun servers should succeed
+PASS new RTCPeerConnection(config) - with turn server, username, credential should succeed
+PASS setConfiguration(config) - with turn server, username, credential should succeed
+FAIL new RTCPeerConnection(config) - with turns server and empty string username, credential should succeed Bad Configuration Parameters
+FAIL setConfiguration(config) - with turns server and empty string username, credential should succeed Bad Configuration Parameters
+FAIL new RTCPeerConnection(config) - with turn server and empty string username, credential should succeed Bad Configuration Parameters
+FAIL setConfiguration(config) - with turn server and empty string username, credential should succeed Bad Configuration Parameters
+PASS new RTCPeerConnection(config) - with one turns server, one turn server, username, credential should succeed
+PASS setConfiguration(config) - with one turns server, one turn server, username, credential should succeed
+PASS new RTCPeerConnection(config) - with a turn server and a username of 509 characters should succeed
+PASS setConfiguration(config) - with a turn server and a username of 509 characters should succeed
+PASS new RTCPeerConnection(config) - with turn server and no credentials should throw InvalidAccessError
+PASS setConfiguration(config) - with turn server and no credentials should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turn server and only username should throw InvalidAccessError
+PASS setConfiguration(config) - with turn server and only username should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turn server and only credential should throw InvalidAccessError
+PASS setConfiguration(config) - with turn server and only credential should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turns server and no credentials should throw InvalidAccessError
+PASS setConfiguration(config) - with turns server and no credentials should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turns server and only username should throw InvalidAccessError
+PASS setConfiguration(config) - with turns server and only username should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with turns server and only credential should throw InvalidAccessError
+PASS setConfiguration(config) - with turns server and only credential should throw InvalidAccessError
+PASS new RTCPeerConnection(config) - with "" url should throw SyntaxError
+PASS setConfiguration(config) - with "" url should throw SyntaxError
+PASS new RTCPeerConnection(config) - with ["stun:stun1.example.net", ""] url should throw SyntaxError
+PASS setConfiguration(config) - with ["stun:stun1.example.net", ""] url should throw SyntaxError
+PASS new RTCPeerConnection(config) - with relative url should throw SyntaxError
+PASS setConfiguration(config) - with relative url should throw SyntaxError
+PASS new RTCPeerConnection(config) - with http url should throw SyntaxError
+PASS setConfiguration(config) - with http url should throw SyntaxError
+FAIL new RTCPeerConnection(config) - with invalid turn url should throw SyntaxError assert_throws_dom: function "() =>
+      makePc({ iceServers: [{
+        urls: 'turn://example.org/foo?x=y'
+        // `username` and `credential` are not passed because the invalid url
+        // should be rejected before the check for those arguments.
+      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+FAIL setConfiguration(config) - with invalid turn url should throw SyntaxError assert_throws_dom: function "() =>
+      makePc({ iceServers: [{
+        urls: 'turn://example.org/foo?x=y'
+        // `username` and `credential` are not passed because the invalid url
+        // should be rejected before the check for those arguments.
+      }] })" threw object "InvalidAccessError: TURN/TURNS server requires both username and credential" that is not a DOMException SyntaxError: property "code" is equal to 15, expected 12
+PASS new RTCPeerConnection(config) - with empty urls should throw SyntaxError
+PASS setConfiguration(config) - with empty urls should throw SyntaxError
+PASS setConfiguration(config) - without iceServers removes ice servers
+PASS new RTCPeerConnection(config) - with 32 ice servers must succeed
+PASS setConfiguration(config) - with 32 ice servers must succeed
+

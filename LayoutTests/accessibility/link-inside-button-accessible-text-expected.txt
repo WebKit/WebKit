@@ -1,0 +1,11 @@
+This tests that when a link is inside a button, its visible text is still available for the button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button1.title is 'AXTitle: foo1'
+PASS button2.title is 'AXTitle: foo2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

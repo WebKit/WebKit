@@ -1,0 +1,86 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 20px;
+    font-family: system-ui;
+}
+
+.textToSelect {
+    border: 1px solid tomato;
+    padding: 3px;
+}
+
+.scrollable {
+    width: 300px;
+    height: 300px;
+    border: solid 1px lightgray;
+    border-radius: 4px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    line-height: 1.5em;
+    outline: none;
+    padding: 1em;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    const textToSelect = document.querySelector(".textToSelect");
+    const scroller = document.querySelector(".scrollable");
+
+    description("Verifies that a text selection on text outside of an overflow scrolling container does not prevent the user from scrolling the container");
+
+    await UIHelper.longPressElement(textToSelect);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Selected text");
+
+    const scrollerRect = scroller.getBoundingClientRect();
+    const swipeLocation = {
+        x : scrollerRect.left + scrollerRect.width / 2,
+        y : scrollerRect.top + scrollerRect.height - 50,
+    };
+
+    const maxNumberOfAttempts = 3;
+    let numberOfAttemptsRemaining = maxNumberOfAttempts;
+    while (true) {
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(swipeLocation.x, swipeLocation.y)
+            .move(swipeLocation.x, swipeLocation.y - 200, 0.25)
+            .end()
+            .takeResult());
+        await UIHelper.waitForZoomingOrScrollingToEnd();
+
+        if (scroller.scrollTop >= 200) {
+            testPassed("Scrolled overflow container");
+            break;
+        }
+
+        if (!--numberOfAttemptsRemaining) {
+            testFailed(`Failed to scroll after ${maxNumberOfAttempts} swipes`);
+            break;
+        }
+    }
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p>1. <span class="textToSelect">Select</span> this text</p>
+    <div class="scrollable">
+        <strong>2. Scroll down in this container</strong>
+        <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>
+        <p>You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them.</p>
+        <p>Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

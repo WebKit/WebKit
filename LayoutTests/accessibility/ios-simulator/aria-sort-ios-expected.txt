@@ -1,0 +1,16 @@
+column column column column
+row
+This tests that aria-sort is exposed correctly to the iOS accessibility API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS col1.sortDirection is 'AXAscendingSortDirection'
+PASS col2.sortDirection is 'AXDescendingSortDirection'
+PASS col3.sortDirection is 'AXUnknownSortDirection'
+PASS link1.sortDirection is 'AXAscendingSortDirection'
+PASS row1.sortDirection is 'AXUnknownSortDirection'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

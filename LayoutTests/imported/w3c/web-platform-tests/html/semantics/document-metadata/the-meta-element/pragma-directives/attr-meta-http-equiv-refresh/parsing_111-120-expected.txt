@@ -1,0 +1,12 @@
+
+PASS Refresh header: "-0"
+PASS <meta>: "0"
+PASS Refresh header: "0"
+PASS <meta>: "1.9; url=foo"
+PASS Refresh header: "1.9; url=foo"
+PASS <meta>: "1.9..5.; url=foo"
+PASS Refresh header: "1.9..5.; url=foo"
+PASS <meta>: ".9; url=foo"
+PASS Refresh header: ".9; url=foo"
+PASS <meta>: "0.9; url=foo"
+

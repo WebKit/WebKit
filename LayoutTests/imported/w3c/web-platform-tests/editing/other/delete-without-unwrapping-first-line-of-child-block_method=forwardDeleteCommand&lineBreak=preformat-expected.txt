@@ -1,0 +1,29 @@
+Xdef
+ghi
+
+PASS document.execCommand("forwarddelete") at abc\\n[\\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at abc\n[\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at \\n[abc\\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at \n[abc\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at \\n[\\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at \n[\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at [\\n\\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at [\n\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at [abc\\n\\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at [abc\n\n<div id="child">]def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at abc\\n[\\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at abc\n[\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("forwarddelete") at \\n[abc\\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at \n[abc\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("forwarddelete") at \\n[\\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at \n[\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("forwarddelete") at [\\n\\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at [\n\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("forwarddelete") at [abc\\n\\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("insertText", false, "X") at [abc\n\n<div id="child">d]ef<br>ghi</div>
+PASS document.execCommand("forwarddelete") at abc\\n[]\\n<div id="child">def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at \\n[]\\n<div id="child">def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at []\\n<div id="child">def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at <b>abc\\n[]\\n</b></b><div id="child">def<br>ghi</div>
+PASS document.execCommand("forwarddelete") at <b>[]\\n</b><div id="child">def<br>ghi</div>
+

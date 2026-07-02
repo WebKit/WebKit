@@ -1,0 +1,5 @@
+
+PASS setting document.domain must give sync access
+PASS parent: originAgentCluster must equal true
+PASS child: originAgentCluster must equal true
+

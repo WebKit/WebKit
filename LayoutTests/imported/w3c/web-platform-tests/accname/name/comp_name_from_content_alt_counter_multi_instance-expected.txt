@@ -1,0 +1,11 @@
+Ensures that CSS alt counter text stored in ::before content remains isolated per element even when styles are shared.
+
+label
+label
+
+label
+
+FAIL first button assert_equals: <button data-expectedlabel="1 label" data-testname="first button" class="ex alt-counter">label</button> expected "1 label" but got "label"
+FAIL heading assert_equals: <h3 data-expectedlabel="2 label" data-testname="heading" class="ex alt-counter">label</h3> expected "2 label" but got "label"
+FAIL link assert_equals: <a href="#" data-expectedlabel="3 label" data-testname="link" class="ex alt-counter">label</a> expected "3 label" but got "label"
+

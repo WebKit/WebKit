@@ -1,0 +1,4 @@
+
+FAIL contain calc(0% + 100px) matches contain 100px at offset before range under CSS zoom assert_true: expected true got false
+FAIL contain calc(0% + 100px) triggers at the same offset as contain 100px under CSS zoom assert_true: expected true got false
+

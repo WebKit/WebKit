@@ -1,0 +1,3 @@
+
+PASS PerformanceNavigationTiming data should show 'instantaneous' events completed beforehand
+

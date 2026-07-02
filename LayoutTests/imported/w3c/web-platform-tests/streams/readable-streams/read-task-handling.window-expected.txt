@@ -1,0 +1,3 @@
+
+PASS reading from a stream should occur in a microtask scope
+

@@ -1,0 +1,97 @@
+// Copyright 2015 The Chromium Authors. All rights reserved.
+// Copyright (C) 2016 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "config.h"
+#include "CSSVariableData.h"
+
+#include "CSSCustomPropertyValue.h"
+#include "CSSParserTokenRange.h"
+#include "CSSValuePool.h"
+#include "StyleComputedStyle.h"
+#include "StyleCustomProperty.h"
+#include <wtf/text/AtomStringHash.h>
+#include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringView.h>
+
+namespace WebCore {
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
+
+template<typename CharacterType> void CSSVariableData::updateBackingStringsInTokens()
+{
+    auto currentOffset = m_backingString.span<CharacterType>();
+    for (auto& token : m_tokens) {
+        if (!token.hasStringBacking() || token.isBackedByStringLiteral())
+            continue;
+        unsigned length = token.value().length();
+        token.updateCharacters(consumeSpan(currentOffset, length));
+    }
+    ASSERT(currentOffset.empty());
+}
+
+bool CSSVariableData::operator==(const CSSVariableData& other) const
+{
+    // Attr-taint is not compared here. It is tracked separately in CustomProperty where it affects equality.
+    return tokens() == other.tokens();
+}
+
+CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSParserContext& context)
+    : CSSVariableData(range, Style::IsAttrTainted::No, context)
+{
+}
+
+CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, Style::IsAttrTainted isAttrTainted, const CSSParserContext& context)
+    : m_tokens(range.span())
+    , m_context(context)
+    , m_isAttrTainted(isAttrTainted)
+{
+    StringBuilder stringBuilder;
+    for (auto& token : m_tokens) {
+        if (!token.hasStringBacking())
+            continue;
+        if (token.tryUseStringLiteralBacking())
+            continue;
+        stringBuilder.append(token.value());
+    }
+
+    if (!stringBuilder.isEmpty()) {
+        m_backingString = stringBuilder.toString();
+        if (m_backingString.is8Bit())
+            updateBackingStringsInTokens<Latin1Character>();
+        else
+            updateBackingStringsInTokens<char16_t>();
+    }
+}
+
+String CSSVariableData::serialize() const
+{
+    return tokenRange().serialize(CSSParserToken::SerializationMode::CustomProperty);
+}
+
+} // namespace WebCore

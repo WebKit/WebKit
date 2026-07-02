@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ TabsToLinks=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<a href="">foo</a>
+<p id="par1">A paragraph with a single line</p>
+<a href="">bar</a>
+
+<script>
+    if (window.accessibilityController && window.eventSender) {
+        var output = "This tests caret browsing for html select elements.\n\n";
+
+        var webArea = clearSelectionAndFocusOnWebArea();
+
+        accessibilityController.enableEnhancedAccessibility(false);
+
+        // Tab (should NOT move selection before enhanced accessibility is enabled).
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+        eventSender.keyDown("\t");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+
+        // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+        accessibilityController.enableEnhancedAccessibility(true);
+        output += expect("accessibilityController.enhancedAccessibilityEnabled", "true");
+
+        // Enable caret browsing so that tabbing will modify selection
+        setCaretBrowsingEnabled(webArea, true);
+        output += expect("caretBrowsingEnabled(webArea)", "true");
+
+        // Tab to move focus to next link
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+        eventSender.keyDown("\t");
+        output += expect("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: bar'");
+
+        setCaretBrowsingEnabled(webArea, false);
+
+        debug(output);
+    }
+</script>
+</body>
+</html>

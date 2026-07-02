@@ -1,0 +1,5 @@
+
+
+PASS HTML parsing doesn't apply in <annotation-xml> without encoding attribute
+PASS HTML parsing does apply in <annotation-xml encoding="application/xhtml+xml">
+

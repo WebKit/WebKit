@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test" contenteditable="true"><span>foo</span>bar</div>
+
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+Markup.description('This tests the last paragraph in the pasted fragment is merged with the content after the insertion position\n'
++ '"baz" and "oobar" should be in the same paragraph below');
+
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+e.focus();
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<div>bar</div>baz");
+
+Markup.dump('test');
+</script>
+</body>
+</html>

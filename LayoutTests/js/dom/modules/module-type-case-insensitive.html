@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test that type="module" should be case-insensitive.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+
+Promise.all([
+    new Promise(function (resolve) {
+        window.resolve1 = resolve;
+    }),
+    new Promise(function (resolve) {
+        window.resolve2 = resolve;
+    }),
+]).then(function () {
+    debug('Module is loaded.');
+    finishJSTest();
+});
+debug('Module is not executed yet.');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+
+<script type="MoDuLe">
+import Cocoa from "./resources/module-inline-simple.js";
+window.resolve1();
+</script>
+
+<script type="MODULE">
+import Cocoa from "./resources/module-inline-simple.js";
+window.resolve2();
+</script>
+
+</body>
+</html>

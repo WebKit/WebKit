@@ -1,0 +1,48 @@
+<html> 
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+
+<script>
+
+function editingTest() {
+    var start = document.getElementById("start");
+    
+    x = start.offsetLeft + 2;
+    y = start.offsetTop + 10;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    
+    var end = document.getElementById("end");
+    
+    x = end.offsetLeft + end.offsetWidth + 2;
+    y = end.offsetTop + 10;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+}
+
+</script>
+</head>
+<body>
+<p>This tests modifying a selection created with a double click.  The new selection should use word granularity.</p>
+<p style="color:green">This test does not run interactively.  It uses the testRunners eventSender to do mouse clicks.  To run it manually, double click on the blue 'g', then drag down to the red 'g'.  As you drag, watch the selection that is created, it should always start and end on word boundaries.</p>
+<div>
+This is a para<span style="color:blue;" id="start">g</span>raph.<br>
+Some text<br>
+Some text<br>
+Some text<br>
+Some text<br>
+This is a para<span style="color:red;" id="end">g</span>raph.
+</div>
+</body>
+<script>
+editingTest();
+</script>
+</html>

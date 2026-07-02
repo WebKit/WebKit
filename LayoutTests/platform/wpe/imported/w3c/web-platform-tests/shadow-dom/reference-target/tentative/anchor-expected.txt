@@ -1,0 +1,6 @@
+Popover content
+
+FAIL ShadowRoot ReferenceTarget works with anchor attribute. assert_equals: popover.offsetLeft expected 100 but got 683
+FAIL ShadowRoot ReferenceTarget works with anchor attribute via options. assert_equals: popover.offsetLeft expected 100 but got 683
+FAIL ShadowRoot ReferenceTarget works with .anchorElement property. assert_equals: popover.offsetLeft expected 100 but got 683
+

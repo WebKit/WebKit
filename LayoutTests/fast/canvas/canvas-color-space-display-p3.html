@@ -1,0 +1,17 @@
+<style>
+    .ref { background-color: #009900; width: 100px; height: 50px; margin-bottom: 0; }
+</style>
+<body>
+    <p>This test passes if the square below looks to be all one color</p>
+    <div class="ref"> </div>
+    <canvas id="test" width="100" height="50"></canvas>
+    <script>
+        let canvas = document.getElementById("test");
+        let context = canvas.getContext("2d", { colorSpace: "display-p3" });
+
+        context.beginPath();
+        context.rect(0, 0, 100, 50);
+        context.fillStyle = "color(display-p3 0.26374 0.59085 0.16434)";
+        context.fill();
+    </script>
+</body>

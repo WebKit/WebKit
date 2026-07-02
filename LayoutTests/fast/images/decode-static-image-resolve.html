@@ -1,0 +1,33 @@
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+</style>
+<body>
+    <p>This tests resolving the decode() promise when loading and decoding a static image succeeds.</p>
+    <canvas></canvas>
+    <script>
+        function drawImageToCanvas(image, canvas) {
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+        if (window.internals && window.testRunner) {
+            testRunner.waitUntilDone();
+            internals.clearMemoryCache();
+        }
+
+        (async () => {
+            let image = new Image;
+            image.src = "resources/green-400x400.png";
+
+            await image.decode();
+            drawImageToCanvas(image, document.querySelector("canvas"))
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        })();
+    </script>
+</body>

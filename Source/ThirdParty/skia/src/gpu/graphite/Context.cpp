@@ -1,0 +1,1018 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+#include "include/gpu/graphite/Context.h"
+
+#include "include/core/SkAlphaType.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColorFilter.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkColorType.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkPixmap.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkSamplingOptions.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkTileMode.h"
+#include "include/core/SkTypes.h"
+#include "include/gpu/GpuTypes.h"
+#include "include/gpu/graphite/BackendTexture.h"
+#include "include/gpu/graphite/ContextOptions.h"
+#include "include/gpu/graphite/GraphiteTypes.h"
+#include "include/gpu/graphite/PrecompileContext.h"
+#include "include/gpu/graphite/Recorder.h"
+#include "include/gpu/graphite/Surface.h"
+#include "include/private/base/SingleOwner.h"
+#include "include/private/base/SkAlign.h"
+#include "include/private/base/SkMutex.h"
+#include "include/private/base/SkOnce.h"
+#include "include/private/base/SkTArray.h"
+#include "include/private/base/SkTo.h"
+#include "src/base/SkEnumBitMask.h"
+#include "src/base/SkRectMemcpy.h"
+#include "src/capture/SkCapture.h"
+#include "src/capture/SkCaptureManager.h"
+#include "src/core/SkAutoPixmapStorage.h"
+#include "src/core/SkCPUContextImpl.h"
+#include "src/core/SkCPURecorderImpl.h"
+#include "src/core/SkColorSpaceXformSteps.h"
+#include "src/core/SkConvertPixels.h"
+#include "src/core/SkImageInfoPriv.h"
+#include "src/core/SkTraceEvent.h"
+#include "src/core/SkYUVMath.h"
+#include "src/gpu/AsyncReadTypes.h"
+#include "src/gpu/GpuTypesPriv.h"
+#include "src/gpu/SkBackingFit.h"
+#include "src/gpu/graphite/AtlasProvider.h"
+#include "src/gpu/graphite/Buffer.h"
+#include "src/gpu/graphite/BufferManager.h"
+#include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/ClientMappedBufferManager.h"
+#include "src/gpu/graphite/ContextPriv.h"
+#include "src/gpu/graphite/GlobalCache.h"
+#include "src/gpu/graphite/Image_Graphite.h"
+#include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/QueueManager.h"
+#include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/RendererProvider.h"
+#include "src/gpu/graphite/ResourceProvider.h"
+#include "src/gpu/graphite/ResourceTypes.h"
+#include "src/gpu/graphite/RuntimeEffectDictionary.h"
+#include "src/gpu/graphite/SharedContext.h"
+#include "src/gpu/graphite/Surface_Graphite.h"
+#include "src/gpu/graphite/TextureFormatXferFn.h"
+#include "src/gpu/graphite/TextureInfoPriv.h"
+#include "src/gpu/graphite/TextureProxy.h"
+#include "src/gpu/graphite/TextureProxyView.h"
+#include "src/gpu/graphite/TextureUtils.h"
+#include "src/gpu/graphite/task/CopyTask.h"
+#include "src/gpu/graphite/task/SynchronizeToCpuTask.h"
+#include "src/gpu/graphite/task/Task.h"
+#include "src/image/SkSurface_Base.h"
+#include "src/sksl/SkSLGraphiteModules.h"
+
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <cstdint>
+#include <cstring>
+#include <forward_list>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <string_view>
+#include <tuple>
+#include <utility>
+#include <vector>
+
+#if defined(GPU_TEST_UTILS)
+#include "src/gpu/graphite/ContextOptionsPriv.h"
+#endif
+
+class SkTraceMemoryDump;
+
+namespace skgpu::graphite { class Recording; }
+
+namespace skgpu::graphite {
+
+#define ASSERT_SINGLE_OWNER SKGPU_ASSERT_SINGLE_OWNER(this->singleOwner())
+
+Context::ContextID Context::ContextID::Next() {
+    static std::atomic<uint32_t> nextID{1};
+    uint32_t id;
+    do {
+        id = nextID.fetch_add(1, std::memory_order_relaxed);
+    } while (id == SK_InvalidUniqueID);
+    return ContextID(id);
+}
+
+//--------------------------------------------------------------------------------------------------
+Context::Context(sk_sp<SharedContext> sharedContext,
+                 std::unique_ptr<QueueManager> queueManager,
+                 const ContextOptions& options)
+        : fSharedContext(std::move(sharedContext))
+        , fQueueManager(std::move(queueManager))
+        , fContextID(ContextID::Next()) {
+    // We need to move the Graphite SkSL code into the central SkSL data loader at least once
+    // (but preferrably only once) before we try to use it. We assume that there's no way to
+    // use the SkSL code without making a context, so we initialize it here.
+    static SkOnce once;
+    once([] { SkSL::Loader::SetGraphiteModuleData(SkSL::Loader::GetGraphiteModules()); });
+
+    // We have to create this outside the initializer list because we need to pass in the Context's
+    // SingleOwner object and it is declared last
+    fResourceProvider = fSharedContext->makeResourceProvider(&fSingleOwner,
+                                                             SK_InvalidGenID,
+                                                             options.fGpuBudgetInBytes);
+    fMappedBufferManager = std::make_unique<ClientMappedBufferManager>(this->contextID());
+#if defined(GPU_TEST_UTILS)
+    if (options.fOptionsPriv) {
+        fStoreContextRefInRecorder = options.fOptionsPriv->fStoreContextRefInRecorder;
+    }
+#endif
+
+    fSharedContext->globalCache()->setPipelineCallback(options.fPipelineCallbackContext,
+                                                       options.fPipelineCachingCallback,
+                                                       options.fPipelineCallback);
+
+    fCPUContext = std::make_unique<skcpu::ContextImpl>();
+    if (options.fEnableCapture) {
+        fSharedContext->setCaptureManager(sk_make_sp<SkCaptureManager>());
+    }
+
+    fPersistentPipelineStorage = options.fPersistentPipelineStorage;
+}
+
+Context::~Context() {
+#if defined(GPU_TEST_UTILS)
+    SkAutoMutexExclusive lock(fTestingLock);
+    for (auto& recorder : fTrackedRecorders) {
+        recorder->priv().setContext(nullptr);
+    }
+#endif
+}
+
+Context::PixelTransferResult::PixelTransferResult() = default;
+Context::PixelTransferResult::PixelTransferResult(const PixelTransferResult&) = default;
+Context::PixelTransferResult::PixelTransferResult(PixelTransferResult&&) = default;
+Context::PixelTransferResult& Context::PixelTransferResult::operator=(const PixelTransferResult&) = default;
+Context::PixelTransferResult::~PixelTransferResult() = default;
+
+bool Context::finishInitialization() {
+    SkASSERT(!fSharedContext->rendererProvider()); // Can only initialize once
+
+    if (!fSharedContext->globalCache()->initializeDynamicSamplers(fResourceProvider.get(),
+                                                                  fSharedContext->caps())) {
+        return false;
+    }
+
+    StaticBufferManager bufferManager{fResourceProvider.get(), fSharedContext->caps()};
+    std::unique_ptr<RendererProvider> renderers{
+            new RendererProvider(fSharedContext->caps(), &bufferManager)};
+
+    auto result = bufferManager.finalize(this, fQueueManager.get(), fSharedContext->globalCache());
+    if (result == StaticBufferManager::FinishResult::kFailure) {
+        // If something went wrong filling out the static vertex buffers, any Renderer that would
+        // use it will draw incorrectly, so it's better to fail the Context creation.
+        return false;
+    }
+    if (result == StaticBufferManager::FinishResult::kSuccess &&
+        !fQueueManager->submitToGpu(/*submitInfo=*/{})) {
+        SKGPU_LOG_W("Failed to submit initial command buffer for Context creation.\n");
+        return false;
+    } // else result was kNoWork so skip submitting to the GPU
+    fSharedContext->setRendererProvider(std::move(renderers));
+    return true;
+}
+
+BackendApi Context::backend() const { return fSharedContext->backend(); }
+
+std::unique_ptr<Recorder> Context::makeRecorder(const RecorderOptions& options) {
+    ASSERT_SINGLE_OWNER
+
+    // This is a client-owned Recorder so pass a null context so it creates its own ResourceProvider
+    auto recorder = std::unique_ptr<Recorder>(new Recorder(fSharedContext, options, nullptr));
+#if defined(GPU_TEST_UTILS)
+    if (fStoreContextRefInRecorder) {
+        recorder->priv().setContext(this);
+    }
+#endif
+    return recorder;
+}
+
+std::unique_ptr<skcpu::Recorder> Context::makeCPURecorder() {
+    ASSERT_SINGLE_OWNER
+
+    return std::make_unique<skcpu::RecorderImpl>(fCPUContext.get());
+}
+
+std::unique_ptr<PrecompileContext> Context::makePrecompileContext() {
+    ASSERT_SINGLE_OWNER
+
+    return std::unique_ptr<PrecompileContext>(new PrecompileContext(fSharedContext));
+}
+
+std::unique_ptr<Recorder> Context::makeInternalRecorder() const {
+    ASSERT_SINGLE_OWNER
+
+    // Unlike makeRecorder(), this Recorder is meant to be short-lived and go away before a Context
+    // public API function returns to the caller. As such it shares the Context's resource provider
+    // (no separate budget) and does not get tracked. The internal drawing performed with an
+    // internal recorder should not require a client image provider.
+    //
+    // Explicitly overrides fRequiresOrderedRecordings to false so that these Recorders do not
+    // inherit any global policy from the ContextOptions. Since they will only produce one Recording
+    // there's no need to require subsequent recordings be ordered.
+    RecorderOptions options = {};
+    options.fRequireOrderedRecordings = false;
+    return std::unique_ptr<Recorder>(new Recorder(fSharedContext, options, this));
+}
+
+InsertStatus Context::insertRecording(const InsertRecordingInfo& info) {
+    ASSERT_SINGLE_OWNER
+
+    return fQueueManager->addRecording(info, this);
+}
+
+bool Context::submit(SubmitInfo submitInfo) {
+    ASSERT_SINGLE_OWNER
+
+    if (submitInfo.fSync == SyncToCpu::kYes && !fSharedContext->caps()->allowCpuSync()) {
+        SKGPU_LOG_E("SyncToCpu::kYes not supported with ContextOptions::fNeverYieldToWebGPU. "
+                    "The parameter is ignored and no synchronization will occur.");
+        submitInfo.fSync = SyncToCpu::kNo;
+    }
+    bool success = fQueueManager->submitToGpu(submitInfo);
+    this->checkForFinishedWork(submitInfo.fSync);
+    return success;
+}
+
+bool Context::hasUnfinishedGpuWork() const { return fQueueManager->hasUnfinishedGpuWork(); }
+
+bool Context::hasPendingGPUWork() const { return fQueueManager->hasPendingGPUWork(); }
+
+template <typename SrcPixels>
+struct Context::AsyncParams {
+    const SrcPixels* fSrcImage;
+    SkIRect          fSrcRect;
+    SkImageInfo      fDstImageInfo;
+
+    SkImage::ReadPixelsCallback* fCallback;
+    SkImage::ReadPixelsContext   fCallbackContext;
+
+    template <typename S>
+    AsyncParams<S> withNewSource(const S* newPixels, const SkIRect& newSrcRect) const {
+        return AsyncParams<S>{newPixels, newSrcRect,
+                                fDstImageInfo, fCallback, fCallbackContext};
+    }
+
+    void fail() const {
+        (*fCallback)(fCallbackContext, nullptr);
+    }
+
+    bool validate() const {
+        if (!fSrcImage) {
+            return false;
+        }
+        // SkImage::isProtected() -> bool, TextureProxyView::isProtected() -> Protected enum.
+        // The explicit cast makes this function work for both template instantiations since
+        // the Protected enum is backed by a bool.
+        if ((bool) fSrcImage->isProtected()) {
+            return false;
+        }
+        if (!SkIRect::MakeSize(fSrcImage->dimensions()).contains(fSrcRect)) {
+            return false;
+        }
+        if (!SkImageInfoIsValid(fDstImageInfo)) {
+            return false;
+        }
+        return true;
+    }
+};
+
+template <typename ReadFn, typename... ExtraArgs>
+void Context::asyncRescaleAndReadImpl(ReadFn Context::* asyncRead,
+                                      SkImage::RescaleGamma rescaleGamma,
+                                      SkImage::RescaleMode rescaleMode,
+                                      const AsyncParams<SkImage>& params,
+                                      ExtraArgs... extraParams) {
+    if (!params.validate() || !as_IB(params.fSrcImage)->isGraphiteBacked()) {
+        return params.fail();
+    }
+
+    if (params.fSrcRect.size() == params.fDstImageInfo.dimensions()) {
+        // No need to rescale so do a direct readback
+        return (this->*asyncRead)(/*recorder=*/nullptr, params, extraParams...);
+    }
+
+    // Make a recorder to collect the rescale drawing commands and the copy commands
+    std::unique_ptr<Recorder> recorder = this->makeInternalRecorder();
+    sk_sp<SkImage> scaledImage = RescaleImage(recorder.get(),
+                                              static_cast<const Image_Base*>(params.fSrcImage),
+                                              params.fSrcRect,
+                                              params.fDstImageInfo,
+                                              rescaleGamma,
+                                              rescaleMode);
+    if (!scaledImage) {
+        SKGPU_LOG_W("AsyncRead failed because rescaling failed");
+        return params.fail();
+    }
+    (this->*asyncRead)(std::move(recorder),
+                       params.withNewSource(scaledImage.get(), params.fDstImageInfo.bounds()),
+                       extraParams...);
+}
+
+void Context::asyncRescaleAndReadPixels(const SkImage* src,
+                                        const SkImageInfo& dstImageInfo,
+                                        const SkIRect& srcRect,
+                                        SkImage::RescaleGamma rescaleGamma,
+                                        SkImage::RescaleMode rescaleMode,
+                                        SkImage::ReadPixelsCallback callback,
+                                        SkImage::ReadPixelsContext callbackContext) {
+    this->asyncRescaleAndReadImpl(&Context::asyncReadPixels,
+                                  rescaleGamma, rescaleMode,
+                                  {src, srcRect, dstImageInfo, callback, callbackContext});
+}
+
+void Context::asyncRescaleAndReadPixels(const SkSurface* src,
+                                        const SkImageInfo& dstImageInfo,
+                                        const SkIRect& srcRect,
+                                        SkImage::RescaleGamma rescaleGamma,
+                                        SkImage::RescaleMode rescaleMode,
+                                        SkImage::ReadPixelsCallback callback,
+                                        SkImage::ReadPixelsContext callbackContext) {
+    sk_sp<SkImage> surfaceImage = SkSurfaces::AsImage(sk_ref_sp(src));
+    if (!surfaceImage) {
+        // The source surface is not texturable, so the only supported readback is if there's
+        // no rescaling
+        if (src && asConstSB(src)->isGraphiteBacked() &&
+            srcRect.size() == dstImageInfo.dimensions()) {
+            TextureProxyView view = static_cast<const Surface*>(src)->target();
+            return this->asyncReadTexture(/*recorder=*/nullptr,
+                                          {&view, srcRect, dstImageInfo, callback, callbackContext},
+                                          src->imageInfo().colorInfo());
+        }
+        // else fall through and let asyncRescaleAndReadPixels() invoke the callback when it detects
+        // the null image.
+    }
+    this->asyncRescaleAndReadPixels(surfaceImage.get(),
+                                    dstImageInfo,
+                                    srcRect,
+                                    rescaleGamma,
+                                    rescaleMode,
+                                    callback,
+                                    callbackContext);
+}
+
+void Context::asyncReadPixels(std::unique_ptr<Recorder> recorder,
+                              const AsyncParams<SkImage>& params) {
+    TRACE_EVENT2("skia.gpu", TRACE_FUNC,
+                 "width", params.fSrcRect.width(),
+                 "height", params.fSrcRect.height());
+    SkASSERT(params.validate());    // all paths to here are already validated
+    SkASSERT(params.fSrcRect.size() == params.fDstImageInfo.dimensions());
+
+    const Caps* caps = fSharedContext->caps();
+    TextureProxyView view = AsView(params.fSrcImage);
+    if (!view || !caps->isCopyableSrc(view.proxy()->textureInfo())) {
+        // This is either a YUVA image (null view) or the texture can't be read directly, so
+        // perform a draw into a compatible texture format and/or flatten any YUVA planes to RGBA.
+        if (!recorder) {
+            recorder = this->makeInternalRecorder();
+        }
+        sk_sp<SkImage> flattened = CopyAsDraw(recorder.get(),
+                                              /*drawContext=*/nullptr,
+                                              params.fSrcImage,
+                                              params.fSrcRect,
+                                              params.fDstImageInfo.colorInfo(),
+                                              Budgeted::kYes,
+                                              Mipmapped::kNo,
+                                              SkBackingFit::kApprox,
+                                              "AsyncReadPixelsFallbackTexture");
+        if (!flattened) {
+            SKGPU_LOG_W("AsyncRead failed because copy-as-drawing into a readable format failed");
+            return params.fail();
+        }
+        // Use the original fSrcRect and not flattened's size since it's approx-fit.
+        return this->asyncReadPixels(std::move(recorder),
+                                     params.withNewSource(flattened.get(),
+                                     SkIRect::MakeSize(params.fSrcRect.size())));
+    }
+
+    // Can copy directly from the image's texture
+    this->asyncReadTexture(std::move(recorder), params.withNewSource(&view, params.fSrcRect),
+                           params.fSrcImage->imageInfo().colorInfo());
+}
+
+void Context::asyncReadTexture(std::unique_ptr<Recorder> recorder,
+                               const AsyncParams<TextureProxyView>& params,
+                               const SkColorInfo& srcColorInfo) {
+    SkASSERT(params.fSrcRect.size() == params.fDstImageInfo.dimensions());
+
+    // We can get here directly from surface or testing-only read pixels, so re-validate
+    if (!params.validate()) {
+        return params.fail();
+    }
+    PixelTransferResult transferResult = this->transferPixels(recorder.get(),
+                                                              *params.fSrcImage,
+                                                              srcColorInfo,
+                                                              params.fDstImageInfo.colorInfo(),
+                                                              params.fSrcRect);
+
+    if (!transferResult.fTransferBuffer) {
+        // TODO: try to do a synchronous readPixels instead
+        return params.fail();
+    }
+
+    this->finalizeAsyncReadPixels(std::move(recorder),
+                                  {&transferResult, 1},
+                                  params.fCallback,
+                                  params.fCallbackContext);
+}
+
+void Context::asyncRescaleAndReadPixelsYUV420(const SkImage* src,
+                                              SkYUVColorSpace yuvColorSpace,
+                                              sk_sp<SkColorSpace> dstColorSpace,
+                                              const SkIRect& srcRect,
+                                              const SkISize& dstSize,
+                                              SkImage::RescaleGamma rescaleGamma,
+                                              SkImage::RescaleMode rescaleMode,
+                                              SkImage::ReadPixelsCallback callback,
+                                              SkImage::ReadPixelsContext callbackContext) {
+    // Use kOpaque alpha type to signal that we don't read back the alpha channel
+    SkImageInfo dstImageInfo = SkImageInfo::Make(dstSize,
+                                                 kRGBA_8888_SkColorType,
+                                                 kOpaque_SkAlphaType,
+                                                 std::move(dstColorSpace));
+    this->asyncRescaleAndReadImpl(&Context::asyncReadPixelsYUV420,
+                                  rescaleGamma, rescaleMode,
+                                  {src, srcRect, dstImageInfo, callback, callbackContext},
+                                  yuvColorSpace);
+}
+
+void Context::asyncRescaleAndReadPixelsYUV420(const SkSurface* src,
+                                              SkYUVColorSpace yuvColorSpace,
+                                              sk_sp<SkColorSpace> dstColorSpace,
+                                              const SkIRect& srcRect,
+                                              const SkISize& dstSize,
+                                              SkImage::RescaleGamma rescaleGamma,
+                                              SkImage::RescaleMode rescaleMode,
+                                              SkImage::ReadPixelsCallback callback,
+                                              SkImage::ReadPixelsContext callbackContext) {
+    // YUV[A] readback requires the surface to be texturable since the plane conversion is performed
+    // by draws. If AsImage() returns null, the image version of asyncRescaleAndReadback will
+    // automatically fail.
+    // TODO: Is it worth performing an extra copy from 'surface' into a texture in order to succeed?
+    sk_sp<SkImage> surfaceImage = SkSurfaces::AsImage(sk_ref_sp(src));
+    this->asyncRescaleAndReadPixelsYUV420(surfaceImage.get(),
+                                          yuvColorSpace,
+                                          dstColorSpace,
+                                          srcRect,
+                                          dstSize,
+                                          rescaleGamma,
+                                          rescaleMode,
+                                          callback,
+                                          callbackContext);
+}
+
+void Context::asyncRescaleAndReadPixelsYUVA420(const SkImage* src,
+                                               SkYUVColorSpace yuvColorSpace,
+                                               sk_sp<SkColorSpace> dstColorSpace,
+                                               const SkIRect& srcRect,
+                                               const SkISize& dstSize,
+                                               SkImage::RescaleGamma rescaleGamma,
+                                               SkImage::RescaleMode rescaleMode,
+                                               SkImage::ReadPixelsCallback callback,
+                                               SkImage::ReadPixelsContext callbackContext) {
+    SkImageInfo dstImageInfo = SkImageInfo::Make(dstSize,
+                                                 kRGBA_8888_SkColorType,
+                                                 kPremul_SkAlphaType,
+                                                 std::move(dstColorSpace));
+    this->asyncRescaleAndReadImpl(&Context::asyncReadPixelsYUV420,
+                                  rescaleGamma, rescaleMode,
+                                  {src, srcRect, dstImageInfo, callback, callbackContext},
+                                  yuvColorSpace);
+}
+
+void Context::asyncRescaleAndReadPixelsYUVA420(const SkSurface* src,
+                                               SkYUVColorSpace yuvColorSpace,
+                                               sk_sp<SkColorSpace> dstColorSpace,
+                                               const SkIRect& srcRect,
+                                               const SkISize& dstSize,
+                                               SkImage::RescaleGamma rescaleGamma,
+                                               SkImage::RescaleMode rescaleMode,
+                                               SkImage::ReadPixelsCallback callback,
+                                               SkImage::ReadPixelsContext callbackContext) {
+    sk_sp<SkImage> surfaceImage = SkSurfaces::AsImage(sk_ref_sp(src));
+    this->asyncRescaleAndReadPixelsYUVA420(surfaceImage.get(),
+                                           yuvColorSpace,
+                                           dstColorSpace,
+                                           srcRect,
+                                           dstSize,
+                                           rescaleGamma,
+                                           rescaleMode,
+                                           callback,
+                                           callbackContext);
+}
+
+void Context::asyncReadPixelsYUV420(std::unique_ptr<Recorder> recorder,
+                                    const AsyncParams<SkImage>& params,
+                                    SkYUVColorSpace yuvColorSpace) {
+    TRACE_EVENT2("skia.gpu", TRACE_FUNC,
+                 "width", params.fSrcRect.width(),
+                 "height", params.fSrcRect.height());
+    // This is only called by asyncRescaleAndReadImpl which already validates its parameters
+    SkASSERT(params.validate());
+    SkASSERT(params.fSrcRect.size() == params.fDstImageInfo.dimensions());
+
+    // The planes are always extracted via drawing, so create the Recorder if there isn't one yet.
+    if (!recorder) {
+        recorder = this->makeInternalRecorder();
+    }
+
+    // copyPlane renders the source image into an A8 image and sets up a transfer stored in 'result'
+    auto copyPlane = [&](SkImageInfo planeInfo,
+                         std::string_view label,
+                         float rgb2yuv[20],
+                         const SkMatrix& texMatrix,
+                         PixelTransferResult* result) {
+        sk_sp<Surface> dstSurface = Surface::MakeScratch(recorder.get(),
+                                                         planeInfo,
+                                                         label,
+                                                         Budgeted::kYes,
+                                                         Mipmapped::kNo,
+                                                         SkBackingFit::kApprox);
+        if (!dstSurface) {
+            return false;
+        }
+
+        // Render the plane defined by rgb2yuv from srcImage into dstSurface
+        SkPaint paint;
+        const SkSamplingOptions sampling(SkFilterMode::kLinear, SkMipmapMode::kNone);
+        sk_sp<SkShader> imgShader = params.fSrcImage->makeShader(
+                SkTileMode::kClamp, SkTileMode::kClamp, sampling, texMatrix);
+        paint.setShader(std::move(imgShader));
+        paint.setBlendMode(SkBlendMode::kSrc);
+
+        if (rgb2yuv) {
+            // NOTE: The dstSurface's color space is set to the requested RGB dstColorSpace, so
+            // the rendered image is automatically converted to that RGB color space before the
+            // RGB->YUV color filter is evaluated, putting the plane data into the alpha channel.
+            paint.setColorFilter(SkColorFilters::Matrix(rgb2yuv));
+        }
+
+        SkCanvas* canvas = dstSurface->getCanvas();
+        canvas->drawPaint(paint);
+
+        // Manually flush the surface before transferPixels() is called to ensure the rendering
+        // operations run before the CopyTextureToBuffer task.
+        Flush(dstSurface);
+        // Must use planeInfo.bounds() for srcRect since dstSurface is kApprox-fit.
+        *result = this->transferPixels(recorder.get(),
+                                       dstSurface->target(),
+                                       dstSurface->imageInfo().colorInfo(),
+                                       planeInfo.colorInfo(),
+                                       planeInfo.bounds());
+        return SkToBool(result->fTransferBuffer);
+    };
+
+    // Set up draws and transfers. This interleaves the drawing to a plane and the copy to the
+    // transfer buffer, which will allow the scratch A8 surface to be reused for each plane.
+    // TODO: Use one transfer buffer for all three planes to reduce map/unmap cost?
+    const bool readAlpha = params.fDstImageInfo.colorInfo().alphaType() != kOpaque_SkAlphaType;
+    SkImageInfo yaInfo = params.fDstImageInfo.makeColorType(kAlpha_8_SkColorType)
+                                             .makeAlphaType(kPremul_SkAlphaType);
+    SkImageInfo uvInfo = yaInfo.makeWH(yaInfo.width()/2, yaInfo.height()/2);
+    PixelTransferResult transfers[4];
+
+    float baseM[20];
+    SkColorMatrix_RGB2YUV(yuvColorSpace, baseM);
+    SkMatrix texMatrix = SkMatrix::Translate(-params.fSrcRect.fLeft, -params.fSrcRect.fTop);
+
+    // This matrix generates (r,g,b,a) = (0, 0, 0, y)
+    float yM[20];
+    std::fill_n(yM, 15, 0.f);
+    std::copy_n(baseM + 0, 5, yM + 15);
+    if (!copyPlane(yaInfo, "AsyncReadPixelsYPlane", yM, texMatrix, &transfers[0])) {
+        return params.fail();
+    }
+
+    // No matrix, straight copy of alpha channel
+    SkASSERT(baseM[15] == 0 &&
+             baseM[16] == 0 &&
+             baseM[17] == 0 &&
+             baseM[18] == 1 &&
+             baseM[19] == 0);
+    if (readAlpha &&
+        !copyPlane(yaInfo, "AsyncReadPixelsAPlane", nullptr, texMatrix, &transfers[3])) {
+        return params.fail();
+    }
+
+    // The UV planes are at half resolution compared to Y and A in 4:2:0
+    texMatrix.postScale(0.5f, 0.5f);
+
+    // This matrix generates (r,g,b,a) = (0, 0, 0, u)
+    float uM[20];
+    std::fill_n(uM, 15, 0.f);
+    std::copy_n(baseM + 5, 5, uM + 15);
+    if (!copyPlane(uvInfo, "AsyncReadPixelsUPlane", uM, texMatrix, &transfers[1])) {
+        return params.fail();
+    }
+
+    // This matrix generates (r,g,b,a) = (0, 0, 0, v)
+    float vM[20];
+    std::fill_n(vM, 15, 0.f);
+    std::copy_n(baseM + 10, 5, vM + 15);
+    if (!copyPlane(uvInfo, "AsyncReadPixelsVPlane", vM, texMatrix, &transfers[2])) {
+        return params.fail();
+    }
+
+    this->finalizeAsyncReadPixels(std::move(recorder),
+                                  {transfers, readAlpha ? 4u : 3u},
+                                  params.fCallback,
+                                  params.fCallbackContext);
+}
+
+void Context::finalizeAsyncReadPixels(std::unique_ptr<Recorder> recorder,
+                                      SkSpan<PixelTransferResult> transferResults,
+                                      SkImage::ReadPixelsCallback callback,
+                                      SkImage::ReadPixelsContext callbackContext) {
+    // If the async readback work required a Recorder, insert the recording with all of the
+    // accumulated work (which includes any copies). Otherwise, for pure copy readbacks,
+    // transferPixels() already added the tasks directly to the QueueManager.
+    if (recorder) {
+        std::unique_ptr<Recording> recording = recorder->snap();
+        if (!recording) {
+            callback(callbackContext, nullptr);
+            return;
+        }
+        InsertRecordingInfo recordingInfo;
+        recordingInfo.fRecording = recording.get();
+        if (!this->insertRecording(recordingInfo)) {
+            callback(callbackContext, nullptr);
+            return;
+        }
+    }
+
+    // Set up FinishContext and add transfer commands to queue
+    struct AsyncReadFinishContext {
+        SkImage::ReadPixelsCallback* fClientCallback;
+        SkImage::ReadPixelsContext fClientContext;
+        ClientMappedBufferManager* fMappedBufferManager;
+        std::array<PixelTransferResult, 4> fTransferResults;
+    };
+
+    auto finishContext = std::make_unique<AsyncReadFinishContext>();
+    finishContext->fClientCallback      = callback;
+    finishContext->fClientContext       = callbackContext;
+    finishContext->fMappedBufferManager = fMappedBufferManager.get();
+
+    SkASSERT(transferResults.size() <= std::size(finishContext->fTransferResults));
+    skia_private::STArray<4, sk_sp<Buffer>> buffersToAsyncMap;
+    for (size_t i = 0; i < transferResults.size(); ++i) {
+        finishContext->fTransferResults[i] = std::move(transferResults[i]);
+        if (fSharedContext->caps()->bufferMapsAreAsync()) {
+            buffersToAsyncMap.push_back(finishContext->fTransferResults[i].fTransferBuffer);
+        }
+    }
+
+    InsertFinishInfo info;
+    info.fFinishedContext = finishContext.release();
+    info.fFinishedProc = [](GpuFinishedContext c, CallbackResult status) {
+        std::unique_ptr<const AsyncReadFinishContext> context(
+                reinterpret_cast<const AsyncReadFinishContext*>(c));
+        using AsyncReadResult = skgpu::TAsyncReadResult<Buffer, ContextID, PixelTransferResult>;
+
+        ClientMappedBufferManager* manager = context->fMappedBufferManager;
+        std::unique_ptr<AsyncReadResult> result;
+        if (status == CallbackResult::kSuccess) {
+            result = std::make_unique<AsyncReadResult>(manager->ownerID());
+        }
+        for (const auto& r : context->fTransferResults) {
+            if (!r.fTransferBuffer) {
+                break;
+            }
+            if (result && !result->addTransferResult(r, r.fSize, r.fRowBytes, manager)) {
+                result.reset();
+            }
+            // If we didn't get this buffer into the mapped buffer manager then make sure it gets
+            // unmapped if it has a pending or completed async map.
+            if (!result && r.fTransferBuffer->isUnmappable()) {
+                r.fTransferBuffer->unmap();
+            }
+        }
+        (*context->fClientCallback)(context->fClientContext, std::move(result));
+    };
+
+    // If addFinishInfo() fails, it invokes the finish callback automatically, which handles all the
+    // required clean up for us, just log an error message. The buffers will never be mapped and
+    // thus don't need an unmap.
+    if (!fQueueManager->addFinishInfo(info, fResourceProvider.get(), buffersToAsyncMap)) {
+        SKGPU_LOG_E("Failed to register finish callbacks for asyncReadPixels.");
+        return;
+    }
+}
+
+Context::PixelTransferResult Context::transferPixels(Recorder* recorder,
+                                                     const TextureProxyView& srcView,
+                                                     const SkColorInfo& srcColorInfo,
+                                                     const SkColorInfo& dstColorInfo,
+                                                     const SkIRect& srcRect) {
+    SkASSERT(SkIRect::MakeSize(srcView.dimensions()).contains(srcRect));
+    SkASSERT(SkColorInfoIsValid(dstColorInfo));
+
+    const TextureInfo& texInfo = srcView.proxy()->textureInfo();
+    const TextureFormat format = TextureInfoPriv::ViewFormat(texInfo);
+    const Caps* caps = fSharedContext->caps();
+
+    if (!srcView || !caps->isCopyableSrc(texInfo)) {
+        return {};
+    }
+
+    SkColorSpaceXformSteps csSteps{srcColorInfo.colorSpace(), srcColorInfo.alphaType(),
+                                   dstColorInfo.colorSpace(), dstColorInfo.alphaType()};
+    auto xferFn = TextureFormatXferFn::MakeGpuToCpu(format,
+                                                    srcView.swizzle(),
+                                                    csSteps,
+                                                    dstColorInfo.colorType());
+    if (!xferFn) {
+        return {};
+    }
+
+    int bpp = TextureFormatBytesPerBlock(format);
+    size_t rowBytes = caps->getAlignedTextureDataRowBytes(bpp * srcRect.width());
+    size_t size = SkAlignTo(rowBytes * srcRect.height(), caps->requiredTransferBufferAlignment());
+    sk_sp<Buffer> buffer = fResourceProvider->findOrCreateNonShareableBuffer(
+            size, BufferType::kXferGpuToCpu, AccessPattern::kHostVisible, "TransferToCpu");
+    if (!buffer) {
+        return {};
+    }
+
+    // Set up copy task. Since we always use a new buffer the offset can be 0 and we don't need to
+    // worry about aligning it to the required transfer buffer alignment.
+    sk_sp<CopyTextureToBufferTask> copyTask = CopyTextureToBufferTask::Make(srcView.refProxy(),
+                                                                            srcRect,
+                                                                            buffer,
+                                                                            /*bufferOffset=*/0,
+                                                                            rowBytes);
+    const bool addTasksDirectly = !SkToBool(recorder);
+    Protected contextIsProtected = fSharedContext->isProtected();
+    if (!copyTask || (addTasksDirectly && !fQueueManager->addTask(copyTask.get(),
+                                                                  this,
+                                                                  contextIsProtected))) {
+        return {};
+    } else if (!addTasksDirectly) {
+        // Add the task to the Recorder instead of the QueueManager if that's been required for
+        // collecting tasks to prepare the copied textures.
+        recorder->priv().add(std::move(copyTask));
+    }
+    sk_sp<SynchronizeToCpuTask> syncTask = SynchronizeToCpuTask::Make(buffer);
+    if (!syncTask || (addTasksDirectly && !fQueueManager->addTask(syncTask.get(),
+                                                                  this,
+                                                                  contextIsProtected))) {
+        return {};
+    } else if (!addTasksDirectly) {
+        recorder->priv().add(std::move(syncTask));
+    }
+
+    PixelTransferResult result;
+    result.fTransferBuffer = std::move(buffer);
+    result.fSize = srcRect.size();
+    if (xferFn->isIdentity()) {
+        result.fRowBytes = rowBytes;
+    } else {
+        SkImageInfo dstInfo = SkImageInfo::Make(srcRect.size(), dstColorInfo);
+        result.fRowBytes = dstInfo.minRowBytes();
+        result.fPixelConverter = [xferFn, dstInfo, rowBytes](void* dst, const void* src) {
+            SkASSERT(xferFn.has_value());
+            xferFn->run(dstInfo.width(), dstInfo.height(),
+                        src, rowBytes,
+                        dst, dstInfo.minRowBytes());
+        };
+    }
+
+    return result;
+}
+
+void Context::checkForFinishedWork(SyncToCpu syncToCpu) {
+    ASSERT_SINGLE_OWNER
+
+    fQueueManager->checkForFinishedWork(syncToCpu);
+    fMappedBufferManager->process();
+    // Process the return queue periodically to make sure it doesn't get too big
+    fResourceProvider->forceProcessReturnedResources();
+    fSharedContext->forceProcessReturnedResources();
+}
+
+void Context::checkAsyncWorkCompletion() {
+    this->checkForFinishedWork(SyncToCpu::kNo);
+}
+
+void Context::deleteBackendTexture(const BackendTexture& texture) {
+    ASSERT_SINGLE_OWNER
+
+    if (!texture.isValid() || texture.backend() != this->backend()) {
+        return;
+    }
+    fResourceProvider->deleteBackendTexture(texture);
+}
+
+void Context::freeGpuResources() {
+    ASSERT_SINGLE_OWNER
+
+    this->checkAsyncWorkCompletion();
+
+    fResourceProvider->freeGpuResources();
+    fSharedContext->freeGpuResources();
+}
+
+void Context::performDeferredCleanup(
+        std::chrono::milliseconds msNotUsed,
+        std::optional<std::chrono::microseconds> microsMaxPurgingDur) {
+    ASSERT_SINGLE_OWNER
+
+    this->checkAsyncWorkCompletion();
+    auto purgeTime = skgpu::StdSteadyClock::now() - msNotUsed;
+
+    // We do not ever limit the time required to purge resources from the threadsafe resource cache
+    // because it holds objects which should be basically trivial to delete. Eventually, these
+    // resources will be moved into a global threadsafe resource cache anyhow.
+    fSharedContext->purgeResourcesNotUsedSince(purgeTime);
+
+    fResourceProvider->purgeResourcesNotUsedSince(purgeTime, microsMaxPurgingDur);
+}
+
+size_t Context::currentBudgetedBytes() const {
+    ASSERT_SINGLE_OWNER
+    SkASSERT(fSharedContext->getResourceCacheCurrentBudgetedBytes() == 0);
+    return fResourceProvider->getResourceCacheCurrentBudgetedBytes();
+}
+
+size_t Context::currentPurgeableBytes() const {
+    ASSERT_SINGLE_OWNER
+    SkASSERT(fSharedContext->getResourceCacheCurrentPurgeableBytes() == 0);
+    return fResourceProvider->getResourceCacheCurrentPurgeableBytes();
+}
+
+size_t Context::maxBudgetedBytes() const {
+    ASSERT_SINGLE_OWNER
+    SkASSERT(fSharedContext->getResourceCacheLimit() == SharedContext::kThreadedSafeResourceBudget);
+    return fResourceProvider->getResourceCacheLimit();
+}
+
+void Context::setMaxBudgetedBytes(size_t bytes) {
+    ASSERT_SINGLE_OWNER
+    return fResourceProvider->setResourceCacheLimit(bytes);
+}
+
+void Context::dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const {
+    ASSERT_SINGLE_OWNER
+    fResourceProvider->dumpMemoryStatistics(traceMemoryDump);
+    fSharedContext->dumpMemoryStatistics(traceMemoryDump);
+    // TODO: What is the graphite equivalent for the text blob cache and how do we print out its
+    // used bytes here (see Ganesh implementation).
+}
+
+bool Context::isDeviceLost() const {
+    return fSharedContext->isDeviceLost();
+}
+
+int Context::maxTextureSize() const {
+    return fSharedContext->caps()->maxTextureSize();
+}
+
+bool Context::supportsProtectedContent() const {
+    return fSharedContext->isProtected() == Protected::kYes;
+}
+
+GpuStatsFlags Context::supportedGpuStats() const {
+    return fSharedContext->caps()->supportedGpuStats();
+}
+
+void Context::syncPipelineData(size_t maxSize) {
+    ASSERT_SINGLE_OWNER
+
+    if (fPersistentPipelineStorage) {
+        fSharedContext->syncPipelineData(fPersistentPipelineStorage, maxSize);
+    }
+}
+
+void Context::startCapture() {
+    if (fSharedContext->captureManager()) {
+        fSharedContext->captureManager()->toggleCapture(true);
+    }
+}
+
+sk_sp<SkCapture> Context::endCapture() {
+    if (fSharedContext->captureManager()) {
+        fSharedContext->captureManager()->toggleCapture(false);
+        return fSharedContext->captureManager()->getLastCapture();
+    }
+    return nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+#if defined(GPU_TEST_UTILS)
+void Context::deregisterRecorder(const Recorder* recorder) {
+    SkAutoMutexExclusive lock(fTestingLock);
+    for (auto it = fTrackedRecorders.begin();
+         it != fTrackedRecorders.end();
+         it++) {
+        if (*it == recorder) {
+            fTrackedRecorders.erase(it);
+            return;
+        }
+    }
+}
+
+bool ContextPriv::readPixels(const SkPixmap& pm,
+                             const TextureProxyView& srcView,
+                             const SkImageInfo& srcImageInfo,
+                             int srcX, int srcY) {
+    auto rect = SkIRect::MakeXYWH(srcX, srcY, pm.width(), pm.height());
+    struct AsyncContext {
+        bool fCalled = false;
+        std::unique_ptr<const SkImage::AsyncReadResult> fResult;
+    } asyncContext;
+
+    auto asyncCallback = [](void* c, std::unique_ptr<const SkImage::AsyncReadResult> out) {
+        auto context = static_cast<AsyncContext*>(c);
+        context->fResult = std::move(out);
+        context->fCalled = true;
+    };
+
+    const SkColorInfo& srcColorInfo = srcImageInfo.colorInfo();
+
+    // This is roughly equivalent to the logic taken in asyncRescaleAndRead(SkSurface) to either
+    // try the image-based readback (with copy-as-draw fallbacks) or read the texture directly
+    // if it supports reading.
+    if (!fContext->fSharedContext->caps()->isCopyableSrc(srcView.proxy()->textureInfo())) {
+        // Since this is a synchronous testing-only API, callers should have flushed any pending
+        // work that modifies this texture proxy already. This means we don't have to worry about
+        // re-wrapping the proxy in a new Image (that wouldn't tbe connected to any Device, etc.).
+        sk_sp<SkImage> image{new Image(srcView, srcColorInfo)};
+        Context::AsyncParams<SkImage> params {image.get(), rect, pm.info(),
+                                              asyncCallback, &asyncContext};
+        if (!params.validate()) {
+            params.fail();
+        } else {
+            fContext->asyncReadPixels(/*recorder=*/nullptr, params);
+        }
+    } else {
+        fContext->asyncReadTexture(/*recorder=*/nullptr,
+                                   {&srcView, rect, pm.info(), asyncCallback, &asyncContext},
+                                   srcImageInfo.colorInfo());
+    }
+
+    if (fContext->fSharedContext->caps()->allowCpuSync()) {
+        fContext->submit(SyncToCpu::kYes);
+    } else {
+        fContext->submit(SyncToCpu::kNo);
+        if (fContext->fSharedContext->backend() == BackendApi::kDawn) {
+            while (!asyncContext.fCalled) {
+                fContext->fSharedContext->deviceTick(fContext);
+            }
+        } else {
+            SK_ABORT("Only Dawn supports non-syncing contexts.");
+        }
+    }
+    SkASSERT(asyncContext.fCalled);
+    if (!asyncContext.fResult) {
+        return false;
+    }
+    SkRectMemcpy(pm.writable_addr(), pm.rowBytes(), asyncContext.fResult->data(0),
+                 asyncContext.fResult->rowBytes(0), pm.info().minRowBytes(),
+                 pm.height());
+    return true;
+}
+#endif // GPU_TEST_UTILS
+
+///////////////////////////////////////////////////////////////////////////////////
+
+std::unique_ptr<Context> ContextCtorAccessor::MakeContext(
+        sk_sp<SharedContext> sharedContext,
+        std::unique_ptr<QueueManager> queueManager,
+        const ContextOptions& options) {
+    auto context = std::unique_ptr<Context>(new Context(std::move(sharedContext),
+                                                        std::move(queueManager),
+                                                        options));
+    if (context && context->finishInitialization()) {
+        return context;
+    } else {
+        return nullptr;
+    }
+}
+
+} // namespace skgpu::graphite

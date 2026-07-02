@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+#target {
+    width: 100px;
+    height: 100px;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+promise_test(async t => { 
+    const timeline = new ScrollTimeline({ source : document.documentElement });
+    const animation = target.animate({ opacity: [0, 1] }, { timeline });
+
+    await animationAcceleration(animation);
+
+    // Wait a few animation frames to check that animations were not resolved
+    // once the scroll-driven animation was accelerated.
+    const before = window.internals?.numberOfAnimationTimelineInvalidations();
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    const after = window.internals?.numberOfAnimationTimelineInvalidations();
+
+    assert_equals(before, after);
+}, "Animation resolution in the web process isn't scheduled once a scroll-driven animation has been accelerated");
+
+</script>
+</body>

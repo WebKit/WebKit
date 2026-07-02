@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title></title>
+    <script src="resources/common.js"></script>
+    <script>
+        async function test()
+        {
+            if (!window.testRunner)
+                return;
+
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+
+            var s1 = document.getElementById("search1");
+            var s2 = document.getElementById("search2");
+            var s3 = document.getElementById("search3");
+
+            var s1cancelPos = searchCancelButtonPosition(s1);
+            var buttonX = s1cancelPos.x;
+            var middleX = s1.offsetLeft + s1.offsetWidth / 2;
+
+            var y2 = s2.offsetTop + s2.offsetHeight / 2;
+            var y3 = s3.offsetTop + s3.offsetHeight / 2;
+
+            await eventSender.asyncMouseMoveTo(buttonX, s1cancelPos.y);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseMoveTo(middleX, s1cancelPos.y);
+            await eventSender.asyncMouseUp();
+            eventSender.leapForward(1000);
+
+            await eventSender.asyncMouseMoveTo(middleX, y2);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseMoveTo(buttonX, y2);
+            await eventSender.asyncMouseUp();
+            eventSender.leapForward(1000);
+
+            await eventSender.asyncMouseMoveTo(buttonX, y3);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseMoveTo(buttonX, y3);
+            await eventSender.asyncMouseUp();
+
+            var result = document.getElementById("result");
+            var values = s1.value + ", " + s2.value + ", " + s3.value;
+            if (values == "foo, bar, ")
+                result.innerText = "PASS";
+            else
+                result.innerText = "FAIL (" + values + ")";
+
+            testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=12618">http://bugs.webkit.org/show_bug.cgi?id=12618</a>
+        REGRESSION (SearchField): Dragging across the text and releasing over the clear button clears the field</i>.
+    </p>
+    <p id="result">
+        Cannot run interactively.
+    </p>
+    <input id="search1" type="search" value="foo">
+    <br>
+    <input id="search2" type="search" value="bar">
+    <br>
+    <input id="search3" type="search" value="baz">
+</body>
+</html>

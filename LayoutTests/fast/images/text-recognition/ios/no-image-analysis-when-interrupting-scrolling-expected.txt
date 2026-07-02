@@ -1,0 +1,10 @@
+Verifies that long pressing an image while stopping momentum scrolling does not trigger spurious image analysis requests. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageAnalysisRequestIDBefore is imageAnalysisRequestIDAfter
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

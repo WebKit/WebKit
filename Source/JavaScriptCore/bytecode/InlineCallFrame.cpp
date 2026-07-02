@@ -1,0 +1,144 @@
+/*
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "InlineCallFrame.h"
+
+#include "CodeBlock.h"
+#include "FunctionExecutable.h"
+#include "JSCJSValueInlines.h"
+
+namespace JSC {
+
+DEFINE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
+
+JSFunction* InlineCallFrame::calleeConstant() const
+{
+    if (calleeRecovery.isConstant())
+        return uncheckedDowncast<JSFunction>(calleeRecovery.constant());
+    return nullptr;
+}
+
+JSFunction* InlineCallFrame::calleeForCallFrame(CallFrame* callFrame) const
+{
+    return uncheckedDowncast<JSFunction>(calleeRecovery.recover(callFrame));
+}
+
+CodeBlockHash InlineCallFrame::hash() const
+{
+    return baselineCodeBlock->hash();
+}
+
+CString InlineCallFrame::inferredName() const
+{
+    return uncheckedDowncast<FunctionExecutable>(baselineCodeBlock->ownerExecutable())->ecmaName().utf8();
+}
+
+String InlineCallFrame::inferredNameWithHash() const
+{
+    return makeString(inferredName(), "#"_s, hash());
+}
+
+void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
+{
+    out.print(inferredName(), "#", hash());
+}
+
+void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    out.print(briefFunctionInformation(), ":<", RawPointer(baselineCodeBlock.get()));
+    if (isInStrictContext())
+        out.print(" (StrictMode)");
+    out.print(", ", directCaller.bytecodeIndex(), ", ", static_cast<Kind>(kind));
+    if (isClosureCall)
+        out.print(", closure call");
+    else
+        out.print(", known callee: ", inContext(calleeRecovery.constant(), context));
+    out.print(", numArgs+this = ", argumentCountIncludingThis);
+    out.print(", numFixup = ", m_argumentsWithFixup.size() - argumentCountIncludingThis);
+    out.print(", stackOffset = ", stackOffset);
+    out.print(" (", virtualRegisterForLocal(0), " maps to ", virtualRegisterForLocal(0) + stackOffset, ")>");
+}
+
+void InlineCallFrame::dump(PrintStream& out) const
+{
+    dumpInContext(out, nullptr);
+}
+
+} // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
+{
+    switch (kind) {
+    case JSC::InlineCallFrame::Call:
+        out.print("Call");
+        return;
+    case JSC::InlineCallFrame::Construct:
+        out.print("Construct");
+        return;
+    case JSC::InlineCallFrame::TailCall:
+        out.print("TailCall");
+        return;
+    case JSC::InlineCallFrame::CallVarargs:
+        out.print("CallVarargs");
+        return;
+    case JSC::InlineCallFrame::ConstructVarargs:
+        out.print("ConstructVarargs");
+        return;
+    case JSC::InlineCallFrame::TailCallVarargs:
+        out.print("TailCallVarargs");
+        return;
+    case JSC::InlineCallFrame::GetterCall:
+        out.print("GetterCall");
+        return;
+    case JSC::InlineCallFrame::SetterCall:
+        out.print("SetterCall");
+        return;
+    case JSC::InlineCallFrame::ProxyObjectLoadCall:
+        out.print("ProxyObjectLoadCall");
+        return;
+    case JSC::InlineCallFrame::ProxyObjectStoreCall:
+        out.print("ProxyObjectStoreCall");
+        return;
+    case JSC::InlineCallFrame::ProxyObjectInCall:
+        out.print("ProxyObjectInCall");
+        return;
+    case JSC::InlineCallFrame::BoundFunctionCall:
+        out.print("BoundFunctionCall");
+        return;
+    case JSC::InlineCallFrame::BoundFunctionTailCall:
+        out.print("BoundFunctionTailCall");
+        return;
+    case JSC::InlineCallFrame::ArraySortComparatorCall:
+        out.print("ArraySortComparatorCall");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+

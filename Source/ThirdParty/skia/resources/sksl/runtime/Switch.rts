@@ -1,0 +1,18 @@
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    // Basic switch test.
+    half4 color;
+    switch (int(colorGreen.g)) {
+        case 0:
+            color = colorRed;
+            break;
+        case 1:
+            color = colorGreen;
+            break;
+        default:
+            color = colorRed;
+            break;
+    }
+    return color;
+}

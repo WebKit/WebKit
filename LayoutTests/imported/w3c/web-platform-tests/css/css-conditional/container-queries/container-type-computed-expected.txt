@@ -1,0 +1,7 @@
+
+PASS Property container-type value 'initial'
+PASS Property container-type value 'unset'
+PASS Property container-type value 'inline-size'
+PASS Property container-type value 'size'
+PASS Property container-type value 'normal'
+

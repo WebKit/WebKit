@@ -1,0 +1,4 @@
+ click me
+
+PASS type attribute on anchor doesn't cause document to be loaded as HTML
+

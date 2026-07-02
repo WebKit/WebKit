@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Only .url should work, previously supported .URL should not.");
+
+var url = "http://127.0.0.1:8000/eventsource/resources/event-stream.py";
+var source = new EventSource(url);
+
+shouldBeEqualToString("source.url", url);
+shouldBeUndefined("source.URL");
+
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

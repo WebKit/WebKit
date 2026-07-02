@@ -1,0 +1,5 @@
+Target
+Source
+
+FAIL Already in-view source triggers animation assert_equals: expected "200px" but got "104.59375px"
+

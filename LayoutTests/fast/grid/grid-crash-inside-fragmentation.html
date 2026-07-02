@@ -1,0 +1,16 @@
+<style>
+html, body, div {
+  overflow-y: -webkit-paged-x;
+}
+
+span {
+  container-type: size;
+}
+</style>
+PASS if no crash or assert.<div style="display: grid"></div><span><pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+document.documentElement.style.display = "flex";
+</script>

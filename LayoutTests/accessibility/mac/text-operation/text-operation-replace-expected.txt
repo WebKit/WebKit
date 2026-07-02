@@ -1,0 +1,31 @@
+Tests that a Replace text operation replaces text and attempts to match the case of the replaced string.
+
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'fox named finn'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick brown fox named finn jumps over the lazy dog.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'Capitalized Prefix: The'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: Capitalized Prefix: The quick brown fox jumps over the lazy dog.'
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'LAZY'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT3: The quick brown fox jumps over the LAZY dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === '[replaced string]'
+PASS: operationResult[1] === '[replaced string]'
+PASS: operationResult[2] === '[Replaced String]'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT4: [Replaced String] quick brown [replaced string] jumps over the [replaced string] dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'three'
+PASS: operationResult[1] === 'two'
+PASS: operationResult[2] === 'One'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT5: One quick brown two jumps over the three dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'three'
+PASS: operationResult[1] === 'two'
+PASS: operationResult[2] === ''
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT6:  quick brown two jumps over the three dog.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

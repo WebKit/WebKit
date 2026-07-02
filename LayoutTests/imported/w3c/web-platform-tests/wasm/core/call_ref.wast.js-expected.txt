@@ -1,0 +1,57 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (call_ref.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (call_ref.wast:129)
+PASS #4 Test that WebAssembly compilation succeeds (call_ref.wast:138)
+PASS #5 Test that WebAssembly compilation succeeds (call_ref.wast:151)
+FAIL #6 Test that WebAssembly compilation fails (call_ref.wast:167) assert_equals: expected true but got false
+FAIL #7 Test that WebAssembly compilation fails (call_ref.wast:183) assert_equals: expected true but got false
+PASS #8 Test that WebAssembly compilation fails (call_ref.wast:200)
+PASS #9 Test that WebAssembly compilation fails (call_ref.wast:210)
+PASS #10 Reinitialize the default imports
+PASS #11 Test that WebAssembly compilation succeeds (call_ref.wast:1)
+PASS #12 Test that WebAssembly instantiation succeeds (call_ref.wast:1)
+PASS #13 Test that a WebAssembly code returns a specific result (call_ref.wast:94)
+PASS #14 Test that a WebAssembly code returns a specific result (call_ref.wast:95)
+PASS #15 Test that a WebAssembly code traps (call_ref.wast:97)
+PASS #16 Test that a WebAssembly code returns a specific result (call_ref.wast:99)
+PASS #17 Test that a WebAssembly code returns a specific result (call_ref.wast:100)
+PASS #18 Test that a WebAssembly code returns a specific result (call_ref.wast:101)
+PASS #19 Test that a WebAssembly code returns a specific result (call_ref.wast:102)
+PASS #20 Test that a WebAssembly code returns a specific result (call_ref.wast:103)
+PASS #21 Test that a WebAssembly code returns a specific result (call_ref.wast:104)
+PASS #22 Test that a WebAssembly code returns a specific result (call_ref.wast:105)
+PASS #23 Test that a WebAssembly code returns a specific result (call_ref.wast:106)
+PASS #24 Test that a WebAssembly code returns a specific result (call_ref.wast:111)
+PASS #25 Test that a WebAssembly code returns a specific result (call_ref.wast:112)
+PASS #26 Test that a WebAssembly code returns a specific result (call_ref.wast:113)
+PASS #27 Test that a WebAssembly code returns a specific result (call_ref.wast:114)
+PASS #28 Test that a WebAssembly code returns a specific result (call_ref.wast:115)
+PASS #29 Test that a WebAssembly code returns a specific result (call_ref.wast:117)
+PASS #30 Test that a WebAssembly code returns a specific result (call_ref.wast:118)
+PASS #31 Test that a WebAssembly code returns a specific result (call_ref.wast:119)
+PASS #32 Test that a WebAssembly code returns a specific result (call_ref.wast:120)
+PASS #33 Test that a WebAssembly code returns a specific result (call_ref.wast:121)
+PASS #34 Test that a WebAssembly code returns a specific result (call_ref.wast:122)
+PASS #35 Test that a WebAssembly code returns a specific result (call_ref.wast:123)
+PASS #36 Test that a WebAssembly code returns a specific result (call_ref.wast:124)
+PASS #37 Test that WebAssembly compilation succeeds (call_ref.wast:129)
+PASS #38 Test that WebAssembly instantiation succeeds (call_ref.wast:129)
+PASS #39 Test that a WebAssembly code traps (call_ref.wast:136)
+PASS #40 Test that WebAssembly compilation succeeds (call_ref.wast:138)
+PASS #41 Test that WebAssembly instantiation succeeds (call_ref.wast:138)
+PASS #42 Test that a WebAssembly code traps (call_ref.wast:149)
+PASS #43 Test that WebAssembly compilation succeeds (call_ref.wast:151)
+PASS #44 Test that WebAssembly instantiation succeeds (call_ref.wast:151)
+PASS #45 Test that a WebAssembly code traps (call_ref.wast:165)
+FAIL #46 Test that WebAssembly compilation fails (call_ref.wast:167) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:157:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:186:9
+call_ref_wast_js@http://web-platform.test:8800/wasm/core/js/call_ref.wast.js:109:15
+global code@http://web-platform.test:8800/wasm/core/js/call_ref.wast.js:120:3 expected true got false
+FAIL #47 Test that WebAssembly compilation fails (call_ref.wast:183) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:157:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:186:9
+call_ref_wast_js@http://web-platform.test:8800/wasm/core/js/call_ref.wast.js:112:15
+global code@http://web-platform.test:8800/wasm/core/js/call_ref.wast.js:120:3 expected true got false
+PASS #48 Test that WebAssembly compilation fails (call_ref.wast:200)
+PASS #49 Test that WebAssembly compilation fails (call_ref.wast:210)
+

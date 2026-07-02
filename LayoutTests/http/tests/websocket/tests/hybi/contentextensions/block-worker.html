@@ -1,0 +1,25 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function endTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startsWith(str, prefix) {
+    return str.indexOf(prefix) == 0;
+}
+
+var worker = new Worker("resources/block-worker.js");
+worker.onmessage = function (event)
+{
+    var message = event.data;
+    console.log(message);
+    if (startsWith(message, "PASS") || startsWith(message, "FAIL"))
+		endTest();
+};
+</script>

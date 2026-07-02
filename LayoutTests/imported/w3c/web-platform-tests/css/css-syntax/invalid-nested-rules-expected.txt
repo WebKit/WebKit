@@ -1,0 +1,3 @@
+
+PASS Continues parsing after block on invalid rule error
+

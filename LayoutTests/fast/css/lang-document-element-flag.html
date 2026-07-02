@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that the document element has effectiveLangKnownToMatchDocumentElement flag set to true");
+
+var frame, iframeDocElement, newDocElement, body;
+
+if (window.internals) {
+    shouldBeTrue('internals.effectiveLangKnownToMatchDocumentElement(document.documentElement)');
+
+    frame = document.createElement("iframe");
+    frame.srcdoc = "<!DOCTYPE html><html lang=en><body>";
+    document.body.append(frame);
+
+    frame.onload = function() {
+        iframeDocElement = frame.contentDocument.documentElement;
+        shouldBeTrue('internals.effectiveLangKnownToMatchDocumentElement(iframeDocElement)');
+        iframeDocElement.remove();
+        shouldBeFalse('internals.effectiveLangKnownToMatchDocumentElement(iframeDocElement)');
+        body = iframeDocElement.querySelector("body");
+        shouldBeTrue('internals.effectiveLangKnownToMatchDocumentElement(body)');
+        newDocElement = frame.contentDocument.createElement("html");
+        newDocElement.lang = "de";
+        frame.contentDocument.append(newDocElement);
+        shouldBeTrue('internals.effectiveLangKnownToMatchDocumentElement(newDocElement)');
+        frame.remove();
+        finishJSTest();
+    };
+
+    var jsTestIsAsync = true;
+} else
+    testFailed("This test requires window.internals");
+</script>
+</body>

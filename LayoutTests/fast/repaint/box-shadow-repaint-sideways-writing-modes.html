@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            margin: 20px;
+            border: 1px solid black;
+            width: 400px;
+            height: 250px;
+        }
+
+        .box {
+            margin: 25px;
+            width: 150px;
+            height: 100px;
+            background-color: green;
+            box-shadow: -10px -10px 0 10px red;
+        }
+        
+        body.changed .box {
+            box-shadow: -10px -10px 0 10px green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="writing-mode: sideways-rl">
+        <div class="box"></div>
+    </div>
+
+    <div class="container" style="writing-mode: sideways-lr">
+        <div class="box"></div>
+    </div>
+
+    <script src="resources/text-based-repaint.js"></script>
+    <script>
+        repaintTest = function() {
+            document.body.classList.add('changed');
+        };
+        runRepaintTest();
+    </script>
+</body>
+</html>

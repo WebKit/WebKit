@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="timeout" content="long">
+<script src="media-source-loader.js"></script>
+<script src="../video-test.js"></script>
+<script>
+var loader;
+var source;
+var source2;
+var sourceBuffer;
+var sourceBuffer2;
+var controller;
+var video2;
+var i;
+
+function loaderPromise(loader) {
+    return new Promise((resolve, reject) => {
+        loader.onload = resolve;
+        loader.onerror = reject;
+    });
+}
+
+async function start() {
+    loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+    await loaderPromise(loader);
+
+    var videos = document.getElementsByTagName('video');
+	  video = videos[0];
+	  video2 = videos[1];
+	  run('controller = video.controller');
+
+    source = new MediaSource();
+    run('video.src = URL.createObjectURL(source)');
+    await waitFor(source, 'sourceopen');
+    waitFor(video, 'error').then(failTest);
+
+    run('sourceBuffer = source.addSourceBuffer(loader.type())');
+    run('sourceBuffer.appendBuffer(loader.initSegment())');
+    await waitFor(sourceBuffer, 'update');
+
+    consoleWrite('Append all media segments')
+    for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+        sourceBuffer.appendBuffer(loader.mediaSegment(i));
+        await waitFor(sourceBuffer, 'update', true);
+    }
+
+    source2 = new MediaSource();
+    run('video2.src = URL.createObjectURL(source2)');
+    await waitFor(source2, 'sourceopen');
+    waitFor(video2, 'error').then(failTest);
+
+    run('sourceBuffer2 = source2.addSourceBuffer(loader.type())');
+    run('sourceBuffer2.appendBuffer(loader.initSegment())');
+    await waitFor(sourceBuffer2, 'update');
+
+    consoleWrite('Append all media segments')
+    for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+        sourceBuffer2.appendBuffer(loader.mediaSegment(i));
+        await waitFor(sourceBuffer2, 'update', true);
+    }
+
+    run('controller.play()');
+    await waitFor(controller, 'playing');
+    await waitForConditionOrTimeout('!internals.isPlayerPaused(video)', false, 5000);
+    await waitForConditionOrTimeout('!internals.isPlayerPaused(video2)', false, 5000);
+
+	  run('controller.pause()');
+    await waitFor(controller, 'pause');
+    await waitForConditionOrTimeout('internals.isPlayerPaused(video)', false, 5000);
+    await waitForConditionOrTimeout('internals.isPlayerPaused(video2)', false, 5000);
+
+    run('controller.play()');
+	  await waitFor(controller, 'play');
+
+    testExpected('controller.playbackState', 'playing');
+    await waitForConditionOrTimeout('!internals.isPlayerPaused(video)', false, 5000);
+    await waitForConditionOrTimeout('!internals.isPlayerPaused(video2)', false, 5000);
+
+    endTest();
+}
+</script>
+</head>
+<body onload="start()">
+	<video mediaGroup="group" controls></video>
+	<video mediaGroup="group" controls></video>
+</body>
+</html>

@@ -1,0 +1,19 @@
+
+PASS :index_format,uint16:
+PASS :index_format,uint32:
+PASS :index_format,change_pipeline_after_setIndexBuffer:setPipelineBeforeSetIndexBuffer=false
+PASS :index_format,change_pipeline_after_setIndexBuffer:setPipelineBeforeSetIndexBuffer=true
+PASS :index_format,setIndexBuffer_before_setPipeline:setIndexBufferBeforeSetPipeline=false
+PASS :index_format,setIndexBuffer_before_setPipeline:setIndexBufferBeforeSetPipeline=true
+PASS :index_format,setIndexBuffer_different_formats:
+PASS :primitive_restart:indexFormat="uint16";primitiveTopology="point-list"
+PASS :primitive_restart:indexFormat="uint16";primitiveTopology="line-list"
+PASS :primitive_restart:indexFormat="uint16";primitiveTopology="line-strip"
+PASS :primitive_restart:indexFormat="uint16";primitiveTopology="triangle-list"
+PASS :primitive_restart:indexFormat="uint16";primitiveTopology="triangle-strip"
+PASS :primitive_restart:indexFormat="uint32";primitiveTopology="point-list"
+PASS :primitive_restart:indexFormat="uint32";primitiveTopology="line-list"
+PASS :primitive_restart:indexFormat="uint32";primitiveTopology="line-strip"
+PASS :primitive_restart:indexFormat="uint32";primitiveTopology="triangle-list"
+PASS :primitive_restart:indexFormat="uint32";primitiveTopology="triangle-strip"
+

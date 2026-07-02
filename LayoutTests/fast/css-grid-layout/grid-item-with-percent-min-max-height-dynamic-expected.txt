@@ -1,0 +1,10 @@
+Test that grid items with a percentage logical min-height or max-height resolve their size properly.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

@@ -1,0 +1,12 @@
+Some hint   Yes   No
+This tests form controls use their fieldset parent's description as AXHelp.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS yesRadio.helpText is 'AXHelp: Some hint'
+PASS noRadio.helpText is 'AXHelp: Some hint'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

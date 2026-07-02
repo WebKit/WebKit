@@ -1,0 +1,8 @@
+This is a text
+
+PASS initial color: div#subject.color
+PASS color after inserting text and div > .descendant: div#subject.color
+PASS color after wiping #child to remove div > .descendant: div#subject.color
+PASS color after inserting text and #child > .descendant: div#subject.color
+PASS color after wiping #child to remove .descendant: div#subject.color
+

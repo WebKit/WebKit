@@ -1,0 +1,22 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "tests",
+    srcs = [
+        "BentleyOttmann1Test.cpp",
+        "BruteForceCrossingsTest.cpp",
+        "ContourTest.cpp",
+        "EventQueueTest.cpp",
+        "Int96Test.cpp",
+        "MyersTest.cpp",
+        "PointTest.cpp",
+        "SegmentTest.cpp",
+        "SweepLineTest.cpp",
+    ],
+)

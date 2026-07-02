@@ -1,0 +1,5 @@
+
+PASS Focus controller should treat each slot as a focus scope.
+
+
+

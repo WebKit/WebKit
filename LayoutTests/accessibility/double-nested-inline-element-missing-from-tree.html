@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+    function dumpAccessibilityChildren(element, level) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.role + " " + element.stringValue);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+                return false;
+        }
+        return true;
+    }
+</script>
+</head>
+
+<body id="body">
+
+<span>
+    <span>
+        test1
+        <div></div>
+    </span><div>
+    test2
+    </div>
+</span>
+
+<div>End of test</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    if (window.accessibilityController) {
+        description("This tests that when you have a two nested inline continuations and the child one has no siblings, that we go back to the parent to check for its continuation.");
+
+        var content = accessibilityController.rootElement.childAtIndex(0);
+        dumpAccessibilityChildren(content, 0);
+    }
+    successfullyParsed = true;
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

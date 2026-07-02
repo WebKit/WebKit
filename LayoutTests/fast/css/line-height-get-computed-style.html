@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Test line-height `getComputedStyle` serialization</title>
+    <style>
+        #target {
+            font-family: Ahem;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+<p id="target">text of font-size 10px</p>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+    let target = document.getElementById('target')
+    const test_line_height = (line_height_percent, expected_line_height) => {
+        test(() => {
+            target.style['line-height'] = line_height_percent
+            const actual_line_height = window.getComputedStyle(target)['line-height']
+            assert_equals(actual_line_height, expected_line_height)
+        }, `with font-size: 10px, #target.style['line-height'] = ${line_height_percent} should result in a used line-height of ${expected_line_height}`)
+    }
+    
+    test_line_height(1e+26, '999999914697178458896728064px')
+    
+    // Per spec, CSS numbers shouldn't serialize with more than 6 decimal places.
+    test_line_height(2.53821, '25.382099px')
+    test_line_height(2.6666667, '26.666664px')
+    // 20 decimals.
+    test_line_height(2.12345678912345678912, '21.234568px')
+    test_line_height(2.5, '25px')
+    test_line_height(2, '20px')
+    test_line_height(1.05, '10.5px')
+    test_line_height(1.049, '10.49px')
+    test_line_height(1.0491, '10.491001px')
+    test_line_height(0, '0px')
+    test_line_height(1, '10px')
+    
+    target.remove()
+</script>
+</body>
+</html>

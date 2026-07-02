@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<div><div id="container"><span id="span1"></span><span id="span2"></span><span></span><div></div><dialog id="dialog"></dialog>&#xA;</div>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  span1.addEventListener("DOMNodeRemoved", _ => {
+      let range =  document.createRange();
+      range.setEndAfter(span2);
+      range.deleteContents();
+      container.addEventListener("DOMCharacterDataModified", _ => {
+        container.removeChild(container.firstChild);
+        window.testRunner?.notifyDone();
+      }, {once: true});
+      dialog.outerHTML = "PASS if no crash.";
+      for(var i=0;i<100;i++) new Uint8Array(1024*1024);
+  }, {once: true});
+  let range = document.createRange();
+  range.setEndAfter(span2);
+  range.deleteContents();
+</script>

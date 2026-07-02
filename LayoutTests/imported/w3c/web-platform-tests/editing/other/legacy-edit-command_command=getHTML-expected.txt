@@ -1,0 +1,12 @@
+abc
+
+
+PASS Wait for load...
+PASS command: "getHTML", param: "undefined"
+PASS execCommand("getHTML", false, undefined)
+PASS queryCommandState("getHTML")
+PASS queryCommandEnabled("getHTML")
+PASS queryCommandIndeterm("getHTML")
+PASS queryCommandValue("getHTML")
+PASS queryCommandSupported("getHTML")
+

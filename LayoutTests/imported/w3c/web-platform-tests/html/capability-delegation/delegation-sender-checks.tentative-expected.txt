@@ -1,0 +1,10 @@
+!DOCTYPE html>
+Verifies that capability delegation related error checks in HTML postMessage algorithm are enforced correctly.
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Delegating an unsupported capability throws an exception
+NOTRUN Delegating to targetOrigin='*' throws an exception
+NOTRUN Delegating without user activation throws an exception
+

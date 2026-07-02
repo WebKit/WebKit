@@ -1,0 +1,1037 @@
+// Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+GPUProcess/GPUProcess.cpp @cost:7
+GPUProcess/GPUConnectionToWebProcess.cpp @cost:8
+GPUProcess/GPUProcessPreferences.cpp
+GPUProcess/RemoteSharedResourceCache.cpp
+GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
+GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
+GPUProcess/ShapeDetection/RemoteTextDetector.cpp
+GPUProcess/ShapeDetection/ShapeDetectionObjectHeap.cpp
+GPUProcess/graphics/ImageBufferShareableAllocator.cpp
+GPUProcess/graphics/RemoteDisplayListRecorder.cpp
+GPUProcess/graphics/RemoteGraphicsContext.cpp @cost:3
+GPUProcess/graphics/RemoteGraphicsContextGL.cpp @cost:3
+GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.cpp @cost:3
+GPUProcess/graphics/RemoteImageBuffer.cpp
+GPUProcess/graphics/RemoteImageBufferGraphicsContext.cpp
+GPUProcess/graphics/RemoteImageBufferSet.cpp
+GPUProcess/graphics/RemoteRenderingBackend.cpp @cost:6
+GPUProcess/graphics/RemoteResourceCache.cpp
+GPUProcess/graphics/RemoteSnapshot.cpp
+GPUProcess/graphics/RemoteSnapshotRecorder.cpp
+GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
+GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
+GPUProcess/graphics/ShareablePixelBuffer.cpp
+GPUProcess/graphics/Model/ModelObjectHeap.cpp
+GPUProcess/graphics/Model/RemoteMesh.cpp
+GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
+GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
+GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp
+GPUProcess/graphics/WebGPU/RemoteBuffer.cpp
+GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp
+GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp
+GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.cpp
+GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp
+GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp
+GPUProcess/graphics/WebGPU/RemoteDevice.cpp @cost:3
+GPUProcess/graphics/WebGPU/RemoteExternalTexture.cpp
+GPUProcess/graphics/WebGPU/RemoteGPU.cpp @cost:3
+GPUProcess/graphics/WebGPU/RemotePipelineLayout.cpp
+GPUProcess/graphics/WebGPU/RemotePresentationContext.cpp
+GPUProcess/graphics/WebGPU/RemoteQuerySet.cpp
+GPUProcess/graphics/WebGPU/RemoteQueue.cpp
+GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp
+GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp
+GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp
+GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp
+GPUProcess/graphics/WebGPU/RemoteSampler.cpp
+GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
+GPUProcess/graphics/WebGPU/RemoteTexture.cpp
+GPUProcess/graphics/WebGPU/RemoteTextureView.cpp
+GPUProcess/graphics/WebGPU/RemoteXRBinding.cpp
+GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer.cpp
+GPUProcess/graphics/WebGPU/RemoteXRSubImage.cpp
+GPUProcess/graphics/WebGPU/RemoteXRView.cpp
+GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp @cost:3
+GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
+GPUProcess/media/RemoteAudioSessionProxy.cpp
+GPUProcess/media/RemoteAudioSessionProxyManager.cpp
+GPUProcess/media/RemoteAudioTrackProxy.cpp @cost:3
+GPUProcess/media/RemoteAudioVideoRendererProxyManager.cpp @cost:3
+GPUProcess/media/RemoteCDMFactoryProxy.cpp
+GPUProcess/media/RemoteCDMInstanceProxy.cpp
+GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp
+GPUProcess/media/RemoteCDMProxy.cpp
+GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp
+GPUProcess/media/RemoteLegacyCDMProxy.cpp @cost:3
+GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp
+GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.cpp
+GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp @cost:4
+GPUProcess/media/RemoteMediaPlayerProxy.cpp @cost:4
+GPUProcess/media/RemoteMediaResource.cpp @cost:3
+GPUProcess/media/RemoteMediaResourceLoader.cpp @cost:3
+GPUProcess/media/RemoteVideoFrameObjectHeap.cpp
+GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
+GPUProcess/media/RemoteTextTrackProxy.cpp @cost:3
+GPUProcess/media/RemoteVideoTrackProxy.cpp @cost:3
+GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
+
+ModelProcess/ModelProcess.cpp
+ModelProcess/ModelConnectionToWebProcess.cpp
+ModelProcess/ModelProcessModelPlayerManagerProxy.cpp
+
+NetworkProcess/BackgroundFetchLoad.cpp @cost:4
+NetworkProcess/DatabaseUtilities.cpp @cost:3
+NetworkProcess/EarlyHintsResourceLoader.cpp @cost:6
+NetworkProcess/NetworkActivityTracker.cpp
+NetworkProcess/NetworkBroadcastChannelRegistry.cpp @cost:4
+NetworkProcess/NetworkCORSPreflightChecker.cpp @cost:4
+NetworkProcess/NetworkConnectionToWebProcess.cpp @cost:8
+NetworkProcess/NetworkContentRuleListManager.cpp @cost:3
+NetworkProcess/NetworkDataTask.cpp @cost:3
+NetworkProcess/NetworkDataTaskBlob.cpp @cost:3
+NetworkProcess/NetworkLoad.cpp @cost:4
+NetworkProcess/NetworkLoadChecker.cpp @cost:7
+NetworkProcess/NetworkLoadScheduler.cpp @cost:3
+NetworkProcess/NetworkOriginAccessPatterns.cpp
+NetworkProcess/NetworkProcess.cpp @cost:11
+NetworkProcess/NetworkProcessPlatformStrategies.cpp
+NetworkProcess/NetworkResourceLoadParameters.cpp @cost:3
+NetworkProcess/NetworkResourceLoadMap.cpp @cost:4
+NetworkProcess/NetworkResourceLoader.cpp @cost:9
+NetworkProcess/NetworkSchemeRegistry.cpp
+NetworkProcess/NetworkSession.cpp @cost:9
+NetworkProcess/NetworkSocketChannel.cpp
+NetworkProcess/PingLoad.cpp @cost:4
+NetworkProcess/PreconnectTask.cpp @cost:3
+
+NetworkProcess/Authentication/AuthenticationManager.cpp @cost:7
+
+NetworkProcess/Classifier/ITPThirdPartyData.cpp
+NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.cpp
+NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp @cost:6
+
+NetworkProcess/Cookies/WebCookieManager.cpp @cost:3
+
+NetworkProcess/Downloads/Download.cpp @cost:4
+NetworkProcess/Downloads/DownloadManager.cpp @cost:5
+NetworkProcess/Downloads/DownloadMonitor.cpp @cost:4
+NetworkProcess/Downloads/PendingDownload.cpp @cost:5
+
+NetworkProcess/Notifications/NetworkNotificationManager.cpp
+NetworkProcess/Notifications/WebPushDaemonConnection.cpp @cost:3
+
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp @cost:3
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp @cost:3
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEphemeralStore.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp @cost:3
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp @cost:3
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementPersistentStore.cpp @cost:3
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp @cost:3
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp
+
+NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp @cost:4
+NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @cost:5
+NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp @cost:3
+NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp @cost:3
+NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify-when(bundle<=8)
+NetworkProcess/ServiceWorker/WebSWRegistrationStore.cpp
+NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify-when(bundle<=8) @cost:11
+NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify-when(bundle<=8) @cost:6
+
+NetworkProcess/SharedWorker/WebSharedWorker.cpp
+NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp @cost:3
+NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp @cost:4
+NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp @cost:4
+
+NetworkProcess/storage/BackgroundFetchStoreManager.cpp
+NetworkProcess/storage/BackgroundFetchStoreImpl.cpp @cost:3
+NetworkProcess/storage/CacheStorageCache.cpp
+NetworkProcess/storage/CacheStorageMemoryStore.cpp
+NetworkProcess/storage/CacheStorageManager.cpp
+NetworkProcess/storage/CacheStorageDiskStore.cpp
+NetworkProcess/storage/CacheStorageRecord.cpp
+NetworkProcess/storage/CacheStorageRegistry.cpp
+NetworkProcess/storage/FileSystemStorageManager.cpp
+NetworkProcess/storage/FileSystemStorageHandle.cpp
+NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp
+NetworkProcess/storage/IDBStorageConnectionToClient.cpp
+NetworkProcess/storage/IDBStorageManager.cpp
+NetworkProcess/storage/IDBStorageRegistry.cpp
+NetworkProcess/storage/LocalStorageManager.cpp
+NetworkProcess/storage/MemoryStorageArea.cpp
+NetworkProcess/storage/NetworkStorageManager.cpp @cost:7
+NetworkProcess/storage/OriginQuotaManager.cpp
+NetworkProcess/storage/OriginStorageManager.cpp
+NetworkProcess/storage/SQLiteStorageArea.cpp
+NetworkProcess/storage/ServiceWorkerStorageManager.cpp
+NetworkProcess/storage/SessionStorageManager.cpp
+NetworkProcess/storage/StorageAreaBase.cpp
+NetworkProcess/storage/StorageAreaRegistry.cpp
+
+NetworkProcess/cache/AsyncRevalidation.cpp
+NetworkProcess/cache/NetworkCache.cpp @cost:4
+NetworkProcess/cache/NetworkCacheBlobStorage.cpp
+NetworkProcess/cache/NetworkCacheCoders.cpp
+NetworkProcess/cache/NetworkCacheData.cpp
+NetworkProcess/cache/NetworkCacheEntry.cpp @cost:3
+NetworkProcess/cache/NetworkCacheFileSystem.cpp
+NetworkProcess/cache/NetworkCacheKey.cpp
+NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp @cost:3
+NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp @cost:4
+NetworkProcess/cache/NetworkCacheStorage.cpp
+NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp
+NetworkProcess/cache/PrefetchCache.cpp
+
+NetworkProcess/webrtc/NetworkMDNSRegister.cpp @cost:4
+NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp @cost:4
+
+NetworkProcess/webtransport/NetworkTransportSession.cpp
+NetworkProcess/webtransport/NetworkTransportStream.cpp
+
+Platform/IPC/DaemonCoders.cpp
+Platform/IPC/FormDataReference.cpp
+
+Shared/ActivityAssertion.cpp
+Shared/AuxiliaryProcess.cpp
+Shared/BlobDataFileReferenceWithSandboxExtension.cpp
+Shared/CacheModel.cpp
+Shared/ContextMenuContextData.cpp
+Shared/DebuggableInfoData.cpp
+Shared/EditingRange.cpp
+Shared/EditorState.cpp
+Shared/FrameInfoData.cpp
+Shared/InspectorExtensionTypes.cpp
+Shared/IPCConnectionTester.cpp
+Shared/IPCStreamTester.cpp
+Shared/IPCTester.cpp
+Shared/IPCTesterReceiver.cpp
+Shared/JavaScriptEvaluationResult.cpp
+Shared/JSHandleInfo.cpp
+Shared/KeyEventInterpretationContext.cpp
+Shared/PersistencyUtils.cpp
+Shared/PrintInfo.cpp
+Shared/ProcessTerminationReason.cpp
+Shared/RTCNetwork.cpp
+Shared/RTCPacketOptions.cpp
+Shared/ScriptTrackingPrivacyFilter.cpp
+Shared/ScrollingAccelerationCurve.cpp
+Shared/SessionState.cpp
+Shared/SharedStringHashStore.cpp
+Shared/SharedStringHashTableReadOnly.cpp
+Shared/SharedStringHashTable.cpp
+Shared/TextExtractionToStringConversion.cpp
+Shared/TextExtractionURLCache.cpp
+Shared/UserData.cpp
+Shared/WebBackForwardListFrameItem.cpp
+Shared/WebBackForwardListItem.cpp
+Shared/WebCompiledContentRuleList.cpp
+Shared/WebCompiledContentRuleListData.cpp
+Shared/WebContextMenuItem.cpp
+Shared/WebContextMenuItemData.cpp
+Shared/WebErrors.cpp
+Shared/WebEvent.cpp
+Shared/WebEventConversion.cpp
+Shared/WebEventModifier.cpp
+Shared/WebFindOptions.cpp
+Shared/WebFoundTextRange.cpp
+Shared/WebGeolocationPosition.cpp
+Shared/WebHitTestResultData.cpp
+Shared/WebImage.cpp
+Shared/WebKeyboardEvent.cpp
+Shared/WebKit2Initialize.cpp
+Shared/WebMemorySampler.cpp
+Shared/WebMouseEvent.cpp
+Shared/WebPageGroupData.cpp
+Shared/WebPlatformTouchPoint.cpp
+Shared/WebPopupItem.cpp
+Shared/WebPreferencesDefaultValues.cpp
+Shared/WebPreferencesStore.cpp
+Shared/WebPushMessage.cpp
+Shared/WebTouchEvent.cpp
+Shared/WebUserContentControllerDataTypes.cpp
+Shared/WebWheelEventCoalescer.cpp
+Shared/WebWheelEvent.cpp
+Shared/WebsiteAutoplayPolicy.cpp
+Shared/WebsitePoliciesData.cpp
+
+Shared/API/APIArray.cpp
+Shared/API/APIData.cpp
+Shared/API/APIDictionary.cpp
+Shared/API/APIError.cpp
+Shared/API/APIObject.cpp
+Shared/API/APIURLRequest.cpp
+
+Shared/API/c/WKArray.cpp
+Shared/API/c/WKCertificateInfo.cpp
+Shared/API/c/WKContextMenuItem.cpp
+Shared/API/c/WKData.cpp
+Shared/API/c/WKDeprecatedFunctions.cpp
+Shared/API/c/WKDictionary.cpp
+Shared/API/c/WKErrorRef.cpp
+Shared/API/c/WKGeometry.cpp
+Shared/API/c/WKImage.cpp
+Shared/API/c/WKMutableArray.cpp
+Shared/API/c/WKMutableDictionary.cpp
+Shared/API/c/WKNumber.cpp
+Shared/API/c/WKPluginInformation.cpp
+Shared/API/c/WKRenderLayer.cpp
+Shared/API/c/WKRenderObject.cpp
+Shared/API/c/WKSecurityOriginRef.cpp
+Shared/API/c/WKSerializedScriptValue.cpp
+Shared/API/c/WKString.cpp
+Shared/API/c/WKType.cpp
+Shared/API/c/WKURL.cpp
+Shared/API/c/WKURLRequest.cpp
+Shared/API/c/WKURLResponse.cpp
+Shared/API/c/WKUserContentURLPattern.cpp
+
+Shared/Databases/IndexedDB/IDBUtilities.cpp
+
+Shared/Extensions/WebExtensionFrameIdentifier.cpp
+Shared/Extensions/WebExtensionSQLiteDatabase.cpp
+Shared/Extensions/WebExtensionSQLiteStatement.cpp
+Shared/Extensions/WebExtensionSQLiteRow.cpp
+Shared/Extensions/WebExtensionSQLiteStore.cpp
+Shared/Extensions/WebExtensionLocalization.cpp
+Shared/Extensions/WebExtensionPermission.cpp
+Shared/Extensions/WebExtensionUtilities.cpp
+Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStore.cpp
+
+Shared/Gamepad/GamepadData.cpp
+
+Shared/graphics/ImageBufferSet.cpp
+
+Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
+Shared/WebGPU/WebGPUBindGroupEntry.cpp
+Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp
+Shared/WebGPU/WebGPUBindGroupLayoutEntry.cpp
+Shared/WebGPU/WebGPUBlendComponent.cpp
+Shared/WebGPU/WebGPUBlendState.cpp
+Shared/WebGPU/WebGPUBufferBinding.cpp
+Shared/WebGPU/WebGPUBufferBindingLayout.cpp
+Shared/WebGPU/WebGPUBufferDescriptor.cpp
+Shared/WebGPU/WebGPUCanvasConfiguration.cpp
+Shared/WebGPU/WebGPUColor.cpp
+Shared/WebGPU/WebGPUColorTargetState.cpp
+Shared/WebGPU/WebGPUCommandBufferDescriptor.cpp
+Shared/WebGPU/WebGPUCommandEncoderDescriptor.cpp
+Shared/WebGPU/WebGPUCompilationMessage.cpp
+Shared/WebGPU/WebGPUComputePassDescriptor.cpp
+Shared/WebGPU/WebGPUComputePassTimestampWrites.cpp
+Shared/WebGPU/WebGPUComputePipelineDescriptor.cpp
+Shared/WebGPU/WebGPUDepthStencilState.cpp
+Shared/WebGPU/WebGPUDeviceDescriptor.cpp
+Shared/WebGPU/WebGPUError.cpp
+Shared/WebGPU/WebGPUExtent3D.cpp
+Shared/WebGPU/WebGPUExternalTextureBindingLayout.cpp
+Shared/WebGPU/WebGPUExternalTextureDescriptor.cpp
+Shared/WebGPU/WebGPUFragmentState.cpp
+Shared/WebGPU/WebGPUImageCopyBuffer.cpp
+Shared/WebGPU/WebGPUImageCopyExternalImage.cpp
+Shared/WebGPU/WebGPUImageCopyTexture.cpp
+Shared/WebGPU/WebGPUImageCopyTextureTagged.cpp
+Shared/WebGPU/WebGPUImageDataLayout.cpp
+Shared/WebGPU/WebGPUInternalError.cpp
+Shared/WebGPU/WebGPUMultisampleState.cpp
+Shared/WebGPU/WebGPUObjectDescriptorBase.cpp
+Shared/WebGPU/WebGPUOrigin2D.cpp
+Shared/WebGPU/WebGPUOrigin3D.cpp
+Shared/WebGPU/WebGPUOutOfMemoryError.cpp
+Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp
+Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
+Shared/WebGPU/WebGPUPresentationContextDescriptor.cpp
+Shared/WebGPU/WebGPUPrimitiveState.cpp
+Shared/WebGPU/WebGPUProgrammableStage.cpp
+Shared/WebGPU/WebGPUQuerySetDescriptor.cpp
+Shared/WebGPU/WebGPURenderBundleDescriptor.cpp
+Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.cpp
+Shared/WebGPU/WebGPURenderPassColorAttachment.cpp
+Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp
+Shared/WebGPU/WebGPURenderPassDescriptor.cpp
+Shared/WebGPU/WebGPURenderPassLayout.cpp
+Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
+Shared/WebGPU/WebGPURenderPipelineDescriptor.cpp
+Shared/WebGPU/WebGPURequestAdapterOptions.cpp
+Shared/WebGPU/WebGPUSamplerBindingLayout.cpp
+Shared/WebGPU/WebGPUSamplerDescriptor.cpp
+Shared/WebGPU/WebGPUShaderModuleCompilationHint.cpp
+Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp
+Shared/WebGPU/WebGPUStencilFaceState.cpp
+Shared/WebGPU/WebGPUStorageTextureBindingLayout.cpp
+Shared/WebGPU/WebGPUSupportedFeatures.cpp
+Shared/WebGPU/WebGPUSupportedLimits.cpp
+Shared/WebGPU/WebGPUTextureBindingLayout.cpp
+Shared/WebGPU/WebGPUTextureDescriptor.cpp
+Shared/WebGPU/WebGPUTextureViewDescriptor.cpp
+Shared/WebGPU/WebGPUValidationError.cpp
+Shared/WebGPU/WebGPUVertexAttribute.cpp
+Shared/WebGPU/WebGPUVertexBufferLayout.cpp
+Shared/WebGPU/WebGPUVertexState.cpp
+
+Shared/WebsiteData/WebsiteData.cpp
+
+Shared/XR/XRDeviceProxy.cpp
+
+UIProcess/AboutSchemeHandler.cpp
+UIProcess/AuxiliaryProcessProxy.cpp @cost:4
+UIProcess/BackgroundProcessResponsivenessTimer.cpp
+UIProcess/BrowsingContextGroup.cpp
+UIProcess/DeviceIdHashSaltStorage.cpp
+UIProcess/DisplayLink.cpp
+UIProcess/DisplayLinkProcessProxyClient.cpp
+UIProcess/DrawingAreaProxy.cpp
+UIProcess/EnhancedSecurityTracking.cpp
+UIProcess/FindStringCallbackAggregator.cpp @cost:3
+UIProcess/FindTextMatchesCallbackAggregator.cpp
+UIProcess/FrameLoadState.cpp
+UIProcess/FrameProcess.cpp
+UIProcess/GeolocationPermissionRequestManagerProxy.cpp @cost:3
+UIProcess/GeolocationPermissionRequestProxy.cpp
+UIProcess/LegacyGlobalSettings.cpp
+UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp @cost:4
+UIProcess/MediaKeySystemPermissionRequestProxy.cpp
+UIProcess/OverrideLanguages.cpp
+UIProcess/PageClient.cpp
+UIProcess/PageLoadState.cpp
+UIProcess/ProcessActivityGroup.cpp
+UIProcess/ProcessAssertion.cpp
+UIProcess/ProcessThrottler.cpp
+UIProcess/ProvisionalFrameProxy.cpp
+UIProcess/ProvisionalPageProxy.cpp
+UIProcess/RemotePageDrawingAreaProxy.cpp
+UIProcess/RemotePageFullscreenManagerProxy.cpp
+UIProcess/RemotePageMediaSessionManagerProxy.cpp
+UIProcess/RemotePagePlaybackSessionManagerProxy.cpp
+UIProcess/RemotePageProxy.cpp
+UIProcess/RemotePageScreenOrientationManagerProxy.cpp
+UIProcess/RemotePageVideoPresentationManagerProxy.cpp
+UIProcess/RemotePageWebAuthenticatorCoordinatorProxy.cpp
+UIProcess/RemotePageWebDeviceOrientationUpdateProviderProxy.cpp
+UIProcess/ResponsivenessTimer.cpp
+UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
+UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
+UIProcess/SpeechRecognitionServer.cpp
+UIProcess/SuspendedPageProxy.cpp @cost:5
+UIProcess/SystemPreviewController.cpp
+UIProcess/SpeechRecognitionPermissionManager.cpp
+UIProcess/TextChecker.cpp
+UIProcess/TextCheckerCompletion.cpp
+UIProcess/TextExtractionAssertionScope.cpp
+UIProcess/TextExtractionCache.cpp
+UIProcess/UIProcessLogInitialization.cpp
+UIProcess/UserMediaPermissionCheckProxy.cpp
+UIProcess/UserMediaPermissionRequestManagerProxy.cpp @cost:5
+UIProcess/UserMediaPermissionRequestProxy.cpp
+UIProcess/UserMediaProcessManager.cpp
+UIProcess/VisitedLinkStore.cpp
+UIProcess/WebBackForwardCache.cpp
+UIProcess/WebBackForwardCacheEntry.cpp
+UIProcess/WebBackForwardList.cpp
+UIProcess/WebColorPicker.cpp
+UIProcess/WebContextClient.cpp
+UIProcess/WebContextInjectedBundleClient.cpp
+UIProcess/WebContextMenuListenerProxy.cpp
+UIProcess/WebContextMenuProxy.cpp @cost:3
+UIProcess/WebDataListSuggestionsDropdown.cpp
+UIProcess/WebDateTimePicker.cpp
+UIProcess/WebEditCommandProxy.cpp @cost:3
+UIProcess/WebFormClient.cpp
+UIProcess/WebFormSubmissionListenerProxy.cpp
+UIProcess/WebFramePolicyListenerProxy.cpp
+UIProcess/WebFrameProxy.cpp @cost:6
+UIProcess/WebFullScreenManagerProxy.cpp
+UIProcess/WebGeolocationManagerProxy.cpp
+UIProcess/WebGeolocationProvider.cpp
+UIProcess/WebLockRegistryProxy.cpp
+UIProcess/WebNavigationState.cpp
+UIProcess/WebOpenPanelResultListenerProxy.cpp
+UIProcess/WebPageDiagnosticLoggingClient.cpp
+UIProcess/WebPageGroup.cpp
+UIProcess/WebPageInjectedBundleClient.cpp
+UIProcess/WebPageProxy.cpp
+UIProcess/WebPageProxyMessageReceiverRegistration.cpp @cost:3
+UIProcess/WebPageProxyTesting.cpp @cost:4
+UIProcess/WebPasteboardProxy.cpp
+UIProcess/WebPermissionControllerProxy.cpp
+UIProcess/WebPreferences.cpp
+UIProcess/WebProcessActivityState.cpp
+UIProcess/WebProcessCache.cpp
+UIProcess/WebProcessPool.cpp @cost:8
+UIProcess/WebProcessProxy.cpp @cost:8
+UIProcess/WebScreenOrientationManagerProxy.cpp
+UIProcess/WebURLSchemeHandler.cpp
+UIProcess/WebURLSchemeTask.cpp @cost:3
+
+UIProcess/API/APIAttachment.cpp
+UIProcess/API/APIContentRuleList.cpp
+UIProcess/API/APIContentRuleListAction.cpp
+UIProcess/API/APIContentRuleListStore.cpp
+UIProcess/API/APIContentWorld.cpp
+UIProcess/API/APIContentWorldConfiguration.cpp
+UIProcess/API/APIContextMenuElementInfo.cpp
+UIProcess/API/APIDataTask.cpp
+UIProcess/API/APIDebuggableInfo.cpp
+UIProcess/API/APIFeature.cpp
+UIProcess/API/APIFormInfo.cpp
+UIProcess/API/APIFrameInfo.cpp
+UIProcess/API/APIFrameTreeNode.cpp
+UIProcess/API/APIHTTPCookieStore.cpp
+UIProcess/API/APIHitTestResult.cpp
+UIProcess/API/APIInspectorConfiguration.cpp
+UIProcess/API/APIInspectorExtension.cpp
+UIProcess/API/APIJSHandle.cpp
+UIProcess/API/APINavigation.cpp
+UIProcess/API/APINavigationData.cpp
+UIProcess/API/APINavigationResponse.cpp
+UIProcess/API/APIPageConfiguration.cpp
+UIProcess/API/APIProcessPoolConfiguration.cpp
+UIProcess/API/APIOpenPanelParameters.cpp
+UIProcess/API/APIScriptMessage.cpp
+UIProcess/API/APISerializedNode.cpp
+UIProcess/API/APISessionState.cpp
+UIProcess/API/APITargetedElementInfo.cpp
+UIProcess/API/APITargetedElementRequest.cpp
+UIProcess/API/APITextRun.cpp
+UIProcess/API/APIUIClient.cpp
+UIProcess/API/APIUserScript.cpp
+UIProcess/API/APIUserStyleSheet.cpp
+UIProcess/API/APIWebAuthenticationAssertionResponse.cpp
+UIProcess/API/APIWebAuthenticationPanel.cpp
+UIProcess/API/APIWebPushDaemonConnection.cpp
+UIProcess/API/APIWebsitePolicies.cpp
+UIProcess/API/APIWindowFeatures.cpp
+
+UIProcess/API/C/WKAuthenticationChallenge.cpp
+UIProcess/API/C/WKAuthenticationDecisionListener.cpp
+UIProcess/API/C/WKBackForwardListItemRef.cpp
+UIProcess/API/C/WKBackForwardListRef.cpp
+UIProcess/API/C/WKContext.cpp
+UIProcess/API/C/WKContextConfigurationRef.cpp
+UIProcess/API/C/WKCookieManager.cpp
+UIProcess/API/C/WKCredential.cpp
+UIProcess/API/C/WKDownloadRef.cpp
+UIProcess/API/C/WKFeature.cpp
+UIProcess/API/C/WKFormSubmissionListener.cpp
+UIProcess/API/C/WKFrame.cpp
+UIProcess/API/C/WKFrameHandleRef.cpp
+UIProcess/API/C/WKFrameInfoRef.cpp
+UIProcess/API/C/WKFramePolicyListener.cpp
+UIProcess/API/C/WKGeolocationManager.cpp
+UIProcess/API/C/WKGeolocationPermissionRequest.cpp
+UIProcess/API/C/WKGeolocationPosition.cpp
+UIProcess/API/C/WKHTTPCookieStoreRef.cpp
+UIProcess/API/C/WKHitTestResult.cpp
+UIProcess/API/C/WKIconDatabase.cpp
+UIProcess/API/C/WKInspector.cpp
+UIProcess/API/C/WKJSHandleRef.cpp
+UIProcess/API/C/WKKeyValueStorageManager.cpp
+UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp
+UIProcess/API/C/WKMessageListener.cpp
+UIProcess/API/C/WKMockMediaDevice.cpp
+UIProcess/API/C/WKNavigationActionRef.cpp
+UIProcess/API/C/WKNavigationDataRef.cpp
+UIProcess/API/C/WKNavigationRef.cpp
+UIProcess/API/C/WKNavigationResponseRef.cpp
+UIProcess/API/C/WKNotification.cpp
+UIProcess/API/C/WKNotificationManager.cpp
+UIProcess/API/C/WKNotificationPermissionRequest.cpp
+UIProcess/API/C/WKOpenPanelParametersRef.cpp
+UIProcess/API/C/WKOpenPanelResultListener.cpp
+UIProcess/API/C/WKQueryPermissionResultCallback.cpp
+UIProcess/API/C/WKPage.cpp
+UIProcess/API/C/WKPageConfigurationRef.cpp
+UIProcess/API/C/WKPageGroup.cpp
+UIProcess/API/C/WKPreferences.cpp
+UIProcess/API/C/WKProtectionSpace.cpp
+UIProcess/API/C/WKResourceCacheManager.cpp
+UIProcess/API/C/WKScriptMessageRef.cpp
+UIProcess/API/C/WKSessionStateRef.cpp
+UIProcess/API/C/WKTextChecker.cpp
+UIProcess/API/C/WKUserContentControllerRef.cpp
+UIProcess/API/C/WKUserContentExtensionStoreRef.cpp
+UIProcess/API/C/WKUserMediaPermissionRequest.cpp
+UIProcess/API/C/WKUserScriptRef.cpp
+UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp
+UIProcess/API/C/WKWebsiteDataStoreRef.cpp
+UIProcess/API/C/WKWebsitePolicies.cpp
+UIProcess/API/C/WKWindowFeaturesRef.cpp
+
+UIProcess/Authentication/AuthenticationChallengeProxy.cpp
+UIProcess/Authentication/AuthenticationDecisionListener.cpp
+UIProcess/Authentication/WebCredential.cpp
+UIProcess/Authentication/WebProtectionSpace.cpp
+
+UIProcess/Automation/BidiBrowserAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiBrowsingContextAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiPermissionsAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiScriptAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiSessionAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiStorageAgent.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/BidiUserContext.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/InspectorPassthroughChannel.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/SimulatedInputDispatcher.cpp @no-unify-when(bundle<=8)
+UIProcess/Automation/WebAutomationSession.cpp @no-unify-when(bundle<=8) @cost:8
+UIProcess/Automation/WebDriverBidiProcessor.cpp @no-unify-when(bundle<=8)
+
+UIProcess/Downloads/DownloadProxy.cpp
+UIProcess/Downloads/DownloadProxyMap.cpp
+
+UIProcess/Extensions/WebExtension.cpp
+UIProcess/Extensions/WebExtensionAlarm.cpp
+UIProcess/Extensions/WebExtensionContext.cpp
+UIProcess/Extensions/WebExtensionController.cpp
+UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
+UIProcess/Extensions/WebExtensionDataRecord.cpp
+UIProcess/Extensions/WebExtensionDeclarativeNetRequestSQLiteStore.cpp
+UIProcess/Extensions/WebExtensionMatchPattern.cpp
+UIProcess/Extensions/WebExtensionStorageSQLiteStore.cpp
+
+UIProcess/Extensions/API/WebExtensionContextAPIDeclarativeNetRequest.cpp
+UIProcess/Extensions/API/WebExtensionContextAPIStorage.cpp @cost:3
+
+UIProcess/Gamepad/UIGamepad.cpp
+UIProcess/Gamepad/UIGamepadProvider.cpp
+
+UIProcess/Launcher/ProcessLauncher.cpp @no-unify-when(bundle<=8)
+
+UIProcess/Network/NetworkProcessProxy.cpp @cost:7
+
+UIProcess/GPU/GPUProcessProxy.cpp @cost:4
+
+UIProcess/Model/ModelProcessProxy.cpp
+
+UIProcess/Inspector/FrameInspectorTargetProxy.cpp
+UIProcess/Inspector/InspectorTargetProxy.cpp @cost:3
+UIProcess/Inspector/PageInspectorTargetProxy.cpp @cost:3
+UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
+UIProcess/Inspector/WasmDebuggerDebuggable.cpp
+UIProcess/Inspector/WebInspectorBackendProxy.cpp
+UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp
+UIProcess/Inspector/WebInspectorUIProxy.cpp @cost:4
+UIProcess/Inspector/WebInspectorUtilities.cpp
+UIProcess/Inspector/WebPageDebuggable.cpp
+UIProcess/Inspector/WebPageInspectorController.cpp
+
+UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
+UIProcess/Inspector/Agents/ProxyingNetworkAgent.cpp
+UIProcess/Inspector/Agents/ProxyingPageAgent.cpp
+
+UIProcess/Media/AudioSessionRoutingArbitratorProxy.cpp
+UIProcess/Media/MediaUsageManager.cpp
+UIProcess/Media/RemoteMediaSessionClientProxy.cpp
+UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp
+UIProcess/Media/RemoteMediaSessionManagerProxy.cpp
+UIProcess/Media/RemoteMediaSessionProxy.cpp
+
+UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp
+UIProcess/Notifications/WebNotification.cpp
+UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp
+UIProcess/Notifications/WebNotificationManagerProxy.cpp
+UIProcess/Notifications/WebNotificationProvider.cpp
+
+UIProcess/UserContent/WebScriptMessageHandler.cpp
+UIProcess/UserContent/WebUserContentControllerProxy.cpp @cost:3
+
+UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp
+UIProcess/WebAuthentication/fido/FidoAuthenticator.cpp
+UIProcess/WebAuthentication/fido/FidoService.cpp
+UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp
+
+UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp
+UIProcess/WebAuthentication/Mock/MockHidConnection.cpp
+UIProcess/WebAuthentication/Mock/MockHidService.cpp
+
+UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
+UIProcess/WebAuthentication/Authenticator.cpp
+UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
+UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp
+
+UIProcess/WebsiteData/EnhancedSecuritySitesHolder.cpp
+UIProcess/WebsiteData/EnhancedSecuritySitesPersistence.cpp
+UIProcess/WebsiteData/WebDeviceOrientationAndMotionAccessController.cpp
+UIProcess/WebsiteData/WebsiteDataRecord.cpp
+UIProcess/WebsiteData/WebsiteDataStore.cpp @cost:5
+UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp
+
+UIProcess/XR/PlatformXRSystem.cpp
+
+WebProcess/WebProcess.cpp @cost:11
+WebProcess/WebSleepDisablerClient.cpp
+WebProcess/WebSystemSoundDelegate.cpp
+
+WebProcess/Automation/WebAutomationSessionProxy.cpp @no-unify-when(bundle<=8) @cost:4
+WebProcess/Automation/WebAutomationDOMWindowObserver.cpp
+
+WebProcess/Cache/WebCacheStorageConnection.cpp @cost:3
+WebProcess/Cache/WebCacheStorageProvider.cpp
+
+WebProcess/Databases/WebDatabaseProvider.cpp
+
+WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp
+
+WebProcess/DigitalCredentials/DigitalCredentialsCoordinator.cpp
+
+WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
+
+WebProcess/Extensions/WebExtensionContextProxy.cpp
+WebProcess/Extensions/WebExtensionControllerProxy.cpp
+
+WebProcess/FileAPI/BlobRegistryProxy.cpp
+
+WebProcess/FullScreen/WebFullScreenManager.cpp @cost:8
+
+WebProcess/Gamepad/WebGamepad.cpp
+WebProcess/Gamepad/WebGamepadProvider.cpp
+
+WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
+WebProcess/Geolocation/WebGeolocationManager.cpp
+
+WebProcess/InjectedBundle/InjectedBundle.cpp @cost:4
+WebProcess/InjectedBundle/InjectedBundleClient.cpp
+WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
+WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
+WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
+WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
+WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp
+WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp
+WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp
+WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp
+WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp
+
+WebProcess/InjectedBundle/API/c/WKBundle.cpp
+WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp
+WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp
+WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp
+WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp @cost:3
+WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp
+WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp
+WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp
+WebProcess/InjectedBundle/API/c/WKBundlePage.cpp @cost:3
+WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp
+WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp
+WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp
+
+WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp
+WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp @no-unify-when(bundle<=8)
+WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp @no-unify-when(bundle<=8)
+
+WebProcess/Inspector/RemoteWebInspectorUI.cpp
+WebProcess/Inspector/UIProcessForwardingFrontendChannel.cpp
+WebProcess/Inspector/FrameInspectorTarget.cpp
+WebProcess/Inspector/WebInspectorBackend.cpp @cost:3
+WebProcess/Inspector/WebInspectorBackendClient.cpp
+WebProcess/Inspector/BackendResourceDataStore.cpp
+WebProcess/Inspector/FrameNetworkAgentProxy.cpp
+WebProcess/Inspector/PageAgentProxy.cpp
+WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp
+WebProcess/Inspector/WebInspectorUI.cpp
+
+WebProcess/Inspector/WasmDebuggerDispatcher.cpp
+WebProcess/Inspector/WebInspectorUIExtensionController.cpp
+WebProcess/Inspector/PageInspectorTarget.cpp
+
+WebProcess/Media/RemoteMediaSessionManager.cpp
+
+WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp
+
+WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
+WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
+
+WebProcess/Model/WebModelPlayerProvider.cpp
+WebProcess/Model/ModelProcessConnection.cpp
+WebProcess/Model/ModelProcessModelPlayer.cpp
+WebProcess/Model/ModelProcessModelPlayerManager.cpp
+WebProcess/Model/ModelProcessModelPlayerTransformState.cpp
+
+WebProcess/GPU/GPUProcessConnection.cpp @cost:3
+WebProcess/GPU/RemoteSharedResourceCacheProxy.cpp
+WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
+WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
+WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
+WebProcess/GPU/graphics/Model/RemoteMeshProxy.cpp
+WebProcess/GPU/graphics/Model/ModelDowncastConvertToBackingContext.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteCompositorIntegrationProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.cpp @cost:3
+WebProcess/GPU/graphics/WebGPU/RemoteExternalTextureProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp @cost:3
+WebProcess/GPU/graphics/WebGPU/RemotePipelineLayoutProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemotePresentationContextProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteQuerySetProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteQueueProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteRenderPassEncoderProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteRenderPipelineProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteSamplerProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteXRBindingProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteXRProjectionLayerProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteXRSubImageProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteXRViewProxy.cpp
+WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp
+WebProcess/GPU/graphics/ImageBufferRemoteDisplayListBackend.cpp
+WebProcess/GPU/graphics/ImageBufferRemotePDFDocumentBackend.cpp
+WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
+WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.cpp
+WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp
+WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp @cost:3
+WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp @cost:6
+WebProcess/GPU/graphics/RemoteGraphicsContextProxy.cpp @cost:3
+WebProcess/GPU/graphics/RemoteImageBufferProxy.cpp @cost:3
+WebProcess/GPU/graphics/RemoteImageBufferSetProxy.cpp
+WebProcess/GPU/graphics/RemoteNativeImageProxy.cpp
+WebProcess/GPU/graphics/RemoteSnapshotRecorderProxy.cpp
+WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp @cost:5
+WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
+WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
+WebProcess/GPU/media/AudioVideoRendererRemote.cpp @cost:5
+WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp @cost:5
+WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
+WebProcess/GPU/media/RemoteAudioHardwareListener.cpp
+WebProcess/GPU/media/RemoteAudioSession.cpp
+WebProcess/GPU/media/RemoteCDM.cpp
+WebProcess/GPU/media/RemoteCDMFactory.cpp
+WebProcess/GPU/media/RemoteCDMInstance.cpp
+WebProcess/GPU/media/RemoteCDMInstanceSession.cpp
+WebProcess/GPU/media/RemoteLegacyCDM.cpp
+WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp
+WebProcess/GPU/media/RemoteLegacyCDMSession.cpp @cost:3
+WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp
+WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
+WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify-when(bundle<=8)
+WebProcess/GPU/media/RemoteMediaResourceLoaderProxy.cpp
+WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
+WebProcess/GPU/media/RemoteVideoFrameProxy.cpp @cost:3
+WebProcess/GPU/media/RemoteRemoteCommandListener.cpp
+WebProcess/GPU/media/RemoteVideoCodecFactory.cpp
+WebProcess/GPU/media/TextTrackPrivateRemote.cpp
+WebProcess/GPU/media/VideoTrackPrivateRemote.cpp
+WebProcess/GPU/media/WebMediaStrategy.cpp
+WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp @cost:4
+WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp
+WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp
+WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
+
+WebProcess/Network/NetworkProcessConnection.cpp @cost:4
+WebProcess/Network/WebLoaderStrategy.cpp @cost:4
+WebProcess/Network/WebResourceInterceptController.cpp
+WebProcess/Network/WebResourceLoader.cpp
+WebProcess/Network/WebSocketChannel.cpp @no-unify-when(bundle<=8)
+WebProcess/Network/WebSocketChannelManager.cpp
+WebProcess/Network/WebSocketProvider.cpp
+WebProcess/Network/WebTransportSession.cpp @cost:4
+
+WebProcess/Network/webrtc/LibWebRTCDnsResolverFactory.cpp
+WebProcess/Network/webrtc/LibWebRTCNetwork.cpp
+WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp @cost:3
+WebProcess/Network/webrtc/LibWebRTCProvider.cpp @cost:3
+WebProcess/Network/webrtc/LibWebRTCResolver.cpp
+WebProcess/Network/webrtc/LibWebRTCSocket.cpp
+WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp
+WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp
+WebProcess/Network/webrtc/WebMDNSRegister.cpp
+WebProcess/Network/webrtc/WebRTCMonitor.cpp
+WebProcess/Network/webrtc/WebRTCNetworkBase.cpp
+WebProcess/Network/webrtc/WebRTCResolver.cpp
+
+WebProcess/Notifications/NotificationPermissionRequestManager.cpp
+WebProcess/Notifications/WebNotificationManager.cpp
+
+WebProcess/Plugins/PluginView.cpp @cost:6
+WebProcess/Plugins/WebPluginInfoProvider.cpp
+
+WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
+
+WebProcess/Storage/RemoteWorkerFrameLoaderClient.cpp
+WebProcess/Storage/WebSWClientConnection.cpp @cost:4
+WebProcess/Storage/WebSWContextManagerConnection.cpp @cost:5
+WebProcess/Storage/WebSWOriginTable.cpp
+WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp
+WebProcess/Storage/WebServiceWorkerProvider.cpp
+WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp @cost:4
+WebProcess/Storage/WebSharedWorkerObjectConnection.cpp
+WebProcess/Storage/WebSharedWorkerProvider.cpp
+
+WebProcess/UserContent/SharedMemoryJSBuffer.cpp
+WebProcess/UserContent/WebUserContentController.cpp
+
+WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
+
+WebProcess/WebCoreSupport/RemoteWebLockRegistry.cpp
+WebProcess/WebCoreSupport/SessionStateConversion.cpp
+WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp @cost:6
+WebProcess/WebCoreSupport/WebAttachmentElementClient.cpp
+WebProcess/WebCoreSupport/WebBadgeClient.cpp
+WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp
+WebProcess/WebCoreSupport/WebChromeClient.cpp @cost:6
+WebProcess/WebCoreSupport/WebColorChooser.cpp
+WebProcess/WebCoreSupport/WebContextMenuClient.cpp
+WebProcess/WebCoreSupport/WebCryptoClient.cpp
+WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp
+WebProcess/WebCoreSupport/WebDateTimeChooser.cpp
+WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp
+WebProcess/WebCoreSupport/WebDragClient.cpp
+WebProcess/WebCoreSupport/WebEditorClient.cpp
+WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp @cost:3
+WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
+WebProcess/WebCoreSupport/WebGeolocationClient.cpp
+WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp @cost:4
+WebProcess/WebCoreSupport/WebMediaKeySystemClient.cpp
+WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp
+WebProcess/WebCoreSupport/WebNotificationClient.cpp
+WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp
+WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp
+WebProcess/WebCoreSupport/WebPermissionController.cpp
+WebProcess/WebCoreSupport/WebPlatformStrategies.cpp @cost:4
+WebProcess/WebCoreSupport/WebPopupMenu.cpp
+WebProcess/WebCoreSupport/WebDocumentSyncClient.cpp
+WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
+WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
+WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
+WebProcess/WebCoreSupport/WebScreenOrientationManager.cpp
+WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
+WebProcess/WebCoreSupport/WebUserMediaClient.cpp
+WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp
+WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
+WebProcess/WebCoreSupport/WebStorageConnection.cpp
+WebProcess/WebCoreSupport/WebWorkerClient.cpp
+
+WebProcess/WebPage/DrawingArea.cpp @cost:3
+WebProcess/WebPage/EventDispatcher.cpp @cost:3
+WebProcess/WebPage/FindIndicator.cpp
+WebProcess/WebPage/FindController.cpp @cost:3
+WebProcess/WebPage/IPCTestingAPI.cpp
+WebProcess/WebPage/MomentumEventDispatcher.cpp
+WebProcess/WebPage/PageBanner.cpp
+WebProcess/WebPage/VisitedLinkTableController.cpp
+WebProcess/WebPage/WebBackForwardListProxy.cpp
+WebProcess/WebPage/WebContextMenu.cpp
+WebProcess/WebPage/WebCookieCache.cpp
+WebProcess/WebPage/WebCookieJar.cpp
+WebProcess/WebPage/WebDisplayRefreshMonitor.cpp
+WebProcess/WebPage/WebFoundTextRangeController.cpp @cost:3
+WebProcess/WebPage/WebFrame.cpp @cost:6
+WebProcess/WebPage/WebHistoryItemClient.cpp
+WebProcess/WebPage/WebOpenPanelResultListener.cpp
+WebProcess/WebPage/WebPage.cpp @cost:18
+WebProcess/WebPage/WebPageGroupProxy.cpp
+WebProcess/WebPage/WebPageOverlay.cpp
+WebProcess/WebPage/WebPageTesting.cpp
+WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
+WebProcess/WebPage/WebURLSchemeTaskProxy.cpp
+WebProcess/WebPage/WebUndoStep.cpp
+
+WebProcess/WebStorage/StorageAreaImpl.cpp
+WebProcess/WebStorage/StorageAreaMap.cpp
+WebProcess/WebStorage/StorageNamespaceImpl.cpp
+WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
+
+WebProcess/XR/PlatformXRSystemProxy.cpp
+
+AudioVideoRendererRemoteMessageReceiverMessageReceiver.cpp
+IPCConnectionTesterMessageReceiver.cpp
+IPCStreamTesterMessageReceiver.cpp
+IPCStreamTesterProxyMessageReceiver.cpp
+IPCTesterMessageReceiver.cpp
+IPCTesterReceiverMessageReceiver.cpp
+ModelProcessModelPlayerManagerProxyMessageReceiver.cpp
+ModelProcessModelPlayerMessageReceiver.cpp
+NetworkBroadcastChannelRegistryMessageReceiver.cpp
+NetworkTransportSessionMessageReceiver.cpp
+RTCDataChannelRemoteManagerMessageReceiver.cpp
+RTCDataChannelRemoteManagerProxyMessageReceiver.cpp
+RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp
+RemoteSnapshotRecorderMessageReceiver.cpp @cost:5
+RemoteGraphicsContextMessageReceiver.cpp @cost:9
+RemoteGraphicsContextGLMessageReceiver.cpp @cost:13
+RemoteGraphicsContextGLProxyMessageReceiver.cpp
+PlatformXRSystemMessageReceiver.cpp
+PlatformXRSystemProxyMessageReceiver.cpp
+PushClientConnectionMessageReceiver.cpp
+RemoteAdapterMessageReceiver.cpp @cost:5
+RemoteAudioVideoRendererProxyManagerMessageReceiver.cpp
+RemoteBarcodeDetectorMessageReceiver.cpp @cost:5
+RemoteBindGroupMessageReceiver.cpp @cost:5
+RemoteBindGroupLayoutMessageReceiver.cpp @cost:5
+RemoteBufferMessageReceiver.cpp @cost:5
+RemoteCommandBufferMessageReceiver.cpp @cost:5
+RemoteCommandEncoderMessageReceiver.cpp @cost:6
+RemoteCompositorIntegrationMessageReceiver.cpp @cost:5
+RemoteComputePassEncoderMessageReceiver.cpp @cost:5
+RemoteComputePipelineMessageReceiver.cpp @cost:5
+RemoteMeshMessageReceiver.cpp
+RemoteDeviceMessageReceiver.cpp @cost:6
+RemoteExternalTextureMessageReceiver.cpp @cost:5
+RemoteFaceDetectorMessageReceiver.cpp @cost:5
+RemoteGPUMessageReceiver.cpp @cost:5
+RemoteGPUProxyMessageReceiver.cpp
+RemoteVideoFrameObjectHeapMessageReceiver.cpp
+RemoteVideoFrameObjectHeapProxyProcessorMessageReceiver.cpp
+RemotePipelineLayoutMessageReceiver.cpp @cost:5
+RemotePresentationContextMessageReceiver.cpp @cost:5
+RemoteQuerySetMessageReceiver.cpp @cost:5
+RemoteQueueMessageReceiver.cpp @cost:5
+RemoteRenderBundleMessageReceiver.cpp @cost:5
+RemoteRenderBundleEncoderMessageReceiver.cpp @cost:5
+RemoteRenderPassEncoderMessageReceiver.cpp @cost:5
+RemoteRenderPipelineMessageReceiver.cpp
+RemoteSamplerMessageReceiver.cpp
+RemoteShaderModuleMessageReceiver.cpp
+RemoteTextDetectorMessageReceiver.cpp @cost:5
+RemoteTextureMessageReceiver.cpp
+RemoteTextureViewMessageReceiver.cpp
+RemoteXRBindingMessageReceiver.cpp
+RemoteXRProjectionLayerMessageReceiver.cpp
+RemoteXRSubImageMessageReceiver.cpp
+RemoteXRViewMessageReceiver.cpp
+RemoteWebLockRegistryMessageReceiver.cpp
+ServiceWorkerDownloadTaskMessageReceiver.cpp
+WebBroadcastChannelRegistryMessageReceiver.cpp
+WebFrameMessageReceiver.cpp
+WebFrameProxyMessageReceiver.cpp @cost:10
+WebLockRegistryProxyMessageReceiver.cpp @cost:10
+WebPermissionControllerMessageReceiver.cpp
+WebPermissionControllerProxyMessageReceiver.cpp @cost:10
+WebScreenOrientationManagerMessageReceiver.cpp
+WebScreenOrientationManagerProxyMessageReceiver.cpp @cost:10
+WebSharedWorkerContextManagerConnectionMessageReceiver.cpp
+WebSharedWorkerObjectConnectionMessageReceiver.cpp
+WebSharedWorkerServerConnectionMessageReceiver.cpp
+WebSharedWorkerServerToContextConnectionMessageReceiver.cpp
+WebTransportSessionMessageReceiver.cpp

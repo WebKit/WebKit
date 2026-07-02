@@ -1,0 +1,70 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_rust//rust:defs.bzl", "rust_static_library")
+load("//bazel:rust_cxx_bridge.bzl", "rust_cxx_bridge")
+load(
+    "//bazel:skia_rules.bzl",
+    "select_multi",
+    "skia_cc_library",
+)
+
+# C++ sources
+skia_cc_library(
+    name = "cpp",
+    hdrs = [
+        "cpp/path_iterator.h",
+    ],
+)
+
+# Generated C++ cxxbridge output
+rust_cxx_bridge(
+    name = "ffi_gen",
+    src = "src/lib.rs",
+    crate_features = select_multi(
+        {
+            "@vello//:msl_shaders": ["msl"],
+            "@vello//:wgsl_shaders": ["wgsl"],
+        },
+    ),
+    deps = [":cpp"],
+)
+
+# Linked rust code
+rust_static_library(
+    name = "vello_rust",
+    srcs = [
+        "src/encoding.rs",
+        "src/lib.rs",
+        "src/shaders.rs",
+    ],
+    crate_features = select_multi(
+        {
+            "@vello//:msl_shaders": ["msl"],
+            "@vello//:wgsl_shaders": ["wgsl"],
+        },
+    ),
+    deps = [
+        "@crates//:bytemuck",
+        "@crates//:cxx",
+        "@crates//:peniko",
+        "@vello//:vello_encoding",
+        "@vello//:vello_shaders",
+    ],
+)
+
+# Linked C++ bridge code
+cc_library(
+    name = "vello_ffi",
+    srcs = [":ffi_gen/filegroup"],
+    defines = select_multi(
+        {
+            "@vello//:msl_shaders": ["VELLO_MSL_SHADERS=true"],
+            "@vello//:wgsl_shaders": ["VELLO_WGSL_SHADERS=true"],
+        },
+    ),
+    visibility = ["//visibility:public"],
+    deps = [
+        ":cpp",
+        ":ffi_gen/include",
+        ":vello_rust",
+    ],
+)

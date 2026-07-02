@@ -1,0 +1,7 @@
+
+
+PASS Shared worker
+PASS Nested worker in shared worker
+PASS Shared worker from https subframe
+PASS Nested worker from shared worker from https subframe
+

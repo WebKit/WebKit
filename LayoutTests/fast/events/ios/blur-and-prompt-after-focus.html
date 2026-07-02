@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ignoreSynchronousMessagingTimeouts=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<input value="Tap here">
+<script>
+jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.setShouldDismissJavaScriptAlertsAsynchronously(true);
+
+let didAlert = false;
+let input = document.querySelector("input");
+input.addEventListener("focus", () => {
+    input.select();
+    input.blur();
+    setTimeout(() => {
+        alert("Hello world");
+        didAlert = true;
+    }, 1);
+});
+
+(async function () {
+    await UIHelper.activateElement(input);
+    await shouldBecomeEqual("didAlert", "true");
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

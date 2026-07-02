@@ -1,0 +1,3 @@
+
+PASS Data-URI background SVG image is observable.
+

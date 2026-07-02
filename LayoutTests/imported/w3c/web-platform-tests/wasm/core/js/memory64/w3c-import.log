@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/address64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/align64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/binary_leb128_64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/bulk64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/call_indirect64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/endianness64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/float_memory64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/load64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory64-imports.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory_copy64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory_fill64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory_grow64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory_init64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory_redundancy64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/memory_trap64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_copy64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_copy_mixed.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_fill64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_get64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_grow64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_init64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_set64.wast.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/js/memory64/table_size64.wast.js

@@ -1,0 +1,4 @@
+
+
+PASS entries() and currentEntry after navigation to a data: URL (which has an opaque origin)
+

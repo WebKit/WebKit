@@ -1,0 +1,12 @@
+
+can't edit
+can't edit
+
+can't edit
+can't edit
+
+
+PASS BR tag is inserted after deleting the text node present before non editable child element
+PASS BR tag is inserted after deleting the text node present between two non editable child elements
+PASS BR tag is inserted after deleting the text node present after non editable child element
+

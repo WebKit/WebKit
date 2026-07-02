@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+some
+<attachment id="attachment" title="title" subtitle="subtitle" action="action" progress="0.5"></attachment>
+test
+
+<script>
+var output = "This tests that attachment element replacements are present in strings.\n\n";
+
+if (window.accessibilityController) {
+    var body = accessibilityController.rootElement.childAtIndex(0);
+    var startMarker = body.startTextMarker;
+    var endMarker = body.endTextMarker;
+    var textMarkerRange = body.textMarkerRangeForMarkers(startMarker, endMarker);
+    output += `String: \n${body.stringForTextMarkerRange(textMarkerRange).replace(String.fromCharCode(65532), "[ATTACHMENT]")}`
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

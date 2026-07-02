@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Switch control examples</title>
+    <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+    <h1>Switch demos</h1>
+    <p>The markup for switches is <code>&lt;input type="checkbox" switch&gt;</code>. It comes built-in with <code>::thumb</code> and <code>::track</code> pseudo-elements. The <code>::before</code> and <code>::after</code> pseudo-elements can also be used for extra possibilities!</p>
+
+    <p>The switch control is enabled in <a href="https://developer.apple.com/safari/resources/">Safari Technology Preview</a>.</p>
+
+    <section class="example">
+        <h1>Native switch (unstyled)</h1>
+        <p>The native switch supports the <code>accent-color</code> and <code>color-scheme</code> CSS properties.</p>
+        <input type="checkbox" switch>
+    </section>
+
+    <div id="warning">
+        <p><b>Your browser does not support the <code>::thumb</code> and <code>::track</code> pseudo-elements.</b> The demos below will not render properly.</p>
+        <p>The pseudo-elements can be enabled in Safari Technology Preview behind the relevant feature flag in <em>Develop > Feature Flags</em>. See <a href="https://developer.apple.com/documentation/safari-developer-tools/develop-menu">Apple's documentation</a> on how to enable the develop menu if you don't yet have it enabled.</p>
+    </div>
+
+    <section class="example">
+        <h1>Basic styled switch</h1>
+        <input type="checkbox" switch class="basic-switch">
+        <details>
+            <summary>Show CSS</summary>
+            <style>
+.basic-switch {
+    appearance: none;
+    display: inline-grid;
+    position: relative;
+    background-color: #98989d;
+    height: 20px;
+    width: 44px;
+    border-radius: 20px;
+}
+
+.basic-switch:checked {
+    background-color: #32d74b;
+}
+
+.basic-switch::thumb {
+    background-color: white;
+    width: 24px;
+    height: 24px;
+    margin: -2px -1px;
+    transition: all 0.3s;
+    border-radius: 100%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3)
+}
+
+.basic-switch:checked::thumb {
+    translate: 22px 0;
+}
+
+.basic-switch::thumb,
+.basic-switch::track {
+    grid-area: 1/1;
+}
+            </style>
+        </details>
+    </section>
+    <section class="example">
+        <h1>Basic styled switch with symbol</h1>
+        <input type="checkbox" switch class="basic-with-symbol">
+        <details>
+            <summary>Show CSS</summary>
+            <style>
+.basic-with-symbol {
+    appearance: none;
+    display: inline-grid;
+    position: relative;
+    background-color: #98989d;
+    height: 20px;
+    width: 44px;
+    border-radius: 20px;
+}
+
+.basic-with-symbol:checked {
+    background-color: #007aff;
+}
+
+.basic-with-symbol::thumb {
+    background-color: white;
+    width: 24px;
+    height: 24px;
+    margin: -2px -1px;
+    transition: all 0.3s;
+    border-radius: 100%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3)
+}
+
+.basic-with-symbol:checked::thumb {
+    translate: 22px 0;
+}
+
+.basic-with-symbol::before {
+    content: "〇" / "";
+    font-weight: bold;
+    position: absolute;
+    font-size: 10px;
+    margin: 4px 5px;
+    top: 0;
+    left: 0;
+    color: white;
+}
+
+.basic-with-symbol:not(:checked)::before {
+    translate: 22px 0;
+}
+
+.basic-with-symbol:checked::before {
+    content: "I" / "";
+    margin-left: 10px;
+}
+
+.basic-with-symbol::thumb,
+.basic-with-symbol::track {
+    grid-area: 1/1;
+}
+            </style>
+        </details>
+    </section>
+    <section class="example">
+        <h1>Sliding track</h1>
+        <input type="checkbox" switch class="sliding-track">
+        <details>
+            <summary>Show CSS</summary>
+            <style>
+.sliding-track {
+    appearance: none;
+    display: inline-grid;
+    color: #000;
+    overflow: hidden;
+    height: 20px;
+    width: 40px;
+    border-radius: 20px;
+    position: relative;
+}
+
+.sliding-track::before,
+.sliding-track::after,
+.sliding-track::thumb,
+.sliding-track::track {
+    transition: translate linear 0.25s;
+}
+
+.sliding-track::before,
+.sliding-track::after {
+    position: absolute;
+    top: 4px;
+    font-size: 8px;
+    margin: 1px;
+    z-index: 2;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    font-weight: 600;
+}
+
+.sliding-track::thumb,
+.sliding-track::track {
+    grid-area: 1/1;
+}
+
+.sliding-track::before {
+    content: "ON" / "";
+    left: -40px;
+}
+
+.sliding-track::after {
+    content: "OFF" / "";
+    right: 0;
+}
+
+.sliding-track:checked::before,
+.sliding-track:checked::after {
+    translate: 40px;
+}
+
+.sliding-track::track {
+    width: 80px;
+    background-image: linear-gradient(to right, #32d74b 50%, #ccd 50%);
+    translate: -50%;
+}
+
+.sliding-track:checked::track {
+    translate: 0;
+}
+
+.sliding-track::thumb {
+    background-color: white;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #bbf;
+    box-sizing: border-box;
+    transition: translate 0.4s;
+    translate: 0;
+}
+
+.sliding-track:checked::thumb {
+    translate: 20px;
+}
+            </style>
+        </details>
+    </section>
+    <section class="example">
+        <h1>Labeled switch</h1>
+        <input type="checkbox" switch class="labeled">
+        <details>
+            <summary>Show CSS</summary>
+            <style>
+.labeled {
+    appearance: none;
+    display: inline-grid;
+    position: relative;
+    background-color: #ccd;
+    color: #000;
+    height: 40px;
+    width: 80px;
+    border-radius: 4px;
+    padding: 5px;
+    position: relative;
+}
+
+.labeled::thumb {
+    background: white;
+    height: 100%;
+    width: 50%;
+    border-radius: 2px;
+    transition: translate 0.3s;
+    z-index: 0;
+}
+
+.labeled::thumb,
+.labeled::track {
+    grid-area: 1/1;
+}
+
+.labeled:checked::thumb {
+    translate: 100%;
+}
+
+.labeled::before,
+.labeled::after {
+    position: absolute;
+    text-align: center;
+    width: 35px;
+    height: 100%;
+    line-height: 40px;
+    z-index: 2;
+}
+
+.labeled::before {
+    content: "OFF" / "";
+    left: 5px;
+}
+
+.labeled::after {
+    content: "ON" / "";
+    right: 5px;
+}
+
+.labeled:checked::after {
+    color: #007aff;
+}
+            </style>
+        </details>
+    </section>
+</html>

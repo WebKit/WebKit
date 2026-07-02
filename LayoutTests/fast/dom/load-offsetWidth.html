@@ -1,0 +1,15 @@
+<style>
+    body {
+        content: url();
+        overflow-y: -webkit-paged-y;
+    }
+</style>
+<script>
+  onload = () => {
+      if (window.testRunner)
+        testRunner.dumpAsText();
+    document.body.offsetWidth;
+    console.log("This test should not crash");
+  };
+</script>
+<div>This test should not crash</div>

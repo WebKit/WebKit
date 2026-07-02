@@ -1,0 +1,154 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="400" height="300"></canvas>
+<script>
+promise_test(async t => {
+    assert_true(!!navigator.gpu, "WebGPU is not supported");
+
+const adapter = await navigator.gpu.requestAdapter();
+assert_true(adapter !== null, "Failed to get GPU adapter");
+
+const device = await adapter.requestDevice();
+t.add_cleanup(() => device.destroy());
+
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("webgpu");
+const format = navigator.gpu.getPreferredCanvasFormat();
+context.configure({ device, format, alphaMode: "premultiplied" });
+
+// Vertex buffer — 4 vertices (x, y in clip space).
+// Valid indices are 0–3; 30000 is guaranteed out-of-bounds.
+const vertexData = new Float32Array([
+    -0.5, -0.5,
+     0.5, -0.5,
+     0.5,  0.5,
+    -0.5,  0.5,
+]);
+const vertexBuffer = device.createBuffer({
+    size:  vertexData.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+});
+device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+// Index buffer — 6 valid indices for two triangles.
+// Needs COPY_SRC so we can read it back, and COPY_DST so command buffer B
+// can overwrite it.
+const INDEX_COUNT   = 6;
+const OOB_VALUE     = 30000;
+const initialIndices = new Uint32Array([0, 1, 2, 0, 2, 3]);
+const indexBuffer = device.createBuffer({
+    size:  initialIndices.byteLength,
+    usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+});
+device.queue.writeBuffer(indexBuffer, 0, initialIndices);
+
+// Staging buffer used to upload the out-of-bounds values inside encoder B.
+const oobData = new Uint32Array(INDEX_COUNT).fill(OOB_VALUE);
+const uploadBuffer = device.createBuffer({
+    size:  oobData.byteLength,
+    usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+});
+device.queue.writeBuffer(uploadBuffer, 0, oobData);
+
+// Readback staging buffer.
+const readbackBuffer = device.createBuffer({
+    size:  initialIndices.byteLength,
+    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+});
+
+// Render pipeline.
+const shaderModule = device.createShaderModule({
+    code: `
+        @vertex
+        fn vs_main(@location(0) pos: vec2f) -> @builtin(position) vec4f {
+            return vec4f(pos, 0.0, 1.0);
+        }
+
+        @fragment
+        fn fs_main() -> @location(0) vec4f {
+            return vec4f(0.2, 0.6, 1.0, 1.0);
+        }
+    `,
+});
+
+const pipeline = device.createRenderPipeline({
+    layout: "auto",
+    vertex: {
+        module:     shaderModule,
+        entryPoint: "vs_main",
+        buffers: [{
+            arrayStride: 8,
+            attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
+        }],
+    },
+    fragment: {
+        module:     shaderModule,
+        entryPoint: "fs_main",
+        targets: [{ format }],
+    },
+    primitive: { topology: "triangle-list" },
+});
+
+for (let iteration = 0; iteration < 2; iteration++) {
+    // Command buffer A — render pass with drawIndexed.
+    const encoderA = device.createCommandEncoder();
+    {
+        const pass = encoderA.beginRenderPass({
+            colorAttachments: [{
+                view:       context.getCurrentTexture().createView(),
+                clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+                loadOp:     "clear",
+                storeOp:    "store",
+            }],
+        });
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, "uint32");
+        pass.drawIndexed(INDEX_COUNT);
+        pass.end();
+    }
+    const cmdBufA = encoderA.finish();
+
+    if (iteration == 1) {
+        // Command buffer B — overwrites every index in the index buffer with 30000.
+        const encoderB = device.createCommandEncoder();
+        encoderB.copyBufferToBuffer(uploadBuffer, 0, indexBuffer, 0, oobData.byteLength);
+        const cmdBufB = encoderB.finish();
+
+        // Submit B first, then A — intentional out-of-order submission.
+        device.queue.submit([cmdBufB]);
+        await device.queue.onSubmittedWorkDone();
+    }
+    device.queue.submit([cmdBufA]);
+
+    // Command buffer C — copy index buffer to readback staging buffer.
+    // Submitted after A so it is ordered after both B and A on the queue.
+    const encoderC = device.createCommandEncoder();
+    encoderC.copyBufferToBuffer(indexBuffer, 0, readbackBuffer, 0, initialIndices.byteLength);
+    device.queue.submit([encoderC.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+
+    if (iteration == 1) {
+        await readbackBuffer.mapAsync(GPUMapMode.READ);
+        const result = new Uint32Array(readbackBuffer.getMappedRange().slice(0));
+        readbackBuffer.unmap();
+
+        // Every index must be 30000 — the out-of-bounds value written by B.
+        for (let i = 0; i < INDEX_COUNT; i++)
+            assert_equals(result[i], OOB_VALUE, `index[${i}] should be ${OOB_VALUE}`);
+
+        console.log("Index buffer contents after submission:", Array.from(result).join(", "));
+    }
+}
+
+}, "Out-of-order command buffer submission: index buffer contains OOB values after B submitted before A");
+</script>
+
+</body>
+</html>

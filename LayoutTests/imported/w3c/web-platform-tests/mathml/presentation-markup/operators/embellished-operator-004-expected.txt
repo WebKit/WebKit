@@ -1,0 +1,22 @@
+
+PASS Vertical stretching performed for math > mo.
+PASS Vertical stretching performed for Stretching for math[display=block] > mo.
+PASS Vertical stretching performed for math > mrow > mo.
+PASS Vertical stretching performed for Stretching for math[display=block] > mrow > mo.
+PASS Vertical stretching performed for math > mrow > mrow > mo.
+PASS Vertical stretching performed for Stretching for math[display=block] > mrow > mrow > mo.
+PASS Vertical stretching performed for math > mrow > mrow > mrow > mo.
+PASS Vertical stretching performed for Stretching for math[display=block] > mrow > mrow > mrow > mo.
+PASS Vertical stretching performed for math > mrow > mrow > mrow > mrow > mo.
+PASS Vertical stretching performed for Stretching for math[display=block] > mrow > mrow > mrow > mrow > mo.
+↨
+↨
+↨
+↨
+↨
+↨
+↨
+↨
+↨
+↨
+

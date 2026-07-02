@@ -1,0 +1,48 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+
+Append all media segments
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(4)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(5)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(6)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(7)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(8)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(9)))
+EVENT(update)
+
+Seek and play
+RUN(video.currentTime = 1.6)
+EVENT(seeked)
+EXPECTED (video.currentTime == '1.6') OK
+RUN(video.play())
+
+EVENT(timeupdate)
+EXPECTED (video.currentTime >= '1.6') OK
+EVENT(timeupdate)
+EXPECTED (video.currentTime >= '1.6') OK
+EVENT(timeupdate)
+EXPECTED (video.currentTime >= '1.6') OK
+EVENT(timeupdate)
+EXPECTED (video.currentTime >= '1.6') OK
+EVENT(timeupdate)
+EXPECTED (video.currentTime >= '1.6') OK
+
+END OF TEST
+

@@ -1,0 +1,2 @@
+PASS if no 'clicked' text is shown below.
+

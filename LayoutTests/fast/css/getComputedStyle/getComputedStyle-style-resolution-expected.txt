@@ -1,0 +1,7 @@
+Text
+
+PASS No style resolution when style is valid.
+PASS No style resolution when sibling style is invalid.
+PASS No style resolution when ancestor sibling style is invalid.
+PASS Explicit 'inherit' chain triggers style resolution
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 400px; height: 400px; }
+</style>
+</head>
+<body>
+<!-- A small plain rect between two composited anchors in a large container. The green rect must render at its real position, not mispositioned or clipped. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <rect style="will-change: transform" x="10" y="10" width="40" height="40" fill="red"/>
+    <rect x="180" y="180" width="40" height="40" fill="green"/>
+    <rect style="will-change: transform" x="350" y="350" width="40" height="40" fill="blue"/>
+</svg>
+</body>
+</html>

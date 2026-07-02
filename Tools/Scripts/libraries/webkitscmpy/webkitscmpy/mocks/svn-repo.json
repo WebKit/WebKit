@@ -1,0 +1,234 @@
+{
+    "tags/tag-1": [
+        {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "hash": "4a228785d37ebd51e4b8c839df2a477c25dd3c9e",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601666100, 
+            "branch": "branch-a", 
+            "message": "7th commit\n", 
+            "identifier": "2.2@branch-a", 
+            "revision": 7
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601668100, 
+            "branch": "tags/tag-1", 
+            "message": "9th commit\n", 
+            "identifier": "2.3@tags/tag-1", 
+            "revision": 9
+        }
+    ], 
+    "tags/tag-2": [
+        {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "hash": "fedcc2546eb9c158b2d69037b2676a6529df7051",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601664100, 
+            "branch": "branch-b", 
+            "message": "5th commit\n", 
+            "identifier": "2.2@branch-b", 
+            "revision": 5
+        }, 
+        {
+            "hash": "eb2b1e28f8b848e1893f45064636cef5414e5fc0",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601667100, 
+            "branch": "branch-b", 
+            "message": "8th commit\n", 
+            "identifier": "2.3@branch-b", 
+            "revision": 8
+        }, 
+        {
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601669100, 
+            "branch": "tags/tag-2", 
+            "message": "10th commit\n", 
+            "identifier": "2.4@tags/tag-2", 
+            "revision": 10
+        }
+    ], 
+    "branch-b": [
+        {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "hash": "fedcc2546eb9c158b2d69037b2676a6529df7051",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601664100, 
+            "branch": "branch-b", 
+            "message": "5th commit\n", 
+            "identifier": "2.2@branch-b", 
+            "revision": 5
+        }, 
+        {
+            "hash": "eb2b1e28f8b848e1893f45064636cef5414e5fc0",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601667100, 
+            "branch": "branch-b", 
+            "message": "8th commit\n", 
+            "identifier": "2.3@branch-b", 
+            "revision": 8
+        }
+    ], 
+    "branch-a": [
+        {
+            "hash": "b3137ad7dd276542606c3964a653fd7f95c29720",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601662100, 
+            "branch": "branch-a", 
+            "message": "3rd commit\n", 
+            "identifier": "2.1@branch-a", 
+            "revision": 3
+        }, 
+        {
+            "hash": "4a228785d37ebd51e4b8c839df2a477c25dd3c9e",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601666100, 
+            "branch": "branch-a", 
+            "message": "7th commit\n", 
+            "identifier": "2.2@branch-a", 
+            "revision": 7
+        }
+    ], 
+    "trunk": [
+        {
+            "hash": "d5d49f5de54925c66e8a74c3af950f60395c2065",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601660100, 
+            "branch": "trunk", 
+            "message": "1st commit\n", 
+            "identifier": "1@trunk", 
+            "revision": 1
+        }, 
+        {
+            "hash": "9c10490460e59907696db46cf31505176b4f930e",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601661100, 
+            "branch": "trunk", 
+            "message": "2nd commit\n", 
+            "identifier": "2@trunk", 
+            "revision": 2
+        }, 
+        {
+            "hash": "463aaf3b3ff608209d36ed6a8cdf651429659659",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601663100, 
+            "branch": "trunk", 
+            "message": "4th commit\n", 
+            "identifier": "3@trunk", 
+            "revision": 4
+        }, 
+        {
+            "hash": "75eaef1c9242f92a8d7694e8ccd310f69cf9683b",
+            "author": {
+                "name": "Jonathan Bedard", 
+                "emails": [
+                    "jbedard@apple.com"
+                ]
+            }, 
+            "timestamp": 1601665100, 
+            "branch": "trunk", 
+            "message": "6th commit\n", 
+            "identifier": "4@trunk", 
+            "revision": 6
+        }
+    ]
+}

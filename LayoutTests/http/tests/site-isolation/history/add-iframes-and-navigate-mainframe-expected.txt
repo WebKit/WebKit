@@ -1,0 +1,10 @@
+Verifies that navigating the main frame while adding an iframe only increments history.length by one.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS history.length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+
+PASS Invalid selector can be detected with CSS.supports()
+PASS Invalid selector can be detected with CSS.supports() even if it is dropped by forgiving parsing
+PASS :is(), :where() or :has() always fails without argument
+PASS :has() always fails inside :has()
+PASS Some pseudo elements always fail inside :is(), :where(), :has()
+

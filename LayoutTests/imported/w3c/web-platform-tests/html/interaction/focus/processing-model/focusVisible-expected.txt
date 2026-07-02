@@ -1,0 +1,8 @@
+ABC
+
+PASS FocusOptions.focusVisible: button
+PASS FocusOptions.focusVisible: input
+PASS FocusOptions.focusVisible: #contenteditable
+PASS FocusOptions.focusVisible: #tabindex
+PASS FocusOptions.focusVisible: #not_focusable
+

@@ -1,0 +1,5 @@
+
+PASS "h1#chapter1" should be a valid selector
+PASS "#chapter1" should be a valid selector
+PASS "*#z98y" should be a valid selector
+

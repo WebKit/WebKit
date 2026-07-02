@@ -1,0 +1,20 @@
+This tests that focusable separators (splitters) and spinbuttons are found by AXControlSearchKey.
+
+PASS: initialControls.includes('focusable-separator') === true
+PASS: initialControls.includes('non-focusable-separator') === false
+PASS: initialControls.includes('spinbutton') === true
+PASS: initialControls.includes('dynamic-separator') === false
+
+Making dynamic-separator focusable by adding tabindex...
+
+Removing tabindex from focusable-separator...
+PASS: finalControls.includes('focusable-separator') === false
+PASS: finalControls.includes('dynamic-separator') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Focusable Separator
+Non-Focusable Separator
+Spinbutton
+Initially Non-Focusable

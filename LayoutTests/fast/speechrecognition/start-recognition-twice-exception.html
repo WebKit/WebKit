@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Verify that starting a started recognition throws exception.");
+
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
+shouldNotThrow("recognition.start()");
+shouldThrow("recognition.start()");
+
+</script>
+</body>
+</html>

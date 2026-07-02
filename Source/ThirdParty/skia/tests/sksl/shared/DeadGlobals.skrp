@@ -1,0 +1,6 @@
+4 instructions
+
+store_src_rg                   v0..1 = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_4_uniforms                $0..3 = colorGreen
+load_src                       src.rgba = $0..3

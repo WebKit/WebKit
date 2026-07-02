@@ -1,0 +1,4 @@
+
+PASS ".a:has(.b:has(.c))" should be an invalid selector
+PASS CSS Selectors: The relational pseudo-class (disallow nesting :has() inside :has())
+

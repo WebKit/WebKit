@@ -1,0 +1,6 @@
+Setting video src.
+Video can play.
+Checking the canvas pixels.
+PASS: Bottom edge is red.
+PASS: Top edge is blue.
+

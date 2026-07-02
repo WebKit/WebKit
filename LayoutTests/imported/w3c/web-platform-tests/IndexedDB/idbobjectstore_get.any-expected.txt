@@ -1,0 +1,9 @@
+
+PASS Key is a number
+PASS Key is a string
+PASS Key is a date
+PASS Attempts to retrieve a record that doesn't exist
+PASS Returns the record with the first key in the range
+PASS When a transaction is aborted, throw TransactionInactiveError
+PASS When an invalid key is used, throw DataError
+

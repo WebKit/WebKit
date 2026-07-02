@@ -1,0 +1,4 @@
+open popover with popovertarget  open popover with command
+
+PASS Disabled fieldset ancestor should prevent popovertarget/command behavior.
+

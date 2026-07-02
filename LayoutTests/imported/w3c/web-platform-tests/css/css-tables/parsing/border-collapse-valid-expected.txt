@@ -1,0 +1,4 @@
+
+PASS e.style['border-collapse'] = "separate" should set the property value
+PASS e.style['border-collapse'] = "collapse" should set the property value
+

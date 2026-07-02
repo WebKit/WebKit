@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that outline corners around inlines align properly.</title>
+<style>
+body {
+    margin: 0px;
+}
+
+.borders {
+	position: absolute;
+}
+</style>
+</head>
+<body>
+<div class=borders style="border-left: 2px solid red; top: 1px; left: 1px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 1px; left: 33px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 18px; left: 52px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 35px; left: 95px; height: 30px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 1px; left: 1px; width: 34px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 18px; left: 33px; width: 21px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 35px; left: 52px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 64px; left: 1px; width: 96px;"></div>
+
+<div class=borders style="border-left: 2px solid red; top: 72px; left: 1px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 72px; left: 95px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 101px; left: 76px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 118px; left: 52px; height: 18px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 72px; left: 1px; width: 96px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 101px; left: 76px; width: 21px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 118px; left: 52px; width: 26px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 135px; left: 1px; width: 53px;"></div>
+
+
+<div class=borders style="border-left: 2px solid red; top: 143px; left: 1px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 143px; left: 52px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 160px; left: 95px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 190px; left: 52px; height: 18px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 143px; left: 1px; width: 52px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 160px; left: 52px; width: 44px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 189px; left: 52px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 206px; left: 1px; width: 53px;"></div>
+
+<div class=borders style="border-left: 2px solid red; top: 214px; left: 1px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 214px; left: 95px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 249px; left: 95px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 244px; left: 52px; height: 6px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 214px; left: 1px; width: 96px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 243px; left: 52px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 248px; left: 52px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 277px; left: 1px; width: 96px;"></div>
+
+
+
+<div style="position: absolute; left: 8px; top: 292px; direction: RTL;">
+
+<div class=borders style="border-left: 2px solid red; top: 1px; left: 95px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 1px; left: 63px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 18px; left: 44px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 35px; left: 1px; height: 30px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 1px; left: 63px; width: 34px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 18px; left: 44px; width: 21px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 35px; left: 1px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 64px; left: 1px; width: 96px;"></div>
+
+<div class=borders style="border-left: 2px solid red; top: 72px; left: 95px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 72px; left: 1px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 101px; left: 20px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 118px; left: 44px; height: 18px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 72px; left: 1px; width: 96px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 101px; left: 1px; width: 21px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 118px; left: 20px; width: 26px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 135px; left: 44px; width: 53px;"></div>
+
+
+<div class=borders style="border-left: 2px solid red; top: 143px; left: 95px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 143px; left: 44px; height: 18px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 160px; left: 1px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 190px; left: 44px; height: 18px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 143px; left: 44px; width: 53px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 160px; left: 1px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 189px; left: 1px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 206px; left: 44px; width: 53px;"></div>
+
+<div class=borders style="border-left: 2px solid red; top: 214px; left: 95px; height: 65px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 214px; left: 1px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 249px; left: 1px; height: 30px;"></div>
+<div class=borders style="border-left: 2px solid red; top: 244px; left: 44px; height: 6px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 214px; left: 1px; width: 96px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 243px; left: 1px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 248px; left: 1px; width: 45px;"></div>
+<div class=borders style="border-top: 2px solid red; top: 277px; left: 1px; width: 96px;"></div>
+</div>
+</body>
+</html>

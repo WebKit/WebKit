@@ -1,0 +1,5 @@
+system type		: Loongson2K-SBC
+machine			: loongson,LS2k1000-EVP
+processor		: 0
+cpu model		: Loongson-2K V0.3  FPU V0.1
+BogoMIPS		: 1980.41

@@ -1,0 +1,3 @@
+
+PASS rotate() with Infinity/NaN is ignored
+

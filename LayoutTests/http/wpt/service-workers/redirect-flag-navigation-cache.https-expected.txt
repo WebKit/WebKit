@@ -1,0 +1,7 @@
+
+
+PASS Unregister service worker if needed
+PASS Navigate to iframe with a redirection URL - final URL is cached
+PASS Setup activating worker
+PASS Navigate to cached final URL directly
+

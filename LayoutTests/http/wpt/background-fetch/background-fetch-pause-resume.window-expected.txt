@@ -1,0 +1,3 @@
+
+PASS background fetch pause/resume should be able to recover if range requests are supported
+

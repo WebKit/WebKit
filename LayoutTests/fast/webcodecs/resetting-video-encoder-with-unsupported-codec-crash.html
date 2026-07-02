@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<p>PASS if no crash.</p>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+const iframe = document.createElement("iframe");
+iframe.srcdoc=`<!DOCTYPE html>
+<script>
+window.addEventListener("load", _ => {
+  const video = document.createElement("video");
+  video.src = "about:blank";
+  if ("VideoEncoder" in window) {
+    const encoder = new VideoEncoder({output: _ => {}, error: _ => {}});
+    encoder.configure({ codec: "a", width: 800, height: 600 });
+    encoder.reset();
+  }
+  parent.postMessage('reload', '*');
+});
+<\u002Fscript>`;
+var reloadCount = 0;
+window.addEventListener("message", e => {
+  if (e.data === 'reload') {
+    if (reloadCount++ < 200) {
+      iframe.contentWindow.location.reload();
+    } else {
+      window.testRunner?.notifyDone();
+    }
+  }
+});
+document.body.appendChild(iframe);
+</script>

@@ -1,0 +1,6 @@
+security.drawImage.canvas.cross
+drawImage of unclean canvas makes the canvas origin-unclean
+Actual output:
+
+PASS drawImage of unclean canvas makes the canvas origin-unclean
+

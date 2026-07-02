@@ -1,0 +1,9 @@
+
+
+PASS Test that image does not load
+PASS Buffer filled
+PASS Event is fired
+PASS CSP Report limits were honored
+PASS Test Report limits were honored
+PASS Combined report limits were honored
+

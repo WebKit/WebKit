@@ -1,0 +1,70 @@
+<html>
+<head>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<div id="test" contenteditable>FAILURE</div>
+<p id="console"></p>
+<script type="text/javascript">
+    
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    
+    if (window.testRunner) {
+        
+        try {
+
+            testRunner.dumpAsText();
+                        document.getElementById("test").focus();
+
+            var substr = textInputController.attributedSubstringFromRange(0, 2);
+//            log(substr); -- attributedSubstringFromRange is not implemented in WebKit yet
+    
+            var attrString = textInputController.makeAttributedString("test");
+            log(attrString.getAttributeNamesAtIndex(0));
+            log(attrString.length());
+            log(attrString.string());
+
+            attrString.addAttribute("NSToolTip", "Tool Tip");
+            attrString.addFontAttribute("NSFont", "Monaco", 14);
+            attrString.addColorAttribute("NSForegroundColor", 1, 1, 1, 0.5);
+
+            attrString.addFontAttributeForRange("NSFont", "Monaco", 12, 0, 2);
+            attrString.addColorAttributeForRange("NSForegroundColor", 1, 0.5, 1, 0.5, 0, 2);
+            attrString.addAttributeForRange("NSObliqueness", 0.5, 0, 2);
+
+            log(attrString.length());
+            log(attrString.string());
+            
+            log(attrString.getAttributeNamesAtIndex(0));
+            log(attrString.getAttributeNamesAtIndex(3));
+
+            log(attrString.getAttributeValueAtIndex("NSObliqueness", 0));
+            log(attrString.getAttributeValueAtIndex("NSObliqueness", 3));
+
+            log(attrString.getAttributeValueAtIndex("NSForegroundColor", 1));
+            
+            document.execCommand("SelectAll");
+            
+            textInputController.insertText(attrString);
+            
+        } catch (ex) {
+            document.write("Exception: " + ex.description);
+        }
+        
+        document.getElementById("console").appendChild(console_messages);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

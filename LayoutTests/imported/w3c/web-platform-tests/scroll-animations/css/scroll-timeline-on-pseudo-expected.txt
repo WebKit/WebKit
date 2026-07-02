@@ -1,0 +1,3 @@
+
+PASS timeline.source does not expose pseudo-element
+

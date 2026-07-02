@@ -1,0 +1,3 @@
+
+FAIL Animation triggers on 'repeatEvent' iteration assert_equals: Expected repeatEvent event, but got beginEvent event instead expected "repeatEvent" but got "beginEvent"
+

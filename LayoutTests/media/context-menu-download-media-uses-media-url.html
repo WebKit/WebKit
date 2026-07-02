@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<video id="video" width="320" height="240" autoplay></video>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+video.addEventListener("playing", () => {
+    const rect = video.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    const item = eventSender.contextClick().find(i => i.title && i.title.includes("Download Video"));
+    document.body.textContent = item && !item.enabled ? "PASS" : "FAIL: Download Video item should be disabled for file:// media";
+    testRunner.notifyDone();
+});
+
+video.src = "content/test.mp4";
+</script>

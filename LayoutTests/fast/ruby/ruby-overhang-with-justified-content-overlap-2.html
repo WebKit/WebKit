@@ -1,0 +1,16 @@
+<style>
+div {
+  width: 600px;
+  font-family: Ahem;
+  font-size: 20px;
+  color: transparent;
+  background-color: green;
+  height: 40px;
+}
+rt {
+  font-size: 20px;
+}
+</style>
+<!-- PASS if no overlapping content -->
+<div style="text-align-last: justify">before<ruby>base<rt>annotation</rt></ruby> after<ruby style="color: blue">base</ruby></div>
+<div>before<ruby>base<rt>annotation</rt></ruby> after<ruby style="color: blue">base</ruby></div>

@@ -1,0 +1,4 @@
+
+PASS RTCStats.timestamp is expressed as Performance time
+PASS RTCRemoteInboundRtpStats.timestamp is expressed as Performance time
+

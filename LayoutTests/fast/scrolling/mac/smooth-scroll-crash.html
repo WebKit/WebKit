@@ -1,0 +1,17 @@
+
+<marquee id="m"></marquee>
+<html>
+<head>
+  <script>
+    onload = () => {
+      m.scrollTo({behavior: 'smooth'});
+      m.remove();
+    };
+    if (window.testRunner)
+          testRunner.dumpAsText();
+  </script>
+</head>
+<body>
+<p>This test passes if it does not crash.</p>
+</body>
+</html>

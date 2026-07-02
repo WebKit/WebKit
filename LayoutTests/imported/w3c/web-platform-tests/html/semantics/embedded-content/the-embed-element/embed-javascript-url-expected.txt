@@ -1,0 +1,5 @@
+
+PASS javascript: in src attribute should do nothing
+PASS location.href = 'javascript:"test"' should fire a load event
+PASS location.href = 'javascript:1' should not fire a load event
+

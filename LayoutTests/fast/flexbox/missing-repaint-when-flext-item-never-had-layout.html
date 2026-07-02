@@ -1,0 +1,45 @@
+<style>
+  .parent {
+    width: 200px;
+    height: 200px;
+    background: red;
+    display: flex;
+  }
+
+  .child {
+    display: inline;
+    width: 200px;
+    height: 200px;
+    background: green;
+    border: 0;
+  }
+</style>
+
+
+<div class=parent><span class=child id=foobar>PASS if visible</span></div>
+<pre id=repaintRects></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+setTimeout(function() {
+    foobar.style.display = "none";
+    document.body.offsetWidth;
+    setTimeout(function() {
+        if (window.internals)
+            internals.startTrackingRepaints();
+        
+        foobar.style.display = "inline";
+        document.body.offsetWidth;
+        
+        if (window.testRunner) {
+            if (window.internals) {
+                repaintRects.innerText = internals.repaintRectsAsText();
+                internals.stopTrackingRepaints();
+            }
+            testRunner.notifyDone();
+        }
+    }, 0);
+}, 0);
+</script>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Media Source with multiple video tracks</title>
+    <script src="../video-test.js"></script>
+    <script>
+    var mediaElement = null;
+
+    async function asyncPrepareMediaSource(mediaElement) {
+        return new Promise(async (resolve) => {
+            var mediaSource = new MediaSource;
+            mediaElement.src = URL.createObjectURL(mediaSource);
+            await new Promise((internalResolve) => { mediaSource.onsourceopen = () => { internalResolve(); } });
+            resolve(mediaSource);
+        });
+    }
+
+    async function asyncAppendDataToSourceBuffer(mediaSource, sourceBuffer, data) {
+        return new Promise(async (resolve) => {
+            sourceBuffer.appendBuffer(data);
+            await new Promise((internalResolve) => { sourceBuffer.onupdateend = () => { internalResolve(); } });
+            resolve();
+        });
+    }
+
+    async function asyncFetchAB(url) {
+        return new Promise((resolve) => {
+            var xhr = new XMLHttpRequest;
+            xhr.open('get', url);
+            xhr.responseType = 'arraybuffer';
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.send();
+        });
+    }
+
+    async function runTest() {
+        mediaElement = document.getElementById("video");
+        var mediaSource = null;
+        var videoSourceBuffer = null;
+
+        const videoStreams = 3;
+        const videoSegmentCount = 3;
+        const videoMimeType = "video/mp4; codecs=\"avc1.640028\"";
+
+        mediaElement.currentTime = 0;
+
+        mediaSource = await asyncPrepareMediaSource(mediaElement);
+
+        const videoSourceBufferList = [];
+        for (var stream = 1; stream <= videoStreams; stream++) {
+            videoSourceBuffer = sourceBuffer = mediaSource.addSourceBuffer(videoMimeType);
+            videoSourceBufferList.push(videoSourceBuffer);
+        }
+
+        for (var stream = 1; stream <= videoStreams; stream++) {
+            videoSourceBuffer = videoSourceBufferList[stream - 1];
+            videoDataList = [];
+
+            var trackId = 100 + stream;
+            var videoData = await asyncFetchAB("content/video320x180-" + `${trackId}` + "-init.mp4");
+            videoDataList.push(videoData);
+
+            for (var segment = 1; segment <= videoSegmentCount; segment++) {
+                var videoData = await asyncFetchAB("content/video320x180-" + `${trackId}` + "-" + `${segment}` + ".m4s");
+                videoDataList.push(videoData);
+            }
+            for (var i = 0; i < videoDataList.length; i++) {
+                await asyncAppendDataToSourceBuffer(mediaSource, videoSourceBuffer, videoDataList[i]);
+            }
+        }
+
+        testExpected('mediaElement.videoTracks.length', 3);
+        for (var stream = 1; stream <= videoStreams; stream++) {
+            testExpected('mediaElement.videoTracks[' + (stream - 1) + '].id', 100 + stream);
+            testExpected('mediaElement.videoTracks[' + (stream - 1) + '].selected', stream == 1 ? true : false);
+        }
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    Test that a MediaSource can actually have multiple video tracks and only one of them (the first one) will
+    be selected by default.
+    <video id="video"></video>
+</body>
+</html>

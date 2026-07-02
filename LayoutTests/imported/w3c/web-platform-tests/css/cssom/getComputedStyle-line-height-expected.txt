@@ -1,0 +1,6 @@
+
+PASS line-height: normal
+PASS line-height: 1
+PASS line-height: 10px
+PASS line-height: 10%
+

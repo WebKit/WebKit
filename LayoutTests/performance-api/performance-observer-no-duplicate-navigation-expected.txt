@@ -1,0 +1,10 @@
+PerformanceNavigationTiming entries should only be queued once per observer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigation_callback_already_invoked is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

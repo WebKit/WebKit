@@ -1,0 +1,166 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let promise0 = adapter0.requestDevice();
+let adapter1 = await navigator.gpu.requestAdapter();
+let device0 = await promise0;
+// START
+shaderModule1 = device0.createShaderModule({
+  code : ` ;
+              struct FragmentOutput0 {
+              @location(3) location_3: vec2i,   @location(0) location_0: vec4f}
+              @fragment fn fragment0() -> FragmentOutput0 {
+              var out: FragmentOutput0;
+              return out;
+            }
+             `});
+device0;
+texture4 = device0.createTexture({
+  size : {width : 768, depthOrArrayLayers : 46},
+  dimension : '3d',
+  format : 'bgra8unorm-srgb',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage[
+    {
+      }]});
+({
+  });
+textureView15 = texture4.createView();
+buffer20 = device0.createBuffer({
+  size : 132,
+  usage : GPUBufferUsage.INDEX | GPUBufferUsage});
+device0;
+shaderModule5 = device0.createShaderModule({
+  code : ` ;
+              struct VertexInput13 {
+              @location(11) location_11: f16,   @location(1) location_1: vec4i,   @location(8) location_8location_6: f16}
+              struct VertexOutput2 {
+              @location(6) location_6: f16,   @builtin(position) position: vec4f,   @location(13) location_13: vec2u,   @location(11) location_11: vec2h,   @location(15) location_15: i32,   @location(1) location_1: vec4h,   @location(3) location_3: vec4h,   @location(2) location_2: f32,   @location(12) location_12: f16,   @location(4) location_4: vec4f,   @location(14) location_14: vec2f,   @location(5) location_5: vec4f,   @location(7) location_7: u32,   @location(9) location_9: vec2u,   @location(8) location_8: vec4i,   @location(0) location_0vertex_index: u32}
+              struct VertexInput15 {
+              @location(15) location_15location_10: i32,   @location(7) location_7location_12: u32,   @location(9) location_9: i32}
+              struct VertexInput17 {
+              @location(0) location_0: vec4u}
+              @vertex fn vertex3(@location(5) location_5: vec4i, @location(2) location_2: vec2f, @location(13) location_13: vec2f, @location(14) location_14: vec2h, @location(4) location_4: vec4h, a9: VertexInput17, ) -> VertexOutput2 {
+              var out: VertexOutput2;
+              while bool(pack4xU8(a9.location_0)) {
+    }
+              return out;
+            }
+             `});
+commandEncoder88 = device0.createCommandEncoder();
+renderPassEncoder20 = commandEncoder88.beginRenderPass({
+  colorAttachments : [ {
+    view : textureView15,
+    depthSlice : 11,
+    clearValue : {
+      r : 204.6,
+      g : 561.2,
+      b : 582.2,
+      a : 717.4},
+    loadOp : 'clear',
+    storeOp : 'discard'} ],
+  });
+buffer80 = device0.createBuffer({
+  size : 514,
+  usage :
+      GPUBufferUsage.VERTEX
+});
+pipelineLayout6 = device0.createPipelineLayout({bindGroupLayouts : []});
+try {
+  renderPassEncoder20.setIndexBuffer(buffer20, 'uint32', )} catch {
+}
+pipeline32 = device0.createRenderPipeline({
+  layout : pipelineLayout6,
+  fragment : {
+    module : shaderModule1,
+    targets : [ {
+      format : 'bgra8unorm-srgb',
+      blend : {
+        alpha : {}}.BLUE} ]},
+  vertex : {
+    module : shaderModule5,
+    buffers : [
+      {
+        arrayStride : 60,
+        attributes : [
+          {format : 'uint32x2', offset : 4, format : 'sint32', offset : 12, format : 'snorm8x4', offset : 12, format : 'unorm16x4', offset : 0, shaderLocation : 2},
+          {format : 'snorm8x2', offset : 2, format : 'float32x4', offset : 4, shaderLocation : 14},
+          {format : 'snorm8x4', offset : 32, format : 'unorm16x2', offset : 28, shaderLocation : 4},
+          {format : 'sint8x4', offset : 8, format : 'uint32x3', offset : 0, shaderLocation : 0},
+          {format : 'sint32', offset : 0, format : 'uint16x4', offset : 8, format : 'snorm8x4', offset : 4, shaderLocation : 13},
+          {format : 'sint16x4', offset : 0, format : 'sint16x2', offset : 12, shaderLocation : 5},
+          {format : 'float32x3', offset : 0, shaderLocation : 6}]}]},
+  primitive : {topology : 'line-list', }});
+try {
+  renderPassEncoder20.setPipeline(pipeline32);
+  renderPassEncoder20.setVertexBuffer(0, buffer80)} catch {
+}
+try {
+  renderPassEncoder20.drawIndexed(2, 138, 0, 115);
+  renderPassEncoder20.end()} catch {
+}
+commandBuffer36 = commandEncoder88.finish();
+try {
+  device0.queue.submit([ commandBuffer36 ])} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass');
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

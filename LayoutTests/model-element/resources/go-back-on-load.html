@@ -1,0 +1,18 @@
+This page should go back after 0.5 seconds. If a test outputs the contents of this
+page, then the test page failed to enter the page cache.
+<script>
+  function triggerBackNavigation() {
+      setTimeout(function() {
+          history.back();
+      }, 500);
+  }
+
+  window.addEventListener("pageshow", (event) => {
+      if (event.persisted)
+          triggerBackNavigation();
+  });
+
+  window.addEventListener("load", function() {
+      triggerBackNavigation();
+  });
+</script>

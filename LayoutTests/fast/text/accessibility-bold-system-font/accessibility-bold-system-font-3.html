@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script>
+if (window.internals)
+    window.internals.settings.setShouldMockBoldSystemFontForAccessibility(true);
+</script>
+</head>
+<body>
+This test makes sure that accessibility bold is applied to font-family: system-ui. The test passes if the text below is bold.
+<p style="font: 24px system-ui;">Hello this is text</p>
+</body>
+</html>

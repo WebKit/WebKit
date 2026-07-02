@@ -1,0 +1,45 @@
+From 73224b6866aad52d93d1738ce1d0e6834b12ddf7 Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 23 Aug 2018 09:21:44 -0700
+Subject: [PATCH] Fix ctype.h include
+
+---
+ .../libwebrtc/Source/webrtc/rtc_base/stringutils.h         | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringutils.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringutils.h
+index d92ba0260f9..fd6890c12a9 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringutils.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringutils.h
+@@ -11,7 +11,10 @@
+ #ifndef RTC_BASE_STRINGUTILS_H_
+ #define RTC_BASE_STRINGUTILS_H_
+ 
++#if !defined(WEBRTC_WEBKIT_BUILD)
+ #include <ctype.h>
++#endif // !defined(WEBRTC_WEBKIT_BUILD)
++
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -50,6 +53,8 @@ bool string_match(const char* target, const char* pattern);
+ 
+ }  // namespace rtc
+ 
++#if !defined(WEBRTC_WEBKIT_BUILD)
++
+ ///////////////////////////////////////////////////////////////////////////////
+ // Rename a few common string functions so they are consistent across platforms.
+ // tolowercase is like tolower, but not compatible with end-of-file value
+@@ -70,6 +75,8 @@ inline wchar_t tolowercase(wchar_t c) {
+ 
+ #endif  // WEBRTC_WIN
+ 
++#endif // !defined(WEBRTC_WEBKIT_BUILD)
++
+ #if defined(WEBRTC_POSIX)
+ 
+ inline int _stricmp(const char* s1, const char* s2) {
+-- 
+2.17.1 (Apple Git-112)
+

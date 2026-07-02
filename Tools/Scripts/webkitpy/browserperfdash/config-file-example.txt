@@ -1,0 +1,71 @@
+# This configuration file uses the syntax from Python's ConfigParser.
+# The syntax is similar to Windows "INI" files.
+#
+# [section1]
+# key1 = value1
+# key2 = value2
+#
+# Each section entry defines a server where to upload the results.
+# The server should be running this Django app: https://github.com/Igalia/browserperfdash
+#
+# If more than a section entry is defined, the program will try to upload
+# the data to each one of them.
+#
+# The following entries are mandatory for each section
+#
+# 'bot_id'       : The identifier of this bot on the server.
+# 'bot_password' : The password of this bot on the server.
+# 'post_url'     : The POST URL (typically ${BASE_URI}/dash/bot-report)
+#
+# There are special sections named 'settings' where it is possible to specify list of
+# plans to be run when the flag '--plans-from-config' is passed, or to specify default
+# values for different options, or even to define several browsers to run the tests.
+# This sections have to be named 'settings' (default one) or start with the string 'settings:'
+# The values for the settings sections that can be configured in this section are:
+#   plan_list = list of plans to run when the flag --plans-from-config is specified
+#   timeout = (Optional) default value that will be used if no parameter "--timeout" is specified
+#   count = (Optional) default value that will be used if no parameter "--count" is specified
+#   platform = (Optional) default value that will be used if no parameter "--platform" is specified
+#   browser = (Optional) default value that will be used if no parameter "--browser" is specified
+#   driver = (Optional) default value that will be used if no parameter "--driver" is specified
+#
+# Note: this [settings] sections are ignored unless the flag '--plans-from-config' is passed.
+
+#
+# Example of configuration file
+#
+
+# Configuration of plans to run and default settings values
+[settings]
+plan_list = ares6 dromaeo-cssquery dromaeo-dom dromaeo-jslib jetstream2 jsbench kraken motionmark octane speedometer stylebench sunspider
+timeout = 900
+count = 1
+platform = linux
+driver = webserver
+browser = minibrowser-wpe
+
+# the values not specified here (platform, driver, count) default to the values passed from the default [settings]
+[settings:skia-cpu]
+plan_list = motionmark
+timeout = 1200
+browser = minibrowser-wpe-skiacpu
+
+# plan_list defaults to the value specified in the default [settings]
+[settings:legacy]
+browser = minibrowser-wpe-legacy
+
+# all the values but webdriver defaults to the values from the default [settings]
+[settings:webdriver]
+driver = webdriver
+
+# Configuration for dashboard browserperfdash.igalia.org
+[browserperfdash.igalia.org]
+bot_id = gtk-linux-64-perf-tests
+bot_password = r4nd0MP4ss
+post_url = https://browserperfdash.igalia.com/dash/bot-report
+
+# Configuration for dashboard localhost-test
+[localhost-test]
+bot_id = testlocalbot
+bot_password = 123
+post_url = http://localhost:8000/dash/bot-report

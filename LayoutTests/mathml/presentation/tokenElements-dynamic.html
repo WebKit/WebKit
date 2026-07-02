@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Token elements - dynamic changes</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      #styled > mo { color: red; }
+      #styled > mi { color: green; }
+      #styled > mi ~ * { color: blue; }
+    </style>
+    <script type="text/javascript">
+      function newText(t)
+      {
+        return document.createTextNode(t); 
+      }
+
+      function test()
+      {
+        var mi = document.getElementsByTagName("mi");
+        var mo = document.getElementsByTagName("mo");
+
+        // Test 1
+        mi[0].textContent = "sin";
+        mi[1].textContent = "x";
+        mi[2].appendChild(newText("cos"));
+        mi[3].appendChild(newText("y"));
+        mi[4].textContent = "a";
+        mi[4].insertBefore(newText("t"), mi[4].firstChild);
+        mi[4].appendChild(newText("n"));
+        mi[5].appendChild(newText("oo"));
+        mi[5].insertBefore(newText("z"), mi[5].firstChild);
+        mi[5].removeChild(mi[5].lastChild);
+
+        // Test 2
+        mo[0].textContent = "+";
+        mo[1].appendChild(newText("-"));
+        mo[2].textContent = "(";
+        mo[3].appendChild(newText("]"));
+        mo[4].appendChild(newText("-"));
+        mo[4].insertBefore(newText("+"), mo[4].firstChild);
+        mo[4].removeChild(mo[4].lastChild);
+        mo[5].appendChild(newText("|"));
+        mo[5].appendChild(newText("{"));
+        mo[5].removeChild(mo[5].firstChild);
+
+        // Test 3
+        mi[6].setAttribute("mathvariant", "bold");
+        mi[7].setAttribute("mathvariant", "italic");
+        mi[8].removeAttribute("mathvariant");
+        mi[9].removeAttribute("mathvariant");
+
+        // Test 4
+        mo[6].setAttribute("stretchy", "false");
+        mo[7].removeAttribute("stretchy");
+
+        // Test 5
+        document.getElementById("unstyled").setAttribute("id", "styled");
+      }
+    </script>
+  </head>
+  <body onload="test()">
+
+    <!-- These tests perform dynamic changes on mi and mo token elements. They should render the same as the static reference. -->
+
+    <!-- Test 1 -->
+    <!-- FIXME: single-char <mi> should be italic. -->
+    <p style="display: none;">
+      <math><mi></mi><mi></mi></math>
+      <math><mi></mi><mi></mi></math>
+      <math><mi></mi><mi></mi></math>
+    </p>
+
+    <!-- Test 2 -->
+    <p>
+      <math><mn>1</mn><mo></mo><mn>2</mn><mo></mo><mn>3</mn></math>
+      <math><mo></mo><msqrt><mfrac><mn>4</mn><mn>5</mn></mfrac></msqrt><mo></mo></math>
+      <math><mo></mo><mo></mo><mfrac><mfrac><mn>6</mn><mn>7</mn></mfrac><mfrac><mn>8</mn><mn>9</mn></mfrac></mfrac></math>
+    </p>
+
+    <!-- Test 3 -->
+    <p>
+      <math><mi>x</mi></math>
+      <math><mi>sin</mi></math>
+      <math><mi mathvariant="bold">x</mi></math>
+      <math><mi mathvariant="italic">sin</mi></math>
+    </p>
+
+    <!-- Test 4 -->
+    <p>
+      <math><mo>{</mo><mfrac><mfrac><mn>6</mn><mn>7</mn></mfrac><mfrac><mn>8</mn><mn>9</mn></mfrac></mfrac></math>
+      <math><mo stretchy="false">{</mo><mfrac><mfrac><mn>6</mn><mn>7</mn></mfrac><mfrac><mn>8</mn><mn>9</mn></mfrac></mfrac></math>
+    </p>    
+
+    <!-- Test 5 -->
+    <p>
+      <math id="unstyled"><mo>-</mo><mi>sin</mi><mi>x</mi></math>
+    </p>
+
+  </body>
+</html>

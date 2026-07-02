@@ -1,0 +1,25 @@
+<head>
+  <meta>
+  <style>
+    meta {
+      -webkit-user-modify: blah;
+      border-inline-style: solid;
+    }
+    :nth-child(2) {
+      -webkit-user-select: all;
+    }
+    head, script {
+      all: unset;
+    }
+  </style>
+  <script>
+    onload = () => {
+      if (window.testRunner)
+          testRunner.dumpAsText();
+      console.log("This test passes if it does not crash.");
+      document.execCommand('SelectAll');
+      document.designMode = 'on';
+      document.execCommand('FontSizeDelta', false, '1');
+    };
+  </script>
+</head>

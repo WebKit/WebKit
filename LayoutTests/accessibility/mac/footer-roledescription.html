@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<footer id="footer1">footer that is contentinfo</footer>
+
+<div role="contentinfo" id="contentinfo">content info</div>
+
+<main>
+  <footer id="footer2">footer that is not contentinfo</footer>
+</main>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a footer element and content info has the right role at the right time.");
+
+    if (window.accessibilityController) {
+
+          // Scoped to body, becomes a contentinfo.
+          var footer1 = accessibilityController.accessibleElementById("footer1");
+          var contentinfo = accessibilityController.accessibleElementById("contentinfo");
+
+          // Scoped to main (sectioning element), becomes sectionfooter.
+          var footer2 = accessibilityController.accessibleElementById("footer2");
+         
+          shouldBe("footer1.role", "'AXRole: AXGroup'");
+          shouldBe("footer1.subrole", "'AXSubrole: AXLandmarkContentInfo'");
+          shouldBe("footer1.roleDescription", "'AXRoleDescription: content information'");
+
+          shouldBe("contentinfo.role", "'AXRole: AXGroup'");
+          shouldBe("contentinfo.subrole", "'AXSubrole: AXLandmarkContentInfo'");
+          shouldBe("contentinfo.roleDescription", "'AXRoleDescription: content information'");
+
+          shouldBe("footer2.role", "'AXRole: AXGroup'");
+          shouldBe("footer2.subrole", "'AXSubrole: AXSectionFooter'");
+          shouldBe("footer2.roleDescription", "'AXRoleDescription: section footer'");
+
+          document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

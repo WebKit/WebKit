@@ -1,0 +1,3 @@
+
+PASS Clearing an interval from the callback should still clear it.
+

@@ -1,0 +1,4 @@
+
+
+PASS Fetch client and URL resolution for location setter
+

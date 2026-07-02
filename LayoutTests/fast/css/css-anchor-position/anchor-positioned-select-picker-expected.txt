@@ -1,0 +1,11 @@
+Checks that an anchor-positioned select element will display its picker at the same location as the element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS popupLocation.x is buttonClientRect.x
+PASS popupLocation.y is buttonClientRect.y
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+
+
+PASS ::picker(select) returns picker element style
+PASS ::picker(select) on non-select element resolves the style
+PASS ::picker(select) on non-select element with no rules resolves the style
+PASS Invalid pseudo-element should return empty style: ::picker
+PASS Invalid pseudo-element should return empty style: ::picker()
+PASS Invalid pseudo-element should return empty style: ::picker(div)
+PASS Invalid pseudo-element should return empty style: :picker(select)
+PASS Invalid pseudo-element should return empty style: ::picker(select)a
+PASS Invalid pseudo-element should return empty style: ::picker( )
+

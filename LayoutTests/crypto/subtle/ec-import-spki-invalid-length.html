@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a SPKI ECDSA key with invalid length byte causing buffer overread");
+
+// This test verifies that importing a malformed SPKI key where the final
+// length byte has a large value (0xFF) is rejected gracefully.
+// Without proper bounds checking, this would cause an unsigned underflow
+// in the (keyData.size() - index) computation.
+//
+// Key structure (25 bytes):
+// - Offset 0: 0x30 (SequenceMark - outer)
+// - Offset 1: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 2: 0x30 (SequenceMark - inner AlgorithmIdentifier)
+// - Offset 3: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 4-12: IdEcPublicKey OID (06 07 2a 86 48 ce 3d 02 01)
+// - Offset 13-22: Secp256r1 OID (06 08 2a 86 48 ce 3d 03 01 07)
+// - Offset 23: 0x03 (BIT STRING mark, skipped by +1)
+// - Offset 24: 0xFF (length byte, bytesUsedToEncodedLength returns 128)
+//
+// index computation:
+// 1. index = 1
+// 2. Check: 25 >= 2 (pass)
+// 3. index = 1 + 1 + 1 = 3 (Read length, inner SEQUENCE)
+// 4. Check: 25 >= 4 (pass)
+// 5. index = 3 + 1 = 4 (Read length)
+// 6. Check: 25 >= 4 + 9 = 13 (pass), verify IdEcPublicKey
+// 7. index = 4 + 9 = 13
+// 8. Check: 25 >= 13 + 10 = 23 (pass), verify Secp256r1
+// 9. index = 13 + 10 + 1 = 24 (Read OID + BIT STRING)
+// 10. Check: 25 >= 24 + 1 = 25 (pass)
+// 11. bytesUsedToEncodedLength(0xFF) = 128
+//     index = 24 + 128 + 1 = 153
+// 12. keyData.size() - index = 25 - 153 -> unsigned underflow without bounds check
+
+var extractable = true;
+
+// 25 bytes: valid SPKI header with IdEcPublicKey + Secp256r1 OIDs, then 0xFF length byte
+var invalidLengthSpkiKey = hexStringToUint8Array("3000300006072a8648ce3d020106082a8648ce3d03010703ff");
+
+// Should reject with DataError, not crash or read beyond buffer
+shouldReject('crypto.subtle.importKey("spki", invalidLengthSpkiKey, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["verify"])');
+
+</script>
+
+</body>
+</html>

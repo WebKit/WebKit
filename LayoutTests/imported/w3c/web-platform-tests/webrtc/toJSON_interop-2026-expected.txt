@@ -1,0 +1,3 @@
+
+PASS RTCIceCandidate.toJSON serializes only specific attributes
+

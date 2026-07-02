@@ -1,0 +1,88 @@
+
+PASS :basic:isAsync=false
+PASS :basic:isAsync=true
+FAIL :no_attachment:isAsync=false assert_unreached:
+  - VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test_utils.js:417:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:38:33
+ Reached unreachable code
+FAIL :no_attachment:isAsync=true assert_unreached:
+  - EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test_utils.js:413:21
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:38:33
+ Reached unreachable code
+FAIL :vertex_state_only:isAsync=false assert_unreached:
+  - (in subcase: depthStencilFormat="depth24plus";hasColor=false) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth24plus";hasColor=true) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth24plus-stencil8";hasColor=false) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth24plus-stencil8";hasColor=true) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth32float";hasColor=false) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth32float";hasColor=true) INFO: subcase ran
+  - (in subcase: depthStencilFormat="";hasColor=true) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1201:36
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test_utils.js:417:30
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:84:33
+  - (in subcase: depthStencilFormat="";hasColor=true) INFO: subcase ran
+ Reached unreachable code
+FAIL :vertex_state_only:isAsync=true assert_unreached:
+  - (in subcase: depthStencilFormat="depth24plus";hasColor=false) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth24plus";hasColor=true) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth24plus-stencil8";hasColor=false) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth24plus-stencil8";hasColor=true) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth32float";hasColor=false) INFO: subcase ran
+  - (in subcase: depthStencilFormat="depth32float";hasColor=true) INFO: subcase ran
+  - (in subcase: depthStencilFormat="";hasColor=true) EXPECTATION FAILED: DID NOT REJECT
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    shouldReject@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:301:34
+    doCreateRenderPipelineTest@http://127.0.0.1:8000/webgpu/webgpu/api/validation/validation_test_utils.js:413:21
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/render_pipeline/misc.spec.js:84:33
+  - (in subcase: depthStencilFormat="";hasColor=true) INFO: subcase ran
+ Reached unreachable code
+PASS :pipeline_layout,device_mismatch:
+PASS :external_texture:
+PASS :storage_texture,format:format="rgba8unorm"
+PASS :storage_texture,format:format="rgba8snorm"
+PASS :storage_texture,format:format="rgba8uint"
+PASS :storage_texture,format:format="rgba8sint"
+PASS :storage_texture,format:format="r16unorm"
+PASS :storage_texture,format:format="r16snorm"
+PASS :storage_texture,format:format="rg16unorm"
+PASS :storage_texture,format:format="rg16snorm"
+PASS :storage_texture,format:format="rgba16unorm"
+PASS :storage_texture,format:format="rgba16snorm"
+PASS :storage_texture,format:format="rgba16uint"
+PASS :storage_texture,format:format="rgba16sint"
+PASS :storage_texture,format:format="rgba16float"
+PASS :storage_texture,format:format="r32uint"
+PASS :storage_texture,format:format="r32sint"
+PASS :storage_texture,format:format="r32float"
+PASS :storage_texture,format:format="rg32uint"
+PASS :storage_texture,format:format="rg32sint"
+PASS :storage_texture,format:format="rg32float"
+PASS :storage_texture,format:format="rgba32uint"
+PASS :storage_texture,format:format="rgba32sint"
+PASS :storage_texture,format:format="rgba32float"
+PASS :storage_texture,format:format="bgra8unorm"
+PASS :storage_texture,format:format="r8unorm"
+PASS :storage_texture,format:format="r8snorm"
+PASS :storage_texture,format:format="r8uint"
+PASS :storage_texture,format:format="r8sint"
+PASS :storage_texture,format:format="rg8unorm"
+PASS :storage_texture,format:format="rg8snorm"
+PASS :storage_texture,format:format="rg8uint"
+PASS :storage_texture,format:format="rg8sint"
+PASS :storage_texture,format:format="r16uint"
+PASS :storage_texture,format:format="r16sint"
+PASS :storage_texture,format:format="r16float"
+PASS :storage_texture,format:format="rg16uint"
+PASS :storage_texture,format:format="rg16sint"
+PASS :storage_texture,format:format="rg16float"
+PASS :storage_texture,format:format="rgb10a2uint"
+PASS :storage_texture,format:format="rgb10a2unorm"
+PASS :storage_texture,format:format="rg11b10ufloat"
+

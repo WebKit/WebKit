@@ -1,0 +1,9 @@
+
+Test that multiple cues in a sample buffer are parsed correctly.
+
+EVENT(addtrack)
+EVENT(cuechange)
+EXPECTED (track.cues.length === '5') OK
+
+END OF TEST
+

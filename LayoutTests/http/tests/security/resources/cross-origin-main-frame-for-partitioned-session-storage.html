@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+<head>
+</head>
+<body>
+    <script>
+        var isOnHistoryBack = false;
+        var opener = window.opener;
+        var loopbackFrame;
+        var localhostFrame;
+        var cachedInfo;
+
+        function localhostFrameLoaded() {
+            localhostFrame = document.getElementById("localhost-frame");
+            if (localhostFrame === undefined) {
+                opener.postMessage("localhostFrame not defined.");
+                return;
+            }
+            if (localhostFrame && loopbackFrame)
+                opener.postMessage("go", "*");
+        }
+
+        function loopbackFrameLoaded() {
+            loopbackFrame = document.getElementById("loopback-frame");
+            if (loopbackFrame === undefined) {
+                opener.postMessage("loopbackFrame not defined.");
+                return;
+            }
+            if (localhostFrame && loopbackFrame)
+                opener.postMessage("go", "*");
+        }
+
+        // Continuation on history.back().
+        window.addEventListener("pageshow", (event) => {
+            if (isOnHistoryBack)
+                opener.postMessage({}, "*");
+        });
+
+        window.addEventListener('message', (event) => {
+            // Handle messages from both opener context and subframes
+            let messageFromOpener = (event.source === opener);
+            let { step } = event.data;
+            switch (step) {
+            case 1:
+            case 2: {
+                const isLocalhostTest = step == 1;
+                let testKey = isLocalhostTest ? "mainFrameLocalhostTest" : "mainFrameLoopbackTest";
+                let targetOrigin = isLocalhostTest ? "localhost" : "loopback";
+                if (messageFromOpener) {
+                    let {_, testValue} = event.data;
+                    cachedInfo = testValue;
+                    let subframe = isLocalhostTest ? localhostFrame : loopbackFrame;
+                    window.sessionStorage.setItem(testKey, testValue);
+                    subframe.contentWindow.postMessage({"step": step, "testKey": testKey}, "*");
+                    break;
+                }
+                // Message from subframe.
+                let {_, result} = event.data;
+                let resultMsg;
+                if (result === cachedInfo)
+                    resultMsg = `${step}: Successfully retrieved sessionStorage from ${targetOrigin} frame: ${result}.`;
+                else
+                    resultMsg = `${step}: Retrieving sessionStorage from ${targetOrigin} failed: ${result}`;
+                opener.postMessage({"result": resultMsg}, "*");
+                break;
+            }
+            case 3:
+            case 4: {
+                const isLocalhostTest = step == 3;
+                let testKey = isLocalhostTest ? "subFrameLocalhostTest" : "subFrameLoopbackTest";
+                let targetOrigin = isLocalhostTest ? "localhost" : "loopback";
+                if (messageFromOpener) {
+                    let {_, param} = event.data;
+                    let testValue = param;
+                    let subframe = isLocalhostTest ? localhostFrame : loopbackFrame;
+                    subframe.contentWindow.postMessage({"step": step, "testKey": testKey}, "*");
+                    break;
+                }
+                // Message from subframe.
+                let {_, testValue} = event.data;
+                let result = window.sessionStorage.getItem(testKey);
+                let resultMsg;
+                if (result === testValue)
+                    resultMsg = `${step}: Successfully retrieved sessionStorage from ${targetOrigin} frame: ${result}.`;
+                else
+                    resultMsg = `${step}: Retrieving sessionStorage from ${targetOrigin} failed: ${result}`;
+                opener.postMessage({"result": resultMsg}, "*");
+                window.sessionStorage.clear();
+                break;
+            }
+            case 5:
+            case 6: {
+                const isLocalhostTest = step == 5;
+                let testKey = isLocalhostTest ? "subFrameLocalhostTest" : "subFrameLoopbackTest";
+                let targetOrigin = isLocalhostTest ? "localhost" : "loopback";
+                if (messageFromOpener) {
+                    let subframe = isLocalhostTest ? localhostFrame : loopbackFrame;
+                    subframe.contentWindow.postMessage({"step": step, "testKey": testKey}, "*");
+                    break;
+                }
+                // Message from subframe.
+                opener.postMessage({}, "*");
+                // Step 7 is when the page is navigated, therefore the next time this variable is accessed will be when returning from that navigation.
+                isOnHistoryBack = true;
+                break;
+            }
+            case 8:
+            case 9:
+            case 11:
+            case 12: {
+                const isLocalhostTest = (step == 8 || step == 11);
+                let testKey = isLocalhostTest ? "subFrameLocalhostTest" : "subFrameLoopbackTest";
+                let targetOrigin = isLocalhostTest ? "localhost" : "loopback";
+                if (messageFromOpener) {
+                    let subframe = isLocalhostTest ? localhostFrame : loopbackFrame;
+                    subframe.contentWindow.postMessage({"step": step, "testKey": testKey}, "*");
+                    break;
+                }
+                // Message from subframe.
+
+                let {_, result} = event.data;
+                let resultMsg;
+                if (result !== null)
+                    resultMsg = `${step}: Successfully retrieved sessionStorage from ${targetOrigin} frame: ${result}.`;
+                else
+                    resultMsg = `${step}: Retrieving sessionStorage from ${targetOrigin} failed: ${result}`;
+                opener.postMessage({"result": resultMsg}, "*");
+                break;
+            }
+            case 10:
+                history.back();
+                break;
+            default:
+                testFailed(`Reached unexpected default case. step: ${step}, data:`, event.data);
+            }
+        }, false);
+    </script>
+    <iframe id="localhost-frame" src="http://localhost:8000/security/resources/cross-origin-iframe-for-partitioned-session-storage.html" onload="localhostFrameLoaded()"></iframe>
+    <iframe id="loopback-frame" src="http://127.0.0.1:8000/security/resources/cross-origin-iframe-for-partitioned-session-storage.html" onload="loopbackFrameLoaded()"></iframe>
+    <div id="logging"></div>
+</body>
+</head>
+

@@ -1,0 +1,4 @@
+
+
+PASS aElement.click() during the load event must NOT replace
+

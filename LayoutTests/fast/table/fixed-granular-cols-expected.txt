@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 200x50
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 200x50
+          RenderTableRow {TR} at (0,0) size 200x50
+            RenderTableCell {TD} at (0,24) size 10x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,24) size 100x2 [bgcolor=#008000] [r=0 c=1 rs=1 cs=3]
+            RenderTableCell {TD} at (110,24) size 90x2 [r=0 c=4 rs=1 cs=1]
+            RenderTableCell {TD} at (200,24) size 0x2 [r=0 c=5 rs=1 cs=1]
+      RenderTable {TABLE} at (0,50) size 200x50
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 200x50
+          RenderTableRow {TR} at (0,0) size 200x50
+            RenderTableCell {TD} at (0,24) size 10x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,24) size 100x2 [bgcolor=#008000] [r=0 c=1 rs=1 cs=3]
+            RenderTableCell {TD} at (110,24) size 90x2 [r=0 c=4 rs=1 cs=1]

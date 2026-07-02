@@ -1,0 +1,18 @@
+This test ensures that when text color is specified expclitly, it is not overriden by a parent.
+
+Attributes in range {0, 24}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+What color is this text?
+
+PASS: The attributed string matched expectations after changing styles.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+What color is this text?

@@ -1,0 +1,6 @@
+
+FAIL User action pseudo-classes on dialog (modal) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: waitForRender"
+FAIL User action pseudo-classes on dialog (non-modal) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: waitForRender"
+FAIL User action pseudo-classes on popover (popover) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: waitForRender"
+FAIL User action pseudo-classes on customizable-select (open) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: waitForRender"
+

@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch: closing while retrieving blob should lead to unset pending activity without crashing/asserting</title>
+    <script src="../resources/gc.js"></script>
+  </head>
+  <body>
+    <div>PASS</div>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    // test is passing if no crashes
+    new Response(new Blob(["this is a test"])).text();
+    window.gc();
+    window.location = "about:blank";
+    </script>
+  </body>
+</html>

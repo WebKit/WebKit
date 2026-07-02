@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<span id="text1">text1</span>
+<span aria-current="true" id="text2">text2</span>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-current is a global attribute.");
+
+    if (window.accessibilityController) {
+        shouldBeFalse("spanAccessible('text1')");
+        shouldBeTrue("spanAccessible('text2')");
+    }
+    
+    function spanAccessible(sh) {
+        var spanObj = accessibilityController.accessibleElementById(sh);
+        
+        if (!spanObj)
+            return false;
+        
+        return !spanObj.isIgnored;
+    }
+
+</script>
+
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

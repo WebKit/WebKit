@@ -1,0 +1,5 @@
+Initial position
+
+FAIL Test altKey of mouse boundary events (modifiers are changed before move) promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Test altKey of mouse boundary events (modifiers are changed after move) promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+

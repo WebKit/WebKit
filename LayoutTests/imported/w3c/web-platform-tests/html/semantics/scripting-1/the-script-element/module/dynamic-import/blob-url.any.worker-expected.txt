@@ -1,0 +1,8 @@
+
+PASS Blob URLs are supported in dynamic imports
+PASS Identical blob URLs resolve to the same module
+PASS Different blob URLs pointing to the same blob resolve to different modules
+PASS A revoked blob URL will not resolve
+PASS A revoked blob URL will resolve if it's already in the module graph
+PASS Revoking a blob URL immediately after calling import will not fail
+

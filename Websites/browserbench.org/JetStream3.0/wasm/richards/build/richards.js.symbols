@@ -1,0 +1,15 @@
+0:emscripten_resize_heap
+1:__wasm_call_ctors
+2:scheduleIter
+3:idlefn
+4:workfn
+5:handlerfn
+6:devfn
+7:setup
+8:getQpktcount
+9:getHoldcount
+10:emscripten_builtin_malloc
+11:sbrk
+12:_emscripten_stack_restore
+13:_emscripten_stack_alloc
+14:emscripten_stack_get_current

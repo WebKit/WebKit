@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+img {
+    width: 200px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<img id="top" src="../../resources/green-400x400.png"></img>
+<div contenteditable><img id="bottom" src="../../resources/green-400x400.png"></img></div>
+<script>
+function mouseOverElement(element) {
+    const bounds = element.getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+}
+
+description("Verifies that Live Text does not trigger for images in editable content. This test requires WebKitTestRunner/DumpRenderTree.");
+addEventListener("load", () => {
+    if (!window.internals || !window.eventSender)
+        return;
+
+    topImage = document.getElementById("top");
+    mouseOverElement(topImage);
+    shouldBe("topImage", "internals.textRecognitionCandidate");
+
+    mouseOverElement(document.getElementById("bottom"));
+    shouldBeNull("internals.textRecognitionCandidate");
+});
+</script>
+</body>
+</html>

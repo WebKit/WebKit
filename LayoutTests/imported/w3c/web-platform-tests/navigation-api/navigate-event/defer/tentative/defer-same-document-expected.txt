@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT
+  navigateEvent.deferPageSwap: deferring is not allowed for same-document navigations
+ Test timed out
+

@@ -1,0 +1,73 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PASS .item 1
+FAIL .item 2 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: center;" data-expected-width="20" data-offset-x="10"></div>
+</div>
+offsetLeft expected 10 but got 20
+FAIL .item 3 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: end;" data-expected-width="20" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 20
+FAIL .item 4 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: self-start;" data-expected-width="20" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 20
+PASS .item 5
+FAIL .item 6 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: left;" data-expected-width="20" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 20
+PASS .item 7
+FAIL .item 8 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: stretch;" data-expected-width="40" data-offset-x="0"></div>
+</div>
+width expected 40 but got 20
+PASS .item 9
+FAIL .item 10 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: center;" data-expected-width="20" data-offset-x="10"></div>
+</div>
+offsetLeft expected 10 but got 20
+FAIL .item 11 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: end;" data-expected-width="20" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 20
+FAIL .item 12 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: self-start;" data-expected-width="20" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 20
+PASS .item 13
+FAIL .item 14 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: left;" data-expected-width="20" data-offset-x="0"></div>
+</div>
+offsetLeft expected 0 but got 20
+PASS .item 15
+FAIL .item 16 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: stretch;" data-expected-width="40" data-offset-x="0"></div>
+</div>
+width expected 40 but got 20
+

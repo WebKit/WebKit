@@ -1,0 +1,3 @@
+
+PASS Node.moveBefore should trigger CSS transition state (left) if needed
+

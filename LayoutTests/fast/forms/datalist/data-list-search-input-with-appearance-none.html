@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+input {
+    width: 300px;
+    height: 50px;
+    border-radius: 1px;
+}
+</style>
+
+<body onload="runTest()">
+<input list="fruits" type="search"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest() {
+    await UIHelper.activateAndWaitForInputSessionAt(150, 25);
+
+    if (UIHelper.isIOSFamily())
+        await UIHelper.tapAt(290, 30);
+
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(true);
+    document.execCommand("InsertText", true, "Apple");
+
+    testRunner.notifyDone();
+}
+</script>

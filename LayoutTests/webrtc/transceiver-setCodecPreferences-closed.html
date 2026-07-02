@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src="../resources/gc.js"></script>
+</head>
+<body>
+<script>
+promise_test(async () => {
+    const audioCodecs = RTCRtpSender.getCapabilities('audio').codecs;
+    const videoCodecs = RTCRtpSender.getCapabilities('video').codecs;
+
+    const transceivers = [];
+    for (let i = 0; i < 50; i++) {
+      const pc = new RTCPeerConnection();
+      transceivers.push(pc.addTransceiver('audio'));
+      transceivers.push(pc.addTransceiver('video'));
+      pc.close();
+      // Intentionally drop pc reference immediately.
+    }
+
+    // Let the event loop drain and run aggressive GC to destroy the PeerConnection objects behind the retained transceivers.
+    await new Promise(resolve => setTimeout(resolve, 30));
+    gc();
+
+    for (const transceiver of transceivers)
+        transceiver.setCodecPreferences(transceiver.receiver.track && transceiver.receiver.track.kind === 'video' ? videoCodecs : audioCodecs);
+});
+</script>
+</body>
+</html>

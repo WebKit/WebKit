@@ -1,0 +1,120 @@
+/*
+ *  Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include <stddef.h>
+#include <stdint.h>
+#ifdef WEBRTC_WEBKIT_BUILD
+#include <stdlib.h>
+#endif
+
+#include <memory>
+#include <string>
+#include <utility>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnullability-completeness"
+#include "absl/strings/string_view.h"
+#include "api/jsep.h"
+#include "api/make_ref_counted.h"
+#include "api/peer_connection_interface.h"
+#include "api/test/rtc_error_matchers.h"
+#include "pc/test/integration_test_helpers.h"
+#include "pc/test/mock_peer_connection_observers.h"
+#include "rtc_base/checks.h"
+#include "test/fuzzers/fuzz_data_helper.h"
+#include "test/gmock.h"
+#include "test/wait_until.h"
+#pragma clang diagnostic pop
+
+namespace webrtc {
+
+class FuzzerTest : public PeerConnectionIntegrationBaseTest {
+ public:
+  FuzzerTest()
+      : PeerConnectionIntegrationBaseTest(SdpSemantics::kUnifiedPlan) {}
+
+#ifdef WEBRTC_WEBKIT_BUILD
+  void RunNegotiateCycle(SdpType sdpType, absl::string_view message) {
+#else
+  void RunNegotiateCycle(absl::string_view message) {
+#endif
+    CreatePeerConnectionWrappers();
+    // Note - we do not do test.ConnectFakeSignaling(); all signals
+    // generated are discarded.
+
+    auto srd_observer =
+        webrtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
+
+#ifdef WEBRTC_WEBKIT_BUILD
+    std::unique_ptr<SessionDescriptionInterface> sdp(
+        CreateSessionDescription(sdpType, std::string(message)));
+#else
+    SdpParseError error;
+    std::unique_ptr<SessionDescriptionInterface> sdp(
+        CreateSessionDescription("offer", std::string(message), &error));
+#endif
+    caller()->pc()->SetRemoteDescription(std::move(sdp), srd_observer);
+    // Wait a short time for observer to be called. Timeout is short
+    // because the fuzzer should be trying many branches.
+    EXPECT_THAT(
+        WaitUntil([&] { return srd_observer->called(); }, ::testing::IsTrue()),
+        IsRtcOk());
+
+    // If set-remote-description was successful, try to answer.
+    auto sld_observer =
+        webrtc::make_ref_counted<FakeSetLocalDescriptionObserver>();
+    if (srd_observer->error().ok()) {
+      caller()->pc()->SetLocalDescription(sld_observer);
+      EXPECT_THAT(WaitUntil([&] { return sld_observer->called(); },
+                            ::testing::IsTrue()),
+                  IsRtcOk());
+    }
+#if !defined(WEBRTC_WEBKIT_BUILD)
+    // If there is an EXPECT failure, die here.
+    RTC_CHECK(!HasFailure());
+#endif // !defined(WEBRTC_WEBKIT_BUILD)
+  }
+
+  // This test isn't using the test definition macros, so we have to
+  // define the TestBody() function, even though we don't need it.
+  void TestBody() override {}
+};
+
+void FuzzOneInput(FuzzDataHelper fuzz_data) {
+#ifdef WEBRTC_WEBKIT_BUILD
+  uint8_t type;
+  if (const char* var = getenv("SDP_TYPE")) {
+    type = atoi(var);
+  } else {
+    type = fuzz_data.ReadOrDefaultValue<uint8_t>(0);
+  }
+  SdpType sdpType = SdpType::kOffer;
+  switch (type % 4) {
+    case 0: sdpType = SdpType::kOffer; break;
+    case 1: sdpType = SdpType::kPrAnswer; break;
+    case 2: sdpType = SdpType::kAnswer; break;
+    case 3: sdpType = SdpType::kRollback; break;
+  }
+#endif
+  if (fuzz_data.size() > 16384) {
+    return;
+  }
+
+  FuzzerTest test;
+#ifdef WEBRTC_WEBKIT_BUILD
+  test.RunNegotiateCycle(
+      sdpType,
+      fuzz_data.ReadString());
+#else
+  test.RunNegotiateCycle(fuzz_data.ReadString());
+#endif
+}
+
+}  // namespace webrtc

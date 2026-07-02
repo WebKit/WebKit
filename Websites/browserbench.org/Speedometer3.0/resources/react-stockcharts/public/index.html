@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Stockcharts</title>
+  </head>
+  <body style="background: #f5f5f5;">
+    <div id="root"></div>
+    <script>
+      // This hack allows to capture the work normally happening in a rAF. We
+      // may be able to remove it if the runner improves.
+      window.requestAnimationFrame = (cb) => window.setTimeout(cb, 0);
+      window.cancelAnimationFrame = window.clearTimeout;
+    </script>
+  </body>
+</html>

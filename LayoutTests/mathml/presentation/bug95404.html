@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <title>testcase</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      body {
+      overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- The first msqrt should not wrap and so should be hidden by the
+         red rectangle -->
+    <div style="position: absolute; top: 1em; left: 0; width: 100%;">
+      <div style="position: absolute; top: 0; left: 0;">
+        <math>
+          <msqrt>
+            <mi style="padding-right: 50vw;">x</mi>
+            <mi style="padding-right: 50vw;">y</mi>
+          </msqrt>
+        </math>
+      </div>
+      <div style="position: absolute; top: -2px; left: -2px; width: 100%;
+                  border: 2px solid green; background: red;">
+        <math style="visibility: hidden;">
+          <msqrt>
+            <mi>x</mi>
+            <mi>y</mi>
+          </msqrt>
+        </math>
+      </div>
+    </div>
+
+    <!-- The first msup should not wrap and so should be hidden by the
+         blue rectangle -->
+    <div style="position: absolute; top: 5em; left: 0; width: 100%;">
+      <div style="position: absolute; top: 0; left: 0;">
+        <math>
+          <msup>
+            <mi style="padding-right: 50vw">x</mi>
+            <mi style="padding-right: 50vw">y</mi>
+          </msup>
+        </math>
+      </div>
+      <div style="position: absolute; top: -2px; left: -2px; width: 100%;
+                  border: 2px solid green; background: blue;">
+        <math style="visibility: hidden;">
+          <msup>
+            <mi>x</mi>
+            <mi>y</mi>
+          </msup>
+        </math>
+      </div>
+    </div>
+
+
+  </body>
+</html>

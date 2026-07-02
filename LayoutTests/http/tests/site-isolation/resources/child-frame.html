@@ -1,0 +1,9 @@
+<iframe src="http://127.0.0.1:8000/site-isolation/resources/grandchild-frame.html" id=onlyiframe></iframe>
+<script>
+    onload = () => {
+        onlyiframe.parentNode.removeChild(onlyiframe);
+        setTimeout(()=>{
+            testRunner.notifyDone();
+        }, 100);
+    }
+</script>

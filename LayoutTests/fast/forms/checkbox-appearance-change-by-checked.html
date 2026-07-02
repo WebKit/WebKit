@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+<input type=checkbox>
+
+<script>
+var checkbox = document.getElementsByTagName('input')[0];
+checkbox.offsetTop;
+if (window.testRunner)
+    testRunner.waitUntilDone();
+setTimeout(function() {
+    checkbox.checked = true;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>

@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseSystemAppearance=true ] -->
+<html>
+<head>
+<title>This tests that vibrancy can be used without an explicitly specified backing material.</title>
+<style>
+
+div {
+    background: linear-gradient(90deg, red, blue) fixed;
+}
+
+p {
+    -apple-visual-effect: none;
+}
+
+</style>
+</head>
+<body>
+<div><p>-apple-system-vibrancy-secondary-label</p></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Testing that settings 'cursor: none' on the <video> element is respected in the media controls shadow root.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).cursor is "wait"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

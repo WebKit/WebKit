@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<title>Deleting a button</title>
+</head>
+<body>
+<p>This tests that deleting a button does not leak the style inside the button to the outside. To manually test, click inside the content-editable area below, click the "Insert a button" button, delete the button by pressing backspace, and then type some text. The text should be left-aligned and black.</p>
+
+<div id="div" contenteditable="true" style="border: 1px #000 solid"></div>
+<input type="button" value="Insert a button" onclick="insertButton()" />
+
+<div id="log"></div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var div = document.getElementById("div");
+
+function insertButton() {
+    var html = '<input type="button" value="a button" style="color: red" />';
+    document.execCommand('InsertHTML', false, html);
+}
+
+var range = document.createRange();
+range.selectNodeContents(div);
+window.getSelection().addRange(range);
+
+insertButton();
+document.execCommand('Delete');
+document.execCommand('InsertText', false, 'test');
+
+if (div.innerHTML == "test")
+    document.getElementById("log").innerText = "PASSED deleting a button did not leak the style inside the button.";
+else
+    document.getElementById("log").innerText = "FAILED deleting a button leaked the style inside the button.";
+
+div.innerHTML = "<br>";
+</script>
+</body>
+</html>

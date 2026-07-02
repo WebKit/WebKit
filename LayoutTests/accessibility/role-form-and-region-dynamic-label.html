@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="form" id="form">
+    <input type="text">
+</div>
+
+<div role="region" id="region">
+    Text inside a region
+</div>
+
+<div id="form-label">Foo</div>
+<div id="region-label">Foo</div>
+
+<script>
+var output = "This test ensures we compute the correct role for role='form' and role='region' elements.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('form').computedRoleString", "'generic'");
+    output += expect("accessibilityController.accessibleElementById('region').computedRoleStringrole", "undefined");
+
+    output += evalAndReturn("document.getElementById('form').setAttribute('aria-label', 'i am a form')");
+    output += evalAndReturn("document.getElementById('region').setAttribute('aria-label', 'i am a region')");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('form').computedRoleString", "'form'");
+        output += await expectAsync("accessibilityController.accessibleElementById('region').computedRoleString", "'region'");
+
+        // Set a blank label.
+        output += evalAndReturn("document.getElementById('form').setAttribute('aria-label', '')");
+        output += evalAndReturn("document.getElementById('region').setAttribute('aria-label', '')");
+
+        output += await expectAsync("accessibilityController.accessibleElementById('form').computedRoleString", "'generic'");
+        output += await expectAsync("accessibilityController.accessibleElementById('region').computedRoleString", "'generic'");
+
+        output += evalAndReturn("document.getElementById('form').removeAttribute('aria-label')");
+        output += evalAndReturn("document.getElementById('region').removeAttribute('aria-label')");
+
+        // Test aria-labelledby.
+        output += evalAndReturn("document.getElementById('form').setAttribute('aria-labelledby', 'form-label')");
+        output += evalAndReturn("document.getElementById('region').setAttribute('aria-labelledby', 'region-label')");
+
+        output += await expectAsync("accessibilityController.accessibleElementById('form').computedRoleString", "'form'");
+        output += await expectAsync("accessibilityController.accessibleElementById('region').computedRoleString", "'region'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

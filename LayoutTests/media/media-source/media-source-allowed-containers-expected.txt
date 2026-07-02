@@ -1,0 +1,8 @@
+RUN(internals.settings.setAllowedMediaContainerTypes(null))
+EXPECTED (MediaSource.isTypeSupported("video/mp4") == 'true') OK
+RUN(internals.settings.setAllowedMediaContainerTypes("video/mp4"))
+EXPECTED (MediaSource.isTypeSupported("video/mp4") == 'true') OK
+RUN(internals.settings.setAllowedMediaContainerTypes("video/webm"))
+EXPECTED (MediaSource.isTypeSupported("video/mp4") == 'false') OK
+END OF TEST
+

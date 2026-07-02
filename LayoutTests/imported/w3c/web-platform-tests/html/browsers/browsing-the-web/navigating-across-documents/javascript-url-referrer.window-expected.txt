@@ -1,0 +1,5 @@
+
+PASS unsafe-url referrer policy used to create the starting page
+PASS origin referrer policy used to create the starting page
+PASS no-referrer referrer policy used to create the starting page
+

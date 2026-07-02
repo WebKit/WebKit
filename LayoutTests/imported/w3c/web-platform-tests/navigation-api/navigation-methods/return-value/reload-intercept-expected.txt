@@ -1,0 +1,3 @@
+
+PASS reload() and intercept() with a fulfilled promise
+

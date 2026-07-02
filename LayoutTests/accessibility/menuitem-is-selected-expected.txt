@@ -1,0 +1,14 @@
+This test ensures that calling isSelected on a menuitem within an unrendered container doesn't cause a crash.
+
+
+{AXRole: AXWebArea}
+
+{AXRole: AXGroup}
+
+{#group AXRole: AXGroup}
+PASS: accessibilityController.accessibleElementById('group').ariaLabelledByElementAtIndex(0).isSelected === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

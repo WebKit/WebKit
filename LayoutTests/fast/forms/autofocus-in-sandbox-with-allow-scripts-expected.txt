@@ -1,0 +1,7 @@
+This tests having an input element with autofocus content attribute inside a sandboxed iframe.
+The input element should be autofocused since scripts are allowed.
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS

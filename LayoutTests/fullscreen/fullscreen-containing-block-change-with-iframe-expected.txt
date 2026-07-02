@@ -1,0 +1,7 @@
+
+Test passes if the lightgreen area is fullscreen after clicking the button.
+
+EXPECTED (iframe.offsetWidth > 400 == 'true') OK
+EXPECTED (iframe.offsetHeight > 400 == 'true') OK
+END OF TEST
+

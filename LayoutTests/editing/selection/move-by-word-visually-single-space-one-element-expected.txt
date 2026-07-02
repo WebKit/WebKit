@@ -1,0 +1,108 @@
+
+======== Move By Word ====
+Test 1, LTR:
+Move right by one word
+"abc def hij opq rst"[0, 4, 8, 12, 16, 19]
+Move left by one word
+"abc def hij opq rst"[19, 16, 12, 8, 4, 0]
+Test 2, RTL:
+Move left by one word
+"abc def hij opq rst"[0, 15, 11, 7, 3, 19]
+Move right by one word
+"abc def hij opq rst"[19, 3, 7, 11, 15, 0]
+Test 3, LTR:
+Move right by one word
+"ZZZ QQQ BBB CCC XXX"[0, 15, 11, 7, 3, 19]
+Move left by one word
+"ZZZ QQQ BBB CCC XXX"[19, 3, 7, 11, 15, 0]
+Test 4, RTL:
+Move left by one word
+"ZZZ QQQ BBB CCC XXX"[0, 4, 8, 12, 16, 19]
+Move right by one word
+"ZZZ QQQ BBB CCC XXX"[19, 16, 12, 8, 4, 0]
+Test 5, LTR:
+Move right by one word
+"abc def hij AAA BBB WWW opr uvw xyz"[0, 4, 8, 12, 19, 15, 24, 28, 32, 35]
+Move left by one word
+"abc def hij AAA BBB WWW opr uvw xyz"[35, 32, 28, 24, 15, 19, 12, 8, 4, 0]
+Test 6, RTL:
+Move left by one word
+"abc def hij AAA BBB WWW opr uvw xyz"[0, 7, 3, 12, 16, 20, 24, 31, 27, 35]
+Move right by one word
+"abc def hij AAA BBB WWW opr uvw xyz"[35, 27, 31, 24, 20, 16, 12, 3, 7, 0]
+Test 7, LTR:
+Move right by one word
+"abc def ZQB RIG uvw xyz"[0, 4, 8, 11, 16, 20, 23]
+Move left by one word
+"abc def ZQB RIG uvw xyz"[23, 20, 16, 11, 8, 4, 0]
+Test 8, RTL:
+Move left by one word
+"abc def ZQB RIG uvw xyz"[0, 3, 8, 12, 16, 19, 23]
+Move right by one word
+"abc def ZQB RIG uvw xyz"[23, 19, 16, 12, 8, 3, 0]
+Test 9, LTR:
+Move right by one word
+"aaa AAA bbb"[0, 4, 8, 11]
+Move left by one word
+"aaa AAA bbb"[11, 8, 4, 0]
+Test 10, RTL:
+Move left by one word
+"aaa AAA bbb"[0, 4, 8, 11]
+Move right by one word
+"aaa AAA bbb"[11, 8, 4, 0]
+Test 11, LTR:
+Move right by one word
+"AAA BBB WWW aaa bbb ccc DDD SSS UUU"[0, 7, 3, 12, 16, 20, 24, 31, 27, 35]
+Move left by one word
+"AAA BBB WWW aaa bbb ccc DDD SSS UUU"[35, 27, 31, 24, 20, 16, 12, 3, 7, 0]
+Test 12, RTL:
+Move left by one word
+"AAA BBB WWW aaa bbb ccc DDD SSS UUU"[0, 4, 8, 12, 19, 15, 24, 28, 32, 35]
+Move right by one word
+"AAA BBB WWW aaa bbb ccc DDD SSS UUU"[35, 32, 28, 24, 15, 19, 12, 8, 4, 0]
+Test 13, LTR:
+Move right by one word
+"AAA BBB aaa bbb WWW DDD"[0, 3, 8, 12, 16, 19, 23]
+Move left by one word
+"AAA BBB aaa bbb WWW DDD"[23, 19, 16, 12, 8, 3, 0]
+Test 14, RTL:
+Move left by one word
+"AAA BBB aaa bbb WWW DDD"[0, 4, 8, 11, 16, 20, 23]
+Move right by one word
+"AAA BBB aaa bbb WWW DDD"[23, 20, 16, 11, 8, 4, 0]
+Test 15, LTR:
+Move right by one word
+"ZQB abc RIG"[0, 4, 8, 11]
+Move left by one word
+"ZQB abc RIG"[11, 8, 4, 0]
+Test 16, RTL:
+Move left by one word
+"ZQB abc RIG"[0, 4, 8, 11]
+Move right by one word
+"ZQB abc RIG"[11, 8, 4, 0]
+Test 17, LTR:
+Move right by one word
+"abc ᪜BAD def᪝ xyz"[0, 8, 14, 17]    FAIL expected: [0, 9, 8, 14, 17]
+"abc ᪜BAD def᪝ xyz"[0, 8]   FAIL expected 9
+"abc ᪜BAD def᪝ xyz"[1, 8]   FAIL expected 9
+"abc ᪜BAD def᪝ xyz"[2, 8]   FAIL expected 9
+"abc ᪜BAD def᪝ xyz"[3, 8]   FAIL expected 9
+"abc ᪜BAD def᪝ xyz"[4, 8]   FAIL expected 9
+Move left by one word
+"abc ᪜BAD def᪝ xyz"[17, 14, 8, 9, 0]
+Test 18, LTR:
+Move right by one word
+"abc def hij "[0, 4, 8], " opq rst "[1, 5, 8]
+Move left by one word
+" opq rst "[8, 5, 1], "abc def hij "[8, 4, 0]
+Test 19, LTR:
+Move right by one word
+"abc def this"[0, 4, 8], "end opq rst "[4, 8, 11]
+Move left by one word
+"end opq rst "[11, 8, 4], "abc def this"[8, 4, 0]
+Test 20, LTR:
+Move right by one word
+<DIV>[0]
+Move left by one word
+<DIV>[0]
+

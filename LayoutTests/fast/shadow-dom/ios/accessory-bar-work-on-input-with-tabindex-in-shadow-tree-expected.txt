@@ -1,0 +1,106 @@
+Test that Accessory bar next/previous buttons work on inputs which is not assigned to any slot in shadow tree
+
+To manually test, do following steps.
+
+Focus the 1st of input, then Accessory bar will shown.
+Press "next" icon 4 times.
+Press "prev" icon 4 times.
+It should traverse focusable elements in the increasing numerical order and reverse the order of them.
+
+
+
+
+
+
+Test that Accessory bar next/previous buttons work on inputs which is not assigned to any slot in shadow tree
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+activate 0th input
+activated 0th input
+forward to 1th input
+documentOrShadowRoot.activeElement's placeholder attribute: 1. input element having a positive tabindex in a shadow tree host having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 1. input element having a positive tabindex in a shadow tree host having a positive tabindex
+forward to 2th input
+documentOrShadowRoot.activeElement's placeholder attribute: 2. input element having a positive tabindex in a element having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 2. input element having a positive tabindex in a element having a positive tabindex
+forward to 3th input
+documentOrShadowRoot.activeElement's placeholder attribute: 3. input element having tabindex=1 in a element having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 3. input element having tabindex=1 in a element having a positive tabindex
+forward to 4th input
+documentOrShadowRoot.activeElement's placeholder attribute: 4. input element having tabindex=0 in a shadow tree host having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 4. input element having tabindex=0 in a shadow tree host having a positive tabindex
+forward to 5th input
+documentOrShadowRoot.activeElement's placeholder attribute: 5. input element having a positive tabindex in a shadow tree host which does not tabindex
+PASS () => activeElement.getAttribute('placeholder') is 5. input element having a positive tabindex in a shadow tree host which does not tabindex
+forward to 6th input
+documentOrShadowRoot.activeElement's placeholder attribute: 6. input element in closed shadow tree host
+PASS () => activeElement.getAttribute('placeholder') is 6. input element in closed shadow tree host
+forward to 7th input
+documentOrShadowRoot.activeElement's placeholder attribute: 7. input element before nested custom element having shadow tree
+PASS () => activeElement.getAttribute('placeholder') is 7. input element before nested custom element having shadow tree
+forward to 8th input
+documentOrShadowRoot.activeElement's placeholder attribute: 8. input element in nested shadow tree
+PASS () => activeElement.getAttribute('placeholder') is 8. input element in nested shadow tree
+forward to 9th input
+documentOrShadowRoot.activeElement's placeholder attribute: 9. input element after nested custom element having shadow tree
+PASS () => activeElement.getAttribute('placeholder') is 9. input element after nested custom element having shadow tree
+forward to 10th input
+documentOrShadowRoot.activeElement's placeholder attribute: 10. Last sequentially input element outside shadow trees
+PASS () => activeElement.getAttribute('placeholder') is 10. Last sequentially input element outside shadow trees
+focus has moved to the last element and will move to the first reversely
+back to 9th input
+documentOrShadowRoot.activeElement's placeholder attribute: 9. input element after nested custom element having shadow tree
+PASS () => activeElement.getAttribute('placeholder') is 9. input element after nested custom element having shadow tree
+back to 8th input
+documentOrShadowRoot.activeElement's placeholder attribute: 8. input element in nested shadow tree
+PASS () => activeElement.getAttribute('placeholder') is 8. input element in nested shadow tree
+back to 7th input
+documentOrShadowRoot.activeElement's placeholder attribute: 7. input element before nested custom element having shadow tree
+PASS () => activeElement.getAttribute('placeholder') is 7. input element before nested custom element having shadow tree
+back to 6th input
+documentOrShadowRoot.activeElement's placeholder attribute: 6. input element in closed shadow tree host
+PASS () => activeElement.getAttribute('placeholder') is 6. input element in closed shadow tree host
+back to 5th input
+documentOrShadowRoot.activeElement's placeholder attribute: 5. input element having a positive tabindex in a shadow tree host which does not tabindex
+PASS () => activeElement.getAttribute('placeholder') is 5. input element having a positive tabindex in a shadow tree host which does not tabindex
+back to 4th input
+documentOrShadowRoot.activeElement's placeholder attribute: 4. input element having tabindex=0 in a shadow tree host having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 4. input element having tabindex=0 in a shadow tree host having a positive tabindex
+back to 3th input
+documentOrShadowRoot.activeElement's placeholder attribute: 3. input element having tabindex=1 in a element having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 3. input element having tabindex=1 in a element having a positive tabindex
+back to 2th input
+documentOrShadowRoot.activeElement's placeholder attribute: 2. input element having a positive tabindex in a element having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 2. input element having a positive tabindex in a element having a positive tabindex
+back to 1th input
+documentOrShadowRoot.activeElement's placeholder attribute: 1. input element having a positive tabindex in a shadow tree host having a positive tabindex
+PASS () => activeElement.getAttribute('placeholder') is 1. input element having a positive tabindex in a shadow tree host having a positive tabindex
+back to 0th input
+documentOrShadowRoot.activeElement's placeholder attribute: 0. First sequentially input element outside shadow trees
+PASS () => activeElement.getAttribute('placeholder') is 0. First sequentially input element outside shadow trees
+PASS successfullyParsed is true
+
+TEST COMPLETE
+0. First sequentially input element outside shadow trees
+1. input element having a positive tabindex in a shadow tree host having a positive tabindex
+2. input element having a positive tabindex in a element having a positive tabindex
+3. input element having tabindex=1 in a element having a positive tabindex
+4. input element having tabindex=0 in a shadow tree host having a positive tabindex
+5. input element having a positive tabindex in a shadow tree host which does not tabindex
+6. input element in closed shadow tree host
+7. input element before nested custom element having shadow tree
+8. input element in nested shadow tree
+9. input element after nested custom element having shadow tree
+10. Last sequentially input element outside shadow trees
+9. input element after nested custom element having shadow tree
+8. input element in nested shadow tree
+7. input element before nested custom element having shadow tree
+6. input element in closed shadow tree host
+5. input element having a positive tabindex in a shadow tree host which does not tabindex
+4. input element having tabindex=0 in a shadow tree host having a positive tabindex
+3. input element having tabindex=1 in a element having a positive tabindex
+2. input element having a positive tabindex in a element having a positive tabindex
+1. input element having a positive tabindex in a shadow tree host having a positive tabindex
+0. First sequentially input element outside shadow trees
+

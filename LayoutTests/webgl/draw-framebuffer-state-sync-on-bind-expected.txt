@@ -1,0 +1,34 @@
+Test that draw buffer state is properly synced when framebuffer is bound to DRAW after modifications while bound to READ.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 19 PASS, 0 FAIL
+
+
+Test 1: Detach while bound to READ_FRAMEBUFFER, then rebind to DRAW_FRAMEBUFFER
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.COLOR_ATTACHMENT0
+PASS gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : setup should succeed
+PASS getError was expected value: NO_ERROR : detach while bound to READ should succeed
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.COLOR_ATTACHMENT0
+PASS gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+
+Test 2: Attach while bound to READ_FRAMEBUFFER, then rebind to DRAW_FRAMEBUFFER
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.COLOR_ATTACHMENT0
+PASS gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) is gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+PASS getError was expected value: NO_ERROR : attach while bound to READ should succeed
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.COLOR_ATTACHMENT0
+PASS gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+
+Test 3: Multiple draw buffers with partial detachment while bound to READ
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.COLOR_ATTACHMENT0
+PASS gl.getParameter(gl.DRAW_BUFFER1) is gl.COLOR_ATTACHMENT1
+PASS gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : partial detach while bound to READ should succeed
+PASS gl.getParameter(gl.DRAW_BUFFER0) is gl.COLOR_ATTACHMENT0
+PASS gl.getParameter(gl.DRAW_BUFFER1) is gl.COLOR_ATTACHMENT1
+PASS gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

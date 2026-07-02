@@ -1,0 +1,20 @@
+# This file seems to be needed only for bazel's dependency pinning to figure out
+# declared dependencies, actual build rules are in BUILD.bazel.
+
+# Introduce a standalone workspace to allow regenerating the Cargo.lock file by building
+# in this directory.
+[workspace]
+
+[package]
+name = "vello_deps"
+edition = "2021"
+version = "0.1.0"
+
+[dependencies]
+bytemuck = { version = "1.16.0", features = ["derive"] }
+naga = { version = "0.20.0", features = ["wgsl-in", "msl-out"] }
+peniko = "0.1.1"
+regex = "1.8.1"
+thiserror = "1.0.60"
+
+[lib]

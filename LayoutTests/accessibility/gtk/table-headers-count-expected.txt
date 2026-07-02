@@ -1,0 +1,45 @@
+This verifies rowHeaders() and columnHeaders() handles unexpected roles and lack of headers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Table header
+Row Headers: 1
+  AXRole: AXColumnHeader AXValue: R1C1
+Column Headers: 1
+  AXRole: AXColumnHeader AXValue: R1C1
+
+Caption
+Row Headers: 0
+Column Headers: 0
+
+Row 1
+Row Headers: 0
+Column Headers: 0
+
+Row 2
+Row Headers: 0
+Column Headers: 0
+
+Header cell
+Row Headers: 0
+Column Headers: 0
+
+Cell 1
+Row Headers: 1
+  AXRole: AXColumnHeader AXValue: R1C1
+Column Headers: 0
+
+Cell 2
+Row Headers: 0
+Column Headers: 1
+  AXRole: AXColumnHeader AXValue: R1C1
+
+Cell 3
+Row Headers: 0
+Column Headers: 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

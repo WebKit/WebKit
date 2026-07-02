@@ -1,0 +1,85 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-calling-window-focus-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-calling-window-focus-middle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-calling-window-focus-outer-different.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-calling-window-focus-outer-same.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-different-site-iframe-inner-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-different-site-iframe-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-different-site-iframe-outer-contentwindow.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-different-site-iframe-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-different-site-iframe-then-immediately-focusing-back-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-same-site-iframe-inner-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-same-site-iframe-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-same-site-iframe-outer-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-focusing-same-site-iframe-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-different-site-iframe-inner-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-different-site-iframe-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-different-site-iframe-outer-contentwindow.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-different-site-iframe-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-same-site-iframe-inner-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-same-site-iframe-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-same-site-iframe-outer-contentwindow.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/activeelement-after-immediately-focusing-same-site-iframe-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/cross-origin-ancestor-activeelement-after-child-lose-focus-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-already-focused-iframe-deep-different-site-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-already-focused-iframe-deep-same-site-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-already-focused-iframe-different-site-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-already-focused-iframe-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-already-focused-iframe-middle.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-already-focused-iframe-same-site-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-different-site-iframe-gets-focus-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-focusing-different-site-iframes-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-focusing-iframes-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-focusing-same-site-iframes-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-iframe-gets-focus-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-innermost-different-site-iframe-gets-focus-middle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-innermost-different-site-iframe-gets-focus-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-same-site-iframe-gets-focus-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-event-after-switching-iframes-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-different-site-iframes-inner-window.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-different-site-iframes-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-different-site-iframes-other.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-different-site-iframes-outer-window.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-different-site-iframes-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-same-site-iframes-inner-window.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/focus-restoration-in-same-site-iframes-outer-window.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/hasfocus-different-site-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/hasfocus-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/hasfocus-other.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/hasfocus-same-site-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-activeelement-after-focusing-out-different-site-iframes-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-activeelement-after-focusing-out-iframes-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-activeelement-after-focusing-out-same-site-iframes-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-contentwindow-focus-with-different-site-intermediate-frame-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-contentwindow-focus-with-different-site-intermediate-frame-middle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-contentwindow-focus-with-different-site-intermediate-frame-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-contentwindow-focus-with-same-as-top-intermediate-frame-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-contentwindow-focus-with-same-as-top-intermediate-frame-middle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-contentwindow-focus-with-same-as-top-intermediate-frame-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focus-with-different-site-intermediate-frame-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focus-with-different-site-intermediate-frame-middle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focus-with-different-site-intermediate-frame-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focus-with-same-as-top-intermediate-frame-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focus-with-same-as-top-intermediate-frame-middle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focus-with-same-as-top-intermediate-frame-outer.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focuses-parent-different-site-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focuses-parent-different-site-other.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focuses-parent-different-site-outer.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focuses-parent-same-site-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focuses-parent-same-site-other.html
+/LayoutTests/imported/w3c/web-platform-tests/focus/support/iframe-focuses-parent-same-site-outer.html

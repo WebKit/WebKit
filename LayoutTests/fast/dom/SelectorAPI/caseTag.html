@@ -1,0 +1,21 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div style="display: none">
+    <span id="lower1">lower</span><br>
+    <P id="UPPER1">UPPER</P><br>
+    </div>
+    <script>
+        shouldBe("document.querySelector('div SPAN').textContent", "'lower'");
+        shouldBe("document.querySelector('div p').textContent", "'UPPER'");
+
+        shouldBeTrue("document.getElementById('lower1').matches('div SPAN')");
+        shouldBeTrue("document.getElementById('UPPER1').matches('div p')");
+        shouldBeTrue("document.getElementById('lower1').webkitMatchesSelector('div SPAN')");
+        shouldBeTrue("document.getElementById('UPPER1').webkitMatchesSelector('div p')");
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

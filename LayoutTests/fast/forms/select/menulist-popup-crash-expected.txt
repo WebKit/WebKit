@@ -1,0 +1,5 @@
+<select> test for opening two popup menus.
+
+PASS if the test didn't crash.
+
+

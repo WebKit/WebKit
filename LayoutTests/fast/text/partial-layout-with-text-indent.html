@@ -1,0 +1,14 @@
+<style>
+div {
+  text-indent: 20px;
+  border: 1px solid green;
+  width: 200px;
+  height: 400px;
+  font-family: Ahem;
+}
+</style>
+<div id=change_this class="editable" contenteditable="true"> some </div>
+<script>
+document.body.offsetHeight;
+change_this.appendChild(document.createTextNode("text"));
+</script>

@@ -1,0 +1,21 @@
+<script src="../resources/js-test-pre.js"></script>
+<script>
+// Reify the window object.
+delete window.name;
+
+var descriptor = Object.getOwnPropertyDescriptor(window, "length");
+shouldBeType("descriptor.get", "Function");
+shouldBeType("descriptor.set", "Function");
+shouldBeTrue("descriptor.configurable");
+shouldBeTrue("descriptor.enumerable");
+shouldBe("window.length", "0");
+
+// window.length is [Replaceable] so it can be shadowed.
+evalAndLog("window.length = 1");
+descriptor = Object.getOwnPropertyDescriptor(window, "length");
+shouldBe("descriptor.value", "1");
+shouldBeTrue("descriptor.configurable");
+shouldBeTrue("descriptor.enumerable");
+shouldBe("window.length", "1");
+</script>
+<script src="../resources/js-test-post.js"></script>

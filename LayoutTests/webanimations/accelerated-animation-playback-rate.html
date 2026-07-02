@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<body>
+<style>
+    body, #cover {
+        background-color: green;
+    }
+
+    #target, #cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100px;
+    }
+
+    #target {
+        width: 100px;
+        background-color: red;
+    }
+
+    /* This element covers the first half of the area traveled by the animated target. If the animation did not
+       respect the playbackRate, then red would appear since the animated target would travel to the right of
+       the cover element. */
+    #cover {
+        left: 100px;
+        width: 200px;
+    }
+
+</style>
+<div id="target"></div>
+<div id="cover"></div>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    // Start an animation.
+    const animation = document.getElementById("target").animate({ transform: ["translateX(100px)", "translateX(300px)"] }, { duration: 1000, fill: "both" });
+
+    // Seek it to its halfway point, the target should align with the right edge of the cover.
+    animation.currentTime = animation.effect.getTiming().duration / 2;
+
+    // Make it play backwards.
+    animation.playbackRate = -1;
+
+    // Wait a few frames.
+    await animation.ready;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    // At this point, if the target were ignoring the playbackRate, it would peek a little to the right of the cover.
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>
+</body>

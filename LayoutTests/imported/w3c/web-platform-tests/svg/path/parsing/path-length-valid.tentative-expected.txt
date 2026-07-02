@@ -1,0 +1,11 @@
+
+FAIL e.style['path-length'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "0" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "1" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "0.5" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "100" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "3.14" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "1e2" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "calc(1 + 2)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['path-length'] = "calc(infinity)" should set the property value assert_not_equals: property should be set got disallowed value ""
+

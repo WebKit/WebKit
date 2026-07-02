@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    font-size: 18px;
+    font-family: system-ui;
+}
+
+div.overlay {
+    position: fixed;
+    background-color: tomato;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+p[dir="rtl"] {
+    max-width: 350px;
+    border: 1px solid tomato;
+    padding: 12px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection remains visually consistent when selecting the entire first line in the paragraph below. To manually run the test, select the text highlighted in red, from right to left");
+
+    lineBounds = UIHelper.computeLineBounds(document.querySelector("p[dir='rtl']"), 0, 1);
+
+    let overlay = document.querySelector("div.overlay");
+    overlay.style.top = `${lineBounds.top}px`;
+    overlay.style.left = `${lineBounds.left}px`;
+    overlay.style.width = `${lineBounds.width}px`;
+    overlay.style.height = `${lineBounds.height}px`;
+
+    await UIHelper.longPressAtPoint(lineBounds.left + lineBounds.width - 5, lineBounds.top + 5);
+    await UIHelper.waitForSelectionToAppear();
+
+    const endHandlePoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(endHandlePoint.x, endHandlePoint.y)
+        .move(endHandlePoint.x - lineBounds.width, endHandlePoint.y, 0.5)
+        .end()
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    isVisuallyContiguous = await UIHelper.isSelectionVisuallyContiguous();
+    selectionBounds = await UIHelper.selectionBounds();
+
+    shouldBeTrue("isVisuallyContiguous");
+    shouldBeGreaterThanOrEqual("selectionBounds.width", "lineBounds.width");
+    shouldBeGreaterThanOrEqual("selectionBounds.height", "lineBounds.height");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p dir="rtl">هذه جملة باللغة الإنجليزية: The quick brown fox jumped over the lazy dog.</p>
+    <div class="overlay"></div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

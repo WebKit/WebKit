@@ -1,0 +1,3 @@
+
+PASS Changing `transform` on an element in the path from the anchor to the scroller should suppress anchoring adjustment
+

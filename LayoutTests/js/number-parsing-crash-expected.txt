@@ -1,0 +1,10 @@
+This tests edge cases of number parsing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS x.toString() is "0.1111111111111111"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

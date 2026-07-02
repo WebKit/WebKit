@@ -1,0 +1,30 @@
+<script src="./util.js"></script>
+<input type="text" id="input">
+<script>
+    const url = new URL(window.location.href);
+    if (window.internals)
+        internals.setMockWebAuthenticationConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testAssertionMessageBase64] } });
+
+    function messageToTop(message) {
+        top.postMessage(message, "*");
+    }
+
+    const requestOptions = {
+        publicKey: {
+            challenge: asciiToUint8Array("123456"),
+            timeout: 100
+        }
+    };
+
+    if (window.internals)
+        internals.withUserGesture(() => { input.focus(); });
+
+    navigator.credentials.get(requestOptions).then(
+        function(value) {
+            messageToTop("PASS!");
+        },
+        function(exception) {
+            messageToTop("Throw " + exception.name + ": " + exception.message);
+      }
+    );
+</script>

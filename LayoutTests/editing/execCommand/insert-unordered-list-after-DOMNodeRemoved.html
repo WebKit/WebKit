@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<style>
+html, body, table, span, abbr, p, video, output {
+    font-variant-ligatures: common-ligatures no-contextual;
+    justify-self: unsafe self-end;
+    -webkit-column-span: all;
+    transform: scale3d(9, 1, 0);
+    overflow: -webkit-paged-y clip;
+    font-style: normal;
+}
+</style>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dumpAsText();
+resizeValue = 1
+insertListCount = 0
+
+setTimeout(() => {
+    document.writeln("PASS");
+    window.testRunner?.notifyDone();
+}, 1000);
+
+function main() {
+    let outputElement = document.querySelector("output");
+    let videoElement = document.querySelector("video");
+    document.getElementById("target").addEventListener("DOMNodeRemoved", () => {
+        try { outputElement.remove(); } catch (e) { }
+        resizeTo(resizeValue, resizeValue++);
+        requestAnimationFrame(() => {
+            find("F");
+            requestAnimationFrame(() => {
+                document.execCommand("insertUnorderedList");
+            });
+        });
+    });
+    document.styleSheets[0].media.appendMedium("all and (orientation:portrait)");
+    videoElement.remove();
+}
+</script>
+</head>
+<body onload="main()" contenteditable autofocus>
+<table rules="none" spellcheck="false" accesskey="A" border="989"></table>
+<span id="text">F</span>
+<abbr>
+    A
+    <p>
+        <span id="target">
+            <video></video>
+            <output></output>
+        </span>
+    </p>
+</abbr>
+</body>
+</html>

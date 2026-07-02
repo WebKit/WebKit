@@ -1,0 +1,6 @@
+Left Right
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT MouseEvent attributes Test timed out
+

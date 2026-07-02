@@ -1,0 +1,4 @@
+Click me
+
+FAIL Moving a node during mousedown should not crash assert_equals: expected Element node <div id="click" onmousedown="handleDown(this)">Click me</... but got null
+

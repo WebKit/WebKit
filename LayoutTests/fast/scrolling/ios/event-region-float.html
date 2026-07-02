@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.container {
+    background-color: blue;
+    width: 200px;
+    height: 200px;
+    will-change: transform; /* Needed to trigger event region creation */
+    visibility: hidden;
+}
+
+.inner {
+    background-color: green;
+    width: 50px;
+    height: 50px;
+    float: right;
+    visibility: visible;
+}
+.scroller {
+    overflow: scroll;
+    height: 50px;
+    width: 50px;
+}
+.scrollcontent {
+    height: 100px;
+    width: 50px;
+}
+</style>
+<body>
+<div class="container">
+    <div class="inner"></div>
+</div>
+<div class="scroller"><div class="scrollcontent"></div></div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.internals)
+    results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+</script>
+</body>
+</html>

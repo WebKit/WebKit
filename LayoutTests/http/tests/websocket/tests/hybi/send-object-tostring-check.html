@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("WebSocket: Object's toString method should be called only once.");
+
+window.jsTestIsAsync = true;
+
+
+var testObj = new function() {
+    this.callCounter = 0;
+    this.toString = function() {
+        this.callCounter++;
+    };
+}
+
+var url = "ws://127.0.0.1:8880/";
+var ws = new WebSocket(url);
+var closeEvent;
+
+
+ws.onopen = function()
+{
+    ws.send(testObj);
+};
+
+ws.onclose = function(event)
+{
+    closeEvent = event;
+    shouldEvaluateTo("testObj.callCounter", 1);
+    shouldBeTrue("closeEvent.wasClean");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

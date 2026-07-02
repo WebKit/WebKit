@@ -1,0 +1,10 @@
+This tests that loading a video with an HTTP URL is allowed when the page has Content Security Policy "media-src *".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did load video.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

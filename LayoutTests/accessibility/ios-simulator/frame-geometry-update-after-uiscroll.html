@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body {
+    height: 5000px;
+    margin: 0;
+}
+#target {
+    position: absolute;
+    top: 200px;
+    left: 10px;
+    width: 100px;
+    height: 50px;
+}
+</style>
+</head>
+<body>
+
+<button id="target">Target</button>
+
+<script>
+var output = "This test verifies that the when scroll happens in the UI process, frame geometry is updated.\n\n";
+var initialY, scrolledY, delta;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        var target = accessibilityController.accessibleElementById("target");
+
+        // Wait for initial FrameGeometry to arrive via async IPC.
+        await waitForFrameGeometryReady();
+        initialY = target.y;
+
+        // Scroll via UIHelper, which scrolls the real UIScrollView (animated).
+        await UIHelper.scrollTo(0, 500);
+
+        // Wait for the frame geometry update to propagate asynchronously.
+        output += await expectAsync("accessibilityController.accessibleElementById('target').y < initialY", "true");
+
+        scrolledY = accessibilityController.accessibleElementById("target").y;
+        delta = initialY - scrolledY;
+        output += expect("delta > 400 && delta < 600", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+
+</body>
+</html>

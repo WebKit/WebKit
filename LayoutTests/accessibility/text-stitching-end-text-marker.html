@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="paragraph">Hello <b>World</b></p>
+
+<script>
+var output = "This test ensures the end-text-marker and UI-element-for-text-marker APIs correctly account for stitched text.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    var startMarker = webArea.startTextMarker;
+    var endMarker = webArea.endTextMarker;
+    var fullRange = webArea.textMarkerRangeForMarkers(startMarker, endMarker);
+    var initialFullText = webArea.stringForTextMarkerRange(fullRange);
+    output += expect("initialFullText", "'Hello World'");
+
+    var startElement = webArea.accessibilityElementForTextMarker(startMarker)
+    var endElement = webArea.accessibilityElementForTextMarker(endMarker);
+    output += expect("endElement.isEqual(startElement)", "true");
+
+    // The end marker should resolve to an element whose string value includes
+    // all of the stitched text, not just an individual member's text.
+    output += expect("endElement.stringValue.includes('Hello World')", "true");
+
+    // Dynamically add more text to the paragraph and verify the end marker updates.
+    var span = document.createElement("span");
+    span.innerText = " Goodbye";
+    document.getElementById("paragraph").appendChild(span);
+
+    setTimeout(async function() {
+        startMarker = webArea.startTextMarker;
+        output += await expectAsync("webArea.stringForTextMarkerRange(webArea.textMarkerRangeForMarkers(startMarker, webArea.endTextMarker))", "'Hello World Goodbye'");
+
+        // After the dynamic update, the end element should still resolve to a visible
+        // element with the full stitched value.
+        endElement = webArea.accessibilityElementForTextMarker(webArea.endTextMarker);
+        output += expect("endElement.stringValue.includes('Goodbye')", "true");
+        output += expect("endElement.isEqual(startElement)", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

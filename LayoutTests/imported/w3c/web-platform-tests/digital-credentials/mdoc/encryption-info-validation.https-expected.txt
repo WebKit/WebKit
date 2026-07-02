@@ -1,0 +1,5 @@
+
+PASS EncryptionInfo protocol tag 'evil' instead of 'dcapi' is rejected.
+PASS EncryptionInfo with empty protocol tag is rejected.
+PASS EncryptionInfo missing nonce field is rejected.
+

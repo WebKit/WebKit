@@ -1,0 +1,22 @@
+<script>
+  async function test() {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    internals.withUserGesture(() => {});
+    let form0 = document.createElement('form');
+    document.body.append(form0);
+    form0.submit();
+    let audio0 = document.createElement('audio');
+    document.body.append(audio0);
+    await audio0.requestFullscreen();
+    location.hash = '#x';
+    if (window.testRunner) {
+      document.body.innerHTML = 'PASS if no crash.';
+      testRunner.notifyDone();
+    }
+}
+</script>
+<body onload="test()">
+</body>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('Test to ensure formAction attribute returns the URL of the document when the attribute is not specified or empty.');
+
+function runTests() {
+    shouldBe('element.formAction', 'location.href');
+    shouldBe('element.setAttribute("formaction", "http://webkit.org/foo.html"); element.formAction', '"http://webkit.org/foo.html"');
+    shouldBe('element.setAttribute("formaction", ""); element.formAction', 'location.href');
+
+    evalAndLog('base = document.createElement("base"); document.head.appendChild(base); base.href = "https://bugs.webkit.org/";');
+    shouldBe('element.formAction', 'location.href');
+    shouldBe('element.setAttribute("formaction", "foo.html"); element.formAction', '"https://bugs.webkit.org/foo.html"');
+    shouldBe('element.setAttribute("formaction", ""); element.formAction', 'location.href');
+}
+
+evalAndLog('element = document.createElement("input");');
+runTests();
+
+debug('');
+evalAndLog('element = document.createElement("button");');
+runTests();
+
+</script>
+</body>
+</html>

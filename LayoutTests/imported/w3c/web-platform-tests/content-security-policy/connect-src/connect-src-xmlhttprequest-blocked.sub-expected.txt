@@ -1,0 +1,3 @@
+
+PASS Expecting logs: ["Pass","violated-directive=connect-src"]
+

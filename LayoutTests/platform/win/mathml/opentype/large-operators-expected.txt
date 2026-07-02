@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,8) size 784x36
+      RenderMathMLMath {math} at (0,0) size 784x36
+        RenderMathMLOperator {mo} at (199,7) size 27x22
+          RenderBlock (anonymous) at (0,0) size 17x16
+            RenderText {#text} at (0,-45) size 17x106
+              text run at (0,-45) width 17: "\x{2211}"
+        RenderMathMLOperator {mo} at (225,0) size 18x36
+          RenderBlock (anonymous) at (0,0) size 11x18
+            RenderText {#text} at (0,-44) size 11x106
+              text run at (0,-44) width 11: "\x{222B}"
+        RenderMathMLOperator {mo} at (242,0) size 24x36
+          RenderBlock (anonymous) at (0,0) size 17x18
+            RenderText {#text} at (0,-44) size 17x106
+              text run at (0,-44) width 17: "\x{222C}"
+        RenderMathMLOperator {mo} at (265,0) size 31x36
+          RenderBlock (anonymous) at (0,0) size 22x18
+            RenderText {#text} at (0,-44) size 22x106
+              text run at (0,-44) width 22: "\x{222D}"
+        RenderMathMLOperator {mo} at (295,0) size 38x36
+          RenderBlock (anonymous) at (0,0) size 28x18
+            RenderText {#text} at (0,-44) size 28x106
+              text run at (0,-44) width 28: "\x{2A0C}"
+        RenderMathMLOperator {mo} at (332,7) size 28x21
+          RenderBlock (anonymous) at (0,0) size 18x15
+            RenderText {#text} at (0,-46) size 18x106
+              text run at (0,-46) width 18: "\x{2A01}"
+        RenderMathMLOperator {mo} at (359,0) size 18x36
+          RenderBlock (anonymous) at (0,0) size 11x18
+            RenderText {#text} at (0,-44) size 11x106
+              text run at (0,-44) width 11: "\x{222E}"
+        RenderMathMLOperator {mo} at (376,0) size 25x36
+          RenderBlock (anonymous) at (0,0) size 17x18
+            RenderText {#text} at (0,-44) size 17x106
+              text run at (0,-44) width 17: "\x{222F}"
+        RenderMathMLOperator {mo} at (400,0) size 30x36
+          RenderBlock (anonymous) at (0,0) size 22x18
+            RenderText {#text} at (0,-44) size 22x106
+              text run at (0,-44) width 22: "\x{2230}"
+        RenderMathMLOperator {mo} at (429,7) size 22x22
+          RenderBlock (anonymous) at (0,0) size 13x17
+            RenderText {#text} at (0,-44) size 13x106
+              text run at (0,-44) width 13: "\x{22C3}"
+        RenderMathMLOperator {mo} at (450,6) size 22x23
+          RenderBlock (anonymous) at (0,0) size 13x18
+            RenderText {#text} at (0,-44) size 13x106
+              text run at (0,-44) width 13: "\x{22C0}"
+        RenderMathMLOperator {mo} at (471,7) size 21x23
+          RenderBlock (anonymous) at (0,0) size 13x18
+            RenderText {#text} at (0,-44) size 13x106
+              text run at (0,-44) width 13: "\x{22C1}"
+        RenderMathMLOperator {mo} at (491,7) size 22x22
+          RenderBlock (anonymous) at (0,0) size 13x17
+            RenderText {#text} at (0,-45) size 13x106
+              text run at (0,-45) width 13: "\x{22C2}"
+        RenderMathMLOperator {mo} at (512,8) size 28x20
+          RenderBlock (anonymous) at (0,0) size 18x16
+            RenderText {#text} at (0,-45) size 18x106
+              text run at (0,-45) width 18: "\x{2A02}"
+        RenderMathMLOperator {mo} at (539,7) size 23x22
+          RenderBlock (anonymous) at (0,0) size 15x16
+            RenderText {#text} at (0,-45) size 15x106
+              text run at (0,-45) width 15: "\x{220F}"
+        RenderMathMLOperator {mo} at (561,7) size 24x22
+          RenderBlock (anonymous) at (0,0) size 15x16
+            RenderText {#text} at (0,-45) size 15x106
+              text run at (0,-45) width 15: "\x{2210}"

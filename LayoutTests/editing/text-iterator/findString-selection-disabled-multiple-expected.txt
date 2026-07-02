@@ -1,0 +1,11 @@
+v_
+findme
+
+findme
+
+
+PASS find first string with selection disabled
+PASS find second string with selection disabled
+PASS find first string with selection enabled
+PASS find second string with selection enabled
+

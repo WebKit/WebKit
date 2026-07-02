@@ -1,0 +1,19 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(Path_rLineTo, 256, 128, false, 0) {
+void draw(SkCanvas* canvas) {
+    SkPaint paint;
+    paint.setAntiAlias(true);
+    paint.setStyle(SkPaint::kStroke_Style);
+    SkPathBuilder path;
+    path.moveTo(10, 98);
+    SkScalar x = 0, y = 0;
+    for (int i = 10; i < 100; i += 5) {
+        x += i * ((i & 2) - 1);
+        y += i * (((i + 1) & 2) - 1);
+        path.rLineTo(x, y);
+    }
+    canvas->drawPath(path.detach(), paint);
+}
+}  // END FIDDLE

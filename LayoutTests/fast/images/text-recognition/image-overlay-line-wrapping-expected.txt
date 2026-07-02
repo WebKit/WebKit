@@ -1,0 +1,6 @@
+
+PASS textarea.value is "this is a test\nfoo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

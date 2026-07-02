@@ -1,0 +1,4 @@
+
+PASS :storeOp_controls_whether_1x1_drawn_quad_is_stored:storeOp="store"
+PASS :storeOp_controls_whether_1x1_drawn_quad_is_stored:storeOp="discard"
+

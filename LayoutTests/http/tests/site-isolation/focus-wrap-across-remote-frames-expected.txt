@@ -1,0 +1,16 @@
+Tests Tab focus navigation into a cross-origin iframe, and that focus relinquishes to chrome after the last element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement.tagName is 'BODY'
+PASS document.activeElement.id is 'outerInput'
+PASS Outer input focused
+PASS document.activeElement.tagName is 'IFRAME'
+PASS Tab moved focus into iframe
+PASS document.activeElement.tagName is 'BODY'
+PASS Tab relinquished focus to chrome
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

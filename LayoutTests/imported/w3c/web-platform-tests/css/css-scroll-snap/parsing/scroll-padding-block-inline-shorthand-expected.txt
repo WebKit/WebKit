@@ -1,0 +1,14 @@
+
+PASS e.style['scroll-padding-block'] = "auto 10px" should set scroll-padding-block-end
+PASS e.style['scroll-padding-block'] = "auto 10px" should set scroll-padding-block-start
+PASS e.style['scroll-padding-block'] = "auto 10px" should not set unrelated longhands
+PASS e.style['scroll-padding-block'] = "20%" should set scroll-padding-block-end
+PASS e.style['scroll-padding-block'] = "20%" should set scroll-padding-block-start
+PASS e.style['scroll-padding-block'] = "20%" should not set unrelated longhands
+PASS e.style['scroll-padding-inline'] = "10px auto" should set scroll-padding-inline-end
+PASS e.style['scroll-padding-inline'] = "10px auto" should set scroll-padding-inline-start
+PASS e.style['scroll-padding-inline'] = "10px auto" should not set unrelated longhands
+PASS e.style['scroll-padding-inline'] = "0%" should set scroll-padding-inline-end
+PASS e.style['scroll-padding-inline'] = "0%" should set scroll-padding-inline-start
+PASS e.style['scroll-padding-inline'] = "0%" should not set unrelated longhands
+

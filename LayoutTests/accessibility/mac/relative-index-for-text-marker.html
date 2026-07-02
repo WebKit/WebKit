@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="preamble">Lorem ipsum dolor sit amet.</div>
+<p id="target">Hello world</p>
+<div id="trail">Trailing text.</div>
+
+<script>
+var output = "Tests AXRelativeIndexForTextMarker. The attribute returns the receiver-local character offset of a text marker, 0..numberOfCharacters, or NSNotFound when the marker does not lie within the receiver's range.\n\n";
+
+if (window.accessibilityController) {
+    target = accessibilityController.accessibleElementById("target").childAtIndex(0);
+    preamble = accessibilityController.accessibleElementById("preamble").childAtIndex(0);
+    trail = accessibilityController.accessibleElementById("trail").childAtIndex(0);
+
+    // 1. Markers within target's range.
+    targetRange = target.textMarkerRangeForElement(target);
+    targetStart = target.startTextMarkerForTextMarkerRange(targetRange);
+    targetEnd = target.endTextMarkerForTextMarkerRange(targetRange);
+    // A marker at element-local offset 6 (between "Hello " and "world").
+    targetSpaceRange = target.textMarkerRangeForRange(6, 0);
+    targetSpaceMarker = target.startTextMarkerForTextMarkerRange(targetSpaceRange);
+
+    output += "Markers within target's range:\n";
+    output += expect("target.relativeIndexForTextMarker(targetStart)", "0");
+    output += expect("target.relativeIndexForTextMarker(targetEnd)", "11");
+    output += expect("target.relativeIndexForTextMarker(targetSpaceMarker)", "6");
+
+    // 2. Markers outside target's range — preamble and trail.
+    preambleRange = preamble.textMarkerRangeForElement(preamble);
+    preambleStart = preamble.startTextMarkerForTextMarkerRange(preambleRange);
+    trailRange = trail.textMarkerRangeForElement(trail);
+    trailStart = trail.startTextMarkerForTextMarkerRange(trailRange);
+
+    output += "\nMarkers outside target's range (expect NSNotFound, surfaced as -1 by the test bindings' int truncation):\n";
+    output += expect("target.relativeIndexForTextMarker(preambleStart)", "-1");
+    output += expect("target.relativeIndexForTextMarker(trailStart)", "-1");
+
+    // 3. Same-marker query on a different receiver (preamble's start
+    //    queried on preamble itself) returns 0, confirming the result
+    //    is receiver-relative, not absolute.
+    output += "\nReceiver-relative (preambleStart on preamble vs target):\n";
+    output += expect("preamble.relativeIndexForTextMarker(preambleStart)", "0");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

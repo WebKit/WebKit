@@ -1,0 +1,13 @@
+Verifies that long-pressing non-editable text while a separate editable element is focused with a hardware (Magic) keyboard attached starts a selection and blurs the focused element (mirrors UIKit TextField behavior: focus and non-editable selection are mutually exclusive).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusedElementWasInput is true
+PASS getSelection().toString() became 'Hello'
+PASS document.activeElement === document.querySelector('input') became false
+PASS focusedElementBlurred is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const renderingBackendIdentifier = randomIPCID();
+    const connection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier, connectionHandle: connection });
+    const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInitializeReply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+    connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+    const number = { optionalValue: { get: { alias: { variantType: "char", variant: 1 } } } };
+    try {
+        remoteBackend.CacheFont({
+            data: { renderingResourceIdentifier: {}, origin: 0, isInterstitial: 0, visibility: 0, isTextOrientationFallback: 0 },
+            platformData: {
+                m_size: 12, m_orientation: 0, m_widthVariant: 0, m_textRenderingMode: 0,
+                m_syntheticBold: false, m_syntheticOblique: false,
+                serializableAttributes: { optionalValue: {
+                    fontName: "Helvetica", descriptorLanguage: "", descriptorTextStyle: "",
+                    matrix: {}, ignoreLegibilityWeight: {}, baselineAdjust: {}, fallbackOption: {},
+                    fixedAdvance: {}, orientation: {}, palette: {}, size: {}, sizeCategory: {},
+                    track: {}, unscaledTracking: {},
+                    paletteColors: { optionalValue: [
+                        [{}, {}],
+                        [number, {}],
+                    ] },
+                    variations: { optionalValue: [
+                        [{}, {}],
+                        [{}, number],
+                        [number, {}],
+                    ] },
+                    opticalSize: {}, traits: {}, featureSettings: {}, additionalNumber: {}
+                } },
+                m_options: 0, m_url: {}, m_psName: {}
+            },
+            renderingResourceIdentifier: {}
+        });
+    } catch { }
+
+    // Verify the GPU is still alive by doing a round-trip. If it crashed processing CacheFont,
+    // it will not respond to FinalizeRenderingUpdate and the wait will time out.
+    try {
+        connection.connection.sendMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackend_FinalizeRenderingUpdate.name, [{ type: 'uint64_t', value: 1 }]);
+        const reply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidFinalizeRenderingUpdate.name, 2);
+        if (!reply)
+            document.querySelector('p').textContent = 'FAIL: GPU process crashed.';
+    } catch {
+        document.querySelector('p').textContent = 'FAIL: GPU process crashed.';
+    }
+
+    connection.connection.invalidate();
+    window.testRunner?.notifyDone();
+})();
+</script>

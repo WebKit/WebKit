@@ -1,0 +1,7 @@
+
+PASS @starting-style is valid
+PASS @starting-style div is not valid
+PASS @starting-style () is not valid
+PASS @starting-style ( {} is not valid
+PASS @starting-style } is not valid
+

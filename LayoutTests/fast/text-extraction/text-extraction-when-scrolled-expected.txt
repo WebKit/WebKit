@@ -1,0 +1,18 @@
+PASS textResults.length is 1
+PASS textResults[0].includes("Bottom link") is true
+PASS rootRect.height is >= 10000
+PASS rootRect.y is <= -5000
+PASS textRect.y is <= 5000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Top link
+
+
+Bottom link
+
+
+
+
+

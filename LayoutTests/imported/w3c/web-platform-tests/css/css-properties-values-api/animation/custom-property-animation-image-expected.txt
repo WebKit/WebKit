@@ -1,0 +1,5 @@
+
+PASS Animating a custom property of type <image> is discrete
+PASS Animating a custom property of type <image>+ is discrete
+PASS Animating a custom property of type <image># is discrete
+

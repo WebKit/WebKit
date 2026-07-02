@@ -1,0 +1,381 @@
+/*
+ * Copyright (C) 2010, 2013, 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "PlatformWebView.h"
+
+#import "TestController.h"
+#import "TestRunnerWKWebView.h"
+#import "WebKitTestRunnerDraggingInfo.h"
+#import "WebKitTestRunnerWindow.h"
+#import <WebKit/WKImageCG.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
+#import <wtf/text/WTFString.h>
+
+@interface WKWebView ()
+- (WKPageRef)_pageForTesting;
+@end
+
+using namespace WTR;
+
+// FIXME: Move to NSWindowSPI.h.
+enum {
+    _NSBackingStoreUnbuffered = 3
+};
+
+// FIXME: Move to NSWindowSPI.h.
+@interface NSWindow ()
+- (void)_setWindowResolution:(CGFloat)resolution;
+// FIXME: Remove once the variant above exists on all platforms we need (cf. rdar://problem/47614795).
+- (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
+@end
+
+@interface WTRCursorOverlayView : NSImageView
+- (void)updateWithCursor:(NSCursor *)cursor;
+@property (nonatomic, readonly) NSPoint hotSpot;
+@property (nonatomic, weak) NSPanel *overlayPanel;
+@end
+
+@implementation WTRCursorOverlayView {
+    NSPoint _hotSpot;
+}
+
+- (NSView *)hitTest:(NSPoint)point
+{
+    return nil;
+}
+
+- (void)updateWithCursor:(NSCursor *)cursor
+{
+    self.image = [cursor image];
+    _hotSpot = [cursor hotSpot];
+    NSSize imageSize = self.image.size;
+    [self setFrameSize:imageSize];
+    [self.overlayPanel setContentSize:imageSize];
+}
+
+- (NSPoint)hotSpot
+{
+    return _hotSpot;
+}
+
+@end
+
+namespace WTR {
+
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const TestOptions& options)
+    : m_windowIsKey(true)
+    , m_options(options)
+{
+    // FIXME: Not sure this is the best place for this; maybe we should have API to set this so we can do it from TestController?
+    if (m_options.useRemoteLayerTree())
+        [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
+    if (m_options.noUseRemoteLayerTree())
+        [[NSUserDefaults standardUserDefaults] setValue:@NO forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
+
+    WKPreferencesSetThreadedScrollingEnabled((__bridge WKPreferencesRef)[(__bridge WKWebViewConfiguration *)configuration preferences], m_options.useThreadedScrolling());
+
+    NSRect rect = NSMakeRect(0, 0, options.viewWidth(), options.viewHeight());
+    m_view = [[TestRunnerWKWebView alloc] initWithFrame:rect configuration:(__bridge WKWebViewConfiguration *)configuration];
+    [m_view _setWindowOcclusionDetectionEnabled:NO];
+
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+
+    NSRect windowRect = m_options.shouldShowWindow() ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
+
+    m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSWindowStyleMaskBorderless backing:(NSBackingStoreType)_NSBackingStoreUnbuffered defer:YES];
+    m_window.platformWebView = this;
+    [m_window setHasShadow:NO];
+    [m_window setColorSpace:[firstScreen colorSpace]];
+    [m_window setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
+    [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
+    [[m_window contentView] addSubview:m_view];
+    [m_window setReleasedWhenClosed:NO];
+
+    if (m_options.shouldShowCursor() && m_options.shouldShowWindow()) {
+        m_cursorOverlay = adoptNS([[WTRCursorOverlayView alloc] initWithFrame:NSZeroRect]);
+        [m_cursorOverlay updateWithCursor:[NSCursor arrowCursor]];
+
+        RetainPtr panel = adoptNS([[NSPanel alloc] initWithContentRect:NSZeroRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+        [panel setOpaque:NO];
+        [panel setBackgroundColor:[NSColor clearColor]];
+        [panel setIgnoresMouseEvents:YES];
+        [panel setHasShadow:NO];
+        [panel setLevel:NSFloatingWindowLevel];
+        [panel setReleasedWhenClosed:NO];
+
+        [[panel contentView] addSubview:m_cursorOverlay];
+        [m_cursorOverlay setOverlayPanel:panel];
+        [m_window addChildWindow:panel ordered:NSWindowAbove];
+    }
+}
+
+void PlatformWebView::setWindowIsKey(bool isKey)
+{
+    m_windowIsKey = isKey;
+    if (m_windowIsKey)
+        [m_window makeKeyWindow];
+    else
+        [m_window resignKeyWindow];
+}
+
+void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode sizingMode)
+{
+    WKRect frame = windowFrame();
+    frame.size.width = width;
+    frame.size.height = height;
+    setWindowFrame(frame, sizingMode);
+}
+
+PlatformWebView::~PlatformWebView()
+{
+    m_window.platformWebView = nullptr;
+    if (RetainPtr panel = [m_cursorOverlay overlayPanel]) {
+        [m_window removeChildWindow:panel];
+        [panel close];
+    }
+
+    [m_window close];
+    [m_window release];
+    [m_view release];
+}
+
+PlatformWindow PlatformWebView::keyWindow()
+{
+    return [WebKitTestRunnerWindow _WTR_keyWindow];
+}
+
+WKPageRef PlatformWebView::page()
+{
+    return [m_view _pageForTesting];
+}
+
+void PlatformWebView::focus()
+{
+    [m_window makeFirstResponder:platformView()];
+    setWindowIsKey(true);
+}
+
+WKRect PlatformWebView::windowFrame()
+{
+    NSRect frame = [m_window frameRespectingFakeOrigin];
+
+    WKRect wkFrame;
+    wkFrame.origin.x = frame.origin.x;
+    wkFrame.origin.y = frame.origin.y;
+    wkFrame.size.width = frame.size.width;
+    wkFrame.size.height = frame.size.height;
+    return wkFrame;
+}
+
+void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode)
+{
+    [m_window setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
+    [platformView() setFrame:NSMakeRect(0, 0, frame.size.width, frame.size.height)];
+}
+
+void PlatformWebView::didInitializeClients()
+{
+    // Set a temporary 1x1 window frame to force a WindowAndViewFramesChanged notification. <rdar://problem/13380145>
+    forceWindowFramesChanged();
+}
+
+void PlatformWebView::addChromeInputField()
+{
+    auto textField = adoptNS([[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)]);
+    [textField setTag:1];
+    [[m_window contentView] addSubview:textField.get()];
+
+    NSView *view = platformView();
+    [textField setNextKeyView:view];
+    [view setNextKeyView:textField.get()];
+}
+
+void PlatformWebView::removeChromeInputField()
+{
+    NSView *textField = [[m_window contentView] viewWithTag:1];
+    if (textField) {
+        [textField removeFromSuperview];
+        makeWebViewFirstResponder();
+    }
+}
+
+void PlatformWebView::setTextInChromeInputField(const String&)
+{
+}
+
+void PlatformWebView::selectChromeInputField()
+{
+}
+
+String PlatformWebView::getSelectedTextInChromeInputField()
+{
+    return { };
+}
+
+void PlatformWebView::addToWindow()
+{
+    [[m_window contentView] addSubview:m_view];
+}
+
+void PlatformWebView::removeFromWindow()
+{
+    [m_view removeFromSuperview];
+}
+
+void PlatformWebView::makeWebViewFirstResponder()
+{
+    [m_window makeFirstResponder:platformView()];
+}
+
+bool PlatformWebView::drawsBackground() const
+{
+    return [m_view _drawsBackground];
+}
+
+void PlatformWebView::setDrawsBackground(bool drawsBackground)
+{
+    [m_view _setDrawsBackground:drawsBackground];
+}
+
+void PlatformWebView::setEditable(bool editable)
+{
+    m_view._editable = editable;
+}
+
+RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
+{
+    RetainPtr panel = [m_cursorOverlay overlayPanel];
+    [panel orderOut:nil];
+    auto showPanelOnExit = WTF::makeScopeExit([panel] {
+        [panel orderFront:nil];
+    });
+
+    [platformView() display];
+    CGWindowImageOption options = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
+
+    CGFloat backingScaleFactor = [m_window backingScaleFactor];
+    if (backingScaleFactor == 1)
+        options |= kCGWindowImageNominalResolution;
+
+    NSRect viewFrame = [platformView() frame];
+    size_t expectedWidth = viewFrame.size.width * backingScaleFactor;
+    size_t expectedHeight = viewFrame.size.height * backingScaleFactor;
+
+    // Work around <rdar://problem/17084993>: CGWindowListCreateImage() can return images with
+    // incorrect dimensions immediately after a window resolution change via _setWindowResolution:,
+    // because the window server reallocates the backing store asynchronously. There is no public
+    // synchronization API to wait for this, so validate the captured dimensions and retry if needed.
+    constexpr unsigned maxRetries = 10;
+    for (unsigned attempt = 0; ; ++attempt) {
+        RetainPtr image = adoptNS([platformView() _windowSnapshotInRect:CGRectNull withOptions:options]);
+        if (!image)
+            return nil;
+
+        auto cgImage = [image CGImageForProposedRect:nil context:nil hints:nil];
+        if (!cgImage)
+            return nil;
+
+        size_t actualWidth = CGImageGetWidth(cgImage);
+        size_t actualHeight = CGImageGetHeight(cgImage);
+        if (actualWidth == expectedWidth && actualHeight == expectedHeight)
+            return cgImage;
+
+        if (attempt >= maxRetries)
+            break;
+
+        usleep(10000); // 10ms — allow the window server to finish the backing store update
+        [platformView() display];
+    }
+
+    WTFLogAlways("Failed to take snapshot of window -- expected dimensions don't match captured images."); // NOLINT
+    return nil;
+}
+
+void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
+{
+    if (m_view._overrideDeviceScaleFactor != newScale)
+        m_view._overrideDeviceScaleFactor = newScale;
+
+    CGFloat currentScale = m_window.backingScaleFactor;
+    if (currentScale != newScale) {
+        if ([m_window respondsToSelector:@selector(_setWindowResolution:)])
+            [m_window _setWindowResolution:newScale];
+        else
+            [m_window _setWindowResolution:newScale displayIfChanged:YES];
+
+        // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
+        forceWindowFramesChanged();
+
+        // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.
+        NSDictionary *userInfo = @{ NSBackingPropertyOldScaleFactorKey: @(currentScale) };
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidChangeBackingPropertiesNotification object:m_window userInfo:userInfo];
+    }
+}
+
+void PlatformWebView::forceWindowFramesChanged()
+{
+    WKRect wkFrame = windowFrame();
+    [m_window setFrame:NSMakeRect(0, 0, 1, 1) display:YES];
+    setWindowFrame(wkFrame);
+}
+
+void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
+{
+    [platformView() setAllowsBackForwardNavigationGestures:enabled];
+}
+
+bool PlatformWebView::isSecureEventInputEnabled() const
+{
+    return platformView()._secureEventInputEnabledForTesting;
+}
+
+void PlatformWebView::setCursorOverlayPosition(double x, double y)
+{
+    if (!m_cursorOverlay)
+        return;
+
+    NSPoint hotSpot = [m_cursorOverlay hotSpot];
+    NSSize imageSize = [m_cursorOverlay frame].size;
+
+    NSRect overlayInView = NSMakeRect(x - hotSpot.x, y - hotSpot.y, imageSize.width, imageSize.height);
+    NSRect overlayInWindow = [m_view convertRect:overlayInView toView:nil];
+
+    NSPoint screenOrigin = [m_window convertPointToScreen:overlayInWindow.origin];
+    [[m_cursorOverlay overlayPanel] setFrameOrigin:screenOrigin];
+}
+
+void PlatformWebView::updateCursorOverlayImage()
+{
+    [m_cursorOverlay updateWithCursor:[NSCursor currentCursor]];
+}
+
+} // namespace WTR

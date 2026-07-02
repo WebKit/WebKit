@@ -1,0 +1,14 @@
+
+PASS RTCPeerConnection.length
+PASS localDescription initial value
+PASS currentLocalDescription initial value
+PASS pendingLocalDescription initial value
+PASS remoteDescription initial value
+PASS currentRemoteDescription initial value
+PASS pendingRemoteDescription initial value
+PASS signalingState initial value
+PASS iceGatheringState initial value
+PASS iceConnectionState initial value
+PASS connectionState initial value
+PASS canTrickleIceCandidates initial value
+

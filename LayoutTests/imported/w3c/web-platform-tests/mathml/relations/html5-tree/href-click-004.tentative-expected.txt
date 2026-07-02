@@ -1,0 +1,30 @@
+
+FAIL annotation with href attribute does not react to click. promise_test: Unhandled rejection with value: object "Error: element click intercepted error"
+FAIL annotation-xml with href attribute does not react to click. promise_test: Unhandled rejection with value: object "Error: element click intercepted error"
+PASS maction with href attribute does not react to click.
+PASS menclose with href attribute does not react to click.
+PASS merror with href attribute does not react to click.
+PASS mfrac with href attribute does not react to click.
+PASS mi with href attribute does not react to click.
+PASS mmultiscripts with href attribute does not react to click.
+PASS mn with href attribute does not react to click.
+PASS mo with href attribute does not react to click.
+PASS mover with href attribute does not react to click.
+PASS mpadded with href attribute does not react to click.
+PASS mphantom with href attribute does not react to click.
+PASS mroot with href attribute does not react to click.
+PASS mrow with href attribute does not react to click.
+PASS ms with href attribute does not react to click.
+PASS msqrt with href attribute does not react to click.
+PASS mstyle with href attribute does not react to click.
+PASS msub with href attribute does not react to click.
+PASS msubsup with href attribute does not react to click.
+PASS msup with href attribute does not react to click.
+PASS mtable with href attribute does not react to click.
+PASS mtd with href attribute does not react to click.
+PASS mtext with href attribute does not react to click.
+PASS mtr with href attribute does not react to click.
+PASS munder with href attribute does not react to click.
+PASS munderover with href attribute does not react to click.
+PASS semantics with href attribute does not react to click.
+

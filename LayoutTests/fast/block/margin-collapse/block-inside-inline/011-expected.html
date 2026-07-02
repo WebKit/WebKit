@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>Margin Collapsing: in flow (simple, block-inside-inline version)</title>
+  <style type="text/css">
+   table { border-spacing: 0; font-size: 50px; border: solid; background: orange; }
+   td { padding: 0; }
+   .a, .b { height: 1em; width: 1em; }
+   .a { background: lime; }
+   .b { background: yellow; }
+  </style>
+ </head>
+ <body>
+  <p>The square should consist of exactly five equal bands, orange, lime, orange, yellow, orange.</p>
+  <table>
+   <tr>
+    <td>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="a"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="b"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+    </td>
+    <td>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="a"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="b"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+    </td>
+    <td>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="a"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="b"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+    </td>
+    <td>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="a"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="b"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+    </td>
+    <td>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="a"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+     <div class="b"></div>
+     <div style="border-top: 1em orange solid; width: 1em;"></div>
+    </td>
+   </tr>
+  </table>
+  <p>This test is meaningless if you don't pass <a href="006.html#">test 006</a>.</p>
+ </body>
+</html>

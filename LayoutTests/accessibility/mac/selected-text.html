@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="contenteditable" contenteditable="true">
+    <div id="one">One foo</div>
+    <div id="two">Two foo</div>
+</div>
+
+<script>
+var output = "This test ensures that the selected text accessibility API works as expected.\n\n";
+
+var contenteditable;
+async function waitUntilSelected(id) {
+    let range = document.createRange();
+    let element = document.getElementById(id);
+    range.selectNodeContents(element);
+
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    output += await expectAsync(`contenteditable.selectedText === "${element.innerText}"`, "true");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    contenteditable = accessibilityController.accessibleElementById("contenteditable");
+    setTimeout(async function() {
+        await waitUntilSelected("one");
+        await waitUntilSelected("two");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

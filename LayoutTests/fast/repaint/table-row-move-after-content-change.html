@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<link rel="match" href="table-row-move-after-content-change-expected.html">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+td {
+  font: 20px/1 Ahem;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<table>
+<tr><td><div id="remove_this">XXXX</div></td></tr>
+<tr><td>PASS</td></tr>
+</table>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest() {
+    await UIHelper.renderingUpdate();
+    remove_this.style.display = "none";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

@@ -1,0 +1,4 @@
+
+PASS Snaps to the positions adjusted by scroll-margin
+PASS scroll-margin doesn't contribute to the snap position of the element if it's outside of the scroll port
+

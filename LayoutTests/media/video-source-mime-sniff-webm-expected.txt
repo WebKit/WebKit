@@ -1,0 +1,10 @@
+RUN(video = document.createElement("video"))
+RUN(source = document.createElement("source"))
+RUN(source.type = "video/mp4")
+RUN(source.src = "content/test-vp8.webm")
+RUN(video.appendChild(source))
+RUN(document.body.appendChild(video))
+loadeddata fired
+selected source: test-vp8.webm
+END OF TEST
+

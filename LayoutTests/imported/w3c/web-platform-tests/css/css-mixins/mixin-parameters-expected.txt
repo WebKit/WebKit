@@ -1,0 +1,50 @@
+This text should be green.
+This text should be green.
+This text should be navy.
+This text should be fuchsia.
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be navy.
+This text should be black.
+This text should be green.
+This text should be black.
+This text should be green.
+This text does not matter.
+This text does not matter.
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be black.
+This text should be green.
+This text should be green.
+This text does not matter.
+This text should be green.
+This text should be green.
+
+FAIL Mixins with invalid parameter lists are ignored assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Basic mixin parameter passing assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Mixins can be called multiple times with different parameters assert_equals: expected "rgb(0, 0, 128)" but got "rgb(0, 0, 0)"
+FAIL Too few parameters and no default ignores mixin assert_equals: expected "rgb(0, 0, 0)" but got "rgb(255, 0, 255)"
+FAIL Mixin argument parsing with arguments wrapped in {} assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Defaults in mixin parameters assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS @apply with too many parameters is ignored
+FAIL Fallback is ignored if argument is given assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Fallback is used with no parameter and no default assert_equals: expected "rgb(0, 0, 128)" but got "rgb(0, 0, 0)"
+PASS Fallback is not used on other errors
+PASS Fallback is not when outside mixin
+PASS Invalid when no fallback and outside mixin
+FAIL var() can be accessed from attributes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL var() resolves typed parameters assert_equals: expected "10px" but got ""
+FAIL var() refuses illegal syntax parameters, but does not fail entire mixin assert_equals: expected "10px" but got "16px"
+FAIL var() can access parameters from outer mixins assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL var() works inside if, in condition and true branch assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL var() works inside if, in condition and false branch assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS var() within a function should not see parameters from a calling mixin
+FAIL Mixin arguments are resolved at call site, not at use assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL var() supports default parameters assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL var() typed default parameters are resolved against the element assert_equals: expected "12px" but got ""
+PASS Invalid defaults should skip declaration, even on unused arguments
+PASS Invalid @apply arguments should skip declaration
+

@@ -1,0 +1,3 @@
+
+PASS forward() promise rejection with rejected intercept()
+

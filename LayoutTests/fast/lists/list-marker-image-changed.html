@@ -1,0 +1,17 @@
+<style>
+  @keyframes a0 {
+    from {
+      -webkit-mask-box-image-source: url()
+    }
+  }
+  :not(:target)::marker {
+    animation-name: a0;
+    animation-duration: 1ms;
+  }
+</style>
+<li>PASS</li>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+</script>

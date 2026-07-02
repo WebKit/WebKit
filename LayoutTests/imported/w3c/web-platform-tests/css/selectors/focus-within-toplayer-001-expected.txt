@@ -1,0 +1,5 @@
+
+PASS Focusing inside a modal dialog should not propagate :focus-within beyond the dialog.
+PASS Focusing inside a popover should not propagate :focus-within beyond the popover.
+PASS With nested top layer elements, :focus-within should stop at the innermost top layer boundary.
+

@@ -1,0 +1,116 @@
+Checking pause locations when stepping with "stepOut".
+
+
+== Running test suite: Debugger.stepOut
+-- Running test case: Debugger.stepOut.function
+PAUSED (debugger-statement)
+PAUSE AT testFunction:12:5
+      8    function c() { return "c"; }
+      9
+     10    function testFunction() {
+ ->  11        |debugger;
+     12        let x = 1;
+     13        let y = 2;
+     14    }
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.eval
+PAUSED (debugger-statement)
+PAUSE AT Eval Code:1:1
+--- Source Unavailable ---
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.innerFunction
+PAUSED (debugger-statement)
+PAUSE AT beta:28:9
+     24            beta();
+     25        }
+     26        function beta() {
+ ->  27            |debugger;
+     28        }
+     29        alpha();
+     30    }
+
+PAUSE AT alpha:26:6
+     22    function testInnerFunction() {
+     23        function alpha() {
+     24            beta();
+ ->  25        }|
+     26        function beta() {
+     27            debugger;
+     28        }
+
+PAUSE AT testInnerFunction:31:2
+     27            debugger;
+     28        }
+     29        alpha();
+ ->  30    }|
+     31
+     32    function testAnonymousFunction() {
+     33        (function() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.anonymousFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:35:9
+     31
+     32    function testAnonymousFunction() {
+     33        (function() {
+ ->  34            |debugger;
+     35            let inner = 1;
+     36        })();
+     37        let outer = 2;
+
+PAUSE AT testAnonymousFunction:38:5
+     34            debugger;
+     35            let inner = 1;
+     36        })();
+ ->  37        |let outer = 2;
+     38    }
+     39
+     40    function testCommas() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.commas
+PAUSED (debugger-statement)
+PAUSE AT testCommas:42:5
+     38    }
+     39
+     40    function testCommas() {
+ ->  41        |debugger;
+     42        let x = 1,
+     43            y = 2,
+     44            z = 3;
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.chainedExpressions
+PAUSED (debugger-statement)
+PAUSE AT testChainedExpressions:51:5
+     47    }
+     48
+     49    function testChainedExpressions() {
+ ->  50        |debugger;
+     51        a() && b() && c();
+     52    }
+     53
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.declarations
+PAUSED (debugger-statement)
+PAUSE AT testDeclarations:56:5
+     52    }
+     53
+     54    function testDeclarations() {
+ ->  55        |debugger;
+     56        let x = a(),
+     57            y = b(),
+     58            z = c();
+
+RESUMED
+

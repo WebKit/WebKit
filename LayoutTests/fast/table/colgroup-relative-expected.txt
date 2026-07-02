@@ -1,0 +1,5 @@
+Test for rdar://problem/5530657.
+
+This tests for a crash during relayout when a <colgroup> is relative-positioned.
+
+

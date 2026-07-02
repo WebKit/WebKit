@@ -1,0 +1,11 @@
+15.4.4.15-8-b-i-3 (TestCases/chapter15/15.4/15.4.4/15.4.4.15/15.4.4.15-8-b-i-3.js) Array.prototype.lastIndexOf when element to be retrieved is own data property that overrides an inherited data property on an Array
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

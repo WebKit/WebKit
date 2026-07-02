@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<head>
+<style>
+#textpath {
+    display: none;
+}
+svg {
+    height: 200px;
+    width: 200px;
+}
+</style>
+</head>
+<body>
+<p>Tests that a &lt;textPath&gt; with display none isn't rendered. This test FAILED if you see the word FAIL below. Otherwise, it PASSED.</p>
+<svg style="width: 200px; height: 200px">
+    <path id="reference-square" d="M 0 20 L 100 20 L 100 120 L 0 120" fill="blue" />
+    <text>
+        <textPath id="textpath" xlink:href="#reference-square">FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL</textPath>
+    </text>
+</svg>
+</body>
+</html>

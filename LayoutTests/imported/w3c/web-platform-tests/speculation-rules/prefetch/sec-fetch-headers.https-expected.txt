@@ -1,0 +1,6 @@
+
+PASS Sec-Fetch-Dest
+PASS Sec-Fetch-Mode
+PASS Sec-Fetch-Dest with redirects
+PASS Sec-Fetch-Mode with redirects
+

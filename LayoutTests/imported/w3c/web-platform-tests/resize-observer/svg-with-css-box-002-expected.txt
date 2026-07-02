@@ -1,0 +1,6 @@
+
+PASS ResizeObserver implemented
+PASS guard
+PASS test0: Root SVG resize observed
+PASS test1: `foreignObject` SVG resize observed
+

@@ -1,0 +1,19 @@
+
+PASS Single-argument form allows for declarations with enclosing parentheses
+PASS Single-argument form allows for declarations without enclosing parentheses
+PASS Complex conditions allowed
+PASS general_enclosed still parses
+PASS Variable references always parse
+PASS Variable references in an unknown function always parse
+PASS two argument form succeeds for known property
+PASS one argument form fails for unknown property
+PASS two argument form fails for unknown property
+PASS one argument form fails for unknown property (but known descriptor)
+PASS two argument form fails for unknown property (but known descriptor)
+PASS one argument form fails for unknown property (but known descriptor, universal value)
+PASS two argument form fails for unknown property (but known descriptor, universal value)
+PASS one argument form fails for invalid value
+PASS two argument form fails for invalid value
+PASS one argument form succeeds for custom property
+PASS two argument form succeeds for custom property
+

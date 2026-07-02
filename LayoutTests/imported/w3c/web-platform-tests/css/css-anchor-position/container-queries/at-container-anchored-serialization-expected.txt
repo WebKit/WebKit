@@ -1,0 +1,7 @@
+
+FAIL Normalize spaces assert_equals: expected "anchored(fallback: --foo)" but got "anchored( fallback:--foo)"
+FAIL No value - invalid, serializes as <general-enclosed> assert_equals: expected "ANChoreD(fallback:    )" but got "ANChoreD(fallback: )"
+FAIL Boolean context assert_equals: expected "anchored(fallback)" but got "anchoRed(fallback)"
+FAIL Logical with 'or' assert_equals: expected "anchored((fallback: flip-inline) or (fallback: --bar))" but got "anchored( ( fallback: flip-INLINE) OR ( FALLBACK : --bar ) )"
+PASS Not an anchored() function with space before '('
+

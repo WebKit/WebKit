@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../../media-resources/video-test.js></script>
+        <script src=../../../media-resources/media-file.js></script>
+
+        <script>
+            async function test()
+            {
+                findMediaElement();
+
+                waitForAndFail(video, 'error')
+                video.src = "http://127.0.0.1:8000/media/resources/hls/multiple-cues-per-sample/master.m3u8";
+
+                await waitFor(video.textTracks, 'addtrack')
+                track = video.textTracks[0];
+                track.mode = 'showing';
+
+                await waitFor(track, 'cuechange')
+                await testExpectedEventually('track.cues.length', 5, '===', 4000);
+
+                consoleWrite('');
+            }
+
+            window.addEventListener('load', async (event) => {
+                await test();
+                endTest();
+            });
+        </script>
+    </head>
+    <body>
+        <video controls muted autoplay></video>
+        <p>Test that multiple cues in a sample buffer are parsed correctly.</p>
+    </body>
+</html>

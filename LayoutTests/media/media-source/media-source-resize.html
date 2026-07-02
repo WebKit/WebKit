@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-resize</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    }
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        waitForEventAndFail('error');
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('source.duration = loader.duration()');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        waitForEventOnce('resize', resize);
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+    }
+
+    function sourceInitialized() {
+        waitForEventOnce('resize', resize);
+        consoleWrite('Append a media segment.')
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+    }
+
+    function resize() {
+        // First resize can be 0x0 (Mac) or 640x480 (GTK+)
+        if (video.videoWidth > 0 && video.videoHeight > 0) {
+            testExpected('video.videoWidth', 640);
+            testExpected('video.videoHeight', 480);
+            endTest();
+        }
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+        This tests that a video element receives "resize" event correctly
+        when we append initialization and media segment to its source buffer.
+    </div>
+    <video controls></video>
+</body>
+</html>

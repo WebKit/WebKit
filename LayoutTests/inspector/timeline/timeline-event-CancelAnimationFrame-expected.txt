@@ -1,0 +1,12 @@
+Tests 'CancelAnimationFrame' Timeline event records.
+
+
+== Running test suite: TimelineEvent.CancelAnimationFrame
+-- Running test case: TimelineEvent.CancelAnimationFrame.requestAnimationFrame
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Should be 1 AnimationFrameCanceled record.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the requestAnimationFrame identifier.
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<style>
+@font-face {
+    font-family: "Ahem";
+    src: url("../../resources/Ahem.ttf");
+}
+</style>
+<canvas width="200" height="100"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    await document.fonts.load("80px Ahem");
+
+    const canvas = document.querySelector("canvas");
+    const context = canvas.getContext("2d");
+    context.fillStyle = `rgb(232, 232, 232)`;
+    context.clearRect(0, 0, 200, 100);
+    context.fillRect(0, 0, 200, 100);
+
+    const gradient = context.createLinearGradient(0, 0, 0, 100);
+    gradient.addColorStop(0, "blue");
+    gradient.addColorStop(1, "blue");
+    context.fillStyle = gradient;
+    context.font = "80px Ahem";
+    context.fillText("foo bar", 0, 0);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</html>

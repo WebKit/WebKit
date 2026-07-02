@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ AllowTopNavigationToDataURLs=false ] -->
+<html>
+<head>
+<meta http-equiv="refresh" content="0; url=data:text/html,<body onload='testRunner.notifyDone()'>FAIL: This should not have loaded.">
+<script src="../../resources/js-test.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+jsTestIsAsync = true;
+</script>
+</head>
+<body>
+<script>
+description("Tests that we do not redirect to a data URL. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: data:text/html,&lt;body onload=...b&quot; followed by &quot;didCancelClientRedirectForFrame&quot; followed by didFailProvisionalLoadWithError.");
+
+shouldBecomeEqual("testRunner.didCancelClientRedirect", "true", finishJSTest);
+</script>
+</body>
+</html>

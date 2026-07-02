@@ -1,0 +1,13 @@
+
+PASS with font-size: 10px, #target.style['line-height'] = 1e+26 should result in a used line-height of 999999914697178458896728064px
+PASS with font-size: 10px, #target.style['line-height'] = 2.53821 should result in a used line-height of 25.382099px
+PASS with font-size: 10px, #target.style['line-height'] = 2.6666667 should result in a used line-height of 26.666664px
+PASS with font-size: 10px, #target.style['line-height'] = 2.123456789123457 should result in a used line-height of 21.234568px
+PASS with font-size: 10px, #target.style['line-height'] = 2.5 should result in a used line-height of 25px
+PASS with font-size: 10px, #target.style['line-height'] = 2 should result in a used line-height of 20px
+PASS with font-size: 10px, #target.style['line-height'] = 1.05 should result in a used line-height of 10.5px
+PASS with font-size: 10px, #target.style['line-height'] = 1.049 should result in a used line-height of 10.49px
+PASS with font-size: 10px, #target.style['line-height'] = 1.0491 should result in a used line-height of 10.491001px
+PASS with font-size: 10px, #target.style['line-height'] = 0 should result in a used line-height of 0px
+PASS with font-size: 10px, #target.style['line-height'] = 1 should result in a used line-height of 10px
+

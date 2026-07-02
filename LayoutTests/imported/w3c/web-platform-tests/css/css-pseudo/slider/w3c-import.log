@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-001-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-002-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-002-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-003-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-003-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-thumb-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-thumb-001-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-thumb-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-001-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-001-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-002-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-002-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-003-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-003-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-003.html

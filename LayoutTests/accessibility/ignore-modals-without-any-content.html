@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="container" role="group">
+    <div>Foo text, before modal</div>
+
+    <div id="modal" role="dialog" aria-modal="true">
+        <!-- Wrap the aria-hidden content in arbitrary div layers to ensure we don't consider the arbitrary divs accessible content. -->
+        <div>
+            <div>
+                <div aria-hidden="true">
+                     <button>Hidden button (inside modal)</button>
+                </div>
+                <div style="display: none;">
+                     Text inside display: none
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>Foo text, after modal</div>
+</div>
+
+<script>
+var output = "This test ensures that we ignore modals that don't have any accessible content.\n";
+
+async function findTextInsideId(id) {
+    const containerElement = accessibilityController.accessibleElementById(id);
+    output += `\nBeginning search from #${id} element.\n`;
+
+    let searchResult = null;
+    while (true) {
+        searchResult = containerElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        if (searchResult.role.includes("StaticText")) {
+            output += `\n${searchResult.role}`;
+            const textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            output += `\n${textContent}\n`;
+        }
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await findTextInsideId("container");
+
+        output += "\nAppending a text node to modal to make it accessible.";
+        let heading = document.createElement("h3");
+        heading.tabIndex = "0";
+        heading.innerText = "Foo text, inside modal";
+        document.getElementById("modal").appendChild(heading);
+        heading.focus();
+
+        // Wait for heading to be added as an AX child.
+        await waitFor(() => accessibilityController.accessibleElementById("modal").childAtIndex(0));
+        await waitFor(() => !accessibilityController.accessibleElementById("container"));
+
+        output += "\nPASS: #container AX element is no longer accessible after adding accessible content to modal.\n";
+
+        await findTextInsideId("modal");
+
+        document.getElementById("container").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

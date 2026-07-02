@@ -1,0 +1,95 @@
+/*
+ * (C) 1999-2003 Lars Knoll (knoll@kde.org)
+ * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2002, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "CSSPageRule.h"
+
+#include "CSSPageDescriptors.h"
+#include "CSSSelectorParser.h"
+#include "CSSSerializationContext.h"
+#include "CSSStyleSheet.h"
+#include "CommonAtomStrings.h"
+#include "Document.h"
+#include "MutableStyleProperties.h"
+#include "NodeDocument.h"
+#include "StyleProperties.h"
+#include "StyleRule.h"
+#include "StyleSheetContents.h"
+#include <wtf/text/MakeString.h>
+
+namespace WebCore {
+
+CSSPageRule::CSSPageRule(StyleRulePage& pageRule, CSSStyleSheet* parent)
+    : CSSRule(parent)
+    , m_pageRule(pageRule)
+{
+}
+
+CSSPageRule::~CSSPageRule()
+{
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->clearParentRule();
+}
+
+CSSPageDescriptors& CSSPageRule::style()
+{
+    if (!m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper = CSSPageDescriptors::create(protect(m_pageRule->mutableProperties()), protect(*this));
+    return *m_propertiesCSSOMWrapper;
+}
+
+String CSSPageRule::selectorText() const
+{
+    if (auto& selector = m_pageRule->selector(); !selector.selectorText().isEmpty())
+        return selector.selectorText();
+    return emptyString();
+}
+
+void CSSPageRule::setSelectorText(const String& selectorText)
+{
+    RefPtr sheet = parentStyleSheet();
+    RefPtr sheetContents = sheet ? &sheet->contents() : nullptr;
+    auto selectorList = CSSSelectorParser::parseSelectorList(selectorText, parserContext(), sheetContents.get());
+    if (!selectorList)
+        return;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(this);
+
+    protect(m_pageRule)->wrapperAdoptSelectorList(WTF::move(*selectorList));
+}
+
+String CSSPageRule::cssText() const
+{
+    auto selector = selectorText();
+    auto optionalSpace = selector.isEmpty() ? ""_s : " "_s;
+    if (auto declarations = protect(m_pageRule)->properties().asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+        return makeString("@page"_s, optionalSpace, selector, " { "_s, declarations, " }"_s);
+    return makeString("@page"_s, optionalSpace, selector, " { }"_s);
+}
+
+void CSSPageRule::reattach(StyleRuleBase& rule)
+{
+    m_pageRule = downcast<StyleRulePage>(rule);
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->reattach(m_pageRule.get().mutableProperties());
+}
+
+} // namespace WebCore

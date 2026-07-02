@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SpeechSynthesis Feature Flag Test with CoreIPC Helper</title>
+    <script src="coreipc.js"></script>
+</head>
+<body>
+    <h1>SpeechSynthesis EnabledBy Feature Flag Test</h1>
+    <div id="status">Loading...</div>
+    
+    <script>
+        console.log('SpeechSynthesis feature flag test starting...');
+        
+        function runSpeechSynthesisTest() {
+            try {
+                if (typeof CoreIPC === 'undefined') {
+                    alert('coreipc_framework_not_available');
+                    return;
+                }
+                
+                // Check if the SpeechSynthesisVoiceList message exists
+                const messageExists = CoreIPC.messages.WebPageProxy_SpeechSynthesisVoiceList;
+                console.log('SpeechSynthesisVoiceList message exists:', !!messageExists);
+                
+                if (!messageExists) {
+                    alert('speechsynthesis_message_not_found');
+                    return;
+                }
+                
+                // Use the proper sync message pattern like the example
+                const reply = IPC.sendSyncMessage(
+                    'UI',
+                    IPC.webPageProxyID,
+                    IPC.messages.WebPageProxy_SpeechSynthesisVoiceList.name,
+                    1000, // timeout in ms
+                    [] // no arguments needed
+                );
+                
+                // For EnabledBy testing, we just need to verify we got a valid reply
+                // The EnabledBy mechanism will throw an error if the message is blocked
+                if (reply && reply.buffer) {
+                    // Check if we have a buffer with some data (skip the 16-byte header)
+                    const buffer = new Uint8Array(reply.buffer);
+                    console.log('Reply buffer length:', buffer.length);
+                    console.log('Reply buffer (first 32 bytes):', Array.from(buffer.slice(0, 32)));
+                    
+                    if (buffer.length > 16) { // More than just the header
+                        alert('speechsynthesis_message_sent_successfully');
+                    } else {
+                        alert('speechsynthesis_message_sent_empty_reply');
+                    }
+                } else if (reply) {
+                    console.log('Got reply but no buffer:', reply);
+                    alert('speechsynthesis_message_sent_no_buffer');
+                } else {
+                    console.log('No reply returned');
+                    alert('speechsynthesis_message_sent_but_no_result');
+                }
+                
+            } catch (error) {
+                console.error('SpeechSynthesis test error:', error);
+                
+                // Check if this is the specific EnabledBy validation error
+                if (error.message && error.message.includes('Receiver cancelled the reply due to invalid destination or deserialization error')) {
+                    alert('speechsynthesis_enabledby_blocked: ' + error.message);
+                } else {
+                    alert('speechsynthesis_test_error: ' + error.message);
+                }
+            }
+        }
+        
+        // Auto-run the test when page loads
+        window.addEventListener('load', function() {
+            console.log('Page loaded, starting SpeechSynthesis test...');
+            setTimeout(runSpeechSynthesisTest, 100);
+        });
+        
+        // Also run immediately in case load event already fired
+        if (document.readyState === 'complete') {
+            console.log('Document already complete, running SpeechSynthesis test immediately');
+            setTimeout(runSpeechSynthesisTest, 100);
+        }
+    </script>
+</body>
+</html>

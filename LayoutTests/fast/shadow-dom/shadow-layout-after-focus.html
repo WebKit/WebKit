@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+
+#container {
+    position: relative;
+}
+
+#host {
+    width: 90px;
+    height: 90px;
+    border: solid 5px red;
+    outline: none;
+}
+
+#host:not(:focus)::after {
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+    width: 90px;
+    height: 45px;
+    content: 'FAIL - not focused';
+}
+
+#host:focus {
+    outline: solid 5px green;
+    outline-offset: -5px;
+}
+
+#host div {
+    background: red;
+    width: 90px;
+    height: 45px;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: green;
+    display: block;
+    width: 100px;
+    height: 50px;
+}
+
+</style>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="container">
+<div id="host" tabindex=0><div>FAIL - misplaced</div></div>
+<div id="overlay"></div>
+</div>
+<script>
+
+var host = document.getElementById('host');
+var shadow = host.attachShadow({mode: 'closed'});
+shadow.innerHTML = `
+    <style>
+        div { background: green; width: 90px; height: 45px; }
+    </style>
+    <slot></slot>
+    <div></div>
+`;
+
+host.getBoundingClientRect();
+host.focus();
+
+</script>
+</body>
+</html>

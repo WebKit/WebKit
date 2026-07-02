@@ -1,0 +1,12 @@
+Verifies that the selection does not unnecessarily clamp to LTR text when selecting the entire RTL paragraph from the start
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialBounds.left + initialBounds.width is finalBounds.left + finalBounds.width
+PASS initialSelectedText is "أُرسلت"
+PASS finalSelectedText is "‫أُرسلت من الـ iPhone‬"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+‫أُرسلت من الـ iPhone‬

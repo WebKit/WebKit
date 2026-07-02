@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('When bold, italic, and underline are toggled on before typing marker-style lines, smart-list conversion should preserve the active typing style — including on a subsequent line typed without an explicit marker.');
+
+var test = document.getElementById('test');
+test.focus();
+boldCommand();
+italicCommand();
+underlineCommand();
+[...'1. this is styled text\n2. this is styled text\nthis is styled text'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Test that the scroll animation is paused
+PASS Test that the scroll animation is paused by updating animation-play-state
+

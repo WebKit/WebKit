@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely_all_cues_have_same_timestamp-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely_all_cues_have_same_timestamp-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/9_cues_overlapping_completely_all_cues_have_same_timestamp.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_404_omit_subtitles-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_404_omit_subtitles-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_404_omit_subtitles.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_height_19-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_height_19-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/media_height_19.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/non-standard-pseudo-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/single_quote-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/single_quote-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/single_quote.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_90-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_90-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_90.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_99-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_99-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/evil/size_99.html

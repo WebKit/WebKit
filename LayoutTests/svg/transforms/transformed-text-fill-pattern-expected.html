@@ -1,0 +1,25 @@
+<html><body><svg width="1000" height="600" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+   <pattern id="hatch" patternUnits="userSpaceOnUse" x="0" y="0" width="10" height="10">
+     <g style="fill:none; stroke:black; stroke-width:1">
+       <path d="M0,0 l10,10"/>
+       <path d="M10,0 l-10,10"/>
+     </g>
+   </pattern>
+   <clipPath id="clipHack">
+     <rect x="3" y="0" width="24" height="600"></rect>
+     <rect x="33" y="10" width="24" height="600"></rect>
+     <rect x="63" y="0" width="24" height="600"></rect>
+     <rect x="93" y="0" width="24" height="600"></rect>
+     <rect x="123" y="0" width="24" height="600"></rect>
+   </clipPath>
+ </defs>
+ <g transform="scale(4)" clip-path="url(#clipHack)">
+  <rect y="26" width="150" height="30" fill="url(#hatch)">
+ </g>
+ <g transform="scale(6)" clip-path="url(#clipHack)">
+  <rect y="66" x="0" width="150" height="30" fill="url(#hatch)">
+ </g>
+</svg>
+</body>
+</html>

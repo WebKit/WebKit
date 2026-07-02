@@ -1,0 +1,1 @@
+../resources/tests21.dat: PASS

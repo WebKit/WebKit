@@ -1,0 +1,104 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "hdrs",
+    srcs = [
+        "SkottieUtils.h",
+        "TextEditor.h",
+    ],
+    visibility = ["//modules/skottie:__pkg__"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkottieUtils.cpp",
+        "TextEditor.cpp",
+    ],
+    visibility = ["//modules/skottie:__pkg__"],
+)
+
+skia_filegroup(
+    name = "skottie_preshape_tool",
+    srcs = [
+        "PreshapeTool.cpp",
+    ],
+    visibility = ["//modules/skottie:__pkg__"],
+)
+
+skia_cc_library(
+    name = "skottie_utils",
+    srcs = [
+        "SkottieUtils.cpp",
+    ],
+    hdrs = [
+        "SkottieUtils.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//:__pkg__",
+        "//dm:__pkg__",
+        "//modules/canvaskit:__pkg__",
+        "//modules/skottie:__subpackages__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//modules/skottie",
+        "//modules/skresources",
+        "//src/base",
+    ],
+)
+
+skia_cc_library(
+    name = "text_editor",
+    srcs = [
+        "TextEditor.cpp",
+    ],
+    hdrs = [
+        "TextEditor.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//:__pkg__",
+        "//modules/canvaskit:__pkg__",
+        "//modules/skottie:__subpackages__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//modules/skottie",
+        "//src/base",
+        "//tools/skui",
+    ],
+)
+
+skia_cc_library(
+    name = "text_preshape",
+    srcs = [
+        "TextPreshape.cpp",
+    ],
+    hdrs = [
+        "TextPreshape.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//:__pkg__",
+        "//modules/skottie:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//modules/skottie",
+        "//modules/skottie:skottie_priv",
+        "//modules/skresources",
+        "//modules/skshaper:skshaper_core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)

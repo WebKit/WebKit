@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/lifecycle-utilities.js"></script>
+<script>
+
+function addNamedAnimationToBody()
+{
+    document.getElementsByTagName("body")[0].classList.add("customAnimation");
+}
+
+function removeNamedAnimationFromBody()
+{
+    document.getElementsByTagName("body")[0].classList.remove("customAnimation");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.Lifecycle");
+
+    suite.addTestCase({
+        name: "Animation.Lifecycle.WebAnimation",
+        description: "Check that Web Inspector is notified whenever web animations are created/destroyed.",
+        async test() {
+            InspectorTest.expectEqual(WI.animationManager.animationCollection.size, 0, "There should not be any animations.");
+
+            let animation = await InspectorTest.AnimationLifecycleUtilities.createAnimation(WI.Animation.Type.WebAnimation, {
+                selector: "body",
+                keyframes: [
+                    {
+                        offset: 0.25,
+                        easing: "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+                        color: "red",
+                        opacity: 0,
+                    },
+                    {
+                        offset: 0.75,
+                        easing: "steps(5, jump-end)",
+                        color: "blue",
+                        opacity: 1,
+                    },
+                ],
+                options: {
+                    id: "web-animation-test",
+                    delay: 100,
+                    endDelay: 200,
+                    duration: 300,
+                    easing: "ease-in-out",
+                    direction: "alternate",
+                    fill: "both",
+                    iterations: 10,
+                    iterationStart: 5,
+                },
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Animation.Lifecycle.WebAnimation.CustomProperty",
+        description: "Check that Web Inspector is notified whenever web animations with custom properties are created/destroyed.",
+        async test() {
+            InspectorTest.log("Adding named animation to body.");
+            let creationResults = await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated(WI.Animation.Type.WebAnimation),
+                InspectorTest.evaluateInPage(`addNamedAnimationToBody()`),
+            ]);
+
+            let animationId = creationResults[0].animationId;
+
+            InspectorTest.log("Removing named animation from body.");
+            await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationDestroyed(animationId),
+                InspectorTest.evaluateInPage(`removeNamedAnimationFromBody()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+@property --customProperty {
+    syntax: "<number>+|none";
+    inherits: false;
+    initial-value: none;
+}
+
+@keyframes customKeyframes {
+    from {
+        --customProperty: 0 0 -4;
+    }
+
+    to {
+        --customProperty: 0 1 -4;
+    }
+}
+
+.customAnimation {
+    animation-name: customKeyframes;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-play-state: paused;
+}
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Animation.animationCreated and Animation.animationDestroyed events.</p>
+</body>
+</html>

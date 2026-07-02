@@ -1,0 +1,93 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ColorFilterEnabled=true ] -->
+<body onload="run();">
+<svg width="450" height="350">
+    <defs>
+        <linearGradient id="g1">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g2a">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g2b">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g3">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g4">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g5">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g6">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g7">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g8">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g9a">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g9b" xlink:href="#g9a"/>
+        <linearGradient id="g10a">
+            <stop offset="0" stop-color="red"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g10b">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+        <linearGradient id="g10c" xlink:href="#g10a"/>
+        <linearGradient id="g11">
+            <stop offset="0" stop-color="blue"/>
+            <stop offset="1" stop-color="yellow"/>
+        </linearGradient>
+    </defs>
+
+    <rect id="r1" x="50" y="50" width="50" height="50"/>
+    <rect id="r2" x="150" y="50" width="50" height="50" fill="url(#g2a)"/>
+    <rect id="r3" x="250" y="50" width="50" height="50" fill="url(#g3)"/>
+    <rect id="r4" x="350" y="50" width="50" height="50" fill="url(#g4)"/>
+    <rect id="r5" x="50" y="150" width="50" height="50" fill="url(#g5)"/>
+    <rect id="r6" x="150" y="150" width="50" height="50" fill="url(#g6)"/>
+    <rect id="r7" x="250" y="150" width="50" height="50" fill="url(#g7)"/>
+    <rect id="r8" x="350" y="150" width="50" height="50" fill="url(#g8)"/>
+    <rect id="r9" x="50" y="250" width="50" height="50" fill="url(#g9b)"/>
+    <rect id="r10" x="150" y="250" width="50" height="50" fill="url(#g10c)"/>
+    <rect id="r11" x="250" y="250" width="50" height="50" fill="url(#g11)"/>
+</svg>
+<script>
+function run() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        requestAnimationFrame(function() {
+            r1.setAttribute("fill", "url(#g1)"); // change from no gradient to some gradient
+            r2.setAttribute("fill", "url(#g2b)"); // change from one gradient to another
+            r3.removeAttribute("fill"); // change from a gradient to no gradient
+            r4.setAttribute("fill-opacity", "0.5"); // change style of gradient resource client
+            r5.setAttribute("width", "75"); // change layout of gradient resource client
+            g6.setAttribute("x2", "0.5"); // change gradient attribute
+            g7.firstElementChild.setAttribute("stop-color", "blue"); // change style of gradient contents
+            g8.firstElementChild.setAttribute("offset", "0.5"); // change other attribute of gradient contents
+            g9a.firstElementChild.setAttribute("stop-color", "blue"); // change style of linked gradient resource contents
+            g10c.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#g10b"); // change xlink:href of gradient resource
+            r11.style = "-apple-color-filter: grayscale();"; // change style of gradient resource client
+            testRunner.notifyDone();
+        });
+    }
+}
+</script>

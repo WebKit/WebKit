@@ -1,0 +1,28 @@
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function GetVariable(fuzzervars, var_type) { { return fuzzervars[var_type]; } { } }
+    function SetVariable(fuzzervars, var_name, var_type) { fuzzervars[var_type] = var_name; }
+    function jsfuzzer() {
+        var fuzzervars = {};
+        SetVariable(fuzzervars, document, 'Document');
+        try { mathmlvar00003.prepend("1"); } catch (e) { }
+        try { /* */ var var00231 = svgvar00032.ownerDocument; } catch (e) { }
+        try { if (!var00231) { var00231 = GetVariable(fuzzervars, 'Document'); } { SetVariable(fuzzervars, 'DocumentOrShadowRoot'); } } catch (e) { }
+        try { var00231.execCommand("selectAll", false); } catch (e) { }
+        try { /* */ var00297 = mathmlvar00003.replaceChild(mathmlvar00016, mathmlvar00003.childNodes[0 % mathmlvar00003.childNodes.length]); } catch (e) { }
+    }
+</script>
+<p>Test passes if no crash.</p>
+
+<body onload=jsfuzzer()>
+    <math display="inline">
+        <msup mathbackground="red">
+            <mtext id="mathmlvar00003" style="-webkit-column-width: initial; position: absolute; class=" class1">k
+            </mtext>
+            <ms displaystyle="true">&lt;</ms>
+        </msup>
+        <mn id="mathmlvar00016" displaystyle="true">7</mn>
+    </math>
+</body>

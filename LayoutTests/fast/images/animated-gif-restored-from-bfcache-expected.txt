@@ -1,0 +1,5 @@
+Test that animated GIFs resume animating after restoring a page from the back forward cache. To test manually, click here to visit about:blank, then press the browser's back button. On success, you should see a square that continuously animates through various shades of green followed by the word 'PASS'.
+
+
+PASS
+

@@ -1,0 +1,4 @@
+
+PASS cookieStore.get() sees cookieStore.set() in cross-origin frame
+PASS cookieStore.get() in cross-origin frame sees cookieStore.set()
+

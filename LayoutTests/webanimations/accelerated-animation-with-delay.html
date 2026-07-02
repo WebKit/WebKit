@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<body>
+<style>
+    
+    body {
+        margin: 0;
+    }
+    
+    div {
+        height: 100px;
+    }
+
+    #target {
+        left: 0;
+        width: 100px;
+        background-color: red;
+    }
+
+    #cache {
+        top: 0;
+        left: 25px;
+        width: 775px;
+        position: absolute;
+        background-color: black;
+    }
+
+</style>
+<div id="target"></div>
+<div id="cache"></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+document.getElementById("target").animate({ transform: "translateX(700px)" }, { delay: 10, duration: 1000 })
+requestAnimationFrame(() => {
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 100);
+});
+
+</script>
+</body>

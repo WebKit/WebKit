@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <desc>Test that the instance of the 'class' attribute is animated and its renderer is invalidated correctly.</desc>
+    <style>
+        .red-fill {
+            fill: red;
+        }
+        .green-fill {
+            fill: green;
+        }
+    </style>
+    <def>
+        <rect id="rect" width="100" height="100" class="red-fill">
+            <set id="green" attributeName="class" to="green-fill" fill="freeze"/>
+        </rect>
+    </def>
+    <use href="#rect"/>
+</svg>

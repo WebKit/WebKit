@@ -1,0 +1,8 @@
+
+PASS e.style['background-image'] = "image()" should not set the property value
+PASS e.style['background-image'] = "image(none)" should not set the property value
+PASS e.style['background-image'] = "image(red, blue)" should not set the property value
+PASS e.style['background-image'] = "image(notacolor)" should not set the property value
+PASS e.style['background-image'] = "image(url(foo.png))" should not set the property value
+PASS e.style['background-color'] = "image(red)" should not set the property value
+

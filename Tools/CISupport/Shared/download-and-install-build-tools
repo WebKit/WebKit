@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import re
+import subprocess
+import argparse
+import sys
+
+CMAKE_VERSION = '3.30.4'
+NINJA_VERSION = '1.12.1'
+CMAKE_DOWNLOAD_URL = f'https://github.com/Kitware/CMake/releases/download/v{CMAKE_VERSION}/cmake-{CMAKE_VERSION}-macos-universal.dmg'
+NINJA_DOWNLOAD_URL = f'https://github.com/ninja-build/ninja/releases/download/v{NINJA_VERSION}/ninja-mac.zip'
+
+
+def parser():
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('package', default='', choices=['cmake', 'ninja'], help='')
+    return parser.parse_args()
+
+
+def run(command):
+    try:
+        subprocess.run(command)
+    except subprocess.CalledProcessError as e:
+        sys.stderr.write(f'{e.output}')
+        sys.exit()
+
+
+def print_version(package):
+    try:
+        log = subprocess.check_output(f'{package} --version', shell=True, text=True)
+    except subprocess.CalledProcessError as e:
+        sys.stderr.write(f'{e.output}')
+        return -1
+    print(f'{log}')
+    version_re = re.compile(r'\d+.\d+.\d+', re.MULTILINE)
+    match = version_re.search(log).group(0)
+    return match
+
+
+def download_and_install(package):
+    if package == 'cmake':
+        run(['mkdir', '/tmp/cmake'])
+        print('Mounting to /tmp/cmake...')
+        run(['hdiutil', 'attach', CMAKE_DOWNLOAD_URL, '-nobrowse', '-mountpoint', '/tmp/cmake'])
+        print('Moving CMake.app to Applications...')
+        run(['ditto', '/tmp/cmake/CMake.app', '/Applications/CMake.app'])
+        print('Detaching and removing /tmp/cmake...')
+        run(['hdiutil', 'detach', '/tmp/cmake'])
+        run(['rm', '-rf', '/tmp/cmake'])
+        run(['xattr', '-dr', 'com.apple.quarantine', '/Applications/CMake.app'])
+    elif package == 'ninja':
+        print('Downloading ninja.zip...')
+        run(['curl', NINJA_DOWNLOAD_URL, '-L', '-o', 'ninja.zip'])
+        run(['rm', 'ninja'])
+        run(['unzip', 'ninja.zip'])
+        print('ninja executable created!')
+        run(['rm', 'ninja.zip'])
+    version = print_version(package)
+    if version == -1:
+        return -1
+    return 0
+
+
+def main():
+    args = parser()
+    package = args.package
+    version = print_version(package)
+    if package == 'ninja' and version == NINJA_VERSION:
+        print(f'ninja is already up to date... skipping download and installation.')
+        return 0
+    elif package == 'cmake' and version == CMAKE_VERSION:
+        print(f'cmake is already up to date... skipping download and installation.')
+        return 0
+    return download_and_install(package)
+
+
+if __name__ == '__main__':
+    main()

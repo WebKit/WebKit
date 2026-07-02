@@ -1,0 +1,17 @@
+This tests "scroll" offsets when unscaled, scaled, and panned.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+unscaled
+PASS window.innerWidth is 800
+PASS window.innerHeight is 600
+PASS document.documentElement.clientWidth is 800
+PASS document.documentElement.clientHeight is 600
+
+scaled and panned
+PASS window.innerWidth is 400
+PASS window.innerHeight is 300
+PASS document.documentElement.clientWidth is 400
+PASS document.documentElement.clientHeight is 300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

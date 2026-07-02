@@ -1,0 +1,12 @@
+Test case for Bug 18655: [XHR] onProgress event needs to be dispatched according to what the specification states
+
+This test verify that we "dispatch a progress event called progress about every 50ms or for every byte received, whichever is least frequent".
+
+You should see a sequence of 5 PASSED.
+
+PASSED
+PASSED
+PASSED
+PASSED
+PASSED
+

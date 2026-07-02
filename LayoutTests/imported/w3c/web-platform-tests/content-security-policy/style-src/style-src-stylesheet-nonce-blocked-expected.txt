@@ -1,0 +1,4 @@
+
+PASS Should not load stylesheet without correct nonce
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum

@@ -1,0 +1,25 @@
+This test ensures we don't make incorrect updates to the accessibility tree when an iframe has dirty layout.
+
+Dumping initial AX tree search traversal.
+
+{WebArea}
+
+{#main LandmarkMain}
+
+
+Dumping new AX tree search traversal.
+
+{WebArea}
+
+{StaticText AXLabel: Cell 1}
+
+{StaticText AXLabel: Cell 2}
+
+{StaticText AXLabel: Cell 3}
+
+{StaticText AXLabel: Cell 4}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

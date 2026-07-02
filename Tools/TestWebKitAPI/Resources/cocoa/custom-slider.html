@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #custom-slider {
+        position: relative;
+        width: 400px;
+        height: 200px;
+        background: #ccc;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    #thumb {
+        position: absolute;
+        top: 0;
+        width: 24px;
+        height: 100%;
+        background: #333;
+    }
+</style>
+</head>
+<body>
+    <input id="native-slider" type="range" min="0" max="10" style="width: 400px; height: 200px" />
+    <div id="custom-slider" role="slider" aria-valuemin="0" aria-valuemax="10" aria-valuenow="5">
+        <div id="thumb"></div>
+    </div>
+
+<script>
+    const customSlider = document.getElementById("custom-slider");
+    const thumb = document.getElementById("thumb");
+    const maxValue = 10;
+
+    window.eventLog = {
+        "custom-slider": new Set(),
+        "native-slider": new Set(),
+    };
+
+    function setValue(value) {
+        value = Math.max(0, Math.min(maxValue, value));
+        customSlider.setAttribute("aria-valuenow", value);
+        window.eventLog["custom-slider"].add(value);
+        thumb.style.left = (value / maxValue) * (customSlider.clientWidth - thumb.offsetWidth) + "px";
+    }
+
+    function setValueFromClientX(clientX) {
+        const rect = customSlider.getBoundingClientRect();
+        setValue(Math.round((clientX - rect.left) / rect.width * maxValue));
+    }
+
+    let dragging = false;
+    customSlider.addEventListener("pointerdown", e => { dragging = true; customSlider.setPointerCapture(e.pointerId); setValueFromClientX(e.clientX); e.preventDefault(); });
+    customSlider.addEventListener("pointermove", e => { if (dragging) setValueFromClientX(e.clientX); });
+    customSlider.addEventListener("pointerup", () => { dragging = false; });
+
+    setValue(5);
+
+    const nativeSlider = document.getElementById("native-slider");
+    window.eventLog["native-slider"].add(Number(nativeSlider.value));
+    nativeSlider.addEventListener("input", e => window.eventLog["native-slider"].add(Number(e.target.value)));
+</script>
+</body>
+</html>

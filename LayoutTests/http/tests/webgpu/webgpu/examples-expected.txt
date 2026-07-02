@@ -1,0 +1,27 @@
+
+PASS :test_name:
+PASS :not_implemented_yet,without_plan:
+PASS :not_implemented_yet,with_plan:
+PASS :basic:
+PASS :basic,async:
+PASS :basic,plain_cases:x=2;y=2
+PASS :basic,plain_cases:x=-10;y=-10
+PASS :basic,plain_cases_private:x=2;y=4
+PASS :basic,plain_cases_private:x=-10;y=18
+PASS :basic,builder_cases:x=1;y=1
+PASS :basic,builder_cases:x=1;y=2
+PASS :basic,builder_cases:x=2;y=1
+PASS :basic,builder_cases:x=2;y=2
+PASS :basic,builder_cases_subcases:x=1
+PASS :basic,builder_cases_subcases:x=2
+PASS :basic,builder_subcases:
+PASS :basic,builder_subcases_short:
+FAIL :gpu,async: assert_unreached:
+  - EXPECTATION FAILED
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
+    @http://127.0.0.1:8000/webgpu/webgpu/examples.spec.js:211:11
+ Reached unreachable code
+PASS :gpu,buffers:
+PASS :gpu,with_texture_compression,bc:
+PASS :gpu,with_texture_compression,etc2:
+

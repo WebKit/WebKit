@@ -1,0 +1,10 @@
+Tests the behavior of Array.prototype.concat while the array is having a bad time due to one of the elements we are concatenating.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS [42].concat() is [42]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

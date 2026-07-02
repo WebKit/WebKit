@@ -1,0 +1,12 @@
+
+FAIL Computed value for `text-combine-upright: digits` is `digits 2` assert_equals: expected "digits 2" but got "none"
+FAIL Computed value for `text-combine-upright: digits 2` is `digits 2` assert_equals: expected "digits 2" but got "none"
+FAIL Computed value for `text-combine-upright: digits 3` is `digits 3` assert_equals: expected "digits 3" but got "none"
+FAIL Computed value for `text-combine-upright: digits 4` is `digits 4` assert_equals: expected "digits 4" but got "none"
+FAIL Computed value for `text-combine-upright: digits +2` is `digits 2` assert_equals: expected "digits 2" but got "none"
+FAIL Computed value for `text-combine-upright: digits+3` is `digits 3` assert_equals: expected "digits 3" but got "none"
+FAIL Computed value for `text-combine-upright: digits[TAB]4` is `digits 4` assert_equals: expected "digits 4" but got "none"
+FAIL Computed value for `text-combine-upright: digits[LF]2` is `digits 2` assert_equals: expected "digits 2" but got "none"
+FAIL Computed value for `text-combine-upright: digits [TAB]3` is `digits 3` assert_equals: expected "digits 3" but got "none"
+FAIL Computed value for `text-combine-upright: digits[TAB][LF]4` is `digits 4` assert_equals: expected "digits 4" but got "none"
+

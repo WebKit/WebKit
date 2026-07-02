@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- A SameType search compares candidates against the start's role. The start is an (ignored) image, so a
+     forward SameType search should find the next image (img2), skipping the button between them -- and must
+     not jump back to the earlier image (img0). This verifies the search still compares against the original
+     start, not the neighbor recovery resumes from. -->
+<div role="main" id="main">
+    <div id="wrapper" role="presentation">
+        <img id="img0" src="resources/cake.png" alt="Image 0">
+        <button id="button1">Button 1</button>
+        <img id="start" src="resources/cake.png" alt="Start">
+        <button id="button2">Button 2</button>
+        <img id="img2" src="resources/cake.png" alt="Image 2">
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that a relative search key (SameType) whose start element has become ignored still compares candidates against the original start's role, resuming from the correct position instead of jumping back to an earlier same-type element.\n\n";
+
+var main, startElement, next, nextDOMId;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    main = accessibilityController.accessibleElementById("main");
+    startElement = accessibilityController.accessibleElementById("start");
+
+    document.getElementById("start").setAttribute("aria-hidden", "true");
+
+    setTimeout(async () => {
+        await waitFor(() => main.childrenCount === 4);
+
+        // SameType forward from the now-ignored image start: the next same-type (image) element after the
+        // start is img2 (button2 is skipped). Before the fix it scanned from the start and returned img0,
+        // the earlier image -- a jump backward.
+        next = main.uiElementForSearchPredicate(startElement, true, "AXSameTypeSearchKey", "", false, true);
+        nextDOMId = next ? next.domIdentifier : "null";
+        output += expect("nextDOMId", "'img2'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

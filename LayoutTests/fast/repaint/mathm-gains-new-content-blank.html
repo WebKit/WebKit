@@ -1,0 +1,38 @@
+<style>
+math {
+  font-family: Ahem;
+  font-size: 20px;
+}
+</style>
+<!-- This is a bit flaky, but repros in Safari after a few attempts -->
+<math style="display: block" xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>PASS if</mn>
+  <mn id=change_this></mn>
+</math>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  change_this.textContent = 'this is visible.';
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

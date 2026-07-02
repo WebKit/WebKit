@@ -1,0 +1,186 @@
+#!/usr/bin/env sh
+#
+# Copyright (C) 2025 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+set -eu
+
+SCRIPTPATH="$(realpath -- "${0}")"
+SCRIPTDIR="$(dirname -- "${SCRIPTPATH}")"
+WEBKITDIR="$(realpath -- "${SCRIPTDIR}/../..")"
+WEBKIT_SOURCE_DIR="${WEBKIT_SOURCE_DIR:-${WEBKITDIR}}"
+WEBKIT_SOURCE_DIR="$(realpath -m -- "${WEBKIT_SOURCE_DIR}")"
+
+help() {
+    cat <<EOF
+Usage: ${0} program-to-execute [arguments...]
+       ${0} --create-symlink
+
+This script is used by the WebKit tooling when running inside the
+webkit-container-sdk for GTK/WPE port development. It enables building
+WebKit and running tests inside a common path at /sdk/webkit.
+
+Options:
+    -h, --help         Show this help message
+    --create-symlink   Create /sdk/webkit as a symlink to ${WEBKIT_SOURCE_DIR}
+                       and exit. Useful for tools not executed through this
+                       wrapper (like gdb) that need to resolve /sdk/webkit paths.
+
+Default behavior:
+    Creates a private mount namespace where /sdk/webkit is a bind-mount
+    to ${WEBKIT_SOURCE_DIR}, then executes the specified program.
+
+Examples:
+    ${0} Tools/Scripts/build-webkit --wpe --release
+    ${0} --create-symlink
+EOF
+    exit 0
+}
+
+error() {
+    printf '%s\n' "${@}" 1>&2
+    exit 1
+}
+
+# If path starts with ${WEBKIT_SOURCE_DIR}, replace that prefix with /sdk/webkit.
+maybe_replace_path_prefix_to_rootsdk() {
+    case "${1}" in
+        "${WEBKIT_SOURCE_DIR}"|"${WEBKIT_SOURCE_DIR}"/*)
+            printf '%s\n' "/sdk/webkit${1#"${WEBKIT_SOURCE_DIR}"}"
+        ;;
+        *)
+            printf '%s\n' "${1}"
+        ;;
+    esac
+}
+
+resolve_relpath_to_abs_if_outside() {
+    abs=$(realpath -m -- "${ORGPWD}/${1}")
+    case "${abs}" in
+        "${WEBKIT_SOURCE_DIR}"|"${WEBKIT_SOURCE_DIR}"/*)
+            # Inside the tree: keep original relative value
+            printf '%s\n' "${1}"
+        ;;
+        *) # relative path outside the tree: make it absolute
+            printf '%s\n' "${abs}"
+        ;;
+    esac
+}
+
+maybe_update_relpath_to_abs_if_outside() {
+    case "${1}" in
+        ""|/*|*://*)
+            # do not touch if is empty or looks like an abs path or a URL
+            printf '%s\n' "${1}"
+        ;;
+        .|..|./*|../*|*/*)
+            resolve_relpath_to_abs_if_outside "${1}"
+        ;;
+        *)
+            if [ -L "${1}" ]; then
+                resolve_relpath_to_abs_if_outside "${1}"
+            else
+                printf '%s\n' "${1}"
+            fi
+        ;;
+    esac
+}
+
+# Convert relative paths to absolute if they point outside ${WEBKIT_SOURCE_DIR}
+args_maybe_update_outside_relpaths() {
+    for arg in "${@}"; do
+        case "${arg}" in
+            --*=*)  # handle arguments like "--option=value"
+                key="${arg%%=*}"
+                val="${arg#*=}"
+                val="$(maybe_update_relpath_to_abs_if_outside "${val}")"
+                arg="${key}=${val}"
+                ;;
+            *)
+                arg="$(maybe_update_relpath_to_abs_if_outside "${arg}")"
+                ;;
+        esac
+        printf "'"
+        printf '%s' "${arg}" | sed "s/'/'\\\\''/g"
+        printf "' "
+    done
+}
+
+[ "$#" -ge 1 ] || help
+[ "${1}" = "--help" ] && help
+[ "${1}" = "-h" ] && help
+
+[ -d "${WEBKIT_SOURCE_DIR}" ] || error "Can't find directory: ${WEBKIT_SOURCE_DIR}"
+[ -d /sdk ] || error "Can't find /sdk directory"
+[ -w /sdk ] || error "Directory /sdk is not writable for user $(whoami)"
+
+case "${WEBKIT_SOURCE_DIR}" in
+  /sdk|/sdk/*) error "${0} should not be invoked with WEBKIT_SOURCE_DIR under /sdk directory" ;;
+esac
+
+if [ "${1}" = "--create-symlink" ]; then
+    [ "$#" -ge 2 ] && error "No extra arguments can be passed with --create-symlink"
+    if [ -L "/sdk/webkit" ]; then
+        CURSYMLINKDEST="$(realpath -m -- /sdk/webkit)"
+        if [ "${CURSYMLINKDEST}" != "${WEBKIT_SOURCE_DIR}" ]; then
+            rm -f "/sdk/webkit"
+            ln -s "${WEBKIT_SOURCE_DIR}" "/sdk/webkit"
+            echo "Symlink at /sdk/webkit changed from ${CURSYMLINKDEST} to ${WEBKIT_SOURCE_DIR}"
+        fi
+    elif ! [ -e "/sdk/webkit" ]; then
+        ln -s "${WEBKIT_SOURCE_DIR}" "/sdk/webkit"
+    else
+        error "ERROR: /sdk/webkit exists and is not a symlink. This is unexpected"
+    fi
+    exit 0
+fi
+
+CURUID="$(id -u)"
+CURGID="$(id -g)"
+ORGPWD="$(pwd)"
+SDKPWD="$(maybe_replace_path_prefix_to_rootsdk "${ORGPWD}")"
+# Try also with the realpath, just in case pwd is inside a symlinked dir.
+if [ "${ORGPWD}" = "${SDKPWD}" ]; then
+    ORGPWD="$(realpath -- "${ORGPWD}")"
+    SDKPWD="$(maybe_replace_path_prefix_to_rootsdk "${ORGPWD}")"
+fi
+# When $(pwd) is inside ${WEBKIT_SOURCE_DIR}, switch (cd) to the equivalent bind-mount path
+# under /sdk/webkit. Any relative path arguments that point outside ${WEBKIT_SOURCE_DIR} are
+# converted to absolute paths first, since they wouldn't resolve correctly after the switch.
+[ "${ORGPWD}" != "${SDKPWD}" ] && eval "set -- $(args_maybe_update_outside_relpaths "${@}")"
+
+# Since util-linux 2.27 is not needed to execute mount --make-rprivate /
+# because unshare does that automatically by default for new mount namespaces
+exec unshare -rm sh -c '
+    set -eu
+    WEBKIT_SOURCE_DIR="${1}"
+    SDKPWD="${2}"
+    CURUID="${3}"
+    CURGID="${4}"
+    shift 4
+    mount -t tmpfs -o size=16M tmpfs /sdk
+    mkdir /sdk/webkit
+    mount --bind "${WEBKIT_SOURCE_DIR}" /sdk/webkit
+    cd "${SDKPWD}"
+    export WEBKIT_CONTAINER_SDK_INSIDE_MOUNT_NAMESPACE=1
+    exec unshare --map-user="${CURUID}" --map-group="${CURGID}" -- "${@}"
+' -- "${WEBKIT_SOURCE_DIR}" "${SDKPWD}" "${CURUID}" "${CURGID}" "${@}"

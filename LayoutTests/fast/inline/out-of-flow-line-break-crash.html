@@ -1,0 +1,13 @@
+<style>
+br {
+  position: fixed;
+}
+</style>
+<div><br id=not_inflow>PASS in no crash</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+not_inflow.remove();
+document.caretRangeFromPoint();
+</script>

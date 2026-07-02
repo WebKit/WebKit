@@ -1,0 +1,3 @@
+
+PASS Display link opts into high frame rate updates only when high-impact animations are running
+

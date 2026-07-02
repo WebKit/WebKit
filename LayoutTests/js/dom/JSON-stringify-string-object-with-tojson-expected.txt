@@ -1,0 +1,12 @@
+PASS nativeJSON.stringify(stringObject) is "\"Foo\""
+PASS nativeJSON.stringify(stringObject) is JSON.stringify(stringObject)
+PASS nativeJSON.stringify(stringObject) is "\"Weird Case 1\""
+PASS nativeJSON.stringify(stringObject) is JSON.stringify(stringObject)
+PASS nativeJSON.stringify(stringObject) is "\"Bar\""
+PASS nativeJSON.stringify(stringObject) is JSON.stringify(stringObject)
+PASS nativeJSON.stringify(stringObject) is "\"Weird Case 2\""
+PASS nativeJSON.stringify(stringObject) is JSON.stringify(stringObject)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

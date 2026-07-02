@@ -1,0 +1,15 @@
+This tests that a notificationclick handler can open a window
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Notification.permission is "granted"
+PASS gotClicked is false
+PASS gotClosed is false
+PASS gotClicked is true
+PASS gotClosed is false
+PASS gotAboutBlankFail is true
+PASS gotUserGestureFail is true
+PASS gotSuccessfulNullClient is true
+PASS New client has been observed
+

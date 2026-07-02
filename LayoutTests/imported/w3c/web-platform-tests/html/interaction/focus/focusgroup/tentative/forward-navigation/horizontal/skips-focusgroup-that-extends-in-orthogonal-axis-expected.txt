@@ -1,0 +1,5 @@
+item2
+item3
+
+FAIL When the focus is set on an extending focusgroup element but that focusgroup doesn't support the axis of the arrow key pressed, skip that subtree altogether. assert_equals: expected Element node <span id="item3" tabindex="-1">item3</span> but got Element node <div id="item1" tabindex="0" focusgroup="extend vertical"...
+

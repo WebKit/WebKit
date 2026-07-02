@@ -1,0 +1,3 @@
+
+PASS currentTime calculates the correct time for a document.scrollingElement source
+

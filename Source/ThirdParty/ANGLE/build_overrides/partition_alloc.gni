@@ -1,0 +1,55 @@
+# Copyright 2026 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/android/config.gni")
+import("//build/config/cast.gni")
+import("//build/config/compiler/compiler.gni")
+import("//build/config/cronet/config.gni")
+import("//build/config/dcheck_always_on.gni")
+import("//build/config/logging.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+
+build_with_chromium = false
+
+partition_alloc_enable_arc_config = "//build/config/compiler:enable_arc"
+
+# partition_alloc is performance critical and it should generally be optimized
+# for speed, even in debug mode.
+partition_alloc_remove_configs =
+    [ "//build/config/compiler:default_optimization" ]
+partition_alloc_add_configs = [ "//build/config/compiler:optimize_speed" ]
+
+# MSVC's cl.exe compiler is not supported.
+_compiler_supported = is_clang || !is_win
+
+# Windows: debug CRT is not compatible with the allocator shim.
+_build_type_supported = !is_win || (!is_component_build && !is_debug)
+
+_platform_supported =
+    is_android || is_apple || is_chromeos || is_fuchsia || is_linux || is_win
+
+_supported = _compiler_supported && _build_type_supported &&
+             _platform_supported && !using_sanitizer
+
+partition_alloc_is_debug_default = is_debug
+use_partition_alloc_as_malloc_default = _supported
+if (is_apple && !is_debug) {
+  use_partition_alloc_as_malloc_default = false
+}
+use_allocator_shim_default = _supported
+if (is_apple && !is_debug) {
+  use_allocator_shim_default = false
+}
+glue_core_pools = false
+use_large_empty_slot_span_ring = true
+shim_supports_sized_dealloc_default = false
+enable_backup_ref_ptr_support_default = _supported
+put_ref_count_in_previous_slot_default = true
+enable_backup_ref_ptr_slow_checks_default = false
+enable_dangling_raw_ptr_checks_default = _supported
+
+# This is the default build configuration for pointers/raw_ptr*.
+raw_ptr_zero_on_construct_default = true
+raw_ptr_zero_on_move_default = true
+raw_ptr_zero_on_destruct_default = false

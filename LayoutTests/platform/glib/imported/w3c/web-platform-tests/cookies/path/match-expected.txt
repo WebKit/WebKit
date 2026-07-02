@@ -1,0 +1,18 @@
+
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: match.html
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: cookies
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/resources/echo-cookie.html
+PASS `document.cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /cook
+PASS `document.cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /w/
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: match.html
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: cookies
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/resources/echo-cookie.html
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /cook
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /w/
+

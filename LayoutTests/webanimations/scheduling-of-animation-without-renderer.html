@@ -1,0 +1,19 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div></div>
+<script>
+
+promise_test(async () => {
+    const target = document.querySelector("div");
+    const animation = document.querySelector("div").animate({ marginLeft: "100px" }, 1000);
+    await animation.ready;
+
+    animation.currentTime = 100;
+    assert_equals(internals.timeToNextAnimationTick(animation), 0, "Animation needs immediate resolution when running with a renderer.");
+
+    target.style.display = "none";
+    assert_equals(getComputedStyle(target).display, "none");
+    assert_equals(internals.timeToNextAnimationTick(animation), 900, "Animation will not need to be resolved until complete when running without a renderer.");
+}, "Computing the time until the next tick for an effect targeting an element losing its renderer.");
+
+</script>

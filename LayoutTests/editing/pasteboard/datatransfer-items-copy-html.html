@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests copying HTML markup using dataTransfer.items. To manually test, click on "Copy text" and paste (Command+V on Mac Control+V elsewhere).');
+
+function copyText()
+{
+    document.getElementById('source').focus();
+    document.execCommand('SelectAll', false, null);
+    document.execCommand('Copy', false, null);
+}
+
+function copy(event)
+{
+    clipboardData = event.clipboardData;
+    shouldBe('clipboardData.items.length', '0');
+    shouldBe('clipboardData.setData("text/html", "rock"); clipboardData.items.length', '1');
+    shouldBeEqualToString('initialItem = clipboardData.items[0]; initialItem.kind', 'string');
+    shouldBeEqualToString('initialItem.type', 'text/html');
+    shouldBe('initialItem.getAsFile()', 'null');
+    shouldBe('initialItem.getAsString(checkContent(1, "rock"))', 'undefined');
+
+    shouldThrowErrorName('clipboardData.items.add("paper", "text/HTML")', 'NotSupportedError');
+    shouldBe('clipboardData.items[0]', 'initialItem');
+    shouldBe('clipboardData.clearData(); clipboardData.items.length', '0');
+
+    const markup = `<!DOCTYPE html><!-- hello --><script>alert('Test failed');</scr` + `ipt>`;
+    shouldBe(`clipboardData.items.add("${markup}", "TEXT/html"); clipboardData.items.length`, '1');
+    shouldNotBe('clipboardData.items[0]', 'initialItem');
+    shouldBeEqualToString('initialItem.kind', 'string');
+    shouldBeEqualToString('initialItem.type', '');
+    shouldBe('initialItem.getAsFile()', 'null');
+    shouldBe('initialItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled 1"))', 'undefined');
+
+    shouldBeEqualToString('clipboardData.getData("text/html")', markup);
+    shouldBeEqualToString('clipboardData.getData("text/plain")', '');
+    shouldBeEqualToString('firstItem = clipboardData.items[0]; clipboardData.items[0].kind', 'string');
+    shouldBeEqualToString('firstItem.type', 'text/html');
+    shouldBe('firstItem.getAsFile()', 'null');
+    shouldBe(`firstItem.getAsString(checkContent(2, "${markup}"))`, 'undefined');
+
+    shouldBe('secondItem = clipboardData.items.add("some content", "text/plain"); secondItem', 'clipboardData.items[1]');
+    shouldBeEqualToString('clipboardData.getData("text/plain")', 'some content');
+    shouldBeEqualToString('secondItem.kind', 'string');
+    shouldBeEqualToString('secondItem.type', 'text/plain');
+    shouldBe('secondItem.getAsFile()', 'null');
+    shouldBe('secondItem.getAsString(checkContent(3, "some content"))', 'undefined');
+
+    shouldBe('clipboardData.items[0]', 'firstItem');
+    shouldBeEqualToString('firstItem.kind', 'string');
+    shouldBeEqualToString('firstItem.type', 'text/html');
+    shouldBeEqualToString('clipboardData.getData("text/html")', markup);
+    shouldBe(`firstItem.getAsString(checkContent(4, "${markup}"))`, 'undefined');
+
+    shouldBe('clipboardData.items.remove(0); clipboardData.items.length', '1');
+    shouldBe('clipboardData.items[0]', 'secondItem');
+    shouldBe('firstItem.kind', 'string');
+    shouldBe('firstItem.type', 'text/html');
+    shouldBe('firstItem.getAsFile()', 'null');
+    shouldBe('firstItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled 2"))', 'undefined');
+    shouldBe('secondItem.kind', 'string');
+    shouldBe('secondItem.type', 'text/plain');
+    shouldBe('secondItem.getAsFile()', 'null');
+    shouldBe('secondItem.getAsString(checkContent(4, "some content"))', 'undefined');
+
+}
+
+let count = 0;
+function checkContent(number, expectedContent)
+{
+    count++;
+    return (content) => {
+        const variableName = 'actualContent' + number;
+        window[variableName] = content;
+        shouldBeEqualToString(variableName, expectedContent);
+        count--;
+        if (!count) {
+            document.getElementById('container').style.display = 'none';
+            finishJSTest();
+        }
+    }
+}
+
+if (window.testRunner)
+    window.onload = copyText;
+jsTestIsAsync = true;
+successfullyParsed = true;
+
+</script>
+<div id="container">
+    <button onclick="copyText();">Copy text</button>
+    <div id="source" oncopy="copy(event)" contenteditable="true">hello, world</div>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

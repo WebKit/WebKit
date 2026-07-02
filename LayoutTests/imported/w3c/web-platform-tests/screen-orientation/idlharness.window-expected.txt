@@ -1,0 +1,27 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Screen: original interface defined
+PASS Partial interface Screen: member names are unique
+PASS ScreenOrientation interface: existence and properties of interface object
+PASS ScreenOrientation interface object length
+PASS ScreenOrientation interface object name
+PASS ScreenOrientation interface: existence and properties of interface prototype object
+PASS ScreenOrientation interface: existence and properties of interface prototype object's "constructor" property
+PASS ScreenOrientation interface: existence and properties of interface prototype object's @@unscopables property
+PASS ScreenOrientation interface: operation lock(OrientationLockType)
+PASS ScreenOrientation interface: operation unlock()
+PASS ScreenOrientation interface: attribute type
+PASS ScreenOrientation interface: attribute angle
+PASS ScreenOrientation interface: attribute onchange
+PASS ScreenOrientation must be primary interface of screen.orientation
+PASS Stringification of screen.orientation
+PASS ScreenOrientation interface: screen.orientation must inherit property "lock(OrientationLockType)" with the proper type
+PASS ScreenOrientation interface: calling lock(OrientationLockType) on screen.orientation with too few arguments must throw TypeError
+PASS ScreenOrientation interface: screen.orientation must inherit property "unlock()" with the proper type
+PASS ScreenOrientation interface: screen.orientation must inherit property "type" with the proper type
+PASS ScreenOrientation interface: screen.orientation must inherit property "angle" with the proper type
+PASS ScreenOrientation interface: screen.orientation must inherit property "onchange" with the proper type
+PASS Screen interface: attribute orientation
+PASS Screen interface: screen must inherit property "orientation" with the proper type
+

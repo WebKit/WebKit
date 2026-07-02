@@ -1,0 +1,4 @@
+
+PASS Check that watchPosition returns synchronously before any callbacks are invoked.
+PASS User denies access, check that error callback is called.
+

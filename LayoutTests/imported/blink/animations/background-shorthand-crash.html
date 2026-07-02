@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+body {
+    background: url('a'), url('b');
+    -webkit-animation: test 1s;
+}
+
+@-webkit-keyframes test {
+    to { background: url('a'), url('b'); }
+}
+</style>
+<pre>This test passes if it does not crash.</pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    requestAnimationFrame(function () {
+        testRunner.notifyDone();
+    });
+}
+</script>

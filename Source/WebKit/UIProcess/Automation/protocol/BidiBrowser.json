@@ -1,0 +1,63 @@
+{
+    "domain": "BidiBrowser",
+    "exposedAs": "browser",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The browser module contains commands for managing the remote end browser process.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-browser",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browser",
+    "types": [
+        {
+            "id": "ClientWindow",
+            "description": "String uniquely identifying a client window.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browser-ClientWindow",
+            "type": "string"
+        },
+        {
+            "id": "UserContext",
+            "description": "Unique string identifying a user context with separate storage.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browser-UserContext",
+            "type": "string"
+        },
+        {
+            "id": "UserContextInfo",
+            "description": "Represents properties of a user context.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browser-UserContextInfo",
+            "type": "object",
+            "properties": [
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "description": "Id of the user context." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "close",
+            "description": "Terminates the WebDriver session to which it is sent and cleans up remote end automation state.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browser-close"
+        },
+        {
+            "name": "createUserContext",
+            "description": "Creates a user context.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browser-createUserContext",
+            "returns": [
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "description": "Identifier of created user context." }
+            ]
+        },
+        {
+            "name": "getUserContexts",
+            "description": "Returns a list of user contexts.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browser-getUserContexts",
+            "returns": [
+                { "name": "userContexts", "type": "array", "items": { "$ref": "BidiBrowser.UserContextInfo" }, "description": "List of existing user contexts." }
+            ]
+        },
+        {
+            "name": "removeUserContext",
+            "description": "Closes a user context and all navigables in it without running beforeunload handlers.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browser-removeUserContext",
+            "async": true,
+            "parameters": [
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "description": "User context id." }
+            ]
+        }
+    ]
+}

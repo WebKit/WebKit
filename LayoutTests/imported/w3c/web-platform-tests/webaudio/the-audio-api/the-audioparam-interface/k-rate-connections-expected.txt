@@ -1,0 +1,4 @@
+
+PASS Gain - k-rate GainNode.gain
+PASS StereoPanner - k-rate StereoPannerNode.pan
+

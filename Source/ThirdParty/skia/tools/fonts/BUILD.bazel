@@ -1,0 +1,100 @@
+load(
+    "//bazel:skia_rules.bzl",
+    "skia_cc_library",
+    "skia_filegroup",
+)
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "test_font_manager_srcs",
+    testonly = True,
+    srcs = [
+        "FontToolUtils.cpp",
+        "FontToolUtils.h",
+        "TestFontMgr.cpp",
+        "TestFontMgr.h",
+        "TestSVGTypeface.cpp",
+        "TestSVGTypeface.h",
+        "TestTypeface.cpp",
+        "TestTypeface.h",
+    ],
+    visibility = [
+        "//tests:__pkg__",
+        "//tools:__subpackages__",
+    ],
+)
+
+skia_filegroup(
+    name = "test_fonts",
+    testonly = True,
+    srcs = [
+        "test_font_index.inc",
+        "test_font_monospace.inc",
+        "test_font_sans_serif.inc",
+        "test_font_serif.inc",
+    ],
+    visibility = [
+        "//tests:__pkg__",
+        "//tools:__subpackages__",
+    ],
+)
+
+skia_filegroup(
+    name = "test_empty_typeface",
+    testonly = True,
+    srcs = ["TestEmptyTypeface.h"],
+    visibility = ["//tests:__pkg__"],
+)
+
+skia_cc_library(
+    name = "font_tool_utils",
+    testonly = True,
+    srcs = [
+        "FontToolUtils.cpp",
+        "TestFontMgr.cpp",
+        "TestFontMgr.h",
+        "TestTypeface.cpp",
+        "TestTypeface.h",
+    ],
+    hdrs = [
+        "FontToolUtils.h",
+    ],
+    features = ["layering_check"],
+    textual_hdrs = [
+        "//tools/fonts:test_fonts",
+    ],
+    visibility = [
+        "//bench:__subpackages__",
+        "//gm:__subpackages__",
+        "//tests:__subpackages__",
+        "//tools:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//tools:resources",
+        "//tools:tool_utils",
+        "//tools/flags:cmd_flags",
+    ] + select({
+        "@platforms//os:android": [
+            "//:fontmgr_android",
+            "//src/ports:freetype_support",
+        ],
+        "@platforms//os:linux": [
+            "//:fontmgr_fontconfig",
+            "//src/ports:fontations_support",
+            "//src/ports:freetype_support",
+        ],
+        "@platforms//os:macos": [
+            "//:fontmgr_coretext",
+            "//:typeface_coretext",
+        ],
+        "//conditions:default": ["//src/ports:fontmgr_fontations_empty"],
+    }),
+)

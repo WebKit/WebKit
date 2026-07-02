@@ -1,0 +1,4 @@
+
+PASS Sec-Speculation-Tags: no tags (prefetch)
+FAIL Sec-Speculation-Tags: no tags (prerender) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PrerenderingRemoteContextHelper"
+

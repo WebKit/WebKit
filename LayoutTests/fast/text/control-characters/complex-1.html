@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<style>
+  #ref, #target {
+      background: lightblue;
+      display: inline-block;
+      font-size: 100px;
+  }
+</style>
+<body>
+  <span id="target"></span><br>
+  <span id="ref"></span><br>
+  <script>
+    description('A control character should be rendered as a visible glyph. "\u0A05\\u0001\u0A06" should be longer than "\u0A05\u0A06"');
+    document.getElementById("target").textContent = '\u0A05\u0001\u0A06';
+    document.getElementById("ref").textContent = '\u0A05\u0A06';
+    shouldBeGreaterThan("target.clientWidth", "ref.clientWidth");
+  </script>
+</body>
+</html>

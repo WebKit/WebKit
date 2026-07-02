@@ -1,0 +1,23 @@
+
+PASS cross-origin HTMLImageElement: origin unclear getImageData
+PASS cross-origin HTMLImageElement: origin unclear 2dContext.drawImage
+PASS cross-origin HTMLImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS cross-origin SVGImageElement: origin unclear getImageData
+PASS cross-origin SVGImageElement: origin unclear 2dContext.drawImage
+PASS cross-origin SVGImageElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS cross-origin HTMLVideoElement: origin unclear getImageData
+PASS cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage
+PASS cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS redirected to cross-origin HTMLVideoElement: origin unclear getImageData
+PASS redirected to cross-origin HTMLVideoElement: origin unclear 2dContext.drawImage
+PASS redirected to cross-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS redirected to same-origin HTMLVideoElement: origin unclear getImageData
+PASS redirected to same-origin HTMLVideoElement: origin unclear 2dContext.drawImage
+PASS redirected to same-origin HTMLVideoElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS unclean HTMLCanvasElement: origin unclear getImageData
+PASS unclean HTMLCanvasElement: origin unclear 2dContext.drawImage
+PASS unclean HTMLCanvasElement: origin unclear bitmaprenderer.transferFromImageBitmap
+PASS unclean ImageBitmap: origin unclear getImageData
+PASS unclean ImageBitmap: origin unclear 2dContext.drawImage
+PASS unclean ImageBitmap: origin unclear bitmaprenderer.transferFromImageBitmap
+

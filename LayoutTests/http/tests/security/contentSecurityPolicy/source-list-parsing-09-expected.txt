@@ -1,0 +1,23 @@
+Host wildcards should work correctly.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS

@@ -1,0 +1,4 @@
+
+PASS MediaElementAudioSourceNode output is 2 channels for a stereo media element
+PASS MediaElementAudioSourceNode output is 1 channel for a mono media element
+

@@ -1,0 +1,23 @@
+﻿<html>
+<body>
+    <div id="toabsolute" style="position: fixed;">
+        <div style="position: fixed;"></div>
+    </div>
+    <p id="foo">
+        This tests that changing the container's position from fixed to absolute is safe, when
+        child container with fixed position is present.<br>
+        PASS, if no crash or assert in debug.
+    </p>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+         var m = document.getElementById("foo");
+         var c = document.getElementById("toabsolute");
+         
+         c.offsetHeight;
+         c.style.position = "absolute";
+         c.style.width = m.offsetWidth + "px";
+         c.offsetHeight;
+     </script>
+</body>
+</html>

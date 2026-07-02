@@ -1,0 +1,3 @@
+
+PASS addition of a shadow root should not cancel in-flight transitions
+

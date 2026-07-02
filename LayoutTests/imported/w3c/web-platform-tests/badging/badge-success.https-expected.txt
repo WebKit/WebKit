@@ -1,0 +1,13 @@
+
+PASS No parameter should show a flag with no numeric value.
+PASS undefined should show a flag with no numeric value.
+PASS An integer value of 3 should show the badge vale 3.
+PASS Non-whole number should round down to nearest integer (10).
+PASS Maximum allowed value (2^53 - 1) should display saturated value: '99+'.
+PASS Set to zero should clear the badge.
+PASS Should clear the badge.
+PASS Setting to null should clear the badge.
+PASS Setting to false should clear the badge.
+PASS Setting to true should display a value of 1.
+PASS Setting to the string '3' should display a value of 3.
+

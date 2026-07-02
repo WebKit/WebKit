@@ -1,0 +1,7 @@
+
+one
+two
+disabled
+
+PASS Hover styles should be present for appearance:base-select options.
+

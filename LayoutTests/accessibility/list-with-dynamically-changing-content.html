@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<ul id="ul-list"></ul>
+<div id="aria-list" role="list"></div>
+
+<script>
+var output = "This test ensures that lists that are initially empty but gain children later become part of the AX tree with the proper role.\n\n";
+var ulList, ariaList;
+
+async function verifyLists(expectedRole, expectedChildCount) {
+    output += await expectAsync(`ulList.role.toLowerCase().includes('${expectedRole}')`, "true");
+    output += await expectAsync("ulList.childrenCount", expectedChildCount);
+    output += await expectAsync(`ariaList.role.toLowerCase().includes('${expectedRole}')`, "true");
+    output += await expectAsync("ariaList.childrenCount", expectedChildCount);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    ulList = accessibilityController.accessibleElementById("ul-list");
+    ariaList = accessibilityController.accessibleElementById("aria-list");
+
+    setTimeout(async function() {
+        await verifyLists("group", /* expectedChildCount */ 0);
+
+        output += `\nAdding listitems to both lists.\n\n`;
+        const li = document.createElement("li");
+        li.textContent = "A dynamic list item";
+        document.getElementById("ul-list").appendChild(li);
+
+        const ariaListItem = document.createElement("div");
+        ariaListItem.role = "listitem";
+        document.getElementById("aria-list").appendChild(ariaListItem);
+
+        await verifyLists("list", /* expectedChildCount */ 1);
+
+        document.getElementById("ul-list").removeChild(li);
+        document.getElementById("aria-list").removeChild(ariaListItem);
+        output += `\nClearing listitems from both lists.\n\n`;
+        await verifyLists("group", /* expectedChildCount */ 0);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

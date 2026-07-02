@@ -1,0 +1,6 @@
+This tests copying content across shadow boundaries doesn't crash.
+To test manually, copy text below starting from "Hello" ending in the space before "World". Test passes if it doesn't crash.
+
+PASS if didn't crash.
+
+Hello

@@ -1,0 +1,5 @@
+Green?
+
+PASS Initially red
+PASS Green after reducing width
+

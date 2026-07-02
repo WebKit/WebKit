@@ -1,0 +1,30 @@
+<script>
+  async function foo() {
+    document.body.appendChild(document.createElement('table'));
+    let iframe0 = document.createElement('iframe');
+    iframe0.src = 'data:';
+    document.body.appendChild(iframe0);
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    iframe0.remove();
+    if (window.caches)
+      await caches.has('a');
+    document.body.append(document.createElement('p'));
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('InsertHTML', false, 'a');
+    visualViewport.onresize = () => {
+      document.execCommand('PasteAsQuotation');
+      parent.postMessage('done');
+    };
+    document.head.appendChild(document.createElement('style'));
+    document.styleSheets[0].insertRule('p { width: 200%; height: 200%; }');
+    document.execCommand('PasteAsQuotation');
+  }
+
+  onload = () => {
+    let s0 = document.createElement('script');
+    document.head.appendChild(s0);
+    s0.src = `data:,(${foo.toString()})();`;
+  }
+</script>

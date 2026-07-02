@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>stretch and -webkit-fill-available are distinct keywords with different resolution in indefinite containing blocks</title>
+<link rel="match" href="fill-available-and-stretch-side-by-side-expected.html">
+<style>
+body {
+  margin: 0;
+}
+.stretch {
+  min-height: stretch;
+  height: 0;
+  width: 100px;
+  background: green;
+}
+.fill-available {
+  min-height: -webkit-fill-available;
+  height: 0;
+  width: 100px;
+  background: green;
+}
+</style>
+<div class="stretch"></div>
+<div class="fill-available"></div>

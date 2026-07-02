@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container {
+            border: 1px solid gray;
+            overflow: scroll;
+            padding: 10px;
+            height: 400px;
+        }
+        
+        .scroller {
+            width: 300px;
+            height: 200px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+        
+        .relative {
+            position: relative;
+        }
+        
+        .spacer {
+            height: 500px;
+        }
+        
+        .box {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="outside relative box">&nbsp;</div>
+
+        <div class="scroller">
+            <div class="relative box"></div>
+            <div class="spacer"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

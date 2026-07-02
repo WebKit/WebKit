@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "NotificationOptionsPayload.h"
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+
+namespace WebCore {
+
+namespace NotificationOptionsPayloadKeys {
+static NSString * const WebDirKey = @"WebDirKey";
+static NSString * const WebLangKey = @"WebLangKey";
+static NSString * const WebBodyKey = @"WebBodyKey";
+static NSString * const WebTagKey = @"WebTagKey";
+static NSString * const WebIconKey = @"WebIconKey";
+static NSString * const WebDataJSONKey = @"WebDataJSONKey";
+static NSString * const WebSilentKey = @"WebSilentKey";
+}
+
+std::optional<NotificationOptionsPayload> NotificationOptionsPayload::fromDictionary(NSDictionary *dictionary)
+{
+    using namespace NotificationOptionsPayloadKeys;
+
+    if (![dictionary isKindOfClass:[NSDictionary class]])
+        return std::nullopt;
+
+    RetainPtr<NSNumber> dir = dictionary[WebDirKey];
+    if (![dir isKindOfClass:[NSNumber class]])
+        return std::nullopt;
+
+    auto dirValue = [dir unsignedCharValue];
+    if (!isValidNotificationDirection(dirValue))
+        return std::nullopt;
+    auto rawDir = static_cast<NotificationDirection>(dirValue);
+
+    RetainPtr<NSString> lang = dictionary[WebLangKey];
+    RetainPtr<NSString> body = dictionary[WebBodyKey];
+    RetainPtr<NSString> tag = dictionary[WebTagKey];
+    RetainPtr<NSString> icon = dictionary[WebIconKey];
+    RetainPtr<NSString> dataJSON = dictionary[WebDataJSONKey];
+
+    RetainPtr<NSNumber> silent = dictionary[WebSilentKey];
+    if (!silent)
+        return std::nullopt;
+
+    std::optional<bool> rawSilent;
+    if (![silent isKindOfClass:[NSNull class]]) {
+        if (![silent isKindOfClass:[NSNumber class]])
+            return std::nullopt;
+
+        rawSilent = [silent boolValue];
+    }
+
+    return NotificationOptionsPayload { rawDir, lang.get(), body.get(), tag.get(), icon.get(), dataJSON.get(), rawSilent };
+}
+
+NSDictionary *NotificationOptionsPayload::dictionaryRepresentation() const
+{
+    using namespace NotificationOptionsPayloadKeys;
+
+    return @{
+        WebDirKey : @((uint8_t)dir),
+        WebLangKey : lang.createNSString().get(),
+        WebBodyKey : body.createNSString().get(),
+        WebTagKey : tag.createNSString().get(),
+        WebIconKey : icon.createNSString().get(),
+        WebDataJSONKey : dataJSONString.createNSString().get(),
+        WebSilentKey : silent.has_value() ? @(*silent) : [NSNull null],
+    };
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)

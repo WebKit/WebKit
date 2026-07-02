@@ -1,0 +1,14 @@
+This tests that aria-multiline will change the role of a text control from a text field to a text area.
+
+#textfield role: TextField
+#textarea role: TextArea
+
+Setting #textfield aria-multiline to true and #textarea aria-multiline to false.
+#textfield role: TextArea
+#textarea role: TextField
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a
+b

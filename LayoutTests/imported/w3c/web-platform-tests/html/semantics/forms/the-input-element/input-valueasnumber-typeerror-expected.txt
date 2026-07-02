@@ -1,0 +1,16 @@
+input_valueAsNumber_TypeError
+
+
+FAIL valueAsNumber = Infinity (input type does apply) assert_throws_js: function "() => input.valueAsNumber = value" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL valueAsNumber = -Infinity (input type does apply) assert_throws_js: function "() => input.valueAsNumber = value" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL valueAsNumber = Infinity (input type does not apply) assert_throws_js: function "() => input.valueAsNumber = value" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL valueAsNumber = -Infinity (input type does not apply) assert_throws_js: function "() => input.valueAsNumber = value" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

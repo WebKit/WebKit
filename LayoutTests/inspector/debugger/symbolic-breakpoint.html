@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint");
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.Ordering",
+        async test() {
+            let breakpointExactCaseSensitive = new WI.SymbolicBreakpoint("triggerSymbolicBreakpoint");
+            let breakpointExactCaseInsensitive = new WI.SymbolicBreakpoint("tRiGgErSyMbOlIcBrEaKpOiNt", {caseSensitive: false});
+            let breakpointRegexCaseSensitive = new WI.SymbolicBreakpoint("trigger\\w+", {isRegex: true});
+            let breakpointRegexCaseInsensitive = new WI.SymbolicBreakpoint("tRiGgEr\\w+", {caseSensitive: false, isRegex: true});
+
+            WI.debuggerManager.addSymbolicBreakpoint(breakpointExactCaseInsensitive);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpointRegexCaseInsensitive);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpointRegexCaseSensitive);
+            WI.debuggerManager.addSymbolicBreakpoint(breakpointExactCaseSensitive);
+
+            let matchingBreakpoints = WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint");
+
+            InspectorTest.expectEqual(matchingBreakpoints[0], breakpointExactCaseSensitive, "First match should be exact case sensitive.");
+            InspectorTest.expectEqual(matchingBreakpoints[1], breakpointExactCaseInsensitive, "Second match should be exact case insensitive.");
+            InspectorTest.expectEqual(matchingBreakpoints[2], breakpointRegexCaseSensitive, "Third match should be regex case sensitive.");
+            InspectorTest.expectEqual(matchingBreakpoints[3], breakpointRegexCaseInsensitive, "Fourth match should be regex case insensitive.");
+
+            breakpointExactCaseSensitive.remove();
+            breakpointExactCaseInsensitive.remove();
+            breakpointRegexCaseSensitive.remove();
+            breakpointRegexCaseInsensitive.remove();
+
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not have any matches.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for SymbolicBreakpoint.</p>
+</body>
+</html>

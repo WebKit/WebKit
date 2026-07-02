@@ -1,0 +1,6 @@
+PASS div.clientWidth is 11
+PASS div.clientHeight is 11
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

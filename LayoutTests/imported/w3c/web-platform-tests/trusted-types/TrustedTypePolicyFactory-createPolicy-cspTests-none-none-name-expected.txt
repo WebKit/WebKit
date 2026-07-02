@@ -1,0 +1,4 @@
+
+PASS Can create policy with name 'SomeName'
+PASS Cannot create policy with name 'default' - policy creation throws
+

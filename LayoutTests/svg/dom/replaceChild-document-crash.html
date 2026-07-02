@@ -1,0 +1,28 @@
+<html>
+<body>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone()
+    }
+
+    function run() {
+        var svgvar = document.getElementById('svgvar');
+        svgvar.style.setProperty("transform", "rotatez(0)");
+        document.replaceChild(svgvar, document.childNodes[0]);
+
+        setTimeout(function() { 
+            document.open();
+            document.write('<html><p>Confirm that svg element with document as parent is handled without crashing</p>PASS</html>');
+            document.close();
+
+            if (window.testRunner)
+                testRunner.notifyDone()
+        }, 0);
+    }
+</script>
+<svg onload="run()">
+    <text id="svgvar"></text>
+</svg>
+</body>
+</html>

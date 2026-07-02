@@ -1,0 +1,12 @@
+This tests that when controls have been shown and hidden, they continue to be hidden after exiting fullscreen.
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+RUN(video.controls = false)
+RUN(video.webkitEnterFullscreen())
+EVENT(fullscreenchange)
+RUN(video.webkitExitFullscreen())
+EVENT(fullscreenchange)
+EXPECTED (shadow.querySelector(".media-controls").children.length == '0') OK
+END OF TEST
+

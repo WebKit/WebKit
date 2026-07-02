@@ -1,0 +1,16 @@
+<style>
+div { transition: color 10s step-end; display: none; color: red; }
+.show { display: block; }
+@starting-style {
+    div { color: green; }
+}
+</style>
+<div id=t>This should be green.</div>
+<script>
+t.offsetHeight;
+t.classList.add("show");
+t.offsetHeight;
+t.classList.remove("show");
+t.offsetHeight;
+t.classList.add("show");
+</script>

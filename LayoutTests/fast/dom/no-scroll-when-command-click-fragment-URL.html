@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Fragment Navigation - ensure navigating to a fragment URL is preventable by a client.</title>
+<meta name="assert" content="This test checks command-clicking on a fragment URL does not navigate on the current page.">
+
+<head>
+<script src="../../resources/ui-helper.js"></script>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCustomPolicyDelegate(true, false);
+    testRunner.skipPolicyDelegateNotifyDone();
+    testRunner.waitUntilDone();
+}
+
+async function runTest()
+{
+    if (!testRunner.runUIScript)
+        return;
+
+    var output = "";
+
+    var scrollOffset = window.pageYOffset;
+
+    await UIHelper.activateElement(document.getElementById("LinkToClick"), ["metaKey"]); // metaKey = commandKey
+
+    await UIHelper.ensurePresentationUpdate();
+
+    if (window.pageYOffset != scrollOffset)
+        output += "FAIL: Page should not scroll. - " + window.pageYOffset;
+    else
+        output += "PASS: Page did not scroll.";
+
+    var scrollOffset = window.pageYOffset;
+
+    var target = document.getElementById('target');
+    target.innerHTML = output;
+    target.style.paddingTop = "0px";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener('load', runTest);
+</script>
+</head>
+
+<body>
+    <a href="#fragment" id="LinkToClick">Link to Fragment</a>
+    <div id="target" style="padding-top: 10000px;">
+        <p>Scroll Point</p>
+        <div id="fragment"></div>
+    </div>
+</body>
+

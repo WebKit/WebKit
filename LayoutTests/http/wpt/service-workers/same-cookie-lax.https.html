@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("same-cookie-lax-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const cookieValue = "samesite-cookie-test";
+    await fetch("resources/set-cookie-lax.py?name=" + cookieValue);
+
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+    });
+
+    activeWorker.postMessage("test-cookie");
+    const result = await promise;
+    assert_true(result.includes(cookieValue + "=1"));
+}, "Test service worker samesite lax cookie - service worker internal fetch");
+
+promise_test(async (test) => {
+    const cookieValue = "samesite-cookie-test-fetch";
+    await fetch("resources/set-cookie-lax.py?name=" + cookieValue);
+
+    const response = await fetch("resources/get-cookie.py?fetchTest");
+    const result = await response.text();
+    assert_true(result.includes(cookieValue + "=1"));
+}, "Test service worker samesite lax cookie - fetch served from service worker");
+</script>
+</body>
+</html>

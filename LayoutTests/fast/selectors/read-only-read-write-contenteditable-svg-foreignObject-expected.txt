@@ -1,0 +1,50 @@
+At the time of writing this test, there is no specification for contenteditable for SVG. Adding contenteditable on an SVG element does not create an editing host. This test verify that having a SVG or HTML attribute "contenteditable" does not interfere with the selectors :read-write and :read-only.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[0]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[1]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[2]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[2]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[3]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[3]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[4]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[4]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[5]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[5]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[6]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[6]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[7]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[7]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[8]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[8]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[9]).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[9]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[10]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[10]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[11]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[11]).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[12]).color is "rgb(0, 255, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-block *")[12]).backgroundColor is "rgb(255, 255, 255)"
+PASS document.querySelectorAll("#test-block :read-write").length is 6
+PASS document.querySelectorAll("#test-block :read-write")[0].id is "editing-host-1"
+PASS document.querySelectorAll("#test-block :read-write")[1].id is "editable-block-1"
+PASS document.querySelectorAll("#test-block :read-write")[2].id is "editing-host-2"
+PASS document.querySelectorAll("#test-block :read-write")[3].id is "editable-block-2"
+PASS document.querySelectorAll("#test-block :read-write")[4].id is "nested-editing-host-2"
+PASS document.querySelectorAll("#test-block :read-write")[5].id is "editable-block-3"
+PASS document.querySelectorAll("#test-block :read-only").length is 7
+PASS document.querySelectorAll("#test-block :read-only")[0].id is "svg-root-1"
+PASS document.querySelectorAll("#test-block :read-only")[1].id is "fake-contenteditable-group-1"
+PASS document.querySelectorAll("#test-block :read-only")[2].id is "foreign-object-1"
+PASS document.querySelectorAll("#test-block :read-only")[3].id is "non-editable-block-1"
+PASS document.querySelectorAll("#test-block :read-only")[4].id is "svg-root-2"
+PASS document.querySelectorAll("#test-block :read-only")[5].id is "fake-contenteditable-group-2"
+PASS document.querySelectorAll("#test-block :read-only")[6].id is "foreign-object-2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

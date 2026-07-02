@@ -1,0 +1,7 @@
+
+EVENT(canplaythrough)
+EVENT(seeked)
+Test that the cue element does not inherit view-transition-name from :root.
+EXPECTED (cueStyle.viewTransitionName == 'none') OK
+END OF TEST
+

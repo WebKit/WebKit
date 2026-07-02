@@ -1,0 +1,17 @@
+<script src=../../media-resources/video-test.js></script>
+<video id="video" playsinline muted></video>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = async () => {
+    findMediaElement();
+
+    video.src = "http://localhost:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm";
+    await waitFor(video, "canplay");
+    endTest();
+};
+</script>
+<p>PASS if no crash occurs.</p>

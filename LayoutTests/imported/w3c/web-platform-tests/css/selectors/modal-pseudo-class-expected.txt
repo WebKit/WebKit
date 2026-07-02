@@ -1,0 +1,5 @@
+
+
+PASS Test that :modal matches modal <dialog>
+PASS Test that :modal matches the fullscreen element
+

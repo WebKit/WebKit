@@ -1,0 +1,7 @@
+2d.imageData.object.round
+
+ImageData.data rounds numbers with round-to-zero
+
+
+PASS ImageData.data rounds numbers with round-to-zero
+

@@ -1,0 +1,7 @@
+2d.path.ellipse.basics
+
+Verify canvas throws error when drawing ellipse with negative radii.
+
+
+PASS Verify canvas throws error when drawing ellipse with negative radii.
+

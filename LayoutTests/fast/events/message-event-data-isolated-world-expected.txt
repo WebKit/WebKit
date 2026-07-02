@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Tests that MessageEvent.data works as expected from isolated worlds.
+CONSOLE MESSAGE: PASS: The isolated world was able to read the MessagePort sent via postMessage()
+

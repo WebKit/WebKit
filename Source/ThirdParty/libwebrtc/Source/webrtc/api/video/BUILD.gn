@@ -1,0 +1,414 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+rtc_library("video_rtp_headers") {
+  visibility = [ "*" ]
+  sources = [
+    "color_space.cc",
+    "color_space.h",
+    "hdr_metadata.cc",
+    "hdr_metadata.h",
+    "video_content_type.cc",
+    "video_content_type.h",
+    "video_rotation.h",
+    "video_timing.cc",
+    "video_timing.h",
+  ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "../units:time_delta",
+  ]
+}
+
+rtc_library("video_frame") {
+  visibility = [ "*" ]
+  sources = [
+    "i420_buffer.cc",
+    "i420_buffer.h",
+    "i422_buffer.cc",
+    "i422_buffer.h",
+    "i444_buffer.cc",
+    "i444_buffer.h",
+    "nv12_buffer.cc",
+    "nv12_buffer.h",
+    "video_codec_type.h",
+    "video_frame.cc",
+    "video_frame.h",
+    "video_frame_buffer.cc",
+    "video_frame_buffer.h",
+    "video_sink_interface.h",
+    "video_source_interface.cc",
+    "video_source_interface.h",
+  ]
+
+  deps = [
+    ":video_rtp_headers",
+    "..:make_ref_counted",
+    "..:ref_count",
+    "..:rtp_packet_info",
+    "..:scoped_refptr",
+    "..:video_track_source_constraints",
+    "../../rtc_base:checks",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/memory:aligned_malloc",
+    "../../rtc_base/system:rtc_export",
+    "../units:time_delta",
+    "../units:timestamp",
+    "//third_party/libyuv",
+  ]
+}
+
+if (is_android) {
+  java_cpp_enum("video_frame_enums") {
+    sources = [ "video_frame_buffer.h" ]
+  }
+}
+
+rtc_library("video_frame_i010") {
+  visibility = [ "*" ]
+  sources = [
+    "i010_buffer.cc",
+    "i010_buffer.h",
+    "i210_buffer.cc",
+    "i210_buffer.h",
+    "i410_buffer.cc",
+    "i410_buffer.h",
+  ]
+  deps = [
+    ":video_frame",
+    ":video_rtp_headers",
+    "..:make_ref_counted",
+    "..:scoped_refptr",
+    "../../rtc_base:checks",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base/memory:aligned_malloc",
+    "../../rtc_base/system:rtc_export",
+    "//third_party/libyuv",
+  ]
+}
+
+rtc_source_set("recordable_encoded_frame") {
+  visibility = [ "*" ]
+  sources = [ "recordable_encoded_frame.h" ]
+
+  deps = [
+    ":encoded_image",
+    ":video_frame",
+    ":video_rtp_headers",
+    "..:scoped_refptr",
+    "../units:timestamp",
+  ]
+}
+
+rtc_source_set("video_frame_type") {
+  visibility = [ "*" ]
+  sources = [ "video_frame_type.h" ]
+  deps = [
+    "../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_source_set("render_resolution") {
+  visibility = [ "*" ]
+  sources = [ "render_resolution.h" ]
+}
+
+rtc_source_set("resolution") {
+  visibility = [ "*" ]
+  sources = [ "resolution.h" ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+}
+
+# TODO: bugs.webrtc.org/358039777 - Remove when safe.
+rtc_source_set("corruption_detection_filter_settings") {
+  visibility = [ "*" ]
+  sources = [ "corruption_detection_filter_settings.h" ]
+  deps = [ "corruption_detection:filter_settings" ]
+}
+
+rtc_library("encoded_image") {
+  visibility = [ "*" ]
+  sources = [
+    "encoded_image.cc",
+    "encoded_image.h",
+  ]
+  deps = [
+    ":video_codec_constants",
+    ":video_frame_type",
+    ":video_rtp_headers",
+    "..:make_ref_counted",
+    "..:ref_count",
+    "..:rtp_packet_info",
+    "..:scoped_refptr",
+    "../../rtc_base:buffer",
+    "../../rtc_base:checks",
+    "../../rtc_base/system:rtc_export",
+    "../units:timestamp",
+    "corruption_detection:filter_settings",
+  ]
+}
+
+rtc_library("encoded_frame") {
+  visibility = [ "*" ]
+  sources = [
+    "encoded_frame.cc",
+    "encoded_frame.h",
+  ]
+
+  deps = [
+    ":encoded_image",
+    ":video_frame",
+    "../../modules/rtp_rtcp:rtp_video_header",
+    "../../modules/video_coding:codec_globals_headers",
+    "../../modules/video_coding:video_codec_interface",
+    "../units:timestamp",
+    "corruption_detection:frame_instrumentation_data",
+  ]
+}
+
+rtc_library("rtp_video_frame_assembler") {
+  visibility = [ "*" ]
+  sources = [
+    "rtp_video_frame_assembler.cc",
+    "rtp_video_frame_assembler.h",
+  ]
+
+  deps = [
+    ":encoded_frame",
+    ":encoded_image",
+    ":video_frame_type",
+    ":video_rtp_headers",
+    "..:rtp_packet_info",
+    "..:scoped_refptr",
+    "../../api/units:timestamp",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../modules/rtp_rtcp:rtp_video_header",
+    "../../modules/video_coding",
+    "../../modules/video_coding:packet_buffer",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
+    "../transport/rtp:dependency_descriptor",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("rtp_video_frame_assembler_unittests") {
+  testonly = true
+  sources = [ "rtp_video_frame_assembler_unittests.cc" ]
+
+  deps = [
+    ":encoded_frame",
+    ":rtp_video_frame_assembler",
+    ":video_frame_type",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_packetizer_av1_test_helper",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../modules/rtp_rtcp:rtp_video_header",
+    "../../modules/video_coding:codec_globals_headers",
+    "../../test:test_support",
+    "../transport/rtp:dependency_descriptor",
+  ]
+}
+
+if (rtc_use_h265) {
+  rtc_library("rtp_video_frame_h265_assembler_unittests") {
+    testonly = true
+    sources = [ "rtp_video_frame_h265_assembler_unittests.cc" ]
+
+    deps = [
+      ":encoded_frame",
+      ":rtp_video_frame_assembler",
+      ":video_frame_type",
+      "../../modules/rtp_rtcp",
+      "../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../modules/rtp_rtcp:rtp_video_header",
+      "../../test:test_support",
+    ]
+  }
+}
+
+rtc_source_set("video_codec_constants") {
+  visibility = [ "*" ]
+  sources = [ "video_codec_constants.h" ]
+  deps = []
+}
+
+rtc_library("video_bitrate_allocation") {
+  visibility = [ "*" ]
+  sources = [
+    "video_bitrate_allocation.cc",
+    "video_bitrate_allocation.h",
+  ]
+  deps = [
+    ":video_codec_constants",
+    "../../rtc_base:checks",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+  ]
+}
+
+rtc_source_set("video_layers_allocation") {
+  visibility = [ "*" ]
+  sources = [ "video_layers_allocation.h" ]
+  deps = [
+    "../units:data_rate",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("video_bitrate_allocator") {
+  visibility = [ "*" ]
+  sources = [
+    "video_bitrate_allocator.cc",
+    "video_bitrate_allocator.h",
+  ]
+  deps = [
+    ":video_bitrate_allocation",
+    "../units:data_rate",
+  ]
+}
+
+rtc_source_set("video_bitrate_allocator_factory") {
+  visibility = [ "*" ]
+  sources = [ "video_bitrate_allocator_factory.h" ]
+  deps = [
+    ":video_bitrate_allocator",
+    "../environment",
+    "../video_codecs:video_codecs_api",
+  ]
+}
+
+rtc_library("video_adaptation") {
+  visibility = [ "*" ]
+  sources = [
+    "video_adaptation_counters.cc",
+    "video_adaptation_counters.h",
+    "video_adaptation_reason.h",
+  ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:stringutils",
+  ]
+}
+
+rtc_source_set("video_stream_encoder") {
+  visibility = [ "*" ]
+  sources = [ "video_stream_encoder_settings.h" ]
+
+  deps = [
+    ":video_adaptation",
+    ":video_bitrate_allocation",
+    ":video_bitrate_allocator",
+    ":video_bitrate_allocator_factory",
+    ":video_codec_constants",
+    ":video_frame",
+    ":video_layers_allocation",
+    "..:rtp_parameters",
+    "..:scoped_refptr",
+    "../:fec_controller_api",
+    "../:rtp_parameters",
+    "../adaptation:resource_adaptation_api",
+    "../units:data_rate",
+    "../video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+
+rtc_library("video_frame_metadata") {
+  visibility = [ "*" ]
+  sources = [
+    "video_frame_metadata.cc",
+    "video_frame_metadata.h",
+  ]
+  deps = [
+    ":video_frame",
+    ":video_frame_type",
+    ":video_rtp_headers",
+    "../../modules/video_coding:codec_globals_headers",
+    "../../rtc_base/system:rtc_export",
+    "../transport/rtp:dependency_descriptor",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("builtin_video_bitrate_allocator_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "builtin_video_bitrate_allocator_factory.cc",
+    "builtin_video_bitrate_allocator_factory.h",
+  ]
+
+  deps = [
+    ":video_bitrate_allocator",
+    ":video_bitrate_allocator_factory",
+    ":video_frame",
+    "../../modules/video_coding:video_coding_utility",
+    "../../modules/video_coding/svc:svc_rate_allocator",
+    "../environment",
+    "../video_codecs:video_codecs_api",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+rtc_library("frame_buffer") {
+  visibility = [ "*" ]
+  sources = [
+    "frame_buffer.cc",
+    "frame_buffer.h",
+  ]
+  deps = [
+    ":encoded_frame",
+    "..:field_trials_view",
+    "../../modules/video_coding:video_coding_utility",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("frame_buffer_unittest") {
+  testonly = true
+  sources = [ "frame_buffer_unittest.cc" ]
+
+  deps = [
+    ":frame_buffer",
+    "..:field_trials",
+    "../../test:create_test_field_trials",
+    "../../test:fake_encoded_frame",
+    "../../test:test_support",
+  ]
+}
+
+rtc_library("video_frame_metadata_unittest") {
+  testonly = true
+  sources = [ "video_frame_metadata_unittest.cc" ]
+
+  deps = [
+    ":video_frame_metadata",
+    "../../modules/video_coding:codec_globals_headers",
+    "../../test:test_support",
+  ]
+}

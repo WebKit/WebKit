@@ -1,0 +1,13 @@
+
+PASS Absolute curveto: C 100,25 150,75 200,50
+PASS Relative curveto: c 50,-25 100,25 150,0 from (50,50)
+PASS Curveto endpoints are correct
+PASS Multiple curveto triplets: C x1,y1 x2,y2 x,y x1,y1 x2,y2 x,y
+PASS Smooth curveto: S 175,200 200,150
+PASS Smooth curveto after C: reflects control point
+PASS Relative smooth curveto: s x2,y2 x,y
+PASS Smooth curveto without preceding curve
+PASS Multiple smooth curveto pairs
+PASS Curveto with space separators (no commas)
+PASS Curveto with all comma separators
+

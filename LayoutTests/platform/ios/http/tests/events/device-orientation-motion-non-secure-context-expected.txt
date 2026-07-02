@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: No device orientation events will be fired, reason: Browsing context is not secure.
+CONSOLE MESSAGE: No device motion events will be fired, reason: Browsing context is not secure.
+Tests that trying to set an event listener for deviceorientation and deviceorientation logs an error in non-secure contexts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Registering device orientation listener
+PASS lastConsoleMessage is "No device orientation events will be fired, reason: Browsing context is not secure."
+
+* Registering device motion listener
+PASS lastConsoleMessage is "No device motion events will be fired, reason: Browsing context is not secure."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,78 @@
+<!doctype html>
+  <html lang="en">
+  <body>
+    <outer-custom-el></outer-custom-el>
+    <p>Tests CSS container queries don't break when using nested shadow DOM</p>
+    <p>PASS if not crash</p>
+  </body>
+  <script>
+    var ShadowHostBase = class extends HTMLElement {
+      createRenderRoot() {
+        const renderRoot = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
+        renderRoot.adoptedStyleSheets = this.constructor.styles;
+        return renderRoot;
+      }
+      connectedCallback() {
+        this.renderRoot ??= this.createRenderRoot();
+        this.update();
+      }
+      update() {
+        const htmlContent = this.render();
+        const template = document.createElement("template");
+        template.innerHTML = htmlContent;
+        this.renderRoot.appendChild(template.content.cloneNode(true));
+      }
+    };
+    ShadowHostBase.shadowRootOptions = { mode: "open" };
+    var SecondShadowHost = class extends ShadowHostBase {
+      render() {
+        return `
+        <div>
+          <span part="label">Nested span with label part</span>
+        </div>
+        `;
+      }
+    };
+    var secondShadowHostStyles = `div:hover span {
+    }`;
+    var prepareStyleSheets = (textStyle) => {
+      const style = new CSSStyleSheet();
+      style.replaceSync(textStyle);
+      return [style];
+    };
+    SecondShadowHost.styles = prepareStyleSheets(secondShadowHostStyles);
+    customElements.define("inner-custom-el", SecondShadowHost);
+    var firstShadowHostStyles = `* {
+      @container style(--foo: bar) {
+        ::part(baz) {}
+      }
+    }`;
+    var FirstShadowHost = class extends ShadowHostBase {
+      render() {
+        return `
+        <inner-custom-el>
+        </inner-custom-el>
+      `;
+      }
+    };
+    FirstShadowHost.styles = prepareStyleSheets(firstShadowHostStyles);
+    customElements.define("outer-custom-el", FirstShadowHost);
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    window.onload = async () => {
+      await customElements.whenDefined('outer-custom-el');
+      await customElements.whenDefined('inner-custom-el');
+      const button = document.querySelector('outer-custom-el').shadowRoot.querySelector('inner-custom-el');
+      const rect = button.getBoundingClientRect();
+      if (window.eventSender) {
+        // The action below triggers the hover behaviour. In combination with the styles defined earlier,
+        // this triggers styleForContainer and used to crash.
+        eventSender.mouseMoveTo(rect.x + rect.width / 2, rect.y + rect.height / 2);
+      }
+      testRunner.notifyDone();
+    };
+  </script>
+</html>

@@ -1,0 +1,172 @@
+/*
+ *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+
+#include <iterator>
+#include <span>
+
+#include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
+#include "api/rtp_parameters.h"
+#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "modules/rtp_rtcp/source/corruption_detection_extension.h"
+#include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
+#include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor_extension.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_video_layers_allocation_extension.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+
+namespace webrtc {
+namespace {
+
+struct ExtensionInfo {
+  RTPExtensionType type;
+  absl::string_view uri;
+};
+
+template <typename Extension>
+constexpr ExtensionInfo CreateExtensionInfo() {
+  return {Extension::kId, Extension::Uri()};
+}
+
+constexpr ExtensionInfo kExtensions[] = {
+    CreateExtensionInfo<TransmissionOffset>(),
+    CreateExtensionInfo<AudioLevelExtension>(),
+    CreateExtensionInfo<CsrcAudioLevel>(),
+    CreateExtensionInfo<AbsoluteSendTime>(),
+    CreateExtensionInfo<AbsoluteCaptureTimeExtension>(),
+    CreateExtensionInfo<VideoOrientation>(),
+    CreateExtensionInfo<TransportSequenceNumber>(),
+    CreateExtensionInfo<TransportSequenceNumberV2>(),
+    CreateExtensionInfo<PlayoutDelayLimits>(),
+    CreateExtensionInfo<VideoContentTypeExtension>(),
+    CreateExtensionInfo<RtpVideoLayersAllocationExtension>(),
+    CreateExtensionInfo<VideoTimingExtension>(),
+    CreateExtensionInfo<RtpStreamId>(),
+    CreateExtensionInfo<RepairedRtpStreamId>(),
+    CreateExtensionInfo<RtpMid>(),
+    CreateExtensionInfo<RtpGenericFrameDescriptorExtension00>(),
+    CreateExtensionInfo<RtpDependencyDescriptorExtension>(),
+    CreateExtensionInfo<ColorSpaceExtension>(),
+    CreateExtensionInfo<InbandComfortNoiseExtension>(),
+    CreateExtensionInfo<VideoFrameTrackingIdExtension>(),
+    CreateExtensionInfo<CorruptionDetectionExtension>(),
+};
+
+// Because of kRtpExtensionNone, NumberOfExtension is 1 bigger than the actual
+// number of known extensions.
+static_assert(std::ssize(kExtensions) ==
+                  static_cast<int>(kRtpExtensionNumberOfExtensions) - 1,
+              "kExtensions expect to list all known extensions");
+
+}  // namespace
+
+RtpHeaderExtensionMap::RtpHeaderExtensionMap() : RtpHeaderExtensionMap(false) {}
+
+RtpHeaderExtensionMap::RtpHeaderExtensionMap(bool extmap_allow_mixed)
+    : extmap_allow_mixed_(extmap_allow_mixed) {
+  for (auto& id : ids_)
+    id = kInvalidId;
+}
+
+RtpHeaderExtensionMap::RtpHeaderExtensionMap(
+    std::span<const RtpExtension> extensions)
+    : RtpHeaderExtensionMap(false) {
+  for (const RtpExtension& extension : extensions)
+    RegisterByUri(extension.id, extension.uri);
+}
+
+void RtpHeaderExtensionMap::Reset(std::span<const RtpExtension> extensions) {
+  for (auto& id : ids_)
+    id = kInvalidId;
+  for (const RtpExtension& extension : extensions)
+    RegisterByUri(extension.id, extension.uri);
+}
+
+bool RtpHeaderExtensionMap::RegisterByType(RtpHeaderExtensionId id,
+                                           RTPExtensionType type) {
+  for (const ExtensionInfo& extension : kExtensions)
+    if (type == extension.type)
+      return Register(id, extension.type, extension.uri);
+  RTC_DCHECK_NOTREACHED();
+  return false;
+}
+
+bool RtpHeaderExtensionMap::RegisterByUri(RtpHeaderExtensionId id,
+                                          absl::string_view uri) {
+  for (const ExtensionInfo& extension : kExtensions)
+    if (uri == extension.uri)
+      return Register(id, extension.type, extension.uri);
+  RTC_LOG(LS_WARNING) << "Unknown extension uri:'" << uri << "', id: " << id
+                      << ".";
+  return false;
+}
+
+RTPExtensionType RtpHeaderExtensionMap::GetType(RtpHeaderExtensionId id) const {
+  RTC_DCHECK(id.Valid());
+  for (int type = kRtpExtensionNone + 1; type < kRtpExtensionNumberOfExtensions;
+       ++type) {
+    if (ids_[type] == id) {
+      return static_cast<RTPExtensionType>(type);
+    }
+  }
+  return kInvalidType;
+}
+
+void RtpHeaderExtensionMap::Deregister(absl::string_view uri) {
+  for (const ExtensionInfo& extension : kExtensions) {
+    if (extension.uri == uri) {
+      ids_[extension.type] = kInvalidId;
+      break;
+    }
+  }
+}
+
+bool RtpHeaderExtensionMap::Register(RtpHeaderExtensionId id,
+                                     RTPExtensionType type,
+                                     absl::string_view uri) {
+  RTC_DCHECK_GT(type, kRtpExtensionNone);
+  RTC_DCHECK_LT(type, kRtpExtensionNumberOfExtensions);
+
+  if (!id.Valid()) {
+    RTC_LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
+                        << "' with invalid id:" << id << ".";
+    return false;
+  }
+
+  RTPExtensionType registered_type = GetType(id);
+  if (registered_type == type) {  // Same type/id pair already registered.
+    RTC_LOG(LS_VERBOSE) << "Reregistering extension uri:'" << uri
+                        << "', id:" << id;
+    return true;
+  }
+
+  if (registered_type !=
+      kInvalidType) {  // `id` used by another extension type.
+    RTC_LOG(LS_WARNING) << "Failed to register extension uri:'" << uri
+                        << "', id:" << id
+                        << ". Id already in use by extension type "
+                        << static_cast<int>(registered_type);
+    return false;
+  }
+  if (IsRegistered(type)) {
+    RTC_LOG(LS_WARNING) << "Illegal reregistration for uri: " << uri
+                        << " is previously registered with id " << GetId(type)
+                        << " and cannot be reregistered with id " << id;
+    return false;
+  }
+
+  ids_[type] = id;
+  return true;
+}
+
+}  // namespace webrtc

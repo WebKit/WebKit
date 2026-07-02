@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function main() {
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+}
+try { x26.setAttribute("contenteditable","false"); } catch { }
+try { x22.setAttribute("hidden",""); } catch { }
+try { x19.focus(); } catch { }
+}
+function f0() {
+try { v1 = document.createElement("ul"); } catch { }
+try { v45 = document.scrollingElement; } catch { }
+try { v1.insertBefore(v45, v1.childNodes[91 % v1.childNodes.length]); } catch { }
+}
+function f3() {
+var x45 = document.getElementById("x45");
+try { x6.addEventListener("DOMSubtreeModified",f0); } catch { }
+try { x25.label = "AAAAAAAAAA"; } catch { }
+try { x45.setAttribute("loading","eager"); } catch { }
+}
+</script>
+</head>
+<body onload="main()">
+<p>PASS if no crash.</p>
+<isindex onfocusin="f3()" draggable="false">
+<iframe id="x45" src="x" loading="lazy" dir="ltr">
+</iframe>
+<b id="x6" translate="yes">
+<progress id="x42">
+<div id="x19"> 
+<optgroup id="x26" part="part0">
+</optgroup>
+<option id="x25" itemref="x20">
+</div>
+</progress>
+</b>
+<details id="x22">
+</isindex>
+AAAAAAA
+</body>
+</html>

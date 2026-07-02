@@ -1,0 +1,11 @@
+This test ensures we order text marker pairs correctly in various scenarios.
+
+PASS: 'Foo[NEWLINE]bar' === 'Foo[NEWLINE]bar' === true
+PASS: 'Foo[NEWLINE]bar' === 'Foo[NEWLINE]bar' === true
+PASS: 'Foo bar' === 'Foo bar' === true
+PASS: 'Foo[NEWLINE]bar' === 'Foo[NEWLINE]bar' === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

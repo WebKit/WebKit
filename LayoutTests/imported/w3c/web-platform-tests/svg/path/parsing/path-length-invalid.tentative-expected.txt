@@ -1,0 +1,9 @@
+
+PASS e.style['path-length'] = "-1" should not set the property value
+PASS e.style['path-length'] = "-0.5" should not set the property value
+PASS e.style['path-length'] = "auto" should not set the property value
+PASS e.style['path-length'] = "10px" should not set the property value
+PASS e.style['path-length'] = "10%" should not set the property value
+PASS e.style['path-length'] = "1 2" should not set the property value
+PASS e.style['path-length'] = "none 1" should not set the property value
+

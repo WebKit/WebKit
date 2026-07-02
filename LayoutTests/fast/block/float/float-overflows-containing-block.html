@@ -1,0 +1,57 @@
+<style>
+.container {
+  width: 200px;
+  height: 100px;
+  background-color: red;
+  overflow: hidden;
+}
+
+.intrusive_float {
+  background-color: green;
+  height: 100px;
+}
+
+.containing_block {
+  height: 100px;
+  width: 100px;
+  background-color: cyan;
+}
+
+.oveflowing_float {
+  width: 150px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<div class=container>
+  <div class=intrusive_float style="float: right; width: 30px;"></div>
+  <div class=intrusive_float style="float: right; width: 20px;"></div>
+  <div class=containing_block>
+    <div class=oveflowing_float style="float: left"></div>
+    PASS if no red.
+  </div>
+</div>
+<div class=container>
+  <div class=intrusive_float style="float: left; width: 30px;"></div>
+  <div class=intrusive_float style="float: right; width: 20px;"></div>
+  <div class=containing_block>
+    <div class=oveflowing_float style="float: left; position: relative; top: -100px; left: 30px;"></div>
+    PASS if no red.
+  </div>
+</div>
+<div class=container>
+  <div class=intrusive_float style="float: left; width: 30px;"></div>
+  <div class=intrusive_float style="float: left; width: 20px;"></div>
+  <div class=containing_block>
+    <div class=oveflowing_float style="float: left; position: relative; top: -100px; left: 50px;"></div>
+    PASS if no red.
+  </div>
+</div>
+<div class=container>
+  <div class=intrusive_float style="float: left; width: 30px;"></div>
+  <div class=intrusive_float style="float: left; width: 20px;"></div>
+  <div class=containing_block style="margin-left: 100px">
+    <div class=oveflowing_float style="float: right;"></div>
+    PASS if no red.
+  </div>
+</div>

@@ -1,0 +1,52 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x238 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x83
+          RenderText {#text} at (0,0) size 66x26
+            text run at (0,0) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 158x27
+            text run at (0,27) width 158: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
+            RenderText {#text} at (158,27) size 257x27
+              text run at (158,27) width 257: "<rdar://problem/4045513>"
+          RenderText {#text} at (415,27) size 708x55
+            text run at (415,27) width 293: " Copying and pasting selection"
+            text run at (0,55) width 593: "starting at end of paragraph can incorrectly remove line break"
+        RenderBlock {DIV} at (14,113) size 756x111
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,27) size 746x83
+            text run at (0,27) width 746: "Should see two lines of text below, self-documenting themselves as \"line one\""
+            text run at (0,55) width 713: "and \"line two\". The insertion point must be after the first character (\"l\") of"
+            text run at (0,83) width 103: "\"line two\"."
+      RenderBlock {DIV} at (0,262) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 76x27
+            text run at (2,2) width 76: "line one"
+          RenderBR {BR} at (78,23) size 0x0
+          RenderText {#text} at (2,30) size 77x27
+            text run at (2,30) width 77: "line two"
+caret: position 1 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

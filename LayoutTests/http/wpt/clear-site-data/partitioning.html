@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/clear-site-data/support/test_utils.sub.js"></script>
+</head>
+<body>
+<script>
+/**
+ * @param Array.<Array.<Datatype>> combination A combination of datatypes.
+ * @param Dict.<string, boolean> report A map between a datatype name and
+ *     whether it is empty.
+ * @return boolean Whether all datatypes are empty if and only if they are
+ *     included in the |combination|.
+ */
+function verifyDatatypes(combination, report) {
+  TestUtils.DATATYPES.forEach(function(datatype) {
+    if (combination.indexOf(datatype) != -1) {
+      assert_true(report[datatype.name], datatype.name + " should have been cleared.");
+    } else {
+      assert_false(report[datatype.name], datatype.name + " should NOT have been cleared.");
+    }
+  });
+}
+
+TestUtils.COMBINATIONS.forEach(function(combination) {
+  var test_name = "Clear datatypes on navigation: " +
+    combination.map(function(e) { return e.name; }).join(", ");
+
+  promise_test(function(test) {
+    return new Promise(function(resolve_test, reject_test) {
+      TestUtils.populateDatatypes().then(function() {
+        return new Promise(function(resolve, reject) {
+          window.addEventListener("message", resolve);
+          let names = combination.map(function(e) { return e.name });
+          // Open a cross-origin popup with an iframe that is same-origin with us and serves the Clear-Site-Data header.
+          // Even though same origin with us, it shouldn't clear our data because of origin partitioning.
+          open(get_host_info().REMOTE_ORIGIN + "/WebKit/clear-site-data/resources/partitioning-popup.html?" + names.join("&"));
+        }).then(function(messageEvent) {
+          // The same-origin frame under a cross-origin parent cleared site data. Check that our data didn't go away.
+          var report = {};
+
+          Promise.all(TestUtils.DATATYPES.map(function(datatype) {
+            return datatype.isEmpty().then(function(isEmpty) {
+              report[datatype.name] = isEmpty;
+            });
+          })).then(() => {
+            verifyDatatypes([], report);
+            resolve_test();
+          });
+        });
+      });
+    });
+  }, test_name);
+});
+</script>
+</body>
+</html>

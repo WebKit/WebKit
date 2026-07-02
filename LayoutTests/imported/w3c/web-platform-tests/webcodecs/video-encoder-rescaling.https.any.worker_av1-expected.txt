@@ -1,0 +1,20 @@
+
+FAIL Scaling Image in Encoding from 64 x 64 to 128 x 128 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 64 x 64 to 128 x 128 Format:RGBX expected 0 +/- 0.05 but got 1.2667200691040306
+FAIL Scaling Image in Encoding from 64 x 64 to 128 x 128 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 64 x 64 to 128 x 128 Format:I420 expected 0 +/- 0.05 but got 1.2597049887663399
+FAIL Scaling Image in Encoding from 128 x 128 to 128 x 128 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 128 to 128 x 128 Format:RGBX expected 0 +/- 0.05 but got 1.2669594226579521
+FAIL Scaling Image in Encoding from 128 x 128 to 128 x 128 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 128 to 128 x 128 Format:I420 expected 0 +/- 0.05 but got 1.2598992374727669
+FAIL Scaling Image in Encoding from 128 x 128 to 64 x 64 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 128 to 64 x 64 Format:RGBX expected 0 +/- 0.05 but got 1.267687908496732
+FAIL Scaling Image in Encoding from 128 x 128 to 64 x 64 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 128 to 64 x 64 Format:I420 expected 0 +/- 0.05 but got 1.2605392156862745
+FAIL Scaling Image in Encoding from 32 x 32 to 96 x 96 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 32 x 32 to 96 x 96 Format:RGBX expected 0 +/- 0.05 but got 1.2668898269184217
+FAIL Scaling Image in Encoding from 32 x 32 to 96 x 96 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 32 x 32 to 96 x 96 Format:I420 expected 0 +/- 0.05 but got 1.2593738652868556
+FAIL Scaling Image in Encoding from 192 x 192 to 64 x 64 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 192 x 192 to 64 x 64 Format:RGBX expected 0 +/- 0.05 but got 1.265958605664488
+FAIL Scaling Image in Encoding from 192 x 192 to 64 x 64 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 192 x 192 to 64 x 64 Format:I420 expected 0 +/- 0.05 but got 1.258837145969499
+FAIL Scaling Image in Encoding from 64 x 32 to 128 x 64 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 64 x 32 to 128 x 64 Format:RGBX expected 0 +/- 0.05 but got 1.2676993974673203
+FAIL Scaling Image in Encoding from 64 x 32 to 128 x 64 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 64 x 32 to 128 x 64 Format:I420 expected 0 +/- 0.05 but got 1.2605604915577342
+FAIL Scaling Image in Encoding from 128 x 256 to 64 x 128 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 256 to 64 x 128 Format:RGBX expected 0 +/- 0.05 but got 1.2669594226579521
+FAIL Scaling Image in Encoding from 128 x 256 to 64 x 128 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 256 to 64 x 128 Format:I420 expected 0 +/- 0.05 but got 1.2598992374727669
+FAIL Scaling Image in Encoding from 64 x 64 to 128 x 192 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 64 x 64 to 128 x 192 Format:RGBX expected 0 +/- 0.05 but got 1.2664841196895424
+FAIL Scaling Image in Encoding from 64 x 64 to 128 x 192 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 64 x 64 to 128 x 192 Format:I420 expected 0 +/- 0.05 but got 1.2596213745915033
+FAIL Scaling Image in Encoding from 128 x 192 to 64 x 64 Format: RGBX assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 192 to 64 x 64 Format:RGBX expected 0 +/- 0.05 but got 1.267687908496732
+FAIL Scaling Image in Encoding from 128 x 192 to 64 x 64 Format: I420 assert_approx_equals: Scaled Image differs too much! Scaling from 128 x 192 to 64 x 64 Format:I420 expected 0 +/- 0.05 but got 1.2605392156862745
+

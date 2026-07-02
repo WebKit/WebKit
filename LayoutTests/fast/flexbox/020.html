@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+div {
+  display: -moz-box;
+  display: -webkit-box;
+  display: box;
+}
+
+.first {
+  -moz-box-flex-group: 1;
+  -webkit-box-flex-group: 1;
+  box-flex-group: 1;
+  background-color: green;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+}
+
+.second {
+  -moz-box-flex-group: 2;
+  -webkit-box-flex-group: 2;
+  box-flex-group: 2;
+  background-color: red;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+}
+</style>
+</head>
+<body>
+<p>You should see a 100x100 green square below.  If you see any red, the test has failed.  This test is checking
+for box-flex-group support.</p>
+<div style="width:100px;height:100px;background-color:red">
+  <div class="first"></div>
+  <div class="second"></div>
+</div>
+</body>
+</html>

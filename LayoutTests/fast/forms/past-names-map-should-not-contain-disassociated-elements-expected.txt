@@ -1,0 +1,16 @@
+This test ensures elements are removed from the past names map of a form element once they are no longer associated with the form element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS form1['foo'] is input
+PASS form2.appendChild(form1.firstChild); form1['foo'] is undefined.
+PASS form2['foo'] is input
+PASS form2.removeChild(input);form2['foo'] is undefined.
+PASS form1.appendChild(input); form1['foo'] is input
+PASS input.setAttribute('form', 'form1'); form1.removeChild(input); input.appendChild(form1); form1['foo'] is undefined.
+PASS form1['foo'] is not input
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

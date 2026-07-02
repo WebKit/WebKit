@@ -1,0 +1,32 @@
+<head>
+<script>
+async function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(20, 70);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
+}
+
+function selectClicked() {
+    var message = "Passed";
+    var paragraph = document.createElement('p');
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById('console').appendChild(paragraph);
+    testRunner?.notifyDone();
+}
+</script>
+</head>
+<body onload="test();">
+<p>This tests clicking on an empty select. If successful, the console message says Passed. See bug 11765.
+<form>
+<select  onclick="selectClicked()" style="width:100px;height:100px;" id="select" size=2>
+</select>
+</form>
+<p id="console"></p>
+</body>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.grid {
+    display: grid;
+    grid-template-rows: [header] 20px [title] auto [body] auto [button] 30px;
+    grid-gap: 20px;
+
+    width: 300px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    font-family: system-ui;
+}
+
+.grid + .grid {
+    margin-top: 1em;
+}
+
+.header {
+    grid-row: header;
+}
+
+.title {
+    grid-row: title;
+
+    font-size: 1.1em;
+    font-weight: bold;
+    word-break: keep-all;
+}
+
+.body {
+    grid-row: body;
+}
+
+.button {
+    grid-row: button;
+
+    appearance: none;
+    border-radius: 5px;
+    border: none;
+    background: royalblue;
+    color: white;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+<div class="grid">
+    <div class="header">one</div>
+    <div class="title">two</div>
+    <div class="description">three</div>
+    <button class="button">four</button>
+</div>
+<script>
+const grid = document.querySelector(".grid");
+grid.appendChild(grid.children[0]);
+grid.appendChild(grid.children[1]);
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL Fetched sheet replaces placeholder including manually-inserted rules. assert_equals: Before insertRule: expected 1 placeholder(s). expected 1 but got 0
+

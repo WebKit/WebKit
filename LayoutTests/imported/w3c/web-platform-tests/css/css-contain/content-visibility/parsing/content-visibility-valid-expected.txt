@@ -1,0 +1,5 @@
+
+PASS e.style['content-visibility'] = "visible" should set the property value
+PASS e.style['content-visibility'] = "auto" should set the property value
+PASS e.style['content-visibility'] = "hidden" should set the property value
+

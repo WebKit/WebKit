@@ -1,0 +1,12 @@
+
+
+
+PASS Removed elements are moved into separate radio groups.
+PASS Disconnected radio buttons should be contained by their tree root.
+PASS Disconnected radio buttons can serve as radio group containers.
+PASS Shadow roots in disconnected trees can serve as radio group containers.
+PASS Non-HTML elements in disconnected trees can serve as radio group containers.
+PASS Disconnected document fragments can serve as radio group containers.
+PASS Appending input radio input into a disconnect tree don't update the other radio inputs in the same radio group.
+PASS Appending input radio input into a disconnect form should update the other radio inputs in the same radio group.
+

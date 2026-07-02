@@ -1,0 +1,7 @@
+
+PASS 'grid' with: grid-template-columns: 1fr auto auto auto; and grid-template-rows: 1fr auto auto auto;
+PASS 'grid' with: grid-template-columns: minmax(0, 1fr) auto auto auto; and grid-template-rows: minmax(0, 1fr) auto auto auto;
+PASS 'grid' with: grid-template-columns: 1fr 1fr 1fr 1fr; and grid-template-rows: 1fr 1fr 1fr 1fr;
+PASS 'grid' with: grid-template-columns: 1fr 1fr 1fr 4fr; and grid-template-rows: 1fr 1fr 1fr 4fr;
+PASS 'grid' with: grid-template-columns: 1fr 1fr 1fr; and grid-template-rows: 1fr 1fr 1fr;
+

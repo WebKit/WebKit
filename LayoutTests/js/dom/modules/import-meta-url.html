@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test import.meta.url.");
+
+var base = location.href.replace(/\/[^/]*$/, '');
+window.jsTestIsAsync = true;
+debug("Module is not executed yet.");
+</script>
+<script type="module">
+window.url = import.meta.url;
+shouldBeTrue(`url.endsWith("js/dom/modules/import-meta-url.html")`);
+</script>
+<script type="module" src="script-tests/import-meta-url-top-level.js"></script>
+<script type="module" src="script-tests/import-meta-url.js"></script>
+<script type="module">
+finishJSTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

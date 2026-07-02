@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that the iframe receives a context menu event twice.");
+jsTestIsAsync = true;
+
+var messageCount = 0;
+addEventListener("message", async (event) => {
+    if (event.data != "contextmenu")
+        return;
+
+    testPassed("iframe received context menu event.");
+    messageCount++;
+    if (messageCount == 1) {
+        await eventSender.asyncMouseUp(2);
+        await eventSender.asyncMouseDown(2);
+        await eventSender.asyncMouseUp(2);
+    } else if (messageCount == 2)
+        finishJSTest();
+});
+
+async function onLoad() {
+    let frame = document.getElementById("frame");
+    let x = frame.offsetParent.offsetLeft + frame.offsetLeft + frame.offsetWidth / 2;
+    let y = frame.offsetParent.offsetTop + frame.offsetTop + frame.offsetHeight / 2;
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown(2);
+}
+</script>
+<iframe onload="onLoad()" id="frame" src="http://localhost:8000/site-isolation/mouse-events/resources/context-menu-event-listener.html"></iframe>

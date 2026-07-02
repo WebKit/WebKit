@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WasmOpcodeOrigin.h"
+
+#include "B3Origin.h"
+
+#include <wtf/text/MakeString.h>
+
+#if ENABLE(WEBASSEMBLY)
+
+namespace JSC { namespace Wasm {
+
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+OpcodeOrigin::OpcodeOrigin(B3::Origin origin)
+{
+    ASSERT(origin.isPackedWasmOrigin());
+    packedData = origin.m_data.bits();
+}
+
+B3::Origin OpcodeOrigin::asB3Origin()
+{
+    return B3::Origin(packedData);
+}
+#endif
+
+ASCIILiteral OpcodeOrigin::opcodeString() const
+{
+    switch (opcode()) {
+#if USE(JSVALUE64)
+    case OpType::ExtGC:
+        return makeString(gcOpcode());
+    case OpType::Ext1:
+        return makeString(ext1Opcode());
+    case OpType::ExtSIMD:
+        return makeString(simdOpcode());
+    case OpType::ExtAtomic:
+        return makeString(atomicOpcode());
+#endif
+    default:
+        return makeString(opcode());
+    }
+}
+
+void OpcodeOrigin::dump(PrintStream& out) const
+{
+    out.print("{opcode: ", opcodeString(), ", location: ", RawHex(location()), "}");
+}
+
+static_assert(sizeof(OpcodeOrigin) == sizeof(uint64_t), "this packing doesn't work if this isn't the case");
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+static_assert(sizeof(B3::Origin) == sizeof(uint64_t), "this packing doesn't work if this isn't the case");
+#endif
+
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

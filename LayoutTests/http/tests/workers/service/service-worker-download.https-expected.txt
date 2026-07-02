@@ -1,0 +1,5 @@
+Download started.
+Downloading URL with suggested filename "download-binary.py"
+Download size: 9.
+Download completed.
+

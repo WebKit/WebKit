@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body style="margin: 0px;">
+<div id="text" style="font: 20px Ahem; width: 700px;">pppppppppppppp
+<div style="font-family: Times;">This test makes sure that hit-testing in a scrolled overflow:scroll area works as expected. The test succeeds if the first character is selected.</div>
+</div>
+<script>
+var text = document.getElementById("text").childNodes[0];
+var selection = window.getSelection();
+selection.removeAllRanges();
+var range = document.createRange();
+range.setStart(text, 0);
+range.setEnd(text, 1);
+selection.addRange(range);
+</script>
+</body>
+</html>

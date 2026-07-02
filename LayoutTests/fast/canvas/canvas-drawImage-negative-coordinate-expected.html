@@ -1,0 +1,19 @@
+<style>
+    canvas {
+        outline: 1px solid red;
+        aspect-ratio: 1 / 1;
+    }
+</style>
+<body>
+    <canvas id="test"></canvas>
+    <script>
+        const destCanvas = document.querySelector('#test');
+        const destCtx = destCanvas.getContext('2d');
+        destCtx.imageSmoothingEnabled = false;
+
+        destCtx.fillStyle = 'yellow';
+        destCtx.fillRect(70, 70, 150, 150);
+        destCtx.fillStyle = 'green';
+        destCtx.fillRect(95, 95, 100, 60);
+    </script>
+</body>

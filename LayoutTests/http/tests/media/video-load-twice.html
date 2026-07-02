@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src=../../media-resources/media-file.js></script>
+<script src=../../media-resources/video-test.js></script>
+<script>
+    var file = findMediaFile("video", "http://127.0.0.1:8000/resources/test");
+
+    function createVideo() {
+        var video = document.createElement("video");
+        document.body.appendChild(video);
+        findMediaElement();
+        waitForEvent('loadedmetadata');
+        waitForEvent('loadeddata');
+        waitForEvent('canplay');
+    }
+
+    function firstCanPlayThrough() {
+        document.body.removeChild(video);
+        createVideo();
+        waitForEventOnce('canplaythrough', endTest);
+        run("video.src = file");
+    }
+
+    function init() {
+        createVideo();
+        waitForEventOnce('canplaythrough', firstCanPlayThrough);
+        run("video.src = file");
+    }
+</script>
+</head>
+<body onload="init()">
+</body>
+</html>

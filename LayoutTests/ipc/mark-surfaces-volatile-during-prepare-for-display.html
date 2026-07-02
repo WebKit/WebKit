@@ -1,0 +1,97 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<!doctype html>
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function runTest() {
+    if (!window.IPC) {
+        testRunner.notifyDone();
+        return;
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const streamConnection = CoreIPC.newStreamConnection();
+    const renderingBackendIdentifier = randomIPCID();
+
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackendIdentifier,
+        connectionHandle: streamConnection
+    });
+
+    const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInitializeReply = streamConnection.connection.waitForMessage(
+        renderingBackendIdentifier,
+        IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name,
+        1
+    );
+    streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+    const imageBufferSetIdentifier = randomIPCID();
+    const graphicsContextIdentifier = randomIPCID();
+
+    remoteRenderingBackend.CreateImageBufferSet({
+        identifier: imageBufferSetIdentifier,
+        contextIdentifier: graphicsContextIdentifier,
+    });
+
+    const remoteImageBufferSet = streamConnection.newInterface("RemoteImageBufferSet", imageBufferSetIdentifier);
+    const remoteGraphicsContext = streamConnection.newInterface("RemoteGraphicsContext", graphicsContextIdentifier);
+
+    remoteImageBufferSet.UpdateConfiguration({
+        configuration: {
+            logicalSize: { width: 128, height: 128 },
+            resolutionScale: 1.0,
+            colorSpace: {
+                serializableColorSpace: {
+                    alias: {
+                        optionalValue: {
+                            m_cgColorSpace: {
+                                alias: {
+                                    variantType: 'WebCore::ColorSpace',
+                                    variant: 19
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            contentsFormat: 1,
+            bufferFormat: { pixelFormat: 2, useLosslessCompression: 0 },
+            renderingMode: 1,
+            renderingPurpose: 3,
+        },
+    });
+
+    remoteRenderingBackend.PrepareImageBufferSetsForDisplaySync({
+        swapBuffersInput: [{
+            remoteBufferSet: imageBufferSetIdentifier,
+            dirtyRegion: { data: { m_segments: [], m_spans: [] } },
+            supportsPartialRepaint: false,
+            hasEmptyDirtyRegion: false,
+            requiresClearedPixels: false,
+        }],
+    });
+
+    remoteRenderingBackend.MarkSurfacesVolatile({
+        requestIdentifier: randomIPCID(),
+        renderingResourceIdentifiers: [[imageBufferSetIdentifier, 1]],
+        forcePurge: false,
+    });
+
+    remoteGraphicsContext.SetShouldAntialias({
+        shouldAntialias: true
+    });
+
+    streamConnection.connection.invalidate();
+    testRunner.notifyDone();
+}
+
+runTest();
+</script>

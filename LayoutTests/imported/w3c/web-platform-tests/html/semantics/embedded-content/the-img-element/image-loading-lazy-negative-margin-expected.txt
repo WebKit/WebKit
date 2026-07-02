@@ -1,0 +1,4 @@
+
+
+PASS A loading=lazy image that is pulled into an `overflow: hidden` area by a negative margin will not load because IntersectionObserver sees it as non-intersecting
+

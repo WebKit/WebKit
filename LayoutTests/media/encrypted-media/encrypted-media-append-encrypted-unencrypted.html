@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Append encrypted and unencrypted content</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-source/media-source-loader-simple.js"></script>
+    <script src="medias-enc.js"></script>
+    <script src="clearKey/encrypted-media-clearKey-handler.js"></script>
+    <script>
+
+     const audioConf = streamMedias["encryptedToUnencryptedMSE"].audio;
+
+     function runTest() {
+
+         findMediaElement();
+
+         const emeHandler = new EncryptedMediaHandler(video, audioConf);
+         if (!emeHandler)
+             endTest();
+
+         function checkEndTest() {
+             consoleWrite("All appends are completed");
+             testExpected('video.duration', 15, '>=');
+             run('video.currentTime = 2');
+             consoleWrite("Playing from second 2 to 4, switch from encrypted to unencrypted happens in second 3.");
+             video.addEventListener('timeupdate', function onTimeUpdate(event) {
+                 if (video.currentTime >= 4) {
+                     testExpected('video.currentTime', 4, '>=');
+                     endTest();
+                 }
+             });
+         }
+
+         consoleWrite("Appending chunks...");
+         const ms = new MediaSourceLoaderSimple(video);
+         ms.onready = function() {
+             ms.createSourceBuffer(audioConf, 11).then(checkEndTest, failTest);
+         };
+     }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Tests that the test harness for non-stub inspector tests can load and run a test.
+
+Logged a message from the inspector page.
+

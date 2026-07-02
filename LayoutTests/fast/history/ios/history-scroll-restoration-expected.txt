@@ -1,0 +1,16 @@
+Tests that history.scrollRestoration works for same-document navigations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'scrollRestoration' in history is true
+PASS history.scrollRestoration is "auto"
+PASS window.scrollX is 123
+PASS window.scrollY is 456
+PASS history.scrollRestoration is "manual"
+PASS window.scrollX is 333
+PASS window.scrollY is 555
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

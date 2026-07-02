@@ -1,0 +1,19 @@
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Check that CSSStyleDeclaration.length is accurate after custom property modifications.");
+
+var computedStyle = window.getComputedStyle(document.body);
+var initialLength = computedStyle.length;
+document.documentElement.style.setProperty('--computed', '#abc');
+var afterAddingComputedPropertyLength = computedStyle.length;
+document.body.offsetTop;
+var afterForcedLayoutLength = computedStyle.length;
+
+shouldBeTrue("afterAddingComputedPropertyLength > initialLength");
+shouldBeTrue("afterAddingComputedPropertyLength === afterForcedLayoutLength");
+</script>
+<script src="../../../resources/js-test-pre.js"></script>
+</body>
+</html>

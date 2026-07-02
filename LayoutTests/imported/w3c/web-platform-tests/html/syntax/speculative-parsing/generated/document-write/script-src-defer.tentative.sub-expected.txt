@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=1293cf47-5fb1-4a41-b9cb-8e9f2845580d&amp;encodingcheck=&Gbreve;" defer></script>
+
+
+
+PASS Speculative parsing, document.write(): script-src-defer
+

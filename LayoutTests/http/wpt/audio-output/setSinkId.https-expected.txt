@@ -1,0 +1,5 @@
+
+PASS setSinkId requires user gesture
+PASS setSinkId and sinkId
+PASS setSinkid can be called close to a devicechange event
+

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div style="display: grid;">
+    <div style="display: grid; grid-template-areas: 'header content'; grid-template-columns: subgrid;">
+        <div style="grid-area: content;">Test passes if it does not crash.</div>
+    </div>
+</body>
+</html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>

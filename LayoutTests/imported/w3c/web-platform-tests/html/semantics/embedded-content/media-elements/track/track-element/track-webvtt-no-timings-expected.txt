@@ -1,0 +1,4 @@
+
+
+PASS Cue without timings are ignored
+

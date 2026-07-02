@@ -1,0 +1,35 @@
+AAA 99
+AAA 100
+AAA 349
+AAA 350
+AAA 549
+AAA 550
+AAA 749
+AAA 750
+AAA 899
+AAA 900
+AAA 901
+
+PASS Test lighter font-weight for base weight 99
+PASS Test bolder font-weight for base weight 99
+PASS Test lighter font-weight for base weight 100
+PASS Test bolder font-weight for base weight 100
+PASS Test lighter font-weight for base weight 349
+PASS Test bolder font-weight for base weight 349
+PASS Test lighter font-weight for base weight 350
+PASS Test bolder font-weight for base weight 350
+PASS Test lighter font-weight for base weight 549
+PASS Test bolder font-weight for base weight 549
+PASS Test lighter font-weight for base weight 550
+PASS Test bolder font-weight for base weight 550
+PASS Test lighter font-weight for base weight 749
+PASS Test bolder font-weight for base weight 749
+PASS Test lighter font-weight for base weight 750
+PASS Test bolder font-weight for base weight 750
+PASS Test lighter font-weight for base weight 899
+PASS Test bolder font-weight for base weight 899
+PASS Test lighter font-weight for base weight 900
+PASS Test bolder font-weight for base weight 900
+PASS Test lighter font-weight for base weight 901
+PASS Test bolder font-weight for base weight 901
+

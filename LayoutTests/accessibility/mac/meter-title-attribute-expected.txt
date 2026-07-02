@@ -1,0 +1,26 @@
+This test ensures the title attribute on meter elements is exposed as part of the accessible description, not as help text.
+
+Meter with title attribute:
+	AXTitle:
+	AXDescription: Fuel level
+	AXHelp:
+PASS: meterWithTitle.description.includes('Fuel level') === true
+PASS: meterWithTitle.helpText.includes('Fuel level') === false
+
+Meter without title attribute:
+	AXTitle:
+	AXDescription:
+	AXHelp:
+PASS: meterWithoutTitle.description === 'AXDescription: '
+
+After dynamically adding title attribute:
+	AXTitle:
+	AXDescription: Battery level
+	AXHelp:
+PASS: meterWithoutTitle.description.includes('Battery level') === true
+PASS: meterWithoutTitle.helpText.includes('Battery level') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

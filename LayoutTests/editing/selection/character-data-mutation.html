@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures WebKit adjusts or clears the selection when either the start or the end container was modified.</p>
+<div id="test" contenteditable></div>
+<pre>
+<script>
+
+var test = document.getElementById('test');
+test.focus();
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var baseIsFirst = true;
+
+function runSingleTest(actor, isStart, expectedOffset) {
+    test.innerHTML = '<span>hello</span> world';
+
+    // Select "llo wo"
+    var selection = window.getSelection();
+    if (baseIsFirst)
+        selection.setBaseAndExtent(test.firstChild.firstChild, 2, test.lastChild, 3);
+    else
+        selection.setBaseAndExtent(test.lastChild, 3, test.firstChild.firstChild, 2);
+    var originalOffset = isStart ? selection.getRangeAt(0).startOffset : selection.getRangeAt(0).endOffset;
+    var action = isStart ? actor(test.firstChild.firstChild, 'startContainer') : actor(test.lastChild, 'endContainer');
+    var message = null;
+    var passed = false;
+    if (typeof(expectedOffset) == 'undefined') {
+        if (selection.rangeCount)
+            message = 'did not clear selection';
+        else {
+            message = 'cleared selection';
+            passed = true;
+        }
+    } else if (!selection.rangeCount)
+        message = 'cleared selection unexpectedly';
+    else if ((selection.getRangeAt(0).startContainer == selection.baseNode
+        && selection.getRangeAt(0).startOffset == selection.baseOffset) ^ baseIsFirst)
+        message = 'exchanged base and extent';
+    else {
+        var actualOffset = isStart ? selection.getRangeAt(0).startOffset : selection.getRangeAt(0).endOffset;
+        message = actualOffset == originalOffset ? 'did not move selection' : 'moved the offset from ' +
+            originalOffset + ' to ' + actualOffset;
+
+        if (actualOffset != expectedOffset)
+            message += ' but expected ' + expectedOffset;
+        else
+            passed = true;
+    }
+
+    document.write((passed ? 'PASS: ' : 'FAIL: ') + action + ' ' + message + '\n');
+}
+
+function runTestPairs(actor, expectedStartOffset, expectedEndOffset, skipEnd) {
+    runSingleTest(actor, true, expectedStartOffset);
+    if (!skipEnd)
+        runSingleTest(actor, false, expectedEndOffset);
+}
+
+function runTests() {
+    runTestPairs(function() { test.removeChild(test.firstChild); return 'Removing the parent of startContainer'; }, 0, undefined, true);
+    runTestPairs(function(node, nodeName) { node.nodeValue = 'a'; return 'Replacing nodeValue of ' + nodeName; }, 0, 0);
+    runTestPairs(function(node, nodeName) { node.appendData(' WebKit'); return 'Appending " WebKit" to ' + nodeName; }, 2, 3);
+
+    runTestPairs(function(node, nodeName) { node.insertData(2, 'WebKit ');
+        return 'Inserting " WebKit" to ' + nodeName + ' before the end point'; }, 2, 10);
+    runTestPairs(function(node, nodeName) { node.insertData(3, 'WebKit ');
+        return 'Inserting " WebKit" to ' + nodeName + ' after the end point'; }, 2, 3);
+
+    runTestPairs(function(node, nodeName) { node.deleteData(1, 4);
+        return 'Removing text in ' + nodeName + ' containing the end point'; }, 1, 1);
+    runTestPairs(function(node, nodeName) { node.deleteData(0, 3);
+        return 'Removing text in ' + nodeName + ' containing the start point'; }, 0, 0);
+    runTestPairs(function(node, nodeName) { node.deleteData(0, 2);
+        return 'Removing 2 characters in ' + nodeName + ' before the end point'; }, 0, 1);
+    runTestPairs(function(node, nodeName) { node.deleteData(0, 3);
+        return 'Removing 3 characters at the beginning of ' + nodeName; }, 0, 0);
+    runTestPairs(function(node, nodeName) { node.deleteData(3, 2);
+        return 'Removing text in ' + nodeName + ' after the end point'; }, 2, 3);
+
+    runTestPairs(function(node, nodeName) { node.replaceData(1, 4, '1234');
+        return 'Replacing text in ' + nodeName + ' containing the end point'; }, 1, 1);
+    runTestPairs(function(node, nodeName) { node.replaceData(0, 2, '12');
+        return 'Replacing 2 characters in ' + nodeName + ' by 2 characters before the end point'; }, 0, 3);
+    runTestPairs(function(node, nodeName) { node.replaceData(0, 2, '1');
+        return 'Replacing 2 characters in ' + nodeName + ' by 1 characters before the end point'; }, 0, 2);
+    runTestPairs(function(node, nodeName) { node.replaceData(3, 2, '12');
+        return 'Replacing 2 characters in ' + nodeName + ' by 2 characters after the end point'; }, 2, 3);
+}
+
+document.write('Base is first:\n');
+runTests();
+
+baseIsFirst = false;
+
+document.write('\nExtent is first:\n');
+runTests();
+
+test.style.display = 'none';
+
+document.write('\nDONE');
+</script>
+</pre>
+</body>
+</html>

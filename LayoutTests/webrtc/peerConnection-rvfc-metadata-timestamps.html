@@ -1,0 +1,152 @@
+<!doctype html><!-- webkit-test-runner [ RequestVideoFrameCallbackEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>VideoFrameMetadata WebRTC timestamp semantics: captureTime/receiveTime/rtpTimestamp</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src="routines.js"></script>
+</head>
+<body>
+    <video id="local" autoplay muted></video>
+    <video id="remote" autoplay muted></video>
+    <script>
+// MediaCapture Extensions §"Video Capture Frame Timestamp Concepts":
+//   https://w3c.github.io/mediacapture-extensions/#video-timestamp-concepts
+//
+// VideoFrameMetadata adds three WebRTC-only fields whose types are
+// spec-mandated:
+//   captureTime: DOMHighResTimeStamp, relative to Performance.timeOrigin
+//   receiveTime: DOMHighResTimeStamp, relative to Performance.timeOrigin
+//   rtpTimestamp: unsigned long (i.e. 32-bit unsigned integer)
+//
+// The upstream WPT test (imported/.../request-video-frame-callback-webrtc.https.html)
+// only asserts presence via `"x" in metadata`. This test asserts the
+// type/range semantics that the spec actually requires.
+//
+// captureTime is only populated for bidirectional streams and even then
+// only after enough RTCP reports flow back; the WPT test acknowledges it
+// as "too unreliable to include in tests". We grab a stretch of frames
+// and assert captureTime's type/range only when it does appear, while
+// always asserting receiveTime and rtpTimestamp (which populate from the
+// first received frame).
+
+async function grabNextMetadata(video) {
+    return new Promise((resolve, reject) => {
+        video.requestVideoFrameCallback((now, metadata) => resolve(metadata));
+        setTimeout(() => reject("Timed out waiting for metadata"), 5000);
+    });
+}
+
+// Collect up to `frameCount` frames of metadata so individual subtests
+// can find a frame that has the field they're checking. captureTime
+// requires the same track to flow in both directions, so add the local
+// track to both peers.
+async function collectFrames(test, frameCount) {
+    const localStream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480 }, audio: true,
+    });
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections(pc1 => {
+            for (const track of localStream.getTracks())
+                pc1.addTrack(track, localStream);
+        }, pc2 => {
+            for (const track of localStream.getTracks())
+                pc2.addTrack(track, localStream);
+            pc2.ontrack = e => resolve(e.streams[0]);
+        });
+        setTimeout(() => reject("PeerConnection setup timed out"), 5000);
+    });
+
+    const video = document.getElementById("remote");
+    video.srcObject = remoteStream;
+    await video.play();
+
+    // captureTime requires bidirectional flow + at least one RTCP
+    // sender-report; give the link time to settle before sampling frames.
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const frames = [];
+    for (let i = 0; i < frameCount; i++)
+        frames.push(await grabNextMetadata(video));
+    return frames;
+}
+
+// Shared across subtests so we don't re-establish a PeerConnection per
+// assertion (each setup takes ~1 second). The first subtest performs
+// the collection; subsequent subtests await the same promise.
+let framesPromise = null;
+function getFrames(test) {
+    if (!framesPromise)
+        framesPromise = collectFrames(test, 200);
+    return framesPromise;
+}
+
+// VideoFrameMetadata.receiveTime is DOMHighResTimeStamp relative to
+// Performance.timeOrigin. Should populate from the first received frame.
+promise_test(async test => {
+    const frames = await getFrames(test);
+    const frame = frames.find(f => "receiveTime" in f);
+    assert_not_equals(frame, undefined,
+        "at least one frame has receiveTime");
+    assert_equals(typeof frame.receiveTime, "number",
+        "receiveTime is a number");
+    assert_greater_than(frame.receiveTime, 0,
+        "receiveTime is positive");
+    assert_less_than(frame.receiveTime, performance.now() + 1000,
+        "receiveTime is in the past relative to performance.now() " +
+        "(i.e. measured against Performance.timeOrigin, not a wall clock)");
+}, "VideoFrameMetadata.receiveTime is a DOMHighResTimeStamp relative to Performance.timeOrigin");
+
+// VideoFrameMetadata.rtpTimestamp is unsigned long (32-bit unsigned
+// integer). Should populate from the first received frame.
+promise_test(async test => {
+    const frames = await getFrames(test);
+    const frame = frames.find(f => "rtpTimestamp" in f);
+    assert_not_equals(frame, undefined,
+        "at least one frame has rtpTimestamp");
+    assert_equals(typeof frame.rtpTimestamp, "number",
+        "rtpTimestamp is a number");
+    assert_true(Number.isInteger(frame.rtpTimestamp),
+        "rtpTimestamp is an integer");
+    assert_greater_than_equal(frame.rtpTimestamp, 0,
+        "rtpTimestamp is non-negative");
+    assert_less_than_equal(frame.rtpTimestamp, 0xFFFFFFFF,
+        "rtpTimestamp fits in unsigned long (32-bit)");
+}, "VideoFrameMetadata.rtpTimestamp is an unsigned long (32-bit unsigned integer)");
+
+// VideoFrameMetadata.captureTime is DOMHighResTimeStamp relative to
+// Performance.timeOrigin. captureTime is "too unreliable" to require on
+// every frame (WPT acknowledges this) and in many WebKit configurations
+// it doesn't populate at all over a finite frame window.
+//
+// Two spec deviations both cause this subtest to fail:
+//   (a) captureTime populates as an NTP-epoch wall-clock value
+//       (~4e12 ms since 1900-01-01) instead of relative to
+//       Performance.timeOrigin (~ small ms count).
+//   (b) captureTime never populates within the frame window.
+//
+// Both are tracked by rdar://180672837. We collapse them into a single
+// assertion with one deterministic message so the baseline is stable
+// regardless of which branch is hit on a given run.
+promise_test(async test => {
+    const frames = await getFrames(test);
+    const frame = frames.find(f => "captureTime" in f);
+    const captureOK = frame !== undefined
+        && typeof frame.captureTime === "number"
+        && frame.captureTime > 0
+        && frame.captureTime < performance.now() + 1000;
+    assert_true(captureOK,
+        "captureTime is reliably populated and is a DOMHighResTimeStamp " +
+        "relative to Performance.timeOrigin (small number close to " +
+        "performance.now(); not an NTP-epoch wall-clock value)");
+    if ("receiveTime" in frame) {
+        assert_greater_than_equal(frame.receiveTime, frame.captureTime,
+            "receiveTime >= captureTime (frame received after capture)");
+    }
+}, "VideoFrameMetadata.captureTime is a DOMHighResTimeStamp relative to Performance.timeOrigin");
+    </script>
+</body>
+</html>

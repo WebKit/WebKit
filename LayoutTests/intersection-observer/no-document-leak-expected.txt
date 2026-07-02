@@ -1,0 +1,10 @@
+Tests that using IntersectionObserver does not cause the document to get leaked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Document did not leak
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

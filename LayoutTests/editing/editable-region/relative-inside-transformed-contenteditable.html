@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.transformed {
+    box-shadow: 0 0 20px black;
+    background-color: rgba(255, 255, 255, 0.75);
+    transform: translate3d(20px, 100px, 1px);
+    width: 250px;
+    padding: 30px;
+}
+</style>
+</head>
+<body>
+<div class="transformed">
+    <div style="position: relative; left: 20px; border: 1px solid blue" contenteditable="true"></div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+if (window.internals)
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+</script>
+</body>
+</html>

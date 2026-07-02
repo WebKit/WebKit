@@ -1,0 +1,23 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/1x1-black-30-alpha.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-data-url-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ib-split-2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ib-split-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-inline-sliced-1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/mask-image/reference/mask-image-svg-child-will-change-ref.html

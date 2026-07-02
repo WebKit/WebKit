@@ -1,0 +1,25 @@
+After setting the view scale to 1.15, the minimum scale is: 1.15000
+After setting the view scale to 1.15, the current scale is: 1.15000
+
+After setting the view scale to 1.25, the minimum scale is: 1.25000
+After setting the view scale to 1.25, the current scale is: 1.25000
+
+After setting the view scale to 1.5, the minimum scale is: 1.50000
+After setting the view scale to 1.5, the current scale is: 1.50000
+
+After setting the view scale to 1.75, the minimum scale is: 1.75000
+After setting the view scale to 1.75, the current scale is: 1.75000
+
+After setting the view scale to 2, the minimum scale is: 2.00000
+After setting the view scale to 2, the current scale is: 2.00000
+
+After setting the view scale to 2.5, the minimum scale is: 2.50000
+After setting the view scale to 2.5, the current scale is: 2.50000
+
+After setting the view scale to 3, the minimum scale is: 3.00000
+After setting the view scale to 3, the current scale is: 3.00000
+
+After setting the view scale to 1, the minimum scale is: 1.00000
+After setting the view scale to 1, the current scale is: 1.00000
+
+This test verifies that changing view scale to zoom to a scale of S > 1 results in a minimum scale of S, rather than a value close to (but not exactly) S. This test requires WebKitTestRunner.

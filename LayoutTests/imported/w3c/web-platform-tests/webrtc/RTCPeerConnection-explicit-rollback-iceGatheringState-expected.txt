@@ -1,0 +1,8 @@
+
+PASS rolling back an ICE restart when gathering is complete should not result in iceGatheringState changes
+PASS rolling back an ICE restart when gathering is complete should not result in iceGatheringState changes (DataChannel case)
+PASS setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete"
+PASS setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete" (DataChannel case)
+PASS setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering"
+PASS setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering" (DataChannel case)
+

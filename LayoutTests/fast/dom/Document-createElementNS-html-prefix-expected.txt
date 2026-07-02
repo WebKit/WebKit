@@ -1,0 +1,21 @@
+Tests that Document.createElementNS preserves a non-null prefix on known HTML elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.prefix is "foo"
+PASS element.localName is "textarea"
+PASS element.tagName is "FOO:TEXTAREA"
+PASS element.namespaceURI is "http://www.w3.org/1999/xhtml"
+PASS element.prefix is "foo"
+PASS element.localName is "article"
+PASS element.tagName is "FOO:ARTICLE"
+PASS element.namespaceURI is "http://www.w3.org/1999/xhtml"
+PASS element.prefix is "foo"
+PASS element.localName is "selectedcontent"
+PASS element.tagName is "FOO:SELECTEDCONTENT"
+PASS element.namespaceURI is "http://www.w3.org/1999/xhtml"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

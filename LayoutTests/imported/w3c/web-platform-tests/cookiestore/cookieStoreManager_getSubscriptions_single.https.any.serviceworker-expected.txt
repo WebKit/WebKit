@@ -1,0 +1,3 @@
+
+PASS getSubscriptions returns a subscription passed to subscribe
+

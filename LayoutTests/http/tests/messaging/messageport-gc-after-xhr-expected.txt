@@ -1,0 +1,11 @@
+Tests that MessagePort doesn't get GC'd while still entangled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Posting message to the iframe.
+PASS Received the message from the iframe. The MessagePort was not GC'd
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS moveBefore() is allowed in ShadowRoots (i.e., connected DocumentFragments)
+

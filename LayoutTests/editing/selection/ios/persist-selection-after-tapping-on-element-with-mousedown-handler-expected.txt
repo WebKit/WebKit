@@ -1,0 +1,3 @@
+WebKit
+The selected text is: "WebKit"
+This test verifies that the DOM selection is not dismissed when tapping on an element that preventDefault()s the mousedown event.

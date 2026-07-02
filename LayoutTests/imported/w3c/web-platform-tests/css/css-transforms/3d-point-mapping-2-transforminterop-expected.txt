@@ -1,0 +1,16 @@
+
+
+
+PASS More point mapping through 3D transform hierarchies, hittesting box1)
+PASS More point mapping through 3D transform hierarchies, hittesting box2)
+PASS More point mapping through 3D transform hierarchies, hittesting box3)
+PASS More point mapping through 3D transform hierarchies, hittesting box4)
+PASS More point mapping through 3D transform hierarchies, hittesting box5)
+PASS More point mapping through 3D transform hierarchies, hittesting box6)
+PASS More point mapping through 3D transform hierarchies, hittesting box7)
+PASS More point mapping through 3D transform hierarchies, hittesting box8)
+PASS More point mapping through 3D transform hierarchies, hittesting box9)
+PASS More point mapping through 3D transform hierarchies, hittesting box10)
+PASS More point mapping through 3D transform hierarchies, hittesting box11)
+PASS More point mapping through 3D transform hierarchies, hittesting box12)
+

@@ -1,0 +1,39 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "ANGLEDeqp.xcconfig"
+
+PRODUCT_NAME = ANGLEDeqpGLES2Tests;
+GCC_PREPROCESSOR_DEFINITIONS = ANGLE_DEQP_GLES2_TESTS $(inherited);
+HEADER_SEARCH_PATHS = $(ANGLE_HEADER_PATH_PREFIX)/src/tests $(inherited);
+ANGLE_OTHER_LDFLAGS = $(DEQP_LINK_FRAMEWORKS) $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME));
+ANGLE_OTHER_LDFLAGS_macosx = -framework Cocoa -framework IOKit -lz;
+ANGLE_OTHER_LDFLAGS_maccatalyst = -framework UIKit -framework IOKit -lz;
+ANGLE_OTHER_LDFLAGS_iphoneos = -framework UIKit -lz;
+ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_xros = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_xrsimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_appletvos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_appletvsimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
+ANGLE_OTHER_LDFLAGS_watchsimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);

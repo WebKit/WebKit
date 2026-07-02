@@ -1,0 +1,11 @@
+Using very little resources but still eligible for resource monitoring.
+
+<script>
+    window.unload = () => {
+        console.log('Should not be run');
+        window.parent.postMessage({ message: 'Bye from iframe 4!' }, '*');
+    };
+
+    const size = 1 * 1024;
+    fetch(`../generate-byte.py?size=${size}`);
+</script>

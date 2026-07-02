@@ -1,0 +1,19 @@
+
+PASS :array_types:arrayType="Uint8Array";useArrayBuffer=false
+PASS :array_types:arrayType="Uint8Array";useArrayBuffer=true
+PASS :array_types:arrayType="Uint16Array";useArrayBuffer=false
+PASS :array_types:arrayType="Uint16Array";useArrayBuffer=true
+PASS :array_types:arrayType="Uint32Array";useArrayBuffer=false
+PASS :array_types:arrayType="Uint32Array";useArrayBuffer=true
+PASS :array_types:arrayType="Int8Array";useArrayBuffer=false
+PASS :array_types:arrayType="Int8Array";useArrayBuffer=true
+PASS :array_types:arrayType="Int16Array";useArrayBuffer=false
+PASS :array_types:arrayType="Int16Array";useArrayBuffer=true
+PASS :array_types:arrayType="Int32Array";useArrayBuffer=false
+PASS :array_types:arrayType="Int32Array";useArrayBuffer=true
+PASS :array_types:arrayType="Float32Array";useArrayBuffer=false
+PASS :array_types:arrayType="Float32Array";useArrayBuffer=true
+PASS :array_types:arrayType="Float64Array";useArrayBuffer=false
+PASS :array_types:arrayType="Float64Array";useArrayBuffer=true
+PASS :multiple_writes_at_different_offsets_and_sizes:
+

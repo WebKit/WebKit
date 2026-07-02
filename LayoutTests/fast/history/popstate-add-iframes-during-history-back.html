@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function gc() {
+    if (typeof GCController !== 'undefined')
+        GCController.collect();
+    else {
+        for (let i = 0; i < 10000; i++)
+            new String("A".repeat(10000));
+    }
+}
+
+function step1() {
+    const childA = document.getElementById('childA').contentWindow;
+    childA.addEventListener('popstate', () => {
+        for (let i = 0; i < 40; i++) {
+            const f = document.createElement('iframe');
+            f.src = 'about:blank';
+            document.body.appendChild(f);
+        }
+        gc();
+    }, { once: true });
+
+    childA.history.pushState({k: 1}, '', '#x');
+
+    setTimeout(step2, 0);
+}
+
+function step2() {
+    history.back();
+    setTimeout(() => {
+        document.getElementById('result').textContent = 'PASS: Did not crash.';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 1000);
+}
+
+window.onload = () => {
+    setTimeout(step1, 0);
+};
+</script>
+</head>
+<body>
+<p>This test verifies that adding many iframes during a popstate event triggered by history.back() does not cause a crash.</p>
+<p id="result"></p>
+<iframe id="childA" src="resources/dummy.html"></iframe>
+<iframe id="childB" src="resources/dummy.html"></iframe>
+</body>
+</html>

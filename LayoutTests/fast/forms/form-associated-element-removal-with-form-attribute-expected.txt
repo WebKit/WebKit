@@ -1,0 +1,12 @@
+This tests removing an input element with form content attribute from the document.
+The input element should be dissociated from the form element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.form is null
+PASS form.elements.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+This test checks that the Permissions API change event works for service workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS message.data is "prompt"
+PASS receivedPostMessageResponse became true
+PASS message.data is "granted"
+PASS receivedPostMessageResponse became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

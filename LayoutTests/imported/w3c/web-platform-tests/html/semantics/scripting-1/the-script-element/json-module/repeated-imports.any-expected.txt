@@ -1,0 +1,7 @@
+
+PASS Importing a specifier that previously failed due to an incorrect type attribute can succeed if the correct attribute is later given
+PASS Importing a specifier that previously succeeded with the correct type attribute should fail if the incorrect attribute is later given
+PASS Two modules of different type with the same specifier can load if the server changes its responses
+PASS An import should always fail if the same specifier/type attribute pair failed previously
+PASS If an import previously succeeded for a given specifier/type attribute pair, future uses of that pair should yield the same result
+

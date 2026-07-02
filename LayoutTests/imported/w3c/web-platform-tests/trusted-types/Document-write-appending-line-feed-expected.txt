@@ -1,0 +1,8 @@
+
+PASS document.write() with TrustedHTML arguments only.
+PASS document.write() with String arguments only.
+PASS document.write() with TrustedHTML for all but one argument.
+PASS document.writeln() with TrustedHTML arguments only.
+PASS document.writeln() with String arguments only.
+PASS document.writeln() with TrustedHTML for all but one argument.
+

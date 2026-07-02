@@ -1,0 +1,175 @@
+# SPI used by WebCore on iOS.
+# More info: https://github.com/WebKit/WebKit/wiki/Using-SPI-on-Apple-platforms
+
+[[temporary-usage]]
+request = "rdar://141698311"
+cleanup = "rdar://157890302"
+classes = ["AXRemoteElement"]
+selectors = [
+    { name = "setOnClientSide:", class = "?" },
+    { name = "initWithUUID:andRemotePid:andContextId:", class = "?" },
+]
+
+[[temporary-usage]]
+request = "rdar://181067589"
+cleanup = "rdar://181067932"
+symbols = [
+    "kCMTextMarkupAttribute_PreventLineWrapping",
+]
+
+[[not-web-essential]]
+request = "rdar://157890384"
+classes = ["MTMaterialLayer"]
+symbols = [
+    "MTCoreMaterialRecipeNone",
+    "MTCoreMaterialRecipePlatformChromeDark",
+    "MTCoreMaterialRecipePlatformChromeLight",
+    "MTCoreMaterialRecipePlatformContentDark",
+    "MTCoreMaterialRecipePlatformContentLight",
+    "MTCoreMaterialRecipePlatformContentThickDark",
+    "MTCoreMaterialRecipePlatformContentThickLight",
+    "MTCoreMaterialRecipePlatformContentThinDark",
+    "MTCoreMaterialRecipePlatformContentThinLight",
+    "MTCoreMaterialRecipePlatformContentUltraThinDark",
+    "MTCoreMaterialRecipePlatformContentUltraThinLight",
+    "MTCoreMaterialVisualStyleCategoryFill",
+    "MTCoreMaterialVisualStyleCategoryStroke",
+    "MTCoreMaterialVisualStyleNone",
+    "MTCoreMaterialVisualStylePrimary",
+    "MTCoreMaterialVisualStyleQuaternary",
+    "MTCoreMaterialVisualStyleSecondary",
+    "MTCoreMaterialVisualStyleSeparator",
+    "MTCoreMaterialVisualStyleTertiary",
+    "MTVisualStylingCreateDictionaryRepresentation",
+]
+
+[[not-web-essential]]
+request = "rdar://157890562"
+symbols = [
+    # Only used for benchmarking, see 293525@main.
+    "nw_parameters_set_source_application",
+]
+
+[[temporary-usage]]
+request = "rdar://157890014"
+cleanup = "rdar://157890142"
+symbols = [
+    "nw_path_create_evaluator_for_endpoint",
+    "nw_path_evaluator_copy_path",
+    "nw_resolver_create_with_path",
+]
+
+[[temporary-usage]]
+request = "rdar://159806937"
+cleanup = "rdar://159806845"
+symbols = [
+    "CGDataProviderCreateWithCopyOfData",
+]
+
+[[temporary-usage]]
+request = "rdar://159947920"
+cleanup = "rdar://159948141"
+selectors = [
+    { name = "_enumerateAllDeclaredTypesUsingBlock:", class = "UTType" },
+    { name = "_parentTypes", class = "UTType" },
+]
+
+[[staging]]
+request = "rdar://161241270"
+cleanup = "rdar://161241477"
+symbols = [
+    "CTFontGetUIFontType",
+]
+requires-sdk = ["iOS <= 26.4"]
+
+[[temporary-usage]]
+request = "rdar://168834967"
+cleanup = "rdar://168834815"
+symbols = [
+    "CGContextGetColorSpace",
+]
+
+[[temporary-usage]]
+request = "rdar://161402565"
+cleanup = "rdar://161402756"
+symbols = [
+    "FPFontCreateMemorySafeFontsFromData",
+]
+
+[[temporary-usage]]
+cleanup = "rdar://171200085"
+symbols = [
+    "MACaptionAppearanceCopyPreviewText",
+]
+
+[[temporary-usage]]
+request = "rdar://175714562"
+cleanup = "rdar://175714562"
+symbols = [
+    "CGImageApplyHDRGainMap",
+    "CGImageSourceCopyAuxiliaryDataInfoAtIndexWithOptions",
+    "CGImageCreateFromIOSurface",
+    "CGImageCreatePixelBufferAttributesForHDRTarget",
+    "CGImageGetHDRGainMapHeadroom",
+    "kCGImageAuxiliaryDataInfoPixelBuffer",
+    "kCGImageAuxiliaryDataRepresentation",
+    "kCGImageAuxiliaryDataRepresentationPixelBuffer",
+    "kCGFlexRangeAlternateColorSpace",
+    "kCGTargetColorSpace",
+    "kCGTargetHeadroom",
+    "kCGTargetPixelFormat",
+]
+
+[[not-web-essential]]
+request = "rdar://168411469"
+symbols = [
+    "DDResultGetRange",
+]
+
+[[temporary-usage]]
+requires = [ "HAVE_CGCONTEXT_STROKE_ARC" ]
+request = "rdar://169211312"
+cleanup = "rdar://169211412"
+symbols = [
+    "CGContextStrokeArc",
+]
+
+ [[temporary-usage]]
+ request = "rdar://170272259"
+ cleanup = "rdar://170272662"
+ symbols = [
+     "CGIOSurfaceContextFlushQueue",
+ ]
+
+[[temporary-usage]]
+request = "rdar://168696619"
+cleanup = "rdar://169487203"
+classes = ["WCRBrowserEngineClient"]
+selectors = [
+    { name = "evaluateURL:mainDocumentURL:withCompletion:onCompletionQueue:", class = "WCRBrowserEngineClient" },
+]
+requires = ["HAVE_WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST"]
+
+[[temporary-usage]]
+requires = [ "HAVE_CGPATTERN_CREATE_WITH_IMAGE_TRANSFORM_STEP" ]
+request = "rdar://170092229"
+cleanup = "rdar://170092414"
+symbols = [
+    "CGPatternCreateWithImageTransformStep",
+]
+
+[[temporary-usage]]
+request = "rdar://165789536"
+cleanup = "rdar://173046822"
+classes = [
+    "_WTTextEffectManager",
+    "_WTTextPreview",
+]
+
+[[temporary-usage]]
+requires = [ "HAVE_CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION" ]
+request = "rdar://168960112"
+cleanup = "rdar://170480216"
+symbols = [
+    "CTFontHasComplexColorFormatForGlyph",
+]

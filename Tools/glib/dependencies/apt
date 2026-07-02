@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+
+# If the package $1 is available, prints it. Otherwise if package $2 is available, prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+aptIfElse() {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    elif apt-cache show $2 &>/dev/null; then
+        echo $2
+    else
+        echo "Neither package is available: $1, $2" 1>&2
+        exit 1
+    fi
+}
+
+aptIfExists() {
+    local ret
+
+    ret=$(apt show "$1" 2>/dev/null)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
+    if [[ "$ret" =~ "(virtual)" ]]; then
+        return
+    fi
+    echo "$1"
+}
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK/WPE.
+    autoconf
+    automake
+    autopoint
+    autotools-dev
+    bubblewrap
+    cmake
+    flite1-dev
+    gawk
+    gperf
+    gtk-doc-tools
+    intltool
+    itstool
+    libasound2-dev
+    libatk1.0-dev
+    libbz2-dev
+    libdrm-dev
+    libenchant-2-dev
+    libepoxy-dev
+    libevent-dev
+    libfile-copy-recursive-perl
+    libgcrypt20-dev
+    libgstreamer1.0-dev
+    libgstreamer-plugins-bad1.0-dev
+    libgstreamer-plugins-base1.0-dev
+    libinput-dev
+    libjpeg-dev
+    libhyphen-dev
+    libkate-dev
+    liblcms2-dev
+    libmanette-0.2-dev
+    libnghttp2-dev
+    libopenjp2-7-dev
+    libopenxr-dev
+    libpng-dev
+    libseccomp-dev
+    libsqlite3-dev
+    libsystemd-dev
+    libtasn1-6-dev
+    libtool
+    libvulkan-volk-dev
+    libwayland-dev
+    libwebp-dev
+    libwoff-dev
+    libxml2-utils
+    libxcb-glx0-dev
+    libxslt1-dev
+    mesa-common-dev
+    ninja-build
+    patch
+    ruby
+    $(aptIfExists gi-docgen)
+    $(aptIfExists libaom-dev)
+    $(aptIfExists libavif-dev)
+    $(aptIfExists libjxl-dev)
+    $(aptIfExists libsoup-3.0-dev)
+    $(aptIfExists libsysprof-capture-4-dev)
+    $(aptIfExists libyuv-dev)
+
+    # These are dependencies necessary for running tests.
+    apache2
+    binutils
+    curl
+    fonts-liberation
+    hyphen-de
+    hyphen-en-gb
+    hyphen-en-us
+    gdb
+    libcgi-pm-perl
+    psmisc
+    $(aptIfExists python3-legacy-cgi)
+    pulseaudio-utils
+    python3-gi
+    ruby-highline
+    ruby-json
+    time
+
+    # These are dependencies necessary for building the jhbuild.
+    bison
+    flex
+    git
+    gobject-introspection
+    gsettings-desktop-schemas-dev
+    gyp
+    libegl1-mesa-dev
+    libexpat1-dev
+    libgirepository1.0-dev
+    libgles2-mesa-dev
+    liborc-0.4-dev
+    libp11-kit-dev
+    libproxy-dev
+    libpsl-dev
+    libssl-dev
+    libtool-bin
+    libxml-libxml-perl
+    meson
+    nasm
+    python3-setuptools
+    uuid-dev
+    yasm
+    $(aptIfExists libfdk-aac-dev)
+
+    # These are dependencies necessary for using webkit-patch.
+    git-svn
+    subversion
+
+    # These are dependencies necessary for using git-webkit.
+    python3-dev
+
+    # These are GStreamer plugins needed to play different media files.
+    gstreamer1.0-gl
+    gstreamer1.0-libav
+    gstreamer1.0-plugins-bad
+    gstreamer1.0-plugins-base
+    gstreamer1.0-plugins-good
+    gstreamer1.0-plugins-ugly
+    gstreamer1.0-pulseaudio
+
+    # These are for generate-bundle script
+    patchelf
+    p11-kit
+
+    # These are required to run the WebKit Container SDK via wkdev-build /
+    # wkdev-sdk. `podman` is the rootless container engine the host wrappers
+    # invoke; `crun` is the runtime we pin podman to (runc does not support
+    # `podman run --init`); `catatonit` is the helper `--init` spawns as
+    # PID 1.
+    catatonit
+    crun
+    podman
+)

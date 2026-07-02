@@ -1,0 +1,9 @@
+{
+    "timeout": 600,
+    "count": 1,
+    "remote_archive": "http://plg.uwaterloo.ca/~dynjs/jsbench/suite/jsbench-2013.1.tar.gz",
+    "webserver_benchmark_patch": "data/patches/webserver/JSBench.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/JSBench.patch",
+    "entry_point": "index.html",
+    "output_file": "jsbench.result"
+}

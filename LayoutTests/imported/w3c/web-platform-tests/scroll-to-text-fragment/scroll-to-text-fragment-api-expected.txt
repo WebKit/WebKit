@@ -1,0 +1,5 @@
+This is a test page
+
+PASS Scroll to text is feature detectable via document.fragmentDirective
+PASS Setting document.fragmentDirective has no effect
+

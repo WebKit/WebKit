@@ -1,0 +1,212 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# File format:
+#
+# Identifier, Format string, Parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc) 
+
+CachedRawResourceRedirectReceived, "CachedRawResource::redirectReceived", (), DEFAULT, Network
+CachedResourceLoadNoAssociatedFrame, "CachedResource::load: No associated frame", (), DEFAULT, Network
+CachedResourceRedirectReceived, "CachedResource::redirectReceived:", (), DEFAULT, Network
+DocumentLoaderAttachToFrame, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::attachToFrame", (uint64_t, uint64_t, int), DEFAULT, Network
+DocumentLoaderCancelMainResourceLoad, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::cancelMainResourceLoad: (type=%d, code=%d)", (uint64_t, uint64_t, int, int, int), DEFAULT, Network
+DocumentLoaderDetachFromFrame, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::detachFromFrame", (uint64_t, uint64_t, int), DEFAULT, Network
+DocumentLoaderMainReceivedError, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::mainReceivedError: (type=%d, code=%d)", (uint64_t, uint64_t, int, int, int), DEFAULT, Network
+DocumentLoaderNotifyFinishedCancelingLoad, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::notifyFinished: canceling load (type=%d, code=%d)", (uint64_t, uint64_t, int, int, int), DEFAULT, Network
+DocumentLoaderSetMainDocumentError, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::setMainDocumentError: (type=%d, code=%d)", (uint64_t, uint64_t, int, int, int), DEFAULT, Network
+DocumentLoaderStartLoadingMainResourceEmptyDocument, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::startLoadingMainResource: Returning empty document", (uint64_t, uint64_t, int), DEFAULT, Network
+DocumentLoaderStartLoadingMainResourceStartingLoad, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::startLoadingMainResource: Starting load", (uint64_t, uint64_t, int), DEFAULT, Network
+DocumentLoaderStopLoading, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] DocumentLoader::stopLoading", (uint64_t, uint64_t, int), DEFAULT, Network
+FontCacheCoreTextRegisterError, "Could not register font %" PRIVATE_LOG_STRING ", error %" PUBLIC_LOG_STRING "", (CString, CString), DEFAULT, Fonts
+FontCacheCoreTextRegisterFont, "Registering font %" PRIVATE_LOG_STRING " with fontURL %" PRIVATE_LOG_STRING, (CString, CString), DEFAULT, Fonts
+FrameLoaderChangeLocation, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::changeLocation: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderCheckLoadCompleteForThisFrame, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::checkLoadCompleteForThisFrame: Finished frame load", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderCheckLoadCompleteForThisFrameFailedProvisionalLoad, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::checkLoadCompleteForThisFrame: Failed provisional load (isTimeout = %d, isCancellation = %d, errorCode = %d, httpsFirstApplicable = %d)", (uint64_t, uint64_t, int, int, int, int, int), DEFAULT, ResourceLoading
+FrameLoaderClearProvisionalLoad, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::clearProvisionalLoad: Clearing provisional document loader (navigationID=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderContinueLoadAfterNavigationPolicy, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: Setting provisional document loader (m_provisionalDocumentLoader=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderContinueLoadAfterNavigationPolicyCannotContinue, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: can't continue loading frame due to the following reasons (allowNavigationToInvalidURL = %d, requestURLIsValid = %d, navigationPolicyDecision = %d)", (uint64_t, uint64_t, int, int, int, int), DEFAULT, ResourceLoading
+FrameLoaderLoadDocumentLoader, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::load (DocumentLoader): frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadFrameLoadRequest, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::load (FrameLoadRequest): frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadFrameRequestFrameLoadStarted, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadFrameRequest: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadUrl, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadURL: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadUrlIntoChildFrame, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadURLIntoChildFrame: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadWithDocumentLoaderFrameLoadStarted, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadWithDocumentLoader: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadWithDocumentLoaderMainFrameLoadStarted, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadWithDocumentLoader: main frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderLoadWithNavigationAction, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::loadWithNavigationAction: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderPrepareForLoadStart, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::prepareForLoadStart: Starting frame load", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderReload, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::reload: frame load started", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderSetDocumentLoader, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setDocumentLoader: Setting document loader to %" PRIu64 " (was %" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderSetPolicyDocumentLoader, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setPolicyDocumentLoader: Setting policy document loader to %" PRIu64 " (was %" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderSetProvisionalDocumentLoader, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setProvisionalDocumentLoader: Setting provisional document loader to %" PRIu64 " (was %" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderSetStateMainFrameLoadCompleted, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::setState: main frame load completed", (uint64_t, uint64_t, int), DEFAULT, ResourceLoading
+FrameLoaderStopAllLoaders, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::stopAllLoaders: m_provisionalDocumentLoader=%" PRIu64 ", m_documentLoader=%" PRIu64 "", (uint64_t, uint64_t, int, uint64_t, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderStopAllLoadersClearingProvisionalDocumentLoader, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::stopAllLoaders: Clearing provisional document loader (m_provisionalDocumentLoader=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
+FrameLoaderTransitionToCommitted, "[pageID=%" PRIu64 " frameID=%" PRIu64 " isMainFrame=%d] FrameLoader::transitionToCommitted: Clearing provisional document loader (m_provisionalDocumentLoader=%" PRIu64 ")", (uint64_t, uint64_t, int, uint64_t), DEFAULT, ResourceLoading
+HTMLMediaElementAddAudioTrack, "HTMLMediaElement::addAudioTrack(%" PRIX64 ") id: %" PUBLIC_LOG_STRING ", %" PUBLIC_LOG_STRING "", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMediaElementAddVideoTrack, "HTMLMediaElement::addVideoTrack(%" PRIX64 ") id: %" PUBLIC_LOG_STRING ", %" PUBLIC_LOG_STRING "", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMediaElementApplyConfiguration, "HTMLMediaElement::applyConfiguration(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementCanPlayType, "HTMLMediaElement::canPlayType(%" PRIX64 ") %" PUBLIC_LOG_STRING ": %" PUBLIC_LOG_STRING "", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMediaElementCanTransitionFromAutoplayToPlayNotAutoplaying, "HTMLMediaElement::canTransitionFromAutoplayToPlay(%" PRIX64 ") not autoplaying", (uint64_t), DEFAULT, Media
+HTMLMediaElementCanTransitionFromAutoplayToPlayNotEnoughData, "HTMLMediaElement::canTransitionFromAutoplayToPlay(%" PRIX64 ") not enough data", (uint64_t), DEFAULT, Media
+HTMLMediaElementCheckPlaybackTargetCompatibility, "HTMLMediaElement::checkPlaybackTargetCompatibility(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementConfigureTextTrackDisplay, "HTMLMediaElement::configureTextTrackDisplay(%" PRIX64 ") %" PUBLIC_LOG_STRING "", (uint64_t, CString), DEFAULT, Media
+HTMLMediaElementConfigureTextTrackGroup, "HTMLMediaElement::configureTextTrackGroup(%" PRIX64 ") %" PUBLIC_LOG_STRING " track with language %" PUBLIC_LOG_STRING " and BCP 47 language %" PUBLIC_LOG_STRING " has score %d", (uint64_t, CString, CString, CString, int), DEFAULT, Media
+HTMLMediaElementCancelSpeakingCueText, "HTMLMediaElement::cancelSpeakingCueText(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementConstructor, "HTMLMediaElement::HTMLMediaElement(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementCreateMediaPlayer, "HTMLMediaElement::createMediaPlayer(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementCurrentMediaTimeSeeking, "HTMLMediaElement::currentMediaTime(%" PRIX64 ") seeking, returning %f", (uint64_t, float), DEFAULT, Media
+HTMLMediaElementDestructor, "HTMLMediaElement::~HTMLMediaElement(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementDidMoveToNewDocument, "HTMLMediaElement::didMoveToNewDocument(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementDispatchPlayPauseEventsIfNeedsQuirks, "HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks(%" PRIX64 ")", (uint64_t), INFO, Media
+HTMLMediaElementExitFullscreen, "HTMLMediaElement::exitFullscreen(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementFinishSeek, "HTMLMediaElement::finishSeek(%" PRIX64 ") current time = %f, pending seek = %d", (uint64_t, double, int), DEFAULT, Media
+HTMLMediaElementHardwareMutedStateDidChange, "HTMLMediaElement::hardwareMutedStateDidChange(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementInsertionSteps, "HTMLMediaElement::insertionSteps(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementLoadNextSourceChild, "HTMLMediaElement::loadNextSourceChild(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaEngineWasUpdated, "HTMLMediaElement::mediaEngineWasUpdated(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaPlayerCharacteristicsChanged, "HTMLMediaElement::mediaPlayerCharacteristicChanged(%" PRIX64 ") %" PUBLIC_LOG_STRING "", (uint64_t, CString), DEFAULT, Media
+HTMLMediaElementMediaPlayerCharacteristicsChangedNoMediaSession, "HTMLMediaElement::mediaPlayerCharacteristicChanged(%" PRIX64 ") no media session", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaPlayerDurationChanged, "HTMLMediaElement::mediaPlayerDurationChanged(%" PRIX64 ") duration = %f, current time = %f", (uint64_t, float, float), DEFAULT, Media
+HTMLMediaElementMediaPlayerEngineUpdated, "HTMLMediaElement::mediaPlayerEngineUpdated(%" PRIX64 ") %" PUBLIC_LOG_STRING "", (uint64_t, CString), DEFAULT, Media
+HTMLMediaElementMediaPlayerMuteChanged, "HTMLMediaElement::mediaPlayerMuteChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaPlayerRateChanged, "HTMLMediaElement::mediaPlayerRateChanged(%" PRIX64 ") rate: %f", (uint64_t, double), DEFAULT, Media
+HTMLMediaElementMediaPlayerResourceNotSupported, "HTMLMediaElement::mediaPlayerResourceNotSupported(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaPlayerSeeked, "HTMLMediaElement::mediaPlayerSeeked(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaPlayerSizeChanged, "HTMLMediaElement::mediaPlayerSizeChanged(%" PRIX64 ") w = %f, h = %f", (uint64_t, float, float), DEFAULT, Media
+HTMLMediaElementMediaPlayerTimeChanged, "HTMLMediaElement::mediaPlayerTimeChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaPlayerTimeChangedLooping, "HTMLMediaElement::mediaPlayerTimeChanged(%" PRIX64 ") current time (%f) is greater then duration (%f), looping", (uint64_t, double, double), DEFAULT, Media
+HTMLMediaElementMediaPlayerVolumeChanged, "HTMLMediaElement::mediaPlayerVolumeChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementMediaStreamCaptureStarted, "HTMLMediaElement::mediaStreamCaptureStarted(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementNoneSupported, "HTMLMediaElement::noneSupported(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementPause, "HTMLMediaElement::pause(%" PRIX64 ")", (uint64_t), INFO, Media
+HTMLMediaElementPauseInternal, "HTMLMediaElement::pauseInternal(%" PRIX64 ")", (uint64_t), INFO, Media
+HTMLMediaElementPausePlaybackForExtendedTextDescription, "HTMLMediaElement::pausePlaybackForExtendedTextDescription(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementPauseSpeakingCueText, "HTMLMediaElement::pauseSpeakingCueText(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementPlay, "HTMLMediaElement::play(%" PRIX64 ")", (uint64_t), INFO, Media
+HTMLMediaElementPlayDom, "HTMLMediaElement::play(%" PRIX64 ") (DOM)", (uint64_t), INFO, Media
+HTMLMediaElementPlayInternal, "HTMLMediaElement::playInternal(%" PRIX64 ")", (uint64_t), INFO, Media
+HTMLMediaElementPostConnectionSteps, "HTMLMediaElement::postConnectionSteps(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementPrepareForLoad, "HTMLMediaElement::prepareForLoad(%" PRIX64 ") gesture = %d", (uint64_t, int), DEFAULT, Media
+HTMLMediaElementPurgeBufferedDataIfPossible, "HTMLMediaElement::purgeBufferedDataIfPossible(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementRemoveAudioTrack, "HTMLMediaElement::removeAudioTrack(%" PRIX64 ") id: %" PUBLIC_LOG_STRING ", %" PUBLIC_LOG_STRING "", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMediaElementRebuildMediaEngineForWirelessPlayback, "HTMLMediaElement::rebuildMediaEngineForWirelessPlayback(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementRemovingSteps, "HTMLMediaElement::removingSteps(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementResume, "HTMLMediaElement::resume(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementResumeSpeakingCueText, "HTMLMediaElement::resumeSpeakingCueText(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementSceneIdentifierDidChange, "HTMLMediaElement::sceneIdentifierDidChange(%" PRIX64 ") %" PUBLIC_LOG_STRING "", (uint64_t, CString), DEFAULT, Media
+HTMLMediaElementScheduleConfigureTextTracksLambdaTaskFired, "HTMLMediaElement::scheduleConfigureTextTracks(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMediaElementScheduleConfigureTextTracksTaskScheduled, "HTMLMediaElement::scheduleConfigureTextTracks(%" PRIX64 ") task scheduled", (uint64_t), DEFAULT, Media
+HTMLMediaElementScheduleMediaEngineWasUpdatedLambdaTaskFired, "HTMLMediaElement::scheduleMediaEngineWasUpdated(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMediaElementScheduleMediaEngineWasUpdatedTaskScheduled, "HTMLMediaElement::scheduleMediaEngineWasUpdated(%" PRIX64 ") task scheduled", (uint64_t), DEFAULT, Media
+HTMLMediaElementSeekInternal, "HTMLMediaElement::seekInternal(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
+HTMLMediaElementSeekWithTolerance, "HTMLMediaElement::seekWithTolerance(%" PRIX64 ") SeekTarget = %" PUBLIC_LOG_STRING "", (uint64_t, CString), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceAttemptingUseOfUnattachedMediaSourceHandle, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") Attempting to use a detached or a previously attached MediaSourceHandle", (uint64_t), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceEmptySrc, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") empty 'src'", (uint64_t), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceHasSrcAttrPlayerNotCreated, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") has srcAttr but m_player is not created", (uint64_t), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceLambdaTaskFired, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceNothingToLoad, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") nothing to load", (uint64_t), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceUsingSrcAttributeUrl, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") using 'src' attribute url", (uint64_t), DEFAULT, Media
+HTMLMediaElementSelectMediaResourceUsingSrcObjectProperty, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") using 'srcObject' property", (uint64_t), DEFAULT, Media
+HTMLMediaElementSetAutoplayEventPlaybackState, "HTMLMediaElement::setAutoplayEventPlaybackState(%" PRIX64 ") %" PUBLIC_LOG_STRING "", (uint64_t, CString), INFO, Media
+HTMLMediaElementSetBufferingPolicy, "HTMLMediaElement::setBufferingPolicy(%" PRIX64 "): %" PRIu8, (uint64_t, uint8_t), DEFAULT, Media
+HTMLMediaElementSetMutedInternal, "HTMLMediaElement::setMutedInternal(%" PRIX64 ") %d", (uint64_t, int), DEFAULT, Media
+HTMLMediaElementSetNetworkState, "HTMLMediaElement::setNetworkState(%" PRIX64 ") new state = %" PUBLIC_LOG_STRING ", current state = %" PUBLIC_LOG_STRING "", (uint64_t, CString, CString), DEFAULT, Media
+HTMLMediaElementSetPlaybackRate, "HTMLMediaElement::setPlaybackRate(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
+HTMLMediaElementSetPlayerIdentifierForVideoElement, "HTMLMediaElement::setPlayerIdentifierForVideoElement(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementSetReadyState, "HTMLMediaElement::setReadyState(%" PRIX64 ") new state = %" PUBLIC_LOG_STRING ", current state = %" PUBLIC_LOG_STRING ", tracks ready = %d", (uint64_t, CString, CString, bool), DEFAULT, Media
+HTMLMediaElementSetShouldDelayLoadEvent, "HTMLMediaElement::setShouldDelayLoadEvent(%" PRIX64 ") %" PRIu8, (uint64_t, uint8_t), DEFAULT, Media
+HTMLMediaElementSetShowPosterFlag, "HTMLMediaElement::setShowPosterFlag(%" PRIX64 ") %d", (uint64_t, int), DEFAULT, Media
+HTMLMediaElementSetVolume, "HTMLMediaElement::setVolume(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
+HTMLMediaElementStop, "HTMLMediaElement::stop(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementUpdatePlayState, "HTMLMediaElement::updatePlayState(%" PRIX64 ") shouldBePlaying = %d, playerPaused = %d", (uint64_t, int, int), DEFAULT, Media
+HTMLMediaElementUpdateShouldPlay, "HTMLMediaElement::updateShouldPlay(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementUserDidInterfereWithAutoplay, "HTMLMediaElement::userDidInterfereWithAutoplay(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementVisibilityStateChanged, "HTMLMediaElement::visibilityStateChanged(%" PRIX64 ") visible = %d", (uint64_t, int), DEFAULT, Media
+HTMLMediaElementWaitForSourceChange, "HTMLMediaElement::waitForSourceChange(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMediaElementWebkitShowPlaybackTargetPicker, "HTMLMediaElement::webkitShowPlaybackTargetPicker(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLVideoElementMediaPlayerFirstVideoFrameAvailable, "HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable(%" PRIX64 ") m_showPoster = %d", (uint64_t, int), DEFAULT, Media
+HTMLVideoElementMediaPlayerRenderingModeChanged, "HTMLVideoElement::mediaPlayerRenderingModeChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLVideoElementScheduleResizeEvent, "HTMLMediaElement::scheduleResizeEvent(%" PRIX64 ") width: %f height: %f", (uint64_t, float, float), DEFAULT, Media
+LibWebRtcLogError, "LibWebRTC error: %" PUBLIC_LOG_STRING "", (CString), DEFAULT, WebRTC
+LibWebRtcLogMessage, "LibWebRTC message: %" PUBLIC_LOG_STRING "", (CString), DEFAULT, WebRTC
+LibWebRtcMediaEndpointOnStatsDelivered, "RTCStats (%" PRIu64 ") %" PUBLIC_LOG_STRING "", (uint64_t, CString), DEFAULT, WebRTCStats
+LocalFrameViewFiringFirstVisuallyNonEmptyLayoutMilestone, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] LocalFrameView::fireLayoutRelatedMilestonesIfNeeded: Firing first visually non-empty layout milestone on the main frame", (uint64_t, uint64_t, int), DEFAULT, Layout
+LocalFrameViewFiringResizeEventsDisabledForPage, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] LocalFrameView::scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page", (uint64_t, uint64_t, int), DEFAULT, Events
+LocalFrameViewNotPaintingLayoutNeeded, "    [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] LocalFrameView::paintContents: Not painting because render tree needs layout", (uint64_t, uint64_t, int), DEFAULT, Layout
+MediaSessionManagerCocoaClientCharacteristicsChanged, "MediaSessionManagerCocoa::clientCharacteristicsChanged, session ID = %" PRIu64, (uint64_t), DEFAULT, Media
+MediaSessionManagerCocoaSessionCanProduceAudioChanged, "MediaSessionManagerCocoa::sessionCanProduceAudioChanged", (), DEFAULT, Media
+MediaSessionManagerCocoaUpdateSessionState, "MediaSessionManagerCocoa::updateSessionState: AudioCapture(%d), AudioTrack(%d), Video(%d), Audio(%d), VideoAudio(%d), WebAudio(%d), DOMMediaSession(%d)", (int, int, int, int, int, int, int), DEFAULT, Media
+MediaSessionManagerInterfaceAddSession, "MediaSessionManagerInterface::addSession, session ID = %" PRIu64 "", (uint64_t), DEFAULT, Media
+MediaSessionManagerInterfaceMaybeActivateAudioSessionActiveSessionNotRequired, "MediaSessionManagerInterface::maybeActivateAudioSession:  active audio session not required", (), DEFAULT, Media
+MediaSessionManagerInterfaceProcessWillSuspendWhileCapturing, "MediaSessionManagerInterface::processWillSuspend: ongoing active microphone capture", (), ERROR, Media
+MediaSessionManagerInterfaceRemoveSession, "MediaSessionManagerInterface::removeSession, session ID = %" PRIu64 "", (uint64_t), DEFAULT, Media
+MediaSessionManagerInterfaceSessionCanProduceAudioChanged, "MediaSessionManagerInterface::sessionCanProduceAudioChanged", (), DEFAULT, Media
+MediaSessionManagerInterfaceSessionWillEndPlayback, "MediaSessionManagerInterface::sessionWillEndPlayback, session ID = %" PRIu64 "", (uint64_t), DEFAULT, Media
+PeerConnectionBackendCreateAnswerSucceeded, "PeerConnectionBackend::createAnswerSucceeded (%" PRIu64 ") to: '%" PUBLIC_LOG_STRING "'", (uint64_t, CString), DEFAULT, WebRTC
+PeerConnectionBackendCreateOfferSucceeded, "PeerConnectionBackend::createOfferSucceeded (%" PRIu64 ") to: '%" PUBLIC_LOG_STRING "'", (uint64_t, CString), DEFAULT, WebRTC
+PerformanceLoggingMemoryUsageForKey, "  %" PUBLIC_LOG_STRING ": %" PRIu64, (CString, uint64_t), DEFAULT, PerformanceLogging
+PerformanceLoggingMemoryUsageInfo, "Memory usage info dump at %" PUBLIC_LOG_STRING ":", (CString), DEFAULT, PerformanceLogging
+PerformanceMonitorMeasureCpuUsageInActivityState, "PerformanceMonitor::measureCPUUsageInActivityState: Process is using %.1f%% CPU in state: %" PUBLIC_LOG_STRING "", (double, CString), DEFAULT, PerformanceLogging
+PerformanceMonitorMeasurePostBackgroundCpuUsage, "PerformanceMonitor::measurePostBackgroundingCPUUsage: Process was using %.1f%% CPU after becoming non visible.", (double), DEFAULT, PerformanceLogging
+PerformanceMonitorMeasurePostBackgroundMemoryUsage, "PerformanceMonitor:measurePostBackgroundingMemoryUsage: Process was using %" PRIu64 " bytes of memory after becoming non visible.", (uint64_t), DEFAULT, PerformanceLogging
+PerformanceMonitorMeasurePostLoadCpuUsage, "PerformanceMonitor::measurePostLoadCPUUsage: Process was using %.1f%% CPU after the page load.", (double), DEFAULT, PerformanceLogging
+PerformanceMonitorMeasurePostLoadMemoryUsage, "PerformanceMonitor::measurePostLoadMemoryUsage: Process was using %" PRIu64 " bytes of memory after the page load.", (uint64_t), DEFAULT, PerformanceLogging
+PolicyCheckerCheckNavigationPolicyContinueInitialEmptyDocument, "[pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::checkNavigationPolicy: continuing because this is an initial empty document", (uint64_t, uint64_t), DEFAULT, Loading
+PolicyCheckerCheckNavigationPolicyContinueLoadInAnotherProcess, "[pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::checkNavigationPolicy: stopping because policyAction from dispatchDecidePolicyForNavigationAction is LoadWillContinueInAnotherProcess", (uint64_t, uint64_t), DEFAULT, Loading
+PolicyCheckerCheckNavigationPolicyContinuePolicyActionIsUse, "[pageID=%" PRIu64 ", frameID=%" PRIu64 "] PolicyChecker::checkNavigationPolicy: continuing because this policyAction from dispatchDecidePolicyForNavigationAction is Use", (uint64_t, uint64_t), DEFAULT, Loading
+ProgressTrackerFinalProgressComplete, "ProgressTracker::finalProgressComplete: value %f, tracked frames %d, originating frameID %" PRIu64 ", isMainLoad %d, isMainLoadProgressing %d", (double, int, uint64_t, int, int), DEFAULT, Network
+ProgressTrackerProgressCompleted, "ProgressTracker::progressCompleted: frameID %" PRIu64 ", value %f, tracked frames %d, originating frameID %" PRIu64 ", isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+ProgressTrackerProgressStarted, "ProgressTracker::progressStarted: frameID %" PRIu64 ", value %f, tracked frames %d, originating frameID %" PRIu64 ", isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+ResourceLoaderWillSendRequestInternal, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] ResourceLoader::willSendRequestInternal: calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+ResourceLoaderWillSendRequestInternalCrossOriginRedirect, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] ResourceLoader::willSendRequestInternal: Processing cross-origin redirect", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+RtcPeerConnectionSetLocalDescription, "RTCPeerConnection::setLocalDescription (%" PRIu64 ") to: '%" PUBLIC_LOG_STRING "'", (uint64_t, CString), DEFAULT, WebRTC
+RtcPeerConnectionSetRemoteDescription, "RTCPeerConnection::setRemoteDescription (%" PRIu64 ") to: '%" PUBLIC_LOG_STRING "'", (uint64_t, CString), DEFAULT, WebRTC
+ServiceWorkerThreadProxyRemoveFetch, "ServiceWorkerThreadProxy::removeFetch %" PRIu64, (uint64_t), DEFAULT, ServiceWorker
+SubResourceLoaderDidFail, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didFail: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+SubResourceLoaderDidFinishLoading, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didFinishLoading", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidFinishLoadingCanceled, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didFinishLoading: was canceled", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidFinishLoadingDidNotReachTerminalState, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didFinishLoading: Did not reach terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidFinishLoadingReachedTerminalState, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didFinishLoading: reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidReceiveResponseCancelingLoadBecauseOfCrossOriginAccessControl, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didReceiveResponse: canceling load because of cross origin access control", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidReceiveResponseCancelingLoadBecauseOfMultipartNonImage, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didReceiveResponse: canceling load because something about a multi-part non-image", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidReceiveResponseCancelingLoadBlockedByContentPolicy, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didReceiveResponse: canceling load because not allowed by content policy", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderDidReceiveResponseCancelingLoadReceivedUnexpectedRangeResponse, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::didReceiveResponse: canceling load because receiving a range requested response for a non-range request", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillCancel, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willCancel: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternal, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because new request is invalid", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalCancelledInvalidNewRequest, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because new request is NULL (1)", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalCancelledInvalidRequest, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because request is NULL (2)", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalCancelledTerminalState, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalReachedTerminalState, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceDoneNotifyingClients, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource done notifying clients", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledAfterImageBeingDeferred, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because it's an image that should be deferred", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledAfterRedirectDeniedByCorsPolicy, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because cross-origin redirection denied by CORS policy", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledAfterUsingBlockedPort, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load (redirect) canceled because it attempted to use a blocked port", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledCannotRequestAfterRedirection, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because CachedResourceLoader::updateRequestAfterRedirection (really CachedResourceLoader::canRequestAfterRedirection) said no", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledDataURL, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because of a data: URL", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledRedirectNotAllowed, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because not allowed to follow a redirect", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCancelledTooManyRedirects, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load canceled because too many redirects", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadCompleted, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load completed", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalResourceLoadFinished, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: resource load finished; calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+SubResourceLoaderWillSendRequestInternalTerminalStateCallingCompletionHandler, "[pageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 " SubResourceLoader::willSendRequestInternal: reached terminal state; calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+UserActivityImplBeginActivity, "UserActivity::Impl::beginActivity: description=%" PUBLIC_LOG_STRING, (CString), DEFAULT, ActivityState
+UserActivityImplEndActivity, "UserActivity::Impl::endActivity: description=%" PUBLIC_LOG_STRING, (CString), DEFAULT, ActivityState
+WebCoreTestLog, "WebCore log message for testing (%u)", (unsigned), DEFAULT, Testing

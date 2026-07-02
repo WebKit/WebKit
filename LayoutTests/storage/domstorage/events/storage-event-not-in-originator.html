@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests that the storage event gets fired in other frames but not the originating one");
+jsTestIsAsync = true;
+
+function uuidv4()
+{
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+let topStorageEventCount = 0;
+let childStorageEventCount = 0;
+
+function childReceivedStorageEvent(e)
+{
+   event = e;
+   testPassed("Child frame received storage event.");
+   if (e.key === sessionStorageKey)
+        expectedValue = sessionStorageValue;
+   else
+        expectedValue = localStorageValue;
+   shouldBeTrue("event.newValue === expectedValue");
+
+   childStorageEventCount++;
+   if (childStorageEventCount == 2) {
+       setTimeout(() => {
+           shouldBe("topStorageEventCount", "0");
+           shouldBe("childStorageEventCount", "2");
+           finishJSTest();
+       }, 0);
+   } 
+}
+
+function storageEventHandler(e) {
+  testFailed("Top frame received storage event.");
+  topStorageEventCount++;
+}
+addEventListener("storage", storageEventHandler);
+
+onload = () => {
+    sessionStorageKey = uuidv4();
+    sessionStorageValue = "foo";
+    shouldBeNull("sessionStorage.getItem(sessionStorageKey)");
+    sessionStorage.setItem(sessionStorageKey, sessionStorageValue);
+
+    localStorageKey = uuidv4();
+    localStorageValue = "bar";
+    shouldBeFalse("sessionStorageKey === localStorageKey");
+    shouldBeNull("localStorage.getItem(localStorageKey)");
+    localStorage.setItem(localStorageKey, localStorageValue);
+}
+</script>
+<iframe src="resources/storage-event-not-in-originator-frame.html">
+</body>
+</html>

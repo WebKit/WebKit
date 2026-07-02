@@ -1,0 +1,31 @@
+Test that -0 and +0 are treated as equal keys in a unique index.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+db.createObjectStore('store')
+store.createIndex('index', 'v', {unique: true})
+onOpenSuccess():
+transaction = db.transaction(['store'], 'readwrite')
+transaction.objectStore('store').put({v: -0}, 'first')
+insertSecondRecord():
+transaction.objectStore('store').put({v: 0}, 'second')
+secondRecordFailed():
+PASS event.target.error.name is 'ConstraintError'
+event.preventDefault()
+testCount():
+transaction2 = db.transaction(['store'], 'readonly')
+transaction2.objectStore('store').count()
+countSuccess():
+PASS event.target.result is 1
+testCursor():
+transaction2.objectStore('store').index('index').openCursor()
+PASS cursorCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

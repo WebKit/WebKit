@@ -1,0 +1,19 @@
+
+PASS Loading data…
+PASS Input † with encoding big5
+PASS Input † with encoding euc-kr
+PASS Input † with encoding utf-8
+PASS Input † with encoding windows-1252
+PASS Input A with encoding big5
+PASS Input A with encoding iso-2022-jp
+PASS Input A with encoding utf-8
+PASS Input ‾\ with encoding iso-2022-jp
+PASS Input ‾\ with encoding utf-8
+PASS Input  with encoding gb18030
+PASS Input  with encoding utf-8
+PASS Input − with encoding shift_jis
+PASS Input − with encoding utf-8
+PASS Input ¢ with encoding iso-8859-2
+PASS Input ¢ with encoding utf-8
+PASS Input á| with encoding utf-8
+

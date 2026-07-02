@@ -1,0 +1,4 @@
+
+
+PASS Popup opened from sandbox without allow-scripts cannot execute script
+

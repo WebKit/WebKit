@@ -1,0 +1,7 @@
+Header example
+
+Paragraph body
+
+
+FAIL Untitled Error: assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 128, 0)"
+

@@ -1,0 +1,4 @@
+
+EVENT(progress)
+END OF TEST
+

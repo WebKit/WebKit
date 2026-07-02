@@ -1,0 +1,10 @@
+THIRD
+<script>
+	window.parent.postMessage("set as self done", "*");
+	window.addEventListener("message", event => {
+		if (event.data == "check") {
+			window.parent.postMessage(window.parent.frames[0].opener === window.parent.frames[0], "*")
+		}
+	}, false);
+</script>
+

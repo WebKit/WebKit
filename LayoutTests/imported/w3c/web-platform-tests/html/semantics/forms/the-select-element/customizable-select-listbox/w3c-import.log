@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-appearance-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-appearance-focused-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-appearance-focused-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-appearance-focused.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-appearance-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-keyboard-behavior.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-mouse-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-sizing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-sizing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/customizable-select-listbox-sizing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/select-listbox-home-end-pagedown-pageup.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/select-listbox-typeahead.optional.html

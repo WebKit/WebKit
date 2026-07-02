@@ -1,0 +1,10 @@
+
+PASS Property font-variation-settings value 'normal'
+PASS Property font-variation-settings value '"wght" 700'
+PASS Property font-variation-settings value '"AB@D" 0.5'
+PASS Property font-variation-settings value '"wght" 700, "wght" 500' duplicate values should be removed, keeping the rightmost occurrence.
+PASS Property font-variation-settings value '"wght" 700, "XHGT" 0.7'
+PASS Property font-variation-settings value '"wght" 100, "wdth" 200' values should be sorted alphabetically by tag.
+PASS Property font-variation-settings value '"wght" 100, "wdth" 200, "wght" 300, "wdth" 400' duplicate values should be removed, keeping the rightmost occurrence, and sorted alphabetically by tag.
+PASS Property font-variation-settings value '"XHGT" calc(0.4 + 0.3)'
+

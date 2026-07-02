@@ -1,0 +1,38 @@
+<style>
+:not(marker) {
+  background: url(#svgvar00007) repeat-x scroll top left;
+  zoom: 50%;
+}
+details {
+  font: 1pt monospace;
+}
+</style>
+
+<script>
+window.testRunner?.dumpAsText();
+
+function testRun() {
+  buttonID.outerHTML = "undefined";
+}
+
+function eventhandler3() {
+  detailsID.open = false;
+  
+  document.body.offsetHeight;
+  tableID.deleteRow(1);
+}
+</script>
+
+<body onload=testRun()>
+<button id=buttonID>
+<details id=detailsID ontoggle="eventhandler3()" open="true">
+<summary>
+<table id=tableID align="right">
+<tr></tr>
+<tfoot><th></th></tfoot>
+<th>PASS if no crash or assert</th>
+</table>
+<iframe srcdoc="">content</iframe>
+</summary>
+<span>
+<li><embed><ol>

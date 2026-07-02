@@ -1,0 +1,6 @@
+Tests that the scroll-snap feature works properly in overflow regions when using a mechanical mouse wheel.
+ PASS div honored snap points.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

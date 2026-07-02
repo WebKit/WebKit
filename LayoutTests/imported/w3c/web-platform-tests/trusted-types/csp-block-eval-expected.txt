@@ -1,0 +1,4 @@
+
+PASS eval with plain string throws (both block).
+PASS eval with TrustedScript throws (script-src blocks).
+

@@ -1,0 +1,71 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=MODEL_ELEMENT,
+    EnabledBySetting=ModelElementEnabled,
+    ExportToWrappedFunction,
+    Exposed=Window,
+    JSGenerateToNativeObject,
+    ReportExtraMemoryCost,
+    ReportExternalMemoryCost
+] interface HTMLModelElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
+    [CEReactions=NotNeeded, ReflectURL] attribute USVString src;
+    [URL] readonly attribute USVString currentSrc;
+
+    readonly attribute boolean complete;
+    readonly attribute Promise<HTMLModelElement> ready;
+
+    [Reflect] attribute boolean interactive;
+
+    [Conditional=MODEL_ELEMENT_BOUNDING_BOX, CEReactions=NotNeeded] readonly attribute DOMPointReadOnly boundingBoxCenter;
+    [Conditional=MODEL_ELEMENT_BOUNDING_BOX, CEReactions=NotNeeded] readonly attribute DOMPointReadOnly boundingBoxExtents;
+
+    [Conditional=MODEL_ELEMENT_ENTITY_TRANSFORM, CEReactions=NotNeeded] attribute DOMMatrixReadOnly entityTransform;
+
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL, Reflect] attribute boolean autoplay;
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL, Reflect] attribute boolean loop;
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL] attribute double playbackRate;
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL] readonly attribute double duration;
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL] readonly attribute boolean paused;
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL] Promise<undefined> play();
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL] Promise<undefined> pause();
+    [Conditional=MODEL_ELEMENT_ANIMATIONS_CONTROL] attribute double currentTime;
+
+    [Conditional=MODEL_ELEMENT_STAGE_MODE, Reflect] attribute DOMString stageMode;
+
+    [Conditional=MODEL_ELEMENT_ENVIRONMENT_MAP, CEReactions=NotNeeded, ReflectURL] attribute USVString environmentMap;
+    [Conditional=MODEL_ELEMENT_ENVIRONMENT_MAP] readonly attribute Promise<undefined> environmentMapReady;
+
+    [Conditional=MODEL_ELEMENT_PORTAL, EnabledBySetting=ModelProcessEnabled&ModelNoPortalAttributeEnabled, Reflect] attribute boolean noportal;
+
+    undefined enterFullscreen();
+
+    [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] attribute EventHandler onimmersivechange;
+    [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] attribute EventHandler onimmersiveerror;
+    [Conditional=MODEL_ELEMENT_IMMERSIVE, EnabledBySetting=ModelElementImmersiveEnabled] Promise<undefined> requestImmersive();
+};

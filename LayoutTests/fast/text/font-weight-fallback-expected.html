@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<!-- Reference: the character should be rendered by the system sans-serif font,
+     identical to the test page where the web font lacks the glyph. -->
+<html>
+<head>
+<style>
+div {
+    font: normal 100px sans-serif;
+}
+</style>
+</head>
+<body>
+<p>Test that when a character is missing from the best-matching web font face, it falls back to the system font, not to a @font-face at a different weight.</p>
+<div>&#x6A2A;</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+
+PASS https: fetch should register ok
+PASS loopback IPv4 http: fetch should register ok
+PASS loopback IPv6 http: fetch should register ok
+PASS localhost http: fetch should register ok
+PASS wss: fetch should reject
+PASS file: fetch should reject
+PASS data: fetch should reject
+PASS unknown scheme fetch should reject
+

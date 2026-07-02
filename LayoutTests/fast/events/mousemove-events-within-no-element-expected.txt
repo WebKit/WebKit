@@ -1,0 +1,25 @@
+
+Tests that the mousemove event is fired when the mouse pointer stays in document but there is no element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+POINTER
+PASS events[0] is "mousemove"
+PASS targets[0] is "#document"
+PASS events[1] is "mousemove"
+PASS targets[1] is "BODY"
+PASS events[2] is "mousemove"
+PASS targets[2] is "#document"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

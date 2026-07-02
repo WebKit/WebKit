@@ -1,0 +1,60 @@
+<html>
+    <head>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitForEventAndFail('error');
+
+            run('source.duration = loader.duration()');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            run('video.playbackRate = 0.01');
+            run('video.play()');
+            await waitFor(video, 'playing');
+
+            run("internals.beginMediaSessionInterruption('System')");
+            await waitFor(video, 'pause');
+
+            run("internals.endMediaSessionInterruption('MayResumePlaying')");
+            await waitFor(video, 'playing');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests that a video element sucessfully resumes playback after an interruption.
+    </div>
+    <video controls></video>
+</body>
+</html>

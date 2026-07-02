@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        select {
+            position: absolute;
+            top: 0;
+            left: -10000px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button>Focus the offscreen select</button>
+    <select>
+        <option id="one">One</option>
+        <option id="two">Two</option>
+        <option id="three">Three</option>
+    </select>
+</body>
+<script>
+window.jsTestIsAsync = true;
+let clickCount = 0;
+let button = document.querySelector("button");
+let select = document.querySelector("select");
+
+window.addEventListener("load", async () => {
+    button.addEventListener("click", (event) => {
+        document.querySelector("select").focus();
+        ++clickCount;
+    });
+
+    description("This test verifies that focusing an offscreen select element does not present an offscreen popover on iPad. To manually run the test, tap the button three times.");
+
+    if (window.testRunner) {
+        for (let i = 0; i < 3; ++i) {
+            await UIHelper.activateElement(button);
+            await UIHelper.waitForDoubleTapDelay();
+        }
+    }
+
+    await new Promise(resolve => shouldBecomeEqual("clickCount", "3", resolve));
+    shouldBe("document.activeElement", "select");
+    document.activeElement.blur();
+    finishJSTest();
+});
+</script>
+</html>

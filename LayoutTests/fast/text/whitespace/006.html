@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+ <!-- ================================================================ -->
+ <!-- WARNING! This document contains significant trailing whitespace! -->
+ <!-- ================================================================ -->
+ <head>
+  <title>white-space normal: zero width non-breaking space</title>
+  <style type="text/css">
+   /* setup */
+   .control { display: inline; font: 1em/1 Ahem, sans-serif; background: red; color: white; }
+   * { white-space: normall; font: inherit; }
+   div { display: block; margin: 1em; }
+   span { display: inline; }
+
+   /* test */
+   div { font: 20px/1 Ahem; }
+   .green { background: lime; color: green; }
+   .red { background: red; color: maroon; }
+  </style>
+ </head>
+ <body>
+  <div class="control">Ahem_font_required_for_this_test.</div>
+  <p>There should be no red below, only three identical striped green and lime bars.</p>
+
+  <!-- the next two tests are identical, but one uses raw data and the other uses entities -->
+
+  <div><span class="red">
+
+   <span class="green">X <span class="red"><span class="red"> <span class="red">
+   </span></span> </span>X <span class="red"> 
+   </span>X<span class="red"><span class="red"><span class="green"> </span><span
+   class="red"> </span></span> </span>X
+<span class="red"> 
+   
+   </span>
+   <span class="green">X<span class="green"> <span class="red"> </span></span><span
+   class="red"> </span>X<span class="red">
+
+  </span></span></div>
+
+  <div><span class="red">&#x000A;&#x000A;&#x0020;&#x0020;&#x0020;<span class="green">X&#x0020;<span class="red"><span class="red">&#x0020;<span class="red">&#x000A;&#x0020;&#x0020;&#x0020;</span></span>&#x0020;</span>X&#x0020;<span class="red">&#x0020;&#x000A;&#x0020;&#x0020;&#x0020;</span>X<span class="red"><span class="red"><span class="green">&#x0020;</span><span class="red">&#x0020;</span></span>&#x0020;</span>X&#x000A;<span class="red">&#x0020;&#x000A;&#x0020;&#x0020;&#x0020;&#x000A;&#x0020;&#x0020;&#x0020;</span>&#x000A;&#x0020;&#x0020;&#x0020;<span class="green">X<span class="green">&#x0020;<span class="red">&#x0020;</span></span><span class="red">&#x0020;</span>X<span class="red">&#x000A;&#x000A;&#x0020;&#x0020;</span></span></div>
+
+  <div><span class="green">X X X X X X</span></div>
+
+ </body>
+</html>

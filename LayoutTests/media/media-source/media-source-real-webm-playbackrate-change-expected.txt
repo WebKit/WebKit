@@ -1,0 +1,18 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.currentTime > '0') OK
+RUN(video.playbackRate = 2)
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.currentTime > timeBeforeRateChange == 'true') OK
+EXPECTED (video.paused == 'false') OK
+RUN(video.playbackRate = 1)
+EXPECTED (video.currentTime > timeAfterRestore == 'true') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.error == 'null') OK
+RUN(video.pause())
+END OF TEST
+

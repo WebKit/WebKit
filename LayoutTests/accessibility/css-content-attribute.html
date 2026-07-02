@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script>
+    function dumpAccessibilityChildren(element, level) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.role + " " + element.stringValue);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+                return false;
+        }
+        return true;
+    }
+</script>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+
+    <style type="text/css">
+
+        h1:before {
+            content: 'This is a';
+        }
+
+        h1:after {
+            content: 'Headline';
+        }
+
+    </style>
+
+</head>
+<body id="body">
+<h1>SAMPLE</h1>
+<div>End of test</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when the content attribute in CSS is used, the correct values are returned.");
+
+    if (window.accessibilityController) {
+          document.getElementById("body").focus();
+          dumpAccessibilityChildren(accessibilityController.focusedElement, 0);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

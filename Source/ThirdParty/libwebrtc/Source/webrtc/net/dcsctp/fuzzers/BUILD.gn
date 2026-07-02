@@ -1,0 +1,46 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("dcsctp_fuzzers") {
+  testonly = true
+  deps = [
+    "../../../api/task_queue",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../common:internal_types",
+    "../packet:chunk",
+    "../packet:data",
+    "../packet:error_cause",
+    "../packet:parameter",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "../public:types",
+    "../socket:dcsctp_socket",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "dcsctp_fuzzers.cc",
+    "dcsctp_fuzzers.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_fuzzers_unittests") {
+    testonly = true
+
+    deps = [
+      ":dcsctp_fuzzers",
+      "../../../test:test_support",
+      "../public:types",
+      "../socket:dcsctp_socket",
+    ]
+    sources = [ "dcsctp_fuzzers_test.cc" ]
+  }
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<title>&lt;model> allowed since Access-Control-Allow-Origin allows all</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.addEventListener('load', async () => {
+        const model = document.getElementById("allowed-model");
+        assert_true(!!model, "Model element should exist");
+        await model.ready;
+        testRunner.notifyDone();
+    }, false);
+</script>
+</head>
+<body>
+    <div>Verify that the model is allowed because the src allows access from all origins</div>
+    <model id='allowed-model'>
+        <source src='http://localhost:8080/security/resources/model-access-control.py?file=cube.usdz&allowAll'/>
+    </model>
+</body>
+</html>

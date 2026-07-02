@@ -1,0 +1,63 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+Renders as:
+ 
+```
+  Good
+  morning
+  world.
+```
+-->
+
+<p id="paragraph" style="width: 80px">
+Good morning world.
+</p>
+
+<script>
+
+/*
+This test verifies that our new behaior on the isolated tree, to include the spaces that were trimmed during soft line break rendering, works as expected.
+This differs from what we do on the live tree, where the range of that space character isn't navigable.
+*/
+
+if (window.accessibilityController) {
+    var output = "This test ensures that with the isolated tree text markers, we include the trimmed space at soft line breaks.\n\n";
+
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var textMarkerRange = paragraph.textMarkerRangeForElement(paragraph)
+    var currentMarker = paragraph.startTextMarkerForTextMarkerRange(textMarkerRange);
+
+    var lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    var startOfLine = paragraph.startTextMarkerForTextMarkerRange(lineRange);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'Good '");
+    output += expect("paragraph.indexForTextMarker(startOfLine)", "0");
+
+    currentMarker = paragraph.nextLineEndTextMarkerForTextMarker(currentMarker);
+    currentMarker = paragraph.nextTextMarker(currentMarker);
+
+    lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    startOfLine = paragraph.startTextMarkerForTextMarkerRange(lineRange);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'morning '");
+    output += expect("paragraph.indexForTextMarker(startOfLine)", "5");
+
+    currentMarker = paragraph.nextLineEndTextMarkerForTextMarker(currentMarker);
+    currentMarker = paragraph.nextTextMarker(currentMarker);
+
+    lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    startOfLine = paragraph.startTextMarkerForTextMarkerRange(lineRange);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'world.'");
+    output += expect("paragraph.indexForTextMarker(startOfLine)", "13");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+iframe {
+    width: 100%;
+    height: 200px;
+}
+</style>
+<script>
+loadedSubframe = false;
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that you can autoscroll inside of a text field in a subframe. To manually run the test, focus the text field and move the caret to the right edge; the text field should scroll to the end (after the word 'dog')");
+
+    let subframe = document.querySelector("iframe");
+    subframe.addEventListener("load", () => { loadedSubframe = true; });
+    subframe.srcdoc = `
+        <style>
+        body {
+            margin: 0;
+        }
+
+        input {
+            font-size: 24px;
+            width: 150px;
+            height: 44px;
+            padding: 0.8em;
+            border: 1px solid black;
+            border-radius: 4px;
+            outline: none;
+        }
+        </style>
+        <input value="The quick brown fox jumped over the lazy dog." />
+    `;
+
+    await shouldBecomeEqual("loadedSubframe", "true");
+
+    const input = subframe.contentDocument.querySelector("input");
+    const inputRect = input.getBoundingClientRect();
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    async function autoscrollWithFloatingCaret() {
+        let caretLocation = { x: 0, y: 0 };
+        while (!caretLocation.x || !caretLocation.y) {
+            await UIHelper.ensurePresentationUpdate();
+            caretLocation = UIHelper.midPointOfRect(await UIHelper.getUICaretViewRect());
+        }
+
+        await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+            .begin(caretLocation.x, caretLocation.y)
+            .wait(0.5)
+            .move(inputRect.left + inputRect.width - 5, caretLocation.y, 0.5)
+            .wait(2)
+            .end()
+            .takeResult());
+    }
+
+    while (input.selectionStart != input.value.length)
+        await autoscrollWithFloatingCaret();
+
+    testPassed("Autoscrolled to end of text field");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <iframe frameborder="0"></iframe>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>

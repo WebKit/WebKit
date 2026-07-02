@@ -1,0 +1,3 @@
+
+PASS :fullscreen pseudo-class support
+

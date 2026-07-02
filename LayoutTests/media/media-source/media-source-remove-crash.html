@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-abort-resets-parser</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    }
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        waitForEventAndFail('error');
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('source.duration = loader.duration()');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+    }
+
+    function sourceInitialized() {
+        consoleWrite('Append a media segment.')
+        waitForEventOn(sourceBuffer, 'update', mediaSegmentAppended, false, true);
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+    }
+
+    function mediaSegmentAppended() {
+        consoleWrite('Remove a range, then remove SourceBuffer from its MediaSource. Should not crash.')
+        run('sourceBuffer.remove(0, source.duration)');
+        run('source.removeSourceBuffer(sourceBuffer)');
+        setTimeout(endTest, 100);
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls></video>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Test passes if orange square is in bottom left corner of rectangle.
+
+PASS .middle > div 1
+

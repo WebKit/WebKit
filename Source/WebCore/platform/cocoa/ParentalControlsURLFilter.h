@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if HAVE(WEBCONTENTRESTRICTIONS)
+
+#include <WebCore/ParentalControlsContentFilter.h>
+#include <WebCore/ParentalControlsURLFilterParameters.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+#include <WebCore/CocoaView.h>
+#endif
+
+OBJC_CLASS WCRBrowserEngineClient;
+
+namespace WTF {
+class WorkQueue;
+}
+
+namespace WebCore {
+
+class ParentalControlsContentFilter;
+
+class ParentalControlsURLFilter : public ThreadSafeRefCounted<ParentalControlsURLFilter, WTF::DestructionThread::Main> {
+public:
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    WEBCORE_EXPORT static ParentalControlsURLFilter& filterWithConfigurationPath(const String&);
+#else
+    WEBCORE_EXPORT static ParentalControlsURLFilter& singleton();
+    WEBCORE_EXPORT static void setGlobalFilter(Ref<ParentalControlsURLFilter>&&);
+    WEBCORE_EXPORT static bool hasGlobalFilter();
+#endif
+    WEBCORE_EXPORT static void setFilterForTesting(Ref<ParentalControlsURLFilter>&&);
+    WEBCORE_EXPORT static void allowURL(const ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT static WorkQueue& workQueueSingleton();
+    WEBCORE_EXPORT bool isEnabled() const;
+    void NODELETE resetIsEnabled();
+
+    WEBCORE_EXPORT virtual ~ParentalControlsURLFilter();
+    virtual bool isEnabledImpl() const;
+    void isURLAllowed(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, ParentalControlsContentFilter&);
+    WEBCORE_EXPORT void isURLAllowed(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
+    virtual void allowURL(const URL&, CompletionHandler<void(bool)>&&);
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+#if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER)
+    virtual void requestPermissionForURL(const URL&, const URL& referrerURL, CompletionHandler<void(bool)>&&, CocoaView* presentingView = nullptr);
+#else
+    WEBCORE_EXPORT void requestPermissionForURL(const URL&, const URL& referrerURL, CompletionHandler<void(bool)>&&);
+#endif
+#endif
+
+protected:
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    ParentalControlsURLFilter(const String& configurationPath);
+#endif
+    WEBCORE_EXPORT ParentalControlsURLFilter();
+
+    virtual void isURLAllowedImpl(IsMainFrameLoad, const URL& mainDocumentURL, const URL&, CompletionHandler<void(bool, NSData *)>&&);
+
+private:
+    WCRBrowserEngineClient* effectiveWCRBrowserEngineClient();
+    bool isWCRBrowserEngineClientEnabled() const;
+
+    mutable std::optional<bool> m_isEnabled;
+    const RetainPtr<WCRBrowserEngineClient> m_wcrBrowserEngineClient;
+#if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
+    String m_configurationPath;
+#endif
+};
+
+} // namespace WebCore
+
+#endif // HAVE(WEBCONTENTRESTRICTIONS)

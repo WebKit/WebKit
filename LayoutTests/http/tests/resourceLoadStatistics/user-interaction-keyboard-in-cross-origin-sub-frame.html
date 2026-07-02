@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/util.js"></script>
+<script>
+description("Tests that keystroke user interaction in a cross-origin sub-frame is logged for the top document/frame, not the sub-frame.");
+jsTestIsAsync = true;
+
+const topFrameOrigin = "http://127.0.0.1:8000";
+const subFrameOrigin = "http://localhost:8000";
+
+let inputFocused = false;
+let iframeReceivedKeyDown = false;
+let keyTyped = false;
+let resolveInputFocused;
+let resolveKeyTypedOrNot;
+
+const inputFocusedPromise = new Promise(r => { resolveInputFocused = r; });
+const keyTypedOrNotPromise = new Promise(r => { resolveKeyTypedOrNot = r; });
+
+window.addEventListener("message", (event) => {
+    if (event.data === "input-focused") {
+        inputFocused = true;
+        resolveInputFocused();
+    } else if (event.data === "keydown-received") {
+        iframeReceivedKeyDown = true;
+    } else if (event.data === "key-typed") {
+        keyTyped = true;
+        resolveKeyTypedOrNot();
+    } else if (event.data === "key-not-typed") {
+        keyTyped = false;
+        resolveKeyTypedOrNot();
+    }
+});
+
+async function activateElement(elementId) {
+    const element = document.getElementById(elementId);
+    const centerX = element.offsetLeft + element.offsetWidth / 2;
+    const centerY = element.offsetTop + element.offsetHeight / 2;
+    await UIHelper.activateAt(centerX, centerY);
+}
+
+onload = function() {
+    setEnableFeature(true, async function() {
+        shouldBe("document.location.origin", "topFrameOrigin");
+        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+
+        // Click into the iframe to we can fire a key event in it.
+        // The click is a mouse event and this attributes the user
+        // interaction to the top frame via the mouse path.
+        await activateElement("testFrame");
+        await inputFocusedPromise;
+        shouldBeTrue("inputFocused");
+
+        // Wait long enough for the 5 second window enforced by
+        // ResourceLoadStatistics::reduceTimeResolution() to pass
+        // so the key event's user interaction isn't ignored.
+        await new Promise(r => setTimeout(r, 6000));
+
+        // Reset the NetworkProcess-side storage so that the top
+        // frame origin no longer contains a user interaction
+        // (the one introduced by the click).
+        await new Promise(r => testRunner.setStatisticsHasHadUserInteraction(topFrameOrigin, false, r));
+        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+
+        eventSender.keyDown("a");
+        await keyTypedOrNotPromise;
+        shouldBeTrue("iframeReceivedKeyDown");
+        shouldBeTrue("keyTyped");
+
+        await testRunner.statisticsProcessStatisticsAndDataRecords();
+        shouldBeTrue("testRunner.isStatisticsHasHadUserInteraction(topFrameOrigin)");
+        shouldBeFalse("testRunner.isStatisticsHasHadUserInteraction(subFrameOrigin)");
+
+        setEnableFeature(false, finishJSTest);
+    });
+};
+</script>
+<iframe id="testFrame" src="http://localhost:8000/resourceLoadStatistics/resources/iframe-with-input.html"></iframe>
+</body>
+</html>

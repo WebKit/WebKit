@@ -1,0 +1,9 @@
+This test ensures that AX doesn't become unresponsive when a page is reloaded.
+
+Role of #button element retained from first page load: AXRole: AXInvalid
+Role of #button element from second page load: AXRole: AXButton
+PASS: Test didn't timeout.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

@@ -1,0 +1,10 @@
+
+PASS e.style['flow-tolerance'] = "normal" should set the property value
+PASS e.style['flow-tolerance'] = "infinite" should set the property value
+PASS e.style['flow-tolerance'] = "initial" should set the property value
+PASS e.style['flow-tolerance'] = "0" should set the property value
+PASS e.style['flow-tolerance'] = "1px" should set the property value
+PASS e.style['flow-tolerance'] = "calc(2em + 3ex)" should set the property value
+PASS e.style['flow-tolerance'] = "4%" should set the property value
+PASS e.style['flow-tolerance'] = "5vmin" should set the property value
+

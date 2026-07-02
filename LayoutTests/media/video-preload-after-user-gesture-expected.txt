@@ -1,0 +1,15 @@
+RUN(window.internals.settings.setRequiresUserGestureForVideoPlayback(true);)
+RUN(video = document.createElement("video"))
+RUN(window.internals.setMediaElementRestrictions(video, "autopreloadingnotpermitted");)
+RUN(video.preload="auto")
+RUN(video.src = findMediaFile("video", "content/test"))
+RUN(video.playsinline = "playsinline")
+RUN(document.body.appendChild(video))
+EVENT(loadedmetadata)
+RUN(video.play())
+EVENT(playing)
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(loadeddata)
+EXPECTED (video.readyState >= '2') OK
+END OF TEST
+

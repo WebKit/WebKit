@@ -1,0 +1,17 @@
+Test that boundary pointer events fire for a stationary pointer device when the element beneath it changes due to layout updates.
+
+This test requires WebKitTestRunner.
+
+
+pointerover@divA
+pointerenter@divA
+pointermove@divA
+pointerout@divA
+pointerleave@divA
+pointerover@divB
+pointerenter@divB
+pointerout@divB
+pointerleave@divB
+pointerover@divA
+pointerenter@divA
+

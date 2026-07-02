@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that SVG animations are properly paused in iframes that are inserted into hidden pages.");
+jsTestIsAsync = true;
+
+var animationAsText = '<svg width="300px" height="100px"><rect x="0" y="0" width="300" height="100" stroke="black" stroke-width="1" /><circle cx="0" cy="50" r="15" fill="blue" stroke="black" stroke-width="1"><animate attributeName="cx" from="0" to="100" dur="5s" repeatCount="indefinite" /></circle></svg>';
+
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        debug("Inserting SVG animation in the document");
+        testDiv.innerHTML = animationAsText;
+        svgElement = document.getElementsByTagName("svg")[0];
+        
+        setTimeout(function() {
+            shouldBeTrue("internals.areSVGAnimationsPaused");
+            shouldBeTrue("svgElement.animationsPaused()");
+
+            debug("Setting page visibility to visible"); 
+            if (window.testRunner)
+                testRunner.setPageVisibility("visible");
+            }, 0);
+    } else {
+        shouldBeFalse("internals.areSVGAnimationsPaused");
+        shouldBeFalse("svgElement.animationsPaused()");
+        finishJSTest();
+    }
+});
+
+window.onload = function() {
+    debug("Setting page visibility to hidden");
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
+}
+</script>
+<div id="testDiv"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

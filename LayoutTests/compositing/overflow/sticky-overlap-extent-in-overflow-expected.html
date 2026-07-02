@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            overflow: auto;
+            height: 300px;
+            margin-top: 400px;
+            position: relative;
+        }
+
+        .sticky {
+            position: relative;
+            height: 150px;
+            background: blue;
+            z-index: 1;
+        }
+
+        .box {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: orange;
+            z-index: 2;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="sticky"></div>
+        <div class="box"></div>
+        <div style="height: 400px"></div>
+    </div>
+</body>
+</html>

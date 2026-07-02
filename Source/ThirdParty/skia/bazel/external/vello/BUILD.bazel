@@ -1,0 +1,112 @@
+# This file will be copied into //third_party/externals/vello via the new_local_repository
+# rule in WORKSPACE.bazel, so all files should be relative to that path.
+load("@rules_rust//cargo:defs.bzl", "cargo_build_script")
+load("@rules_rust//rust:defs.bzl", "rust_library")
+
+# The vello repository is organized as a workspace where the vello_shaders and vello_encoding crates
+# live in //vello/vello_shaders and //vello/vello_encoding, respectively. The WGSL shader source
+# files live under //vello/vello_shaders/shader.
+#
+# Normally we would simply list the following dependencies in our Cargo.toml file and Bazel's
+# `crates_repository` rule would automatically create targets for both crates that could be compiled
+# out-of-the-box:
+#
+#    vello_shaders = { git = "https://skia.googlesource.com/external/github.com/linebender/vello", rev = "123456" }
+#    vello_encoding = { git = "https://skia.googlesource.com/external/github.com/linebender/vello", rev = "123456" }
+#
+# However, using that setup I (armansito@) haven't found a good way to both:
+#
+#    (a) Conditionally toggle the "wgsl" and "msl" cargo features for these libraries. Bazel wants
+#        config settings and cargo features to be declared by the relevant library rules and not
+#        consumers of that library;
+#    (b) Support local iteration using a cargo "path" dependency.
+#
+# Until we find a way around these limitations, we maintain our own build rules for the vello crates
+# here.
+
+rust_library(
+    name = "vello_encoding",
+    srcs = glob(
+        include = ["vello_encoding/src/**/*.rs"],
+        allow_empty = False,
+    ),
+    crate_features = ["bump_estimate"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@crates//:bytemuck",
+        "@crates//:peniko",
+    ],
+)
+
+# The following setting is used to enable the WGSL -> MSL translation feature. Pass
+# `--define VELLO_MSL_SHADERS=true` to Bazel to bundle vello shaders in the Metal Shading Language.
+config_setting(
+    name = "msl_shaders",
+    values = {
+        "define": "VELLO_MSL_SHADERS=true",
+    },
+)
+
+# Pass `--define VELLO_WGSL_SHADERS=true` to Bazel to bundle the vello shaders in their native
+# WebGPU Shading Language.
+config_setting(
+    name = "wgsl_shaders",
+    values = {
+        "define": "VELLO_WGSL_SHADERS=true",
+    },
+)
+
+rust_library(
+    name = "vello_shaders",
+    srcs = glob(
+        include = ["vello_shaders/src/**/*.rs"],
+        allow_empty = False,
+    ),
+    crate_features = select({
+        ":msl_shaders": ["msl"],
+        "//conditions:default": [],
+    }) + select({
+        ":wgsl_shaders": ["wgsl"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//visibility:public"],
+    deps = [":vello_shaders_build_script"],
+)
+
+cargo_build_script(
+    name = "vello_shaders_build_script",
+    srcs = [
+        "vello_shaders/build.rs",
+        "vello_shaders/src/compile/mod.rs",
+        "vello_shaders/src/compile/msl.rs",
+        "vello_shaders/src/compile/permutations.rs",
+        "vello_shaders/src/compile/preprocess.rs",
+        "vello_shaders/src/types.rs",
+    ],
+    build_script_env = {
+        "UNSTABLE_BAZEL_VELLO_SHADERS_CRATE_MANIFEST_PATH": "$(execpath vello_shaders/Cargo.toml)",
+    },
+    crate_features = select({
+        ":msl_shaders": ["msl"],
+        "//conditions:default": [],
+    }) + select({
+        ":wgsl_shaders": ["wgsl"],
+        "//conditions:default": [],
+    }),
+    crate_root = "vello_shaders/build.rs",
+    data = [
+        # This is needed to define BAZEL_CRATE_MANIFEST_PATH above.
+        "vello_shaders/Cargo.toml",
+        "vello_shaders/shader/permutations",
+    ] + glob(
+        include = [
+            "vello_shaders/shader/**/*.wgsl",
+        ],
+        allow_empty = False,
+    ),
+    deps = [
+        "@crates//:naga",
+        "@crates//:regex",
+        "@crates//:thiserror",
+    ],
+)

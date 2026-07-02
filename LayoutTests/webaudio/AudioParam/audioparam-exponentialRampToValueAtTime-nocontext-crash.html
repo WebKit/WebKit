@@ -1,0 +1,14 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Make sure we don't crash when calling linearRampToValueAtTime() on an AudioParam that lost its AudioContext.");
+
+let audioParam = new OfflineAudioContext(1, 1, 3000).listener.forwardX;
+gc();
+audioParam.exponentialRampToValueAtTime(1, 0);
+testPassed("Did not crash");
+</script>
+</body>
+</html>

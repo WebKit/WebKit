@@ -1,0 +1,8 @@
+（テスト
+（テスト
+（テスト
+（テスト
+
+FAIL [consistent] Check that text-spacing-trim: trim-start scales larger than none because of trimmed start margin assert_true: trimLineHeight (22px) should be greater than noneLineHeight (22px) expected true got false
+FAIL [per-line-all] Check that text-spacing-trim: trim-start scales larger than none because of trimmed start margin assert_true: trimLineHeight (22px) should be greater than noneLineHeight (22px) expected true got false
+

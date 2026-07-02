@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests pasting text into a table cell.  The last bit of content in the incoming fragment should be merged with the paragraph after the position being pasted into.</p>
+<div contenteditable="true"><table border='1'><tr><td><div id="test2">Item 1</div></td><td>Item 2</td></tr></table></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+var e = document.getElementById("test2");
+var s = window.getSelection();
+
+Markup.description(document.querySelector('p').textContent);
+Markup.dump(document.querySelector('table'), 'Before insertion');
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByWordCommand();
+insertHTMLCommand("<div>foo</div><div>bar</div>");
+
+Markup.dump(document.querySelector('table'), 'After insertion');
+</script>
+</body>
+</html>

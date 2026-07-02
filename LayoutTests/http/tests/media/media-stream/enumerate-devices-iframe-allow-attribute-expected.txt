@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call enumerateDevices.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call enumerateDevices.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call enumerateDevices.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Permission policy 'Microphone' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Permission policy 'Camera' check failed for document with origin 'http://localhost:8000'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+
+
+PASS Wait for frames to be loaded
+PASS none
+PASS microphone
+PASS camera
+PASS camera+microphone
+PASS microphone+speakerselection
+PASS camera+microphone+speakerselection
+PASS same-origin
+

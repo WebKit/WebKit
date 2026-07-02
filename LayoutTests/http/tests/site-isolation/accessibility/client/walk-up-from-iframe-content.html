@@ -1,0 +1,95 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<h1 id="heading-before">Heading Before Iframe</h1>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+
+<button id="button-after">Button After Iframe</button>
+
+<script>
+var output = "Tests that walking accessibilityParent from a cross-process iframe descendant reaches the main page's WebArea.\n";
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+// Walks accessibilityParent until the chain ends or maxHops is exceeded.
+// Records each role visited so the test output documents the cross-process boundary.
+function walkParents(startElement) {
+    var roles = [];
+    var webAreaCount = 0;
+    var current = startElement;
+    var maxHops = 20;
+    while (current && roles.length < maxHops) {
+        var role = current.role || "";
+        if (!role)
+            break;
+
+        roles.push(role);
+        if (role.includes("AXWebArea"))
+            webAreaCount++;
+        current = current.parentElement();
+    }
+    return { roles, webAreaCount };
+}
+
+var iframeHeading, walk;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // Wait for an iframe heading (cross-process content) to be in the AX tree.
+    await waitForElements([
+        (element) => element.role.includes("Heading") && element.title.includes("Iframe Heading"),
+    ]);
+
+    var root = accessibilityController.rootElement;
+    var webArea = root.childAtIndex(0);
+
+    // Find a heading inside the iframe. This necessitates crossing the iframe-process
+    // boundary when walking parent-by-parent.
+    function findIframeHeading(element, depth) {
+        if (!element || depth > 8)
+            return null;
+        if (element.role && element.role.includes("Heading") && element.title && element.title.includes("Iframe Heading"))
+            return element;
+        for (var i = 0; i < element.childrenCount; i++) {
+            var found = findIframeHeading(element.childAtIndex(i), depth + 1);
+            if (found)
+                return found;
+        }
+        return null;
+    }
+
+    iframeHeading = findIframeHeading(webArea, 0);
+    output += expect("iframeHeading != null", "true");
+    if (!iframeHeading) {
+        debug(output);
+        finishJSTest();
+        return;
+    }
+
+    output += `\nFound Iframe descendant: ${iframeHeading.role} "${iframeHeading.title}"\n`;
+
+    walk = walkParents(iframeHeading);
+    output += "\nAccessibility-parent chain:\n";
+    for (var i = 0; i < walk.roles.length; i++)
+        output += `  ${i + 1}: ${walk.roles[i]}\n`;
+
+    // The chain should pass through at least two AXWebArea elements: the iframe's
+    // own AXWebArea (inside the iframe process) and the main page's AXWebArea
+    // (in the main process).
+    output += "\n" + expect("walk.webAreaCount >= 2", "true");
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

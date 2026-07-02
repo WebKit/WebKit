@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/UIKitServices.framework/UIKitServices
+current-version: 9088.1.113
+exports:
+-       targets: [x86_64-ios-simulator, arm64-ios-simulator]
+        objc-classes: [UISApplicationState]
+...

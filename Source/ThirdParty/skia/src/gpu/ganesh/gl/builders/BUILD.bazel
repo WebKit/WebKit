@@ -1,0 +1,20 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+BUILDER_FILES = [
+    "GrGLProgramBuilder.cpp",
+    "GrGLProgramBuilder.h",
+    "GrGLShaderStringBuilder.cpp",
+    "GrGLShaderStringBuilder.h",
+]
+
+split_srcs_and_hdrs(
+    name = "builder",
+    files = BUILDER_FILES,
+    visibility = ["//src/gpu/ganesh/gl:__pkg__"],
+)

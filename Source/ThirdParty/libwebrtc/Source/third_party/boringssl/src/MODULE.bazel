@@ -1,0 +1,42 @@
+# Copyright 2024 The BoringSSL Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# When tagging a new periodic snapshot, bump the version here and then tag at
+# the revision where we bump the version.
+module(
+    name = "boringssl",
+    version = "0.20260526.0",
+    compatibility_level = 2,
+)
+
+# Periodically update the following dependencies to their latest versions
+# listed on https://registry.bazel.build/. When doing so, run
+# `bazelisk test ...` to update the hashes in MODULE.bazel.lock.
+#
+# Similarly update the dependencies in util/bazel-example/MODULE.bazel
+#
+# After updating dependencies, run bazelisk mod deps --lockfile_mode=refresh
+# from the root and util/bazel-example
+
+# In principle, googletest is only needed for tests and could be a
+# dev_dependency. But it would then be impossible for downstream modules to run
+# BoringSSL's tests. The downstream module provides the toolchain, so we may
+# need to request they run tests when triaging issues. If
+# https://github.com/bazelbuild/bazel/issues/22187 is ever fixed, we can change
+# this.
+bazel_dep(name = "googletest", version = "1.17.0.bcr.2")
+bazel_dep(name = "google_benchmark", version = "1.9.5")
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "rules_cc", version = "0.2.17")
+bazel_dep(name = "rules_license", version = "1.0.0")

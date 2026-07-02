@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html><head>
+    <meta charset="utf-8">
+        <style type="text/css">
+            html,body {
+                color:black; background-color:white; font-size:16px; padding:0; margin:0;
+            }
+        
+        div {
+            position: absolute;
+            background: rgba(0,255,0,0.5);
+            top:0; bottom:0;
+            left:0; right:0;
+            z-index: 0;
+        }
+        c {
+            display: block;
+            background: blue;
+            height:100%;
+        }
+        
+        legend { height: 24px; }
+        
+        fieldset {
+            position: absolute;
+            border: 2px green solid;
+            width: 100px;
+            height: 100px;
+            margin-bottom:40px;
+        }
+        
+        #t1,#t3 { padding: 3px 5px 7px 11px; }
+        #t2,#t4 { padding: 0; }
+        
+        #t1 div, #t3 div {
+            /* same numbers as padding above */
+            left: -11px; right: -5px;
+            top:  -3px;  bottom:-7px;
+        }
+        
+        #t2 { top: 120px; }
+        #t3 { top: 240px; }
+        #t4 { top: 360px; }
+        
+        x {
+            position: absolute;
+            width:100px;
+            height:100px;
+        }
+        #t1 x, #t2 x {
+            height:78px; /* compensate for legend */
+        }
+        </style>
+</head>
+<body>
+    
+    
+    <fieldset id="t1">
+        <legend>legend</legend>
+        <x><div></div><c></c></x>
+    </fieldset>
+    
+    <fieldset id="t2">
+        <legend>legend</legend>
+        <x><div></div></x>
+    </fieldset>
+    
+    <fieldset id="t3">
+        <x><div></div><c></c></x>
+    </fieldset>
+    
+    <fieldset id="t4">
+        <x><div></div></x>
+    </fieldset>
+    
+    
+</body>
+</html>
+

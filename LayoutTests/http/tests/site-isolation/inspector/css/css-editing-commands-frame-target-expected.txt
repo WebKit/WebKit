@@ -1,0 +1,33 @@
+Test that CSS style/rule editing commands (setStyleText, setRuleSelector, setGroupingHeaderText, addRule) work correctly on frame targets under site isolation, routing undoable edits through the frame's InspectorHistory.
+
+
+
+== Running test suite: SiteIsolation.CSS.EditingCommands.FrameTarget
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.Setup
+PASS: Should find a child frame target.
+PASS: Child frame target should have a CSSAgent.
+PASS: Should create an inspector stylesheet for the frame.
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.AddRule
+PASS: Added rule should have the requested selector.
+PASS: Added rule should have a ruleId.
+PASS: Added rule should have a styleId.
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleText
+PASS: Updated style should contain a color property.
+PASS: color should be updated to 'blue'.
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.SetRuleSelectorThenUndo
+PASS: setRuleSelector should update the selector.
+PASS: undo() should revert the selector back to '.added-rule'.
+PASS: The '.renamed-rule' selector should no longer be present after undo().
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.Redo
+PASS: redo() should re-apply the selector change back to '.renamed-rule'.
+PASS: The '.added-rule' selector should no longer be present after redo().
+
+-- Running test case: SiteIsolation.CSS.EditingCommands.FrameTarget.SetGroupingHeaderText
+PASS: Should find the rule nested inside the @media grouping.
+PASS: Should find the editable @media grouping.
+PASS: Grouping header text should be updated to 'print'.
+

@@ -1,0 +1,21 @@
+Regression test for WK136583 - ensure the versionchange event has the proper name
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+db.onversionchange = onVersionChange
+store = db.createObjectStore('store1')
+PASS db.version is 1
+request = indexedDB.open(dbname, 2)
+db.onversionchange = onVersionChange
+
+onVersionChange():
+PASS event.type is "versionchange"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

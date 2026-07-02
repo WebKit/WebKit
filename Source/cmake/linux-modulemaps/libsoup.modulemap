@@ -1,0 +1,9 @@
+// Linux system modulemap for libsoup-3.0.
+// This file is injected into /usr/include/libsoup-3.0/ via a VFS overlay
+// (see Source/WebKit/CMakeLists.txt and vfs-overlay.yaml.in).
+//
+// Headers are filled in iteratively. See the linux-system-modulemaps skill.
+
+module libsoup_3_0 [system] {
+    export *
+}

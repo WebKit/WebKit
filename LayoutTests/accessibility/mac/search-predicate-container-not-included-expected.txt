@@ -1,0 +1,11 @@
+This tests that the search predicate container is not included in the search results.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backwardResultCount is 0
+PASS forwardResultCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

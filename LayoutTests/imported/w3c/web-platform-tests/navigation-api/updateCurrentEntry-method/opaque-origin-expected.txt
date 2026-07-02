@@ -1,0 +1,4 @@
+
+
+PASS navigation.updateCurrentEntry() in an opaque origin iframe
+

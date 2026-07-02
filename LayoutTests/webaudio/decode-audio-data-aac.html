@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding an aac file succeeds");
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext({ sampleRate: 48000 });
+var request = new XMLHttpRequest();
+request.open("GET", 'resources/media/aac.aac', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        // File is exactly 1.024s long @ 48000Hz, but AAC encoder delay is 2112 frames long (which would be silence). leaving 47040 frames.
+        if (buffer.length === 47040)
+          testPassed("Decoding returned the right number of frames.");
+        else
+          testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+        finishJSTest();
+      }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+      });
+}
+request.send();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Test negative values for lineDashOffset
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.lineDashOffset is -100
+PASS getPixel(50,100) is [0,0,0,0]
+PASS getPixel(150,100) is [0,255,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

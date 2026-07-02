@@ -1,0 +1,8 @@
+Pressing Enter on an empty list item (double newline) should break out of the list, moving the following text "C" outside the list as its own block.
+| "* A"
+| <div>
+|   "* B"
+| <div>
+|   <br>
+| <div>
+|   "C<#selection-caret>"

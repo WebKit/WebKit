@@ -1,0 +1,22 @@
+
+done
+
+Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
+
+PASS Test pointer events in the main document
+FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
+PASS mouse pointerover.fromElement value is null
+PASS mouse pointerover.toElement value is null
+PASS mouse pointerenter.fromElement value is null
+PASS mouse pointerenter.toElement value is null
+PASS mouse pointermove.fromElement value is null
+PASS mouse pointermove.toElement value is null
+PASS mouse pointerdown.fromElement value is null
+PASS mouse pointerdown.toElement value is null
+PASS mouse pointerup.fromElement value is null
+PASS mouse pointerup.toElement value is null
+PASS mouse pointerout.fromElement value is null
+PASS mouse pointerout.toElement value is null
+PASS mouse pointerleave.fromElement value is null
+PASS mouse pointerleave.toElement value is null
+

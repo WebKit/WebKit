@@ -1,0 +1,4 @@
+
+FAIL COEP support on DedicatedWorker. assert_equals: expected 1 but got 0
+FAIL COEP-Report-Only support on DedicatedWorker. assert_equals: expected 1 but got 0
+

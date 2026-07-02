@@ -1,0 +1,20 @@
+root
+	label='Main content'
+		'Before subframes'
+		role=document
+			iframe title='Same origin iframe'
+				label=Heading 'Hello world'
+				form autocomplete=on
+					label='Sign in with email'
+						input placeholder='Enter your email'
+						link url=javascript: 'Forgot your email?'
+					input placeholder='Enter your password' secure
+				iframe
+					contentEditable role=textbox focused
+						label=Heading 'Nested subframe'
+				link url=www.apple.com 'Link in subframe'
+				image label='Square icon' src=square20.jpg
+		role=document
+			iframe title='Cross origin iframe' origin=localhost:8000
+		button label=Submit 'After subframes'
+		link url=webkit.org 'Link in mainframe'

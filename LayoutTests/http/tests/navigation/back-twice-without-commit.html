@@ -1,0 +1,23 @@
+<script>
+if (window.testRunner) {
+    if (!window.localStorage.page1Started) {
+        // On the first visit, clear the back forward list to start fresh,
+        // then set up the test.
+        window.localStorage.page1Started = true;
+        testRunner.clearBackForwardList();
+        testRunner.dumpBackForwardList();
+        testRunner.dumpAsText();
+
+        // Visit two pages, then go back to page 2, which has a slow frame the 
+        // second time, and then back to page 1 before page 2 commits.
+        testRunner.queueLoad("resources/back-twice-page-2.html");
+        testRunner.queueLoad("resources/back-twice-page-3.html");
+        testRunner.queueBackNavigation(1);
+        testRunner.queueBackNavigation(1);
+    } else {
+        delete window.localStorage.page1Started;
+    }
+}
+</script>
+<p>This test checks that going back twice without committing doesn't corrupt the back/forward list.
+<p>If testing manually, <a href="resources/back-twice-page-2.html">click here</a>.

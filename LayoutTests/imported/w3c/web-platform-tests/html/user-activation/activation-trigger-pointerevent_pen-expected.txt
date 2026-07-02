@@ -1,0 +1,8 @@
+Test for pointerevent click activation trigger
+
+Tests user activation from a pointer click.
+
+Click anywhere in the document.
+
+FAIL Activation through pen pointerevent click assert_false: pen pointerdown event should not result in activation expected false got true
+

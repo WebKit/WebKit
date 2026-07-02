@@ -1,0 +1,4 @@
+
+PASS Test flush on an empty file.
+PASS SyncAccessHandle.read returns bytes written by SyncAccessHandle.write after SyncAccessHandle.flush
+

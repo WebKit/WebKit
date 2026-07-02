@@ -1,0 +1,23 @@
+checkbox1
+
+checkbox2
+
+checkbox3
+
+checkbox4
+
+
+This tests that checkboxes will return the right AXValue for false/true/mixed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById('box1').intValue is 0
+PASS accessibilityController.accessibleElementById('box2').intValue is 1
+PASS accessibilityController.accessibleElementById('box3').intValue is 2
+PASS accessibilityController.accessibleElementById('box4').intValue is 0
+PASS accessibilityController.accessibleElementById('box5').intValue is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

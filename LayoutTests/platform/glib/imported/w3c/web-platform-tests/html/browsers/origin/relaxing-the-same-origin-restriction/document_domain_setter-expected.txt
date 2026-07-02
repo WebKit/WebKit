@@ -1,0 +1,6 @@
+
+
+FAIL failed setting of document.domain assert_throws_dom: function "function() { document.domain = SUFFIX_HOST; }" did not throw
+PASS same-origin-domain iframe
+PASS failed setting of document.domain for documents without browsing context
+

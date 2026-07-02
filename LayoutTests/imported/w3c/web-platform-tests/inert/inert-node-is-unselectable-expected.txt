@@ -1,0 +1,5 @@
+Here is a text node you can't select.
+I'm selectable.
+
+PASS Inert nodes cannot be selected.
+

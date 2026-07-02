@@ -1,0 +1,4 @@
+
+PASS Oscillator with large detune produces 0 output at Nyquist or above
+PASS Oscillator with detune automation becomes silent above Nyquist
+

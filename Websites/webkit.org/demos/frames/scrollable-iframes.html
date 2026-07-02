@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+    <h1>Scrollable iframes</h1>
+
+    <h2>Basic iframe with vertical and horizontal overflows</h2>
+    <iframe style="height: 100px; width: 200px;" scrolling="yes" srcdoc="<div style='height: 500px; width: 300px; background: linear-gradient(135deg, red, blue);'></div>"></iframe>
+
+    <h2>Iframe with text and images</h2>
+    <iframe style="border: 10px solid black; width: 200px; height: 200px" scrolling="yes" srcdoc="<p style='color: red'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p style='color: green'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><img src='https://planet.igalia.com/images/logo.png'/><p style='color: blue'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>"></iframe>
+
+    <h2>Nested iframes</h2>
+    <iframe style="width: 400px; height: 300px; background: green;" srcdoc="<iframe style=&quot;width: 200px; height: 600px; background: orange&quot; srcdoc=&quot;&amp;lt;div style=&amp;quot;height: 1000px; background: linear-gradient(180deg, blue, purple);&amp;quot;&amp;gt;&amp;lt;/div&amp;gt;&quot;></iframe>"></iframe>
+
+    <h2>Overlapping iframes and elements</h2>
+    <div style="height: 300px">
+      <div style="position: absolute;">
+        <iframe style="position: absolute; top: 20px; left:0; width: 300px; height: 200px;" scrolling="yes" srcdoc="<div style='height: 1000px; background: linear-gradient(180deg, red, yellow);'></div>"></iframe>
+        <div style="position: absolute; top: 20px; left: 0; width: 500px; height: 100px; background: gray; z-index: -1"></div>
+        <iframe style="position: absolute; top: 80px; left: 70px; width: 300px; height: 200px;" scrolling="yes" srcdoc="<div style='height: 1000px; background: linear-gradient(180deg, green, blue);'></div>"></iframe>
+        <div style="position: absolute; top: 120px; left: 50px; width: 100px; height: 100px; background: gray;"></div>
+      </div>
+    </div>
+
+    <h2>Iframe with CSS transforms</h2>
+    <iframe style="width: 300px; height: 200px; transform: translate(100px,0px) skewX(-30deg)" scrolling="yes" srcdoc="<div style='height: 1000px; background: linear-gradient(180deg, orange, purple);'></div>"></iframe><br/>
+    <iframe style="width: 300px; height: 200px; transform: translate(400px,0px) rotate(45deg)" scrolling="yes" srcdoc="<div style='height: 1000px; background: linear-gradient(180deg, cyan, red);'></div>"></iframe><br/>
+
+    <h2>iframe with position:fixed</h2>
+
+    <iframe style="height: 200px; width: 200px;" scrolling="yes" srcdoc="<div style='height: 500px; width: 300px; background: linear-gradient(135deg, red, blue);'></div><div style='position: fixed; left: 30px; top: 30px; height: 100px; width: 100px; background: green;'></div>"></iframe>
+    
+    <h2>iframe with complex content</h2>
+    <iframe style="margin: 0; border-style: solid; border-color: black; border-width: 5px 2% 5px 2%; width: 96%; height: 300px;" src="https://en.wikipedia.org/wiki/Igalia"/>
+
+  </body>
+</html>

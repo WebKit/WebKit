@@ -1,0 +1,4 @@
+hello, world
+
+FAIL direction returns "none" when there is a triple click selection(directionless) assert_equals: expected Element node <div id="container">hello, world</div> but got null
+

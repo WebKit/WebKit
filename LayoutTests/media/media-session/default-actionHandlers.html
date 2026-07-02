@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>default-actionHandlers</title>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+
+    async function runTest() {
+        if (!window.internals) {
+            failTest('This test requires Internals');
+            return;
+        }
+
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'loadeddata');
+
+        consoleWrite('Test that default media element action will be run when no media session handlers exist for that action.');
+
+        testExpected("video.paused", true);
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"})');
+        testExpected("video.paused", false);
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "pause"})');
+        testExpected("video.paused", true);
+
+        run('video.currentTime = 0');
+        testExpected("video.currentTime", 0);
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1})');
+        testExpected("video.currentTime", 1);
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekforward", seekOffset: 5})');
+        testExpected("video.currentTime", 6);
+
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekbackward", seekOffset: 5})');
+        testExpected("video.currentTime", 1);
+
+        navigator.mediaSession.setActionHandler("play", actionDetails => {
+            consoleWrite(`ACTION: ${actionDetails.action}`);
+        });
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"})');
+        // Playback shouldn't have started if a handler for the play action was defined and it did nothing.
+        testExpected("video.paused", true);
+
+        navigator.mediaSession.setActionHandler("play", null);
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"})');
+        testExpected("video.paused", false);
+
+        navigator.mediaSession.setActionHandler("pause", actionDetails => {
+            consoleWrite(`ACTION: ${actionDetails.action}`);
+        });
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "pause"})');
+        // Playback shouldn't have been interrupted if a handler for the pause action was defined and it did nothing.
+        testExpected("video.paused", false);
+
+        navigator.mediaSession.setActionHandler("pause", null);
+        run('internals.sendMediaSessionAction(navigator.mediaSession, {action: "pause"})');
+        testExpected("video.paused", true);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls preload='auto'></video>
+</body>
+</html>

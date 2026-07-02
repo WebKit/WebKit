@@ -1,0 +1,6 @@
+This tests that we can assign strings to the status property.
+PASS: window.status = 'set window.status'; window.status should be 'set window.status' and is.
+PASS: status = 'set status' should be 'set status' and is.
+PASS: window.status = 1; window.status should be '1' and is.
+PASS: status = 2; status should be '2' and is.
+PASS: window.status={toString:function(){ return 'object.toString'; }}; window.status should be 'object.toString' and is.

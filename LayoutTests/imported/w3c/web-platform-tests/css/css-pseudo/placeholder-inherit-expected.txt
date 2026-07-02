@@ -1,0 +1,4 @@
+
+
+PASS ::placeholder should inherit from its originating element
+

@@ -1,0 +1,93 @@
+// Copyright (C) 2021 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "BaseTarget.xcconfig"
+#include "RelocatableFrameworksLinkerFlags.xcconfig"
+
+PRODUCT_NAME = webpushd
+PRODUCT_NAME[sdk=macos*] = $(PRODUCT_NAME_MAC_$(WK_RELOCATABLE_WEBPUSHD))
+PRODUCT_NAME_MAC_NO = webpushd
+PRODUCT_NAME_MAC_YES = webpushd-relocatable
+
+WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK = $(WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_$(SHALLOW_BUNDLE)_DEPLOYMENT_$(DEPLOYMENT_LOCATION));
+WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_NO_DEPLOYMENT_YES = ../../..;
+WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_YES_DEPLOYMENT_YES = .;
+WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_NO_DEPLOYMENT_NO = .;
+WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORK_SHALLOW_BUNDLE_YES_DEPLOYMENT_NO = .;
+
+CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
+WK_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
+WK_PGO_USE_CFLAGS = ; // Disable IR PGO profile use
+WK_PGO_USE_LDFLAGS = ; // Disable IR PGO profile use
+OTHER_LDFLAGS = $(WK_COMMON_OTHER_LDFLAGS) $(WK_RELOCATABLE_FRAMEWORKS_LDFLAGS) -framework WebKit $(SOURCE_VERSION_LDFLAGS);
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
+
+// We want this to always be NO for non-simulator builds. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=*simulator] = YES;
+
+// For simulator builds, entitlements are added to a special __entitlements section on the binary rather than the signature.
+CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Resources/ios/XPCService-embedded-simulator.entitlements
+
+WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
+
+WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS = $(WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_$(WK_LIBRARY_VALIDATION_ENABLED));
+WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_ = -o library;
+WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS_YES = -o library
+
+OTHER_CODE_SIGN_FLAGS = --entitlements $(WK_PROCESSED_XCENT_FILE);
+OTHER_CODE_SIGN_FLAGS[sdk=macos*] = $(OTHER_CODE_SIGN_FLAGS_$(USE_INTERNAL_SDK)) $(WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS);
+OTHER_CODE_SIGN_FLAGS_YES = --entitlements $(WK_PROCESSED_XCENT_FILE);
+
+INSTALL_PATH_NO = $(SYSTEM_SECONDARY_CONTENT_PATH)/usr/libexec;
+INSTALL_PATH_YES = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Daemons;
+INSTALL_PATH = $(INSTALL_PATH_$(WK_RELOCATABLE_WEBPUSHD));
+
+SKIP_INSTALL[sdk=macosx*] = $(WK_IS_CATALYST);
+
+LAUNCHD_PLIST_FILE_NAME = com.apple.webkit.webpushd.plist
+
+LAUNCHD_PLIST_INPUT_FILE = webpushd/com.apple.webkit.webpushd.ios.plist
+LAUNCHD_PLIST_INPUT_FILE[sdk=macosx*] = $(LAUNCHD_PLIST_INPUT_FILE_MAC_$(WK_RELOCATABLE_WEBPUSHD));
+LAUNCHD_PLIST_INPUT_FILE_MAC_NO = webpushd/com.apple.webkit.webpushd.mac.plist
+LAUNCHD_PLIST_INPUT_FILE_MAC_YES = webpushd/com.apple.webkit.webpushd.relocatable.mac.plist
+
+LAUNCHD_PLIST_INSTALL_PATH = $(LAUNCHD_PLIST_INSTALL_PATH_$(WK_RELOCATABLE_WEBPUSHD))
+LAUNCHD_PLIST_INSTALL_PATH_YES = /System/Library/LaunchDaemons
+LAUNCHD_PLIST_INSTALL_PATH_YES[sdk=macos*] = /Library/Apple/System/Library/LaunchAgents
+
+LAUNCHD_PLIST_INSTALL_PATH_NO = /System/Library/LaunchDaemons
+LAUNCHD_PLIST_INSTALL_PATH_NO[sdk=macos*] = $(SYSTEM_SECONDARY_CONTENT_PATH)/System/Library/LaunchAgents
+
+LAUNCHD_PLIST_OUTPUT_FILE = $(LAUNCHD_PLIST_OUTPUT_FILE_INSTALL_$(WK_NOT_$(SKIP_INSTALL)))
+LAUNCHD_PLIST_OUTPUT_FILE_INSTALL_YES = $(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)
+
+LAUNCHD_PLIST_SYMLINK_PATH[sdk=macos*] = $(LAUNCHD_PLIST_SYMLINK_PATH_$(WK_RELOCATABLE_WEBPUSHD))
+LAUNCHD_PLIST_SYMLINK_PATH_NO = /System/Library/LaunchAgents
+
+WK_NEEDS_LAUNCH_CONSTRAINTS = $(WK_NOT_$(WK_OR_$(WK_RELOCATABLE_FRAMEWORKS)_$(WK_ANY_SANITIZER_ENABLED)))
+
+LAUNCH_CONSTRAINT_SELF = $(LAUNCH_CONSTRAINT_SELF_$(WK_NEEDS_LAUNCH_CONSTRAINTS))
+LAUNCH_CONSTRAINT_SELF_YES = Configurations/LaunchConstraints/xpc-self.plist
+LAUNCH_CONSTRAINT_PARENT = $(LAUNCH_CONSTRAINT_PARENT_$(WK_NEEDS_LAUNCH_CONSTRAINTS))
+LAUNCH_CONSTRAINT_PARENT_YES = Configurations/LaunchConstraints/xpc-parent.plist

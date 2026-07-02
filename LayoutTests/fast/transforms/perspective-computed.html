@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/computed-testcommon.js"></script>
+<style>
+  #container {
+    container-type: inline-size;
+    width: 10px;
+  }
+  #target {
+    font-size: 40px;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="target"></div>
+</div>
+<script>
+test_computed_value("perspective", "10px", "10px");
+test_computed_value("perspective", "10em", "400px");
+test_computed_value("perspective", "calc(10px)", "10px");
+test_computed_value("perspective", "calc(-10px)", "0px");
+test_computed_value("perspective", "calc(10em)", "400px");
+test_computed_value("perspective", "calc(-10em)", "0px");
+test_computed_value("perspective", "calc(10px + (5px * sign(20cqw - 10px)))", "5px");
+
+test_computed_value("-webkit-perspective", "10px", "10px");
+test_computed_value("-webkit-perspective", "10em", "400px");
+test_computed_value("-webkit-perspective", "calc(10px)", "10px");
+test_computed_value("-webkit-perspective", "calc(-10px)", "0px");
+test_computed_value("-webkit-perspective", "calc(10em)", "400px");
+test_computed_value("-webkit-perspective", "calc(-10em)", "0px");
+test_computed_value("-webkit-perspective", "calc(10px + (5px * sign(20cqw - 10px)))", "5px");
+test_computed_value("-webkit-perspective", "10", "10px");
+test_computed_value("-webkit-perspective", "calc(10)", "10px");
+test_computed_value("-webkit-perspective", "calc(-10)", "0px");
+test_computed_value("-webkit-perspective", "calc(10 + (5 * sign(20cqw - 10px)))", "5px");
+</script>
+</body>
+</html>

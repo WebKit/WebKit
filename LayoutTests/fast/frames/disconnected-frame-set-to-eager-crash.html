@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<iframe id="iframe" loading="lazy"></iframe>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    let iframe = document.getElementById("iframe");
+    iframe.remove();
+    iframe.setAttribute("loading", "eager");
+    document.body.appendChild(iframe);
+    iframe.remove();
+    requestAnimationFrame(() => {
+        document.body.innerHTML = "PASS if no crash.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>

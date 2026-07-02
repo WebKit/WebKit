@@ -1,0 +1,10 @@
+
+FAIL XRRigidTransform constructor works - webgl assert_throws_js: Constructor should throw TypeError if position values contain NaN function "() => new XRRigidTransform(
+    coordDict([NaN, 2.0, 3.0, 1.0]),
+    coordDict([1.1, 2.1, 3.1, 1.0])
+)" did not throw
+FAIL XRRigidTransform constructor works - webgl2 assert_throws_js: Constructor should throw TypeError if position values contain NaN function "() => new XRRigidTransform(
+    coordDict([NaN, 2.0, 3.0, 1.0]),
+    coordDict([1.1, 2.1, 3.1, 1.0])
+)" did not throw
+

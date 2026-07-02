@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that the navigate event doesn't get fired if the client blocks the navigation via policy decision.");
+jsTestIsAsync = true;
+
+navigateEventWasFired = false;
+
+onload = () => {
+    frame = document.getElementById("testFrame");
+
+    // Deny navigations.
+    frame.contentWindow.testRunner.setCustomPolicyDelegate(true, false);
+    frame.contentWindow.testRunner.skipPolicyDelegateNotifyDone();
+
+    setTimeout(() => {
+        frame.contentWindow.navigation.onnavigate = () => {
+            frame.contentWindow.navigation.onnavigate = null;
+            navigateEventWasFired = true;
+            testFailed("The navigate event was fired unexpectedly");
+            finishJSTest();
+        };
+
+        internals.withUserGesture(() => {
+            testLink.style = "display:none";
+            testLink.click();
+        });
+        setTimeout(() => {
+            if (navigateEventWasFired)
+                return;
+            testPassed("The navigate event was not fired");
+            finishJSTest();
+        }, 100);
+    }, 0);
+};
+</script>
+<iframe id="testFrame" name="testFrame" src="/security/resources/empty.html"></iframe>
+<a id="testLink" target="testFrame" href="/security/resources/empty.html?test">Click me</a>
+</body>
+</html>

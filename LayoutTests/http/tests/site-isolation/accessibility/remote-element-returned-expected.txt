@@ -1,0 +1,8 @@
+This test ensures that a remote element is present in the AX tree.
+
+Remote frame exists
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

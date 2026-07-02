@@ -1,0 +1,8 @@
+
+Harness Error (FAIL), message = Test named 'promise_test with asynchronous cleanup including rejection' specified 3 'cleanup' functions, and 1 failed.
+
+PASS promise_test with asynchronous cleanup including rejection
+NOTRUN synchronously-defined test ('NOT RUN')
+NOTRUN test is not asynchronously considered 'complete' ('NOT RUN')
+NOTRUN test is not considered 'complete' following rejection of first promise ('NOT RUN')
+

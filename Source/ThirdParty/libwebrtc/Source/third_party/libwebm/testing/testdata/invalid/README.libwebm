@@ -1,0 +1,24 @@
+Why the files in this directory are considered invalid:
+
+block_ends_beyond_cluster.mkv -
+  File containing a single cluster with two simple blocks. One valid, and the
+  second reporting a size that would cause the block to end far beyond the end
+  of its parent cluster.
+
+blockgroup_block_ends_beyond_blockgroup.mkv -
+  File containing a single cluster and two blockgroups. The first blockgroup is
+  valid. The second blockgroup contains a block reporting a size that spans well
+  past the block and the end of the file.
+
+chapters_truncated_chapter_string.mkv -
+  File with a Chapters element that ends with a ChapterAtom whose ChapterDisplay
+  element contains a truncated ChapterString.
+
+chapters_truncated_chapter_string_2.mkv -
+  Nearly identical to chapters_truncated_chapter_string.mkv, but with a void
+  element and a partial cluster. Causes mkvparser to fail in a slightly
+  different manner.
+
+fixed_lacing_bad_lace_size.mkv -
+  File containing a BlockGroup with fixed lacing, but reports a total laced size
+  that is not evenly divisible by the number of laced frames.

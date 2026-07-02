@@ -1,0 +1,25 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns='http://www.w3.org/2000/svg'>
+  <!--
+    A basic test for the <feSpecularLighting> filter primitive.
+    Setting kernelUnitLength on the <feSpecularLighting> should allow us to
+    assume pixel perfection.
+    -->
+  <filter id='f' x='0' y='0' width='1' height='1' color-interpolation-filters='sRGB'>
+    <feSpecularLighting kernelUnitLength='1' result='a'>
+      <feDistantLight azimuth='45'/>
+    </feSpecularLighting>
+    <feComposite in='a' in2='SourceAlpha' operator='in' result='b'/>
+    <feComposite in='SourceGraphic' in2='b' operator='arithmetic' k1='0' k2='1' k3='1' k4='0' x='10' y='10' width='80' height='80'/>
+  </filter>
+  <rect width='100' height='100' fill='blue'/>
+  <path d='M0,0 h100 v100 h-100 z M20,20 v60 h60 v-60 z' filter='url(#f)'/>
+
+  <!-- Cover two spots in the test whose rendering differs in opt builds
+       vs. debug builds (see Bug 610945). -->
+  <rect x='78' y='18' width='4' height='4'/>
+  <rect x='18' y='78' width='4' height='4'/>
+</svg>

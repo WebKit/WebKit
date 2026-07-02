@@ -1,0 +1,35 @@
+<head>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that the [playingEffectPromise] gets resolved with 'preempted' when the document is no longer fully active");
+jsTestIsAsync = true;
+
+function runTest() {
+    testFrame = document.getElementById("testFrame");
+    testFrame.contentWindow.addEventListener("gamepadconnected", async e => {
+        gamepad = testFrame.contentWindow.navigator.getGamepads()[0];
+        debug("* Starting dual-rumble effect");
+        let promise = gamepad.vibrationActuator.playEffect('dual-rumble', { duration: 3000 });
+        debug("* Detach iframe");
+        testFrame.remove();
+	try {
+            result = await promise;
+            shouldBeEqualToString("result", "preempted");
+        } catch (error) {
+            testFailed("Promise got unexpectedly rejected: " + error);
+        }
+        finishJSTest();
+    });
+    const supportsDualRumble = true;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2, supportsDualRumble);
+    testRunner.setMockGamepadAxisValue(0, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(0, 1, 1.0);
+    testRunner.connectMockGamepad(0);
+}
+onload = runTest;
+</script>
+<iframe id="testFrame" src="about:blank"></iframe>
+</body>

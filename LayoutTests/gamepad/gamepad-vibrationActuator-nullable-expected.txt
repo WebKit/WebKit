@@ -1,0 +1,11 @@
+Tests that Gamepad.vibrationActuator is null when the gamepad doesn't support dual-rumble
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.getGamepads()[0].vibrationActuator is not null
+PASS navigator.getGamepads()[1].vibrationActuator is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

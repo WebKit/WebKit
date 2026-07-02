@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests enqueuing a lot of custom elements during innerHTML.<br>
+WebKit should not lose JS wrappers of those custom elements.</p>
+<pre id="log"></pre>
+<div id="container"><script>
+let failCount = 0;
+class MyComponent extends HTMLElement {
+    disconnectedCallback() {
+        if (!(this instanceof MyComponent))
+            failCount++;
+        const x = new Array(100);
+        for (let i = 0; i < 100; i++)
+            x[i] = new Array(10);
+    }
+}
+customElements.define("my-component", MyComponent);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let content = '';
+for (let i = 0; i < 50; i++)
+    content += '<my-component></my-component>';
+content += '<my-component id="last"></my-component>'
+
+let first = true;
+for (let test = 0; test < 20; test++) {
+    failCount = 0;
+    for (let i = 0; i < 10; i++)
+        document.getElementById('container').innerHTML = content;
+    document.getElementById('log').append(failCount ? `FAIL - ${failCount} elements lost wrappers\n` : 'PASS\n');
+}
+document.getElementById('container').textContent = '';
+
+</script></div>
+</body>
+</html>
+

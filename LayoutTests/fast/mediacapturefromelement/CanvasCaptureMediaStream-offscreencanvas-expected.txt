@@ -1,0 +1,4 @@
+
+PASS capture of an OffscreenCanvas with 2D context
+PASS capture of an OffscreenCanvas with WebGL context
+

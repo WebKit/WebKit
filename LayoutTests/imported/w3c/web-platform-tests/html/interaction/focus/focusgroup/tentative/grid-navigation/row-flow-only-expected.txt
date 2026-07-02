@@ -1,0 +1,8 @@
+r1c1	r1c2	r1c3
+r2c1	r2c2	r2c3
+
+FAIL When on the last column, a right arrow press should move the focus to first column and next row if the focusgroup flows horizontally. assert_equals: expected Element node <td id="r2c1" tabindex="-1">r2c1</td> but got Element node <td id="r1c3" tabindex="-1">r1c3</td>
+PASS A down arrow press should not flow the focus vertically when not supported by the focusgroup.
+FAIL When on the first column, a left arrow press should move the focus to last column and previous row if the focusgroup flows horizontally. assert_equals: expected Element node <td id="r1c3" tabindex="-1">r1c3</td> but got Element node <td id="r2c1" tabindex="-1">r2c1</td>
+PASS An up arrow press should not flow the focus vertically when not supported by the focusgroup.
+

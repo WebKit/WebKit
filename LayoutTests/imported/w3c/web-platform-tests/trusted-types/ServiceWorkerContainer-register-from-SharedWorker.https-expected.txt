@@ -1,0 +1,6 @@
+
+PASS WorkerNavigator exposed in shared worker
+PASS register() with TrustedScriptURL works in shared worker
+PASS register() fails with plain string in shared worker
+PASS register() fails with plain string in shared worker with a default policy
+

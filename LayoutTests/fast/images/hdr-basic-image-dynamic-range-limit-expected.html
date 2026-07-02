@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .image-box {
+        width: 200px;
+        height: 200px;
+        will-change: transform;
+    }
+    .box {
+        position: fixed;
+        top: 20px; 
+    }
+    .standard { 
+        left: 20px;
+    }
+    .no-limit { 
+        left: 240px;
+    }
+</style>
+<body>
+    <div class="standard box">
+        <div class="image-box" style="background-color: red;"></div>
+    </div>
+    <div class="no-limit box">
+        <div class="image-box" style="background-color: color(srgb-linear 0 2.5 0); will-change: transform;"></div>
+    </div>
+</body>
+</html>

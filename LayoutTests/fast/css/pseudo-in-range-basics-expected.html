@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+      .expected {
+          background-color: red;
+          color: green;
+          border: 2px solid blue;
+          -webkit-appearance: none;
+      }
+      #testcase * {
+          margin: 0;
+          padding: 0;
+      }
+      #testcase input {
+          width: 50px;
+      }
+  </style>
+</head>
+<body>
+    <p>Check styling of elements with the :in-range pseudo selector</p>
+    <div id=testcase>
+        <div>
+            <input type="text">
+            <input type="text" min=1>
+            <input type="text" min=1 value=0>
+            <input type="text" min=1 value=1>
+            <input type="text" max=42>
+            <input type="text" max=42 value=42>
+            <input type="text" max=42 value=43>
+            <input type="text" min=1 max=42>
+            <input type="text" min=1 max=42 value=0>
+            <input type="text" min=1 max=42 value=1>
+            <input type="text" min=1 max=42 value=2>
+            <input type="text" min=1 max=42 value=41>
+            <input type="text" min=1 max=42 value=42>
+            <input type="text" min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="number">
+            <input type="number" min=1 class=expected>
+            <input type="number" min=1 value=0>
+            <input type="number" min=1 value=1 class=expected>
+            <input type="number" max=42 class=expected>
+            <input type="number" max=42 value=42 class=expected>
+            <input type="number" max=42 value=43>
+            <input type="number" min=1 max=42 class=expected>
+            <input type="number" min=1 max=42 value=0>
+            <input type="number" min=1 max=42 value=1 class=expected>
+            <input type="number" min=1 max=42 value=2 class=expected>
+            <input type="number" min=1 max=42 value=41 class=expected>
+            <input type="number" min=1 max=42 value=42 class=expected>
+            <input type="number" min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="number" min>
+            <input type="number" min value=0>
+            <input type="number" max>
+            <input type="number" max value=42>
+            <input type="number" min max>
+            <input type="number" min max=42 class=expected>
+            <input type="number" min=1 max class=expected>
+            <input type="number" min max value=0>
+            <input type="number" min=1 max value=0>
+            <input type="number" min=1 max value=1 class=expected>
+            <input type="number" min max=42 value=42 class=expected>
+            <input type="number" min max=42 value=43>
+        </div>
+        <div>
+            <input type="number" min="webkit">
+            <input type="number" min="webkit" value=0>
+            <input type="number" max="webkit">
+            <input type="number" max="webkit" value=42>
+            <input type="number" min="webkit" max="webkit">
+            <input type="number" min="webkit" max=42 class=expected>
+            <input type="number" min=1 max="webkit" class=expected>
+            <input type="number" min="webkit" max="webkit" value=0>
+            <input type="number" min=1 max="webkit" value=0>
+            <input type="number" min=1 max="webkit" value=1 class=expected>
+            <input type="number" min="webkit" max=42 value=42 class=expected>
+            <input type="number" min="webkit" max=42 value=43>
+        </div>
+        <div>
+            <input type="range" class=expected>
+            <input type="range" min=1 class=expected>
+            <input type="range" min=1 value=0 class=expected>
+            <input type="range" min=1 value=1 class=expected>
+            <input type="range" max=42 class=expected>
+            <input type="range" max=42 value=42 class=expected>
+            <input type="range" max=42 value=43 class=expected>
+            <input type="range" min=1 max=42 class=expected>
+            <input type="range" min=1 max=42 value=0 class=expected>
+            <input type="range" min=1 max=42 value=1 class=expected>
+            <input type="range" min=1 max=42 value=2 class=expected>
+            <input type="range" min=1 max=42 value=41 class=expected>
+            <input type="range" min=1 max=42 value=42 class=expected>
+            <input type="range" min=1 max=42 value=43 class=expected>
+        </div>
+        <div>
+            <input type="range" min class=expected>
+            <input type="range" min value=0 class=expected>
+            <input type="range" max class=expected>
+            <input type="range" max value=42 class=expected>
+            <input type="range" min max class=expected>
+            <input type="range" min max=42 class=expected>
+            <input type="range" min=1 max class=expected>
+            <input type="range" min max value=0 class=expected>
+            <input type="range" min=1 max value=0 class=expected>
+            <input type="range" min=1 max value=1 class=expected>
+            <input type="range" min max=42 value=42 class=expected>
+            <input type="range" min max=42 value=43 class=expected>
+        </div>
+        <div>
+            <input type="range" min="webkit" class=expected>
+            <input type="range" min="webkit" value=0 class=expected>
+            <input type="range" max="webkit" class=expected>
+            <input type="range" max="webkit" value=42 class=expected>
+            <input type="range" min="webkit" max="webkit" class=expected>
+            <input type="range" min="webkit" max=42 class=expected>
+            <input type="range" min=1 max="webkit" class=expected>
+            <input type="range" min="webkit" max="webkit" value=0 class=expected>
+            <input type="range" min=1 max="webkit" value=0 class=expected>
+            <input type="range" min=1 max="webkit" value=1 class=expected>
+            <input type="range" min="webkit" max=42 value=42 class=expected>
+            <input type="range" min="webkit" max=42 value=43 class=expected>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RTCPeerConnection per-track colorSpace round-trip and swap</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+async function runColorSpaceTest(test, { codec, useScriptTransform }) {
+    const worker = new Worker("peer-connection-color-space-worker.js");
+    test.add_cleanup(() => worker.terminate());
+
+    // Worker creates two VideoTrackGenerators, writes BT.601 and BT.709 frames respectively, and transfers the resulting MediaStreamVideoTracks back.
+    const sourceTracks = await new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error("source tracks timed out")), 5000);
+        worker.addEventListener("message", function once(e) {
+            if (e.data?.command !== "sourceTracks")
+                return;
+            worker.removeEventListener("message", once);
+            clearTimeout(t);
+            resolve(e.data.tracks);
+        });
+    });
+    assert_equals(sourceTracks.length, 2, "two source tracks transferred");
+
+    // Accumulate every colorSpaceChange event the worker emits, indexed by track.
+    //waitForMatch then polls the per-track history for an entry that satisfies the predicate.
+    const seenColorSpaces = [[], []];
+    worker.addEventListener("message", e => {
+        if (e.data?.command === "colorSpaceChange")
+            seenColorSpaces[e.data.trackIndex].push(e.data.colorSpace);
+        else if (e.data?.command === "error")
+            assert_unreached(`worker error: ${e.data.message}`);
+    });
+    async function waitForMatch(trackIndex, predicate, label) {
+        const start = Date.now();
+        while (Date.now() - start < 5000) {
+            const m = seenColorSpaces[trackIndex].find(predicate);
+            if (m)
+                return m;
+            await new Promise(r => setTimeout(r, 50));
+        }
+        throw new Error(`${label}: timed out`);
+    }
+
+    const sender = new RTCPeerConnection();
+    const receiver = new RTCPeerConnection();
+    test.add_cleanup(() => { sender.close(); receiver.close(); });
+    sender.addEventListener("icecandidate", e => { if (e.candidate) receiver.addIceCandidate(e.candidate); });
+    receiver.addEventListener("icecandidate", e => { if (e.candidate) sender.addIceCandidate(e.candidate); });
+
+    const receivedTracks = [];
+    const allReceived = new Promise(resolve => {
+        receiver.addEventListener("track", e => {
+            receivedTracks.push(e.track);
+            if (receivedTracks.length === 2)
+                resolve();
+        });
+    });
+
+    const mimeType = `video/${codec}`;
+    const codecEntries = RTCRtpSender.getCapabilities("video").codecs.filter(c => c.mimeType === mimeType);
+    assert_greater_than(codecEntries.length, 0, `${codec} is supported`);
+    const transceivers = [
+        sender.addTransceiver(sourceTracks[0], { direction: "sendonly" }),
+        sender.addTransceiver(sourceTracks[1], { direction: "sendonly" }),
+    ];
+    for (const transceiver of transceivers) {
+        transceiver.setCodecPreferences(codecEntries);
+        if (useScriptTransform)
+            transceiver.sender.transform = new RTCRtpScriptTransform(worker);
+    }
+
+    const offer = await sender.createOffer();
+    await sender.setLocalDescription(offer);
+    await receiver.setRemoteDescription(offer);
+    const answer = await receiver.createAnswer();
+    await receiver.setLocalDescription(answer);
+    await sender.setRemoteDescription(answer);
+
+    await allReceived;
+    assert_equals(receivedTracks.length, 2, "two tracks received");
+
+    worker.postMessage({ command: "process", tracks: receivedTracks }, receivedTracks);
+
+    // Initial round-trip: track 0 should land as BT.601, track 1 as BT.709.
+    const initial0 = await waitForMatch(0, cs => cs.matrix === "bt470bg", "initial BT.601 on track 0");
+    const initial1 = await waitForMatch(1, cs => cs.matrix === "bt709", "initial BT.709 on track 1");
+
+    // Clear history so the post-swap waits can't match against pre-swap entries.
+    seenColorSpaces[0].length = 0;
+    seenColorSpaces[1].length = 0;
+
+    // Swap on the sender side: track 0 now writes BT.709, track 1 writes BT.601.
+    worker.postMessage({ command: "swap" });
+
+    const swapped0 = await waitForMatch(0, cs => cs.matrix === "bt709", "swapped BT.709 on track 0");
+    const swapped1 = await waitForMatch(1, cs => cs.matrix === "bt470bg", "swapped BT.601 on track 1");
+}
+
+promise_test(test => runColorSpaceTest(test, { codec: "VP9", useScriptTransform: false }),
+    "Per-track colorSpace round-trip and swap (VP9, in-bitstream tag)");
+
+promise_test(test => runColorSpaceTest(test, { codec: "VP9", useScriptTransform: true }),
+    "Per-track colorSpace round-trip and swap (VP9, in-bitstream tag stripped, RTP metadata path)");
+
+promise_test(test => runColorSpaceTest(test, { codec: "AV1", useScriptTransform: false }),
+    "Per-track colorSpace round-trip and swap (AV1, in-bitstream tag)");
+</script>
+</body>
+</html>

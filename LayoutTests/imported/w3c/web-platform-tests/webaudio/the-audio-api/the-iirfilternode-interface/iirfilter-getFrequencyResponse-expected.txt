@@ -1,0 +1,5 @@
+
+PASS 1â€‘pole IIR getFrequencyResponse() matches analytic response
+PASS IIR filter equivalent to biquad has matching frequency response
+PASS Outâ€‘ofâ€‘range frequency values yield NaN responses
+

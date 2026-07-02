@@ -1,0 +1,43 @@
+Title: Pointers for contribution
+Slug: contributing
+
+## Contacting Us
+
+#if WPE
+
+You can find the developers behind WPE WebKit on various platforms:
+
+- [Mastodon](https://floss.social/@WPEWebKit).
+- [Bluesky](https://bsky.app/profile/wpewebkit.org).
+- [#wpe channel](https://matrix.to/#/#wpe:matrix.org) on **Matrix**.
+- [#wpe channel](https://webchat.oftc.net/?channels=wpe) on the **OTFC** IRC network (bridged to the Matrix one).
+
+#else
+
+You can find the developers behind WebKitGTK on various platforms:
+
+- [Mastodon](https://floss.social/@WebKitGTK).
+- [Bluesky](https://bsky.app/profile/webkitgtk.org).
+- [#webkitgtk channel](https://matrix.to/#/#webkitgtk:matrix.org) on **Matrix**.
+
+#endif
+
+Feel free to reach out to us if you have any questions. For reporting issues and requesting new features, please follow the contribution guidelines in the following section.
+
+## Reporting Feedback
+
+If you encountered a bug, an unusual behavior, or would like to request a new feature, the [WebKit Bugzilla](https://bugs.webkit.org) is the place to visit. Bugs specific to the GTK and WPE ports, as well as cross-platform bugs affecting all WebKit ports (including e.g. macOS/iOS variants), are reported there.
+
+WebKit is a large software project with many contributors and billions of users, receiving a lot of bug reports. Before reporting a new issue, be sure to [search for the existing ones](https://bugs.webkit.org/query.cgi) to make sure your issue may be already known. However, do not refrain from opening a ticket if you cannot find any describing your issue.
+
+If you are unfamiliar with the [WebKit bug writing guidelines](https://bugs.webkit.org/page.cgi?id=bug-writing.html), you might want to have a look before opening a ticket. Prefix the bug title with **[WPE]** or **[GTK]** depending on the port flavour that you are using, and ideally assign a component that matches the problem domain. If unsure, select WebKitGTK or WPE WebKit, but do not leave it unassigned.
+
+Last but not least, thanks for your contribution! You can make a difference and help us improve and evolve our project.
+
+## Code Contributions
+
+To contribute, you should first setup a local development environment. The easiest solution is to use the [WebKit Container SDK](https://github.com/Igalia/webkit-container-sdk). It contains a set of scripts that assist in creating and running a [Podman](https://podman.io/)-based container on your Linux machine, which contains all dependencies needed to compile WebKit.
+
+The **webkit.org** page contains a [section](https://webkit.org/contributing-code/) dedicated to code contributions&mdash;be sure to read it, as it contains many interesting articles, covering the [WebKit Early Warning System (EWS)](http://ews-build.webkit.org), the [coding style guidelines](https://webkit.org/code-style-guidelines/) and much more.
+
+Additionally there is a [Wiki](https://github.com/WebKit/WebKit/wiki) page with further information about the WebKit project, and links to all aforementioned pages.

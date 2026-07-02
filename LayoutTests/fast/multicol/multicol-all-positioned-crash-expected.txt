@@ -1,0 +1,1 @@
+Test for the bug 135563. It should not crash or assert.

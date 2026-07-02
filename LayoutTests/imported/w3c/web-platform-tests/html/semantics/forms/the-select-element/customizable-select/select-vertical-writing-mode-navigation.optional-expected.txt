@@ -1,0 +1,11 @@
+
+
+PASS vertical-lr: Right/Left keys navigate as primary axis
+PASS vertical-lr: Down/Up keys navigate as secondary axis
+PASS vertical-rl: Left/Right keys navigate as primary axis (block-flipped)
+PASS vertical-rl: Down/Up keys navigate as secondary axis
+PASS sideways-lr: Right/Left keys navigate as primary axis
+PASS sideways-lr: Down/Up keys navigate as secondary axis
+PASS sideways-rl: Left/Right keys navigate as primary axis (block-flipped)
+PASS sideways-rl: Down/Up keys navigate as secondary axis
+

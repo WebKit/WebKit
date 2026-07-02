@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    const select = document.querySelector('select');
+    const option = document.querySelector('option');
+    const container = document.querySelector('span');
+    document.addEventListener('DOMNodeRemoved', () => {
+        document.addEventListener("DOMSubtreeModified", () => select.options.length = 1, {once: true});
+        option.prepend(container);
+        select.add(option, 0);
+    }, {once: true});
+    select.textContent = '';
+    document.body.innerHTML = '<p>This tests inserting a new node to be removed during mutation events of textContent setter. WebKit should not hit a crash.</p>PASS';
+}
+</script>
+<body onload="main()"><span><form><select> </select></form></span><option></option></body>

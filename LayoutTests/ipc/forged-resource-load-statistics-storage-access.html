@@ -1,0 +1,110 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<p>Test that a WebContent process cannot forge a persistent storage-access grant by sending
+storageAccessUnderTopFrameDomains via NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+function out(s) { document.getElementById('log').textContent += s + '\n'; }
+function J(v) { return JSON.stringify(v, (k, x) => typeof x === 'bigint' ? x.toString() + 'n' : x); }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function main() {
+    const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+    const fix = (o) => {
+        if (Array.isArray(o))
+            o.forEach(fix); 
+        else if (o && typeof o === 'object') {
+            for (const k in o) {
+                if (o[k] === 'std::monostate')
+                    o[k] = 'std::nullptr_t';
+                else
+                    fix(o[k]);
+            }
+        }
+    };
+    fix(CoreIPC.typeInfo);
+    const so = ArgumentSerializer.serializeOptional;
+    ArgumentSerializer.serializeOptional = (t, a) => so.call(ArgumentSerializer, t, a ?? { });
+
+    const VICTIM = 'victim.example';
+    const ATTACKER = 'attacker.example';
+    const frameID = Array.isArray(IPC.frameID) ? IPC.frameID[0] : IPC.frameID;
+    const pageID = IPC.pageID;
+    const now = Date.now() / 1000;
+    const RD = (d) => ({ "string": d });
+    const WT = (t) => ({ "secondsSinceEpochSeconds": t });
+
+    const stat = (dom, storageAccessUnder) => ({
+        registrableDomain: RD(dom),
+        lastSeen: WT(now),
+        hadUserInteraction: true,
+        mostRecentUserInteractionTime: WT(now),
+        grandfathered: true,
+        storageAccessUnderTopFrameDomains: (storageAccessUnder || []).map(RD),
+        topFrameUniqueRedirectsTo: [],
+        topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement: [],
+        topFrameUniqueRedirectsFrom: [],
+        topFrameLinkDecorationsFrom: [],
+        gotLinkDecorationFromPrevalentResource: false,
+        topFrameLoadedThirdPartyScripts: [],
+        subframeUnderTopFrameDomains: [],
+        subresourceUnderTopFrameDomains: [],
+        subresourceUniqueRedirectsTo: [],
+        subresourceUniqueRedirectsFrom: [],
+        isPrevalentResource: true,
+        isVeryPrevalentResource: false,
+        dataRecordsRemoved: 0,
+        timesAccessedAsFirstPartyDueToUserInteraction: 0,
+        timesAccessedAsFirstPartyDueToStorageAccessAPI: 0,
+        topFrameRegistrableDomainsWhichAccessedWebAPIs: [],
+        fontsFailedToLoad: [],
+        fontsSuccessfullyLoaded: [],
+        canvasActivityRecord: { textWritten: [], wasDataRead: false },
+        navigatorFunctionsAccessed: 0,
+        screenFunctionsAccessed: 0,
+    });
+
+    let rlsDone = false;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.ResourceLoadStatisticsUpdated(0, {
+        statistics: [stat(ATTACKER), stat(VICTIM, [ATTACKER])]
+    }, () => { rlsDone = true; });
+    for (let i = 0; i < 40 && !rlsDone; i++) await sleep(100);
+
+    let rsaReply = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.RequestStorageAccess(0, {
+        subFrameDomain: RD(VICTIM),
+        topFrameDomain: RD(ATTACKER),
+        frameID: frameID,
+        webPageID: pageID,
+        webPageProxyID: IPC.webPageProxyID,
+        scope: 1,
+        hasOrShouldIgnoreUserGesture: 1,
+    }, (r) => { rsaReply = r; });
+    for (let i = 0; i < 40 && !rsaReply; i++) await sleep(100);
+
+    let hsaReply = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.HasStorageAccess(0, {
+        subFrameDomain: RD(VICTIM),
+        topFrameDomain: RD(ATTACKER),
+        frameID: frameID,
+        pageID: pageID,
+    }, (r) => { hsaReply = r; });
+    for (let i = 0; i < 40 && !hsaReply; i++) await sleep(100);
+
+    if (hsaReply && hsaReply.hasStorageAccess)
+        out('FAIL: forged storageAccessUnderTopFrameDomains produced a live storage-access grant');
+    else
+        out('PASS: no storage-access grant was created from forged statistics');
+}
+
+if (window.IPC)
+    main().catch(e => out('FAIL: ' + e)).finally(() => testRunner.notifyDone());
+else {
+    out('PASS: no storage-access grant was created from forged statistics');
+    testRunner?.notifyDone();
+}
+</script>
+</body>
+</html>

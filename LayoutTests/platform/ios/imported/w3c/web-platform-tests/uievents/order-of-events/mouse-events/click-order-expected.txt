@@ -1,0 +1,6 @@
+Double-click into the blue area.
+Click the "Done" button.
+Done
+
+FAIL Click-related events should fire in the correct order assert_true: expected true got false
+

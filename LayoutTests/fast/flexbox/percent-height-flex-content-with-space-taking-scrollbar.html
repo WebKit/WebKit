@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+.flex-container {
+  display: flex;
+  position: absolute;
+  inset: 0;
+}
+
+.flex-item-child {
+  height: 100%;
+  overflow: auto;
+}
+
+.tall-content {
+  height: 10000px;
+  background-color: green;
+  display: inline-block;
+  width: 100px; 
+}
+</style>
+<!-- PASS if green area is scrollable -->
+<div class=flex-container>
+  <div>
+    <div class=flex-item-child>
+      <div class=tall-content></div>
+    </div>
+  </div>
+</div>

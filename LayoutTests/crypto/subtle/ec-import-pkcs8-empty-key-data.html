@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a PKCS8 ECDSA key where index equals keyData.size()");
+
+// This test verifies that importing a malformed PKCS8 key where the computed
+// index exactly equals the buffer size is rejected gracefully.
+// After stripping the header, there would be zero bytes left for the public key.
+//
+// Key structure (72 bytes):
+// - Offset 0-66: Valid PKCS8 EC header with OIDs and 32-byte private key
+// - Offset 67: 0xa1 (TaggedType1)
+// - Offset 68: 0x00 (length byte)
+// - Offset 69: 0x03 (BIT STRING)
+// - Offset 70: 0x00 (length byte, bytesUsedToEncodedLength returns 1)
+// - Offset 71: 0x00 (InitialOctet placeholder, consumed by +1)
+//
+// At offset 70: bytesUsedToEncodedLength(0x00) = 1
+// index = 70 + 1 + 1 = 72
+// index == keyData.size(), zero bytes remain for public key data
+
+var extractable = true;
+
+// 72 bytes: valid PKCS8 EC structure, but no public key data remains after parsing
+var emptyKeyDataPkcs8 = hexStringToUint8Array("3000020100300006072a8648ce3d020106082a8648ce3d0301070400300002010104000000000000000000000000000000000000000000000000000000000000000000a100030000");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("pkcs8", emptyKeyDataPkcs8, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["sign"])');
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="ShadowRoot's ">
+<link rel="help" href="http://w3c.github.io/webcomponents/spec/shadow/#extensions-to-event-interface">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/event-path-test-helpers.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function testActiveElementWithFocusedElementInAnotherShadow(mode) {
+    test(function () {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadowRoot = host.attachShadow({'mode': mode});
+        const input = document.createElement('input');
+        shadowRoot.appendChild(input);
+        assert_equals(shadowRoot.activeElement, null);
+        input.focus();
+        assert_equals(shadowRoot.activeElement, input);
+        assert_equals(document.activeElement, host);
+
+        const anotherHost = document.createElement('div');
+        document.body.appendChild(anotherHost);
+        const anotherShadowRoot = anotherHost.attachShadow({'mode': mode});
+        const anotherInput = document.createElement('input');
+        anotherShadowRoot.appendChild(anotherInput);
+
+        assert_equals(anotherShadowRoot.activeElement, null);
+        assert_equals(shadowRoot.activeElement, input);
+        assert_equals(document.activeElement, host);
+
+        anotherInput.focus();
+        assert_equals(anotherShadowRoot.activeElement, anotherInput);
+        assert_equals(shadowRoot.activeElement, null);
+        assert_equals(document.activeElement, anotherHost);
+
+    }, 'ShadowRoot.activeElement must return null the focused element is in another shadow tree when both shadow roots are ' + mode + '.');
+}
+
+testActiveElementWithFocusedElementInAnotherShadow('open');
+testActiveElementWithFocusedElementInAnotherShadow('closed');
+
+</script>
+</body>
+</html>

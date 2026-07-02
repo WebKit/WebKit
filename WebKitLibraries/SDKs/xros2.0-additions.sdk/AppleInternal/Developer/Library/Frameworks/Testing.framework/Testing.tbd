@@ -1,0 +1,16 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64-xros, arm64e-xros]
+install-name: /AppleInternal/Developer/Library/Frameworks/Testing.framework/Testing
+swift-abi-version: 7
+exports:
+-       targets: [arm64-xros, arm64e-xros]
+        symbols: [_$s7Testing12__ExpressionV16__fromSyntaxNodeyACSSFZ, _$s7Testing12__ExpressionV21__fromBinaryOperationyA2C_SSACtFZ,
+                _$s7Testing12__ExpressionVMa, _$s7Testing14SourceLocationV6__here6fileID0E4Path4line6columnACSS_SSS2itFZ,
+                _$s7Testing14SourceLocationV6fileID0D4Path4line6columnACSS_SSS2itcfC, _$s7Testing14SourceLocationVMa, _$s7Testing14__requiringTryyxxnKRi_zlF,
+                _$s7Testing15__TestContainerMp, _$s7Testing15__TestContainerP7__testsSayAA0B0VGvgZTq, _$s7Testing16__requiringAwait_9isolationxxn_ScA_pSgYitYaRi_zlF,
+                _$s7Testing16__requiringAwait_9isolationxxn_ScA_pSgYitYaRi_zlFTu, _$s7Testing22__checkBinaryOperation___10expression8comments10isRequired14sourceLocations6ResultOyyts5Error_pGx_Sbx_q_yXEtXEq_yXKAA12__ExpressionVSayAA7CommentVGyXKSbAA06SourceJ0Vtr0_lF,
+                _$s7Testing3BugVAA9TestTraitAAWP, _$s7Testing3BugVMa, _$s7Testing4TestV10__function5named2in02xcB18CompatibleSelector11displayName6traits14sourceLocation10parameters12testFunctionACSS_ypRi_s_XPXpSg10ObjectiveC0H0VSgSSSgSayAA0B5Trait_pGAA06SourceM0VSaySS05firstJ0_AR06secondJ0ypXp4typetGyyYaYbKctFZ,
+                _$s7Testing4TestVMa, _$s7Testing5TraitPA2A3BugVRszrlE3bugyAESSYt_AA7CommentVSgtFZ, _$s7Testing7CommentVMa,
+                _$s7Testing7CommentVMn, _$s7Testing9TestTraitMp, _$ss6ResultO7TestingE10__expectedyyytRszrlF]
+...

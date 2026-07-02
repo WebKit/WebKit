@@ -1,0 +1,262 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS "global/js-products.html.tmpl" %]
+
+[% IF action == "insert" %]
+  [% title = BLOCK %]
+    Create Flag Type for [% type.target_type == "bug" ? terms.Bugs : "Attachments" %]
+    [% IF type.id %]
+      Based on [% type.name FILTER html %]
+    [% END %]
+  [% END %]
+[% ELSE %]
+  [% title = BLOCK %]Edit Flag Type [% type.name FILTER html %][% END %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+  onload="var f = document.forms['flagtype_properties'];
+          selectProduct(f.product, f.component, '__Any__');"
+  javascript_urls=["js/productform.js"]
+  doc_section = "administering/flags.html"
+%]
+
+<form id="flagtype_properties" method="post" action="editflagtypes.cgi">
+  <input type="hidden" name="action" value="[% action FILTER html %]">
+  <input type="hidden" name="can_fully_edit" value="[% can_fully_edit FILTER html %]">
+  <input type="hidden" name="id" value="[% type.id FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="hidden" name="target_type" value="[% type.target_type FILTER html %]">
+  <input type="hidden" name="check_clusions" value="[% check_clusions FILTER none %]">
+  [% FOREACH category = inclusions.values %]
+    <input type="hidden" name="inclusions" value="[% category FILTER html %]">
+  [% END %]
+  [% FOREACH category = exclusions.values %]
+    <input type="hidden" name="exclusions" value="[% category FILTER html %]">
+  [% END %]
+
+  [%# Add a hidden button at the top of the form so that the user pressing "return"
+    # really submit the form, as expected. %]
+  <input type="submit" id="commit" value="Submit" class="bz_default_hidden">
+
+  <table id="admin_table_edit">
+    <tr>
+      <th>Name:</th>
+      <td>
+        a short name identifying this type.<br>
+        <input type="text" name="name" value="[% type.name FILTER html %]" size="50"
+               maxlength="50" [%- ' disabled="disabled"' UNLESS can_fully_edit %] required>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Description:</th>
+      <td>
+        a comprehensive description of this type.<br>
+        [% INCLUDE global/textarea.html.tmpl
+          name           = 'description'
+          minrows        = 4
+          cols           = 80
+          defaultcontent = type.description
+          disabled       = !can_fully_edit
+          mandatory      = 1
+        %]
+      </td>
+    </tr>
+
+    <tr>
+      <th>Category:</th>
+
+      <td>
+        the products/components to which [% type.target_type == "bug" ? terms.bugs : "attachments" %]
+        must (inclusions) or must not (exclusions) belong in order for users
+        to be able to set flags of this type for them.
+        [% UNLESS can_fully_edit %]
+          <p class="warning">This flagtype also applies to some products you are not allowed
+          to edit (and so which are not displayed in the lists below). Your limited privileges
+          means you are only allowed to add and remove this flagtype to/from products you can
+          edit, but not to edit other properties of the flagtype.</p>
+        [% END %]
+        <table>
+          <tr>
+            <th class="top left">
+              Product/Component:<br>
+              [% INCLUDE "global/product-select.html.tmpl"
+                id       => "product"
+                name     => "product"
+                add      => "__Any__"
+                onchange => "selectProduct(this, this.form.component, '__Any__');"
+                products => products
+              %]<br>
+              <select name="component">
+                <option value="">__Any__</option>
+                [% FOREACH comp = components %]
+                  <option value="[% comp FILTER html %]">[% comp FILTER html %]</option>
+                [% END %]
+              </select><br>
+              <input type="submit" id="categoryAction-include" 
+                                   name="categoryAction-include" value="Include">
+              <input type="submit" id="categoryAction-exclude"
+                                   name="categoryAction-exclude" value="Exclude">
+            </th>
+            <th class="top left">
+              Inclusions:<br>
+              [% PROCESS category_select name="inclusion_to_remove" categories = inclusions %]<br>
+              <input type="submit" id="categoryAction-removeInclusion" 
+                     name="categoryAction-removeInclusion" value="Remove Inclusion">
+            </th>
+            <th class="top left">
+              Exclusions:<br>
+              [% PROCESS category_select name="exclusion_to_remove" categories = exclusions %]<br>
+              <input type="submit" id="categoryAction-removeExclusion" 
+                     name="categoryAction-removeExclusion" value="Remove Exclusion">
+            </th>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Sort Key:</th>
+      <td>
+        a number between 0 and [% constants.MAX_SMALLINT FILTER none %] by which
+        this type will be sorted when displayed to users in a list; ignore if you
+        don't care what order the types appear in or if you want them to appear
+        in alphabetical order.<br>
+        <input type="text" name="sortkey" value="[% type.sortkey || 0 FILTER html %]" size="5"
+               maxlength="5" [% ' disabled="disabled"' UNLESS can_fully_edit %] required>
+      </td>
+    </tr>
+
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <input type="checkbox" id="is_active" name="is_active"
+               [%- ' disabled="disabled"' UNLESS can_fully_edit %]
+               [% " checked" IF type.is_active || !type.is_active.defined %]>
+        <label for="is_active">active (flags of this type appear in the UI and can be set)</label>
+      </td>
+    </tr>
+
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <input type="checkbox" id="is_requestable" name="is_requestable"
+               [%- ' disabled="disabled"' UNLESS can_fully_edit %]
+               [% " checked" IF type.is_requestable || !type.is_requestable.defined %]>
+        <label for="is_requestable">requestable (users can ask for flags of this type to be set)</label>
+      </td>
+    </tr>
+
+    <tr>
+      <th>CC List:</th>
+      <td>
+        if requestable, who should get carbon copied on email notification of requests.
+        This is a comma-separated list of full e-mail addresses which do not
+        need to be [% terms.Bugzilla %] logins.
+        [% IF Param('emailsuffix') %]
+          Note that the configured emailsuffix
+          <kbd>[% Param('emailsuffix') %]</kbd> will <em>not</em> be appended
+          to these addresses, so you should add it explicitly if so desired.
+        [% END %]<br>
+        <input type="text" name="cc_list" value="[% type.cc_list FILTER html %]" size="80"
+               maxlength="200" [%- ' disabled="disabled"' UNLESS can_fully_edit %]>
+      </td>
+    </tr>
+
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <input type="checkbox" id="is_requesteeble" name="is_requesteeble"
+               [%- ' disabled="disabled"' UNLESS can_fully_edit %]
+               [% " checked" IF type.is_requesteeble || !type.is_requesteeble.defined %]>
+        <label for="is_requesteeble">specifically requestable (users can ask specific other users
+          to set flags of this type as opposed to just asking the wind)</label>
+      </td>
+    </tr>
+
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <input type="checkbox" id="is_multiplicable" name="is_multiplicable"
+               [%- ' disabled="disabled"' UNLESS can_fully_edit %]
+               [% " checked" IF type.is_multiplicable || !type.is_multiplicable.defined %]>
+        <label for="is_multiplicable">multiplicable (multiple flags of this type can be set on
+          the same [% type.target_type == "bug" ? terms.bug : "attachment" %])</label>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Grant Group:</th>
+      <td>
+        the group allowed to grant/deny flags of this type
+        (to allow all users to grant/deny these flags, select no group).<br>
+        [% PROCESS group_select selname = "grant_group" %]
+      </td>
+    </tr>
+
+    <tr>
+      <th>Request Group:</th>
+      <td>
+        if flags of this type are requestable, the group allowed to request them
+        (to allow all users to request these flags, select no group).<br>
+        Note that the request group alone has no effect if the grant group is not defined!<br>
+        [% PROCESS group_select selname = "request_group" %]
+      </td>
+    </tr>
+
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <input type="submit" id="save" value="[% action == "insert" ? "Create" : "Save Changes" %]">
+      </td>
+    </tr>
+
+  </table>
+
+</form>
+
+[% PROCESS global/footer.html.tmpl %]
+
+
+[%############################################################################%]
+[%# Block for SELECT fields                                                  #%]
+[%############################################################################%]
+
+[% BLOCK group_select %]
+  <select name="[% selname %]" id="[% selname %]" [%- ' disabled="disabled"' UNLESS can_fully_edit %]>
+    <option value="">(no group)</option>
+    [% group_found = 0 %]
+    [% FOREACH group = groups %]
+      <option value="[% group.name FILTER html %]"
+        [% IF type.${selname} && type.${selname}.name == group.name %]
+          [% ' selected="selected"' %]
+          [% group_found = 1 %]
+        [% END %]>
+        [%- group.name FILTER html ~%]
+      </option>
+    [% END %]
+    [% IF !group_found && type.${selname}.name %]
+      <option value="[% type.${selname}.name FILTER html %]" selected="selected">
+        [%- type.${selname}.name FILTER html ~%]
+      </option>
+    [% END %]
+  </select>
+[% END %]
+
+[% BLOCK category_select %]
+  <select name="[% name FILTER html %]" multiple="multiple" size="7">
+    [% FOREACH option = categories.keys.sort %]
+      <option value="[% categories.$option FILTER html %]">
+        [% option FILTER html %]
+      </option>
+    [% END %]
+  </select>
+[% END %]

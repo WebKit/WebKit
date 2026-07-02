@@ -1,0 +1,136 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+import("test/test_resources.gni")
+
+if (rtc_enable_protobuf) {
+  rtc_library("simulator") {
+    sources = [
+      "assembler.cc",
+      "assembler.h",
+      "decodability_simulator.cc",
+      "decodability_simulator.h",
+      "decodability_tracker.cc",
+      "decodability_tracker.h",
+      "frame_base.h",
+      "log_classifiers.cc",
+      "log_classifiers.h",
+      "receiver.cc",
+      "receiver.h",
+      "rendering_simulator.cc",
+      "rendering_simulator.h",
+      "rendering_tracker.cc",
+      "rendering_tracker.h",
+      "results_base.h",
+      "rtc_event_log_driver.cc",
+      "rtc_event_log_driver.h",
+      "rtp_packet_simulator.cc",
+      "rtp_packet_simulator.h",
+      "stream_base.h",
+    ]
+    deps = [
+      "../../../api:field_trials",
+      "../../../api:rtp_headers",
+      "../../../api:rtp_packet_info",
+      "../../../api:rtp_parameters",
+      "../../../api:scoped_refptr",
+      "../../../api:sequence_checker",
+      "../../../api:transport_api",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
+      "../../../api/numerics",
+      "../../../api/task_queue",
+      "../../../api/task_queue:pending_task_safety_flag",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../api/video:encoded_frame",
+      "../../../api/video:frame_buffer",
+      "../../../api/video:video_frame",
+      "../../../api/video:video_rtp_headers",
+      "../../../call:rtp_interfaces",
+      "../../../call:rtp_receiver",
+      "../../../call:video_receive_stream_api",
+      "../../../logging:rtc_event_log_parser",
+      "../../../logging:rtc_event_rtp_rtcp",
+      "../../../logging:rtc_event_video",
+      "../../../modules/rtp_rtcp",
+      "../../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../../modules/video_coding:nack_requester",
+      "../../../modules/video_coding/timing:timing_module",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:macromagic",
+      "../../../rtc_base:rtc_numerics",
+      "../../../test/time_controller:simulated_time_task_queue_controller",
+      "../../../video",
+      "../../../video:task_queue_frame_decode_scheduler",
+      "../../../video:video_stream_buffer_controller",
+      "../../../video/render:incoming_video_stream",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/container:flat_hash_map",
+      "//third_party/abseil-cpp/absl/container:flat_hash_set",
+      "//third_party/abseil-cpp/absl/container:inlined_vector",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    rtc_library("simulator_tests") {
+      testonly = true
+      sources = [
+        "assembler_unittest.cc",
+        "decodability_simulator_unittest.cc",
+        "decodability_tracker_unittest.cc",
+        "frame_base_unittest.cc",
+        "log_classifiers_unittest.cc",
+        "receiver_unittest.cc",
+        "rendering_simulator_unittest.cc",
+        "rendering_tracker_unittest.cc",
+        "results_base_unittest.cc",
+        "rtc_event_log_driver_unittest.cc",
+        "rtp_packet_simulator_unittest.cc",
+        "stream_base_unittest.cc",
+      ]
+      deps = [
+        ":simulator",
+        "../../../api:rtp_headers",
+        "../../../api:rtp_packet_info",
+        "../../../api:sequence_checker",
+        "../../../api/environment",
+        "../../../api/numerics",
+        "../../../api/transport/rtp:dependency_descriptor",
+        "../../../api/units:data_size",
+        "../../../api/units:time_delta",
+        "../../../api/units:timestamp",
+        "../../../api/video:encoded_frame",
+        "../../../api/video:video_frame",
+        "../../../logging:rtc_event_log_parser",
+        "../../../logging:rtc_event_rtp_rtcp",
+        "../../../modules/rtp_rtcp:rtp_rtcp_format",
+        "../../../modules/video_coding/timing:timing_module",
+        "../../../rtc_base:checks",
+        "../../../rtc_base:macromagic",
+        "../../../system_wrappers",
+        "../../../test:create_test_environment",
+        "../../../test:test_support",
+        "test",
+        "//third_party/abseil-cpp/absl/algorithm:container",
+        "//third_party/abseil-cpp/absl/functional:any_invocable",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+      data = VIDEO_TIMING_SIMULATOR_TEST_RESOURCES
+      if (is_ios) {
+        deps += [ "test:video_timing_simulator_test_resources_bundle_data" ]
+      }
+    }
+  }
+}

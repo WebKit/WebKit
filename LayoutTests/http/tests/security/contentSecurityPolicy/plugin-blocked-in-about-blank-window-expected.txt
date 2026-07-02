@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Refused to load data:application/x-webkit-test-netscape,alertwhenloaded because it does not appear in the object-src directive of the Content Security Policy.
+

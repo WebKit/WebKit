@@ -1,0 +1,3 @@
+
+PASS key property test of session event
+

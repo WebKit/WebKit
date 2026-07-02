@@ -1,0 +1,7 @@
+EXPECTED (internals.createHEVCCodecParametersString(makeHEVCParameterSet("hvc1", 0, 1, 0x60000000, 0, [0, 0, 0, 0, 0, 0], 93)) == 'hvc1.1.6.L93') OK
+EXPECTED (internals.createHEVCCodecParametersString(makeHEVCParameterSet("hev1", 1, 4, 0x82000000, 1, [0, 0, 0, 0, 0, 0], 120)) == 'hev1.A4.41.H120') OK
+EXPECTED (internals.createHEVCCodecParametersString(makeHEVCParameterSet("hvc1", 0, 1, 0x60000000, 0, [176, 0, 0, 0, 0, 0], 93)) == 'hvc1.1.6.L93.B0') OK
+EXPECTED (internals.createHEVCCodecParametersString(makeHEVCParameterSet("hev1", 1, 4, 0x82000000, 1, [176, 35, 0, 0, 0, 0], 120)) == 'hev1.A4.41.H120.B0.23') OK
+EXPECTED (internals.createHEVCCodecParametersString(makeHEVCParameterSet("hvc1", 2, 1, 0xF77DB57B, 1, [18, 52, 86, 120, 154, 188], 254)) == 'hvc1.B1.DEADBEEF.H254.12.34.56.78.9A.BC') OK
+END OF TEST
+

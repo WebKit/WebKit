@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<iframe id="crossOriginFrame" src="http://localhost:8000/security/resources/blank.html"></iframe>
+<iframe id="sameOriginFrame" src="about:blank"></iframe>
+<script>
+description("Tests that iframe.contentDocument is not accessible cross-origin.");
+jsTestIsAsync = true;
+
+function shouldThrowOrReturnUndefinedOrNull(expression)
+{
+    try {
+        result = eval(expression);
+    } catch (e) {
+        testPassed(expression + " threw exception " + e + ".");
+        return;
+    }
+    if (result === undefined)
+        testPassed(expression + " returned undefined.");
+    else if (result === null)
+        testPassed(expression + " returned null.");
+    else
+        testFailed(expression + " returned " + result);
+}
+
+function runTest()
+{
+    crossOriginFrame = document.getElementById("crossOriginFrame");
+    sameOriginFrame = document.getElementById("sameOriginFrame");
+
+    shouldThrowOrReturnUndefinedOrNull('crossOriginFrame.contentDocument');
+    shouldThrowOrReturnUndefinedOrNull('Object.getOwnPropertyDescriptor(sameOriginFrame.__proto__, "contentDocument").get.call(crossOriginFrame)');
+    shouldThrowOrReturnUndefinedOrNull('Object.getOwnPropertyDescriptor(crossOriginFrame.__proto__, "contentDocument").get.call(crossOriginFrame)');
+    shouldThrowOrReturnUndefinedOrNull('Object.getOwnPropertyDescriptor(crossOriginFrame, "contentDocument")');
+    finishJSTest();
+}
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: TypeError: Argument 1 ('child') to Node.removeChild must be an instance of Node
+CONSOLE MESSAGE: TypeError: Argument 1 ('child') to Node.removeChild must be an instance of Node
+PASS. DRT didn't crash.

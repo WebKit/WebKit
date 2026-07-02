@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var scope = "resources";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("fetch-metrics-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const iframe = await with_iframe(scope);
+
+    const response1 = await iframe.contentWindow.fetch("/?intercept");
+    const response2 = await iframe.contentWindow.fetch("/?do-not-intercept");
+
+    assert_equals(response1.status, 200);
+    assert_equals(response2.status, 200);
+
+    await response2.text();
+    await response1.text();
+
+    if (window.internals) {
+        assert_true(internals.responseNetworkLoadMetricsProtocol(response1).length > 0);
+        assert_equals(internals.responseNetworkLoadMetricsProtocol(response1), internals.responseNetworkLoadMetricsProtocol(response2));
+    }
+}, "Validate metrics of a fetch via service worker");
+</script>
+</body>
+</html>

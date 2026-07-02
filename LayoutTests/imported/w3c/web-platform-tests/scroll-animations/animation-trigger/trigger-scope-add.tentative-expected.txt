@@ -1,0 +1,7 @@
+In-scope Target
+SOURCE
+Out-of-scope Target
+
+FAIL Added scope prevents subtree from searching for external trigger assert_equals: expected (string) "none" but got (undefined) undefined
+FAIL Added scope prevents external references from finding trigger within scope. assert_equals: animation on inner_target has playState running. expected "running" but got "paused"
+

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+onload = top.postMessage({'type': 'load'}, '*');
+onmessage = (event) => {
+    if (event.data.type != 'run')
+        return;
+
+    let number = event.data.startingNumber;
+    let logs = [];
+    for (const frameName of event.data.order) {
+        const windowProxy = frameName == 'self' ? self : top[frameName];
+        windowProxy.internals.queueTask("DOMManipulation", () => logs.push(number++));
+    }
+
+    setTimeout(() => {
+        top.postMessage({'type': 'logs', logs}, '*');
+    }, 20);
+}
+
+</script>
+</body>
+</html>

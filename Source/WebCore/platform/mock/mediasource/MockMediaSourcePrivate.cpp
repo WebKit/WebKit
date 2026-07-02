@@ -1,0 +1,123 @@
+/*
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "MockMediaSourcePrivate.h"
+
+#if ENABLE(MEDIA_SOURCE)
+
+#include "ContentType.h"
+#include "Logging.h"
+#include "MediaSourcePrivateClient.h"
+#include "MockMediaPlayerMediaSource.h"
+#include "MockSourceBufferPrivate.h"
+
+namespace WebCore {
+
+Ref<MockMediaSourcePrivate> MockMediaSourcePrivate::create(MockMediaPlayerMediaSource& parent, MediaSourcePrivateClient& client)
+{
+    Ref source = adoptRef(*new MockMediaSourcePrivate(parent, client));
+    client.setPrivateAndOpen(source.copyRef());
+    return source;
+}
+
+MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource& parent, MediaSourcePrivateClient& client)
+    : MediaSourcePrivate(client)
+    , m_player(parent)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(parent.mediaPlayerLogger())
+    , m_logIdentifier(parent.mediaPlayerLogIdentifier())
+#endif
+{
+#if !RELEASE_LOG_DISABLED
+    client.setLogIdentifier(parent.mediaPlayerLogIdentifier());
+#endif
+}
+
+MockMediaSourcePrivate::~MockMediaSourcePrivate() = default;
+
+MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>& outPrivate)
+{
+    MediaEngineSupportParameters parameters {
+        .platformType = PlatformMediaDecodingType::MediaSource,
+        .type = contentType
+    };
+    if (MockMediaPlayerMediaSource::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
+        return AddStatus::NotSupported;
+
+    {
+        Locker locker { m_lock };
+        m_sourceBuffers.append(MockSourceBufferPrivate::create(*this));
+        outPrivate = m_sourceBuffers.last();
+    }
+    outPrivate->setMediaSourceDuration(duration());
+
+    return AddStatus::Ok;
+}
+
+RefPtr<MediaPlayerPrivateInterface> MockMediaSourcePrivate::player() const
+{
+    return m_player.get();
+}
+
+void MockMediaSourcePrivate::setPlayer(MediaPlayerPrivateInterface* player)
+{
+    m_player = downcast<MockMediaPlayerMediaSource>(player);
+}
+
+void MockMediaSourcePrivate::durationChanged(const MediaTime& duration)
+{
+    MediaSourcePrivate::durationChanged(duration);
+    if (RefPtr player = m_player.get())
+        player->updateDuration(duration);
+}
+
+void MockMediaSourcePrivate::notifyActiveSourceBuffersChanged()
+{
+    if (RefPtr player = m_player.get())
+        player->notifyActiveSourceBuffersChanged();
+}
+
+std::optional<VideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlaybackQualityMetrics()
+{
+    return VideoPlaybackQualityMetrics {
+        m_totalVideoFrames,
+        m_droppedVideoFrames,
+        m_corruptedVideoFrames,
+        m_totalFrameDelay.toDouble(),
+        0,
+    };
+}
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MockMediaSourcePrivate::logChannel() const
+{
+    return LogMediaSource;
+}
+#endif
+
+}
+
+#endif

@@ -1,0 +1,211 @@
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#include "include/core/SkPath.h"
+#include "include/core/SkPathTypes.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkTypes.h"
+#include "include/pathops/SkPathOps.h"
+#include "include/private/base/SkTArray.h"
+#include "include/private/base/SkTDArray.h"
+#include "include/private/base/SkTo.h"
+#include "src/base/SkArenaAlloc.h"
+#include "src/core/SkPathEnums.h"
+#include "src/core/SkPathPriv.h"
+#include "src/pathops/SkOpContour.h"
+#include "src/pathops/SkOpEdgeBuilder.h"
+#include "src/pathops/SkOpSegment.h"
+#include "src/pathops/SkOpSpan.h"
+#include "src/pathops/SkPathOpsCommon.h"
+#include "src/pathops/SkPathOpsTypes.h"
+#include "src/pathops/SkPathWriter.h"
+
+#include <cstdint>
+
+static bool one_contour(const SkPath& path) {
+    const auto raw = SkPathPriv::Raw(path, SkResolveConvexity::kNo);
+    if (!raw) {
+        return false;
+    }
+
+    const auto verbs = raw->verbs();
+    for (size_t i = 1; i < verbs.size(); ++i) {
+        if (verbs[i] == SkPathVerb::kMove) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void SkOpBuilder::ReversePath(SkPath* path) {
+    auto lastPt = path->getLastPt();
+    SkASSERT(lastPt.has_value());
+    SkPathBuilder temp;
+    temp.moveTo(*lastPt);
+    SkPathPriv::ReversePathTo(&temp, *path);
+    temp.close();
+    *path = temp.detach();
+}
+
+bool SkOpBuilder::FixWinding(SkPath* path) {
+    SkPathFillType fillType = path->getFillType();
+    if (fillType == SkPathFillType::kInverseEvenOdd) {
+        fillType = SkPathFillType::kInverseWinding;
+    } else if (fillType == SkPathFillType::kEvenOdd) {
+        fillType = SkPathFillType::kWinding;
+    }
+    if (one_contour(*path)) {
+        SkPathFirstDirection dir = SkPathPriv::ComputeFirstDirection(*path);
+        if (dir != SkPathFirstDirection::kUnknown) {
+            if (dir == SkPathFirstDirection::kCW) {
+                ReversePath(path);
+            }
+            path->setFillType(fillType);
+            return true;
+        }
+    }
+    SkSTArenaAlloc<4096> allocator;
+    SkOpContourHead contourHead;
+    SkOpGlobalState globalState(&contourHead, &allocator  SkDEBUGPARAMS(false)
+            SkDEBUGPARAMS(nullptr));
+    SkOpEdgeBuilder builder(*path, &contourHead, &globalState);
+    if (builder.unparseable() || !builder.finish()) {
+        return false;
+    }
+    if (!contourHead.count()) {
+        return true;
+    }
+    if (!contourHead.next()) {
+        return false;
+    }
+    contourHead.joinAllSegments();
+    contourHead.resetReverse();
+    bool writePath = false;
+    SkOpSpan* topSpan;
+    globalState.setPhase(SkOpPhase::kFixWinding);
+    while ((topSpan = FindSortableTop(&contourHead))) {
+        SkOpSegment* topSegment = topSpan->segment();
+        SkOpContour* topContour = topSegment->contour();
+        SkASSERT(topContour->isCcw() >= 0);
+#if DEBUG_WINDING
+        SkDebugf("%s id=%d nested=%d ccw=%d\n",  __FUNCTION__,
+                topSegment->debugID(), globalState.nested(), topContour->isCcw());
+#endif
+        if ((globalState.nested() & 1) != SkToBool(topContour->isCcw())) {
+            topContour->setReverse();
+            writePath = true;
+        }
+        topContour->markAllDone();
+        globalState.clearNested();
+    }
+    if (!writePath) {
+        path->setFillType(fillType);
+        return true;
+    }
+
+    SkPathWriter woundPath(fillType);
+    SkOpContour* test = &contourHead;
+    do {
+        if (!test->count()) {
+            continue;
+        }
+        if (test->reversed()) {
+            test->toReversePath(&woundPath);
+        } else {
+            test->toPath(&woundPath);
+        }
+    } while ((test = test->next()));
+    *path = woundPath.nativePath();
+    return true;
+}
+
+void SkOpBuilder::add(const SkPath& path, SkPathOp op) {
+    if (fOps.empty() && op != kUnion_SkPathOp) {
+        fPathRefs.push_back() = SkPath();
+        *fOps.append() = kUnion_SkPathOp;
+    }
+    fPathRefs.push_back() = path;
+    *fOps.append() = op;
+}
+
+void SkOpBuilder::reset() {
+    fPathRefs.clear();
+    fOps.reset();
+}
+
+/* OPTIMIZATION: Union doesn't need to be all-or-nothing. A run of three or more convex
+   paths with union ops could be locally resolved and still improve over doing the
+   ops one at a time. */
+std::optional<SkPath> SkOpBuilder::resolve() {
+    int count = fOps.size();
+    bool allUnion = true;
+    SkPathFirstDirection firstDir = SkPathFirstDirection::kUnknown;
+    for (int index = 0; index < count; ++index) {
+        SkPath* test = &fPathRefs[index];
+        if (kUnion_SkPathOp != fOps[index] || test->isInverseFillType()) {
+            allUnion = false;
+            break;
+        }
+        // If all paths are convex, track direction, reversing as needed.
+        if (test->isConvex()) {
+            SkPathFirstDirection dir = SkPathPriv::ComputeFirstDirection(*test);
+            if (dir == SkPathFirstDirection::kUnknown) {
+                allUnion = false;
+                break;
+            }
+            if (firstDir == SkPathFirstDirection::kUnknown) {
+                firstDir = dir;
+            } else if (firstDir != dir) {
+                ReversePath(test);
+            }
+            continue;
+        }
+        // If the path is not convex but its bounds do not intersect the others, simplify is enough.
+        const SkRect& testBounds = test->getBounds();
+        for (int inner = 0; inner < index; ++inner) {
+            // OPTIMIZE: check to see if the contour bounds do not intersect other contour bounds?
+            if (SkRect::Intersects(fPathRefs[inner].getBounds(), testBounds)) {
+                allUnion = false;
+                break;
+            }
+        }
+    }
+    if (!allUnion) {
+        SkPath result = fPathRefs[0];
+        for (int index = 1; index < count; ++index) {
+            if (auto res = Op(result, fPathRefs[index], fOps[index])) {
+                result = *res;
+            } else {
+                reset();
+                return {};
+            }
+        }
+        reset();
+        return result;
+    }
+    SkPathBuilder sum;
+    for (int index = 0; index < count; ++index) {
+        auto result = Simplify(fPathRefs[index]);
+        if (!result.has_value()) {
+            reset();
+            return {};
+        }
+        fPathRefs[index] = *result;
+        if (!fPathRefs[index].isEmpty()) {
+            // convert the even odd result back to winding form before accumulating it
+            if (!FixWinding(&fPathRefs[index])) {
+                return {};
+            }
+            sum.addPath(fPathRefs[index]);
+        }
+    }
+    reset();
+
+    return Simplify(sum.detach());
+}

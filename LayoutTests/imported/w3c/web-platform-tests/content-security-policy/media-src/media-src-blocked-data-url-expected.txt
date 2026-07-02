@@ -1,0 +1,6 @@
+Video element with data: URL must be blocked by media-src 'self'
+
+
+PASS Video with data: URL blocked by media-src 'self'
+PASS Audio with data: URL blocked by media-src 'self'
+

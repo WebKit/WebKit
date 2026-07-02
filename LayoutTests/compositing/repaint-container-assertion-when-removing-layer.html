@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/ui-helper.js"></script>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+ }
+</script>
+</head>
+<body>
+<div id=outer style="will-change: opacity; opacity: 0.5; width: 200px; height: 200px;">
+  <div id=inner style="opacity: 0.5; width: 100px; height: 100px; background:blue"></div>
+</div>
+</body>
+<div>PASS if no crash or assert in debug mode.</div>
+<script>
+window.addEventListener('load', async () => {
+    await UIHelper.renderingUpdate();
+
+    outer.style.willChange = "";
+    outer.style.opacity = "1.0";
+    getComputedStyle(outer);
+    inner.style.transform = "translateZ(0px)";
+    if (window.testRunner)
+        testRunner.notifyDone();
+ }, false);
+</script>
+</html>

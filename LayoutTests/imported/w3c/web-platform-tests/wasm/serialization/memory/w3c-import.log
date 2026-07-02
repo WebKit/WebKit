@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/clone-error.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/messageport-via-sharedworker-success.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/messageport-via-sharedworker-success.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/no-transferring.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/window-nested-dedicated-worker-failure.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/window-nested-dedicated-worker-failure.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/window-sharedworker-failure.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/window-sharedworker-failure.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html.headers

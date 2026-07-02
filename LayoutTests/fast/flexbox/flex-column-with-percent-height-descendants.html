@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+.flexContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100px;
+}
+.firstChild {
+  background-color: yellow;
+  height: 50px;
+}
+.secondChild {
+  height: 50%;
+  background-color: green;
+}
+.percentHeightDescendant {
+  height: 100%;
+  background-color: green
+}
+</style>
+<div class=flexContainer>
+  <div class=firstChild><div class=percentHeightDescendant></div></div>
+  <div class=secondChild></div>
+</div>

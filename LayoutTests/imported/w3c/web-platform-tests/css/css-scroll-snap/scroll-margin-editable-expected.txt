@@ -1,0 +1,4 @@
+a
+
+PASS already-in-view div should not cause a scroll upon focus.
+

@@ -1,0 +1,13 @@
+
+
+PASS WindowProxy: document-tree child navigable with index 0 (indexed access)
+PASS WindowProxy: document-tree child navigable with index 1 (indexed access)
+PASS WindowProxy: document-tree child navigable with index 2 (indexed access)
+PASS WindowProxy: document-tree child navigable with target name 3 (named access)
+PASS WindowProxy: element with id 4 (named access)
+PASS Window prototype: element with id 0 (named access)
+PASS Window prototype: document-tree child navigable with target name 1 (named access)
+PASS Window prototype: document-tree child navigable with target name 2 (named access)
+PASS Window prototype: document-tree child navigable with target name 3 (named access)
+PASS Window prototype: element with id 4 (named access)
+

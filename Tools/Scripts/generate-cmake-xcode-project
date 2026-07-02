@@ -1,0 +1,648 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+generate-cmake-xcode-project
+
+Emits a thin Xcode project that wraps a CMake/Ninja build directory:
+  - One PBXLegacyTarget that shells out to ninja, so Cmd-B is a ninja
+    incremental (sub-second no-op) instead of a workspace dependency scan.
+  - One scheme per discovered executable / .app bundle pointing directly at
+    the ninja-built product, so Cmd-R launches under lldb.
+  - Folder references to Source/, Tools/, and each <framework>/DerivedSources in
+    the build dir, so the Project Navigator and Quick Open cover both checked-in
+    and generated code.
+  - An lldbinit that inverts the build's -fdebug-prefix-map so breakpoints
+    set in the source editor resolve.
+
+This is not `cmake -G Xcode` -- the Xcode generator routes compilation back
+through Xcode's build system, reintroducing the script-phase / xcfilelist
+overhead this project exists to avoid. Here ninja stays the build system;
+Xcode is purely the debugger frontend.
+
+Usage:
+    Tools/Scripts/generate-cmake-xcode-project [build-dir]
+
+Output:
+    <build-dir>/WebKit.xcodeproj
+    <build-dir>/lldbinit
+"""
+
+import argparse
+import functools
+import os
+import plistlib
+import re
+import shutil
+import struct
+import subprocess
+import sys
+import uuid
+from pathlib import Path
+
+
+# Build-time helpers that happen to be Mach-O executables but are not useful
+# debug targets. Filtered out of scheme generation.
+BUILD_TOOL_NAMES = {
+    "yasm",
+    "LLIntOffsetsExtractor",
+    "LLIntSettingsExtractor",
+    "LayoutTestHelper",
+    "ImageDiff",
+}
+
+# Mach-O magic numbers (thin + fat, both endians).
+MACHO_MAGICS = {0xfeedface, 0xfeedfacf, 0xcefaedfe, 0xcffaedfe, 0xcafebabe, 0xbebafeca}
+
+
+def pbxid(seed=None):
+    """Xcode 96-bit object identifier (24 hex chars). Seeded IDs are stable
+    across regenerations so scheme -> target references survive."""
+    if seed:
+        return uuid.uuid5(uuid.NAMESPACE_DNS, f"webkit.cmake.{seed}").hex[:24].upper()
+    return uuid.uuid4().hex[:24].upper()
+
+
+NINJA_TARGET_ID = pbxid("ninja-target")
+PROJECT_NAME = "WebKit"
+
+# Top-level source-tree directories exposed as folder references in the Project
+# Navigator. Folder references (lastKnownFileType = folder) track the filesystem
+# live, so the navigator matches `ls` without enumerating ~15,000 PBXFileReference
+# entries the way the hand-maintained WebKit.xcodeproj does. Quick Open, gutter
+# breakpoints, and Open Quickly all work against folder-reference contents.
+#
+# LayoutTests is intentionally omitted: at ~200,000 files it dominates Xcode's
+# "Create build description" scan and turns a no-op Cmd-B into ~30 s. Tests can
+# still be opened via File > Open or by path; they aren't useful for setting
+# breakpoints anyway.
+SOURCE_FOLDERS = ("Source", "Tools")
+
+
+def find_ninja():
+    p = shutil.which("ninja")
+    if p:
+        return p
+    for candidate in ("/opt/homebrew/bin/ninja", "/usr/local/bin/ninja"):
+        if os.path.exists(candidate):
+            return candidate
+    sys.exit("error: ninja not found on PATH")
+
+
+@functools.lru_cache(maxsize=None)
+def xcode_version_tag() -> str:
+    """LastUpgradeCheck / LastUpgradeVersion want the Xcode version as a 4-digit
+    MMmm string (Xcode 27.0 -> "2700", 17.2 -> "1720"). Matching the running
+    Xcode suppresses the "project was created with an older Xcode" upgrade
+    prompt on first open."""
+    try:
+        out = subprocess.check_output(["/usr/bin/xcrun", "xcodebuild", "-version"],
+                                      text=True, stderr=subprocess.DEVNULL)
+        m = re.search(r"Xcode\s+(\d+)(?:\.(\d+))?", out)
+        if m:
+            major, minor = int(m.group(1)), int(m.group(2) or 0)
+            return f"{major:02d}{minor:02d}"
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return "1600"
+
+
+@functools.lru_cache(maxsize=None)
+def read_build_ninja(build_dir: Path) -> str:
+    """build.ninja is ~80-100 MB; read it once and let lru_cache hold it for
+    the (short) lifetime of this script. Both read_isysroot and read_prefix_maps
+    pull from it."""
+    try:
+        return (build_dir / "build.ninja").read_text()
+    except OSError:
+        return ""
+
+
+@functools.lru_cache(maxsize=None)
+def read_cmake_cache(build_dir: Path, key: str) -> str:
+    try:
+        for line in (build_dir / "CMakeCache.txt").read_text().splitlines():
+            if line.startswith(f"{key}:"):
+                return line.split("=", 1)[1]
+    except OSError:
+        pass
+    return ""
+
+
+def read_isysroot(build_dir: Path) -> str:
+    """CMAKE_OSX_SYSROOT is often empty in the cache (CMake recomputes it from
+    env on every configure). The authoritative value is the -isysroot flag
+    baked into build.ninja -- using that guarantees the wrapper's SDKROOT
+    matches what the existing object files were built against."""
+    m = re.search(r"-isysroot\s+(\S+)", read_build_ninja(build_dir))
+    if m:
+        return m.group(1)
+    return read_cmake_cache(build_dir, "CMAKE_OSX_SYSROOT")
+
+
+# Variables Xcode may inject into the legacy-target environment even with
+# passBuildSettingsInEnvironment = 0. If any of these reach a CMake reconfigure
+# (triggered by ninja's build.ninja-regeneration rule whenever a CMakeLists.txt
+# changes), CMake bakes the new values into every compile command and the next
+# build is a full rebuild instead of a no-op. Scrub them.
+XCODE_ENV_POLLUTANTS = (
+    "SDKROOT", "SDK_NAME", "SDK_DIR", "PLATFORM_NAME", "PLATFORM_DIR",
+    "MACOSX_DEPLOYMENT_TARGET", "IPHONEOS_DEPLOYMENT_TARGET",
+    "ARCHS", "NATIVE_ARCH", "CURRENT_ARCH", "VALID_ARCHS",
+    "LLVM_TARGET_TRIPLE_VENDOR", "LLVM_TARGET_TRIPLE_OS_VERSION",
+    "LLVM_TARGET_TRIPLE_SUFFIX",
+    "TOOLCHAINS", "CONFIGURATION", "CONFIGURATION_BUILD_DIR",
+    "BUILT_PRODUCTS_DIR", "TARGET_BUILD_DIR", "OBJROOT", "SYMROOT",
+    "CC", "CXX", "LD", "LDPLUSPLUS",
+)
+
+
+def generate_ninja_wrapper(build_dir: Path, ninja_path: str) -> Path:
+    """Produce a hermetic launcher for ninja. The goal is bit-identical
+    environment to a terminal `ninja -C <dir>` so that (a) no-op builds stay
+    no-op, (b) ccache hits, and (c) any CMake reconfigure ninja triggers sees
+    the same toolchain it was originally configured with."""
+    sysroot = read_isysroot(build_dir)
+    deployment = read_cmake_cache(build_dir, "CMAKE_OSX_DEPLOYMENT_TARGET")
+
+    lines = [
+        "#!/bin/sh",
+        "# Generated by Tools/Scripts/generate-cmake-xcode-project.",
+        "# Scrub Xcode-injected variables so CMake reconfigure (if ninja",
+        "# triggers one) produces an identical build.ninja and the existing",
+        "# object files / ccache entries remain valid.",
+        "unset " + " ".join(XCODE_ENV_POLLUTANTS),
+        "",
+        "# Keep the inherited PATH (so user-installed tools the build relies on",
+        "# -- ccache, python, perl modules -- remain reachable) but drop entries",
+        "# Xcode prepends from inside its .app bundle, which would shadow the",
+        "# system clang/ld and change CMake's compiler-ID detection.",
+        'PATH=$(printf "%s" "$PATH" | /usr/bin/tr ":" "\\n" \\',
+        '       | /usr/bin/grep -Ev "/Contents/Developer/|/Xcode[^/]*\\.app/" \\',
+        '       | /usr/bin/paste -sd ":" -)',
+        f'export PATH="{os.path.dirname(ninja_path)}:$PATH"',
+    ]
+    if sysroot:
+        lines.append(f'export SDKROOT="{sysroot}"')
+    else:
+        lines.append('export SDKROOT="$(/usr/bin/xcrun --sdk macosx --show-sdk-path)"')
+    if deployment:
+        lines.append(f'export MACOSX_DEPLOYMENT_TARGET="{deployment}"')
+    lines.append(f'exec "{ninja_path}" "$@"')
+
+    wrapper = build_dir / "ninja-xcode-wrapper"
+    wrapper.write_text("\n".join(lines) + "\n")
+    wrapper.chmod(0o755)
+    return wrapper
+
+
+def is_macho_executable(path: Path) -> bool:
+    if not (path.is_file() and os.access(path, os.X_OK)):
+        return False
+    try:
+        with path.open("rb") as f:
+            magic, = struct.unpack("<I", f.read(4))
+        return magic in MACHO_MAGICS
+    except (OSError, struct.error):
+        return False
+
+
+def discover_executables(build_dir: Path):
+    """Yield (scheme_name, absolute_path, is_bundle) for every launchable
+    product directly under build_dir. Re-run after building new targets."""
+    for app in sorted(build_dir.glob("*.app")):
+        yield app.stem, app, True
+    for exe in sorted(build_dir.iterdir()):
+        if exe.name in BUILD_TOOL_NAMES or exe.suffix in (".dylib", ".a"):
+            continue
+        if is_macho_executable(exe):
+            yield exe.name, exe, False
+
+
+def read_prefix_maps(build_dir: Path):
+    """Extract -fdebug-prefix-map=FROM=TO pairs from build.ninja so the
+    generated lldbinit exactly inverts whatever OptionsMac.cmake configured,
+    rather than assuming a particular layout."""
+    maps = []
+    for from_path, to_token in set(re.findall(r"-fdebug-prefix-map=(\S+?)=(\S+)",
+                                              read_build_ninja(build_dir))):
+        maps.append((to_token, from_path))
+    # Longer replacement tokens first so "build" sorts before ".".
+    maps.sort(key=lambda m: -len(m[0]))
+    return maps
+
+
+def generate_pbxproj(build_dir: Path, source_dir: Path, ninja_path: str) -> str:
+    ids = {k: pbxid(k) for k in (
+        "project", "root_group", "products_group", "derived_group",
+        "config_list_project", "config_list_target",
+        "config_project", "config_target",
+    )}
+    ids["legacy_target"] = NINJA_TARGET_ID
+
+    folder_refs = []
+    folder_children = []
+    for name in SOURCE_FOLDERS:
+        if not (source_dir / name).is_dir():
+            continue
+        fid = pbxid(f"folder.{name}")
+        folder_children.append(f"{fid} /* {name} */")
+        folder_refs.append(
+            f'\t\t{fid} /* {name} */ = {{\n'
+            f'\t\t\tisa = PBXFileReference;\n'
+            f'\t\t\tlastKnownFileType = folder;\n'
+            f'\t\t\tname = {name};\n'
+            f'\t\t\tpath = "{source_dir / name}";\n'
+            f'\t\t\tsourceTree = "<absolute>";\n'
+            f'\t\t}};'
+        )
+
+    # Build-dir DerivedSources, one folder ref per framework, grouped under a
+    # "DerivedSources" PBXGroup so the navigator reads
+    #   DerivedSources / WebKit / FooMessageReceiver.cpp
+    # rather than exposing the whole build dir (which would drag in CMakeFiles
+    # and *.o). Discovered at generation time so new frameworks appear after a
+    # reconfigure.
+    derived_children = []
+    for d in sorted(build_dir.glob("*/DerivedSources")):
+        if not any(d.iterdir()):
+            continue
+        framework = d.parent.name
+        fid = pbxid(f"derived.{framework}")
+        derived_children.append(f"{fid} /* {framework} */")
+        folder_refs.append(
+            f'\t\t{fid} /* {framework} */ = {{\n'
+            f'\t\t\tisa = PBXFileReference;\n'
+            f'\t\t\tlastKnownFileType = folder;\n'
+            f'\t\t\tname = {framework};\n'
+            f'\t\t\tpath = "{d}";\n'
+            f'\t\t\tsourceTree = "<absolute>";\n'
+            f'\t\t}};'
+        )
+
+    folder_refs_text = "\n".join(folder_refs)
+    root_children = ", ".join(
+        folder_children
+        + [f'{ids["derived_group"]} /* DerivedSources */']
+        + [f'{ids["products_group"]} /* Products */']
+    )
+    derived_children_text = ", ".join(derived_children)
+
+    # passBuildSettingsInEnvironment = 0 keeps Xcode's ~200 build-setting env
+    # vars (SDKROOT, ARCHS, etc.) out of the ninja invocation -- they would
+    # perturb ccache hashes and the IDL preprocessor's -target flag handling.
+    return f"""// !$*UTF8*$!
+{{
+\tarchiveVersion = 1;
+\tclasses = {{}};
+\tobjectVersion = 56;
+\tobjects = {{
+\t\t{ids["legacy_target"]} /* ninja */ = {{
+\t\t\tisa = PBXLegacyTarget;
+\t\t\tbuildArgumentsString = "-C {build_dir} $(ACTION)";
+\t\t\tbuildConfigurationList = {ids["config_list_target"]};
+\t\t\tbuildPhases = ();
+\t\t\tbuildToolPath = "{ninja_path}";
+\t\t\tbuildWorkingDirectory = "{source_dir}";
+\t\t\tdependencies = ();
+\t\t\tname = ninja;
+\t\t\tpassBuildSettingsInEnvironment = 0;
+\t\t\tproductName = ninja;
+\t\t}};
+\t\t{ids["project"]} /* Project */ = {{
+\t\t\tisa = PBXProject;
+\t\t\tattributes = {{
+\t\t\t\tBuildIndependentTargetsInParallel = YES;
+\t\t\t\tLastUpgradeCheck = {xcode_version_tag()};
+\t\t\t}};
+\t\t\tbuildConfigurationList = {ids["config_list_project"]};
+\t\t\tcompatibilityVersion = "Xcode 14.0";
+\t\t\tdevelopmentRegion = en;
+\t\t\thasScannedForEncodings = 0;
+\t\t\tknownRegions = (en, Base);
+\t\t\tmainGroup = {ids["root_group"]};
+\t\t\tproductRefGroup = {ids["products_group"]};
+\t\t\tprojectDirPath = "";
+\t\t\tprojectRoot = "";
+\t\t\ttargets = ({ids["legacy_target"]});
+\t\t}};
+\t\t{ids["root_group"]} = {{
+\t\t\tisa = PBXGroup;
+\t\t\tchildren = ({root_children});
+\t\t\tsourceTree = "<group>";
+\t\t}};
+\t\t{ids["products_group"]} /* Products */ = {{
+\t\t\tisa = PBXGroup;
+\t\t\tchildren = ();
+\t\t\tname = Products;
+\t\t\tsourceTree = "<group>";
+\t\t}};
+\t\t{ids["derived_group"]} /* DerivedSources */ = {{
+\t\t\tisa = PBXGroup;
+\t\t\tchildren = ({derived_children_text});
+\t\t\tname = DerivedSources;
+\t\t\tsourceTree = "<group>";
+\t\t}};
+{folder_refs_text}
+\t\t{ids["config_project"]} /* Debug */ = {{
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbuildSettings = {{}};
+\t\t\tname = Debug;
+\t\t}};
+\t\t{ids["config_target"]} /* Debug */ = {{
+\t\t\tisa = XCBuildConfiguration;
+\t\t\tbuildSettings = {{}};
+\t\t\tname = Debug;
+\t\t}};
+\t\t{ids["config_list_project"]} = {{
+\t\t\tisa = XCConfigurationList;
+\t\t\tbuildConfigurations = ({ids["config_project"]});
+\t\t\tdefaultConfigurationIsVisible = 0;
+\t\t\tdefaultConfigurationName = Debug;
+\t\t}};
+\t\t{ids["config_list_target"]} = {{
+\t\t\tisa = XCConfigurationList;
+\t\t\tbuildConfigurations = ({ids["config_target"]});
+\t\t\tdefaultConfigurationIsVisible = 0;
+\t\t\tdefaultConfigurationName = Debug;
+\t\t}};
+\t}};
+\trootObject = {ids["project"]};
+}}
+"""
+
+
+def asan_options(build_dir: Path) -> str:
+    """ASAN_OPTIONS for any process built with -fsanitize=address.
+    allocator_may_return_null=1 matches Tools/Scripts/webkitpy/port/driver.py.
+    The sandbox profiles allow ASan's sigaltstack/socketpair calls when
+    preprocessed with -fsanitize=address (see PlatformMac.cmake), so no
+    use_sigaltstack workaround is needed."""
+    if "address" in read_cmake_cache(build_dir, "ENABLE_SANITIZERS"):
+        return "allocator_may_return_null=1"
+    return ""
+
+
+def tsan_options(build_dir: Path) -> str:
+    """TSAN_OPTIONS for any process built with -fsanitize=thread.
+    Points at the in-tree suppressions file (JSC parallel-GC, JIT, allocator
+    internals -- see Tools/Scripts/tsan_suppressions.txt). second_deadlock_stack
+    gives both lock-order stacks; halt_on_error=0 lets a test surface multiple
+    races in one run."""
+    if "thread" not in read_cmake_cache(build_dir, "ENABLE_SANITIZERS"):
+        return ""
+    source_dir = Path(read_cmake_cache(build_dir, "CMAKE_HOME_DIRECTORY"))
+    supp = source_dir / "Tools" / "Scripts" / "tsan_suppressions.txt"
+    opts = "halt_on_error=0:second_deadlock_stack=1"
+    if supp.exists():
+        opts += f":suppressions={supp}"
+    return opts
+
+
+def bundle_identifier(app_path: Path, fallback_name: str) -> str:
+    try:
+        with (app_path / "Contents" / "Info.plist").open("rb") as f:
+            return plistlib.load(f)["CFBundleIdentifier"]
+    except (OSError, KeyError, plistlib.InvalidFileException):
+        return f"org.WebKit.{fallback_name}"
+
+
+def generate_scheme(name: str, executable_path: Path, is_bundle: bool,
+                    build_dir: Path) -> str:
+    if is_bundle:
+        runnable = f"""
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         BundleIdentifier = "{bundle_identifier(executable_path, name)}"
+         FilePath = "{executable_path}">
+      </PathRunnable>"""
+    else:
+        runnable = f"""
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         FilePath = "{executable_path}">
+      </PathRunnable>"""
+
+    framework_path = f"{build_dir}:{build_dir}/lib"
+    asan = asan_options(build_dir)
+    tsan = tsan_options(build_dir)
+
+    # Plain executables (jsc, testapi, ...) find their frameworks via LC_RPATH;
+    # setting DYLD_FRAMEWORK_PATH on them would only redirect Xcode's injected
+    # liblldbViewDebuggerSupport.dylib (which links system WebKit) to the
+    # just-built one, which is pointless for binaries that don't use WebKit.
+    #
+    # App bundles need the full set, matching Tools/Scripts/run-minibrowser:
+    # DYLD_FRAMEWORK_PATH for the UI process and __XPC_-prefixed copies that
+    # launchd forwards (with the prefix stripped) to WebContent/Networking/GPU
+    # children -- SIP would otherwise strip DYLD_* on the way to them. The
+    # view-debugger redirect this causes is harmless because PlatformMac.cmake
+    # makes WebKit.framework re-export WebKitLegacy, matching the system ABI.
+    env = []
+    if is_bundle:
+        env += [
+            ("DYLD_FRAMEWORK_PATH", framework_path),
+            ("DYLD_LIBRARY_PATH", framework_path),
+            ("__XPC_DYLD_FRAMEWORK_PATH", framework_path),
+            ("__XPC_DYLD_LIBRARY_PATH", framework_path),
+        ]
+    if asan:
+        env.append(("ASAN_OPTIONS", asan))
+        if is_bundle:
+            env.append(("__XPC_ASAN_OPTIONS", asan))
+    if tsan:
+        env.append(("TSAN_OPTIONS", tsan))
+        if is_bundle:
+            env.append(("__XPC_TSAN_OPTIONS", tsan))
+
+    if env:
+        entries = "".join(
+            f"""
+         <EnvironmentVariable
+            key = "{k}"
+            value = "{v}"
+            isEnabled = "YES">
+         </EnvironmentVariable>""" for k, v in env)
+        env_vars = f"""
+      <EnvironmentVariables>{entries}
+      </EnvironmentVariables>"""
+    else:
+        env_vars = ""
+
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "{xcode_version_tag()}"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "{NINJA_TARGET_ID}"
+               BuildableName = "ninja"
+               BlueprintName = "ninja"
+               ReferencedContainer = "container:{PROJECT_NAME}.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables/>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "NO"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "NO"
+      customLLDBInitFile = "{build_dir}/lldbinit">{runnable}{env_vars}
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Debug"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "NO">{runnable}
+   </ProfileAction>
+   <AnalyzeAction buildConfiguration = "Debug"/>
+   <ArchiveAction buildConfiguration = "Debug" revealArchiveInOrganizer = "YES"/>
+</Scheme>
+"""
+
+
+def generate_lldbinit(source_dir: Path, build_dir: Path) -> str:
+    lines = ["# Generated by Tools/Scripts/generate-cmake-xcode-project"]
+    for token, real_path in read_prefix_maps(build_dir):
+        lines.append(f"settings append target.source-map {token} {real_path}")
+    if not any("source-map" in l for l in lines):
+        # Fall back to the conventional mapping if build.ninja was unreadable.
+        lines.append(f"settings append target.source-map . {source_dir}")
+        lines.append(f"settings append target.source-map build {build_dir}")
+    formatters = source_dir / "Tools" / "lldb" / "lldb_webkit.py"
+    if formatters.exists():
+        lines.append("")
+        lines.append(f"command script import {formatters}")
+    return "\n".join(lines) + "\n"
+
+
+def default_build_dir(source_dir: Path) -> Path:
+    for cfg in ("Debug", "RelWithDebInfo", "Release"):
+        candidate = source_dir / "WebKitBuild" / "cmake-mac" / cfg
+        if (candidate / "CMakeCache.txt").exists():
+            return candidate
+    return source_dir / "WebKitBuild" / "cmake-mac" / "Release"
+
+
+def main():
+    script_dir = Path(__file__).resolve().parent
+    source_dir = script_dir.parent.parent  # Tools/Scripts -> repo root
+
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("build_dir", nargs="?",
+                    help="CMake binary dir (default: first configured "
+                         "WebKitBuild/cmake-mac/{Debug,RelWithDebInfo,Release})")
+    args = ap.parse_args()
+
+    if args.build_dir:
+        build_dir = Path(args.build_dir)
+        if not build_dir.is_absolute():
+            build_dir = (source_dir / build_dir).resolve()
+    else:
+        build_dir = default_build_dir(source_dir)
+
+    if not (build_dir / "CMakeCache.txt").exists():
+        sys.exit(f"error: {build_dir}/CMakeCache.txt not found -- run "
+                 f"'cmake --preset mac-dev-release' first")
+
+    ninja_path = find_ninja()
+    wrapper = generate_ninja_wrapper(build_dir, ninja_path)
+
+    proj = build_dir / f"{PROJECT_NAME}.xcodeproj"
+    proj.mkdir(exist_ok=True)
+    (proj / "project.pbxproj").write_text(
+        generate_pbxproj(build_dir, source_dir, str(wrapper)))
+
+    schemes_dir = proj / "xcshareddata" / "xcschemes"
+    schemes_dir.mkdir(parents=True, exist_ok=True)
+
+    schemes = list(discover_executables(build_dir))
+    for name, path, is_bundle in schemes:
+        (schemes_dir / f"{name}.xcscheme").write_text(
+            generate_scheme(name, path, is_bundle, build_dir))
+
+    # Xcode selects the alphabetically-first scheme by default; pin MiniBrowser
+    # (or the first .app bundle) to orderHint 0 so a fresh open lands on the
+    # thing most people want to debug. The management plist is per-user, which
+    # is fine -- the project lives in the build dir and isn't shared.
+    user = os.environ.get("USER", "default")
+    mgmt_dir = proj / "xcuserdata" / f"{user}.xcuserdatad" / "xcschemes"
+    mgmt_dir.mkdir(parents=True, exist_ok=True)
+    preferred = next((n for n, _, b in schemes if b), schemes[0][0] if schemes else None)
+    if preferred:
+        ordered = [preferred] + sorted(n for n, _, _ in schemes if n != preferred)
+        entries = "\n".join(
+            f"\t\t<key>{n}.xcscheme_^#shared#^_</key>\n"
+            f"\t\t<dict><key>orderHint</key><integer>{i}</integer></dict>"
+            for i, n in enumerate(ordered)
+        )
+        (mgmt_dir / "xcschememanagement.plist").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" '
+            '"http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n'
+            '<plist version="1.0">\n<dict>\n'
+            '\t<key>SchemeUserState</key>\n\t<dict>\n'
+            f'{entries}\n'
+            '\t</dict>\n</dict>\n</plist>\n'
+        )
+
+    (build_dir / "lldbinit").write_text(generate_lldbinit(source_dir, build_dir))
+
+    print(f"Generated {proj}")
+    print(f"  {len(schemes)} scheme(s): "
+          f"{', '.join(n for n, _, _ in schemes) or '(none yet -- build first, then re-run)'}")
+    print(f"  lldbinit: {build_dir}/lldbinit")
+    print()
+    print(f"  open {proj}")
+    print(f"  Cmd-B  -> {wrapper} -C {build_dir}")
+    print(f"  Cmd-R  -> ninja, then launch + attach lldb")
+
+
+if __name__ == "__main__":
+    main()

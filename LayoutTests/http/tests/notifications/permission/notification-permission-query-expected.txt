@@ -1,0 +1,17 @@
+This test checks that Permissions::query() returns the true permission state of the Notifications API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No permission state is set
+PASS permissionsQueryResult is "prompt"
+Permission has been granted
+PASS requestPermissionResult is "granted"
+PASS permissionsQueryResult is "granted"
+Permission has been denied
+PASS requestPermissionResult is "denied"
+PASS permissionsQueryResult is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Video Codec Test Results</title>
+<style type="text/css">
+<!-- Begin 960 reset -->
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,c
+ode,dd,del,details,dfn,dialog,div,dl,dt,em,embed,fieldset,figcaption,figure,font,footer,form,h1,h2,h
+3,h4,h5,h6,header,hgroup,hr,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,meter,nav,object,ol,
+output,p,pre,progress,q,rp,rt,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbo
+dy,td,tfoot,th,thead,time,tr,tt,u,ul,var,video,xmp{border:0;margin:0;padding:0;font-size:100%}html,b
+ody{height:100%}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{displa
+y:block}b,strong{font-weight:bold}img{color:transparent;font-size:0;vertical-align:middle;-ms-interp
+olation-mode:bicubic}ol,ul{list-style:none}li{display:list-item}table{border-collapse:collapse;borde
+r-spacing:0}th,td,caption{font-weight:normal;vertical-align:top;text-align:left}q{quotes:none}q:befo
+re,q:after{content:'';content:none}sub,sup,small{font-size:75%}sub,sup{line-height:0;position:relati
+ve;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}svg{overflow:hidden}
+<!-- End 960 reset -->
+<!-- Begin 960 text -->
+body{font:13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif}pre,code{font-family
+:'DejaVu Sans Mono',Menlo,Consolas,monospace}hr{border:0 #ccc solid;border-top-width:1px;clear:both;
+height:0}h1{font-size:25px}h2{font-size:23px}h3{font-size:21px}h4{font-size:19px}h5{font-size:17px}h
+6{font-size:15px}ol{list-style:decimal}ul{list-style:disc}li{margin-left:30px}p,dl,hr,h1,h2,h3,h4,h5
+,h6,ol,ul,pre,table,address,fieldset,figure{margin-bottom:20px}
+<!-- End 960 text -->
+<!-- Begin 960 grid (fluid variant)
+     12 columns, 1152px total width
+     http://960.gs/ | http://grids.heroku.com/ -->
+.container_12{width:92%;margin-left:4%;margin-right:4%}.grid_1,.grid_2,.grid_3,.grid_4,.grid_5,.grid
+_6,.grid_7,.grid_8,.grid_9,.grid_10,.grid_11,.grid_12{display:inline;float:left;position:relative;ma
+rgin-left:1%;margin-right:1%}.alpha{margin-left:0}.omega{margin-right:0}.container_12 .grid_1{width:
+6.333%}.container_12 .grid_2{width:14.667%}.container_12 .grid_3{width:23.0%}.container_12 .grid_4{w
+idth:31.333%}.container_12 .grid_5{width:39.667%}.container_12 .grid_6{width:48.0%}.container_12 .gr
+id_7{width:56.333%}.container_12 .grid_8{width:64.667%}.container_12 .grid_9{width:73.0%}.container_
+12 .grid_10{width:81.333%}.container_12 .grid_11{width:89.667%}.container_12 .grid_12{width:98.0%}.c
+ontainer_12 .prefix_1{padding-left:8.333%}.container_12 .prefix_2{padding-left:16.667%}.container_12
+ .prefix_3{padding-left:25.0%}.container_12 .prefix_4{padding-left:33.333%}.container_12 .prefix_5{p
+adding-left:41.667%}.container_12 .prefix_6{padding-left:50.0%}.container_12 .prefix_7{padding-left:
+58.333%}.container_12 .prefix_8{padding-left:66.667%}.container_12 .prefix_9{padding-left:75.0%}.con
+tainer_12 .prefix_10{padding-left:83.333%}.container_12 .prefix_11{padding-left:91.667%}.container_1
+2 .suffix_1{padding-right:8.333%}.container_12 .suffix_2{padding-right:16.667%}.container_12 .suffix
+_3{padding-right:25.0%}.container_12 .suffix_4{padding-right:33.333%}.container_12 .suffix_5{padding
+-right:41.667%}.container_12 .suffix_6{padding-right:50.0%}.container_12 .suffix_7{padding-right:58.
+333%}.container_12 .suffix_8{padding-right:66.667%}.container_12 .suffix_9{padding-right:75.0%}.cont
+ainer_12 .suffix_10{padding-right:83.333%}.container_12 .suffix_11{padding-right:91.667%}.container_
+12 .push_1{left:8.333%}.container_12 .push_2{left:16.667%}.container_12 .push_3{left:25.0%}.containe
+r_12 .push_4{left:33.333%}.container_12 .push_5{left:41.667%}.container_12 .push_6{left:50.0%}.conta
+iner_12 .push_7{left:58.333%}.container_12 .push_8{left:66.667%}.container_12 .push_9{left:75.0%}.co
+ntainer_12 .push_10{left:83.333%}.container_12 .push_11{left:91.667%}.container_12 .pull_1{left:-8.3
+33%}.container_12 .pull_2{left:-16.667%}.container_12 .pull_3{left:-25.0%}.container_12 .pull_4{left
+:-33.333%}.container_12 .pull_5{left:-41.667%}.container_12 .pull_6{left:-50.0%}.container_12 .pull_
+7{left:-58.333%}.container_12 .pull_8{left:-66.667%}.container_12 .pull_9{left:-75.0%}.container_12
+.pull_10{left:-83.333%}.container_12 .pull_11{left:-91.667%}.clear{clear:both;display:block;overflow
+:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font
+-size:0;line-height:0;visibility:hidden;width:0;height:0}.clearfix{display:inline-block}* html .clea
+rfix{height:1%}.clearfix{display:block}
+<!-- End 960 grid -->
+
+div.metricgraph {
+
+}
+
+body {
+
+}
+
+div.header {
+  font-family: Arial, sans-serif;
+}
+
+div.header h2 {
+  margin: .5em auto;
+}
+
+div.radio {
+  font-family: Arial, sans-serif;
+  margin-bottom: 1em;
+}
+
+div.main {
+
+}
+
+div.cliplist {
+  font-family: Arial, sans-serif;
+  margin-top: 6px;
+}
+
+div.chartarea {
+  font-family: Arial, sans-serif;
+}
+
+div.indicators {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  margin-top: 6px;
+  min-height: 600px;
+  background-color: #f7f7f7;
+}
+
+div.indicators div.content {
+  margin: 1em;
+}
+
+div.indicators div.content h5 {
+  font-size: 13px;
+  text-align: center;
+  margin: 0;
+}
+
+div.indicators div.content ul {
+  margin-left: 0;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+div.indicators div.content ul li {
+  margin-left: 1.5em;
+}
+
+div.indicators div.content p:first-child {
+  margin-bottom: .5em;
+}
+
+span.google-visualization-table-sortind {
+  color: #000;
+}
+.header-style {
+  font-weight: bold;
+  border: 1px solid #fff;
+  background-color: #ccc;
+}
+
+td.header-style+td {
+
+}
+
+.orange-background {
+  background-color: orange;
+}
+
+.light-gray-background {
+  background-color: #f0f0f0;
+}
+</style>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+var chart_left   = 40;
+var chart_top    = 6;
+var chart_height = document.documentElement.clientHeight-100;
+var chart_width  = "100%";
+ftable='filestable_avg'
+var snrs = [];
+var filestable_dsnr = [];
+var filestable_drate = [];
+var filestable_avg = [];
+
+// Python template code replaces the following 2 lines.
+//%%metrics_js%%//
+//%%filestable_dpsnr%%//
+//%%filestable_avg%%//
+//%%filestable_drate%%//
+//%%snrs%%//
+
+var selected = 0
+var imagestr = '';
+var bettertable=0;
+var chart=0;
+var better=0;
+var metricdata=0;
+var metricView=0;
+var column=1;
+var formatter=0;
+
+function changeColumn(col) {
+  column = col;
+  console.log(col)
+  draw_files();
+}
+
+function changeMetric(m) {
+  ftable=m
+  draw_files()
+}
+
+function setup_vis() {
+  chart = new google.visualization.ScatterChart(
+      document.getElementById("metricgraph"));
+
+  bettertable = new google.visualization.Table(
+      document.getElementById("bettertable"));
+
+  draw_files();
+  build_metrics_radio();
+}
+
+function build_metrics_radio() {
+  for (metric=1; metric < metrics.length; metric++) {
+    var rb = document.createElement('input');
+    var l = document.createElement('label');
+    rb.setAttribute('type','radio');
+    rb.setAttribute('name','metric');
+    rb.setAttribute('onClick', "changeColumn('"+metric.toString()+"')");
+    l.innerHTML = metrics[metric];
+    document.getElementById('metrics').appendChild(rb);
+    document.getElementById('metrics').appendChild(l);
+  }
+}
+
+function draw_files() {
+  var options = {'allowHtml': true, 'width': "100%", 'height': "50%"};
+  if (better != 0) delete better;
+
+  col=eval(ftable+'[column]')
+  better = new google.visualization.DataTable(col)
+
+  // Python Template code replaces the following line with a list of
+  // formatters.
+  if (ftable == 'filestable_dsnr')
+    formatter = new google.visualization.NumberFormat(
+      {fractionDigits: 4, suffix:" db"});
+  else
+    formatter = new google.visualization.NumberFormat(
+       {fractionDigits: 4, suffix:"%"});
+
+  //%%formatters%%//
+
+  bettertable.draw(better,options);
+  google.visualization.events.addListener(bettertable, 'select',
+                                          selectBetterHandler);
+  query_file()
+}
+
+function query_file() {
+  imagestr = better.getFormattedValue(selected, 0)
+  var metricjson = eval('(' + snrs[column][selected] + ')');
+  metricdata = new google.visualization.DataTable(metricjson, 0.6);
+  if( metricView != 0 ) delete metricView;
+  metricView = new google.visualization.DataView(metricdata);
+
+  chart.draw(metricView, {curveType:'function',
+      explorer: {},
+      chartArea:{left:chart_left, top:chart_top, width:chart_width,
+      height:chart_height-90},
+      hAxis:{title:"Datarate in kbps"},
+      vAxis:{title:"Quality in decibels", format: '##.0', textPosition: 'in'},
+      legend:{position:"in"}, title:imagestr, pointSize:2, lineWidth:1,
+      width:chart_width, height:chart_height-50 });
+
+  google.visualization.events.addListener(chart, 'select', chartSelect);
+  google.visualization.events.addListener(chart, 'onmouseover', chartMouseOver);
+  google.visualization.events.addListener(chart, 'onmouseout', chartMouseOut);
+}
+
+function chartMouseOut(e) {
+  statusbar = document.getElementById('status');
+  statusbar.style.display = 'none';
+}
+
+function chartMouseOver(e) {
+  pointDifference(e.row, e.column)
+}
+
+function pointDifference(row, col) {
+  if(!row || !col)
+    return;
+
+  var cols = metricdata.getNumberOfColumns();
+  var rows = metricdata.getNumberOfRows();
+
+  var sel_bitrate = metricView.getValue(row, 0 );
+  var sel_metric = metricView.getValue(row, col);
+
+  var message = '<ul>' + metricView.getColumnLabel(col) +
+     ' (' + sel_bitrate.toFixed(0) + ' kbps, ' + sel_metric.toFixed(2) + ')' + ' is ';
+
+
+  // col 0 is datarate
+  for( var i=1;i<cols;++i) {
+
+    var metric_greatest_thats_less = 0;
+    var rate_greatest_thats_less = 0;
+    var metric_smallest_thats_greater = 999;
+    var rate_smallest_thats_greater = 0;
+
+    if(i==col)
+      continue;
+
+    // Find the lowest metric for the column that's greater than sel_metric and
+    // the highest metric for this column that's less than the metric.
+    for(var line_count = 0; line_count < rows; ++line_count) {
+      this_metric = metricdata.getValue(line_count, i)
+      this_rate = metricdata.getValue(line_count, 0)
+      if(!this_metric)
+        continue;
+
+      if(this_metric > metric_greatest_thats_less &&
+         this_metric <= sel_metric) {
+        metric_greatest_thats_less = this_metric;
+        rate_greatest_thats_less = this_rate;
+      }
+      if(this_metric < metric_smallest_thats_greater &&
+        this_metric > sel_metric) {
+        metric_smallest_thats_greater = this_metric;
+        rate_smallest_thats_greater = this_rate;
+      }
+    }
+
+    if(rate_smallest_thats_greater == 0 || rate_greatest_thats_less == 0) {
+      message = message + " <li> Couldn't find a point on both sides.</li>"
+    } else {
+      metric_slope = ( rate_smallest_thats_greater - rate_greatest_thats_less) /
+          ( metric_smallest_thats_greater - metric_greatest_thats_less);
+
+      projected_rate = ( sel_metric - metric_greatest_thats_less) *
+          metric_slope + rate_greatest_thats_less;
+
+      difference = 100 * (projected_rate / sel_bitrate - 1);
+
+
+      if (difference > 0)
+        message = message + "<li>  " + difference.toFixed(2) +
+                  "% smaller than <em>" +
+                  metricdata.getColumnLabel(i) + "</em></li> "
+      else
+        message = message + "<li>  " + -difference.toFixed(2) +
+                  "% bigger than <em>" +
+                  metricdata.getColumnLabel(i) + "</em></li> "
+    }
+
+  }
+  message = message + "</ul>"
+  statusbar = document.getElementById('status');
+  statusbar.innerHTML = "<p>" + message + "</p>";
+  statusbar.style.display = 'block';
+}
+
+function chartSelect() {
+  var selection = chart.getSelection();
+  var message = '';
+  var min = metricView.getFormattedValue(selection[0].row, 0);
+  var max = metricView.getFormattedValue(selection[selection.length-1].row, 0);
+  var val = metricView.getFormattedValue(selection[0].row,selection[0].column);
+
+  pointDifference(selection[0].row, selection[0].column)
+  min = min / 3
+  max = max * 3
+  metricView.setRows(metricdata.getFilteredRows(
+      [{column: 0,minValue: min, maxValue:max}]));
+
+  chart.draw(metricView, {curveType:'function',
+      chartArea:{left:40, top:10, width:chart_width, height:chart_height - 110},
+      hAxis:{title:"datarate in kbps"}, vAxis:{title:"quality in decibels"},
+      legend:{position:"in"}, title:imagestr, pointSize:2, lineWidth:1,
+      width:chart_width, height:chart_height - 50});
+}
+
+function selectBetterHandler() {
+  var selection = bettertable.getSelection();
+  for (var i = 0; i < selection.length; i++) {
+    item = selection[i];
+  }
+  selected = item.row
+  query_file()
+}
+
+
+google.load('visualization', '1', {'packages' : ['corechart','table']});
+google.setOnLoadCallback(setup_vis);
+</script>
+</head>
+
+<body>
+
+  <div class="container_12">
+
+    <div class="grid_12 header">
+      <h2>Codec Comparison Results</h2>
+    </div>
+
+    <div class="grid_12 radio">
+
+      <form name="myform">
+        Method For Combining Points
+        <input type="radio" checked name="column" value="1"
+          onClick="changeMetric('filestable_avg')" />Average of bitrates difference
+        <input type="radio" name="column" value="2"
+          onClick="changeMetric('filestable_dsnr')" />BDSNR
+        <input type="radio" name="column" value="3"
+          onClick="changeMetric('filestable_drate')" />BDRATE
+      </form>
+
+      <form id="metrics" name="myform">
+      </form>
+
+    </div>
+
+    <div class="grid_12 main">
+
+      <div class="grid_5 alpha cliplist">
+        <div id="bettertable"></div>
+      </div>
+
+      <div class="grid_5 chartarea">
+        <div id="metricgraph"></div>
+      </div>
+
+      <div class="grid_2 omega indicators">
+        <div class="content">
+          <h5>Indicators</h5>
+          <hr>
+          <div id="status"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

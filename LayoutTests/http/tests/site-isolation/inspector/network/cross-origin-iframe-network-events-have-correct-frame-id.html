@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../../../inspector/resources/stable-id-map.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameFrameId");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.FrameIdMatchesIFrame",
+        description: "Network events for a cross-origin iframe fetch should carry the iframe's frame ID.",
+        async test() {
+            let frameIdMap = new StableIdMap;
+
+            // Wait for the cross-origin iframe's frame target.
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let targetEvent = await targetAddedPromise;
+            let frameTarget = targetEvent.data.target;
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Frame target should be created.");
+
+            // Wait for execution context.
+            if (!frameTarget.executionContext)
+                await frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+
+            let mainFrameId = WI.networkManager.mainFrame.id;
+
+            // Trigger fetch and wait for the resource.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+
+            let resourceFrameId = resource.parentFrame.id;
+            InspectorTest.expectEqual(resourceFrameId, frameTarget.identifier, "Resource frame ID should match the iframe's identifier.");
+            InspectorTest.expectNotEqual(resourceFrameId, mainFrameId, "Resource frame ID should not equal main frame ID.");
+            InspectorTest.expectThat(resourceFrameId !== null && resourceFrameId !== undefined, "Resource frame ID should not be null.");
+            InspectorTest.log(`Main frame ID: ${frameIdMap.get(mainFrameId)}`);
+            InspectorTest.log(`Resource frame ID: ${frameIdMap.get(resourceFrameId)}`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that network events for a cross-origin iframe fetch carry the iframe's frame ID, not the main frame's.</p>
+</body>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <script>
+    var canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = 200;
+    canvas.height = 200;
+
+    ctx.fillStyle = "#f00";
+    ctx.fillRect(0, 0, 100, 200);
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(100, 0, 100, 200);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS clip responsive to inherited clip changes
+PASS clip responsive to inherited clip changes from auto
+

@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText()
+        testRunner.dumpFullScreenCallbacks();
+    }
+    addEventListener("message", (event) => {
+        document.getElementById("mylog").innerHTML += event.data + "<br>";
+        document.getElementById("mylog").innerHTML += 'iframe border style after transition: ' + getComputedStyle(document.getElementById("frame")).getPropertyValue('border') + "<br><br>";
+        if (event.data.startsWith('Size after exiting') && window.testRunner) { testRunner.notifyDone() }
+    });
+</script>
+<iframe id='frame' allowfullscreen src="http://localhost:8000/site-isolation/resources/fullscreen.html" frameborder=0></iframe>
+<div id=mylog>
+</div>

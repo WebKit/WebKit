@@ -1,0 +1,5 @@
+
+FAIL once animation triggered via scroll() timeline. assert_true: expected true got false
+FAIL once animation triggered via view() timeline. assert_true: expected true got false
+FAIL once animation triggered via deferred (view) timeline. assert_true: expected true got false
+

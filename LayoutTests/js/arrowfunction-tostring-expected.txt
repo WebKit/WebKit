@@ -1,0 +1,32 @@
+Tests for ES6 arrow function toString() method
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+var simpleArrowFunction = () => {}
+PASS simpleArrowFunction.toString() is '() => {}'
+PASS ((x) => { x + 1 }).toString() is '(x) => { x + 1 }'
+PASS (x => x + 1).toString() is 'x => x + 1'
+var f0 = x => x
+PASS f0.toString() is 'x => x'
+var f1 = () => this
+PASS f1.toString() is '() => this'
+var f2 = x => { return x; };
+PASS f2.toString() is '(x) => { return x; }'
+var f3 = (x, y) => { return x + y; };
+PASS f3.toString() is '(x, y) => { return x + y; }'
+function foo(x) { return x.toString()};
+PASS foo((x)=>x) is '(x)=>x'
+var a = z => z*2, b = () => ({});
+PASS a.toString() is 'z => z*2'
+PASS b.toString() is '() => ({})'
+var arrExpr = [y=>y + 1, x=>x];
+PASS arrExpr[0].toString() is 'y=>y + 1'
+PASS arrExpr[1].toString() is 'x=>x'
+var arrBody  = [y=>{ y + 1 }, x=>{ x }];
+PASS arrBody[0].toString() is 'y=>{ y + 1 }'
+PASS arrBody[1].toString() is 'x=>{ x }'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

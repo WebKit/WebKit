@@ -1,0 +1,19 @@
+abc 
+
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">{}<br></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">{}<br></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">abc[]<br></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">abc[]<br></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">abc{}<br></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">abc{}<br></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">ab[]c<br></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">ab[]c<br></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap"><b>{}<br></b></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap"><b>{}<br></b></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">abc[]<b><br></b></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">abc[]<b><br></b></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">abc<b>{}<br></b></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">abc<b>{}<br></b></div>
+PASS Typing X when <div contenteditable style="white-space:pre-wrap">abc&nbsp;[]<br></div>
+PASS Typing space when <div contenteditable style="white-space:pre-wrap">abc&nbsp;[]<br></div>
+

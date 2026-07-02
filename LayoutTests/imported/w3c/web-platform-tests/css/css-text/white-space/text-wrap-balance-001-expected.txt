@@ -1,0 +1,11 @@
+Balancing should
+Balancing should
+Balancing should not change
+Balancing should not change
+Balancing should not change the number of lines.
+Balancing should not change the number of lines.
+
+PASS text-wrap-balance-001
+PASS text-wrap-balance-001 1
+PASS text-wrap-balance-001 2
+

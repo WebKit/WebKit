@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Selection gap custom background color</title>
+
+<style>
+::selection {
+    background-color: #FF0000;
+}
+</style>
+
+<div>This test passes if the gap to the right of this sentence -></div>
+<p>
+Is colored with the same background color as this text.
+</p>
+
+<script>
+document.execCommand("SelectAll");
+</script>

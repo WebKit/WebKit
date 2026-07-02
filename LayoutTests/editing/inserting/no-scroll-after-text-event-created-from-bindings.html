@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that dispatching a TextEvent created from bindings inside an editable element does not trigger scrolling.");
+
+    await UIHelper.renderingUpdate();
+    scrollTo(0, 0);
+    pageYOffsetBefore = pageYOffset;
+
+    textField = document.querySelector("input");
+    textField.focus({ preventScroll: true });
+
+    const event = document.createEvent("TextEvent");
+    event.initTextEvent("textInput", true, true, null, "a");
+    textField.dispatchEvent(event);
+    pageYOffsetAfter = pageYOffset;
+
+    await UIHelper.renderingUpdate();
+    shouldBe("pageYOffsetBefore", "pageYOffsetAfter");
+    shouldBeEqualToString("textField.value", "a");
+
+    document.querySelector(".tall").remove();
+    finishJSTest();
+});
+</script>
+<style>
+.tall {
+    width: 100%;
+    height: 5000px;
+}
+
+input {
+    font-size: 18px;
+}
+</style>
+</head>
+<body>
+    <div class="tall"></div>
+    <input type="text" />
+</body>
+</html>

@@ -1,0 +1,9 @@
+This test checks that the MathML UA stylesheet applies outline via :focus-visible, not :focus.
+
+1
++
+2
+
+PASS Mouse click on MathML element should not trigger UA focus outline
+PASS Keyboard focus on MathML element should trigger UA focus outline
+

@@ -1,0 +1,384 @@
+/*
+ *  Copyright (C) 2005-2025 Apple Inc. All rights reserved.
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <algorithm>
+#include <utility>
+#include <wtf/RawPtrTraits.h>
+#include <wtf/Ref.h>
+#include <wtf/SwiftBridging.h>
+
+namespace WTF {
+
+template<typename T, typename PtrTraits, typename RefDerefTraits> class RefPtr;
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> RefPtr<T, PtrTraits, RefDerefTraits> adoptRef(T*);
+
+/**
+ * @brief RefPtr is a nullable intrusive reference-counting smart pointer.
+ *
+ * It extends the lifetime of the referenced object by calling ref() on construction
+ * and deref() on destruction. When the reference count reaches zero, the object
+ * is automatically deleted.
+ *
+ * RefPtr can only be used with classes that implement ref() and deref() member
+ * functions, typically by inheriting from RefCounted, ThreadSafeRefCounted, or
+ * AbstractRefCounted. Another common pattern is to have an object forward its
+ * ref-counting to its owner. In such cases, you provide custom ref() and deref()
+ * functions on the ownee which internally call ref() / deref() on the owner.
+ * This is an alternative to subclassing RefCounted / ThreadSafeRefCounted.
+ * For types with non-standard ref/deref interfaces, you can provide custom
+ * RefDerefTraits as a template parameter (see DefaultRefDerefTraits in Ref.h).
+ *
+ * @note RefCounted uses non-atomic operations and is not thread-safe. If you
+ * need to share ownership across threads, use ThreadSafeRefCounted instead,
+ * which uses atomic reference counting.
+ *
+ * If you expect the pointer to never be null during its usage, consider using
+ * Ref instead, which provides clearer non-nullable semantics.
+ *
+ * To create a RefPtr, use one of the following:
+ * @code
+ * // Increments the ref count on assignment and decrements when when
+ * // going out of scope.
+ * RefPtr ptr = &object;
+ * // X::create() uses adoptRef() internally to take ownership without incrementing
+ * // the ref count since ref-counted objects get constructed with a ref count
+ * // of 1.
+ * RefPtr ptr = X::create();
+ * class X {
+ * public:
+ *     static RefPtr<X> create() { return adoptRef(new X); }
+ * private:
+ *     X() = default;
+ * };
+ * @endcode
+ *
+ * Use adoptRef() when you receive an object that you already own (i.e., it was
+ * created with a +1 ref count). This is typically used within a static create()
+ * factory function on the class, and the constructor should be private to ensure
+ * all instances are created through the factory. Using the regular RefPtr
+ * constructor instead of adoptRef() would add an extra ref, causing a leak when
+ * the RefPtr is destroyed. Use the regular constructor when you want to add a
+ * reference to an object you don't already own. Newly constructed RefCounted
+ * or ThreadSafeRefCounted objects start with a ref count of 1.
+ */
+template<typename T, typename _PtrTraits, typename _RefDerefTraits>
+class RefPtr {
+    WTF_FORBID_HEAP_ALLOCATION_ALLOWING_PLACEMENT_NEW;
+public:
+    using PtrTraits = _PtrTraits;
+    using RefDerefTraits = _RefDerefTraits;
+    typedef T ValueType;
+    typedef ValueType* PtrType;
+
+    static constexpr bool isRefPtr = true;
+
+    ALWAYS_INLINE constexpr RefPtr() : m_ptr(nullptr) { }
+    ALWAYS_INLINE constexpr RefPtr(std::nullptr_t) : m_ptr(nullptr) { }
+    ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(RefDerefTraits::refIfNotNull(ptr)) { }
+    ALWAYS_INLINE RefPtr(T& ptr) : m_ptr(&RefDerefTraits::ref(ptr)) { }
+    ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.m_ptr))) { }
+    template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.get()))) { }
+
+    ALWAYS_INLINE RefPtr(RefPtr&& o) : m_ptr(o.leakRef()) { }
+    template<typename X, typename Y, typename Z> RefPtr(RefPtr<X, Y, Z>&& o) : m_ptr(o.leakRef()) { }
+    template<typename X, typename Y> RefPtr(Ref<X, Y>&&);
+    template<typename X, typename Y, typename Z> RefPtr(const WeakPtr<X, Y, Z>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
+    template<typename X, typename Y> RefPtr(const CheckedPtr<X, Y>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
+    template<typename X, typename Y> RefPtr(const ThreadSafeWeakPtr<X, Y>& o) requires std::is_convertible_v<X*, T*> : m_ptr(RefDerefTraits::refIfNotNull(o.get())) { }
+
+    // Hash table deleted values, which are only constructed and never copied or destroyed.
+    RefPtr(HashTableDeletedValueType) : m_ptr(PtrTraits::hashTableDeletedValue()) { }
+    bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
+
+    RefPtr(HashTableEmptyValueType) : m_ptr(hashTableEmptyValue()) { }
+    bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }
+    static T* hashTableEmptyValue() { return nullptr; }
+
+    ALWAYS_INLINE ~RefPtr() { RefDerefTraits::derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
+
+    T* get() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }
+    T* unsafeGet() const { return PtrTraits::unwrap(m_ptr); } // FIXME: Replace with get() then remove.
+    operator T*() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }
+
+    Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
+
+    [[nodiscard]] T* leakRef();
+
+    ALWAYS_INLINE T& operator*() const LIFETIME_BOUND { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T* operator->() const LIFETIME_BOUND { return &**this; }
+
+    bool operator!() const { return !m_ptr; }
+    explicit operator bool() const { return !!m_ptr; }
+    
+    RefPtr& operator=(const RefPtr&);
+    RefPtr& operator=(T*);
+    RefPtr& operator=(std::nullptr_t);
+    template<typename X, typename Y, typename Z> RefPtr& operator=(const RefPtr<X, Y, Z>&);
+    RefPtr& operator=(RefPtr&&);
+    template<typename X, typename Y, typename Z> RefPtr& operator=(RefPtr<X, Y, Z>&&);
+    template<typename X> RefPtr& operator=(Ref<X>&&);
+
+    template<typename X, typename Y, typename Z> void swap(RefPtr<X, Y, Z>&);
+
+    RefPtr copyRef() && = delete;
+    [[nodiscard]] RefPtr copyRef() const & { return RefPtr(m_ptr); }
+
+private:
+    friend RefPtr adoptRef<T, PtrTraits, RefDerefTraits>(T*);
+    template<typename X, typename Y, typename Z> friend class RefPtr;
+
+    template<typename T1, typename U, typename V, typename X, typename Y, typename Z>
+    friend bool operator==(const RefPtr<T1, U, V>&, const RefPtr<X, Y, Z>&);
+    template<typename T1, typename U, typename V, typename X>
+    friend bool operator==(const RefPtr<T1, U, V>&, X*);
+
+    enum AdoptTag { Adopt };
+    RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
+
+    typename PtrTraits::StorageType m_ptr;
+} SWIFT_ESCAPABLE;
+
+// Template deduction guide.
+template<typename X, typename Y> RefPtr(Ref<X, Y>&&) -> RefPtr<X, Y, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y, typename Z> RefPtr(const WeakPtr<X, Y, Z>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y, typename Z> RefPtr(WeakPtr<X, Y, Z>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y> RefPtr(const CheckedPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y> RefPtr(CheckedPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y> RefPtr(const ThreadSafeWeakPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+template<typename X, typename Y> RefPtr(ThreadSafeWeakPtr<X, Y>&) -> RefPtr<X, RawPtrTraits<X>, DefaultRefDerefTraits<X>>;
+
+template<typename T, typename U, typename V>
+template<typename X, typename Y>
+inline RefPtr<T, U, V>::RefPtr(Ref<X, Y>&& reference)
+    : m_ptr(&reference.leakRef())
+{
+}
+
+template<typename T, typename U, typename V>
+inline T* RefPtr<T, U, V>::leakRef()
+{
+    return U::exchange(m_ptr, nullptr);
+}
+
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr& o)
+{
+    RefPtr ptr = o;
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename U, typename V>
+template<typename X, typename Y, typename Z>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(const RefPtr<X, Y, Z>& o)
+{
+    RefPtr ptr = o;
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(T* optr)
+{
+    RefPtr ptr = optr;
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(std::nullptr_t)
+{
+    V::derefIfNotNull(U::exchange(m_ptr, nullptr));
+    return *this;
+}
+
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr&& o)
+{
+    RefPtr ptr = WTF::move(o);
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename U, typename V>
+template<typename X, typename Y, typename Z>
+inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(RefPtr<X, Y, Z>&& o)
+{
+    RefPtr ptr = WTF::move(o);
+    swap(ptr);
+    return *this;
+}
+
+template<typename T, typename V, typename W>
+template<typename U>
+inline RefPtr<T, V, W>& RefPtr<T, V, W>::operator=(Ref<U>&& reference)
+{
+    RefPtr ptr = WTF::move(reference);
+    swap(ptr);
+    return *this;
+}
+
+template<class T, typename U, typename V>
+template<typename X, typename Y, typename Z>
+inline void RefPtr<T, U, V>::swap(RefPtr<X, Y, Z>& o)
+{
+    U::swap(m_ptr, o.m_ptr);
+}
+
+template<typename T, typename U, typename V>
+inline void swap(RefPtr<T, U, V>& a, RefPtr<T, U, V>& b)
+{
+    a.swap(b);
+}
+
+template<typename T, typename U, typename V, typename X, typename Y, typename Z>
+inline bool operator==(const RefPtr<T, U, V>& a, const RefPtr<X, Y, Z>& b)
+{
+    return a.m_ptr == b.m_ptr;
+}
+
+template<typename T, typename U, typename V, typename X>
+inline bool operator==(const RefPtr<T, U, V>& a, X* b)
+{
+    return a.m_ptr == b;
+}
+
+template<typename T, typename U, typename V>
+inline RefPtr<T, U, V> adoptRef(T* p)
+{
+    adopted(p);
+    return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
+}
+
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
+    requires CanUseDefaultRefDerefTraits<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(T* ptr)
+{
+    return RefPtr<T, PtrTraits, RefDerefTraits>(ptr);
+}
+
+template<typename T, typename PtrTraits, typename RefDerefTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(const RefPtr<T, PtrTraits, RefDerefTraits>& ptr)
+{
+    return ptr.copyRef();
+}
+
+template<typename T, typename PtrTraits, typename RefDerefTraits>
+RefPtr<T, PtrTraits, RefDerefTraits> protect(RefPtr<T, PtrTraits, RefDerefTraits>&&)
+{
+    static_assert(WTF::unreachableForType<T>, "Calling protect() on an rvalue is unnecessary; the caller already owns the value.");
+}
+
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> upcast(const RefPtr<X, Y, Z>& p)
+{
+    static_assert(!std::same_as<X, T>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<X, T>, "Should be an upcast");
+    return RefPtr<T, U, V>(static_cast<T*>(p.get()));
+}
+
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> upcast(RefPtr<X, Y, Z>&& p)
+{
+    static_assert(!std::same_as<X, T>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<X, T>, "Should be an upcast");
+    return adoptRef(static_cast<T*>(p.leakRef()));
+}
+
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> unsafeRefPtrDowncast(const RefPtr<X, Y, Z>& p)
+{
+    static_assert(!std::same_as<X, T>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<T, X>, "Use upcast instead");
+    SUPPRESS_MEMORY_UNSAFE_CAST return RefPtr<T, U, V>(static_cast<T*>(p.get()));
+}
+
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> unsafeRefPtrDowncast(RefPtr<X, Y, Z>&& p)
+{
+    static_assert(!std::same_as<X, T>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<T, X>, "Use upcast instead");
+    SUPPRESS_MEMORY_UNSAFE_CAST return adoptRef(static_cast<T*>(p.leakRef()));
+}
+
+template <typename T, typename U, typename V>
+struct IsSmartPtr<RefPtr<T, U, V>> {
+    static constexpr bool value = true;
+    static constexpr bool isNullable = true;
+};
+
+template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
+inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename... ExpectedTypes, typename ArgType, typename PtrTraits, typename RefDerefTraits>
+inline bool isAnyOf(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
+{
+    return isAnyOf<ExpectedTypes...>(source.get());
+}
+
+template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
+inline RefPtr<match_constness_t<Source, Target>> uncheckedDowncast(RefPtr<Source, PtrTraits, RefDerefTraits> source)
+{
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
+    ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
+    return unsafeRefPtrDowncast<match_constness_t<Source, Target>>(WTF::move(source));
+}
+
+template<typename Target, typename Source, typename PtrTraits, typename RefDerefTraits>
+inline RefPtr<match_constness_t<Source, Target>> downcast(RefPtr<Source, PtrTraits, RefDerefTraits> source)
+{
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
+    RELEASE_ASSERT(!source || is<Target>(*source));
+    return unsafeRefPtrDowncast<match_constness_t<Source, Target>>(WTF::move(source));
+}
+
+template<typename Target, typename Source, typename TargetPtrTraits = RawPtrTraits<match_constness_t<Source, Target>>, typename TargetRefDerefTraits = DefaultRefDerefTraits<match_constness_t<Source, Target>>,
+    typename SourcePtrTraits, typename SourceRefDerefTraits>
+inline RefPtr<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDerefTraits> dynamicDowncast(RefPtr<Source, SourcePtrTraits, SourceRefDerefTraits> source)
+{
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
+    if (!is<Target>(source))
+        return nullptr;
+    return unsafeRefPtrDowncast<match_constness_t<Source, Target>, TargetPtrTraits, TargetRefDerefTraits>(WTF::move(source));
+}
+
+template<typename T, typename U>
+SUPPRESS_NODELETE ALWAYS_INLINE void NODELETE lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
+{
+    RELEASE_ASSERT(!ptr);
+    const_cast<RefPtr<T>&>(ptr) = WTF::move(obj);
+}
+
+} // namespace WTF
+
+using WTF::RefPtr;
+using WTF::adoptRef;
+using WTF::protect;
+using WTF::upcast;
+using WTF::unsafeRefPtrDowncast;
+using WTF::lazyInitialize;

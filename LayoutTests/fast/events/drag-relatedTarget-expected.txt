@@ -1,0 +1,14 @@
+Test that dragenter and dragleave events carry the correct relatedTarget. Per the DOM Level 2 Events spec, dragenter.relatedTarget is the element just exited and dragleave.relatedTarget is the element being entered.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Drag me
+Zone AZone B
+PASS enterARelatedTarget is null
+PASS leaveARelatedTarget is document.getElementById('zoneB')
+PASS enterBRelatedTarget is document.getElementById('zoneA')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

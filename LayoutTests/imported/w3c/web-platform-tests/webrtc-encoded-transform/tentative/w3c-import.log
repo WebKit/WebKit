@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-audiolevel.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-clone.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-metadata.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-receive-cloned.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-send-incoming.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-serviceworker-failure.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFrame-timestamps-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFrame-timestamps.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedVideoFrame-clone.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedVideoFrame-metadata.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedVideoFrame-serviceworker-failure.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams-errors.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams-simulcast.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams-video-frames.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams-video.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-insertable-streams.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-sender-worker-single-frame.js
+/LayoutTests/imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCPeerConnection-worker-transform.js

@@ -1,0 +1,60 @@
+Tests that defining a setter on the Array prototype and then using ArrayPush works even if it is done after arrays are allocated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Henceforth I will have a bad time.
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Ouch!
+Passed some tests silently.
+
+TEST COMPLETE
+

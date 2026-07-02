@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Horizontal marquee with block children should not expand table width</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <table id="test-table" width="200" style="background:red">
+      <tr>
+        <td>
+          <marquee><div>Text that has to wrap at a width of 200px!!!!</div></marquee>
+        </td>
+      </tr>
+    </table>
+    
+    <script>
+        test(function() {
+            var table = document.getElementById('test-table');
+            var computedWidth = parseFloat(window.getComputedStyle(table).width);
+            assert_equals(computedWidth, 200, 
+                "Table width should be 200px despite marquee containing wide block content");
+        }, "Horizontal marquee with block children does not expand parent table width");
+    </script>
+</body>
+</html>

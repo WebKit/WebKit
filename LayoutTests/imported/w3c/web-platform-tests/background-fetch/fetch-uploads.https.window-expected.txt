@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Fetch with an upload should work assert_equals: expected 17 but got 0
+TIMEOUT Progress event includes uploaded bytes Test timed out
+NOTRUN Duplicate upload requests work and can be distinguished.
+

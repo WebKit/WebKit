@@ -1,0 +1,22 @@
+<style>
+.abspos {
+  width: 100px;
+  height: 100px;
+  background: red;
+  position: absolute;
+}
+
+#container {
+  position: relative;
+}
+</style>
+PASS if no assert in debug.
+<div id=container></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+let video = document.createElement("video");
+video.className = "abspos";
+container.appendChild(video);
+</script>

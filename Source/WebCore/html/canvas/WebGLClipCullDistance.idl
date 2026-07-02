@@ -1,0 +1,42 @@
+/*
+ * Copyright 2022 The Chromium Authors. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    LegacyNoInterfaceObject,
+    Conditional=WEBGL,
+    GenerateIsReachable,
+] interface WebGLClipCullDistance {
+    const unsigned long MAX_CLIP_DISTANCES_WEBGL = 0x0D32;
+    const unsigned long MAX_CULL_DISTANCES_WEBGL = 0x82F9;
+    const unsigned long MAX_COMBINED_CLIP_AND_CULL_DISTANCES_WEBGL = 0x82FA;
+    const unsigned long CLIP_DISTANCE0_WEBGL = 0x3000;
+    const unsigned long CLIP_DISTANCE1_WEBGL = 0x3001;
+    const unsigned long CLIP_DISTANCE2_WEBGL = 0x3002;
+    const unsigned long CLIP_DISTANCE3_WEBGL = 0x3003;
+    const unsigned long CLIP_DISTANCE4_WEBGL = 0x3004;
+    const unsigned long CLIP_DISTANCE5_WEBGL = 0x3005;
+    const unsigned long CLIP_DISTANCE6_WEBGL = 0x3006;
+    const unsigned long CLIP_DISTANCE7_WEBGL = 0x3007;
+};

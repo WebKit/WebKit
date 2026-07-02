@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+const WORKER_CODE = `self.onmessage = event => {
+    const frames = event.data;
+
+    frames.a.copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    frames.b.copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    frames.c.copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    frames.d.copyTo(new ArrayBuffer(1024 * 1024 * 4));
+
+    frames.a.close();
+    frames.b.close();
+    frames.d.close();
+    frames.d.close();
+};
+self.postMessage('ready');
+`
+
+promise_test(async () => {
+    const encodedFrames = [];
+    let resolve, reject;
+    const encoderPromise = new Promise((res,rej) => {
+        resolve = res;
+        reject = rej;
+     });
+
+    for (const size of [2, 1024]) {
+        const encoder = new VideoEncoder({
+            output: chunk => {
+                encodedFrames.push(chunk);
+                if (encodedFrames.length === 2)
+                    resolve();
+            },
+            error: e => reject(e),
+        });
+        setTimeout(() => {
+            reject("timed out waiting for encoded chunks");
+        }, 5000);
+        encoder.configure({
+            codec: 'vp8',
+            width: size,
+            height: size,
+            bitrate: 10e6,
+            framerate: 1,
+        });
+
+        const frame = new VideoFrame(new ArrayBuffer(size * size * 4), {format: 'RGBA', codedWidth: size, codedHeight: size, timestamp: 0});
+        encoder.encode(frame, {keyFrame: false});
+        frame.close();
+    }
+    await encoderPromise;
+
+    const decoderPromise = new Promise((res,rej) => {
+        resolve = res;
+        reject = rej;
+     });
+
+    const frames = [];
+    const decoder = new VideoDecoder({
+        output: frame => {
+            frames.push(frame);
+            if (frames.length === 8)
+                resolve();
+        },
+        error: e => reject(e),
+    });
+    setTimeout(() => {
+        reject("timed out waiting for decoded frames");
+    }, 5000);
+
+    decoder.configure({
+        codec: 'vp8',
+        codedWidth: 16,
+        codedHeight: 16,
+    });
+
+    for (let i = 0; i < 4; ++i) {
+        decoder.decode(encodedFrames[0]);
+        decoder.decode(encodedFrames[1]);
+    }
+
+    await decoderPromise;
+
+    const worker = new Worker(URL.createObjectURL(new Blob([WORKER_CODE])));
+    await new Promise(resolve => worker.onmessage = resolve);
+
+    worker.postMessage({a: frames[0], b: frames[1], c: frames[2], d: frames[3]}, [frames[0], frames[1], frames[2], frames[3]]);
+
+    frames[4].copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    frames[5].copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    frames[6].copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    frames[7].copyTo(new ArrayBuffer(1024 * 1024 * 4));
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    frames[4].close();
+    frames[5].close();
+    frames[6].close();
+    frames[7].close();
+}, "Test copyTo on different contexts");
+</script>
+</body>
+</html>

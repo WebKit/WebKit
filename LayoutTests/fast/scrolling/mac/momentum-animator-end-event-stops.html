@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+        
+        let sawMomentumEvent = false;
+        let sawFingersDown = false;
+        let scrollEventCount = 0;
+        let scrollEventCountAtMomentumEnded = 0;
+        
+        async function testEventSequence()
+        {
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 100,
+                    viewY : 100,
+                    deltaY : -10, // Note that this delta is currently ignored.
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -50,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -60,
+                    momentumPhase : "began"
+                },
+                {
+                    type: "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaY : -99,
+                    momentumPhase: "changed"
+                },
+                {
+                    type: "wheel",
+                    viewX : 102, // defeat coalescing
+                    deltaY : -80,
+                    momentumPhase: "changed"
+                },
+                {
+                    type: "wheel",
+                    viewX : 101, // defeat coalescing
+                    deltaY : -60,
+                    momentumPhase: "changed"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events }, { waitForCompletion: false});
+            await UIHelper.waitForCondition(() => { return sawMomentumEvent });
+            shouldBeTrue('scrollEventCount > 0');
+
+            const fingersTapGesture = [
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events: fingersTapGesture }, { waitForCompletion: false});
+            // We can't detect the "ended" via events. so wait for a presentation update to make
+            // sure it got to the main thread.
+            await UIHelper.ensurePresentationUpdate();
+            
+            scrollEventCountAtMomentumEnded = scrollEventCount;
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+            
+            // Make sure no more scroll events fire.
+            shouldBe('scrollEventCount', 'scrollEventCountAtMomentumEnded');
+            finishJSTest();
+        }
+
+        async function scrollTest()
+        {
+            await testEventSequence();
+        }
+
+        window.addEventListener('load', () => {
+            window.addEventListener('wheel', (event) => {
+                if (event.deltaY == 99) {
+                    debug('Momentum event reached main thread');
+                    sawMomentumEvent = true;
+                }
+
+                if (event.deltaY == 12) {
+                    debug('Saw the fingers down gesture');
+                    sawFingersDown = true;
+                }
+                // console.log(`wheel ${event.deltaX} ${event.deltaY}`);
+            }, { passive: true });
+
+            window.addEventListener('scroll', (event) => {
+                ++scrollEventCount;
+            });
+            
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

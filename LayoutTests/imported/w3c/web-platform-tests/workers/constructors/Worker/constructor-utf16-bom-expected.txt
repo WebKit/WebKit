@@ -1,0 +1,4 @@
+
+PASS Worker with UTF-16BE BOM
+PASS Worker with UTF-16LE BOM
+

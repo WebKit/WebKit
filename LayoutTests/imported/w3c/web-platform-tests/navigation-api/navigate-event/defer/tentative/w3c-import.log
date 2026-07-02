@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-after-dispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-back.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-restore-callback-abort.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-with-multiple-handlers-and-single-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-with-multiple-handlers.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-with-single-handler-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-with-single-handler.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/restore-after-bfcache.html

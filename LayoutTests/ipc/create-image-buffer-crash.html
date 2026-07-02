@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  window.setTimeout(async () => {
+    if (!window.IPC)
+      return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const renderingBackendIdentifier = randomIPCID();
+    const connection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: renderingBackendIdentifier, connectionHandle: connection });
+    const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInitializeReply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
+    connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+    // The pixel formats to test
+    const pixelFormats = [
+      0, // RGBA8
+      1, // BGRX8
+      2, // BGRA8
+      3, // RGB10
+      4, // RGB10A8
+      5  // RGBA16F (if HDR_SUPPORT is enabled)
+    ];
+
+    // Iterate through each pixel format and create image buffer
+    for (let format of pixelFormats) {
+      try {
+        remoteBackend.CreateImageBuffer({
+          logicalSize: { width: 69, height: 67 },
+          renderingMode: 1,
+          renderingPurpose: 2,
+          resolutionScale: 96,
+          colorSpace: {
+            serializableColorSpace: {
+              alias: {
+                optionalValue: {
+                  m_cgColorSpace: {
+                    alias: {
+                      variantType: 'RetainPtr<CFStringRef>',
+                      variant: 'A'
+                    }
+                  }
+                }
+              }
+            }
+          },
+          bufferFormat: { pixelFormat: format, useLosslessCompression: 0 },
+          identifier: randomIPCID(),
+          contextIdentifier: randomIPCID()
+        });
+      } catch {}
+    }
+
+    connection.connection.invalidate();
+
+    window.testRunner?.notifyDone();
+  }, 10);
+</script>

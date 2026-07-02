@@ -1,0 +1,20 @@
+// https://html.spec.whatwg.org/multipage/interaction.html#closewatcher
+[
+  ActiveDOMObject,
+  Exposed=Window,
+  EnabledBySetting=CloseWatcherEnabled,
+] interface CloseWatcher : EventTarget {
+  [CallWith=CurrentScriptExecutionContext, RaisesException] constructor(optional CloseWatcherOptions options = {});
+
+  undefined requestClose();
+  undefined close();
+  undefined destroy();
+
+  attribute EventHandler oncancel;
+  attribute EventHandler onclose;
+};
+
+// https://html.spec.whatwg.org/multipage/interaction.html#closewatcheroptions
+dictionary CloseWatcherOptions {
+  AbortSignal signal;
+};

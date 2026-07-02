@@ -1,0 +1,8 @@
+
+PASS :only-child should match because ::view-transition-old is not generated (none to root)
+PASS :only-child should not match because ::view-transition-old is generated (root to root)
+PASS :only-child should not match because ::view-transition-old is generated (element to root)
+PASS :only-child should match because ::view-transition-old is not generated (none to element)
+PASS :only-child should not match because ::view-transition-old is generated (root to element)
+PASS :only-child should not match because ::view-transition-old is generated (element to element)
+

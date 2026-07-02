@@ -1,0 +1,4 @@
+
+PASS window.onerror - compile error in <script src=...> with hash
+PASS window.onerror - compile error in <script src=...> with hash (column)
+

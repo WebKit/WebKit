@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/arc-commands.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/curveto-commands.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/error-handling.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/lineto-commands.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/moveto-absolute.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/moveto-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/number-edge-case-consecutive.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/number-edge-case-decimal.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/number-error-trailing-decimal.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/number-exponent.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/path-length-computed.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/path-length-invalid.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/path-length-valid.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/quadratic-bezier-commands.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/parsing/whitespace-basic.html

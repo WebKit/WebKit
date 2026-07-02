@@ -1,0 +1,286 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WKHTTPCookieStoreInternal.h"
+
+#import <WebCore/Cookie.h>
+#import <WebCore/HTTPCookieAcceptPolicy.h>
+#import <WebCore/HTTPCookieAcceptPolicyCocoa.h>
+#import <WebCore/WebCoreObjCExtras.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/HashMap.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/URL.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/WorkQueue.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
+#if PLATFORM(IOS_FAMILY)
+static NSHTTPCookie *clearCookiePartitionPropertyIfNeeded(NSHTTPCookie *cookie, bool isCookiePartitioningEnabled)
+{
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+    if (!cookie)
+        return cookie;
+
+    if (!isCookiePartitioningEnabled)
+        return cookie;
+
+    if (!cookie._storagePartition)
+        return cookie;
+
+    auto properties = adoptNS([[cookie properties] mutableCopy]);
+    [properties removeObjectForKey:@"StoragePartition"];
+    return [NSHTTPCookie cookieWithProperties:properties.get()];
+#else
+    UNUSED_PARAM(isCookiePartitioningEnabled);
+    return cookie;
+#endif
+}
+#endif
+
+static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Cookie>& coreCookies, bool isCookiePartitioningEnabled)
+{
+    return createNSArray(coreCookies, [isCookiePartitioningEnabled] (auto& cookie) -> NSHTTPCookie * {
+#if PLATFORM(IOS_FAMILY)
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExposePartitionFromWKHTTPCookieStoreAPI) && WTF::IOSApplication::isTableau())
+            return clearCookiePartitionPropertyIfNeeded(cookie.createNSHTTPCookie().autorelease(), isCookiePartitioningEnabled);
+#else
+        UNUSED_PARAM(isCookiePartitioningEnabled);
+#endif
+
+        return cookie.createNSHTTPCookie().autorelease();
+    }).autorelease();
+}
+
+static WorkQueue& cookieConversionQueueSingleton()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("com.apple.WebKit.WKHTTPCookieStoreCookieConversion"_s);
+    return queue.get();
+}
+
+static CompletionHandler<void(Vector<WebCore::Cookie>&&)> makeCookieConversionHandler(bool isOptInCookiePartitioningEnabled, void (^completionHandler)(NSArray<NSHTTPCookie *> *))
+{
+    return { [isOptInCookiePartitioningEnabled, handler = makeBlockPtr(completionHandler)](Vector<WebCore::Cookie>&& cookies) mutable {
+        assertIsCurrent(cookieConversionQueueSingleton());
+        RetainPtr nsCookies = coreCookiesToNSCookies(cookies, isOptInCookiePartitioningEnabled);
+        RunLoop::mainSingleton().dispatch([handler = WTF::move(handler), nsCookies = WTF::move(nsCookies)] {
+            handler.get()(nsCookies.get());
+        });
+    }, CompletionHandlerCallThread::AnyThread };
+}
+
+class WKHTTPCookieStoreObserver : public API::HTTPCookieStoreObserver {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WKHTTPCookieStoreObserver);
+public:
+    static Ref<WKHTTPCookieStoreObserver> create(id<WKHTTPCookieStoreObserver> observer)
+    {
+        return adoptRef(*new WKHTTPCookieStoreObserver(observer));
+    }
+
+private:
+    explicit WKHTTPCookieStoreObserver(id<WKHTTPCookieStoreObserver> observer)
+        : m_observer(observer)
+    {
+    }
+
+    void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
+    {
+        RetainPtr observer = m_observer.get();
+        if ([observer respondsToSelector:@selector(cookiesDidChangeInCookieStore:)])
+            [observer cookiesDidChangeInCookieStore:(RetainPtr { wrapper(cookieStore) }.get())];
+    }
+
+    WeakObjCPtr<id<WKHTTPCookieStoreObserver>> m_observer;
+};
+
+@implementation WKHTTPCookieStore {
+    HashMap<CFTypeRef, Ref<WKHTTPCookieStoreObserver>> _observers;
+}
+
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKHTTPCookieStore.class, self))
+        return;
+
+    for (Ref observer : _observers.values())
+        protect(*_cookieStore)->unregisterObserver(observer);
+
+    SUPPRESS_UNCOUNTED_ARG _cookieStore->API::HTTPCookieStore::~HTTPCookieStore();
+
+    [super dealloc];
+}
+
+- (void)getAllCookies:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
+{
+    protect(*_cookieStore)->cookies(makeCookieConversionHandler(protect(*_cookieStore)->isOptInCookiePartitioningEnabled(), completionHandler), &cookieConversionQueueSingleton());
+}
+
+- (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_cookieStore)->setCookies({ cookie }, [handler = adoptNS([completionHandler copy])]() {
+        auto rawHandler = (void (^)())handler.get();
+        if (rawHandler)
+            rawHandler();
+    });
+
+}
+
+static std::optional<WebCore::Cookie> makeVectorElement(const WebCore::Cookie*, id arrayElement)
+{
+    if (NSHTTPCookie *nsCookie = dynamic_objc_cast<NSHTTPCookie>(arrayElement))
+        return WebCore::Cookie { nsCookie };
+
+    return std::nullopt;
+}
+
+- (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_cookieStore)->setCookies(makeVector<WebCore::Cookie>(cookies), [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+}
+
+- (void)deleteCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_cookieStore)->deleteCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
+        auto rawHandler = (void (^)())handler.get();
+        if (rawHandler)
+            rawHandler();
+    });
+}
+
+- (void)addObserver:(id<WKHTTPCookieStoreObserver>)observer
+{
+    auto result = _observers.ensure((__bridge CFTypeRef)observer, [&] {
+        return WKHTTPCookieStoreObserver::create(observer);
+    });
+    if (!result.isNewEntry)
+        return;
+
+    protect(*_cookieStore)->registerObserver(protect(result.iterator->value));
+}
+
+- (void)removeObserver:(id<WKHTTPCookieStoreObserver>)observer
+{
+    auto result = _observers.take((__bridge CFTypeRef)observer);
+    if (!result)
+        return;
+
+    protect(*_cookieStore)->unregisterObserver(*result);
+}
+
+static WebCore::HTTPCookieAcceptPolicy NODELETE toHTTPCookieAcceptPolicy(WKCookiePolicy wkCookiePolicy)
+{
+    switch (wkCookiePolicy) {
+    case WKCookiePolicyAllow:
+        return WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+    case WKCookiePolicyDisallow:
+        return WebCore::HTTPCookieAcceptPolicy::Never;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+static WKCookiePolicy NODELETE toWKCookiePolicy(WebCore::HTTPCookieAcceptPolicy policy)
+{
+    switch (policy) {
+    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+        return WKCookiePolicyAllow;
+    case WebCore::HTTPCookieAcceptPolicy::Never:
+        return WKCookiePolicyDisallow;
+    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
+    case WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+        return WKCookiePolicyAllow;
+    }
+}
+
+- (void)setCookiePolicy:(WKCookiePolicy)policy completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_cookieStore)->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy), [completionHandler = makeBlockPtr(completionHandler)] {
+        if (completionHandler)
+            completionHandler.get()();
+    });
+}
+
+- (void)getCookiePolicy:(void (^)(WKCookiePolicy))completionHandler
+{
+    protect(*_cookieStore)->getHTTPCookieAcceptPolicy([completionHandler = makeBlockPtr(completionHandler)] (WebCore::HTTPCookieAcceptPolicy policy) {
+        completionHandler(toWKCookiePolicy(policy));
+    });
+}
+
+- (void)getCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
+{
+    protect(*_cookieStore)->cookiesForURL(url, makeCookieConversionHandler(protect(*_cookieStore)->isOptInCookiePartitioningEnabled(), completionHandler), &cookieConversionQueueSingleton());
+}
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_cookieStore;
+}
+
+@end
+
+@implementation WKHTTPCookieStore (WKPrivate)
+
+- (void)_getCookiesForURL:(NSURL *)url completionHandler:(void (^)(NSArray<NSHTTPCookie *> *))completionHandler
+{
+    [self getCookiesForURL:url completionHandler:completionHandler];
+}
+
+- (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy completionHandler:(void (^)())completionHandler
+{
+    protect(*_cookieStore)->setHTTPCookieAcceptPolicy(WebCore::toHTTPCookieAcceptPolicy(policy), [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler.get()();
+    });
+}
+
+- (void)_flushCookiesToDiskWithCompletionHandler:(void(^)(void))completionHandler
+{
+    protect(*_cookieStore)->flushCookies([completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+}
+
+#if !TARGET_OS_IPHONE
+
+- (void)_setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_cookieStore)->setCookies(makeVector<WebCore::Cookie>(cookies), [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
+}
+
+#endif
+
+@end

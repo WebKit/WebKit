@@ -1,0 +1,4 @@
+
+PASS scroll-snap-type on HTML should control snapping behavior and changing it takes effect
+PASS scroll-snap-type on DIV should control snapping behavior and changing it takes effect
+

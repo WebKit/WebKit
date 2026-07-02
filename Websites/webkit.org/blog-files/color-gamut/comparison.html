@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Interactive Wide-Gamut Comparisons</title>
+<style>
+
+body {
+    background-color: #888;
+    text-align: center;
+    font-family: -apple-system, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 18px;
+}
+
+* {
+    -webkit-user-select: none;
+}
+
+.comparison {
+    margin: 0 auto 40px auto;
+    position: relative;
+    width: 600px;
+    height: 400px;
+}
+
+.comparison img {
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+}
+
+.comparison .a, .comparison .b {
+    position: absolute;
+    top: 0;
+    height: 400px;
+}
+
+.comparison .a {
+    left: 0;
+    width: 300px;
+}
+
+.comparison .b {
+    right: 0;
+    width: 300px;
+    overflow: hidden;
+}
+
+.comparison .a span,
+.comparison .b span {
+    display: block;
+    position: absolute;
+    color: white;
+    border: 1px solid white;
+    padding: 2px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.75);
+    top: 10px;
+    left: 10px;
+}
+
+.comparison .b span {
+    left: auto;
+    right: 10px;
+}
+
+.comparison .b img {
+    position: absolute;
+    right: 0;
+}
+
+.comparison .divider {
+    position: absolute;
+    top: 0;
+    left: 300px;
+    height: 100%;
+    margin-left: -2px;
+    width: 4px;
+    background-color: #444;
+}
+
+</style>
+<script>
+
+var IMAGES = [
+    { name: "Webkit-logo", wide: "P3", type: "png", alt: "A red square with the WebKit logo embossed", width: 500, height: 500 },
+    { name: "Iceland", wide: "P3", type: "jpg", alt: "A river in Iceland", divider: "white" },
+    { name: "Shoes", wide: "AdobeRGB", type: "jpg", alt: "Hober's bright orange shoes", divider: "white" },
+    { name: "YellowFlower", wide: "P3", type: "jpg", alt: "A bright yellow flower" },
+    { name: "Italy", wide: "P3", type: "jpg", alt: "Some umbrellas in Italy", divider: "white" },
+    { name: "Flowers", wide: "ProPhoto", type: "jpg", alt: "Red flowers", width: 600, height: 396 },
+    { name: "Rose", wide: "ProPhoto", type: "jpg", alt: "A red rose", width: 500, height: 500 },
+    { name: "Sunset", wide: "P3", type: "jpg", alt: "A sunset", divider: "white", width: 397, height: 600 },
+]
+
+window.addEventListener("load", init, false);
+
+function init()
+{
+    IMAGES.forEach(function(image) {
+        var comparison = document.createElement("div");
+        comparison.className = "comparison";
+        comparison.addEventListener("mousedown", startDrag, false);
+        comparison.addEventListener("touchstart", startDrag, false);
+        var a = document.createElement("div");
+        a.className = "a";
+        var imgA = document.createElement("img");
+        imgA.src = image.name + "-sRGB." + image.type;
+        imgA.alt = image.alt + ". Image is in the sRGB color space";
+        a.appendChild(imgA);
+        var description = document.createElement("span");
+        description.textContent = "sRGB";
+        a.appendChild(description);
+        comparison.appendChild(a);
+        var b = document.createElement("div");
+        b.className = "b";
+        var imgB = document.createElement("img");
+        imgB.src = image.name + "-" + image.wide + "." + image.type;
+        imgB.alt = image.alt + ". Image is in the " + image.wide + " color space";
+        b.appendChild(imgB);
+        description = document.createElement("span");
+        description.textContent = image.wide;
+        b.appendChild(description);
+        comparison.appendChild(b);
+        var divider = document.createElement("div");
+        divider.className = "divider";
+        if (image.divider)
+            divider.style.backgroundColor = image.divider;
+        comparison.appendChild(divider);
+        document.body.appendChild(comparison);
+
+        if (image.width) {
+            // Non-standard width and height.
+            comparison.style.width = image.width + "px";
+            comparison.style.height = image.height + "px";
+            a.style.height = image.height + "px";
+            a.style.width = (image.width / 2) + "px";
+            b.style.height = image.height + "px";
+            b.style.width = (image.width / 2) + "px";
+            divider.style.left = (image.width / 2) + "px";
+            imgA.width = image.width;
+            imgA.height = image.height;
+            imgB.width = image.width;
+            imgB.height = image.height;
+        }
+    });
+}
+
+var dragTarget = null;
+
+function startDrag(event)
+{
+    if (event.touches && event.touches.length > 1) {
+        event.preventDefault();
+        return;
+    }
+
+    dragTarget = event.currentTarget;
+
+    document.addEventListener("mousemove", dragged, false);
+    document.addEventListener("mouseup", endDrag, false);
+    document.addEventListener("touchmove", dragged, false);
+    document.addEventListener("touchend", endDrag, false);
+    document.addEventListener("touchcancel", endDrag, false);
+
+    var x = event.clientX;
+    if (event.touches && event.touches.length > 0)
+        x = event.touches[0].clientX;
+
+    updateComparisonPoint(dragTarget, x);
+}
+
+function dragged(event)
+{
+    if (!dragTarget)
+        return;
+
+    if (event.touches && event.touches.length > 1)
+        return;
+
+    var x = event.clientX;
+    if (event.touches && event.touches.length > 0)
+        x = event.touches[0].clientX;
+
+    updateComparisonPoint(dragTarget, x);
+}
+
+function endDrag(event)
+{
+    if (!dragTarget)
+        return;
+
+    if (event.touches && event.touches.length > 1)
+        return;
+
+    document.removeEventListener("mousemove", dragged);
+    document.removeEventListener("mouseup", endDrag);
+    document.removeEventListener("touchmove", dragged);
+    document.removeEventListener("touchend", endDrag);
+    document.removeEventListener("touchcancel", endDrag);
+}
+
+function updateComparisonPoint(comparison, clientX)
+{
+    var bounds = comparison.getBoundingClientRect();
+    var offset = clientX - bounds.left;
+
+    offset = Math.min(bounds.width, Math.max(0, offset));
+
+    var imageAContainer = comparison.querySelector(".a");
+    var imageBContainer = comparison.querySelector(".b");
+
+    imageAContainer.style.width = offset + "px";
+    imageBContainer.style.width = (bounds.width - offset) + "px";
+
+    var divider = comparison.querySelector(".divider");
+    divider.style.left = offset + "px";
+}
+
+</script>
+<body>
+    <h1>Interactive Image Comparison</h1>
+    <p>
+        Touch and drag on the images to move between the sRGB version (left)
+        and the wide-gamut version (right).
+    </p>
+    <p>
+        Note that if you don't have a wide-gamut display, you might
+        not notice any difference. The <a href=".">less interactive version</a>
+        has an option to show the out-of-gamut pixels.
+    </p>
+</body>

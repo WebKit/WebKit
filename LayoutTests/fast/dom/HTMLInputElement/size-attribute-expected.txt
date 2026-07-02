@@ -1,0 +1,25 @@
+HTMLInputElement size attribute test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.createElement("input").size is 20
+PASS sizeAttributeEffect("") is 20
+PASS sizeAttributeEffect("1") is 1
+PASS sizeAttributeEffect("2") is 2
+PASS sizeAttributeEffect("10") is 10
+PASS sizeAttributeEffect("0") is 20
+PASS sizeAttributeEffect("-1") is 20
+PASS sizeAttributeEffect("1x") is 1
+PASS sizeAttributeEffect("1.") is 1
+PASS sizeAttributeEffect("1.9") is 1
+PASS sizeAttributeEffect("2x") is 2
+PASS sizeAttributeEffect("2.") is 2
+PASS sizeAttributeEffect("2.9") is 2
+PASS sizeAttributeEffect("a") is 20
+PASS sizeAttributeEffect(arabicIndicDigitOne) is 20
+PASS sizeAttributeEffect("2" + arabicIndicDigitOne) is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

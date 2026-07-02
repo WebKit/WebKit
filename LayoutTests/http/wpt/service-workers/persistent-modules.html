@@ -1,0 +1,73 @@
+<html>
+<head>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+function getRandomIdFromWorker(worker)
+{
+    worker.postMessage("getRandomId");
+    return new Promise(function(resolve) {
+      navigator.serviceWorker.addEventListener('message', function(e) {
+            resolve(e.data);
+        });
+    });
+}
+
+function withIframe2(url) {
+  return new Promise(function(resolve) {
+      window.addEventListener("message", function (ev) {
+        resolve(ev.data);
+      }, false);
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      document.body.appendChild(frame);
+    });
+}
+
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var registration;
+var worker;
+async function doTest() {
+    if (!window.testRunner)
+        return Promise.reject('Internals API needed for this test');
+
+    registration = await navigator.serviceWorker.register("resources/persistent-module-worker.js", {
+        type: "module"
+    });
+    if (registration.installing) {
+        worker = registration.installing;
+        await waitForState(worker, "activated");
+    } else
+        worker = registration.active;
+
+    let randomId = await getRandomIdFromWorker(worker);
+
+    if (!window.location.hash.length) {
+        if (window.internals)
+            await internals.storeRegistrationsOnDisk();
+
+        if (window.testRunner)
+            testRunner.terminateNetworkProcess();
+        await waitFor(100);
+
+        let randomId2 = await withIframe2("./persistent-modules.html#iframe");
+
+        document.body.innerHTML = randomId === randomId2 ? "PASS" : "FAIL";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        window.parent.postMessage(randomId, '*');
+        return;
+    }
+}
+doTest();
+
+</script>
+</body>
+</html>

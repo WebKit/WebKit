@@ -1,0 +1,5 @@
+
+FAIL Display none during a view transition skips the transition. promise_test: Unhandled rejection with value: object "TypeError: target.startViewTransition is not a function. (In 'target.startViewTransition(() => {
+      target.style.backgroundColor = 'orange';
+    })', 'target.startViewTransition' is undefined)"
+

@@ -1,0 +1,10 @@
+Verifies that long pressing the page during momentum scrolling does not dispatch click events to the page. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop passed 1000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

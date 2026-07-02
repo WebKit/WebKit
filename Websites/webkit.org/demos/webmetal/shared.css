@@ -1,0 +1,45 @@
+body {
+    background-color: rgb(35%, 65%, 85%);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+body.error {
+    background-color: rgb(85%, 35%, 35%);
+}
+
+body.error canvas {
+    display: none;
+}
+
+#error {
+    margin: 0;
+    padding: 0;
+    width: 50vw;
+    display: none;
+    text-align: center;
+}
+
+body.error #error {
+    display: block;
+}
+
+#error h2 {
+    font-weight: bold;
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+#error p {
+    font-size: 30px;
+}

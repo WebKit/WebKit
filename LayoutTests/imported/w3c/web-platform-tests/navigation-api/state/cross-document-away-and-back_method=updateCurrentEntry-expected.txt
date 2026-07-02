@@ -1,0 +1,4 @@
+
+
+PASS entry.getState() behavior after navigating away and back
+

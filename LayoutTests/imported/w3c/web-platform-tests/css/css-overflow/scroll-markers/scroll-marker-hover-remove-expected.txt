@@ -1,0 +1,4 @@
+
+
+FAIL CSS Test: ::scroll-marker:hover is removed correctly assert_equals: ::scroll-marker changes on hover via :hover expected "rgb(0, 0, 255)" but got ""
+

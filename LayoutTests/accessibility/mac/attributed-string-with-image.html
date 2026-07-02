@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="wrapper" role="group" aria-label="wrapper text">
+    <img src="/Users/twilco/projects/OpenSource/LayoutTests/accessibility/resources/cake.png"/>xyz
+</div>
+
+<script>
+var output = "This test ensures we include the AXAttachment attribute in attributed strings created from ranges that include images.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+
+    setTimeout(async function() {
+        output += webarea.attributedStringForTextMarkerRange(await selectElementTextById("wrapper", webarea)).replace(String.fromCharCode(65532), "[ATTACHMENT]");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+
+
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,4 @@
+
+
+FAIL Video with loading=lazy, poster and source does not load until visible assert_false: Video load should not start while offscreen expected false got true
+

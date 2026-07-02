@@ -1,0 +1,16 @@
+Tests the computedrole mappings for the table-related roles defined in HTML-AAM. Most test names correspond to unique ID defined in the spec.
+
+caption
+a	b	c
+1	2	3
+4	5	6
+x	y	z
+
+PASS el-table
+PASS el-caption
+PASS el-tr-thead
+PASS el-th
+PASS el-tr-tbody
+PASS el-th-in-row
+PASS el-td
+

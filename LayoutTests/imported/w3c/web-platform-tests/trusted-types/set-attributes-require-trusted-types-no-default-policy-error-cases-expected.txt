@@ -1,0 +1,10 @@
+
+PASS setAttributeNode runs Trusted Types check before inuse checks
+PASS setAttributeNodeNS runs Trusted Types check before inuse checks
+PASS setNamedItem runs Trusted Types check before inuse checks
+PASS setNamedItemNS runs Trusted Types check before inuse checks
+PASS setAttributeNode runs Trusted Types check before same attribute early return
+PASS setAttributeNodeNS runs Trusted Types check before same attribute early return
+PASS setNamedItem runs Trusted Types check before same attribute early return
+PASS setNamedItemNS runs Trusted Types check before same attribute early return
+

@@ -1,0 +1,4 @@
+This is a test of load callbacks. It is only useful inside the regression test tool.
+It also assumes there is no web server running locally on port 54321.
+PASS main frame fired its load event despite the unreachable subframe.
+

@@ -1,0 +1,6 @@
+
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor 1
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor 2
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor 3
+

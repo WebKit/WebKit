@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CSSStyleDeclaration.setProperty(): changing only the priority must update the cascade</title>
+<link rel="help" href="https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-setproperty">
+<link rel="help" href="https://drafts.csswg.org/css-cascade/#importance">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+  #target { width: 100px !important; }
+</style>
+</head>
+<body>
+<div id="target"></div>
+<script>
+const target = document.getElementById("target");
+
+test(() => {
+    target.style.setProperty("width", "255px");
+    assert_equals(target.style.getPropertyPriority("width"), "");
+    assert_equals(target.offsetWidth, 100,
+        "stylesheet !important wins over non-important inline style");
+}, "Baseline: non-important inline width is overridden by stylesheet !important");
+
+test(() => {
+    target.style.setProperty("width", "255px", "important");
+    assert_equals(target.style.getPropertyPriority("width"), "important");
+    assert_equals(target.offsetWidth, 255,
+        "inline !important (higher specificity) wins over stylesheet !important");
+}, "Upgrading priority to !important with an unchanged value updates layout");
+
+test(() => {
+    target.style.setProperty("width", "255px");
+    assert_equals(target.style.getPropertyPriority("width"), "");
+    assert_equals(target.offsetWidth, 100,
+        "after dropping !important, stylesheet !important wins again");
+}, "Downgrading priority from !important with an unchanged value updates layout");
+
+test(() => {
+    target.style.setProperty("width", "10px");
+    assert_equals(target.offsetWidth, 100);
+    target.style.setProperty("width", "10px", "important");
+    assert_equals(target.offsetWidth, 10,
+        "inline !important wins for a different integer value too");
+    target.style.setProperty("width", "10px");
+    assert_equals(target.offsetWidth, 100,
+        "dropping !important reverts to stylesheet !important");
+}, "Priority-only toggles update layout for additional integer values");
+
+test(() => {
+    target.style.setProperty("width", "300px");
+    assert_equals(target.offsetWidth, 100);
+    target.style.setProperty("width", "300px", "important");
+    assert_equals(target.offsetWidth, 300);
+}, "Priority-only upgrade works for large integer values");
+</script>
+</body>
+</html>

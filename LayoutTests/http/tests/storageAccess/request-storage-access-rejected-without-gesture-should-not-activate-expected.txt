@@ -1,0 +1,10 @@
+Tests that rejecting requestStorageAccess() without a user gesture does not synthesize user activation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Rejection handler correctly had no user activation.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+<p>Cross-origin iframe that fetches a resource on demand.</p>
+
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data.type === "TriggerFetch")
+        triggerFetch();
+});
+
+function triggerFetch() {
+    let url = "data.json?" + Math.random();
+    fetch(url).then((response) => {
+        window.parent.postMessage({type: "FetchComplete", statusCode: response.status}, "*");
+    }).catch((error) => {
+        window.parent.postMessage({type: "FetchFailed", error: error.message}, "*");
+    });
+}
+</script>

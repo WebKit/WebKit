@@ -1,0 +1,6 @@
+
+
+PASS The width of an empty text input should be same as the caret width
+PASS The width of an empty search input should be same as the caret width
+PASS The width of an empty number input should be same as the caret width
+

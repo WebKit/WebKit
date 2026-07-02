@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/gc.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const canvas = document.body.appendChild(document.createElement('canvas'));
+const context = canvas.getContext('2d');
+
+let div = document.body.appendChild(document.createElement('div'));
+
+const keyframeEffect = new KeyframeEffect(div, [{transform: 'translate(100px)'}], {fill: 'forwards'});
+const animation = new Animation(keyframeEffect);
+
+animation.play();
+animation.finished;
+
+Reflect.defineProperty(Object.prototype, 'then', {
+    configurable: true,
+
+    get() {
+        Reflect.deleteProperty(Object.prototype, 'then');
+
+        keyframeEffect.target = null;
+        div.remove();
+        div = null;
+
+        gc();
+    }
+});
+
+// Just a random method that calls updateStyleIfNeeded
+context.font = 'a';
+document.write('PASS if WebKit did not hit an assertion.');
+
+</script>
+</body>
+</html>

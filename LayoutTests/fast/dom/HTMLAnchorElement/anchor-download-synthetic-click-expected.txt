@@ -1,0 +1,8 @@
+Download started.
+Downloading URL with suggested filename "foo.pdf"
+Download completed.
+Test that synthetic clicks on an anchor with a download attribute are not ignored.
+
+This test passes if you see a 'Download started' message above and if the suggested filename is foo.pdf.
+
+Blob URL

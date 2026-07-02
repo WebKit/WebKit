@@ -1,0 +1,1 @@
+PASS: Clearing ruby text with counters does not crash.

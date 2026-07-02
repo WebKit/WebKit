@@ -1,0 +1,8 @@
+PASS countAfterCreate === countOrig + 50 is true
+FAIL countAfterGC < countAfterCreate should be true. Was false.
+PASS refAfterGet === refOrig + 50 is true
+FAIL refAfterGetGC < refAfterGet should be true. Was false.
+PASS refAfterPass === refBeforePass + 50 is true
+FAIL refAfterPassAndGC < refAfterPass should be true. Was false.
+Test that we can get an NPObject returned through a method on an NPAPI Object.
+

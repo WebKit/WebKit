@@ -1,0 +1,1 @@
+<doc xmlns="http://www.example.com/ns1" xmlns:p="http://www.example.com/p" xmlns:NS2="http://www.example.com/ns2"><NS2:test xmlns:ns1="http://www.example.com/q" ns1:a="I am q" p:b="I am p" xmlns:xlink="http://www.example.com/xlink" xmlns:ns2="http://www.w3.org/1999/xlink" ns2:href="#foo"/></doc>

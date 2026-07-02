@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="tree" id="tree">
+   <div role="treeitem" id="item1">
+      <input id="input1" /input>
+   </div>
+   <input id="input2" /input>
+   <div role="treeitem" id="item2">
+      <row>
+         <input id="input3" /input>
+      </row>
+   </div>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests if a treeitem contains an element other than static text, it should be exposed");
+
+    if (window.accessibilityController) {
+    	// tree should only have 3 child, since malformed tree should also be accessible.
+        var tree = accessibilityController.accessibleElementById("tree");
+        shouldBe("tree.childrenCount", "3");
+        
+        // input filed in treeitem1 should be exposed
+        var inputField = accessibilityController.accessibleElementById("input1");
+        shouldBeTrue("inputField.isValid");
+        
+        // treeitem's children should be exposed, eg. the input field in treeitem2
+        var inputField3 = accessibilityController.accessibleElementById("input3");
+        shouldBeTrue("inputField3.isValid");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

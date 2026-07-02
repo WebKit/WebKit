@@ -1,0 +1,16 @@
+Test that silent autoplay videos do not start playing without user gesture when aggressive thermal mitigiation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Received 'canplaythrough' event
+PASS !!internals.shadowRoot(media).querySelector('button.play-pause') became true
+PASS media.controls is false
+Pressing on the start button
+Received 'play' event
+PASS media.controls is false
+PASS internals.shadowRoot(media).querySelector('button.play-pause') became null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

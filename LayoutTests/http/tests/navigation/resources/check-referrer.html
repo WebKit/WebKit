@@ -1,0 +1,11 @@
+<script>
+onload = function() {
+  if (document.referrer == sessionStorage.expectedReferrer) {
+    document.body.innerText = "PASS";
+  } else {
+    document.body.innerText = "FAIL: document.referrer is \'" + document.referrer + "\'";
+  }
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>

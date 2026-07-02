@@ -1,0 +1,4 @@
+
+
+PASS entries() should not be leaked from cross-origin when navigating to about:blank
+

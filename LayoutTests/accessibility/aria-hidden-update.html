@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div role="group" tabindex="0" id="container">
+    <div role="button" id="button1" tabindex="0">Button 1</div>
+    <div role="button" id="button2" tabindex="0">Button 2</div>
+    <div role="button" id="button3" tabindex="0">Button 3</div>
+</div>
+
+<script>
+    description("This test makes sure that when aria-hidden changes, the AX hierarchy is updated.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var container = accessibilityController.accessibleElementById("container");
+        var button1 = accessibilityController.accessibleElementById("button1");;
+        var button2 = accessibilityController.accessibleElementById("button2");;
+        var button3 = accessibilityController.accessibleElementById("button3");;
+
+        // Verify that the 3 buttons are present as children.
+        shouldBeTrue("container.childAtIndex(0).isEqual(button1)");
+        shouldBeTrue("container.childAtIndex(1).isEqual(button2)");
+        shouldBeTrue("container.childAtIndex(2).isEqual(button3)");
+
+        // Make the 2nd button hidden. Only 1 and 3 should be present.
+        document.getElementById("button2").setAttribute("aria-hidden", "true");
+        shouldBeTrue("container.childAtIndex(0).isEqual(button1)");
+        setTimeout(async function() {
+            await expectAsyncExpression("container.childAtIndex(1).isEqual(button3)", "true");
+           
+            // Make the 1st button hidden. Only 3 should be present.
+            document.getElementById("button1").setAttribute("aria-hidden", "true");
+            await expectAsyncExpression("container.childAtIndex(0).isEqual(button3)", "true");
+
+            // Make the 2nd button not hidden. 2 and 3 should be present.
+            document.getElementById("button2").setAttribute("aria-hidden", "false");
+            await expectAsyncExpression("container.childAtIndex(0).isEqual(button2)", "true");
+            await expectAsyncExpression("container.childAtIndex(1).isEqual(button3)", "true");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<style>
+div { width: 100px; height: 100px; overflow: scroll; background-color: #ccc; }
+div::-webkit-scrollbar { width: 20px; height: 20px; background-color: yellow; }
+</style>
+<p>Passes if the test does not crash.</p>
+<div id=div></div>
+<script src="full-screen-test.js"></script>
+<script>
+document.addEventListener("webkitfullscreenchange", endTest, { once: true });
+runWithKeyDown(() => div.webkitRequestFullScreen());
+</script>

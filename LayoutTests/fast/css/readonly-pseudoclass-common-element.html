@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <style>
+            :read-only {
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body id="body">
+        <div id="readwrite1" contenteditable>
+            <div id="inside-readwrite1"></div>
+            <input type="text" readonly id="readonly2"/>
+        </div>
+        <p id="readonly3" contenteditable="false"></p>
+        <span id="readonly4">
+            <textarea type="text" readonly id="readonly5"></textarea>
+            <input type="text" id="readwrite2"/>
+            <textarea type="text" id="readwrite3"></textarea>
+        </span>
+        <svg id="svg" height="210" width="250">
+          <path id="svg_path" d="M150 0 L75 200 L225 200 Z"/>
+        </svg>
+        <svg id="svg_contenteditable" height="210" width="250" contenteditable>
+          <path d="M150 0 L75 200 L225 200 Z"/>
+        </svg>
+        <math id="mathml" xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow>
+              <msup id="mathml_msup"><mi>x</mi><mn>2</mn></msup>
+              <mo>=</mo><mn>0</mn>
+          </mrow>
+        </math>
+
+        <script>
+            function backgroundColor(identifier) { return getComputedStyle(document.getElementById(identifier)).getPropertyValue("background-color"); }
+            var readOnlyColor = "rgb(255, 0, 0)";
+
+            description('Tests read-only pseudo-class properties are applied to not user-alterable elements');
+            shouldNotBeEqualToString("backgroundColor('readwrite1')", readOnlyColor);
+            shouldNotBeEqualToString("backgroundColor('readwrite2')", readOnlyColor);
+            shouldNotBeEqualToString("backgroundColor('readwrite3')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('body')", readOnlyColor);
+            shouldNotBeEqualToString("backgroundColor('inside-readwrite1')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('readonly2')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('readonly3')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('readonly4')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('readonly5')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('svg')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('svg_path')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('svg_contenteditable')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('mathml')", readOnlyColor);
+            shouldBeEqualToString("backgroundColor('mathml_msup')", readOnlyColor);
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,30 @@
+<html> <!-- webkit-test-runner [ MockScrollbarsControllerEnabled=true ] -->
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+    if (window.internals) {
+        window.internals.setUsesOverlayScrollbars(true);
+    }
+
+    function runTest() {
+        if (window.internals)
+            internals.updateLayoutAndStyleForAllFrames();
+        document.body.offsetHeight;
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(0, 0);
+            eventSender.mouseMoveTo(frame.offsetLeft + 4, frame.offsetTop + frame.offsetHeight - 4);
+            eventSender.mouseMoveTo(0, 0);
+        }
+        finishJSTest();
+    };
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<body>
+  <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=153304">https://bugs.webkit.org/show_bug.cgi?id=153304</a>.</p>
+  <iframe onload="runTest()" width=120 scrolling=yes id="frame" src="data:text/html,
+      <p style='white-space: nowrap'>Scroll animator should be notified when overlay scrollbars in main frame are hovered</p>
+      ">
+  </iframe>
+  <pre id="console"></pre>
+</body>
+</html>

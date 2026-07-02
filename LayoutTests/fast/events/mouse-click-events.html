@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This tests what mouse events we send.");
+
+window.jsTestIsAsync = true;
+
+var div = document.createElement("div");
+div.style.width = "100px";
+div.style.height = "100px";
+div.style.backgroundColor = "blue";
+
+var eventLog = "";
+
+function appendEventLog() {
+    if (window.eventSender) {
+        eventLog += event.type + "(button: " + event.button + " which: " + event.which + ") ";
+    } else {
+        debug(event.type + "(button: " + event.button + " which: " + event.which + ")");
+    }
+}
+
+function clearEventLog() {
+    eventLog = "";
+}
+
+function dismissContextMenu() {
+    if (window.eventSender) {
+        // esc key to kill the context menu.
+        eventSender.keyDown(String.fromCharCode(0x001B), null);
+    }
+}
+
+async function sendEvents(button) {
+    if (!window.eventSender) {
+        debug("This test requires DumpRenderTree.  Click on the blue rect with different mouse buttons to log.")
+        return;
+    }
+    await eventSender.asyncMouseDown(button);
+    if (button == 2)
+        dismissContextMenu();
+    await eventSender.asyncMouseUp(button);
+    await eventSender.asyncMouseDown(button);
+    if (button == 2)
+        dismissContextMenu();
+    await eventSender.asyncMouseUp(button);
+    // could test dragging here too
+}
+
+async function testEvents(description, button, expectedString) {
+    debug(description);
+    await sendEvents(button);
+    shouldBeEqualToString("eventLog", expectedString);
+    clearEventLog();
+}
+
+onload = async () => {
+
+    div.addEventListener("auxclick", appendEventLog, false);
+    div.addEventListener("click", appendEventLog, false);
+    div.addEventListener("dblclick", appendEventLog, false);
+    div.addEventListener("mousedown", appendEventLog, false);
+    div.addEventListener("mouseup", appendEventLog, false);
+    document.body.insertBefore(div, document.body.firstChild);
+
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(10, 10);
+        await testEvents("Left Mouse Button", 0, "mousedown(button: 0 which: 1) mouseup(button: 0 which: 1) click(button: 0 which: 1) mousedown(button: 0 which: 1) mouseup(button: 0 which: 1) click(button: 0 which: 1) dblclick(button: 0 which: 1) ");
+        await testEvents("Middle Mouse Button", 1, "mousedown(button: 1 which: 2) mouseup(button: 1 which: 2) auxclick(button: 1 which: 2) mousedown(button: 1 which: 2) mouseup(button: 1 which: 2) auxclick(button: 1 which: 2) ");
+        await testEvents("Right Mouse Button", 2, "mousedown(button: 2 which: 3) mouseup(button: 2 which: 3) auxclick(button: 2 which: 3) mousedown(button: 2 which: 3) mouseup(button: 2 which: 3) auxclick(button: 2 which: 3) ");
+        await testEvents("Back Mouse Button", 3, "mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) mousedown(button: 3 which: 4) mouseup(button: 3 which: 4) auxclick(button: 3 which: 4) ");
+        await testEvents("Forward Mouse Button", 4, "mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) mousedown(button: 4 which: 5) mouseup(button: 4 which: 5) auxclick(button: 4 which: 5) ");
+    }
+    finishJSTest();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

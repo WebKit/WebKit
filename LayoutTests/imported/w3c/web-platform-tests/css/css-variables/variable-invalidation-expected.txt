@@ -1,0 +1,6 @@
+
+PASS css rule test
+PASS css rule test important
+PASS inline style test
+PASS inline style test important
+

@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.dumpEditingCallbacks();
+                }
+                var ta = document.getElementById('ta');
+                ta.focus();
+                document.execCommand("SelectAll");
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        This tests that select all works in a readonly textarea, without selecting the surrounding text.
+        <br>
+        <textarea id="ta" readonly>This text should be selected</textarea>
+    </body>
+</html>
+

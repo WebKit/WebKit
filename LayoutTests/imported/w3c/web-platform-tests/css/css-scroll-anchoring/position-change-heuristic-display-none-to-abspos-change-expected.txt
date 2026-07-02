@@ -1,0 +1,11 @@
+1	1	1	1
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+PASS Scroll offset doesn't get stuck in infinite scroll events when an element goes back and forth to display: none while changing abspos style
+

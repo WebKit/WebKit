@@ -1,0 +1,37 @@
+This is a link. This is a wiki-style link. This is a link with a background. This is a link with an outline. This is a link with borders on all sides. This is a link with border-radius explicitly set. This is a link with a box shadow. border-bottom link This is a JavaScript link. This link does nothing.
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+
+      (interaction regions [
+        (interaction (-4,-3.50) width=36.45 height=27)
+        (cornerRadius 8.00),
+        (interaction (87.11,-3.50) width=36.45 height=27)
+        (cornerRadius 8.00),
+        (guard (250.21,-9.50) width=28.45 height=39),
+        (interaction (250.21,0.50) width=28.45 height=19),
+        (guard (464.40,-9.50) width=28.45 height=39),
+        (interaction (464.40,0.50) width=28.45 height=19),
+        (guard (657.49,-9.50) width=28.45 height=39),
+        (interaction (657.49,0.50) width=28.45 height=19),
+        (guard (131.98,10.50) width=28.45 height=39),
+        (interaction (131.98,20.50) width=28.45 height=19),
+        (guard (431.60,10.50) width=28.45 height=39),
+        (interaction (431.60,20.50) width=28.45 height=19),
+        (interaction (642.10,16.50) width=128.99 height=27)
+        (cornerRadius 8.00),
+        (interaction (767.09,16.50) width=36.45 height=27)
+        (cornerRadius 8.00)])
+      )
+    )
+  )
+)
+

@@ -1,0 +1,22 @@
+This test ensures we don't crash trying to update the modal node when a text node has recently been destroyed, and relations are dirty.
+
+
+{#wrapper AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Some text}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: A paragraph}
+
+{AXRole: AXStaticText AXValue: Foo}
+
+{AXRole: AXStaticText AXValue: More text}
+
+{#div AXRole: AXGroup}
+PASS: No crash
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

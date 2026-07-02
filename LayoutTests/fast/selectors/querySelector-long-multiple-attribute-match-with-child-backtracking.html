@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+<!-- Fails on the <li> tag. There is extra [data-webkit][data-padding] preventing the match. -->
+<ul data-foo data-bar>
+  <li data-webkit data-padding>
+    <div data-webkit data-padding>
+      <div data-webkit data-padding>
+        <pre data-webkit data-padding>
+          <blockquote><span>Fail.</span></blockquote>
+        </pre>
+      </div>
+    </div>
+  </li>
+</ul>
+
+<!-- Fails on the the root, [data-foo] is missing. -->
+<div data-webkit data-padding data-bar>
+  <li data-webkit data-padding>
+    <div data-webkit data-padding>
+      <pre data-webkit data-padding>
+        <blockquote><span>Fail.</span></blockquote>
+      </pre>
+    </div>
+  </li>
+</div>
+
+<!-- Simple matches. -->
+<ul data-webkit data-padding data-foo data-bar>
+  <li data-webkit data-padding>
+    <div data-webkit data-padding>
+      <pre data-webkit data-padding>
+        <blockquote><span id="target1">Target 1</span></blockquote>
+      </pre>
+    </div>
+  </li>
+</ul>
+<ul data-foo data-bar>
+  <li data-webkit data-padding>
+    <div data-webkit data-padding>
+      <pre data-webkit data-padding>
+        <pre data-webkit data-padding>
+          <blockquote><span id="target2">Target 2</span></blockquote>
+        </pre>
+      </pre>
+    </div>
+  </li>
+</ul>
+
+<!-- Multiple failures before a match. -->
+<ul data-foo data-bar>
+  <li data-webkit data-padding>
+    <div data-webkit data-padding>
+      <pre data-webkit data-padding>
+
+        <!-- This subtree lacks the [data-foo] on the root. -->
+        <li data-webkit data-padding data-bar>
+          <div data-webkit data-padding>
+            <div data-webkit data-padding>
+
+              <!-- This subtree lacks the [data-webkit] in [data-webkit][data-padding]>div>pre. -->
+              <div data-padding>
+                <div data-webkit data-padding>
+                  <pre data-webkit data-padding>
+                    <blockquote><span id="target3">Target 3</span></blockquote>
+                  </pre>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </li>
+
+      </pre>
+    </div>
+  </li>
+</ul>
+
+</div>
+</body>
+<script>
+description('Test backtracking of matching multiple attribute with multiple child selector relations.');
+
+// Define the style dynamically to test lazy attributes.
+var allTargetSpans = document.querySelectorAll('blockquote>span');
+for (var i = 0; i < allTargetSpans.length; ++i)
+    allTargetSpans[i].style.textDecoration='underline';
+
+shouldBe('document.querySelectorAll("[data-foo][data-bar]>[data-webkit][data-padding]>div>pre span[style]").length', '3');
+shouldBeEqualToString('document.querySelectorAll("[data-foo][data-bar]>[data-webkit][data-padding]>div>pre span[style]")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("[data-foo][data-bar]>[data-webkit][data-padding]>div>pre span[style]")[1].id', 'target2');
+shouldBeEqualToString('document.querySelectorAll("[data-foo][data-bar]>[data-webkit][data-padding]>div>pre span[style]")[2].id', 'target3');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.setBootstrapScript.RunsOncePerNavigation");
+
+    suite.addTestCase({
+        name: "Page.setBootstrapScript.NotExecutedTwiceInScriptlessSubframe",
+        description: "Test that the bootstrap script runs exactly once in a script-less subframe (regression test for double didClearWindowObject dispatch).",
+        async test() {
+            InspectorTest.log("Setting bootstrap script that counts its own executions...");
+            await WI.networkManager.createBootstrapScript(`window.bootstrapScriptRunCount = (window.bootstrapScriptRunCount || 0) + 1;`);
+            WI.networkManager.bootstrapScriptEnabled = true;
+
+            InspectorTest.log("Adding a script-less subframe (its execution context is force-created on frameNavigated)...");
+            await InspectorTest.evaluateInPage(`
+                (function() {
+                    let iframe = document.createElement("iframe");
+                    iframe.src = "resources/scriptless-subframe.html";
+                    iframe.onload = () => {
+                        window.subframeBootstrapRunCount = iframe.contentWindow.bootstrapScriptRunCount;
+                        TestPage.dispatchEventToFrontend("SubframeLoaded");
+                    };
+                    document.body.appendChild(iframe);
+                })();
+            `);
+
+            await InspectorTest.awaitEvent("SubframeLoaded");
+
+            let runCount = await InspectorTest.evaluateInPage(`window.subframeBootstrapRunCount`);
+            InspectorTest.log(`Bootstrap script executions in the script-less subframe: ${runCount}`);
+            InspectorTest.expectEqual(runCount, 1, "Bootstrap script should run exactly once in the script-less subframe.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Page.setBootstrapScript is executed exactly once per navigation, including in script-less subframes.</p>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the volume slider container has concentric (equal horizontal and vertical) padding.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+document.body.appendChild(mediaControls.element);
+
+mediaControls._setupVolumeSliderConfiguration();
+
+if (!mediaControls._volumeSliderSetupComplete)
+    mediaControls._setupVolumeSliderConfiguration();
+
+mediaControls.handleEvent({ type: "mouseenter", currentTarget: mediaControls.muteButton.element });
+
+shouldBecomeEqual("mediaControls.volumeSlider.parent ? mediaControls.volumeSlider.parent.element.parentNode : null", "mediaControls.element", () => {
+    window.containerStyle = window.getComputedStyle(mediaControls.volumeSlider.parent.element);
+
+    window.paddingLeft = parseFloat(containerStyle.paddingLeft);
+    window.paddingRight = parseFloat(containerStyle.paddingRight);
+    window.paddingTop = parseFloat(containerStyle.paddingTop);
+    window.paddingBottom = parseFloat(containerStyle.paddingBottom);
+
+    shouldBe("paddingLeft", "paddingTop");
+    shouldBe("paddingRight", "paddingBottom");
+    shouldBe("paddingLeft", "paddingRight");
+
+    mediaControls.element.remove();
+
+    debug("");
+    finishMediaControlsTest();
+});
+
+window.requestAnimationFrame(() => mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter")));
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

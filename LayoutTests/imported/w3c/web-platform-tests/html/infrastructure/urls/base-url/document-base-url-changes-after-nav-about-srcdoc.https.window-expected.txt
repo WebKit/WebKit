@@ -1,0 +1,4 @@
+
+FAIL non-sandboxed srcdoc - parent changes baseURI assert_equals: expected "https://www1.web-platform.test:9443/" but got "https://web-platform.test:9443/html/infrastructure/urls/base-url/document-base-url-changes-after-nav-about-srcdoc.https.window.html"
+FAIL sandboxed srcdoc - parent changes baseURI assert_equals: expected "https://www1.web-platform.test:9443/" but got "https://web-platform.test:9443/html/infrastructure/urls/base-url/document-base-url-changes-after-nav-about-srcdoc.https.window.html"
+

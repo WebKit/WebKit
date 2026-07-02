@@ -1,0 +1,2 @@
+This tests to make sure that content that is colored by the user is pasted with that color during a Paste as Quotation.
+<blockquote><span class="Apple-style-span" style="color: red;">This text should be red (it should be wrapped in a style span).</span></blockquote>

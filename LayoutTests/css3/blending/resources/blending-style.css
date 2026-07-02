@@ -1,0 +1,149 @@
+/* blending styles*/
+
+.multiply {
+    mix-blend-mode: multiply;
+}
+
+.difference {
+    mix-blend-mode: difference;
+}
+
+.screen {
+    mix-blend-mode: screen;
+}
+
+.isolating {
+    isolation: isolate;
+}
+
+.bg-multiply {
+    background-blend-mode: multiply;
+}
+
+.bg-difference {
+    background-blend-mode: difference;
+}
+
+.composited, .accelerated {
+    -webkit-transform: rotateX(0deg);
+}
+
+.stacking-context {
+    position: relative;
+    z-index: 0;
+}
+
+/* overflow */
+.clipping {
+    overflow: hidden;
+}
+
+/* box sizes */
+.box {
+    width: 100px;
+    height: 100px;
+}
+
+.bigbox {
+    width: 200px;
+    height: 200px;
+}
+
+.hugebox {
+    width: 400px;
+    height: 400px;
+}
+
+.box10px {
+    width: 10px;
+    height: 10px;
+}
+
+.box60px {
+    width: 60px;
+    height: 60px;
+}
+
+.box130px {
+    width: 130px;
+    height: 130px;
+}
+
+.hbar {
+    width: 400px;
+    height: 20px;
+}
+
+/* colors */
+.red {
+    background-color: #ff0000;
+}
+
+.lime {
+    background-color: #00ff00;
+}
+
+.blue {
+    background-color: #0000ff;
+}
+
+.green {
+    background-color: #008000;
+}
+
+.black {
+    background-color: #000000;
+}
+
+.fuchsia {
+    background-color: #ff00ff;
+}
+
+.aqua {
+    background-color: #00ffff;
+}
+
+.yellow {
+    background-color: #ffff00;
+}
+
+.gray7 {
+    background-color: #777777;
+}
+
+.white-text {
+    color: #ffffff;
+}
+
+/* images */
+
+.white-svg {
+    background-image: url('white_square.svg');
+}
+
+.ducky {
+    background-image: url('ducky.png');
+}
+
+.ducky-jpg {
+    background-image: url('ducky.jpg');
+}
+
+.bg-full {
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.ducky-and-gradient {
+    background-image: url('ducky.png'), linear-gradient(to right, white 0%, gray 100%);
+}
+
+/* margins */
+
+.margin10 {
+    margin: 10px;
+}
+
+.margin5 {
+    margin: 5px;
+}

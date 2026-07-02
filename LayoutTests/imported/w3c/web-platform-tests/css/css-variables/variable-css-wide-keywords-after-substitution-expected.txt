@@ -1,0 +1,19 @@
+direct initial
+substituted initial
+direct inherit
+substituted inherit
+direct unset
+substituted unset
+direct revert
+substituted revert
+direct revert-layer
+substituted revert-layer
+use-as-sibling
+
+PASS CSS-wide keyword `initial` after var() substitution
+PASS CSS-wide keyword `inherit` after var() substitution
+PASS CSS-wide keyword `unset` after var() substitution
+PASS CSS-wide keyword `revert` after var() substitution
+PASS CSS-wide keyword `revert-layer` after var() substitution
+PASS revert-layer after var() substitution takes effect on the cascade
+

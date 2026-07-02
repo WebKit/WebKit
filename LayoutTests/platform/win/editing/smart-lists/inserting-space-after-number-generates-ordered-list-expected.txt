@@ -1,0 +1,11 @@
+Typing a single digit followed by "." or ")" plus space at the start of two consecutive lines should auto-convert them into an ordered (decimal) list. Both delimiters are accepted.
+
+Period delimiter:
+| "1. Hello"
+| <div>
+|   "2. World<#selection-caret>"
+
+Parenthesis delimiter:
+| "1) Hello"
+| <div>
+|   "2) World<#selection-caret>"

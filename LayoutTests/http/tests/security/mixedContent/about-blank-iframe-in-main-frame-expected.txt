@@ -1,0 +1,2 @@
+PASS window.data is 'Not blocked'
+This test opens a window iframe that loads an about:blank iframe. We should *not* trigger a mixed content callback because the about:blank iframes cannot be corrupted by active network attackers.

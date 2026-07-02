@@ -1,0 +1,11 @@
+The test to ensure resetting scaling by height change
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS false is false
+PASS false is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsPixels = true;
+    }
+
+    // Removing the filter from the first anchor decomposites it and collapses the trailing segment. The green rect drops its segment, so rendering still reflects DOM order.
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            document.getElementById('first-anchor').removeAttribute('filter');
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                document.documentElement.classList.remove('reftest-wait');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }));
+        }));
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g id="first-anchor" filter="url(#f)">
+        <rect x="10" y="10" width="120" height="120" fill="red"/>
+    </g>
+    <rect x="40" y="40" width="120" height="120" fill="green"/>
+    <g style="will-change: transform">
+        <rect x="70" y="70" width="120" height="120" fill="blue"/>
+    </g>
+    <defs>
+        <filter id="f" x="-10%" y="-10%" width="120%" height="120%">
+            <feOffset dx="0" dy="0"/>
+        </filter>
+    </defs>
+</svg>
+</body>
+</html>

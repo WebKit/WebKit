@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-streaming</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (MediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            run('source = new MediaSource()');
+            run('video.src = URL.createObjectURL(source)');
+
+            await waitFor(source, 'sourceopen');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Appending 10s Data');
+            do {
+                sourceBuffer.appendBuffer(loader.mediaSegment(0));
+                await once(sourceBuffer, 'update');
+                sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
+            } while (sourceBuffer.buffered.end(sourceBuffer.buffered.length-1) < 10);
+            testExpected('video.readyState', 1, '>');
+            run('video.currentTime = 2.5');
+            await waitFor(video, 'seeked');
+            run('source.endOfStream()');
+            await waitFor(source, 'sourceended');
+            run('video.play()');
+            run('sourceBuffer.remove(video.currentTime - 1, video.currentTime + 5)');
+            await Promise.all([waitFor(video, 'waiting'), waitFor(sourceBuffer, 'update')]);
+
+            testExpected('video.readyState', 1);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

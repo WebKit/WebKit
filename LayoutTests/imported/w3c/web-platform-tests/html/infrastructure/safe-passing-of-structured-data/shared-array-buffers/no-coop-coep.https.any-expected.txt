@@ -1,0 +1,7 @@
+
+PASS SharedArrayBuffer constructor does not exist without COOP+COEP
+PASS SharedArrayBuffer over MessageChannel without COOP+COEP
+PASS SharedArrayBuffer over BroadcastChannel without COOP+COEP
+PASS SharedArrayBuffer over postMessage() without COOP+COEP
+PASS Bonus: self.crossOriginIsolated
+

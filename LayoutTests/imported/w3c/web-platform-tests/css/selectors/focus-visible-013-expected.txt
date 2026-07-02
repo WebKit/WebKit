@@ -1,0 +1,12 @@
+This test checks that if the active element matches ':focus-visible' and a mouse click causes focus to move elsewhere, the newly focused element should not match :focus-visible.
+
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Press the TAB key.
+If the element that says "Initial" has a red outline, then the test rsult is a FAILURE.
+Use the mouse to focus the element below that says "Target".
+If the element that says "Target" has a green outline, then the test result is a SUCCESS.
+Initial
+Target
+
+PASS :focus-visible does not match after mouse click even if previous focused element was matching :focus-visible
+

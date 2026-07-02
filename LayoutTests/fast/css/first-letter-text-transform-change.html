@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Dynamic text-transform change with ::first-letter</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<style>
+.test {
+    font: 20px/1 Ahem;
+    width: max-content;
+}
+.test::first-letter {
+    color: red;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<div class="test" id="d1" style="text-transform: uppercase">ab</div>
+<div class="test" id="d2" style="text-transform: lowercase">AB</div>
+<pre id="result"></pre>
+<script>
+document.body.offsetHeight;
+
+document.getElementById('d1').style.textTransform = 'lowercase';
+document.getElementById('d2').style.textTransform = 'uppercase';
+document.body.offsetHeight;
+
+var results = [];
+
+var d1 = document.getElementById('d1');
+results.push(d1.textContent === 'ab' && d1.innerText === 'ab'
+    ? "PASS: d1 text content is 'ab'"
+    : "FAIL: d1 text is '" + d1.innerText + "'");
+
+var d2 = document.getElementById('d2');
+results.push(d2.textContent === 'AB' && d2.innerText === 'AB'
+    ? "PASS: d2 text content is 'AB'"
+    : "FAIL: d2 text is '" + d2.innerText + "'");
+
+// Check first character is visible by measuring width
+results.push(d1.offsetWidth > 20
+    ? "PASS: d1 has both characters (width=" + d1.offsetWidth + ")"
+    : "FAIL: d1 missing characters (width=" + d1.offsetWidth + ")");
+
+results.push(d2.offsetWidth > 20
+    ? "PASS: d2 has both characters (width=" + d2.offsetWidth + ")"
+    : "FAIL: d2 missing characters (width=" + d2.offsetWidth + ")");
+
+document.getElementById('result').textContent = results.join('\n') + '\n';
+</script>

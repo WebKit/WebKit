@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+  html::before {
+    content: '';
+  }
+  html {
+    min-width: 100000px;
+  }
+  body, div {
+    padding-bottom: 50000%;
+  }
+  div:first-child {
+    float: right;
+  }
+</style>
+<!-- PASS if no crash or assert -->
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    let n0 = document.createElement('span');
+    document.documentElement.appendChild(n0);
+    n0.appendChild(document.createElement('div'));
+    document.documentElement.appendChild(document.createElement('div'));
+    document.documentElement.appendChild(document.createElement('span'));
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`:first-of-type::first-letter { background: grey; }`);
+  };
+</script>

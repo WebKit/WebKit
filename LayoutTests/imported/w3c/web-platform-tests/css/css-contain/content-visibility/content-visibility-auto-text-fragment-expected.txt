@@ -1,0 +1,4 @@
+
+PASS Fragment navigation with content-visibility; single text
+PASS Fragment navigation with content-visibility; range across blocks
+

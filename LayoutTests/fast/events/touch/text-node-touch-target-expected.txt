@@ -1,0 +1,13 @@
+Tests that the event target for a touch on a text node is the parent element, not the text node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+This is some text
+PASS event.type is "touchstart"
+PASS event.touches[0].target.id is "targetDiv"
+PASS event.touches[0].target.nodeName is "DIV"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

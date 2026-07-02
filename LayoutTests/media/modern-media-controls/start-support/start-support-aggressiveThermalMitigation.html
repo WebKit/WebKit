@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ RespondToThermalPressureAggressively=true ] -->
+<html>
+<head>
+<script>
+internals.setAggressiveThermalMitigationEnabled(true);
+</script>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+</head>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" autoplay></video>
+<script>
+description("Test that silent autoplay videos do not start playing without user gesture when aggressive thermal mitigiation is enabled.");
+jsTestIsAsync = true;
+
+let hasUserGesture = false;
+const media = document.querySelector("video");
+
+function endTest()
+{
+    media.remove();
+    finishJSTest();
+}
+
+media.addEventListener("canplaythrough", function() {
+    debug("Received 'canplaythrough' event");
+    // We should display the start button since we denied autoplay and the user needs a way to start playback.
+    shouldBecomeEqual("!!internals.shadowRoot(media).querySelector('button.play-pause')", "true", function() {
+        shouldBeFalse("media.controls");
+
+        debug("Pressing on the start button");
+        hasUserGesture = true;
+        pressOnElement(internals.shadowRoot(media).querySelector('button.play-pause'));
+    });
+});
+
+media.addEventListener("play", function() {
+    debug("Received 'play' event");
+    shouldBeFalse("media.controls");
+    if (hasUserGesture) {
+        shouldBecomeEqual("internals.shadowRoot(media).querySelector('button.play-pause')", "null", endTest);
+    } else {
+        testFailed("Media started playing without user interaction");
+        endTest();
+    }
+});
+
+setTimeout(finishJSTest, 5000);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

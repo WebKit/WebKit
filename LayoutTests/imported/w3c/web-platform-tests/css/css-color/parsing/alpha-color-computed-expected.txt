@@ -1,0 +1,39 @@
+
+PASS Property color value 'alpha(from red / 0.5)'
+PASS Property color value 'alpha(from blue / 0)'
+PASS Property color value 'alpha(from green / 1)'
+PASS Property color value 'alpha(from red / 50%)'
+PASS Property color value 'alpha(from red / 0%)'
+PASS Property color value 'alpha(from red)'
+PASS Property color value 'alpha(from rgba(255, 0, 0, 0.3))'
+PASS Property color value 'alpha(from red / none)'
+PASS Property color value 'alpha(from red / 2)'
+PASS Property color value 'alpha(from red / -1)'
+PASS Property color value 'alpha(from rgba(255, 0, 0, 0.3) / 0.8)'
+PASS Property color value 'alpha(from color(display-p3 1 0 0) / 0.5)'
+PASS Property color value 'alpha(from color(srgb 1 0 0) / 0.5)'
+FAIL Property background-color value 'alpha(from currentcolor / 0.5)' Colors do not match.
+Actual:   rgba(255, 0, 0, 0.5)
+Expected: color(srgb 1 0 0 / 0.5).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
+FAIL Property background-color value 'alpha(from currentcolor)' Colors do not match.
+Actual:   rgb(0, 0, 255)
+Expected: color(srgb 0 0 1).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 2, expected 1 +/- 0.01, expected 1 but got 255
+FAIL Property background-color value 'alpha(from currentcolor / alpha)' Colors do not match.
+Actual:   rgba(255, 0, 0, 0.8)
+Expected: color(srgb 1 0 0 / 0.8).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
+FAIL Property background-color value 'alpha(from currentcolor / none)' Colors do not match.
+Actual:   rgba(0, 128, 0, 0)
+Expected: color(srgb 0 0.50196 0 / none).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 3 got 4
+FAIL Property background-color value 'alpha(from currentcolor / 50%)' Colors do not match.
+Actual:   rgba(255, 0, 0, 0.5)
+Expected: color(srgb 1 0 0 / 0.5).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
+FAIL Property background-color value 'alpha(from currentcolor / calc(alpha * 0.5))' Colors do not match.
+Actual:   rgba(255, 0, 0, 0.4)
+Expected: color(srgb 1 0 0 / 0.4).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 1 +/- 0.01, expected 1 but got 255
+

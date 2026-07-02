@@ -1,0 +1,24 @@
+
+A BC
+This test checks getClientRects() on SVG elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+getClientRects on a rect at absolute coordinates:
+{ x 20.00 y 30.00 width 40.00 height 50.00 }
+
+getClientRects on a rotated rect:
+{ x 30.36 y 113.86 width 139.27 height 139.27 }
+
+getClientRects on a g:
+{ x 0.00 y 103.50 width 260.00 height 110.00 }
+
+getClientRects on a path:
+{ x 30.00 y 143.50 width 50.00 height 50.00 }
+
+getClientRects on text:
+{ x 30.00 y 143.50 width 50.00 height 50.00 }
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

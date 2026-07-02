@@ -1,0 +1,10 @@
+Checks that sorting an array with a side-effecting comparison function doesn't trigger assertions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS It worked.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

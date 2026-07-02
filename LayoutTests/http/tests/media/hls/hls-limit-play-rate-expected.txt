@@ -1,0 +1,25 @@
+
+RUN(video.defaultPlaybackRate = 2.1)
+EVENT(ratechange)
+EXPECTED (video.defaultPlaybackRate == '2.1') OK
+EXPECTED (video.playbackRate == '1') OK
+
+RUN(video.playbackRate = 2.1)
+EVENT(ratechange)
+EXPECTED (video.defaultPlaybackRate == '2.1') OK
+EXPECTED (video.playbackRate == '2.1') OK
+
+RUN(video.src = '../resources/hls/audio-tracks.m3u8')
+EVENT(canplaythrough)
+EXPECTED (video.playbackRate == '2') OK
+
+RUN(video.playbackRate = 1)
+EVENT(ratechange)
+EXPECTED (video.playbackRate == '1') OK
+
+RUN(video.playbackRate = 2.5)
+EVENT(ratechange)
+EXPECTED (video.playbackRate == '2') OK
+
+END OF TEST
+

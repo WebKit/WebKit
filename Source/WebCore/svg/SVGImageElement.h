@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "SVGGraphicsElement.h"
+#include "SVGImageLoader.h"
+#include "SVGURIReference.h"
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference {
+    WTF_MAKE_TZONE_ALLOCATED(SVGImageElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGImageElement);
+public:
+    static Ref<SVGImageElement> create(const QualifiedName&, Document&);
+
+    WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
+    bool renderingTaintsOrigin() const;
+    String imageSourceURL() const final;
+
+    const SVGLengthValue& x() const LIFETIME_BOUND { return m_x->currentValue(); }
+    const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }
+    const SVGLengthValue& width() const LIFETIME_BOUND { return m_width->currentValue(); }
+    const SVGLengthValue& height() const LIFETIME_BOUND { return m_height->currentValue(); }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const LIFETIME_BOUND { return m_preserveAspectRatio->currentValue(); }
+
+    void setCrossOrigin(const AtomString&);
+    String crossOrigin() const;
+
+    SVGAnimatedLength& xAnimated() { return m_x; }
+    SVGAnimatedLength& yAnimated() { return m_y; }
+    SVGAnimatedLength& widthAnimated() { return m_width; }
+    SVGAnimatedLength& heightAnimated() { return m_height; }
+    SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGImageElement, SVGGraphicsElement, SVGURIReference>;
+
+    void decode(Ref<DeferredPromise>&&);
+
+private:
+    SVGImageElement(const QualifiedName&, Document&);
+    
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void svgAttributeChanged(const QualifiedName&) final;
+
+    void didAttachRenderers() final;
+    NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+
+    void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
+    bool haveLoadedRequiredResources() final;
+
+    bool isValid() const final { return SVGTests::isValid(); }
+    bool selfHasRelativeLengths() const final { return true; }
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
+    const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
+    const Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
+    const Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio { SVGAnimatedPreserveAspectRatio::create(this) };
+    const UniqueRef<SVGImageLoader> m_imageLoader;
+};
+
+} // namespace WebCore

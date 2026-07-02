@@ -1,0 +1,6 @@
+
+PASS currentTime should be null for a display: inline source
+PASS currentTime should be null for a display: none source
+PASS currentTime should be null for an unattached source
+PASS currentTime should be null when the source is not a scroller
+

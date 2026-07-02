@@ -1,0 +1,7 @@
+This test attempts to access an HTMLLabelElement's form property. The first test accesses the form property of an label which is inside of a form. The second test accesses the form property of an label which is not inside of a form
+
+Passed
+
+Passed
+
+

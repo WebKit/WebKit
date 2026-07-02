@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<title>navigator.globalPrivacyControl Window</title>
+<head>
+  <script src="/resources/testharness.js"></script>
+</head>
+<body>
+  <div id="log"></div>
+  <script>
+    setup({explicit_done: true});
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const expectedValue = urlParams.has("gpc", "true");
+    test(function(t) {
+      assert_equals(navigator.globalPrivacyControl, expectedValue, "Expected navigator.globalPrivacyControl value is read from the window");
+    }, `Expected navigator.globalPrivacyControl value (${expectedValue}) is read from the window`);
+
+    async function run() {
+      await fetch_tests_from_worker(new Worker(`navigator-globalPrivacyControl.js?gpc=${expectedValue}&workerType=dedicated`));
+      done();
+    }
+    run();
+  </script>
+</body>
+</html>

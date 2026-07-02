@@ -1,0 +1,15 @@
+<script src="resources/repaint.js"></script>
+<script>
+    onload = runRepaintTest;
+
+    function repaintTest()
+    {
+        document.getElementById("target").style.visibility = "hidden";
+    }
+</script>
+<div style="height: 100px; width: 100px; background-color: red; -webkit-writing-mode: horizontal-bt;">
+    <div style="height: 25px;">
+        <div style="height: 100px; background-color: green;"></div>
+    </div>
+</div>
+<div id="target" style="height: 50px; width: 100px; background-color: red; margin-top: -100px;"></div>

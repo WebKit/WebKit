@@ -1,0 +1,44 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Element: original interface defined
+PASS Partial interface Element: member names are unique
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined
+PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document interface: attribute fullscreenEnabled
+PASS Document interface: attribute fullscreen
+PASS Document interface: operation exitFullscreen()
+PASS Document interface: attribute onfullscreenchange
+PASS Document interface: attribute onfullscreenerror
+PASS Document interface: attribute fullscreenElement
+PASS Document interface: new Document must inherit property "fullscreenEnabled" with the proper type
+PASS Document interface: new Document must inherit property "fullscreen" with the proper type
+PASS Document interface: new Document must inherit property "exitFullscreen()" with the proper type
+PASS Document interface: new Document must inherit property "onfullscreenchange" with the proper type
+PASS Document interface: new Document must inherit property "onfullscreenerror" with the proper type
+PASS Document interface: new Document must inherit property "fullscreenElement" with the proper type
+PASS ShadowRoot interface: attribute fullscreenElement
+PASS Element interface: operation requestFullscreen(optional FullscreenOptions)
+PASS Element interface: attribute onfullscreenchange
+PASS Element interface: attribute onfullscreenerror
+PASS Element interface: document.createElementNS(null, "test") must inherit property "requestFullscreen(optional FullscreenOptions)" with the proper type
+PASS Element interface: calling requestFullscreen(optional FullscreenOptions) on document.createElementNS(null, "test") with too few arguments must throw TypeError
+PASS Element interface: document.createElementNS(null, "test") must inherit property "onfullscreenchange" with the proper type
+PASS Element interface: document.createElementNS(null, "test") must inherit property "onfullscreenerror" with the proper type
+

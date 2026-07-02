@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks the read-only property of SVGTransformList.animVal");
+
+var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+var rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+var transformBase = rectElement.transform.baseVal;
+var transformAnim = rectElement.transform.animVal;
+var t = transformBase.createSVGTransformFromMatrix();
+var m = svgElement.createSVGMatrix();
+
+debug("");
+debug("Check SVGAnimatedTransformList.animVal is a readonly SVGTransformList");
+shouldThrow("transformAnim.appendItem(t)");
+shouldThrow("transformAnim.clear()");
+shouldThrow("transformAnim.initialize(t)");
+shouldThrow("transformAnim.insertItemBefore(t, 0)");
+shouldThrow("transformAnim.replaceItem(t, 0)");
+shouldThrow("transformAnim.removeItem(0)");
+shouldThrow("transformAnim(0) = t");
+
+debug("");
+debug("Check items of SVGAnimatedTransformList.animVal are readonly SVGTransform");
+transformBase.appendItem(t);
+t = transformAnim.getItem(0);
+m = svgElement.createSVGMatrix();
+shouldThrow("t.setScale(2, 2)");
+shouldThrow("t.setMatrix(m)");
+m = t.matrix;
+shouldThrow("m.b = 2");
+
+debug("");
+debug("Check detached items from SVGAnimatedTransformList.animVal are not readonly SVGTransform");
+t = transformAnim.getItem(0);
+transformBase.clear();
+m = svgElement.createSVGMatrix();
+shouldNotThrow("t.setScale(2, 2)");
+shouldNotThrow("t.setMatrix(m)");
+m = t.matrix;
+shouldNotThrow("m.b = 2");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

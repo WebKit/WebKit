@@ -1,0 +1,24 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<head>
+    <title>PointerLock interface tests.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+if (window.internals){
+    internals.markContextAsInsecure();
+}
+test(function() {
+    assert_false("canShare" in navigator);
+},'canShare should not exist in insecure context');
+
+test(function() {
+    assert_false("share" in navigator);
+},'share should not exist in insecure context');
+
+</script>
+</body>
+</html>

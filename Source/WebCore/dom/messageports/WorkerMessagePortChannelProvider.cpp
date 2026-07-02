@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WorkerMessagePortChannelProvider.h"
+
+#include "MessagePort.h"
+#include "WorkerOrWorkletGlobalScope.h"
+#include "WorkerThread.h"
+#include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagePortChannelProvider);
+
+Ref<WorkerMessagePortChannelProvider> WorkerMessagePortChannelProvider::create(WorkerOrWorkletGlobalScope& scope)
+{
+    return adoptRef(*new WorkerMessagePortChannelProvider(scope));
+}
+
+WorkerMessagePortChannelProvider::WorkerMessagePortChannelProvider(WorkerOrWorkletGlobalScope& scope)
+    : m_scope(scope)
+{
+}
+
+WorkerMessagePortChannelProvider::~WorkerMessagePortChannelProvider()
+{
+    while (!m_takeAllMessagesCallbacks.isEmpty()) {
+        auto first = m_takeAllMessagesCallbacks.takeFirst();
+        first({ }, [] { });
+    }
+}
+
+void WorkerMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
+{
+    callOnMainThread([local, remote] {
+        MessagePortChannelProvider::singleton().createNewMessagePortChannel(local, remote);
+    });
+}
+
+void WorkerMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
+{
+    callOnMainThread([local, remote] {
+        MessagePortChannelProvider::singleton().entangleLocalPortInThisProcessToRemote(local, remote);
+    });
+}
+
+void WorkerMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& local)
+{
+    callOnMainThread([local] {
+        MessagePortChannelProvider::singleton().messagePortDisentangled(local);
+    });
+}
+
+void WorkerMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void WorkerMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
+{
+    callOnMainThread([message = WTF::move(message), remoteTarget]() mutable {
+        MessagePortChannelProvider::singleton().postMessageToRemote(WTF::move(message), remoteTarget);
+    });
+}
+
+class MainThreadCompletionHandler {
+public:
+    explicit MainThreadCompletionHandler(CompletionHandler<void()>&& completionHandler)
+        : m_completionHandler(WTF::move(completionHandler))
+    {
+    }
+    MainThreadCompletionHandler(MainThreadCompletionHandler&&) = default;
+    MainThreadCompletionHandler& operator=(MainThreadCompletionHandler&&) = default;
+
+    ~MainThreadCompletionHandler()
+    {
+        if (m_completionHandler)
+            complete();
+    }
+
+    void complete()
+    {
+        callOnMainThread(WTF::move(m_completionHandler));
+    }
+
+private:
+    CompletionHandler<void()> m_completionHandler;
+};
+
+void WorkerMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& identifier, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& callback)
+{
+    RefPtr scope = m_scope.get();
+    if (!scope)
+        return callback({ }, [] { });
+
+    uint64_t callbackIdentifier = ++m_lastCallbackIdentifier;
+    m_takeAllMessagesCallbacks.add(callbackIdentifier, WTF::move(callback));
+
+    callOnMainThread([weakThis = WeakPtr { *this }, workerThread = scope->workerOrWorkletThread(), callbackIdentifier, identifier]() mutable {
+        MessagePortChannelProvider::singleton().takeAllMessagesForPort(identifier, [weakThis = WTF::move(weakThis), workerThread = WTF::move(workerThread), callbackIdentifier](Vector<MessageWithMessagePorts>&& messages, Function<void()>&& completionHandler) mutable {
+            workerThread->runLoop().postTaskForMode([weakThis = WTF::move(weakThis), callbackIdentifier, messages = WTF::move(messages), completionHandler = MainThreadCompletionHandler(WTF::move(completionHandler))](auto&) mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+                protectedThis->m_takeAllMessagesCallbacks.take(callbackIdentifier)(WTF::move(messages), [completionHandler = WTF::move(completionHandler)]() mutable {
+                    completionHandler.complete();
+                });
+            }, WorkerRunLoop::defaultMode());
+        });
+    });
+}
+
+} // namespace WebCore

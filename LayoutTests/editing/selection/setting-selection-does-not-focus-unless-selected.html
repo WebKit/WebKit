@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setting selection through APIs does not focus unless selection is inside the text control.</title>
+</head>
+<body>
+    <p>Setting selection through APIs does not focus unless selection is inside the text control.</p>
+    <input id="input" value="XXXXXXXX">
+    <textarea id="textarea">XXXXXXXX</textarea>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+        function testSetSelectionRange(element, expectFocus) {
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            element.setSelectionRange(null, null);
+            assert_equals(document.activeElement == element, expectFocus, `Element is should ${!expectFocus ? "not " : ""}be focused`);
+            assert_equals(element.selectionStart, 0, "selectionStart is correctly set");
+            assert_equals(element.selectionStart, 0, "selectionEnd is correctly set");
+            element.setSelectionRange(2, 4);
+            assert_equals(document.activeElement == element, expectFocus, `Element is should ${!expectFocus ? "not " : ""}be focused`);
+            assert_equals(element.selectionStart, 2, "selectionStart is correctly set");
+            assert_equals(element.selectionEnd, 4, "selectionEnd is correctly set");
+        }
+        function testSelectionStartEnd(element, expectFocus) {
+            element.selectionStart = 3;
+            element.selectionEnd = 5;
+            assert_equals(document.activeElement == element, expectFocus, `Element is should ${!expectFocus ? "not " : ""}be focused`);
+            assert_equals(element.selectionStart, 3, "selectionStart is correctly set");
+            assert_equals(element.selectionEnd, 5, "selectionEnd is correctly set");
+        }
+
+        function testSetRangeText(element, expectFocus) {
+            element.setRangeText('barrr', 0, 3, 'select');
+            assert_equals(document.activeElement == element, expectFocus, `Element is should ${!expectFocus ? "not " : ""}be focused`);
+        }
+
+        test(t => {
+            t.add_cleanup(() => { input.blur(); textarea.blur(); getSelection().removeAllRanges(); });
+            testSetSelectionRange(input, false);
+            testSetSelectionRange(textarea, false);
+            input.focus();
+            testSetSelectionRange(input, true);
+            textarea.focus();
+            testSetSelectionRange(textarea, true);
+        }, "setSelectionRange does not focus unless selection is inside the text control.");
+
+        test(t => {
+            t.add_cleanup(() => { input.blur(); textarea.blur(); getSelection().removeAllRanges(); });
+            testSelectionStartEnd(input, false);
+            testSelectionStartEnd(textarea, false);
+            input.focus();
+            testSelectionStartEnd(input, true);
+            textarea.focus();
+            testSelectionStartEnd(textarea, true);
+        }, "selectionStart/selectionEnd does not focus unless selection is inside the text control.");
+
+        test(t => {
+            t.add_cleanup(() => { input.blur(); textarea.blur(); getSelection().removeAllRanges(); });
+            testSetRangeText(input, false);
+            testSetRangeText(textarea, false);
+            input.focus();
+            testSetRangeText(input, true);
+            textarea.focus();
+            testSetRangeText(textarea, true);
+        }, "setRangeText does not focus unless selection is inside the text control.");
+    </script>
+</body>
+</html>

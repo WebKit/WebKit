@@ -1,0 +1,3 @@
+
+PASS Speculation-Rules header must only be fetched for top-level windows
+

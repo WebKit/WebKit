@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.setTimeout(async () => {
+        if (!window.IPC)
+            return window.testRunner?.notifyDone();
+        const { CoreIPC } = await import('./coreipc.js');
+        CoreIPC.UI.WebProcessProxy.SerializeAndWrapCryptoKey(0, {
+            key: {
+                keyClass: 5,
+                algorithmIdentifier: 14,
+                extractable: false,
+                usages: 57,
+                key: {
+                    optionalValue: [166, 24, 193, 205]
+                },
+                jwk: {
+                    optionalValue: {
+                        kty: '',
+                        use: '',
+                        key_ops: {
+                            optionalValue: []
+                        },
+                        usages: 9693558,
+                        alg: '',
+                        ext: {
+                            optionalValue: false
+                        },
+                        crv: '',
+                        x: '',
+                        y: '',
+                        d: '',
+                        n: '',
+                        e: '',
+                        p: '',
+                        q: '',
+                        dp: '',
+                        dq: 'A',
+                        qi: '',
+                        oth: {
+                            optionalValue: []
+                        },
+                        k: ''
+                    }
+                },
+                hashAlgorithmIdentifier: {},
+                namedCurveString: {
+                    optionalValue: ''
+                },
+                lengthBits: {
+                    optionalValue: 185
+                },
+                type: {}
+            }
+        });
+        globalThis.testRunner?.notifyDone();
+    }, 10);
+</script>

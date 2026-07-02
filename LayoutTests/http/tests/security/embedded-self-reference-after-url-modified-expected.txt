@@ -1,0 +1,8 @@
+This test passes if it doesn't crash or timeout.
+Additionally there should only be one child frame.
+
+--------
+Frame: '<!--frame1-->'
+--------
+This test passes if it doesn't crash or timeout.
+Additionally there should only be one child frame.

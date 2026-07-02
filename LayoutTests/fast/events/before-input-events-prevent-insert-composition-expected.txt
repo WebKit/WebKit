@@ -1,0 +1,13 @@
+To manually test this, try to insert text using IME. No text should be committed to the input.
+
+after trying to commit a typed composition:
+|   <shadow:root>
+|     <div>
+|       contenteditable="plaintext-only"
+|       <br>
+
+after trying to commit a selected composition:
+|   <shadow:root>
+|     <div>
+|       contenteditable="plaintext-only"
+|       <br>

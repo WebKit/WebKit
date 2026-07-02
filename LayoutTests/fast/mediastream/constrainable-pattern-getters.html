@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ConstrainablePattern getCapabilities/getConstraints/getSettings return the internal slots</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// MediaCapture-Main §"ConstrainablePattern":
+//   https://w3c.github.io/mediacapture-main/#constrainable-interface
+//
+// MediaStreamTrack implements ConstrainablePattern, which exposes three
+// getter-style methods:
+//
+//   getCapabilities() — returns the [[Capabilities]] internal slot
+//                       (the device's full range of values for each
+//                       constrainable property)
+//   getConstraints()  — returns the [[Constraints]] internal slot (the
+//                       most recently applied constraints, or {} if none
+//                       have been applied)
+//   getSettings()     — returns the [[Settings]] internal slot (the
+//                       current actual settings the track is operating
+//                       under)
+//
+// All three return plain dictionaries (per IDL, the IDL records are
+// stringified to JS objects). Across multiple calls without an
+// intervening mutation, each must return equivalent data.
+
+if (window.testRunner) {
+    testRunner.setMicrophonePermission(true);
+    testRunner.setCameraPermission(true);
+}
+
+promise_test(async test => {
+    // getCapabilities returns the [[Capabilities]] internal slot.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    const caps = track.getCapabilities();
+    assert_equals(typeof caps, "object", "getCapabilities returns an object");
+    assert_not_equals(caps, null, "getCapabilities returns non-null");
+
+    // Idempotent: a second call yields the same content (no per-call
+    // mutation of [[Capabilities]]).
+    const caps2 = track.getCapabilities();
+    assert_object_equals(caps, caps2,
+        "two getCapabilities calls return equivalent content");
+
+    // Per spec, capability values for constrainable properties of the
+    // device should include at least the kind-applicable members. For a
+    // video track this includes width/height or facingMode.
+    const hasAtLeastOneCap = "width" in caps || "height" in caps
+        || "facingMode" in caps || "deviceId" in caps;
+    assert_true(hasAtLeastOneCap,
+        "video track getCapabilities exposes at least one constrainable property");
+}, "getCapabilities returns the [[Capabilities]] internal slot as a plain object");
+
+promise_test(async test => {
+    // getConstraints returns the [[Constraints]] internal slot —
+    // the most recently *successfully applied* constraints.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    // Before any explicit applyConstraints, [[Constraints]] reflects
+    // whatever getUserMedia was called with — for our setup, no constraints.
+    let c = track.getConstraints();
+    assert_equals(typeof c, "object", "getConstraints returns an object");
+
+    // After applyConstraints with a successful constraint, getConstraints
+    // returns the applied set verbatim.
+    await track.applyConstraints({ frameRate: { ideal: 24 } });
+    c = track.getConstraints();
+    assert_object_equals(c, { frameRate: { ideal: 24 } },
+        "getConstraints returns the most recently applied constraints");
+
+    // A second applyConstraints replaces (not merges) [[Constraints]].
+    await track.applyConstraints({ width: { ideal: 320 } });
+    c = track.getConstraints();
+    assert_object_equals(c, { width: { ideal: 320 } },
+        "getConstraints reflects only the most recent applyConstraints input " +
+        "(replaces prior constraints, not merges)");
+    assert_false("frameRate" in c,
+        "prior frameRate constraint cleared by second applyConstraints");
+}, "getConstraints returns the [[Constraints]] internal slot (most recent successfully applied)");
+
+promise_test(async test => {
+    // getSettings returns the [[Settings]] internal slot —
+    // the actual current operating values for each constrainable property.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    const settings = track.getSettings();
+    assert_equals(typeof settings, "object", "getSettings returns an object");
+
+    // Settings must include a deviceId (the spec marks it as inherent
+    // constrainable property for every track).
+    assert_true("deviceId" in settings, "getSettings includes deviceId");
+    assert_equals(typeof settings.deviceId, "string", "deviceId is a string");
+
+    // Idempotent: two calls without mutation return equivalent content.
+    const settings2 = track.getSettings();
+    assert_object_equals(settings, settings2,
+        "two getSettings calls return equivalent content");
+}, "getSettings returns the [[Settings]] internal slot as a plain object");
+</script>
+</head>
+<body></body>
+</html>

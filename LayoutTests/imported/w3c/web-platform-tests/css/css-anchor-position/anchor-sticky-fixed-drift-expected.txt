@@ -1,0 +1,3 @@
+
+PASS Fixed anchored element with sticky anchor
+

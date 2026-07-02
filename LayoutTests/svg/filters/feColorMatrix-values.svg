@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+<defs>
+    <filter id="satfull">
+        <feColorMatrix type="saturate" values="1" />
+    </filter>
+
+    <filter id="matnull">
+        <feColorMatrix type="matrix" />
+    </filter>
+    <filter id="satnull">
+        <feColorMatrix type="saturate" />
+    </filter>
+    <filter id="huenull">
+        <feColorMatrix type="hueRotate" />
+    </filter>
+
+    <filter id="matbad">
+        <feColorMatrix type="matrix" values="1 1 1" />
+    </filter>
+    <filter id="satbad">
+        <feColorMatrix type="saturate" values="1 1 1" />
+    </filter>
+    <filter id="huebad">
+        <feColorMatrix type="hueRotate" values="1 1 1" />
+    </filter>
+
+    <filter id="satrange">
+        <feColorMatrix type="saturate" values="1 1" />
+    </filter>
+    <filter id="huerange">
+        <feColorMatrix type="hueRotate" values="720" />
+    </filter>
+
+</defs>
+  <g font-size="24" fill="black">
+    <!-- Backround for tests. Green is success and red is failure -->
+    <rect y="0" x="0" width="400" height="400" fill="lime" style="filter:url(#satfull)" />
+    <rect y="2" x="2" width="196" height="396" fill="red" />
+
+    <!-- Display default parameters when values is not present -->
+    <text y="40" x="10" >Should be default</text>
+    <text y="70" x="10" >matrix.</text>
+    <rect y="0" x="0" width="200" height="104" fill="lime" style="filter:url(#matnull)" />
+    <text y="140" x="10" >Should be default</text>
+    <text y="170" x="10" >saturate.</text>
+    <rect y="100" x="0" width="200" height="104" fill="lime" style="filter:url(#satnull)" />
+    <text y="240" x="10" >Should be default</text>
+    <text y="270" x="10" >hueRotate.</text>
+    <rect y="200" x="0" width="200" height="104" fill="lime" style="filter:url(#huenull)" />
+    <text y="340" x="10">Should be valid</text>
+    <text y="370" x="10">hueRotate.</text>
+    <rect y="300" x="0" width="200" height="99" fill="lime" style="filter:url(#huerange)" />
+
+    <!-- Do not render element if values is invalid -->
+    <rect y="2" x="202" width="196" height="96" fill="red" style="filter:url(#matbad)" />
+    <text y="40" x="210" style="filter:url(#matbad)">Invalid matrix</text>
+    <text y="70" x="210" style="filter:url(#matbad)">values attribute.</text>
+    <rect y="102" x="202" width="196" height="96" fill="red" style="filter:url(#huebad)" />
+    <text y="140" x="210" style="filter:url(#huebad)">Invalid saturate</text>
+    <text y="170" x="210" style="filter:url(#huebad)">values attribute.</text>
+    <rect y="202" x="202" width="196" height="96" fill="red" style="filter:url(#satbad)" />
+    <text y="240" x="210" style="filter:url(#satbad)">Invalid hueRotate</text>
+    <text y="270" x="210" style="filter:url(#satbad)">values attribute.</text>
+    <rect y="302" x="202" width="196" height="96" fill="red" style="filter:url(#satrange)" />
+    <text y="340" x="210" style="filter:url(#satrange)">Saturate must  </text>
+    <text y="370" x="210" style="filter:url(#satrange)">have one value.</text>
+</g>
+</svg>

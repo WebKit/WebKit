@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<use href="#x1" x="0" y="0" />
+<script>
+document.querySelector('use').getBoundingClientRect();
+</script>
+<defs>
+    <image id="x1" width="100" height="100" href="use-element-refers-subsequent-image-element-after-style-update-expected.svg"/>
+</defs>
+</svg>

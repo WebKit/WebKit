@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-unbuffered</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    }
+
+    const sleep = (milliseconds) => {
+      return new Promise(resolve => setTimeout(resolve, milliseconds))
+    }
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        waitForEventAndFail('error');
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('source.duration = loader.duration()');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+    }
+
+    function sourceInitialized() {
+        waitForEventOn(video, 'seeked', videoSeeked, false, true);
+        consoleWrite('Seek and append a media segment.')
+        run('video.currentTime = 0.8');
+        run('sourceBuffer.appendBuffer(loader.concatenateMediaSegments([loader.mediaSegment(0), loader.mediaSegment(1)]))');
+    }
+
+    var oldCurrentTime;
+
+    async function videoSeeked() {
+        run('sourceBuffer.remove(0.5, 2)');
+        await video.play();
+        oldCurrentTime = video.currentTime;
+        await sleep(100);
+        testExpected('oldCurrentTime <= video.currentTime' , true);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+        This tests that when seeking and play into unbuffered time, currentTime doesn't appear to go backward.
+    </div>
+    <video controls></video>
+</body>
+</html>

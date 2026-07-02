@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script>
+var i = 0;
+var refreshIntervalId;
+function repaintTest()
+{
+    refreshIntervalId = setInterval(function(){moveInputElement();}, 10);
+}
+function moveInputElement()
+{
+    var input = document.getElementById('input');
+    i++;
+    input.style.left = i*10 + 'px';
+    if (i >= 3) {
+        clearInterval(refreshIntervalId);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.onload = repaintTest();
+</script>
+<style>
+input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 50px;
+  width: 200px;
+}
+</style>
+<div>This change checks that the caret in the &gt;input&lt; below doesn't shift out of it after several layouts.</div>
+<div>This test has passed if the caret is centered <b>inside</b> the &gt;input&lt;</div>
+<input id="input" type="text" autofocus>

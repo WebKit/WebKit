@@ -1,0 +1,5 @@
+Derived from historical testcase for WebKit bug 3420: XMLHttpRequest does not handle set-cookie headers.
+
+
+PASS Basic non-cross-site cookie handling in XHR
+

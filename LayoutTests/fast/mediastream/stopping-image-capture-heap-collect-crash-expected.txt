@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: grabFrame is stopped
+
+Harness Error (FAIL), message = Unhandled rejection: grabFrame is stopped
+
+PASS grabFrame while GC
+

@@ -1,0 +1,10 @@
+This test ensures that a textfield ignored due to invalid markup (buttons should have no children) is still usable by AX clients when the textfield is included in a published notification.
+
+Successfully added notification listener: true
+Sending keyDown to password field.
+Got AXValueChanged notification. Role for element included in notification: AXRole: AXTextField
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Please enter your password

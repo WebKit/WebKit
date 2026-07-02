@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label for="meter">label</label>
+<meter id="meter" min="0" max="100" value="83.5"></meter>
+
+<label>label wrapping meter<meter id="meter2" min="0" max="100" value="83.5"></meter></label>
+
+<label for="meter3" aria-label="aria label">label</label>
+<meter id="meter3" min="0" max="100" value="83.5"></meter>
+
+<p id="p1">aria</p>
+<p id="p2">labelledby</p>
+<label aria-labelledby="p1 p2">label<meter id="meter4" min="0" max="100" value="83.5"></meter></label>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that for meter elements, the label element should be used as accessible name.");
+
+    if (window.accessibilityController) {
+
+          var meter1 = accessibilityController.accessibleElementById("meter");
+          shouldBe("meter1.description", "'AXDescription: label'");
+
+          var meter2 = accessibilityController.accessibleElementById("meter2");
+          shouldBe("meter2.description", "'AXDescription: label wrapping meter'");
+          
+          var meter3 = accessibilityController.accessibleElementById("meter3");
+          shouldBe("meter3.description", "'AXDescription: aria label'");
+          
+          var meter4 = accessibilityController.accessibleElementById("meter4");
+          shouldBe("meter4.description", "'AXDescription: aria labelledby'");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

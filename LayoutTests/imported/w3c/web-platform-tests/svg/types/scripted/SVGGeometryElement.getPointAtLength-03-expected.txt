@@ -1,0 +1,5 @@
+
+PASS When SVGGeometryElement.getPointAtLength is called with an element that is not in the document, either succeed or throw exception with SVGPathElement
+PASS When SVGGeometryElement.getPointAtLength is called with an element that is not in the document, either succeed or throw exception with SVGRectElement
+PASS When SVGGeometryElement.getPointAtLength is called with an element that is not in the document, either succeed or throw exception with SVGCircleElement
+

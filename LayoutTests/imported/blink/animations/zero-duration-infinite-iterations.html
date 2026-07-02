@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+p {
+  -webkit-animation: test infinite;
+}
+@-webkit-keyframes test {
+  0% {
+  }
+}
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<body>
+<p>This tests an animation with zero duration and infinite iterations. See http:://crbug.com/322575.
+<p>This test passes if it doesn't crash.
+<body

@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Verifies that tooltips from iframes are correct.");
+jsTestIsAsync = true;
+
+var tooltips = [];
+function tooltipDidChangeCallback(tooltip)
+{
+    tooltips.push(tooltip);
+}
+
+async function runTest() {
+
+    if (window.testRunner) {
+        testRunner.installTooltipDidChangeCallback(tooltipDidChangeCallback);
+
+        await eventSender.asyncMouseMoveTo(30, 30);
+        await eventSender.asyncMouseMoveTo(100, 100);
+        await eventSender.asyncMouseMoveTo(300, 300);
+
+        // If this test is run with another test before it, then
+        // we can get a 'clear' tooltip first. In order for this
+        // test to be able to run with other tests or independently
+        // we should slice off that first clear if it exists.
+
+        var firstTooltipIndex = 0;
+        if (tooltips[0] == "")
+            tooltips = tooltips.slice(1);
+
+        shouldBe("tooltips[0]", "'Test Main Frame'");
+        shouldBe("tooltips[2]", "'Tooltip A'");
+        shouldBe("tooltips[4]", "'Tooltip B'");
+
+        finishJSTest();
+    }
+}
+
+</script>
+<style>
+    .container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 800px;
+        height: 800px;
+        border: 2px solid #333;
+    }
+
+    #frame1 {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 400px;
+        height: 400px;
+        border-color: #e74c3c;
+        z-index: 1;
+    }
+    
+    #frame2 {
+        position: absolute;
+        top: 200px;
+        left: 200px;
+        width: 400px;
+        height: 400px;
+        border-color: #3498db;
+        z-index: 2;
+    }
+</style>
+<body onload="runTest()">
+    <div class="container" id="mainframe" title="Test Main Frame">
+        <iframe id="frame1" src='http://localhost:8000/site-isolation/mouse-events/resources/tooltip-subframe-a.html'></iframe>
+        <iframe id="frame2" src='http://localhost:8000/site-isolation/mouse-events/resources/tooltip-subframe-b.html'></iframe>
+    </div>
+</body>

@@ -1,0 +1,12 @@
+Verify the series of sub-tests that are executed for "tested" interface objects but skipped for "untested" interface objects.
+
+
+PASS Foo interface: existence and properties of interface object
+PASS Foo interface object length
+PASS Foo interface object name
+PASS Foo interface: existence and properties of interface prototype object
+PASS Foo interface: existence and properties of interface prototype object's "constructor" property
+PASS Foo interface: existence and properties of interface prototype object's @@unscopables property
+PASS Foo must be primary interface of new Foo()
+PASS Stringification of new Foo()
+

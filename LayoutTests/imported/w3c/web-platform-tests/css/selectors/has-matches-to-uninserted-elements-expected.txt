@@ -1,0 +1,14 @@
+
+PASS :has(child) matches expectedly
+PASS :has(> child) matches expectedly
+PASS :has(descendant) matches expectedly
+PASS :has(> descendant) matches expectedly
+PASS :has(~ direct_sibling) matches expectedly
+PASS :has(+ direct_sibling) matches expectedly
+PASS :has(~ indirect_sibling) matches expectedly
+PASS :has(+ indirect_sibling) matches expectedly
+PASS :has(*) matches expectedly
+PASS :has(> *) matches expectedly
+PASS :has(~ *) matches expectedly
+PASS :has(+ *) matches expectedly
+

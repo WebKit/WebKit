@@ -1,0 +1,3 @@
+
+PASS strokeRect draws shadows
+

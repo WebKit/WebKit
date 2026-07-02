@@ -1,0 +1,11 @@
+This test verifies that refocusing a select element after changing its size does not present two pickers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

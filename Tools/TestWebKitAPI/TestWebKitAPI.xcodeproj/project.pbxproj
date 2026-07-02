@@ -1,0 +1,2969 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 90;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		0723A7492F80357300CB96E7 /* Derived Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 0723A7532F80357300CB96E7 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
+			buildPhases = (
+				0723A7602F80360F00CB96E7 /* Generate Swift platform args */,
+			);
+			name = "Derived Sources";
+			productName = "Derived Sources";
+		};
+		537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */;
+			buildPhases = (
+				537CF84722EFD65000C6EBB3 /* Run Sublaunch Script */,
+			);
+			name = "Apply Configuration to XCFileLists";
+			productName = "Apply Configuration to XCFileLists";
+		};
+		5C9D921422D7DA02008E9266 /* Generate Unified Sources */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */;
+			buildPhases = (
+				5C9D921C22D7DA33008E9266 /* Generate Unified Sources */,
+			);
+			name = "Generate Unified Sources";
+			productName = All;
+		};
+		7C83E02B1D0A5E1000FEBCF3 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7C83E02C1D0A5E1000FEBCF3 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+				537CF84822EFD72000C6EBB3 /* Check .xcfilelists */,
+			);
+			dependencies = (
+				3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */,
+				7B9FC58828A26D83007570E7 /* PBXTargetDependency */,
+				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
+				A188990A2CAA366C00FEB09A /* PBXTargetDependency */,
+				7C83E0321D0A5E1D00FEBCF3 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		07275CBC2D01398C002315A5 /* _WebKit_SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */; };
+		07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
+		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
+		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
+		3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDAF428D1638A004DA950 /* libicucore.tbd */; };
+		3A5DDB0C28D53325004DA950 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
+		3A5DDB2C28D5525E004DA950 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
+		3A5DDB2D28D55265004DA950 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDB2028D54269004DA950 /* libwgsl.a */; };
+		4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */; };
+		51A97F1B2FD0B5A400FBDD0C /* UnifiedSource52-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A97F062FD0B59400FBDD0C /* UnifiedSource52-nonARC.mm */; };
+		5C9D922C22D7DE12008E9266 /* UnifiedSource1-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922922D7DE01008E9266 /* UnifiedSource1-nonARC.mm */; };
+		5C9D922D22D7DE19008E9266 /* UnifiedSource2-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922B22D7DE01008E9266 /* UnifiedSource2-nonARC.mm */; };
+		5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922A22D7DE01008E9266 /* UnifiedSource1.cpp */; };
+		5C9D922F22D7DE1F008E9266 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D922822D7DE00008E9266 /* UnifiedSource2.cpp */; };
+		5C9D923822D7E2B0008E9266 /* UnifiedSource3-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923422D7E235008E9266 /* UnifiedSource3-nonARC.mm */; };
+		5C9D923922D7E2B0008E9266 /* UnifiedSource3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923622D7E235008E9266 /* UnifiedSource3.cpp */; };
+		5C9D923A22D7E2B0008E9266 /* UnifiedSource4-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923722D7E235008E9266 /* UnifiedSource4-nonARC.mm */; };
+		5C9D923B22D7E2B0008E9266 /* UnifiedSource4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923222D7E235008E9266 /* UnifiedSource4.cpp */; };
+		5C9D923C22D7E2B0008E9266 /* UnifiedSource5-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923522D7E235008E9266 /* UnifiedSource5-nonARC.mm */; };
+		5C9D923D22D7E2B0008E9266 /* UnifiedSource5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D923322D7E235008E9266 /* UnifiedSource5.cpp */; };
+		5CABDBBF2735C9BD00B88BCB /* UnifiedSource16-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB922735C9BA00B88BCB /* UnifiedSource16-nonARC.mm */; };
+		5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */; };
+		5CABDBC12735C9BD00B88BCB /* UnifiedSource49-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */; };
+		5CABDBC22735C9BD00B88BCB /* UnifiedSource40-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */; };
+		5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */; };
+		5CABDBC32735C9BD00B88BCB /* UnifiedSource7-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */; };
+		5CABDBC42735C9BD00B88BCB /* UnifiedSource12-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB972735C9BA00B88BCB /* UnifiedSource12-nonARC.mm */; };
+		5CABDBC52735C9BD00B88BCB /* UnifiedSource28-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB982735C9BA00B88BCB /* UnifiedSource28-nonARC.mm */; };
+		5CABDBC62735C9BD00B88BCB /* UnifiedSource10-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB992735C9BB00B88BCB /* UnifiedSource10-nonARC.mm */; };
+		5CABDBC72735C9BD00B88BCB /* UnifiedSource9-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB9A2735C9BB00B88BCB /* UnifiedSource9-nonARC.mm */; };
+		5CABDBC82735C9BD00B88BCB /* UnifiedSource6-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB9B2735C9BB00B88BCB /* UnifiedSource6-nonARC.mm */; };
+		5CABDBC92735C9BD00B88BCB /* UnifiedSource19-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB9C2735C9BB00B88BCB /* UnifiedSource19-nonARC.mm */; };
+		5CABDBCA2735C9BD00B88BCB /* UnifiedSource33-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB9D2735C9BB00B88BCB /* UnifiedSource33-nonARC.mm */; };
+		5CABDBCB2735C9BD00B88BCB /* UnifiedSource24-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB9E2735C9BB00B88BCB /* UnifiedSource24-nonARC.mm */; };
+		5CABDBCC2735C9BD00B88BCB /* UnifiedSource25-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB9F2735C9BB00B88BCB /* UnifiedSource25-nonARC.mm */; };
+		5CABDBCD2735C9BD00B88BCB /* UnifiedSource42-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA02735C9BB00B88BCB /* UnifiedSource42-nonARC.mm */; };
+		5CABDBCE2735C9BD00B88BCB /* UnifiedSource18-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA12735C9BB00B88BCB /* UnifiedSource18-nonARC.mm */; };
+		5CABDBCF2735C9BD00B88BCB /* UnifiedSource41-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA22735C9BB00B88BCB /* UnifiedSource41-nonARC.mm */; };
+		5CABDBD02735C9BD00B88BCB /* UnifiedSource13-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA32735C9BB00B88BCB /* UnifiedSource13-nonARC.mm */; };
+		5CABDBD12735C9BD00B88BCB /* UnifiedSource29-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA42735C9BB00B88BCB /* UnifiedSource29-nonARC.mm */; };
+		5CABDBD22735C9BD00B88BCB /* UnifiedSource48-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA52735C9BB00B88BCB /* UnifiedSource48-nonARC.mm */; };
+		5CABDBD32735C9BD00B88BCB /* UnifiedSource35-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA62735C9BB00B88BCB /* UnifiedSource35-nonARC.mm */; };
+		5CABDBD42735C9BD00B88BCB /* UnifiedSource34-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA72735C9BB00B88BCB /* UnifiedSource34-nonARC.mm */; };
+		5CABDBD52735C9BD00B88BCB /* UnifiedSource38-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA82735C9BC00B88BCB /* UnifiedSource38-nonARC.mm */; };
+		5CABDBD62735C9BD00B88BCB /* UnifiedSource31-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBA92735C9BC00B88BCB /* UnifiedSource31-nonARC.mm */; };
+		5CABDBD72735C9BD00B88BCB /* UnifiedSource21-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBAA2735C9BC00B88BCB /* UnifiedSource21-nonARC.mm */; };
+		5CABDBD82735C9BD00B88BCB /* UnifiedSource45-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBAB2735C9BC00B88BCB /* UnifiedSource45-nonARC.mm */; };
+		5CABDBD92735C9BD00B88BCB /* UnifiedSource11-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBAC2735C9BC00B88BCB /* UnifiedSource11-nonARC.mm */; };
+		5CABDBDA2735C9BD00B88BCB /* UnifiedSource27-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBAD2735C9BC00B88BCB /* UnifiedSource27-nonARC.mm */; };
+		5CABDBDB2735C9BD00B88BCB /* UnifiedSource20-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBAE2735C9BC00B88BCB /* UnifiedSource20-nonARC.mm */; };
+		5CABDBDC2735C9BD00B88BCB /* UnifiedSource22-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBAF2735C9BC00B88BCB /* UnifiedSource22-nonARC.mm */; };
+		5CABDBDD2735C9BD00B88BCB /* UnifiedSource14-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB02735C9BC00B88BCB /* UnifiedSource14-nonARC.mm */; };
+		5CABDBDE2735C9BD00B88BCB /* UnifiedSource39-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB12735C9BC00B88BCB /* UnifiedSource39-nonARC.mm */; };
+		5CABDBDF2735C9BD00B88BCB /* UnifiedSource23-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB22735C9BC00B88BCB /* UnifiedSource23-nonARC.mm */; };
+		5CABDBE02735C9BD00B88BCB /* UnifiedSource36-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB32735C9BC00B88BCB /* UnifiedSource36-nonARC.mm */; };
+		5CABDBE12735C9BD00B88BCB /* UnifiedSource15-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB42735C9BC00B88BCB /* UnifiedSource15-nonARC.mm */; };
+		5CABDBE22735C9BD00B88BCB /* UnifiedSource44-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB52735C9BC00B88BCB /* UnifiedSource44-nonARC.mm */; };
+		5CABDBE32735C9BD00B88BCB /* UnifiedSource46-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB62735C9BC00B88BCB /* UnifiedSource46-nonARC.mm */; };
+		5CABDBE42735C9BD00B88BCB /* UnifiedSource17-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB72735C9BD00B88BCB /* UnifiedSource17-nonARC.mm */; };
+		5CABDBE52735C9BD00B88BCB /* UnifiedSource26-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB82735C9BD00B88BCB /* UnifiedSource26-nonARC.mm */; };
+		5CABDBE62735C9BD00B88BCB /* UnifiedSource47-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBB92735C9BD00B88BCB /* UnifiedSource47-nonARC.mm */; };
+		5CABDBE72735C9BD00B88BCB /* UnifiedSource30-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBA2735C9BD00B88BCB /* UnifiedSource30-nonARC.mm */; };
+		5CABDBE82735C9BD00B88BCB /* UnifiedSource43-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBB2735C9BD00B88BCB /* UnifiedSource43-nonARC.mm */; };
+		5CABDBE92735C9BD00B88BCB /* UnifiedSource8-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBC2735C9BD00B88BCB /* UnifiedSource8-nonARC.mm */; };
+		5CABDBEA2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBD2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm */; };
+		5CABDBEB2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDBBE2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm */; };
+		7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
+		7B9FC3AA28A26137007570E7 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
+		7B9FC3AD28A26137007570E7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
+		7B9FC58528A267A7007570E7 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
+		7B9FC5B128A5221B007570E7 /* CryptoTokenKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5B028A5221B007570E7 /* CryptoTokenKit.framework */; };
+		7B9FC5B528A5222D007570E7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */; };
+		7B9FC5CD28A52DC0007570E7 /* libWebKitPlatform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */; };
+		7B9FC5CE28A52ECD007570E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5B628A52236007570E7 /* WebCore.framework */; };
+		7B9FC5D528A53137007570E7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
+		7B9FC5D628A5326A007570E7 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */; };
+		93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
+		97A826852DF8B677004EA039 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
+		97DAA8D02DF70B91004B3040 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97DAA8CF2DF70B91004B3040 /* Metal.framework */; };
+		A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */; };
+		A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2472D6D295400C63915 /* GPUExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A176D24C2D6D2A4E00C63915 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2482D6D295400C63915 /* NetworkingExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A176D24D2D6D2A4E00C63915 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2492D6D295400C63915 /* WebContentExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */; };
+		A1798B8522433647000764BD /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
+		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; platformFilters = (macos, ); };
+		A1B8D76A2D67CD830045C305 /* InjectedBundleTestWebKitAPI.bundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A1B8D76B2D67CD9B0045C305 /* TestWebKitAPI.wkbundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A1B8D76C2D67CDA20045C305 /* TestWebKitAPIResources.bundle in Copy Resources */ = {isa = PBXBuildFile; fileRef = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */; };
+		BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */; };
+		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
+		DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD403D4928EB932F009B4684 /* libbmalloc.a */; };
+		DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DD4671652A685F6800E49DBD /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5B628A52236007570E7 /* WebCore.framework */; };
+		DD5698002DC1320500050321 /* rdar150228472.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD5697FF2DC1320500050321 /* rdar150228472.swift */; };
+		DDADB22628FA094400918467 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
+		DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB3724528ECE32F00A2F32D /* libbmalloc.a */; };
+		DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
+		DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
+		FE9CD7E42D10CE7500266FDD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		A176D2552D6D35D400C63915 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.appex";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(SRCROOT)/../TestRunnerShared/Scripts/install-extensions-rule.sh",
+			);
+			outputFiles = (
+				"$(BUILT_PRODUCTS_DIR)/$(EXTENSIONS_FOLDER_PATH)/$(INPUT_FILE_NAME)",
+			);
+			script = (
+				"\"${SCRIPT_INPUT_FILE_0}\"",
+				"",
+				"",
+				"",
+				"",
+			);
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXContainerItemProxy section */
+		0723A7542F80358F00CB96E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0723A7492F80357300CB96E7;
+			remoteInfo = "Derived Sources";
+		};
+		0723A7562F80359900CB96E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0723A7492F80357300CB96E7;
+			remoteInfo = "Derived Sources";
+		};
+		0723A7582F80359E00CB96E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0723A7492F80357300CB96E7;
+			remoteInfo = "Derived Sources";
+		};
+		0723A75A2F8035A300CB96E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0723A7492F80357300CB96E7;
+			remoteInfo = "Derived Sources";
+		};
+		0723A75C2F8035B000CB96E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0723A7492F80357300CB96E7;
+			remoteInfo = "Derived Sources";
+		};
+		0723A75E2F8035B400CB96E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0723A7492F80357300CB96E7;
+			remoteInfo = "Derived Sources";
+		};
+		3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3A15783C28D1505B00142DB1;
+			remoteInfo = TestWGSL;
+		};
+		5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C9D921422D7DA02008E9266;
+			remoteInfo = "Generate Unified Sources";
+		};
+		7B9FC58728A26D83007570E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7B9FC39428A26137007570E7;
+			remoteInfo = TestIPC;
+		};
+		7C83E0241D0A5B2500FEBCF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C83DE951D0A590C00FEBCF3;
+			remoteInfo = TestWTFLibrary;
+		};
+		7C83E02F1D0A5E1B00FEBCF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76F960486AA7600D96B5E;
+			remoteInfo = TestWebKitAPI;
+		};
+		7C83E0311D0A5E1D00FEBCF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C83DF951D0A5AE400FEBCF3;
+			remoteInfo = TestWTF;
+		};
+		7CCE7F501A4124DB00447C4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
+			remoteInfo = TestWebKitAPILibrary;
+		};
+		A13EBBB21B87441900097110 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A13EBB481B87339E00097110;
+			remoteInfo = WebProcessPlugIn;
+		};
+		A17C48552C98EBF50023F3C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A17C46452C98E3430023F3C7;
+			remoteInfo = TestWebKitAPIResources;
+		};
+		A18898FD2CA9F70B00FEB09A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A17C58012C9AA12F009DD0B5;
+			remoteInfo = TestWebKitAPIApp;
+		};
+		A18899092CAA366C00FEB09A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A17C582D2C9B3EAD009DD0B5;
+			remoteInfo = TestWebKitAPIBundle;
+		};
+		A188991F2CAC690400FEB09A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
+			remoteInfo = TestWebKitAPILibrary;
+		};
+		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC57597F126E74AF006F0F12;
+			remoteInfo = InjectedBundle;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3A15783D28D1505B00142DB1 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Product;
+			files = (
+				3A5DDB0C28D53325004DA950 /* WebKit.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+		};
+		7B6FF89528C22D3D00CA76B0 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Product;
+			files = (
+				7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+		};
+		97FB42742E1D629F00C63F41 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = shaders;
+			dstSubfolder = Resources;
+			files = (
+			);
+		};
+		A176D23F2D6D079900C63915 /* Embed Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolder = Product;
+			files = (
+				A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */,
+				A176D24C2D6D2A4E00C63915 /* NetworkingExtension.appex in Embed Extensions */,
+				A176D24D2D6D2A4E00C63915 /* WebContentExtension.appex in Embed Extensions */,
+			);
+			name = "Embed Extensions";
+		};
+		A17C464B2C98E4520023F3C7 /* Copy Resources */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Resources;
+			files = (
+			);
+			name = "Copy Resources";
+		};
+		A1B8D7622D67CD6E0045C305 /* Copy Resources */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Resources;
+			files = (
+				A1B8D76A2D67CD830045C305 /* InjectedBundleTestWebKitAPI.bundle in Copy Resources */,
+				A1B8D76B2D67CD9B0045C305 /* TestWebKitAPI.wkbundle in Copy Resources */,
+				A1B8D76C2D67CDA20045C305 /* TestWebKitAPIResources.bundle in Copy Resources */,
+			);
+			name = "Copy Resources";
+		};
+		DD0EDF8C2798A69E005152AD /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Product;
+			files = (
+				DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */,
+				DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+		};
+		DD42949E284BE0A6004D49ED /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Product;
+			files = (
+				DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = _WebKit_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		07597D7E2F81DD59000C96D0 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InjectedBundleControllerMac.mm; path = mac/InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
+		2B648DBA28C1C1F700791F2B /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A15785328D1505B00142DB1 /* TestWGSL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWGSL; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A5DDAF228D1637A004DA950 /* libicu.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libicu.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A5DDAF428D1638A004DA950 /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
+		3A5DDB2028D54269004DA950 /* libwgsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libwgsl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		466CB9FE2DADC4A200B32457 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		466CBA072DADC50A00B32457 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS19.0.Internal.sdk/usr/local/lib/libWTF.a; sourceTree = DEVELOPER_DIR; };
+		49AEEF682407276F00C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		516281282325C45400BB7E42 /* PDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PDFKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/PDFKit.framework; sourceTree = DEVELOPER_DIR; };
+		51A97F062FD0B59400FBDD0C /* UnifiedSource52-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource52-nonARC.mm"; sourceTree = "<group>"; };
+		574F55D0204D471C002948C6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
+		5C9D921D22D7DBF7008E9266 /* Sources.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sources.txt; sourceTree = "<group>"; };
+		5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesCocoa.txt; sourceTree = "<group>"; };
+		5C9D922822D7DE00008E9266 /* UnifiedSource2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource2.cpp; sourceTree = "<group>"; };
+		5C9D922922D7DE01008E9266 /* UnifiedSource1-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource1-nonARC.mm"; sourceTree = "<group>"; };
+		5C9D922A22D7DE01008E9266 /* UnifiedSource1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource1.cpp; sourceTree = "<group>"; };
+		5C9D922B22D7DE01008E9266 /* UnifiedSource2-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource2-nonARC.mm"; sourceTree = "<group>"; };
+		5C9D923222D7E235008E9266 /* UnifiedSource4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource4.cpp; sourceTree = "<group>"; };
+		5C9D923322D7E235008E9266 /* UnifiedSource5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource5.cpp; sourceTree = "<group>"; };
+		5C9D923422D7E235008E9266 /* UnifiedSource3-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource3-nonARC.mm"; sourceTree = "<group>"; };
+		5C9D923522D7E235008E9266 /* UnifiedSource5-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource5-nonARC.mm"; sourceTree = "<group>"; };
+		5C9D923622D7E235008E9266 /* UnifiedSource3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource3.cpp; sourceTree = "<group>"; };
+		5C9D923722D7E235008E9266 /* UnifiedSource4-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource4-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB922735C9BA00B88BCB /* UnifiedSource16-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource16-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource50-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource49-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource40-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource51-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource7-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB972735C9BA00B88BCB /* UnifiedSource12-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource12-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB982735C9BA00B88BCB /* UnifiedSource28-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource28-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB992735C9BB00B88BCB /* UnifiedSource10-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource10-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB9A2735C9BB00B88BCB /* UnifiedSource9-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource9-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB9B2735C9BB00B88BCB /* UnifiedSource6-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource6-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB9C2735C9BB00B88BCB /* UnifiedSource19-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource19-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB9D2735C9BB00B88BCB /* UnifiedSource33-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource33-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB9E2735C9BB00B88BCB /* UnifiedSource24-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource24-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB9F2735C9BB00B88BCB /* UnifiedSource25-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource25-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA02735C9BB00B88BCB /* UnifiedSource42-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource42-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA12735C9BB00B88BCB /* UnifiedSource18-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource18-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA22735C9BB00B88BCB /* UnifiedSource41-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource41-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA32735C9BB00B88BCB /* UnifiedSource13-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource13-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA42735C9BB00B88BCB /* UnifiedSource29-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource29-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA52735C9BB00B88BCB /* UnifiedSource48-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource48-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA62735C9BB00B88BCB /* UnifiedSource35-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource35-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA72735C9BB00B88BCB /* UnifiedSource34-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource34-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA82735C9BC00B88BCB /* UnifiedSource38-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource38-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBA92735C9BC00B88BCB /* UnifiedSource31-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource31-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBAA2735C9BC00B88BCB /* UnifiedSource21-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource21-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBAB2735C9BC00B88BCB /* UnifiedSource45-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource45-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBAC2735C9BC00B88BCB /* UnifiedSource11-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource11-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBAD2735C9BC00B88BCB /* UnifiedSource27-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource27-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBAE2735C9BC00B88BCB /* UnifiedSource20-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource20-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBAF2735C9BC00B88BCB /* UnifiedSource22-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource22-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB02735C9BC00B88BCB /* UnifiedSource14-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource14-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB12735C9BC00B88BCB /* UnifiedSource39-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource39-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB22735C9BC00B88BCB /* UnifiedSource23-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource23-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB32735C9BC00B88BCB /* UnifiedSource36-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource36-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB42735C9BC00B88BCB /* UnifiedSource15-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource15-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB52735C9BC00B88BCB /* UnifiedSource44-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource44-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB62735C9BC00B88BCB /* UnifiedSource46-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource46-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB72735C9BD00B88BCB /* UnifiedSource17-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource17-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB82735C9BD00B88BCB /* UnifiedSource26-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource26-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBB92735C9BD00B88BCB /* UnifiedSource47-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource47-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBBA2735C9BD00B88BCB /* UnifiedSource30-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource30-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBBB2735C9BD00B88BCB /* UnifiedSource43-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource43-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBBC2735C9BD00B88BCB /* UnifiedSource8-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource8-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBBD2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource37-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDBBE2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource32-nonARC.mm"; sourceTree = "<group>"; };
+		5CBAA7FA2440EA0200564A8B /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		5CFACF62226F73C60056C7D0 /* libboringssl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libboringssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		634910DF1E9D3FF300880309 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		7A010BCA1D877C0500EDE72A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		7B9FC57E28A26137007570E7 /* TestIPC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestIPC; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B9FC5A928A38F2E007570E7 /* libWebKitIPC.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitIPC.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B9FC5B028A5221B007570E7 /* CryptoTokenKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoTokenKit.framework; path = System/Library/Frameworks/CryptoTokenKit.framework; sourceTree = SDKROOT; };
+		7B9FC5B628A52236007570E7 /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitPlatform.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C83DF681D0A590C00FEBCF3 /* libTestWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTestWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C83E0231D0A5AE400FEBCF3 /* TestWTF */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWTF; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTestWebKitAPI.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DD76FA10486AA7600D96B5E /* TestWebKitAPI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWebKitAPI; sourceTree = BUILT_PRODUCTS_DIR; };
+		97DAA8CF2DF70B91004B3040 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPI.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		A13EBB541B8734E000097110 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugIn.mm; sourceTree = "<group>"; };
+		A176D2472D6D295400C63915 /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A176D2482D6D295400C63915 /* NetworkingExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = NetworkingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A176D2492D6D295400C63915 /* WebContentExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1798B8322433647000764BD /* WebProcessPlugInWithInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessPlugInWithInternals.h; sourceTree = "<group>"; };
+		A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessPlugInWithInternals.mm; sourceTree = "<group>"; };
+		A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPIResources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestWebKitAPI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A17C58242C9AAA25009DD0B5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A17C582E2C9B3EAD009DD0B5 /* TestWebKitAPIBundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPIBundle.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A17C58452C9BF45A009DD0B5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
+		BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundleTestWebKitAPI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InjectedBundle-Info.plist"; sourceTree = "<group>"; };
+		BC575A9E126E75FB006F0F12 /* InjectedBundleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleTest.h; sourceTree = "<group>"; };
+		BC575A9F126E7657006F0F12 /* InjectedBundleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleController.h; sourceTree = "<group>"; };
+		BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleController.cpp; sourceTree = "<group>"; };
+		BC90964D1255620C00083756 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCB9E9F011235BDE00A137E0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Carbon.framework; sourceTree = SDKROOT; };
+		C081224813FC1B0300DC39AE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C20F88A62295B96700D610FA /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CDA3159C1ED5643F009F60D3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		DD403D4928EB932F009B4684 /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD5697FF2DC1320500050321 /* rdar150228472.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rdar150228472.swift; sourceTree = "<group>"; };
+		DDB3724528ECE32F00A2F32D /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDF3A82928930475005920CF /* gtest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gtest.xcodeproj; path = ../../Source/ThirdParty/gtest/xcode/gtest.xcodeproj; sourceTree = SOURCE_ROOT; };
+		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		07A40C282F8CB37A0003E8D7 /* Exceptions for "TestWebKitAPILibrary" folder in "TestWebKitAPILibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestWebKitAPILibrary.swift,
+			);
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+		};
+		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift",
+				"WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift",
+				"WebKit/WebPage/AppKit Gesture Tests/EmbeddedAppKitGesturesTests.swift",
+				WebKit/WebPage/EditingFontSizeTests.swift,
+				WebKit/WebPage/JavaScriptExpressionTests.swift,
+				WebKit/WebPage/NavigatorWebDriverOverride.swift,
+				WebKit/WebPage/SendInspectorMessage.swift,
+				WebKit/WebPage/SimulateClickOverTextTests.swift,
+				WebKit/WebPage/URLSchemeHandlerTests.swift,
+				WebKit/WebPage/WebPageMouseEventsTests.swift,
+				WebKit/WebPage/WebPageNavigationTests.swift,
+				WebKit/WebPage/WebPageTests.swift,
+				WebKit/WebPage/WebPageTransferableTests.swift,
+				WebKit/WKWebView/CodingTests.swift,
+				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
+			);
+			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
+		};
+		07C907B32F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPILibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			additionalCompilerFlagsByRelativePath = {
+				cocoa/WebExtensionUtilities.mm = "-fobjc-arc";
+			};
+			membershipExceptions = (
+				"cocoa/AppKit+Extras.swift",
+				"cocoa/Bundle+Extras.swift",
+				"cocoa/Foundation+Extras.swift",
+				cocoa/HTTPServer.mm,
+				cocoa/HTTPServer.swift,
+				cocoa/JavaScriptMessages.swift,
+				cocoa/JavaScriptTypes.swift,
+				cocoa/StdLibExtras.swift,
+				"cocoa/SwiftUI+Extras.swift",
+				cocoa/TestCocoaImageAndCocoaColor.mm,
+				cocoa/TestContextMenuDriver.mm,
+				cocoa/TestElementFullscreenDelegate.mm,
+				cocoa/TestNSBundleExtras.m,
+				cocoa/TestPDFDocument.swift,
+				cocoa/UtilitiesCocoa.mm,
+				cocoa/WebExtensionUtilities.mm,
+				"cocoa/WebPage+Extras.swift",
+				"cocoa/WebPage+JavaScriptExpression.swift",
+				"cocoa/WebPageConfiguration+Extras.swift",
+				cocoa/WebTransportServer.mm,
+				Counters.cpp,
+				GraphicsTestUtilities.cpp,
+				ios/DragAndDropSimulatorIOS.mm,
+				ios/PreferredContentMode.mm,
+				ios/TestUIMenuBuilder.mm,
+				ios/TestWKWebViewController.mm,
+				ios/UIKitTestingHelpers.mm,
+				mac/DragAndDropSimulatorMac.mm,
+				mac/GamepadMappings/GoogleStadia.mm,
+				mac/GamepadMappings/LogitechF310.mm,
+				mac/GamepadMappings/LogitechF710.mm,
+				mac/GamepadMappings/MicrosoftXboxOne.mm,
+				mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm,
+				mac/GamepadMappings/SonyDualShock3.mm,
+				mac/GamepadMappings/SonyDualShock4.mm,
+				mac/GamepadMappings/SteelSeriesNimbus.mm,
+				mac/GamepadMappings/SunLightApplicationGenericNES.mm,
+				mac/JavaScriptTestMac.mm,
+				mac/NSFontPanelTesting.mm,
+				mac/OffscreenWindow.mm,
+				mac/PlatformUtilitiesMac.mm,
+				mac/PlatformWebViewMac.mm,
+				mac/SyntheticBackingScaleFactorWindow.m,
+				mac/TestBrowsingContextLoadDelegate.mm,
+				mac/TestDraggingInfo.mm,
+				mac/TestFilePromiseReceiver.mm,
+				mac/TestFontOptions.mm,
+				mac/TestInspectorBar.mm,
+				mac/VirtualGamepad.mm,
+				mac/WebKitAgnosticTest.mm,
+			);
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+		};
+		07C907B42F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWTFLibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				cocoa/UtilitiesCocoa.mm,
+				Counters.cpp,
+			);
+			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
+		};
+		07C907B52F820907003A09D8 /* Exceptions for "Helpers" folder in "TestIPC" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				cocoa/UtilitiesCocoa.mm,
+			);
+			target = 7B9FC39428A26137007570E7 /* TestIPC */;
+		};
+		07C907B72F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWGSL" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				cocoa/UtilitiesCocoa.mm,
+			);
+			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
+		};
+		07C907B82F820907003A09D8 /* Exceptions for "Helpers" folder in "InjectedBundleTestWebKitAPI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				cocoa/PlatformUtilitiesCocoa.mm,
+				cocoa/UtilitiesCocoa.mm,
+				mac/PlatformUtilitiesMac.mm,
+				PlatformUtilities.cpp,
+			);
+			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
+		};
+		07C907B92F820907003A09D8 /* Exceptions for "Helpers" folder in "WebProcessPlugIn" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				cocoa/PlatformUtilitiesCocoa.mm,
+				cocoa/UtilitiesCocoa.mm,
+			);
+			target = A13EBB481B87339E00097110 /* WebProcessPlugIn */;
+		};
+		07C913DA2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPILibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			additionalCompilerFlagsByRelativePath = {
+				WebKit/WKWebView/WKWebExtensionAPILocalization.mm = "-fobjc-arc";
+			};
+			membershipExceptions = (
+				JavaScriptCore/DisallowVMEntry.cpp,
+				JavaScriptCore/InspectorConsoleMessage.cpp,
+				JavaScriptCore/JSRunLoopTimer.mm,
+				JavaScriptCore/MarkedVector.cpp,
+				JavaScriptCore/PropertySlot.cpp,
+				Misc/TestRunnerTests.cpp,
+				TestWebKitAPIAdditionsHook.mm,
+				WebCore/AffineTransform.cpp,
+				WebCore/AnimationFrameRate.cpp,
+				WebCore/ApduTest.cpp,
+				WebCore/ApplicationManifestParser.cpp,
+				WebCore/ASN1Utilities.cpp,
+				WebCore/AudioSampleFormat.cpp,
+				WebCore/CARingBufferTest.cpp,
+				WebCore/CBORReaderTest.cpp,
+				WebCore/CBORValueTest.cpp,
+				WebCore/CBORWriterTest.cpp,
+				WebCore/cocoa/AttributedStringFontCache.mm,
+				WebCore/cocoa/AudioStreamDescriptionCocoa.mm,
+				WebCore/cocoa/AudioVideoRendererAVFObjCTests.mm,
+				WebCore/cocoa/AVFoundationSoftLinkTest.mm,
+				WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp,
+				WebCore/cocoa/CaptionPreferencesTests.mm,
+				WebCore/cocoa/CoreMediaUtilities.mm,
+				WebCore/cocoa/DatabaseTrackerTest.mm,
+				WebCore/cocoa/GraphicsContextCGTests.mm,
+				WebCore/cocoa/H264UtilitiesCocoaTests.mm,
+				WebCore/cocoa/ImageRotationSessionVT.cpp,
+				WebCore/cocoa/IOSurfaceTests.mm,
+				WebCore/cocoa/MediaPlayerPrivateAVFoundationObjCTests.mm,
+				WebCore/cocoa/PrivateClickMeasurementCocoa.mm,
+				WebCore/cocoa/ResourceMonitor.mm,
+				WebCore/cocoa/ScrollbarWidthCrash.mm,
+				WebCore/cocoa/SerializedCryptoKeyWrap.mm,
+				WebCore/cocoa/ShareableSpatialImageTests.mm,
+				WebCore/cocoa/SharedBuffer.mm,
+				WebCore/cocoa/SharedVideoFrame.mm,
+				WebCore/cocoa/TestGraphicsContextGLCocoa.mm,
+				WebCore/cocoa/TestUTIRegistry.cpp,
+				WebCore/cocoa/TestUTIUtilities.cpp,
+				WebCore/cocoa/WebCoreDecompressionSessionTests.mm,
+				WebCore/cocoa/WebCoreNSURLSession.mm,
+				WebCore/cocoa/XMLParsing.mm,
+				WebCore/ColorTests.cpp,
+				WebCore/ComplexTextController.cpp,
+				WebCore/ContentExtensions.cpp,
+				WebCore/ContextMenuAction.cpp,
+				WebCore/CookieJar.cpp,
+				WebCore/CryptoDigest.cpp,
+				WebCore/CSSParser.cpp,
+				WebCore/CSSParserFastPaths.cpp,
+				WebCore/CSSTokenizerTests.cpp,
+				WebCore/CtapPinTest.cpp,
+				WebCore/CtapRequestTest.cpp,
+				WebCore/CtapResponseTest.cpp,
+				WebCore/Decimal.cpp,
+				WebCore/DFACombiner.cpp,
+				WebCore/DFAMinimizer.cpp,
+				WebCore/DisplayListRecorderTests.cpp,
+				WebCore/DocumentOrder.cpp,
+				WebCore/FidoHidMessageTest.cpp,
+				WebCore/FileMonitor.cpp,
+				WebCore/FloatPointTests.cpp,
+				WebCore/FloatQuadTests.cpp,
+				WebCore/FloatRectTests.cpp,
+				WebCore/FloatSegmentTest.cpp,
+				WebCore/FloatSizeTests.cpp,
+				WebCore/FontCascade.cpp,
+				WebCore/FontShadowTests.cpp,
+				WebCore/GridPosition.cpp,
+				WebCore/HTMLParserIdioms.cpp,
+				WebCore/HTTPHeaderField.cpp,
+				WebCore/HTTPHeaderMap.cpp,
+				WebCore/HTTPParsers.cpp,
+				WebCore/HysteresisActivityTests.cpp,
+				WebCore/IDBKeyData.cpp,
+				WebCore/IDBSerializationTest.cpp,
+				WebCore/ImageBufferTests.cpp,
+				WebCore/IntPointTests.cpp,
+				WebCore/IntRectTests.cpp,
+				WebCore/IntSizeTests.cpp,
+				WebCore/ios/PreviewConverter.cpp,
+				WebCore/IPAddressSpaceTests.cpp,
+				WebCore/IPAddressTests.cpp,
+				WebCore/ISOBox.cpp,
+				WebCore/KeyedCoding.cpp,
+				WebCore/LayoutRoundedRectTests.cpp,
+				WebCore/LayoutUnitTests.cpp,
+				WebCore/Logging.cpp,
+				WebCore/LoginStatus.cpp,
+				WebCore/MarkedText.cpp,
+				WebCore/MediaReorderQueue.cpp,
+				WebCore/MIMESniffer.cpp,
+				WebCore/MIMETypeRegistry.cpp,
+				WebCore/MixedContentChecker.cpp,
+				WebCore/MonospaceFontTests.cpp,
+				WebCore/NowPlayingInfoTests.cpp,
+				WebCore/ParsedContentRange.cpp,
+				WebCore/ParsedContentType.cpp,
+				WebCore/PathTests.cpp,
+				WebCore/PixelBufferConversionTests.cpp,
+				WebCore/PlatformCAAnimationKeyPath.cpp,
+				WebCore/PlatformDynamicRangeLimitTests.cpp,
+				WebCore/PrivateClickMeasurement.cpp,
+				WebCore/PublicSuffix.cpp,
+				WebCore/PushDatabase.cpp,
+				WebCore/PushMessageCrypto.cpp,
+				WebCore/RegionTests.cpp,
+				WebCore/RegistrableDomain.cpp,
+				WebCore/RenderStyleChange.cpp,
+				WebCore/RTCRtpSFrameTransformerTests.cpp,
+				WebCore/SampleMap.cpp,
+				WebCore/SecurityOrigin.cpp,
+				WebCore/SerializedScriptValue.cpp,
+				WebCore/ServiceWorkerRoutines.cpp,
+				WebCore/ShareableBitmap.cpp,
+				WebCore/SharedBuffer.cpp,
+				WebCore/SharedBufferTest.cpp,
+				WebCore/SharedMemoryTests.cpp,
+				WebCore/SharedTimebaseTests.cpp,
+				WebCore/StaticRangeValidity.cpp,
+				WebCore/StringUtilities.mm,
+				WebCore/StringWithDirection.cpp,
+				WebCore/STUNMessageParsingTest.cpp,
+				WebCore/StyleGradient.cpp,
+				WebCore/SVGImageCasts.cpp,
+				WebCore/TextBoundaries.cpp,
+				WebCore/TextCodec.cpp,
+				WebCore/TimeRanges.cpp,
+				WebCore/TransformationMatrix.cpp,
+				WebCore/U2fCommandConstructorTest.cpp,
+				WebCore/URLParserTextEncoding.cpp,
+				WebCore/UserAgentStringParser.cpp,
+				WebCore/WritingModeTests.cpp,
+				WebCore/XRCompositionLayer.cpp,
+				WebCore/YouTubePluginReplacement.cpp,
+				WebKit/WKPage/AboutBlankLoad.cpp,
+				WebKit/WKPage/CanHandleRequest.cpp,
+				WebKit/WKPage/CloseFromWithinCreatePage.cpp,
+				WebKit/WKPage/CloseThenTerminate.cpp,
+				WebKit/WKPage/cocoa/AccessibilityIncreaseContrast.mm,
+				WebKit/WKPage/cocoa/AccessibilityReduceMotion.mm,
+				WebKit/WKPage/cocoa/AccessibilityRemoteUIApp.mm,
+				WebKit/WKPage/cocoa/AttributedSubstringForProposedRangeCAPI.mm,
+				WebKit/WKPage/cocoa/Battery.mm,
+				WebKit/WKPage/cocoa/ContextMenuDownload.mm,
+				WebKit/WKPage/cocoa/ContextMenuImgWithVideo.mm,
+				WebKit/WKPage/cocoa/CustomBundleObject.mm,
+				WebKit/WKPage/cocoa/CustomBundleParameter.mm,
+				WebKit/WKPage/cocoa/EditorCommands.mm,
+				WebKit/WKPage/cocoa/EnableAccessibility.mm,
+				WebKit/WKPage/cocoa/FetchLocalFile.mm,
+				WebKit/WKPage/cocoa/FindMatches.mm,
+				WebKit/WKPage/cocoa/FontRegistrySandboxCheck.mm,
+				WebKit/WKPage/cocoa/ForceLightAppearanceInBundle.mm,
+				WebKit/WKPage/cocoa/GetBackingScaleFactor.mm,
+				WebKit/WKPage/cocoa/GetPIDAfterAbortedProcessLaunch.cpp,
+				WebKit/WKPage/cocoa/InjectedBundleAppleEvent.cpp,
+				WebKit/WKPage/cocoa/LocalizedDeviceModel.mm,
+				WebKit/WKPage/cocoa/LogForwarding.mm,
+				WebKit/WKPage/cocoa/MediaSessionCoordinatorTest.mm,
+				WebKit/WKPage/cocoa/MobileAssetSandboxCheck.mm,
+				WebKit/WKPage/cocoa/NetworkProcessCrashWithPendingConnection.mm,
+				WebKit/WKPage/cocoa/OverrideAppleLanguagesPreference.mm,
+				WebKit/WKPage/cocoa/PasteboardNotifications.mm,
+				WebKit/WKPage/cocoa/PictureInPictureSupport.mm,
+				WebKit/WKPage/cocoa/PreferenceChanges.mm,
+				WebKit/WKPage/cocoa/ResponsivenessTimerCrash.mm,
+				WebKit/WKPage/cocoa/RestoreStateAfterTermination.mm,
+				WebKit/WKPage/cocoa/ScrollPinningBehaviors.mm,
+				WebKit/WKPage/cocoa/SleepDisabler.mm,
+				WebKit/WKPage/cocoa/SyscallUnixSandboxCheck.mm,
+				WebKit/WKPage/cocoa/SystemBeep.mm,
+				WebKit/WKPage/cocoa/WeakObjCPtr.mm,
+				WebKit/WKPage/cocoa/WebFilter.mm,
+				WebKit/WKPage/cocoa/XPCEndpoint.mm,
+				WebKit/WKPage/DidAssociateFormControls.cpp,
+				WebKit/WKPage/DidNotHandleKeyDown.cpp,
+				WebKit/WKPage/DidRemoveFrameFromHiearchyInPageCache.cpp,
+				WebKit/WKPage/DocumentStartUserScriptAlertCrash.cpp,
+				WebKit/WKPage/DOMWindowExtensionBasic.cpp,
+				WebKit/WKPage/DOMWindowExtensionNoCache.cpp,
+				WebKit/WKPage/DownloadDecideDestinationCrash.cpp,
+				WebKit/WKPage/EnvironmentUtilitiesTest.cpp,
+				WebKit/WKPage/EphemeralSessionPushStateNoHistoryCallback.cpp,
+				WebKit/WKPage/EvaluateJavaScript.cpp,
+				WebKit/WKPage/EventModifiers.cpp,
+				WebKit/WKPage/FailedLoad.cpp,
+				WebKit/WKPage/Find.cpp,
+				WebKit/WKPage/FirstMeaningfulPaintMilestone.cpp,
+				WebKit/WKPage/ForceRepaint.cpp,
+				WebKit/WKPage/FrameMIMETypeHTML.cpp,
+				WebKit/WKPage/FrameMIMETypePNG.cpp,
+				WebKit/WKPage/Geolocation.cpp,
+				WebKit/WKPage/GetInjectedBundleInitializationUserDataCallback.cpp,
+				WebKit/WKPage/HitTestResultNodeHandle.cpp,
+				WebKit/WKPage/InjectedBundleBasic.cpp,
+				WebKit/WKPage/InjectedBundleDisableOverrideBuiltinsBehavior.cpp,
+				WebKit/WKPage/InjectedBundleFrameHitTest.cpp,
+				WebKit/WKPage/InjectedBundleInitializationUserDataCallbackWins.cpp,
+				WebKit/WKPage/InjectedBundleMakeAllShadowRootsOpen.cpp,
+				WebKit/WKPage/LayoutMilestonesWithAllContentInFrame.cpp,
+				WebKit/WKPage/LoadAlternateHTMLStringWithNonDirectoryURL.cpp,
+				WebKit/WKPage/LoadCanceledNoServerRedirectCallback.cpp,
+				WebKit/WKPage/LoadPageOnCrash.cpp,
+				WebKit/WKPage/mac/CustomProtocolsSyncXHRTest.mm,
+				WebKit/WKPage/mac/DeferredViewInWindowStateChange.mm,
+				WebKit/WKPage/mac/WKThumbnailView.mm,
+				WebKit/WKPage/MenuTypesForMouseEvents.cpp,
+				WebKit/WKPage/ModalAlertsSPI.cpp,
+				WebKit/WKPage/MouseMoveAfterCrash.cpp,
+				WebKit/WKPage/NavigationClientDefaultCrypto.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayout.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutFails.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutForImages.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutFrames.cpp,
+				WebKit/WKPage/PageLoadBasic.cpp,
+				WebKit/WKPage/PageLoadDidChangeLocationWithinPageForFrame.cpp,
+				WebKit/WKPage/PageLoadEmptyURL.cpp,
+				WebKit/WKPage/PageLoadState.cpp,
+				WebKit/WKPage/ParentFrame.cpp,
+				WebKit/WKPage/PendingAPIRequestURL.cpp,
+				WebKit/WKPage/PreventEmptyUserAgent.cpp,
+				WebKit/WKPage/PrivateBrowsingPushStateNoHistoryCallback.cpp,
+				WebKit/WKPage/ProcessDidTerminate.cpp,
+				WebKit/WKPage/ProvisionalURLAfterWillSendRequestCallback.cpp,
+				WebKit/WKPage/ReloadPageAfterCrash.cpp,
+				WebKit/WKPage/ResizeReversePaginatedWebView.cpp,
+				WebKit/WKPage/ResizeWindowAfterCrash.cpp,
+				WebKit/WKPage/RestoreSessionState.cpp,
+				WebKit/WKPage/RestoreSessionStateContainingFormData.cpp,
+				WebKit/WKPage/ShouldKeepCurrentBackForwardListItemInList.cpp,
+				WebKit/WKPage/SpacebarScrolling.cpp,
+				WebKit/WKPage/TerminateTwice.cpp,
+				WebKit/WKPage/TextFieldDidBeginAndEndEditing.cpp,
+				WebKit/WKPage/UserMedia.cpp,
+				WebKit/WKPage/UserMessage.cpp,
+				WebKit/WKPage/WebArchive.cpp,
+				WebKit/WKPage/WillLoad.cpp,
+				WebKit/WKPage/WillSendSubmitEvent.cpp,
+				WebKit/WKPage/WKImageCreateCGImageCrash.cpp,
+				WebKit/WKPage/WKPageConfiguration.cpp,
+				WebKit/WKPage/WKPageCopySessionStateWithFiltering.cpp,
+				WebKit/WKPage/WKPageGetScaleFactorNotZero.cpp,
+				WebKit/WKPage/WKPageIsPlayingAudio.cpp,
+				WebKit/WKPage/WKPreferences.cpp,
+				WebKit/WKPage/WKRetainPtr.cpp,
+				WebKit/WKPage/WKSecurityOrigin.cpp,
+				WebKit/WKPage/WKString.cpp,
+				WebKit/WKPage/WKStringJSString.cpp,
+				WebKit/WKWebView/AdvancedPrivacyProtections.mm,
+				WebKit/WKWebView/AllowInlinePlaybackInDesktopClassBrowsing.mm,
+				WebKit/WKWebView/AnimationControl.mm,
+				WebKit/WKWebView/DictationStreamingOpacity.mm,
+				WebKit/WKWebView/FullscreenLifecycle.mm,
+				WebKit/WKWebView/GetUserMedia.mm,
+				WebKit/WKWebView/GetUserMediaNavigation.mm,
+				WebKit/WKWebView/GetUserMediaReprompt.mm,
+				WebKit/WKWebView/InjectedBundleHitTest.mm,
+				WebKit/WKWebView/InstanceMethodSwizzler.mm,
+				WebKit/WKWebView/ios/AccessibilityTestsIOS.mm,
+				WebKit/WKWebView/ios/ActionSheetTests.mm,
+				WebKit/WKWebView/ios/ApplicationStateTracking.mm,
+				WebKit/WKWebView/ios/AutocorrectionTestsIOS.mm,
+				WebKit/WKWebView/ios/BacklightLevelNotification.mm,
+				WebKit/WKWebView/ios/CustomContentViewGestures.mm,
+				WebKit/WKWebView/ios/DataDetectorsTestIOS.mm,
+				WebKit/WKWebView/ios/DataListTextSuggestionTests.mm,
+				WebKit/WKWebView/ios/DragAndDropTestsIOS.mm,
+				WebKit/WKWebView/ios/ElementActionTests.mm,
+				WebKit/WKWebView/ios/EnterKeyHintTests.mm,
+				WebKit/WKWebView/ios/FocusPreservationTests.mm,
+				WebKit/WKWebView/ios/FullscreenLayoutParameters.mm,
+				WebKit/WKWebView/ios/FullscreenTouchSecheuristicTests.cpp,
+				WebKit/WKWebView/ios/GestureRecognizerTests.mm,
+				WebKit/WKWebView/ios/GrantAccessToMobileAssets.mm,
+				WebKit/WKWebView/ios/KeyboardInputTestsIOS.mm,
+				WebKit/WKWebView/ios/ModalDialogDuringOverlappingFocus.mm,
+				WebKit/WKWebView/ios/OverflowScrollViewTests.mm,
+				WebKit/WKWebView/ios/RenderingProgressTests.mm,
+				WebKit/WKWebView/ios/ScrollViewBouncesTests.mm,
+				WebKit/WKWebView/ios/ScrollViewInsetTests.mm,
+				WebKit/WKWebView/ios/ScrollViewScrollabilityTests.mm,
+				WebKit/WKWebView/ios/SelectionByWord.mm,
+				WebKit/WKWebView/ios/SelectionModifyByParagraphBoundary.mm,
+				WebKit/WKWebView/ios/SetTimeoutFunction.mm,
+				WebKit/WKWebView/ios/ShareSheetTests.mm,
+				WebKit/WKWebView/ios/SynchronousTimeoutTests.mm,
+				WebKit/WKWebView/ios/TestInputDelegate.mm,
+				WebKit/WKWebView/ios/TextAlternatives.mm,
+				WebKit/WKWebView/ios/TextAutosizingBoost.mm,
+				WebKit/WKWebView/ios/TextServicesTests.mm,
+				WebKit/WKWebView/ios/TextStyleFontSize.mm,
+				WebKit/WKWebView/ios/TouchEventTests.mm,
+				WebKit/WKWebView/ios/UIFocusTests.mm,
+				WebKit/WKWebView/ios/UIPasteboardTests.mm,
+				WebKit/WKWebView/ios/UIWKInteractionViewProtocol.mm,
+				WebKit/WKWebView/ios/UserInterfaceIdiomUpdate.mm,
+				WebKit/WKWebView/ios/Viewport.mm,
+				WebKit/WKWebView/ios/VisualViewport.mm,
+				WebKit/WKWebView/ios/WindowOrientation.mm,
+				WebKit/WKWebView/ios/WKScrollViewTests.mm,
+				WebKit/WKWebView/ios/WKWebViewAutofillTests.mm,
+				WebKit/WKWebView/ios/WKWebViewOpaque.mm,
+				WebKit/WKWebView/ios/WKWebViewPausePlayingAudioTests.mm,
+				WebKit/WKWebView/mac/AcceptsFirstMouse.mm,
+				WebKit/WKWebView/mac/AttributedString.mm,
+				WebKit/WKWebView/mac/AttributedSubstringForProposedRange.mm,
+				WebKit/WKWebView/mac/BackForwardList.mm,
+				WebKit/WKWebView/mac/BackgroundColor.mm,
+				WebKit/WKWebView/mac/CancelLoadFromResourceLoadDelegate.mm,
+				WebKit/WKWebView/mac/CandidateTests.mm,
+				WebKit/WKWebView/mac/CloseNewWindowInNavigationPolicyDelegate.mm,
+				WebKit/WKWebView/mac/CloseWhileCommittingLoad.mm,
+				WebKit/WKWebView/mac/ColorInputTests.mm,
+				WebKit/WKWebView/mac/ContextMenuCanCopyURL.mm,
+				WebKit/WKWebView/mac/ContextMenuDefaultItemsHaveTags.mm,
+				WebKit/WKWebView/mac/ContextMenuMouseEvents.mm,
+				WebKit/WKWebView/mac/ContextMenuTests.mm,
+				WebKit/WKWebView/mac/CrossPartitionFileSchemeAccess.mm,
+				WebKit/WKWebView/mac/DateInputTests.mm,
+				WebKit/WKWebView/mac/DeviceScaleFactorOnBack.mm,
+				WebKit/WKWebView/mac/DisableAutomaticSpellingCorrection.mm,
+				WebKit/WKWebView/mac/DOMHTMLTableCellCellAbove.mm,
+				WebKit/WKWebView/mac/DOMHTMLVideoElementWrapper.mm,
+				WebKit/WKWebView/mac/DOMNode.mm,
+				WebKit/WKWebView/mac/DOMNodeFromJSObject.mm,
+				WebKit/WKWebView/mac/DOMRangeOfString.mm,
+				WebKit/WKWebView/mac/DragAndDropTestsMac.mm,
+				WebKit/WKWebView/mac/DynamicDeviceScaleFactor.mm,
+				WebKit/WKWebView/mac/EditableLegacyWebView.mm,
+				WebKit/WKWebView/mac/ElementAtPointInWebFrame.mm,
+				WebKit/WKWebView/mac/FirstResponderScrollingPosition.mm,
+				WebKit/WKWebView/mac/FirstResponderSuppression.mm,
+				WebKit/WKWebView/mac/FontManagerTests.mm,
+				WebKit/WKWebView/mac/FragmentNavigation.mm,
+				WebKit/WKWebView/mac/FullscreenFocus.mm,
+				WebKit/WKWebView/mac/FullscreenPointerLeave.mm,
+				WebKit/WKWebView/mac/FullscreenZoomInitialFrame.mm,
+				WebKit/WKWebView/mac/GetMatchedCSSRules.mm,
+				WebKit/WKWebView/mac/GrammarMarkerPrecedence.mm,
+				WebKit/WKWebView/mac/HIDGamepads.mm,
+				WebKit/WKWebView/mac/HTMLCollectionNamedItem.mm,
+				WebKit/WKWebView/mac/HTMLFormCollectionNamedItem.mm,
+				WebKit/WKWebView/mac/ImmediateActionTests.mm,
+				WebKit/WKWebView/mac/InspectorBar.mm,
+				WebKit/WKWebView/mac/InWindowFullscreen.mm,
+				WebKit/WKWebView/mac/IsNavigationActionTrusted.mm,
+				WebKit/WKWebView/mac/JavascriptURLNavigation.mm,
+				WebKit/WKWebView/mac/JSWrapperForNodeInWebFrame.mm,
+				WebKit/WKWebView/mac/KeyboardEventTests.mm,
+				WebKit/WKWebView/mac/LegacyDragAndDropTests.mm,
+				WebKit/WKWebView/mac/LimitTitleSize.mm,
+				WebKit/WKWebView/mac/LoadWebArchive.mm,
+				WebKit/WKWebView/mac/LoadWebViewWithEmptyAppName.mm,
+				WebKit/WKWebView/mac/MediaPlaybackSleepAssertion.mm,
+				WebKit/WKWebView/mac/MemoryCacheDisableWithinResourceLoadDelegate.mm,
+				WebKit/WKWebView/mac/MemoryCachePruneWithinResourceLoadDelegate.mm,
+				WebKit/WKWebView/mac/MemoryPressureHandler.mm,
+				WebKit/WKWebView/mac/MenuTypesForMouseEvents.mm,
+				WebKit/WKWebView/mac/MouseEventTests.mm,
+				WebKit/WKWebView/mac/NoPolicyDelegateResponse.mm,
+				WebKit/WKWebView/mac/NSResponderTests.mm,
+				WebKit/WKWebView/mac/PageVisibilityStateWithWindowChanges.mm,
+				WebKit/WKWebView/mac/RenderedImageFromDOMNode.mm,
+				WebKit/WKWebView/mac/RenderedImageFromDOMRange.mm,
+				WebKit/WKWebView/mac/RunningBoardManagement.mm,
+				WebKit/WKWebView/mac/ScrollbarTests.mm,
+				WebKit/WKWebView/mac/ScrollingCoordinatorTests.mm,
+				WebKit/WKWebView/mac/SetAndUpdateCacheModel.mm,
+				WebKit/WKWebView/mac/SetDocumentURI.mm,
+				WebKit/WKWebView/mac/SimplifyMarkup.mm,
+				WebKit/WKWebView/mac/SkipAdInPictureInPicture.mm,
+				WebKit/WKWebView/mac/SpellCheckerDocumentTag.mm,
+				WebKit/WKWebView/mac/StartLoadInDidFailProvisionalLoad.mm,
+				WebKit/WKWebView/mac/StopLoadingFromDidFinishLoading.mm,
+				WebKit/WKWebView/mac/StopLoadingFromDidReceiveResponse.mm,
+				WebKit/WKWebView/mac/StringByEvaluatingJavaScriptFromString.mm,
+				WebKit/WKWebView/mac/StringTruncator.mm,
+				WebKit/WKWebView/mac/StringWidth.mm,
+				WebKit/WKWebView/mac/SubresourceErrorCrash.mm,
+				WebKit/WKWebView/mac/TypingStyleCrash.mm,
+				WebKit/WKWebView/mac/ViewportSizeForViewportUnits.mm,
+				WebKit/WKWebView/mac/WebScriptObjectDescription.mm,
+				WebKit/WKWebView/mac/WebViewCanPasteURL.mm,
+				WebKit/WKWebView/mac/WebViewCanPasteZeroPng.mm,
+				WebKit/WKWebView/mac/WebViewCloseInsideDidFinishLoadForFrame.mm,
+				WebKit/WKWebView/mac/WebViewDidCreateJavaScriptContext.mm,
+				WebKit/WKWebView/mac/WebViewDidRemoveFrameFromHierarchy.mm,
+				WebKit/WKWebView/mac/WebViewIconLoading.mm,
+				WebKit/WKWebView/mac/WebViewScheduleInRunLoop.mm,
+				WebKit/WKWebView/mac/WillPerformClientRedirectToURLCrash.mm,
+				WebKit/WKWebView/mac/WillSendSubmitEvent.mm,
+				WebKit/WKWebView/mac/WindowlessWebViewWithMedia.mm,
+				WebKit/WKWebView/mac/WKWebViewCoders.mm,
+				WebKit/WKWebView/mac/WKWebViewMacEditingTests.mm,
+				WebKit/WKWebView/mac/WKWebViewTitlebarSeparatorTests.mm,
+				WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm,
+				WebKit/WKWebView/MediaStreamingActivitySuspended.mm,
+				WebKit/WKWebView/MediaStreamTrackDetached.mm,
+				WebKit/WKWebView/MSEIsTypeSupportedCaching.mm,
+				WebKit/WKWebView/NoHistoryItemScrollToFragment.mm,
+				WebKit/WKWebView/NowPlayingMetadataObserver.mm,
+				WebKit/WKWebView/NowPlayingSession.mm,
+				WebKit/WKWebView/OrthogonalFlowAvailableSize.mm,
+				WebKit/WKWebView/ParentalControlsContentFilteringTests.mm,
+				WebKit/WKWebView/SmartLists.mm,
+				WebKit/WKWebView/SpatialAudioExperience.mm,
+				WebKit/WKWebView/WebRTC.mm,
+				WebKit/WKWebView/WKBackForwardListTests.mm,
+				WebKit/WKWebView/WKWebExtensionAPILocalization.mm,
+				WebKit/WKWebView/WKWebViewLogging.mm,
+				WebKit/WKWebView/WKWebViewSpatialTrackingLabels.mm,
+				WebKitLegacy/cocoa/WebPreferencesTest.mm,
+				WebKitLegacy/ios/AudioSessionCategoryIOS.mm,
+				WebKitLegacy/ios/DateTimeInputsAccessoryViewTests.mm,
+				WebKitLegacy/ios/JSLockTakesWebThreadLock.mm,
+				WebKitLegacy/ios/PreemptVideoFullscreen.mm,
+				WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm,
+				WebKitLegacy/ios/ScrollToRevealSelection.mm,
+				WebKitLegacy/ios/SnapshotViaRenderInContext.mm,
+				WebKitLegacy/ios/WebGLNoCrashOnOtherThreadAccess.mm,
+				WebKitLegacy/ios/WebGLPrepareDisplayOnWebThread.mm,
+				WebKitLegacy/ios/WebThreadLock.mm,
+				WebKitLegacy/mac/AccessingPastedImage.mm,
+				WebKitLegacy/mac/ClosingWebView.mm,
+				WebKitLegacy/mac/CustomProtocolsInvalidScheme.mm,
+				WebKitLegacy/mac/CustomProtocolsTest.mm,
+				WebKitLegacy/mac/DeallocWebViewInEventListener.mm,
+				WebKitLegacy/mac/DownloadThread.mm,
+				WebKitLegacy/mac/EarlyKVOCrash.mm,
+				WebKitLegacy/mac/EmbeddedPrintPagination.mm,
+				WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm,
+				WebKitLegacy/mac/URLExtras.mm,
+				WebKitLegacy/mac/UserContentTest.mm,
+				WebKitLegacy/mac/WKBrowsingContextLoadDelegateTest.mm,
+			);
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+		};
+		07C913DB2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWTFLibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			additionalCompilerFlagsByRelativePath = {
+				WTF/ScopedLambda.cpp = "-fno-elide-constructors";
+				WTF/cocoa/RetainPtrARC.mm = "-fobjc-arc";
+				WTF/cocoa/RetainPtrHashingCocoaARC.mm = "-fobjc-arc";
+				WTF/cocoa/RetainRefARC.mm = "-fobjc-arc";
+				WTF/cocoa/TypeCastsCocoaARC.mm = "-fobjc-arc";
+				WTF/darwin/OSObjectPtrCocoaARC.mm = "-fobjc-arc";
+				WTF/darwin/TypeCastsOSObjectCocoaARC.mm = "-fobjc-arc";
+			};
+			membershipExceptions = (
+				WTF/ASCIILiteral.cpp,
+				WTF/AtomString.cpp,
+				WTF/Base64.cpp,
+				WTF/BitSet.cpp,
+				WTF/BitVector.cpp,
+				WTF/BloomFilter.cpp,
+				WTF/BoxPtr.cpp,
+				WTF/BumpPointerAllocator.cpp,
+				WTF/cf/RetainPtr.cpp,
+				WTF/cf/RetainPtrHashing.cpp,
+				WTF/cf/RetainRef.cpp,
+				WTF/cf/StringCF.cpp,
+				WTF/cf/VectorCF.cpp,
+				WTF/CharacterProperties.cpp,
+				WTF/CheckedArithmeticOperations.cpp,
+				WTF/CheckedPtr.cpp,
+				WTF/CheckedRef.cpp,
+				WTF/cocoa/BlockPtr.mm,
+				WTF/cocoa/ContextualizedNSString.mm,
+				WTF/cocoa/LoggerCocoa.mm,
+				WTF/cocoa/RetainPtr.mm,
+				WTF/cocoa/RetainPtrARC.mm,
+				WTF/cocoa/RetainPtrHashingCocoa.mm,
+				WTF/cocoa/RetainPtrHashingCocoaARC.mm,
+				WTF/cocoa/RetainRef.mm,
+				WTF/cocoa/RetainRefARC.mm,
+				WTF/cocoa/TextStreamCocoa.cpp,
+				WTF/cocoa/TextStreamCocoa.mm,
+				WTF/cocoa/TypeCastsCocoa.mm,
+				WTF/cocoa/TypeCastsCocoaARC.mm,
+				WTF/cocoa/UUIDCocoa.mm,
+				WTF/cocoa/VectorCocoa.mm,
+				WTF/CompactPtr.cpp,
+				WTF/CompactRefPtr.cpp,
+				WTF/CompactRefPtrTuple.cpp,
+				WTF/CompactUniquePtrTuple.cpp,
+				WTF/CompactVariant.cpp,
+				WTF/CompletionHandlerTests.cpp,
+				WTF/ConcurrentPtrHashSet.cpp,
+				WTF/Condition.cpp,
+				WTF/CrossThreadCopierTests.cpp,
+				WTF/CrossThreadTask.cpp,
+				WTF/CString.cpp,
+				WTF/CStringView.cpp,
+				WTF/darwin/MachSendRight.cpp,
+				WTF/darwin/OSObjectPtr.cpp,
+				WTF/darwin/OSObjectPtrCocoa.mm,
+				WTF/darwin/OSObjectPtrCocoaARC.mm,
+				WTF/darwin/TypeCastsOSObjectCF.cpp,
+				WTF/darwin/TypeCastsOSObjectCocoa.mm,
+				WTF/darwin/TypeCastsOSObjectCocoaARC.mm,
+				WTF/darwin/WeakLinking.cpp,
+				WTF/DateMath.cpp,
+				WTF/Deque.cpp,
+				WTF/DragonBoxTest.cpp,
+				WTF/EmbeddedFixedVector.cpp,
+				WTF/EnumeratedArray.cpp,
+				WTF/EnumSet.cpp,
+				WTF/EnumTraits.cpp,
+				WTF/Expected.cpp,
+				WTF/FileSystem.cpp,
+				WTF/FixedBitVector.cpp,
+				WTF/FixedVector.cpp,
+				WTF/FormattedLogging.cpp,
+				WTF/Function.cpp,
+				WTF/GenerationalSet.cpp,
+				WTF/HashCountedSet.cpp,
+				WTF/Hasher.cpp,
+				WTF/HashMap.cpp,
+				WTF/HashSet.cpp,
+				WTF/HexNumber.cpp,
+				WTF/IndexSparseSet.cpp,
+				WTF/InlineMap.cpp,
+				WTF/Int128.cpp,
+				WTF/IntegerToStringConversion.cpp,
+				WTF/IntervalSet.cpp,
+				WTF/IteratorRange.cpp,
+				WTF/JSONValue.cpp,
+				WTF/LazyRef.cpp,
+				WTF/LazyUniqueRef.cpp,
+				WTF/LEBDecoder.cpp,
+				WTF/LifecycleLogger.cpp,
+				WTF/LineEnding.cpp,
+				WTF/ListHashSet.cpp,
+				WTF/Lock.cpp,
+				WTF/Logger.cpp,
+				WTF/Markable.cpp,
+				WTF/MathExtras.cpp,
+				WTF/MediaTime.cpp,
+				WTF/MemoryDump.cpp,
+				WTF/MetaAllocator.cpp,
+				WTF/MoveOnlyLifecycleLogger.cpp,
+				WTF/NakedPtr.cpp,
+				WTF/NativePromise.cpp,
+				WTF/NeverDestroyed.cpp,
+				WTF/Observer.cpp,
+				WTF/OptionCountedSet.cpp,
+				WTF/OptionSet.cpp,
+				WTF/OrderedHashMap.cpp,
+				WTF/OrderedHashSet.cpp,
+				WTF/Packed.cpp,
+				WTF/PackedRef.cpp,
+				WTF/PackedRefPtr.cpp,
+				WTF/ParkingLot.cpp,
+				WTF/PreciseSum.cpp,
+				WTF/PriorityQueue.cpp,
+				WTF/RapidHash.cpp,
+				WTF/RedBlackTree.cpp,
+				WTF/Ref.cpp,
+				WTF/RefCountedFixedVector.cpp,
+				WTF/RefCounter.cpp,
+				WTF/RefLogger.cpp,
+				WTF/RefPtr.cpp,
+				WTF/RobinHoodHashMap.cpp,
+				WTF/RobinHoodHashSet.cpp,
+				WTF/RunLoop.cpp,
+				WTF/SafeStrerror.cpp,
+				WTF/SaturatingArithmeticOperations.cpp,
+				WTF/Scope.cpp,
+				WTF/ScopedLambda.cpp,
+				WTF/SegmentedVector.cpp,
+				WTF/SentinelLinkedList.cpp,
+				WTF/SequenceLockedTest.cpp,
+				WTF/SetForScope.cpp,
+				WTF/SHA1.cpp,
+				WTF/Signals.cpp,
+				WTF/SmallSet.cpp,
+				WTF/SortedArrayMap.cpp,
+				WTF/SparseBitVector.cpp,
+				WTF/StackTraceTest.cpp,
+				WTF/StdLibExtrasTests.cpp,
+				WTF/StringBuilder.cpp,
+				WTF/StringCommon.cpp,
+				WTF/StringConcatenate.cpp,
+				WTF/StringHasher.cpp,
+				WTF/StringImpl.cpp,
+				WTF/StringParsingBuffer.cpp,
+				WTF/StringSearch.cpp,
+				WTF/StringToIntegerConversion.cpp,
+				WTF/StringView.cpp,
+				WTF/SuperFastHash.cpp,
+				WTF/SuspendableWorkQueueTests.cpp,
+				WTF/SynchronizedFixedQueue.cpp,
+				WTF/TextBreakIterator.cpp,
+				WTF/ThreadAssertionsTest.cpp,
+				WTF/ThreadGroup.cpp,
+				WTF/Threading.cpp,
+				WTF/ThreadMessages.cpp,
+				WTF/Time.cpp,
+				WTF/TruncateFloat.cpp,
+				WTF/UniqueArray.cpp,
+				WTF/UniqueRef.cpp,
+				WTF/UniqueRefVector.cpp,
+				WTF/URL.cpp,
+				WTF/URLParser.cpp,
+				WTF/UTF8Conversion.cpp,
+				WTF/UUID.cpp,
+				WTF/VariantList.cpp,
+				WTF/Vector.cpp,
+				WTF/WeakPtr.cpp,
+				WTF/WorkerPool.cpp,
+				WTF/WorkQueue.cpp,
+				WTF/WTFString.cpp,
+			);
+			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
+		};
+		07C913DC2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestIPC" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				IPC/ArgumentCoderTests.cpp,
+				IPC/ConnectionTests.cpp,
+				IPC/EventTests.cpp,
+				IPC/IPCSerialization.mm,
+				IPC/IPCTestUtilities.cpp,
+				IPC/MessageLogEndToEndTests.cpp,
+				IPC/MessageLogTests.cpp,
+				IPC/MessageSenderTests.cpp,
+				IPC/StreamConnectionBufferTests.cpp,
+				IPC/StreamConnectionEncoderTests.cpp,
+				IPC/StreamConnectionTests.cpp,
+				IPC/StreamConnectionWorkQueueTests.cpp,
+				IPC/ThreadSafeObjectHeapTests.cpp,
+				IPC/TransferStringObjCTests.mm,
+				IPC/TransferStringTests.cpp,
+			);
+			target = 7B9FC39428A26137007570E7 /* TestIPC */;
+		};
+		07C913DD2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WebKit/WKWebView/ElementFullscreenIntersectionObserver.mm,
+			);
+			target = A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */;
+		};
+		07C913DE2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIBundle" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"WebKit/WebPage/AppKit Gesture Tests/AppKitGesturesTestsSupport.swift",
+				"WebKit/WebPage/AppKit Gesture Tests/BasicAppKitGesturesTests.swift",
+				"WebKit/WebPage/AppKit Gesture Tests/EmbeddedAppKitGesturesTests.swift",
+				WebKit/WebPage/EditingFontSizeTests.swift,
+				WebKit/WebPage/JavaScriptExpressionTests.swift,
+				WebKit/WebPage/NavigatorWebDriverOverride.swift,
+				WebKit/WebPage/SendInspectorMessage.swift,
+				WebKit/WebPage/SimulateClickOverTextTests.swift,
+				WebKit/WebPage/URLSchemeHandlerTests.swift,
+				WebKit/WebPage/WebPageMouseEventsTests.swift,
+				WebKit/WebPage/WebPageNavigationTests.swift,
+				WebKit/WebPage/WebPageTests.swift,
+				WebKit/WebPage/WebPageTransferableTests.swift,
+				WebKit/WKWebView/CodingTests.swift,
+				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
+				WTF/cocoa/SwiftCxxInteropTestbed.cpp,
+				WTF/cocoa/SwiftCxxInteropTests.swift,
+			);
+			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
+		};
+		07C913DF2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWGSL" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WGSL/ASTStringDumperTests.cpp,
+				WGSL/ConstLiteralTests.cpp,
+				WGSL/LexerTests.cpp,
+				WGSL/MetalCompilationTests.mm,
+				WGSL/MetalGenerationTests.cpp,
+				WGSL/ParserTests.cpp,
+				WGSL/TestWGSLAPI.cpp,
+				WGSL/TypeCheckingTests.mm,
+			);
+			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
+		};
+		07C913E12F820CCA003A09D8 /* Exceptions for "Tests" folder in "InjectedBundleTestWebKitAPI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				InjectInternals_Bundle.cpp,
+				WebKit/WKPage/CanHandleRequest_Bundle.cpp,
+				WebKit/WKPage/cocoa/CustomBundleObject.mm,
+				WebKit/WKPage/cocoa/CustomBundleParameter_Bundle.mm,
+				WebKit/WKPage/cocoa/ForceLightAppearanceInBundle_Bundle.mm,
+				WebKit/WKPage/cocoa/GetBackingScaleFactor_Bundle.mm,
+				WebKit/WKPage/cocoa/InjectedBundleAppleEvent_Bundle.cpp,
+				WebKit/WKPage/DidAssociateFormControls_Bundle.cpp,
+				WebKit/WKPage/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp,
+				WebKit/WKPage/DocumentStartUserScriptAlertCrash_Bundle.cpp,
+				WebKit/WKPage/DOMWindowExtensionBasic_Bundle.cpp,
+				WebKit/WKPage/DOMWindowExtensionNoCache_Bundle.cpp,
+				WebKit/WKPage/FirstMeaningfulPaintMilestone_Bundle.cpp,
+				WebKit/WKPage/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp,
+				WebKit/WKPage/HitTestResultNodeHandle_Bundle.cpp,
+				WebKit/WKPage/InjectedBundleBasic_Bundle.cpp,
+				WebKit/WKPage/InjectedBundleDisableOverrideBuiltinsBehavior_Bundle.cpp,
+				WebKit/WKPage/InjectedBundleFrameHitTest_Bundle.cpp,
+				WebKit/WKPage/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp,
+				WebKit/WKPage/InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp,
+				WebKit/WKPage/LoadCanceledNoServerRedirectCallback_Bundle.cpp,
+				WebKit/WKPage/MouseMoveAfterCrash_Bundle.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayout_Bundle.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp,
+				WebKit/WKPage/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp,
+				WebKit/WKPage/ParentFrame_Bundle.cpp,
+				WebKit/WKPage/PasteboardNotifications_Bundle.cpp,
+				WebKit/WKPage/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp,
+				WebKit/WKPage/ResponsivenessTimerDoesntFireEarly_Bundle.cpp,
+				WebKit/WKPage/TextFieldDidBeginAndEndEditing_Bundle.cpp,
+				WebKit/WKPage/UserMessage_Bundle.cpp,
+				WebKit/WKPage/WebArchive_Bundle.cpp,
+				WebKit/WKPage/WillLoad_Bundle.cpp,
+				WebKit/WKPage/WillSendSubmitEvent_Bundle.cpp,
+				WebKitLegacy/mac/CustomProtocolsInvalidScheme_Bundle.cpp,
+				WebKitLegacy/mac/PreventImageLoadWithAutoResizing_Bundle.cpp,
+			);
+			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
+		};
+		07C913E22F820CCA003A09D8 /* Exceptions for "Tests" folder in "WebProcessPlugIn" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WebKit/WKWebView/AccessibilityTestPlugin.mm,
+				WebKit/WKWebView/AdditionalReadAccessAllowedURLsPlugin.mm,
+				WebKit/WKWebView/AppPrivacyReportPlugIn.mm,
+				WebKit/WKWebView/AutoFillAvailable.mm,
+				WebKit/WKWebView/BasicProposedCredentialPlugIn.mm,
+				WebKit/WKWebView/BundleCSSStyleDeclarationHandlePlugIn.mm,
+				WebKit/WKWebView/BundleEditingDelegatePlugIn.mm,
+				WebKit/WKWebView/BundleFormDelegatePlugIn.mm,
+				WebKit/WKWebView/BundleParametersPlugIn.mm,
+				WebKit/WKWebView/BundleRangeHandlePlugIn.mm,
+				WebKit/WKWebView/BundleRetainPagePlugIn.mm,
+				WebKit/WKWebView/CancelFontSubresourcePlugIn.mm,
+				WebKit/WKWebView/ClearWrappersNavigatePlugIn.mm,
+				WebKit/WKWebView/ClickAutoFillButton.mm,
+				WebKit/WKWebView/ContentFilteringPlugIn.mm,
+				WebKit/WKWebView/ContentWorldPlugIn.mm,
+				WebKit/WKWebView/DisableSpellcheckPlugIn.mm,
+				WebKit/WKWebView/GetComputedStyleAfterIframeRemovalPlugIn.mm,
+				WebKit/WKWebView/InjectedBundleHitTestPlugIn.mm,
+				WebKit/WKWebView/InjectedBundleNodeHandleIsSelectElement.mm,
+				WebKit/WKWebView/InjectedBundleNodeHandleIsTextField.mm,
+				WebKit/WKWebView/PageOverlayPlugin.mm,
+				WebKit/WKWebView/ParserYieldTokenPlugIn.mm,
+				WebKit/WKWebView/RemoteObjectRegistryPlugIn.mm,
+				WebKit/WKWebView/RenderedImageWithOptionsPlugIn.mm,
+				WebKit/WKWebView/RenderingProgressPlugIn.mm,
+				WebKit/WKWebView/SchemeChangingPlugIn.mm,
+				WebKit/WKWebView/ServiceWorkerPagePlugIn.mm,
+				WebKit/WKWebView/SkipDecidePolicyForResponsePlugIn.mm,
+				WebKit/WKWebView/TestAwakener.mm,
+				WebKit/WKWebView/UserContentWorldPlugIn.mm,
+			);
+			target = A13EBB481B87339E00097110 /* WebProcessPlugIn */;
+		};
+		07C913F12F820D86003A09D8 /* Exceptions for "TestBundle" folder in "TestWebKitAPIBundle" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestWebKitAPI.xctestplan,
+			);
+			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
+		};
+		07C93D9A2F821631003A09D8 /* Exceptions for "Resources" folder in "TestWebKitAPIResources" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			attributesByRelativePath = {
+				"cocoa/web-extension-ios.appex" = (RemoveHeadersOnCopy, );
+				"cocoa/web-extension-mac.appex" = (RemoveHeadersOnCopy, );
+			};
+			membershipExceptions = (
+				glib/blank.ico,
+				"glib/blue-48x48.png",
+				glib/boring.html,
+				"glib/form-in-frame.html",
+				"glib/generate-test-cert.sh",
+				"glib/link-title.js",
+				"glib/red-32x32.png",
+				glib/silence.webm,
+				glib/simple.json,
+				"glib/test-cert.conf",
+				"glib/test-cert.pem",
+				"glib/test-key.pem",
+				glib/test.pdf,
+				glib/text,
+				glib/track.ogg,
+				"glib/webkitglib-tests.gresource.xml",
+			);
+			target = A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		07C913E02F820CCA003A09D8 /* Exceptions for "Tests" folder in "Copy Files" phase from "TestWGSL" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 97FB42742E1D629F00C63F41 /* CopyFiles */;
+			membershipExceptions = (
+				"WGSL/shaders/access-expression.wgsl",
+				WGSL/shaders/aliases.wgsl,
+				"WGSL/shaders/array-alias-constructor.wgsl",
+				"WGSL/shaders/array-count-expression.wgsl",
+				"WGSL/shaders/array-length-pointer.wgsl",
+				"WGSL/shaders/array-length-pointer2.wgsl",
+				"WGSL/shaders/array-length-unordered.wgsl",
+				"WGSL/shaders/array-length.wgsl",
+				"WGSL/shaders/array-primitive-struct.wgsl",
+				"WGSL/shaders/array-vec3.wgsl",
+				WGSL/shaders/atomics.wgsl,
+				WGSL/shaders/attributes.wgsl,
+				"WGSL/shaders/binding-uint-max.wgsl",
+				"WGSL/shaders/const-assert.wgsl",
+				"WGSL/shaders/constants-utf8.wgsl",
+				"WGSL/shaders/constants-utf16.wgsl",
+				WGSL/shaders/division.wgsl,
+				WGSL/shaders/for.wgsl,
+				"WGSL/shaders/fragment-output.wgsl",
+				"WGSL/shaders/fuzz-127229681.wgsl",
+				"WGSL/shaders/fuzz-128785160.wgsl",
+				"WGSL/shaders/fuzz-130082002.wgsl",
+				"WGSL/shaders/fuzz-130088292.wgsl",
+				"WGSL/shaders/fuzz-130092499.wgsl",
+				"WGSL/shaders/fuzz-133788509.wgsl",
+				"WGSL/shaders/fuzz-166715941.wgsl",
+				"WGSL/shaders/global-constant-vector.wgsl",
+				"WGSL/shaders/global-ordering.wgsl",
+				"WGSL/shaders/global-same-binding.wgsl",
+				"WGSL/shaders/hex-double-lchar.wgsl",
+				"WGSL/shaders/hex-double-uchar.wgsl",
+				WGSL/shaders/if.wgsl,
+				"WGSL/shaders/large-struct.wgsl",
+				"WGSL/shaders/limits-brace-enclosed.wgsl",
+				"WGSL/shaders/limits-composite-type.wgsl",
+				"WGSL/shaders/limits-const-array.wgsl",
+				"WGSL/shaders/limits-function-parameters.wgsl",
+				"WGSL/shaders/limits-function-vars.wgsl",
+				"WGSL/shaders/limits-private-vars.wgsl",
+				"WGSL/shaders/limits-struct-members.wgsl",
+				"WGSL/shaders/limits-switch-case.wgsl",
+				"WGSL/shaders/limits-workgroup-vars.wgsl",
+				"WGSL/shaders/location-uint-max.wgsl",
+				WGSL/shaders/loop.wgsl,
+				"WGSL/shaders/minus-minus-ambiguity.wgsl",
+				"WGSL/shaders/name-mangling.wgsl",
+				WGSL/shaders/overload.wgsl,
+				"WGSL/shaders/override-complex-expression.wgsl",
+				WGSL/shaders/override.wgsl,
+				"WGSL/shaders/pack-unpack.wgsl",
+				"WGSL/shaders/packing-nested-array.wgsl",
+				"WGSL/shaders/packing-pointer-arguments.wgsl",
+				WGSL/shaders/pointers.wgsl,
+				WGSL/shaders/references.wgsl,
+				WGSL/shaders/reordering.wgsl,
+				"WGSL/shaders/runtime-sized-array-resource.wgsl",
+				WGSL/shaders/scope.wgsl,
+				WGSL/shaders/shadowing.wgsl,
+				WGSL/shaders/struct.wgsl,
+				WGSL/shaders/switch.wgsl,
+				WGSL/shaders/swizzle.wgsl,
+				"WGSL/shaders/texture-external.wgsl",
+				"WGSL/shaders/type-promotion.wgsl",
+				WGSL/shaders/while.wgsl,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		07C904CF2F8207FB003A09D8 /* App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = App;
+			sourceTree = "<group>";
+		};
+		07C907772F820906003A09D8 /* Helpers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07C907B32F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPILibrary" target */,
+				07C907B42F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWTFLibrary" target */,
+				07C907B52F820907003A09D8 /* Exceptions for "Helpers" folder in "TestIPC" target */,
+				07C907B72F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWGSL" target */,
+				07C907B82F820907003A09D8 /* Exceptions for "Helpers" folder in "InjectedBundleTestWebKitAPI" target */,
+				07C907B92F820907003A09D8 /* Exceptions for "Helpers" folder in "WebProcessPlugIn" target */,
+			);
+			explicitFileTypes = {
+				cocoa/DragAndDropSimulator.mm = sourcecode.cpp.objcpp;
+			};
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		07C907C22F820940003A09D8 /* Runner */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {
+				TestsController.cpp = sourcecode.cpp.cpp;
+			};
+			path = Runner;
+			sourceTree = "<group>";
+		};
+		07C907D82F820949003A09D8 /* TestWebKitAPILibrary */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07A40C282F8CB37A0003E8D7 /* Exceptions for "TestWebKitAPILibrary" folder in "TestWebKitAPILibrary" target */,
+			);
+			path = TestWebKitAPILibrary;
+			sourceTree = "<group>";
+		};
+		07C907E72F820957003A09D8 /* Configurations */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		07C910F42F820CC7003A09D8 /* Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07C913DA2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPILibrary" target */,
+				07C913DB2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWTFLibrary" target */,
+				07C913DC2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestIPC" target */,
+				07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */,
+				07C913DD2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIApp" target */,
+				07C913DE2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIBundle" target */,
+				07C913DF2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWGSL" target */,
+				07C913E02F820CCA003A09D8 /* Exceptions for "Tests" folder in "Copy Files" phase from "TestWGSL" target */,
+				07C913E12F820CCA003A09D8 /* Exceptions for "Tests" folder in "InjectedBundleTestWebKitAPI" target */,
+				07C913E22F820CCA003A09D8 /* Exceptions for "Tests" folder in "WebProcessPlugIn" target */,
+			);
+			explicitFileTypes = {
+				TestWebKitAPIAdditionsHook.mm = sourcecode.cpp.objcpp;
+				WGSL/MetalCompilationTests.mm = sourcecode.cpp.objcpp;
+				WTF/darwin/TypeCastsOSObjectCF.cpp = sourcecode.cpp.cpp;
+			};
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		07C913E62F820CF1003A09D8 /* Scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		07C913EF2F820D85003A09D8 /* TestBundle */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07C913F12F820D86003A09D8 /* Exceptions for "TestBundle" folder in "TestWebKitAPIBundle" target */,
+			);
+			path = TestBundle;
+			sourceTree = "<group>";
+		};
+		07C93B2D2F821630003A09D8 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07C93D9A2F821631003A09D8 /* Exceptions for "Resources" folder in "TestWebKitAPIResources" target */,
+			);
+			explicitFolders = (
+				"cocoa/web-extension",
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3A15784628D1505B00142DB1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				97A826852DF8B677004EA039 /* JavaScriptCore.framework in Frameworks */,
+				DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */,
+				DDADB22628FA094400918467 /* libgtest.a in Frameworks */,
+				3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */,
+				3A5DDB2D28D55265004DA950 /* libwgsl.a in Frameworks */,
+				3A5DDB2C28D5525E004DA950 /* libWTF.a in Frameworks */,
+				97DAA8D02DF70B91004B3040 /* Metal.framework in Frameworks */,
+				FE9CD7E42D10CE7500266FDD /* Security.framework in Frameworks */,
+			);
+		};
+		7B9FC3A328A26137007570E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				7B9FC5B128A5221B007570E7 /* CryptoTokenKit.framework in Frameworks */,
+				7B9FC5D628A5326A007570E7 /* ImageIO.framework in Frameworks */,
+				7B9FC5D528A53137007570E7 /* JavaScriptCore.framework in Frameworks */,
+				7B9FC58528A267A7007570E7 /* libgtest.a in Frameworks */,
+				7B9FC3AA28A26137007570E7 /* libicucore.dylib in Frameworks */,
+				7B9FC5CD28A52DC0007570E7 /* libWebKitPlatform.a in Frameworks */,
+				7B9FC5B528A5222D007570E7 /* QuartzCore.framework in Frameworks */,
+				7B9FC3AD28A26137007570E7 /* Security.framework in Frameworks */,
+				7B9FC5CE28A52ECD007570E7 /* WebCore.framework in Frameworks */,
+			);
+		};
+		7C83DF641D0A590C00FEBCF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		7C83DFC11D0A5AE400FEBCF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */,
+				93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */,
+				DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */,
+				143DDE9820C9018B007F76FA /* Security.framework in Frameworks */,
+			);
+		};
+		7CCE7E891A41144E00447C4C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		8DD76F9B0486AA7600D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		A1798B7D22431D18000764BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */,
+				DD4671652A685F6800E49DBD /* WebCore.framework in Frameworks */,
+			);
+		};
+		A17C57FF2C9AA12F009DD0B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */,
+				A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */,
+			);
+		};
+		A17C582B2C9B3EAD009DD0B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				07275CBC2D01398C002315A5 /* _WebKit_SwiftUI.framework in Frameworks */,
+			);
+		};
+		BC57597E126E74AF006F0F12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */,
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
+			isa = PBXGroup;
+			children = (
+				07C904CF2F8207FB003A09D8 /* App */,
+				07C907E72F820957003A09D8 /* Configurations */,
+				5C9D922622D7DD7B008E9266 /* Derived Sources */,
+				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
+				7C83E0281D0A5CDF00FEBCF3 /* Frameworks */,
+				07C907772F820906003A09D8 /* Helpers */,
+				BC575944126E733C006F0F12 /* InjectedBundle */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+				07C93B2D2F821630003A09D8 /* Resources */,
+				07C907C22F820940003A09D8 /* Runner */,
+				07C913E62F820CF1003A09D8 /* Scripts */,
+				07C913EF2F820D85003A09D8 /* TestBundle */,
+				07C907D82F820949003A09D8 /* TestWebKitAPILibrary */,
+				07C910F42F820CC7003A09D8 /* Tests */,
+				DDF3A82928930475005920CF /* gtest.xcodeproj */,
+				49AEEF682407276F00C87E4C /* Info.plist */,
+				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
+				5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */,
+				07597D7E2F81DD59000C96D0 /* config.h */,
+			);
+			name = TestWebKitAPI;
+			sourceTree = "<group>";
+		};
+		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				C02B7853126613AE0026BF0F /* Carbon.framework */,
+				BCB9E9F011235BDE00A137E0 /* Cocoa.framework */,
+				BC90964D1255620C00083756 /* JavaScriptCore.framework */,
+				F3FC3EE213678B7300126A65 /* libgtest.a */,
+				C081224813FC1B0300DC39AE /* WebKit.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A176D2472D6D295400C63915 /* GPUExtension.appex */,
+				A176D2482D6D295400C63915 /* NetworkingExtension.appex */,
+				A176D2492D6D295400C63915 /* WebContentExtension.appex */,
+				7B9FC57E28A26137007570E7 /* TestIPC */,
+				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
+				3A15785328D1505B00142DB1 /* TestWGSL */,
+				7C83E0231D0A5AE400FEBCF3 /* TestWTF */,
+				BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */,
+				7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */,
+				7C83DF681D0A590C00FEBCF3 /* libTestWTF.a */,
+				A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */,
+				A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */,
+				A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */,
+				A17C582E2C9B3EAD009DD0B5 /* TestWebKitAPIBundle.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5C9D922622D7DD7B008E9266 /* Derived Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5C9D922722D7DD8B008E9266 /* unified-sources */,
+				DD5697FF2DC1320500050321 /* rdar150228472.swift */,
+			);
+			name = "Derived Sources";
+			path = DerivedSources/TestWebKitAPI;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5C9D922722D7DD8B008E9266 /* unified-sources */ = {
+			isa = PBXGroup;
+			children = (
+				5C9D922922D7DE01008E9266 /* UnifiedSource1-nonARC.mm */,
+				5C9D922A22D7DE01008E9266 /* UnifiedSource1.cpp */,
+				5C9D922B22D7DE01008E9266 /* UnifiedSource2-nonARC.mm */,
+				5C9D922822D7DE00008E9266 /* UnifiedSource2.cpp */,
+				5C9D923422D7E235008E9266 /* UnifiedSource3-nonARC.mm */,
+				5C9D923622D7E235008E9266 /* UnifiedSource3.cpp */,
+				5C9D923722D7E235008E9266 /* UnifiedSource4-nonARC.mm */,
+				5C9D923222D7E235008E9266 /* UnifiedSource4.cpp */,
+				5C9D923522D7E235008E9266 /* UnifiedSource5-nonARC.mm */,
+				5C9D923322D7E235008E9266 /* UnifiedSource5.cpp */,
+				5CABDB9B2735C9BB00B88BCB /* UnifiedSource6-nonARC.mm */,
+				5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */,
+				5CABDBBC2735C9BD00B88BCB /* UnifiedSource8-nonARC.mm */,
+				5CABDB9A2735C9BB00B88BCB /* UnifiedSource9-nonARC.mm */,
+				5CABDB992735C9BB00B88BCB /* UnifiedSource10-nonARC.mm */,
+				5CABDBAC2735C9BC00B88BCB /* UnifiedSource11-nonARC.mm */,
+				5CABDB972735C9BA00B88BCB /* UnifiedSource12-nonARC.mm */,
+				5CABDBA32735C9BB00B88BCB /* UnifiedSource13-nonARC.mm */,
+				5CABDBB02735C9BC00B88BCB /* UnifiedSource14-nonARC.mm */,
+				5CABDBB42735C9BC00B88BCB /* UnifiedSource15-nonARC.mm */,
+				5CABDB922735C9BA00B88BCB /* UnifiedSource16-nonARC.mm */,
+				5CABDBB72735C9BD00B88BCB /* UnifiedSource17-nonARC.mm */,
+				5CABDBA12735C9BB00B88BCB /* UnifiedSource18-nonARC.mm */,
+				5CABDB9C2735C9BB00B88BCB /* UnifiedSource19-nonARC.mm */,
+				5CABDBAE2735C9BC00B88BCB /* UnifiedSource20-nonARC.mm */,
+				5CABDBAA2735C9BC00B88BCB /* UnifiedSource21-nonARC.mm */,
+				5CABDBAF2735C9BC00B88BCB /* UnifiedSource22-nonARC.mm */,
+				5CABDBB22735C9BC00B88BCB /* UnifiedSource23-nonARC.mm */,
+				5CABDB9E2735C9BB00B88BCB /* UnifiedSource24-nonARC.mm */,
+				5CABDB9F2735C9BB00B88BCB /* UnifiedSource25-nonARC.mm */,
+				5CABDBB82735C9BD00B88BCB /* UnifiedSource26-nonARC.mm */,
+				5CABDBAD2735C9BC00B88BCB /* UnifiedSource27-nonARC.mm */,
+				5CABDB982735C9BA00B88BCB /* UnifiedSource28-nonARC.mm */,
+				5CABDBA42735C9BB00B88BCB /* UnifiedSource29-nonARC.mm */,
+				5CABDBBA2735C9BD00B88BCB /* UnifiedSource30-nonARC.mm */,
+				5CABDBA92735C9BC00B88BCB /* UnifiedSource31-nonARC.mm */,
+				5CABDBBE2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm */,
+				5CABDB9D2735C9BB00B88BCB /* UnifiedSource33-nonARC.mm */,
+				5CABDBA72735C9BB00B88BCB /* UnifiedSource34-nonARC.mm */,
+				5CABDBA62735C9BB00B88BCB /* UnifiedSource35-nonARC.mm */,
+				5CABDBB32735C9BC00B88BCB /* UnifiedSource36-nonARC.mm */,
+				5CABDBBD2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm */,
+				5CABDBA82735C9BC00B88BCB /* UnifiedSource38-nonARC.mm */,
+				5CABDBB12735C9BC00B88BCB /* UnifiedSource39-nonARC.mm */,
+				5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */,
+				5CABDBA22735C9BB00B88BCB /* UnifiedSource41-nonARC.mm */,
+				5CABDBA02735C9BB00B88BCB /* UnifiedSource42-nonARC.mm */,
+				5CABDBBB2735C9BD00B88BCB /* UnifiedSource43-nonARC.mm */,
+				5CABDBB52735C9BC00B88BCB /* UnifiedSource44-nonARC.mm */,
+				5CABDBAB2735C9BC00B88BCB /* UnifiedSource45-nonARC.mm */,
+				5CABDBB62735C9BC00B88BCB /* UnifiedSource46-nonARC.mm */,
+				5CABDBB92735C9BD00B88BCB /* UnifiedSource47-nonARC.mm */,
+				5CABDBA52735C9BB00B88BCB /* UnifiedSource48-nonARC.mm */,
+				5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */,
+				5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */,
+				5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */,
+				51A97F062FD0B59400FBDD0C /* UnifiedSource52-nonARC.mm */,
+			);
+			path = "unified-sources";
+			sourceTree = "<group>";
+		};
+		7C83E0281D0A5CDF00FEBCF3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */,
+				5CBAA7FA2440EA0200564A8B /* CFNetwork.framework */,
+				7A010BCA1D877C0500EDE72A /* CoreGraphics.framework */,
+				634910DF1E9D3FF300880309 /* CoreLocation.framework */,
+				C20F88A62295B96700D610FA /* CoreText.framework */,
+				7B9FC5B028A5221B007570E7 /* CryptoTokenKit.framework */,
+				0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */,
+				CDA3159C1ED5643F009F60D3 /* IOKit.framework */,
+				DDB3724528ECE32F00A2F32D /* libbmalloc.a */,
+				DD403D4928EB932F009B4684 /* libbmalloc.a */,
+				5CFACF62226F73C60056C7D0 /* libboringssl.a */,
+				3A5DDAF228D1637A004DA950 /* libicu.a */,
+				7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */,
+				3A5DDAF428D1638A004DA950 /* libicucore.tbd */,
+				A1798B7E22431D2B000764BD /* libWebCoreTestSupport.dylib */,
+				4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */,
+				7B9FC5A928A38F2E007570E7 /* libWebKitIPC.a */,
+				7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */,
+				3A5DDB2028D54269004DA950 /* libwgsl.a */,
+				466CB9FE2DADC4A200B32457 /* libWTF.a */,
+				466CBA072DADC50A00B32457 /* libWTF.a */,
+				7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */,
+				578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */,
+				97DAA8CF2DF70B91004B3040 /* Metal.framework */,
+				516281282325C45400BB7E42 /* PDFKit.framework */,
+				7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */,
+				574F55D0204D471C002948C6 /* Security.framework */,
+				A17C58242C9AAA25009DD0B5 /* UIKit.framework */,
+				7B9FC5B628A52236007570E7 /* WebCore.framework */,
+				2B648DBA28C1C1F700791F2B /* WebKit.framework */,
+				A17C58452C9BF45A009DD0B5 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A13EBB441B87332B00097110 /* WebProcessPlugIn */ = {
+			isa = PBXGroup;
+			children = (
+				A13EBB541B8734E000097110 /* Info.plist */,
+				A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */,
+				A1798B8322433647000764BD /* WebProcessPlugInWithInternals.h */,
+				A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */,
+			);
+			name = WebProcessPlugIn;
+			path = cocoa/WebProcessPlugIn;
+			sourceTree = "<group>";
+		};
+		BC575944126E733C006F0F12 /* InjectedBundle */ = {
+			isa = PBXGroup;
+			children = (
+				A13EBB441B87332B00097110 /* WebProcessPlugIn */,
+				BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */,
+				BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */,
+				BC575A9F126E7657006F0F12 /* InjectedBundleController.h */,
+				1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */,
+				BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */,
+				BC575A9E126E75FB006F0F12 /* InjectedBundleTest.h */,
+			);
+			path = InjectedBundle;
+			sourceTree = "<group>";
+		};
+		DDF3A82A28930475005920CF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A15783C28D1505B00142DB1 /* TestWGSL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A15785028D1505B00142DB1 /* Build configuration list for PBXNativeTarget "TestWGSL" */;
+			buildPhases = (
+				3A15783D28D1505B00142DB1 /* Product Dependencies */,
+				3A15783F28D1505B00142DB1 /* Sources */,
+				3A15784628D1505B00142DB1 /* Frameworks */,
+				97FB42742E1D629F00C63F41 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0723A75D2F8035B000CB96E7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				07C907C22F820940003A09D8 /* Runner */,
+			);
+			name = TestWGSL;
+			productInstallPath = "$(HOME)/bin";
+			productName = TestWebKitAPI;
+			productReference = 3A15785328D1505B00142DB1 /* TestWGSL */;
+			productType = "com.apple.product-type.tool";
+		};
+		7B9FC39428A26137007570E7 /* TestIPC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7B9FC57B28A26137007570E7 /* Build configuration list for PBXNativeTarget "TestIPC" */;
+			buildPhases = (
+				7B6FF89528C22D3D00CA76B0 /* Product Dependencies */,
+				7B9FC39B28A26137007570E7 /* Sources */,
+				7B9FC3A328A26137007570E7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0723A7592F80359E00CB96E7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				07C907C22F820940003A09D8 /* Runner */,
+			);
+			name = TestIPC;
+			productInstallPath = "$(HOME)/bin";
+			productName = TestWebKitAPI;
+			productReference = 7B9FC57E28A26137007570E7 /* TestIPC */;
+			productType = "com.apple.product-type.tool";
+		};
+		7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C83DF651D0A590C00FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTFLibrary" */;
+			buildPhases = (
+				DD0EDF8C2798A69E005152AD /* Product Dependencies */,
+				7C83DE961D0A590C00FEBCF3 /* Sources */,
+				7C83DF641D0A590C00FEBCF3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0723A7572F80359900CB96E7 /* PBXTargetDependency */,
+			);
+			name = TestWTFLibrary;
+			productName = TestWebKitAPILibrary;
+			productReference = 7C83DF681D0A590C00FEBCF3 /* libTestWTF.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		7C83DF951D0A5AE400FEBCF3 /* TestWTF */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C83E0201D0A5AE400FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTF" */;
+			buildPhases = (
+				7C83DF9C1D0A5AE400FEBCF3 /* Sources */,
+				7C83DFC11D0A5AE400FEBCF3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0723A75F2F8035B400CB96E7 /* PBXTargetDependency */,
+				7C83E0251D0A5B2500FEBCF3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				07C907C22F820940003A09D8 /* Runner */,
+			);
+			name = TestWTF;
+			productInstallPath = "$(HOME)/bin";
+			productName = TestWebKitAPI;
+			productReference = 7C83E0231D0A5AE400FEBCF3 /* TestWTF */;
+			productType = "com.apple.product-type.tool";
+		};
+		7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7CCE7EA11A41144E00447C4C /* Build configuration list for PBXNativeTarget "TestWebKitAPILibrary" */;
+			buildPhases = (
+				7CCE7E881A41144E00447C4C /* Sources */,
+				7CCE7E891A41144E00447C4C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0723A7552F80358F00CB96E7 /* PBXTargetDependency */,
+				5C9D922222D7DC84008E9266 /* PBXTargetDependency */,
+			);
+			name = TestWebKitAPILibrary;
+			productName = TestWebKitAPILibrary;
+			productReference = 7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		8DD76F960486AA7600D96B5E /* TestWebKitAPI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "TestWebKitAPI" */;
+			buildPhases = (
+				A1508C552DAF1F8000C3E213 /* Process Entitlements */,
+				0777713A2F887DCE00A1C903 /* Embed Testing.framework */,
+				8DD76F990486AA7600D96B5E /* Sources */,
+				8DD76F9B0486AA7600D96B5E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0723A75B2F8035A300CB96E7 /* PBXTargetDependency */,
+				BC575A96126E74E7006F0F12 /* PBXTargetDependency */,
+				7CCE7F511A4124DB00447C4C /* PBXTargetDependency */,
+				A17C48562C98EBF50023F3C7 /* PBXTargetDependency */,
+				A13EBBB31B87441900097110 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				07C907C22F820940003A09D8 /* Runner */,
+			);
+			name = TestWebKitAPI;
+			productInstallPath = "$(HOME)/bin";
+			productName = TestWebKitAPI;
+			productReference = 8DD76FA10486AA7600D96B5E /* TestWebKitAPI */;
+			productType = "com.apple.product-type.tool";
+		};
+		A13EBB481B87339E00097110 /* WebProcessPlugIn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A13EBB4C1B87339E00097110 /* Build configuration list for PBXNativeTarget "WebProcessPlugIn" */;
+			buildPhases = (
+				A13EBB451B87339E00097110 /* Sources */,
+				A1798B7D22431D18000764BD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			name = WebProcessPlugIn;
+			productName = WebProcessPlugIn;
+			productReference = A13EBB491B87339E00097110 /* TestWebKitAPI.wkbundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+		A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A17C46472C98E3440023F3C7 /* Build configuration list for PBXNativeTarget "TestWebKitAPIResources" */;
+			buildPhases = (
+				A17C464B2C98E4520023F3C7 /* Copy Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				07C93B2D2F821630003A09D8 /* Resources */,
+			);
+			name = TestWebKitAPIResources;
+			productName = TestWebKitAPIResources;
+			productReference = A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+		A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A17C58212C9AA132009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIApp" */;
+			buildPhases = (
+				A1CD8B582DBA0F4600463203 /* Process Entitlements */,
+				A17C57FE2C9AA12F009DD0B5 /* Sources */,
+				A17C57FF2C9AA12F009DD0B5 /* Frameworks */,
+				A1B8D7622D67CD6E0045C305 /* Copy Resources */,
+				A176D23F2D6D079900C63915 /* Embed Extensions */,
+			);
+			buildRules = (
+				A176D2552D6D35D400C63915 /* PBXBuildRule */,
+			);
+			dependencies = (
+				A18899202CAC690400FEB09A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				07C904CF2F8207FB003A09D8 /* App */,
+			);
+			name = TestWebKitAPIApp;
+			productName = TestWebKitAPIApp;
+			productReference = A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A17C583D2C9B3EAE009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIBundle" */;
+			buildPhases = (
+				A17C582A2C9B3EAD009DD0B5 /* Sources */,
+				A17C582B2C9B3EAD009DD0B5 /* Frameworks */,
+				A17C582C2C9B3EAD009DD0B5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A18898FE2CA9F70B00FEB09A /* PBXTargetDependency */,
+			);
+			name = TestWebKitAPIBundle;
+			productName = TestBundle;
+			productReference = A17C582E2C9B3EAD009DD0B5 /* TestWebKitAPIBundle.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */;
+			buildPhases = (
+				DD42949E284BE0A6004D49ED /* Product Dependencies */,
+				BC57597C126E74AF006F0F12 /* Resources */,
+				BC57597D126E74AF006F0F12 /* Sources */,
+				BC57597E126E74AF006F0F12 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			name = InjectedBundleTestWebKitAPI;
+			productName = InjectedBundle;
+			productReference = BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					0723A7492F80357300CB96E7 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					537CF84322EFD64100C6EBB3 = {
+						CreatedOnToolsVersion = 11.0;
+					};
+					7C83E02B1D0A5E1000FEBCF3 = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
+					7CCE7E8B1A41144E00447C4C = {
+						CreatedOnToolsVersion = 6.3;
+						ProvisioningStyle = Manual;
+					};
+					8DD76F960486AA7600D96B5E = {
+						ProvisioningStyle = Manual;
+					};
+					A13EBB481B87339E00097110 = {
+						CreatedOnToolsVersion = 7.0;
+						ProvisioningStyle = Manual;
+					};
+					A17C46452C98E3430023F3C7 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					A17C58012C9AA12F009DD0B5 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					A17C582D2C9B3EAD009DD0B5 = {
+						CreatedOnToolsVersion = 16.0;
+						LastSwiftMigration = 1620;
+						TestTargetID = A17C58012C9AA12F009DD0B5;
+					};
+					BC57597F126E74AF006F0F12 = {
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 08FB7794FE84155DC02AAC07 /* TestWebKitAPI */;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
+			preferredProjectObjectVersion = 90;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DDF3A82A28930475005920CF /* Products */;
+					ProjectRef = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				7C83E02B1D0A5E1000FEBCF3 /* All */,
+				0723A7492F80357300CB96E7 /* Derived Sources */,
+				5C9D921422D7DA02008E9266 /* Generate Unified Sources */,
+				7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */,
+				7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */,
+				7B9FC39428A26137007570E7 /* TestIPC */,
+				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
+				A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */,
+				A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */,
+				A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */,
+				3A15783C28D1505B00142DB1 /* TestWGSL */,
+				7C83DF951D0A5AE400FEBCF3 /* TestWTF */,
+				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
+				A13EBB481B87339E00097110 /* WebProcessPlugIn */,
+				537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A17C582C2C9B3EAD009DD0B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		BC57597C126E74AF006F0F12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0723A7602F80360F00CB96E7 /* Generate Swift platform args */ = {
+			isa = PBXShellScriptBuildPhase;
+			dependencyFile = "$(DERIVED_FILES_DIR)/generate-platform-args.d";
+			inputPaths = (
+				"$(WTF_BUILD_SCRIPTS_DIR)/generate-platform-args",
+			);
+			name = "Generate Swift platform args";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.arm64.resp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.arm64_32.resp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.arm64e.resp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.armv7k.resp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.x86_64.resp",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/rdar150228472.swift",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"if [ \"${ACTION}\" = installhdrs ]",
+				"then touch \"${DERIVED_FILES_DIR}/generate-platform-args.d\"",
+				"else \"${SCRIPT_INPUT_FILE_0}\"",
+				"fi",
+				"",
+			);
+		};
+		0777713A2F887DCE00A1C903 /* Embed Testing.framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/Testing.framework",
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/_Testing_AppKit.framework",
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/_Testing_CoreGraphics.framework",
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/_Testing_CoreImage.framework",
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/_Testing_CoreTransferable.framework",
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/_Testing_Foundation.framework",
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/_Testing_UIKit.framework",
+				"$(PLATFORM_DIR)/Developer/usr/lib/lib_TestingInterop.dylib",
+			);
+			name = "Embed Testing.framework";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/Testing.framework",
+				"$(BUILT_PRODUCTS_DIR)/_Testing_AppKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/_Testing_CoreGraphics.framework",
+				"$(BUILT_PRODUCTS_DIR)/_Testing_CoreImage.framework",
+				"$(BUILT_PRODUCTS_DIR)/_Testing_CoreTransferable.framework",
+				"$(BUILT_PRODUCTS_DIR)/_Testing_Foundation.framework",
+				"$(BUILT_PRODUCTS_DIR)/_Testing_UIKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/lib_TestingInterop.dylib",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"# The Swift explicit-modules dep scanner resolves cross-import overlays relative to the",
+				"# parent module's location, so the _Testing_* overlays must live next to the dittoed",
+				"# Testing.framework, not just in PLATFORM_DIR.",
+				"for (( i=0 ; $i < $SCRIPT_INPUT_FILE_COUNT ; i++ )); do",
+				"    eval input=\"\\${SCRIPT_INPUT_FILE_$i}\"",
+				"    if [ -e \"$input\" ]; then",
+				"        ditto \"$input\" \"${BUILT_PRODUCTS_DIR}/$(basename \"$input\")\"",
+				"    fi",
+				"done",
+				"",
+			);
+		};
+		537CF84722EFD65000C6EBB3 /* Run Sublaunch Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			name = "Run Sublaunch Script";
+			shellPath = /bin/sh;
+			shellScript = (
+				"eval \"${WK_SUBLAUNCH_SCRIPT_PARAMETERS[@]}\"",
+				"",
+			);
+		};
+		537CF84822EFD72000C6EBB3 /* Check .xcfilelists */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+				"$(SRCROOT)/DerivedSources.make",
+			);
+			name = "Check .xcfilelists";
+			outputPaths = (
+				"$(TARGET_TEMP_DIR)/check-xcfilelists.timestamp",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"Scripts/check-xcfilelists.sh && touch \"${SCRIPT_OUTPUT_FILE_0}\"",
+				"",
+			);
+		};
+		5C9D921C22D7DA33008E9266 /* Generate Unified Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
+				"$(SRCROOT)/Sources.txt",
+				"$(SRCROOT)/SourcesCocoa.txt",
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/generate-unified-source-bundles.py",
+			);
+			name = "Generate Unified Sources";
+			outputFileListPaths = (
+				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"Scripts/generate-unified-sources.sh",
+				"",
+			);
+		};
+		A1508C552DAF1F8000C3E213 /* Process Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process Entitlements";
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+				"$(WK_PROCESSED_SIMULATOR_XCENT_FILE)",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"Scripts/process-entitlements.sh",
+				"",
+			);
+		};
+		A1CD8B582DBA0F4600463203 /* Process Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Process Entitlements";
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+				"$(WK_PROCESSED_SIMULATOR_XCENT_FILE)",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"Scripts/process-entitlements.sh",
+				"",
+			);
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3A15783F28D1505B00142DB1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		7B9FC39B28A26137007570E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		7C83DE961D0A590C00FEBCF3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		7C83DF9C1D0A5AE400FEBCF3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		7CCE7E881A41144E00447C4C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				5C9D922C22D7DE12008E9266 /* UnifiedSource1-nonARC.mm in Sources */,
+				5C9D922E22D7DE1C008E9266 /* UnifiedSource1.cpp in Sources */,
+				5C9D922D22D7DE19008E9266 /* UnifiedSource2-nonARC.mm in Sources */,
+				5C9D922F22D7DE1F008E9266 /* UnifiedSource2.cpp in Sources */,
+				5C9D923822D7E2B0008E9266 /* UnifiedSource3-nonARC.mm in Sources */,
+				5C9D923922D7E2B0008E9266 /* UnifiedSource3.cpp in Sources */,
+				5C9D923A22D7E2B0008E9266 /* UnifiedSource4-nonARC.mm in Sources */,
+				5C9D923B22D7E2B0008E9266 /* UnifiedSource4.cpp in Sources */,
+				5C9D923C22D7E2B0008E9266 /* UnifiedSource5-nonARC.mm in Sources */,
+				5C9D923D22D7E2B0008E9266 /* UnifiedSource5.cpp in Sources */,
+				5CABDBC82735C9BD00B88BCB /* UnifiedSource6-nonARC.mm in Sources */,
+				5CABDBC32735C9BD00B88BCB /* UnifiedSource7-nonARC.mm in Sources */,
+				5CABDBE92735C9BD00B88BCB /* UnifiedSource8-nonARC.mm in Sources */,
+				5CABDBC72735C9BD00B88BCB /* UnifiedSource9-nonARC.mm in Sources */,
+				5CABDBC62735C9BD00B88BCB /* UnifiedSource10-nonARC.mm in Sources */,
+				5CABDBD92735C9BD00B88BCB /* UnifiedSource11-nonARC.mm in Sources */,
+				5CABDBC42735C9BD00B88BCB /* UnifiedSource12-nonARC.mm in Sources */,
+				5CABDBD02735C9BD00B88BCB /* UnifiedSource13-nonARC.mm in Sources */,
+				5CABDBDD2735C9BD00B88BCB /* UnifiedSource14-nonARC.mm in Sources */,
+				5CABDBE12735C9BD00B88BCB /* UnifiedSource15-nonARC.mm in Sources */,
+				5CABDBBF2735C9BD00B88BCB /* UnifiedSource16-nonARC.mm in Sources */,
+				5CABDBE42735C9BD00B88BCB /* UnifiedSource17-nonARC.mm in Sources */,
+				5CABDBCE2735C9BD00B88BCB /* UnifiedSource18-nonARC.mm in Sources */,
+				5CABDBC92735C9BD00B88BCB /* UnifiedSource19-nonARC.mm in Sources */,
+				5CABDBDB2735C9BD00B88BCB /* UnifiedSource20-nonARC.mm in Sources */,
+				5CABDBD72735C9BD00B88BCB /* UnifiedSource21-nonARC.mm in Sources */,
+				5CABDBDC2735C9BD00B88BCB /* UnifiedSource22-nonARC.mm in Sources */,
+				5CABDBDF2735C9BD00B88BCB /* UnifiedSource23-nonARC.mm in Sources */,
+				5CABDBCB2735C9BD00B88BCB /* UnifiedSource24-nonARC.mm in Sources */,
+				5CABDBCC2735C9BD00B88BCB /* UnifiedSource25-nonARC.mm in Sources */,
+				5CABDBE52735C9BD00B88BCB /* UnifiedSource26-nonARC.mm in Sources */,
+				5CABDBDA2735C9BD00B88BCB /* UnifiedSource27-nonARC.mm in Sources */,
+				5CABDBC52735C9BD00B88BCB /* UnifiedSource28-nonARC.mm in Sources */,
+				5CABDBD12735C9BD00B88BCB /* UnifiedSource29-nonARC.mm in Sources */,
+				5CABDBE72735C9BD00B88BCB /* UnifiedSource30-nonARC.mm in Sources */,
+				5CABDBD62735C9BD00B88BCB /* UnifiedSource31-nonARC.mm in Sources */,
+				5CABDBEB2735C9BD00B88BCB /* UnifiedSource32-nonARC.mm in Sources */,
+				5CABDBCA2735C9BD00B88BCB /* UnifiedSource33-nonARC.mm in Sources */,
+				5CABDBD42735C9BD00B88BCB /* UnifiedSource34-nonARC.mm in Sources */,
+				5CABDBD32735C9BD00B88BCB /* UnifiedSource35-nonARC.mm in Sources */,
+				5CABDBE02735C9BD00B88BCB /* UnifiedSource36-nonARC.mm in Sources */,
+				5CABDBEA2735C9BD00B88BCB /* UnifiedSource37-nonARC.mm in Sources */,
+				5CABDBD52735C9BD00B88BCB /* UnifiedSource38-nonARC.mm in Sources */,
+				5CABDBDE2735C9BD00B88BCB /* UnifiedSource39-nonARC.mm in Sources */,
+				5CABDBC22735C9BD00B88BCB /* UnifiedSource40-nonARC.mm in Sources */,
+				5CABDBCF2735C9BD00B88BCB /* UnifiedSource41-nonARC.mm in Sources */,
+				5CABDBCD2735C9BD00B88BCB /* UnifiedSource42-nonARC.mm in Sources */,
+				5CABDBE82735C9BD00B88BCB /* UnifiedSource43-nonARC.mm in Sources */,
+				5CABDBE22735C9BD00B88BCB /* UnifiedSource44-nonARC.mm in Sources */,
+				5CABDBD82735C9BD00B88BCB /* UnifiedSource45-nonARC.mm in Sources */,
+				5CABDBE32735C9BD00B88BCB /* UnifiedSource46-nonARC.mm in Sources */,
+				5CABDBE62735C9BD00B88BCB /* UnifiedSource47-nonARC.mm in Sources */,
+				5CABDBD22735C9BD00B88BCB /* UnifiedSource48-nonARC.mm in Sources */,
+				5CABDBC12735C9BD00B88BCB /* UnifiedSource49-nonARC.mm in Sources */,
+				5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */,
+				5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */,
+				51A97F1B2FD0B5A400FBDD0C /* UnifiedSource52-nonARC.mm in Sources */,
+				07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */,
+			);
+		};
+		8DD76F990486AA7600D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		A13EBB451B87339E00097110 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */,
+				A1798B8522433647000764BD /* WebProcessPlugInWithInternals.mm in Sources */,
+			);
+		};
+		A17C57FE2C9AA12F009DD0B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		A17C582A2C9B3EAD009DD0B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				DD5698002DC1320500050321 /* rdar150228472.swift in Sources */,
+			);
+		};
+		BC57597D126E74AF006F0F12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */,
+				1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */,
+				BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0723A7552F80358F00CB96E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
+			targetProxy = 0723A7542F80358F00CB96E7 /* PBXContainerItemProxy */;
+		};
+		0723A7572F80359900CB96E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
+			targetProxy = 0723A7562F80359900CB96E7 /* PBXContainerItemProxy */;
+		};
+		0723A7592F80359E00CB96E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
+			targetProxy = 0723A7582F80359E00CB96E7 /* PBXContainerItemProxy */;
+		};
+		0723A75B2F8035A300CB96E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
+			targetProxy = 0723A75A2F8035A300CB96E7 /* PBXContainerItemProxy */;
+		};
+		0723A75D2F8035B000CB96E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
+			targetProxy = 0723A75C2F8035B000CB96E7 /* PBXContainerItemProxy */;
+		};
+		0723A75F2F8035B400CB96E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0723A7492F80357300CB96E7 /* Derived Sources */;
+			targetProxy = 0723A75E2F8035B400CB96E7 /* PBXContainerItemProxy */;
+		};
+		3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
+			targetProxy = 3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */;
+		};
+		5C9D922222D7DC84008E9266 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C9D921422D7DA02008E9266 /* Generate Unified Sources */;
+			targetProxy = 5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */;
+		};
+		7B9FC58828A26D83007570E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7B9FC39428A26137007570E7 /* TestIPC */;
+			targetProxy = 7B9FC58728A26D83007570E7 /* PBXContainerItemProxy */;
+		};
+		7C83E0251D0A5B2500FEBCF3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */;
+			targetProxy = 7C83E0241D0A5B2500FEBCF3 /* PBXContainerItemProxy */;
+		};
+		7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
+			targetProxy = 7C83E02F1D0A5E1B00FEBCF3 /* PBXContainerItemProxy */;
+		};
+		7C83E0321D0A5E1D00FEBCF3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C83DF951D0A5AE400FEBCF3 /* TestWTF */;
+			targetProxy = 7C83E0311D0A5E1D00FEBCF3 /* PBXContainerItemProxy */;
+		};
+		7CCE7F511A4124DB00447C4C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+			targetProxy = 7CCE7F501A4124DB00447C4C /* PBXContainerItemProxy */;
+		};
+		A13EBBB31B87441900097110 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A13EBB481B87339E00097110 /* WebProcessPlugIn */;
+			targetProxy = A13EBBB21B87441900097110 /* PBXContainerItemProxy */;
+		};
+		A17C48562C98EBF50023F3C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A17C46452C98E3430023F3C7 /* TestWebKitAPIResources */;
+			targetProxy = A17C48552C98EBF50023F3C7 /* PBXContainerItemProxy */;
+		};
+		A18898FE2CA9F70B00FEB09A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A17C58012C9AA12F009DD0B5 /* TestWebKitAPIApp */;
+			targetProxy = A18898FD2CA9F70B00FEB09A /* PBXContainerItemProxy */;
+		};
+		A188990A2CAA366C00FEB09A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
+			targetProxy = A18899092CAA366C00FEB09A /* PBXContainerItemProxy */;
+		};
+		A18899202CAC690400FEB09A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+			targetProxy = A188991F2CAC690400FEB09A /* PBXContainerItemProxy */;
+		};
+		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
+			targetProxy = BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0723A74A2F80357300CB96E7 /* Debug configuration for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		1DEB927508733DD40010E9CD /* Debug configuration for PBXNativeTarget "TestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPI.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB927608733DD40010E9CD /* Release configuration for PBXNativeTarget "TestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPI.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1DEB927908733DD40010E9CD /* Debug configuration for PBXProject "TestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = DebugRelease.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB927A08733DD40010E9CD /* Release configuration for PBXProject "TestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = DebugRelease.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		3A15785128D1505B00142DB1 /* Debug configuration for PBXNativeTarget "TestWGSL" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWGSL.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		3A15785228D1505B00142DB1 /* Release configuration for PBXNativeTarget "TestWGSL" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWGSL.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		537CF84422EFD64100C6EBB3 /* Debug configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		537CF84522EFD64100C6EBB3 /* Release configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5C9D921A22D7DA02008E9266 /* Debug configuration for PBXAggregateTarget "Generate Unified Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C9D921B22D7DA02008E9266 /* Release configuration for PBXAggregateTarget "Generate Unified Sources" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		7B9FC57C28A26137007570E7 /* Debug configuration for PBXNativeTarget "TestIPC" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestIPC.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7B9FC57D28A26137007570E7 /* Release configuration for PBXNativeTarget "TestIPC" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestIPC.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7C83DF661D0A590C00FEBCF3 /* Debug configuration for PBXNativeTarget "TestWTFLibrary" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWTFLibrary.xcconfig;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tests/WTF/darwin",
+				);
+			};
+			name = Debug;
+		};
+		7C83DF671D0A590C00FEBCF3 /* Release configuration for PBXNativeTarget "TestWTFLibrary" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWTFLibrary.xcconfig;
+			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Tests/WTF/darwin",
+				);
+			};
+			name = Release;
+		};
+		7C83E0211D0A5AE400FEBCF3 /* Debug configuration for PBXNativeTarget "TestWTF" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWTF.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7C83E0221D0A5AE400FEBCF3 /* Release configuration for PBXNativeTarget "TestWTF" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWTF.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7C83E02D1D0A5E1000FEBCF3 /* Debug configuration for PBXAggregateTarget "All" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7C83E02E1D0A5E1000FEBCF3 /* Release configuration for PBXAggregateTarget "All" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		7CCE7E9D1A41144E00447C4C /* Debug configuration for PBXNativeTarget "TestWebKitAPILibrary" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPILibrary.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7CCE7E9E1A41144E00447C4C /* Release configuration for PBXNativeTarget "TestWebKitAPILibrary" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPILibrary.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		A13EBB4D1B87339E00097110 /* Debug configuration for PBXNativeTarget "WebProcessPlugIn" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = WebProcessPlugIn.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A13EBB4E1B87339E00097110 /* Release configuration for PBXNativeTarget "WebProcessPlugIn" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = WebProcessPlugIn.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		A17C46482C98E3440023F3C7 /* Debug configuration for PBXNativeTarget "TestWebKitAPIResources" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIResources.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A17C46492C98E3440023F3C7 /* Release configuration for PBXNativeTarget "TestWebKitAPIResources" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIResources.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		A17C58182C9AA132009DD0B5 /* Debug configuration for PBXNativeTarget "TestWebKitAPIApp" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIApp.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A17C58192C9AA132009DD0B5 /* Release configuration for PBXNativeTarget "TestWebKitAPIApp" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIApp.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		A17C58342C9B3EAE009DD0B5 /* Debug configuration for PBXNativeTarget "TestWebKitAPIBundle" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIBundle.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A17C58352C9B3EAE009DD0B5 /* Release configuration for PBXNativeTarget "TestWebKitAPIBundle" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = TestWebKitAPIBundle.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		BC575984126E74AF006F0F12 /* Debug configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = InjectedBundle.xcconfig;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		BC575985126E74AF006F0F12 /* Release configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 07C907E72F820957003A09D8 /* Configurations */;
+			baseConfigurationReferenceRelativePath = InjectedBundle.xcconfig;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0723A7532F80357300CB96E7 /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0723A74A2F80357300CB96E7 /* Debug configuration for PBXAggregateTarget "Derived Sources" */,
+				0723A74B2F80357300CB96E7 /* Release configuration for PBXAggregateTarget "Derived Sources" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "TestWebKitAPI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927508733DD40010E9CD /* Debug configuration for PBXNativeTarget "TestWebKitAPI" */,
+				1DEB927608733DD40010E9CD /* Release configuration for PBXNativeTarget "TestWebKitAPI" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB927908733DD40010E9CD /* Debug configuration for PBXProject "TestWebKitAPI" */,
+				1DEB927A08733DD40010E9CD /* Release configuration for PBXProject "TestWebKitAPI" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		3A15785028D1505B00142DB1 /* Build configuration list for PBXNativeTarget "TestWGSL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A15785128D1505B00142DB1 /* Debug configuration for PBXNativeTarget "TestWGSL" */,
+				3A15785228D1505B00142DB1 /* Release configuration for PBXNativeTarget "TestWGSL" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		537CF84622EFD64100C6EBB3 /* Build configuration list for PBXAggregateTarget "Apply Configuration to XCFileLists" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				537CF84422EFD64100C6EBB3 /* Debug configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
+				537CF84522EFD64100C6EBB3 /* Release configuration for PBXAggregateTarget "Apply Configuration to XCFileLists" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		5C9D921922D7DA02008E9266 /* Build configuration list for PBXAggregateTarget "Generate Unified Sources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C9D921A22D7DA02008E9266 /* Debug configuration for PBXAggregateTarget "Generate Unified Sources" */,
+				5C9D921B22D7DA02008E9266 /* Release configuration for PBXAggregateTarget "Generate Unified Sources" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7B9FC57B28A26137007570E7 /* Build configuration list for PBXNativeTarget "TestIPC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7B9FC57C28A26137007570E7 /* Debug configuration for PBXNativeTarget "TestIPC" */,
+				7B9FC57D28A26137007570E7 /* Release configuration for PBXNativeTarget "TestIPC" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7C83DF651D0A590C00FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTFLibrary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C83DF661D0A590C00FEBCF3 /* Debug configuration for PBXNativeTarget "TestWTFLibrary" */,
+				7C83DF671D0A590C00FEBCF3 /* Release configuration for PBXNativeTarget "TestWTFLibrary" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7C83E0201D0A5AE400FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTF" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C83E0211D0A5AE400FEBCF3 /* Debug configuration for PBXNativeTarget "TestWTF" */,
+				7C83E0221D0A5AE400FEBCF3 /* Release configuration for PBXNativeTarget "TestWTF" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7C83E02C1D0A5E1000FEBCF3 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C83E02D1D0A5E1000FEBCF3 /* Debug configuration for PBXAggregateTarget "All" */,
+				7C83E02E1D0A5E1000FEBCF3 /* Release configuration for PBXAggregateTarget "All" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7CCE7EA11A41144E00447C4C /* Build configuration list for PBXNativeTarget "TestWebKitAPILibrary" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7CCE7E9D1A41144E00447C4C /* Debug configuration for PBXNativeTarget "TestWebKitAPILibrary" */,
+				7CCE7E9E1A41144E00447C4C /* Release configuration for PBXNativeTarget "TestWebKitAPILibrary" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		A13EBB4C1B87339E00097110 /* Build configuration list for PBXNativeTarget "WebProcessPlugIn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A13EBB4D1B87339E00097110 /* Debug configuration for PBXNativeTarget "WebProcessPlugIn" */,
+				A13EBB4E1B87339E00097110 /* Release configuration for PBXNativeTarget "WebProcessPlugIn" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		A17C46472C98E3440023F3C7 /* Build configuration list for PBXNativeTarget "TestWebKitAPIResources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A17C46482C98E3440023F3C7 /* Debug configuration for PBXNativeTarget "TestWebKitAPIResources" */,
+				A17C46492C98E3440023F3C7 /* Release configuration for PBXNativeTarget "TestWebKitAPIResources" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		A17C58212C9AA132009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A17C58182C9AA132009DD0B5 /* Debug configuration for PBXNativeTarget "TestWebKitAPIApp" */,
+				A17C58192C9AA132009DD0B5 /* Release configuration for PBXNativeTarget "TestWebKitAPIApp" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		A17C583D2C9B3EAE009DD0B5 /* Build configuration list for PBXNativeTarget "TestWebKitAPIBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A17C58342C9B3EAE009DD0B5 /* Debug configuration for PBXNativeTarget "TestWebKitAPIBundle" */,
+				A17C58352C9B3EAE009DD0B5 /* Release configuration for PBXNativeTarget "TestWebKitAPIBundle" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC575984126E74AF006F0F12 /* Debug configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */,
+				BC575985126E74AF006F0F12 /* Release configuration for PBXNativeTarget "InjectedBundleTestWebKitAPI" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

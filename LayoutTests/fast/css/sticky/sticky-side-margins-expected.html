@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden; /* hide scrollbars */
+    }
+    
+    .group {
+        position: relative;
+        width: 500px;
+        height: 200px;
+    }
+    
+    .container {
+        position: relative;
+        width: 400px;
+        height: 180px;
+        outline: 2px solid black;
+    }
+    
+    .box {
+        width: 200px;
+        height: 180px;
+    }
+
+    .sticky {
+        position: absolute;
+        background-color: green;
+    }
+</style>
+</head>
+<body>
+    <div class="group" style="left: -100px">
+        <div class="container">
+            <div class="sticky box" style="right: 0;"></div>
+        </div>
+    </div>
+
+    <div class="group" style="left: -100px">
+        <div class="container">
+            <div class="sticky box" style="right: 20px;"></div>
+        </div>
+    </div>
+
+    <div class="group" style="left: -100px">
+        <div class="container">
+            <div class="sticky box" style="right: 80px"></div>
+        </div>
+    </div>
+</body>
+</html>

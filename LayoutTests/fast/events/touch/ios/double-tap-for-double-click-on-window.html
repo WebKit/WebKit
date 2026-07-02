@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function runTest() {
+    if (!testRunner.runUIScript)
+        return;
+
+    let dblclickFired = false;
+
+    window.addEventListener("dblclick", () => {
+        dblclickFired = true;
+    });
+
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.humanSpeedDoubleTapAt(50, 50);
+
+    if (dblclickFired)
+        document.getElementById("result").textContent = "PASS: Received dblclick event on window.";
+    else
+        document.getElementById("result").textContent = `FAIL: Did not receive dblclick event on window.`;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+</head>
+<body>
+<p>Test for double tap triggering dblclick event on window. To run manually, double tap anywhere in the viewport.</p>
+<p id="result"></p>
+</body>
+</html>

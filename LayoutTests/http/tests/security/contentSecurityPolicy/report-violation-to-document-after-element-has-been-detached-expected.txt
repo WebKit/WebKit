@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+Tests that a detached element sends a CSP violation report to its document
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully received violation event
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false ] -->                                                                                                                      
+<style>
+.container {
+    display: inline-block;
+    width: 200px;
+    height: 100px;
+    vertical-align: top;
+    overflow: scroll;
+}
+
+.big {
+    width: 500px;
+    height: 500px;
+}
+
+.green {
+    width: 200px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+<p>Test passes if space taking scrollbars are visible.</p>
+<div class="container">
+    <div class="big">
+      <div class=green></div>
+    </div>
+</div>

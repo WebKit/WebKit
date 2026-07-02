@@ -1,0 +1,14 @@
+
+PASS Absolute arc: A 50,50 0 0,1 200,100
+PASS Relative arc: a 50,50 0 0,1 100,0 from (100,150)
+PASS Arc endpoint is correct
+PASS Large arc flag: A 50,50 0 1,1 200,200
+PASS Sweep flag variations: 0 vs 1
+PASS X-axis rotation: A 50,25 45 0,1 200,300
+PASS Multiple arc arguments
+PASS Arc flags without comma: 01 instead of 0,1
+PASS Arc flags with spaces: 0 1 instead of 0,1
+PASS Elliptical arc: A 75,25 (different rx and ry)
+PASS Arc with zero radius becomes line
+PASS Arc with negative radius uses absolute value
+

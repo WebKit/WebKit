@@ -1,0 +1,13 @@
+This test makes sure asking for the header element for a cell, will return the header element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS button.headerElementAtIndex(0).isEqual(header) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+header 1	header 2	header 3
+cell 1	cell 2	cell 3
+cell 4	cell 5	cell
+6

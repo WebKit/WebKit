@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function shouldBeTrue(condition, testName)
+{
+    var result = testName + ": ";
+    if (condition)
+        result += "PASS";
+    else
+        result += "FAIL";
+
+    document.getElementById("results").innerHTML += result + "<br>";
+}
+
+function test()
+{
+    // With these encodings, backslashes will be transcoded into yen signs.
+    var encodings = ["EUC-JP", "Shift_JIS", "ISO-2022-JP"];
+    for (var i = 0; i < encodings.length; i++) {
+        var encoding = encodings[i];
+        var frameDocument = frames[i].document;
+        shouldBeTrue(frameDocument.execCommand("FindString", false, "¥-in-body"), "We can find a backslash in " + encoding + " page by finding a yen sign");
+        shouldBeTrue(frameDocument.execCommand("FindString", false, "¥-in-input"), "We can find a backslash in " + encoding + " text control by finding a yen sign");
+    }
+
+    shouldBeTrue(!document.execCommand("FindString", false, "¥-in-body"), "We can NOT find a backslash in UTF8 page by finding a yen sign");
+    shouldBeTrue(!document.execCommand("FindString", false, "¥-in-input"), "We can NOT find a backslash in UTF8 text control by finding a yen sign");
+}
+
+</script>
+</head>
+<body onload="test()">
+
+<div>\-in-body</div>
+<input value=\-in-input>
+<iframe src="data:text/html;charset=EUC-JP,<body>\-in-body<input value=\-in-input></body>"></iframe>
+<iframe src="data:text/html;charset=Shift_JIS,<body>\-in-body<input value=\-in-input></body>"></iframe>
+<iframe src="data:text/html;charset=ISO-2022-JP,<body>\-in-body<input value=\-in-input></body>"></iframe>
+
+<p>Results</p>
+
+<p id="results">
+</p>
+</body>
+</html>

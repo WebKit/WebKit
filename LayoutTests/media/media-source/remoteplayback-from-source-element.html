@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remote playback from source element</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+
+    let source;
+
+    if (window.internals) {
+        internals.setMockMediaPlaybackTargetPickerEnabled(true);
+        internals.settings.setAllowsAirPlayForMediaPlayback(true);
+    }
+
+    async function setupSources()
+    {
+        consoleWrite('<br>** Setup MSE and URL &lt;source&gt; elements')
+
+        let canPlayListener = new Promise(resolve => {
+            video.addEventListener('canplay', event => {
+                resolve(event);
+            }, { once: true });
+        });
+
+        let loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        let sourceElement = document.createElement('source');
+        sourceElement.id = 'MSE';
+        sourceElement.type = loader.type();
+        sourceElement.src = URL.createObjectURL(source);
+        video.appendChild(sourceElement);
+        await waitFor(source, 'sourceopen');
+
+        let sourceBuffer = source.addSourceBuffer(loader.type());
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await waitFor(sourceBuffer, 'update');
+
+        for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+            sourceBuffer.appendBuffer(loader.mediaSegment(i));
+            await waitForEventWithTimeout(sourceBuffer, 'update', 5000, '"update" for sample never fired')
+        }
+
+        sourceElement = document.createElement('source');
+        let sourceFile = findMediaFile('video', '../content/test');
+        sourceElement.id = 'MP4';
+        sourceElement.src = sourceFile
+        sourceElement.type = mimeTypeForFile(sourceFile);
+        video.appendChild(sourceElement);
+
+        await canPlayListener;
+        testExpected('video.currentSrc.indexOf("blob:")', 0, '===');
+        testExpected('video.readyState', HTMLMediaElement.HAVE_METADATA, '>=');
+    }
+
+    async function setupRemote()
+    {
+        consoleWrite('<br>** Simulate a device becoming available')
+
+        let pendingTimeout = setTimeout(_ => {
+            failTest(`<br>Remote device not available after 8 seconds!`);
+        }, 8000);
+
+        let resolveCallback;
+        try {
+            video.remote.watchAvailability((available) => {
+                if (!available)
+                    return;
+
+                video.remote.cancelWatchAvailability();
+                clearTimeout(pendingTimeout);
+                resolveCallback();
+            });
+        } catch (error) {
+            failTest(`<br>'watchAvailability' threw error ${error}`);
+        }
+
+        if (window.internals)
+            internals.setMockMediaPlaybackTargetPickerState('Sleepy', 'DeviceAvailable');
+
+        return new Promise(resolve => { resolveCallback = resolve; });
+    }
+
+    async function connectToRemote()
+    {
+        consoleWrite('<br>** Simulate selecting a device');
+
+        await video.play();
+        video.pause();
+
+        runWithKeyDown(async () => {
+            video.remote.prompt().catch(error => {
+                consoleWrite(`remote.prompt() failed with error '${ error }'`);
+            })
+        });
+
+        await waitForEventWithTimeout(video.remote, 'connect', 8000, "'connect' not fired after 8 seconds");
+
+        await testExpectedEventually('video.currentSrc.indexOf("blob:")', 0, '<', 8000);
+        testExpected('video.readyState', HTMLMediaElement.HAVE_METADATA, '>=');
+        consoleWrite('');
+    }
+
+    async function runTest()
+    {
+        findMediaElement();
+
+        waitForEventAndFail('error');
+
+        await setupSources();
+
+        await setupRemote();
+
+        await connectToRemote();
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video muted controls></video>
+</body>
+</html>

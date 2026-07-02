@@ -1,0 +1,18 @@
+
+PASS e.style['gap'] = "normal" should set the property value
+PASS e.style['gap'] = "10px" should set the property value
+PASS e.style['gap'] = "normal normal" should set the property value
+PASS e.style['gap'] = "10px 10px" should set the property value
+PASS e.style['column-gap'] = "normal" should set the property value
+PASS e.style['column-gap'] = "10px" should set the property value
+PASS e.style['row-gap'] = "normal" should set the property value
+PASS e.style['row-gap'] = "10px" should set the property value
+PASS 'row-gap: normal; column-gap: normal;' is serialized to 'gap: normal;'
+PASS getPropertyValue for 'row-gap: normal; column-gap: normal;' returns 'normal'
+PASS 'row-gap: 10px; column-gap: 10px;' is serialized to 'gap: 10px;'
+PASS getPropertyValue for 'row-gap: 10px; column-gap: 10px;' returns '10px'
+PASS 'row-gap: 10px; column-gap: normal;' is serialized to 'gap: 10px normal;'
+PASS getPropertyValue for 'row-gap: 10px; column-gap: normal;' returns '10px normal'
+PASS 'column-gap: normal; row-gap: 10px;' is serialized to 'gap: 10px normal;'
+PASS getPropertyValue for 'column-gap: normal; row-gap: 10px;' returns '10px normal'
+

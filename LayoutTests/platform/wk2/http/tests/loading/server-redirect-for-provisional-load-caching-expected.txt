@@ -1,0 +1,26 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didReceiveServerRedirectForProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/server-redirect.py
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didReceiveServerRedirectForProvisionalLoadForFrame
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+Test passes if the second redirection which is loaded from the cache dispatches didReceiveServerRedirectForProvisionalLoadForFrame.
+
+
+http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http status code 200>
+http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html - didFinishLoading
+http://127.0.0.1:8000/loading/resources/server-redirect.py - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/server-redirect.py, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/server-redirect-result.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/server-redirect-result.html, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/server-redirect.py, http status code 301>
+http://127.0.0.1:8000/loading/resources/server-redirect.py - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/server-redirect-result.html, http status code 200>
+http://127.0.0.1:8000/loading/resources/server-redirect.py - didFinishLoading

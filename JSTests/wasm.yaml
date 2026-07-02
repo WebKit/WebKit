@@ -1,0 +1,80 @@
+# Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+- path: wasm/stress
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/wast-tests/
+  cmd: runWebAssemblyWithHarness unless parseRunCommands
+- path: wasm/js-api/
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/noJIT/
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/function-tests
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/references
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/function-references
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/gc
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/fuzz
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/lowExecutableMemory
+  cmd: runWebAssemblyLowExecutableMemory unless parseRunCommands
+- path: wasm/regress/
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/modules/
+  cmd: runWebAssembly unless parseRunCommands
+- path: wasm/self-test/
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/v8/
+  cmd: runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
+- path: wasm/v8/regress/
+  cmd: runV8WebAssemblySuite(:no_module, "mjsunit.js") unless parseRunCommands
+- path: wasm/branch-hints
+  cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/memory64-spec-tests
+  cmd: runWebAssemblyMemory64SpecTest :normal
+- path: wasm/spec-tests
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/simd-spec-tests
+  cmd: "$skipModes += ['wasm-eager-jettison'.to_sym, 'wasm-eager-jettison-eager'.to_sym] if ($architecture == 'arm64' and $hostOS == 'linux'); runWebAssemblySIMDSpecTest :normal"
+- path: wasm/function-references-spec-tests
+  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
+- path: wasm/gc-spec-tests
+  cmd: runWebAssemblyGCSpecTest :normal
+- path: wasm/threads-spec-tests
+  cmd: runWebAssemblyThreadsSpecTest :normal
+- path: wasm/tail-call-spec-tests
+  cmd: runWebAssemblyTailCallSpecTest :normal
+- path: wasm/extended-const-spec-tests
+  cmd: runWebAssemblySpecTest :normal unless parseRunCommands
+- path: wasm/multi-memory-spec-tests
+  cmd: runWebAssemblyMultiMemorySpecTest :normal unless parseRunCommands
+
+- path: wasm/modules/run-from-wasm.wasm
+  cmd: runWebAssembly
+
+- path: ../PerformanceTests/JetStream2/wasm-cli.js
+  cmd: runWebAssemblyJetStream2 unless parseRunCommands
+

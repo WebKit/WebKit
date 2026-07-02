@@ -1,0 +1,63 @@
+/*
+ *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "test/mock_audio_encoder.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <span>
+
+#include "api/audio_codecs/audio_encoder.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
+
+namespace webrtc {
+
+MockAudioEncoder::MockAudioEncoder() = default;
+MockAudioEncoder::~MockAudioEncoder() = default;
+
+MockAudioEncoder::FakeEncoding::FakeEncoding(
+    const AudioEncoder::EncodedInfo& info)
+    : info_(info) {}
+
+MockAudioEncoder::FakeEncoding::FakeEncoding(size_t encoded_bytes) {
+  info_.encoded_bytes = encoded_bytes;
+}
+
+AudioEncoder::EncodedInfo MockAudioEncoder::FakeEncoding::operator()(
+    uint32_t timestamp,
+    std::span<const int16_t> audio,
+    Buffer* encoded) {
+  encoded->SetSize(encoded->size() + info_.encoded_bytes);
+  return info_;
+}
+
+MockAudioEncoder::CopyEncoding::~CopyEncoding() = default;
+
+MockAudioEncoder::CopyEncoding::CopyEncoding(AudioEncoder::EncodedInfo info,
+                                             std::span<const uint8_t> payload)
+    : info_(info), payload_(payload) {}
+
+MockAudioEncoder::CopyEncoding::CopyEncoding(std::span<const uint8_t> payload)
+    : payload_(payload) {
+  info_.encoded_bytes = payload_.size();
+}
+
+AudioEncoder::EncodedInfo MockAudioEncoder::CopyEncoding::operator()(
+    uint32_t timestamp,
+    std::span<const int16_t> audio,
+    Buffer* encoded) {
+  RTC_CHECK(encoded);
+  RTC_CHECK_LE(info_.encoded_bytes, payload_.size());
+  encoded->AppendData(payload_.data(), info_.encoded_bytes);
+  return info_;
+}
+
+}  // namespace webrtc

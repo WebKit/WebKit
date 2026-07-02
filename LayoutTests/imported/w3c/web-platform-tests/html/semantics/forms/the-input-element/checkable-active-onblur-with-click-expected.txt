@@ -1,0 +1,22 @@
+ ghi  jkl abc  def
+
+PASS Wait for load
+FAIL Checkboxes should clear :active when the user tabs away from them while pressing it with a pointing device assert_equals: Checkboxes should not be :active after tab is used to change focus. expected null but got Element node <html><head>
+<meta charset="utf-8">
+<script src="/resourc...
+FAIL Radios should clear :active when the user tabs away from them while pressing it with a pointing device assert_equals: Radios should not be :active after tab is used to change focus. expected null but got Element node <html><head>
+<meta charset="utf-8">
+<script src="/resourc...
+FAIL Checkboxes should clear :active when the user tabs away from them while pressing the parent label with a pointing device assert_equals: Checkboxes should not be :active after tab is used to change focus. expected null but got Element node <html><head>
+<meta charset="utf-8">
+<script src="/resourc...
+FAIL Radios should clear :active when the user tabs away from them while pressing the parent label with a pointing device assert_equals: Radios should not be :active after tab is used to change focus. expected null but got Element node <html><head>
+<meta charset="utf-8">
+<script src="/resourc...
+FAIL Checkboxes should clear :active when the user tabs away from them while pressing the following label with a pointing device assert_equals: Checkboxes should not be :active after tab is used to change focus. expected null but got Element node <html><head>
+<meta charset="utf-8">
+<script src="/resourc...
+FAIL Radios should clear :active when the user tabs away from them while pressing the following label with a pointing device assert_equals: Radios should not be :active after tab is used to change focus. expected null but got Element node <html><head>
+<meta charset="utf-8">
+<script src="/resourc...
+

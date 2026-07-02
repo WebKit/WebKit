@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <defs>
+        <symbol id="circle-symbol" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" fill="blue"/>
+        </symbol>
+        <symbol id="rect-symbol" viewBox="0 0 50 50">
+            <rect x="5" y="5" width="40" height="40" fill="red"/>
+        </symbol>
+    </defs>
+    <use href="#circle-symbol" x="0" y="0" width="50" height="50"/>
+    <use href="#rect-symbol" x="50" y="0" width="50" height="50"/>
+    <use href="#circle-symbol" x="0" y="50" width="50" height="50"/>
+    <use href="#rect-symbol" x="50" y="50" width="50" height="50"/>
+</svg>

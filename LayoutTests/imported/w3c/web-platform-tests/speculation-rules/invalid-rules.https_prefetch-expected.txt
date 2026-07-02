@@ -1,0 +1,3 @@
+
+PASS an unrecognized key in a prefetch rule should prevent it from being preloaded
+

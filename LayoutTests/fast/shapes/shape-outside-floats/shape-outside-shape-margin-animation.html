@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+        width: 200px;
+        height: 200px;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        -webkit-shape-outside: inset(0 100% 100% 0);
+        float: left;
+        background: rgba(0, 0, 255, 0.5);
+    }
+
+    #length-box {
+      -webkit-animation: length-anim 2s linear;
+    }
+
+    @-webkit-keyframes length-anim {
+        from { -webkit-shape-margin: 0px; }
+        to   { -webkit-shape-margin: 100px; }
+    }
+
+  </style>
+  <script src="../../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["length-anim",  1, "length-box", "-webkit-shape-margin", "50", 0.5],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class='container'>
+  <div class="box" id="length-box"></div>
+  Moving Text
+</div>
+
+<div id="result">
+</div>
+</body>
+</html>

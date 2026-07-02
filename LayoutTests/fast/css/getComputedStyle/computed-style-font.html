@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test exercises the 'font' shorthand property in CSS computed styles.");
+
+var testDiv = document.createElement('div');
+document.body.appendChild(testDiv);
+
+function computedFont(fontString)
+{
+    testDiv.style.font = 'bold 600px serif';
+    testDiv.style.font = fontString;
+    return getComputedStyle(testDiv).getPropertyValue('font');
+}
+
+function testComputedFont(value, expected)
+{
+    shouldBeEqualToString("computedFont('" + value + "')", expected || value);
+}
+
+testComputedFont("10px sans-serif");
+testComputedFont("10px SANS-SERIF", "10px sans-serif");
+testComputedFont("12px sans-serif");
+testComputedFont("12px  sans-serif", "12px sans-serif");
+testComputedFont("10px sans-serif, sans-serif");
+testComputedFont("10px sans-serif, serif");
+testComputedFont("12px ahem");
+testComputedFont("12px unlikely-font-name");
+testComputedFont("100 10px sans-serif");
+testComputedFont("200 10px sans-serif");
+testComputedFont("300 10px sans-serif");
+testComputedFont("400 10px sans-serif", "10px sans-serif");
+testComputedFont("normal 10px sans-serif", "10px sans-serif");
+testComputedFont("500 10px sans-serif");
+testComputedFont("600 10px sans-serif");
+testComputedFont("700 10px sans-serif");
+testComputedFont("bold 10px sans-serif", "700 10px sans-serif");
+testComputedFont("800 10px sans-serif");
+testComputedFont("900 10px sans-serif");
+testComputedFont("italic 10px sans-serif");
+testComputedFont("small-caps 10px sans-serif");
+testComputedFont("italic small-caps 10px sans-serif");
+testComputedFont("italic small-caps bold 10px sans-serif", "italic small-caps 700 10px sans-serif");
+testComputedFont("10px/100% sans-serif", "10px / 10px sans-serif");
+testComputedFont("10px/100px sans-serif", "10px / 100px sans-serif");
+testComputedFont("10px/normal sans-serif", "10px sans-serif");
+</script>
+</body>
+</html>

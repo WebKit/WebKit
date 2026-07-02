@@ -1,0 +1,175 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "DeclaredStylePropertyMap.h"
+
+#include "CSSCustomPropertyValue.h"
+#include "CSSSerializationContext.h"
+#include "CSSStyleRule.h"
+#include "CSSStyleSheet.h"
+#include "CSSUnparsedValue.h"
+#include "Document.h"
+#include "MutableStyleProperties.h"
+#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
+#include "StyleRule.h"
+
+namespace WebCore {
+
+Ref<DeclaredStylePropertyMap> DeclaredStylePropertyMap::create(CSSStyleRule& ownerRule)
+{
+    return adoptRef(*new DeclaredStylePropertyMap(ownerRule));
+}
+
+DeclaredStylePropertyMap::DeclaredStylePropertyMap(CSSStyleRule& ownerRule)
+    : m_ownerRule(ownerRule)
+{
+}
+
+unsigned DeclaredStylePropertyMap::size() const
+{
+    if (auto* styleRule = this->styleRule())
+        return styleRule->properties().propertyCount();
+    return 0;
+}
+
+auto DeclaredStylePropertyMap::entries(ScriptExecutionContext* context) const -> Vector<StylePropertyMapEntry>
+{
+    if (!context)
+        return { };
+
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return { };
+
+    auto& document = downcast<Document>(*context);
+    Ref properties = styleRule->properties();
+    return map(properties.get(), [&document](auto propertyReference) {
+        return StylePropertyMapEntry {
+            propertyReference.cssName(),
+            propertyReference.id() == CSSPropertyCustom
+                ? reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, AtomString { propertyReference.cssName() })
+                : reifyValueToVector(document, RefPtr<CSSValue> { propertyReference.value() }, propertyReference.id()),
+        };
+    });
+}
+
+RefPtr<CSSValue> DeclaredStylePropertyMap::propertyValue(CSSPropertyID propertyID) const
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return nullptr;
+    return protect(styleRule->properties())->getPropertyCSSValue(propertyID);
+}
+
+String DeclaredStylePropertyMap::shorthandPropertySerialization(CSSPropertyID propertyID) const
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return { };
+    return protect(styleRule->properties())->getPropertyValue(propertyID);
+}
+
+RefPtr<CSSValue> DeclaredStylePropertyMap::customPropertyValue(const AtomString& propertyName) const
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return nullptr;
+    return protect(styleRule->properties())->getCustomPropertyCSSValue(propertyName.string());
+}
+
+bool DeclaredStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, const String& value)
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return false;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    bool didFailParsing = false;
+    protect(styleRule->mutableProperties())->setProperty(propertyID, value, IsImportant::No, &didFailParsing);
+    return !didFailParsing;
+}
+
+bool DeclaredStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value)
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return false;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    bool didFailParsing = false;
+    protect(styleRule->mutableProperties())->setProperty(propertyID, value->cssText(CSS::defaultSerializationContext()), IsImportant::No, &didFailParsing);
+    return !didFailParsing;
+}
+
+bool DeclaredStylePropertyMap::setCustomProperty(Document&, const AtomString& property, Ref<CSSSubstitutionValue>&& value)
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return false;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    Ref customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTF::move(value));
+    protect(styleRule->mutableProperties())->addParsedProperty(CSSProperty(CSSPropertyCustom, WTF::move(customPropertyValue)));
+    return true;
+}
+
+void DeclaredStylePropertyMap::removeProperty(CSSPropertyID propertyID)
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    protect(styleRule->mutableProperties())->removeProperty(propertyID);
+}
+
+void DeclaredStylePropertyMap::removeCustomProperty(const AtomString& property)
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    protect(styleRule->mutableProperties())->removeCustomProperty(property.string());
+}
+
+StyleRule* DeclaredStylePropertyMap::styleRule() const
+{
+    return m_ownerRule ? &m_ownerRule->styleRule() : nullptr;
+}
+
+void DeclaredStylePropertyMap::clear()
+{
+    RefPtr styleRule = this->styleRule();
+    if (!styleRule)
+        return;
+
+    CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
+    protect(styleRule->mutableProperties())->clear();
+}
+
+} // namespace WebCore

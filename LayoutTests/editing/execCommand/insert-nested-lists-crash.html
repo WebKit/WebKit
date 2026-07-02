@@ -1,0 +1,16 @@
+<style>
+  li {
+    display: contents;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('InsertOrderedList');
+    document.execCommand('InsertNestedOrderedList');
+    document.write("This test passes if it doesn't crash");
+  };
+</script>

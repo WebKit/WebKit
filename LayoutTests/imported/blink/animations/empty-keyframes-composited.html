@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<style>
+p {
+  transform: rotateX(0deg);
+  -webkit-animation: 1s test;
+}
+@-webkit-keyframes test {
+  0% {
+  }
+}
+</style>
+
+<p>Tests an animation where all keyframes are empty, applied to an element which is composited.
+<p>This test passes if it doesn't crash.
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

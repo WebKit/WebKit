@@ -1,0 +1,103 @@
+Test that CanvasManager is able to record actions made to offscreen WebGL canvas contexts.
+
+
+== Running test suite: Canvas.recordingOffscreenWebGL
+-- Running test case: Canvas.recordingOffscreenWebGL.snapshots
+initialState:
+  attributes:
+    width: 300
+    height: 150
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"powerPreference":"default","failIfMajorPerformanceCaveat":false}
+  content: <filtered>
+frames:
+  0: (duration)
+    0: useProgram(1)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: useProgram
+        1: performActions
+        2: Global Code
+    1: clearColor(0, 0, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearColor
+        1: clearContext
+        2: performActions
+        3: Global Code
+    2: clear(16384)
+      swizzleTypes: [Number]
+      trace:
+        0: clear
+        1: clearContext
+        2: performActions
+        3: Global Code
+      snapshot: <PASS: content changed>
+    3: bufferData(34962, 0, 35044)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: bufferData
+        1: drawArrays
+        2: performActions
+        3: Global Code
+    4: drawArrays(4, 0, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: drawArrays
+        1: drawArrays
+        2: performActions
+        3: Global Code
+      snapshot: <PASS: content changed>
+    5: clearColor(0, 0, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearColor
+        1: clearContext
+        2: performActions
+        3: Global Code
+    6: clear(16384)
+      swizzleTypes: [Number]
+      trace:
+        0: clear
+        1: clearContext
+        2: performActions
+        3: Global Code
+      snapshot: <PASS: content changed>
+    7: bufferData(34962, 0, 35044)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: bufferData
+        1: drawElements
+        2: performActions
+        3: Global Code
+    8: bufferData(34963, 0, 35044)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: bufferData
+        1: drawElements
+        2: performActions
+        3: Global Code
+    9: drawElements(4, 3, 5123, 0)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: drawElements
+        1: drawElements
+        2: performActions
+        3: Global Code
+      snapshot: <PASS: content changed>
+    10: clearColor(0, 0, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearColor
+        1: clearContext
+        2: performActions
+        3: Global Code
+    11: clear(16384)
+      swizzleTypes: [Number]
+      trace:
+        0: clear
+        1: clearContext
+        2: performActions
+        3: Global Code
+      snapshot: <PASS: content changed>
+

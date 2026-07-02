@@ -1,0 +1,32 @@
+First line
+baseannotation
+Third line
+First line
+baseannotation
+Third line
+First line
+Second line
+baseannotation
+First line
+Second line
+baseannotation
+before
+baseannotation
+baseannotation
+n
+before baseannotation after
+baseannotation
+before baseannotation after
+baseannotation
+
+PASS Over ruby doesn't overflow the block
+PASS Over ruby + vertical-align doesn't overflow the block
+FAIL Under ruby doesn't overflow the block assert_true: expected true got false
+FAIL Under ruby + vertical-align doesn't overflow the block assert_true: expected true got false
+PASS Under ruby doesn't overwrap with the next block
+PASS Expand inter-lines spacing
+FAIL Consume half-leading of the previous line assert_approx_equals: expected 26 +/- 1 but got 24
+PASS Don't Consume half-leading of the previous line with text-emphasis
+FAIL Consume half-leading of the next line assert_approx_equals: expected 24 +/- 1 but got 26
+PASS Don't Consume half-leading of the next line with text-emphasis
+

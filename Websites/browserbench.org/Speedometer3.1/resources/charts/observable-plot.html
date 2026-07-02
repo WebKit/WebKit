@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Observable Plot</title>
+        <style>
+            label {
+                display: inline-flex;
+                align-content: center;
+                gap: 3px;
+                margin: 0 3px;
+            }
+            #airport-group-size {
+                min-width: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <button id="run-all" type="button">Run all scenario (development only)</button>
+            <button id="prepare" type="button">Prepare data</button>
+            <button id="add-stacked-chart-button" type="button">Add a stacked chart</button>
+            <button id="add-dotted-chart-button" type="button">Add a dotted chart</button>
+            <button id="reset" type="button">Reset</button>
+            <label>
+                Number of airports to keep in each group:
+                <span id="airport-group-size"></span>
+                <input type="range" id="airport-group-size-input" min="0" max="20" value="6" />
+            </label>
+        </div>
+        <div id="chart"></div>
+        <script type="module" src="/observable-plot.js"></script>
+    </body>
+</html>

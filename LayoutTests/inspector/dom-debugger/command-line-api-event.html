@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/exceptions.js"></script>
+<script>
+window.worldID = "main";
+window.addEventListener("event-main", (event) => {
+    debugger;
+});
+
+window.internals?.evaluateInWorldIgnoringException?.("internal", `
+window.worldID = "internal";
+window.addEventListener("event-internal", (event) => {
+    debugger;
+});
+`);
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.$event");
+
+    suite.addTestCase({
+        name: "CommandLineAPI.$event.World.Main",
+        async test() {
+            let pausePromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            InspectorTest.log("Triggering event...");
+            let dispatchPromise = InspectorTest.evaluateInPage(`window.dispatchEvent(new CustomEvent("event-main"))`);
+
+            await pausePromise;
+
+            InspectorTest.log("Checking $event...");
+            let {result} = await DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: WI.debuggerManager.activeCallFrame.id,
+                expression: `$event.target.worldID`,
+                objectGroup: "test",
+                includeCommandLineAPI: true,
+                doNotPauseOnExceptionsAndMuteConsole: true,
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(result.value, "main", "Should pause in main world.");
+
+            InspectorTest.log("Resuming...");
+            await WI.debuggerManager.resume();
+
+            await dispatchPromise;
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.$event.World.Internal",
+        async test() {
+            let pausePromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+
+            InspectorTest.log("Triggering event...");
+            let dispatchPromise = InspectorTest.evaluateInPage(`window.dispatchEvent(new CustomEvent("event-internal"))`);
+
+            await pausePromise;
+
+            InspectorTest.log("Checking $event...");
+            let {result} = await DebuggerAgent.evaluateOnCallFrame.invoke({
+                callFrameId: WI.debuggerManager.activeCallFrame.id,
+                expression: `$event.target.worldID`,
+                objectGroup: "test",
+                includeCommandLineAPI: true,
+                doNotPauseOnExceptionsAndMuteConsole: true,
+                returnByValue: true,
+            });
+            InspectorTest.expectEqual(result.value, "internal", "Should pause in internal world.");
+
+            InspectorTest.log("Resuming...");
+            await WI.debuggerManager.resume();
+
+            await dispatchPromise;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checks that <code>$event</code> is available and accurate in evaluations when paused in an event listener.</p>
+</body>
+</html>

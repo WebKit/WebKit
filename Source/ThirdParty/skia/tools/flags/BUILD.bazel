@@ -1,0 +1,143 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+exports_files([
+    "CommandLineFlags.cpp",
+    "CommandLineFlags.h",
+])
+
+skia_filegroup(
+    name = "flags",
+    testonly = True,
+    srcs = [
+        "CommandLineFlags.cpp",
+        "CommandLineFlags.h",
+    ],
+    visibility = [
+        "//gm:__pkg__",
+        "//modules/skottie:__pkg__",
+        "//tests:__subpackages__",
+        "//tools:__subpackages__",
+    ],
+)
+
+skia_filegroup(
+    name = "common_flags_legacy",
+    testonly = True,
+    srcs = [
+        "CommonFlags.h",
+        "CommonFlagsImages.cpp",
+    ],
+    visibility = [
+        # See png_codec.bzl
+        "//gm:__pkg__",
+    ],
+)
+
+skia_cc_library(
+    name = "common_flags",
+    testonly = True,
+    srcs = [
+        "CommonFlagsImages.cpp",
+    ],
+    hdrs = [
+        "CommonFlags.h",
+    ],
+    visibility = [
+        "//bench:__pkg__",
+        "//dm:__pkg__",
+        "//tools/skpbench:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        ":cmd_flags",
+        "//:core",
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
+    ],
+)
+
+# This is a filegroup because CommonFlagsConfig.cpp mixes functionality from all backends,
+# and is difficult to untangle in a reasonable manner.
+skia_filegroup(
+    name = "common_flags_config",
+    testonly = True,
+    srcs = [
+        "CommonFlagsConfig.cpp",
+        "CommonFlagsConfig.h",
+    ],
+    visibility = [
+        "//dm:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+)
+
+skia_cc_library(
+    name = "cmd_flags",
+    testonly = True,
+    srcs = [
+        "CommandLineFlags.cpp",
+    ],
+    hdrs = [
+        "CommandLineFlags.h",
+    ],
+    visibility = [
+        "//bench:__pkg__",
+        "//modules/skottie:__pkg__",
+        "//tests:__pkg__",
+        "//tools:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "ganesh_flags",
+    testonly = True,
+    srcs = [
+        "CommonFlagsGanesh.cpp",
+    ],
+    hdrs = [
+        "CommonFlagsGanesh.h",
+    ],
+    visibility = [
+        "//bench:__pkg__",
+        "//dm:__pkg__",
+        "//tools/skpbench:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        ":cmd_flags",
+        "//:core",
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
+    ],
+)
+
+skia_cc_library(
+    name = "graphite_flags",
+    testonly = True,
+    srcs = [
+        "CommonFlagsGraphite.cpp",
+    ],
+    hdrs = [
+        "CommonFlagsGraphite.h",
+    ],
+    visibility = [
+        "//bench:__pkg__",
+        "//dm:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        ":cmd_flags",
+        "//:core",
+        "//src/gpu/graphite:graphite_TEST_UTIL",
+        "//tools/graphite:graphite_utils",
+    ],
+)

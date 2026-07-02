@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that JS prompts are allowed in cross-origin frames");
+jsTestIsAsync = true;
+
+onmessage = (e) => {
+  if (e.data == "done")
+    finishJSTest();
+  else
+    debug(e.data);
+}
+</script>
+<iframe src="http://localhost:8000/security/resources/cross-origin-js-prompt-allowed.html"></iframe>
+</body>
+</html>

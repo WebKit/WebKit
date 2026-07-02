@@ -1,0 +1,6 @@
+
+PASS ':in-range' matches time inputs whose value is within a reversed range (>= min OR <= max)
+PASS ':out-of-range' matches time inputs whose value is in the gap of a reversed range (> max AND < min)
+PASS Dynamic update from in-range to out-of-range in a reversed time range
+PASS Dynamic update from out-of-range to in-range in a reversed time range
+

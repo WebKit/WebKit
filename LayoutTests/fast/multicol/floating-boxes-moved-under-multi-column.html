@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+  :focus-within {
+    column-width: 1px;
+    width: 0;
+  }
+  :nth-last-child(3) {
+    margin-block-end: 1px;
+    float: right;
+  }
+  :nth-last-child(3)::first-letter {
+    background: grey;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  
+  onload = () => {
+    document.body.appendChild(document.createElement('span'));
+    document.body.appendChild(document.createElement('div'));
+    document.body.appendChild(document.createElement('span'));
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.body.appendChild(document.createElement('div'));
+  };
+</script>
+<body>
+</body>

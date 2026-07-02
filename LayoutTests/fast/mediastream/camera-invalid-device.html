@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Test that invalid capture devices are not exposed by enumerateDevices.</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <video id='video'></video>
+    <script>
+    let setup = async (test) => {
+        if (!window.testRunner)
+            return Promise.reject('test requires internal API');
+
+        test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
+    }
+
+    async function getDeviceWithLabel(label)
+    {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        let deviceId = undefined;
+        devices.forEach(device => {
+            if (device.label === label)
+                deviceId = device.deviceId;
+        });
+
+        stream.getTracks().forEach(track => {
+            track.stop();
+        });
+
+        return deviceId;
+    }
+
+    promise_test(async (test) => {
+        await setup(test);
+
+        testRunner.addMockCameraDevice('BogusCamera', 'invalid camera', { invalid: 'true' });
+        let invalidDevice = await getDeviceWithLabel('invalid camera')
+        assert_equals(invalidDevice, undefined);
+
+        testRunner.resetMockMediaDevices();
+        testRunner.addMockMicrophoneDevice('BogusMicrophone', 'invalid microphone', { invalid: 'true' });
+        invalidDevice = await getDeviceWithLabel('invalid microphone')
+        assert_equals(invalidDevice, undefined);
+
+    }, 'Invalid cameras and microphones should not be exposed by enumerateDevices');
+    </script>
+</body>
+</html>

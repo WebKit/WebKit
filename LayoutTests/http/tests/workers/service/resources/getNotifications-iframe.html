@@ -1,0 +1,11 @@
+<head>
+<script>
+async function getNotifications()
+{
+    const registration = await navigator.serviceWorker.register('shownotification-worker.js');
+    return registration.getNotifications({ tag: "" });
+}
+</script>
+</head>
+<body>
+</body>

@@ -1,0 +1,84 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let buffer = device.createBuffer({ size: 3827, usage: GPUBufferUsage.INDIRECT });
+    let texture = device.createTexture({ size: { width: 1100 }, dimension: '3d', format: 'rgba16sint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 922, visibility: GPUShaderStage.VERTEX, buffer: { hasDynamicOffset: true } },
+        ]
+    });
+    let sampler = device.createSampler({ compare: 'not-equal' });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let buffer2 = device.createBuffer({ size: 10023, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 922, resource: { buffer: buffer2 } },
+        ]
+    });
+    let shaderModule = device.createShaderModule({ code: `
+        struct FragmentOutput0 {
+            @location(1) f0: vec4<i32>
+        }
+        @fragment fn fragment0() -> FragmentOutput0 {
+            return FragmentOutput0();
+        }
+        @vertex fn vertex0() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+    `});
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: [, 'rgba16sint'], stencilReadOnly: true });
+    let shaderModule2 = device.createShaderModule({ code: `
+        struct FragmentOutput0 {
+            @location(2) f0: vec4<u32>,
+            @location(1) f1: vec4<i32>
+        }
+        @fragment fn fragment0() -> FragmentOutput0 {
+            return FragmentOutput0();
+        }
+        @vertex fn vertex0() -> @builtin(position) vec4<f32> {
+            return vec4();
+        }
+    `});
+    renderBundleEncoder.setVertexBuffer(7, buffer2);
+    let pipelineLayout2 = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let pipeline2 = device.createRenderPipeline({
+        layout: pipelineLayout2,
+        fragment: {
+            module: shaderModule,
+            targets: [, { format: 'rgba16sint', writeMask: GPUColorWrite.ALPHARED }]
+        },
+        vertex: { module: shaderModule, buffers: [] }
+    });
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule2, targets: [, { format: 'rgba16sint' }] },
+        vertex: { module: shaderModule2, buffers: [] }
+    });
+    renderBundleEncoder.setPipeline(pipeline2);
+    renderBundleEncoder.setVertexBuffer(1, buffer2);
+    renderBundleEncoder.setBindGroup(0, bindGroup, new Uint32Array(651), 599, 1);
+    renderBundleEncoder.drawIndirect(buffer, 48);
+    renderBundleEncoder.setPipeline(pipeline);
+    renderBundleEncoder.draw(982);
+    let renderBundle = renderBundleEncoder.finish();
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [, { view: textureView, depthSlice: 0, loadOp: 'clear', storeOp: 'discard' }]
+    });
+    renderPassEncoder.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

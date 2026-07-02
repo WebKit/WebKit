@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root {
+            background-color: silver;
+        }
+
+        .blending {
+            margin: 50px;
+            width: 2097px;
+            height: 200px;
+            border: 1px solid black;
+            background-color: green;
+            mix-blend-mode: screen;
+        }
+        
+        body.changed .blending {
+            width: 200px;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+            document.body.classList.add('changed');
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="composited blending"></div>
+</body>
+</html>

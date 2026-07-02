@@ -1,0 +1,30 @@
+<style>
+.previous_sibling {
+  height: 50px;
+}
+.float {
+  float: left;
+  width: 50px;
+  height: 50px;
+  background: blue;
+}
+#content {
+  overflow: hidden;
+  margin-top: -50px;
+  width: 50px;
+  height: 50px;
+  background: green;
+}
+</style>
+PASS if green box shows.
+<div class=previous_sibling>
+  <div class="float"></div>
+</div>
+<div style="position:absolute"></div>
+<div id="content"></div>
+
+<div class=previous_sibling>
+  <div class="float"></div>
+</div>
+<div style="display: flex"></div>
+<div id="content"></div>

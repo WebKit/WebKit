@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+  let n14 = document.createElement('audio');
+  n14.src = '../content/CC+Subtitles.mov';
+  n14.onloadedmetadata = () => {
+    n14.src = 'data:';
+  };
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+PASS if this doesn't crash

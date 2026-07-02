@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<iframe id="iframe" src="resources/iframe-with-buttons.html" width="500" height="200"></iframe>
+
+<script>
+var output = "This test ensures iframe content remains accessible across rapid iframe document replacements.\n\n";
+
+var yesButton, noButton;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var iframeElement = document.getElementById("iframe");
+    setTimeout(async () => {
+        // Establish the initial iframe accessibility state.
+        yesButton = await waitForElementById("yes-btn");
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        // Replace the iframe document several times.
+        for (let navCount = 1; navCount <= 3; navCount++) {
+            await new Promise(resolve => {
+                iframeElement.addEventListener("load", function onLoad() {
+                    iframeElement.removeEventListener("load", onLoad);
+                    resolve();
+                });
+                iframeElement.src = `resources/iframe-with-buttons.html?nav=${navCount}`;
+            });
+
+            await waitFor(() => {
+                let candidate = accessibilityController.accessibleElementById("yes-btn");
+                return candidate && !candidate.isEqual(yesButton);
+            });
+            yesButton = accessibilityController.accessibleElementById("yes-btn");
+        }
+
+        noButton = accessibilityController.accessibleElementById("no-btn");
+        output += expect("yesButton && yesButton.title.includes('Yes')", "true");
+        output += expect("noButton && noButton.title.includes('No')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

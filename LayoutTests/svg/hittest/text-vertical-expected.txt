@@ -1,0 +1,4 @@
+MMMMMMMM
+
+PASS elementFromPoint(...) on vertical <svg:text>
+

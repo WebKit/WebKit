@@ -1,0 +1,36 @@
+Testing the MacOSInlineMediaControls layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+mediaControls.children.length 3
+mediaControls.children[0].constructor.name ControlsBar
+mediaControls.children[1].constructor.name ControlsBar
+mediaControls.topLeftControlsBar.children.length 2
+PASS mediaControls.topLeftControlsBar.children[0] instanceof BackgroundTint is true
+PASS mediaControls.topLeftControlsBar.children[1] instanceof ButtonsContainer is true
+mediaControls.topLeftControlsBar.children[1].children.length 2
+mediaControls.topLeftControlsBar.children[1].children[0].constructor.name PiPButton
+mediaControls.topLeftControlsBar.children[1].children[1].constructor.name FullscreenButton
+mediaControls.bottomControlsBar.children.length 4
+PASS mediaControls.bottomControlsBar.children[0] instanceof BackgroundTint is true
+mediaControls.bottomControlsBar.children[1].constructor.name ButtonsContainer
+mediaControls.bottomControlsBar.children[2].constructor.name TimeControl
+mediaControls.bottomControlsBar.children[3].constructor.name ButtonsContainer
+mediaControls.leftContainer.children.length 3
+mediaControls.leftContainer.children[0].constructor.name SkipBackButton
+mediaControls.leftContainer.children[1].constructor.name PlayPauseButton
+mediaControls.leftContainer.children[2].constructor.name SkipForwardButton
+mediaControls.timeControl.children.length 4
+mediaControls.timeControl.children[0].constructor.name TimeLabel
+mediaControls.timeControl.children[1].constructor.name Slider
+mediaControls.timeControl.children[2].constructor.name TimeLabel
+mediaControls.timeControl.children[3].constructor.name TimeLabel
+mediaControls.rightContainer.children.length 3
+mediaControls.rightContainer.children[0].constructor.name AirplayButton
+mediaControls.rightContainer.children[1].constructor.name TracksButton
+mediaControls.rightContainer.children[2].constructor.name OverflowButton
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

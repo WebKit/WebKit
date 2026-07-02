@@ -1,0 +1,3 @@
+
+PASS Resolved <color> value with sibling-index()
+

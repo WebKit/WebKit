@@ -1,0 +1,10 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Ensures that accessibility returns a remote element from the focused-ui-element API when focus moves into a remote frame.
+PASS: addedNotification === true
+PASS: focusedObject.role.toLowerCase().includes('link') === true
+PASS: focusedObject.isRemotePlatformElement === false
+PASS: focusedObject.isRemotePlatformElement === true
+
+Pre-iframe focusable element

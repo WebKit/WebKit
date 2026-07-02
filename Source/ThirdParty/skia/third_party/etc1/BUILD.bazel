@@ -1,0 +1,13 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "etc1",
+    testonly = True,  # Only used for a few gms
+    srcs = [
+        "etc1.cpp",
+    ],
+    hdrs = [
+        "etc1.h",
+    ],
+    visibility = ["//gm:__pkg__"],
+)

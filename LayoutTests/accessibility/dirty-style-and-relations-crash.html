@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<main aria-label="content here">
+    <div>
+        <div id="container" role="group" aria-label="container">
+            <button id="button">Foo</button>
+        </div>
+
+        <div id="container-2" role="group" aria-label="container2" aria-owns="button">
+        </div>
+
+        <div id="container-3" role="group" aria-labelledby="text" aria-owns="abc">
+        </div>
+    <div>
+</main>
+
+<div id="a"></div>
+<div id="b"></div>
+<div id="c"></div>
+<div id="d"></div>
+<div id="e"></div>
+
+<div role="group" id="text">hello world</div>
+
+<script>
+var output = "This test passes ensures we don't crash after performing accessibility tree updates with dirty style and object relations.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+    setTimeout(async function() {
+        // Wait out any tree updates that result from the initial page load that didn't already happen during the
+        // touchAccessibilityTree call above.
+        await sleep(100);
+
+        // Changing the id attribute unconditionally dirties relations, so do that to setup for the crash.
+        document.getElementById("button").setAttribute("id", "abc");
+        // Dirty the style of #text and #abc, which are involved in relations — this is necesssary to trigger the crash.
+        // The goal is to get `Element::computedStyle()` to call `resolveComputedStyle()` at an invalid time.
+        document.getElementById("text").style.fontSize = "16px";
+        document.getElementById("c").setAttribute("id", "c1");
+        document.getElementById("text").style.display = "none"
+        document.getElementById("abc").style.fontSize = "16px";
+        document.getElementById("abc").style.display = "block";
+        // Now that style and relations are dirty, perform a DOM mutation, which should cause AXIsolatedTree::removeNode
+        // to run and try to un-dirty relations as a result of a parentObject() call. This will then cause isIgnored()
+        // to run, which depends on style. If we resolve style eagerly at this point, we will RELEASE_ASSERT in RenderTreeBuilder
+        // because a render tree update is already happening higher up in the stack.
+        document.getElementById("container").removeChild(document.getElementById("abc"));
+        document.getElementById("d").setAttribute("id", "d1");
+        document.getElementById("e").setAttribute("id", "e1");
+
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        output += "PASS: No crash."
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

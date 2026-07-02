@@ -1,0 +1,10 @@
+Test media files loaded via redirect are marked app initiated
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfully loaded only app initiated requests
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+<style>
+body {
+  margin: 0px;
+  font-family: ahem;
+  font-size: 20px;
+}
+
+div {
+  width: 10px;
+}
+
+.test {
+  word-break: break-all;
+  color: red;
+}
+
+.ref {
+  word-break: normal;
+  color: green;
+  position: absolute;
+  top: 0px;
+}
+</style>
+<!-- do not break between punctuation, but break at other positions -->
+<div class=test>X !!!should_break</div>
+<div class=ref>X !!! s h o u l d  _ b r e a k</div>

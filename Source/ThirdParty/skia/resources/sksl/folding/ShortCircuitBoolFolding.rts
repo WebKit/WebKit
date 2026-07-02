@@ -1,0 +1,47 @@
+uniform half4 colorRed, colorGreen;
+uniform half  unknownInput;
+
+bool test() {
+    bool expr = unknownInput > 0;
+
+    int ok = 0, bad = 0;
+
+    // Test boolean short-circuiting with constants on the left side.
+    if (true  && expr) { ++ok; } else { ++bad; } // -> (expr)
+    if (false && expr) { ++bad; } else { ++ok; } // -> (false) -> block removed
+    if (true  ^^ expr) { ++bad; } else { ++ok; } // -> unchanged
+    if (false ^^ expr) { ++ok; } else { ++bad; } // -> (expr)
+    if (true  || expr) { ++ok; } else { ++bad; } // -> (true)
+    if (false || expr) { ++ok; } else { ++bad; } // -> (expr)
+    if (true  == expr) { ++ok; } else { ++bad; } // -> (expr)
+    if (false == expr) { ++bad; } else { ++ok; } // -> unchanged
+    if (true  != expr) { ++bad; } else { ++ok; } // -> unchanged
+    if (false != expr) { ++ok; } else { ++bad; } // -> (expr)
+
+    // Test boolean short-circuiting with constants on the right side.
+    if (expr && true ) { ++ok; } else { ++bad; } // -> (expr)
+    if (expr && false) { ++bad; } else { ++ok; } // -> (false) -> block removed
+    if (expr ^^ true ) { ++bad; } else { ++ok; } // -> unchanged
+    if (expr ^^ false) { ++ok; } else { ++bad; } // -> (expr)
+    if (expr || true ) { ++ok; } else { ++bad; } // -> (true)
+    if (expr || false) { ++ok; } else { ++bad; } // -> (expr)
+    if (expr == true ) { ++ok; } else { ++bad; } // -> (expr)
+    if (expr == false) { ++bad; } else { ++ok; } // -> unchanged
+    if (expr != true ) { ++bad; } else { ++ok; } // -> unchanged
+    if (expr != false) { ++ok; } else { ++bad; } // -> (expr)
+
+    // Test that side-effects in the left-side expression prevent right-side expr elimination.
+    float a = unknownInput + 2, b = unknownInput * 2;
+
+    true || bool(a = b);                         // -> true
+    if (a == b) { ++bad; } else { ++ok; }
+
+    bool(a = b) || true;                         // -> unchanged
+    if (a == b) { ++ok; } else { ++bad; }
+
+    return ok == 22 && bad == 0;
+}
+
+half4 main(float2 coords) {
+    return test() ? colorGreen : colorRed;
+}

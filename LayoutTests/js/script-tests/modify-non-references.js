@@ -1,0 +1,12 @@
+shouldBe("function f() { g()++; } f.toString()", "'function f() { g()++; }'");
+shouldBe("function f() { g()--; } f.toString()", "'function f() { g()--; }'");
+shouldBe("function f() { ++g(); } f.toString()", "'function f() { ++g(); }'");
+shouldBe("function f() { --g(); } f.toString()", "'function f() { --g(); }'");
+shouldBe("function f() { g() = 1; } f.toString()", "'function f() { g() = 1; }'");
+shouldBe("function f() { g() += 1; } f.toString()", "'function f() { g() += 1; }'");
+shouldThrow("function g() {} g()++", "'ReferenceError: Postfix ++ operator applied to value that is not a reference.'");
+shouldThrow("function g() {} g()--", "'ReferenceError: Postfix -- operator applied to value that is not a reference.'");
+shouldThrow("function g() {} ++g()", "'ReferenceError: Prefix ++ operator applied to value that is not a reference.'");
+shouldThrow("function g() {} --g()", "'ReferenceError: Prefix -- operator applied to value that is not a reference.'");
+shouldThrow("function g() {} g() = 1", "'ReferenceError: Left side of assignment is not a reference.'");
+shouldThrow("function g() {} g() += 1", "'ReferenceError: Left side of assignment is not a reference.'");

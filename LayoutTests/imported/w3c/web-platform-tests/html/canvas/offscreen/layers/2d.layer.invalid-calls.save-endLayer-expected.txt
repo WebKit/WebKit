@@ -1,0 +1,10 @@
+2d.layer.invalid-calls.save-endLayer
+
+Raises exception on save() + endLayer().
+
+
+FAIL Raises exception on save() + endLayer(). assert_throws_dom: function "function() {
+    ctx.save();
+    ctx.endLayer();
+  }" did not throw
+

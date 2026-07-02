@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>getVideoPlaybackQuality with WebM</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+
+    waitFor(window, 'load').then(async event => { 
+        findMediaElement();
+
+        run('video.src = "content/test-vp8.webm"');
+        await waitFor(video, 'canplaythrough');
+
+        run(`originalQuality = video.getVideoPlaybackQuality()`);
+        testExpected('originalQuality.totalVideoFrames', 0, '>=');
+        testExpected('originalQuality.droppedVideoFrames', 0);
+        testExpected('originalQuality.totalFrameDelay', 0);
+
+        runWithKeyDown('video.play()');
+        await waitFor(video, 'playing');
+
+        run(`newQuality = video.getVideoPlaybackQuality()`);
+        testExpected('newQuality.creationTime > originalQuality.creationTime', true);
+        testExpected('newQuality.totalVideoFrames >= originalQuality.totalVideoFrames', true);
+        testExpected('newQuality.totalVideoFrames', 0, ">");
+        testExpected('newQuality.droppedVideoFrames >= originalQuality.droppedVideoFrames', true);
+        testExpected('newQuality.droppedVideoFrames <= originalQuality.totalVideoFrames', true);
+
+        endTest();
+    });
+
+    </script>
+</head>
+<body>
+    <video controls preload='auto'></video>
+</body>
+</html>

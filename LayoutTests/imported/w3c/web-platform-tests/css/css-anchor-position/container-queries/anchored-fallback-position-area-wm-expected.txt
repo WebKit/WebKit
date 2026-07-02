@@ -1,0 +1,4 @@
+
+FAIL @container anchored(fallback) with 'self-block-end self-inline-start' fallback applied assert_equals: queried physical position-area expected "yes" but got ""
+FAIL @container anchored(fallback) with 'block-end inline-end' fallback applied assert_equals: queried physical position-area expected "yes" but got ""
+

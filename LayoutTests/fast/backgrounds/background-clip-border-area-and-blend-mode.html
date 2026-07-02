@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            margin: 20px;
+            width: 400px;
+            box-sizing: border-box;
+            border: 20px solid transparent;
+            padding: 20px;
+            font-size: 20pt;
+            font-weight: 900;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        .single-background {
+            background-clip: border-area;
+            background-image: url('../images/resources/green-400x400.png');
+            background-color: blue;
+            background-blend-mode: lighten;
+        }
+
+        .middle-background {
+            background-clip: border-area, border-box;
+            background-image: url('../images/resources/green-400x400.png'), url('../images/resources/green-256x256.png');
+            background-color: blue;
+            background-blend-mode: difference, lighten;
+        }
+
+        .last-background {
+            background-clip: border-box, border-area;
+            background-image: url('../images/resources/green-400x400.png'), url('../images/resources/green-256x256.png');
+            background-color: blue;
+            background-blend-mode: difference, lighten;
+        }
+    </style>    
+</head>
+<body>
+    <div class="box single-background">Blue border, white background</div>
+    <div class="box middle-background">Blue border, cyan background</div>
+    <div class="box last-background">Blue border, green background</div>
+</body>
+</html>

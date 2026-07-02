@@ -1,0 +1,194 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/IDBKey.h>
+#include <wtf/Hasher.h>
+#include <wtf/StdSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/text/StringHash.h>
+
+namespace WebCore {
+
+class KeyedDecoder;
+class KeyedEncoder;
+
+class IDBKeyData {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBKeyData, WEBCORE_EXPORT);
+public:
+    struct Date {
+        double value { 0.0 };
+        Date isolatedCopy() const { return { value }; }
+    };
+    struct Min { Min isolatedCopy() const { return { }; } };
+    struct Max { Max isolatedCopy() const { return { }; } };
+    struct Invalid { Invalid isolatedCopy() const { return { }; } };
+    using ValueVariant = Variant<std::nullptr_t, Invalid, Vector<IDBKeyData>, String, double, Date, ThreadSafeDataBuffer, Min, Max>;
+
+    enum IsolatedCopyTag { IsolatedCopy };
+
+    IDBKeyData() = default;
+    IDBKeyData(ValueVariant&& value)
+        : m_value(WTF::move(value)) { }
+    IDBKeyData(const IDBKeyData&, IsolatedCopyTag);
+    IDBKeyData(bool isPlaceholder, ValueVariant&& value)
+        : m_isPlaceholder(isPlaceholder)
+        , m_value(WTF::move(value)) { }
+    WEBCORE_EXPORT IDBKeyData(const IDBKey*);
+    bool isPlaceholder() const { return m_isPlaceholder; }
+
+    static IDBKeyData minimum()
+    {
+        IDBKeyData result;
+        result.m_value = Min { };
+        return result;
+    }
+
+    static IDBKeyData maximum()
+    {
+        IDBKeyData result;
+        result.m_value = Max { };
+        return result;
+    }
+
+    static IDBKeyData placeholder()
+    {
+        IDBKeyData result;
+        result.m_isPlaceholder = true;
+        return result;
+    }
+
+    WEBCORE_EXPORT RefPtr<IDBKey> maybeCreateIDBKey() const;
+
+    WEBCORE_EXPORT IDBKeyData isolatedCopy() const;
+
+    WEBCORE_EXPORT void encode(KeyedEncoder&) const;
+    [[nodiscard]] WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyData&);
+
+    void setArrayValue(const Vector<IDBKeyData>&);
+    void setBinaryValue(const ThreadSafeDataBuffer&);
+    void setStringValue(const String&);
+    void setDateValue(double);
+    WEBCORE_EXPORT void setNumberValue(double);
+    
+    WEBCORE_EXPORT String loggingString() const;
+
+    bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
+    WEBCORE_EXPORT bool isValid() const;
+    WEBCORE_EXPORT static bool isValidValue(const ValueVariant&);
+    WEBCORE_EXPORT IndexedDB::KeyType type() const;
+
+    WEBCORE_EXPORT friend std::weak_ordering operator<=>(const IDBKeyData&, const IDBKeyData&);
+
+    WEBCORE_EXPORT bool operator==(const IDBKeyData& other) const;
+
+    String string() const
+    {
+        return std::get<String>(m_value);
+    }
+
+    double date() const
+    {
+        return std::get<Date>(m_value).value;
+    }
+
+    double number() const
+    {
+        return std::get<double>(m_value);
+    }
+
+    const ThreadSafeDataBuffer& binary() const
+    {
+        return std::get<ThreadSafeDataBuffer>(m_value);
+    }
+
+    const Vector<IDBKeyData>& array() const
+    {
+        return std::get<Vector<IDBKeyData>>(m_value);
+    }
+
+    size_t size() const;
+
+    const ValueVariant& value() const LIFETIME_BOUND { return m_value; };
+
+private:
+    friend struct IDBKeyDataHashTraits;
+
+    bool m_isDeletedValue { false };
+    bool m_isPlaceholder { false };
+    ValueVariant m_value;
+};
+
+inline void add(Hasher& hasher, const IDBKeyData& keyData)
+{
+    add(hasher, keyData.type());
+    add(hasher, keyData.isNull());
+    switch (keyData.type()) {
+    case IndexedDB::KeyType::Invalid:
+    case IndexedDB::KeyType::Max:
+    case IndexedDB::KeyType::Min:
+        break;
+    case IndexedDB::KeyType::Number:
+        // Normalize negative 0.
+        add(hasher, keyData.number() + 0.0);
+        break;
+    case IndexedDB::KeyType::Date:
+        // Normalize negative 0.
+        add(hasher, keyData.date() + 0.0);
+        break;
+    case IndexedDB::KeyType::String:
+        add(hasher, keyData.string());
+        break;
+    case IndexedDB::KeyType::Binary:
+        add(hasher, keyData.binary());
+        break;
+    case IndexedDB::KeyType::Array:
+        add(hasher, keyData.array());
+        break;
+    }
+}
+
+struct IDBKeyDataHashTraits : public WTF::CustomHashTraits<IDBKeyData> {
+    static const bool emptyValueIsZero = false;
+    static const bool hasIsEmptyValueFunction = true;
+
+    static void constructDeletedValue(IDBKeyData& key) { key.m_isDeletedValue = true; }
+    static bool isDeletedValue(const IDBKeyData& key) { return key.m_isDeletedValue; }
+
+    static IDBKeyData emptyValue()
+    {
+        return IDBKeyData();
+    }
+
+    static bool isEmptyValue(const IDBKeyData& key)
+    {
+        return key.isNull();
+    }
+};
+
+using IDBKeyDataSet = StdSet<IDBKeyData>;
+
+} // namespace WebCore

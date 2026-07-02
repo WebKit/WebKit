@@ -1,0 +1,19 @@
+<html>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    description("This test ensures window.innerWidth/innerHeight return the size of the visual viewport in CSS pixels.");
+    window.jsTestIsAsync = true;
+    var originalWidth = window.innerWidth;
+    var originalHeight = window.innerHeight;
+    var scale = 2;
+    async function runTest() {
+        if (window.testRunner)
+            await window.testRunner.setPageScaleFactor(scale, 0, 0);
+
+        shouldBe("window.innerWidth", "Math.floor(originalWidth / scale)");
+        shouldBe("window.innerHeight", "Math.floor(originalHeight / scale)");
+        finishJSTest();
+    }
+    </script>
+    <body onload="runTest()"></body>
+</html>

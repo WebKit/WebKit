@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test that starting many nested workers does not crash due to threading issues</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+async_test(function() {
+  for (let i = 0; i < 1000; ++i) {
+    const worker = new Worker("resources/many-nested-workers-parent.js");
+    worker.onmessage = this.step_func_done((e) => {
+      assert_equals(e.data, "Pass");
+      worker.terminate();
+    });
+  }
+});
+</script>

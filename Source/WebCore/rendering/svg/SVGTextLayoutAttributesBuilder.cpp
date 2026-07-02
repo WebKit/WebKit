@@ -1,0 +1,218 @@
+/*
+ * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "SVGTextLayoutAttributesBuilder.h"
+
+#include "RenderChildIterator.h"
+#include "RenderSVGInline.h"
+#include "RenderSVGInlineText.h"
+#include "RenderSVGText.h"
+#include "SVGTextPositioningElement.h"
+#include "StyleComputedStyle+GettersInlines.h"
+
+namespace WebCore {
+
+void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextRenderer(RenderSVGInlineText& text)
+{
+    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(text);
+    if (!textRoot)
+        return;
+
+    if (m_textPositions.isEmpty()) {
+        m_characterDataMap.clear();
+
+        m_textLength = 0;
+        bool lastCharacterWasSpace = true;
+        collectTextPositioningElements(*textRoot, lastCharacterWasSpace);
+
+        if (!m_textLength)
+            return;
+
+        buildCharacterDataMap(*textRoot);
+    }
+
+    m_metricsBuilder.buildMetricsAndLayoutAttributes(*textRoot, &text, m_characterDataMap);
+}
+
+bool SVGTextLayoutAttributesBuilder::buildLayoutAttributesForSubtree(RenderSVGText& textRoot)
+{
+    m_characterDataMap.clear();
+
+    if (m_textPositions.isEmpty()) {
+        m_textLength = 0;
+        bool lastCharacterWasSpace = true;
+        collectTextPositioningElements(textRoot, lastCharacterWasSpace);
+    }
+
+    if (!m_textLength)
+        return false;
+
+    buildCharacterDataMap(textRoot);
+    m_metricsBuilder.buildMetricsAndLayoutAttributes(textRoot, nullptr, m_characterDataMap);
+    return true;
+}
+
+void SVGTextLayoutAttributesBuilder::rebuildMetricsForSubtree(RenderSVGText& text)
+{
+    m_metricsBuilder.measureTextRenderer(text, nullptr);
+}
+
+static inline void NODELETE processRenderSVGInlineText(const RenderSVGInlineText& text, unsigned& atCharacter, bool& lastCharacterWasSpace)
+{
+    auto& string = text.text();
+    auto length = string.length();
+
+    // The value list position advances once per character (code point), so a non-BMP character
+    // encoded as a UTF-16 surrogate pair must count once, not once per code unit. This keeps the
+    // value list keys consistent with the per-character lookup in measureTextRendererWithIterator().
+    if (text.style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve) {
+        for (unsigned i = 0; i < length;) {
+            U16_FWD_1(string, i, length);
+            ++atCharacter;
+        }
+        if (length)
+            lastCharacterWasSpace = string[length - 1] == ' ';
+        return;
+    }
+
+    // FIXME: This is not a complete whitespace collapsing implementation; it doesn't handle newlines or tabs.
+    for (unsigned i = 0; i < length;) {
+        char32_t character;
+        U16_NEXT(string, i, length, character);
+        if (character == ' ' && lastCharacterWasSpace)
+            continue;
+
+        lastCharacterWasSpace = character == ' ';
+        ++atCharacter;
+    }
+}
+
+void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxModelObject& start, bool& lastCharacterWasSpace)
+{
+    ASSERT(!is<RenderSVGText>(start) || m_textPositions.isEmpty());
+
+    for (auto& child : childrenOfType<RenderObject>(start)) {
+        if (auto* inlineText = dynamicDowncast<RenderSVGInlineText>(child)) {
+            processRenderSVGInlineText(*inlineText, m_textLength, lastCharacterWasSpace);
+            continue;
+        }
+
+        CheckedPtr inlineChild = dynamicDowncast<RenderSVGInline>(child);
+        if (!inlineChild)
+            continue;
+
+        RefPtr element = SVGTextPositioningElement::elementFromRenderer(*inlineChild);
+
+        unsigned atPosition = m_textPositions.size();
+        if (element)
+            m_textPositions.append(TextPosition(element.get(), m_textLength));
+
+        collectTextPositioningElements(*inlineChild, lastCharacterWasSpace);
+
+        if (!element)
+            continue;
+
+        // Update text position, after we're back from recursion.
+        TextPosition& position = m_textPositions[atPosition];
+        ASSERT(!position.length);
+        position.length = m_textLength - position.start;
+    }
+}
+
+void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText& textRoot)
+{
+    RefPtr outermostTextElement = SVGTextPositioningElement::elementFromRenderer(textRoot);
+    ASSERT(outermostTextElement);
+
+    // Grab outermost <text> element value lists and insert them in the character data map.
+    TextPosition wholeTextPosition(outermostTextElement.get(), 0, m_textLength);
+    fillCharacterDataMap(wholeTextPosition);
+
+    // Fill character data map using child text positioning elements in top-down order.
+    unsigned size = m_textPositions.size();
+    for (unsigned i = 0; i < size; ++i)
+        fillCharacterDataMap(m_textPositions[i]);
+
+    // Handle x/y default attributes.
+    auto addDataResult = m_characterDataMap.ensure((1), [] {
+        SVGCharacterData data;
+        data.x = 0;
+        data.y = 0;
+        return data;
+    });
+    if (!addDataResult.isNewEntry) {
+        SVGCharacterData& data = addDataResult.iterator->value;
+        if (SVGTextLayoutAttributes::isEmptyValue(data.x))
+            data.x = 0;
+        if (SVGTextLayoutAttributes::isEmptyValue(data.y))
+            data.y = 0;
+    }
+}
+
+void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& position)
+{
+    RefPtr element = position.element.get();
+    Ref xList = element->x();
+    Ref yList = element->y();
+    Ref dxList = element->dx();
+    Ref dyList = element->dy();
+    Ref rotateList = element->rotate();
+
+    unsigned xListSize = xList->size();
+    unsigned yListSize = yList->size();
+    unsigned dxListSize = dxList->size();
+    unsigned dyListSize = dyList->size();
+    unsigned rotateListSize = rotateList->items().size();
+    if (!xListSize && !yListSize && !dxListSize && !dyListSize && !rotateListSize)
+        return;
+
+    SVGLengthContext lengthContext(element.get());
+    for (unsigned i = 0; i < position.length; ++i) {
+        const SVGLengthList* xListPtr = i < xListSize ? xList.ptr() : nullptr;
+        const SVGLengthList* yListPtr = i < yListSize ? yList.ptr() : nullptr;
+        const SVGLengthList* dxListPtr = i < dxListSize ? dxList.ptr() : nullptr;
+        const SVGLengthList* dyListPtr = i < dyListSize ? dyList.ptr() : nullptr;
+        const SVGNumberList* rotateListPtr = rotateListSize ? rotateList.ptr() : nullptr;
+        if (!xListPtr && !yListPtr && !dxListPtr && !dyListPtr && !rotateListPtr)
+            break;
+
+        auto& data = m_characterDataMap.ensure((position.start + i + 1), [] {
+            return SVGCharacterData();
+        }).iterator->value;
+
+        if (xListPtr)
+            data.x = xList->items()[i]->value().value(lengthContext);
+        if (yListPtr)
+            data.y = yList->items()[i]->value().value(lengthContext);
+        if (dxListPtr)
+            data.dx = dxList->items()[i]->value().value(lengthContext);
+        if (dyListPtr)
+            data.dy = dyList->items()[i]->value().value(lengthContext);
+
+        if (rotateListPtr) {
+            unsigned rotateIndex = std::min(i, rotateListSize - 1);
+            data.rotate = rotateList->items()[rotateIndex]->value();
+        }
+    }
+}
+
+}

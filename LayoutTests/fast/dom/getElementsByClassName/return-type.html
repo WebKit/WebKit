@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests that getElementsByTagName() returns an HTMLCollection.");
+
+shouldBe('document.getElementsByClassName("test").__proto__', 'HTMLCollection.prototype');
+shouldBe('document.body.getElementsByClassName("test").__proto__', 'HTMLCollection.prototype');
+</script>
+<script src="../../../resources/js-post.js"></script>
+<body>
+</html>

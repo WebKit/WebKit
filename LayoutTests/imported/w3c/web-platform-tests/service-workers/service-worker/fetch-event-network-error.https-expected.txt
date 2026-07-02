@@ -1,0 +1,3 @@
+
+PASS Rejecting the fetch event or using preventDefault() causes a network error
+

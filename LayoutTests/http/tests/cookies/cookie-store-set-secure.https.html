@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description('Tests that the Cookie Store API set() function sets a secure cookie');
+jsTestIsAsync = true;
+
+onload = async () => {
+    await cookieStore.set("cookieName", "cookieValue");
+    let cookies = internals.getCookies();
+
+    let foundCookie = false;
+    for (let cookie of cookies) {
+        if (foundCookie)
+            break;
+
+        if (cookie.name !== "cookieName")
+            continue;
+
+        foundCookie = true;
+        if (!cookie.isSecure)
+            testFailed("Cookie set by CookieStore::set() is not secure");
+        else
+            testPassed("Cookie set by CookieStore::set() is secure")
+    }
+
+    if (!foundCookie)
+        testFailed("Cookie was not set");
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/COLR-palettes-test-font-no-light-dark.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/COLR-palettes-test-font.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/NotoSansJP-kana_test-subset.otf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/NotoSansMongolian-18xx.woff2
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/ahem-ex-250.otf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/ahem-ex-500.otf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/avar2_kern_test.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/colorization_SVG_COLR.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/markA.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/markB.ttf
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/separator-test-font.ttf

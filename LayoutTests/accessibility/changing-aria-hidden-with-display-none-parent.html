@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=false ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body" role="group">
+
+<ul id="ul">
+    <li id="li1">One</li>
+    <li>Two</li>
+    <li>Three</li>
+</ul>
+
+<script>
+var output = "This test ensures that we don't crash when removing an object from the AX tree whose child recently changed aria-hidden status.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    output += dumpAXSearchTraversal(webarea);
+
+    output += "\nMaking #li1 aria-hidden and #ul display:none.\n";
+    document.getElementById("li1").setAttribute("aria-hidden", "true");
+    document.getElementById("ul").style.display = "none"
+    var secondTraversalOutput;
+    setTimeout(async function() {
+        await waitFor(() => !accessibilityController.accessibleElementById("ul"));
+
+        output += "\nRe-dumping AX tree.\n\n";
+        await waitFor(() => {
+            secondTraversalOutput = dumpAXSearchTraversal(webarea);
+            // Wait for the hierarchy to be empty (no list or listitem elements are present in the accessibility tree).
+            return !secondTraversalOutput.toLowerCase().includes("list");
+        });
+        output += secondTraversalOutput;
+        output += "\nPASS: There was no crash.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+
+

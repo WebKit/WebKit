@@ -1,0 +1,3 @@
+
+PASS Trailing semicolons in SMIL values attribute should produce valid path
+

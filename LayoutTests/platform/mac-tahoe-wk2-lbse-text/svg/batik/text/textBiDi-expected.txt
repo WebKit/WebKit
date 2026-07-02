@@ -1,0 +1,90 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (0,0) size 450x500
+layer at (0,0) size 450x500
+  RenderSVGViewportContainer at (0,0) size 450x500
+layer at (45,36) size 342x368
+  RenderSVGTransformableContainer {g} at (45,36) size 342x368
+layer at (130,36) size 190x17
+  RenderSVGText {text} at (85,0) size 190x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 190x17
+      chunk 1 (middle anchor) text run 1 at (130.38,50.00) startOffset 0 endOffset 30 width 189.24: "BiDi Text / International Text"
+layer at (72,113) size 306x15
+  RenderSVGText {text} at (26,76) size 308x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 83x15
+      chunk 1 (middle anchor) text run 1 at (71.75,125.00) startOffset 0 endOffset 15 width 82.68: "Some text goes "
+    RenderSVGTSpan {tspan} at (0,0) size 68x15
+      RenderSVGInlineText {#text} at (82,0) size 68x15
+        chunk 1 (middle anchor) text run 1 at (154.43,125.00) startOffset 0 endOffset 15 width 67.15 RTL: "(right to left)"
+    RenderSVGInlineText {#text} at (149,0) size 157x15
+      chunk 1 (middle anchor) text run 1 at (221.58,125.00) startOffset 0 endOffset 34 width 156.68: ", other text goes (left to right)."
+layer at (153,138) size 144x15
+  RenderSVGText {text} at (107,101) size 146x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 33x15
+      chunk 1 (middle anchor) text run 1 at (152.80,150.00) startOffset 0 endOffset 5 width 32.86: "Some "
+    RenderSVGTSpan {tspan} at (0,0) size 87x15
+      RenderSVGInlineText {#text} at (32,0) size 86x15
+        chunk 1 (middle anchor) text run 1 at (185.66,150.00) startOffset 0 endOffset 1 width 4.33 RTL: ")"
+        chunk 1 (middle anchor) text run 1 at (189.99,150.00) startOffset 0 endOffset 13 width 76.90: "embedded bidi"
+        chunk 1 (middle anchor) text run 1 at (266.88,150.00) startOffset 0 endOffset 1 width 4.33 RTL: "("
+    RenderSVGInlineText {#text} at (118,0) size 26x15
+      chunk 1 (middle anchor) text run 1 at (271.21,150.00) startOffset 0 endOffset 6 width 25.99: " text."
+layer at (63,166) size 324x12
+  RenderSVGText {text} at (18,129) size 324x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 324x12
+      chunk 1 (middle anchor) text run 1 at (63.50,175.00) startOffset 0 endOffset 45 width 178.04: "Text selection allows visually discontiguous "
+      chunk 1 (middle anchor) text run 1 at (241.53,175.00) startOffset 0 endOffset 38 width 144.97: "selections across bi-directional text."
+layer at (45,212) size 293x193
+  RenderSVGTransformableContainer {g} at (0,175) size 293x193
+layer at (45,212) size 287x17
+  RenderSVGText {text} at (0,0) size 288x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 288x17
+      chunk 1 text run 1 at (45.00,225.00) startOffset 0 endOffset 7 width 34.58: "latin: "
+      chunk 1 text run 1 at (79.58,225.00) startOffset 0 endOffset 8 width 73.76: "ABCDEFG "
+      chunk 1 text run 1 at (153.34,225.00) startOffset 0 endOffset 26 width 179.13: "abcdefghijklmnopqrstuvwxyz"
+layer at (45,237) size 191x17
+  RenderSVGText {text} at (0,25) size 192x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 192x17
+      chunk 1 text run 1 at (45.00,250.00) startOffset 0 endOffset 16 width 93.71: "latin-extended: "
+      chunk 1 text run 1 at (138.71,250.00) startOffset 0 endOffset 15 width 97.46: "\x{E6}\x{E7}\x{E8}\x{E9}\x{EA}\x{EB}\x{EC}\x{ED}\x{EE}\x{EF}\x{F0}\x{F1}\x{F2}\x{F3}\x{F4}"
+layer at (45,262) size 293x17
+  RenderSVGText {text} at (0,50) size 293x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 293x17
+      chunk 1 text run 1 at (45.00,275.00) startOffset 0 endOffset 10 width 50.40: "cyrillic: "
+      chunk 1 text run 1 at (95.40,275.00) startOffset 0 endOffset 23 width 242.47: "\x{411}\x{412}\x{413}\x{414}\x{415}\x{416}\x{417}\x{418}\x{419}\x{41A}\x{41B}\x{41C}\x{41D}\x{41E}\x{41F}\x{420}\x{421}\x{422}\x{423}\x{424}\x{425}\x{426}\x{427}"
+layer at (45,287) size 290x17
+  RenderSVGText {text} at (0,75) size 290x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 290x17
+      chunk 1 text run 1 at (45.00,300.00) startOffset 0 endOffset 7 width 41.23: "greek: "
+      chunk 1 text run 1 at (86.23,300.00) startOffset 0 endOffset 30 width 248.72: "\x{391}\x{392}\x{393}\x{394} \x{3B1}\x{3B2}\x{3B3}\x{3B4}\x{3B5}\x{3B6}\x{3B7}\x{3B8}\x{3B9}\x{3BA}\x{3BB}\x{3BC}\x{3BD}\x{3BE}\x{3BF}\x{3C0}\x{3C1}\x{3C2}\x{3C3}\x{3C4}\x{3C5}\x{3C6}\x{3C7}\x{3C8}\x{3C9}"
+layer at (45,312) size 276x17
+  RenderSVGText {text} at (0,100) size 277x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 277x17
+      chunk 1 text run 1 at (45.00,325.00) startOffset 0 endOffset 8 width 52.06: "hebrew: "
+      chunk 1 text run 1 at (97.06,325.00) startOffset 0 endOffset 27 width 224.09 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DA}\x{5DB}\x{5DC}\x{5DD}\x{5DE}\x{5DF}\x{5E0}\x{5E1}\x{5E2}\x{5E3}\x{5E4}\x{5E5}\x{5E6}\x{5E7}\x{5E8}\x{5E9}\x{5EA}"
+layer at (45,337) size 224x17
+  RenderSVGText {text} at (0,125) size 225x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 225x17
+      chunk 1 text run 1 at (45.00,350.00) startOffset 0 endOffset 27 width 224.09 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DA}\x{5DB}\x{5DC}\x{5DD}\x{5DE}\x{5DF}\x{5E0}\x{5E1}\x{5E2}\x{5E3}\x{5E4}\x{5E5}\x{5E6}\x{5E7}\x{5E8}\x{5E9}\x{5EA}"
+layer at (45,362) size 275x17
+  RenderSVGText {text} at (0,150) size 276x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 276x17
+      chunk 1 text run 1 at (45.00,375.00) startOffset 0 endOffset 8 width 44.55: "arabic: "
+      chunk 1 text run 1 at (89.55,375.00) startOffset 0 endOffset 36 width 230.55 RTL: "\x{621}\x{623}\x{624}\x{625}\x{626}\x{627}\x{628}\x{629}\x{62A}\x{62B}\x{62C}\x{62D}\x{62E}\x{62F}\x{630}\x{631}\x{632}\x{633}\x{634}\x{635}\x{636}\x{637}\x{638}\x{639}\x{640}\x{641}\x{642}\x{643}\x{644}\x{645}\x{646}\x{647}\x{648}\x{649}\x{650}\x{676}"
+layer at (45,387) size 231x17
+  RenderSVGText {text} at (0,175) size 231x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 231x17
+      chunk 1 text run 1 at (45.00,400.00) startOffset 0 endOffset 36 width 230.55 RTL: "\x{621}\x{623}\x{624}\x{625}\x{626}\x{627}\x{628}\x{629}\x{62A}\x{62B}\x{62C}\x{62D}\x{62E}\x{62F}\x{630}\x{631}\x{632}\x{633}\x{634}\x{635}\x{636}\x{637}\x{638}\x{639}\x{640}\x{641}\x{642}\x{643}\x{644}\x{645}\x{646}\x{647}\x{648}\x{649}\x{650}\x{676}"
+layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
+layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (1,1) size 447x497
+  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (0,0) size 28x29
+  RenderSVGViewportContainer {svg} at (0,0) size 28x29
+layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
+  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

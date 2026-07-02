@@ -1,0 +1,10 @@
+Test Description: Tests that the mouseup event is prevented.
+Click the left mouse button to lock pointer
+Click the back mouse button
+Click the forward mouse button
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Tests that when pointer is locked, the mouseup is preventable.
+

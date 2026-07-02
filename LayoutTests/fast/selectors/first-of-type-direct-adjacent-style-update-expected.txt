@@ -1,0 +1,54 @@
+Test style update caused by tree changes with the selector :first-of-type. This test does not use any sibling "~" combinator to avoid its more generic marking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initialy, <foo> is the first of its type, the style should match.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(4, 5, 6)"
+Adding a few elements that are not <foo> do not invalidate the :first-of-type.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(4, 5, 6)"
+Adding a second <foo>. This should breat the rules because the new foo does not match "+ padding".
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(0, 0, 0)"
+Adding a few elements that are not <foo>, we should still not match because of the previously added <foo>.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(0, 0, 0)"
+Removing the <foo> blocking foo:first-of-type+padding.
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("bar-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-with-renderer")).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById("bar-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("baz-without-renderer")).color is "rgb(4, 5, 6)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

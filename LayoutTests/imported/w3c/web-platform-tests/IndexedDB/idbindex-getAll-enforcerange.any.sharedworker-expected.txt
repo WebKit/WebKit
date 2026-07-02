@@ -1,0 +1,3 @@
+
+PASS IDBIndex.getAll() should enforce valid range constraints.
+

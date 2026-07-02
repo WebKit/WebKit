@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .container {
+        width: 200px;
+        height: 200px;
+        will-change: transform;
+    }
+    .sdr {
+        border-image: url('../../fast/images/resources/green-400x400.png') 30 fill;
+    }
+    .hdr {
+        border-image: url('../../fast/images/resources/red-100x100.png') 30 fill;
+    }
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <div style="position: fixed; top: 10px; left: 10px;">
+        <div class="container">&nbsp;</div>
+    </div>
+    <div style="position: fixed; top: 10px; left: 220px;">
+        <div class="container"></div></div>
+    </div>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        let images = [];
+        let imageSources = ["../../fast/images/resources/green-400x400.png", "../../fast/images/resources/red-100x100.png"];
+
+        function loadImages() {
+            return imageSources.map((imageSource) => {
+                return new Promise((resolve) => {
+                    let image = new Image;
+                    image.onload = (e) => {
+                        resolve({ width: image.width, height: image.height });
+                    };
+                    image.src = imageSource;
+                    images.push(image);             
+                });
+            });
+        }
+ 
+        (async () => {
+            await Promise.all(loadImages());
+
+            if (window.internals)
+                internals.setHasHDRContentForTesting(images[1]);
+
+            const containerElements = document.querySelectorAll("div.container");
+
+            containerElements[0].classList.add("sdr");
+            containerElements[1].classList.add("hdr");
+
+            if (window.testRunner) {
+                document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        })();
+    </script>
+</body>
+</html>

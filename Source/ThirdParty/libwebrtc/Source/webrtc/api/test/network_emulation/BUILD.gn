@@ -1,0 +1,149 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//third_party/protobuf/proto_library.gni")
+import("../../../webrtc.gni")
+
+if (rtc_enable_protobuf) {
+  proto_library("network_config_schedule_proto") {
+    visibility = [ "*" ]
+    sources = [ "network_config_schedule.proto" ]
+    proto_out_dir = "api/test/network_emulation/"
+  }
+
+  rtc_library("schedulable_network_node_builder") {
+    visibility = [ "*" ]
+    sources = [
+      "schedulable_network_node_builder.cc",
+      "schedulable_network_node_builder.h",
+    ]
+    deps = [
+      ":network_config_schedule_proto",
+      ":network_queue",
+      "../..:network_emulation_manager_api",
+      "../../../test/network:schedulable_network_behavior",
+      "../../units:timestamp",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+    ]
+  }
+}
+
+rtc_library("network_emulation") {
+  visibility = [ "*" ]
+
+  sources = [
+    "cross_traffic.h",
+    "ecn_marking_counter.cc",
+    "ecn_marking_counter.h",
+    "network_emulation_interfaces.cc",
+    "network_emulation_interfaces.h",
+  ]
+
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:copy_on_write_buffer",
+    "../../../rtc_base:ip_address",
+    "../../../rtc_base:net_helper",
+    "../../../rtc_base:net_helpers",
+    "../../../rtc_base:socket_address",
+    "../../numerics",
+    "../../transport:ecn_marking",
+    "../../units:data_rate",
+    "../../units:data_size",
+    "../../units:time_delta",
+    "../../units:timestamp",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+
+rtc_library("create_cross_traffic") {
+  visibility = [ "*" ]
+  testonly = true
+
+  sources = [
+    "create_cross_traffic.cc",
+    "create_cross_traffic.h",
+  ]
+
+  deps = [
+    ":network_emulation",
+    "../..:network_emulation_manager_api",
+    "../../../test/network:emulated_network",
+  ]
+}
+
+rtc_library("network_queue") {
+  visibility = [ "*" ]
+
+  sources = [
+    "dual_pi2_network_queue.cc",
+    "dual_pi2_network_queue.h",
+    "leaky_bucket_network_queue.cc",
+    "leaky_bucket_network_queue.h",
+    "network_queue.h",
+  ]
+
+  deps = [
+    "../..:sequence_checker",
+    "../..:simulated_network_api",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:random",
+    "../../transport:ecn_marking",
+    "../../units:data_rate",
+    "../../units:data_size",
+    "../../units:time_delta",
+    "../../units:timestamp",
+  ]
+}
+
+rtc_library("network_queue_unittests") {
+  sources = [
+    "dual_pi2_network_queue_unittest.cc",
+    "leaky_bucket_network_queue_unittest.cc",
+  ]
+
+  testonly = true
+  deps = [
+    ":network_queue",
+    "../..:simulated_network_api",
+    "../../../test:test_support",
+    "../../transport:ecn_marking",
+    "../../units:data_rate",
+    "../../units:data_size",
+    "../../units:time_delta",
+    "../../units:timestamp",
+  ]
+}
+
+rtc_library("token_bucket_network_behavior_config") {
+  visibility = [ "*" ]
+  sources = [ "token_bucket_network_behavior_config.h" ]
+  deps = [
+    "../../units:data_rate",
+    "../../units:data_size",
+  ]
+}
+
+rtc_library("token_bucket_network_behavior_builder") {
+  visibility = [ "*" ]
+  sources = [
+    "token_bucket_network_behavior_builder.cc",
+    "token_bucket_network_behavior_builder.h",
+  ]
+  deps = [
+    ":network_queue",
+    ":token_bucket_network_behavior_config",
+    "../..:function_view",
+    "../..:network_emulation_manager_api",
+    "../../../test/network:token_bucket_network_behavior",
+    "../../units:data_rate",
+    "../../units:data_size",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}

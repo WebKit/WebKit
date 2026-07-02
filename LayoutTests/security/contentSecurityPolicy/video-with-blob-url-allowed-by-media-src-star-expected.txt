@@ -1,0 +1,2 @@
+This tests that loading a video with a blob URL is allowed when the page has Content Security Policy "media-src *". To run this test by hand, select a video file.
+PASS: Video with blob URL loaded successfully under media-src *.

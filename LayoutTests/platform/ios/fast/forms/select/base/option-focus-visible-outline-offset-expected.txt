@@ -1,0 +1,17 @@
+Tests that option elements in a base-select have a negative outline-offset equal to the outline width when focus-visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL outlineOffset == "-3px" || outlineOffset == "-2px" should be true. Was false.
+PASS getComputedStyle(opt1).outlineOffset is "0px"
+PASS getComputedStyle(opt1).outlineOffset is "0px"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+
+Option 1
+Option 2
+Option 3
+

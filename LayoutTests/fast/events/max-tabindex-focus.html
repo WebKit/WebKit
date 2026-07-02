@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that an element with the maximum tabIndex value can be focused.");
+jsTestIsAsync = true;
+
+function success()
+{
+    testPassed("Element with the maximum tabIndex was focused.");
+    finishJSTest();
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+ 
+    var element = document.getElementById('focusMe')
+    element.focus();
+
+    document.getElementById("elementWithMaxTabIndex").onfocus = success;
+    eventSender.keyDown("\t"); 
+}
+</script>
+<body onload="runTest()">
+<input id="focusMe" tabindex="1">
+<input id="elementWithMaxTabIndex" tabindex="2147483647">
+<script src="../../resources/js-test-post.js"></script>
+</body>

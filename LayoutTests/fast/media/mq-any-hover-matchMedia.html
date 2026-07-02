@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test the any-hover media feature with machMedia.")
+
+    function testHoverCondition(condition) {
+        var testString = 'window.matchMedia("(' + condition + ')").matches';
+        debug(testString + " = " + eval(testString));
+    }
+
+    testHoverCondition("any-hover");
+
+    testHoverCondition("any-hover: hover");
+    testHoverCondition("any-hover: on-demand");
+    testHoverCondition("any-hover: none");
+
+    testHoverCondition("any-hover: Hover");
+    testHoverCondition("any-hover: On-demand");
+    testHoverCondition("any-hover: None");
+
+    testHoverCondition("Any-Hover: hover");
+    testHoverCondition("Any-Hover: on-demand");
+    testHoverCondition("Any-Hover: none");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

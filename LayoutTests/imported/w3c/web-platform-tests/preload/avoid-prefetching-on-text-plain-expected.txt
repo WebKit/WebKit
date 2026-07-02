@@ -1,0 +1,4 @@
+
+
+PASS Ensures content delivered with Content-Type: text/plain header is not prefetched
+

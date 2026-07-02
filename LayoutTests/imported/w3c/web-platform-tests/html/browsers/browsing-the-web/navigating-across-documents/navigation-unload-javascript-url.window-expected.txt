@@ -1,0 +1,3 @@
+
+PASS javascript: URL navigation started from unload handler must be ignored
+

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="input" type="text">
+<label for="input">Enter</label>
+<label id="label2" for="input">your</label>
+<label id="label3" for="input">color</label>
+
+<script>
+var output = "This test ensures that inputs with multiple labels have the correct accessibility text exposed.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var input = accessibilityController.accessibleElementById("input");
+    output += `Initial AX text: \n${platformTextAlternatives(input)}\n`;
+
+    output += evalAndReturn("document.getElementById('label2').remove();");
+    var newText;
+    setTimeout(async function() {
+        await waitFor(() => {
+            newText = platformTextAlternatives(input);
+            return !newText.includes("your");
+        });
+        output += `${newText}\n`;
+
+        output += evalAndReturn("document.getElementById('label3').innerText = 'choice';");
+        await waitFor(() => {
+            newText = platformTextAlternatives(input);
+            return !newText.includes("color");
+        });
+        output += `${newText}\n`;
+
+        output += evalAndReturn("document.getElementById('label3').innerHTML = 'decision';");
+        await waitFor(() => {
+            newText = platformTextAlternatives(input);
+            return newText.includes("decision");
+        });
+        output += `${newText}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

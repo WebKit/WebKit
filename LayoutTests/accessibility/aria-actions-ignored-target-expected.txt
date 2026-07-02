@@ -1,0 +1,24 @@
+This test verifies that aria-actions targets which are themselves accessibility-ignored (here, role=button elements inside a listbox option) are still exposed with an accessible name, and thus as invokable custom actions.
+
+The action targets are resolved in DOM order:
+PASS: deleteAction.domIdentifier === 'delete-action'
+PASS: favoriteAction.domIdentifier === 'favorite-action'
+
+The action targets are accessibility-ignored (they are buttons inside a listbox option):
+PASS: deleteAction.isIgnored === true
+PASS: favoriteAction.isIgnored === true
+
+Even though they are ignored, the action targets expose their accessible name:
+PASS: platformValueForW3CName(deleteAction) === 'Delete'
+PASS: platformValueForW3CName(favoriteAction) === 'Favorite'
+
+The custom actions are exposed on the option and can be invoked:
+PASS: option.invokeCustomActionAtIndex(0) === true
+PASS: option.invokeCustomActionAtIndex(1) === true
+PASS: clickedActions[0] === 'delete-action'
+PASS: clickedActions[1] === 'favorite-action'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Delete Favorite

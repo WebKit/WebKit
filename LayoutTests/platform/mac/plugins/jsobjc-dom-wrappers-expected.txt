@@ -1,0 +1,19 @@
+document.childNodes == DOMNodeList ? -> PASS
+
+document.body.attributes == DOMNamedNodeMap ? -> PASS
+
+document.styleSheets == DOMStyleSheetList ? -> PASS
+
+document.styleSheets[0] == DOMCSSStyleSheet ? -> PASS
+
+document.styleSheets[0].media == DOMMediaList ? -> PASS
+
+document.styleSheets[0].cssRules == DOMCSSRuleList ? -> PASS
+
+document.styleSheets[0].cssRules[0] == DOMCSSStyleRule ? -> PASS
+
+document.styleSheets[0].cssRules[0].style == DOMCSSStyleDeclaration ? -> PASS
+
+document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("font-family") == DOMCSSValueList ? -> PASS
+
+document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("width") == DOMCSSPrimitiveValue ? -> PASS

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: TypeError: 'text/html' is not a valid JavaScript MIME type.
+This test passes if it does not crash.

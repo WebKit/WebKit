@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="range" aria-valuetext="hello" id="range">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-valuetext can be used on native elements, like input=range");
+
+    if (window.accessibilityController) {
+          var range = accessibilityController.accessibleElementById("range");
+          shouldBe("range.valueDescription", "'AXValueDescription: hello'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

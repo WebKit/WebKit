@@ -1,0 +1,13 @@
+Check that resources from inline styles are loaded with the referrer and referrer policy from the document.
+
+
+FAIL Styling SVG from inline styles fill promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles stroke promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles filter promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles clip-path promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles marker-start promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles marker-mid promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles marker-end promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles mask promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Styling SVG from inline styles mask-image promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+

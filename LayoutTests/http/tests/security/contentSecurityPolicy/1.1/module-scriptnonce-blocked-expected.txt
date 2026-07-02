@@ -1,0 +1,28 @@
+Only the first two of these scripts should execute even though there are parse errors in the policy. Update: Since we no longer support X-WebKit-CSP all the scripts should run.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame5-->'
+--------
+PASS

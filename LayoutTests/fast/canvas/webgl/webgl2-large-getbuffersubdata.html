@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="128" height="128"></canvas>
+<script>
+  description("Make sure that reading large buffers with getBufferData works as expected.");
+
+  var canvas = document.getElementById("canvas");
+  var gl = canvas.getContext("webgl2");
+
+  runTests(4096, 1);
+  runTests(32*1024, 8);
+  runTests(1024*1024, 256);
+  runTests(27*1024*1024, 6192);
+
+  var bufferData;
+
+  function runTests(dim, skip) {
+      bufferData = new Float32Array(dim);
+      for (var i = 0; i < dim; ++i)
+          bufferData[i] = i % 256;
+      var buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
+      shouldBe("gl.getError()", "gl.NO_ERROR");
+
+      bufferData.fill(512);
+
+      gl.getBufferSubData(gl.ARRAY_BUFFER, 0, bufferData);
+      shouldBe("gl.getError()", "gl.NO_ERROR");
+
+      for (var i = 0; i < dim; i += skip) {
+          shouldBe(`bufferData[${i}]`, (i%256).toString(), true);
+      }
+
+      gl.deleteBuffer(buffer);
+      shouldBe("gl.getError()", "gl.NO_ERROR");
+  }
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

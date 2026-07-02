@@ -1,0 +1,15 @@
+
+PASS Property mask-border-outset should be reset to its initial value.
+PASS Property mask-border-repeat should be reset to its initial value.
+PASS Property mask-border-slice should be reset to its initial value.
+PASS Property mask-border-source should be reset to its initial value.
+PASS Property mask-border-width should be reset to its initial value.
+PASS Property mask-clip should be reset to its initial value.
+PASS Property mask-composite should be reset to its initial value.
+PASS Property mask-image should be reset to its initial value.
+PASS Property mask-mode should be reset to its initial value.
+PASS Property mask-origin should be reset to its initial value.
+PASS Property mask-position should be reset to its initial value.
+PASS Property mask-repeat should be reset to its initial value.
+PASS Property mask-size should be reset to its initial value.
+

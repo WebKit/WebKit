@@ -1,0 +1,11 @@
+float foo(float x) {
+    return x * x;
+}
+
+void caller() {
+    float x = foo(1, 2);
+}
+
+/*%%*
+call to 'foo' expected 1 argument, but found 2
+*%%*/

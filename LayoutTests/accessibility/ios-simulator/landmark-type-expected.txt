@@ -1,0 +1,22 @@
+This tests that landmarks return their type as part of the AX label.
+
+PASS: main.description === 'AXLabel: main'
+PASS: banner.description === 'AXLabel: banner'
+PASS: region.description === 'AXLabel: testregion, region'
+PASS: footer.description === 'AXLabel: content information'
+PASS: article.description === 'AXLabel: article'
+PASS: note.description === 'AXLabel: note'
+PASS: documentContainer.description === 'AXLabel: document'
+PASS: region.childAtIndex(0).traits == main.childAtIndex(0).traits === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+non landmark
+text
+text
+text
+footer
+article
+document
+note

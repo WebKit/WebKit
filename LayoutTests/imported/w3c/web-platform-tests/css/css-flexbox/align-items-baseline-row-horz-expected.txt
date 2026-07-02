@@ -1,0 +1,9 @@
+line1
+line2
+line1
+line2
+
+PASS #target > div 1
+PASS #target > div 2
+PASS #target > div 3
+

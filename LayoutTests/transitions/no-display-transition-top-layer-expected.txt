@@ -1,0 +1,4 @@
+Regular
+PASS: popover hide does not create display transition
+PASS: dialog close does not create display transition
+PASS: regular element gets display transition

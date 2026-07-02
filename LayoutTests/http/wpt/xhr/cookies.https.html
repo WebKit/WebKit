@@ -1,0 +1,80 @@
+<html>
+<body>
+<p>Tests for <a href="http://bugs.webkit.org/show_bug.cgi?id=3420">bug 3420</a>:
+XMLHttpRequest does not handle set-cookie headers.</p>
+<div id="result">FAIL: test script didn't run.</div>
+
+<script>
+function setResult(result)
+{
+    document.getElementById("result").firstChild.data = result;
+}
+
+const params = new URLSearchParams(location.search);
+const phase = params.get("phase");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setAllowsAnySSLCertificate(true);
+}
+
+if (!phase) {
+    // Phase 1: bounce away from localhost to https://web-platform.test. CFNetwork
+    // treats loopback hosts (127.0.0.0/8, ::1, localhost, *.localhost) as
+    // "potentially trustworthy", which means a Secure cookie can be set over
+    // plain http and is also sent on plain http requests to a loopback host.
+    // Using a non-loopback hostname ensures the connection is treated as truly
+    // insecure for cookie purposes.
+    location.href = "https://web-platform.test:9443/WebKit/xhr/cookies.https.html?phase=setup";
+} else if (phase === "setup") {
+    // Phase 2: served over https://web-platform.test, install both cookies
+    // (Secure attribute is honored because the response is over https) then
+    // bounce to http for verification.
+    try {
+        let req = new XMLHttpRequest();
+        req.open("POST", "resources/get-set-cookie.py?clear=1", false);
+        req.send("");
+        req = new XMLHttpRequest();
+        req.open("POST", "resources/get-set-cookie.py", false);
+        req.send("");
+        location.href = "http://web-platform.test:8800/WebKit/xhr/cookies.https.html?phase=verify";
+    } catch (ex) {
+        setResult(ex);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+} else if (phase === "verify") {
+    // Phase 3: served over http://web-platform.test, verify only the non-Secure
+    // cookie is sent over plain http.
+    function clearCookies()
+    {
+        // Clearing the Secure cookie requires a secure response, hence the
+        // cross-origin XHR to the https endpoint.
+        const req = new XMLHttpRequest();
+        req.open("POST", "https://web-platform.test:9443/WebKit/xhr/resources/get-set-cookie.py?clear=1", false);
+        req.withCredentials = true;
+        try { req.send(""); } catch (ex) {}
+    }
+    try {
+        const req = new XMLHttpRequest();
+        req.open("POST", "resources/get-set-cookie.py", false);
+        req.send("");
+        const response = req.responseText;
+        if (response.match(/.*WK-test-secure=1.*/))
+            setResult("FAIL: a secure cookie was sent via HTTP");
+        else if (response.match(/.*WK-test=1.*/))
+            setResult("SUCCESS");
+        else
+            setResult("FAIL: the cookie was not set");
+    } catch (ex) {
+        setResult(ex);
+    } finally {
+        clearCookies();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</body>
+</html>

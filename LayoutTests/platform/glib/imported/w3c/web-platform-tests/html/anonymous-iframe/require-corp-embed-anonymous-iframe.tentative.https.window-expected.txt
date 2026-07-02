@@ -1,0 +1,3 @@
+
+FAIL Loading a credentialless iframe with COEP: require-corp is allowed. assert_true: The credentialless iframe should be allowed. expected true got false
+

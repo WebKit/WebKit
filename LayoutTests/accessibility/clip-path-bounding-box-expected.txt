@@ -1,0 +1,39 @@
+This test ensures we compute the right frame for elements affected by clip-path.
+
+PASS: current.role.toLowerCase().includes("statictext") === true
+x: 8
+y: 150
+width: 25
+height: 18
+
+x is valid: true
+y is valid: true
+width is valid: true
+height is valid: true
+
+PASS: current.role.toLowerCase().includes("statictext") === true
+x: 8
+y: 186
+width: 109
+height: 18
+
+PASS: current.role.toLowerCase().includes("group") === true
+x: 8
+y: 204
+width: 300
+height: 300
+
+PASS: current.role.toLowerCase().includes("statictext") === true
+x: 8
+y: 204
+width: 288
+height: 54
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+
+This is some text
+This text is clipped and unpainted but still should have a valid and reasonable bounding box.

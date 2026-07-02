@@ -1,0 +1,9 @@
+
+PASS Computed StylePropertyMap contains every CSS property
+PASS Computed StylePropertyMap contains CSS property declarations in style rules
+PASS Computed StylePropertyMap contains custom property declarations in style rules
+PASS Computed StylePropertyMap contains CSS property declarations in inline styles
+PASS Computed StylePropertyMap contains custom property declarations in inline rules
+PASS Computed StylePropertyMap contains computed values and not resolved values
+PASS Computed StylePropertyMap is live
+

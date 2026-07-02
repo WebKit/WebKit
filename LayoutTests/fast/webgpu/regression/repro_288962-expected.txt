@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: WebGPU initialized.
+CONSOLE MESSAGE: [object VideoFrame]
+CONSOLE MESSAGE: [object VideoFrame]
+CONSOLE MESSAGE: [object VideoFrame]
+CONSOLE MESSAGE: [object VideoFrame]
+layer at (0,0) size 1032x802
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 785x802
+  RenderBlock {HTML} at (0,0) size 785x802
+    RenderBody {BODY} at (8,8) size 769x786
+      RenderBlock (anonymous) at (0,0) size 769x18
+        RenderBR {BR} at (0,0) size 0x18
+      RenderBlock {DIV} at (0,18) size 769x768
+layer at (8,26) size 1024x768
+  RenderHTMLCanvas {CANVAS} at (0,0) size 1024x768

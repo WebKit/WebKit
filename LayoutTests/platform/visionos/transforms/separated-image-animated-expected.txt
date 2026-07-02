@@ -1,0 +1,10 @@
+
+(UIView tree root view [class: WKCompositingView]
+  (layer bounds [x: 0 y: 0 width: 800 height: 200])
+  (layer position [x: 400 y: 400])
+  (subviews
+    (view [class: WKCompositingView]
+      (layer bounds [x: 0 y: 0 width: 200 height: 200])
+      (layer position [x: 100 y: 100])
+      (layer cornerRadius 12)
+      (separated))))

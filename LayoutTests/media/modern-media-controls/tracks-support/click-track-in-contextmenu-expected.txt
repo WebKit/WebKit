@@ -1,0 +1,26 @@
+Clicking on a track in the tracks contextmenu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Audio track 'English Sound' is enabled.
+Audio track 'French Sound' is disabled.
+Audio track 'Spanish Sound' is disabled.
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+Tapping tracks button...
+Selecting 'French' track...
+Audio tracks changed.
+Audio track 'English Sound' is disabled.
+Audio track 'French Sound' is enabled.
+Audio track 'Spanish Sound' is disabled.
+Tapping tracks button...
+Selecting 'Spanish' track...
+Audio tracks changed.
+Audio track 'English Sound' is disabled.
+Audio track 'French Sound' is disabled.
+Audio track 'Spanish Sound' is enabled.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

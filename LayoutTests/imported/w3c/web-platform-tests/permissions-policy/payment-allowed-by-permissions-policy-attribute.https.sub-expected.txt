@@ -1,0 +1,5 @@
+
+PASS permissions policy "payment" is enabled by default
+PASS permissions policy "payment" can be enabled in same-origin iframe using allow="payment" attribute
+PASS permissions policy "payment" can be enabled in cross-origin iframe using allow="payment" attribute
+

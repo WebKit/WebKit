@@ -1,0 +1,9 @@
+
+PASS var() in attribute value substitutes locally
+PASS var() in attribute value substitutes locally, argument
+PASS var() in attribute value substitutes locally, typed
+PASS attr() fallback substitutes locally
+PASS attr() cycle through local
+PASS attr() cycle through unused fallback in local
+PASS attr() cycle through function
+

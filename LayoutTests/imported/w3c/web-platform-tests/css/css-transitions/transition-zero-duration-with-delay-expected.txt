@@ -1,0 +1,3 @@
+
+PASS 0-duration transition with delay applies change after delay period
+

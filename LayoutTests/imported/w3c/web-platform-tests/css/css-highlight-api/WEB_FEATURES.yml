@@ -1,0 +1,8 @@
+features:
+- name: highlight
+  files:
+  - "*"
+  - "!HighlightRegistry-highlightsFromPoint*"
+- name: highlightsfrompoint
+  files:
+  - HighlightRegistry-highlightsFromPoint*

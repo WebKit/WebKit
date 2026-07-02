@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Test that decoding an opus ogg file succeeds");
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext({ sampleRate: 48000 });
+var request = new XMLHttpRequest();
+request.open("GET", 'resources/media/opus.ogg', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        // File is 9600 frames @ 48000Hz, opus encoder delay is 312 frames (which would be silence), leaving 9288 frames.
+        if (buffer.length === 9288)
+          testPassed("Decoding returned the right number of frames.");
+        else
+          testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+        finishJSTest();
+      }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+      });
+}
+request.send();
+
+</script>
+</body>
+</html>

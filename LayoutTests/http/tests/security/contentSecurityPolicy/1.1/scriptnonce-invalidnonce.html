@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='../resources/multiple-iframe-test.js'></script>
+<script>
+var tests = [
+    ['yes', 'script-src \'n', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce-\'', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce-', 'resources/script.js', ''],
+    ['yes', 'script-src nonce-abcd', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce- \'', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce-     \'', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce- nonces have no spaces\'', 'resources/script.js', ''],
+    ['yes', 'script-src \'nonce-{}\'', 'resources/script.js', '{}'],
+    ['yes', 'script-src \'nonce-/\\\'', 'resources/script.js', '/\\'],
+];
+</script>
+</head>
+<body onload="testExperimentalPolicy()">
+  <p>
+      None of these scripts should execute, as all the nonces are invalid.
+
+      Update: Since we no longer support X-WebKit-CSP all the scripts should be executed.
+  </p>

@@ -1,0 +1,5 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS step3: echo-cookies returned the expected value
+ Navigate and send ping

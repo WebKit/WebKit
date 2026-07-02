@@ -1,0 +1,4 @@
+
+
+PASS Readonly date input should not change value via keyboard interaction
+

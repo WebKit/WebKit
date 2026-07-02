@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test AbortController memory leak with event listeners");
+jsTestIsAsync = true;
+
+if (!window.testRunner || !window.internals) {
+    testFailed("Requires testRunner and internals.");
+    finishJSTest();
+}
+
+function runTest() {
+    let weakRefs = [];
+    let controllers = [];
+    
+    for (let i = 0; i < 20; i++) {
+        let controller = new AbortController();
+        controller.signal.addEventListener('abort', () => {
+            console.log('Event listener for controller ' + i);
+        });
+        controllers.push(controller);
+        weakRefs.push(new WeakRef(controller.signal));
+    }
+    
+    controllers = null;
+    
+    setTimeout(() => {
+        gc();
+        
+        let aliveCount = 0;
+        for (let weakRef of weakRefs) {
+            if (weakRef.deref())
+                aliveCount++;
+        }
+        
+        if (aliveCount < 20)
+            testPassed(`Some AbortSignals were garbage collected.`);
+        else
+            testFailed(`No AbortSignals were collected.`);
+
+        finishJSTest();
+    }, 0)
+}
+
+onload = runTest;
+</script>
+</body>
+</html>

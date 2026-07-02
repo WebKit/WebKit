@@ -1,0 +1,3 @@
+
+FAIL Test insertion into table undefined is not a constructor (evaluating 'new WebAssembly.Function({parameters: ["i32"], results: []}, testfunc)')
+

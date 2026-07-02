@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/gc.js"></script>
+<script>
+description("Tests that a MutationObserver with a pending mutation record does not leak its document when the document is stopped (e.g. its frame is removed).");
+
+if (window.internals) {
+    jsTestIsAsync = true;
+
+    window.onload = function () {
+        testDocumentIsNotLeaked(
+            async function initAndRemove(frameCount)
+            {
+                let frames = await new Promise((resolve, reject) => {
+                    let frames = [];
+                    let counter = 0;
+                    function onLoad() {
+                        counter++;
+                        if (counter == frameCount)
+                            resolve(frames);
+                    }
+                    for (let i = 0; i < frameCount; ++i) {
+                        let frame = document.createElement('iframe');
+                        frame.src = "resources/no-document-leak-frame.html";
+                        frame.onload = onLoad;
+                        document.body.appendChild(frame);
+                        frames.push(frame);
+                    }
+                });
+                let frameIdentifiers = [];
+                for (let i = 0; i < frameCount; ++i) {
+                    let frame = frames[i];
+                    frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                    let frameTarget = frame.contentDocument.getElementById("target");
+                    frameTarget.setAttribute("data-x", String(i));
+                    frame.remove();
+                }
+                nukeArray(frames);
+                frames = null;
+                return frameIdentifiers;
+            },
+            {
+                documentCount: 100
+            }
+        ).then(
+            () => testPassed("Document did not leak"),
+            (error) => testFailed(error.message)
+        ).finally(finishJSTest);
+    };
+}
+</script>
+</body>
+</html>

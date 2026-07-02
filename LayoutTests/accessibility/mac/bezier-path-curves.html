@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- SVG path with quadratic Bézier curve (Q command). -->
+<svg width="100" height="100">
+  <path role="button" id="quad-curve" d="M0,50 Q50,0 100,50 Q50,100 0,50 Z" />
+</svg>
+
+<!-- SVG path with cubic Bézier curve (C command). -->
+<svg width="100" height="100">
+  <path role="button" id="cubic-curve" d="M0,50 C25,0 75,0 100,50 C75,100 25,100 0,50 Z" />
+</svg>
+
+<script>
+var output = "This test verifies that quadratic and cubic curves in SVG paths are correctly converted to NSBezierPath for the AXPath attribute.\n\n";
+
+if (window.accessibilityController) {
+    // Quadratic curves (Q) should be promoted to cubic and appear as "Curve to".
+    var quadCurveCount = pathSegmentCountOfID("quad-curve", "Curve to");
+    output += expect("quadCurveCount > 0", "true");
+
+    // Cubic curves (C) should appear as "Curve to".
+    var cubicCurveCount = pathSegmentCountOfID("cubic-curve", "Curve to");
+    output += expect("cubicCurveCount > 0", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

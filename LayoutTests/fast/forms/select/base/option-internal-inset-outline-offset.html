@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="default"><option id="default-opt">Default</option><option>Other</option></select>
+<select id="solid"><option id="solid-opt">Solid</option><option>Other</option></select>
+<select id="wide"><option id="wide-opt">Wide</option><option>Other</option></select>
+<select id="zoomed"><option id="zoomed-opt">Zoomed</option><option>Other</option></select>
+<select id="solid-zoomed"><option id="solid-zoomed-opt">Solid zoomed</option><option>Other</option></select>
+
+<style>
+#solid-opt { outline-style: solid; outline-width: 2px; }
+#wide-opt { outline-style: solid; outline-width: 10px; }
+#zoomed-opt { zoom: 2; }
+#solid-zoomed-opt { outline-style: solid; outline-width: 5px; zoom: 2; }
+</style>
+
+<script>
+description("Tests that -internal-inset outline-offset resolves correctly with various outline widths, styles, and zoom.");
+
+jsTestIsAsync = true;
+
+async function openAndCheck(selectId, optId, expectedOffset) {
+    const select = document.getElementById(selectId);
+    const opt = document.getElementById(optId);
+
+    select.focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+
+    window.actualOffset = getComputedStyle(opt).outlineOffset;
+    window.expectedOffset = expectedOffset;
+    shouldBeEqualToString('actualOffset', expectedOffset);
+
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+}
+
+(async () => {
+    // Default: outline-style: auto, platform focus ring width (3px Mac, 2px Adwaita).
+    const defaultOpt = document.getElementById("default-opt");
+    document.getElementById("default").focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+    window.defaultOffset = getComputedStyle(defaultOpt).outlineOffset;
+    shouldBeTrue('defaultOffset == "-3px" || defaultOffset == "-2px"');
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+
+    // Solid 2px: offset should be -2px.
+    await openAndCheck("solid", "solid-opt", "-2px");
+
+    // Solid 10px: offset should be -10px.
+    await openAndCheck("wide", "wide-opt", "-10px");
+
+    // Auto with zoom: 2, computed value is pre-zoom.
+    const zoomedOpt = document.getElementById("zoomed-opt");
+    document.getElementById("zoomed").focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+    window.zoomedOffset = getComputedStyle(zoomedOpt).outlineOffset;
+    shouldBeTrue('zoomedOffset == "-3px" || zoomedOffset == "-2px"');
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+
+    // Solid 5px with zoom: 2, computed value is pre-zoom.
+    await openAndCheck("solid-zoomed", "solid-zoomed-opt", "-5px");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

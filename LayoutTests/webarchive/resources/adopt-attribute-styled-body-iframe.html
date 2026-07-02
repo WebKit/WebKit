@@ -1,0 +1,7 @@
+<script>
+if (window.parent.bodyToAdopt) {
+    document.getElementsByTagName("html")[0].appendChild(document.adoptNode(window.parent.bodyToAdopt));
+    window.parent.bodyToAdopt = null;
+} else
+    alert("window.parent.bodyToAdopt is not set - Are you viewing this page as part of the adopt-attribute-styled-body test?");
+</script>

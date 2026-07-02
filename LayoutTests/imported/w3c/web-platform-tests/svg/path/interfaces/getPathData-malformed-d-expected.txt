@@ -1,0 +1,4 @@
+
+FAIL path.getPathData() with malformed d returns segments up to the error truncated.getPathData is not a function. (In 'truncated.getPathData()', 'truncated.getPathData' is undefined)
+FAIL path.getPathData() with closepath-only d returns [] closepathOnly.getPathData is not a function. (In 'closepathOnly.getPathData()', 'closepathOnly.getPathData' is undefined)
+

@@ -1,0 +1,105 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body {
+    color: red;
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/override-setting-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    async function addIFrameAndGetTarget() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await targetAddedPromise;
+        return event.data.target;
+    }
+
+    async function getComputedColorInTarget(target) {
+        // Wait for the iframe document to fully load before checking computed styles.
+        // TargetAdded fires when the JS context is created, before DOM and CSS are ready.
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(response.result.value, "Should be able to evaluate computed style in cross-origin target.");
+        return response.result.value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.OverrideSettingCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.OverrideSetting.DefaultStyles",
+        description: "Both the main page and cross-origin iframe should have author styles applied by default.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(255, 0, 0)", "Main page should have author styles applied (red).");
+
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(255, 0, 0)", "Cross-origin iframe should have author styles applied (red).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.OverrideSetting.DisableAndReload",
+        description: "Overriding AuthorAndUserStylesEnabled to false and reloading should disable styles in the cross-origin iframe.",
+        async test() {
+            InspectorTest.log("Overriding AuthorAndUserStylesEnabled to false...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled, false);
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 0, 0)", "Main page should have author styles disabled (black).");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(0, 0, 0)", "Cross-origin iframe should have author styles disabled (black).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.OverrideSetting.RemoveOverrideAndReload",
+        description: "Removing the override and reloading should restore author styles in both frames.",
+        async test() {
+            InspectorTest.log("Removing AuthorAndUserStylesEnabled override...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled);
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(255, 0, 0)", "Main page should have author styles restored (red).");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(255, 0, 0)", "Cross-origin iframe should have author styles restored (red).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Page.overrideSetting propagates to cross-origin iframes under site isolation.</p>
+</body>

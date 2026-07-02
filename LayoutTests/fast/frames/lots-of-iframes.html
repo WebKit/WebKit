@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Lots of iframes</title>
+<script>
+  var maxNumberOfFrames = 1000;
+
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+function dumpResults()
+{
+    var results = "";
+
+    var f = document.getElementById("i" + (maxNumberOfFrames - 1));
+    if (f && f.contentWindow) {
+      results += "Sucessfully created " + maxNumberOfFrames + " frames.<br>";
+    } else {
+      results += "Failed to create " + maxNumberOfFrames + " frames.<br>";
+    }
+
+    var g = document.getElementById("i" + maxNumberOfFrames);
+    if (g && g.contentWindow) {
+      results += "Failed to block creation of frame number " + (maxNumberOfFrames + 1) + ".";
+    } else {
+      results += "Successfully blocked creation of frame number " + (maxNumberOfFrames + 1) + ".<br>";
+    }
+
+    document.getElementById("status").innerHTML = results;
+}
+
+function createIFrames()
+{
+    let fragment = document.createDocumentFragment();
+    for (var i = 0; i < maxNumberOfFrames + 1; ++i) {
+        let iframe = document.createElement("iframe");
+        iframe.id = `i${i}`;
+        iframe.style.display = "none"
+        iframe.style.position = "absolute";
+        iframe.style.top = "9999px";
+        iframe.loading = "lazy";
+        iframe.srcdoc = `iframe_${i}`;
+        fragment.appendChild(iframe);
+    }
+    document.body.appendChild(fragment);
+    dumpResults();
+}
+
+</script>
+</head>
+<body onLoad="createIFrames()">
+<div id="status"></div>
+</body>
+</html>

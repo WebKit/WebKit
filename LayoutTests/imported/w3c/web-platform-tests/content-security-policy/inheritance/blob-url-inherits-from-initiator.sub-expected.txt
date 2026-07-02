@@ -1,0 +1,4 @@
+
+PASS Initiator is same-origin with target frame.
+PASS Initiator is cross-origin with target frame.
+

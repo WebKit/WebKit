@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<!--
+  Each test case is a chain of nested iframes, controlled by the `origins` search
+  parameter (encoded as JSON array). `origins[i]` is the i'th nested iframe's src
+  origin ("main" or "alt")
+
+  Once the chain is set up, the leaf page (page at the end of the chain) sends back
+  the evaluation result of @media (prefers-color-scheme) to the test page at the top,
+  and the test page checks if the result is correct or not. None of the intermediate
+  iframes have `color-scheme` explicitly set, so prefers-color-scheme should resolve
+  to the system color scheme.
+-->
+
+<title>prefers-color-scheme in nested iframes follows system preference if none of the iframes explicitly specify color-scheme</title>
+
+<main id="main">
+</main>
+
+<template id="leafpage">
+  <style>
+    @media (prefers-color-scheme: dark) {
+      #target { background-color: #00ff00; }
+    }
+
+    @media (prefers-color-scheme: light) {
+      #target { background-color: #ff0000; }
+    }
+
+    #target {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+  <div id="target"></div>
+</template>
+
+<script>
+  const mainURL = new URL(location.pathname, "http://127.0.0.1:8000");
+  const altURL = new URL(location.pathname, "http://localhost:8000");
+
+  const params = new URLSearchParams(location.search);
+  const origins = JSON.parse(params.get("origins"));
+  const systemAppearance = JSON.parse(params.get("systemAppearance"));
+
+  const isTestPage = !origins;
+  const isLeafPage = origins && !origins.length;
+  const isIntermediatePage = !isTestPage && !isLeafPage;
+
+  function createNextIframe(origins, systemAppearance) {
+    const origin = origins.shift();
+    const childURL = origin == "alt" ? new URL(altURL): new URL(mainURL);
+    childURL.searchParams.append("origins", JSON.stringify(origins));
+    childURL.searchParams.append("systemAppearance", JSON.stringify(systemAppearance));
+
+    const iframe = document.createElement("iframe");
+    iframe.src = childURL.toString();
+
+    return iframe;
+  }
+
+  if (isLeafPage) {
+    main.appendChild(leafpage.content.cloneNode(true));
+
+    if (window.testRunner) {
+      // setUseDarkAppearanceForTesting affects loaded frames, but doesn't affect
+      // future frames, so we have to set this for every new test case.
+      testRunner.setUseDarkAppearanceForTesting(systemAppearance);
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const targetComputedBackgroundColor = getComputedStyle(target).backgroundColor;
+        window.top.postMessage(targetComputedBackgroundColor, "*");
+      });
+    });
+  } else if (isIntermediatePage) {
+    main.appendChild(createNextIframe(origins, systemAppearance));
+  } else if (isTestPage) {
+    async function nested_test(origins, systemAppearance, expectedColor) {
+      main.appendChild(createNextIframe(origins, systemAppearance));
+
+      caughtEvent = await new Promise((resolve) => window.addEventListener("message", resolve, { once: true }));
+      shouldBeEqualToString("caughtEvent.data", expectedColor);
+      main.replaceChildren();
+    }
+
+    async function run_tests(systemAppearance, expectedColor) {
+      // Tests run rather slowly (maybe because testRunner.setUseDarkAppearanceForTesting is slow),
+      // so only test limited cases here, to keep the test fast and avoid timing out.
+
+      await nested_test(["main", "main"], systemAppearance, expectedColor);
+      await nested_test(["main", "main", "alt"], systemAppearance, expectedColor);
+      await nested_test(["main", "alt", "main", "alt"], systemAppearance, expectedColor);
+      await nested_test(["alt", "main", "alt", "main"], systemAppearance, expectedColor);
+    }
+
+    async function load_js(src) {
+      const script = document.createElement("script");
+      script.src = src;
+      document.head.appendChild(script);
+
+      return new Promise((resolve) => script.addEventListener("load", resolve));
+    }
+
+    window.jsTestIsAsync = true;
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    (async () => {
+      // js-test-pre.js and js-test-post.js should not run in intermediate & leaf pages,
+      // so load it here using JS only in the test page.
+      await load_js("/js-test-resources/js-test-pre.js");
+
+      description("prefers-color-scheme in nested iframes follows system preference if none of the iframes explicitly specify color-scheme");
+
+      // Light system preferrence.
+      const expectedLightColor = "rgb(255, 0, 0)";
+      await run_tests(false, expectedLightColor);
+
+      // Dark system preferrence.
+      const expectedDarkColor = "rgb(0, 255, 0)";
+      await run_tests(true, expectedDarkColor);
+
+      finishJSTest();
+
+      await load_js("/js-test-resources/js-test-post.js");
+    })();
+  };
+</script>

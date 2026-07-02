@@ -1,0 +1,6 @@
+2d.text.drawing.style.absolute.spacing
+Testing letter spacing and word spacing with absolute length
+Actual output:
+
+PASS Testing letter spacing and word spacing with absolute length
+

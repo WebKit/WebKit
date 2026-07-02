@@ -1,0 +1,36 @@
+<html>
+<head>
+<style>
+/* Fixed position for the line break should be ignored. */
+br { position: fixed; }
+
+/* Only function of this styling is forcing style invalidation
+ * on the line break renderer. */
+br::first-line { color: blue; }
+</style>
+<script>
+function test() {
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
+    }
+
+    setTimeout(function() {
+        // Only function of this event listener is invalidating event regions
+        // for the Document and subsequently triggering a complete style rebuild
+        // which is necessary to exhibit the problem.
+        window.addEventListener('wheel', function() { });
+
+        setTimeout(function() {
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        });
+    });
+}
+</script>
+</head>
+<body onload="test()">
+This test passes if it doesn't crash.
+<br/>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Test named 'Exception in cleanup function causes harness failure.' specified 1 'cleanup' function, and 1 failed.
+
+PASS Exception in cleanup function causes harness failure.
+NOTRUN This test should not be run.
+

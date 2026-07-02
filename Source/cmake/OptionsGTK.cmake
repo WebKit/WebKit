@@ -1,0 +1,504 @@
+include(GNUInstallDirs)
+include(VersioningUtils)
+
+WEBKIT_OPTION_BEGIN()
+
+SET_PROJECT_VERSION(2 53 4)
+
+set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
+
+set(ENABLE_UNSAFE_BUFFER_USAGE_WARNING ON)
+list(APPEND WEBKIT_UNSAFE_BUFFER_WARNING_FLAGS -Wno-unsafe-buffer-usage-in-format-attr-call)
+
+# Update Source/WTF/wtf/Platform.h to match required GLib versions.
+find_package(GLib 2.70.0 REQUIRED COMPONENTS GioUnix Thread Module)
+find_package(Cairo 1.16.0 REQUIRED)
+find_package(LibGcrypt 1.7.0 REQUIRED)
+find_package(Soup3 3.0.0 REQUIRED)
+find_package(Tasn1 REQUIRED)
+find_package(HarfBuzz 2.7.4 REQUIRED COMPONENTS ICU)
+find_package(ICU 70.1 REQUIRED COMPONENTS data i18n uc)
+find_package(JPEG REQUIRED)
+find_package(Epoxy 1.5.4 REQUIRED)
+find_package(LibXml2 2.9.13 REQUIRED)
+find_package(PNG REQUIRED)
+find_package(SQLite3 REQUIRED)
+find_package(Threads REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(WebP REQUIRED COMPONENTS demux)
+find_package(ATSPI 2.5.3)
+
+if (NOT TARGET SQLite3::SQLite3) # CMake < 4.3
+    add_library(SQLite3::SQLite3 ALIAS SQLite::SQLite3)
+endif ()
+
+include(GStreamerDefinitions)
+include(FindGLibCompileResources)
+
+SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
+SET_AND_EXPOSE_TO_BUILD(USE_LIBEPOXY TRUE)
+SET_AND_EXPOSE_TO_BUILD(USE_THEME_ADWAITA TRUE)
+SET_AND_EXPOSE_TO_BUILD(USE_XDGMIME TRUE)
+
+if (WTF_CPU_ARM OR WTF_CPU_MIPS)
+    SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE ${DEVELOPER_MODE})
+endif ()
+
+# Public options specific to the GTK port. Do not add any options here unless
+# there is a strong reason we should support changing the value of the option,
+# and the option is not relevant to other WebKit ports.
+WEBKIT_OPTION_DEFINE(ENABLE_DOCUMENTATION "Whether to generate documentation." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspection." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_FLITE "Whether to enable usage of Flite for speech synthesis." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBBACKTRACE "Whether to enable usage of libbacktrace." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBDRM "Whether to enable usage of libdrm." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_SKIA_OPENTYPE_SVG "Whether to use the Skia built-in support for OpenType SVG fonts." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_VULKAN "Whether to build support to use Vulkan." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFINE(ENABLE_JSC_RESTRICTED_OPTIONS_BY_DEFAULT "Whether to enable dangerous development options in JSC by default." PRIVATE OFF)
+
+WEBKIT_OPTION_DEPEND(ENABLE_DOCUMENTATION ENABLE_INTROSPECTION)
+WEBKIT_OPTION_DEPEND(USE_GBM USE_LIBDRM)
+
+# Private options specific to the GTK port. Changing these options is
+# completely unsupported. They are intended for use only by WebKit developers.
+WEBKIT_OPTION_DEFINE(USE_SPIEL "Whether to enable usage of LibSpiel for speech synthesis." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for tracing." PRIVATE ON)
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
+
+WEBKIT_OPTION_DEPEND(USE_SYSTEM_SYSPROF_CAPTURE USE_SYSPROF_CAPTURE)
+
+SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
+if (DEVELOPER_MODE)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS PRIVATE ON)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LAYOUT_TESTS PRIVATE ON)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JSC_RESTRICTED_OPTIONS_BY_DEFAULT PRIVATE ON)
+    set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
+else ()
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS PRIVATE OFF)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LAYOUT_TESTS PRIVATE OFF)
+endif ()
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BUBBLEWRAP_SANDBOX PUBLIC ON)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEMORY_SAMPLER PRIVATE ON)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_RESOURCE_USAGE PRIVATE ON)
+else ()
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BUBBLEWRAP_SANDBOX PUBLIC OFF)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEMORY_SAMPLER PRIVATE OFF)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_RESOURCE_USAGE PRIVATE OFF)
+endif ()
+
+# Public options shared with other WebKit ports. Do not add any options here
+# without approval from a GTK reviewer. There must be strong reason to support
+# changing the value of the option.
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DRAG_SUPPORT PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GAMEPAD PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MINIBROWSER PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PDFJS PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SPELLCHECK PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SPEECH_SYNTHESIS PUBLIC ON)
+
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LCMS PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_JPEGXL PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_WOFF2 PUBLIC ON)
+
+# Private options shared with other WebKit ports. Add options here when
+# we need a value different from the default defined in WebKitFeatures.cmake.
+# Changing these options is completely unsupported.
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ASYNC_SCROLLING PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_AUTOCAPITALIZE PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CONTENT_EXTENSIONS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_TAP_HIGHLIGHT_COLOR PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CURSOR_VISIBILITY PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DARK_MODE_CSS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ENCRYPTED_MEDIA PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GPU_PROCESS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_RECORDER PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION_PLAYLIST PRIVATE OFF)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_STREAM PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MHTML PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_CONTROLS_CONTEXT_MENUS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MOUSE_CURSOR_SCALE PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_OFFSCREEN_CANVAS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_OFFSCREEN_CANVAS_IN_WORKERS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_THUNDER PRIVATE ${ENABLE_DEVELOPER_MODE})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PERIODIC_MEMORY_MONITOR PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_POINTER_LOCK PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SHAREABLE_RESOURCE PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VARIATION_FONTS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_API_STATISTICS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_CODECS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_BIDI PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WK_WEB_EXTENSIONS PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR_HIT_TEST PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR_LAYERS PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
+
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_LIBRICE PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SKIA PRIVATE ON)
+
+WEBKIT_OPTION_DEPEND(ENABLE_GPU_PROCESS USE_GBM)
+
+include(GStreamerDependencies)
+
+WEBKIT_OPTION_DEPEND(ENABLE_WEBXR ENABLE_GAMEPAD)
+
+# Finalize the value for all options. Do not attempt to use an option before
+# this point, and do not attempt to change any option after this point.
+WEBKIT_OPTION_END()
+
+if (USE_GTK4)
+    set(GTK_MINIMUM_VERSION 4.6.0)
+    set(GTK_PC_NAME gtk4)
+else ()
+    set(GTK_MINIMUM_VERSION 3.22.0)
+    set(GTK_PC_NAME gtk+-3.0)
+endif ()
+find_package(GTK ${GTK_MINIMUM_VERSION} REQUIRED OPTIONAL_COMPONENTS unix-print)
+
+if (ENABLE_QUARTZ_TARGET AND NOT ${GTK_SUPPORTS_QUARTZ})
+    set(ENABLE_QUARTZ_TARGET OFF)
+endif ()
+if (ENABLE_X11_TARGET AND NOT ${GTK_SUPPORTS_X11})
+    set(ENABLE_X11_TARGET OFF)
+endif ()
+if (ENABLE_WAYLAND_TARGET AND NOT ${GTK_SUPPORTS_WAYLAND})
+    set(ENABLE_WAYLAND_TARGET OFF)
+endif ()
+
+if (USE_GTK4)
+    set(WEBKITGTK_API_INFIX "")
+    set(WEBKITGTK_API_VERSION "6.0")
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_2022_GLIB_API ON)
+else ()
+    set(WEBKITGTK_API_INFIX "2")
+    set(WEBKITGTK_API_VERSION "4.1")
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_2022_GLIB_API OFF)
+endif ()
+
+EXPOSE_STRING_VARIABLE_TO_BUILD(WEBKITGTK_API_INFIX)
+EXPOSE_STRING_VARIABLE_TO_BUILD(WEBKITGTK_API_VERSION)
+
+if (WEBKITGTK_API_VERSION VERSION_EQUAL "4.1")
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 23 0 23)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 11 3 11)
+elseif (WEBKITGTK_API_VERSION VERSION_EQUAL "6.0")
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 22 0 18)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 9 3 8)
+else ()
+    message(FATAL_ERROR "Unhandled API version")
+endif ()
+
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(bmalloc_LIBRARY_TYPE OBJECT)
+set(WTF_LIBRARY_TYPE OBJECT)
+set(WebCore_LIBRARY_TYPE OBJECT)
+
+# These are shared variables, but we special case their definition so that we can use the
+# CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
+set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to library installation directory")
+set(EXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "Absolute path to executable installation directory")
+set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}" CACHE PATH "Absolute path to install executables executed by the library")
+
+set(WEBKITGTK_HEADER_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/webkitgtk-${WEBKITGTK_API_VERSION}")
+set(INTROSPECTION_INSTALL_GIRDIR "${CMAKE_INSTALL_FULL_DATADIR}/gir-1.0")
+set(INTROSPECTION_INSTALL_TYPELIBDIR "${LIB_INSTALL_DIR}/girepository-1.0")
+
+SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_QUARTZ ${ENABLE_QUARTZ_TARGET})
+SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_X11 ${ENABLE_X11_TARGET})
+SET_AND_EXPOSE_TO_BUILD(WTF_PLATFORM_WAYLAND ${ENABLE_WAYLAND_TARGET})
+
+add_definitions(-DBUILDING_GTK__=1)
+add_definitions(-DGETTEXT_PACKAGE="WebKitGTK-${WEBKITGTK_API_VERSION}")
+add_definitions(-DJSC_GLIB_API_ENABLED)
+# We do not yet have a systematic way of representing the equivalent of WTF PLATFORM_ macros
+# within Swift. This task is represented within Apple as rdar://168139870.
+# For now, our only immediate need is to determine if we're being built
+# on GTK, so pass --DBUILDING_GTK__.
+add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-DBUILDING_GTK__>")
+
+if (USER_AGENT_BRANDING)
+    add_definitions(-DUSER_AGENT_BRANDING="${USER_AGENT_BRANDING}")
+endif ()
+
+if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
+    set(BUILD_REVISION "tarball")
+endif ()
+
+if (NOT USE_GTK4)
+    SET_AND_EXPOSE_TO_BUILD(USE_ATK 1)
+endif ()
+
+SET_AND_EXPOSE_TO_BUILD(USE_ATSPI 1)
+SET_AND_EXPOSE_TO_BUILD(HAVE_GL_FENCE TRUE)
+SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
+
+# https://bugs.webkit.org/show_bug.cgi?id=182247
+if (ENABLED_COMPILER_SANITIZERS)
+    set(ENABLE_INTROSPECTION OFF)
+    set(ENABLE_DOCUMENTATION OFF)
+endif ()
+
+if (ENABLE_GAMEPAD)
+    find_package(Manette 0.2.4)
+    if (NOT Manette_FOUND)
+        message(FATAL_ERROR "libmanette is required for ENABLE_GAMEPAD")
+    endif ()
+    SET_AND_EXPOSE_TO_BUILD(USE_MANETTE TRUE)
+endif ()
+
+if (ENABLE_XSLT)
+    find_package(LibXslt 1.1.13 REQUIRED)
+endif ()
+
+if (USE_LIBSECRET)
+    find_package(Secret)
+    if (NOT Secret_FOUND)
+        message(FATAL_ERROR "libsecret is needed for USE_LIBSECRET")
+    endif ()
+endif ()
+
+find_package(GI)
+if (ENABLE_INTROSPECTION AND NOT GI_FOUND)
+    message(FATAL_ERROR "GObjectIntrospection is needed for ENABLE_INTROSPECTION.")
+endif ()
+
+find_package(GIDocgen)
+if (ENABLE_DOCUMENTATION AND NOT GIDocgen_FOUND)
+    message(FATAL_ERROR "gi-docgen is needed for ENABLE_DOCUMENTATION.")
+endif ()
+
+if (ENABLE_WEBDRIVER)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS ON)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_MOUSE_INTERACTIONS ON)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_TOUCH_INTERACTIONS OFF)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_WHEEL_INTERACTIONS ON)
+endif ()
+
+if (USE_LIBDRM)
+    find_package(LibDRM)
+    if (NOT LibDRM_FOUND)
+        message(FATAL_ERROR "libdrm is required for USE_LIBDRM")
+    endif ()
+
+    set(CMAKE_REQUIRED_LIBRARIES LibDRM::LibDRM)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_DRM_GET_FORMAT_MODIFIER_VENDOR drmGetFormatModifierVendor xf86drm.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_DRM_GET_FORMAT_MODIFIER_NAME drmGetFormatModifierName xf86drm.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_DRM_MODE_CREATE_DUMB_BUFFER drmModeCreateDumbBuffer xf86drm.h)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_DRM_MODE_DESTROY_DUMB_BUFFER drmModeDestroyDumbBuffer xf86drm.h)
+    unset(CMAKE_REQUIRED_LIBRARIES)
+endif ()
+
+SET_AND_EXPOSE_TO_BUILD(USE_CAIRO OFF)
+SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER ON)
+SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS ON)
+SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
+
+if (USE_GBM)
+    find_package(GBM)
+    if (NOT GBM_FOUND)
+        message(FATAL_ERROR "GBM is required for USE_GBM")
+    endif ()
+
+    set(CMAKE_REQUIRED_LIBRARIES GBM::GBM)
+    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_GBM_BO_CREATE_WITH_MODIFIERS2 gbm_bo_create_with_modifiers2 gbm.h)
+    unset(CMAKE_REQUIRED_LIBRARIES)
+endif ()
+
+if (ENABLE_SPEECH_SYNTHESIS)
+    if (USE_SPIEL)
+        find_package(LibSpiel)
+        if (NOT LibSpiel_FOUND)
+            message(FATAL_ERROR "LibSpiel is needed for ENABLE_SPEECH_SYNTHESIS")
+        endif ()
+        SET_AND_EXPOSE_TO_BUILD(USE_SPIEL ON)
+    elseif (USE_FLITE)
+        find_package(Flite 2.2)
+        if (NOT Flite_FOUND)
+            message(FATAL_ERROR "Flite is needed for ENABLE_SPEECH_SYNTHESIS")
+        endif ()
+        SET_AND_EXPOSE_TO_BUILD(USE_FLITE ON)
+    else ()
+        message(FATAL_ERROR "Either USE_SPIEL or USE_FLITE is needed for ENABLE_SPEECH_SYNTHESIS")
+    endif ()
+endif ()
+
+if (ENABLE_SPELLCHECK)
+    find_package(Enchant)
+    if (NOT Enchant_FOUND)
+        message(FATAL_ERROR "Enchant is needed for ENABLE_SPELLCHECK")
+    endif ()
+endif ()
+
+if (ENABLE_QUARTZ_TARGET)
+    if (NOT GTK_SUPPORTS_QUARTZ)
+        message(FATAL_ERROR "Recompile GTK with Quartz backend to use ENABLE_QUARTZ_TARGET")
+    endif ()
+endif ()
+
+if (ENABLE_X11_TARGET)
+    if (NOT GTK_SUPPORTS_X11)
+        message(FATAL_ERROR "Recompile GTK with X11 backend to use ENABLE_X11_TARGET")
+    endif ()
+
+    find_package(X11 REQUIRED)
+endif ()
+
+if (ENABLE_WAYLAND_TARGET)
+    if (NOT GTK_SUPPORTS_WAYLAND)
+        message(FATAL_ERROR "Recompile GTK with Wayland backend to use ENABLE_WAYLAND_TARGET")
+    endif ()
+
+    find_package(Wayland 1.20 REQUIRED)
+    find_package(WaylandProtocols 1.24 REQUIRED)
+endif ()
+
+if (USE_JPEGXL)
+    find_package(JPEGXL 0.7.0)
+    if (NOT JPEGXL_FOUND)
+        message(FATAL_ERROR "libjxl is required for USE_JPEGXL")
+    endif ()
+endif ()
+
+if (USE_LIBHYPHEN)
+    find_package(Hyphen)
+    if (NOT Hyphen_FOUND)
+       message(FATAL_ERROR "libhyphen is needed for USE_LIBHYPHEN.")
+    endif ()
+endif ()
+
+if (USE_VULKAN)
+    find_package(volk CONFIG)
+    if (NOT TARGET volk::volk OR NOT TARGET volk::volk_headers)
+        message(FATAL_ERROR "Volk is required for USE_VULKAN")
+    endif ()
+endif ()
+
+# Resolve FreeType so WOFF2Checks can detect its builtin WOFF2 support. Skia
+# resolves it again later, in a subdirectory scope that is not visible here.
+find_package(Freetype 2.9.0 REQUIRED)
+
+include(WOFF2Checks)
+if (FREETYPE_WOFF2_SUPPORT_IS_AVAILABLE)
+    SET_AND_EXPOSE_TO_BUILD(HAVE_WOFF_SUPPORT ON)
+
+    # Turn off use of libwoff2
+    if (USE_WOFF2)
+        message(STATUS "Using FreeType's WOFF2 support")
+        set(USE_WOFF2 OFF)
+    endif ()
+endif ()
+
+if (USE_WOFF2)
+    find_package(WOFF2 1.0.2 COMPONENTS dec)
+    if (NOT WOFF2_FOUND)
+       message(FATAL_ERROR "libwoff2dec is required for USE_WOFF2")
+    endif ()
+endif ()
+
+if (ENABLE_WEBXR)
+    find_package(OpenXR REQUIRED CONFIG)
+    SET_AND_EXPOSE_TO_BUILD(USE_OPENXR ${OpenXR_FOUND})
+    SET_AND_EXPOSE_TO_BUILD(XR_USE_PLATFORM_EGL TRUE)
+    SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_OPENGL_ES TRUE)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBXR_AR TRUE)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBXR_HANDS TRUE)
+endif ()
+
+if (USE_AVIF)
+    find_package(AVIF 0.9.0)
+    if (NOT AVIF_FOUND)
+        message(FATAL_ERROR "libavif 0.9.0 is required for USE_AVIF.")
+    endif ()
+endif ()
+
+if (ENABLE_JOURNALD_LOG)
+    find_package(Journald)
+    if (NOT Journald_FOUND)
+        message(FATAL_ERROR "libsystemd or libelogind are needed for ENABLE_JOURNALD_LOG")
+    endif ()
+endif ()
+
+if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_THUNDER)
+  find_package(Thunder REQUIRED)
+endif ()
+
+if (USE_LCMS)
+    find_package(LCMS2)
+    if (NOT LCMS2_FOUND)
+        message(FATAL_ERROR "libcms2 is required for USE_LCMS.")
+    endif ()
+endif ()
+
+if (USE_LIBBACKTRACE)
+    find_package(LibBacktrace)
+    if (NOT LIBBACKTRACE_FOUND)
+        message(FATAL_ERROR "libbacktrace is required for USE_LIBBACKTRACE")
+    endif ()
+endif ()
+
+# Override the cached variable, gtk-doc does not really work when building on Mac.
+if (APPLE)
+    set(ENABLE_GTKDOC OFF)
+endif ()
+
+if (ENABLE_MALLOC_HEAP_BREAKDOWN)
+    set(MALLOC_HEAP_BREAKDOWN_LIBRARIES MallocHeapBreakdown)
+endif ()
+
+# Using DERIVED_SOURCES_DIR is deprecated
+set(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
+
+# Using FORWARDING_HEADERS_DIR is deprecated
+set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
+
+# FIXME: Remove in https://bugs.webkit.org/show_bug.cgi?id=210891
+set(WebKit_FRAMEWORK_HEADERS_DIR ${FORWARDING_HEADERS_DIR})
+set(WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR ${FORWARDING_HEADERS_DIR})
+set(WebKit_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit")
+
+set(JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCoreGLib/Headers")
+set(JavaScriptCoreGLib_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/JavaScriptCoreGLib/DerivedSources")
+
+set(WebKitGTK_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitGTK/Headers")
+set(WebKitGTK_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKitGTK/DerivedSources")
+
+set(JavaScriptCore_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc)
+set(WebKitGTK_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}.pc)
+if (ENABLE_2022_GLIB_API)
+    set(WebKitGTKWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkitgtk-web-process-extension-${WEBKITGTK_API_VERSION}.pc)
+else ()
+    set(WebKitGTKWebProcessExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}.pc)
+endif ()
+
+set(JavaScriptCore_LIBRARY_TYPE SHARED)
+set(SHOULD_INSTALL_JS_SHELL ON)
+
+# Add a typelib file to the list of all typelib dependencies. This makes it easy to
+# expose a 'gir' target with all gobject-introspection files.
+macro(ADD_TYPELIB typelib)
+    if (ENABLE_INTROSPECTION)
+        get_filename_component(target_name ${typelib} NAME_WE)
+        add_custom_target(${target_name}-gir ALL DEPENDS ${typelib})
+        list(APPEND GObjectIntrospectionTargets ${target_name}-gir)
+        set(GObjectIntrospectionTargets ${GObjectIntrospectionTargets} PARENT_SCOPE)
+    endif ()
+endmacro()
+
+include(BubblewrapSandboxChecks)
+include(GStreamerChecks)

@@ -1,0 +1,4 @@
+
+PASS Layout change under a stationary pointer (a new element appears) fires boundary events and no pointermove event
+PASS Layout change under a stationary pointer (the element disappears) fires boundary events and no pointermove event
+

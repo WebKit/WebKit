@@ -1,0 +1,39 @@
+<style>
+#testdiv {
+    background-color: inherit; /* needed to dodge the matched properties cache */
+}
+.test {
+    transition: 1s;
+    width: calc(100% - 10px); /* calc compares inequal with the same exact calc value */
+}
+</style>
+<body onload="test()">
+Test that calc values in transitions don't lead to a style resolution spin.
+<div id=log></div>
+<div id=testdiv></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function test() {
+    document.body.offsetWidth;
+
+    const startStyleRecalcCount = window.internals ? internals.styleRecalcCount() : 0;
+
+    testdiv.classList.add('test');
+
+    if (!window.internals)
+        return;
+    setTimeout(() => {
+       const styleRecalcCount = internals.styleRecalcCount() - startStyleRecalcCount;
+       if (styleRecalcCount <= 3)
+           log.innerHTML = "PASS"
+       else
+           log.innerHTML = `FAIL: styleRecalcCount: ${ internals.styleRecalcCount() - startStyleRecalcCount}`;
+       testRunner.notifyDone();
+    }, 10);
+}
+</script>
+</div>

@@ -1,0 +1,371 @@
+/*
+ * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2010 François Sausset (sausset@gmail.com). All rights reserved.
+ * Copyright (C) 2013, 2016 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RenderMathMLOperator.h"
+
+#if ENABLE(MATHML)
+
+#include "FontSelector.h"
+#include "FontInlines.h"
+#include "MathMLNames.h"
+#include "MathMLOperatorElement.h"
+#include "PaintInfo.h"
+#include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderText.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include <cmath>
+#include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/unicode/CharacterNames.h>
+
+namespace WebCore {
+
+using namespace MathMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLOperator);
+
+RenderMathMLOperator::RenderMathMLOperator(Type type, MathMLOperatorElement& element, Style::ComputedStyle&& style)
+    : RenderMathMLToken(type, element, WTF::move(style))
+{
+    updateTokenContent();
+}
+
+RenderMathMLOperator::RenderMathMLOperator(Type type, Document& document, Style::ComputedStyle&& style)
+    : RenderMathMLToken(type, document, WTF::move(style))
+{
+}
+
+RenderMathMLOperator::~RenderMathMLOperator() = default;
+
+MathMLOperatorElement& RenderMathMLOperator::element() const
+{
+    return static_cast<MathMLOperatorElement&>(nodeForNonAnonymous());
+}
+
+char32_t RenderMathMLOperator::singleCharCodePoint() const
+{
+    auto operatorChar = protect(element())->operatorChar();
+    if (operatorChar.hasTwoCharacters)
+        return 0;
+    return operatorChar.character;
+}
+
+bool RenderMathMLOperator::isInvisibleOperator() const
+{
+    // The following operators are invisible: U+2061 FUNCTION APPLICATION, U+2062 INVISIBLE TIMES, U+2063 INVISIBLE SEPARATOR, U+2064 INVISIBLE PLUS.
+    char32_t character = singleCharCodePoint();
+    return 0x2061 <= character && character <= 0x2064;
+}
+
+bool RenderMathMLOperator::hasOperatorFlag(MathMLOperatorDictionary::Flag flag) const
+{
+    return protect(element())->hasProperty(flag);
+}
+
+bool RenderMathMLOperator::isLargeOperatorInDisplayStyle() const
+{
+    return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && style().mathStyle() == MathStyle::Normal;
+}
+
+LayoutUnit RenderMathMLOperator::leadingSpace() const
+{
+    // FIXME: Negative leading spaces must be implemented (https://webkit.org/b/124830).
+    LayoutUnit leadingSpace = toUserUnits(protect(element())->defaultLeadingSpace(), style(), 0);
+    leadingSpace = toUserUnits(protect(element())->leadingSpace(), style(), leadingSpace);
+    return std::max<LayoutUnit>(0, leadingSpace);
+}
+
+LayoutUnit RenderMathMLOperator::trailingSpace() const
+{
+    // FIXME: Negative trailing spaces must be implemented (https://webkit.org/b/124830).
+    LayoutUnit trailingSpace = toUserUnits(protect(element())->defaultTrailingSpace(), style(), 0);
+    trailingSpace = toUserUnits(protect(element())->trailingSpace(), style(), trailingSpace);
+    return std::max<LayoutUnit>(0, trailingSpace);
+}
+
+LayoutUnit RenderMathMLOperator::minSize() const
+{
+    // Per MathML Core, default minsize is 100% of the unstretched size and
+    // percentage values are relative to the unstretched size ("height of g").
+    // If the unstretched size is unavailable (e.g. base glyph not found),
+    // percentages and the default resolve to 0 (no constraint).
+    return toUserUnits(protect(element())->minSize(), style(), m_mathOperator.unstretchedSize());
+}
+
+LayoutUnit RenderMathMLOperator::maxSize() const
+{
+    // Default maxsize is infinity. Percentages are relative to the unstretched size.
+    Ref protectedElement = element();
+    const auto& length = protectedElement->maxSize();
+    if (length.type == MathMLElement::LengthType::ParsingFailed)
+        return intMaxForLayoutUnit;
+
+    return toUserUnits(length, style(), m_mathOperator.unstretchedSize());
+}
+
+bool RenderMathMLOperator::isVertical() const
+{
+    return protect(element())->operatorChar().isVertical;
+}
+
+
+void RenderMathMLOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
+{
+    ASSERT(isStretchy());
+    ASSERT(isVertical());
+    ASSERT(!isStretchWidthLocked());
+
+    if (!isVertical() || (heightAboveBaseline == m_stretchHeightAboveBaseline && depthBelowBaseline == m_stretchDepthBelowBaseline))
+        return;
+
+    m_stretchHeightAboveBaseline = heightAboveBaseline;
+    m_stretchDepthBelowBaseline = depthBelowBaseline;
+
+    if (hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
+        // We make the operator stretch symmetrically above and below the axis.
+        LayoutUnit axis = mathAxisHeight();
+        LayoutUnit halfStretchSize = std::max(m_stretchHeightAboveBaseline - axis, m_stretchDepthBelowBaseline + axis);
+        m_stretchHeightAboveBaseline = halfStretchSize + axis;
+        m_stretchDepthBelowBaseline = halfStretchSize - axis;
+    }
+    // We try to honor the minsize/maxsize condition by increasing or decreasing both height and depth proportionately.
+    // Per MathML Core step 5 of https://w3c.github.io/mathml-core/#layout-of-operators:
+    // "If minsize < 0 then set minsize to 0. If maxsize < minsize then set maxsize to minsize."
+    LayoutUnit size = stretchSize();
+    LayoutUnit minSizeValue = std::max(0_lu, minSize());
+    LayoutUnit maxSizeValue = std::max(minSizeValue, maxSize());
+    float aspect = 1.0;
+    if (size > 0) {
+        if (size < minSizeValue)
+            aspect = minSizeValue.toFloat() / size;
+        else if (maxSizeValue < size)
+            aspect = maxSizeValue.toFloat() / size;
+    }
+    m_stretchHeightAboveBaseline *= aspect;
+    m_stretchDepthBelowBaseline *= aspect;
+
+    m_mathOperator.stretchTo(style(), m_stretchHeightAboveBaseline + m_stretchDepthBelowBaseline);
+
+    setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
+}
+
+void RenderMathMLOperator::stretchTo(LayoutUnit width)
+{
+    ASSERT(isStretchy());
+    ASSERT(!isVertical());
+    ASSERT(!isStretchWidthLocked());
+
+    if (isVertical() || m_stretchWidth == width)
+        return;
+
+    m_stretchWidth = width;
+    m_mathOperator.stretchTo(style(), width);
+
+    setLogicalWidth(leadingSpace() + width + trailingSpace() + borderAndPaddingLogicalWidth());
+    setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
+}
+
+void RenderMathMLOperator::resetStretchSize()
+{
+    ASSERT(!isStretchWidthLocked());
+
+    if (isVertical()) {
+        m_stretchHeightAboveBaseline = 0;
+        m_stretchDepthBelowBaseline = 0;
+    } else
+        m_stretchWidth = 0;
+}
+
+void RenderMathMLOperator::computeIntrinsicLogicalWidthContributions()
+{
+    ASSERT(hasInvalidContentLogicalWidths());
+
+    LayoutUnit preferredWidth;
+
+    if (!useMathOperator()) {
+        // No need to include padding/border/margin here, RenderMathMLToken::computeIntrinsicLogicalWidthContributions takes care of them.
+        RenderMathMLToken::computeIntrinsicLogicalWidthContributions();
+        preferredWidth = m_maxContentLogicalWidthContribution;
+        if (isInvisibleOperator()) {
+            // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
+            GlyphData data = style().fontCascade().glyphDataForCharacter(singleCharCodePoint(), false);
+            float glyphWidth = data.font ? protect(data.font)->widthForGlyph(data.glyph) : 0;
+            preferredWidth -= std::min(LayoutUnit(glyphWidth), preferredWidth);
+        }
+    } else
+        preferredWidth = m_mathOperator.maxPreferredWidth() + borderAndPaddingLogicalWidth();
+
+    // FIXME: The spacing should be added to the whole embellished operator (https://webkit.org/b/124831).
+    // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
+    preferredWidth = leadingSpace() + preferredWidth + trailingSpace();
+
+    m_minContentLogicalWidthContribution = preferredWidth;
+    m_maxContentLogicalWidthContribution = preferredWidth;
+
+    clearContentLogicalWidthsInvalidation();
+}
+
+void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
+{
+    ASSERT(needsLayout());
+
+    insertPositionedChildrenIntoContainingBlock();
+
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
+        return;
+
+    layoutFloatingChildren();
+
+    LayoutUnit leadingSpaceValue = leadingSpace();
+    LayoutUnit trailingSpaceValue = trailingSpace();
+
+    if (useMathOperator()) {
+        recomputeLogicalWidth();
+        for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+            child->layoutIfNeeded();
+        setLogicalWidth(leadingSpaceValue + m_mathOperator.width() + trailingSpaceValue + borderAndPaddingLogicalWidth());
+        setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
+
+        updateLogicalHeight();
+
+        layoutOutOfFlowBoxes(relayoutChildren);
+    } else {
+        // We first do the normal layout without spacing.
+        // No need to handle padding/border/margin here, RenderMathMLToken::layoutBlock takes care of them.
+        recomputeLogicalWidth();
+        LayoutUnit width = logicalWidth();
+        setLogicalWidth(width - leadingSpaceValue - trailingSpaceValue);
+        RenderMathMLToken::layoutBlock(relayoutChildren, pageLogicalHeight);
+        setLogicalWidth(width);
+
+        // We then move the children to take spacing into account.
+        shiftInFlowChildren(writingMode().isBidiLTR() ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
+    }
+}
+
+void RenderMathMLOperator::updateMathOperator()
+{
+    ASSERT(useMathOperator());
+    MathOperator::Type type;
+    if (isStretchy())
+        type = isVertical() ? MathOperator::Type::VerticalOperator : MathOperator::Type::HorizontalOperator;
+    else if (singleCharCodePoint() && isLargeOperatorInDisplayStyle())
+        type = MathOperator::Type::DisplayOperator;
+    else
+        type = MathOperator::Type::NormalOperator;
+
+    m_mathOperator.setOperator(style(), singleCharCodePoint(), type);
+}
+
+void RenderMathMLOperator::updateTokenContent()
+{
+    ASSERT(!isAnonymous());
+    RenderMathMLToken::updateTokenContent();
+    if (useMathOperator())
+        updateMathOperator();
+}
+
+void RenderMathMLOperator::updateFromElement()
+{
+    updateTokenContent();
+    resetStretchSize();
+}
+
+bool RenderMathMLOperator::useMathOperator() const
+{
+    // We use the MathOperator class to handle the following cases:
+    // 1) Stretchy and large operators, since they require special painting.
+    // 2) The minus sign, since it can be obtained from a hyphen in the DOM.
+    return isStretchy() || (singleCharCodePoint() && isLargeOperatorInDisplayStyle()) || singleCharCodePoint() == minusSign;
+}
+
+void RenderMathMLOperator::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderMathMLBlock::styleDidChange(diff, oldStyle);
+    m_mathOperator.reset(style());
+    resetStretchSize();
+
+    // MathML displaystyle can affect isLargeOperatorInDisplayStyle()
+    if (oldStyle && style().mathStyle() != oldStyle->mathStyle() && !isAnonymous())
+        updateTokenContent();
+}
+
+LayoutUnit RenderMathMLOperator::verticalStretchedOperatorShift() const
+{
+    if (!isVertical() || !stretchSize())
+        return 0;
+
+    return (m_stretchDepthBelowBaseline - m_stretchHeightAboveBaseline - m_mathOperator.descent() + m_mathOperator.ascent()) / 2;
+}
+
+std::optional<LayoutUnit> RenderMathMLOperator::firstLineBaseline() const
+{
+    if (useMathOperator()) {
+        LayoutUnit shift;
+        if (isVertical() && hasOperatorFlag(MathMLOperatorDictionary::Stretchy)) {
+            // If the operator has the stretchy property.
+            // If the stretch axis of the operator is block.
+            // https://w3c.github.io/mathml-core/#layout-of-operators
+            shift = verticalStretchedOperatorShift();
+        } else if (isLargeOperatorInDisplayStyle() && hasOperatorFlag(MathMLOperatorDictionary::Symmetric)) {
+            // If the operator has the largeop property and if math-style on the mo element is normal.
+            // If the operator has the symmetric property.
+            // https://w3c.github.io/mathml-core/#layout-of-operators
+            shift = (m_mathOperator.ascent() - m_mathOperator.descent() - 2 * mathAxisHeight()) / 2;
+        }
+        auto baseline = settings().subpixelInlineLayoutEnabled() ? m_mathOperator.ascent() - shift : LayoutUnit(roundf(m_mathOperator.ascent() - shift));
+        return { borderAndPaddingBefore() + baseline };
+    }
+    return RenderMathMLToken::firstLineBaseline();
+}
+
+void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
+{
+    RenderMathMLToken::paint(info, paintOffset);
+    if (!useMathOperator())
+        return;
+
+    auto operatorTopLeft = paintOffset + location();
+    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
+
+    m_mathOperator.paint(style(), info, operatorTopLeft, protect(document())->deviceScaleFactor());
+}
+
+void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    // We skip painting for invisible operators too to avoid some "missing character" glyph to appear if appropriate math fonts are not available.
+    if (useMathOperator() || isInvisibleOperator())
+        return;
+    RenderMathMLToken::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
+}
+
+}
+
+#endif

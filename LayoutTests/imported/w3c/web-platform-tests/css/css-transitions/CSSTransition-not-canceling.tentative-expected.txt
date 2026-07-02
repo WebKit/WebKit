@@ -1,0 +1,4 @@
+
+PASS Setting "display: none" with "display" set to transition using "display 100s allow-discrete" does not cancel running transitions
+PASS Setting "display: none" with "display" set to transition using "display 100s, all allow-discrete 100s" does not cancel running transitions
+

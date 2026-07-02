@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(async () => {
+    if (!window.IPC)
+        return testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+    const url = unescape('RN-f%25%07sk%08S%22%5BDW6x.%0Ed%3B%270%7D%19lC%05%7Eykp%03r%0Cy%21%024%28%1B%19%60%0C%20%1DO2%10%3B%26uG%16/Z%13%7C%22kNy%1E%00b_fSGI.%03%3C%0B3PT%13%3C%3Ad%1B%09Mc');
+
+    CoreIPC.Networking.NetworkConnectionToWebProcess.LoadImageForDecoding(0, {
+        request: {
+            getRequestDataToSerialize: {
+                variantType: 'WebCore::ResourceRequest::RequestData',
+                variant: {
+                    m_url: { string: url },
+                    m_firstPartyForCookies: { string: '' },
+                    m_timeoutInterval: 100,
+                    m_httpMethod: '',
+                    m_httpHeaderFields: {
+                        commonHeaders: [
+                            { key: 7, value: '' },
+                            { key: 89, value: '' }
+                        ],
+                        uncommonHeaders: [
+                            { key: 'A', value: '' },
+                        ]
+                    },
+                    m_responseContentDispositionEncodingFallbackArray: ['', '', 'A', '', ''],
+                    m_cachePolicy: 4,
+                    m_sameSiteDisposition: 0,
+                    m_priority: 3,
+                    m_requester: 7,
+                    m_allowCookies: false,
+                    m_isTopSite: true,
+                    m_isAppInitiated: false,
+                    m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                    m_useAdvancedPrivacyProtections: true,
+                    m_didFilterLinkDecoration: true,
+                    m_isPrivateTokenUsageByThirdPartyAllowed: true,
+                    m_wasSchemeOptimisticallyUpgraded: false,
+                    m_targetAddressSpace: 0
+                }
+            },
+            shouldBlockThirdPartyStorage: true,
+            hiddenFromInspector: true
+        },
+        pageID: IPC.pageID,
+        maximumBytesFromNetwork: 410
+    });
+
+    testRunner?.notifyDone();
+}, 10);
+</script>
+<body>
+    <p>This test passes if WebKit does not crash.</p>
+</body>
+

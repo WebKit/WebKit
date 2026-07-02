@@ -1,0 +1,8 @@
+First
+Finally Third
+
+FAIL Focus flows into second when details is open assert_equals: expected Element node <a id="second" href="#">Second</a> but got Element node <body><details id="details" open="">
+  <summary id="first...
+FAIL Focus flows into third when details is closed assert_equals: expected Element node <button id="third">Third</button> but got Element node <body><details id="details">
+  <summary id="first">First<...
+

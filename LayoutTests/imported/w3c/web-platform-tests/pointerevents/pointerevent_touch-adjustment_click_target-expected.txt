@@ -1,0 +1,7 @@
+Touch letter 'O' below to run the test. If a "PASS" result appears the test passes, otherwise it fails
+
+Link O
+
+
+PASS Touch-generated events should have the same target
+

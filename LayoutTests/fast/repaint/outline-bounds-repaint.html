@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+        body {
+            height: 400px;
+            font-family: Ahem;
+        }
+		#test {
+            margin: 100px;
+			width: 200px;
+			padding: 20px;
+            outline: 20px solid blue;
+            outline-offset: 36px;
+			border: 1px solid red;
+		}
+	</style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();            
+        }
+        
+        window.addEventListener('load', async () => {
+            if (window.internals)
+              internals.startTrackingRepaints();
+
+    		document.getElementById("test").innerHTML = "<p>Hello</p>";
+
+            if (window.internals) {
+              repaints.innerHTML = window.internals.repaintRectsAsText();
+              internals.stopTrackingRepaints();
+            }
+
+            if (window.testRunner)
+              testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+<div id="test"><p>Hello</p><p>World</p></div>
+<pre id="repaints"></pre>
+</body>
+</html>

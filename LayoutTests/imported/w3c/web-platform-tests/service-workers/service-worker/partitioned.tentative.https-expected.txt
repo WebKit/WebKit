@@ -1,0 +1,10 @@
+The 3p iframe's postMessage:
+3p iframe's has_pending: false source: From3pFrame. 1p iframe's has_pending: true source: From1pFrame
+
+The nested iframe's postMessage:
+Nested iframe's has_pending: true source: FromNestedFrame. 1p iframe's has_pending: false source: From1pFrame
+
+
+PASS Services workers under different top-level sites are partitioned.
+FAIL Services workers with cross-site ancestors are partitioned. assert_true: The 1p iframe saw a pending promise in the service worker. expected true got false
+

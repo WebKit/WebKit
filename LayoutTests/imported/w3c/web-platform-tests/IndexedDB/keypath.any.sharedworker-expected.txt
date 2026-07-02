@@ -1,0 +1,22 @@
+
+PASS undefined - my.key
+PASS undefined - my.køi
+PASS undefined - my.key_ya
+PASS undefined - public.key$ya
+PASS undefined - true.$
+PASS undefined - my._
+PASS undefined - delete.a7
+PASS undefined - p.p.p.p.p.p.p.p.p.p.p.p.p.p
+PASS undefined - str.length
+PASS undefined - arr.length
+PASS undefined - length
+PASS undefined - '' uses value as key
+PASS undefined - [''] uses value as [key]
+PASS undefined - ['x', 'y']
+PASS undefined - [['x'], 'y'] (stringifies)
+PASS undefined - ['x', {toString->'y'}] (stringifies)
+PASS undefined - name,type
+PASS undefined - name,type.name
+PASS undefined - list with 1 field
+PASS undefined - array loop -> stringify becomes ['']
+

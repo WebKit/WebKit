@@ -1,0 +1,27 @@
+<script>
+   nodes = new Map([['n0', new WeakRef(document.documentElement)]]);
+   try {
+   function getNodeSafe(key) {
+   weak = nodes.get(key);
+   node = weak.deref();
+   return node;
+   }
+   } catch {
+   }
+   (async => {
+   try { (() => {
+   n11 = document.createElement('img'); (document.body ?? document.documentElement).append(n11);
+   })(); } catch {}
+   try { (() => {
+   targetNode = getNodeSafe('n0');
+   targetNode.style['text-wrap-style'] = 'pretty';
+   })(); } catch {}
+   })();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+</script>
+</head>
+<body>
+This test passes if it doesn't crash.
+</body>

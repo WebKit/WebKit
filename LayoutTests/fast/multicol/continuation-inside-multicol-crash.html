@@ -1,0 +1,37 @@
+<style>
+*:last-of-type { 
+  -webkit-column-span: all;
+  column-width: 737px;
+}
+.class4 {
+  float: right;
+}
+*:focus,#x38,select:invalid { 
+  white-space: pre-line;
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+function main() {
+document.designMode = "on";
+
+x46.outerText = "AAAAAAAAAAAAAAA";
+document.execCommand("justifyLeft",false,null);
+window.find("AAAAAAAA",false,false,true,true,false,false);
+
+document.execCommand("selectAll",false,null);
+document.execCommand("foreColor",false,"rgb(51,23,61)");
+document.execCommand("justifyCenter",false,null);
+document.execCommand("delete",false,null);
+
+document.body.innerText = "PASS if no crash or assert.";
+}
+</script>
+<body onload="main()">
+<object data="x" dir="rtl"><span id="x46"></object>
+<meter class="class4"></meter>
+<svg>
+<menu hidden=""></menu>
+</section>

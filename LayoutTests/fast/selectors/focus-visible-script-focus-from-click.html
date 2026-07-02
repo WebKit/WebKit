@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>:focus-visible should not match when element.focus() is called from a click handler</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        *:focus,
+        *:focus-visible {
+            outline: none;
+        }
+        #target:focus-visible {
+            outline: 3px solid red;
+        }
+    </style>
+</head>
+<body>
+    <p>Test that calling element.focus() from a button's click handler does not show :focus-visible,
+    regardless of whether the button has child elements.</p>
+
+    <button id="trigger-with-child" type="button"><div>Click</div></button>
+    <button id="trigger-text-only" type="button">Click</button>
+    <button id="trigger-pe-none" type="button"><div style="pointer-events:none">Click</div></button>
+    <button id="trigger-shadow" type="button"><div id="shadow-host"></div></button>
+    <button id="trigger-slot" type="button"><div id="slot-host"><span>Click</span></div></button>
+    <button id="target" type="button">Focus target</button>
+
+    <script>
+    const shadowHost = document.getElementById("shadow-host");
+    const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+    shadowRoot.innerHTML = "<div>Click</div>";
+
+    const slotHost = document.getElementById("slot-host");
+    const slotRoot = slotHost.attachShadow({ mode: "open" });
+    slotRoot.innerHTML = "<slot></slot>";
+
+    const target = document.getElementById("target");
+    for (const btn of document.querySelectorAll("[id^=trigger]"))
+        btn.addEventListener("click", () => { target.focus(); });
+
+    function clickCenter(element) {
+        const rect = element.getBoundingClientRect();
+        return UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    }
+
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger-with-child");
+        await clickCenter(trigger);
+        assert_equals(document.activeElement, target, "target should be focused");
+        assert_false(target.matches(":focus-visible"),
+            ":focus-visible should not match on target when triggered from button with child element");
+        target.blur();
+    }, "Button with <div> child: focus() from click handler should not show :focus-visible");
+
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger-text-only");
+        await clickCenter(trigger);
+        assert_equals(document.activeElement, target, "target should be focused");
+        assert_false(target.matches(":focus-visible"),
+            ":focus-visible should not match on target when triggered from text-only button");
+        target.blur();
+    }, "Button with text only: focus() from click handler should not show :focus-visible");
+
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger-pe-none");
+        await clickCenter(trigger);
+        assert_equals(document.activeElement, target, "target should be focused");
+        assert_false(target.matches(":focus-visible"),
+            ":focus-visible should not match on target when triggered from button with pointer-events:none child");
+        target.blur();
+    }, "Button with pointer-events:none child: focus() from click handler should not show :focus-visible");
+
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger-shadow");
+        await clickCenter(trigger);
+        assert_equals(document.activeElement, target, "target should be focused");
+        assert_false(target.matches(":focus-visible"),
+            ":focus-visible should not match on target when triggered from button with shadow DOM child");
+        target.blur();
+    }, "Button with shadow DOM child: focus() from click handler should not show :focus-visible");
+
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger-slot");
+        await clickCenter(trigger);
+        assert_equals(document.activeElement, target, "target should be focused");
+        assert_false(target.matches(":focus-visible"),
+            ":focus-visible should not match on target when triggered from button with slotted content");
+        target.blur();
+    }, "Button with slotted content: focus() from click handler should not show :focus-visible");
+    </script>
+</body>
+</html>

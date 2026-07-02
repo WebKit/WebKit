@@ -1,0 +1,21 @@
+Test for bug 31689: RegExp#exec's returned Array-like object behaves differently from regular Arrays
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testRegExpMatchesArray(0) is ["abcdef", "a", undefined, "c", undefined, "e", undefined]
+PASS testInOperator(0) is ["abcdef", "a", undefined, "c", undefined, "e", undefined]
+PASS testForEachFunction(0) is ["abcdef", "a", undefined, "c", undefined, "e", undefined]
+PASS testRegExpMatchesArray(1) is ["a", "a", undefined]
+PASS testInOperator(1) is ["a", "a", undefined]
+PASS testForEachFunction(1) is ["a", "a", undefined]
+PASS testRegExpMatchesArray(2) is ["xa", undefined, "a"]
+PASS testInOperator(2) is ["xa", undefined, "a"]
+PASS testForEachFunction(2) is ["xa", undefined, "a"]
+PASS testRegExpMatchesArray(3) is ["xa", undefined, "a", undefined]
+PASS testInOperator(3) is ["xa", undefined, "a", undefined]
+PASS testForEachFunction(3) is ["xa", undefined, "a", undefined]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

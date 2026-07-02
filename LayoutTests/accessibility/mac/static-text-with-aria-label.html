@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<abbr tabindex="0" id="abbrItem" role="text" aria-label="inch">"</abbr>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-label on a role='text' does not duplicate the AXValue in the AXDescription");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("abbrItem").focus();
+        shouldBe("accessibilityController.focusedElement.description", "'AXDescription: '");
+        shouldBe("accessibilityController.focusedElement.stringValue", "'AXValue: inch'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

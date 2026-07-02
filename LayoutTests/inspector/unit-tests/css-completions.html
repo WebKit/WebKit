@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("CSSCompletions");
+
+    suite.addTestCase({
+        name: "CSSCompletions.completeUnbalancedValue",
+        test() {
+            function log(cssValue) {
+                let suffix = WI.CSSCompletions.completeUnbalancedValue(cssValue);
+                InspectorTest.log(cssValue + "|" + suffix);
+            }
+
+            log(`url(`);
+            log(`url()`);
+            log(`rgb(1`);
+            log(`rgb(1,2,3)`);
+            log(`calc(var(--foo`);
+
+            log(`'`);
+            log(`''`);
+            log(`'foo`);
+            log(`'foo'`);
+
+            log(`"`);
+            log(`""`);
+            log(`"bar`);
+            log(`"bar"`);
+
+            log(`/*`);
+            log(`/**/`);
+            log(`/* "foo */`);
+            log(`/* 'foo */`);
+            log(`/* (foo */`);
+
+            log(`('foo"`);
+            log(`('foo")`);
+            log(`("bar"')`);
+            log(`("bar")`);
+
+            log(`'(`);
+            log(`'(foo`);
+            log(`"(`);
+            log(`"(bar`);
+
+            log(`\\`);
+            log(`\\\\`);
+            log(`\\\\\\`);
+
+            log(`"\\"`);
+            log(`'\\'`);
+            log(`(\\)`);
+            log(`/*\\*/`);
+
+            log(`radial-gradient(ellipse closest-corner at var(--v) var(--h), hsl(198, 100%, 20%) 0%, hsla(204, 100%, 20%, 0) 100%)`);
+            log(`"Helvetica Neue", 'Source Code Pro', "Comic Sans", 'PT Mono'`);
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing CSS completion.</p>
+</body>
+</html>

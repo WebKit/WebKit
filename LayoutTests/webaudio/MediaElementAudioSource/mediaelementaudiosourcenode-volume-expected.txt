@@ -1,0 +1,11 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "mediaelementsourcenode-volume"
+PASS Audit report
+PASS > [mediaelementsourcenode-volume] Verify volume changes to the media element are audible when attached to a MediaElementSourceNode
+PASS   fullVolumeDecibels > 0 is true.
+PASS   halfVolumeDecibels > 0 is true.
+PASS   halfVolumeDecibels < fullVolumeDecibels is true.
+PASS < [mediaelementsourcenode-volume] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

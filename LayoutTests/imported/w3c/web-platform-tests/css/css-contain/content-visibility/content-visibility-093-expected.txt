@@ -1,0 +1,3 @@
+
+PASS getComputedStyle works on a grid container with c-v: hidden and an absolutely positioned child
+

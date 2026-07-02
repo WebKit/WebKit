@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+rightmost .target {
+    color:rgb(0,0,0);
+    background-color:rgb(0, 0, 0);
+}
+rightmost .target:first-child {
+    color:rgb(1,2,3);
+}
+rightmost .target:not(:first-child) {
+    background-color:rgb(4, 5, 6);
+}
+
+ancestor .target {
+    color:rgb(255, 255, 255);
+    background-color:rgb(255, 255, 255);
+}
+ancestor .parent:first-child .target {
+    color:rgb(7, 8, 9);
+}
+ancestor .parent:not(:first-child) .target {
+    background-color:rgb(10, 11, 12);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <rightmost>
+        <span id="target1" class="target"></span>
+        <span id="target2" class="target"></span>
+        <span id="target3" class="target"></span>
+    </rightmost>
+    <ancestor>
+        <span class="parent">
+            <span id="target4" class="target"></span>
+        </span>
+        <span class="parent">
+            <span id="target5" class="target"></span>
+        </span>
+        <span class="parent">
+            <span id="target6" class="target"></span>
+        </span>
+    </ancestor>
+</div>
+</body>
+<script>
+description("When updating the tree, the style needs to be invalidated when the :first-child changes, even if there is no renderer.");
+
+debug("Base case for rightmost element with :first-child");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).color', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).color', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).color', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(4, 5, 6)');
+
+
+var target1 = document.getElementById("target1");
+var parentElement = target1.parentElement;
+parentElement.removeChild(target1);
+
+debug("Removed first child (target1)");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).color', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).color', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(4, 5, 6)');
+
+parentElement.appendChild(target1);
+
+debug("Add back target1 at the end");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).color', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).color', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).color', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(4, 5, 6)');
+
+
+debug("Base case for a styled element with an ancestor affected by :first-child");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).color', 'rgb(7, 8, 9)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).color', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).color', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).backgroundColor', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).backgroundColor', 'rgb(10, 11, 12)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).backgroundColor', 'rgb(10, 11, 12)');
+
+var target4Parent = document.getElementById("target4").parentElement;
+var parentElement = target4Parent.parentElement;
+parentElement.removeChild(target4Parent);
+
+debug("Removed first child (target4's parent)");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).color', 'rgb(7, 8, 9)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).color', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).backgroundColor', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).backgroundColor', 'rgb(10, 11, 12)');
+
+debug("Add back target4's parent at the end");
+parentElement.appendChild(target4Parent);
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).color', 'rgb(7, 8, 9)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).color', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).color', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).backgroundColor', 'rgb(255, 255, 255)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).backgroundColor', 'rgb(10, 11, 12)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).backgroundColor', 'rgb(10, 11, 12)');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

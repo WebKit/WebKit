@@ -1,0 +1,7 @@
+
+enabled 1  Button  enabled 2  enabled 3
+
+
+FAIL Focusable elements between radio elements in a group can be focused. assert_equals: expected Element node <input type="text" id="end"></input> but got Element node <input type="radio" name="radio" id="b"></input>
+PASS During arrow key navigation, focus and checked is set on the radio element.
+

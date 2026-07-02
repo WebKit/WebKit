@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+promise_test(async () => {
+    function createReadStream() {
+        const response = new Response(new Blob(['aaaaa']));
+        return response.body;
+    }
+
+    const f = document.body.appendChild(document.createElement('iframe'));
+    const response = new f.contentWindow.Response(createReadStream());
+
+    f.contentWindow.Object.prototype.__defineGetter__('then', () => {
+        delete f.contentWindow.Object.prototype.then;
+
+        f.remove();
+    });
+
+    response.blob();
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+}, "Ensure redefining then does not alter blob promise");
+
+</script>
+</body>
+</html>

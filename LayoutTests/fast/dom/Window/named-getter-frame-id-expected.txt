@@ -1,0 +1,12 @@
+Tests that looking up a frame by id returns the iframe element and not its contentWindow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testFrame is document.getElementById('testFrame')
+PASS testFrame.name is ""
+PASS testFrame.id is "testFrame"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

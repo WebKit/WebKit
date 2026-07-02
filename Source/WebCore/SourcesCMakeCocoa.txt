@@ -1,0 +1,159 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+// CMake-only unified source list for the Cocoa ports. The Xcode build compiles
+// these files individually via WebCore.xcodeproj; folding them into the shared
+// SourcesCocoa.txt would require coordinated bundle-count and pbxproj updates.
+//
+// Registered Mac-only for now (see PlatformCocoa.cmake); every entry already
+// comes from CMakeLists.txt or PlatformCocoa.cmake, so iOS adoption should
+// only need a build-verification pass.
+
+Modules/encryptedmedia/CDM.cpp
+Modules/encryptedmedia/InitDataRegistry.cpp
+Modules/encryptedmedia/MediaKeyMessageEvent.cpp
+Modules/encryptedmedia/MediaKeySession.cpp
+Modules/encryptedmedia/MediaKeyStatusMap.cpp
+Modules/encryptedmedia/MediaKeySystemAccess.cpp
+Modules/encryptedmedia/MediaKeySystemController.cpp
+Modules/encryptedmedia/MediaKeySystemRequest.cpp
+Modules/encryptedmedia/MediaKeys.cpp
+Modules/encryptedmedia/NavigatorEME.cpp
+
+Modules/encryptedmedia/legacy/LegacyCDM.cpp
+Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.cpp
+Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp
+Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp
+Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp
+Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp
+Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp
+Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp
+
+Modules/gamepad/Gamepad.cpp
+Modules/gamepad/GamepadButton.cpp
+Modules/gamepad/GamepadEvent.cpp
+Modules/gamepad/GamepadHapticActuator.cpp
+Modules/gamepad/GamepadManager.cpp
+Modules/gamepad/NavigatorGamepad.cpp
+
+Modules/geolocation/cocoa/GeolocationPositionDataCocoa.mm @nonARC
+
+Modules/webaudio/MediaStreamAudioSourceCocoa.cpp
+
+Modules/webauthn/AuthenticationExtensionsClientInputs.cpp
+Modules/webauthn/AuthenticationExtensionsClientOutputs.cpp
+
+editing/TextListParser.cpp
+
+editing/mac/UniversalAccessZoom.mm @nonARC
+
+html/MediaEncryptedEvent.cpp
+
+html/shadow/SpatialImageControls.cpp
+
+page/UserMessageHandler.cpp
+page/UserMessageHandlerDescriptor.cpp
+page/UserMessageHandlersNamespace.cpp
+page/ViewportConfiguration.cpp
+page/WebKitNamespace.cpp
+
+platform/CPUMonitor.cpp
+platform/DictationCaretAnimator.cpp
+platform/OpacityCaretAnimator.cpp
+
+platform/audio/cocoa/AudioSessionCocoa.mm @nonARC
+
+platform/cocoa/SharedVideoFrameInfo.mm @nonARC
+platform/cocoa/SystemBattery.mm @nonARC
+platform/cocoa/VideoFullscreenCaptions.mm @nonARC
+platform/cocoa/WebAVPlayerLayer.mm @nonARC
+
+platform/gamepad/cocoa/CoreHapticsSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+platform/gamepad/cocoa/GameControllerHapticEffect.mm @nonARC
+platform/gamepad/cocoa/GameControllerHapticEngines.mm @nonARC
+platform/gamepad/cocoa/GameControllerSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+
+platform/graphics/FormatConverter.cpp
+
+platform/graphics/angle/ANGLEUtilities.cpp
+
+platform/graphics/avfoundation/CDMFairPlayStreaming.cpp
+
+platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm @nonARC
+platform/graphics/avfoundation/objc/QueuedVideoOutput.mm @nonARC
+
+platform/graphics/cocoa/ANGLEUtilitiesCocoa.mm @nonARC
+platform/graphics/cocoa/MediaPlayerEnumsCocoa.mm @nonARC
+platform/graphics/cocoa/TextTransformCocoa.cpp
+platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm @nonARC
+
+platform/graphics/cv/ImageRotationSessionVT.mm @nonARC
+platform/graphics/cv/PixelBufferConformerCV.mm @nonARC
+
+platform/mac/WebCoreView.mm @nonARC
+
+platform/mediarecorder/MediaRecorderPrivateWriter.cpp
+
+platform/mediastream/cocoa/CoreAudioCaptureUnit.mm @nonARC
+
+platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm @nonARC
+
+testing/MockContentFilter.cpp
+testing/MockContentFilterManager.cpp
+testing/MockContentFilterSettings.cpp
+testing/MockParentalControlsURLFilter.mm @nonARC
+
+workers/service/ServiceWorkerRoute.mm @nonARC
+
+// DerivedSources. The four gperf outputs (CSSPropertyNames, HTTPHeaderNames,
+// SelectorPseudoClassAndCompatibilityElementMap, SelectorPseudoElementMap) are
+// not listed: gperf emits TOTAL_KEYWORDS / wordlist / lookup at file scope with
+// fixed names, so any two gperf outputs in one translation unit collide.
+HTMLNames.cpp
+JSMediaConfiguration.cpp
+JSRTCRtpCodingParameters.cpp
+JSTouch.cpp
+JSTouchEvent.cpp
+JSTouchList.cpp
+JSWebXRHitTestResult.cpp
+JSWebXRHitTestSource.cpp
+JSWebXRRay.cpp
+JSWebXRTransientInputHitTestResult.cpp
+JSWebXRTransientInputHitTestSource.cpp
+JSXRHitTestOptionsInit.cpp
+JSXRHitTestTrackableType.cpp
+JSXRLayerInit.cpp
+JSXRRayDirectionInit.cpp
+JSXRTransientInputHitTestOptionsInit.cpp
+MathMLNames.cpp
+Namespace.cpp
+NodeName.cpp
+Settings.cpp
+SVGNames.cpp
+TagName.cpp
+UserAgentParts.cpp
+UserAgentScriptsData.cpp
+WebKitFontFamilyNames.cpp
+XLinkNames.cpp
+XMLNames.cpp
+XMLNSNames.cpp

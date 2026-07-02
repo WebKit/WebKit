@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div class="contents">
+    <svg id="svg" width="4in" height="4in" role="button" aria-label="clickable circle" onclick="svgClicked();">
+        <circle cx="2in" cy="2in" r="1.75in" fill="green" stroke="black">
+            <title>Clickable circle</title>
+        </circle>
+    </svg>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    window.jsTestIsAsync = true;
+
+    description("This tests that AXPress works on SVG elements");
+
+    function svgClicked() {
+        debug("SVG element WAS clicked with accessibility");
+        finishJSTest();
+    }
+
+    if (window.accessibilityController) {
+        var svg = accessibilityController.accessibleElementById("svg");
+        svg.press();
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

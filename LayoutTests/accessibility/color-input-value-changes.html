@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="color" id="color">
+
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures accessibility properly responds to dynamic changes in a color input's value.\n\n";
+
+// There are a few layouts that happen when the page loads — run the test in window.onload to wait them out before changing
+// the color value. If we change the color value before these layouts occur, we pass the test no matter
+// what (even if our implementation is wrong). This is because a top-level children changed notification causes
+// the color input AX object to be re-built with the correct value, making us pass the test on accident.
+window.onload = () => {
+    if (!window.accessibilityController)
+        return;
+
+    var color = accessibilityController.accessibleElementById("color");
+    output += `#color ${color.stringValue}\n`;
+    setTimeout(async function() {
+        output += "\nUpdating #color value to '#ff0f00'.\n";
+        document.getElementById("color").setAttribute("value", "#ff0f00");
+        await waitFor(() => color.stringValue.includes("rgb 1.00000"));
+        output += `#color ${color.stringValue}\n`;
+
+        output += "\nUpdating #color value to '#000000'.\n";
+        // selectColorInColorChooser is explicitly used in this test as that is the same codepath exercised when
+        // an AT user (or non-AT user) selects an item from the color chooser grid UI.
+        internals.selectColorInColorChooser(document.getElementById("color"), "#000000");
+
+        await waitFor(() => !color.stringValue.includes("rgb 1.00000"));
+        output += `#color ${color.stringValue}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+};
+</script>
+</body>
+</html>
+

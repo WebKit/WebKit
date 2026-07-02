@@ -1,0 +1,25 @@
+Adjacent lists with different marker styles (disc and dash) should not merge into a single list. After a blank line, typing a different marker type produces a separate list.
+| <ul>
+|   class="Apple-disc-list"
+|   style="list-style-type: disc;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B"
+|   <li>
+|     "C"
+|   <li>
+|     "D"
+|     <br>
+|   <li>
+|     "E"
+| <div>
+|   <ul>
+|     class="Apple-dash-list"
+|     style="list-style-type: "-  ";"
+|     <li>
+|       "A"
+|       <br>
+|     <li>
+|       "B<#selection-caret>"

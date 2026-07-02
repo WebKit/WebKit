@@ -1,0 +1,33 @@
+<script src="../../resources/js-test.js"></script>
+<body>
+    <script>
+        description("DOMMatrix.invers() should not return NaN for small but normal values.");
+
+        const matrix = new DOMMatrix([9.780006597705043e-07, 3.532646825298159e-07, -2.528174268419108e-07, 1.326003454762908e-06, 42.05985792398261, -76.82054904789567]);
+        const svgMatrix = document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGMatrix();
+
+        svgMatrix.a = matrix.a;
+        svgMatrix.b = matrix.b;
+        svgMatrix.c = matrix.c;
+        svgMatrix.d = matrix.d;
+        svgMatrix.e = matrix.e;
+        svgMatrix.f = matrix.f;
+
+        const matrixInverse = matrix.inverse();
+        const svgMatrixInverse = svgMatrix.inverse();
+
+        shouldNotBe("matrixInverse.a", "NaN");
+        shouldNotBe("matrixInverse.b", "NaN");
+        shouldNotBe("matrixInverse.c", "NaN");
+        shouldNotBe("matrixInverse.d", "NaN");
+        shouldNotBe("matrixInverse.e", "NaN");
+        shouldNotBe("matrixInverse.f", "NaN");
+
+        shouldBeTrue("Math.abs(matrixInverse.a - svgMatrixInverse.a) < 0.0000001");
+        shouldBeTrue("Math.abs(matrixInverse.b - svgMatrixInverse.b) < 0.0000001");
+        shouldBeTrue("Math.abs(matrixInverse.c - svgMatrixInverse.c) < 0.0000001");
+        shouldBeTrue("Math.abs(matrixInverse.d - svgMatrixInverse.d) < 0.0000001");
+        shouldBeTrue("Math.abs(matrixInverse.e - svgMatrixInverse.e) < 0.0000001");
+        shouldBeTrue("Math.abs(matrixInverse.f - svgMatrixInverse.f) < 0.0000001");
+    </script>
+</body>

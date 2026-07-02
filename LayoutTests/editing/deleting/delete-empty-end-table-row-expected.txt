@@ -1,0 +1,5 @@
+Tests that deleting a selection running from inside a table row through a trailing empty row removes the now-fully-selected empty row. This is a regression test for a typo (introduced in 295798@main) that made DeleteSelectionCommand compare the end row against itself (using m_startTableRow in place of m_endTableRow), leaving the empty trailing row behind. The test passes if the table ends up with a single row containing "A".
+
+A
+PASS: empty trailing table row is removed (row count is 1, was 2)
+PASS: the surviving row keeps its remaining text "A"

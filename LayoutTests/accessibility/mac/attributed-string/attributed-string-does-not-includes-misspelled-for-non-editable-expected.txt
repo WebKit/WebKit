@@ -1,0 +1,17 @@
+
+
+test mispelled
+test mispelled
+This tests that spell checking is not run on non-editable elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS attrString.indexOf('AXMisspelled = 1') != -1 is true
+PASS attrString.indexOf('AXMisspelled = 1') != -1 is true
+PASS attrString.indexOf('AXMisspelled = 1') != -1 is true
+PASS staticText.attributedStringForTextMarkerRangeContainsAttribute('AXMisspelled', markerRange) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

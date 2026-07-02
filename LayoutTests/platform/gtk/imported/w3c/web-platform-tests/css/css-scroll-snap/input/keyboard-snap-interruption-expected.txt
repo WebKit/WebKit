@@ -1,0 +1,3 @@
+
+PASS Interrupting a snap animation with another key press targeting the same node preserves snapping destination
+

@@ -1,0 +1,21 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "animated_image",
+    srcs = ["SkAnimatedImage.cpp"],
+    hdrs = ["//include/android:animated_image_hdrs"],
+    features = ["layering_check"],
+    visibility = ["//modules/canvaskit:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/codec:android_codec",
+        "//src/codec:codec_support_priv",
+        "//src/core:core_priv",
+    ],
+)

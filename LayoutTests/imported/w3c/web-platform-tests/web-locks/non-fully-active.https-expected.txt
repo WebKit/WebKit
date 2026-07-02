@@ -1,0 +1,7 @@
+
+PASS request() on non-fully-active document must fail
+PASS query() on a non-fully-active document must fail
+PASS request()'s fully-active check happens earlier than name validation
+PASS Reactivated iframe must not reuse the previous LockManager
+PASS Workers owned by an unloaded iframe must release their locks
+

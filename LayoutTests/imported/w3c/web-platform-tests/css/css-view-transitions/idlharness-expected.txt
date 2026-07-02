@@ -1,0 +1,55 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS CSSViewTransitionRule interface: existence and properties of interface object
+PASS CSSViewTransitionRule interface object length
+PASS CSSViewTransitionRule interface object name
+PASS CSSViewTransitionRule interface: existence and properties of interface prototype object
+PASS CSSViewTransitionRule interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSViewTransitionRule interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSViewTransitionRule interface: attribute navigation
+PASS CSSViewTransitionRule interface: attribute types
+PASS CSSViewTransitionRule must be primary interface of sheet.cssRules[0]
+PASS Stringification of sheet.cssRules[0]
+PASS CSSViewTransitionRule interface: sheet.cssRules[0] must inherit property "navigation" with the proper type
+PASS CSSViewTransitionRule interface: sheet.cssRules[0] must inherit property "types" with the proper type
+PASS ViewTransition interface: existence and properties of interface object
+PASS ViewTransition interface object length
+PASS ViewTransition interface object name
+PASS ViewTransition interface: existence and properties of interface prototype object
+PASS ViewTransition interface: existence and properties of interface prototype object's "constructor" property
+PASS ViewTransition interface: existence and properties of interface prototype object's @@unscopables property
+PASS ViewTransition interface: attribute updateCallbackDone
+PASS ViewTransition interface: attribute ready
+PASS ViewTransition interface: attribute finished
+PASS ViewTransition interface: operation skipTransition()
+PASS ViewTransition interface: attribute types
+PASS ViewTransition must be primary interface of document.startViewTransition()
+PASS Stringification of document.startViewTransition()
+PASS ViewTransition interface: document.startViewTransition() must inherit property "updateCallbackDone" with the proper type
+PASS ViewTransition interface: document.startViewTransition() must inherit property "ready" with the proper type
+PASS ViewTransition interface: document.startViewTransition() must inherit property "finished" with the proper type
+PASS ViewTransition interface: document.startViewTransition() must inherit property "skipTransition()" with the proper type
+PASS ViewTransition interface: document.startViewTransition() must inherit property "types" with the proper type
+PASS ViewTransitionTypeSet interface: existence and properties of interface object
+PASS ViewTransitionTypeSet interface object length
+PASS ViewTransitionTypeSet interface object name
+PASS ViewTransitionTypeSet interface: existence and properties of interface prototype object
+PASS ViewTransitionTypeSet interface: existence and properties of interface prototype object's "constructor" property
+PASS ViewTransitionTypeSet interface: existence and properties of interface prototype object's @@unscopables property
+PASS ViewTransitionTypeSet interface: setlike<DOMString>
+PASS Document interface: operation startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions))
+PASS Document interface: attribute activeViewTransition
+PASS Document interface: document must inherit property "startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions))" with the proper type
+PASS Document interface: calling startViewTransition(optional (ViewTransitionUpdateCallback or StartViewTransitionOptions)) on document with too few arguments must throw TypeError
+PASS Document interface: document must inherit property "activeViewTransition" with the proper type
+

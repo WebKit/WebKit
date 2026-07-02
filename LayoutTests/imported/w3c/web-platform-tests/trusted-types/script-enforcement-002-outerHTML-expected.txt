@@ -1,0 +1,3 @@
+
+PASS Default policy's calls when setting script source via Element.outerHTML.
+

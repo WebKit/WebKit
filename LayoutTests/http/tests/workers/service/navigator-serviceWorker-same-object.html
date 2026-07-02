@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that navigator.serviceWorker always returns the same object.");
+jsTestIsAsync = true;
+
+shouldBeUndefined("navigator.serviceWorker.foo");
+navigator.serviceWorker.foo = 1;
+shouldBe("navigator.serviceWorker.foo", "1");
+gc();
+shouldBe("navigator.serviceWorker.foo", "1");
+setTimeout(function() {
+    gc();
+    shouldBe("navigator.serviceWorker.foo", "1");
+
+    finishJSTest();
+}, 0);
+
+</script>
+</body>
+</html>

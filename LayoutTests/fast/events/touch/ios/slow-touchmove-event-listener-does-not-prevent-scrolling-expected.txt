@@ -1,0 +1,11 @@
+Panning over this element should allow scrolling.
+This test verifies that panning up and down over an element that has an active 'touchmove' event listener allows scrolling to happen, even if the event handler temporarily hangs the web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed scroll event
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

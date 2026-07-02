@@ -1,0 +1,4 @@
+
+PASS Normal initially dark
+PASS Normal should change to light from page color schemes
+

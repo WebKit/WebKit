@@ -1,0 +1,63 @@
+load("//bazel:skia_rules.bzl", "skia_objc_library", "supports_platforms")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_objc_library(
+    name = "mac_utils_priv",
+    srcs = [
+        "SkCTFont.cpp",
+        "SkCTFontCreateExactCopy.cpp",
+        "//src/ports:typeface_mac_hdrs",
+    ],
+    hdrs = [
+        "SkCGBase.h",
+        "SkCGGeometry.h",
+        "SkCTFont.h",
+        "SkCTFontCreateExactCopy.h",
+        "SkUniqueCFRef.h",
+        "//include/utils/mac:public_hdrs",
+    ],
+    ios_frameworks = [
+        "CoreFoundation",
+        "CoreGraphics",
+        "CoreText",
+    ],
+    mac_frameworks = [
+        "ApplicationServices",
+    ],
+    visibility = [
+        "//modules/skshaper:__pkg__",
+        "//src/ports:__pkg__",
+    ],
+    deps = [
+        ":mac_utils",
+        "//:core",
+        "//src/base",
+    ],
+)
+
+skia_objc_library(
+    name = "mac_utils",
+    srcs = [
+        "SkCreateCGImageRef.cpp",
+        "SkUniqueCFRef.h",
+    ],
+    hdrs = [
+        "//include/utils/mac:public_hdrs",
+    ],
+    sdk_frameworks = ["CoreFoundation"],
+    target_compatible_with = supports_platforms(
+        "@platforms//os:macos",
+        "@platforms//os:ios",
+    ),
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/encode:icc_encode",
+    ],
+)

@@ -1,0 +1,46 @@
+Testing the LayoutNode.children property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check default state
+PASS Array.isArray(node.children) is true
+PASS node.children.length === 0 is true
+
+Set children to [a, b, c]
+PASS node.children.length === 3 is true
+PASS node.children[0] === a is true
+PASS node.children[1] === b is true
+PASS node.children[2] === c is true
+PASS node.children !== children is true
+
+Layout was performed
+PASS node.element.childElementCount === 3 is true
+PASS node.element.firstElementChild === a.element is true
+PASS node.element.firstElementChild.nextElementSibling === b.element is true
+PASS node.element.lastElementChild === c.element is true
+
+Set children to be a copy of itself
+PASS node.children[0].needsLayout is false
+PASS node.children[1].needsLayout is false
+PASS node.children[2].needsLayout is false
+
+Set children to [b, a]
+PASS node.children.length === 2 is true
+PASS node.children[0] === b is true
+PASS node.children[1] === a is true
+
+Layout was performed
+PASS node.element.childElementCount === 2 is true
+PASS node.element.firstElementChild === b.element is true
+PASS node.element.lastElementChild === a.element is true
+
+Set children to []
+PASS node.children.length === 0 is true
+
+Layout was performed
+PASS node.element.childElementCount === 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<style>
+.container {
+  width: 100px;
+}
+
+.float_tall {
+  float: left;
+  clip-path: polygon(60% 30%, 40% 70%, 90% 90%);
+  shape-outside: polygon(60% 30%, 40% 70%, 90% 90%);
+  height: 100px;
+  width: 40px;
+  background-color: green;
+}
+
+.float_short {
+  float: left;
+  clip-path: polygon(60% 20%, 10% 10%, 10% 30%);
+  shape-outside: polygon(60% 20%, 50% 50%, 100% 100%);
+  height: 10px;
+  width: 40px;
+  background-color: blue;
+}
+.float_overflowing {
+  float: left;
+  height: 40px;
+  width: 140px;
+  background-color: gray;
+}
+</style>
+PASS if no assert.
+<div class=container>
+  <div class=float_tall></div>text
+  <div class=float_short></div>
+  <div class=float_overflowing></div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

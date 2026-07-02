@@ -1,0 +1,4 @@
+
+
+PASS Click text input should light-dismiss popover
+

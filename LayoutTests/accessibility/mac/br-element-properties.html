@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true ] -->
+<!-- Run singly due to the use of accessibilityController.setForceInitialFrameCaching(). -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="editable" contenteditable="true">x<br/><br/><br/><br/>y</div>
+
+<script>
+var output = "This test ensures we compute the correct size and isEnabled state for br elements, especially in the context of text navigation.\n\n";
+
+window.jsTestIsAsync = true;
+
+if (window.accessibilityController) {
+    // With ITM enabled, this forces us to follow the same codepath that ATs do, which is important to simulate the
+    // bug being tested. The behavior we're trying to test is that we don't serve an empty rect for br elements so that 
+    // VoiceOver can draw a cursor for them.
+    accessibilityController.setForceInitialFrameCaching(true);
+
+    var editable = accessibilityController.accessibleElementById("editable");
+    var startMarker = editable.startTextMarkerForTextMarkerRange(editable.textMarkerRangeForElement(editable));
+    var endMarker = editable.nextTextMarker(startMarker);
+    var markerRange, endElement;
+    setTimeout(async function() {
+        for (let i = 0; i < 4; i++) {
+            markerRange = editable.textMarkerRangeForMarkers(startMarker, endMarker);
+            endElement = editable.accessibilityElementForTextMarker(endMarker);
+
+            const string = editable.stringForTextMarkerRange(markerRange).replace("\n", "newline");
+            // If width or height is zero, VoiceOver won't be able to draw a cursor, e.g. by requesting the element's
+            // size or through NSAccessibilityBoundsForTextMarkerRangeAttribute. This scenario can be triggered by
+            // navigating up and down by lines through text with <br />s (e.g. the markup in this test).
+            //
+            // We need to await this because an accessibility paint may not have happened in order to cache the element
+            // frames.
+            await waitFor(() => endElement.height > 0 && endElement.width > 0);
+            // Furthermore, it's important that <br />s are considered to be enabled. Otherwise when you navigate by line
+            // to them, VoiceOver will speak "dimmed", which isn't right.
+            output += `[${string}], height and width are valid, isEnabled is valid: ${endElement.isEnabled === true}\n`;
+
+            startMarker = endMarker;
+            endMarker = editable.nextTextMarker(startMarker);
+        }
+
+        accessibilityController.setForceInitialFrameCaching(false);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

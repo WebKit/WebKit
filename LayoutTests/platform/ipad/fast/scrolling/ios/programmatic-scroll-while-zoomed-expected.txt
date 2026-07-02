@@ -1,0 +1,14 @@
+FAIL window.pageXOffset should be 53. Was 128.
+FAIL window.pageYOffset should be 91. Was 167.
+FAIL window.visualViewport.pageLeft should be 53. Was 128.
+FAIL window.visualViewport.pageTop should be 91. Was 167.
+
+scrolling to 0,0
+FAIL window.pageXOffset should be 53. Was 128.
+FAIL window.pageYOffset should be 91. Was 167.
+FAIL window.visualViewport.pageLeft should be 53. Was 128.
+FAIL window.visualViewport.pageTop should be 91. Was 167.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

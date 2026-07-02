@@ -1,0 +1,8 @@
+
+
+
+PASS selectionchange event on document fires
+PASS selectionchange event on document fires once
+PASS task to fire selectionchange event gets queued each time selection is mutated
+PASS has scheduled selectionchange event is set to false at the beginning of a task to fire selectionchange event
+

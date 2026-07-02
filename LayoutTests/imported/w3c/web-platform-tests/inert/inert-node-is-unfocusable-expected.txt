@@ -1,0 +1,13 @@
+Outside of inert container  Inert button
+
+I'm editable
+I'm tabindexed.
+ Link
+
+PASS Button outside of inert container is focusable.
+PASS Button with inert atribute is unfocusable.
+PASS All focusable elements inside inert subtree are unfocusable
+PASS Can get inert via property
+PASS Elements inside of inert subtrees return false when getting 'inert'
+PASS Setting inert via property correctly modifies inert state
+

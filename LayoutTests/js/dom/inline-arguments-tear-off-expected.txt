@@ -1,0 +1,11 @@
+Ensure that we correctly tearoff the arguments objects when throwing from inlined function
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fiftiethArguments[0] is 50
+PASS fiftiethArguments.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

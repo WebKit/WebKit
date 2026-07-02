@@ -1,0 +1,20 @@
+<style>
+    image { 
+        transition: 18s;
+    }
+</style>
+<body>
+    <p>This test passes if it doesn't crash.</p>
+    <svg id="svg">
+        <image id="image"/>
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        window.addEventListener("load", (event) => {
+            let style = image.style;
+            style.setProperty("rotate", "0 0 0 45deg");
+            svg.scrollIntoView(true);
+        });
+    </script>
+</body>

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="./resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<div>
+<p id="p1">Test sentence one. Test sentence two</p>
+</div>
+<div>
+<p id="p2">Where</p>
+</div>
+
+<script>
+var result = "This tests that previous sentence\/word\/paragraph text marker calls work with p tag elements\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // select text
+    selectTextInNode('p2');
+    var p2 = accessibilityController.accessibleElementById("p2");
+    setTimeout(async function() {
+        var selectedRange = null;
+        var selectedString = "";
+
+        await waitFor(() => {
+            selectedRange = p2.selectedTextMarkerRange();
+            selectedString = p2.stringForTextMarkerRange(selectedRange);
+            return selectedString == "Where";
+        });
+        result += `selectedString is ${selectedString}\n`;
+
+        var startTextMarker = p2.startTextMarkerForTextMarkerRange(selectedRange);
+        var preSentenceStart = p2.previousSentenceStartTextMarkerForTextMarker(startTextMarker);
+        var sentenceRange = p2.textMarkerRangeForMarkers(preSentenceStart, startTextMarker);
+        var sentenceString = p2.stringForTextMarkerRange(sentenceRange);
+        result += `Previous sentence: ${sentenceString}\n`;
+
+        var preWordStart = p2.previousWordStartTextMarkerForTextMarker(startTextMarker);
+        var wordRange = p2.textMarkerRangeForMarkers(preWordStart, startTextMarker);
+        var wordString = p2.stringForTextMarkerRange(wordRange);
+        result += `Previous word: ${wordString}\n`;
+
+        var preParagraphStart = p2.previousParagraphStartTextMarkerForTextMarker(startTextMarker);
+        var paragraphRange = p2.textMarkerRangeForMarkers(preParagraphStart, startTextMarker);
+        var paragraphString = p2.stringForTextMarkerRange(paragraphRange);
+        result += `Previous paragraph: ${paragraphString}\n`;
+
+        debug(result);
+        finishJSTest();
+    }, 0);
+}
+</script>
+
+</body>
+</html>

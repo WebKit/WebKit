@@ -1,0 +1,4 @@
+
+PASS Fragment navigation with content-visibility; single text
+FAIL Fragment navigation with content-visibility; range across blocks assert_equals: expected "text2" but got "unknown"
+

@@ -1,0 +1,297 @@
+/*
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WKNavigationActionInternal.h"
+
+#import "APIHitTestResult.h"
+#import "NavigationActionData.h"
+#import "WKFrameInfoInternal.h"
+#import "WKNavigationInternal.h"
+#import "WebEventFactory.h"
+#import "WebsiteDataStore.h"
+#import "_WKHitTestResultInternal.h"
+#import "_WKUserInitiatedActionInternal.h"
+#import <WebCore/FloatPoint.h>
+#import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "WebIOSEventFactory.h"
+#endif
+
+@implementation WKNavigationAction
+
+static WKNavigationType NODELETE toWKNavigationType(WebCore::NavigationType navigationType)
+{
+    switch (navigationType) {
+    case WebCore::NavigationType::LinkClicked:
+        return WKNavigationTypeLinkActivated;
+    case WebCore::NavigationType::FormSubmitted:
+        return WKNavigationTypeFormSubmitted;
+    case WebCore::NavigationType::BackForward:
+        return WKNavigationTypeBackForward;
+    case WebCore::NavigationType::Reload:
+        return WKNavigationTypeReload;
+    case WebCore::NavigationType::FormResubmitted:
+        return WKNavigationTypeFormResubmitted;
+    case WebCore::NavigationType::Other:
+        return WKNavigationTypeOther;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKNavigationTypeOther;
+}
+
+#if PLATFORM(IOS_FAMILY)
+static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheticClickType syntheticClickType)
+{
+    switch (syntheticClickType) {
+    case WebKit::WebMouseEventSyntheticClickType::NoTap:
+        return WKSyntheticClickTypeNoTap;
+    case WebKit::WebMouseEventSyntheticClickType::OneFingerTap:
+        return WKSyntheticClickTypeOneFingerTap;
+    case WebKit::WebMouseEventSyntheticClickType::TwoFingerTap:
+        return WKSyntheticClickTypeTwoFingerTap;
+    }
+    ASSERT_NOT_REACHED();
+    return WKSyntheticClickTypeNoTap;
+}
+#endif
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKNavigationAction.class, self))
+        return;
+
+    SUPPRESS_UNCOUNTED_ARG _navigationAction->~NavigationAction();
+
+    [super dealloc];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; syntheticClickType = %ld; position x = %.2f y = %.2f request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
+        (long)self.navigationType,
+#if PLATFORM(IOS_FAMILY)
+        (long)self._syntheticClickType, self._clickLocationInRootViewCoordinates.x, self._clickLocationInRootViewCoordinates.y,
+#else
+        0L, 0.0, 0.0,
+#endif
+        retainPtr(self.request).get(), retainPtr(self.sourceFrame).get(), retainPtr(self.targetFrame).get()];
+}
+
+- (WKFrameInfo *)sourceFrame
+{
+    return wrapper(_navigationAction->sourceFrame());
+}
+
+- (WKFrameInfo *)targetFrame
+{
+    return wrapper(_navigationAction->targetFrame());
+}
+
+- (WKNavigationType)navigationType
+{
+    return toWKNavigationType(_navigationAction->navigationType());
+}
+
+- (NSURLRequest *)request
+{
+    if (RetainPtr request = _navigationAction->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody))
+        return request.autorelease();
+    return [NSURLRequest requestWithURL:bridge_cast(URL::createCFURL(_navigationAction->data().invalidURLString).get())];
+}
+
+- (BOOL)shouldPerformDownload
+{
+    return _navigationAction->shouldPerformDownload();
+}
+
+- (WKNavigation *)mainFrameNavigation
+{
+    return wrapper(_navigationAction->mainFrameNavigation());
+}
+
+#if PLATFORM(IOS_FAMILY)
+- (WKSyntheticClickType)_syntheticClickType
+{
+    return toWKSyntheticClickType(_navigationAction->syntheticClickType());
+}
+
+- (CGPoint)_clickLocationInRootViewCoordinates
+{
+    return _navigationAction->clickLocationInRootViewCoordinates();
+}
+#endif
+
+#if PLATFORM(MAC)
+
+- (NSEventModifierFlags)modifierFlags
+{
+    return WebKit::WebEventFactory::toNSEventModifierFlags(_navigationAction->modifiers());
+}
+
+- (NSInteger)buttonNumber
+{
+    return WebKit::WebEventFactory::toNSButtonNumber(_navigationAction->mouseButton());
+}
+
+#else
+
+- (UIKeyModifierFlags)modifierFlags
+{
+    return WebKit::WebIOSEventFactory::toUIKeyModifierFlags(_navigationAction->modifiers());
+}
+
+- (UIEventButtonMask)buttonNumber
+{
+    return WebKit::WebIOSEventFactory::toUIEventButtonMask(_navigationAction->mouseButton());
+}
+
+#endif
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_navigationAction;
+}
+
+@end
+
+@implementation WKNavigationAction (WKPrivate)
+
+- (NSURL *)_originalURL
+{
+    return protect(*_navigationAction)->originalURL().createNSURL().autorelease();
+}
+
+- (BOOL)_isUserInitiated
+{
+    return _navigationAction->isProcessingUserGesture();
+}
+
+- (BOOL)_canHandleRequest
+{
+    return _navigationAction->canHandleRequest();
+}
+
+- (BOOL)_shouldOpenExternalSchemes
+{
+    return _navigationAction->shouldOpenExternalSchemes();
+}
+
+- (BOOL)_shouldOpenAppLinks
+{
+    return _navigationAction->shouldOpenAppLinks();
+}
+
+- (BOOL)_shouldPerformDownload
+{
+    return _navigationAction->shouldPerformDownload();
+}
+
+- (BOOL)_shouldOpenExternalURLs
+{
+    return [self _shouldOpenExternalSchemes];
+}
+
+- (_WKUserInitiatedAction *)_userInitiatedAction
+{
+    return wrapper(_navigationAction->userInitiatedAction());
+}
+
+- (BOOL)isContentRuleListRedirect
+{
+    return _navigationAction->isContentRuleListRedirect();
+}
+
+- (BOOL)_isContentExtensionRedirect
+{
+    return _navigationAction->isContentRuleListRedirect();
+}
+
+- (BOOL)_isRedirect
+{
+    return _navigationAction->isRedirect();
+}
+
+- (WKNavigation *)_mainFrameNavigation
+{
+    return [self mainFrameNavigation];
+}
+
+- (void)_storeSKAdNetworkAttribution
+{
+    RefPtr mainFrameNavigation = _navigationAction->mainFrameNavigation();
+    if (!mainFrameNavigation)
+        return;
+    auto* privateClickMeasurement = mainFrameNavigation->privateClickMeasurement();
+    if (!privateClickMeasurement || !privateClickMeasurement->isSKAdNetworkAttribution())
+        return;
+    RefPtr sourceFrame = _navigationAction->sourceFrame();
+    if (!sourceFrame)
+        return;
+    RefPtr page = sourceFrame->page();
+    if (!page)
+        return;
+    protect(page->websiteDataStore())->storePrivateClickMeasurement(*privateClickMeasurement);
+}
+
+- (_WKHitTestResult *)_hitTestResult
+{
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    auto& webHitTestResultData = _navigationAction->webHitTestResultData();
+    if (!webHitTestResultData)
+        return nil;
+    RefPtr sourceFrame = _navigationAction->sourceFrame();
+    if (!sourceFrame)
+        return nil;
+    RefPtr page = sourceFrame->page();
+    if (!page)
+        return nil;
+
+    auto apiHitTestResult = API::HitTestResult::create(webHitTestResultData.value(), page.get());
+    return retainPtr(wrapper(apiHitTestResult)).autorelease();
+#else
+    return nil;
+#endif
+}
+
+- (NSString *)_targetFrameName
+{
+    auto& name = _navigationAction->targetFrameName();
+    if (name.isNull())
+        return nil;
+    return name.createNSString().autorelease();
+}
+
+- (BOOL)_hasOpener
+{
+    return _navigationAction->hasOpener();
+}
+
+@end

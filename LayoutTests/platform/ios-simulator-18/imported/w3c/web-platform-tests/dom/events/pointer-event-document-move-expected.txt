@@ -1,0 +1,5 @@
+TEST
+
+
+FAIL Moving a node to new document should move the registered event listeners together assert_true: expected true got false
+

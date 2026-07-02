@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Gulf-regular.ttf");
+    unicode-range: U+0041;
+}
+</style>
+</head>
+<body>
+This test makes sure that fonts which support a letter but have that character omitted from its unicode-range don't cause a crash. The test passes if there is no crash.
+<div style="position: relative;">
+<div style="font-family: 'Helvetica';">AeAe</div>
+<div style="font-family: 'WebFont', 'Helvetica';">AeAe</div>
+<div style="font-family: 'WebFont';">AeAe</div>
+<div style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px; background: white;"></div>
+</div>
+</body>
+</html>

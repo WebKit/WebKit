@@ -1,0 +1,58 @@
+<style>
+.container {
+  background-color: yellow;
+  width: 100px;
+  height: 40px;
+}
+
+#show_this {
+  display: none;
+  position: absolute;
+  left: 0px;
+  width: 10px;
+  height: 10px;
+}
+
+#hide_this {
+  position: absolute;
+  left: 100px;
+  width: 80px;
+  height: 80px;
+  background-color: red;
+}
+</style>
+<div class=container>
+  PASS if no red<div id=show_this></div>
+  <span style="position: relative;">
+     <div id=hide_this></div>
+   </span>
+</div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  hide_this.style.display = "none";
+  show_this.style.display = "block";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+  
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

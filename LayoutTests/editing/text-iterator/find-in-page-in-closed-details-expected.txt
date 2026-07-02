@@ -1,0 +1,9 @@
+
+PASS auto-expand on find-in-page match: details-simple
+PASS auto-expand on find-in-page match: details-in-p
+PASS auto-expand on find-in-page match: details-in-table
+PASS auto-expand on find-in-page match: details-nested-simple
+PASS auto-expand on find-in-page match: details-nested-target-in-p
+PASS auto-expand on find-in-page match: details-nested-target-in-table
+PASS auto-expand on find-in-page match: details-summary-nested-simple
+

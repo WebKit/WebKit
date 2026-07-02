@@ -1,0 +1,52 @@
+<head>
+    <script>
+        testRunner?.dumpAsText();
+        testRunner?.waitUntilDone();
+        testRunner?.setMockGamepadDetails(0, "Test Joystick", "", 2, 2, false);
+
+        function log(msg) {
+            document.getElementById("logger").innerHTML += msg + "<br>";
+        }
+
+        async function runTest() {
+            await runHandlerTests(window);
+            await runHandlerTests(document.body);
+            testRunner.notifyDone();
+        }
+
+        async function runHandlerTests(target) {
+            log(
+                `ongamepadconnected in ${target}: ${
+                    "ongamepadconnected" in target
+                }`
+            );
+
+            log("Connecting gamepad...");
+            await new Promise((resolve) => {
+                target.ongamepadconnected = () => {
+                    log(`Received gamepadconnected event on ${target}.`);
+                    resolve();
+                };
+                testRunner.connectMockGamepad(0);
+            });
+
+            log(
+                `ongamepaddisconnected in ${target}: ${
+                    "ongamepaddisconnected" in target
+                }`
+            );
+
+            log("Disconnecting gamepad...");
+            await new Promise((resolve) => {
+                target.ongamepaddisconnected = () => {
+                    log(`Received gamepaddisconnected event on ${target}.`);
+                    resolve();
+                };
+                testRunner.disconnectMockGamepad(0);
+            });
+        }
+    </script>
+</head>
+<body onload="runTest();">
+    <div id="logger"></div>
+</body>

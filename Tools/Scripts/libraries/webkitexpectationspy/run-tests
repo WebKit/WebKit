@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2024-2026 Apple Inc. All rights reserved.
+# See LICENSE file for license terms.
+
+import os
+import logging
+import platform
+import sys
+import webkitexpectationspy
+
+from webkitcorepy import AutoInstall, log, __path__ as wcp_paths
+from webkitcorepy.testing import PythonTestRunner
+
+
+libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.WARNING)
+
+    sys.exit(PythonTestRunner(
+        description='Run unit tests for the webkitexpectationspy module.',
+        modules={
+            os.path.dirname(__file__): ['webkitexpectationspy'],
+            os.path.dirname(wcp_paths[0]): ['webkitcorepy'],
+        }, loggers=[logging.getLogger(), log],
+    ).main(*sys.argv[1:]))

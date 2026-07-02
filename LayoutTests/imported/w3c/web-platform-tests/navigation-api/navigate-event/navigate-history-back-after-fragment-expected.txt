@@ -1,0 +1,3 @@
+
+PASS history.back() fires the navigate event and sets hashChange when reversing a fragment navigation
+

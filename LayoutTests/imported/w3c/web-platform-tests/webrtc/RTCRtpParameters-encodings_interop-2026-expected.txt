@@ -1,0 +1,15 @@
+
+PASS addTransceiver(audio) with undefined sendEncodings should have default encoding parameter with active set to true
+PASS addTransceiver(audio) with empty list sendEncodings should have default encoding parameter with active set to true
+PASS addTransceiver(video) should auto-set scaleResolutionDownBy to 1 when some encodings have it, but not all
+PASS addTransceiver should auto-set scaleResolutionDownBy to powers of 2 (descending) when absent
+PASS addTransceiver(audio) with multiple encodings should result in one encoding with no properties other than active
+PASS setParameters with scaleResolutionDownBy on an audio sender should succeed, but remove the scaleResolutionDownBy
+PASS setParameters with an invalid scaleResolutionDownBy on an audio sender should succeed, but remove the scaleResolutionDownBy
+PASS addTransceiver with rid longer than 255 characters throws TypeError
+PASS sender.getParameters() should return sendEncodings set by addTransceiver()
+PASS sender.setParameters() with added encodings should reject with InvalidModificationError
+PASS sender.setParameters() with removed encodings should reject with InvalidModificationError
+PASS sender.setParameters() with empty encodings should reject with InvalidModificationError (video)
+PASS sender.setParameters() with empty encodings should reject with InvalidModificationError (audio)
+

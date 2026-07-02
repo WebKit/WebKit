@@ -1,0 +1,20 @@
+<html> <!-- webkit-test-runner [ SWVPDecodersAlwaysEnabled=true ] -->
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<video id="video" controls src="content/bipbop-vp9.mp4" autoplay muted playsinline></video>
+<script>
+// FIXME: Add test for MediaSource.isTypeSupported("video/mp4; codecs=vp9")
+
+test(() => {
+    assert_equals(video.canPlayType("video/mp4; codecs=vp09"), "probably", "canPlayType");
+}, "HTMLMediaElement.canPlay VP9");
+
+promise_test(async() => {
+    await video.play();
+    assert_equals(video.videoWidth, 640);
+    assert_equals(video.videoHeight, 480);
+}, "VP9 decoding");
+</script>
+</body>
+</html>

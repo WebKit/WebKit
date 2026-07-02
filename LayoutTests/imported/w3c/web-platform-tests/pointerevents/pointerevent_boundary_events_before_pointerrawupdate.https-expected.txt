@@ -1,0 +1,3 @@
+
+FAIL Pointer boundary events should be fired before `pointerrawupdate` assert_equals: expected "pointerover, pointerenter, pointerrawupdate, pointermove" but got "pointerover, mouseover, pointerenter, mouseenter, pointermove"
+

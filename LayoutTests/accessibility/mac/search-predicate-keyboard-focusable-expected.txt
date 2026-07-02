@@ -1,0 +1,21 @@
+This tests AXKeyboardFocusableSearchKey gives the default focusable elements.
+
+PASS: resultElement.role === 'AXRole: AXTextField'
+PASS: resultElement.role === 'AXRole: AXCheckBox'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: Submit'
+PASS: resultElement.role === 'AXRole: AXComboBox'
+PASS: resultElement.role === 'AXRole: AXLink'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 1'
+PASS: resultElement.role === 'AXRole: AXButton'
+PASS: resultElement.title === 'AXTitle: test button 2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+

@@ -1,0 +1,6 @@
+
+PASS TrustedTypePolicyFactory.isHTML requires the object to be created via policy.
+PASS TrustedTypePolicyFactory.isScript requires the object to be created via policy.
+PASS TrustedTypePolicyFactory.isScriptURL requires the object to be created via policy.
+PASS TrustedTypePolicyFactory.isXXX should accept anything without throwing.
+

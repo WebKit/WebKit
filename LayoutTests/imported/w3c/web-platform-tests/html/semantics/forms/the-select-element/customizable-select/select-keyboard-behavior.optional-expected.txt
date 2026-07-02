@@ -1,0 +1,13 @@
+custom button
+
+PASS defaultbutton: When the listbox is closed, spacebar should open the listbox.
+FAIL defaultbutton: When the listbox is closed, all arrow keys should open the listbox. assert_true: Arrow left should open the listbox. expected true got false
+PASS defaultbutton: When the listbox is closed, the enter key should not trigger form submission.
+FAIL defaultbutton: When the listbox is open, the enter key should commit the selected option. assert_equals: The first option should remain focused after pressing the right arrow key. expected Element node <option class="one">one</option> but got Element node <option class="two">two</option>
+PASS defaultbutton: When the listbox is open, the tab key should close the listbox.
+PASS custombutton: When the listbox is closed, spacebar should open the listbox.
+FAIL custombutton: When the listbox is closed, all arrow keys should open the listbox. assert_true: Arrow left should open the listbox. expected true got false
+PASS custombutton: When the listbox is closed, the enter key should not trigger form submission.
+FAIL custombutton: When the listbox is open, the enter key should commit the selected option. assert_equals: The first option should remain focused after pressing the right arrow key. expected Element node <option class="one">one</option> but got Element node <option class="two">two</option>
+PASS custombutton: When the listbox is open, the tab key should close the listbox.
+

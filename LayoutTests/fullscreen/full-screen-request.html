@@ -1,0 +1,12 @@
+<body>
+<script src="full-screen-test.js"></script>
+<script>
+    // Bail out early if the full screen API is not enabled or is missing:
+    if (Element.prototype.webkitRequestFullScreen == undefined) {
+        logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+        endTest();
+    } else {
+        waitForEventTestAndEnd(document, 'webkitfullscreenchange', "document.webkitIsFullScreen==true");
+        runWithKeyDown(function(){document.documentElement.webkitRequestFullScreen()});
+    }
+</script>

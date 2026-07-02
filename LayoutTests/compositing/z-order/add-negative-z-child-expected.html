@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+        
+        .composited {
+            transform: translateZ(1px);
+        }
+        
+        .negative {
+            z-index: -1;
+        }
+
+        .positive {
+            z-index: 1;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <p>You should see a green box below.</p>
+    <div class="composited box">
+        <div class="negative box"></div>
+        <div class="positive box"></div>
+    </div>
+</body>
+</html>

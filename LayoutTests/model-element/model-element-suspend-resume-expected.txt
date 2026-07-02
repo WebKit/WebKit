@@ -1,0 +1,1 @@
+PASSED: model is resumed after being suspended

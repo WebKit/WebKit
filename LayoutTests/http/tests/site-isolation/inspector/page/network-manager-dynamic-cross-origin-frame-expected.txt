@@ -1,0 +1,13 @@
+Test that a dynamically added cross-origin frame appears in the frame model and a genuine removal is reported under site isolation.
+
+
+== Running test suite: SiteIsolation.NetworkManager.DynamicCrossOriginFrame
+-- Running test case: SiteIsolation.NetworkManager.DynamicCrossOriginFrame.AddThenRemove
+PASS: Cross-origin child frame should appear in WI.networkManager.frames after being added.
+PASS: Added cross-origin child's parent should be the main frame.
+PASS: Cross-origin child should still be in the frame model (process-swap frameDetached must be suppressed).
+PASS: Removing the iframe should fire FrameWasRemoved for the cross-origin child (genuine detach is reported).
+PASS: Cross-origin child should no longer be in WI.networkManager.frames after removal.
+PASS: frameForIdentifier should return null for the removed cross-origin child.
+PASS: Main frame should remain after the child is removed.
+

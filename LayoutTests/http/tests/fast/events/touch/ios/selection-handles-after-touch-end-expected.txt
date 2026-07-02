@@ -1,0 +1,32 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+WK
+
+This test verifies that selection handles are present after selecting a word via long press. To manually test, long press the word 'WK' until a selection highlight is shown, and verify that selection handles are present after ending the touch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 1
+PASS Math.round(selectionRects[0].left) is 0
+PASS Math.round(selectionRects[0].top) is 3
+PASS Math.round(selectionRects[0].width) is 250
+PASS Math.round(selectionRects[0].height) is 167
+PASS Math.round(startGrabberRect.left) is 0
+PASS Math.round(startGrabberRect.top) is 3
+PASS Math.round(startGrabberRect) is <= Math.round(selectionRects[0].left)
+PASS Math.round(startGrabberRect.left + startGrabberRect.width) is > Math.round(selectionRects[0].left)
+PASS Math.round(startGrabberRect.height) is 167
+PASS Math.round(endGrabberRect.left) is 249
+PASS Math.round(endGrabberRect.top) is 3
+PASS Math.round(endGrabberRect.left) is <= Math.round(selectionRects[0].left + selectionRects[0].width)
+PASS Math.round(endGrabberRect.left + endGrabberRect.width) is > Math.round(selectionRects[0].left + selectionRects[0].width)
+PASS Math.round(endGrabberRect.height) is 167
+PASS observedTouchEnd became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

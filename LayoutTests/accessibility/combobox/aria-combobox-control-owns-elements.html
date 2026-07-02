@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<!-- Example 1: controls a list -->
+<input type="text" role="combobox" id="combobox1" aria-controls="list1" aria-label="Combobox1">
+<div role="list" id="list1" aria-label="List1">
+    <div role="listitem" id="item1_1">item1</div>
+    <div role="listitem" id="item1_2">item2</div>
+</div>
+
+<!-- Example 2: owns a listbox -->
+<input type="text" role="combobox" id="combobox2" aria-owns="listbox2" aria-label="Combobox2">
+<div role="listbox" id="listbox2" aria-label="Listbox2">
+    <div role="option" id="option2_1">item1</div>
+    <div role="option" id="option2_2">item2</div>
+</div>
+
+<!-- Example 3: owns a grid -->
+<input type="text" role="combobox" id="combobox3" aria-owns="grid3" aria-label="Combobox3">
+<div role="grid" id="grid3" aria-label="Grid3">
+    <div role="row" id="row3_1">
+        <div role="gridcell" id="gridcell3_1">cell1</div>
+    </div>
+</div>
+
+<!-- Example 4: owns a tree -->
+<input type="text" role="combobox" id="combobox4" aria-owns="tree4" aria-label="Combobox4">
+<div role="tree" id="tree4" aria-label="Tree4">
+    <div role="treeitem" id="treeitem4_1">treeitem1</div>
+    <div role="treeitem" id="treeitem4_2">treeitem2</div>
+</div>
+
+<script>
+let output = "This tests variations of the comboboxes and elements it can control and own. Then verifies the active-descendant is reflected correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var activeElementChangeCount = 0;
+
+    accessibilityController.addNotificationListener((target, notification) => {
+        if (notification == "AXActiveElementChanged") {
+            output += `Received notification for ${platformValueForW3CName(target)}\n`;
+            ++activeElementChangeCount;
+        }
+    });
+
+    // Example 1: aria-controls a list.
+    document.getElementById("combobox1").focus();
+    combobox = accessibilityController.accessibleElementById("combobox1");
+    // Set active-descendant, verify notification is sent and that list has correct active element.
+    document.getElementById("combobox1").setAttribute("aria-activedescendant", "item1_1");
+    setTimeout(async () => {
+        listitem1 = accessibilityController.accessibleElementById("item1_1");
+        output += expect("combobox.activeElement.isEqual(listitem1)", "true");
+
+        // Example 2: aria-owns a listbox.
+        document.getElementById("combobox2").focus();
+        combobox = accessibilityController.accessibleElementById("combobox2");
+        // Set active-descendant, verify notification is sent and that list has correct active element.
+        document.getElementById("combobox2").setAttribute("aria-activedescendant", "option2_1");
+        option2_1 = accessibilityController.accessibleElementById("option2_1");
+        await waitFor(() => {
+            return activeElementChangeCount == 2;
+        });
+        output += expect("combobox.activeElement.isEqual(option2_1)", "true");
+
+        // Example 3: aria-owns a grid.
+        document.getElementById("combobox3").focus();
+        combobox = accessibilityController.accessibleElementById("combobox3");
+        // Set active-descendant, verify notification is sent and that list has correct active element.
+        document.getElementById("combobox3").setAttribute("aria-activedescendant", "row3_1");
+        row3_1 = accessibilityController.accessibleElementById("row3_1");
+        await waitFor(() => {
+            return activeElementChangeCount == 3;
+        });
+        output += expect("combobox.activeElement.isEqual(row3_1)", "true");
+
+        // Example 4: aria-owns a tree.
+        document.getElementById("combobox4").focus();
+        combobox = accessibilityController.accessibleElementById("combobox4");
+        // Set active-descendant, verify notification is sent and that tree has correct active descendant.
+        document.getElementById("combobox4").setAttribute("aria-activedescendant", "treeitem4_1");
+        treeitem4_1 = accessibilityController.accessibleElementById("treeitem4_1");
+        await waitFor(() => {
+            return activeElementChangeCount == 4;
+        });
+        output += expect("combobox.activeElement.isEqual(treeitem4_1)", "true");
+
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

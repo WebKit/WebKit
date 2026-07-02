@@ -1,0 +1,113 @@
+
+FAIL 1: Shrink-to-fit inline-block with a child of orthogonal block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 2: Shrink-to-fit inline-block with a child of orthogonal inline assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 3: Shrink-to-fit inline-block with a child of orthogonal block with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 4: Shrink-to-fit inline-block with a child of orthogonal inline with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 5: Shrink-to-fit inline-block with a child of orthogonal block in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 6: Shrink-to-fit inline-block with a child of orthogonal inline in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 7: Shrink-to-fit inline-block with a child of orthogonal block with borders in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 8: Shrink-to-fit inline-block with a child of orthogonal inline with borders in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 9: Shrink-to-fit float with a child of orthogonal block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 10: Shrink-to-fit float with a child of orthogonal inline assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 11: Shrink-to-fit float with a child of orthogonal block with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 12: Shrink-to-fit float with a child of orthogonal inline with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 13: Shrink-to-fit float with a child of orthogonal block in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 14: Shrink-to-fit float with a child of orthogonal inline in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 15: Shrink-to-fit float with a child of orthogonal block with borders in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 16: Shrink-to-fit float with a child of orthogonal inline with borders in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 17: Shrink-to-fit table-cell with a child of orthogonal block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 18: Shrink-to-fit table-cell with a child of orthogonal inline assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 19: Shrink-to-fit table-cell with a child of orthogonal block with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 20: Shrink-to-fit table-cell with a child of orthogonal inline with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 21: Shrink-to-fit table-cell with a child of orthogonal block in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 22: Shrink-to-fit table-cell with a child of orthogonal inline in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 23: Shrink-to-fit table-cell with a child of orthogonal block with borders in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+FAIL 24: Shrink-to-fit table-cell with a child of orthogonal inline with borders in inline-block assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+Test passes if the X-position of the left edge of the orange box and the right edge of the blue box are the same.
+
+If script is enabled, there should be one or more PASS and no FAIL.
+
+1: Shrink-to-fit inline-block with a child of orthogonal block
+
+HH
+ZZ
+2: Shrink-to-fit inline-block with a child of orthogonal inline
+
+HHZZ
+3: Shrink-to-fit inline-block with a child of orthogonal block with borders
+
+HHH
+ZZ
+4: Shrink-to-fit inline-block with a child of orthogonal inline with borders
+
+HHHZZ
+5: Shrink-to-fit inline-block with a child of orthogonal block in inline-block
+
+HH
+ZZ
+6: Shrink-to-fit inline-block with a child of orthogonal inline in inline-block
+
+HHZZ
+7: Shrink-to-fit inline-block with a child of orthogonal block with borders in inline-block
+
+HHH
+ZZ
+8: Shrink-to-fit inline-block with a child of orthogonal inline with borders in inline-block
+
+HHHZZ
+9: Shrink-to-fit float with a child of orthogonal block
+
+HH
+ZZ
+10: Shrink-to-fit float with a child of orthogonal inline
+
+HHZZ
+11: Shrink-to-fit float with a child of orthogonal block with borders
+
+HHH
+ZZ
+12: Shrink-to-fit float with a child of orthogonal inline with borders
+
+HHHZZ
+13: Shrink-to-fit float with a child of orthogonal block in inline-block
+
+HH
+ZZ
+14: Shrink-to-fit float with a child of orthogonal inline in inline-block
+
+HHZZ
+15: Shrink-to-fit float with a child of orthogonal block with borders in inline-block
+
+HHH
+ZZ
+16: Shrink-to-fit float with a child of orthogonal inline with borders in inline-block
+
+HHHZZ
+17: Shrink-to-fit table-cell with a child of orthogonal block
+
+HH
+ZZ
+18: Shrink-to-fit table-cell with a child of orthogonal inline
+
+HH	ZZ
+19: Shrink-to-fit table-cell with a child of orthogonal block with borders
+
+HHH
+ZZ
+20: Shrink-to-fit table-cell with a child of orthogonal inline with borders
+
+HHH	ZZ
+21: Shrink-to-fit table-cell with a child of orthogonal block in inline-block
+
+HH
+ZZ
+22: Shrink-to-fit table-cell with a child of orthogonal inline in inline-block
+
+HH	ZZ
+23: Shrink-to-fit table-cell with a child of orthogonal block with borders in inline-block
+
+HHH
+ZZ
+24: Shrink-to-fit table-cell with a child of orthogonal inline with borders in inline-block
+
+HHH	ZZ

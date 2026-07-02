@@ -1,0 +1,10 @@
+Verifies that the red square with content-visibility: auto; is visible, in a web view with obscured insets. Requires WebKitTestRunner
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isVisible is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

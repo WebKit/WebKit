@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<script>
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<head>
+<style>
+    ol {
+        display: -webkit-box;
+    }
+    ul {
+        display: -webkit-box;
+    }
+    li {
+        display: -webkit-box;
+    }
+</style> 
+</head>
+<body id="body">
+  <div>
+    <div>
+      <ul>
+        <li id="test 1">test 1</li>
+        <li>test 2</li>
+      </ul>
+    </div>
+  </div>
+  <div>
+    <div>
+      <ol>
+        <li id="test a">test a</li>
+        <li>test b</li>
+      </ol>
+    </div>
+  </div>
+
+    <BR><BR><BR><hr><BR>
+    <div id="result"></div>    
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var olListElement = window.accessibilityController.accessibleElementById("test 1");
+            result.innerText += 'il in ol role: ' + olListElement.role + "\n\n";
+
+            var ulListElement = window.accessibilityController.accessibleElementById("test a");
+            result.innerText += 'il in ul role: ' + ulListElement.role + "\n\n";
+        }
+    </script>
+</body>
+</html>

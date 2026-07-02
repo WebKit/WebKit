@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button type="button" id="show-popover-command-btn" commandfor="mypopover" command="show-popover">Show popover</button>
+<button type="button" id="hide-popover-command-btn" commandfor="mypopover" command="hide-popover">Hide popover</button>
+<button type="button" id="toggle-popover-command-btn" commandfor="mypopover" command="toggle-popover">Toggle popover</button>
+
+<button type="button" id="custom-command-btn" commandfor="mypopover" command="--custom">Custom Command Button</button>
+<button type="button" id="invalid-command-btn" commandfor="mypopover" command="invalid">Invalid Command Button</button>
+
+<div id="mypopover" popover>Popover content</div>
+
+<script>
+let output = "This tests that expanded notifications will be sent correctly for command buttons and popovers.\n";
+
+let notificationCount = 0;
+function notificationCallback(element, notification) {
+    if (notification == "AXExpandedChanged") {
+        notificationCount++;
+
+        output += `Received ${notification} for #${element.domIdentifier}\n`;
+        output += `element.isExpanded: ${element.isExpanded}\n`;
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notificationCallback);
+    var showPopoverCommandButton = accessibilityController.accessibleElementById("show-popover-command-btn");
+    var hidePopoverCommandButton = accessibilityController.accessibleElementById("hide-popover-command-btn");
+    var togglePopoverCommandButton = accessibilityController.accessibleElementById("toggle-popover-command-btn");
+    var customCommandButton = accessibilityController.accessibleElementById("custom-command-btn");
+    var invalidCommandButton = accessibilityController.accessibleElementById("invalid-command-btn");
+    setTimeout(async () => {
+        // Command buttons that are linked to closed popovers should not be considered expanded, but should still support the expanded state.
+        output += expect("showPopoverCommandButton.isExpanded", "false");
+        output += expect("hidePopoverCommandButton.isExpanded", "false");
+        output += expect("togglePopoverCommandButton.isExpanded", "false");
+        output += expect("showPopoverCommandButton.isAttributeSupported('AXExpanded')", "true");
+        output += expect("hidePopoverCommandButton.isAttributeSupported('AXExpanded')", "true");
+        output += expect("togglePopoverCommandButton.isAttributeSupported('AXExpanded')", "true");
+
+        // Custom or invalid commands should not support the expanded state.
+        output += expect("customCommandButton.isExpanded", "false");
+        output += expect("invalidCommandButton.isExpanded", "false");
+        output += expect("customCommandButton.isAttributeSupported('AXExpanded')", "false");
+        output += expect("invalidCommandButton.isAttributeSupported('AXExpanded')", "false");
+
+        output += evalAndReturn("document.getElementById('show-popover-command-btn').click()");
+        // We expanded the popover via #show-popover-command-btn, but #hide-popover-command-btn and #toggle-popover-command-btn (which are also linked to the popover) should be considered expanded now as well.
+        output += await expectAsync("showPopoverCommandButton.isExpanded", "true");
+        output += await expectAsync("hidePopoverCommandButton.isExpanded", "true");
+        output += await expectAsync("togglePopoverCommandButton.isExpanded", "true");
+        // Custom or invalid commands should still not support the expanded state.
+        output += await expectAsync("customCommandButton.isExpanded", "false");
+        output += await expectAsync("invalidCommandButton.isExpanded", "false");
+        output += await expectAsync("customCommandButton.isAttributeSupported('AXExpanded')", "false");
+        output += await expectAsync("invalidCommandButton.isAttributeSupported('AXExpanded')", "false");
+
+        output += evalAndReturn("document.getElementById('hide-popover-command-btn').click()");
+        output += await expectAsync("showPopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("hidePopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("togglePopoverCommandButton.isExpanded", "false");
+
+        // Point commandfor at non-existent ID.
+        output += evalAndReturn("document.getElementById('show-popover-command-btn').setAttribute('commandfor', 'non-existent')");
+        output += await expectAsync("showPopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("showPopoverCommandButton.isAttributeSupported('AXExpanded')", "false");
+
+        output += evalAndReturn("document.getElementById('show-popover-command-btn').setAttribute('commandfor', 'mypopover')");
+        output += await expectAsync("showPopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("showPopoverCommandButton.isAttributeSupported('AXExpanded')", "true");
+
+        // Change command attribute to invalid.
+        output += evalAndReturn("document.getElementById('show-popover-command-btn').setAttribute('command', 'invalid')");
+        output += await expectAsync("showPopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("showPopoverCommandButton.isAttributeSupported('AXExpanded')", "false");
+
+        output += evalAndReturn("document.getElementById('show-popover-command-btn').setAttribute('command', 'show-popover')");
+
+        // Make #mypopover not a popover.
+        output += evalAndReturn("document.getElementById('mypopover').removeAttribute('popover')");
+        output += await expectAsync("showPopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("hidePopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("togglePopoverCommandButton.isExpanded", "false");
+        output += await expectAsync("showPopoverCommandButton.isAttributeSupported('AXExpanded')", "false");
+        output += await expectAsync("hidePopoverCommandButton.isAttributeSupported('AXExpanded')", "false");
+        output += await expectAsync("togglePopoverCommandButton.isAttributeSupported('AXExpanded')", "false");
+
+        debug(output);
+        accessibilityController.removeNotificationListener();
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

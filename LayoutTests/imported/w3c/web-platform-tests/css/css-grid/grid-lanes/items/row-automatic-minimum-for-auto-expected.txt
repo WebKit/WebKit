@@ -1,0 +1,68 @@
+XX
+XXX
+XX
+XXX
+XXXX
+XX
+XX
+XX
+X
+X
+X
+XXX
+X
+XX
+XX
+X
+X
+XXXX
+X
+XX
+XXX
+X
+X
+XX
+XXX
+XX
+XXX
+XX
+XX XX
+XXXXXX X XXX
+XX XX XX
+X X X X
+XX XX
+X XXX XX
+XXX XXXX
+XX XX XX
+XXXXX X XXXXX
+X XXX XX
+XXXXX XXXXX
+XX XX
+XX XX XX XX
+XXX
+X XX XXX
+X XX X
+XXX X
+XXX X
+XXX X
+XX XXX XX XXX XX XXX
+XX XXX XX
+XX XXX XX X XX
+XXXXXX
+XXXXXX
+XXXXXX
+XX
+XXX X
+XX
+XXX X
+XX
+XXX X
+XXX X
+XXX X
+XXX X
+
+PASS Check that min-height is honored when sizing auto rows.
+PASS Check that min-height is honored when sizing auto rows and spanning grid items.
+PASS Check the interactions between height and min-height and auto tracks.
+PASS Check that borders and paddings are considering when computing min sizes.
+

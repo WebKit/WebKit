@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<iframe id=frame srcdoc="
+<script>
+const style = document.createElement('style');
+style.textContent = '@import url(data:text/css,)';
+document.head.appendChild(style);
+style.remove();
+</script>">
+</iframe>
+This test passes if it doesn't assert.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+    
+function end() {
+    if (window.GCController)
+        GCController.collect();
+    testRunner.notifyDone();
+}
+
+frame.onload = () => {
+    frame.remove();
+    setTimeout(end, 0);
+};
+</script>

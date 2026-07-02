@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html id="html">
+<head>
+<style id="custom-style">
+    * {
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+    /* The order of evalution is important here. The simple selector ":active" must be evaluated last */
+    label:active, input:active {
+        background-color: rgb(50, 100, 150) !important;
+    }
+    #target {
+        display: block;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+    }
+</style>
+</head>
+<script src="../../resources/js-test-pre.js"></script>
+<body id="body">
+    <div id="webkit-test">
+        <div id="labelable-ancestor">
+            <div id="labelable-parent">
+                <label for="labelable" id="target">Label</label>
+            </div>
+        </div>
+        <div id="next-group" style="display:none">
+            <div id="sibling1">Sibling1</div>
+            <input id="labelable" value="Labelable Input">
+            <div id="sibling2">Sibling2</div>
+        </div>
+    </div>
+    <div id="console">
+    </div>
+    <script>
+    description("Verify that a labeled elemed gets the :active state even if it has no renderer.");
+    window.jsTestIsAsync = true;
+
+    function elementsWithActiveStyle() {
+        let elements = [];
+        for (let element of document.querySelectorAll("*")) {
+            if (getComputedStyle(element).backgroundColor === "rgb(50, 100, 150)")
+                elements.push(element.id);
+        }
+        return elements;
+    }
+    function elementsMatchingActiveSelector() {
+        let elements = [];
+        for (let element of document.querySelectorAll(":active")) {
+            elements.push(element.id);
+        }
+        return elements;
+    }
+
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(50, 50);
+    } else {
+        debug("");
+        debug("To run Manually, click-hold-release 3 times on the green rect. All the results below should say PASS.")
+        debug("");
+    }
+
+    function sendMouseDown() {
+        if (window.eventSender) {
+            eventSender.mouseDown();
+        }
+    }
+
+    function sendMouseUp() {
+        if (window.eventSender) {
+            eventSender.mouseUp();
+        }
+    }
+
+    function mouseDownHandler(event, delayed = false) {
+        debug(delayed ? "After Mouse Down" : "On Mouse Down");
+        shouldBe('elementsWithActiveStyle()', '["target", "labelable"]');
+        shouldBe('elementsMatchingActiveSelector()', '["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target", "labelable"]');
+
+        // The current spec does not defined the order in which elements are activated.
+        // It is reasonable to have the activation after the mouseDown dispatch. That's what Firefox does at this time.
+        // This delayed handler ensure we cover both possibilities. The first handler fails on Firefox but that's not
+        // necessarily wrong, just undefined. The result is fine as long as one of the two handler succeed.
+        if (!delayed) {
+            setTimeout(function() { mouseDownHandler(event, true); }, 0);
+        } else {
+            sendMouseUp();
+        }
+    }
+    var target = document.getElementById('target');
+    target.addEventListener('mousedown', mouseDownHandler);
+
+    let mouseUpCount = 0;
+    function mouseUpHandler(event, delayed = false) {
+        debug(delayed ? "After Mouse Up" : "On Mouse Up");
+        shouldBe('elementsWithActiveStyle()', '[]');
+        shouldBe('elementsMatchingActiveSelector()', '[]');
+        if (++mouseUpCount === 6) {
+            document.getElementById("webkit-test").style.display = "none";
+            document.getElementById("custom-style").innerText = "";
+            finishJSTest();
+        } else {
+            if (!delayed) {
+                setTimeout(function() { mouseUpHandler(event, true); }, 0);
+            } else {
+                sendMouseDown();
+            }
+        }
+    }
+    target.addEventListener('mouseup', mouseUpHandler);
+
+
+    debug("Initial state");
+    shouldBe('elementsWithActiveStyle()', '[]');
+    shouldBe('elementsMatchingActiveSelector()', '[]');
+
+    sendMouseDown();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

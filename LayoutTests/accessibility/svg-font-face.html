@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("resources/Litherum.svg") format(svg);
+}
+* { font-family: 'Litherum'; }
+</style>
+</head>
+<body onload="runTest()">
+
+<input type="text" id="textfield" value="some word"></input>
+
+<script>
+    var output = "This test ensures that we don't crash when applying a custom SVG font to attributed strings.\n";
+
+    if (window.accessibilityController)
+        window.jsTestIsAsync = true;
+
+    function runTest() {
+        if (window.accessibilityController) {
+            const textField = accessibilityController.accessibleElementById("textfield");
+            output += `Getting attributed string for range (0, 9)\n`;
+            const attributedString = textField.attributedStringForRange(0, 9);
+            output += "PASS: Didn't crash.\n";
+            debug(output);
+            finishJSTest();
+        }
+    }
+</script>
+</body>
+</html>

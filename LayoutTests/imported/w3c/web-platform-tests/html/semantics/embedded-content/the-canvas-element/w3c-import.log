@@ -1,0 +1,93 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/2d-getcontext-options.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-004.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.arguments.missing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.casesensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.emptystring.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.unrecognised.badname.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.unrecognised.badsuffix.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.unrecognised.nullsuffix.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.unrecognised.unicode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.nested.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/imagedata.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.dataURI.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.canvas.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.drawImage.image.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.fillStyle.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.strokeStyle.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.canvas.timing.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.create.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.cross.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.fillStyle.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.image.strokeStyle.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.reset.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.resize.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.resize.redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.style.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob-cross-realm-callback-report-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.null.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.png.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.arguments.1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.arguments.2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.arguments.3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.bogustype.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.alpha.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.alpha.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.primarycolours.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.primarycolours.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.quality.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.quality.basic.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.quality.notnumber.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpeg.quality.outsiderange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.jpg.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.lowercase.ascii.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.lowercase.unicode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.nocontext.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.png.complexcolours.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.png.complexcolours.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.png.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.png.primarycolours.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.png.primarycolours.png
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.unrecognised.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.zeroheight.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.zerosize.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.zerowidth.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/type.exists.html

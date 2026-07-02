@@ -1,0 +1,17 @@
+<meta http-equiv="Content-Security-Policy" content="manifest-src 'none'">
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+</script>
+<link rel="manifest" href="manifest.test/manifest.json">
+<script>
+    if (window.testRunner) {
+        (async () => {
+            const success = await testRunner.getApplicationManifest();
+            alert("manifest fetch success: " + success);
+            testRunner.notifyDone();
+        })();
+    }
+</script>

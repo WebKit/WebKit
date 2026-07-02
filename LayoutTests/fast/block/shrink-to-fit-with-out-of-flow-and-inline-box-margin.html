@@ -1,0 +1,16 @@
+<style>
+.container {
+  float: left;
+  font-size: 20px;
+}
+
+.margin_offset {
+  margin-inline-start: 10px;
+}
+
+.out_of_flow {
+  position: absolute;
+}
+</style>
+<div class=container>this content<span class=margin_offset><div class=out_of_flow></div>should not wrap</span></div>
+<div class=container style="direction: rtl">this content<span class=margin_offset><div class=out_of_flow></div>should not wrap</span></div>

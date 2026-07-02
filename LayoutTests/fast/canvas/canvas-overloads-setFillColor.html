@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test the behavior of CanvasRenderingContext2D.setFillColor() when called with different numbers of arguments.");
+
+let ctx = document.createElement('canvas').getContext('2d');
+
+let TypeError = "TypeError: Type error";
+let TypeErrorNotEnoughArguments = "TypeError: Not enough arguments";
+
+shouldThrow("ctx.setFillColor()", "TypeErrorNotEnoughArguments");
+shouldBe("ctx.fillStyle", "'#000000'");
+
+
+debug("\n\nundefined setFillColor(DOMString color, optional unrestricted float alpha)\n")
+shouldBe("ctx.setFillColor('red')", "undefined");
+shouldBe("ctx.fillStyle", "'#ff0000'");
+
+shouldBe("ctx.setFillColor('red', .5)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(255, 0, 0, 0.5)'");
+
+shouldBe("ctx.setFillColor('red', NaN)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(255, 0, 0, 0.5)'");
+
+
+debug("\n\nundefined setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1)\n")
+
+shouldBe("ctx.setFillColor(.25)", "undefined");
+shouldBe("ctx.fillStyle", "'#404040'");
+
+shouldBe("ctx.setFillColor(.25, .5)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(64, 64, 64, 0.5)'");
+
+shouldBe("ctx.setFillColor(NaN, .5)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(64, 64, 64, 0.5)'");
+
+shouldBe("ctx.setFillColor(.25, NaN)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(64, 64, 64, 0.5)'");
+
+
+debug("\n\nundefined setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a)\n")
+
+shouldThrow("ctx.setFillColor(.1, .2, .3)", "TypeError");
+
+shouldBe("ctx.setFillColor(.1, .2, .3, .4)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setFillColor(NaN, .2, .3, .4)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setFillColor(.1, NaN, .3, .4)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setFillColor(.1, .2, NaN, .4)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setFillColor(.1, .2, .3, NaN)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setFillColor(.5, .4, .3, .2, .1)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(128, 102, 77, 0.2)'");
+
+shouldBe("ctx.setFillColor(1, .4, .3, .2, .1, 0)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(255, 102, 77, 0.2)'");
+
+shouldBe("ctx.setFillColor(1.5, 10, -0.1, -100)", "undefined");
+shouldBe("ctx.fillStyle", "'rgba(255, 255, 0, 0)'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

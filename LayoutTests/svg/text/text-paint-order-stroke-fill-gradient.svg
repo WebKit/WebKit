@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200">
+    <meta name="fuzzy" content="maxDifference=0-22; totalPixels=0-2801" />
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+        text {
+            stroke: black;
+            stroke-width: 2;
+            stroke-linejoin: round;
+            font-weight: bold;
+            font-family: serif;
+            
+        }
+        .solid-order {
+            fill: green;
+            paint-order: stroke fill;
+        }
+        .gradient-no-order {
+            fill: url(#g);
+        }
+        .gradient-order {
+            fill: url(#g);
+            paint-order: stroke fill;
+        }
+    </style>
+    <defs>
+        <linearGradient id="g">
+            <stop offset="0%" stop-color="green"/>
+            <stop offset="100%" stop-color="green"/>
+        </linearGradient>
+    </defs>
+    <text x="50%" y="20%" text-anchor="middle" font-size="25" class="solid-order">
+        With Solid Fill
+    </text>
+    <text x="50%" y="50%" text-anchor="middle" font-size="25" class="gradient-no-order">
+        With Gradient Fill, No Paint Order
+    </text>
+    <text x="50%" y="80%" text-anchor="middle" font-size="25" class="gradient-order">
+        With Gradient Fill, And Paint Order
+    </text>
+</svg>

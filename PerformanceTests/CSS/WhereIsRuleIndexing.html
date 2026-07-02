@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance test for :where()/:is() rule indexing</title>
+</head>
+<body>
+<div id="container" style="height: 1px; overflow: hidden;"></div>
+<script src="../resources/runner.js"></script>
+<script>
+
+var ruleTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'blockquote',
+    'strong', 'em', 'code', 'pre', 'ol', 'ul', 'li', 'table', 'img', 'hr', 'dl'];
+var style = document.createElement('style');
+var css = '';
+for (var i = 0; i < ruleTags.length; i++)
+    css += '.prose :where(' + ruleTags[i] + '):not(:where([class~="not-prose"], [class~="not-prose"] *)) { margin: ' + (i + 1) + 'px; }\n';
+style.textContent = css;
+document.head.appendChild(style);
+
+var container = document.getElementById('container');
+var domTags = ['div', 'div', 'div', 'span', 'span', 'p', 'section', 'article'];
+for (var i = 0; i < 25000; i++) {
+    var el = document.createElement(domTags[i % domTags.length]);
+    el.textContent = 'x';
+    if (i % 500 === 0)
+        el.className = 'not-prose';
+    container.appendChild(el);
+}
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "Style recalculation with :where(tag) rules on a large DOM. Tests that single-argument :where()/:is() rules are indexed by tag.",
+    run: function() {
+        container.classList.add('prose');
+        container.offsetHeight;
+
+        container.classList.remove('prose');
+        container.offsetHeight;
+    }
+});
+</script>
+</body>
+</html>

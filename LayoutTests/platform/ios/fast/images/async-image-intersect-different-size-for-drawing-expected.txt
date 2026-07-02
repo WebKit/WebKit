@@ -1,0 +1,11 @@
+Ensures a renderer will decode its image synchronously if it intersects with another renderer with a different sizeForDrawing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+decodingOptions = { decodingMode : Asynchronous, sizeForDrawing : { 1000, 1000 } }
+decodingOptions = { decodingMode : Synchronous }
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

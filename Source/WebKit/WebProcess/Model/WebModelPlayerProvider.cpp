@@ -1,0 +1,120 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebModelPlayerProvider.h"
+
+#include "WebModelPlayer.h"
+#include "WebPage.h"
+#include "WebProcess.h"
+#include <WebCore/ModelPlayer.h>
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
+#include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(COCOA)
+#include <sys/sysctl.h>
+#include <wtf/spi/darwin/OSVariantSPI.h>
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+#include "ModelProcessModelPlayer.h"
+#include "ModelProcessModelPlayerManager.h"
+#endif
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebModelPlayerProvider);
+
+#if PLATFORM(COCOA)
+static bool isRunningInRecoveryOS()
+{
+#if PLATFORM(MAC)
+    static bool isBaseSystem = os_variant_is_basesystem("WebKit");
+    return isBaseSystem;
+#else
+    return false;
+#endif
+}
+#endif
+
+Ref<WebModelPlayerProvider> WebModelPlayerProvider::create(WebPage& webPage)
+{
+    return adoptRef(*new WebModelPlayerProvider(webPage));
+}
+
+WebModelPlayerProvider::WebModelPlayerProvider(WebPage& page)
+    : m_page { page }
+{
+}
+
+WebModelPlayerProvider::~WebModelPlayerProvider() = default;
+
+// MARK: - WebCore::ModelPlayerProvider overrides.
+
+bool WebModelPlayerProvider::isAvailable() const
+{
+#if PLATFORM(COCOA)
+    return !isRunningInRecoveryOS();
+#else
+    return true;
+#endif
+}
+
+RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::ModelPlayerClient& client)
+{
+    Ref page = m_page.get();
+#if PLATFORM(COCOA)
+    if (!isAvailable()) {
+        UNUSED_PARAM(client);
+        return nullptr;
+    }
+#endif
+#if ENABLE(MODEL_PROCESS)
+    if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
+        return WebProcess::singleton().modelProcessModelPlayerManager().createModelProcessModelPlayer(page, client);
+#elif ENABLE(GPU_PROCESS_MODEL)
+    if (page->corePage() && page->corePage()->settings().modelElementEnabled())
+        return WebModelPlayer::create(*page->corePage(), client);
+#else
+    UNUSED_PARAM(page);
+#endif
+
+    UNUSED_PARAM(client);
+    return nullptr;
+}
+
+void WebModelPlayerProvider::deleteModelPlayer(WebCore::ModelPlayer& modelPlayer)
+{
+#if ENABLE(MODEL_PROCESS)
+    Ref page = m_page.get();
+    if (page->corePage() && page->corePage()->settings().modelProcessEnabled())
+        WebProcess::singleton().modelProcessModelPlayerManager().deleteModelProcessModelPlayer(modelPlayer);
+#else
+    UNUSED_PARAM(modelPlayer);
+#endif
+}
+
+}

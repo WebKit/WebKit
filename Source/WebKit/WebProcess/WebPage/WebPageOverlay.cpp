@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebPageOverlay.h"
+
+#include "WebFrame.h"
+#include "WebPage.h"
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/LocalFrame.h>
+#include <WebCore/PageOverlay.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/NeverDestroyed.h>
+
+namespace WebKit {
+using namespace WebCore;
+
+static HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& NODELETE overlayMap()
+{
+    static NeverDestroyed<HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>> map;
+    return map;
+}
+
+Ref<WebPageOverlay> WebPageOverlay::create(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)
+{
+    return adoptRef(*new WebPageOverlay(WTF::move(client), overlayType));
+}
+
+WebPageOverlay::WebPageOverlay(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)
+    : m_overlay(PageOverlay::create(*this, overlayType))
+    , m_client(WTF::move(client))
+{
+    ASSERT(m_client);
+    overlayMap().add(*m_overlay, *this);
+}
+
+WebPageOverlay::~WebPageOverlay()
+{
+    RefPtr overlay = m_overlay;
+    if (!overlay)
+        return;
+
+    overlayMap().remove(*overlay);
+    m_overlay = nullptr;
+}
+
+WebPageOverlay* WebPageOverlay::fromCoreOverlay(PageOverlay& overlay)
+{
+    return overlayMap().get(overlay);
+}
+
+void WebPageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
+{
+    protect(coreOverlay())->setNeedsDisplay(dirtyRect);
+}
+
+void WebPageOverlay::setNeedsDisplay()
+{
+    protect(coreOverlay())->setNeedsDisplay();
+}
+
+void WebPageOverlay::clear()
+{
+    protect(coreOverlay())->clear();
+}
+
+void WebPageOverlay::willMoveToPage(PageOverlay&, Page* page)
+{
+    RefPtr webPage = page ? WebPage::fromCorePage(*page) : nullptr;
+    m_client->willMoveToPage(*this, webPage.get());
+}
+
+void WebPageOverlay::didMoveToPage(PageOverlay&, Page* page)
+{
+    RefPtr webPage = page ? WebPage::fromCorePage(*page) : nullptr;
+    m_client->didMoveToPage(*this, webPage.get());
+}
+
+void WebPageOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRect& dirtyRect)
+{
+    m_client->drawRect(*this, context, dirtyRect);
+}
+
+bool WebPageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
+{
+    return m_client->mouseEvent(*this, event);
+}
+
+void WebPageOverlay::didScrollFrame(PageOverlay&, LocalFrame& frame)
+{
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    m_client->didScrollFrame(*this, webFrame.get());
+}
+
+#if PLATFORM(MAC)
+auto WebPageOverlay::actionContextForResultAtPoint(FloatPoint location) -> std::optional<ActionContext>
+{
+    return m_client->actionContextForResultAtPoint(*this, location);
+}
+
+void WebPageOverlay::dataDetectorsDidPresentUI()
+{
+    m_client->dataDetectorsDidPresentUI(*this);
+}
+
+void WebPageOverlay::dataDetectorsDidChangeUI()
+{
+    m_client->dataDetectorsDidChangeUI(*this);
+}
+
+void WebPageOverlay::dataDetectorsDidHideUI()
+{
+    m_client->dataDetectorsDidHideUI(*this);
+}
+#endif // PLATFORM(MAC)
+
+bool WebPageOverlay::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String attribute, FloatPoint parameter, String& value)
+{
+    return m_client->copyAccessibilityAttributeStringValueForPoint(*this, attribute, parameter, value);
+}
+
+bool WebPageOverlay::copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String attribute, FloatPoint parameter, bool& value)
+{
+    return m_client->copyAccessibilityAttributeBoolValueForPoint(*this, attribute, parameter, value);
+}
+
+Vector<String> WebPageOverlay::copyAccessibilityAttributeNames(PageOverlay&, bool parameterizedNames)
+{
+    return m_client->copyAccessibilityAttributeNames(*this, parameterizedNames);
+}
+
+} // namespace WebKit

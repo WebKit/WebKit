@@ -1,0 +1,348 @@
+/*
+ * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
+ * Copyright (C) 2012 David Barton (dbarton@mathscribe.com). All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "RenderMathMLBlock.h"
+
+#if ENABLE(MATHML)
+
+#include "CSSUnits.h"
+#include "FontCascadeInlines.h"
+#include "GraphicsContext.h"
+#include "LayoutRepainter.h"
+#include "MathMLElement.h"
+#include "MathMLNames.h"
+#include "MathMLPresentationElement.h"
+#include "OpenTypeMathData.h"
+#include "RenderBoxInlines.h"
+#include "RenderChildIterator.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderObjectInlines.h"
+#include "RenderTableInlines.h"
+#include "RenderView.h"
+#include "Settings.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+using namespace MathMLNames;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLBlock);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLTable);
+
+RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, Style::ComputedStyle&& style)
+    : RenderBlock(type, container, WTF::move(style), { })
+    , m_mathMLStyle(MathMLStyle::create())
+{
+    setChildrenInline(false); // All of our children must be block-level.
+}
+
+RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, Style::ComputedStyle&& style)
+    : RenderBlock(type, document, WTF::move(style), { })
+    , m_mathMLStyle(MathMLStyle::create())
+{
+    setChildrenInline(false); // All of our children must be block-level.
+}
+
+RenderMathMLBlock::~RenderMathMLBlock() = default;
+
+bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const Style::ComputedStyle&) const
+{
+    return is<Element>(child.node());
+}
+
+static LayoutUnit axisHeight(const Style::ComputedStyle& style)
+{
+    // If we have a MATH table we just return the AxisHeight constant.
+    Ref primaryFont = style.fontCascade().primaryFont();
+    if (RefPtr mathData = primaryFont->mathData())
+        return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::MathConstant::AxisHeight));
+
+    // Otherwise, the idea is to try and use the middle of operators as the math axis which we thus approximate by "half of the x-height".
+    // Note that Gecko has a slower but more accurate version that measures half of the height of U+2212 MINUS SIGN.
+    return LayoutUnit(style.metricsOfPrimaryFont().xHeight().value_or(0) / 2);
+}
+
+LayoutUnit RenderMathMLBlock::mathAxisHeight() const
+{
+    return axisHeight(style());
+}
+
+LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth) const
+{
+    if (writingMode().isBidiRTL())
+        return logicalWidth() - boxWidth - horizontalOffset;
+
+    return horizontalOffset;
+}
+
+LayoutUnit toUserUnits(const MathMLElement::Length& length, const Style::ComputedStyle& style, const LayoutUnit& referenceValue)
+{
+    switch (length.type) {
+    // Zoom for physical units needs to be accounted for.
+    case MathMLElement::LengthType::Cm:
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerCm));
+    case MathMLElement::LengthType::In:
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerInch));
+    case MathMLElement::LengthType::Mm:
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerMm));
+    case MathMLElement::LengthType::Pc:
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerPc));
+    case MathMLElement::LengthType::Pt:
+        return LayoutUnit(style.usedZoom() * length.value * static_cast<float>(CSS::pixelsPerPt));
+    case MathMLElement::LengthType::Px:
+        return LayoutUnit(style.usedZoom() * length.value);
+
+    // Zoom for logical units is accounted for either in the font info or referenceValue.
+    case MathMLElement::LengthType::Em:
+        return LayoutUnit(length.value * style.fontCascade().size());
+    case MathMLElement::LengthType::Ex: {
+        // When evaluation-time zoom is enabled, font metrics already include the zoom factor.
+        auto zoomFactor = style.fontDescription().evaluationTimeZoomEnabled() ? 1.0f : style.usedZoom();
+        return LayoutUnit(length.value * style.metricsOfPrimaryFont().xHeight().value_or(0) * zoomFactor);
+    }
+    case MathMLElement::LengthType::MathUnit:
+        return LayoutUnit(length.value * style.fontCascade().size() / 18);
+    case MathMLElement::LengthType::Percentage:
+        return LayoutUnit(referenceValue * length.value / 100);
+    case MathMLElement::LengthType::UnitLess:
+        return LayoutUnit(referenceValue * length.value);
+    case MathMLElement::LengthType::ParsingFailed:
+        return referenceValue;
+    default:
+        ASSERT_NOT_REACHED();
+        return referenceValue;
+    }
+}
+
+RenderMathMLTable::~RenderMathMLTable() = default;
+
+std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
+{
+    // By default the vertical center of <mtable> is aligned on the math axis.
+    // This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
+    auto baseline = logicalHeight() / 2 + axisHeight(style());
+    return { settings().subpixelInlineLayoutEnabled() ? baseline : LayoutUnit(baseline.toInt()) };
+}
+
+void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
+{
+    LayoutUnit verticalOffset = borderAndPaddingBefore();
+    LayoutUnit horizontalOffset = borderAndPaddingStart();
+
+    LayoutUnit preferredHorizontalExtent;
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        LayoutUnit childHorizontalExtent = child->maxContentLogicalWidthContribution() - child->horizontalBorderAndPaddingExtent();
+        LayoutUnit childHorizontalMarginBoxExtent = child->horizontalBorderAndPaddingExtent() + childHorizontalExtent;
+        childHorizontalMarginBoxExtent += child->horizontalMarginExtent();
+
+        preferredHorizontalExtent += childHorizontalMarginBoxExtent;
+    }
+
+    LayoutUnit currentHorizontalExtent = contentBoxLogicalWidth();
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        auto everHadLayout = child->everHadLayout();
+        LayoutUnit childSize = child->maxContentLogicalWidthContribution() - child->horizontalBorderAndPaddingExtent();
+
+        if (preferredHorizontalExtent > currentHorizontalExtent)
+            childSize = currentHorizontalExtent;
+
+        LayoutUnit childPreferredSize = childSize + child->horizontalBorderAndPaddingExtent();
+
+        if (childPreferredSize != child->borderBoxWidth())
+            child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+
+        updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, *child);
+        child->layoutIfNeeded();
+
+        LayoutUnit childVerticalMarginBoxExtent;
+        childVerticalMarginBoxExtent = child->borderBoxHeight() + child->verticalMarginExtent();
+
+        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAndPaddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
+
+        horizontalOffset += child->marginStart();
+
+        LayoutUnit childHorizontalExtent = child->borderBoxWidth();
+        LayoutPoint childLocation(writingMode().isBidiLTR() ? horizontalOffset : borderBoxWidth() - horizontalOffset - childHorizontalExtent,
+            verticalOffset + child->marginBefore());
+
+        child->setLocation(childLocation);
+        horizontalOffset += childHorizontalExtent + child->marginEnd();
+        if (!everHadLayout && child->checkForRepaintDuringLayout())
+            child->repaint();
+    }
+}
+
+void RenderMathMLBlock::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
+{
+    ASSERT(needsLayout());
+
+    insertPositionedChildrenIntoContainingBlock();
+
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
+        return;
+
+    layoutFloatingChildren();
+
+    LayoutRepainter repainter(*this);
+
+    if (recomputeLogicalWidth())
+        relayoutChildren = RelayoutChildren::Yes;
+
+    setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
+
+    layoutItems(relayoutChildren);
+
+    updateLogicalHeight();
+
+    layoutOutOfFlowBoxes(relayoutChildren);
+
+    repainter.repaintAfterLayout();
+
+}
+
+void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
+{
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+        child->computeAndSetBlockDirectionMargins(*this);
+}
+
+void RenderMathMLBlock::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    // MathML displaystyle changes can affect layout.
+    if (oldStyle && style().mathStyle() != oldStyle->mathStyle())
+        setNeedsLayoutAndInvalidateContentLogicalWidths();
+}
+
+void RenderMathMLBlock::insertPositionedChildrenIntoContainingBlock()
+{
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        if (child.isOutOfFlowPositioned())
+            child.containingBlock()->addOutOfFlowBox(child);
+    }
+}
+
+void RenderMathMLBlock::layoutFloatingChildren()
+{
+    // According to the spec, https://w3c.github.io/mathml-core/#css-styling:
+    // > The float property does not create floating of elements whose parent's computed display value is block math or inline math,
+    // > and does not take them out-of-flow.
+    // However, WebKit does not currently do this since `display: math` is unimplemented. See webkit.org/b/278533.
+    // Since this leaves floats as neither positioned nor in-flow, perform dummy layout for floating children.
+    // FIXME: Per the spec, there should be no floating children inside MathML renderers.
+    for (auto& child : childrenOfType<RenderBox>(*this)) {
+        if (child.isFloating())
+            child.layoutIfNeeded();
+    }
+}
+
+void RenderMathMLBlock::shiftInFlowChildren(LayoutUnit left, LayoutUnit top)
+{
+    LayoutPoint shift(left, top);
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+        child->setLocation(child->location() + shift);
+}
+
+void RenderMathMLBlock::adjustContentLogicalWidthsForBorderAndPadding()
+{
+    ASSERT(hasInvalidContentLogicalWidths());
+    m_minContentLogicalWidthContribution += borderAndPaddingLogicalWidth();
+    m_maxContentLogicalWidthContribution += borderAndPaddingLogicalWidth();
+}
+
+void RenderMathMLBlock::adjustLayoutForBorderAndPadding()
+{
+    setLogicalWidth(logicalWidth() + borderAndPaddingLogicalWidth());
+    setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
+    shiftInFlowChildren(style().writingMode().deprecatedIsLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd(), borderAndPaddingBefore());
+}
+
+RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMathContent(LayoutPhase phase)
+{
+    SizeAppliedToMathContent sizes;
+    auto& style = this->style();
+    auto usedZoom = style.usedZoomForLength();
+
+    // Handle size containment with contain-intrinsic-inline-size
+    if (shouldApplySizeOrInlineSizeContainment()) {
+        if (auto intrinsicWidth = explicitIntrinsicInnerLogicalWidth())
+            sizes.logicalWidth = intrinsicWidth.value();
+
+        if (phase == LayoutPhase::Layout && shouldApplySizeContainment()) {
+            if (auto intrinsicHeight = explicitIntrinsicInnerLogicalHeight())
+                sizes.logicalHeight = intrinsicHeight.value();
+        }
+
+        return sizes;
+    }
+
+    // FIXME: Resolve percentages.
+    // https://github.com/w3c/mathml-core/issues/76
+    if (auto fixedLogicalWidth = style.logicalWidth().tryFixed())
+        sizes.logicalWidth = fixedLogicalWidth->resolveZoom(usedZoom);
+
+    // FIXME: Resolve percentages.
+    // https://github.com/w3c/mathml-core/issues/77
+    if (auto fixedLogicalHeight = style.logicalHeight().tryFixed(); phase == LayoutPhase::Layout && fixedLogicalHeight)
+        sizes.logicalHeight = fixedLogicalHeight->resolveZoom(usedZoom);
+
+    return sizes;
+}
+
+LayoutUnit RenderMathMLBlock::applySizeToMathContent(LayoutPhase phase, const SizeAppliedToMathContent& sizes)
+{
+    if (phase == LayoutPhase::CalculatePreferredLogicalWidth) {
+        ASSERT(hasInvalidContentLogicalWidths());
+        if (sizes.logicalWidth) {
+            m_minContentLogicalWidthContribution = *sizes.logicalWidth;
+            m_maxContentLogicalWidthContribution = *sizes.logicalWidth;
+        }
+        return LayoutUnit();
+    }
+
+    ASSERT(phase == LayoutPhase::Layout);
+
+    LayoutUnit inlineShift;
+    if (sizes.logicalWidth) {
+        auto oldWidth = logicalWidth();
+        if (isMathContentCentered()) {
+            inlineShift = (*sizes.logicalWidth - oldWidth) / 2;
+        } else if (!style().writingMode().deprecatedIsLeftToRightDirection())
+            inlineShift = *sizes.logicalWidth - oldWidth;
+        setLogicalWidth(*sizes.logicalWidth);
+    }
+
+    if (sizes.logicalHeight)
+        setLogicalHeight(*sizes.logicalHeight);
+
+    return inlineShift;
+}
+
+}
+
+#endif

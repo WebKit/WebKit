@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function prepareAudio() {
+            // Global variables used from video-test.js.
+            video = document.getElementById('audio');
+            video.src="http://127.0.0.1:8000/media/resources/serve_video.py?content-length=no"
+                + "&name=hls/english/description.aac&type=audio/aac&stallOffset=512&stallDuration=2";
+            mediaElement = video;
+            video.play();
+        }
+
+        waitForEvent("ended", function onEnded() {
+            testExpected("video.currentTime > 6", true);
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        });
+    </script>
+</head>
+<body onload="prepareAudio()">
+Live audios (no Content-Length, loaded as they are generated) shouldn't trigger end-of-stream if future data isn't available immediately.<br/>
+<audio controls id="audio" playsinline></audio>
+</body>
+</html>

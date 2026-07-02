@@ -1,0 +1,50 @@
+<html>
+<head>
+<script>
+function checkForDone()
+{
+    var targetParent = document.getElementById("targetParent");
+    var textNode = targetParent.firstChild;
+
+    var selection = window.getSelection();
+    var anchor = selection.anchorNode;
+    if (anchor == textNode) {
+        var console = document.getElementById("console");
+        console.innerHTML = "SUCCESS! We did not dismiss the selection when we force clicked the text.";
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startTest()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var selection = window.getSelection();
+    var targetParent = document.getElementById("targetParent");
+    var textNode = targetParent.firstChild;
+    var range = document.createRange();
+    range.selectNodeContents(textNode);
+    selection.addRange(range);
+
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(16, 16);
+        eventSender.mouseForceClick();
+        window.setTimeout(checkForDone, 0);
+    }
+}
+</script>
+</head>
+
+<body onload="startTest()">
+
+<div>Force click me.</div>
+<div id="targetParent">Select me.</div>
+<pre id="console">Failed. This test must be run in the test harness. To run the test manually, select text on the page and then force click a different piece of text. The original selection should not be dismissed.</pre>
+
+</body>
+</html>

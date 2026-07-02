@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<script>
+  window.addEventListener("load", _ => {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    container.appendChild(marquee);
+    details.open = false;
+    document.body.scrollHeight;
+    img.align = "top";
+    details.open = true;
+    document.body.scrollHeight;
+
+    document.body.innerHTML = "PASS if no crash.";
+    window.testRunner?.notifyDone();
+  });
+</script>
+<body>
+  <div style="float: left">floating</div>
+  <img id="img" border="100" align="right"></img>
+  <div id="container"></div>
+  <div>
+    <details id="details" open="">
+      <div><marquee id="marquee"><embed></marquee></div>
+    </details>
+  </div>
+</body>

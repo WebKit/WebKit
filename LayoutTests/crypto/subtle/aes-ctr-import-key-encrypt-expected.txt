@@ -1,0 +1,40 @@
+CONSOLE MESSAGE: AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.
+Test encrypting using AES-CTR with an imported 128bit key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Length < 64
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 64
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 65
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 2, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText4
+Length = 2, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText5
+Length = 8, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText6
+Length = 8, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText7
+Length = 64, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText8
+Length = 64, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText9
+Length = 66, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText10
+Length = 66, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText11
+Length = 128, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText12
+Length = 128, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText13
+Length = 33
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 63
+PASS bytesToHexString(cipherText) is expectedCipherText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

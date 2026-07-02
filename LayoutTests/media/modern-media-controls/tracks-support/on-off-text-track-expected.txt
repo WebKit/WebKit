@@ -1,0 +1,53 @@
+
+RUN(video.src = findMediaFile("audio", "../../content/test"))
+EVENT(loadedmetadata)
+--
+Test basic menu structure:
+EXPECTED (contextMenu.length == '7') OK
+EXPECTED (contextMenu[0].title == 'Subtitles') OK
+EXPECTED (contextMenu[1].title == 'On') OK
+EXPECTED (contextMenu[2].title == 'Off') OK
+EXPECTED (contextMenu[3].title == 'undefined') OK
+EXPECTED (contextMenu[4].title == 'Languages') OK
+EXPECTED (contextMenu[4].children.length == '4') OK
+EXPECTED (contextMenu[4].children[0].title == 'English Captions') OK
+EXPECTED (contextMenu[4].children[1].title == 'French Captions') OK
+EXPECTED (contextMenu[4].children[2].title == 'German Captions') OK
+EXPECTED (contextMenu[4].children[3].title == 'Spanish Captions') OK
+EXPECTED (contextMenu[5].title == 'undefined') OK
+EXPECTED (contextMenu[6].title == 'Styles') OK
+--
+Test default menu selection states
+EXPECTED (contextMenu[1].checked == 'false') OK
+EXPECTED (contextMenu[2].checked == 'true') OK
+EXPECTED (contextMenu[4].children[0].checked == 'true') OK
+EXPECTED (contextMenu[4].children[1].checked == 'false') OK
+EXPECTED (contextMenu[4].children[2].checked == 'false') OK
+EXPECTED (contextMenu[4].children[3].checked == 'false') OK
+--
+Test On menu item behavior
+RUN(controlsHost.setSelectedTextTrack(onItem))
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (contextMenu[1].checked == 'true') OK
+EXPECTED (contextMenu[2].checked == 'false') OK
+EXPECTED (internals.captionDisplayMode == 'alwayson') OK
+--
+Test Off menu item behavior
+RUN(controlsHost.setSelectedTextTrack(offItem))
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (contextMenu[1].checked == 'false') OK
+EXPECTED (contextMenu[2].checked == 'true') OK
+EXPECTED (internals.captionDisplayMode == 'forcedonly') OK
+--
+Test Language menu item behavior
+RUN(controlsHost.setSelectedTextTrack(video.textTracks[1]))
+EXPECTED (video.textTracks[1].mode == 'showing') OK
+EXPECTED (contextMenu[1].checked == 'true') OK
+EXPECTED (contextMenu[2].checked == 'false') OK
+EXPECTED (contextMenu[4].children[0].checked == 'false') OK
+EXPECTED (contextMenu[4].children[1].checked == 'true') OK
+EXPECTED (contextMenu[4].children[2].checked == 'false') OK
+EXPECTED (contextMenu[4].children[3].checked == 'false') OK
+EXPECTED (internals.captionDisplayMode == 'alwayson') OK
+END OF TEST
+

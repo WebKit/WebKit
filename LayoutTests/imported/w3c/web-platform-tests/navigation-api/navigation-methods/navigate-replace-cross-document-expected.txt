@@ -1,0 +1,4 @@
+
+
+PASS navigate() with history: 'replace' option
+

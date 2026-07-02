@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<script src="/common/utils.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?useNavigationPreloadPromise=true&token=" + token();
+
+promise_test(async (test) => {
+     return setupActivatedButNotRunningServiceWorker("/WebKit/service-workers/fetch-service-worker-preload-worker.js", url, registration => {
+         return registration.navigationPreload.enable();
+     }); 
+}, "Setup activated but not running worker");
+
+promise_test(async (test) => {
+    await fetch(url + "&value=use-preload", { method: 'POST' });
+
+    const frame = await withIframe(url);
+    assert_equals(frame.contentWindow.value, "use-preload");
+}, "Service worker preloadResponse is correctly served when there is no running worker when receiving the preload response");
+</script>
+</body>
+</html>

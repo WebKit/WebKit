@@ -1,0 +1,47 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpEditingCallbacks();
+    testRunner.dumpAsText();
+}
+
+function log(message) {
+    var console = document.getElementById("console");
+    var text = document.createTextNode(message);
+    console.appendChild(text);
+}
+
+</script>
+<p>This test checks to see that Insert{Un}OrderedList can remove items from a list, can remove empty list when they are emptied, and can remove content from orphaned list items.</p>
+<div id="div" contenteditable="true">
+<ol style="border: 1px solid red;">
+    <li>foo</li>
+    <span id="item1">This should not be a list.</span>
+    <br><br>
+    bar
+    <li>baz</li>
+    <span id="item2">This should not be in a list.</span>
+    <li>foo</li>
+    <li><span id="item3">This should not be in a list.</span></li>
+    <li>bar</li>
+</ol>
+<li><span id="item4">This should not be in a list.</span></li>
+<ul><li><span id="item5">This should not be in a list.</span></li></ul>
+</div>
+<p id="console"></p>
+
+<script>
+var s = window.getSelection();
+s.setPosition(document.getElementById("item1"), 0);
+document.execCommand("InsertOrderedList", false, "");
+s.setPosition(document.getElementById("item2"), 0);
+document.execCommand("InsertOrderedList", false, "");
+s.setPosition(document.getElementById("item3"), 0);
+document.execCommand("InsertOrderedList", false, "");
+s.setPosition(document.getElementById("item4"), 0);
+document.execCommand("InsertUnorderedList", false, "");
+s.setPosition(document.getElementById("item5"), 0);
+document.execCommand("InsertUnorderedList", false, "");
+
+log(div.innerHTML);
+
+</script>

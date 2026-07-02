@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<style>
+div,content {grid-auto-flow: column;text-overflow: ellipsis;}
+div,content {border-right: 999px outset;overflow-y: hidden;}
+p {border-right: 0px}
+</style>
+<body>
+<p>
+PASS if no assert in debug.
+</p>
+<div dir="rtl">
+<content>
+</content>
+</div>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+</body>
+</html>

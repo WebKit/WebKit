@@ -1,0 +1,12 @@
+ Checks that array access in a shader can not read out of bounds
+
+PASS Top left corner should clamp to index 0
+PASS Inside top right corner should clamp to index 0
+PASS Inside bottom left corner should clamp to index 0
+PASS Bottom right corner should clamp to index 7
+PASS Outside bottom left corner should clamp to index 7
+PASS Outside top right corner should clamp to index 7
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

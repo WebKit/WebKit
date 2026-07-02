@@ -1,0 +1,67 @@
+<style>
+
+body, div {
+    background-color: green;
+    overflow: hidden;
+}
+
+div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+}
+
+.parent {
+    animation: 5s slide;
+}
+
+.cover, .cover > div {
+    left: -1px;
+    width: 102px;
+}
+
+.actual > div {
+    background-color: red;
+}
+
+.tiled {
+    width: 5000px;
+    height: 5000px;
+}
+
+@keyframes slide {
+    from { transform: translateX(0px) }
+    to { transform: translateX(100px) }
+}
+
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = async function() {
+    const element = document.body.querySelectorAll(".parent")[0];
+    const animation = element.getAnimations()[0];
+
+    await animation.ready;
+
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    // Force tiling in the middle of the animation.
+    element.classList.add("tiled");
+
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+
+<div class="parent actual"><div class="child"></div></div>
+<div class="parent cover"><div class="child"></div></div>

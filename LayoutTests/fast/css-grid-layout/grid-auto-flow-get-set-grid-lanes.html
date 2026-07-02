@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<style>
+.grid {
+    display: grid-lanes;
+}
+.rows {
+    grid-template-rows: auto;
+}
+.columns {
+    grid-template-columns: auto;
+}
+
+.gridAutoFlowColumnSparse {
+    grid-auto-flow: column;
+}
+.gridAutoFlowRowSparse {
+    grid-auto-flow: row;
+}
+.gridAutoFlowDense {
+    grid-auto-flow: dense;
+}
+.gridAutoFlowColumnDense {
+    grid-auto-flow: column dense;
+}
+.gridAutoFlowRowDense {
+    grid-auto-flow: row dense;
+}
+.gridAutoFlowDenseColumn {
+    grid-auto-flow: dense column;
+}
+.gridAutoFlowDenseRow {
+    grid-auto-flow: dense row;
+}
+.gridAutoFlowInherit {
+    grid-auto-flow: inherit;
+}
+/* Bad values. */
+.gridAutoFlowboth {
+    grid-auto-flow: both;
+}
+.gridAutoFlowRows {
+    grid-auto-flow: rows;
+}
+.gridAutoFlowColumns {
+    grid-auto-flow: columns;
+}
+.gridAutoFlowColumnFoo {
+    grid-auto-flow: column foo;
+}
+.gridAutoFlowColumnColumn {
+    grid-auto-flow: column column;
+}
+.gridAutoFlowDenseRowRow {
+    grid-auto-flow: dense row row;
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div class="grid" id="noneGridAutoFlowInitial"></div>
+    <div class="grid none gridAutoFlowColumnSparse" id="noneGridAutoFlowColumnSparse"></div>
+    <div class="grid none gridAutoFlowRowSparse" id="noneGridAutoFlowRowSparse"></div>
+    <div class="grid none gridAutoFlowDense" id="noneGridAutoFlowDense"></div>
+    <div class="grid none gridAutoFlowColumnDense" id="noneGridAutoFlowColumnDense"></div>
+    <div class="grid none gridAutoFlowRowDense" id="noneGridAutoFlowRowDense"></div>
+    <div class="grid none gridAutoFlowDenseColumn" id="noneGridAutoFlowDenseColumn"></div>
+    <div class="grid none gridAutoFlowDenseRow" id="noneGridAutoFlowDenseRow"></div>
+    <div class="grid none gridAutoFlowColumnSparse">
+        <div class="grid none gridAutoFlowInherit" id="noneGridAutoFlowInherit"></div>
+    </div>
+    <div class="grid gridAutoFlowColumnSparse">
+        <div><div class="grid none gridAutoFlowInherit" id="noneGridAutoFlowNoInherit"></div><div>
+    </div>
+
+    <div class="grid columns" id="columnsOnlyGridAutoFlowInitial"></div>
+    <div class="grid columns gridAutoFlowColumnSparse" id="columnsOnlyGridAutoFlowColumnSparse"></div>
+    <div class="grid columns gridAutoFlowRowSparse" id="columnsOnlyGridAutoFlowRowSparse"></div>
+    <div class="grid columns gridAutoFlowDense" id="columnsOnlyGridAutoFlowDense"></div>
+    <div class="grid columns gridAutoFlowColumnDense" id="columnsOnlyGridAutoFlowColumnDense"></div>
+    <div class="grid columns gridAutoFlowRowDense" id="columnsOnlyGridAutoFlowRowDense"></div>
+    <div class="grid columns gridAutoFlowDenseColumn" id="columnsOnlyGridAutoFlowDenseColumn"></div>
+    <div class="grid columns gridAutoFlowDenseRow" id="columnsOnlyGridAutoFlowDenseRow"></div>
+    <div class="grid columns gridAutoFlowColumnSparse">
+        <div class="grid columns gridAutoFlowInherit" id="columnsOnlyGridAutoFlowInherit"></div>
+    </div>
+    <div class="grid gridAutoFlowColumnSparse">
+        <div><div class="grid columns gridAutoFlowInherit" id="columnsOnlyGridAutoFlowNoInherit"></div><div>
+    </div>
+
+    <div class="grid rows" id="rowsOnlyGridAutoFlowInitial"></div>
+    <div class="grid rows gridAutoFlowColumnSparse" id="rowsOnlyGridAutoFlowColumnSparse"></div>
+    <div class="grid rows gridAutoFlowRowSparse" id="rowsOnlyGridAutoFlowRowSparse"></div>
+    <div class="grid rows gridAutoFlowDense" id="rowsOnlyGridAutoFlowDense"></div>
+    <div class="grid rows gridAutoFlowColumnDense" id="rowsOnlyGridAutoFlowColumnDense"></div>
+    <div class="grid rows gridAutoFlowRowDense" id="rowsOnlyGridAutoFlowRowDense"></div>
+    <div class="grid rows gridAutoFlowDenseColumn" id="rowsOnlyGridAutoFlowDenseColumn"></div>
+    <div class="grid rows gridAutoFlowDenseRow" id="rowsOnlyGridAutoFlowDenseRow"></div>
+    <div class="grid rows gridAutoFlowColumnSparse">
+        <div class="grid rows gridAutoFlowInherit" id="rowsOnlyGridAutoFlowInherit"></div>
+    </div>
+    <div class="grid gridAutoFlowRowSparse">
+        <div><div class="grid rows gridAutoFlowInherit" id="rowsOnlyGridAutoFlowNoInherit"></div><div>
+    </div>
+
+    <div class="grid rows columns" id="bothGridAutoFlowInitial"></div>
+    <div class="grid rows columns gridAutoFlowColumnSparse" id="bothGridAutoFlowColumnSparse"></div>
+    <div class="grid rows columns gridAutoFlowRowSparse" id="bothGridAutoFlowRowSparse"></div>
+    <div class="grid rows columns gridAutoFlowDense" id="bothGridAutoFlowDense"></div>
+    <div class="grid rows columns gridAutoFlowColumnDense" id="bothGridAutoFlowColumnDense"></div>
+    <div class="grid rows columns gridAutoFlowRowDense" id="bothGridAutoFlowRowDense"></div>
+    <div class="grid rows columns gridAutoFlowDenseColumn" id="bothGridAutoFlowDenseColumn"></div>
+    <div class="grid rows columns gridAutoFlowDenseRow" id="bothGridAutoFlowDenseRow"></div>
+    <div class="grid gridAutoFlowColumnSparse">
+        <div class="grid rows columns gridAutoFlowInherit" id="bothGridAutoFlowInherit"></div>
+    </div>
+    <div class="grid rows columns gridAutoFlowColumnSparse">
+        <div><div class="grid rows columns gridAutoFlowInherit" id="bothGridAutoFlowNoInherit"></div><div>
+    </div>
+
+<script src="resources/grid-definitions-parsing-utils.js"></script>
+<script>
+    description('Test that setting and getting grid-auto-flow works as expected on grid-lanes containers');
+
+    debug("Test getting grid-auto-flow set through CSS when grid-templates-* is none.");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowInitial", "row");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowColumnSparse", "column");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowRowSparse", "row");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowDense", "dense");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowColumnDense", "column dense");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowRowDense", "dense");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowDenseColumn", "column dense");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowDenseRow", "dense");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowInherit", "column");
+    checkGridAutoFlowSetCSSValue("noneGridAutoFlowNoInherit", "row");
+
+    debug("Test getting grid-auto-flow set through CSS when only grid-template-columns is set.");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowInitial", "row");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowColumnSparse", "column");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowRowSparse", "row");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowDense", "dense");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowColumnDense", "column dense");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowRowDense", "dense");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowDenseColumn", "column dense");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowDenseRow", "dense");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowInherit", "column");
+    checkGridAutoFlowSetCSSValue("columnsOnlyGridAutoFlowNoInherit", "row");
+
+    debug("Test getting grid-auto-flow set through CSS when only grid-template-rows is set.");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowInitial", "column");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowColumnSparse", "column");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowRowSparse", "row");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowDense", "column dense");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowColumnDense", "column dense");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowRowDense", "row dense");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowDenseColumn", "column dense");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowDenseRow", "row dense");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowInherit", "column");
+    checkGridAutoFlowSetCSSValue("rowsOnlyGridAutoFlowNoInherit", "column");
+
+    debug("Test getting grid-auto-flow set through CSS when both grid-template-rows and grid-template-columns are set.");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowInitial", "row");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowColumnSparse", "column");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowRowSparse", "row");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowDense", "dense");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowColumnDense", "column dense");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowRowDense", "dense");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowDenseColumn", "column dense");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowDenseRow", "dense");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowInherit", "column");
+    checkGridAutoFlowSetCSSValue("bothGridAutoFlowNoInherit", "row");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

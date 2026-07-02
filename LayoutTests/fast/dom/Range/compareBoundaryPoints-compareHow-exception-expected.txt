@@ -1,0 +1,18 @@
+Checks that Range.compareBoundaryPoints() throw if the compareHow parameter is invalid
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range.compareBoundaryPoints(Range.START_TO_START, sourceRange) is -1
+PASS range.compareBoundaryPoints(Range.START_TO_END, sourceRange) is -1
+PASS range.compareBoundaryPoints(Range.END_TO_END, sourceRange) is -1
+PASS range.compareBoundaryPoints(Range.END_TO_START, sourceRange) is -1
+PASS range.compareBoundaryPoints(65536, sourceRange) is -1
+PASS range.compareBoundaryPoints(-1, sourceRange) threw exception NotSupportedError: The operation is not supported..
+PASS range.compareBoundaryPoints(4, sourceRange) threw exception NotSupportedError: The operation is not supported..
+PASS range.compareBoundaryPoints(100, sourceRange) threw exception NotSupportedError: The operation is not supported..
+PASS range.compareBoundaryPoints(65535, sourceRange) threw exception NotSupportedError: The operation is not supported..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

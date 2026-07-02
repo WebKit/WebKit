@@ -1,0 +1,13 @@
+Tests that we can quickly sort a small sparse array that has a large length.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+array[0] = 42
+PASS result is "42"
+PASS array.length is 10000001
+PASS array[0] is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,22 @@
+#include "Base-libvpx.xcconfig"
+
+PRODUCT_NAME = vpx;
+SKIP_INSTALL = YES;
+
+INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH);
+PUBLIC_HEADERS_FOLDER_PATH = $(INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/libwebrtc;
+
+ARM_FILES = *_neon.c arm_cpudetect.c *_arm.c *_neon.c *_neon_dotprod.c *_neon_asm.asm *_neon.asm
+X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx2.cc *_avx.c *.asm
+
+EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(ARM_FILES) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_IS_CATALYST))
+EXCLUDED_SOURCE_FILE_NAMES_YES = *_sse4.c *_avx.c
+EXCLUDED_SOURCE_FILE_NAMES[arch=arm64*] = $(X86_FILES) *_mmx.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator*][arch=x86_64] = $(ARM_FILES) $(X86_FILES)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=xros*] = $(X86_FILES) *_mmx.c *_neon_dotprod.c
+
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);

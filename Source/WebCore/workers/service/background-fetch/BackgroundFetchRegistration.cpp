@@ -1,0 +1,258 @@
+/*
+ * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "BackgroundFetchRegistration.h"
+
+#include "BackgroundFetchManager.h"
+#include "BackgroundFetchRecordInformation.h"
+#include "CacheQueryOptions.h"
+#include "ContextDestructionObserverInlines.h"
+#include "EventNames.h"
+#include "FetchRequest.h"
+#include "FetchResponse.h"
+#include "FetchResponseBodyLoader.h"
+#include "JSBackgroundFetchRecord.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
+#include "Node.h"
+#include "RetrieveRecordsOptions.h"
+#include "SWClientConnection.h"
+#include "ServiceWorkerContainer.h"
+#include "ServiceWorkerRegistrationBackgroundFetchAPI.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchRegistration);
+
+void BackgroundFetchRegistration::updateIfExisting(ScriptExecutionContext& context, const BackgroundFetchInformation& information)
+{
+    RefPtr container = context.serviceWorkerContainer();
+    RefPtr registration = container ? container->registration(information.registrationIdentifier) : nullptr;
+    RefPtr manager = registration ? ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetchIfCreated(*registration) : nullptr;
+    if (auto backgroundFetchRegistration = manager ? manager->existingBackgroundFetchRegistration(information.identifier) : nullptr)
+        backgroundFetchRegistration->updateInformation(information);
+}
+
+Ref<BackgroundFetchRegistration> BackgroundFetchRegistration::create(ScriptExecutionContext& context, BackgroundFetchInformation&& information)
+{
+    auto registration = adoptRef(*new BackgroundFetchRegistration(context, WTF::move(information)));
+    registration->suspendIfNeeded();
+    return registration;
+}
+
+BackgroundFetchRegistration::BackgroundFetchRegistration(ScriptExecutionContext& context, BackgroundFetchInformation&& information)
+    : ActiveDOMObject(&context)
+    , m_information(WTF::move(information))
+{
+}
+
+BackgroundFetchRegistration::~BackgroundFetchRegistration() = default;
+
+void BackgroundFetchRegistration::abort(ScriptExecutionContext& context, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    SWClientConnection::fromScriptExecutionContext(context)->abortBackgroundFetch(registrationIdentifier(), id(), [promise = WTF::move(promise)](auto&& result) mutable {
+        promise.resolve(result);
+    });
+}
+
+static ExceptionOr<ResourceRequest> requestFromInfo(ScriptExecutionContext& context, std::optional<BackgroundFetchRegistration::RequestInfo>&& info)
+{
+    if (!info)
+        return ResourceRequest { };
+
+    ResourceRequest resourceRequest;
+    ExceptionOr<Ref<FetchRequest>> requestOrException = FetchRequest::create(context, WTF::move(*info), { });
+    if (requestOrException.hasException())
+        return requestOrException.releaseException();
+
+    Ref<FetchRequest> request = requestOrException.releaseReturnValue();
+    return request->resourceRequest();
+}
+
+class BackgroundFetchResponseBodyLoader final : public FetchResponseBodyLoader, public CanMakeWeakPtr<BackgroundFetchResponseBodyLoader>, public CanMakeCheckedPtr<BackgroundFetchResponseBodyLoader> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(BackgroundFetchResponseBodyLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BackgroundFetchResponseBodyLoader);
+public:
+    BackgroundFetchResponseBodyLoader(ScriptExecutionContext& context, FetchResponse& response, BackgroundFetchRecordIdentifier recordIdentifier)
+        : FetchResponseBodyLoader(response)
+        , m_connection(SWClientConnection::fromScriptExecutionContext(context))
+        , m_recordIdentifier(recordIdentifier)
+    {
+    }
+
+private:
+    void start() final
+    {
+        m_connection->retrieveRecordResponseBody(m_recordIdentifier, [weakThis = WeakPtr { *this }](auto&& result) {
+            CheckedPtr checkedThis = weakThis.get();
+            if (!checkedThis || !checkedThis->m_response)
+                return;
+
+            Ref protectedResponse = *checkedThis->m_response;
+
+            if (!result.has_value()) {
+                checkedThis->m_response = nullptr;
+                protectedResponse->receivedError(WTF::move(result.error()));
+                return;
+            }
+
+            auto buffer = WTF::move(result.value());
+            if (!buffer) {
+                checkedThis->m_response = nullptr;
+                protectedResponse->didSucceed({ });
+                return;
+            }
+
+            protectedResponse->receivedData(buffer.releaseNonNull());
+        });
+    }
+
+    void stop() final
+    {
+        m_response = nullptr;
+    }
+
+    const Ref<SWClientConnection> m_connection;
+    BackgroundFetchRecordIdentifier m_recordIdentifier;
+};
+
+static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information)
+{
+    auto recordIdentifier = information.identifier;
+    auto record = BackgroundFetchRecord::create(context, WTF::move(information));
+    SWClientConnection::fromScriptExecutionContext(context)->retrieveRecordResponse(recordIdentifier, [weakContext = WeakPtr { context }, record, recordIdentifier](auto&& result) {
+        RefPtr context = weakContext.get();
+        if (!context)
+            return;
+
+        if (result.hasException()) {
+            record->settleResponseReadyPromise(result.releaseException());
+            return;
+        }
+
+        auto response = FetchResponse::create(context.get(), { }, FetchHeaders::Guard::Immutable, { });
+        response->setReceivedInternalResponse(result.releaseReturnValue(), FetchOptions::Credentials::Omit);
+        response->setBodyLoader(makeUniqueRef<BackgroundFetchResponseBodyLoader>(*context, response.get(), recordIdentifier));
+        record->settleResponseReadyPromise(WTF::move(response));
+    });
+    return record;
+}
+
+void BackgroundFetchRegistration::match(ScriptExecutionContext& context, RequestInfo&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLInterface<BackgroundFetchRecord>>&& promise)
+{
+    if (!recordsAvailable()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_s });
+        return;
+    }
+
+    auto requestOrException = requestFromInfo(context, WTF::move(info));
+    if (requestOrException.hasException()) {
+        promise.reject(requestOrException.releaseException());
+        return;
+    }
+
+    bool shouldRetrieveResponses = false;
+    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
+
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](Vector<BackgroundFetchRecordInformation>&& results) mutable {
+        if (!weakContext)
+            return;
+
+        if (!results.size()) {
+            promise.reject(Exception { ExceptionCode::TypeError, "No matching record"_s });
+            return;
+        }
+
+        promise.resolve(createRecord(*weakContext, WTF::move(results[0])));
+    });
+}
+
+void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std::optional<RequestInfo>&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLSequence<IDLInterface<BackgroundFetchRecord>>>&& promise)
+{
+    if (!recordsAvailable()) {
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_s });
+        return;
+    }
+
+    auto requestOrException = requestFromInfo(context, WTF::move(info));
+    if (requestOrException.hasException()) {
+        promise.reject(requestOrException.releaseException());
+        return;
+    }
+
+    bool shouldRetrieveResponses = false;
+    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
+
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](auto&& results) mutable {
+        if (!weakContext)
+            return;
+
+        auto records = WTF::map(results, [&weakContext](auto& result) {
+            return createRecord(*weakContext, WTF::move(result));
+        });
+
+        promise.resolve(WTF::move(records));
+    });
+}
+
+void BackgroundFetchRegistration::updateInformation(const BackgroundFetchInformation& information)
+{
+    ASSERT(m_information.registrationIdentifier == information.registrationIdentifier);
+    ASSERT(m_information.identifier == information.identifier);
+    ASSERT(m_information.recordsAvailable);
+
+    if (m_information.downloaded == information.downloaded && m_information.uploaded == information.uploaded && m_information.result == information.result && m_information.failureReason == information.failureReason)
+        return;
+    
+    m_information.uploadTotal = information.uploadTotal;
+    m_information.uploaded = information.uploaded;
+    m_information.downloadTotal = information.downloadTotal;
+    m_information.downloaded = information.downloaded;
+    m_information.result = information.result;
+    m_information.failureReason = information.failureReason;
+    m_information.recordsAvailable = information.recordsAvailable;
+
+    // FIXME: We should update m_information as part of the task that fires the event.
+    queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventNames().progressEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+ScriptExecutionContext* BackgroundFetchRegistration::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+void BackgroundFetchRegistration::stop()
+{
+}
+
+bool BackgroundFetchRegistration::virtualHasPendingActivity() const
+{
+    return m_information.recordsAvailable;
+}
+
+} // namespace WebCore

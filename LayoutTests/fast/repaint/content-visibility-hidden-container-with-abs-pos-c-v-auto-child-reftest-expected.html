@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't leave bits behind, when an absolute positioned content-visibility: auto child is hidden due to content-visibility: hidden.</title>
+<style>
+#container {
+    height: 100px;
+    width: 100px;
+    content-visibility: hidden;
+}
+
+#content {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    background: green;
+    content-visibility: auto;
+}
+</style>
+</head>
+<body>
+<div id=container>
+    <div id=content></div>
+</div>
+</body>
+</html>

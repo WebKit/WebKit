@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div id="content">
+    <div id="img" role="img">This div should have a role of image.</div>
+    <div id="image" role="image">This div should also have a role of image.</div>
+</div>
+<script>
+    description("This test ensures that role=\"image\" and role=\"img\" are synonyms.");
+    if (window.accessibilityController) {
+        var img = accessibilityController.accessibleElementById("img");
+        var image = accessibilityController.accessibleElementById("image");
+        shouldBe("img.role", "'AXRole: AXImage'");
+        shouldBe("image.role", "'AXRole: AXImage'");
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

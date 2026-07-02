@@ -1,0 +1,14 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Datagrams are echoed successfully Test timed out
+NOTRUN Successfully reading datagrams with BYOB reader.
+NOTRUN Reading datagrams with insufficient buffer should be rejected.
+NOTRUN Transfer max-size datagram
+NOTRUN Fail to transfer max-size+1 datagram
+NOTRUN Sending and receiving datagrams is ready to use before session is established
+NOTRUN Datagram's outgoingHighWaterMark correctly regulates written datagrams
+NOTRUN Datagrams read is less than or equal to the incomingHighWaterMark
+NOTRUN Datagram MaxAge getters/setters work correctly
+NOTRUN Datagram HighWaterMark getters/setters work correctly
+

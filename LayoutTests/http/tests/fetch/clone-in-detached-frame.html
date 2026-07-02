@@ -1,0 +1,24 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/js-test-resources/gc.js"></script>
+<script>
+  function with_iframe() {
+      return new Promise((resolve) => {
+          const frame = document.createElement("iframe");
+          frame.src = "about:blank";
+          frame.onload = () => resolve(frame);
+          document.documentElement.appendChild(frame);
+      });
+  }
+
+  promise_test(async (t) => {
+      let frame = await with_iframe();
+      const response = await frame.contentWindow.fetch("/resources/test.mp4");
+      response.clone();
+      frame.remove();
+      frame = null;
+      gc();
+      response.clone();
+  }, "Cloning response in a detached iframe should not crash");
+</script>

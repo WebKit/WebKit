@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.contextWebGL = document.body.appendChild(document.createElement("canvas")).getContext("webgl");
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContextWebGL");
+
+    suite.addTestCase({
+        name: `Canvas.resolveContextWebGL.validIdentifier`,
+        description: "Should return a valid object for the given canvas identifier.",
+        test(resolve, reject) {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            if (!canvas) {
+                reject(`Missing Canvas.`);
+                return;
+            }
+
+            const objectGroup = "test";
+            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            .then(({object}) => {
+                InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+                InspectorTest.expectEqual(object.className, "WebGLRenderingContext", `Payload should have className "WebGLRenderingContext".`);
+            })
+            .then(resolve, reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for the Canvas.resolveContext command for WebGL contexts.</p>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Setting stage mode persists after changing source on the same model element
+PASS Checking <model> stage mode value after updating
+

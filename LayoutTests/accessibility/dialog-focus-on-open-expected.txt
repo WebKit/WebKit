@@ -1,0 +1,12 @@
+This test verifies that when a dialog opens and a heading inside it is programmatically focused, the focused element reported to assistive technologies is the heading.
+
+PASS: window.focusedAtNotificationTime === 'heading'
+PASS: accessibilityController.focusedElement.domIdentifier === 'heading'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show dialog
+Create
+
+Cancel  Create

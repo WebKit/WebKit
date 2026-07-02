@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="color-scheme" content="light dark">
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .scroller {
+            width: 400px;
+            height: 450px;
+            border: 2px solid black;
+            overflow: scroll;
+        }
+
+        .contents {
+            height: 300%;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        if (window.internals) {
+            internals.settings.setUseDarkAppearance(true);
+            internals.setUsesOverlayScrollbars(true);
+        }
+
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            let scroller = document.querySelector('.scroller');
+
+            // Trigger scrollbar display.
+            scroller.scrollTop = 10;
+            // Ensure scrollbar is drawn once.
+            await UIHelper.ensureStablePresentationUpdate();
+
+            internals.settings.setUseDarkAppearance(false);
+            // Trigger scrollbar display.
+            scroller.scrollTop = 20;
+
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+        </div>
+    </div>
+</body>
+</html>

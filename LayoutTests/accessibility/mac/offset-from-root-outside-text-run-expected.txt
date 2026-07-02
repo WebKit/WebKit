@@ -1,0 +1,9 @@
+This test ensures we can get the index of a text marker that points to an object with no runs/text.
+
+PASS: pObject.indexForTextMarker(endMarker) === 11
+PASS: inputObject.indexForTextMarker(inputStart) === 11
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world

@@ -1,0 +1,106 @@
+{
+  "name": "webkit",
+  "dependencies": [
+    "icu"
+  ],
+  "features": {
+    "avif": {
+      "description": "Build with AVIF image support",
+      "dependencies": [
+        {
+          "name": "libavif",
+          "features": [
+            "aom"
+          ]
+        }
+      ]
+    },
+    "cairo": {
+      "description": "Build with cairo graphics backend",
+      "dependencies": [
+        "cairo"
+      ]
+    },
+    "jpeg-xl": {
+      "description": "Build with JPEG XL image support",
+      "dependencies": [
+        "libjxl"
+      ]
+    },
+    "lcms": {
+      "description": "Build with Little-CMS support",
+      "dependencies": [
+        "lcms"
+      ]
+    },
+    "skia": {
+      "description": "Build with skia graphics backend",
+      "dependencies": [
+        {
+          "name": "harfbuzz",
+          "default-features": false,
+          "features": [
+            "directwrite",
+            "icu"
+          ]
+        }
+      ]
+    },
+    "web": {
+      "description": "Build the web browser",
+      "dependencies": [
+        "brotli",
+        {
+          "name": "curl",
+          "features": [
+            "http3",
+            "ipv6",
+            "libressl"
+          ]
+        },
+        "libjpeg-turbo",
+        "libpng",
+        "libpsl",
+        "libressl",
+        "libwebp",
+        {
+          "name": "libxml2",
+          "default-features": false,
+          "features": [
+            "icu"
+          ]
+        },
+        "libxslt",
+        "nghttp2",
+        "nghttp3",
+        {
+          "name": "ngtcp2",
+          "features": [
+            "openssl"
+          ]
+        },
+        {
+          "name": "sqlite3",
+          "features": [
+            "fts3",
+            "json1",
+            "rtree"
+          ]
+        },
+        "zlib"
+      ]
+    },
+    "woff2": {
+      "description": "Build with WOFF2 file support",
+      "dependencies": [
+        "woff2"
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "name": "ngtcp2",
+      "version": "1.12.0"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<p>This tests for an ASSERTion failure when setting the main frame's selection inside a node in a subframe.</p>
+<iframe src="data:text/html, <body contenteditable='true'>hello world</div>"></iframe>
+<script>
+window.onload = function() {
+    var body = frames[0].document.body;
+    frames[0].focus();
+    frames[0].getSelection().setBaseAndExtent(body, 0, body, body.childNodes.length);
+}
+</script>

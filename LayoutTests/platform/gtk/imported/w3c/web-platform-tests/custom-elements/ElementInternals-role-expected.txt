@@ -1,0 +1,70 @@
+
+PASS Applies "alert" via Element Internals
+PASS Applies "alertdialog" via Element Internals
+PASS Applies "application" via Element Internals
+PASS Applies "article" via Element Internals
+PASS Applies "banner" via Element Internals
+PASS Applies "button" via Element Internals
+PASS Applies "cell" via Element Internals
+PASS Applies "checkbox" via Element Internals
+PASS Applies "combobox" via Element Internals
+PASS Applies "complementary" via Element Internals
+PASS Applies "contentinfo" via Element Internals
+PASS Applies "definition" via Element Internals
+PASS Applies "dialog" via Element Internals
+PASS Applies "directory" via Element Internals
+PASS Applies "document" via Element Internals
+PASS Applies "figure" via Element Internals
+PASS Applies "form" via Element Internals
+PASS Applies "grid" via Element Internals
+PASS Applies "group" via Element Internals
+PASS Applies "heading" via Element Internals
+PASS Applies "img" via Element Internals
+PASS Applies "feed" via Element Internals
+PASS Applies "link" via Element Internals
+PASS Applies "list" via Element Internals
+PASS Applies "listbox" via Element Internals
+PASS Applies "log" via Element Internals
+PASS Applies "main" via Element Internals
+PASS Applies "marquee" via Element Internals
+PASS Applies "math" via Element Internals
+PASS Applies "menu" via Element Internals
+PASS Applies "menubar" via Element Internals
+PASS Applies "meter" via Element Internals
+PASS Applies "navigation" via Element Internals
+PASS Applies "note" via Element Internals
+PASS Applies "progressbar" via Element Internals
+PASS Applies "radio" via Element Internals
+PASS Applies "radiogroup" via Element Internals
+PASS Applies "region" via Element Internals
+PASS Applies "scrollbar" via Element Internals
+PASS Applies "search" via Element Internals
+PASS Applies "searchbox" via Element Internals
+PASS Applies "separator" via Element Internals
+PASS Applies "slider" via Element Internals
+PASS Applies "spinbutton" via Element Internals
+PASS Applies "status" via Element Internals
+PASS Applies "switch" via Element Internals
+PASS Applies "table" via Element Internals
+PASS Applies "tablist" via Element Internals
+PASS Applies "tabpanel" via Element Internals
+PASS Applies "term" via Element Internals
+PASS Applies "textbox" via Element Internals
+PASS Applies "timer" via Element Internals
+PASS Applies "toolbar" via Element Internals
+PASS Applies "tooltip" via Element Internals
+PASS Applies "tree" via Element Internals
+PASS Applies "treegrid" via Element Internals
+PASS Applies parent/child relationship of "table"/"row"/"columnheader" via Element Internals
+PASS Applies parent/child relationship of "grid"/"row"/"gridcell" via Element Internals
+PASS Applies parent/child relationship of "list"/"listitem" via Element Internals
+PASS Applies parent/child relationship of "menu"/"menuitem" via Element Internals
+PASS Applies parent/child relationship of "menu"/"menuitemcheckbox" via Element Internals
+PASS Applies parent/child relationship of "menu"/"menuitemradio" via Element Internals
+PASS Applies parent/child relationship of "listbox"/"option" via Element Internals
+PASS Applies parent/child relationship of "table"/"row" via Element Internals
+PASS Applies parent/child relationship of "table"/"rowgroup" via Element Internals
+PASS Applies parent/child relationship of "table"/"row"/"rowheader" via Element Internals
+PASS Applies parent/child relationship of "tablist"/"tab" via Element Internals
+FAIL Applies parent/child relationship of "tree"/"treeitem" via Element Internals assert_equals: [object HTMLElement] expected "tree" but got "generic"
+

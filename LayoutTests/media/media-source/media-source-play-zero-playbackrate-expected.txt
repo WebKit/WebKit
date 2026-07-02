@@ -1,0 +1,39 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+
+Append all media segments
+
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+RUN(video.pause())
+EXPECTED (video.paused == 'true') OK
+RUN(video.playbackRate = 0)
+EXPECTED (video.playbackRate == '0') OK
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.currentTime == oldPosition == 'true') OK
+
+RUN(video.playbackRate = 1)
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.currentTime > oldPosition == 'true') OK
+RUN(video.playbackRate = 0)
+EXPECTED (video.playbackRate == '0') OK
+RUN(video.pause())
+EXPECTED (video.currentTime == oldPosition == 'true') OK
+RUN(video.playbackRate = 1)
+EXPECTED (video.playbackRate == '1') OK
+RUN(video.play())
+EXPECTED (video.currentTime > oldPosition == 'true') OK
+
+RUN(video.currentTime = 5)
+EXPECTED (video.currentTime >= '5') OK
+RUN(video.playbackRate = 0)
+EXPECTED (video.playbackRate == '0') OK
+EXPECTED (video.currentTime == oldPosition == 'true') OK
+END OF TEST
+

@@ -1,0 +1,66 @@
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (bounds 240.00 240.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 240.00 240.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=10 height=10)
+                  (position 10.00 10.00)
+                  (anchor -0.05 -0.05)
+                  (bounds 220.00 220.00)
+                  (drawsContent 1)
+                  (children 6
+                    (GraphicsLayer
+                      (anchor -0.10 -0.10)
+                      (bounds 100.00 100.00)
+                      (drawsContent 1)
+                    )
+                    (GraphicsLayer
+                      (position 20.00 20.00)
+                      (anchor -0.75 -0.75)
+                      (bounds 40.00 40.00)
+                      (drawsContent 1)
+                    )
+                    (GraphicsLayer
+                      (offsetFromRenderer width=10 height=10)
+                      (bounds 220.00 220.00)
+                      (drawsContent 1)
+                    )
+                    (GraphicsLayer
+                      (position 60.00 60.00)
+                      (anchor -1.75 -1.75)
+                      (bounds 40.00 40.00)
+                      (drawsContent 1)
+                    )
+                    (GraphicsLayer
+                      (offsetFromRenderer width=10 height=10)
+                      (bounds 220.00 220.00)
+                      (drawsContent 1)
+                    )
+                    (GraphicsLayer
+                      (position 120.00 120.00)
+                      (anchor -1.30 -1.30)
+                      (bounds 100.00 100.00)
+                      (drawsContent 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

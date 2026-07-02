@@ -1,0 +1,9 @@
+This tests that test convenience methods behave correctly.
+
+PASS: isFocusedConvenience === isFocusedConvenience
+PASS: isFocusedConvenience === isFocusedAttribute
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

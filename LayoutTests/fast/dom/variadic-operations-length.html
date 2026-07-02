@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the value of the 'length' property is correct for variadic operations.");
+
+// void before((Node or DOMString)... nodes);
+shouldBe("document.body.before.length", "0");
+
+// void after((Node or DOMString)... nodes);
+shouldBe("document.body.after.length", "0");
+
+// void replaceWith((Node or DOMString)... nodes);
+shouldBe("document.body.replaceWith.length", "0");
+
+//void prepend((Node or DOMString)... nodes);
+shouldBe("document.body.prepend.length", "0");
+
+// void append((Node or DOMString)... nodes);
+shouldBe("document.body.append.length", "0");
+
+// void add(DOMString... tokens);
+shouldBe("document.body.classList.add.length", "0");
+
+// void remove(DOMString... tokens);
+shouldBe("document.body.classList.remove.length", "0");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

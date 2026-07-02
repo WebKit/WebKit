@@ -1,0 +1,5 @@
+Source expressions are discarded with `strict-dynamic` in the script-src directive.
+
+
+PASS Allowed scripts without a correct nonce are not permitted with `strict-dynamic`.
+

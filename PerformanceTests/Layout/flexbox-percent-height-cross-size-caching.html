@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<script src="../resources/runner.js"></script>
+<div style="display: flex;">
+  <div style="display: flex; flex-direction: column; height: 100%; visibility: hidden" id="column"></div>
+  <div id="second"></div>
+</div>
+<script>
+for (var i = 0; i < 5000; i++)
+    document.querySelector("#column").innerHTML += "<div>a</div>";
+document.body.offsetHeight;
+
+var index = 0;
+
+PerfTestRunner.measureRunsPerSecond({run: function() {
+  document.querySelector("#second").style.width = ++index % 2 ? "1px" : "2px";
+  document.body.offsetHeight;
+}, done: function() {
+  document.querySelector("#column").style.display = "none";
+}});
+</script>
+</html>
+

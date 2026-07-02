@@ -1,0 +1,13 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Dynamically change the channel count to if unspecified."
+PASS Executing "Givien outputChannelCount must be honored."
+PASS Audit report
+PASS > [Dynamically change the channel count to if unspecified.]
+PASS   The expected output channel count is equal to 17.
+PASS < [Dynamically change the channel count to if unspecified.] All assertions passed. (total 1 assertions)
+PASS > [Givien outputChannelCount must be honored.]
+PASS   The expected output channel count is equal to 2.
+PASS < [Givien outputChannelCount must be honored.] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

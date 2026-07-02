@@ -1,0 +1,195 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer.
+ * 2. Redistributions in binary form must reproduce the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CSSTranslate.h"
+
+#include "CSSFunctionValue.h"
+#include "CSSNumericFactory.h"
+#include "CSSNumericValue.h"
+#include "CSSStyleValueFactory.h"
+#include "CSSUnitValue.h"
+#include "CSSUnits.h"
+#include "DOMMatrix.h"
+#include "ExceptionOr.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTranslate);
+
+ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, RefPtr<CSSNumericValue> z)
+{
+    auto is2D = z ? CSSTransformComponent::Is2D::No : CSSTransformComponent::Is2D::Yes;
+    if (!z)
+        z = CSSUnitValue::create(0.0, CSSUnitType::CSS_PX);
+
+    if (!x->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
+        || !y->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
+        || !z->type().matches<CSSNumericBaseType::Length>())
+        return Exception { ExceptionCode::TypeError };
+
+    return adoptRef(*new CSSTranslate(is2D, WTF::move(x), WTF::move(y), z.releaseNonNull()));
+}
+
+ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<const CSSFunctionValue> cssFunctionValue, Document& document)
+{
+    auto makeTranslate = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSTranslate>>(Vector<Ref<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSTranslate>> {
+        Vector<Ref<CSSNumericValue>> components;
+        for (Ref componentCSSValue : cssFunctionValue.get()) {
+            auto valueOrException = CSSNumericValue::reifyValue(document, componentCSSValue.get());
+            if (valueOrException.hasException())
+                return valueOrException.releaseException();
+            components.append(valueOrException.releaseReturnValue());
+        }
+        if (!maxNumberOfComponents)
+            maxNumberOfComponents = minNumberOfComponents;
+        auto numberOfComponents = components.size();
+        if (numberOfComponents < minNumberOfComponents || numberOfComponents > maxNumberOfComponents) {
+            ASSERT_NOT_REACHED();
+            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
+        }
+        return create(WTF::move(components));
+    };
+
+    switch (cssFunctionValue->name()) {
+    case CSSValueTranslateX:
+        return makeTranslate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSTranslate::create(components[0], CSSNumericFactory::px(0), nullptr);
+        }, 1);
+    case CSSValueTranslateY:
+        return makeTranslate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSTranslate::create(CSSNumericFactory::px(0), components[0], nullptr);
+        }, 1);
+    case CSSValueTranslateZ:
+        return makeTranslate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSTranslate::create(CSSNumericFactory::px(0), CSSNumericFactory::px(0), components[0].ptr());
+        }, 1);
+    case CSSValueTranslate:
+        return makeTranslate([](Vector<Ref<CSSNumericValue>>&& components) {
+            if (components.size() == 2)
+                return CSSTranslate::create(components[0], components[1], nullptr);
+            return CSSTranslate::create(components[0], CSSNumericFactory::px(0), nullptr);
+        }, 1, 2);
+    case CSSValueTranslate3d:
+        return makeTranslate([](Vector<Ref<CSSNumericValue>>&& components) {
+            return CSSTranslate::create(components[0], components[1], components[2].ptr());
+        }, 3);
+    default:
+        ASSERT_NOT_REACHED();
+        return CSSTranslate::create(CSSNumericFactory::px(0), CSSNumericFactory::px(0), nullptr);
+    }
+}
+
+CSSTranslate::CSSTranslate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue>&& x, Ref<CSSNumericValue>&& y, Ref<CSSNumericValue>&& z)
+    : CSSTransformComponent(is2D)
+    , m_x(WTF::move(x))
+    , m_y(WTF::move(y))
+    , m_z(WTF::move(z))
+{
+}
+
+void CSSTranslate::serialize(StringBuilder& builder) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-csstranslate
+    builder.append(is2D() ? "translate("_s : "translate3d("_s);
+    protect(m_x)->serialize(builder);
+    builder.append(", "_s);
+    protect(m_y)->serialize(builder);
+    if (!is2D()) {
+        builder.append(", "_s);
+        protect(m_z)->serialize(builder);
+    }
+    builder.append(')');
+}
+
+ExceptionOr<void> CSSTranslate::setZ(Ref<CSSNumericValue> z)
+{
+    if (!z->type().matches<CSSNumericBaseType::Length>())
+        return Exception { ExceptionCode::TypeError };
+
+    m_z = WTF::move(z);
+    return { };
+}
+
+ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformcomponent-tomatrix
+    // As the entries of such a matrix are defined relative to the px unit, if any <length>s
+    // in this involved in generating the matrix are not compatible units with px (such as
+    // relative lengths or percentages), throw a TypeError.
+    RefPtr xUnitValue = dynamicDowncast<CSSUnitValue>(m_x);
+    RefPtr yUnitValue = dynamicDowncast<CSSUnitValue>(m_y);
+    RefPtr zUnitValue = dynamicDowncast<CSSUnitValue>(m_z);
+    if (!xUnitValue || !yUnitValue || !zUnitValue)
+        return Exception { ExceptionCode::TypeError };
+
+    auto xPx = xUnitValue->convertTo(CSSUnitType::CSS_PX);
+    auto yPx = yUnitValue->convertTo(CSSUnitType::CSS_PX);
+    auto zPx = zUnitValue->convertTo(CSSUnitType::CSS_PX);
+
+    if (!xPx || !yPx || !zPx)
+        return Exception { ExceptionCode::TypeError };
+
+    auto x = xPx->value();
+    auto y = yPx->value();
+    auto z = zPx->value();
+
+    TransformationMatrix matrix { };
+
+    if (is2D())
+        matrix.translate(x, y);
+    else
+        matrix.translate3d(x, y, z);
+
+    return { DOMMatrix::create(WTF::move(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
+}
+
+RefPtr<CSSValue> CSSTranslate::toCSSValue() const
+{
+    RefPtr x = protect(m_x)->toCSSValue();
+    if (!x)
+        return nullptr;
+
+    RefPtr y = protect(m_y)->toCSSValue();
+    if (!y)
+        return nullptr;
+
+    if (is2D())
+        return CSSFunctionValue::create(CSSValueTranslate, x.releaseNonNull(), y.releaseNonNull());
+
+    RefPtr z = protect(m_z)->toCSSValue();
+    if (!z)
+        return nullptr;
+
+    return CSSFunctionValue::create(CSSValueTranslate3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
+}
+
+} // namespace WebCore

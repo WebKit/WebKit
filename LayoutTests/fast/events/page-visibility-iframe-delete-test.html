@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("This test checks that the page visibility event propagation does not crash the browser when frames are added / deleted.");
+jsTestIsAsync = true;
+
+let visibilityChangeEventCount = 0;
+
+onload = function() {
+    debug("Loaded all frames.");
+
+    frame1 = document.getElementById("topFrame1");
+    frame2 = document.getElementById("topFrame2");
+    frame3 = document.getElementById("topFrame3");
+    frame4 = document.getElementById("topFrame4");
+    subFrame1 = frame3.contentDocument.getElementById("subIframe1");
+    subFrame2 = frame3.contentDocument.getElementById("subIframe2");
+
+    document.addEventListener("visibilitychange", onMainPageVisibilityChange);
+    frame2.contentDocument.addEventListener("visibilitychange", onFrame2VisibilityChange);
+
+    // Change the visibility of the current page to invisible.
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
+}
+
+function onMainPageVisibilityChange()
+{
+    ++visibilityChangeEventCount;
+    debug("Received visibilitychange event");
+
+    // Delete frame 4.
+    frame4.remove();
+
+        // Delete subframe 2.
+    frame3.contentDocument.body.removeChild(subFrame2);
+
+    // Add a new frame to top level.
+    frame5 = document.createElement("iframe");
+    document.body.appendChild(frame5);
+
+    // Add a new frame to frame2.
+    subFrame3 = frame2.contentDocument.createElement("iframe");
+    frame2.contentDocument.body.appendChild(subFrame3);
+
+    if (visibilityChangeEventCount == 2)
+        finishJSTest();
+}
+
+function onFrame2VisibilityChange()
+{
+    ++visibilityChangeEventCount;
+    debug("Received visibilitychange event");
+
+    // Delete frame 1.
+    frame1.remove();
+
+    if (visibilityChangeEventCount == 2)
+        finishJSTest();
+}
+
+</script>
+<iframe id="topFrame1"></iframe>
+<iframe id="topFrame2"></iframe>
+<iframe id="topFrame3" src="resources/page-visibility-iframe-delete-test-frame.html"></iframe>
+<iframe id="topFrame4"></iframe>
+</body>
+</html>

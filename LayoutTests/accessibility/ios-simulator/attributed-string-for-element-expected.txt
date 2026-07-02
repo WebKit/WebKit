@@ -1,0 +1,29 @@
+hello world test bold
+This test ensures that attributed string under the element works
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Attributed string: hello {
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman";
+    UIAccessibilityTokenFontSize = 16;
+}world{
+    UIAccessibilityTokenBold = 1;
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman Bold";
+    UIAccessibilityTokenFontSize = 16;
+} test {
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman";
+    UIAccessibilityTokenFontSize = 16;
+}bold{
+    UIAccessibilityTokenBold = 1;
+    UIAccessibilityTokenFontFamily = "Times New Roman";
+    UIAccessibilityTokenFontName = "Times New Roman Bold";
+    UIAccessibilityTokenFontSize = 16;
+}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

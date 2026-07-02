@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Event Timing only times certain types of trusted event.
+

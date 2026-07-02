@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <canvas id="canvas"></canvas>
+    <p>This test passes if it does not crash</p>
+
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        context.filter = 'drop-shadow(0em 1em green)';
+    </script>
+</body>
+</html>
+

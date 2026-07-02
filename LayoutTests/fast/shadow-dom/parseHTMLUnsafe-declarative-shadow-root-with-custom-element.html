@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let constructed = false;
+let connectedCallbackIsCalled = false;
+window.customElements.define('inner-element', class InnerElement extends HTMLElement {
+    constructor() { super(); constructed = true; }
+    connectedCallback() { connectedCallbackIsCalled = true; }
+});
+
+document.body.appendChild(Document.parseHTMLUnsafe(`<div><template shadowrootmode="open"><inner-element></inner-element></template></div>`).querySelector('div'));
+document.write(constructed ? (connectedCallbackIsCalled ? 'PASS' : 'FAIL2') : 'FAIL1')
+
+</script>

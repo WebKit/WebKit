@@ -1,0 +1,12 @@
+This test verifies that navigator.clipboard.readText can be used to read text from the clipboard without showing DOM paste UI for same-origin data. To run the test manually, click 'Copy' and then click 'Paste'. DOM paste UI should not appear.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS finishedCopying became true
+PASS Read text from clipboard using navigator.clipboard.readText.
+PASS clipboardText is "This text was copied."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

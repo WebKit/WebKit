@@ -1,0 +1,25 @@
+<html lang="en">
+<head>
+  <style>
+    * {
+      transition-property: all;
+      text-emphasis: filled;
+      column-width: 1px;
+      white-space: break-spaces;
+      widows: 4;
+    }
+  </style>
+  <script>
+    onload = () => {
+      if (window.testRunner)
+        testRunner.dumpAsText();
+      document.styleSheets[0].insertRule(`* { margin-left: 0; }`);
+      document.styleSheets[0].insertRule(`* { orphans: 1; }`);
+      document.styleSheets[0].insertRule(`* { transition: 1s transform cubic-bezier(0, 0, 0, 200); }`);
+    };
+  </script>
+</head>
+<body>
+<div>PASS if no crash or assert</div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+
+PASS Current times and effect phase at start when delay = 0 and endDelay = 0 |
+PASS Current times and effect phase in active range when delay = 0 and endDelay = 0 |
+PASS Current times and effect phase at effect end time when delay = 0 and endDelay = 0 |
+PASS Current times and effect phase at timeline start when delay = 500 and endDelay = 0 |
+PASS Current times and effect phase before start delay when delay = 500 and endDelay = 0 |
+PASS Current times and effect phase at start delay when delay = 500 and endDelay = 0 |
+PASS Current times and effect phase in active range when delay = 500 and endDelay = 0 |
+PASS Current times and effect phase at effect end time when delay = 500 and endDelay = 0 |
+PASS Current times and effect phase at timeline start when delay = 0 and endDelay = 500 |
+PASS Current times and effect phase in active range when delay = 0 and endDelay = 500 |
+PASS Current times and effect phase at effect end time when delay = 0 and endDelay = 500 |
+PASS Current times and effect phase after effect end time when delay = 0 and endDelay = 500 |
+PASS Current times and effect phase at timeline boundary when delay = 0 and endDelay = 500 |
+PASS Current times and effect phase at timeline start when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase before start delay when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase at start delay when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase in active range when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase at effect end time when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase after effect end time when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase at timeline boundary when delay = 250 and endDelay = 250 |
+PASS Current times and effect phase at timeline start when delay = -125 and endDelay = -125 |
+PASS Current times and effect phase in active range when delay = -125 and endDelay = -125 |
+PASS Current times and effect phase at timeline end when delay = -125 and endDelay = -125 |
+PASS Playback rate affects whether active phase boundary is inclusive.
+PASS Verify that (play -> pause -> play) doesn't change phase/progress.
+PASS Pause in before phase, scroll timeline into active phase, animation should remain in the before phase
+PASS Pause in before phase, set animation current time to be in active range, animation should become active. Scrolling should have no effect.
+PASS Make scroller inactive, then set current time to an in range time
+PASS Animation effect is still applied after pausing and making timeline inactive.
+PASS Make timeline inactive, force style update then pause the animation. No crashing indicates test success.
+

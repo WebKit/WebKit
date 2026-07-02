@@ -1,0 +1,5 @@
+
+PASS CSSStyleSheet.replaceSync throws NotAllowedError for non-constructed sheets
+PASS CSSStyleSheet.replace returns a rejected promise for non-constructed sheets
+PASS CSSStyleSheet.replace returns a rejected promise for non-constructed sheets that have no associated document
+

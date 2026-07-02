@@ -1,0 +1,19 @@
+Tests that no blur is fired when the date picker is opened, and that the focused element remains after opening the picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement.id === 'date-input' is true
+PASS showingPicker is true
+PASS document.activeElement.id === 'date-input' is true
+PASS blurEventCount is 0
+PASS showingPicker is false
+PASS showingPicker is true
+PASS document.activeElement.id === 'date-input' is true
+PASS blurEventCount is 0
+PASS document.activeElement.id === 'text-input' is true
+PASS blurEventCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

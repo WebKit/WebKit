@@ -1,0 +1,16 @@
+Tests that NSAccessibilityNumberOfCharactersAttribute returns the correct value for text fields.
+
+Field1: 17
+Field2: 17
+Field3: 10
+Field4: 0
+Field5: 0
+Field6: 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Content editable.
+
+

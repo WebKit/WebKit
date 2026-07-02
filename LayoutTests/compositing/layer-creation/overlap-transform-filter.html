@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+		.composited {
+			position: absolute;
+			top: 50px;
+            left: 50px;
+		    width: 100px;
+		    height: 100px;
+		    background-color: silver;
+            will-change: transform;
+        }
+        
+        .box {
+            position: absolute;
+            top: 250px;
+            left: 50px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+            filter: blur(1px);
+            transform: translate(100px, -100px);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.testRunner)
+                document.getElementById("layers").innerText = window.internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="composited">&nbsp;</div>
+    <div class="box">This element should be composited</div>    
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

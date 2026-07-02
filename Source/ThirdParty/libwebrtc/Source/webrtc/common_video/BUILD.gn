@@ -1,0 +1,176 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+
+rtc_library("corruption_score_calculator") {
+  sources = [ "include/corruption_score_calculator.h" ]
+  deps = [
+    "../api/video:video_frame",
+    "../api/video:video_rtp_headers",
+    "../api/video/corruption_detection:frame_instrumentation_data",
+  ]
+}
+
+rtc_library("common_video") {
+  visibility = [ "*" ]
+
+  sources = [
+    "bitrate_adjuster.cc",
+    "frame_rate_estimator.cc",
+    "frame_rate_estimator.h",
+    "framerate_controller.cc",
+    "framerate_controller.h",
+    "h264/h264_bitstream_parser.cc",
+    "h264/h264_bitstream_parser.h",
+    "h264/h264_common.cc",
+    "h264/h264_common.h",
+    "h264/pps_parser.cc",
+    "h264/pps_parser.h",
+    "h264/sps_parser.cc",
+    "h264/sps_parser.h",
+    "h264/sps_vui_rewriter.cc",
+    "h264/sps_vui_rewriter.h",
+    "include/bitrate_adjuster.h",
+    "include/quality_limitation_reason.h",
+    "include/video_frame_buffer.h",
+    "include/video_frame_buffer_pool.h",
+    "libyuv/include/webrtc_libyuv.h",
+    "libyuv/webrtc_libyuv.cc",
+    "video_frame_buffer.cc",
+    "video_frame_buffer_pool.cc",
+  ]
+
+  if (rtc_use_h265) {
+    sources += [
+      "h265/h265_bitstream_parser.cc",
+      "h265/h265_bitstream_parser.h",
+      "h265/h265_common.cc",
+      "h265/h265_common.h",
+      "h265/h265_inline.cc",
+      "h265/h265_inline.h",
+      "h265/h265_pps_parser.cc",
+      "h265/h265_pps_parser.h",
+      "h265/h265_sps_parser.cc",
+      "h265/h265_sps_parser.h",
+      "h265/h265_vps_parser.cc",
+      "h265/h265_vps_parser.h",
+    ]
+  }
+
+  deps = [
+    "../api:make_ref_counted",
+    "../api:scoped_refptr",
+    "../api/units:time_delta",
+    "../api/units:timestamp",
+    "../api/video:video_frame",
+    "../api/video:video_frame_i010",
+    "../api/video:video_rtp_headers",
+    "../api/video_codecs:bitstream_parser_api",
+    "../rtc_base:bit_buffer",
+    "../rtc_base:bitstream_reader",
+    "../rtc_base:buffer",
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+    "../rtc_base:macromagic",
+    "../rtc_base:race_checker",
+    "../rtc_base:rate_statistics",
+    "../rtc_base:refcount",
+    "../rtc_base:timeutils",
+    "../rtc_base/synchronization:mutex",
+    "../rtc_base/system:rtc_export",
+    "../system_wrappers",
+    "../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/numeric:bits",
+    "//third_party/libyuv",
+  ]
+  if (rtc_use_h265) {
+    deps += [
+      "../rtc_base:compile_assert_c",
+      "../rtc_base/containers:flat_map",
+    ]
+  }
+}
+
+rtc_source_set("frame_counts") {
+  visibility = [ "*" ]
+
+  sources = [ "frame_counts.h" ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  common_video_resources = [ "../resources/foreman_cif.yuv" ]
+
+  if (is_ios) {
+    bundle_data("common_video_unittests_bundle_data") {
+      testonly = true
+      sources = common_video_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_test("common_video_unittests") {
+    testonly = true
+
+    sources = [
+      "bitrate_adjuster_unittest.cc",
+      "frame_rate_estimator_unittest.cc",
+      "framerate_controller_unittest.cc",
+      "h264/h264_bitstream_parser_unittest.cc",
+      "h264/pps_parser_unittest.cc",
+      "h264/sps_parser_unittest.cc",
+      "h264/sps_vui_rewriter_unittest.cc",
+      "libyuv/libyuv_unittest.cc",
+      "video_frame_buffer_pool_unittest.cc",
+      "video_frame_unittest.cc",
+    ]
+
+    if (rtc_use_h265) {
+      sources += [
+        "h265/h265_bitstream_parser_unittest.cc",
+        "h265/h265_pps_parser_unittest.cc",
+        "h265/h265_sps_parser_unittest.cc",
+        "h265/h265_vps_parser_unittest.cc",
+      ]
+    }
+
+    deps = [
+      ":common_video",
+      "../api:scoped_refptr",
+      "../api/units:time_delta",
+      "../api/units:timestamp",
+      "../api/video:video_frame",
+      "../api/video:video_frame_i010",
+      "../api/video:video_rtp_headers",
+      "../rtc_base:bit_buffer",
+      "../rtc_base:buffer",
+      "../rtc_base:checks",
+      "../rtc_base:logging",
+      "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:timeutils",
+      "../system_wrappers",
+      "../test:fileutils",
+      "../test:frame_utils",
+      "../test:test_support",
+      "../test:video_test_common",
+      "//testing/gtest",
+      "//third_party/libyuv",
+    ]
+
+    data = common_video_resources
+    if (is_android) {
+      shard_timeout = 900
+    }
+
+    if (is_ios) {
+      deps += [ ":common_video_unittests_bundle_data" ]
+    }
+  }
+}

@@ -1,0 +1,60 @@
+<!doctype html>
+<style>
+test { display: block; }
+
+.case1 :where(#test) { color: red; background-color: green; }
+.case1 #test { color: black; }
+.case2 :where(.test) { color: red; background-color: green; }
+.case2 .test { color: black; }
+.case3 :where(test) { color: red; background-color: green; }
+.case3 test { color: black; }
+.case4 :where(#other, div .test) { color: red; background-color: green; }
+.case4 .test { color: black; }
+
+.case5 #test { color: black; }
+.case5 :where(#test) { color: red; background-color: green; }
+.case6 .test { color: black; }
+.case6 :where(.test) { color: red; background-color: green; }
+.case7 test { color: black; }
+.case7 :where(test) { color: red; background-color: green; }
+.case8 .test { color: black; }
+.case8 :where(#other, div .test) { color: red; background-color: green; }
+
+.case9 #test:where(#test) { color: red; background-color: green; }
+.case9 #test { color: black; }
+.case10 .test:where(.test) { color: red; background-color: green; }
+.case10 .test { color: black; }
+.case11 test:where(test) { color: red; background-color: green; }
+.case11 test { color: black; }
+div.case12 .test:where(#other, div .test) { color: red; background-color: green; }
+div.case12 .test { color: black; }
+
+.case13 #test { color: red; }
+.case13 #test:where(#test) { color: black; background-color: green; }
+.case14 .test { color: red; }
+.case14 .test:where(.test) { color: black; background-color: green; }
+.case15 test { color: red; }
+.case15 test:where(test) { color: black; background-color: green; }
+div.case16 .test { color: red; }
+div.case16 .test:where(#other, div .test) { color: black; background-color: green; }
+</style>
+
+<div class=case1><div id=test>Black on green</div></div>
+<div class=case2><div class=test>Black on green</div></div>
+<div class=case3><test>Black on green</test></div>
+<div class=case4><div class=test>Black on green</div></div>
+
+<div class=case5><div id=test>Black on green</div></div>
+<div class=case6><div class=test>Black on green</div></div>
+<div class=case7><test>Black on green</test></div>
+<div class=case8><div class=test>Black on green</div></div>
+
+<div class=case9><div id=test>Black on green</div></div>
+<div class=case10><div class=test>Black on green</div></div>
+<div class=case11><test>Black on green</test></div>
+<div class=case12><div class=test>Black on green</div></div>
+
+<div class=case13><div id=test>Black on green</div></div>
+<div class=case14><div class=test>Black on green</div></div>
+<div class=case15><test>Black on green</test></div>
+<div class=case16><div class=test>Black on green</div></div>

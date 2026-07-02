@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest() {
+    output.value = "test value";
+    output.appendChild(inserted_div);
+
+    document.getElementById("output").addEventListener('DOMSubtreeModified', function() {
+        for(var i=0; i<20; i++) {
+            form.appendChild(document.createElement("input"));
+        }
+    }, false);
+
+    form.reset();
+    setTimeout(function() {
+        testPassed("Passes if we do not crash.");
+        finishJSTest();
+    }, 0);
+}
+</script>
+</head>
+<body onload="runTest()">
+    <div id="inserted_div">foo</div>
+    <form id="form" onchange="eventhandler()">
+        <input type="text" value="foo">
+        <output id="output" oninput="eventhandler()"></output>
+        <input type="text" value="foo">
+    </form>
+</body>
+</html>

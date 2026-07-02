@@ -1,0 +1,11 @@
+This tests that aria-expanded works as expected on links.
+
+PASS: link.isAttributeSupported('AXExpanded') === true
+PASS: link.isExpanded === true
+Changing link expanded status to FALSE
+PASS: link.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is an expanded link.

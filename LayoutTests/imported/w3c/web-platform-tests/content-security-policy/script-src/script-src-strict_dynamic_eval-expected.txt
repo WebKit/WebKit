@@ -1,0 +1,5 @@
+Scripts injected via `eval` are not allowed with `strict-dynamic` without `unsafe-eval`.
+
+
+PASS Script injected via `eval` is not allowed with `strict-dynamic` without `unsafe-eval`.
+

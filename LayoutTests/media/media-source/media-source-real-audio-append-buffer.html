@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-audio-append-buffer</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests basic audio-only MSE append through the real MP4/AAC parser pipeline.
+    // The audio path through AudioVideoRendererAVFObjC has its own set of bugs
+    // (rate change flush, encryption key serialization) distinct from video.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.AUDIO_TYPE)) {
+            consoleWrite('SKIPPED: ' + MP4.AUDIO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.AUDIO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 44100,
+            tracks: [{ id: 1, type: 'audio', timescale: 44100 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        testExpected('sourceBuffer.updating', true);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.updating', false);
+
+        // 4 audio frames, each 1024 samples at 44100 Hz (~23.2ms each, ~93ms total)
+        // Use round durations in timescale units for clean buffered ranges.
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{
+                id: 1, type: 'audio', baseDecodeTime: 0,
+                samples: [
+                    { duration: 44100, isSync: true },
+                    { duration: 44100, isSync: true },
+                    { duration: 44100, isSync: true },
+                    { duration: 44100, isSync: true },
+                ]
+            }]
+        });
+        sourceBuffer.appendBuffer(media);
+        testExpected('sourceBuffer.updating', true);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.updating', false);
+
+        // 4 frames × 44100 samples / 44100 Hz = 4 seconds
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.05);
+
+        testExpected('sourceBuffer.audioTracks.length', 1);
+        testExpected('source.activeSourceBuffers.length', 1);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

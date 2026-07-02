@@ -1,0 +1,4 @@
+
+
+PASS reload() promises never settle (without intercept())
+

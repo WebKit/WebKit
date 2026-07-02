@@ -1,0 +1,32 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# Not yet included in a Bazel build.
+# File group is here for exporting to utils.gni:skia_utils_sources.
+WIN_FILES = [
+    "SkAutoCoInitialize.cpp",
+    "SkAutoCoInitialize.h",
+    "SkDWrite.cpp",
+    "SkDWrite.h",
+    "SkDWriteFontFileStream.cpp",
+    "SkDWriteFontFileStream.h",
+    "SkDWriteGeometrySink.cpp",
+    "SkDWriteGeometrySink.h",
+    "SkDWriteNTDDI_VERSION.h",
+    "SkHRESULT.cpp",
+    "SkHRESULT.h",
+    "SkIStream.cpp",
+    "SkIStream.h",
+    "SkObjBase.h",
+    "SkTScopedComPtr.h",
+]
+
+split_srcs_and_hdrs(
+    name = "core",
+    files = WIN_FILES,
+)

@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+(async () => {
+  if (sessionStorage.testCompleted) {
+    delete sessionStorage.testCompleted;
+    testRunner?.notifyDone();
+  } else {
+    sessionStorage.testCompleted = true;
+    await navigation.reload();
+  }
+
+  let audio = document.createElement('audio');
+  audio.src = '/resources/foo.mp4';
+  await navigator.locks.query();
+  onpageswap = async (e) => {
+    let { committed, finished } = navigation.reload();
+    let committedRejected = await committed.then(() => false, () => true);
+    let finishedRejected = await finished.then(() => false, () => true);
+    if (!committedRejected)
+      document.write("FAIL: committed promise should have been rejected.");
+    if (!finishedRejected)
+      document.write("FAIL: finished promise should have been rejected.");
+  };
+  await cookieStore.get("bar");
+})();
+</script>
+PASS if no crash.

@@ -1,0 +1,89 @@
+# Copyright (C) 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI
+]
+messages -> WebPasteboardProxy {
+#if PLATFORM(IOS_FAMILY)
+    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+#endif
+
+    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (Vector<String> types) Synchronous
+    AllPasteboardItemInfo(String pasteboardName, int64_t changeCount, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (std::optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous
+    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (struct std::optional<WebCore::PasteboardItemInfo> info) Synchronous
+    GetPasteboardItemsCount(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (uint64_t itemsCount) Synchronous
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String string) Synchronous
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String url, String title) Synchronous
+    ReadBufferFromPasteboard(std::optional<uint64_t> index, String pasteboardType, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
+    ContainsStringSafeForDOMToReadForType(String type, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (bool result) Synchronous
+
+#if PLATFORM(COCOA)
+    # Pasteboard messages.
+    GetNumberOfFiles(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (uint64_t numberOfFiles) Synchronous
+    GetPasteboardTypes(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (Vector<String> types) Synchronous
+    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (Vector<String> pathnames, Vector<WebKit::SandboxExtensionHandle> sandboxExtensions) Synchronous
+    GetPasteboardStringForType(String pasteboardName, String pasteboardType, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String string) Synchronous
+    GetPasteboardStringsForType(String pasteboardName, String pasteboardType, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (Vector<String> strings) Synchronous
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (struct WebCore::PasteboardBuffer pasteboardBuffer) Synchronous
+    GetPasteboardChangeCount(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    GetPasteboardColor(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (WebCore::Color color) Synchronous
+    GetPasteboardURL(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String urlString) Synchronous
+    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    SetPasteboardColor(String pasteboardName, WebCore::Color color, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<WebCore::SharedBuffer> buffer, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    WriteWebArchiveToPasteBoard(String pasteboardName, WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameArchives, Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers) -> (enum:uint8_t WebKit::WriteWebArchiveToPasteBoardResult result, int64_t changeCount) Synchronous
+    ContainsURLStringSuitableForLoading(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (bool result) Synchronous
+    URLStringSuitableForLoading(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String url, String title) Synchronous
+
+#if ENABLE(IPC_TESTING_API)
+    TestIPCSharedMemory(String pasteboardName, String pasteboardType, WebCore::SharedMemory::Handle handle, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount, String buffer) Synchronous
+#endif
+
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    GetTypes(String pasteboardName) -> (Vector<String> types) Synchronous
+    ReadText(String pasteboardName, String pasteboardType) -> (String text) Synchronous
+    ReadFilePaths(String pasteboardName) -> (Vector<String> types) Synchronous
+    ReadBuffer(String pasteboardName, String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
+    WriteToClipboard(String pasteboardName, WebCore::SelectionData pasteboardContent)
+    ClearClipboard(String pasteboardName)
+    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
+#endif
+
+#if USE(LIBWPE) && !PLATFORM(WPE)
+    GetPasteboardTypes() -> (Vector<String> types) Synchronous
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
+    WriteStringToPasteboard(String pasteboardType, String text)
+#endif
+}

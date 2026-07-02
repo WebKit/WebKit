@@ -1,0 +1,5 @@
+
+FAIL multicol1 assert_equals: expected (string) "auto" but got (undefined) undefined
+FAIL multicol2 assert_equals: expected (string) "auto" but got (undefined) undefined
+FAIL multicol3 assert_equals: expected (string) "nowrap" but got (undefined) undefined
+

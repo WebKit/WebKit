@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                video = document.getElementsByTagName('video')[0];
+                waitForEventOnce("canplaythrough", canplaythrough);
+                video.src = findMediaFile("video", "content/test");
+                video.loop = true;
+
+                internals.settings.setAllowsInlineMediaPlayback(false);
+
+                internals.setMockVideoPresentationModeEnabled(true);
+
+                consoleWrite("");
+            }
+
+            function canplaythrough()
+            {
+                testExpected("video.webkitSupportsFullscreen", true);
+                testExpected("video.webkitDisplayingFullscreen", false);
+
+                try {
+                    waitForEventOnce('playing', playing);
+                    runWithKeyDown("video.play()");
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+            }
+
+            async function playing()
+            {
+                consoleWrite("<br>** Started playing");
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+                testExpected("video.webkitDisplayingFullscreen", true);
+                waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
+                run("video.webkitExitFullScreen()");
+            }
+
+            async function endfullscreen()
+            {
+                consoleWrite("<br>** Received webkitpresentationmodechanged event");
+                await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+                consoleWrite("Exited fullscreen");
+                testExpected("video.webkitDisplayingFullscreen", false);
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+        <p>Test the play() function of &lt;video&gt; when fullscreen is required.</p>
+    </body>
+</html>

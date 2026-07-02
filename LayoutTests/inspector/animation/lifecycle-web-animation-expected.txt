@@ -1,0 +1,68 @@
+Tests for the Animation.animationCreated and Animation.animationDestroyed events.
+
+
+== Running test suite: Animation.Lifecycle
+-- Running test case: Animation.Lifecycle.WebAnimation
+PASS: There should not be any animations.
+Creating animation...
+
+PASS: Animation created 'web-animation-test'.
+  0: animate - [native code]
+  1: (anonymous function) - inspector/animation/resources/lifecycle-utilities.js:8:39
+  ---
+  0: setTimeout - [native code]
+  1: createAnimation - inspector/animation/resources/lifecycle-utilities.js:3:15
+  2: Global Code - [program code]
+PASS: Animation type should be Web Animation.
+startDelay: 100
+endDelay: 200
+iterationCount: 10
+iterationStart: 5
+iterationDuration: 300
+timingFunction: "ease-in-out"
+playbackDirection: "alternate"
+fillMode: "both"
+keyframes:
+[
+  {
+    "offset": 0.25,
+    "easing": "cubic-bezier(0.1, 0.2, 0.3, 0.4)",
+    "style": "color: red;\nopacity: 0;"
+  },
+  {
+    "offset": 0.75,
+    "easing": "steps(5, jump-end)",
+    "style": "color: blue;\nopacity: 1;"
+  }
+]
+
+
+-- Running test case: Animation.Lifecycle.WebAnimation.CustomProperty
+Adding named animation to body.
+PASS: Animation created 'customKeyframes'.
+FAIL: Animation type should be Web Animation.
+    Expected: "web-animation"
+    Actual: "css-animation"
+iterationCount: Infinity
+iterationDuration: 1000
+timingFunction: "linear"
+playbackDirection: "alternate"
+fillMode: "none"
+keyframes:
+[
+  {
+    "offset": 0,
+    "easing": "ease",
+    "style": "--customProperty: 0 0 -4;"
+  },
+  {
+    "offset": 1,
+    "easing": "ease",
+    "style": "--customProperty: 0 0 -4;"
+  }
+]
+
+Removing named animation from body.
+PASS: Animation destroyed.
+PASS: Removed animation has expected ID.
+

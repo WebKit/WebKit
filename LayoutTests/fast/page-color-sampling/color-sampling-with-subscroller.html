@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 obscuredInset.left=50 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            font-family: system-ui;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .content {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            top: 0;
+            overflow-y: scroll;
+            padding: 0 1em;
+        }
+
+        .box {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 50px;
+            box-sizing: border-box;
+            border-radius: 1em;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background: rgb(225, 225, 225);
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(50, 50, 50, 50);
+        await UIHelper.ensurePresentationUpdate();
+        colors = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("colors.top", "rgb(0, 122, 255)");
+        shouldBeEqualToString("colors.left", "multiple");
+        shouldBeEqualToString("colors.right", "multiple");
+        shouldBeEqualToString("colors.bottom", "rgb(225, 225, 225)");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <pre id="console"></pre>
+    <pre id="description"></pre>
+    <div class="content">
+        <div class="box" style="background: rgb(0, 122, 255);"></div>
+        <div class="box" style="background: rgb(52, 199, 89);"></div>
+        <div class="box" style="background: rgb(88, 86, 214);"></div>
+        <div class="box" style="background: rgb(255, 149, 0);"></div>
+        <div class="box" style="background: rgb(255, 45, 85);"></div>
+        <div class="box" style="background: rgb(175, 82, 222);"></div>
+        <div class="box" style="background: rgb(255, 59, 48);"></div>
+        <div class="box" style="background: rgb(90, 200, 250);"></div>
+        <div class="box" style="background: rgb(255, 204, 0);"></div>
+        <div class="box" style="background: rgb(200, 200, 200);"></div>
+        <div class="box" style="background: rgb(160, 82, 45);"></div>
+        <div class="box" style="background: rgb(64, 224, 208);"></div>
+    </div>
+    <footer></footer>
+</body>
+</html>

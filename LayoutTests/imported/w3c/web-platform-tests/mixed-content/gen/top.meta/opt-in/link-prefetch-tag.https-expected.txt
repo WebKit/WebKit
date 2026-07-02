@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Mixed-Content: Expects allowed for link-prefetch-tag to same-https origin and no-redirect redirection from https context. Test timed out
+NOTRUN Mixed-Content: Expects blocked for link-prefetch-tag to cross-http origin and no-redirect redirection from https context.
+NOTRUN Mixed-Content: Expects blocked for link-prefetch-tag to same-http origin and no-redirect redirection from https context.
+

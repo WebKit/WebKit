@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    div {
+        width: 200px;
+        height: 200px;
+        background-color:lime;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      internals.settings.setImagesEnabled(false);
+      internals.settings.setLoadsImagesAutomatically(false);
+      testRunner.queueReload();
+    }
+  </script>
+</head>
+<body>
+  <div>
+    <img src="resources/image-with-nested-data-uri-images.svg">
+  </div>
+</body>
+</html>

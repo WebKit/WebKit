@@ -1,0 +1,15 @@
+<style>
+div {
+  width: 40px;
+  height: 30px;
+  background-color: blue;
+  margin: 10px;
+}
+</style>
+<div style="box-shadow: inset 40px 0px 0px 0px green"></div>
+<div style="box-shadow: inset 0px 30px 0px 0px green"></div>
+<div style="box-shadow: inset 0px 0px 0px 20px green"></div>
+<div style="box-shadow: inset 0px 0px 0px 15px green"></div>
+
+<!-- inset shadow does not cover the box in this case -->
+<div style="box-shadow: inset 0px 0px 0px 14px green"></div>

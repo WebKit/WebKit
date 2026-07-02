@@ -1,0 +1,49 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This test moves caret between lines of different editabilities.
+
+Initial condition:
+| "\nLine 1<#selection-caret> editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 1"
+| "\nLine 2 editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 2"
+| "\nLine 3 editable"
+
+After moving forward by line:
+| "\nLine 1 editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 1"
+| "\nLine 2<#selection-caret> editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 2"
+| "\nLine 3 editable"
+
+After moving forward by line:
+| "\nLine 1 editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 1"
+| "\nLine 2 editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 2"
+| "\nLine 3<#selection-caret> editable"
+
+After moving forward by line:
+| "\nLine 1 editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 1"
+| "\nLine 2 editable"
+| <div>
+|   contenteditable="false"
+|   "Uneditable div 2"
+| "\nLine 3 editable<#selection-caret>"

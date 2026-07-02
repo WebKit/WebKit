@@ -1,0 +1,17 @@
+diff --git a/Kotlin-compose/build/skiko.mjs b/Kotlin-compose/build/skiko.mjs
+index ca8cabd..157890b 100644
+--- a/Kotlin-compose/build/skiko.mjs
++++ b/Kotlin-compose/build/skiko.mjs
+@@ -8325,6 +8325,7 @@ export const {
+     _releaseLocalCallbackScope
+ } = SkikoCallbacks;
+ 
++/*
+ export const loadedWasm = await loadSkikoWASM();
+ 
+ export const { GL } = loadedWasm;
+@@ -9295,3 +9296,4 @@ export const {
+     skia_memSetDouble,
+     skia_memGetDouble,
+ } = loadedWasm.wasmExports;
++*/

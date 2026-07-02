@@ -1,0 +1,11 @@
+Verifies that the iframe receives click events with the expected coordinates.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS events[0] is 'anchor click'
+PASS events[1] is 'click 113,33'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

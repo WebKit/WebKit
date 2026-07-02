@@ -1,0 +1,34 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+TRANSFORM_FILES = [
+    "SkSLAddConstToVarModifiers.cpp",
+    "SkSLEliminateDeadFunctions.cpp",
+    "SkSLEliminateDeadGlobalVariables.cpp",
+    "SkSLEliminateDeadLocalVariables.cpp",
+    "SkSLEliminateEmptyStatements.cpp",
+    "SkSLEliminateUnnecessaryBraces.cpp",
+    "SkSLEliminateUnreachableCode.cpp",
+    "SkSLFindAndDeclareBuiltinFunctions.cpp",
+    "SkSLFindAndDeclareBuiltinStructs.cpp",
+    "SkSLFindAndDeclareBuiltinVariables.cpp",
+    "SkSLHoistSwitchVarDeclarationsAtTopLevel.cpp",
+    "SkSLProgramWriter.h",
+    "SkSLRenamePrivateSymbols.cpp",
+    "SkSLReplaceConstVarsWithLiterals.cpp",
+    "SkSLReplaceSplatCastsWithSwizzles.cpp",
+    "SkSLRewriteIndexedSwizzle.cpp",
+    "SkSLTransform.cpp",
+    "SkSLTransform.h",
+]
+
+split_srcs_and_hdrs(
+    name = "transform",
+    files = TRANSFORM_FILES,
+    visibility = ["//src/sksl:__pkg__"],
+)

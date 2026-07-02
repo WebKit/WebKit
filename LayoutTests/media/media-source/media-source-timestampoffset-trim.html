@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-timestampoffset-trim</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    const framesInAACPacket = 1024;
+    const sampleRate = 48000;
+    const totalFramesInSegment = 47;
+    const framesToBeDroppedBeginning = 5;
+    const framesToBeDroppedEnd = 5;
+
+    function resetSourceBuffer() {
+        run('sourceBuffer.timestampOffset = 0');
+        run('sourceBuffer.appendWindowStart = 0');
+        run('sourceBuffer.appendWindowEnd = Infinity');
+    }
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        loader.onerror = () => {
+            failTest('Media data loading failed');
+        };
+        loader.onload = async () => {
+            waitForEventAndFail('error');
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            // We want the first framesToBeDroppedBeginning frames to be dropped, and only those.
+            run('sourceBuffer.timestampOffset = -(framesToBeDroppedBeginning * framesInAACPacket) / sampleRate');
+            consoleWrite('Append a media segment negative offset.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('sourceBuffer.buffered.length', 1);
+            testExpected('sourceBuffer.buffered.start(0)', 0);
+            testExpected('sourceBuffer.buffered.end(0)'  , ((totalFramesInSegment - framesToBeDroppedBeginning) * framesInAACPacket) / sampleRate);
+            run('sourceBuffer.remove(0, Infinity)');
+            await waitFor(sourceBuffer, 'update');
+
+            resetSourceBuffer();
+            // We want the first framesToBeDroppedBeginning frames to be dropped, and only those.
+            run('sourceBuffer.appendWindowStart = (framesToBeDroppedBeginning * framesInAACPacket) / sampleRate');
+            consoleWrite('Append a media segment with appendWindowStart set.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('sourceBuffer.buffered.length', 1);
+            testExpected('sourceBuffer.buffered.start(0)', (framesToBeDroppedBeginning * framesInAACPacket) / sampleRate);
+            testExpected('sourceBuffer.buffered.end(0)'  , (totalFramesInSegment * framesInAACPacket) / sampleRate);
+            run('sourceBuffer.remove(0, Infinity)');
+            await waitFor(sourceBuffer, 'update');
+
+            resetSourceBuffer();
+            // We want the last framesToBeDroppedEnd frames to be dropped, and only those.
+            run('sourceBuffer.appendWindowEnd = ((totalFramesInSegment - framesToBeDroppedEnd) * framesInAACPacket) / sampleRate');
+            consoleWrite('Append a media segment with appendWindowEnd set.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('sourceBuffer.buffered.length', 1);
+            testExpected('sourceBuffer.buffered.start(0)', 0);
+            testExpected('sourceBuffer.buffered.end(0)'  , ((totalFramesInSegment - framesToBeDroppedEnd) * framesInAACPacket) / sampleRate);
+
+            endTest();
+        };
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+        This tests that audio samples outside the appendWindow's interval are properly ignored.
+    </div>
+    <video controls></video>
+</body>
+</html>

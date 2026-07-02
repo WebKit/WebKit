@@ -1,0 +1,5 @@
+
+FAIL Browser supports link element with compression-dictionary rel. assert_true: expected true got false
+FAIL Fetch same origin dictionary using link element assert_true: Headers should be available expected true got false
+FAIL Fetch cross origin dictionary using link element assert_true: Headers should be available expected true got false
+

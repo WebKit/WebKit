@@ -1,0 +1,72 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/css-color-visited-currentcolor-svg-fill-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/css-color-visited-currentcolor-svg-fill.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-currentcolor-1-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-currentcolor-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-currentcolor-2-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-currentcolor-2.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-invalid-uri-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-invalid-uri.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-none-1-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-none-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-none-2-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-none-2.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-none-3-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/fill-fallback-none-3.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-color-interpolation-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-color-interpolation.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-01.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-inheritance-not-in-rendertree-02.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-objectBoundingBox-absolute-units-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-objectBoundingBox-absolute-units.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-01-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-02-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-01.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-not-in-rendertree-02.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-template-pattern-removed-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-template-pattern-removed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-opacity-01-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-opacity-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-text-01-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-text-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-01-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-02-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-02.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-viewbox-01-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-viewbox-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/percent-encoded-fragment-fill-stroke-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/percent-encoded-fragment-fill-stroke-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/percent-encoded-fragment-fill-stroke.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/percent-encoded-fragment-refs.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/stroke-fallback-invalid-uri-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/stroke-fallback-invalid-uri.svg

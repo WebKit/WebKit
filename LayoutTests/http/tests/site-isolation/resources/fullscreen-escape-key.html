@@ -1,0 +1,16 @@
+<script>
+    async function enterFullScreen() {
+        await document.documentElement.requestFullscreen();
+        if (window.testRunner) { await testRunner.updatePresentation() }
+    }
+
+    document.documentElement.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) { window.parent.postMessage("Exited",  "*"); }});
+
+    if (window.internals) {
+        internals.withUserGesture(async () => {
+            await enterFullScreen();
+            window.parent.postMessage("Entered", "*");
+        });
+    }
+</script>
+<button onclick="enterFullScreen()">Enter</button>

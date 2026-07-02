@@ -1,0 +1,7 @@
+Text to reproduce the issue.
+
+
+
+PASS Target is initially visible
+PASS Scroll such that target is just out of view, target is not visible
+

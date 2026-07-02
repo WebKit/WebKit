@@ -1,0 +1,9 @@
+
+PASS Adjacent empty li elements in ul produce siblings.
+PASS Adjacent empty li elements in ol produce siblings.
+PASS Adjacent li elements with text content produce siblings.
+PASS Three adjacent li elements produce siblings.
+PASS Legitimate li nesting through intervening ul is preserved.
+PASS Adjacent li elements produce siblings when ul is nested in div.
+PASS Adjacent li elements with attributes produce siblings.
+

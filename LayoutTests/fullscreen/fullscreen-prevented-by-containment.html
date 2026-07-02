@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script src="full-screen-test.js"></script>
+<style>
+.content-ancestor {
+  background-color: red;
+  height: 500px;
+  width: 500px;
+}
+.content {
+  contain: content;
+}
+
+#fullscreener {
+  background-color: green;
+}
+</style>
+<div class=content-ancestor>
+  <div class=content>
+    <div id=fullscreener>This is the fullscreen element (click to activate)</div>
+</div>
+<script>
+  if (window.testRunner) {
+    waitForEventTestAndEnd(document, 'webkitfullscreenchange', "fullscreener.offsetWidth == window.innerWidth && fullscreener.offsetHeight == window.innerHeight");
+    runWithKeyDown(function() {
+      fullscreener.webkitRequestFullScreen();
+    });
+  } else {
+     fullscreener.addEventListener('click', function () {
+        fullscreener.webkitRequestFullscreen();
+     }, false);
+ }
+</script>

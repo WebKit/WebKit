@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+:root {
+  --focus-ring-size: 3px;
+  --input-width: 160px;
+  --input-height: 20px;
+  --border-width: 1px;
+}
+
+#overlay {
+    position: absolute;
+    top: var(--focus-ring-size);
+    left: var(--focus-ring-size);
+    background-color: red;
+    border: var(--border-width) solid red;
+    width: calc(var(--input-width) + 2 * var(--focus-ring-size));
+    height: calc(var(--input-height) + 2 * var(--focus-ring-size));
+}
+
+</style>
+</head>
+<body>
+<div id="overlay"></div>
+</body>
+</html>

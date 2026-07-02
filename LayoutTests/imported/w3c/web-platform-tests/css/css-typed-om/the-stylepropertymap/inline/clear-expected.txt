@@ -1,0 +1,5 @@
+
+PASS Clearing an empty inline style is a no-op
+PASS Can clear an inline style containing properties
+PASS Inline StylePropertyMap.clear updates the element inline style
+

@@ -1,0 +1,3 @@
+This test checks that adding a new grid item before an already existing item wrapped by an anonymous block does not crash under ASAN.
+
+X

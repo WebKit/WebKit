@@ -1,0 +1,4 @@
+
+PASS deleteMedium matches a query that differs only in whitespace
+PASS deleteMedium removes every matching query, not only the first
+

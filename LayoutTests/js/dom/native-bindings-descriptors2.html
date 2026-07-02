@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<title>old title</title>
+</head>
+<body>
+<script>
+var originalDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, "title");
+
+shouldBeEqualToString('document.title', 'old title');
+
+evalAndLog('Object.defineProperty(Document.prototype, "title", { value: 5 })');
+var newDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, "title");
+
+shouldNotBe('originalDescriptor.value', 'newDescriptor.value');
+shouldBe('document.title', '5');
+
+Object.defineProperty(Document.prototype, "title", originalDescriptor);
+shouldBeEqualToString('document.title', 'old title');
+
+evalAndLog('document.title = "new title"');
+shouldBeEqualToString('document.title', 'new title');
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

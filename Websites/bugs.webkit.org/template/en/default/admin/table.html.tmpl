@@ -1,0 +1,160 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #
+  # columns: 
+  #   array of hashes representing the columns in the table. 
+  #   Each hash contains data for a single column. Hash keys:
+  #     name: Name of the field in the data param
+  #     heading: The text to print at the header cell
+  #     contentlink: URI to which the content of a data cell shall be linked to.
+  #                  Expressions of format %%xxx%% are replaced with value
+  #                  with the key xxx in data hash of the current row.
+  #     content: If specified, the content of this variable is used
+  #              instead of the data pulled from the current row. 
+  #              NOTE: This value is only partially HTML filtered!
+  #     content_use_field: If defined and true, then each value in the 
+  #                        column corresponds with a key in the
+  #                        field_descs field, and that value from the 
+  #                        field_descs hash will be used instead of "content."
+  #                        See fieldvalues/select-field for an example of use.
+  #                        This content WILL be HTML-filtered in this case.
+  #     allow_html_content: if defined, then this column allows some html content
+  #                         and so it will be only partially filtered.
+  #     yesno_field: Turn the data from 0/!0 into Yes/No
+  #
+  # data:
+  #   array of hashes representing the data for the table.
+  #   Each hash contains data for a single row of data. The
+  #   keys are column names from columns subhashes name field.
+  #
+  # overrides:
+  # Example:
+  #     overrides {                           # first hash
+  #       column_name_to_be_overwriten => {   # second hash
+  #         name_of_row_to_match_against => { # third hash
+  #           value_to_match_against => {     # fourth hash
+  #             content => "some contents"
+  #             override_content => 1
+  #           }
+  #         }
+  #       }
+  #     }
+  #
+  #   Provides a method for overriding individual table cells. This is a hash
+  #   (1), whose key is the column name, so the column must be named for
+  #   one of it's cells to be overwritten. The hash value is another hash
+  #   (2). The keys of that second hash are the name of the row to match
+  #   against. The second hash then again points to another hash. Within this
+  #   third hash (3), the keys represent values to match against. The item
+  #   contains a fourth hash (4) specifying overridden values.
+  #   
+  #   Each column value mentioned in the 'columns' documentation above
+  #   can be overwritten (apart from name and heading). To override a
+  #   table-cell value 'xxx', specify a new 'xxx' value, and specify a
+  #   'override_xxx' value as well. See
+  #   admin/milestones/list.html.tmpl for example
+  #
+  #%]
+
+[%###################  TABLE HEADER   ######################%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    [% FOREACH c = columns %]
+      [%# Default to align left for headers %]
+      <th class="[% (c.class || 'left') FILTER css_class_quote %]">
+        [% c.heading FILTER html %]
+      </th>
+    [% END %]
+  </tr>
+
+
+[%###################  TABLE CONTENT  ######################%]
+
+[% FOREACH row = data %]
+
+  <tr>
+    [% FOREACH c = columns %]
+
+      [%# Copy to local variables, as we may update these %]
+      [% contentlink = c.contentlink
+         content = c.content
+         content_use_field = c.content_use_field
+         class = c.class
+         allow_html_content = c.allow_html_content
+         yesno_field = c.yesno_field
+       %]
+
+      [%# Get any specific "important" overrides for this c.name and row.name ? %]
+      [% SET important = overrides.${c.name}.name.${row.name} %]
+
+      [% IF important %]
+
+          [% FOREACH key IN important.keys %]
+             [% SET ${key} = important.${key} %]
+          [% END %]
+
+      [% ELSE %]
+
+          [%# Are there any specific overrides for this column? %]
+          [% FOREACH match_field = overrides.${c.name}.keys %]
+     
+              [% override = overrides.${c.name}.${match_field}.${row.$match_field} %]
+              [% NEXT UNLESS override %]
+
+              [% FOREACH key IN override.keys %]
+                  [% SET ${key} = override.${key} %]
+              [% END %]
+
+              [% LAST %]
+
+          [% END %]
+      [% END %]
+
+      <td [% IF class %] class="[% class FILTER html %]"[% END %]>
+
+        [% IF contentlink %]
+          [% FOREACH m = contentlink.match('%%(.+?)%%', 1) %]
+            [% replacement_value = FILTER uri; row.$m; END %]
+            [% contentlink = contentlink.replace("%%$m%%", replacement_value) %]
+          [% END %]
+          <a href="[% contentlink %]">
+        [% END %]
+
+        [% IF content_use_field %]
+          [% colname = row.${c.name} %]
+          [% field_descs.${colname} FILTER html %]
+        [% ELSIF content %]
+          [% content FILTER html_light %]
+        [% ELSIF yesno_field %]
+          [% row.${c.name} ? "Yes" : "No" %]
+        [% ELSIF allow_html_content %]
+          [% row.${c.name} FILTER html_light %]
+        [% ELSE %]
+          [% row.${c.name} FILTER html %]
+        [% END %]
+
+        [% IF contentlink %]
+          </a>
+        [% END %]
+         
+      </td>
+    [% END %]
+  </tr>
+[% END %]
+
+[% IF data.size == 0 %]
+  <tr><td colspan="[% columns.size %]" class="center"><i>&lt;none&gt;</i></td></tr>
+[% END %]
+
+
+[%###################  TABLE FOOTER   ######################%]
+
+</table>

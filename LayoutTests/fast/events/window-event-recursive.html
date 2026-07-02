@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that window.event is set on the right global when an event is fired.");
+
+let dispatchedRecursiveEvent = false;
+
+const otherWindow = document.body.appendChild(document.createElement("iframe")).contentWindow;
+otherWindow.addEventListener("foo", (e) => {
+    passedEvent = e;
+    shouldBeUndefined("otherWindow.event");
+    shouldBe("passedEvent", "window.event");
+
+    if (!dispatchedRecursiveEvent) {
+        dispatchedRecursiveEvent = true;
+        debug("Dispatching recursive error event");
+        otherWindow.dispatchEvent(new Event("foo"));
+
+        passedEvent = e;
+        shouldBeUndefined("otherWindow.event");
+        shouldBe("passedEvent", "window.event");
+    }
+});
+shouldBeUndefined("otherWindow.event");
+shouldBeUndefined("window.event");
+debug("Dispatching error event");
+otherWindow.dispatchEvent(new Event("foo"));
+shouldBeUndefined("otherWindow.event");
+shouldBeUndefined("window.event");
+</script>
+</body>
+</html>

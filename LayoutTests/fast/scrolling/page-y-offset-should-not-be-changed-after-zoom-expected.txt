@@ -1,0 +1,3 @@
+
+PASS page-y-offset-should-not-be-changed-after-zoom
+

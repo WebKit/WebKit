@@ -1,0 +1,12 @@
+m=video 9 RTP/SAVPF 120
+c=IN IP4 0.0.0.0
+a=rtcp:9 IN IP4 0.0.0.0
+a=ice-ufrag:ufrag_video
+a=ice-pwd:pwd_video
+a=mid:video_content_name
+a=sendrecv
+a=rtpmap:120 VP8/90000
+a=ssrc:2 cname:stream_1_cname
+a=ssrc:2 msid:local_stream video_track_id_1
+a=ssrc:2 mslabel:local_stream
+a=ssrc:2 label:video_track_id_1

@@ -1,0 +1,137 @@
+/*
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
+ * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
+ * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2009 Holger Hans Peter Freyther
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "PlatformScreen.h"
+
+#include "DestinationColorSpace.h"
+#include "FloatRect.h"
+#include "HostWindow.h"
+#include "LocalFrameView.h"
+#include "ScreenProperties.h"
+#include "SystemSettings.h"
+#include "Widget.h"
+
+namespace WebCore {
+
+static PlatformDisplayID widgetDisplayID(Widget* widget)
+{
+    if (!widget)
+        return 0;
+
+    auto* view = widget->root();
+    if (!view)
+        return 0;
+
+    auto* hostWindow = view->hostWindow();
+    if (!hostWindow)
+        return 0;
+
+    return hostWindow->displayID();
+}
+
+int screenDepth(Widget* widget)
+{
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(widgetDisplayID(widget));
+    return data ? data->screenDepth : 24;
+}
+
+int screenDepthPerComponent(Widget* widget)
+{
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(widgetDisplayID(widget));
+    return data ? data->screenDepthPerComponent : 8;
+}
+
+bool screenIsMonochrome(Widget* widget)
+{
+    return screenDepth(widget) < 2;
+}
+
+DestinationColorSpace screenColorSpace(Widget*)
+{
+    return DestinationColorSpace::SRGB();
+}
+
+bool screenHasInvertedColors()
+{
+    return false;
+}
+
+double fontDPI()
+{
+    auto xftDPI = SystemSettings::singleton().xftDPI();
+    if (xftDPI)
+        return xftDPI.value() / 1024.0;
+
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(platformScreen->primaryScreenDisplayID());
+    return data ? data->dpi : 96.;
+}
+
+double screenDPI(PlatformDisplayID screendisplayID)
+{
+    Ref platformScreen = PlatformScreen::singleton();
+    auto* data = platformScreen->screenData(screendisplayID);
+    return data ? data->dpi : 96.;
+}
+
+
+FloatRect screenRect(Widget* widget)
+{
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto* data = platformScreen->screenData(widgetDisplayID(widget)))
+        return data->screenRect;
+    return { };
+}
+
+FloatRect screenAvailableRect(Widget* widget)
+{
+    Ref platformScreen = PlatformScreen::singleton();
+    if (auto* data = platformScreen->screenData(widgetDisplayID(widget)))
+        return data->screenAvailableRect;
+    return { };
+}
+
+bool screenSupportsExtendedColor(Widget*)
+{
+    return false;
+}
+
+#if ENABLE(TOUCH_EVENTS)
+bool screenHasTouchDevice()
+{
+    Ref platformScreen = PlatformScreen::singleton();
+    return platformScreen->screenProperties().screenHasTouchDevice;
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
+} // namespace WebCore

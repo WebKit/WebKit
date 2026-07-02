@@ -1,0 +1,4 @@
+
+EVENT(loadedmetadata)
+END OF TEST
+

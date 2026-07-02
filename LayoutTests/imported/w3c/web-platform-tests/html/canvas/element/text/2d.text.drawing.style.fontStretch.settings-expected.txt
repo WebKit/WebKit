@@ -1,0 +1,6 @@
+2d.text.drawing.style.fontStretch.settings
+Testing value setting of fontStretch in Canvas
+Actual output:
+
+FAIL Testing value setting of fontStretch in Canvas assert_equals: ctx.fontStretch === "ultra-expanded" (got ulTra-condensed[string], expected ultra-expanded[string]) expected "ultra-expanded" but got "ulTra-condensed"
+

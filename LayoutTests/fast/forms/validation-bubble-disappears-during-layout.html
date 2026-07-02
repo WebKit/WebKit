@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+            description("Tests that the HTML form validation bubble disappears while layout. https://webkit.org/b/211832");
+            jsTestIsAsync = true;
+
+            onload = () => {
+                const button = document.querySelector('button');
+                button.setCustomValidity("Hello"); // Instanciate ValidationMessage
+                button.reportValidity(); // Instanciate timer. Focus the button
+                button.blur(); // Blur the focus
+                button.autofocus = true;
+                button.onfocus = () => {
+                    // onfocus is called for the autofocus element during layout
+                    document.body.appendChild(button); // Delete ValidationMessage
+                    setTimeout(() => {
+                        finishJSTest();
+                    }, 0);
+                };
+                setTimeout(() => {
+                    // Cocoa port doesn't dispatch onfocus event.
+                    button.focus();
+                }, 1000);
+            }
+        </script>
+    </head>
+    <body>
+        <button></button>
+    </body>
+</html>

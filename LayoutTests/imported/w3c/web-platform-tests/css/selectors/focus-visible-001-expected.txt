@@ -1,0 +1,9 @@
+This test checks that using the Tab key to navigate focus to an element triggers :focus-visible matching.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Use the TAB key on the keyboard to focus the element below that says "Focus me."
+If the element has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.
+
+Focus me.
+
+PASS Keyboard focus should match :focus-visible
+

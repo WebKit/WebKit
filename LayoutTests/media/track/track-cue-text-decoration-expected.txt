@@ -1,0 +1,11 @@
+
+EVENT(canplaythrough)
+EVENT(seeked)
+Test that text-decoration properties are applied to ::cue pseudo-element.
+
+EXPECTED (cueStyle.textDecorationLine == 'underline') OK
+EXPECTED (cueStyle.textDecorationStyle == 'dashed') OK
+EXPECTED (cueStyle.textDecorationColor == 'rgb(0, 255, 255)') OK
+EXPECTED (cueStyle.textDecorationThickness == '3px') OK
+END OF TEST
+

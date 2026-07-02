@@ -1,0 +1,14 @@
+
+FAIL e.style['interest-target-delay'] = "0.23s 450ms" should set interest-target-hide-delay assert_equals: interest-target-hide-delay should be canonical expected (string) "450ms" but got (undefined) undefined
+FAIL e.style['interest-target-delay'] = "0.23s 450ms" should set interest-target-show-delay assert_equals: interest-target-show-delay should be canonical expected (string) "0.23s" but got (undefined) undefined
+FAIL e.style['interest-target-delay'] = "0.23s 450ms" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['interest-target-delay'] = "0.23s" should set interest-target-hide-delay assert_equals: interest-target-hide-delay should be canonical expected (string) "0.23s" but got (undefined) undefined
+FAIL e.style['interest-target-delay'] = "0.23s" should set interest-target-show-delay assert_equals: interest-target-show-delay should be canonical expected (string) "0.23s" but got (undefined) undefined
+FAIL e.style['interest-target-delay'] = "0.23s" should not set unrelated longhands assert_true: expected true got false
+FAIL e.style['interest-target-delay'] = "450ms" should set interest-target-hide-delay assert_equals: interest-target-hide-delay should be canonical expected (string) "450ms" but got (undefined) undefined
+FAIL e.style['interest-target-delay'] = "450ms" should set interest-target-show-delay assert_equals: interest-target-show-delay should be canonical expected (string) "450ms" but got (undefined) undefined
+FAIL e.style['interest-target-delay'] = "450ms" should not set unrelated longhands assert_true: expected true got false
+PASS e.style['interest-target-delay'] = "" should not set the property value
+PASS e.style['interest-target-delay'] = "0" should not set the property value
+PASS e.style['interest-target-delay'] = "0.23s 0.23s 0.23s" should not set the property value
+

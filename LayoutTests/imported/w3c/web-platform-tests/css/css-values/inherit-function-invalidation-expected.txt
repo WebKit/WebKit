@@ -1,0 +1,5 @@
+
+FAIL inherit() invalidates when values changes on parent element, inherited assert_equals: expected "2" but got "auto"
+FAIL inherit() invalidates when values changes on parent element, inherited, deeper assert_equals: expected "2" but got "auto"
+FAIL inherit() invalidates when values changes on parent element, non-inherited assert_equals: expected "2" but got "auto"
+

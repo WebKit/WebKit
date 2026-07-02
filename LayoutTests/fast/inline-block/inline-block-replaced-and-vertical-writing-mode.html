@@ -1,0 +1,24 @@
+<style>
+.container {
+  writing-mode: vertical-rl;
+  font-family: Monospace;
+  font-size: 20px;
+}
+.inline_block {
+  display: inline-block;
+  background-color: blue;
+  width: 30px;
+  height: 30px;
+}
+object {
+  display: inline-block;
+  background-color: blue;
+  width: 30px;
+  height: 30px;
+  border-image-width: 0px;
+}
+</style>
+<div class=container>
+  PASS if both<div class=inline_block></div><br>
+  aligned the same way<object>
+</div>

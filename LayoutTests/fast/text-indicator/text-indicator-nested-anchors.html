@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        function getBoundingRectForElementWithId(elementId) {
+            const range = document.createRange();
+            range.selectNodeContents(document.getElementById(elementId));
+
+            const indicator = internals.textIndicatorForRange(range, {
+                useBoundingRectAndPaintAllContentForComplexRanges : true,
+                useUserSelectAllCommonAncestor : true,
+            });
+            return indicator.textBoundingRectInRootViewCoordinates;
+        }
+
+        function runTest() {
+            if (!window.internals)
+                return;
+
+            innerAnchorRect = getBoundingRectForElementWithId("innerAnchor");
+            outerAnchorRect = getBoundingRectForElementWithId("outerAnchor");
+
+            shouldBe("innerAnchorRect.x", "outerAnchorRect.x");
+            shouldBe("innerAnchorRect.y", "outerAnchorRect.y");
+            shouldBe("innerAnchorRect.width", "outerAnchorRect.width");
+            shouldBe("innerAnchorRect.height", "outerAnchorRect.height");
+        }
+    </script>
+</head>
+<body onload="runTest()">
+<div id="testCases">
+    <div>
+        <a id="outerAnchor" href="https://apple.com" style="user-select: all; -webkit-user-select: all">
+            <table>
+                <tbody>
+                <tr>
+                    <td><div>hello</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <a id="innerAnchor" href="https://apple.com">Apple's website</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </a>
+    </div>
+</div>
+</body>
+</html>

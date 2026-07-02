@@ -1,0 +1,3 @@
+
+PASS Hit-test of clip-path polygon combined with box-shadow
+

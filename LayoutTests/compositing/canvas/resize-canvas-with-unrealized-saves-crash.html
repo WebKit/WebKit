@@ -1,0 +1,15 @@
+<body>This test passes if it doesn't crash.<canvas id="canvas"/></body>
+<script>
+ testRunner?.dumpAsText();
+ var ctx = canvas.getContext('2d');
+ var img = new Image();
+ img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+ var pattern = ctx.createPattern(img, "repeat-x");
+ ctx.fillStyle = pattern;
+ ctx.save();
+ ctx.shadowOffsetX = 40;
+ ctx.shadowColor = "black";
+ ctx.save();
+ canvas.width = 10;
+ ctx.fillText("FOO",  0, 0);
+</script>

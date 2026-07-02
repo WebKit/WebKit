@@ -1,0 +1,27 @@
+Tests that preferred width for content with an empty inline-block is computed correctly.
+
+PASS: empty inline-block with no styles
+
+PASS: empty inline-block with width: 0
+
+PASS: empty inline-block with padding
+
+PASS: empty inline-block with border
+
+PASS: empty inline-block with margin
+
+PASS: empty inline-block with explicit size 0x0
+
+PASS: empty inline-block with width: 10px
+
+PASS: empty inline-block with height: 20px
+
+PASS: empty inline-block with width: 50%
+
+PASS: empty inline-block with width: auto
+
+PASS: empty inline-block with width: min-content
+
+PASS: empty inline-block with width: max-content
+
+PASS: empty inline-block with width: fit-content

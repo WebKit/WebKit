@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-3; totalPixels=0-7550" />
+<style>
+    @font-face {
+        font-family: "WebFont";
+        src: url("resources/Ahem-SVG.ttf") format("truetype");
+    }
+</style>
+</head>
+<body>
+    <h2>This tests drawing text with OpenType-SVG fonts in 2D canvas.</h2>
+    <canvas id="canvas" width="500" height="100"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d");
+        document.fonts.load("100px 'WebFont'").then(function() {
+            context.font = "100px 'WebFont'";
+            context.textBaseline = "top";
+            context.fillText("aABCa", 0, 0);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</body>
+</html>

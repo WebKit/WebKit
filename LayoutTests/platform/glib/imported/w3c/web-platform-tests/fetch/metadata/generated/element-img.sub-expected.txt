@@ -1,0 +1,32 @@
+
+PASS sec-fetch-site - src - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-site - srcset - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-site - src - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-site - srcset - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-site - src - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-site - srcset - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-mode - src - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-mode - srcset - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-mode - src - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-mode - srcset - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-mode - src - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-mode - srcset - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-dest - src - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-dest - srcset - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-dest - src - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-dest - srcset - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-dest - src - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-dest - srcset - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-user - src - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-user - srcset - Not sent to non-trustworthy same-origin destination, no attributes
+PASS sec-fetch-user - src - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-user - srcset - Not sent to non-trustworthy same-site destination, no attributes
+PASS sec-fetch-user - src - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-user - srcset - Not sent to non-trustworthy cross-site destination, no attributes
+PASS sec-fetch-site - src - HTTPS downgrade (header not sent), no attributes
+PASS sec-fetch-site - srcset - HTTPS downgrade (header not sent), no attributes
+PASS sec-fetch-site - src - HTTPS upgrade, no attributes
+PASS sec-fetch-site - srcset - HTTPS upgrade, no attributes
+PASS sec-fetch-site - src - HTTPS downgrade-upgrade, no attributes
+PASS sec-fetch-site - srcset - HTTPS downgrade-upgrade, no attributes
+

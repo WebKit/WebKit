@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+    
+<table id="table">
+    <tr id="tr1">
+        <th>Cell 1</th>
+        <th>Cell 2</th>
+    </tr>
+    <tr id="tr2">
+        <td>Cell 3</td>
+        <td>Cell 4</td>
+    </tr>
+</table>
+
+<script>
+function tableRowAndColumnIndices(table) {
+    let result = "";
+    for (let i = 0; i < table.rowCount; i++)
+        result += `Row Index [${i}]: ${table.rowAtIndex(i).indexInTable()}\n`;
+
+    const columns = table.columns();
+    for (let i = 0; i < table.columnCount; i++)
+        result += `Column Index [${i}]: ${columns[i].indexInTable()}\n`;
+    return result;
+}    
+
+var output = "This tests that table row and column indicies update correctly after row/column insertions.\n\n"
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var table = accessibilityController.accessibleElementById("table");
+    output += tableRowAndColumnIndices(table);
+
+    // Insert a new row at index 1
+    output += "\nAdding row at index 1:\n\n";
+    let newRow = document.createElement("tr");
+    newRow.innerHTML = "<td>Cell 5</td><td>Cell 6</td>";
+    document.getElementById("tr1").after(newRow);
+
+    setTimeout(async function() {
+        await waitFor(() => accessibilityController.accessibleElementById("tr2").indexInTable() == 2);
+        output += tableRowAndColumnIndices(table);
+
+        // Create a new column by inserting a cell at the end of a row
+        output += "\nAdding cell to row 0:\n\n";
+        let newCell = document.createElement("td");
+        newCell.innerHTML = "Cell 7";
+        document.getElementById("tr1").append(newCell);
+
+        await waitFor(() => table.columns().length == 3);
+        output += tableRowAndColumnIndices(table);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+
+</body>
+</html>

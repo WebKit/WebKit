@@ -1,0 +1,100 @@
+Tests for the CSS.getMatchedStyleForNode command and style rule groupings.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.StartingStyleGrouping
+-- Running test case: CSS.getMatchedStyleForNode.StartingStyleGrouping.Full.Normal
+PASS: Should have 3 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#full".
+PASS: "color" property value should be "blue".
+PASS: "color" property value should be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #1
+PASS: Selector text should be "#full".
+PASS: "color" property value should be "green".
+PASS: "color" property value should not be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have no groupings.
+- Testing rule #2
+PASS: Selector text should be "#full".
+PASS: "color" property value should be "red".
+PASS: "color" property value should be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+
+-- Running test case: CSS.getMatchedStyleForNode.StartingStyleGrouping.Initial.Normal
+PASS: Should have 2 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#initial".
+PASS: "color" property value should be "blue".
+PASS: "color" property value should not be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #1
+PASS: Selector text should be "#initial".
+PASS: "color" property value should be "red".
+PASS: "color" property value should be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+
+-- Running test case: CSS.getMatchedStyleForNode.StartingStyleGrouping.Full.Important
+PASS: Should have 3 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#full-important".
+PASS: "color" property value should be "blue".
+PASS: "color" property value should be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #1
+PASS: Selector text should be "#full-important".
+PASS: "color" property value should be "green".
+PASS: "color" property value should not be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have no groupings.
+- Testing rule #2
+PASS: Selector text should be "#full-important".
+PASS: "color" property value should be "red".
+PASS: "color" property value should be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+
+-- Running test case: CSS.getMatchedStyleForNode.StartingStyleGrouping.Initial.Important
+PASS: Should have 2 authored rules.
+- Testing rule #0
+PASS: Selector text should be "#initial-important".
+PASS: "color" property value should be "blue".
+PASS: "color" property value should be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #1
+PASS: Selector text should be "#initial-important".
+PASS: "color" property value should be "red".
+PASS: "color" property value should not be overridden.
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeStartingStyleGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "starting-style-rule".
+PASS: Grouping 0 should not have any text.
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+

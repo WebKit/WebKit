@@ -1,0 +1,20 @@
+Test that provisional frame targets are paused on start across all navigation types: cross-origin iframe navigation (case 1), cross-origin page navigation with new main frame (case 2), and cross-origin page navigation with reused main frame (case 3).
+
+
+== Running test suite: SiteIsolation.ProvisionalFrameTargetPausing
+-- Running test case: SiteIsolation.ProvisionalFrameTargetPausing.IframeNavigation
+PASS: Provisional frame target was created.
+PASS: Target should be paused on start.
+PASS: Provisional frame target was committed.
+PASS: Frame loaded successfully.
+
+-- Running test case: SiteIsolation.ProvisionalFrameTargetPausing.PageNavigation.NewMainFrame
+PASS: Provisional frame target was created.
+PASS: Target should be paused on start.
+PASS: Provisional frame target was committed.
+
+-- Running test case: SiteIsolation.ProvisionalFrameTargetPausing.PageNavigation.ReusedMainFrame
+PASS: Provisional frame target was created.
+PASS: Target should be paused on start.
+PASS: Provisional frame target was committed.
+

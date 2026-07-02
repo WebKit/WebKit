@@ -1,0 +1,11 @@
+
+PASS put() on an already-aborted request should reject with AbortError
+PASS put() synchronously followed by abort should reject with AbortError
+PASS put() followed by abort after headers received should reject with AbortError
+PASS add() on an already-aborted request should reject with AbortError
+PASS add() synchronously followed by abort should reject with AbortError
+PASS add() followed by abort after headers received should reject with AbortError
+PASS addAll() on an already-aborted request should reject with AbortError
+PASS addAll() synchronously followed by abort should reject with AbortError
+PASS addAll() followed by abort after headers received should reject with AbortError
+

@@ -1,0 +1,4 @@
+
+PASS updateRenderState handles appropriately XRRenderStateInit params - webgl
+PASS updateRenderState handles appropriately XRRenderStateInit params - webgl2
+

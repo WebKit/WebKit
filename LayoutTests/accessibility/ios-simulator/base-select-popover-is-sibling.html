@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="select">
+    <option id="option1">Apple</option>
+    <option id="option2" selected>Banana</option>
+    <option id="option3">Cherry</option>
+</select>
+</div>
+
+<script>
+var output = "This test verifies that the base-select popover (Menu) is a sibling of the select in the iOS accessibility tree, not a child. On iOS, isAccessibilityElement=YES elements are treated as leaves -- assistive technologies won't recurse into their children. The select is an accessibility element, so the popover must be a sibling for its menu items to be reachable.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        output += "--- Menu is a sibling of the select, not a child ---\n";
+        // On iOS, the popover is reparented: the select should have no Menu child.
+        window.hasMenuChild = false;
+        for (var i = 0; i < select.childrenCount; i++) {
+            var child = select.childAtIndex(i);
+            var childRole = child ? child.role : null;
+            if (childRole && childRole.toLowerCase().includes("menu"))
+                hasMenuChild = true;
+        }
+        output += expect("hasMenuChild", "false");
+
+        // The menu should be a sibling of the select (child of the select's parent).
+        window.menu = findBaseSelectMenu(select);
+        output += expect("menu != null", "true");
+        output += expect("menu.role.toLowerCase().includes('menu')", "true");
+
+        output += "\n--- Menu items have MenuItem role ---\n";
+        output += expect("menu.childAtIndex(0).role.toLowerCase().includes('menuitem')", "true");
+        output += expect("menu.childAtIndex(1).role.toLowerCase().includes('menuitem')", "true");
+        output += expect("menu.childAtIndex(2).role.toLowerCase().includes('menuitem')", "true");
+
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

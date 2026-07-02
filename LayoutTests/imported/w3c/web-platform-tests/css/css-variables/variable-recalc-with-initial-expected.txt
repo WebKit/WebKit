@@ -1,0 +1,4 @@
+Test passes if this text is green.
+
+PASS Style recalculation picks up â€œinitialâ€ variable declaration
+

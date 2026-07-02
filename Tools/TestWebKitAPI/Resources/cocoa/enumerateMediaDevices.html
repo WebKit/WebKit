@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script>
+            function enumerate(devices)
+            {
+                console.log("enumerateDevices succeeded");
+            }
+
+            function userMediaError(error)
+            {
+                console.log(error);
+            }
+
+            function test()
+            {
+                navigator.mediaDevices.enumerateDevices()
+                    .then(enumerate)
+                    .catch(userMediaError);
+            }
+        </script>
+    </head>
+    <body onload="test()">
+    </body>
+</html>

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x324
+  RenderBlock {HTML} at (0,0) size 800x324
+    RenderBody {BODY} at (8,8) size 784x308
+      RenderBlock (anonymous) at (0,0) size 784x154
+        RenderSVGRoot {svg} at (8,8) size 0x0
+          RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,154) size 784x154
+        RenderSVGRoot {svg} at (8,162) size 0x0
+          RenderSVGForeignObject {foreignObject} at (0,0) size 0x0
+            RenderText {#text} at (0,0) size 21x18
+              text run at (0,0) width 21: "FO"
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+const validUrlsToCheck = [
+    ["onePartWithEpilogue", "--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22username%22%0D%0A%0D%0Afoo%0D%0A--boundary--%0D%0A"],
+    ["onePartWithTransportPadding", "--boundary%20%09%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22username%22%0D%0A%0D%0Afoo%0D%0A--boundary--%0D%0A"],
+    ["onePartWithoutEpilogue", "--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22username%22%0D%0A%0D%0Afoo%0D%0A--boundary--"],
+    ["twoPartsWithEpilogue", "--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22username%22%0D%0A%0D%0Afoo%0D%0A--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22account%22%0D%0A%0D%0Agoo%0D%0A--boundary--%0D%0A"],
+    ["twoPartsWithoutEpilogue", "--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22username%22%0D%0A%0D%0Afoo%0D%0A--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22account%22%0D%0A%0D%0Agoo%0D%0A--boundary--"],
+    ["twoPartsWithTransportPadding", "--boundary%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22username%22%0D%0A%0D%0Afoo%0D%0A--boundary%09%20%0D%0AContent-Disposition%3A%20form-data%3B%20name%3D%22account%22%0D%0A%0D%0Agoo%0D%0A--boundary--"]
+];
+const invalidUrlsToCheck = [
+    ["empty", "--boundary--boundary--%0D%0A"],
+    ["cr1", "--boundary%0A--boundary--%0D%0A"],
+    ["cr2", "--boundary%0D--boundary--%0D%0A"],
+    ["cr_", "--boundary%0A_--boundary--%0D%0A"],
+    ["dashes", "--boundary-%20---boundary--%0D%0A"],
+];
+
+validUrlsToCheck.forEach(url => {
+    promise_test(async t => {
+        const response = await fetch("resources/wrong-form-data.py?value=" + url[1]);
+        const formData = await response.formData();
+        let iterator = formData.entries();
+        assert_array_equals(iterator.next().value, ["username", "foo"]);
+
+        const result = iterator.next();
+        if (result.done)
+            return;
+        assert_array_equals(result.value, ["account", "goo"]);
+        assert_true(iterator.next().done);
+    }, "Validate form data - " + url[0]);
+});
+
+invalidUrlsToCheck.forEach(url => {
+    promise_test(async t => {
+    const response = await fetch("resources/wrong-form-data.py?value=" + url[1]);
+    await promise_rejects_js(t, TypeError, response.formData());
+    }, "Validate buggy form data - " + url[0]);
+});
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+
+PASS XRWebGLLayer reports a valid viewports for immersive sessions - webgl
+PASS XRWebGLLayer reports a valid viewports for immersive sessions - webgl2
+PASS XRWebGLLayer reports a valid viewports for immersive sessions with secondary views requested - webgl
+PASS XRWebGLLayer reports a valid viewports for immersive sessions with secondary views requested - webgl2
+PASS XRWebGLLayer reports a valid viewports for inline sessions - webgl
+PASS XRWebGLLayer reports a valid viewports for inline sessions - webgl2
+PASS XRWebGLLayer reports a valid viewports for inline sessions with secondary views requested - webgl
+PASS XRWebGLLayer reports a valid viewports for inline sessions with secondary views requested - webgl2
+

@@ -1,0 +1,10 @@
+
+
+FAIL CSS Test: document.activeElement for ::scroll-button is scroller assert_equals: document.activeElement for ::scroll-button is scroller expected Element node <div id="scroller">
+  <div></div>
+  <div></div>
+</div> but got Element node <body><div id="scroller">
+  <div></div>
+  <div></div>
+</d...
+

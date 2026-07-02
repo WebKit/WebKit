@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="timeout" content="long">
+    <title>media-source-seek-during-pending-seek</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function start() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        // Append all segments so data is buffered for all seek targets.
+        for (let i = 0; i < loader.mediaSegmentsLength(); i++) {
+            sourceBuffer.appendBuffer(loader.mediaSegment(i));
+            await waitFor(sourceBuffer, 'update', true);
+        }
+        consoleWrite('Appended all media segments');
+
+        // Seek to position A, wait for the seeking event (which confirms
+        // seekTask() has run and seekToTarget was called), then immediately
+        // seek to position B. This exercises the window where waitForTarget's
+        // promise from the first seek may have resolved and be in-flight on
+        // the run loop when the second seek cancels it.
+        consoleWrite('');
+        consoleWrite('Test: Seek during pending seek while paused');
+        for (let i = 0; i < 5; i++) {
+            video.currentTime = 3;
+            await waitFor(video, 'seeking', true);
+            video.currentTime = 7;
+            await waitFor(video, 'seeking', true);
+        }
+        await waitFor(video, 'seeked', true);
+        testExpected('video.currentTime >= 7', true);
+
+        // Same pattern but while playing.
+        consoleWrite('');
+        consoleWrite('Test: Seek during pending seek while playing');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        for (let i = 0; i < 5; i++) {
+            video.currentTime = 2;
+            await waitFor(video, 'seeking', true);
+            video.currentTime = 8;
+            await waitFor(video, 'seeking', true);
+        }
+        await waitFor(video, 'seeked', true);
+        testExpected('video.currentTime >= 8', true);
+        testExpected('video.paused', false);
+
+        consoleWrite('');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="start()">
+    <video></video>
+</body>
+</html>

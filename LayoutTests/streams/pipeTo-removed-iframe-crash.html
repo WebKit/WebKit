@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that pipeTo does not crash when the document frame is detached during error propagation.<br>
+WebKit should not crash, and you should see PASS below.</p>
+<div id="result"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// The crash: StreamPipeToState::globalObject() calls
+// jsDynamicCast<JSDOMGlobalObject*>(context->globalObject()), but
+// ScriptExecutionContext::globalObject() can return null when the document
+// has no frame (e.g. after its iframe is removed). jsDynamicCast does not
+// null-check its argument, so passing null crashes with a read from 0x0.
+//
+// To reproduce, pipeTo must be called in the iframe's JS context so that
+// StreamPipeToState is associated with the iframe's ScriptExecutionContext.
+// Erroring the source stream queues a microtask. If the iframe is removed
+// before that microtask runs, context->globalObject() returns null when the
+// error-propagation callback fires.
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+
+// Run pipeTo inside the iframe's context (CallWith=CurrentGlobalObject means
+// the StreamPipeToState gets the iframe's ScriptExecutionContext).
+iframe.contentWindow.eval(`
+    var readable = new ReadableStream({ start(c) { window._controller = c; } });
+    var writable = new WritableStream();
+    readable.pipeTo(writable).catch(() => {});
+    window._controller.error("test error");
+`);
+
+// Detach the iframe's document from its frame before the error-propagation
+// microtask runs. After this, ScriptExecutionContext::globalObject() returns
+// null for the iframe's context (document->frame() is null).
+iframe.remove();
+
+// Let microtasks and the event loop run. Without the fix, the error-propagation
+// microtask crashes in StreamPipeToState::globalObject().
+setTimeout(() => {
+    document.getElementById('result').textContent = 'PASS';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

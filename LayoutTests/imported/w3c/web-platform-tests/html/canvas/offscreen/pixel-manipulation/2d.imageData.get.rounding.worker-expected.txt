@@ -1,0 +1,3 @@
+
+PASS Test the handling of non-integer source coordinates in getImageData().
+

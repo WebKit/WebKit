@@ -1,0 +1,14 @@
+
+PASS -webkit-align-content is a legacy name alias for align-content
+PASS -webkit-align-items is a legacy name alias for align-items
+PASS -webkit-align-self is a legacy name alias for align-self
+PASS -webkit-flex is a legacy name alias for flex
+PASS -webkit-flex-basis is a legacy name alias for flex-basis
+PASS -webkit-flex-direction is a legacy name alias for flex-direction
+PASS -webkit-flex-flow is a legacy name alias for flex-flow
+PASS -webkit-flex-grow is a legacy name alias for flex-grow
+PASS -webkit-flex-shrink is a legacy name alias for flex-shrink
+PASS -webkit-flex-wrap is a legacy name alias for flex-wrap
+PASS -webkit-justify-content is a legacy name alias for justify-content
+PASS -webkit-order is a legacy name alias for order
+

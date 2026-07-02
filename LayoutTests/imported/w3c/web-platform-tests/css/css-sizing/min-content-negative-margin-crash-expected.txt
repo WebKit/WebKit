@@ -1,0 +1,7 @@
+layer at (0,0) size 33554431x585
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 33554431x585
+  RenderBlock {HTML} at (0,0) size 33554431x585
+layer at (8,8) size 33554431x569 backgroundClip at (8,8) size 33554424x569 clip at (8,8) size 33554417x554
+  RenderBody {BODY} at (8,8) size 33554423x569
+    RenderBlock {DIV} at (33554428,0) size 0x0

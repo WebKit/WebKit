@@ -1,0 +1,55 @@
+include_rules = [
+  "+json",
+  "+system_wrappers",
+  "+third_party/jsoncpp",
+  "+absl/strings/str_format.h",
+]
+
+specific_include_rules = {
+  "checks\\.h": [
+    "+absl/strings/has_absl_stringify.h",
+  ],
+  "string_builder\\.h": [
+    "+absl/strings/has_absl_stringify.h",
+  ],
+  "protobuf_utils\\.h": [
+    "+third_party/protobuf",
+  ],
+  "gunit\\.h": [
+    "+testing/base/public/gunit.h"
+  ],
+  "trace_categories\\.h": [
+    "+third_party/perfetto",
+  ],
+  "event_tracer\\.cc": [
+    "+third_party/perfetto",
+  ],
+  "logging\\.h": [
+    "+absl/strings/has_absl_stringify.h",
+  ],
+
+  "trace_event\\.h": [
+    "+third_party/perfetto",
+  ],
+  "openssl_adapter\\.cc": [
+    "+openssl",
+  ],
+  "openssl_stream_adapter\\.cc": [
+    "+openssl",
+  ],
+  "openssl_stream_adapter\\.h": [
+    "+openssl",
+  ],
+  "openssl_session_cache\\.h": [
+    "+openssl",
+  ],
+  "base64_benchmark\\.cc": [
+    "+benchmark",
+  ],
+  "base64_rust\\.cc": [
+    "+third_party/rust/chromium_crates_io/vendor/cxx-v1/include/cxx.h",
+  ],
+  "rate_tracker_comparison_unittest\\.cc": [
+    "+absl/random/random.h",
+  ],
+}

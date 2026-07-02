@@ -1,0 +1,4 @@
+
+
+PASS HTMLEmbedElement.getSVGDocument() for cross-origin document
+

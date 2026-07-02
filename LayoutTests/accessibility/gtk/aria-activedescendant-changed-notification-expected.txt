@@ -1,0 +1,15 @@
+This tests that changing the aria-activedescendant value results in a state-changed notification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXFocusedUIElementChanged: AXRole: AXEmbedded
+AXFocusedUIElementChanged: AXRole: AXTextField
+AXFocusedUIElementChanged: AXRole: AXGroup
+AXFocusedUIElementChanged: AXRole: AXGroup
+AXFocusedUIElementChanged: AXRole: AXGroup
+AXFocusedUIElementChanged: AXRole: AXCheckBox
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

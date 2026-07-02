@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ jscOptions=--useShadowRealm=true ] -->
+<body>
+    <script src="/resources/js-test-pre.js"></script>
+    <iframe src="http://localhost:8000/misc/resources/iframe-shadow-realm-subframe.html"></iframe>
+    <script>
+     description("Test that shadow realms can load modules from different-origin iframe contexts");
+
+     window.jsTestIsAsync = true;
+
+     window.addEventListener("message", (event) => {
+         shouldBe("event.data", "42");
+         finishJSTest();
+     });
+    </script>
+    <script src="/resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,7 @@
+Click Here
+PASS win is non-null.
+PASS win is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

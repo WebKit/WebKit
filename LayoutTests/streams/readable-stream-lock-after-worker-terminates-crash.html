@@ -1,0 +1,30 @@
+<script>
+function createWorker() {
+    function createRequest() {
+        setTimeout(() => {
+            const request = new Request("http://test.org", {"method": "POST", "body": "text" });
+            request.text();
+            request.body;
+        }, 0);
+        self.postMessage("");
+    };
+    const worker = new Worker('data:application/javascript;charset=utf-8,' + createRequest.toString() + ';createRequest()');
+    return new Promise(resolve => {
+        worker.onmessage = () => {
+            worker.terminate();
+            resolve();
+        }
+    });
+}
+
+onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    console.log('This test PASS if it does not crash.')
+    for (var i = 0; i < 100; ++i) {
+        const script = document.createElement('script');
+        script.src = `data:application/javascript;charset=utf-8,${createWorker.toString()};createWorker();`;
+        document.head.appendChild(script);
+    }
+};
+</script>

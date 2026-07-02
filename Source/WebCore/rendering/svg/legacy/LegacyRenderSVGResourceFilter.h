@@ -1,0 +1,100 @@
+/*
+ * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "FilterResults.h"
+#include "GraphicsContextSwitcher.h"
+#include "LegacyRenderSVGResourceContainer.h"
+#include "SVGFilterRenderer.h"
+#include "SVGUnitTypes.h"
+#include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class GraphicsContext;
+class SVGFilterElement;
+
+struct FilterData {
+    WTF_MAKE_TZONE_ALLOCATED(FilterData);
+    WTF_MAKE_NONCOPYABLE(FilterData);
+public:
+    enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
+
+    FilterData() = default;
+
+    RefPtr<SVGFilterRenderer> filter;
+
+    std::unique_ptr<GraphicsContextSwitcher> targetSwitcher;
+    FloatRect sourceImageRect;
+
+    GraphicsContext* savedContext { nullptr };
+    FilterDataState state { PaintingSource };
+};
+
+class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceFilter);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilter);
+public:
+    LegacyRenderSVGResourceFilter(SVGFilterElement&, Style::ComputedStyle&&);
+    virtual ~LegacyRenderSVGResourceFilter();
+
+    inline SVGFilterElement& filterElement() const;
+    bool isIdentity() const;
+
+    void removeAllClientsFromCache() override;
+    void removeClientFromCache(RenderElement&) override;
+
+    OptionSet<ApplyResult> applyResource(RenderElement&, const Style::ComputedStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
+    void postApplyResource(RenderElement&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) override;
+
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
+
+    inline SVGUnitTypes::SVGUnitType filterUnits() const;
+    inline SVGUnitTypes::SVGUnitType primitiveUnits() const;
+
+    void markFilterForRepaint(FilterEffect&);
+    void markFilterForRebuild();
+
+    RenderSVGResourceType resourceType() const override { return FilterResourceType; }
+
+    FloatRect NODELETE drawingRegion(RenderObject&) const;
+
+private:
+    void element() const = delete;
+
+    ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
+
+    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
+};
+
+WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceFilter)
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceFilter(); }
+    static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
+    static bool isType(const WebCore::LegacyRenderSVGResourceContainer& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
+SPECIALIZE_TYPE_TRAITS_END()

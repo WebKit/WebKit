@@ -1,0 +1,4 @@
+
+
+FAIL Neither the removing, moving, nor insertion steps for the source element track the previous 'next sibling' pointer when triggering relevant mutations for remaining child image elements of its old parent promise_test: Unhandled rejection with value: object "TypeError: document.body.moveBefore is not a function. (In 'document.body.moveBefore(source3, null)', 'document.body.moveBefore' is undefined)"
+

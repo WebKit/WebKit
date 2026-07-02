@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="width=600">
+<head>
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.didEndZoomingCallback = function() {
+                uiController.uiScriptComplete();
+            };
+            uiController.singleTapAtPoint(50, 120, function() {});
+            uiController.singleTapAtPoint(50, 120, function() {});
+        })();
+    </script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var target;
+
+        function getUIScript()
+        {
+            return document.getElementById("ui-script").text;
+        }
+
+        function runTest()
+        {
+            target = document.getElementById("target");
+            target.addEventListener("click", handleClick, false);
+            var description = document.getElementById("description");
+            description.addEventListener("click", handleClick, false);
+
+            if (!window.eventSender || !testRunner.runUIScript)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function() {
+                target.textContent = "PASS: Double tap caused zoom.";
+                testRunner.notifyDone();
+            });
+        }
+
+        function handleClick(event)
+        {
+            target.textContent = "PASS: Click fired on element with handler.";
+            testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            width: 300px;
+        }
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+<div id="target"></div>
+<div id="description">This document is set up to enable fast clicks. Double
+tapping on the rectangle would send a click event, not trigger a
+zoom. But double tapping on this text content should zoom.<br>
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+</div>
+</body>
+</html>

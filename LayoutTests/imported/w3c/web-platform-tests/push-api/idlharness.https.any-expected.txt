@@ -1,0 +1,17 @@
+
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "PushPermissionDescriptor inherits PermissionDescriptor, but PermissionDescriptor is undefined."
+PASS idl_test validation
+PASS Partial interface ServiceWorkerGlobalScope: original interface defined
+PASS Partial interface ServiceWorkerGlobalScope: valid exposure set
+PASS Partial interface ServiceWorkerGlobalScope: member names are unique
+PASS Partial interface Window: member names are unique
+PASS Window includes PushManagerAttribute: member names are unique
+PASS ServiceWorkerRegistration includes PushManagerAttribute: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+

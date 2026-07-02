@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing ICE candidate filtering when using data channel</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+function ensureCandidatesAreMDNS(sdp)
+{
+    assert_true(sdp.indexOf("c=IN IP4 0.0.0.0\r\n") != -1 || sdp.indexOf("c=IN IP6 ::\r\n") != -1);
+    const candidates = sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=candidate') !== -1;
+    });
+    for (const candidate of candidates)
+        assert_not_equals(candidate.indexOf('.local'), -1);
+}
+
+function ensureCandidatesAreNotMDNS(sdp)
+{
+    const candidates = sdp.split('\r\n').filter(line => {
+        return line.indexOf('a=candidate') !== -1;
+    });
+    for (const candidate of candidates)
+        assert_equals(candidate.indexOf('.local'), -1);
+}
+
+promise_test(async (test) => {
+    let resolve, reject;
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+    setTimeout(() => { reject("Test timed out"); }, 5000);
+
+    if (window.internals)
+        internals.setICECandidateFiltering(true);
+
+    let counter = 0;
+    let pc = new RTCPeerConnection();
+    pc.createDataChannel('sendDataChannel');
+    pc.onicecandidate = async (event) => {
+        if (event.candidate) {
+            assert_not_equals(event.candidate.candidate.indexOf('.local'), -1);
+            counter++;
+            return;
+        }
+        ensureCandidatesAreMDNS(pc.localDescription.sdp);
+        if (counter === 0) {
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            ensureCandidatesAreMDNS(pc.localDescription.sdp);
+            resolve();
+            return;
+        }
+        resolve();
+    };
+    const offer = await pc.createOffer();
+    assert_equals(offer.sdp.indexOf("a=candidate"), -1);
+    await pc.setLocalDescription(offer);
+
+    return promise;
+}, "Gathering ICE candidates from a data channel peer connection with ICE candidate filtering on");
+
+promise_test(async (test) => {
+    let resolve, reject;
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+    setTimeout(() => { reject("Test timed out"); }, 5000);
+
+    if (window.internals)
+        internals.setICECandidateFiltering(false);
+ 
+    let counter = 0;
+    let pc = new RTCPeerConnection();
+    pc.createDataChannel('sendDataChannel');
+
+    pc.onicecandidate = async (event) => {
+        if (event.candidate) {
+            assert_equals(event.candidate.candidate.indexOf('.local'), -1);
+            counter++;
+            return;
+        }
+        ensureCandidatesAreNotMDNS(pc.localDescription.sdp);
+        if (counter !== 0) {
+            // Redoing an offer now that we have some candidates.
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            ensureCandidatesAreNotMDNS(pc.localDescription.sdp);
+            resolve();
+        } else
+            reject("Host candidates should be found");
+    };
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    return promise;
+}, "Gathering ICE candidates from a data channel peer connection with ICE candidate filtering off");
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.setICECandidateFiltering(true);
+
+    const pc = new RTCPeerConnection();
+
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+
+    pc.createDataChannel('sendDataChannel');
+    pc.onicecandidate = (event) => {
+        if (event.candidate) {
+            if (event.candidate.protocol !== "tcp")
+                return;
+            assert_equals(event.candidate.port, 9);
+            assert_true(event.candidate.address.indexOf(".local") !== -1);
+            return;
+        }
+        resolve();
+    }
+    pc.createOffer().then((offer) => { pc.setLocalDescription(offer); });
+
+    await promise;
+
+    pc.onicecandidate = null;
+}, "Verify TCP candidates with filtering");
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.setICECandidateFiltering(false);
+
+    const pc = new RTCPeerConnection();
+
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+
+    pc.createDataChannel('sendDataChannel');
+    pc.onicecandidate = (event) => {
+        if (event.candidate) {
+            if (event.candidate.protocol !== "tcp")
+                return;
+            assert_equals(event.candidate.port, 9);
+            assert_true(event.candidate.address.indexOf(".local") === -1);
+            return;
+        }
+        resolve();
+    }
+    pc.createOffer().then((offer) => { pc.setLocalDescription(offer); });
+
+    await promise;
+
+    pc.onicecandidate = null;
+}, "Verify TCP candidates without filtering");
+    </script>
+  </body>
+</html>

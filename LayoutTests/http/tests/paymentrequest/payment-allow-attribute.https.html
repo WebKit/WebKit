@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      iframe {
+        display: none;
+      }
+    </style>
+    <script src="../resources/js-test-pre.js"></script>
+    <script>
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+      }
+
+      function waitFor(target, eventName) {
+        return new Promise((resolve) => {
+          target.addEventListener(eventName, resolve, { once: true });
+        });
+      }
+
+      window.addEventListener("load", async () => {
+        const action = "create-payment-request";
+        for (const iframe of document.querySelectorAll("iframe")) {
+          iframe.src = iframe.dataset.src;
+          await waitFor(iframe, "load");
+          const isAllowed = iframe.dataset.enabled === "true";
+          iframe.contentWindow.postMessage({ action }, "*");
+          const { data } = await waitFor(window, "message");
+          const { exceptionMessage, exceptionName, result } = data;
+
+          const msg = `iframe src: "${iframe.src}" with allow="${
+            iframe.allow
+          }" ${
+            isAllowed ? "is allowed to" : "MUST NOT"
+          } create a PaymentRequest. ${exceptionName ?? ""} ${
+            exceptionMessage ?? ""
+          }`;
+
+          if (isAllowed) {
+            // ApplePay session doesn't allow remote origins to create PaymentRequests
+            // so we need to distinguish between the two cases.
+            switch (result) {
+              case "payment request created":
+                testPassed(msg);
+                continue;
+              case "threw":
+                // This is ok! policy worked, but ApplePay intervened!
+                if (data.exceptionMessage?.includes("Apple Pay")) {
+                  testPassed(msg);
+                  continue;
+                }
+                testFailed(msg);
+                continue;
+              default:
+                testFailed(msg);
+            }
+            continue;
+          }
+
+          if (!isAllowed) {
+            switch (result) {
+              case "payment request created":
+                testFailed(msg);
+                continue;
+              case "threw":
+                // The only legitimate reason for throwing is if the policy
+                // disallowed creating the PaymentRequest.
+                if (
+                  data.exceptionMessage ===
+                  "Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)"
+                ) {
+                  testPassed(msg);
+                  continue;
+                }
+                testFailed(msg);
+                continue;
+              default:
+                testFailed(msg);
+            }
+          }
+        }
+        testRunner.notifyDone();
+      });
+
+      window.addEventListener("error", (ev) => {
+        testFailed(`Unexpected error. Threw exception ${ev.message}.`);
+        testRunner?.notifyDone();
+      });
+    </script>
+  </head>
+  <body>
+    <iframe
+      data-enabled="false"
+      data-src="https://localhost:8443/paymentrequest/resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      data-enabled="true"
+      data-src="./resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment"
+      data-enabled="true"
+      data-src="https://localhost:8443/paymentrequest/resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment"
+      data-enabled="true"
+      data-src="./resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment *"
+      data-enabled="true"
+      data-src="https://localhost:8443/paymentrequest/resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment *"
+      data-enabled="true"
+      data-src="./resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment 'none'"
+      data-enabled="false"
+      data-src="https://localhost:8443/paymentrequest/resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment 'none'"
+      data-enabled="false"
+      data-src="./resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment 'self'"
+      data-enabled="false"
+      data-src="https://localhost:8443/paymentrequest/resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment 'self'"
+      data-enabled="true"
+      data-src="./resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment https://localhost:8443"
+      data-enabled="true"
+      data-src="https://localhost:8443/paymentrequest/resources/payment-postmessage.html"
+    ></iframe>
+    <iframe
+      allow="payment https://localhost:8443"
+      data-enabled="false"
+      data-src="./resources/payment-postmessage.html"
+    ></iframe>
+  </body>
+</html>

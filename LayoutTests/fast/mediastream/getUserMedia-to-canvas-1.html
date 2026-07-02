@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="timeout" content="long">
+    <meta charset="utf-8">
+    <title>Testing getUserMedia stream to canvas contexts 1</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../webrtc/routines.js"></script>
+    <script src="../canvas/webgl/resources/webgl-test-utils.js"></script>
+    <script src="resources/getUserMedia-to-canvas.js"></script>
+    <style type=text/css>
+        canvas { width: 60px }
+        video { width: 60px }
+    </style>
+</head>
+<body>
+    <div id="debuge"></div>
+    <script>
+        createUserMediaToCanvasTests(0, 2);
+    </script>
+</body>
+</html>

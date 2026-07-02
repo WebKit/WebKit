@@ -1,0 +1,61 @@
+<style>
+body {
+  margin: 0px;
+}
+#wrapper {
+  transform: translateX(0);
+  width: 50px;
+  height: 50px;
+  background: blue;
+}
+
+#contents {
+  visibility: hidden;
+  background: green;
+  width: 200px;
+  height: 200px;
+  transform: translateX(0);
+}
+
+.ref {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background: red;
+  width: 200px;
+  height: 200px;
+}
+</style>
+<!-- PASS if no red -->
+<div class=ref></div>
+<div id=wrapper><div id=contents></div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  wrapper.style.transform = "translateY(0)";
+  contents.style.visibility = "visible";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+  
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

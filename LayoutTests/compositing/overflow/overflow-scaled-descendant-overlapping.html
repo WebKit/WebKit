@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <!-- This checks the overlap test between render layers inside clipped
+    containers and other render layers when page scaling is used. See
+    https://bugs.webkit.org/show_bug.cgi?id=76850 -->
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+        window.onload = async function() {
+            if (!window.testRunner)
+                return;
+            testRunner.dumpAsText(true);
+            await window.testRunner.setPageScaleFactor(0.5, 0, 0);
+            window.testRunner.notifyDone();
+        }
+    </script>
+
+    <style type="text/css">
+        .box {
+            width: 100px;
+            height: 100px;
+        }
+
+        .positioned {
+            position: absolute;
+            left: 400px;
+        }
+
+        .transformed {
+            -webkit-transform: translateZ(0);
+        }
+
+        .clip {
+            overflow: hidden;
+        }
+
+        .test {
+            z-index: 1;
+            background-color: green;
+        }
+
+        .indicator {
+            background-color: red;
+        }
+    </style>
+
+    <div class="positioned test box"></div>
+
+    <div class="positioned clip box">
+        <div class="transformed indicator box"></div>
+    </div>
+</html>

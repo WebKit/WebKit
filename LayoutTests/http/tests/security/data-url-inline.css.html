@@ -1,0 +1,10 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test ensures that a data URL can access its own inline style sheets.
+Sorry for the obscurity of the test case, but it's the repro from
+<a href="https://bugs.webkit.org/show_bug.cgi?id=32309">Bug 32309</a>, which
+has an "unobfuscated" version of the code.</p>
+<p>This test passes if it alerts that it found 1 rule.</p>
+<iframe src="data:text/html;base64,PGh0bWw+DQogIDxzdHlsZT4NCiAgICBib2R5IHsNCiAgICAgIGJhY2tncm91bmQ6IGdyZWVuOw0KICAgIH0NCiAgPC9zdHlsZT4NCiAgPGJvZHk+DQogICAgPHNjcmlwdD4NCiAgICAgIHZhciBzdHlsZXNoZWV0cyA9IGRvY3VtZW50LnN0eWxlU2hlZXRzOw0KICAgICAgdmFyIHN0eWxlc2hlZXQgPSBzdHlsZXNoZWV0c1tzdHlsZXNoZWV0cy5sZW5ndGgtMV07DQogICAgICB2YXIgcnVsZXMgPSBzdHlsZXNoZWV0LmNzc1J1bGVzOw0KICAgICAgY29uc29sZS5sb2cocnVsZXMubGVuZ3RoICsgJyBydWxlcyBmb3VuZCcpOw0KICAgIDwvc2NyaXB0Pg0KICA8L2JvZHk+DQo8L2h0bWw+DQo="></iframe>

@@ -1,0 +1,11 @@
+Test importing a P-384 PKCS8 ECDH key and exporting it in PKCS8 format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS bytesToHexString(privateKey) is pkcs8KeyHex
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

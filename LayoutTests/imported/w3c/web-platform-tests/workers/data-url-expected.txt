@@ -1,0 +1,11 @@
+
+PASS application/javascript MIME allowed
+PASS text/plain MIME allowed
+PASS empty MIME allowed
+PASS communication goes both ways
+PASS indexedDB is present
+PASS indexedDB is inaccessible
+PASS cross-origin worker
+PASS worker has opaque origin
+PASS invalid javascript produces error
+

@@ -1,0 +1,14 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  <title>Reference for text scaling</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=392233 -->
+
+  <text x="0" y="128" font-size="128">Hello</text>
+  <text x="0" y="256" font-size="128">Hello</text>
+  <text x="0" y="384" font-size="128">Hello</text>
+</svg>

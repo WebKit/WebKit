@@ -1,0 +1,4 @@
+This page tests that entering fullscreen doesn't adjust the scroll offset
+
+PASS fullscreen root block scrolling
+

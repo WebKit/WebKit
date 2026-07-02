@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/ahem-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/ahem-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/ahem-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/ahem-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/canvas-background-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/canvas-background.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/initial-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/initial-color.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/medium-font-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/medium-font-size.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/min-font-size-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/min-font-size.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/assumptions/non-secure-context.any.js

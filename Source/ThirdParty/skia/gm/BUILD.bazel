@@ -1,0 +1,37 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+filegroup(
+    name = "gm_subset",
+    srcs = [
+        "bitmaprect.cpp",
+        "colrv1.cpp",
+        "fontations.cpp",
+        "palette.cpp",
+    ],
+    visibility = ["//tools/viewer:__pkg__"],
+)
+
+skia_cc_library(
+    name = "gm",
+    testonly = True,
+    srcs = [
+        "gm.cpp",
+    ],
+    hdrs = ["gm.h"],
+    visibility = [
+        "//dm:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//tools:registry",
+        "//tools:tool_utils",
+        "//tools/fonts:font_tool_utils",
+    ],
+)

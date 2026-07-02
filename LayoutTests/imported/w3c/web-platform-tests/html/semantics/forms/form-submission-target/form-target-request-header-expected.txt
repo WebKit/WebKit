@@ -1,0 +1,3 @@
+
+PASS Verify the content-type exist during a form submission toward "_blank"
+

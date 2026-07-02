@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<meta viewport="width=device-width, initial-scale=1.0" />
+<style>
+  html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  button {
+    height: 100vh;
+    width: 100%;
+    border: 1px solid black;
+  }
+</style>
+<body>
+  <button id="share-button">SHARE!</button>
+  <script>
+    window.addEventListener(
+      "message",
+      async (event) => {
+        const shareButton = document.getElementById("share-button");
+        const { action } = event.data;
+        let result = null;
+        let exceptionMessage;
+        let exceptionName;
+        switch (action) {
+          case "call canShare()":
+            try {
+              result = navigator.canShare({ text: "some text" });
+            } catch (e) {
+              exceptionMessage = e.message;
+              exceptionName = e.name;
+            }
+            break;
+          case "call share()":
+            await userActivationFromParent(shareButton, event);
+            try {
+              await navigator.share({ text: "some text" });
+              result = "share completed";
+            } catch (e) {
+              result = "threw";
+              exceptionMessage = e.message;
+              exceptionName = e.name;
+            }
+            break;
+          default:
+            throw new Error(`Unknown action: ${action}`);
+        }
+        event.source.postMessage(
+          { action, result, exceptionMessage, exceptionName },
+          event.origin
+        );
+      },
+      { once: true }
+    );
+
+    function userActivationFromParent(shareButton, event) {
+      return new Promise((resolve) => {
+        shareButton.addEventListener("click", resolve, { once: true });
+        event.source.postMessage("activate me!", event.origin);
+      });
+    }
+  </script>
+</body>

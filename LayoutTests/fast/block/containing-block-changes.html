@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we properly reparent containing block descendants.</title>
+<style>
+    .translate {
+        transform: translateX(10px);
+    }
+
+    .positioned {
+        position: relative;
+    }
+    
+    .container {
+      height: 20px;
+      width: 20px;
+      border: 10px solid gray;
+    }
+    
+    .box {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      height: 10px;
+      width: 10px;
+      background-color: blue;
+    }
+</style>
+</head>
+<body>
+<div class="container"><div class="box"></div></div>
+<div class="container"><div class="box"></div></div>
+<div class="container"><div class="box"></div></div>
+<div class="container"><div class="box"></div></div>
+<div class="container"><div class="box"></div></div>
+<div class="container"><div class="box"></div></div>
+<div class="container"><div class="box"></div></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(function() {
+  document.getElementsByClassName("container")[0].classList.toggle("translate");
+  document.getElementsByClassName("container")[1].classList.toggle("positioned");
+  document.getElementsByClassName("container")[2].classList.toggle("translate");
+  document.getElementsByClassName("container")[3].classList.toggle("positioned");
+  document.getElementsByClassName("container")[4].classList.toggle("positioned");
+  document.getElementsByClassName("container")[5].classList.toggle("translate");
+  document.getElementsByClassName("container")[6].classList.toggle("translate");
+  document.body.offsetHeight;
+  setTimeout(function() {
+    document.getElementsByClassName("container")[2].classList.toggle("positioned"); 
+    document.getElementsByClassName("container")[3].classList.toggle("translate");
+    document.getElementsByClassName("container")[4].classList.toggle("translate"); 
+    document.getElementsByClassName("container")[5].classList.toggle("positioned"); 
+    document.getElementsByClassName("container")[6].classList.toggle("positioned"); 
+    document.body.offsetHeight;
+    setTimeout(function() {
+      document.getElementsByClassName("container")[4].classList.toggle("positioned"); 
+      document.getElementsByClassName("container")[5].classList.toggle("translate"); 
+      document.getElementsByClassName("container")[6].classList.toggle("translate"); 
+      document.body.offsetHeight;
+      setTimeout(function() {
+        document.getElementsByClassName("container")[6].classList.toggle("positioned"); 
+        document.body.offsetHeight;
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 0);
+    }, 0);
+  }, 0);
+}, 0);
+</script>
+</body>
+</html>

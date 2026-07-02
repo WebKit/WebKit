@@ -1,0 +1,9 @@
+Verify that style invalidation of elements affected by :nth-last-child() no not cause an invalidation storm.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

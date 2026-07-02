@@ -1,0 +1,15 @@
+
+PASS Property color-scheme value 'normal'
+PASS Property color-scheme value 'light dark'
+PASS Property color-scheme value 'dark light'
+PASS Property color-scheme value 'light unknown'
+PASS Property color-scheme value 'only light'
+PASS Property color-scheme value 'only light dark'
+PASS Property color-scheme value 'light light'
+PASS Property color-scheme value 'light only'
+PASS Property color-scheme value 'none'
+PASS Property color-scheme value 'initial'
+PASS Property color-scheme value 'inherit'
+PASS Property color-scheme value 'unset'
+PASS Property color-scheme value 'revert'
+

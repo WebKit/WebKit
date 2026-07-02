@@ -1,0 +1,8 @@
+
+
+PASS Test we can register a video.rVFC callback.
+PASS Test video.rVFC callbacks run before window.rAF callbacks.
+PASS Test we can cancel a video.rVFC request.
+PASS Test invalid calls to the video.rVFC API.
+PASS Test video.rVFC does not stop when switching sources.
+

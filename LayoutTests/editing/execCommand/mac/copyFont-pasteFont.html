@@ -1,0 +1,46 @@
+<html>
+<head>
+    <script src=../../editing.js></script>
+    <script>
+function editingTest() {
+    let selection = window.getSelection();
+
+    let copyRange = document.createRange();
+    copyRange.selectNodeContents(document.getElementById("copy"));
+    selection.removeAllRanges();
+    selection.addRange(copyRange);
+    copyFontCommand();
+
+    let pasteRange = document.createRange();
+    pasteRange.selectNodeContents(document.getElementById("paste"));
+    selection.removeAllRanges();
+    selection.addRange(pasteRange);
+    pasteFontCommand();
+
+    selection.removeAllRanges();
+}
+    </script>
+    <style>
+#copy {
+    background-color: green;
+    font-family: Arial;
+    font-size: 20px;
+    font-weight: bold;
+    font-style: italic;
+    color: yellow;
+    text-shadow: black 1px 1px;
+    vertical-align: sub;
+}
+#paste {
+    outline: none;
+}
+    </style>
+</head>
+<body>
+    <div id="copy">copy this</div>
+    <div id="paste" contenteditable>paste here</div>
+    <script>
+runEditingTest();
+    </script>
+</body>
+</html>

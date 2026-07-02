@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<script>
+description("Check that trying to deserialize an ArrayBuffer when there's not enough memory does not crash (test may only fail flakily)");
+const a = [0];
+a.__proto__ = {};
+Object.defineProperty(a, 0, { get: foo });
+Object.defineProperty(a, 80000000, {});
+function foo() {
+  new Uint8Array(a);
+}
+new Promise(foo);
+
+
+window.addEventListener('message', e => e.data);
+
+var ab;
+try {
+    ab = new ArrayBuffer(2**23);
+for (let i=0; i<10; i++) {
+  window.postMessage(ab, '*');
+}
+} catch { }
+</script>
+</html>

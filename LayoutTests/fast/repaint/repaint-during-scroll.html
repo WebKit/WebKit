@@ -1,0 +1,23 @@
+<head>
+    <script src="resources/repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            var target = document.getElementById("target");
+            scrollBy(0, 100);
+        }
+
+        function handleScroll()
+        {
+            var target = document.getElementById("target");
+            target.style.backgroundColor = "green";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()" onscroll="handleScroll()" style="height: 200%;">
+    <div id="target" style="position: absolute; top: 300px; left: 300px; background-color: red; width: 100px; height: 100px;"></div>
+</body>

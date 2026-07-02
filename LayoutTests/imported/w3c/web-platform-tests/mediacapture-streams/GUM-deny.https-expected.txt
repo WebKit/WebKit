@@ -1,0 +1,9 @@
+When prompted, please deny access to the video stream.
+
+Description
+
+This test checks that the error callback is triggered when user denies access to the video stream.
+
+
+PASS Tests that the error callback is triggered when permission is denied
+

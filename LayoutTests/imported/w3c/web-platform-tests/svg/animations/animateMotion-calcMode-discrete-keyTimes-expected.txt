@@ -1,0 +1,3 @@
+
+FAIL Test animateMotion with calcMode="discrete", path, and non-uniform keyTimes assert_equals: point 1 (x) expected 0 but got 25
+

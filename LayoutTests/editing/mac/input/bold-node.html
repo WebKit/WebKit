@@ -1,0 +1,23 @@
+<meta charset="utf-8">
+<body>
+<p>Test for <a href="rdar://problem/6988023">rdar://problem/6988023</a>: Only the last Korean character can be shown if font style is enabled while typing.</p>
+<div contenteditable id=div></div>
+<script>
+var div = document.getElementById("div");
+div.focus();
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    textInputController.insertText("a");
+    textInputController.doCommand("toggleBold:");
+    textInputController.setMarkedText("b", 0, 1);
+    div.innerHTML = (textInputController.hasMarkedText()) ? "PASS" : "FAIL";
+} else {
+    document.write("To test manually:<br>" + 
+        "1. Type any character to the focused input field, then enable 2-Set Hangul input method.<br>" +
+        "2. Press 'Command + B', 'Command + I' or 'Command + U'.<br>" +
+        "3. Type any Korean characters (e.g. \"한글(gksrmf)\" ) after the character typed in Step 1, check the results.");
+}
+</script>
+</body>

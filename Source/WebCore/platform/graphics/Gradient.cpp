@@ -1,0 +1,161 @@
+/*
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "Gradient.h"
+
+#include "FloatRect.h"
+#include "NativeImage.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/Hasher.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/TextStream.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Gradient);
+
+Ref<Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, bool isTransient)
+{
+    return adoptRef(*new Gradient(WTF::move(data), colorInterpolationMethod, spreadMethod, WTF::move(stops), isTransient));
+}
+
+Gradient::Gradient(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, bool isTransient)
+    : m_data { WTF::move(data) }
+    , m_colorInterpolationMethod { colorInterpolationMethod }
+    , m_spreadMethod { spreadMethod }
+    , m_stops { WTF::move(stops) }
+    , m_isTransient { isTransient }
+{
+}
+
+Gradient::~Gradient()
+{
+    for (CheckedRef observer : m_observers)
+        observer->willDestroyGradient(*this);
+}
+
+void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)
+{
+    if (srcRect.isEmpty())
+        return;
+
+    if (!spacing.isZero())
+        return;
+
+    WTF::switchOn(m_data,
+        [&] (const LinearData& data) {
+            if (data.point0.x() == data.point1.x()) {
+                size.setWidth(1);
+                srcRect.setWidth(1);
+                srcRect.setX(0);
+                return;
+            }
+            if (data.point0.y() != data.point1.y())
+                return;
+
+            size.setHeight(1);
+            srcRect.setHeight(1);
+            srcRect.setY(0);
+        },
+        [] (const RadialData&) {
+        },
+        [] (const ConicData&) {
+        }
+    );
+}
+
+bool Gradient::isZeroSize() const
+{
+    return WTF::switchOn(m_data,
+        [] (const LinearData& data) {
+            return data.point0.x() == data.point1.x() && data.point0.y() == data.point1.y();
+        },
+        [] (const RadialData& data) {
+            return data.point0.x() == data.point1.x() && data.point0.y() == data.point1.y() && data.startRadius == data.endRadius;
+        },
+        [] (const ConicData&) {
+            return false;
+        }
+    );
+}
+
+void Gradient::addColorStop(GradientColorStop&& stop)
+{
+    m_stops.addColorStop(WTF::move(stop));
+    m_cachedHash = 0;
+    stopsChanged();
+}
+
+static void NODELETE add(Hasher& hasher, const Gradient::LinearData& data)
+{
+    add(hasher, data.point0, data.point1);
+}
+
+static void NODELETE add(Hasher& hasher, const Gradient::RadialData& data)
+{
+    add(hasher, data.point0, data.point1, data.startRadius, data.endRadius, data.aspectRatio);
+}
+
+static void NODELETE add(Hasher& hasher, const Gradient::ConicData& data)
+{
+    add(hasher, data.point0, data.angleRadians);
+}
+
+unsigned Gradient::hash() const
+{
+    if (!m_cachedHash)
+        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops.sorted());
+    return m_cachedHash;
+}
+
+TextStream& operator<<(TextStream& ts, const Gradient& gradient)
+{
+    WTF::switchOn(gradient.data(),
+        [&] (const Gradient::LinearData& data) {
+            ts.dumpProperty("p0"_s, data.point0);
+            ts.dumpProperty("p1"_s, data.point1);
+        },
+        [&] (const Gradient::RadialData& data) {
+            ts.dumpProperty("p0"_s, data.point0);
+            ts.dumpProperty("p1"_s, data.point1);
+            ts.dumpProperty("start-radius"_s, data.startRadius);
+            ts.dumpProperty("end-radius"_s, data.endRadius);
+            ts.dumpProperty("aspect-ratio"_s, data.aspectRatio);
+        },
+        [&] (const Gradient::ConicData& data) {
+            ts.dumpProperty("p0"_s, data.point0);
+            ts.dumpProperty("angle-radians"_s, data.angleRadians);
+        }
+    );
+    ts.dumpProperty("color-interpolation-method"_s, gradient.colorInterpolationMethod());
+    ts.dumpProperty("spread-method"_s, gradient.spreadMethod());
+    ts.dumpProperty("stops"_s, gradient.stops());
+    return ts;
+}
+
+} // namespace WebCore

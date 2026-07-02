@@ -1,0 +1,483 @@
+/*
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Assertions.h>
+#include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
+
+#if ENABLE(JOURNALD_LOG)
+#define SD_JOURNAL_SUPPRESS_LOCATION
+#include <systemd/sd-journal.h>
+#endif
+
+#if OS(ANDROID)
+#include <android/log.h>
+#endif
+
+namespace WTF {
+
+template<typename T>
+struct LogArgument {
+    template<typename U = T> requires (std::same_as<U, bool>) static String toString(bool argument) { return argument ? "true"_s : "false"_s; }
+    template<typename U = T> requires (std::same_as<U, int>) static String toString(int argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned>) static String toString(unsigned argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned long>) static String toString(unsigned long argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, long>) static String toString(long argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned long long>) static String toString(unsigned long long argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, long long>) static String toString(long long argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, unsigned short>) static String toString(unsigned short argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, short>) static String toString(short argument) { return String::number(argument); }
+    template<typename U = T> requires (std::is_enum_v<U>) static String toString(U argument) { return String::number(static_cast<typename std::underlying_type<U>::type>(argument)); }
+    template<typename U = T> requires (std::same_as<U, float>) static String toString(float argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<U, double>) static String toString(double argument) { return String::number(argument); }
+    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, AtomString>) static String toString(const AtomString& argument) { return argument.string(); }
+    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, String>) static String toString(String argument) { return argument; }
+    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, StringBuilder*>) static String toString(StringBuilder* argument) { return argument->toString(); }
+    template<typename U = T> requires (std::same_as<typename std::remove_reference_t<U>, StringView>) static String toString(const StringView& argument) { return argument.toString(); }
+    template<typename U = T> requires (std::same_as<U, const char*>) static String toString(const char* argument) { return String::fromLatin1(argument); }
+    template<typename U = T> requires (std::same_as<U, ASCIILiteral>) static String toString(ASCIILiteral argument) { return argument; }
+    template<typename U = T> requires (std::same_as<U, std::span<const char8_t>>) static String toString(std::span<const char8_t> argument) { return argument; }
+#ifdef __OBJC__
+    template<typename U = T> requires (std::is_base_of_v<NSError, std::remove_pointer_t<U>>) static String toString(NSError *argument) { return String(argument.localizedDescription); }
+    template<typename U = T> requires (std::is_base_of_v<NSObject, std::remove_pointer_t<U>>) static String toString(NSObject *argument) { return String(argument.description); }
+    template<typename U = T> requires (std::is_base_of_v<NSProxy, std::remove_pointer_t<U>>) static String toString(NSProxy *argument) { return String(argument.description); }
+#endif
+    template<size_t length> static String toString(const char (&argument)[length]) { return String::fromLatin1(argument); }
+};
+
+struct JSONLogValue {
+    enum class Type { String, JSON };
+    Type type { Type::JSON };
+    String value;
+};
+
+template<class C>
+class HasToJSONString {
+    template <class T> static std::true_type testSignature(String (T::*)() const);
+
+    template <class T> static decltype(testSignature(&T::toJSONString)) test(std::nullptr_t);
+    template <class T> static std::false_type test(...);
+
+public:
+    static constexpr bool value = decltype(test<C>(nullptr))::value;
+};
+
+template<typename Argument, bool hasJSON = HasToJSONString<Argument>::value>
+struct ConsoleLogValueImpl;
+
+template<typename Argument>
+struct ConsoleLogValueImpl<Argument, true> {
+    static JSONLogValue toValue(const Argument& value)
+    {
+        return JSONLogValue { JSONLogValue::Type::JSON, value.toJSONString() };
+    }
+};
+
+template<typename Argument>
+struct ConsoleLogValueImpl<Argument, false> {
+    static JSONLogValue toValue(const Argument& value)
+    {
+        return JSONLogValue { JSONLogValue::Type::String, LogArgument<Argument>::toString(value) };
+    }
+};
+
+template<typename Argument, bool hasJSON = std::is_class<Argument>::value>
+struct ConsoleLogValue;
+
+template<typename Argument>
+struct ConsoleLogValue<Argument, true> {
+    static JSONLogValue toValue(const Argument& value)
+    {
+        return ConsoleLogValueImpl<Argument>::toValue(value);
+    }
+};
+
+// Specialization for non-class types
+template<typename Argument>
+struct ConsoleLogValue<Argument, false> {
+    template<typename T>
+    static JSONLogValue toValue(T value)
+    {
+        return JSONLogValue { JSONLogValue::Type::String, LogArgument<T>::toString(value) };
+    }
+};
+
+WTF_EXPORT_PRIVATE extern Lock loggerObserverLock;
+WTF_EXPORT_PRIVATE extern Lock messageHandlerLoggerObserverLock;
+
+class Logger : public ThreadSafeRefCounted<Logger> {
+    WTF_MAKE_NONCOPYABLE(Logger);
+public:
+    virtual ~Logger() { }
+
+    class Observer {
+    public:
+        virtual ~Observer() = default;
+        // Can be called on any thread.
+        virtual void didLogMessage(const WTFLogChannel&, WTFLogLevel, std::optional<WTFLogLocation>, Vector<JSONLogValue>&&) = 0;
+    };
+
+    class MessageHandlerObserver {
+    public:
+        virtual ~MessageHandlerObserver() = default;
+        virtual void handleLogMessage(const WTFLogChannel&, WTFLogLevel, std::optional<WTFLogLocation>, const Vector<JSONLogValue>&) = 0;
+    };
+
+    static Ref<Logger> create(const void* owner)
+    {
+        return adoptRef(*new Logger(owner));
+    }
+
+    template<typename... Arguments>
+    inline void logAlways(WTFLogChannel& channel, UNUSED_VARIADIC_PARAMS const Arguments&... arguments) const
+    {
+#if RELEASE_LOG_DISABLED
+        // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
+        //  on some systems, so don't allow it.
+        UNUSED_PARAM(channel);
+#else
+        if (!willLog(channel, WTFLogLevel::Always, { }, arguments...))
+            return;
+
+        log(channel, WTFLogLevel::Always, arguments...);
+#endif
+    }
+
+    template<typename... Arguments>
+    inline void error(WTFLogChannel& channel, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Error, { }, arguments...))
+            return;
+
+        log(channel, WTFLogLevel::Error, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void warning(WTFLogChannel& channel, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Warning, { }, arguments...))
+            return;
+
+        log(channel, WTFLogLevel::Warning, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void info(WTFLogChannel& channel, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Info, { }, arguments...))
+            return;
+
+        log(channel, WTFLogLevel::Info, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void debug(WTFLogChannel& channel, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Debug, { }, arguments...))
+            return;
+
+        log(channel, WTFLogLevel::Debug, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void logAlwaysVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, UNUSED_VARIADIC_PARAMS const Arguments&... arguments) const
+    {
+#if RELEASE_LOG_DISABLED
+        // "Standard" WebCore logging goes to stderr, which is captured in layout test output and can generally be a problem
+        //  on some systems, so don't allow it.
+        UNUSED_PARAM(channel);
+        UNUSED_PARAM(file);
+        UNUSED_PARAM(function);
+        UNUSED_PARAM(line);
+#else
+        if (!willLog(channel, WTFLogLevel::Always, { { file, function, line } }, arguments...))
+            return;
+
+        logVerbose(channel, WTFLogLevel::Always, file, function, line, arguments...);
+#endif
+    }
+
+    template<typename... Arguments>
+    inline void errorVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Error, { { file, function, line } }, arguments...))
+            return;
+
+        logVerbose(channel, WTFLogLevel::Error, file, function, line, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void warningVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Warning, { { file, function, line } }, arguments...))
+            return;
+
+        logVerbose(channel, WTFLogLevel::Warning, file, function, line, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void infoVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Info, { { file, function, line } }, arguments...))
+            return;
+
+        logVerbose(channel, WTFLogLevel::Info, file, function, line, arguments...);
+    }
+
+    template<typename... Arguments>
+    inline void debugVerbose(WTFLogChannel& channel, const char* file, const char* function, int line, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, WTFLogLevel::Debug, { { file, function, line } }, arguments...))
+            return;
+
+        logVerbose(channel, WTFLogLevel::Debug, file, function, line, arguments...);
+    }
+
+    template<typename... Argument>
+    inline bool willLog(const WTFLogChannel& channel, WTFLogLevel level, std::optional<WTFLogLocation> logLocation, const Argument&... arguments) const
+    {
+        {
+            if (!messageHandlerObserverLock().tryLock())
+                return false;
+
+            Locker locker { AdoptLock, messageHandlerObserverLock() };
+            Vector<JSONLogValue> values { ConsoleLogValue<Argument>::toValue(arguments)... };
+            for (MessageHandlerObserver& observer : messageHandlerObservers())
+                observer.handleLogMessage(channel, level, logLocation, values);
+        }
+
+        if (!m_enabled)
+            return false;
+
+#if ENABLE(JOURNALD_LOG) || OS(ANDROID)
+        if (channel.state == WTFLogChannelState::Off)
+            return false;
+#endif
+
+        if (level <= WTFLogLevel::Error)
+            return true;
+
+        if (channel.state == WTFLogChannelState::Off || level > channel.level)
+            return false;
+
+        return true;
+    }
+
+    template<typename... Arguments>
+    inline void toObservers(WTFLogChannel& channel, WTFLogLevel level, std::optional<WTFLogLocation> location, const Arguments&... arguments) const
+    {
+        if (!willLog(channel, level, location, arguments...))
+            return;
+
+        sendMessageToObservers(channel, level, location, arguments...);
+    }
+
+    bool enabled() const { return m_enabled; }
+    void setEnabled(const void* owner, bool enabled)
+    {
+        ASSERT(owner == m_owner);
+        if (owner == m_owner)
+            m_enabled = enabled;
+    }
+
+    struct LogSiteIdentifier {
+        LogSiteIdentifier(const char* methodName, uint64_t objectIdentifier)
+            : methodName { methodName }
+            , objectIdentifier { objectIdentifier }
+        {
+        }
+
+        LogSiteIdentifier(ASCIILiteral className, const char* methodName, uint64_t objectIdentifier)
+            : className { className }
+            , methodName { methodName }
+            , objectIdentifier { objectIdentifier }
+        {
+        }
+
+        WTF_EXPORT_PRIVATE String toString() const;
+
+        ASCIILiteral className;
+        const char* methodName { nullptr };
+        const uint64_t objectIdentifier { 0 };
+    };
+
+    static inline void addObserver(Observer& observer)
+    {
+        Locker locker { observerLock() };
+        observers().append(observer);
+    }
+    static inline void removeObserver(Observer& observer)
+    {
+        Locker locker { observerLock() };
+        observers().removeFirstMatching([&observer](auto anObserver) {
+            return &anObserver.get() == &observer;
+        });
+    }
+
+    static inline void addMessageHandlerObserver(MessageHandlerObserver& observer)
+    {
+        Locker locker { messageHandlerObserverLock() };
+        messageHandlerObservers().append(observer);
+    }
+    static inline void removeMessageHandlerObserver(MessageHandlerObserver& observer)
+    {
+        Locker locker { messageHandlerObserverLock() };
+        messageHandlerObservers().removeFirstMatching([&observer](auto anObserver) {
+            return &anObserver.get() == &observer;
+        });
+    }
+
+    bool hasEnabledInspector() const { return m_hasEnabledInspector; }
+    void setHasEnabledInspector(bool hasEnabledInspector) { m_hasEnabledInspector = hasEnabledInspector; }
+
+private:
+    friend class AggregateLogger;
+    friend class NativePromiseBase;
+
+    explicit Logger(const void* owner)
+        : m_owner { owner }
+    {
+    }
+
+#if USE(OS_LOG)
+    WTF_EXPORT_PRIVATE static void osLog(WTFLogChannel&, const CString& message);
+#endif
+
+    template<typename... Argument>
+    static inline void log(WTFLogChannel& channel, WTFLogLevel level, const Argument&... arguments)
+    {
+        auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
+
+#if RELEASE_LOG_DISABLED
+        WTFLog(&channel, "%s", logMessage.utf8().data());
+#elif USE(OS_LOG)
+        osLog(channel, logMessage.utf8());
+#elif OS(ANDROID)
+        __android_log_print(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s", channel.name, logMessage.utf8().data());
+#elif ENABLE(JOURNALD_LOG)
+        sd_journal_send("WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
+#else
+        IGNORE_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
+        fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s\n", channel.name, logMessage.utf8().data());
+        IGNORE_WARNINGS_END
+#endif
+
+        sendMessageToObservers(channel, level, { }, arguments...);
+    }
+
+    template<typename... Argument>
+    static inline void sendMessageToObservers(WTFLogChannel& channel, WTFLogLevel level, std::optional<WTFLogLocation> location, const Argument&... arguments)
+    {
+        if (channel.state == WTFLogChannelState::Off || level > channel.level)
+            return;
+
+        if (!observerLock().tryLock())
+            return;
+
+        Locker locker { AdoptLock, observerLock() };
+        for (Observer& observer : observers())
+            observer.didLogMessage(channel, level, location, { ConsoleLogValue<Argument>::toValue(arguments)... });
+    }
+
+    template<typename... Argument>
+    static inline void logVerbose(WTFLogChannel& channel, WTFLogLevel level, const char* file, const char* function, int line, const Argument&... arguments)
+    {
+        auto logMessage = makeString(LogArgument<Argument>::toString(arguments)...);
+
+#if RELEASE_LOG_DISABLED
+        WTFLogVerbose(file, line, function, &channel, "%s", logMessage.utf8().data());
+#elif USE(OS_LOG)
+        osLog(channel, logMessage.utf8());
+        UNUSED_PARAM(file);
+        UNUSED_PARAM(line);
+        UNUSED_PARAM(function);
+#elif OS(ANDROID)
+        __android_log_print(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s FILE=%s:%d: %s", channel.name, logMessage.utf8().data(), file, line, function);
+#elif ENABLE(JOURNALD_LOG)
+        auto fileString = makeString("CODE_FILE="_s, unsafeSpan(file));
+        auto lineString = makeString("CODE_LINE="_s, line);
+        sd_journal_send_with_location(fileString.utf8().data(), lineString.utf8().data(), function, "WEBKIT_SUBSYSTEM=" LOG_CHANNEL_WEBKIT_SUBSYSTEM, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
+#else
+        fprintf(stderr, "[" LOG_CHANNEL_WEBKIT_SUBSYSTEM ":%s:-] %s FILE=%s:%d %s\n", channel.name, logMessage.utf8().data(), file, line, function);
+#endif
+
+        sendMessageToObservers(channel, level, { { file, function, line } }, arguments...);
+    }
+
+    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& NODELETE observers() WTF_REQUIRES_LOCK(observerLock());
+
+    static Lock& observerLock() WTF_RETURNS_LOCK(loggerObserverLock)
+    {
+        return loggerObserverLock;
+    }
+
+    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<MessageHandlerObserver>>& NODELETE messageHandlerObservers() WTF_REQUIRES_LOCK(messageHandlerObserverLock());
+
+    static Lock& messageHandlerObserverLock() WTF_RETURNS_LOCK(messageHandlerLoggerObserverLock)
+    {
+        return messageHandlerLoggerObserverLock;
+    }
+
+    bool m_enabled { true };
+    bool m_hasEnabledInspector { false };
+    const void* m_owner;
+};
+
+WTF_EXPORT_PRIVATE const Logger& emptyLogger();
+
+template<> struct LogArgument<Logger::LogSiteIdentifier> {
+    static String toString(const Logger::LogSiteIdentifier& value) { return value.toString(); }
+};
+template<> struct LogArgument<const void*> {
+    WTF_EXPORT_PRIVATE static String toString(const void*);
+};
+template<typename T>
+struct LogArgument<std::optional<T>> {
+    static String toString(const std::optional<T>& value)
+    {
+        return value ? LogArgument<T>::toString(value.value()) : "nullopt"_s;
+    }
+};
+
+#ifdef __OBJC__
+template<> struct LogArgument<id> {
+    static String toString(id argument)
+    {
+        if ([argument respondsToSelector:@selector(description)])
+            return String([argument description]);
+        return LogArgument<const void*>::toString((__bridge const void*)argument);
+    }
+};
+#endif
+
+} // namespace WTF
+
+using WTF::Logger;
+using WTF::JSONLogValue;
+using WTF::emptyLogger;

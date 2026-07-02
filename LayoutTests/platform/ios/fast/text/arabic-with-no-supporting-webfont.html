@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html dir="ltr" jstcache="0">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face {
+font-family: 'DroidSans';
+font-style: normal;
+font-weight: 400;
+src: url(../../../../fast/writing-mode/resources/DroidSansFallback-reduced.ttf) format('truetype');
+}
+</style>
+</head>
+<body>
+This test makes sure that text which is styled with a web font which does not support arabic 1) does not get drawn with LastResort, and 2) does not get drawn with .PhoneFallback
+<div style="font: 100px DroidSans;">نهر النيل</div>
+</body></html>

@@ -1,0 +1,6 @@
+
+PASS Ensure XRSession throws appropriate errors when updating render state without layers feature enabled - webgl
+PASS Ensure XRSession throws appropriate errors when updating render state without layers feature enabled - webgl2
+PASS Ensure XRSession throws appropriate errors when updating render state with layers feature enabled - webgl
+PASS Ensure XRSession throws appropriate errors when updating render state with layers feature enabled - webgl2
+

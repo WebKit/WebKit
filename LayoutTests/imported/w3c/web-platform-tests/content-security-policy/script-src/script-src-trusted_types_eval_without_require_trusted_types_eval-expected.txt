@@ -1,0 +1,8 @@
+Scripts injected via `eval` are not allowed with `trusted-types-eval` without `require-trusted-types-for 'script'`.
+
+
+PASS Scripts injected via direct `eval` are not allowed with `trusted-types-eval` without `require-trusted-types-for 'script'`.
+PASS Scripts injected via indirect `eval` are not allowed with `trusted-types-eval` without `require-trusted-types-for 'script'`.
+PASS Scripts injected via `new Function` are not allowed with `trusted-types-eval` without `require-trusted-types-for 'script'`.
+PASS Scripts injected via `setTimeout` are not allowed with `trusted-types-eval` without `require-trusted-types-for 'script'`.
+

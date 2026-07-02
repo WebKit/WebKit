@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 684x18
+        text run at (0,0) width 684: "This is a test that large toggle elements render correctly. See https://bugs.webkit.org/show_bug.cgi?id=82833"
+      RenderBlock {INPUT} at (2,21) size 200x200
+      RenderText {#text} at (204,207) size 4x17
+        text run at (204,207) width 4: " "
+      RenderBlock {INPUT} at (210,21) size 200x200
+      RenderText {#text} at (0,0) size 0x0

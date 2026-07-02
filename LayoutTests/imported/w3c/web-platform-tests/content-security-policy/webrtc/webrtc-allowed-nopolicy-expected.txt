@@ -1,0 +1,3 @@
+
+PASS webrtc allowed with no policy
+

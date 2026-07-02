@@ -1,0 +1,6 @@
+
+PASS Outer animation can see view timeline defined by :host
+PASS Outer animation can see view timeline defined by ::slotted
+PASS Inner animation can see view timeline defined by ::part
+PASS Slotted element can see view timeline within the shadow
+

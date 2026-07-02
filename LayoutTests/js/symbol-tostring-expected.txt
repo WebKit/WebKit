@@ -1,0 +1,17 @@
+This tests that ToString(Symbol) behaviors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String(Symbol.iterator) is "Symbol(Symbol.iterator)"
+PASS String(Symbol.prototype) threw exception TypeError: Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object.
+PASS Symbol.prototype.toString.call(Symbol.iterator) is "Symbol(Symbol.iterator)"
+PASS Symbol.prototype.toString.call(Symbol('hello')) is "Symbol(hello)"
+PASS Symbol.prototype.toString.call(Symbol()) is "Symbol()"
+PASS Object.prototype.toString.call(Symbol()) is "[object Symbol]"
+PASS Object.prototype.toString.call(Symbol.prototype) is "[object Symbol]"
+PASS Object.prototype.toString.call(Symbol) is "[object Function]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

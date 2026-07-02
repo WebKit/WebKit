@@ -1,0 +1,70 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true PrivateClickMeasurementFraudPreventionEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests that the presence of a source nonce triggers a token signing request.</div>
+<a id="targetLink" attributionsourceid=3 attributiondestination="http://localhost:8000" attributionsourcenonce="ABCDEFabcdef0123456789">Link</a><br>
+<div id="output"></div>
+<script>
+    const currentTimeMillis = (new Date()).getTime();
+    const highEntropyBits = currentTimeMillis - (Math.floor(currentTimeMillis / 1000000) * 1000000);
+    const dummy = highEntropyBits + "" + Math.floor(Math.random() * 100);
+
+    if (!window.location.search)
+        prepareTest();
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function appendIframe(url, onloadCallback) {
+        let iframeElement = document.createElement("iframe");
+        iframeElement.src = url;
+        if (onloadCallback)
+            iframeElement.onload = onloadCallback;
+        document.body.appendChild(iframeElement);
+    }
+
+    function appendTokenSignatureIframeAndFinish(dummy) {
+        // tearDownAndFinish();
+        appendIframe("http://127.0.0.1:8000/privateClickMeasurement/resources/getTokenSigningData.py?timeout_ms=200&dummy=" + dummy, function() {
+            testRunner.dumpPrivateClickMeasurement();
+            document.body.removeChild(document.getElementById("targetLink"));
+            tearDownAndFinish();
+        });
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (!window.location.search) {
+                testRunner.setPrivateClickMeasurementTokenPublicKeyURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/fraudPreventionTestURL.py?dummy=" + dummy + "&nullContent=true");
+                testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/fraudPreventionTestURL.py?dummy=" + dummy + "&last=true");
+
+                targetLink.href = "http://localhost:8000/privateClickMeasurement/private-click-measurement-with-source-nonce-wrong-content-type.html?dummy=" + dummy;
+                activateElement("targetLink");
+            } else {
+                let params = new URLSearchParams(window.location.search);
+                appendTokenSignatureIframeAndFinish(params.get("dummy"));
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

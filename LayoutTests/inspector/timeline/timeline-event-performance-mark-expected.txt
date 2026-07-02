@@ -1,0 +1,14 @@
+Tests 'performance.mark' Timeline event records.
+
+
+== Running test suite: TimelineEvent.PerformanceMark
+-- Running test case: TimelineEvent.PerformanceMark.performanceMark
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: expectEqual(2, 2)
+PASS: expectEqual("timestamp", "timestamp")
+PASS: expectEqual("foo", "foo")
+PASS: expectEqual("timestamp", "timestamp")
+PASS: expectEqual("bar", "bar")
+

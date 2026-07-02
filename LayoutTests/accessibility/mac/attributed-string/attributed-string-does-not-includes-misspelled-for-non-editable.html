@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<input type="text" id="textfield" value="test mispelled"><br>
+<textarea id="textarea">test mispelled</textarea>
+<div id="contenteditable" contenteditable="true"><b>test mispelled</b></div>
+
+<div role="group" id="div">test mispelled</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that spell checking is not run on non-editable elements.");
+
+    if (window.accessibilityController) {
+
+        var contentLength = document.getElementById("textfield").value.length;
+
+        // textfield
+        var attrString = accessibilityController.accessibleElementById("textfield").attributedStringForRange(0, contentLength);
+        shouldBeTrue("attrString.indexOf('AXMisspelled = 1') != -1");
+
+        // textarea
+        attrString = accessibilityController.accessibleElementById("textarea").attributedStringForRange(0, contentLength);
+        shouldBeTrue("attrString.indexOf('AXMisspelled = 1') != -1");
+
+        // contenteditable
+        attrString = accessibilityController.accessibleElementById("contenteditable").attributedStringForRange(0, contentLength);
+        shouldBeTrue("attrString.indexOf('AXMisspelled = 1') != -1");
+
+        // non-editable (the attributedStringForRange only works on text controls, so use attributedStringForTextMarkerRangeContainsAttribute).
+        var staticText = accessibilityController.accessibleElementById("div");
+        var markerRange = staticText.textMarkerRangeForElement(staticText);
+        shouldBeFalse("staticText.attributedStringForTextMarkerRangeContainsAttribute('AXMisspelled', markerRange)");
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

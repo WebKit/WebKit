@@ -1,0 +1,141 @@
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "android_fontmgr_hdrs",
+    srcs = ["SkFontMgr_android.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "android_ndk_fontmgr_hdrs",
+    srcs = ["SkFontMgr_android_ndk.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_foundation_hdrs",
+    srcs = ["SkCFObject.h"],
+    visibility = [
+        "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/gpu/graphite:__subpackages__",  # TODO(kjlubick) remove after decoupling
+        "//src/gpu/graphite/mtl:__pkg__",
+        "//src/ports:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "coretext_fontmgr_hdrs",
+    srcs = ["SkFontMgr_mac_ct.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "directory_fontmgr_hdrs",
+    srcs = ["SkFontMgr_directory.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "data_fontmgr_hdrs",
+    srcs = ["SkFontMgr_data.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "empty_fontmgr_hdrs",
+    srcs = ["SkFontMgr_empty.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "fontconfig_fontmgr_hdrs",
+    srcs = ["SkFontMgr_fontconfig.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "fuchsia_fontmgr_hdrs",
+    srcs = ["SkFontMgr_fuchsia.h"],
+)
+
+skia_filegroup(
+    name = "fci_fontmgr_hdrs",
+    srcs = [
+        "SkFontConfigInterface.h",
+        "SkFontMgr_FontConfigInterface.h",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_fontations_hdrs",
+    srcs = [
+        "SkFontScanner_Fontations.h",
+        "SkTypeface_fontations.h",
+    ],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "typeface_freetype_hdrs",
+    srcs = [
+        "SkFontScanner_FreeType.h",
+    ],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "fontmgr_fontations_hdrs",
+    srcs = ["SkFontMgr_Fontations.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "typeface_windows_hdrs",
+    srcs = ["SkTypeface_win.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "imagegenerator_cg_hdrs",
+    srcs = ["SkImageGeneratorCG.h"],
+    visibility = [
+        "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/ports:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "imagegenerator_ndk_hdrs",
+    srcs = ["SkImageGeneratorNDK.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "imagegenerator_wic_hdrs",
+    srcs = ["SkImageGeneratorWIC.h"],
+    visibility = ["//src/ports:__pkg__"],
+)
+
+skia_filegroup(
+    name = "mac_typeface",
+    srcs = ["SkTypeface_mac.h"],
+    visibility = [
+        "//src/gpu/ganesh/mtl:__pkg__",
+        "//src/ports:__pkg__",
+    ],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = [
+        "SkFontMgr_data.h",
+        "SkFontMgr_directory.h",
+        "SkFontMgr_empty.h",
+    ],
+)

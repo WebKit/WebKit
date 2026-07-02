@@ -1,0 +1,25 @@
+An element with a finished fill-forwards animation should not trigger backing store outside the viewport.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 1110.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 1110.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 1010.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 0.00 0.00 1.00])
+        )
+      )
+    )
+  )
+)
+Some text here to force backing store.

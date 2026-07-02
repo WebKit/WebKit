@@ -1,0 +1,21 @@
+case precision_specifier
+    expect compile_fail
+    values {}
+
+    vertex ""
+        ${VERTEX_DECLARATIONS}
+        uniform lowp sampler2D s;
+
+        void main()
+        {
+            mediump vec2 v = mediump vec2(1.0, 1.0);
+            ${VERTEX_OUTPUT}
+        }
+    ""
+    fragment ""
+        void main()
+        {
+            gl_FragColor = vec4(1.0);
+        }
+    ""
+end

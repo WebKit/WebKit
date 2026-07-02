@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Filter region should include the child when the child translates. There should be two boxes side by side that have been filtered.</title>
+<style>
+.test {
+    display: grid;
+    background: thistle;
+    filter: invert(1);
+    width: 150px;
+    height: 100px;
+}
+
+.test::after {
+    translate: 100%;
+    background: blueviolet;
+    content: '';
+    width: 150px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+
+<div class="test"></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let html = '<body><div><template shadowrootmode="open"><map id="testmap"></map></template></div></body>';
+let doc = Document.parseHTMLUnsafe(html);
+document.documentElement.prepend(doc.body);
+</script>
+This test passes if it does not crash.

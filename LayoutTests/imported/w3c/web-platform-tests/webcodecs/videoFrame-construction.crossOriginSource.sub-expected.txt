@@ -1,0 +1,14 @@
+
+PASS Test creating a VideoFrame with a same-origin HTMLImageElement
+PASS Test creating a VideoFrame with a cross-origin HTMLImageElement
+PASS Test creating a VideoFrame with a CORS enabled cross-origin HTMLImageElement without setting crossorigin
+PASS Test creating a VideoFrame with a CORS enabled cross-origin HTMLImageElement with crossorigin="anonymous"
+PASS Test creating a VideoFrame with a same-origin SVGImageElement
+PASS Test creating a VideoFrame with a cross-origin SVGImageElement
+PASS Test creating a VideoFrame with a CORS enabled cross-origin SVGImageElement without setting crossorigin
+PASS Test creating a VideoFrame with a CORS enabled cross-origin SVGImageElement with crossorigin="anonymous"
+PASS Test creating a VideoFrame with a same-origin HTMLVideoElement
+PASS Test creating a VideoFrame with a cross-origin HTMLVideoElement
+PASS Test creating a VideoFrame with a CORS enabled cross-origin HTMLVideoElement without setting crossorigin
+PASS Test creating a VideoFrame with a CORS enabled cross-origin HTMLVideoElement with crossorigin="anonymous"
+

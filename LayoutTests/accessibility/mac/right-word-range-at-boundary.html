@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div>
+    <div id="text1">Hello</div>
+    <div id="text2">World</div>
+</div>
+    
+<script>
+var textMarker, textRange, textChild, range, rangeStart, rangeEnd;
+
+if (window.accessibilityController) {
+    var output = "This test verifies that we get the correct right word range when we are at the border of containing blocks.\n\n";
+    textChild = accessibilityController.accessibleElementById("text1").childAtIndex(0);
+    textRange = textChild.textMarkerRangeForElement(textChild);
+    textMarker = textChild.endTextMarkerForTextMarkerRange(textRange);
+
+    // Right Word
+    range = textChild.rightWordTextMarkerRangeForTextMarker(textMarker);
+    rangeEnd = textChild.endTextMarkerForTextMarkerRange(range);
+    output += expect("textChild.stringForTextMarkerRange(range)", "''");
+
+    // Left Word
+    textChild = accessibilityController.accessibleElementById("text2").childAtIndex(0);
+    textRange = textChild.textMarkerRangeForElement(textChild);
+    textMarker = textChild.startTextMarkerForTextMarkerRange(textRange);
+    range = textChild.leftWordTextMarkerRangeForTextMarker(textMarker);
+    rangeStart = textChild.startTextMarkerForTextMarkerRange(range);
+    output += expect("textChild.stringForTextMarkerRange(range)", "''");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

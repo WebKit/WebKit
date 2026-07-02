@@ -1,0 +1,4 @@
+
+PASS Test addEventListener/removeEventListener on the document.
+PASS Test setting onanimationstart handler on the document.
+

@@ -1,0 +1,11 @@
+
+
+FAIL Initial match by id attribute assert_true: expected true got null
+FAIL Changing id away breaks the match assert_false: expected false got null
+FAIL Setting name to match usemap restores the match assert_true: expected true got null
+FAIL Removing name and restoring id matches by id assert_true: expected true got null
+FAIL Both name and id matching usemap works assert_true: expected true got null
+FAIL Changing id away while name still matches keeps the match assert_true: expected true got null
+FAIL Changing name away too breaks the match assert_false: expected false got null
+FAIL Restoring id matches again assert_true: expected true got null
+

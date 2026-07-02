@@ -1,0 +1,3 @@
+
+PASS CSS Animations neutral keyframes on registered custom properties should produce the underlying value
+

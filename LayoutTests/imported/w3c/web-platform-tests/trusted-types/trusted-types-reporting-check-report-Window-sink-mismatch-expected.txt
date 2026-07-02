@@ -1,0 +1,7 @@
+
+PASS Passing a plain string to setTimeout works since it's report-only.
+PASS Passing a TrustedScript to setTimeout works.
+PASS Passing a plain string to eval throws.
+PASS Test report-uri works with require-trusted-types-for violation.
+PASS Test number of sent reports.
+

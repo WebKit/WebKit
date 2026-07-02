@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test import of a .mjs module.");
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+(async function() {
+    debug("Module is not executed yet.");
+    try {
+        await import("./resources/module-simple-A.mjs");
+    } catch (e) {
+        debug("Module import failed.");
+    } finally {
+        finishJSTest();
+    }
+}());
+</script>
+</body>
+</html>

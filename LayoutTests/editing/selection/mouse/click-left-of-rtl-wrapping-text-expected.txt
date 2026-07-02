@@ -1,0 +1,12 @@
+
+PASS Click left at line 1/2
+PASS Click left at line 2/2
+PASS Click left at line 1/3
+PASS Click left at line 2/3
+PASS Click left at line 3/3
+PASS Click left at line 1/5
+PASS Click left at line 2/5
+PASS Click left at line 3/5
+PASS Click left at line 4/5
+PASS Click left at line 5/5
+

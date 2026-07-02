@@ -1,0 +1,17 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS With Get: Policy to use: null, is cross-origin: false, is allowed by policy: true
+PASS With Get: Policy to use: null, is cross-origin: true, is allowed by policy: false
+PASS With Get: Policy to use: digital-credentials-get, is cross-origin: false, is allowed by policy: true
+FAIL With Get: Policy to use: digital-credentials-get, is cross-origin: true, is allowed by policy: true assert_true: <iframe allow="digital-credentials-get" src="https://www1.web-platform.test:9443/digital-credentials/support/iframe.html" data-expect-is-allowed="true"></iframe> - Digital credentials are not supported. expected true got false
+PASS With Get: Policy to use: digital-credentials-get *, is cross-origin: false, is allowed by policy: true
+TIMEOUT With Get: Policy to use: digital-credentials-get *, is cross-origin: true, is allowed by policy: true Test timed out
+NOTRUN With Get: Policy to use: digital-credentials-get 'none', is cross-origin: false, is allowed by policy: false
+NOTRUN With Get: Policy to use: digital-credentials-get 'none', is cross-origin: true, is allowed by policy: false
+NOTRUN With Get: Policy to use: digital-credentials-get 'self', is cross-origin: false, is allowed by policy: true
+NOTRUN With Get: Policy to use: digital-credentials-get 'self', is cross-origin: true, is allowed by policy: false
+NOTRUN With Get: Policy to use: digital-credentials-get https://www1.web-platform.test:9443, is cross-origin: false, is allowed by policy: false
+NOTRUN With Get: Policy to use: digital-credentials-get https://www1.web-platform.test:9443, is cross-origin: true, is allowed by policy: true
+

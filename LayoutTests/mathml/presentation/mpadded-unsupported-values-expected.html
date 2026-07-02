@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mpadded unsupported values</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <math>
+      <mpadded mathbackground="red">
+        <mspace width="0px" height="25px" depth="25px"/>
+      </mpadded>
+      <mpadded height="0px" mathbackground="green">
+        <mspace width="50px" height="25px" depth="25px"/>
+      </mpadded>
+      <mpadded depth="0px" mathbackground="blue">
+        <mspace width="50px" height="25px" depth="25px"/>
+      </mpadded>
+      <mpadded lspace="0px" mathbackground="magenta">
+        <mspace width="50px" height="25px" depth="25px"/>
+      </mpadded>
+    </math>
+    <hr/>
+
+    <!-- We ignore pseudo-units for now. -->
+    <math>
+      <mpadded mathbackground="red">
+        <mspace width="50px" height="25px" depth="25px"/>
+      </mpadded>
+      <mpadded mathbackground="green">
+        <mspace width="50px" height="25px" depth="25px"/>
+      </mpadded>
+      <mpadded mathbackground="blue">
+        <mspace width="50px" height="25px" depth="25px"/>
+      </mpadded>
+    </math>
+
+  </body>
+</html>

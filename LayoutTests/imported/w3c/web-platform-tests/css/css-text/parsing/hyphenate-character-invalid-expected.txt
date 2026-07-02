@@ -1,0 +1,9 @@
+
+PASS e.style['hyphenate-character'] = "normal" should not set the property value
+PASS e.style['hyphenate-character'] = "manual" should not set the property value
+PASS e.style['hyphenate-character'] = "none" should not set the property value
+PASS e.style['hyphenate-character'] = "auto auto" should not set the property value
+PASS e.style['hyphenate-character'] = "\"-\" \"=\"" should not set the property value
+PASS e.style['hyphenate-character'] = "1400" should not set the property value
+PASS e.style['hyphenate-character'] = "U+1400" should not set the property value
+

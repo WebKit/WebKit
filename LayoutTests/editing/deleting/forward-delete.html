@@ -1,0 +1,43 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+        forwardDeleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable="true">
+<div class="explanation">
+Should see "bar" in the red box. Insertion point should be at the start of the document.
+</div>
+
+<div id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">foo bar</div></div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

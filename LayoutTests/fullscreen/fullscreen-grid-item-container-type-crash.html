@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html style="display: grid; container-type: size;">
+<style>
+frameset {
+  content: "test";
+}
+</style>
+<p>Passes if the test does not crash.</p>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+(async () => {
+    internals.withUserGesture(() => {});
+    let frameset = document.createElement("frameset");
+    document.documentElement.appendChild(frameset);
+    await frameset.requestFullscreen({ keyboardLock: 'none' });
+    testRunner?.notifyDone();
+})();
+</script>
+</html>

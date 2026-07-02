@@ -1,0 +1,13 @@
+This test ensures that shadow dom elements return the right text.
+
+Button1 text: 	AXTitle: Button One
+	AXDescription:
+Button2 text: 	AXTitle: Nested Button Two
+	AXDescription:
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button One
+Nested Button Two
+

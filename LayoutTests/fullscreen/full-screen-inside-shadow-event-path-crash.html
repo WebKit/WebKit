@@ -1,0 +1,22 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+onload = async () => {
+    let shadowRoot = document.createElement('div').attachShadow({mode: 'open'});
+    window.r = new WeakRef(shadowRoot.children);
+    let div2 = document.createElement('div');
+    div2.webkitRequestFullscreen();
+    shadowRoot.replaceChildren(div2);
+    await undefined;
+    GCController.collect();
+    location.href = `data:text/html,<!DOCTYPE html>
+<p>PASS</p>
+<script>
+if (window.testRunner)
+    testRunner.notifyDone();
+</` + 'script>'
+};
+</script>

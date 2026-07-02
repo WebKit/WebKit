@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" 
+              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" width="335" height="296">
+  <g style="fill-opacity:0.7;">
+    <circle cx="50%" cy="50%" r="145" style="fill:red; stroke:black; stroke-width:2" />
+  </g>
+</svg>

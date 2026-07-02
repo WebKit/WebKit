@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p><a href="https://bugs.webkit.org/show_bug.cgi?id=53341">Bug 53341</a></p>
+<div id="test-container">
+    <div id="target" onMouseDown="style.cursor='progress';event.preventDefault();" onMouseMove="style.cursor='pointer';" onMouseUp="style.cursor='help';" style="cursor:pointer;">Play with mouse on this element. Cursors change on events - mousemove: pointer(hand), mousedown: progress, mouseup: help.</div>
+</div>
+<br/>
+<div id="console"></div>
+<script>
+var CURSOR_UPDATE_DELAY = 200;
+
+description("Test that mouse cursors are changed correctly on mouse events.");
+
+if (!window.eventSender) {
+    testFailed('This test requires DumpRenderTree');
+}
+
+if (window.testRunner) {
+    window.jsTestIsAsync = true;
+}
+
+async function runTest(prepare, next) {
+    await prepare();
+    setTimeout(function() {
+        debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
+        debug('');
+        next();
+    }, CURSOR_UPDATE_DELAY);
+}
+
+function testsDone() {
+    // This text is redundant with the test output - hide it
+    document.getElementById('test-container').style.display = 'none';
+    finishJSTest();
+}
+
+onload = async () => {
+    // Can't do anything useful here without eventSender
+    if (window.eventSender) {
+        var target = document.getElementById('target');
+        eventSender.dragMode = false;
+        var tests = [
+            async function() {
+                debug('Mouse move');
+                await eventSender.asyncMouseMoveTo(target.offsetLeft + 3, target.offsetTop + 3);
+            }, async function() {
+                debug('Mouse down');
+                await eventSender.asyncMouseDown();
+            }, async function() {
+                debug('Mouse hold down, move');
+                await eventSender.asyncMouseMoveTo(target.offsetLeft + 13, target.offsetTop + 3);
+            }, async function() {
+                debug('Mouse up');
+                await eventSender.asyncMouseUp();
+            }
+        ];
+
+        var i = 0;
+        async function nextTest() {
+            if (i < tests.length) {
+                await runTest(tests[i++], nextTest);
+            } else {
+                testsDone();
+            }
+        }
+        await nextTest();
+    }
+}
+
+</script>
+</body>
+</html>

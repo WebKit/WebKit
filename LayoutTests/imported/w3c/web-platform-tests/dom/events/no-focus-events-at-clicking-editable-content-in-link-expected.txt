@@ -1,0 +1,5 @@
+Hello Hello
+
+PASS Click editable element in link
+PASS Click editable link
+

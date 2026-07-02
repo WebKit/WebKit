@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function with_iframe(url, allow) {
+    let frame = document.createElement('iframe');
+    frame.src = url;
+    frame.setAttribute('allow', allow);
+    return new Promise(resolve => {
+        frame.onload = () => { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async () => {
+    var frame1 = await with_iframe("resources/", "microphone:'none'; camera:'none'");
+    let devices = await frame1.contentWindow.navigator.mediaDevices.enumerateDevices();
+    assert_equals(devices.length, 0);
+
+    frame1.onload = async () => {
+        devices = await frame1.contentWindow.navigator.mediaDevices.enumerateDevices();
+        assert_not_equals(devices.length, 0);
+    }
+    frame1.removeAttribute('allow');
+    frame1.contentWindow.location.reload();
+}, "allow attribute can be updated dynamically");
+</script>
+</body>

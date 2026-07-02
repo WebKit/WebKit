@@ -1,0 +1,175 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Tests the primitive_index builtin from the WGSL primitive_index extension. " +
+            "Renders 4 non-overlapping triangles in a single draw call and uses " +
+            "@builtin(primitive_index) in the fragment shader to write each primitive's " +
+            "index into a storage buffer indexed by pixel position. " +
+            "Verifies the index seen by the fragment shader matches the draw order.");
+
+const WIDTH = 4;
+const HEIGHT = 1;
+const NUM_PRIMITIVES = 4;
+
+const SHADER = `
+enable primitive_index;
+
+struct VOut {
+    @builtin(position) position: vec4f,
+};
+
+@vertex
+fn vs_main(@builtin(vertex_index) vid: u32) -> VOut {
+    // Render NUM_PRIMITIVES triangles into a NUM_PRIMITIVES x 1 framebuffer,
+    // one triangle per strip. Each triangle is wide enough at the pixel center
+    // line (NDC y = 0) to cover its strip's pixel center, but the triangles do
+    // not overlap (so each strip pixel is rasterized by exactly one primitive).
+    let triIndex   = vid / 3u;
+    let cornerIdx  = vid % 3u;
+    let stripCount = f32(${NUM_PRIMITIVES});
+    let stripIndex = f32(triIndex);
+
+    // Strip pixel-x [stripIndex, stripIndex+1] -> NDC x.
+    let xLeft  = (stripIndex        / stripCount) * 2.0 - 1.0;
+    let xRight = ((stripIndex + 1.0) / stripCount) * 2.0 - 1.0;
+
+    // Triangle with the strip as the base (at NDC y = -1) and apex at the strip
+    // midpoint at NDC y = 1. At the pixel center (NDC y = 0), the triangle's
+    // x-extent equals half the strip width centered on the strip midpoint, which
+    // covers the pixel center for any 1-pixel-wide strip.
+    var corners = array<vec2f, 3>(
+        vec2f(xLeft,  -1.0),
+        vec2f(xRight, -1.0),
+        vec2f((xLeft + xRight) * 0.5, 1.0),
+    );
+
+    var out: VOut;
+    out.position = vec4f(corners[cornerIdx], 0.0, 1.0);
+    return out;
+}
+
+struct FIn {
+    @builtin(position) position: vec4f,
+    @builtin(primitive_index) prim: u32,
+};
+
+@group(0) @binding(0) var<storage, read_write> out_buf: array<u32, ${WIDTH * HEIGHT}>;
+
+@fragment
+fn fs_main(in: FIn) -> @location(0) vec4f {
+    let x = u32(in.position.x);
+    let y = u32(in.position.y);
+    let idx = y * ${WIDTH}u + x;
+    if (idx < ${WIDTH * HEIGHT}u) {
+        // Write prim+1 so a "no fragment ran here" (initial 0) is distinguishable
+        // from a fragment that observed primitive_index 0.
+        out_buf[idx] = in.prim + 1u;
+    }
+    return vec4f(f32(in.prim) / 255.0, 0.0, 0.0, 1.0);
+}
+`;
+
+let primitiveIndexBuf;
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter({});
+    if (!adapter) {
+        testFailed("requestAdapter returned null");
+        return;
+    }
+
+    if (!adapter.features.has("primitive-index")) {
+        testFailed("Adapter does not advertise the 'primitive-index' feature");
+        return;
+    }
+    testPassed("Adapter advertises 'primitive-index' feature");
+
+    const device = await adapter.requestDevice({
+        requiredFeatures: ["primitive-index"],
+    });
+
+    const shaderModule = device.createShaderModule({ code: SHADER });
+
+    const colorTexture = device.createTexture({
+        size: { width: WIDTH, height: HEIGHT, depthOrArrayLayers: 1 },
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+
+    const storageBuffer = device.createBuffer({
+        size: WIDTH * HEIGHT * 4,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+    });
+
+    const readBuffer = device.createBuffer({
+        size: WIDTH * HEIGHT * 4,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [{
+            binding: 0,
+            visibility: GPUShaderStage.FRAGMENT,
+            buffer: { type: "storage" },
+        }],
+    });
+
+    const pipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [bindGroupLayout],
+    });
+
+    const pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        vertex:   { module: shaderModule, entryPoint: "vs_main" },
+        fragment: { module: shaderModule, entryPoint: "fs_main",
+                    targets: [{ format: "rgba8unorm" }] },
+        primitive: { topology: "triangle-list" },
+    });
+
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{ binding: 0, resource: { buffer: storageBuffer } }],
+    });
+
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+        colorAttachments: [{
+            view: colorTexture.createView(),
+            clearValue: { r: 0, g: 0, b: 0, a: 1 },
+            loadOp: "clear",
+            storeOp: "store",
+        }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    // Single draw, single instance, NUM_PRIMITIVES triangles. The fragment shader
+    // should observe primitive_index 0..NUM_PRIMITIVES-1 across the strips.
+    pass.draw(NUM_PRIMITIVES * 3, 1, 0, 0);
+    pass.end();
+
+    encoder.copyBufferToBuffer(storageBuffer, 0, readBuffer, 0, WIDTH * HEIGHT * 4);
+    device.queue.submit([encoder.finish()]);
+
+    await readBuffer.mapAsync(GPUMapMode.READ);
+    primitiveIndexBuf = new Uint32Array(readBuffer.getMappedRange()).slice();
+    readBuffer.unmap();
+
+    debug("Per-pixel primitive_index+1: " + Array.from(primitiveIndexBuf).join(","));
+
+    // Each strip i should have been rasterized by primitive i; we wrote prim+1.
+    for (let i = 0; i < NUM_PRIMITIVES; ++i)
+        shouldBe(`primitiveIndexBuf[${i}]`, `${i + 1}`);
+}
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

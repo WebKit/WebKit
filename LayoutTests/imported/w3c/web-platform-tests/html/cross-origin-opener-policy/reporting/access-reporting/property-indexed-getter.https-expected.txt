@@ -1,0 +1,8 @@
+
+FAIL cross-origin > w => w[0] assert_equals: expected 1 but got 0
+PASS cross-origin > w => w[1]
+PASS cross-origin > w => w[-1]
+FAIL same-site > w => w[0] assert_equals: expected 1 but got 0
+PASS same-site > w => w[1]
+PASS same-site > w => w[-1]
+

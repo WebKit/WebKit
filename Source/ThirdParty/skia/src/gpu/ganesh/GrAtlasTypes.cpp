@@ -1,0 +1,159 @@
+/*
+ * Copyright 2022 Google LLC
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#include "src/gpu/ganesh/GrAtlasTypes.h"
+
+#include "include/core/SkAlphaType.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkPixmap.h"
+#include "include/private/base/SkMalloc.h"
+#include "src/core/SkSwizzlePriv.h"
+
+GrPlot::GrPlot(int pageIndex,
+               int plotIndex,
+               GrAtlasGenerationCounter* generationCounter,
+               int offX, int offY,
+               int width, int height,
+               SkColorType colorType,
+               size_t bpp)
+        : fLastUpload(skgpu::Token::InvalidToken())
+        , fLastUse(skgpu::Token::InvalidToken())
+        , fFlushesSinceLastUse(0)
+        , fGenerationCounter(generationCounter)
+        , fGenID(fGenerationCounter->next())
+        , fPlotLocator(pageIndex, plotIndex, fGenID)
+        , fData(nullptr)
+        , fWidth(width)
+        , fHeight(height)
+        , fX(offX)
+        , fY(offY)
+        , fRectanizer(width, height)
+        , fOffset(SkIPoint16::Make(fX * fWidth, fY * fHeight))
+        , fColorType(colorType)
+        , fBytesPerPixel(bpp)
+#ifdef SK_DEBUG
+        , fDirty(false)
+#endif
+{
+    // We expect the allocated dimensions to be a multiple of 4 bytes
+    SkASSERT(((width*fBytesPerPixel) & 0x3) == 0);
+    // The padding for faster uploads only works for 1, 2 and 4 byte texels
+    SkASSERT(fBytesPerPixel != 3 && fBytesPerPixel <= 4);
+    fDirtyRect.setEmpty();
+}
+
+GrPlot::~GrPlot() {
+    sk_free(fData);
+}
+
+bool GrPlot::addRect(int width, int height, GrAtlasLocator* atlasLocator) {
+    SkASSERT(width <= fWidth && height <= fHeight);
+
+    SkIPoint16 loc;
+    if (!fRectanizer.addRect(width, height, &loc)) {
+        return false;
+    }
+
+    auto rect = GrIRect16::MakeXYWH(loc.fX, loc.fY, width, height);
+    fDirtyRect.join({rect.fLeft, rect.fTop, rect.fRight, rect.fBottom});
+
+    rect.offset(fOffset.fX, fOffset.fY);
+    atlasLocator->updateRect(rect);
+    SkDEBUGCODE(fDirty = true;)
+
+    return true;
+}
+
+void* GrPlot::dataAt(SkIPoint atlasPoint) {
+    if (!fData) {
+        // We use calloc here because our contract is that all pixel data is initially zero.
+        // This is of particular importance when a caller uses padding with prepForRender().
+        fData = reinterpret_cast<std::byte*>(sk_calloc_throw(this->rowBytes() * fHeight));
+    }
+
+    auto localPoint = atlasPoint - SkIPoint{fOffset.fX, fOffset.fY};
+    SkASSERT(localPoint.fX >= 0 && localPoint.fX < fWidth);
+    SkASSERT(localPoint.fY >= 0 && localPoint.fY < fHeight);
+
+    size_t offset = fBytesPerPixel * (localPoint.fY * fWidth + localPoint.fX);
+
+    return fData + offset;
+}
+
+bool GrPlot::addSubImage(int width, int height, const void* image, GrAtlasLocator* atlasLocator) {
+    if (!this->addRect(width, height, atlasLocator)) {
+        return false;
+    }
+
+    const unsigned char* imagePtr = (const unsigned char*)image;
+    unsigned char* dataPtr = (unsigned char*)this->dataAt(atlasLocator->topLeft());
+    size_t imageRB = width * fBytesPerPixel;
+    size_t plotRB = this->rowBytes();
+
+    // copy into the data buffer, swizzling as we go if this is ARGB data
+    constexpr bool kBGRAIsNative = kN32_SkColorType == kBGRA_8888_SkColorType;
+    if (4 == fBytesPerPixel && kBGRAIsNative) {
+        for (int i = 0; i < height; ++i) {
+            SkOpts::RGBA_to_BGRA((uint32_t*)dataPtr, (const uint32_t*)imagePtr, width);
+            dataPtr += plotRB;
+            imagePtr += imageRB;
+        }
+    } else {
+        for (int i = 0; i < height; ++i) {
+            memcpy(dataPtr, imagePtr, imageRB);
+            dataPtr += plotRB;
+            imagePtr += imageRB;
+        }
+    }
+
+    return true;
+}
+
+std::pair<const void*, SkIRect> GrPlot::prepareForUpload() {
+    // We should only be issuing uploads if we are dirty
+    SkASSERT(fDirty);
+    if (!fData) {
+        return {nullptr, {}};
+    }
+    const std::byte* dataPtr;
+    SkIRect offsetRect;
+    // Clamp to 4-byte aligned boundaries
+    unsigned int clearBits = 0x3 / fBytesPerPixel;
+    fDirtyRect.fLeft &= ~clearBits;
+    fDirtyRect.fRight += clearBits;
+    fDirtyRect.fRight &= ~clearBits;
+    SkASSERT(fDirtyRect.fRight <= fWidth);
+    // Set up dataPtr
+    dataPtr = fData;
+    dataPtr += this->rowBytes() * fDirtyRect.fTop;
+    dataPtr += fBytesPerPixel * fDirtyRect.fLeft;
+    offsetRect = fDirtyRect.makeOffset(fOffset.fX, fOffset.fY);
+
+    fDirtyRect.setEmpty();
+    SkDEBUGCODE(fDirty = false);
+
+    return {dataPtr, offsetRect};
+}
+
+void GrPlot::resetRects(bool freeData) {
+    fRectanizer.reset();
+    fGenID = fGenerationCounter->next();
+    fPlotLocator = GrPlotLocator(this->pageIndex(), this->plotIndex(), fGenID);
+    fLastUpload = skgpu::Token::InvalidToken();
+    fLastUse = skgpu::Token::InvalidToken();
+
+    if (freeData) {
+        sk_free(fData);
+        fData = nullptr;
+    } else if (fData) {
+        // zero out the plot
+        sk_bzero(fData, this->rowBytes() * fHeight);
+    }
+
+    fDirtyRect.setEmpty();
+    SkDEBUGCODE(fDirty = false;)
+}

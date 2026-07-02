@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Cross-origin check: true
+CONSOLE MESSAGE: Same-origin check: true
+

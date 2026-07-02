@@ -1,0 +1,23 @@
+<script>
+
+async function loaded() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        var element = document.getElementById("fragmentlink");
+        await eventSender.asyncMouseMoveTo(element.offsetLeft + (element.offsetWidth / 2), element.offsetTop + (element.offsetHeight / 2));
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
+}
+
+function hashChanged()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<body onhashchange="hashChanged();" onload="loaded();">
+<a id="fragmentlink" href="#testfragment">Click this link, and there should be a back-list entry for the page without the fragment ID.</a>
+</body>
+<html>

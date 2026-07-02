@@ -1,0 +1,4 @@
+
+PASS @container anchored() without applied fallback
+FAIL @container anchored() with fallback applied assert_equals: Fallback applies display:block expected 100 but got 0
+

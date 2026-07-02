@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: grey;
+  }
+</style>
+</head>
+<body>
+<div style="width: 400px; height: 400px; transform: translateZ(0px); background: lightblue">
+  <div style="overflow-y:auto; width: 200px; height: 200px;">
+    <div style="height: 100px; text-align: right">Hello there</div>
+    <div id="change" style="height: 100px; background: red"></div>
+  </div>
+  Hi
+</div>
+<pre id=result></pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function timerAfterRAF(callback) {
+    return requestAnimationFrame(() => setTimeout(callback, 0));
+}
+
+function runTest() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+    change.style.height = "400px";
+
+    timerAfterRAF(() => {
+        if (window.internals) {
+            result.innerText = internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+
+    });
+};
+
+window.addEventListener('load', () => {
+    timerAfterRAF(runTest);
+}, false);
+
+</script>
+
+</body>
+</html>

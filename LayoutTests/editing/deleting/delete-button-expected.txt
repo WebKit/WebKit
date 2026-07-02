@@ -1,0 +1,5 @@
+This tests that deleting a button does not leak the style inside the button to the outside. To manually test, click inside the content-editable area below, click the "Insert a button" button, delete the button by pressing backspace, and then type some text. The text should be left-aligned and black.
+
+
+
+PASSED deleting a button did not leak the style inside the button.

@@ -1,0 +1,53 @@
+<style>
+div {
+    width: 200px;
+    height: 200px;
+}
+
+#div1_back {
+    background-color: red;
+    margin-left:40px;
+    margin-top:40px;
+    -webkit-transform: rotate(-30deg);
+    overflow: hidden;
+}
+
+#div2_back {
+    background-color: green;
+    -webkit-transform: rotate(30deg);
+}
+
+#div1 {
+    background-color: red;
+    margin-left:40px;
+    margin-top:40px;
+    -webkit-transform: rotate(-30deg);
+    -webkit-filter: hue-rotate(100deg);
+}
+
+#div2 {
+    background-color: green;
+    -webkit-transform: rotate(30deg);
+}
+</style>
+
+<div style="position:absolute">
+    <div id="div1_back">
+      <!-- This blocks should be overlaid by the second set of blocks. -->
+      <div id="div2_back">
+      </div>
+    </div>
+</div>
+
+<div style="position:absolute">
+    <div id="div1">
+      <!-- This paragraph will have a filter applied. -->
+      <div id="div2">
+      </div>
+    </div>
+</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText(true);
+</script>

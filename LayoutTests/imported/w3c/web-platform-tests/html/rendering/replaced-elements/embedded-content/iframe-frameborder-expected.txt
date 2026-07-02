@@ -1,0 +1,16 @@
+
+PASS <iframe frameborder=""></iframe>
+PASS <iframe frameborder="0"></iframe>
+PASS <iframe frameborder="-0"></iframe>
+PASS <iframe frameborder="0.5"></iframe>
+PASS <iframe frameborder="0.5e1"></iframe>
+PASS <iframe frameborder="no"></iframe>
+PASS <iframe frameborder="none"></iframe>
+PASS <iframe frameborder="error"></iframe>
+PASS <iframe></iframe>
+PASS <iframe frameborder="1"></iframe>
+PASS <iframe frameborder="-1"></iframe>
+PASS <iframe frameborder="10"></iframe>
+PASS <iframe frameborder="-10"></iframe>
+
+

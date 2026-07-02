@@ -1,0 +1,91 @@
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+struct WebCore::WebTransportConnectionStats {
+    uint64_t bytesSent
+    uint64_t packetsSent
+    uint64_t bytesLost
+    uint64_t packetsLost
+    uint64_t bytesReceived
+    uint64_t packetsReceived
+    double smoothedRtt
+    double rttVariation
+    double minRtt
+    WebCore::WebTransportDatagramStats datagrams
+    std::optional<uint64_t> estimatedSendRate
+    bool atSendCapacity
+}
+
+struct WebCore::WebTransportDatagramStats {
+    uint64_t droppedIncoming
+    uint64_t expiredIncoming
+    uint64_t expiredOutgoing
+    uint64_t lostOutgoing
+}
+
+struct WebCore::WebTransportSendStreamStats {
+    uint64_t bytesWritten
+    uint64_t bytesSent
+    uint64_t bytesAcknowledged
+}
+
+struct WebCore::WebTransportReceiveStreamStats {
+    uint64_t bytesReceived
+    uint64_t bytesRead
+}
+
+struct WebCore::WebTransportHash {
+    String algorithm;
+    WebCore::BufferSource value;
+};
+
+struct WebCore::WebTransportOptions {
+    bool allowPooling
+    bool requireUnreliable
+    Vector<WebCore::WebTransportHash> serverCertificateHashes
+    WebCore::WebTransportCongestionControl congestionControl
+    std::optional<uint16_t> anticipatedConcurrentIncomingUnidirectionalStreams
+    std::optional<uint16_t> anticipatedConcurrentIncomingBidirectionalStreams
+    Vector<String> protocols
+    std::optional<WebCore::DatagramsReadableMode> datagramsReadableMode;
+};
+
+enum class WebCore::WebTransportCongestionControl : uint8_t {
+    Default,
+    Throughput,
+    LowLatency,
+};
+
+enum class WebCore::WebTransportReliabilityMode : uint8_t {
+    Pending,
+    ReliableOnly,
+    SupportsUnreliable
+};
+
+enum class WebCore::DatagramsReadableMode : uint8_t {
+    Bytes
+};
+
+struct WebCore::WebTransportConnectionInfo {
+    String protocol
+    WebCore::WebTransportReliabilityMode reliabilityMode
+};

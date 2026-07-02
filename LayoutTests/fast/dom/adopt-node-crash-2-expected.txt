@@ -1,0 +1,3 @@
+Tests for a crash due to adopting a DOM node when unfocusing. Test passes if it doesn't crash.
+PASS: Focused node should not be keygen
+PASS: Focused node should not be keygen

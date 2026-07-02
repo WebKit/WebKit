@@ -1,0 +1,4 @@
+
+FAIL fullscreen and orientation support promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+PASS Iframe can't itself know if it's parent is fullscreen when changing orientation
+

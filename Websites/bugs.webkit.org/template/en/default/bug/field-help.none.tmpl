@@ -1,0 +1,243 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# This file describes both bug fields and search fields.
+  # As calling this template once per label is very expensive,
+  # it is called only by Template.pm. %]
+
+[% RETURN UNLESS in_template_var %]
+
+[% vars.help_html = {
+
+# Note that all these keys here are in alphabetical order, though
+# search-specific fields are at the bottom.
+
+##############
+# Bug Fields #
+##############
+
+alias =>
+  "A short, unique name assigned to $terms.abug in order to assist with
+   looking it up and referring to it in other places in Bugzilla.",
+
+assigned_to =>
+  "The person in charge of resolving the ${terms.bug}.",
+
+blocked =>
+  "This $terms.bug must be resolved before the $terms.bugs listed in this
+   field can be resolved.",
+
+bug_file_loc =>
+  "$terms.Bugs can have a URL associated with them - for example, a"
+  _ " pointer to a web site where the problem is seen.",
+
+bug_id =>
+  "The numeric id of $terms.abug, unique within this entire installation"
+  _ " of Bugzilla.",
+
+bug_severity =>
+  "How severe the $terms.bug is, or whether it's an enhancement.",
+
+bug_status =>
+  "$terms.Abug may be in any of a number of states.",
+
+cc =>
+  "Users who may not have a direct role to play on this $terms.bug, but who
+   are interested in its progress.",
+
+classification => 
+  "$terms.Bugs are categorised into Classifications, Products and"
+  _ " Components. classifications is the top-level categorisation.",   
+
+component => 
+  "Components are second-level categories; each belongs to a"
+  _ " particular Product. Select a Product to narrow down this list.",
+
+creation_ts =>
+  "When the $terms.bug was filed.",
+
+deadline =>
+  "The date that this $terms.bug must be resolved by, entered in YYYY-MM-DD
+   format.",
+
+delta_ts =>
+  "When this $terms.bug was last updated.",
+
+dependson =>
+  "The $terms.bugs listed here must be resolved before this $terms.bug
+   can be resolved.",
+
+estimated_time =>
+  "The amount of time that has been estimated it will take to resolve
+   this ${terms.bug}.",
+
+importance =>
+  "The importance of $terms.abug is described as the combination of
+   its $vars.field_descs.priority and ${vars.field_descs.bug_severity}.",
+
+keywords =>
+   "You can add keywords from a defined list to $terms.bugs, in order"
+   _ " to easily identify and group them.",
+
+longdesc =>
+  "$terms.Bugs have comments added to them by Bugzilla users."
+  _ " You can search for some text in those comments.",
+
+op_sys =>
+  "The operating system the $terms.bug was observed on.",
+
+percentage_complete =>
+  "How close to 100% done this $terms.bug is, by comparing its
+   $vars.field_descs.work_time to its ${vars.field_descs.estimated_time}.",
+
+priority =>
+  "Engineers prioritize their $terms.bugs using this field.",
+
+# Note that this has extra text added below if useclassification is on.
+product =>
+  "$terms.Bugs are categorised into Products and Components.",
+
+qa_contact =>
+  "The person responsible for confirming this $terms.bug if it is"
+  _ " unconfirmed, and for verifying the fix once the $terms.bug"
+  _ " has been resolved.",
+
+remaining_time =>
+  "The number of hours of work left on this $terms.bug, calculated by
+   subtracting the $vars.field_descs.work_time from the 
+   ${vars.field_descs.estimated_time}.",
+
+rep_platform => 
+  "The hardware platform the $terms.bug was observed on.",
+
+reporter =>
+  "The person who filed this ${terms.bug}.",
+
+resolution =>
+  "If $terms.abug is in a resolved state, then one of these reasons"
+  _ " will be given for its resolution.",
+
+see_also =>
+  "This allows you to refer to $terms.bugs in other installations.
+   You can enter a URL to $terms.abug in the 'Add $terms.Bug URLs'
+   field to note that that $terms.bug is related to this one. You can
+   enter multiple URLs at once by separating them with whitespace.
+
+   <p>You should normally use this field to refer to $terms.bugs in
+     <em>other</em> installations. For $terms.bugs in this
+     installation, it is better to use the $vars.field_descs.dependson and 
+     $vars.field_descs.blocked fields.</p>",
+
+short_desc =>
+  "The $terms.bug summary is a short sentence which succinctly"
+  _ " describes what the $terms.bug is about.",
+
+status_whiteboard =>
+  "Each $terms.bug has a free-form single line text entry box for"
+  _ " adding tags and status information.",
+
+tag =>
+  "Unlike ${vars.field_descs.keywords} which are global and visible by
+   all users, ${vars.field_descs.tag} are personal and can only be
+   viewed and edited by their author.
+   Editing them won't send any notification to other users. Use them
+   to tag and keep track of ${terms.bugs}.",
+
+target_milestone =>
+   "The $vars.field_descs.target_milestone field is used to define when the"
+   _ " engineer the $terms.bug is assigned to expects to fix it.",
+
+version =>
+  "The version field defines the version of the software the"
+  _ " $terms.bug was found in.",
+
+votes =>
+  "Some $terms.bugs can be voted for, and you can limit your search to"
+  _ " $terms.bugs with more than a certain number of votes.",
+
+work_time =>
+  "The total amount of time spent on this $terms.bug so far.",
+
+##########################
+# Search-specific fields #
+##########################
+
+chfield =>
+  "You can search for specific types of change - this field defines"
+  _" which field you are interested in changes for.",
+
+# Duplicated to chfieldto below, also.
+chfieldfrom =>
+  "Specify the start and end dates either in YYYY-MM-DD format
+   optionally followed by HH:mm, in 24 hour clock), or in relative
+   dates such as 1h, 2d, 3w, 4m, 5y, which respectively mean one hour,
+   two days, three weeks, four months, or five years ago. 0d is last
+   midnight, and 0h, 0w, 0m, 0y is the beginning of this hour, week,
+   month, or year.",
+
+chfieldvalue =>
+  "The value the field defined above changed to during that time.",
+
+content =>
+  "This is a field available in searches that does a Google-like
+   'full-text' search on the $vars.field_descs.short_desc and
+   $vars.field_descs.longdesc fields.",
+
+# Duplicated to email2 below, also.
+email1 =>
+  "Every $terms.bug has people associated with it in different"
+  _ " roles. Here, you can search on what people are in what role.",
+
+} %]
+
+[% vars.help_html.email2 = vars.help_html.email1 %]
+[% vars.help_html.chfieldto = vars.help_html.chfieldfrom %]
+[% vars.help_html.deadlinefrom = vars.help_html.deadline %]
+[% vars.help_html.deadlineto = vars.help_html.deadline %]
+
+[% help_all_note = BLOCK %]
+  <strong>Note:</strong> When searching, selecting the option "All"
+  only finds [% terms.bugs %] whose value for this field is literally
+  the word "All".
+[% END %]
+[% FOREACH all_field = ['op_sys', 'rep_platform'] %]
+  [% vars.help_html.$all_field = vars.help_html.$all_field _ ' ' _ help_all_note %]
+[% END %]
+
+[% IF Param('useclassification') %]
+  [% vars.help_html.product = vars.help_html.product 
+      _ " Select a Classification to narrow down this list." %]
+[% END %]
+
+[% FOREACH help_field = bug_fields.keys %]
+
+  [%# Add help for custom fields. %]
+  [% IF !vars.help_html.${help_field}.defined %]
+    [% IF bug_fields.${help_field}.long_desc %]
+      [% vars.help_html.${help_field} = bug_fields.${help_field}.long_desc %]
+    [% ELSE %]
+      [% SET field_type = bug_fields.${help_field}.type %]
+      [% field_type_desc = BLOCK -%]
+        [% field_types.$field_type FILTER html %]
+      [%- END %]
+      [% vars.help_html.${help_field} = 
+        "A custom $field_type_desc field in this installation"
+        _ " of Bugzilla." %]
+    [% END %]
+  [% END %]
+
+  [%# Add help for the search types, for query.cgi. %]
+  [% type_desc = BLOCK %]
+    The type of [% vars.field_descs.${help_field} FILTER html %] search you 
+    would like.
+  [% END %]
+  [% SET type_name = help_field _ '_type' %]
+  [% vars.help_html.$type_name = type_desc %]
+[% END %]
+
+[% Hook.process("end") %]

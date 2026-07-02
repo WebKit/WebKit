@@ -1,0 +1,3 @@
+
+FAIL Cancel a navigation with a precommitHandler before commit by starting a new navigation assert_equals: expected "" but got "#ShouldNotCommit"
+

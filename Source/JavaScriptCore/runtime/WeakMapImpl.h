@@ -1,0 +1,494 @@
+/*
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "ExceptionHelpers.h"
+#include "HashMapHelper.h"
+#include "JSObject.h"
+#include <wtf/MallocPtr.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+namespace JSC {
+
+template<size_t> class MarkedArgumentBufferWithSize;
+using MarkedArgumentBuffer = MarkedArgumentBufferWithSize<8>;
+
+enum class HashTableType {
+    Key,
+    KeyValue
+};
+
+struct WeakMapBucketDataKey {
+    static const HashTableType Type = HashTableType::Key;
+    WriteBarrier<JSCell> key;
+};
+static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*));
+
+struct WeakMapBucketDataKeyValue {
+    static const HashTableType Type = HashTableType::KeyValue;
+    WriteBarrier<JSCell> key;
+#if USE(JSVALUE32_64)
+    uint32_t padding;
+#endif
+    WriteBarrier<Unknown> value;
+};
+static_assert(sizeof(WeakMapBucketDataKeyValue) == 16);
+
+template<typename T>
+concept WeakMapBucketSameAsDataKeyValue = std::same_as<T, WeakMapBucketDataKeyValue>;
+
+template<typename T>
+concept WeakMapBucketSameAsDataKey = std::same_as<T, WeakMapBucketDataKey>;
+
+ALWAYS_INLINE uint32_t jsWeakMapHash(JSCell* key);
+ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount);
+
+template <typename Data>
+class WeakMapBucket {
+public:
+    ALWAYS_INLINE void setKey(VM& vm, JSCell* owner, JSCell* key)
+    {
+        m_data.key.set(vm, owner, key);
+    }
+
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE void setValue(VM& vm, JSCell* owner, JSValue value)
+    {
+        m_data.value.set(vm, owner, value);
+    }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE void setValue(VM&, JSCell*, JSValue) { }
+
+    ALWAYS_INLINE JSCell* key() const { return m_data.key.get(); }
+
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE JSValue value() const
+    {
+        return m_data.value.get();
+    }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE JSValue value() const { return JSValue(); }
+
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE void copyFrom(const WeakMapBucket& from)
+    {
+        m_data.key.copyFrom(from.m_data.key);
+        m_data.value.setWithoutWriteBarrier(from.m_data.value.get());
+    }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE void copyFrom(const WeakMapBucket& from)
+    {
+        m_data.key.copyFrom(from.m_data.key);
+    }
+
+    static constexpr ptrdiff_t offsetOfKey()
+    {
+        return OBJECT_OFFSETOF(WeakMapBucket, m_data) + OBJECT_OFFSETOF(Data, key);
+    }
+
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    static ptrdiff_t offsetOfValue()
+    {
+        return OBJECT_OFFSETOF(WeakMapBucket, m_data) + OBJECT_OFFSETOF(Data, value);
+    }
+
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE static JSValue extractValue(const WeakMapBucket& bucket)
+    {
+        return bucket.value();
+    }
+
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE static JSValue extractValue(const WeakMapBucket&)
+    {
+        return JSValue();
+    }
+
+    bool isEmpty()
+    {
+        return !m_data.key.unvalidatedGet();
+    }
+
+    static JSCell* deletedKey()
+    {
+        return std::bit_cast<JSCell*>(static_cast<uintptr_t>(-3));
+    }
+
+    bool isDeleted()
+    {
+        return m_data.key.unvalidatedGet() == deletedKey();
+    }
+
+    void makeDeleted()
+    {
+        m_data.key.setWithoutWriteBarrier(deletedKey());
+        clearValue();
+    }
+
+    template<WeakMapBucketSameAsDataKeyValue T = Data, typename Visitor>
+    ALWAYS_INLINE void visitAggregate(Visitor& visitor)
+    {
+        visitor.append(m_data.value);
+    }
+
+private:
+    template<WeakMapBucketSameAsDataKeyValue T = Data>
+    ALWAYS_INLINE void clearValue()
+    {
+        m_data.value.clear();
+    }
+    template<WeakMapBucketSameAsDataKey T = Data>
+    ALWAYS_INLINE void clearValue() { }
+
+    Data m_data;
+};
+
+template <typename BucketType>
+class WeakMapBuffer {
+public:
+    WeakMapBuffer() = delete;
+
+    static size_t allocationSize(Checked<size_t> capacity)
+    {
+        return capacity * sizeof(BucketType);
+    }
+
+    ALWAYS_INLINE BucketType* buffer() const
+    {
+        return std::bit_cast<BucketType*>(this);
+    }
+
+    static MallocPtr<WeakMapBuffer> create(uint32_t capacity)
+    {
+        size_t allocationSize = WeakMapBuffer::allocationSize(capacity);
+        auto buffer = MallocPtr<WeakMapBuffer>::malloc(allocationSize);
+        buffer->reset(capacity);
+        return buffer;
+    }
+
+    static void destroy(WeakMapBuffer* buffer)
+    {
+        WTF::fastFree(buffer);
+    }
+
+    ALWAYS_INLINE void reset(uint32_t capacity)
+    {
+        memset(this, 0, allocationSize(capacity));
+    }
+};
+
+JS_EXPORT_PRIVATE extern const uint64_t emptyWeakMapBuffer[2];
+static_assert(sizeof(emptyWeakMapBuffer) == sizeof(WeakMapBucketDataKeyValue));
+
+template <typename WeakMapBucketType>
+class WeakMapImpl : public JSNonFinalObject {
+    using Base = JSNonFinalObject;
+    using WeakMapBufferType = WeakMapBuffer<WeakMapBucketType>;
+
+public:
+    using BucketType = WeakMapBucketType;
+
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
+    static void destroy(JSCell*);
+
+    DECLARE_VISIT_CHILDREN;
+
+    static size_t estimatedSize(JSCell*, VM&);
+
+    static constexpr uint32_t initialCapacity = 4;
+
+    static constexpr uint32_t emptyCapacity = 1;
+
+    static WeakMapBufferType* emptyBuffer()
+    {
+        return std::bit_cast<WeakMapBufferType*>(const_cast<uint64_t*>(emptyWeakMapBuffer));
+    }
+
+    WeakMapImpl(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+        ASSERT_WITH_MESSAGE(WeakMapBucket<WeakMapBucketDataKey>::offsetOfKey() == WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
+    }
+
+    ~WeakMapImpl()
+    {
+        if (m_buffer != emptyBuffer())
+            WeakMapBufferType::destroy(m_buffer);
+    }
+
+    // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
+    // This guarantee is ensured by AssertNoGC.
+
+    template<typename T = WeakMapBucketType>
+        requires std::same_as<T, WeakMapBucket<WeakMapBucketDataKeyValue>>
+    ALWAYS_INLINE JSValue get(JSCell* key)
+    {
+        AssertNoGC assertNoGC;
+        if (WeakMapBucketType* bucket = findBucket(key))
+            return bucket->value();
+        return jsUndefined();
+    }
+
+    template<typename T = WeakMapBucketType>
+        requires std::same_as<T, WeakMapBucket<WeakMapBucketDataKeyValue>>
+    ALWAYS_INLINE JSValue getBucket(JSCell* key, uint32_t hash, size_t index)
+    {
+        UNUSED_PARAM(key);
+        UNUSED_PARAM(hash);
+        ASSERT(jsWeakMapHash(key) == hash);
+
+        WeakMapBucketType* bucket = buffer() + index;
+        ASSERT(bucket);
+        ASSERT(findBucket(key, hash) == bucket);
+
+        return bucket->value();
+    }
+
+    ALWAYS_INLINE std::pair<size_t, bool> findBucketIndex(JSCell* key, uint32_t hash)
+    {
+        return findBucketIndexAlreadyHashed(key, hash);
+    }
+
+    ALWAYS_INLINE WeakMapBucketType* findBucket(JSCell* key, uint32_t hash)
+    {
+        if (auto [index, exists] = findBucketIndexAlreadyHashed(key, hash); exists)
+            return buffer() + index;
+        return nullptr;
+    }
+
+    ALWAYS_INLINE bool has(JSCell* key)
+    {
+        AssertNoGC assertNoGC;
+        return !!findBucket(key);
+    }
+
+    ALWAYS_INLINE void add(VM&, JSCell* key, JSValue = JSValue());
+    ALWAYS_INLINE void add(VM&, JSCell* key, JSValue, uint32_t hash);
+    ALWAYS_INLINE void addBucket(VM&, JSCell* key, JSValue, uint32_t hash, size_t index);
+
+    ALWAYS_INLINE bool remove(JSCell* key)
+    {
+        AssertNoGC assertNoGC;
+        WeakMapBucketType* bucket = findBucket(key);
+        if (!bucket)
+            return false;
+
+        bucket->makeDeleted();
+
+        ++m_deleteCount;
+        RELEASE_ASSERT(m_keyCount > 0);
+        --m_keyCount;
+
+        if (shouldShrink())
+            rehash();
+
+        return true;
+    }
+
+    ALWAYS_INLINE uint32_t size() const
+    {
+        return m_keyCount;
+    }
+
+    void takeSnapshot(MarkedArgumentBuffer&, unsigned limit = 0);
+
+    static constexpr ptrdiff_t offsetOfBuffer()
+    {
+        return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_buffer);
+    }
+
+    static constexpr ptrdiff_t offsetOfCapacity()
+    {
+        return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_capacity);
+    }
+
+    static constexpr ptrdiff_t offsetOfKeyCount()
+    {
+        return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_keyCount);
+    }
+
+    static constexpr ptrdiff_t offsetOfDeleteCount()
+    {
+        return OBJECT_OFFSETOF(WeakMapImpl<WeakMapBucketType>, m_deleteCount);
+    }
+
+    static constexpr bool isWeakMap()
+    {
+        return std::same_as<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKeyValue>>;
+    }
+
+    static constexpr bool isWeakSet()
+    {
+        return std::same_as<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKey>>;
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        if constexpr (isWeakMap())
+            return vm.weakMapSpace<mode>();
+        return vm.weakSetSpace<mode>();
+    }
+
+    template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);
+    void finalizeUnconditionally(VM&, CollectionScope);
+
+private:
+    template<typename Visitor>
+    ALWAYS_INLINE static void visitOutputConstraintsForDataKeyValue(JSCell*, Visitor&);
+
+    ALWAYS_INLINE WeakMapBucketType* findBucket(JSCell* key)
+    {
+        return findBucket(key, jsWeakMapHash(key));
+    }
+
+    ALWAYS_INLINE WeakMapBucketType* buffer() const
+    {
+        return m_buffer->buffer();
+    }
+
+    enum class IterationState { Continue, Stop };
+    template<typename Functor>
+    void forEach(Functor functor)
+    {
+        auto* buffer = this->buffer();
+        for (uint32_t index = 0; index < m_capacity; ++index) {
+            auto* bucket = buffer + index;
+            if (bucket->isEmpty() || bucket->isDeleted())
+                continue;
+            if (functor(bucket->key(), bucket->value()) == IterationState::Stop)
+                return;
+        }
+    }
+
+    ALWAYS_INLINE uint32_t shouldRehashAfterAdd() const;
+
+    ALWAYS_INLINE uint32_t shouldShrink() const
+    {
+        return JSC::shouldShrink(m_capacity, m_keyCount);
+    }
+
+    ALWAYS_INLINE static bool canUseBucket(WeakMapBucketType* bucket, JSCell* key)
+    {
+        return !bucket->isDeleted() && key == bucket->key();
+    }
+
+    ALWAYS_INLINE void addInternal(VM& vm, JSCell* key, JSValue value, uint32_t hash)
+    {
+        ASSERT(m_buffer != emptyBuffer());
+        const uint32_t mask = m_capacity - 1;
+        uint32_t index = hash & mask;
+        WeakMapBucketType* buffer = this->buffer();
+        WeakMapBucketType* bucket = buffer + index;
+        while (!bucket->isEmpty()) {
+            if (canUseBucket(bucket, key)) {
+                ASSERT(!bucket->isDeleted());
+                bucket->setValue(vm, this, value);
+                return;
+            }
+            index = (index + 1) & mask;
+            bucket = buffer + index;
+        }
+
+        auto* newEntry = buffer + index;
+        newEntry->setKey(vm, this, key);
+        newEntry->setValue(vm, this, value);
+        ++m_keyCount;
+    }
+
+    ALWAYS_INLINE std::pair<size_t, bool> findBucketIndexAlreadyHashed(JSCell* key, uint32_t hash)
+    {
+        const uint32_t mask = m_capacity - 1;
+        uint32_t index = hash & mask;
+        WeakMapBucketType* buffer = this->buffer();
+        WeakMapBucketType* bucket = buffer + index;
+
+        while (!bucket->isEmpty()) {
+            if (canUseBucket(bucket, key)) {
+                ASSERT(!bucket->isDeleted());
+                return { index, true };
+            }
+            index = (index + 1) & mask;
+            bucket = buffer + index;
+        }
+        return { index, false };
+    }
+
+    enum class RehashMode { Normal, RemoveBatching };
+    void rehash(RehashMode = RehashMode::Normal);
+
+    ALWAYS_INLINE void checkConsistency() const
+    {
+        if (ASSERT_ENABLED) {
+            uint32_t size = 0;
+            auto* buffer = this->buffer();
+            for (uint32_t index = 0; index < m_capacity; ++index) {
+                auto* bucket = buffer + index;
+                if (bucket->isEmpty() || bucket->isDeleted())
+                    continue;
+                ++size;
+            }
+            ASSERT_UNUSED(size, size == m_keyCount);
+        }
+    }
+
+    // Overwrites m_buffer without freeing the previous one. Callers must have already taken
+    // ownership of the old buffer (rehash) or be replacing the shared empty buffer (add).
+    void makeAndSetNewBuffer(uint32_t capacity)
+    {
+        ASSERT(!(capacity & (capacity - 1)));
+
+        m_buffer = WeakMapBufferType::create(capacity).leakPtr();
+        m_capacity = capacity;
+        ASSERT(m_buffer);
+        assertBufferIsEmpty();
+    }
+
+    ALWAYS_INLINE void assertBufferIsEmpty() const
+    {
+        if (ASSERT_ENABLED) {
+            for (unsigned i = 0; i < m_capacity; i++)
+                ASSERT((buffer() + i)->isEmpty());
+        }
+    }
+
+    template<typename Appender>
+    void takeSnapshotInternal(unsigned limit, Appender);
+
+    WeakMapBufferType* m_buffer { emptyBuffer() };
+    uint32_t m_capacity { emptyCapacity };
+    uint32_t m_keyCount { 0 };
+    uint32_t m_deleteCount { 0 };
+};
+
+template<> void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::takeSnapshot(MarkedArgumentBuffer&, unsigned);
+template<> void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::takeSnapshot(MarkedArgumentBuffer&, unsigned);
+
+} // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

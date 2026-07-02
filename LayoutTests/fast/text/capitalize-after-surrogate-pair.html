@@ -1,0 +1,21 @@
+<meta charset="utf-8">
+<!-- Tests that text-transform: capitalize works correctly when the previous
+     text node ends with a character outside the Basic Multilingual Plane
+     (i.e. a surrogate pair in UTF-16), such as emoji. The capitalize logic
+     needs to find the last character of the previous sibling text to determine
+     word boundaries. -->
+<style>
+div { text-transform: capitalize; }
+</style>
+<!-- Previous sibling text ends with a surrogate pair (emoji U+1F600 😀), next word should capitalize. -->
+<div><span>hello 😀</span> world</div>
+<!-- Multiple emoji (each is a surrogate pair). -->
+<div><span>test 🌍🌎🌏</span> earth</div>
+<!-- Surrogate pair character immediately before the span boundary, no space. -->
+<div><span>x😀</span>abc</div>
+<!-- Supplementary letter (U+10400 𐐀 Deseret Capital Long I) before a new word. -->
+<div><span>a 𐐀</span> next</div>
+<!-- Musical symbol (U+1D11E 𝄞) ending previous node. -->
+<div><span>note 𝄞</span> melody</div>
+<!-- Mix: BMP character after surrogate pair ending, verifying no over-read. -->
+<div><span>emoji 😀</span> <span>smile</span></div>

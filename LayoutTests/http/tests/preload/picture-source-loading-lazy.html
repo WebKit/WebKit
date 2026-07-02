@@ -1,0 +1,64 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner && window.internals) {
+            testRunner.dumpAsText();
+            internals.clearMemoryCache();
+            internals.settings.setLazyImageLoadingEnabled(true);
+        }
+    </script>
+
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=101&test=picture-source-loading-lazy"></script>
+</head>
+<body>
+<script>
+    description("The speculative preload scanner must not preload &lt;source&gt; candidates inside a &lt;picture&gt; whose &lt;img&gt; has loading=lazy.");
+
+    if (window.testRunner && window.internals) {
+        // Sanity / control: a picture with a non-lazy <img> still preloads its matched <source>.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?0&control&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?0');");
+
+        // Bug under test: <source> inside a <picture> with <img loading=lazy> must NOT be preloaded.
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?1&jxl');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?1&webp');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?1');");
+
+        // Resolution-switching srcset on a <source> with a lazy <img> must also not be preloaded.
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?2&100w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?2&800w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?2&1000w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?2');");
+
+        // loading=eager (and lazy=missing) must keep the existing preload behavior intact.
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?3&eager&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?3');");
+    }
+</script>
+<!-- Control: matched <source> with non-lazy <img>: must still be preloaded. -->
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?0&control&preload">
+    <img src="/resources/square20.jpg?0">
+</picture>
+
+<!-- Bug under test: <source> alternatives must NOT be preloaded when <img loading=lazy>. -->
+<picture>
+    <source type="image/jxl" srcset="/resources/square20.jpg?1&jxl">
+    <source type="image/webp" srcset="/resources/square20.jpg?1&webp">
+    <img src="/resources/square20.jpg?1" loading="lazy">
+</picture>
+
+<!-- Bug under test, resolution-switching <source> form. -->
+<picture>
+    <source type="image/jpeg" sizes="200px" srcset="/resources/square20.jpg?2&100w 100w, /resources/square20.jpg?2&800w 800w, /resources/square20.jpg?2&1000w 1000w">
+    <img src="/resources/square20.jpg?2" loading="lazy">
+</picture>
+
+<!-- Control: loading=eager keeps the source preload. -->
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?3&eager&preload">
+    <img src="/resources/square20.jpg?3" loading="eager">
+</picture>
+</body>
+</html>

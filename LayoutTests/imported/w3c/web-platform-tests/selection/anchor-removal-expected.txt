@@ -1,0 +1,5 @@
+Child paragraph one Paragraph two
+
+PASS anchorNode snaps up to parent when removed (no asserts)
+PASS anchorNode snaps up to parent when removed (with asserts)
+

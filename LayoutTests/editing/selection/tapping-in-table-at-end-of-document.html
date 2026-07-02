@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.onload = async () => {
+        const table = document.getElementById('table');
+        const rect = table.getBoundingClientRect();
+        await UIHelper.activateAt(rect.x + rect.width / 2, rect.y + 10);
+        setTimeout(() => testRunner.notifyDone(), 0);
+    }
+}
+
+</script>
+</head>
+<body>
+<p>This tests tapping on after a CSS table doesn't cause a hang.<br>
+To manually test, click on the right of the text below inside the red box.<br>
+WebKit should not hang, and you should see PASS below immediately:</p>
+<div id="result"></div>
+<div id="table" onclick="result.textContent = 'PASS'" style="width: 100%; height: 100%; border: solid 10px red; padding: 10px;">
+  <div style="display: table">
+    <div style="display: table-row">
+      <div style="display: table-cell">
+        Click here >
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

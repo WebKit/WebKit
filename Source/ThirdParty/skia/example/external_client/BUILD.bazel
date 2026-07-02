@@ -1,0 +1,359 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_cc//cc:objc_library.bzl", "objc_library")
+
+# This first example only needs the core Skia functionality and the pathops
+# module. Thus, the client defines a cc_library (skia_core_and_pathops) with
+# those components and then depending on that library.
+cc_binary(
+    name = "path_combiner",
+    srcs = ["src/path_main.cpp"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [":skia_core_and_pathops"],
+)
+
+cc_library(
+    name = "skia_core_and_pathops",
+    deps = [
+        "@skia//:core",
+        "@skia//:pathops",
+    ],
+)
+
+cc_binary(
+    name = "png_decoder",
+    srcs = ["src/decode_png_main.cpp"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:png_decode_codec",
+    ],
+)
+
+cc_binary(
+    name = "decode_everything",
+    srcs = ["src/decode_everything.cpp"],
+    linkopts = select({
+        "@platforms//os:linux": [
+            "-fuse-ld=lld",
+            "-lpthread",
+        ],
+        "//conditions:default": [],
+    }),
+    deps = [
+        "@skia//:bmp_decode_codec",
+        "@skia//:core",
+        "@skia//:gif_decode_codec",
+        "@skia//:ico_decode_codec",
+        "@skia//:jpeg_decode_codec",
+        "@skia//:jpegxl_decode_codec",
+        "@skia//:png_decode_codec",
+        "@skia//:wbmp_decode_codec",
+        "@skia//:webp_decode_codec",
+    ],
+)
+
+cc_binary(
+    name = "write_text_to_png",
+    srcs = ["src/write_text_to_png.cpp"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:png_encode_codec",
+    ] + select({
+        "@platforms//os:linux": [
+            "@skia//:fontmgr_fontconfig",
+            "@skia//:freetype_support",
+        ],
+        "@platforms//os:macos": ["@skia//:fontmgr_coretext"],
+        "//conditions:default": ["@skia//:fontmgr_empty_freetype"],
+    }),
+)
+
+cc_binary(
+    name = "shape_text",
+    srcs = ["src/shape_text.cpp"],
+    linkopts = [
+        "-fuse-ld=lld",
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:fontmgr_empty_freetype",
+        "@skia//:jpeg_encode_codec",
+        "@skia//:skparagraph_harfbuzz_skunicode",
+        "@skia//:skunicode_icu",
+    ],
+)
+
+cc_binary(
+    name = "use_ganesh_gl",
+    srcs = ["src/ganesh_gl.cpp"],
+    linkopts = [
+    ] + select(
+        {
+            "@platforms//os:windows": [],
+            "//conditions:default": [
+                "-lpthread",
+            ],
+        },
+    ) + select(
+        {
+            "@platforms//os:linux": [
+                "-lGL",
+                "-lX11",
+            ],
+            "@platforms//os:windows": [
+                "-lgdi32",
+                "-lOpenGL32",
+                "-luser32",
+            ],
+            "//conditions:default": [],
+        },
+    ),
+    deps = [
+        "@skia//:core",
+        "@skia//:ganesh_gl",
+        "@skia//:webp_encode_codec",
+    ] + select({
+        "@platforms//os:linux": ["@skia//:ganesh_glx_factory"],
+        "@platforms//os:macos": [
+            ":gl_context_helper",
+            "@skia//:ganesh_gl_mac_factory",
+        ],
+        "@platforms//os:windows": [
+            "@skia//:ganesh_gl_win_factory",
+        ],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+)
+
+objc_library(
+    name = "gl_context_helper",
+    srcs = ["src/gl_context_helper.mm"],
+    hdrs = ["src/gl_context_helper.h"],
+    copts = ["-DGL_SILENCE_DEPRECATION"],
+    includes = ["src"],
+    sdk_frameworks = [
+        "OpenGL",
+    ],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+)
+
+cc_binary(
+    name = "use_ganesh_vulkan",
+    srcs = ["src/ganesh_vulkan.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:ganesh_vulkan",
+    ],
+)
+
+cc_binary(
+    name = "use_ganesh_metal",
+    srcs = ["src/ganesh_metal.cpp"],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":ganesh_metal_context_helper",
+        "@skia//:core",
+        "@skia//:ganesh_metal",
+        "@skia//:jpeg_encode_codec",
+    ],
+)
+
+objc_library(
+    name = "ganesh_metal_context_helper",
+    srcs = ["src/ganesh_metal_context_helper.mm"],
+    hdrs = ["src/ganesh_metal_context_helper.h"],
+    includes = ["src"],
+    sdk_frameworks = [
+        # Without MetalKit added as a dependency, `[*device newCommandQueue]` fails
+        "MetalKit",
+        "Metal",
+    ],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        "@skia//:core",
+        "@skia//:ganesh_metal",
+    ],
+)
+
+cc_binary(
+    name = "use_graphite_native_metal",
+    srcs = ["src/graphite_native_metal.cpp"],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":graphite_metal_context_helper",
+        "@skia//:core",
+        "@skia//:graphite_native_metal",
+        "@skia//:jpeg_encode_codec",
+    ],
+)
+
+cc_binary(
+    name = "use_graphite_metal_capture",
+    srcs = ["src/graphite_metal_capture.cpp"],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        ":graphite_metal_context_helper",
+        "@skia//:core",
+        "@skia//:graphite_native_metal",
+        "@skia//:jpeg_encode_codec",
+    ],
+)
+
+objc_library(
+    name = "graphite_metal_context_helper",
+    srcs = ["src/graphite_metal_context_helper.mm"],
+    hdrs = ["src/graphite_metal_context_helper.h"],
+    includes = ["src"],
+    sdk_frameworks = [
+        # Without MetalKit added as a dependency, `[*device newCommandQueue]` fails
+        "MetalKit",
+        "Metal",
+    ],
+    target_compatible_with = select({
+        "@platforms//os:macos": [],
+        "@platforms//os:ios": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    deps = [
+        "@skia//:core",
+        "@skia//:graphite_native_metal",
+    ],
+)
+
+cc_binary(
+    name = "use_graphite_native_vulkan",
+    srcs = ["src/graphite_native_vulkan.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:graphite_native_vulkan",
+        "@vulkan_headers",
+    ],
+)
+
+cc_binary(
+    name = "use_skresources",
+    srcs = ["src/use_skresources.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:jpeg_decode_codec",
+        "@skia//:png_decode_codec",
+        "@skia//:skresources",
+    ],
+)
+
+cc_binary(
+    name = "svg_with_primitive",
+    srcs = ["src/svg_renderer.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:png_encode_codec",
+        "@skia//:skshaper_core",
+        "@skia//:svg_renderer",
+    ] + select({
+        "@platforms//os:linux": [
+            "@skia//:fontmgr_fontconfig",
+            "@skia//:freetype_support",
+        ],
+        "@platforms//os:macos": ["@skia//:fontmgr_coretext"],
+        "//conditions:default": [],
+    }),
+)
+
+cc_binary(
+    name = "svg_with_harfbuzz",
+    srcs = ["src/svg_renderer.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:png_encode_codec",
+        "@skia//:skshaper_harfbuzz",
+        "@skia//:skshaper_unicode",
+        "@skia//:skunicode_icu",
+        "@skia//:svg_renderer",
+    ] + select({
+        "@platforms//os:linux": [
+            "@skia//:fontmgr_fontconfig",
+            "@skia//:freetype_support",
+        ],
+        "@platforms//os:macos": ["@skia//:fontmgr_coretext"],
+        "//conditions:default": [],
+    }),
+)
+
+cc_binary(
+    name = "write_to_pdf",
+    srcs = ["src/write_to_pdf.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:pdf_jpeg_helpers",
+        "@skia//:pdf_writer",
+    ] + select({
+        "@platforms//os:linux": [
+            "@skia//:fontmgr_fontconfig",
+            "@skia//:freetype_support",
+        ],
+        "@platforms//os:macos": ["@skia//:fontmgr_coretext"],
+        "//conditions:default": [],
+    }),
+)
+
+cc_binary(
+    name = "play_skottie",
+    srcs = ["src/play_skottie.cpp"],
+    linkopts = [
+        "-lpthread",
+    ],
+    deps = [
+        "@skia//:core",
+        "@skia//:png_encode_codec",
+        "@skia//:skottie",
+    ],
+)

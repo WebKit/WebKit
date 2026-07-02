@@ -1,0 +1,7 @@
+
+PASS Should use the last position option initially
+PASS Should stay at initial position, since it still fits
+PASS Should use the third position option with enough space left
+PASS Should use the first position option with enough space left and below
+PASS Should use the second position option with enough space below (and not enough above)
+

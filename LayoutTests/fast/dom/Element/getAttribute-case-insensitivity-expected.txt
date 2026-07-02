@@ -1,0 +1,15 @@
+Test for Bugzilla bug: 105713: getAttribute does not behave correctly for mixed-case attributes on HTML testements.
+This test verifies that the getAttribute() and the getAttributeNode() APIs convert the passed attribute name to lowercase before comparing against existing attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS test.getAttribute('NEWATTR') is 'PASS'
+PASS test.getAttributeNode('NEWATTR').value is 'PASS'
+PASS test.getAttributeNS(null, 'NEWATTR') is 'FAIL'
+PASS test.getAttribute('newattr') is 'PASS'
+PASS test.getAttributeNode('newattr').value is 'PASS'
+PASS test.getAttributeNS(null, 'newattr') is 'PASS'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

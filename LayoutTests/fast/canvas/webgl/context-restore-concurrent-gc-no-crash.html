@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!-- Exercises a race between WebGL2 context restoration (which reinitializes
+     bound-object state via initializeNewContext) and concurrent GC marking (which
+     traverses that state via addMembersToOpaqueRoots). Without objectGraphLock()
+     held during restoration, the restore path can free objects the GC marker is
+     still reading, causing a use-after-free. -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals)
+    internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+const tick = () => new Promise(r => setTimeout(r, 0));
+
+// Ensure the GC marker doesn't reach the WebGL wrapper until the concurrent phase.
+const heapPaddingSize = 300000;
+const heapPadding = new Array(heapPaddingSize);
+for (let i = 0; i < heapPaddingSize; i++)
+    heapPadding[i] = { a: i, b: { c: i } };
+
+async function loseAndRestoreContext() {
+    const canvas = document.body.appendChild(document.createElement('canvas'));
+    canvas.width = 1;
+    canvas.height = 1;
+    const gl = canvas.getContext('webgl2');
+    const ext = gl.getExtension('WEBGL_lose_context');
+    for (let i = 0; i < heapPaddingSize; i += 4096)
+        heapPadding[i].g = gl;
+
+    const contextLost = new Promise(r => {
+        canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); r(); });
+    });
+    const contextRestored = new Promise(r => {
+        canvas.addEventListener('webglcontextrestored', () => r());
+    });
+
+    ext.loseContext();
+    await contextLost;
+    await tick();
+
+    // Trigger GC so its concurrent marking phase overlaps the restore timer.
+    new WebAssembly.Memory({ initial: 1024 });
+    new WebAssembly.Memory({ initial: 1024 });
+    ext.restoreContext();
+    await tick();
+    await tick();
+    await contextRestored;
+
+    canvas.remove();
+}
+
+async function runTest() {
+    for (let i = 0; i < 50; i++)
+        await loseAndRestoreContext();
+    document.body.textContent = 'PASS if no crash.';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+runTest();
+</script>
+</body>
+</html>

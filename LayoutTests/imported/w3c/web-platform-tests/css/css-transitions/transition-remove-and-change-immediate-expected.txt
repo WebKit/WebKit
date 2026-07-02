@@ -1,0 +1,3 @@
+
+PASS Removing transition and changing width applies change immediately
+

@@ -1,0 +1,7 @@
+
+
+PASS A named property must not be set if a property already exists
+PASS A named property must not be set if a property already exists, even if undefined
+PASS If a property is occupied by a named property but then the user sets it, the user's value shadows it
+PASS A named property must not be set if the property already exists in the proxy
+

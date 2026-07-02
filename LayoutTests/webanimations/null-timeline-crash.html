@@ -1,0 +1,17 @@
+<body>
+PASS if this does not crash.
+<script>
+
+window.testRunner?.dumpAsText();
+
+const doc = new DOMParser().parseFromString("", "text/html");
+const root = doc.documentElement;
+
+const keyframes = { "divisor": [0, -1] };
+root.animate(keyframes, 1).timeline = null;
+root.animate(keyframes, 1);
+
+window.GCController?.collect();
+
+</script>
+</body>

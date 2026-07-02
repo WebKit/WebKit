@@ -1,0 +1,33 @@
+Tests that setting -webkit-perspective-origin property is corrected parsed / computed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(parentDiv)['-webkit-perspective'] is "150px"
+PASS getComputedStyle(parentDiv)['-webkit-perspective-origin'] is "10px 10px"
+PASS getComputedStyle(parentDiv)['-webkit-perspective-origin-x'] is ""
+PASS getComputedStyle(parentDiv)['-webkit-perspective-origin-y'] is ""
+PASS getComputedStyle(testDiv)['-webkit-perspective'] is "100px"
+PASS getComputedStyle(testDiv)['-webkit-perspective-origin'] is "5px 5px"
+PASS getComputedStyle(testDiv)['-webkit-perspective-origin-x'] is ""
+PASS getComputedStyle(testDiv)['-webkit-perspective-origin-y'] is ""
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective'] is "200px"
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective-origin'] is "15px 15px"
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective-origin-x'] is ""
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective-origin-y'] is ""
+testDiv.style['-webkit-perspective-origin'] = 'inherit'
+PASS getComputedStyle(testDiv)['-webkit-perspective-origin'] is "10px 10px"
+testDiv.style['-webkit-perspective-origin'] = 'initial'
+PASS getComputedStyle(testDiv)['-webkit-perspective-origin'] is "100px 100px"
+testDiv.style['-webkit-perspective-origin'] = '20px 20px'
+PASS getComputedStyle(testDiv)['-webkit-perspective-origin'] is "20px 20px"
+noShortHandDiv.style['-webkit-perspective-origin'] = 'inherit'
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective-origin'] is "10px 10px"
+noShortHandDiv.style['-webkit-perspective-origin'] = 'initial'
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective-origin'] is "150px 150px"
+noShortHandDiv.style['-webkit-perspective-origin'] = '20px 20px'
+PASS getComputedStyle(noShortHandDiv)['-webkit-perspective-origin'] is "20px 20px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

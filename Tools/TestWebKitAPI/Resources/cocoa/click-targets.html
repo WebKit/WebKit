@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    font-family: system-ui;
+    font-size: 16px;
+}
+
+.button {
+    color: white;
+    padding: 0.5em;
+    font-size: 16px;
+    border-radius: 4px;
+    border: none;
+}
+
+.green {
+    background: green;
+}
+
+div.container {
+    margin: 1em 0;
+}
+
+div.tall {
+    height: 5000px;
+}
+
+.close {
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    cursor: pointer;
+    border-radius: 20px;
+    background: black;
+    color: white;
+    font-size: 24px;
+    line-height: 36px;
+    text-align: center;
+}
+</style>
+<script>
+addEventListener("load", () => {
+    for (const element of [...document.querySelectorAll("a, button, input, div.close")]) {
+        for (const type of ["mousedown", "mouseup", "click"]) {
+            element.addEventListener(type, event => {
+                const target = event.target;
+                if (target.events)
+                    target.events.push(event.type);
+                else
+                    target.events = [event.type];
+                event.preventDefault();
+            });
+        }
+    }
+});
+</script>
+</head>
+<body>
+    <div class="container"><a class="top" href="https://bugs.webkit.org">Bugzilla</a></div>
+    <div class="container"><button class="top green button">Sign Up</button></div>
+    <div class="container"><input class="top" type="text" placeholder="First name"></div>
+    <div class="container"><input class="top" type="submit" value="Log In">&nbsp;<input class="top" type="button" value="More Info"></div>
+    <div onclick="javascript:void()" aria-label="Close" class="top close">ｘ</div>
+    <div class="tall"></div>
+    <div class="container"><a class="bottom" href="https://bugs.webkit.org">Bugzilla</a></div>
+    <div class="container"><button class="bottom green button">Sign Up</button></div>
+    <div class="container"><input class="bottom" type="text" placeholder="First name"></div>
+    <div class="container"><input class="bottom" type="submit" value="Log In">&nbsp;<input class="bottom" type="button" value="More Info"></div>
+    <div onclick="javascript:void()" aria-label="Close" class="bottom close">ｘ</div>
+    <div class="tall"></div>
+</body>
+</html>

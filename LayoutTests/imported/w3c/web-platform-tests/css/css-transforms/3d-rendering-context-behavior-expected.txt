@@ -1,0 +1,14 @@
+
+PASS Direct DOM parent is root of rendering context (normal flow)
+PASS Direct DOM parent is root of rendering context (absolute)
+PASS Direct DOM parent is root of rendering context (fixed)
+PASS Intermediate DOM nodes cause rendering context to end (normal flow)
+PASS Intermediate DOM nodes cause rendering context to end (absolute)
+PASS Intermediate DOM nodes cause rendering context to end (fixed)
+PASS Perspective applies to direct DOM normal-flow children
+PASS Perspective applies to direct DOM abs-pos children
+PASS Perspective applies to direct DOM fixed-pos children
+PASS Perspective does not apply to DOM normal-flow grandchildren
+PASS Perspective does not apply to DOM abs-pos grandchildren
+PASS Perspective does not apply to DOM fixed-pos grandchildren
+

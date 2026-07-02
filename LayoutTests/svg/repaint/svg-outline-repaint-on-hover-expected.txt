@@ -1,0 +1,17 @@
+ SVG border box: 100x100 at (50,50)
+
+Repaint rects on hover (outline added):
+(repaint rects
+  (rect 50 50 100 100)
+  (rect 35 35 130 130)
+  (rect 0 0 800 204)
+)
+
+Repaint rects on un-hover (outline removed):
+(repaint rects
+  (rect 35 35 130 130)
+  (rect 35 35 130 130)
+  (rect 35 35 130 130)
+  (rect 0 0 800 204)
+)
+

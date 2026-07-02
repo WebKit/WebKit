@@ -1,0 +1,4 @@
+
+
+FAIL permissions-policy-opaque-origin-history assert_equals: iframe should be able to access fullscreen. expected "fullscreen enabled in opaque-origin-history1.html" but got "fullscreen disabled in opaque-origin-history1.html"
+

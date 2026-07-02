@@ -1,0 +1,5 @@
+
+
+PASS Input with `display: inline` should have positive client width
+PASS Textarea with `display: inline` should have positive client width
+

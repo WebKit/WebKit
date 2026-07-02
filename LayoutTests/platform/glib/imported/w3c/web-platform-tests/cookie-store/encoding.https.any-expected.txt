@@ -1,0 +1,4 @@
+
+PASS BOM not stripped from name
+PASS BOM not stripped from value
+

@@ -1,0 +1,4 @@
+
+PASS window.open()
+PASS window.open(noopener)
+

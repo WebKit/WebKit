@@ -1,0 +1,157 @@
+/*
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <JavaScriptCore/RuntimeFlags.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/FetchRequestCredentials.h>
+#include <WebCore/NotificationPermission.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/ServiceWorkerRegistrationData.h>
+#include <WebCore/Settings.h>
+#include <WebCore/WorkerClient.h>
+#include <WebCore/WorkerOrWorkletThread.h>
+#include <WebCore/WorkerRunLoop.h>
+#include <WebCore/WorkerType.h>
+#include <memory>
+#include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/URL.h>
+
+namespace WebCore {
+
+class NotificationClient;
+class Page;
+class ScriptBuffer;
+class SecurityOrigin;
+class SocketProvider;
+class WorkerBadgeProxy;
+class WorkerGlobalScope;
+class WorkerLoaderProxy;
+class WorkerDebuggerProxy;
+class WorkerReportingProxy;
+
+enum class WorkerThreadStartMode {
+    Normal,
+    WaitForInspector,
+};
+
+namespace IDBClient {
+class IDBConnectionProxy;
+}
+
+enum class AdvancedPrivacyProtections : uint16_t;
+
+struct WorkerThreadStartupData;
+
+struct WorkerParameters {
+public:
+    URL scriptURL;
+    URL ownerURL;
+    String name;
+    String inspectorIdentifier;
+    String userAgent;
+    bool isOnline;
+    ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
+    bool shouldBypassMainWorldContentSecurityPolicy;
+    CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
+    MonotonicTime timeOrigin;
+    ReferrerPolicy referrerPolicy;
+    WorkerType workerType;
+    FetchRequestCredentials credentials;
+    SettingsValues settingsValues;
+    WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
+    PAL::SessionID sessionID;
+    std::optional<ServiceWorkerData> serviceWorkerData;
+    Markable<ScriptExecutionContextIdentifier> clientIdentifier;
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
+    std::optional<uint64_t> noiseInjectionHashSalt;
+    String agentClusterID;
+
+    WorkerParameters isolatedCopy() const;
+};
+
+class WorkerThread : public WorkerOrWorkletThread {
+public:
+    virtual ~WorkerThread();
+
+    WorkerBadgeProxy* workerBadgeProxy() const { return m_workerBadgeProxy.get(); }
+    WorkerDebuggerProxy* workerDebuggerProxy() const final { return m_workerDebuggerProxy.get(); }
+    WorkerLoaderProxy* workerLoaderProxy() const final { return m_workerLoaderProxy.get(); }
+    WorkerReportingProxy* workerReportingProxy() const { return m_workerReportingProxy.get(); }
+
+    // Number of active worker threads.
+    WEBCORE_EXPORT static unsigned NODELETE workerThreadCount();
+
+    JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
+    bool isInStaticScriptEvaluation() const { return m_isInStaticScriptEvaluation; }
+
+    void clearProxies() override;
+
+    void setWorkerClient(std::unique_ptr<WorkerClient> client) { m_workerClient = WTF::move(client); }
+protected:
+    WorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerBadgeProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
+
+    // Factory method for creating a new worker context for the thread.
+    virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, Ref<SecurityOrigin>&& topOrigin) = 0;
+
+    WorkerGlobalScope* NODELETE globalScope();
+
+    IDBClient::IDBConnectionProxy* idbConnectionProxy() { return m_idbConnectionProxy.get(); }
+    SocketProvider* socketProvider() { return m_socketProvider.get(); }
+
+    std::unique_ptr<WorkerClient> m_workerClient;
+private:
+    virtual ASCIILiteral threadName() const = 0;
+
+    virtual void finishedEvaluatingScript() { }
+    bool isWorkerThread() const final { return true; }
+
+    // WorkerOrWorkletThread.
+    Ref<Thread> createThread() final;
+    RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
+    void evaluateScriptIfNecessary(String& exceptionMessage) final;
+    bool shouldWaitForWebInspectorOnStartup() const final;
+
+    CheckedPtr<WorkerLoaderProxy> m_workerLoaderProxy;
+    CheckedPtr<WorkerDebuggerProxy> m_workerDebuggerProxy;
+    CheckedPtr<WorkerReportingProxy> m_workerReportingProxy;
+    CheckedPtr<WorkerBadgeProxy> m_workerBadgeProxy;
+    JSC::RuntimeFlags m_runtimeFlags;
+
+    std::unique_ptr<WorkerThreadStartupData> m_startupData;
+
+    const RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
+    const RefPtr<SocketProvider> m_socketProvider;
+    bool m_isInStaticScriptEvaluation { false };
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerThread)
+    static bool isType(const WebCore::WorkerOrWorkletThread& thread) { return thread.isWorkerThread(); }
+SPECIALIZE_TYPE_TRAITS_END()

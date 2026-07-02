@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Cwd qw(getcwd);
+use File::Path qw(make_path);
+
+chomp(my $ninja = `which ninja 2>/dev/null` || `xcrun -f ninja`);
+
+# CMake configuration
+if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
+    exec($ninja, @ARGV);
+}
+
+# CMake try_compile/check_*
+if (getcwd() =~ m{/CMakeFiles/}) {
+    exec($ninja, @ARGV);
+}
+
+# Real compilation
+my $bundlePolicy = $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY};
+if (!defined($bundlePolicy)) {
+    my $dryRun = `$ninja -n @ARGV 2>&1`;
+    my ($totalCommands) = $dryRun =~ m{/(\d+)\]};
+
+    # No-op build
+    if (!defined($totalCommands)) {
+        print($dryRun);
+        exit($? >> 8);
+    }
+
+    if ($dryRun =~ /\bRe-running CMake\b/) {
+        $bundlePolicy = "Bundle";
+    } elsif ($totalCommands > 8) {
+        $bundlePolicy = "Bundle";
+    } else {
+        $bundlePolicy = "NoBundle";
+    }
+
+    $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY} = $bundlePolicy;
+}
+
+# Record the bundle policy for inspection; nothing reads this file.
+make_path("DerivedSources");
+if (open(my $fh, '>', "DerivedSources/unified-sources-bundle-policy")) {
+    print($fh $bundlePolicy);
+    close($fh);
+}
+
+exec('/usr/bin/caffeinate', '-i', $ninja, @ARGV);

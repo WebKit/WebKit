@@ -1,0 +1,3 @@
+
+FAIL A_10_01_02_04_T01 s.getSelection is not a function. (In 's.getSelection()', 's.getSelection' is undefined)
+

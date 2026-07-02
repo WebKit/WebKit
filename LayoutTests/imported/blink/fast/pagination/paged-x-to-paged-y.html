@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Changing from paged-x to paged-y</title>
+        <script>
+            function test() {
+                document.body.offsetTop; // trigger layout
+                document.body.style.overflow = 'paged-y';
+                document.body.style.overflow = '-webkit-paged-y';
+            }
+        </script>
+    </head>
+    <body style="overflow:-webkit-paged-x; overflow:paged-x;" onload="test()">
+        <div style="height:150vh;">
+            There should be a vertical scrollbar on this page.
+        </div>
+    </body>
+</html>

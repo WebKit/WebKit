@@ -1,0 +1,1 @@
+Test that calling navigator.getGamepads no longer generates a console message in insecure contexts

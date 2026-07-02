@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't assert while finding the repaint container for the content that just lost compositing.</title>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div style="-webkit-columns: 4;">PASS if no crash or assert in debug mode.</div>
+<script>
+  var head = document.getElementsByTagName("head")[0];
+  var div = document.getElementsByTagName("div")[0];
+  var style = document.createElement("style");
+  style.innerHTML="div {-webkit-animation-duration: 1s; -webkit-animation-timing-function: ease-in;}";
+  head.appendChild(style);
+  head.parentNode.removeChild(head);
+  document.execCommand("SelectAll");
+  div.setAttribute("style","color: red;");
+</script>
+</body>
+</html>

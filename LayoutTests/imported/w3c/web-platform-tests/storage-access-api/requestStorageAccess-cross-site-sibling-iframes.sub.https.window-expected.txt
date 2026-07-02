@@ -1,0 +1,4 @@
+
+PASS Grants have per-frame scope
+PASS Cross-site sibling iframes should not be able to take advantage of the existing permission grant requested by others.
+

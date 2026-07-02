@@ -1,0 +1,16 @@
+Test that updating the size of a vertex buffer is properly noticed by the WebGL implementation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : after initialization
+PASS getError was expected value: NO_ERROR : after vertex setup
+PASS getError was expected value: NO_ERROR : after texture coord setup
+PASS getError was expected value: NO_ERROR : after vertex redefinition
+PASS getError was expected value: NO_ERROR : after texture coordinate / color redefinition
+PASS getError was expected value: NO_ERROR : after setting up indices
+PASS getError was expected value: NO_ERROR : after drawing
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

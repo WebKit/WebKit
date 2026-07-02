@@ -1,0 +1,42 @@
+<svg width="100%" height="100%" viewBox="0 0 4000 2500"
+     xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <path id="SimplePath"
+      d="M 100  200 
+         C 200  100 300    0  400  100
+         C 500  200 600  300  700  200
+         C 800  100 900    0  1000 100
+         C 1100 200 1200 300  1300 200
+         C 1400 100 1500   0  1600 100
+         C 1700 200 1800 300  1900 200"/>
+  </defs>
+
+  <g id="TextOnPath25">
+    <g id="TextOnPath5">
+      <g id="TextOnPath">
+        <use xlink:href="#SimplePath" fill="none" stroke="red"/>
+        <text font-family="Verdana" font-size="42.5">
+          <textPath xlink:href="#SimplePath">
+            We go up, then we go down, then up again, then we go down, then we up again, then we go down.
+          </textPath>
+        </text>
+      </g>
+      <use xlink:href="#TextOnPath" transform="translate(0,40)"/>
+      <use xlink:href="#TextOnPath" transform="translate(0,80)"/>
+      <use xlink:href="#TextOnPath" transform="translate(0,120)"/>
+      <use xlink:href="#TextOnPath" transform="translate(0,160)"/>
+    </g>
+  
+    <use xlink:href="#TextOnPath5" transform="translate(0,200)"/>
+    <use xlink:href="#TextOnPath5" transform="translate(0,400)"/>
+    <use xlink:href="#TextOnPath5" transform="translate(0,600)"/>
+    <use xlink:href="#TextOnPath5" transform="translate(0,800)"/>
+  </g>
+
+  <use xlink:href="#TextOnPath25" transform="translate(2000,0)"/>
+  <use xlink:href="#TextOnPath25" transform="translate(0,1200)"/>
+  <use xlink:href="#TextOnPath25" transform="translate(2000,1200)"/>
+
+  <rect x="1" y="1" width="3999" height="2499" fill="none" stroke="black" stroke-width="2" />
+</svg>

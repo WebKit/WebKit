@@ -1,0 +1,4 @@
+
+
+PASS A traversal that redirects from same-origin to cross-origin fires the navigate event
+

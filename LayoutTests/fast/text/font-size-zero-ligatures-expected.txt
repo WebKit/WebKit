@@ -1,0 +1,11 @@
+Tests that text with font-size:0 has zero width even when the font has ligatures. Ligature substitution via CTFontShapeGlyphs in the simple text path should not produce non-zero advances when the font size is zero.
+
+PASS testWidth('fi', 'Hoefler Text') is 0
+PASS testWidth('fl', 'Hoefler Text') is 0
+PASS testWidth('ffi', 'Hoefler Text') is 0
+PASS testWidth('abc', 'Helvetica') is 0
+PASS sanity.getBoundingClientRect().width > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

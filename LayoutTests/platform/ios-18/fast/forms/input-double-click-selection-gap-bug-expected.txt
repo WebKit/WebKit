@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x548
+  RenderBlock {HTML} at (0,0) size 800x548
+    RenderBody {BODY} at (8,16) size 784x524
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 422x19
+          text run at (0,0) width 332: "The top table was resized while the field\x{2019}s contents "
+          text run at (331,0) width 91: "were selected."
+      RenderTable {TABLE} at (0,36) size 199x244
+        RenderTableSection {TBODY} at (0,0) size 199x244
+          RenderTableRow {TR} at (0,2) size 199x240
+            RenderTableCell {TD} at (2,91) size 195x62 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (20,109) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+              RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,280) size 199x244
+        RenderTableSection {TBODY} at (0,0) size 199x244
+          RenderTableRow {TR} at (0,2) size 199x240
+            RenderTableCell {TD} at (2,91) size 195x62 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
+              RenderTextControl {INPUT} at (20,109) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+              RenderText {#text} at (0,0) size 0x0
+layer at (37,166) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15
+    RenderText {#text} at (0,0) size 38x14
+      text run at (0,0) width 38: "foo bar"
+layer at (37,410) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15
+    RenderText {#text} at (0,0) size 38x14
+      text run at (0,0) width 38: "foo bar"
+caret: position 7 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 1 {INPUT} of child 1 {TD} of child 0 {TR} of child 1 {TBODY} of child 3 {TABLE} of body

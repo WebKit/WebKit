@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<style>
+@font-face {
+    font-family: test-font;
+    src: url(resources/ignorables.woff);
+}
+body {
+    font-family: test-font;
+}
+</style>
+<body>
+<p>&#x200f;&#x0627;&#x200e;</p>
+<script>
+onload = async () => {
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+    // Force layout.
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
+}
+</script>
+</body>
+</html>

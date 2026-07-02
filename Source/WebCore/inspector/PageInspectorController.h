@@ -1,0 +1,187 @@
+/*
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/InspectorAgentRegistry.h>
+#include <JavaScriptCore/InspectorEnvironment.h>
+#include <WebCore/InspectorBackendClient.h>
+#include <WebCore/InspectorFrontendClient.h>
+#include <WebCore/InspectorOverlay.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
+#include <wtf/text/WTFString.h>
+
+namespace Inspector {
+class BackendDispatcher;
+class FrontendChannel;
+class FrontendRouter;
+class IdentifierRegistry;
+class InspectorAgent;
+}
+
+namespace WebCore {
+
+class DOMWrapperWorld;
+class GraphicsContext;
+class InspectorDOMAgent;
+class InspectorInstrumentation;
+class InspectorPageAgent;
+class InstrumentingAgents;
+class LocalFrame;
+class Node;
+class Page;
+class PageDebugger;
+class WebInjectedScriptManager;
+struct PageAgentContext;
+
+class PageInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<PageInspectorController> {
+    WTF_MAKE_NONCOPYABLE(PageInspectorController);
+    WTF_MAKE_TZONE_ALLOCATED(PageInspectorController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageInspectorController);
+public:
+    PageInspectorController(Page&, std::unique_ptr<InspectorBackendClient>&&);
+    ~PageInspectorController() override;
+
+    // AbstractCanMakeCheckedPtr overrides
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+
+    WEBCORE_EXPORT void NODELETE ref() const;
+    WEBCORE_EXPORT void deref() const;
+
+    void inspectedPageDestroyed();
+
+    WEBCORE_EXPORT bool enabled() const;
+    Page& NODELETE inspectedPage() const;
+
+    WEBCORE_EXPORT void show();
+
+    WEBCORE_EXPORT void NODELETE setInspectorFrontendClient(InspectorFrontendClient*);
+    unsigned inspectionLevel() const;
+    void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
+
+    WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
+
+    bool hasLocalFrontend() const;
+    bool hasRemoteFrontend() const;
+
+    WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
+    WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
+    WEBCORE_EXPORT void disconnectAllFrontends();
+
+    WEBCORE_EXPORT void connectRemoteInstrumentation();
+    WEBCORE_EXPORT void disconnectRemoteInstrumentation();
+
+    void inspect(Node*);
+    WEBCORE_EXPORT bool NODELETE shouldShowOverlay() const;
+    WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
+    WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
+    void hideHighlight();
+    Node* NODELETE highlightedNode() const;
+
+    WEBCORE_EXPORT void setIndicating(bool);
+
+    WEBCORE_EXPORT void willComposite(LocalFrame&);
+    WEBCORE_EXPORT void didComposite(LocalFrame&);
+
+    // Testing support.
+    bool isUnderTest() const { return m_isUnderTest; }
+    void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
+    WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
+    WEBCORE_EXPORT unsigned NODELETE gridOverlayCount() const;
+    WEBCORE_EXPORT unsigned NODELETE flexOverlayCount() const;
+    WEBCORE_EXPORT unsigned paintRectCount() const;
+
+    InspectorBackendClient* inspectorBackendClient() const LIFETIME_BOUND { return m_inspectorBackendClient.get(); }
+    InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
+
+    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
+    Inspector::FrontendRouter& frontendRouter() const { return m_frontendRouter.get(); }
+    Inspector::BackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
+    WebInjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager.get(); }
+
+    Inspector::InspectorAgent& ensureInspectorAgent();
+    InspectorDOMAgent& ensureDOMAgent();
+    WEBCORE_EXPORT InspectorPageAgent& ensurePageAgent();
+
+    Inspector::IdentifierRegistry& identifierRegistry() const { return m_identifierRegistry.get(); }
+    WEBCORE_EXPORT void siteIsolationFirstEnabled();
+
+    // InspectorEnvironment
+    bool developerExtrasEnabled() const override;
+    bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
+    Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
+    Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    void frontendInitialized() override;
+    WEBCORE_EXPORT WTF::Stopwatch& NODELETE executionStopwatch() const final;
+    JSC::Debugger* debugger() override;
+    JSC::VM& vm() override;
+
+private:
+    friend class InspectorInstrumentation;
+
+    PageAgentContext pageAgentContext();
+    void createLazyAgents();
+
+    WeakRef<Page> m_page;
+    const Ref<InstrumentingAgents> m_instrumentingAgents;
+    const Ref<WebInjectedScriptManager> m_injectedScriptManager;
+    const Ref<Inspector::FrontendRouter> m_frontendRouter;
+    const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+    const UniqueRef<InspectorOverlay> m_overlay;
+    const Ref<WTF::Stopwatch> m_executionStopwatch;
+    std::unique_ptr<PageDebugger> m_debugger;
+    Inspector::AgentRegistry m_agents;
+
+    std::unique_ptr<InspectorBackendClient> m_inspectorBackendClient;
+    Ref<Inspector::IdentifierRegistry> m_identifierRegistry;
+    InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
+
+    // Lazy, but also on-demand agents.
+    CheckedPtr<Inspector::InspectorAgent> m_inspectorAgent;
+    CheckedPtr<InspectorDOMAgent> m_domAgent;
+    CheckedPtr<InspectorPageAgent> m_pageAgent;
+
+    bool m_isUnderTest { false };
+    bool m_isAutomaticInspection { false };
+    bool m_pauseAfterInitialization = { false };
+    bool m_didCreateLazyAgents { false };
+};
+
+} // namespace WebCore

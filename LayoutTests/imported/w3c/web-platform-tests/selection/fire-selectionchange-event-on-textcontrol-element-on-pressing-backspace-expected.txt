@@ -1,0 +1,4 @@
+
+
+FAIL selectionchange event fired on an input element assert_equals: selectionStart after pressing backspace key expected 4 but got 5
+

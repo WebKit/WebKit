@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<style>
+div {
+  border: 1px solid blue;
+  width: 100px;
+  height: 100px;
+}
+
+.float_box {
+  float: left;
+  border: none;
+  width: 20px;
+}
+</style>
+<span>
+  span start
+  <div>
+    <div class=float_box style="background-color: green; height: 140px;"></div>
+    <div class=float_box style="background-color: yellow; height: 160px;"></div>
+  </div>
+  span end
+</span>

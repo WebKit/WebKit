@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+
+description("Verifies same-origin window properties can be accessed after window.open with a frame name");
+jsTestIsAsync = true;
+
+function runTest() {
+    openedWindow = window.open("http://localhost:8000/site-isolation/resources/opened-main.html");
+}
+
+function runTestIfInTestRunner() { if (window.testRunner) { runTest() } }
+
+function firstSameOriginIframeOpened() {
+    debug("state before window.open:")
+    shouldBe("openedWindow[0].customProperty", "42");
+    windowOpenedInFrame = window.open("http://127.0.0.1:8000/site-isolation/resources/opened-iframe-2.html", "openedFrameName")
+}
+function secondSameOriginIframeOpened() {
+    debug("state after window.open with a frame name:")
+    shouldBe("openedWindow[0].customProperty", "43");
+    finishJSTest();
+}
+</script>
+<body onload="runTestIfInTestRunner()">
+<button onclick="runTest()">click to run test manually in a browser</button>
+</body>

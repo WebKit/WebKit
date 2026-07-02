@@ -1,0 +1,15 @@
+Test that the parameters of the editing API on Document are mandatory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.execCommand() threw exception TypeError: Not enough arguments.
+PASS document.queryCommandEnabled() threw exception TypeError: Not enough arguments.
+PASS document.queryCommandIndeterm() threw exception TypeError: Not enough arguments.
+PASS document.queryCommandState() threw exception TypeError: Not enough arguments.
+PASS document.queryCommandSupported() threw exception TypeError: Not enough arguments.
+PASS document.queryCommandValue() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

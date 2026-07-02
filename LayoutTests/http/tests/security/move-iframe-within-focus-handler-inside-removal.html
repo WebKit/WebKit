@@ -1,0 +1,44 @@
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description(`Tests moving an iframe inside a focus event handler while removing a node.<br>
+<strong>To manually test, open this page on a new window/tab each time. Reloading would not work.</strong>`);
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+const doc = iframe.contentDocument;
+
+doc.body.innerHTML = `<a id="target" href="#"></a><div><link rel="stylesheet" href="data:,d"></div>`;
+let target = doc.querySelector('#target');
+const linkParent = doc.querySelector('link').parentNode;
+
+window.movedFrame = doc.createElement('iframe');
+const helperFrame = doc.createElement('iframe');
+doc.body.appendChild(helperFrame);
+
+target.onfocus = () => {
+    linkParent.appendChild(movedFrame);
+    const helperContent = `<svg xmlns="http://www.w3.org/2000/svg"><script>top.check();<\/script></svg>`;
+    helperFrame.src = URL.createObjectURL(new Blob([helperContent], {type: 'text/xml'}));
+};
+
+function check() {
+    window.oldGlobal = movedFrame.contentWindow;
+    doc.body.appendChild(movedFrame);
+    window.newGlobal = movedFrame.contentWindow;
+    shouldNotBe('newGlobal', 'oldGlobal');
+    iframe.remove();
+    finishJSTest();
+}
+
+iframe.contentWindow.location.hash = target.id;
+linkParent.textContent = '';
+
+var jsTestIsAsync = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

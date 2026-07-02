@@ -1,0 +1,14 @@
+
+PASS animation-duration
+PASS animation-duration: 0s
+PASS animation-iteration-count
+PASS animation-iteration-count: 0
+PASS animation-iteration-count: infinite
+PASS animation-direction: normal
+PASS animation-direction: reverse
+PASS animation-direction: alternate
+PASS animation-direction: alternate-reverse
+PASS animation-delay with a positive value
+PASS animation-delay with a negative value
+PASS animation-fill-mode
+

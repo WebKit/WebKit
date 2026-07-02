@@ -1,0 +1,5 @@
+
+PASS 'color' animation
+PASS 'opacity' animation
+PASS 'color' + 'opacity' animation
+list item

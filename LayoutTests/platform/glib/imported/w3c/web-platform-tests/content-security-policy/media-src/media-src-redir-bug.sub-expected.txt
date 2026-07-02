@@ -1,0 +1,11 @@
+Video element in media-src list - redirect test
+
+
+PASS In-policy async video src
+PASS in-policy async video src w/redir
+PASS In-policy async video source element
+PASS In-policy async video source element w/redir
+PASS Should not fire policy violation events
+This test tests a buggy interaction in Chrome 46. Two hosts (self and www2) are both allowed as media-src, but only one (self) is allowed for connect-src. If a video src starts on an allowed host (self), and is redirected to another allowed media-src host, it should succeed. But a bug causes the redirect to be done in a fetch context to which connect-src is being applied instead, so the load is blocked. (This test passes in Firefox 45, modulo an event listener not firing.)
+
+

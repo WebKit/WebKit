@@ -1,0 +1,4 @@
+
+PASS Property overflow-anchor has initial value auto
+PASS Property overflow-anchor does not inherit
+

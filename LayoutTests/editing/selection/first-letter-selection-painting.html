@@ -1,0 +1,25 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+div::first-letter {
+    color: red;
+    font-size: 2em;
+}
+</style>
+<div id="target">Hello World</div>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest() {
+    await UIHelper.renderingUpdate();
+    var range = document.createRange();
+    range.selectNodeContents(document.getElementById("target"));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<form>
+<some-element><template shadowrootmode="open"><input name="email"><form><input name="nickname"></form></template></some-element>
+<input name="name">
+</form>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('This tests having a declarative shadow DOM inside a form element. form control elements inside the declarative shadow DOM should not be associated with the form in the document tree.');
+shouldBeFalse(`!!document.forms[0]['email']`);
+shouldBeFalse(`!!document.forms[0]['nickname']`);
+shouldBeTrue(`!!document.forms[0]['name']`);
+shouldBeTrue(`!!document.querySelector('some-element').shadowRoot.querySelector('form')['nickname']`);
+shouldBeEqualToString(`document.querySelector('some-element').shadowRoot.innerHTML`, '<input name="email"><form><input name="nickname"></form>');
+document.querySelector('form').remove();
+</script>

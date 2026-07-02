@@ -1,0 +1,4 @@
+root
+	input placeholder='Enter your email' autofilled
+	input placeholder='Enter your password' secure autofilled
+	input number placeholder='Security code' '123456'

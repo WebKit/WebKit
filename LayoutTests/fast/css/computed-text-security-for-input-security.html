@@ -1,0 +1,51 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSInputSecurityEnabled=true ] -->
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+    <input type="password" id="passwordInput">
+    <input type="text" id="textInput">
+</body>
+<script>
+
+function runTest(input, inputSecurity, textSecurity)
+{
+    inputType = input.type;
+
+    debug(`\n\"input-security: ${ inputSecurity }, -webkit-text-security: ${ textSecurity }\" on an &lt;input type=${ inputType }&gt;`);
+
+    input.style.inputSecurity = inputSecurity;
+    input.style.webkitTextSecurity = textSecurity;
+
+    computedStyle = window.getComputedStyle(input);
+    shouldBeEqualToString("computedStyle.inputSecurity", inputSecurity);
+
+    expectedTextSecurity = (() => {
+        if (inputType === "password")
+            return (inputSecurity === "auto") ? "disc" : "none";
+
+        return textSecurity;
+    })();
+
+    shouldBeEqualToString("computedStyle.webkitTextSecurity", expectedTextSecurity);
+}
+
+addEventListener("load", () => {
+    description("This test verifies that the value of input-security correctly adjusts the value of -webkit-text-security for sensitive text inputs.");
+
+    for (const input of [ passwordInput, textInput ]) {
+        for (const inputSecurity of [ "auto", "none" ]) {
+            for (const textSecurity of [ "none", "disc", "circle", "square" ]) {
+                runTest(input, inputSecurity, textSecurity);
+            }
+        }
+    }
+
+    debug("");
+});
+
+</script>
+</html>

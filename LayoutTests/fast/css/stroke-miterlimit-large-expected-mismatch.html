@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        div {
+            position: absolute;
+            font-size: 200px;
+            color: gray;
+        }
+
+        .test-stroke {
+            text-shadow: none;
+            -webkit-text-stroke: 30px red;
+        }
+    
+        .obscurer {
+            width: 600px;
+            height: 200px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+
+<div class="test-stroke" style="stroke-miterlimit: 4;">Miter</div>
+<div class="obscurer" style="left: 0px; top: 20px;"></div>
+
+</body>
+</html>

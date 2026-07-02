@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="host" role="group">
+<button id="before">Before</button>
+<iframe id="iframe" role="presentation" src="../resources/presentational-iframe-content.html"></iframe>
+<button id="after">After</button>
+</div>
+
+<script>
+var output = "This test ensures the content of a presentational (accessibility-ignored) iframe is hoisted in the accessibility tree, with childrenCount and indexOfChild consistent with the hoisted children, and can reach the root via ancestry walk.\n\n";
+
+var host, root, button;
+function ancestryReaches(element, target) {
+    for (var ancestor = element; ancestor; ancestor = ancestor.parentElement()) {
+        if (ancestor.isEqual(target))
+            return true;
+    }
+    return false;
+}
+
+window.jsTestIsAsync = true;
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // The iframe has more than one top-level child, so its content must be hoisted as multiple children of
+    // the host -- this is what distinguishes the cross-frame-aware count and index paths from the raw stitched
+    // children (where the iframe counts as a single placeholder).
+    button = await waitForElementById("frame-button-1");
+    await waitFor(() => {
+        if (!button)
+            return false;
+        host = accessibilityController.accessibleElementById("host");
+        return host && host.childrenCount === 4 && host.childAtIndex(1).isEqual(button);
+    });
+
+    root = accessibilityController.rootElement;
+
+    output += expect("host.childrenCount", "4");
+    output += expect("host.childAtIndex(0).domIdentifier", "'before'");
+    output += expect("host.childAtIndex(1).domIdentifier", "'frame-button-1'");
+    output += expect("host.childAtIndex(1).role", "'AXRole: AXButton'");
+    output += expect("host.childAtIndex(2).domIdentifier", "'frame-button-2'");
+    output += expect("host.childAtIndex(3).domIdentifier", "'after'");
+
+    // The count, children list, and index lookups must all agree on the hoisted list, otherwise
+    // NSAccessibility drops trailing children or misindexes them.
+    output += expect("host.indexOfChild(host.childAtIndex(1))", "1");
+    output += expect("host.indexOfChild(host.childAtIndex(2))", "2");
+    output += expect("host.indexOfChild(host.childAtIndex(3))", "3");
+
+    output += expect("(button && host ? ancestryReaches(button, host) : false)", "true");
+    output += expect("(button && root ? ancestryReaches(button, root) : false)", "true");
+
+    debug(output);
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

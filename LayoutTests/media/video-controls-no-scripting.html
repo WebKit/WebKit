@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="video-test.js" type="text/javascript"></script>
+        <script>
+        function setup()
+        {
+            if (!window.testRunner) {
+                consoleWrite("This test only works in DRT.");
+                return;
+            }
+
+            video = document.getElementById("fr").contentDocument.querySelector("video");
+            testExpected("internals.shadowRoot(video)", null, "!=");
+            controls =  internals.shadowRoot(video).firstChild.firstChild;
+
+            // Don't use "testExpected()" for the control location because not all ports use the same size controls.
+            reportExpected((controls.offsetTop + controls.offsetHeight) <= video.offsetHeight, "controls.offsetTop + controls.offsetHeight", "<=", "video.offsetHeight", controls.offsetTop + controls.offsetHeight);
+
+            testExpected("getComputedStyle(controls).opacity", 1);
+            
+            consoleWrite("");
+            endTest();
+        }
+        </script>
+    </head>
+
+    <body>
+
+        <iframe sandbox="allow-same-origin" src="resources/video-controls-no-scripting-iframe.html" id="fr" style="width: 400px; height: 320px; border: 1px solid black;"></iframe>
+
+        <p>Tests that the built-in controls are always enabled when JavaScript is disabled.</p>
+        <pre id="console"></pre>
+        <script>
+            document.getElementById("fr").onload = setup;
+        </script>
+    </body>
+</html>

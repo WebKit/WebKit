@@ -1,0 +1,4 @@
+
+
+PASS dialog.focus() in navigable's focus handler
+

@@ -1,0 +1,34 @@
+
+
+PASS Test helper: fetching and sanity checking test JSON: empty-import-map.json
+PASS valid relative specifiers: ./foo
+PASS valid relative specifiers: ./foo/bar
+PASS valid relative specifiers: ./foo/../bar
+PASS valid relative specifiers: ./foo/../../bar
+PASS valid relative specifiers: ../foo
+PASS valid relative specifiers: ../foo/bar
+PASS valid relative specifiers: ../../../foo/bar
+PASS valid relative specifiers: /foo
+PASS valid relative specifiers: /foo/bar
+PASS valid relative specifiers: /../../foo/bar
+PASS valid relative specifiers: /../foo/../bar
+PASS HTTPS scheme absolute URLs: https://fetch-scheme.net
+PASS HTTPS scheme absolute URLs: https:fetch-scheme.org
+PASS HTTPS scheme absolute URLs: https://fetch%2Dscheme.com/
+PASS HTTPS scheme absolute URLs: https://///fetch-scheme.com///
+PASS valid relative URLs that are invalid as specifiers should fail: invalid-specifier
+PASS valid relative URLs that are invalid as specifiers should fail: \invalid-specifier
+PASS valid relative URLs that are invalid as specifiers should fail: :invalid-specifier
+PASS valid relative URLs that are invalid as specifiers should fail: @invalid-specifier
+PASS valid relative URLs that are invalid as specifiers should fail: %2E/invalid-specifier
+PASS valid relative URLs that are invalid as specifiers should fail: %2E%2E/invalid-specifier
+PASS valid relative URLs that are invalid as specifiers should fail: .%2Finvalid-specifier
+PASS invalid absolute URLs should fail: https://invalid-url.com:demo
+PASS invalid absolute URLs should fail: http://[invalid-url.com]/
+PASS non-HTTPS fetch scheme absolute URLs: about:fetch-scheme
+PASS non-fetch scheme absolute URLs: about:fetch-scheme
+PASS non-fetch scheme absolute URLs: mailto:non-fetch-scheme
+PASS non-fetch scheme absolute URLs: import:non-fetch-scheme
+PASS non-fetch scheme absolute URLs: javascript:non-fetch-scheme
+PASS non-fetch scheme absolute URLs: wss:non-fetch-scheme
+

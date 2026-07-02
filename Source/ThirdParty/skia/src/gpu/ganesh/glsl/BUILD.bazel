@@ -1,0 +1,33 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+GLSL_FILES = [
+    "GrGLSLBlend.cpp",
+    "GrGLSLBlend.h",
+    "GrGLSLColorSpaceXformHelper.h",
+    "GrGLSLFragmentShaderBuilder.cpp",
+    "GrGLSLFragmentShaderBuilder.h",
+    "GrGLSLProgramBuilder.cpp",
+    "GrGLSLProgramBuilder.h",
+    "GrGLSLProgramDataManager.cpp",
+    "GrGLSLProgramDataManager.h",
+    "GrGLSLShaderBuilder.cpp",
+    "GrGLSLShaderBuilder.h",
+    "GrGLSLUniformHandler.cpp",
+    "GrGLSLUniformHandler.h",
+    "GrGLSLVarying.cpp",
+    "GrGLSLVarying.h",
+    "GrGLSLVertexGeoBuilder.cpp",
+    "GrGLSLVertexGeoBuilder.h",
+]
+
+split_srcs_and_hdrs(
+    name = "glsl",
+    files = GLSL_FILES,
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)

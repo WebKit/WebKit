@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Worker was started
+CONSOLE MESSAGE: Worker was terminated
+Test Worker.terminate() for a worker that tries to run forever.

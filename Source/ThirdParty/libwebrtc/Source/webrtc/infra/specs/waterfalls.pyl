@@ -1,0 +1,531 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+[
+  {
+    'name': 'client.webrtc',
+    'mixins': [],
+    'machines': {
+      'Android32 Builder arm': {},
+      'Android32 Builder x86': {},
+      'Android32 Builder x86 (dbg)': {},
+      'Android64': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_tests',
+          'isolated_scripts': 'android_junit_tests',
+        },
+      },
+      'Android64 (dbg)': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_tests',
+          'isolated_scripts': 'android_junit_tests',
+        },
+      },
+      'Android64 (more configs)': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'more_configs_tests',
+        },
+      },
+      'Android64 Builder arm64': {},
+      'Android64 Builder x64 (dbg)': {},
+      'Fuchsia Builder': {},
+      'Fuchsia Release': {
+        'os_type':
+        'linux',
+        'mixins': [
+          'linux-jammy', 'x86-64', 'fuchsia-gtest-output',
+          'resultdb-gtest-json-format'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'fuchsia_compatible_tests',
+        },
+      },
+      'Linux (more configs)': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'more_configs_tests',
+        },
+      },
+      'Linux Asan': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux MSan': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux Tsan v2': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux UBSan': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux UBSan vptr': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux32 Debug': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Linux32 Debug (ARM)': {},
+      'Linux32 Release': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Linux32 Release (ARM)': {},
+      'Linux64 Builder': {},
+      'Linux64 Debug': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux64 Debug (ARM)': {},
+      'Linux64 Release': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'Linux64 Release (ARM)': {},
+      'Linux64 Release (Libfuzzer)': {},
+      'Mac Asan': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_x64', 'cores-12', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Mac64 Debug': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_x64', 'cores-12', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Mac64 Release': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_x64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'MacARM64 M1 Release': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_arm64', 'mac-m1-cpu', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'MacArm64 Builder': {},
+      'Win (more configs)': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'more_configs_tests',
+        },
+      },
+      'Win32 Builder (Clang)': {},
+      'Win32 Debug (Clang)': {},
+      'Win32 Release (Clang)': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Win64 ASan': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Win64 Debug (Clang)': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'Win64 Release (Clang)': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'iOS Debug (simulator)': {
+        'mixins': [
+          'mac_15_arm64', 'xcode_26_main', 'chromium-tester-service-account',
+          'mac_toolchain', 'has_native_resultdb_integration', 'out_dir_arg',
+          'webrtc-xctest'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'ios_simulator_tests_matrix',
+        },
+      },
+      'iOS64 Debug': {},
+      'iOS64 Release': {},
+    },
+  },
+  {
+    'name': 'client.webrtc.perf',
+    'mixins': ['limited-capacity'],
+    'machines': {
+      'Perf Android32 (R Pixel5)': {
+        'mixins': [
+          'redfin', 'android-devices', 'perf-pool', 'timeout-3h', 'perf-output',
+          'has_native_resultdb_integration', 'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'perf_tests',
+        },
+      },
+      'Perf Android64 (R Pixel5)': {
+        'mixins': [
+          'redfin', 'android-devices', 'perf-pool', 'timeout-3h', 'perf-output',
+          'has_native_resultdb_integration', 'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'perf_tests',
+        },
+      },
+      'Perf Fuchsia': {
+        'os_type':
+        'linux',
+        'mixins': [
+          'linux-jammy', 'x86-64', 'perf-pool-vm', 'timeout-3h',
+          'resultdb-gtest-json-format', 'fuchsia-gtest-output', 'perf-output'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'perf_tests',
+        }
+      },
+      'Perf Linux': {
+        'os_type':
+        'linux',
+        'mixins': [
+          'linux-jammy', 'perf-pool', 'timeout-3h', 'resultdb-gtest-json-format'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'perf_tests_save_worst_frame',
+        },
+      },
+      'Perf Mac M1 Arm64 12': {
+        'os_type':
+        'mac',
+        'mixins': [
+          'mac_12_arm64', 'mac-m1-cpu', 'perf-pool', 'timeout-3h',
+          'resultdb-gtest-json-format'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'perf_tests_save_worst_frame',
+        },
+      },
+      'Perf Win 10': {
+        'os_type':
+        'win',
+        'mixins':
+        ['win10-any', 'perf-pool', 'timeout-3h', 'resultdb-gtest-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'perf_tests_save_worst_frame',
+        },
+      },
+    },
+  },
+  {
+    'name': 'tryserver.webrtc',
+    'mixins': [],
+    'machines': {
+      'android_arm_dbg': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_tests_tryserver',
+          'isolated_scripts': 'android_junit_tests',
+        },
+      },
+      'android_arm_more_configs': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'more_configs_tests',
+        },
+      },
+      'android_arm_rel': {
+        'mixins': [
+          'panther_on_14', 'android-devices', 'has_native_resultdb_integration',
+          'chromium-tester-service-account'
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_tests_tryserver',
+          'isolated_scripts': 'android_junit_tests',
+        },
+      },
+      'android_compile_arm_dbg': {},
+      'android_compile_arm_rel': {},
+      'android_compile_x64_dbg': {},
+      'android_compile_x64_rel': {},
+      'android_compile_x86_dbg': {},
+      'android_compile_x86_rel': {},
+      'fuchsia_rel': {
+        'os_type':
+        'linux',
+        'mixins': [
+          'linux-jammy', 'x86-64', 'fuchsia-gtest-output',
+          'resultdb-gtest-json-format'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'fuchsia_compatible_tests',
+        },
+      },
+      'ios_compile_arm64_dbg': {},
+      'ios_compile_arm64_rel': {},
+      'ios_dbg_simulator': {
+        'mixins': [
+          'mac_15_arm64', 'xcode_26_main', 'chromium-tester-service-account',
+          'mac_toolchain', 'has_native_resultdb_integration', 'out_dir_arg',
+          'webrtc-xctest'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'ios_simulator_tests_matrix',
+        },
+      },
+      'iwyu_verifier': {},
+      'linux_asan': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'linux_compile_arm64_dbg': {},
+      'linux_compile_arm64_rel': {},
+      'linux_compile_arm_dbg': {},
+      'linux_compile_arm_rel': {},
+      'linux_compile_dbg': {},
+      'linux_compile_rel': {},
+      'linux_coverage': {
+        'os_type':
+        'linux',
+        'mixins': [
+          'linux-jammy', 'x86-64', 'resultdb-json-format',
+          'isolate_profile_data'
+        ],
+        'test_suites': {
+          'isolated_scripts': 'linux_desktop_tests_tryserver',
+        },
+      },
+      'linux_dbg': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'linux_libfuzzer_rel': {},
+      'linux_more_configs': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'more_configs_tests',
+        },
+      },
+      'linux_msan': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'linux_rel': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_desktop_tests_tryserver',
+        },
+      },
+      'linux_tsan2': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'linux_ubsan': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'linux_ubsan_vptr': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'linux_tests',
+        },
+      },
+      'linux_x86_dbg': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'linux_x86_rel': {
+        'os_type': 'linux',
+        'mixins': ['linux-jammy', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'mac_asan': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_x64', 'resultdb-json-format', 'cores-12'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'mac_compile_dbg': {},
+      'mac_compile_rel': {},
+      'mac_dbg': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_x64', 'resultdb-json-format', 'cores-12'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'mac_dbg_m1': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_arm64', 'mac-m1-cpu', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'mac_rel': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_x64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests_tryserver',
+        },
+      },
+      'mac_rel_m1': {
+        'os_type': 'mac',
+        'mixins': ['mac_15_arm64', 'mac-m1-cpu', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win11_debug': {
+        'os_type': 'win',
+        'mixins': ['win11', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win11_release': {
+        'os_type': 'win',
+        'mixins': ['win11', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests_tryserver',
+        },
+      },
+      'win_asan': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win_compile_x64_clang_dbg': {},
+      'win_compile_x64_clang_rel': {},
+      'win_compile_x86_clang_dbg': {},
+      'win_compile_x86_clang_rel': {},
+      'win_x64_clang_dbg': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win_x64_clang_rel': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win_x86_clang_dbg': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests',
+        },
+      },
+      'win_x86_clang_rel': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'desktop_tests_tryserver',
+        },
+      },
+      'win_x86_more_configs': {
+        'os_type': 'win',
+        'mixins': ['win10', 'x86-64', 'resultdb-json-format'],
+        'test_suites': {
+          'isolated_scripts': 'more_configs_tests',
+        },
+      },
+    },
+  },
+]

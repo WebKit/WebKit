@@ -1,0 +1,17 @@
+Testing with explicit width and height
+EVENT(webkitfullscreenchange)
+EXPECTED (target.clientWidth === document.documentElement.clientWidth == 'true') OK
+EXPECTED (target.clientHeight === document.documentElement.clientHeight == 'true') OK
+EVENT(webkitfullscreenchange)
+Testing with max-width and max-height
+EVENT(webkitfullscreenchange)
+EXPECTED (target.clientWidth === document.documentElement.clientWidth == 'true') OK
+EXPECTED (target.clientHeight === document.documentElement.clientHeight == 'true') OK
+EVENT(webkitfullscreenchange)
+Testing with min-width and min-height
+EVENT(webkitfullscreenchange)
+EXPECTED (target.clientWidth === document.documentElement.clientWidth == 'true') OK
+EXPECTED (target.clientHeight === document.documentElement.clientHeight == 'true') OK
+EVENT(webkitfullscreenchange)
+END OF TEST
+

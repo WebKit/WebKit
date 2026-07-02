@@ -1,0 +1,4 @@
+Selection box crashes on search when it's empty.
+
+
+Cannot run interactively.

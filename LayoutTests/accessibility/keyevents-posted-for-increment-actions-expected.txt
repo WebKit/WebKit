@@ -1,0 +1,23 @@
+This test verifies that the increment/decrement actions post keyboard events that are correct for LTR and orientation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Increment/Decrement - LTR
+Horizontal orientation
+Keycode received: identifier: Right key name: ArrowRight key code: 39
+Keycode received: identifier: Left key name: ArrowLeft key code: 37
+Vertical orientation
+Keycode received: identifier: Up key name: ArrowUp key code: 38
+Keycode received: identifier: Down key name: ArrowDown key code: 40
+Increment/Decrement - RTL
+Horizontal orientation
+Keycode received: identifier: Left key name: ArrowLeft key code: 37
+Keycode received: identifier: Right key name: ArrowRight key code: 39
+Vertical orientation
+Keycode received: identifier: Up key name: ArrowUp key code: 38
+Keycode received: identifier: Down key name: ArrowDown key code: 40
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

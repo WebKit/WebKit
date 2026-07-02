@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+    onload = () => {
+        document.designMode = 'on';
+        let span0 = document.createElement('span');
+        span0.appendChild(document.createElement('input'));
+        let div0 = document.createElement('div');
+        span0.appendChild(div0);
+        div0.appendChild(document.createElement('input'));
+        document.body.attachShadow({mode: 'open'}).append(span0);
+        getSelection().selectAllChildren(span0);
+        document.execCommand('Delete');
+        document.write("Test passes if it does not crash.");
+    };
+</script>

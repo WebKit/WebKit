@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+
+<img>
+<picture>
+  <img>
+</picture>
+<video></video>
+
+<script>
+  if (window.testRunner && window.internals) {
+    window.testRunner.dumpAsText();
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+    description("inverted-colors ua style test");
+    shouldEvaluateTo("getComputedStyle(document.querySelector('img')).filter", "'invert(1)'");
+    shouldEvaluateTo("getComputedStyle(document.querySelector('picture')).filter", "'invert(1)'");
+    shouldEvaluateTo("getComputedStyle(document.querySelector('picture>img')).filter", "'none'");
+    shouldEvaluateTo("getComputedStyle(document.querySelector('video')).filter", "'invert(1)'");
+  }
+</script>
+</body>
+</html>

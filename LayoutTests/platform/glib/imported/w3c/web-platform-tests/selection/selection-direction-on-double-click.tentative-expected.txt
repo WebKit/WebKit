@@ -1,0 +1,4 @@
+hello, world
+
+FAIL direction returns "none" when there is a double click selection(directionless) assert_equals: expected "none" but got "forward"
+

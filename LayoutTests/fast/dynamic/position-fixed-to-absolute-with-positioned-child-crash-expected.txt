@@ -1,0 +1,2 @@
+This tests that changing the container's position from fixed to absolute is safe, when child container with fixed position is present.
+PASS, if no crash or assert in debug.

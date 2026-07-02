@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    width: 1000px;
+    height: 800px;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    window.testRunner.waitUntilDone();
+  async function runTest() {
+    requestAnimationFrame(async function() {
+      if (window.testRunner) {
+        await testRunner.setPageScaleFactor(0.5, 0, 0);
+        await window.testRunner.displayAndTrackRepaints();
+        await window.testRunner.displayAndTrackRepaints();
+        window.testRunner.notifyDone();
+      }
+    });
+  }
+</script>
+</head>
+<body onload="runTest();">
+  On success, the blue reference box should be invisible (covered by the fixed box).
+</body>
+</html>

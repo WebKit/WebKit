@@ -1,0 +1,18 @@
+Adjacent lists with different marker styles (disc and dash) should not merge into a single list. After a blank line, typing a different marker type produces a separate list.
+| "* A"
+| <div>
+|   "* B"
+| <div>
+|   "C"
+| <div>
+|   <br>
+| <div>
+|   "* D"
+| <div>
+|   "* E"
+| <div>
+|   <br>
+| <div>
+|   "- A"
+| <div>
+|   "- B<#selection-caret>"

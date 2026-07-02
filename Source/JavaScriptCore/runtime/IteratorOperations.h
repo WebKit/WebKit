@@ -1,0 +1,422 @@
+/*
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/CachedCallInlines.h>
+#include <JavaScriptCore/IterationModeMetadata.h>
+#include <JavaScriptCore/JSArrayIterator.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/JSMapInlines.h>
+#include <JavaScriptCore/JSMapIterator.h>
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/JSSetInlines.h>
+#include <JavaScriptCore/JSSetIterator.h>
+#include <JavaScriptCore/MapIteratorPrototypeInlines.h>
+#include <JavaScriptCore/SetIteratorPrototypeInlines.h>
+#include <JavaScriptCore/ThrowScope.h>
+
+namespace JSC {
+
+struct IterationRecord {
+    JSValue iterator;
+    JSValue nextMethod;
+};
+
+JSValue iteratorNext(JSGlobalObject*, IterationRecord, JSValue argument = JSValue());
+JS_EXPORT_PRIVATE JSValue iteratorNextExported(JSGlobalObject*, IterationRecord, JSValue argument = JSValue());
+JSValue iteratorNextWithCachedCall(JSGlobalObject*, IterationRecord, CachedCall*, JSValue argument = JSValue());
+JS_EXPORT_PRIVATE JSValue iteratorValue(JSGlobalObject*, JSValue iterResult);
+bool iteratorComplete(JSGlobalObject*, JSValue iterResult);
+JS_EXPORT_PRIVATE bool iteratorCompleteExported(JSGlobalObject*, JSValue iterResult);
+JS_EXPORT_PRIVATE JSValue iteratorStep(JSGlobalObject*, IterationRecord);
+JS_EXPORT_PRIVATE JSValue iteratorStepWithCachedCall(JSGlobalObject*, IterationRecord, CachedCall*);
+JS_EXPORT_PRIVATE void iteratorClose(JSGlobalObject*, JSValue iterator);
+
+// Property offsets in objects with the iteratorResultObjectStructure (see createIteratorResultObjectStructure).
+static constexpr PropertyOffset iteratorResultObjectValuePropertyOffset = 0;
+static constexpr PropertyOffset iteratorResultObjectDonePropertyOffset = 1;
+
+JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(JSGlobalObject*, JSValue, bool done);
+
+Structure* createIteratorResultObjectStructure(VM&, JSGlobalObject&);
+
+JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
+JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(JSGlobalObject*, JSObject*, JSValue iteratorMethod);
+JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(JSGlobalObject*, JSValue iterable);
+JS_EXPORT_PRIVATE IterationRecord iteratorDirect(JSGlobalObject*, JSValue);
+IterationRecord getAsyncIterator(JSGlobalObject&, JSValue);
+JS_EXPORT_PRIVATE IterationRecord getAsyncIteratorExported(JSGlobalObject&, JSValue);
+
+JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
+JS_EXPORT_PRIVATE bool hasIteratorMethod(JSGlobalObject*, JSValue);
+
+enum class IterableValidationResult : uint8_t {
+    Valid,
+    NullNotIterable,
+    UndefinedNotIterable,
+    NumberNotIterable,
+    BooleanNotIterable,
+    SymbolNotIterable,
+    ObjectNotIterable,
+    ValueNotIterable
+};
+
+JS_EXPORT_PRIVATE IterableValidationResult validateIterable(VM&, JSValue iterable, JSValue symbolIterator);
+JS_EXPORT_PRIVATE ASCIILiteral getIteratorErrorMessage(IterableValidationResult, JSValue iterable);
+
+JS_EXPORT_PRIVATE IterationMode NODELETE getIterationMode(VM&, JSGlobalObject*, JSValue iterable);
+JS_EXPORT_PRIVATE IterationMode getIterationMode(VM&, JSGlobalObject*, JSValue iterable, JSValue symbolIterator);
+
+
+static ALWAYS_INLINE void forEachInMapStorage(VM& vm, JSGlobalObject* globalObject, JSCell* storageCell, JSMap::Helper::Entry startEntry, IterationKind iterationKind, NOESCAPE const auto& callback, NOESCAPE const auto& callbackExceptionHandler)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* storage = uncheckedDowncast<JSMap::Storage>(storageCell);
+    JSMap::Helper::Entry entry = startEntry;
+
+    while (true) {
+        storageCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+        if (storageCell == vm.orderedHashTableSentinel())
+            break;
+
+        storage = uncheckedDowncast<JSMap::Storage>(storageCell);
+        entry = JSMap::Helper::iterationEntry(*storage) + 1;
+
+        JSValue value;
+        switch (iterationKind) {
+        case IterationKind::Keys:
+            value = JSMap::Helper::getIterationEntryKey(*storage);
+            break;
+        case IterationKind::Values:
+            value = JSMap::Helper::getIterationEntryValue(*storage);
+            break;
+        case IterationKind::Entries: {
+            JSValue entryKey = JSMap::Helper::getIterationEntryKey(*storage);
+            JSValue entryValue = JSMap::Helper::getIterationEntryValue(*storage);
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=298574
+            value = constructArrayPair(globalObject, entryKey, entryValue);
+            RETURN_IF_EXCEPTION(scope, void());
+            break;
+        }
+        }
+
+        if constexpr (std::same_as<IterationStatus, std::invoke_result_t<decltype(callback), VM&, JSGlobalObject*, JSValue>>) {
+            auto result = callback(vm, globalObject, value);
+            if (scope.exception()) [[unlikely]] {
+                scope.release();
+                callbackExceptionHandler(storageCell, entry);
+                return;
+            }
+            if (result == IterationStatus::Done)
+                break;
+        } else {
+            callback(vm, globalObject, value);
+            if (scope.exception()) [[unlikely]] {
+                scope.release();
+                callbackExceptionHandler(storageCell, entry);
+                return;
+            }
+        }
+    }
+}
+
+static ALWAYS_INLINE void forEachInMapStorage(VM& vm, JSGlobalObject* globalObject, JSCell* storageCell, JSMap::Helper::Entry startEntry, IterationKind iterationKind, NOESCAPE const auto& callback)
+{
+    forEachInMapStorage(vm, globalObject, storageCell, startEntry, iterationKind, callback, [](JSCell*, JSMap::Helper::Entry) { });
+}
+
+static ALWAYS_INLINE void forEachInSetStorage(VM& vm, JSGlobalObject* globalObject, JSCell* storageCell, JSSet::Helper::Entry startEntry, NOESCAPE const auto& callback, NOESCAPE const auto& callbackExceptionHandler)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* storage = uncheckedDowncast<JSSet::Storage>(storageCell);
+    JSSet::Helper::Entry entry = startEntry;
+
+    while (true) {
+        storageCell = JSSet::Helper::nextAndUpdateIterationEntry(vm, *storage, entry);
+        if (storageCell == vm.orderedHashTableSentinel())
+            break;
+
+        storage = uncheckedDowncast<JSSet::Storage>(storageCell);
+        entry = JSSet::Helper::iterationEntry(*storage) + 1;
+        JSValue entryKey = JSSet::Helper::getIterationEntryKey(*storage);
+
+        if constexpr (std::same_as<IterationStatus, std::invoke_result_t<decltype(callback), VM&, JSGlobalObject*, JSValue>>) {
+            auto result = callback(vm, globalObject, entryKey);
+            if (scope.exception()) [[unlikely]] {
+                scope.release();
+                callbackExceptionHandler(storageCell, entry);
+                return;
+            }
+            if (result == IterationStatus::Done)
+                break;
+        } else {
+            callback(vm, globalObject, entryKey);
+            if (scope.exception()) [[unlikely]] {
+                scope.release();
+                callbackExceptionHandler(storageCell, entry);
+                return;
+            }
+        }
+    }
+}
+
+static ALWAYS_INLINE void forEachInSetStorage(VM& vm, JSGlobalObject* globalObject, JSCell* storageCell, JSSet::Helper::Entry startEntry, NOESCAPE const auto& callback)
+{
+    forEachInSetStorage(vm, globalObject, storageCell, startEntry, callback, [](JSCell*, JSSet::Helper::Entry) { });
+}
+
+static ALWAYS_INLINE void forEachInFastArray(JSGlobalObject* globalObject, JSValue iterable, JSArray* array, NOESCAPE const Invocable<void(VM&, JSGlobalObject*, JSValue)> auto& callback)
+{
+    UNUSED_PARAM(iterable);
+
+    auto& vm = getVM(globalObject);
+    ASSERT(getIterationMode(vm, globalObject, iterable) == IterationMode::FastArray);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    for (unsigned index = 0; index < array->length(); ++index) {
+        JSValue nextValue = array->getIndex(globalObject, index);
+        RETURN_IF_EXCEPTION(scope, void());
+        callback(vm, globalObject, nextValue);
+        if (scope.exception()) [[unlikely]] {
+            scope.release();
+            JSArrayIterator* iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), array, IterationKind::Values);
+            iterator->internalField(JSArrayIterator::Field::Index).setWithoutWriteBarrier(jsNumber(index + 1));
+            iteratorClose(globalObject, iterator);
+            return;
+        }
+    }
+}
+
+ALWAYS_INLINE void forEachInIterationRecord(JSGlobalObject* globalObject, IterationRecord iterationRecord, NOESCAPE const Invocable<void(VM&, JSGlobalObject*, JSValue)> auto& callback)
+{
+    auto& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue nextMethod = iterationRecord.nextMethod;
+    auto callData = getCallDataInline(nextMethod);
+
+    std::optional<CachedCall> cachedCallHolder;
+    CachedCall* cachedCall = nullptr;
+    if (callData.type == CallData::Type::JS) [[likely]] {
+        cachedCallHolder.emplace(globalObject, uncheckedDowncast<JSFunction>(nextMethod), 0);
+        if (scope.exception()) [[unlikely]]
+            return;
+        cachedCall = &cachedCallHolder.value();
+    }
+
+    while (true) {
+        JSValue next;
+        if (cachedCall) [[likely]] {
+            cachedCall->clearArguments();
+            next = iteratorStepWithCachedCall(globalObject, iterationRecord, cachedCall);
+        } else
+            next = iteratorStep(globalObject, iterationRecord);
+        if (scope.exception()) [[unlikely]]
+            return;
+        if (next.isFalse())
+            return;
+
+        JSValue nextValue = iteratorValue(globalObject, next);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        callback(vm, globalObject, nextValue);
+        if (scope.exception()) [[unlikely]] {
+            scope.release();
+            iteratorClose(globalObject, iterationRecord.iterator);
+            return;
+        }
+    }
+}
+
+void forEachInIterable(JSGlobalObject* globalObject, JSValue iterable, NOESCAPE const Invocable<void(VM&, JSGlobalObject*, JSValue)> auto& callback)
+{
+    auto& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (getIterationMode(vm, globalObject, iterable) == IterationMode::FastArray) {
+        auto* array = uncheckedDowncast<JSArray>(iterable);
+        forEachInFastArray(globalObject, iterable, array, callback);
+        RETURN_IF_EXCEPTION(scope, void());
+        return;
+    }
+
+    if (auto* jsMap = dynamicDowncast<JSMap>(iterable)) {
+        if (jsMap->isIteratorProtocolFastAndNonObservable()) {
+            JSCell* storageCell = jsMap->storageOrSentinel(vm);
+            if (storageCell != vm.orderedHashTableSentinel()) {
+                forEachInMapStorage(vm, globalObject, storageCell, 0, IterationKind::Entries, callback, [&](JSCell* currentStorageCell, JSMap::Helper::Entry entry) {
+                    JSMapIterator* iterator = JSMapIterator::create(vm, jsMap->realm()->mapIteratorStructure(), jsMap, IterationKind::Entries);
+                    iterator->setStorage(vm, currentStorageCell);
+                    iterator->setEntry(vm, entry);
+                    iteratorClose(globalObject, iterator);
+                });
+                RETURN_IF_EXCEPTION(scope, void());
+            }
+            return;
+        }
+    } else if (auto* jsSet = dynamicDowncast<JSSet>(iterable)) {
+        if (jsSet->isIteratorProtocolFastAndNonObservable()) {
+            JSCell* storageCell = jsSet->storageOrSentinel(vm);
+            if (storageCell != vm.orderedHashTableSentinel()) {
+                forEachInSetStorage(vm, globalObject, storageCell, 0, callback, [&](JSCell* currentStorageCell, JSSet::Helper::Entry entry) {
+                    JSSetIterator* iterator = JSSetIterator::create(vm, jsSet->realm()->setIteratorStructure(), jsSet, IterationKind::Values);
+                    iterator->setStorage(vm, currentStorageCell);
+                    iterator->setEntry(vm, entry);
+                    iteratorClose(globalObject, iterator);
+                });
+                RETURN_IF_EXCEPTION(scope, void());
+            }
+            return;
+        }
+    }
+
+    IterationRecord iterationRecord = iteratorForIterable(globalObject, iterable);
+    RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
+    forEachInIterationRecord(globalObject, iterationRecord, callback);
+}
+
+void forEachInIterable(JSGlobalObject& globalObject, JSObject* iterable, JSValue iteratorMethod, NOESCAPE const Invocable<void(VM&, JSGlobalObject&, JSValue)> auto& callback)
+{
+    auto& vm = getVM(&globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto iterationMode = getIterationMode(vm, &globalObject, iterable, iteratorMethod);
+    if (iterationMode == IterationMode::FastArray) {
+        auto* array = uncheckedDowncast<JSArray>(iterable);
+        for (unsigned index = 0; index < array->length(); ++index) {
+            JSValue nextValue = array->getIndex(&globalObject, index);
+            RETURN_IF_EXCEPTION(scope, void());
+            callback(vm, globalObject, nextValue);
+            if (scope.exception()) [[unlikely]] {
+                scope.release();
+                JSArrayIterator* iterator = JSArrayIterator::create(vm, globalObject.arrayIteratorStructure(), array, IterationKind::Values);
+                iterator->internalField(JSArrayIterator::Field::Index).setWithoutWriteBarrier(jsNumber(index + 1));
+                iteratorClose(&globalObject, iterator);
+                return;
+            }
+        }
+        return;
+    }
+
+    auto validationResult = validateIterable(vm, iterable, iteratorMethod);
+    if (validationResult != IterableValidationResult::Valid) [[unlikely]] {
+        throwTypeError(&globalObject, scope, getIteratorErrorMessage(validationResult, iterable));
+        return;
+    }
+
+    auto iterationRecord = iteratorForIterable(&globalObject, iterable, iteratorMethod);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    JSValue nextMethod = iterationRecord.nextMethod;
+    auto callData = getCallDataInline(nextMethod);
+
+    std::optional<CachedCall> cachedCallHolder;
+    CachedCall* cachedCall = nullptr;
+    if (callData.type == CallData::Type::JS) [[likely]] {
+        cachedCallHolder.emplace(&globalObject, uncheckedDowncast<JSFunction>(nextMethod), 0);
+        if (scope.exception()) [[unlikely]]
+            return;
+        cachedCall = &cachedCallHolder.value();
+    }
+
+    while (true) {
+        JSValue next;
+        if (cachedCall) [[likely]] {
+            cachedCall->clearArguments();
+            next = iteratorStepWithCachedCall(&globalObject, iterationRecord, cachedCall);
+        } else
+            next = iteratorStep(&globalObject, iterationRecord);
+        if (scope.exception()) [[unlikely]]
+            return;
+        if (next.isFalse())
+            return;
+
+        JSValue nextValue = iteratorValue(&globalObject, next);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        callback(vm, globalObject, nextValue);
+        if (scope.exception()) [[unlikely]] {
+            scope.release();
+            iteratorClose(&globalObject, iterationRecord.iterator);
+            return;
+        }
+    }
+}
+
+void forEachInIteratorProtocol(JSGlobalObject* globalObject, JSValue iterable, NOESCAPE const Invocable<void(VM&, JSGlobalObject*, JSValue)> auto& callback)
+{
+    auto& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (auto* mapIterator = dynamicDowncast<JSMapIterator>(iterable)) {
+        if (mapIteratorProtocolIsFastAndNonObservable(vm, mapIterator)) {
+            if (mapIterator->iteratedObject()) {
+                JSValue value;
+                while (mapIterator->next(globalObject, value)) {
+                    RETURN_IF_EXCEPTION(scope, void());
+                    callback(vm, globalObject, value);
+                    if (scope.exception()) [[unlikely]] {
+                        scope.release();
+                        iteratorClose(globalObject, mapIterator);
+                        return;
+                    }
+                }
+                RETURN_IF_EXCEPTION(scope, void());
+                return;
+            }
+        }
+    } else if (auto* setIterator = dynamicDowncast<JSSetIterator>(iterable)) {
+        if (setIteratorProtocolIsFastAndNonObservable(vm, setIterator)) {
+            if (setIterator->iteratedObject()) {
+                JSValue value;
+                while (setIterator->next(globalObject, value)) {
+                    RETURN_IF_EXCEPTION(scope, void());
+                    callback(vm, globalObject, value);
+                    if (scope.exception()) [[unlikely]] {
+                        scope.release();
+                        iteratorClose(globalObject, setIterator);
+                        return;
+                    }
+                }
+                RETURN_IF_EXCEPTION(scope, void());
+                return;
+            }
+        }
+    }
+
+    IterationRecord iterationRecord = iteratorDirect(globalObject, iterable);
+    RETURN_IF_EXCEPTION(scope, void());
+    scope.release();
+    forEachInIterationRecord(globalObject, iterationRecord, callback);
+}
+
+} // namespace JSC

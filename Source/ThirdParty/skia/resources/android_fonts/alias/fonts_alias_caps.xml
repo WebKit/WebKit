@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<familyset version="21">
+    <family name="sans-serif-black">
+        <font weight="900" style="normal">Roboto-Black.ttf</font>
+    </family>
+    <alias name="test-alias" to="SANS-SERIF-BLACK" />
+</familyset>

@@ -1,0 +1,5 @@
+
+PASS CSSVariableReferenceValue can be constructed with no fallback
+PASS CSSVariableReferenceValue can be constructed with null fallback
+PASS CSSVariableReferenceValue can be constructed with valid fallback
+

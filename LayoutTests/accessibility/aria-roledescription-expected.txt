@@ -1,0 +1,15 @@
+This tests that aria-roledescription works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axButton.roleDescription is 'AXRoleDescription: Super Button'
+PASS Got default role description: AXRoleDescription: button
+PASS axButton.roleDescription === 'AXRoleDescription: Super Button'
+PASS Got default role description: AXRoleDescription: button
+PASS axButton.roleDescription === 'AXRoleDescription: Super Button'
+PASS Got default role description: AXRoleDescription: button
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text

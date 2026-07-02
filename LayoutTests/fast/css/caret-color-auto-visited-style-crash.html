@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @keyframes test {
+    to { caret-color: blue; }
+  }
+  a:link { caret-color: green; }
+  a:visited { caret-color: auto; }
+  a { animation: test 1s linear infinite alternate; }
+</style>
+<script>
+  window.testRunner?.dumpAsText();
+</script>
+</head>
+<body>
+  This passes if the test does not crash.
+  <a href="https://example.com">Link</a>
+</body>
+</html>

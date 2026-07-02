@@ -1,0 +1,4 @@
+ar
+font-load-data-partitioned-alphabet.html - willSendRequest <NSURLRequest URL font-load-data-partitioned-alphabet.html, main document URL font-load-data-partitioned-alphabet.html, http method GET> redirectResponse (null)
+font-load-data-partitioned-alphabet.html - didReceiveResponse <NSURLResponse font-load-data-partitioned-alphabet.html, http status code 0>
+font-load-data-partitioned-alphabet.html - didFinishLoading

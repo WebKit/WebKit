@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let doc = document.implementation.createHTMLDocument();
+let input = doc.createElement('input');
+input.value = 'hello';
+doc.body.appendChild(input);
+input.setSelectionRange(0, 1);
+</script>
+<p>PASS if it does not crash</p>
+</body>
+</html>

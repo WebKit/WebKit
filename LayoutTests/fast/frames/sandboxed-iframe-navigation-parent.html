@@ -1,0 +1,65 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+var navigatedFrames = 0;
+
+function checkResults()
+{
+    var testStatus = document.getElementById('testStatus');
+
+    if (self.navigated.location.href.indexOf('parent.html') != -1)
+        testStatus.innerHTML = 'FAIL: sandboxed frame couldn\'t navigate';
+    else if (navigatedFrames == 11)
+        testStatus.innerHTML = 'PASS';
+    else
+        testStatus.innerHTML = 'FAIL: frames not navigated properly';
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+function countFrame()
+{
+    ++navigatedFrames;
+
+    if (navigatedFrames == 11)
+        checkResults();
+}
+
+</script>
+</head>
+
+<body>
+
+    <p>This test verifies that a sandboxed IFrame with the keywords
+    allow-scripts and allow-same-origin is allowed to navigate an ancestor
+    in the frame tree by assigning the location attribute.</p>
+
+    <p>This test will print &quot;PASS&quot; on success.</p>
+
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+
+    <iframe name='navigated'
+            src="resources/sandboxed-iframe-navigation-parent.html">
+    </iframe>
+
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+    <iframe src="resources/non-sandboxed-iframe-navigation.html"></iframe>
+
+    <p id='testStatus'>FAIL: Script didn't run</p>
+    
+</body>
+</html>

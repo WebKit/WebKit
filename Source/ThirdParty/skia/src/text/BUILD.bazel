@@ -1,0 +1,23 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+TEXT_FILES = [
+    "GlyphRun.cpp",
+    "GlyphRun.h",
+    "StrikeForGPU.cpp",
+    "StrikeForGPU.h",
+    "SlugFromBuffer.cpp",
+]
+
+split_srcs_and_hdrs(
+    name = "text",
+    files = TEXT_FILES,
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)

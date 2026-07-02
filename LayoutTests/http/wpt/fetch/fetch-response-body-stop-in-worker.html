@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+promise_test(async (t) => {
+    const script = `
+        let streamReader;
+        fetch('${window.location.origin}/WebKit/fetch/resources/lengthy-pass.py?delay=1').then(response => {
+            streamReader = response.body.getReader();
+            self.postMessage('ready');
+        });
+    `;
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const worker = new Worker(URL.createObjectURL(blob));
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    worker.terminate();
+    await new Promise(resolve => setTimeout(resolve, 50));
+}, "fetch response body stop in a worker");
+</script>
+</body>
+</html>

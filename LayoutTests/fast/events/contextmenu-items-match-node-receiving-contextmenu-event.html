@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        video {
+            width: 400px;
+            height: 300px;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+        }
+        #overlay {
+            width: 50px;
+            height: 50px;
+            background: red;
+            position: absolute;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <p>The node which receives a 'contextmenu' event should be the node hit-tested when determining which items to show.</p>
+    <video id="video" src="../../media/resources/white.mp4"></video>
+    <span id="output"></span>
+    <div id="overlay"></div>
+    <script>
+        var videoReceivedContextMenuEvent = false;
+        var videoLoaded = false;
+
+        video.addEventListener("contextmenu", (e) => {
+            videoReceivedContextMenuEvent = true;
+            overlay.style.left = (e.pageX + 1) + "px";
+            overlay.style.top = (e.pageY + 1) + "px";
+        });
+
+        video.addEventListener("loadeddata", () => {
+            videoLoaded = true;
+        });
+
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function hasMenuItemContainingTitle(items, titleToQuery) {
+            if (!items)
+                return false;
+            for (let item of items) {
+                let title = item.title || item;
+                if (title.includes?.(titleToQuery))
+                    return true;
+            }
+            return false;
+        }
+
+        function logMessage(msg) {
+            document.getElementById("output").innerText = msg;
+        }
+
+        onload = async () => {
+            if (!window.testRunner)
+                return;
+
+            await eventSender.asyncMouseMoveTo(200.5, 250.5);
+            let items = await eventSender.contextClick();
+
+            let isVideoContextMenu = hasMenuItemContainingTitle(items, "Show Controls");
+            if (!videoLoaded)
+                logMessage("FAIL: The video failed to load; the test could not complete.");
+            else if (isVideoContextMenu == videoReceivedContextMenuEvent)
+                logMessage("PASS: The node hit-tested for the context menu matches the node the contextmenu event was fired on.");
+            else {
+                logMessage("FAIL: The node hit-tested for the context menu does not match the node the contextmenu event was fired on.");
+                var contextmenuMsg = videoReceivedContextMenuEvent ? "fired" : "did not fire";
+                var hitTestForItemsMsg = isVideoContextMenu ? "was" : "was not";
+                logMessage("The contextmenu event " + contextmenuMsg + " on the video, but the video " + hitTestForItemsMsg + " hit-tested when determining which items to show.");
+            }
+            // Esc key to hide the context menu.
+            await eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+            testRunner.notifyDone();
+        }
+    </script>
+</body>
+</html>

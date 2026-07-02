@@ -1,0 +1,87 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # classifications: array of hashes, with an 'object' key representing a
+  #                  classification object and 'products' the list of
+  #                  product objects the user can enter bugs into.
+  # target:   the script that displays this template.
+  #%]
+
+[% IF target == "enter_bug.cgi" %]
+  [% title = "File a $terms.Bug Report: Choose a product" %]
+  [% subheader = "Select Product" %]
+  [% h2 = BLOCK %]
+    [% IF Param('useclassification') %]Next,[% END %]
+    Where would you like to start your feedback?
+  [% END %]
+[% ELSIF target == "describecomponents.cgi" %]
+  [% title = "Browse" %]
+  [% h2 = "Select a product category to browse:" %]
+[% END %]
+
+[% DEFAULT title = "Choose a Product" %]
+[% PROCESS global/header.html.tmpl %]
+
+[% USE Bugzilla %]
+[% previous_params = Bugzilla.cgi.canonicalise_query('classification', 'product') %]
+
+<h2>[% h2 FILTER html %]</h2>
+
+<div id="choose_product" class="chooser">
+
+[% FOREACH c = classifications %]
+  [% IF c.object %]
+    <div class="classification">
+      <h3>[% c.object.name FILTER html %]
+      [%+ c.object.description FILTER html_light %]
+    </div>
+  [% END %]
+
+  [% FOREACH p = c.products %]
+    [% IF p.name == "WebKit" %]
+    <a href="[% target %]?product=[% p.name FILTER uri -%]
+      [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]&amp;component=New+Bugs" class="product">
+        <h3>[% p.name FILTER html %]</h3>
+        <p>[% p.description FILTER html_light %]</p>
+    </a>
+    [% ELSE %]
+    <a href="[% target %]?product=[% p.name FILTER uri -%]
+      [%- IF previous_params %]&amp;[% previous_params FILTER none %][% END -%]" class="product">
+        <h3>[% p.name FILTER html %]</h3>
+        <p>[% p.description FILTER html_light %]</p>
+    </a>
+    [% END %]
+  [% END %]
+
+  [% IF target == "enter_bug.cgi" %]
+
+    <!-- Custom Web Accessibility Link -->
+    <a href="https://webkit.org/new-ax-bug" class="product">
+      <h3>Accessibility</h3>
+      <p>Accessibility-related bugs for WebKit</p>
+    </a>
+
+    <!-- Custom Web Inspector Link -->
+    <a href="https://webkit.org/new-inspector-bug" class="product">
+      <h3>Web Inspector</h3>
+      <p>Bugs for Web Inspector Developer Tools</p>
+    </a>
+    
+    <!-- Custom webcompat.com Link -->
+    <a href="https://webcompat.com/issues/new" class="product">
+      <h3>webcompat.com</h3>
+      <p>File a report on webcompat.com for websites that have an issue in WebKit-based browsers.</p>
+    </a>
+  [% END %]
+
+[% END %]
+
+</div>
+
+[% PROCESS global/footer.html.tmpl %]

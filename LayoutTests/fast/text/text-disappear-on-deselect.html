@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that deselecting text over multiple lines does not make the text disappear.</title>
+<style>
+div {
+    font-family: Ahem;
+    font-size: 10px;
+}
+
+::selection {
+    color: red;
+}
+</style>
+</head>
+<body>
+<div id=foobar>foobar<br>
+foobar  foobar</div>
+<script>
+var target = document.getElementById("foobar");
+if (window.eventSender) {
+    window.eventSender.mouseMoveTo(target.offsetLeft, target.offsetTop);
+    window.eventSender.mouseDown();
+    window.eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + target.offsetHeight + 15);
+    window.eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + target.offsetHeight - 5);
+    window.eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

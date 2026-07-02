@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    let context2Ds = [ ];
+    context2Ds.push(document.createElement("canvas").getContext("2d"));
+    if (window.OffscreenCanvas)
+        context2Ds.push(new OffscreenCanvas(300, 150).getContext("2d"));
+    window.context2Ds = context2Ds;
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestClientNodes");
+    function addTestCase({name, contextType}) {
+        suite.addTestCase({
+            name,
+            description: "Check that creating a CSS canvas client node is tracked correctly.",
+            test(resolve, reject) {
+                let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === contextType);
+                if (!canvas) {
+                    reject(`Missing canvas for type ${contextType}.`);
+                    return;
+                }
+                canvas.requestClientNodes((clientNodes) => {
+                    InspectorTest.expectEqual(clientNodes.length, 0, "There should initially be no client nodes.");
+                    resolve();
+                });
+            }
+        });
+    };
+
+    addTestCase({name: "Canvas.requestClientNodes.Initial.Canvas2D", contextType: WI.Canvas.ContextType.Canvas2D});
+    if (window.OffscreenCanvas)
+        addTestCase({name: "CCanvas.requestClientNodes.Initial.OffscreenCanvas2D", contextType: WI.Canvas.ContextType.OffscreenCanvas2D});
+
+    suite.addTestCase({
+        name: "Canvas.CSSCanvasClients.InvalidCanvasId",
+        description: "Invalid canvas identifiers should cause an error.",
+        test(resolve, reject) {
+            const canvasId = "DOES_NOT_EXIST";
+            CanvasAgent.requestClientNodes(canvasId, (error, clientNodeIds) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasAgent tracks changes in the client nodes of a CSS canvas.</p>
+</body>
+</html>

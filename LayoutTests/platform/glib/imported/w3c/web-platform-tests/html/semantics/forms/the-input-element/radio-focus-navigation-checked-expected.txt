@@ -1,0 +1,10 @@
+
+
+
+
+FAIL Focus the new checked radio in the focused radio group. assert_equals: expected Element node <input type="radio" name="radio"></input> but got Element node <input type="text" id="end"></input>
+PASS Focusable radio can be focused even with a checked radio in the group.
+PASS Focus the checked radio in the group.
+FAIL Focus the checked radio in the focused radio group. assert_equals: expected Element node <input type="radio" name="radio" id="b"></input> but got Element node <input type="text" id="end"></input>
+FAIL When `checked` is false on a radio element, focus navigation target the radio group first element. assert_equals: expected Element node <input type="radio" name="radio" id="a"></input> but got Element node <input type="radio" name="radio"></input>
+

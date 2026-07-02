@@ -1,0 +1,58 @@
+<style>
+    canvas {
+        width: 700px;
+        height: 460px;
+    }
+</style>
+<body>
+    <h3>This tests the filter bounding rect is calculated correctly.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 700;
+        canvas.height = 460;
+
+        ctx.font = "120px serif";
+
+        ctx.fillStyle = 'green';
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 10;
+
+        ctx.fillRect(20, 70, 100, 100);
+
+        ctx.strokeRect(345, 75, 90, 90);
+
+        ctx.fillRect(460, 20, 100, 100);
+
+        ctx.strokeRect(585, 125, 90, 90);
+
+        ctx.lineWidth = 2;
+
+        ctx.fillText("\u25A0", 30, 380);
+        ctx.strokeText("\u25A0", 350, 380);
+
+        ctx.fillRect(460, 240, 100, 100);
+        ctx.fillRect(580, 340, 100, 100);
+
+        ctx.fillStyle = '#666';
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 10;
+
+        ctx.fillRect(120,  70, 100, 100);
+
+        ctx.strokeRect(245, 75, 90, 90);
+
+        ctx.fillRect(460, 120, 100, 100);
+
+        ctx.strokeRect(585, 25, 90, 90);
+
+        ctx.lineWidth = 2;
+
+        ctx.fillText("\u25A0", 130, 380);
+        ctx.strokeText("\u25A0", 250, 380);
+
+        ctx.fillRect(460, 340, 100, 100);
+        ctx.fillRect(580, 240, 100, 100);
+    </script>
+</body>

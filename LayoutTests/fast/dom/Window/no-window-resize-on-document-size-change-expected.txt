@@ -1,0 +1,10 @@
+Test that changing the viewport causes a window.resize event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS windowResizeCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

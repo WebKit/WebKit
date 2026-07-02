@@ -1,0 +1,5 @@
+
+
+FAIL input should accept text input even after restyled assert_equals: expected "ab" but got ""
+FAIL textarea should accept text input even after restyled assert_equals: expected "ab" but got ""
+

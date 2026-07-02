@@ -1,0 +1,35 @@
+Test parsing and computed style of stop-opacity
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerStyle("stop-opacity", "0") is "0"
+PASS innerStyle("stop-opacity", "0.5") is "0.5"
+PASS innerStyle("stop-opacity", "1") is "1"
+PASS innerStyle("stop-opacity", "1000") is "1000"
+PASS innerStyle("stop-opacity", "-400") is "-400"
+PASS innerStyle("stop-opacity", "20%") is "0.2"
+PASS innerStyle("stop-opacity", "-600%") is "-6"
+PASS innerStyle("stop-opacity", "700%") is "7"
+PASS innerStyle("stop-opacity", "2.5e-1") is "0.25"
+PASS innerStyle("stop-opacity", "2.5e1%") is "0.25"
+PASS innerStyle("stop-opacity", "100.25%") is "1.0025"
+PASS computedStyle("stop-opacity", "0") is "0"
+PASS computedStyle("stop-opacity", "0.5") is "0.5"
+PASS computedStyle("stop-opacity", "1") is "1"
+PASS computedStyle("stop-opacity", "1000") is "1"
+PASS computedStyle("stop-opacity", "-400") is "0"
+PASS computedStyle("stop-opacity", "25%") is "0.25"
+PASS computedStyle("stop-opacity", "-600%") is "0"
+PASS computedStyle("stop-opacity", "700%") is "1"
+PASS computedStyle("stop-opacity", "2.5e-1") is "0.25"
+PASS computedStyle("stop-opacity", "2.5e1%") is "0.25"
+PASS computedStyle("stop-opacity", "100.25%") is "1"
+PASS innerStyle("stop-opacity", "2px") is ""
+PASS innerStyle("stop-opacity", "auto") is ""
+PASS innerStyle("stop-opacity", "none") is ""
+PASS innerStyle("stop-opacity", "'str'") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

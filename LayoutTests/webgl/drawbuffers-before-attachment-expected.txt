@@ -1,0 +1,16 @@
+Test that framebuffer rendering works correctly when drawBuffersWEBGL is called before texture attachment.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 7 PASS, 0 FAIL
+
+PASS WEBGL_draw_buffers extension enabled
+PASS getError was expected value: NO_ERROR : drawBuffersWEBGL should succeed
+PASS drawBuffersWEBGL called BEFORE texture attachment
+PASS Texture attached AFTER drawBuffersWEBGL
+PASS getError was expected value: NO_ERROR : draw should succeed
+PASS framebuffer should contain red pixels after draw
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

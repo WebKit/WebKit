@@ -1,0 +1,6 @@
+
+PASS Relative font size larger responsive to style changes
+PASS Relative font size smaller responsive to style changes
+PASS Font size medium responsive to style changes
+PASS Font size initial responsive to style changes
+

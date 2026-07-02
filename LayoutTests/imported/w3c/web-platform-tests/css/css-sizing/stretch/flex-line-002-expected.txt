@@ -1,0 +1,11 @@
+a
+b
+
+a
+b
+
+PASS .stretch 1
+PASS .stretch 2
+PASS .stretch 3
+PASS .stretch 4
+

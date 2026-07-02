@@ -1,0 +1,145 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ImageDataSettings contains pixelFormat.");
+
+var canvas = document.createElement("canvas");
+canvas.width = 10;
+canvas.height = 10;
+var context = canvas.getContext("2d");
+var r = 0;
+var g = 128;
+var b = 255;
+var a = 255;
+context.fillStyle = `rgb(${r} ${g} ${b})`;
+context.fillRect(0, 0, 1, 1);
+
+const componentsPerPixel = 4;
+
+function shouldBeAround(to_eval, targetNumber, tolerance, quiet)
+{
+    if (!tolerance)
+        return shouldBe(to_eval, String(targetNumber), quiet);
+    return shouldBeCloseTo(to_eval, targetNumber, tolerance, quiet);
+}
+
+function verifyImageData(variable, constructor, bytesPerElement, red, green, blue, alpha, tolerance, quiet) {
+    shouldBe(variable + '.width', '1', quiet);
+    shouldBe(variable + '.height', '1', quiet);
+    shouldBe(variable + '.data.constructor', constructor, quiet);
+    shouldBe(variable + '.data.BYTES_PER_ELEMENT', String(bytesPerElement), quiet);
+    shouldBe(variable + '.data.length', '4', quiet);
+    shouldBe(variable + '.data.byteLength', String(bytesPerElement * 4), quiet);
+    shouldBeAround(variable + '.data.at(0)', red, tolerance, quiet);
+    shouldBeAround(variable + '.data.at(1)', green, tolerance, quiet);
+    shouldBeAround(variable + '.data.at(2)', blue, tolerance, quiet);
+    shouldBeAround(variable + '.data.at(3)', alpha, tolerance, quiet);
+}
+
+function areEqualImageData(imageDataActual, imageDataExpected, tolerance)
+{
+    tolerance = 0;
+    shouldBe(imageDataActual + '.width', imageDataExpected + '.width');
+    shouldBe(imageDataActual + '.height', imageDataExpected + '.height');
+    shouldBe(imageDataActual + '.data.constructor', imageDataExpected + '.data.constructor');
+    shouldBe(imageDataActual + '.data.BYTES_PER_ELEMENT', imageDataExpected + '.data.BYTES_PER_ELEMENT');
+    shouldBe(imageDataActual + '.data.length', imageDataExpected + '.data.length');
+    shouldBe(imageDataActual + '.data.byteLength', imageDataExpected + '.data.byteLength');
+    const actualData = eval(imageDataActual).data;
+    const expectedData = eval(imageDataExpected).data;
+    for (component = 0; component < actualData.length; ++component) {
+        if (Math.abs(actualData[component] - expectedData[component]) > tolerance)
+            shouldBeAround(imageDataActual + '.data[' + component + ']', expectedData[component], tolerance, true);
+    }
+}
+
+const unorm8_bytes_per_element = 1;
+const float16_bytes_per_element = 2;
+// Less than half the range of a color component [0..255]/255 unit.
+const float16_nonzero_tolerance = (1 / 256) / 2;
+
+var created_imageData_unorm8 = context.createImageData(1, 1, { pixelFormat: "rgba-unorm8" });
+verifyImageData('created_imageData_unorm8', 'Uint8ClampedArray', unorm8_bytes_per_element, 0, 0, 0, 0);
+
+var gotten_imageData_unorm8 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-unorm8" });
+verifyImageData('gotten_imageData_unorm8', 'Uint8ClampedArray', unorm8_bytes_per_element, r, g, b, a);
+
+var created_imageData_float16 = context.createImageData(1, 1, { pixelFormat: "rgba-float16" });
+verifyImageData('created_imageData_float16', 'Float16Array', float16_bytes_per_element, 0, 0, 0, 0, 0);
+
+// This verifies the basic unorm8->float16 conversion.
+var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { pixelFormat: "rgba-float16" });
+verifyImageData('gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
+
+// Put the float16 ImageData back into the (unorm8-backed) canvas, and get a default (unorm8) ImageData.
+// This verifies the basic float16->unorm8 conversion:
+context.clearRect(0, 0, 1, 1);
+context.putImageData(gotten_imageData_float16, 0, 0);
+var gotten_imageData_unorm8_from_float16 = context.getImageData(0, 0, 1, 1);
+verifyImageData('gotten_imageData_unorm8_from_float16', 'Uint8ClampedArray', unorm8_bytes_per_element, r, g, b, a);
+
+// Exhaustive unorm8->float16->unorm8 round-trip test for all possible individual rgba-unorm8 component values. Only log errors.
+canvas.width = 64;
+canvas.height = 16;
+var componentsToTest = componentsPerPixel;
+shouldBeTrue('canvas.width * canvas.height >= 256 * componentsToTest');
+
+var input_imageData_unorm8 = context.createImageData(canvas.width, canvas.height);
+var expected_imageData_unorm8 = context.createImageData(canvas.width, canvas.height);
+var expected_imageData_float16 = context.createImageData(canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
+
+var pixelOffset = 0;
+for (let v = 0; v < 256; ++v) {
+    for (component = 0; component < componentsToTest; ++component) {
+        r = g = b = 0;
+        a = 255;
+        switch (component) {
+        case 0: r = v; break;
+        case 1: g = v; break;
+        case 2: b = v; break;
+        case 3: r = g = b = (v ? 255 : 0); a = v; break;
+        }
+        input_imageData_unorm8.data[pixelOffset * componentsPerPixel + 0] = r;
+        input_imageData_unorm8.data[pixelOffset * componentsPerPixel + 1] = g;
+        input_imageData_unorm8.data[pixelOffset * componentsPerPixel + 2] = b;
+        input_imageData_unorm8.data[pixelOffset * componentsPerPixel + 3] = a;
+
+        expected_imageData_unorm8.data[pixelOffset * componentsPerPixel + 0] = r;
+        expected_imageData_unorm8.data[pixelOffset * componentsPerPixel + 1] = g;
+        expected_imageData_unorm8.data[pixelOffset * componentsPerPixel + 2] = b;
+        expected_imageData_unorm8.data[pixelOffset * componentsPerPixel + 3] = a;
+
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 0] = r / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 1] = g / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 2] = b / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 3] = a / 255;
+
+        ++pixelOffset;
+    }
+}
+shouldBe('pixelOffset', '256 * componentsToTest');
+
+context.putImageData(input_imageData_unorm8, 0, 0);
+gotten_imageData_unorm8 = context.getImageData(0, 0, canvas.width, canvas.height, { pixelFormat: "rgba-unorm8" });
+areEqualImageData('gotten_imageData_unorm8', 'expected_imageData_unorm8', 0);
+gotten_imageData_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
+areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', float16_nonzero_tolerance);
+
+context.clearRect(0, 0, canvas.width, canvas.height);
+context.putImageData(gotten_imageData_float16, 0, 0);
+gotten_imageData_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { pixelFormat: "rgba-float16" });
+areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', float16_nonzero_tolerance);
+gotten_imageData_unorm8 = context.getImageData(0, 0, canvas.width, canvas.height, { pixelFormat: "rgba-unorm8" });
+areEqualImageData('gotten_imageData_unorm8', 'expected_imageData_unorm8', 0);
+
+shouldThrowErrorName(`context.createImageData(1, 1, { pixelFormat: "foo" })`, "TypeError")
+shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { pixelFormat: "foo" })`, "TypeError")
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

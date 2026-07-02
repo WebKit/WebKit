@@ -1,0 +1,3 @@
+
+PASS Fetching modulepreload should not block the window's load event
+

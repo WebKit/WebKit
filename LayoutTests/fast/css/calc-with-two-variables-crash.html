@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+#test {
+    --baseLength: 64px;
+    --scaleFactor: 2;
+    height: calc(var(--scaleFactor) * (var(--baseLength))); /* The extra parentheses around the second operand are necessary. */
+    width: 128px;
+    background-color: blue;
+}
+</style>
+</head>
+<body>
+<p>This test PASSED if it doesn't cause a crash, especially when run with Guard Malloc or MallocScribble enabled.</p>
+<div id="test"></div>
+<script>
+// Iterating at least 100 times seems to reliably reproduce the crash when run without Guard Malloc/MallocScribble enabled.
+for (var i = 0; i < 100; ++i) {
+    var oldStyleElement = document.querySelector("style");
+    var newStyleElement = document.createElement("style");
+    newStyleElement.textContent = oldStyleElement.textContent;
+    document.head.removeChild(oldStyleElement);
+    document.head.appendChild(newStyleElement);
+}
+</script>
+</body>
+</html>

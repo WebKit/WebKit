@@ -1,0 +1,8 @@
+A
+A
+A
+PASS repaintCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

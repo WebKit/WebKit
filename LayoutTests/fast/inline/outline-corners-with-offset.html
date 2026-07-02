@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that outline corners around inlines align properly.</title>
+<style>
+body {
+    margin: 0px;
+ 	color: white;
+ 	font: ahem;
+ 	font-size: 15px;
+ }
+
+.container {
+    margin-left: 8px;
+    margin-top: 8px;
+	margin-bottom: 20px;
+    }
+
+span {
+    outline-offset: 5px;
+    outline: 2px solid red;
+}
+
+.cornerBox {
+	position: absolute;
+	width: 2px;
+	height: 2px;
+	background: red;
+}
+</style>
+</head>
+<body>
+<div class=cornerBox style="left: 1px; top: 1px"></div>
+<div class=cornerBox style="left: 1px; top: 30px"></div>
+<div class=cornerBox style="left: 1px; top: 47px"></div>
+<div class=cornerBox style="left: 1px; top: 64px"></div>
+<div class=cornerBox style="left: 33px; top: 1px"></div>
+<div class=cornerBox style="left: 33px; top: 18px"></div>
+<div class=cornerBox style="left: 52px; top: 18px"></div>
+<div class=cornerBox style="left: 52px; top: 35px"></div>
+<div class=cornerBox style="left: 95px; top: 35px"></div>
+<div class=cornerBox style="left: 95px; top: 64px"></div>
+
+<div class=cornerBox style="left: 1px; top: 72px"></div>
+<div class=cornerBox style="left: 1px; top: 101px"></div>
+<div class=cornerBox style="left: 1px; top: 118px"></div>
+<div class=cornerBox style="left: 1px; top: 135px"></div>
+<div class=cornerBox style="left: 95px; top: 72px"></div>
+<div class=cornerBox style="left: 95px; top: 101px"></div>
+<div class=cornerBox style="left: 76px; top: 101px"></div>
+<div class=cornerBox style="left: 76px; top: 118px"></div>
+<div class=cornerBox style="left: 52px; top: 118px"></div>
+<div class=cornerBox style="left: 52px; top: 135px"></div>
+
+<div class=cornerBox style="left: 1px; top: 143px"></div>
+<div class=cornerBox style="left: 1px; top: 172px"></div>
+<div class=cornerBox style="left: 1px; top: 189px"></div>
+<div class=cornerBox style="left: 1px; top: 206px"></div>
+<div class=cornerBox style="left: 52px; top: 143px"></div>
+<div class=cornerBox style="left: 52px; top: 160px"></div>
+<div class=cornerBox style="left: 95px; top: 160px"></div>
+<div class=cornerBox style="left: 95px; top: 189px"></div>
+<div class=cornerBox style="left: 52px; top: 189px"></div>
+<div class=cornerBox style="left: 52px; top: 206px"></div>
+
+<div class=cornerBox style="left: 1px; top: 214px"></div>
+<div class=cornerBox style="left: 1px; top: 243px"></div>
+<div class=cornerBox style="left: 1px; top: 260px"></div>
+<div class=cornerBox style="left: 1px; top: 277px"></div>
+<div class=cornerBox style="left: 95px; top: 214px"></div>
+<div class=cornerBox style="left: 95px; top: 243px"></div>
+<div class=cornerBox style="left: 52px; top: 243px"></div>
+<div class=cornerBox style="left: 52px; top: 248px"></div>
+<div class=cornerBox style="left: 95px; top: 248px"></div>
+<div class=cornerBox style="left: 95px; top: 277px"></div>
+
+
+<div class=container><span>foo<br>foobar<br>foobar foobar</span></div>
+<div class=container><span>foobar foobar<br>foobar foo<br>foobar</span></div>
+<div class=container><span>foobar<br>foobar foobar<br>foobar</span></div>
+<div class=container><span>foobar foobar<br>foobar<br>foobar foobar</span></div>
+
+<div style="position: absolute; left: 8px; direction: RTL;">
+<div class=cornerBox style="left: 95px; top: 1px"></div>
+<div class=cornerBox style="left: 95px; top: 30px"></div>
+<div class=cornerBox style="left: 95px; top: 47px"></div>
+<div class=cornerBox style="left: 95px; top: 64px"></div>
+<div class=cornerBox style="left: 63px; top: 1px"></div>
+<div class=cornerBox style="left: 63px; top: 18px"></div>
+<div class=cornerBox style="left: 44px; top: 18px"></div>
+<div class=cornerBox style="left: 44px; top: 35px"></div>
+<div class=cornerBox style="left: 1px; top: 35px"></div>
+<div class=cornerBox style="left: 1px; top: 64px"></div>
+
+<div class=cornerBox style="left: 95px; top: 72px"></div>
+<div class=cornerBox style="left: 95px; top: 101px"></div>
+<div class=cornerBox style="left: 95px; top: 118px"></div>
+<div class=cornerBox style="left: 95px; top: 135px"></div>
+<div class=cornerBox style="left: 1px; top: 72px"></div>
+<div class=cornerBox style="left: 1px; top: 101px"></div>
+<div class=cornerBox style="left: 20px; top: 101px"></div>
+<div class=cornerBox style="left: 20px; top: 118px"></div>
+<div class=cornerBox style="left: 44px; top: 118px"></div>
+<div class=cornerBox style="left: 44px; top: 135px"></div>
+
+<div class=cornerBox style="left: 95px; top: 143px"></div>
+<div class=cornerBox style="left: 95px; top: 172px"></div>
+<div class=cornerBox style="left: 95px; top: 189px"></div>
+<div class=cornerBox style="left: 95px; top: 206px"></div>
+<div class=cornerBox style="left: 44px; top: 143px"></div>
+<div class=cornerBox style="left: 44px; top: 160px"></div>
+<div class=cornerBox style="left: 1px; top: 160px"></div>
+<div class=cornerBox style="left: 1px; top: 189px"></div>
+<div class=cornerBox style="left: 44px; top: 189px"></div>
+<div class=cornerBox style="left: 44px; top: 206px"></div>
+
+<div class=cornerBox style="left: 95px; top: 214px"></div>
+<div class=cornerBox style="left: 95px; top: 243px"></div>
+<div class=cornerBox style="left: 95px; top: 260px"></div>
+<div class=cornerBox style="left: 95px; top: 277px"></div>
+<div class=cornerBox style="left: 1px; top: 214px"></div>
+<div class=cornerBox style="left: 1px; top: 243px"></div>
+<div class=cornerBox style="left: 44px; top: 243px"></div>
+<div class=cornerBox style="left: 44px; top: 248px"></div>
+<div class=cornerBox style="left: 1px; top: 248px"></div>
+<div class=cornerBox style="left: 1px; top: 277px"></div>
+
+<div class=container><span>foo<br>foobar<br>foobar foobar</span></div>
+<div class=container><span>foobar foobar<br>foobar foo<br>foobar</span></div>
+<div class=container><span>foobar<br>foobar foobar<br>foobar</span></div>
+<div class=container><span>foobar foobar<br>foobar<br>foobar foobar</span></div>
+</div>
+</body>
+</head>

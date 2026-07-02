@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+    <iframe id="none"></iframe>
+    <iframe id="microphone" allow="microphone"></iframe>
+
+    <script>
+promise_test(async () => {
+   none.src = "http://localhost:8000/media/media-stream/resources/speechRecognition-iframe.html";
+   const result = await new Promise((resolve, reject) => {
+       window.addEventListener("message", event => resolve(event.data));
+       setTimeout(() => reject("time out"), 5000);
+   });
+   assert_equals(result, "error");
+}, "speech recognition in iframe without microphone feature policy should fail");
+
+promise_test(async () => {
+   microphone.src = "http://localhost:8000/media/media-stream/resources/speechRecognition-iframe.html";
+   const result = await new Promise((resolve, reject) => {
+       window.addEventListener("message", event => resolve(event.data));
+       setTimeout(() => reject("time out"), 5000);
+   });
+   assert_equals(result, "start");
+}, "speech recognition in iframe with microphone feature policy should start");
+    </script>
+</body>
+</html>

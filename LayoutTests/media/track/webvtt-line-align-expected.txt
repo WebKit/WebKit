@@ -1,0 +1,15 @@
+
+EVENT(load)
+
+*** Testing text track 0
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues[0].line == '0') OK
+EXPECTED (cues[0].lineAlign == 'start') OK
+EXPECTED (cues[1].line == '50') OK
+EXPECTED (cues[1].lineAlign == 'center') OK
+EXPECTED (cues[2].line == '100') OK
+EXPECTED (cues[2].lineAlign == 'end') OK
+EXPECTED (cues[3].line == 'auto') OK
+EXPECTED (cues[3].lineAlign == 'start') OK
+END OF TEST
+

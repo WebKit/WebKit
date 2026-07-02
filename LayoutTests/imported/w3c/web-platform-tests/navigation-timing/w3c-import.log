@@ -1,0 +1,77 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/buffered-flag.window.js
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/content-encoding.https.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/dom-interactive-image-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/dom-interactive-media-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-data-uri.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-attributes-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-attributes-values.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-document-open.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-document-replaced.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-frame-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-instance-accessible-from-the-start.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-instance-accessors.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-navigate-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-navigate-within-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-navigation-type-backforward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-navigation-type-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-navigation-type-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-chain-xserver-final-original-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-chain-xserver-partial-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-none.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-xserver.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-response-end-and-duration-before-during-and-after-load-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-timing-persistent.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nav2-test-unique-nav-instances.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/navigation-type-post-backforward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/nested-unload-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/po-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/prefetch-transfer-size-executor.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/prefetch-transfer-size-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/redirect-tao.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/response-start-after-coop-bcg-switch.https.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/secure-connection-start-non-zero.https.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/secure-connection-start-reuse.https.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/supported-navigation-type.window.js
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-document-onload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-document-open.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-document-readiness-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-navigate-within-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-navigation-attributes-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-navigation-redirectCount-none.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-navigation-type-backforward.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-navigation-type-enums.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-navigation-type-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-no-previous-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-performance-attributes-exist-in-object.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-performance-attributes-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-performance-attributes.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-readwrite.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-attributes-dependent-on-document-load.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-attributes-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-attributes-order.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-client-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-server-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-timing-xserver-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/test-unique-performance-objects.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-timing/unload-event-same-origin-check.html

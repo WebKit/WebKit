@@ -1,0 +1,10 @@
+
+PASS RTCEncodedVideoFrame copy construction on main thread.
+PASS RTCEncodedAudioFrame copy construction on main thread.
+FAIL RTCEncodedVideoFrame copy construction metadata override on main thread. assert_equals: expected "{\"contributingSources\":[2],\"dependencies\":[],\"frameId\":1,\"height\":480,\"mimeType\":\"video/H264\",\"payloadType\":96,\"rtpTimestamp\":1700513326,\"spatialIndex\":0,\"synchronizationSource\":1379895005,\"temporalIndex\":0,\"width\":640}" but got "{\"contributingSources\":[],\"dependencies\":[],\"frameId\":1,\"height\":480,\"mimeType\":\"video/H264\",\"payloadType\":96,\"rtpTimestamp\":1700513326,\"spatialIndex\":0,\"synchronizationSource\":1379895005,\"temporalIndex\":0,\"width\":640}"
+PASS RTCEncodedVideoFrame structuredClone on main thread.
+FAIL RTCEncodedVideoFrame structuredClone transfer on main thread. assert_equals: expected 214 but got 0
+FAIL RTCEncodedAudioFrame copy construction metadata override on main thread. assert_equals: expected "{\"contributingSources\":[2],\"mimeType\":\"audio/opus\",\"payloadType\":111,\"rtpTimestamp\":1257486326,\"synchronizationSource\":8300854}" but got "{\"contributingSources\":[],\"mimeType\":\"audio/opus\",\"payloadType\":111,\"rtpTimestamp\":1257486326,\"synchronizationSource\":8300854}"
+PASS RTCEncodedAudioFrame structuredClone on main thread.
+FAIL RTCEncodedAudioFrame structuredClone transfer on main thread. assert_equals: expected 99 but got 0
+

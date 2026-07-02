@@ -1,0 +1,6 @@
+Header
+
+Legend
+
+FAIL The rendered LEGEND should work well for :hover. assert_not_equals: got disallowed value null
+

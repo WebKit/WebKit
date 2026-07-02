@@ -1,0 +1,3 @@
+
+PASS navigator.storage.persist() resolves to a value that matches navigator.storage.persisted()
+

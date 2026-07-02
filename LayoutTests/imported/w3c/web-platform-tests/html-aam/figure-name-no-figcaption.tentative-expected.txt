@@ -1,0 +1,32 @@
+Tests the accName for elements defined in HTML-AAM: Accessible Name Computations By HTML Element. These tests are meant to show whether an element returns a name per the naming mechanism used. See wpt: accname for expanded accName testing.
+
+figure element
+
+x
+y
+x
+y
+x
+y
+x
+figcaption text
+x
+y
+
+figcaption
+
+figcaption
+ other content
+figcaption
+labelledby
+
+PASS figure with figcaption - no name
+PASS figure with figcaption and aria-label
+PASS figure with figcaption and aria-labelledby pointing to another element
+PASS figure with aria-labelledby pointing to figcaption
+PASS figure with figcaption and title
+PASS figure with figcaption and img without alt
+PASS img without alt within a figure with figcaption
+PASS img without alt but with title within a figure with figcaption
+PASS img without alt within a figure with figcaption, and with other flow content within the figure
+

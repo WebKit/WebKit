@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <p>Simple paragraph</p>
+    <p role="grid">A paragraph pretending to be a table</p>
+
+    <label>A label</label>
+    <label role="heading">Who said label? It's a heading!</label>
+
+    <form>A form with a button <button name="button" value="Button">Click me!</button></form>
+    <form role="button">Just a button <button name="button" value="Button">Click me!</button></form>
+
+    <div>Just some text inside a div</div>
+    <div role="textbox">This div is contains a textbox (an entry)</div>
+</div>
+
+<script>
+
+var testOutput = "This tests that ARIA roles are not ignored for 'p', 'label', 'form' and 'div' elements.\n\n";
+
+function dumpTree(axElement, indent = 0) {
+    if (!axElement)
+        return "";
+
+    let indentStr = "";
+    for (let i = 0; i < indent; i++)
+        indentStr += "    ";
+
+    let str = `${indentStr}${axElement.role}\n`
+    if (axElement.role && axElement.role.includes("StaticText"))
+        str += `${indentStr}${accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue}\n`
+
+    for (let i = 0; i < axElement.childrenCount; ++i)
+        str += dumpTree(axElement.childAtIndex(i), indent + 1);
+
+    return str;
+}
+
+if (window.accessibilityController) {
+    testOutput += dumpTree(accessibilityController.rootElement.childAtIndex(0));
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(testOutput);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>box-shadow parse should reject invalid values</title>
+</head>
+<body>
+<div id="target"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+let target = document.getElementById('target') 
+let test_invalid_value = (value) => {
+    test(() => {
+        target.style['box-shadow'] = ''
+        target.style['box-shadow'] = value
+        assert_equals(target.style.getPropertyValue('box-shadow'), '');
+    }, '#target.style["box-shadow"] = ' + JSON.stringify(value) + ' should not set the property value')
+}
+
+// Disallow multiple color components.
+test_invalid_value('red green -4px 4px')
+test_invalid_value('red -4px 4px green')
+test_invalid_value('red inset -4px 4px red')
+test_invalid_value('-4px 4px red green')
+
+// Disallow multiple `inset` keyword components.
+test_invalid_value('inset inset -4px 4px')
+test_invalid_value('inset inset -4px 4px red')
+test_invalid_value('inset -4px 4px inset')
+test_invalid_value('inset green -4px 4px inset')
+test_invalid_value('-4px 4px inset inset')
+
+// Disallow multiple lengths components.
+test_invalid_value('-4px 4px inset 8px -8px')
+test_invalid_value('-4px 4px 2px inset 8px -8px')
+test_invalid_value('-4px 4px 2px 2px inset 8px -8px')
+test_invalid_value('-4px 4px 2px 2px inset 8px -8px 2px')
+test_invalid_value('-4px 4px 2px 2px inset 8px -8px 2px 2px')
+
+test_invalid_value('-4px 4px red 8px -8px')
+test_invalid_value('-4px 4px 2px red 8px -8px')
+test_invalid_value('-4px 4px 2px 2px red 8px -8px')
+test_invalid_value('-4px 4px 2px 2px red 8px -8px 2px')
+test_invalid_value('-4px 4px 2px 2px red 8px -8px 2px 2px')
+
+test_invalid_value('inset -4px 4px 8px 8px 2px 2px')
+test_invalid_value('red -4px 4px 8px 8px 2px 2px')
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="http://www.w3.org/TR/2013/WD-SVG2-20130618/" />
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Validates the SVG2 inheritance model.");
+
+function checkParent(type, expectedParent)
+{
+    // Using shouldBe() would lead to not very readable output here.
+    if (!window[type]) {
+        testFailed(type + " is not defined");
+        return;
+    }
+    var parentPrototype = window[type].prototype.__proto__;
+    var expectedPrototype = window[expectedParent] ? window[expectedParent].prototype : null;
+
+    if (expectedPrototype && parentPrototype === expectedPrototype)
+        testPassed(type + " inherits " + expectedParent);
+    else
+        testFailed(type + " should inherit " + expectedParent + " but got " + parentPrototype.constructor.name + " instead");
+}
+
+checkParent("SVGAElement", "SVGGraphicsElement");
+checkParent("SVGAngle", "Object");
+checkParent("SVGAnimateElement", "SVGAnimationElement");
+checkParent("SVGAnimateMotionElement", "SVGAnimationElement");
+checkParent("SVGAnimateTransformElement", "SVGAnimationElement");
+checkParent("SVGAnimatedAngle", "Object");
+checkParent("SVGAnimatedBoolean", "Object");
+checkParent("SVGAnimatedEnumeration", "Object");
+checkParent("SVGAnimatedInteger", "Object");
+checkParent("SVGAnimatedLength", "Object");
+checkParent("SVGAnimatedLengthList", "Object");
+checkParent("SVGAnimatedNumber", "Object");
+checkParent("SVGAnimatedNumberList", "Object");
+checkParent("SVGAnimatedPathData", "Object");
+checkParent("SVGAnimatedPreserveAspectRatio", "Object");
+checkParent("SVGAnimatedRect", "Object");
+checkParent("SVGAnimatedString", "Object");
+checkParent("SVGAnimatedTransformList", "Object");
+checkParent("SVGAnimationElement", "SVGElement");
+checkParent("SVGCSSRule", "CSSRule");
+checkParent("SVGCircleElement", "SVGGeometryElement");
+checkParent("SVGClipPathElement", "SVGDefinitionElement");
+checkParent("SVGColorProfileElement", "SVGElement");
+checkParent("SVGColorProfileRule", "SVGCSSRule");
+checkParent("SVGDefsElement", "SVGGraphicsElement");
+checkParent("SVGDescElement", "SVGElement");
+checkParent("SVGElement", "Element");
+checkParent("SVGEllipseElement", "SVGGeometryElement");
+checkParent("SVGForeignObjectElement", "SVGGraphicsElement");
+checkParent("SVGGElement", "SVGGraphicsElement");
+checkParent("SVGGeometryElement", "SVGGraphicsElement");
+checkParent("SVGGradientElement", "SVGElement");
+checkParent("SVGGraphicsElement", "SVGElement");
+checkParent("SVGImageElement", "SVGGraphicsElement");
+checkParent("SVGLength", "Object");
+checkParent("SVGLengthList", "Object");
+checkParent("SVGLineElement", "SVGGeometryElement");
+checkParent("SVGLinearGradientElement", "SVGGradientElement");
+checkParent("SVGMPathElement", "SVGElement");
+checkParent("SVGMarkerElement", "SVGElement");
+checkParent("SVGMarkerInstance", "Object");
+checkParent("SVGMarkerList", "Object");
+checkParent("SVGMaskElement", "SVGDefinitionElement");
+checkParent("SVGMatrix", "Object");
+checkParent("SVGMetadataElement", "SVGElement");
+checkParent("SVGNumber", "Object");
+checkParent("SVGNumberList", "Object");
+checkParent("SVGPathElement", "SVGGeometryElement");
+checkParent("SVGPathSeg", "Object");
+checkParent("SVGPathSegArcAbs", "SVGPathSeg");
+checkParent("SVGPathSegArcRel", "SVGPathSeg");
+checkParent("SVGPathSegClosePath", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoCubicAbs", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoCubicRel", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoCubicSmoothAbs", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoCubicSmoothRel", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoQuadraticAbs", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoQuadraticRel", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoQuadraticSmoothAbs", "SVGPathSeg");
+checkParent("SVGPathSegCurvetoQuadraticSmoothRel", "SVGPathSeg");
+checkParent("SVGPathSegLinetoAbs", "SVGPathSeg");
+checkParent("SVGPathSegLinetoHorizontalAbs", "SVGPathSeg");
+checkParent("SVGPathSegLinetoHorizontalRel", "SVGPathSeg");
+checkParent("SVGPathSegLinetoRel", "SVGPathSeg");
+checkParent("SVGPathSegLinetoVerticalAbs", "SVGPathSeg");
+checkParent("SVGPathSegLinetoVerticalRel", "SVGPathSeg");
+checkParent("SVGPathSegList", "Object");
+checkParent("SVGPathSegMovetoAbs", "SVGPathSeg");
+checkParent("SVGPathSegMovetoRel", "SVGPathSeg");
+checkParent("SVGPatternElement", "SVGElement");
+checkParent("SVGPoint", "Object");
+checkParent("SVGPointList", "Object");
+checkParent("SVGPolygonElement", "SVGGeometryElement");
+checkParent("SVGPolylineElement", "SVGGeometryElement");
+checkParent("SVGPreserveAspectRatio", "Object");
+checkParent("SVGRadialGradientElement", "SVGGradientElement");
+checkParent("SVGRect", "Object");
+checkParent("SVGRectElement", "SVGGeometryElement");
+checkParent("SVGSVGElement", "SVGGraphicsElement");
+checkParent("SVGScriptElement", "SVGElement");
+checkParent("SVGSetElement", "SVGAnimationElement");
+checkParent("SVGStopElement", "SVGElement");
+checkParent("SVGStringList", "Object");
+checkParent("SVGStyleElement", "SVGElement");
+checkParent("SVGSwitchElement", "SVGGraphicsElement");
+checkParent("SVGSymbolElement", "SVGGraphicsElement");
+checkParent("SVGTSpanElement", "SVGTextPositioningElement");
+checkParent("SVGTextContentElement", "SVGGraphicsElement");
+checkParent("SVGTextElement", "SVGTextPositioningElement");
+checkParent("SVGTextPathElement", "SVGTextContentElement");
+checkParent("SVGTextPositioningElement", "SVGTextContentElement");
+checkParent("SVGTitleElement", "SVGElement");
+checkParent("SVGTransform", "Object");
+checkParent("SVGTransformList", "Object");
+checkParent("SVGUseElement", "SVGGraphicsElement");
+checkParent("SVGViewElement", "SVGElement");
+checkParent("SVGViewSpec", "Object");
+checkParent("TimeEvent", "Event");
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<!-- U+2029 PARAGRAPH SEPARATOR has bidi class B and resets the paragraph direction.
+     U+2028 LINE SEPARATOR has bidi class WS and does NOT reset the paragraph direction.
+     All cases use Ahem 10px for exact width measurements (1 char = 10px). -->
+
+<!-- Baseline: RTL block with LTR span, no separator. "ab" stays LTR inside the span. -->
+<div id="baseline" dir="rtl" style="font-family: Ahem; font-size: 10px; width: 200px;"><span id="baseline-span" dir="ltr">ab</span></div>
+
+<!-- U+2028 inside an LTR span in an RTL block: bidi class WS, does not reset paragraph.
+     Both "a" and "b" remain LTR. Two lines, each with LTR text. -->
+<div id="ls-rtl" dir="rtl" style="font-family: Ahem; font-size: 10px; line-height: 10px; width: 200px;"><span id="ls-span" dir="ltr"></span></div>
+
+<!-- U+2029 inside an LTR span in an RTL block: bidi class B, resets paragraph direction.
+     "a" is LTR (before separator), "b" starts a new bidi paragraph — the span's LTR
+     context is unwound and rewound, so "b" should also get the LTR direction from the span. -->
+<div id="ps-rtl" dir="rtl" style="font-family: Ahem; font-size: 10px; line-height: 10px; width: 200px;"><span id="ps-span" dir="ltr"></span></div>
+
+<!-- U+2029 in a plain RTL block without any LTR overrides.
+     Both "a" and "b" are Latin (strong LTR), but the paragraph direction is RTL.
+     After U+2029, the paragraph direction resets to the block's RTL. -->
+<div id="ps-plain-rtl" dir="rtl" style="font-family: Ahem; font-size: 10px; line-height: 10px; width: 200px;"></div>
+
+<!-- U+2029 in an LTR block — paragraph reset has no visible effect since both
+     paragraphs get the same LTR direction. Two lines. -->
+<div id="ps-ltr" dir="ltr" style="font-family: Ahem; font-size: 10px; line-height: 10px; width: 200px;"></div>
+
+<!-- U+2028 vs U+2029 side by side: confirm they produce different bidi behavior.
+     Both force line breaks, but only U+2029 resets the paragraph direction. -->
+<div id="ls-offset" dir="rtl" style="font-family: Ahem; font-size: 10px; line-height: 10px; width: 200px;"></div>
+<div id="ps-offset" dir="rtl" style="font-family: Ahem; font-size: 10px; line-height: 10px; width: 200px;"></div>
+
+<script>
+description("U+2029 PARAGRAPH SEPARATOR resets bidi paragraph direction; U+2028 LINE SEPARATOR does not.");
+
+var ls = "\u2028";
+var ps = "\u2029";
+
+document.querySelector("#ls-span").textContent = "a" + ls + "b";
+document.querySelector("#ps-span").textContent = "a" + ps + "b";
+document.getElementById("ps-plain-rtl").textContent = "a" + ps + "b";
+document.getElementById("ps-ltr").textContent = "a" + ps + "b";
+document.getElementById("ls-offset").textContent = "a" + ls + "b";
+document.getElementById("ps-offset").textContent = "a" + ps + "b";
+
+// Both U+2028 and U+2029 produce two lines.
+shouldBe("document.getElementById('ls-rtl').offsetHeight", "20");
+shouldBe("document.getElementById('ps-rtl').offsetHeight", "20");
+shouldBe("document.getElementById('ps-plain-rtl').offsetHeight", "20");
+shouldBe("document.getElementById('ps-ltr').offsetHeight", "20");
+
+// In the LTR block, "a" is at x=0 on line 1, "b" at x=0 on line 2.
+shouldBe("document.getElementById('ps-ltr').offsetHeight", "20");
+
+// In an RTL block, LTR text "a" is pushed to the right: offsetLeft should be 200 - 10 = 190.
+// After U+2028, "b" stays LTR (no paragraph reset) — same right-aligned position.
+// After U+2029, "b" starts a new paragraph — still right-aligned since the block is RTL
+// and "b" is strong LTR. Both should have the same visual position in this simple case.
+shouldBe("document.getElementById('ls-offset').offsetHeight", "20");
+shouldBe("document.getElementById('ps-offset').offsetHeight", "20");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

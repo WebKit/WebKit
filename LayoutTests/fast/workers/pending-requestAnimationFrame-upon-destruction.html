@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+This test passes if it doesn't crash.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function popupReloaded()
+{
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+open("resources/pending-requestAnimationFrame-upon-destruction-popup.html");
+</script>
+</body>
+</html>

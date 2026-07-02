@@ -1,0 +1,7 @@
+
+PASS offset-position supports calc
+PASS offset-path supports calc
+PASS offset-distance supports calc
+PASS offset-rotate supports calc
+PASS offset-anchor supports calc
+

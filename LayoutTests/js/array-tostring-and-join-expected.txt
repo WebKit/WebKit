@@ -1,0 +1,10 @@
+This test checks that toString and join share the same HashSet for visited elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS arr.join() is '1,2,,**'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

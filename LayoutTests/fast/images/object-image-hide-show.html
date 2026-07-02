@@ -1,0 +1,33 @@
+<style>
+    object {
+        width: 100px;
+        height: 100px;  
+    }
+</style>
+<body>
+    <object data="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQIHWNg+M8AAAICAQDpLOrTAAAAAElFTkSuQmCC" type="image/png" />
+    <script>
+        function toggleVisiblity(element, after) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    if (element.style.display === "none")
+                        element.style.display = "block";
+                    else
+                        element.style.display = "none";
+                    resolve();
+                }, after);
+            });
+        }
+
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var element = document.querySelector("object");
+        toggleVisiblity(element, 50).then(() => {
+            return toggleVisiblity(element, 50);
+        }).then(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</body>

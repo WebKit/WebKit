@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test to ensure that modifications to canvas are not visible from already captured patterns.");
+// At the time of writing this would fail for Cocoa in case where Canvas backing store image was accessed as
+// mapped in WP but the modifications would happen in GPUP. At the time, GPUP DOM rendering == off, GPUP Canvas
+// rendering == on.
+var ctx = document.createElement('canvas').getContext('2d');
+var pcanvas = document.createElement('canvas');
+pcanvas.width = 100;
+pcanvas.height = 100;
+var pctx = pcanvas.getContext('2d');
+
+var c;
+
+pctx.fillStyle = 'lime';
+pctx.fillRect(0, 0, 50, 50);
+
+// 1. Capture pattern before modification (green).
+var pattern = ctx.createPattern(pcanvas, 'repeat');
+
+// 2. Modify the canvas that was the pattern source (the source is red, the pattern is expected to be green).
+pctx.fillStyle = 'red';
+pctx.fillRect(0, 0, 50, 50);
+c = pctx.getImageData(0, 0, 1, 1).data;
+shouldBe("c[0]", "255");
+shouldBe("c[1]", "0");
+shouldBe("c[2]", "0");
+
+// 3. Assert that the modification is not visible through the captured pattern.
+ctx.fillStyle = pattern;
+ctx.fillRect(0, 0, 100, 100);
+c = ctx.getImageData(0, 0, 1, 1).data;
+shouldBe("c[0]", "0");
+shouldBe("c[1]", "255");
+shouldBe("c[2]", "0");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+
+

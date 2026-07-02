@@ -1,0 +1,60 @@
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_cc_library", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+MOCK_FILES = [
+    "GrMockAttachment.h",
+    "GrMockBackendSurface.cpp",
+    "GrMockBuffer.h",
+    "GrMockCaps.cpp",
+    "GrMockCaps.h",
+    "GrMockGpu.cpp",
+    "GrMockGpu.h",
+    "GrMockOpTarget.h",
+    "GrMockOpsRenderPass.h",
+    "GrMockRenderTask.h",
+    "GrMockSurfaceProxy.h",
+    "GrMockTexture.h",
+    "GrMockTypes.cpp",
+    "GrMockTypesPriv.h",
+]
+
+split_srcs_and_hdrs(
+    name = "mock",
+    files = MOCK_FILES,
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+# TODO(kjlubick, egdaniel) If we decouple the mock Ganesh backend
+# then the headers/sources should be put here.
+skia_cc_library(
+    name = "ganesh_mock",
+    hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh/mock:public_hdrs",
+    ],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//src/gpu/ganesh",
+    ],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = [
+        "GrMockAttachment.h",
+        "GrMockBuffer.h",
+        "GrMockCaps.h",
+        "GrMockGpu.h",
+        "GrMockOpTarget.h",
+        "GrMockOpsRenderPass.h",
+        "GrMockRenderTask.h",
+        "GrMockSurfaceProxy.h",
+        "GrMockTexture.h",
+        "GrMockTypesPriv.h",
+    ],
+)

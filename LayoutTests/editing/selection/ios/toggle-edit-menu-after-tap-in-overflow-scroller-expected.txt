@@ -1,0 +1,15 @@
+Select
+
+This test verifies that tapping selected non-editable text inside an overflow scroller shows or hides the edit menu. To manually test, select the text above, and wait for the edit menu to show; tap inside the selection to dismiss the edit menu
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed selection
+PASS Showed edit menu after selecting text
+PASS Dismissed edit menu after tap in selected text
+PASS getSelection().type is "Range"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

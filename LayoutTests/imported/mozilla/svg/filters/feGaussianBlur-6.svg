@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+<filter id="f1" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+  <feGaussianBlur stdDeviation="0"/>
+</filter>
+<g filter="url(#f1)">
+  <rect x="100" y="100" width="100" height="100" fill="#00ff00"/>
+</g>
+</svg>

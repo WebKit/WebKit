@@ -1,0 +1,14 @@
+This tests that SVG use element cycles in accessibility do not cause infinite recursion or a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: typeof platformValueForW3CName(useA) === 'string'
+PASS: typeof platformValueForW3CName(useSelf) === 'string'
+PASS: typeof platformValueForW3CName(useC) === 'string'
+PASS: typeof platformValueForW3CName(chain1) === 'string'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,127 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  const width = 128;
+  const height = 128;
+  const format = 'bgra8unorm';
+
+  function setupCanvas(device) {
+    let canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    document.body.append(canvas);
+    let context = canvas.getContext('webgpu');
+    context.configure({device, format, usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    return context;
+  }
+
+  function createVertexBuffer(device) {
+    let vertexesF32 = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+    let vertexBuffer = device.createBuffer({size: vertexesF32.byteLength, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true});
+    new Float32Array(vertexBuffer.getMappedRange()).set(vertexesF32);
+    vertexBuffer.unmap();
+    return vertexBuffer;
+  }
+
+  async function createTexture(device) {
+    let texture = device.createTexture({
+      format, size: [width, height, 1],
+      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    const imageElement2 = document.getElementsByTagName("svg");
+    const img = new Image();
+
+    img.onload = () => {
+        device.queue.copyExternalImageToTexture({ source: img }, {texture}, {width, height});
+    };
+
+    img.onerror = () => {
+        document.writeln('Error loading SVG file');
+    };
+
+    img.src = 'webkit.svg';
+    return texture;
+  }
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({requiredLimits: {maxTextureDimension2D: 16384}});
+    let context = setupCanvas(device);
+    let texture = await createTexture(device);
+    let vertexBuffer = createVertexBuffer(device);
+    let code = `
+@vertex
+fn v(@location(0) position : vec4f) -> @builtin(position) vec4f {
+  return position;
+}
+
+@group(0) @binding(0) var t: texture_2d<f32>;
+@group(0) @binding(1) var s: sampler;
+
+@fragment
+fn f(@builtin(position) position: vec4f) -> @location(0) vec4f {
+  return textureSample(t, s, position.xy/512);
+}
+`;
+    let bindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, texture: {}, visibility: GPUShaderStage.FRAGMENT},
+        {binding: 1, sampler: {}, visibility: GPUShaderStage.FRAGMENT},
+      ],
+    });
+    let module = device.createShaderModule({code});
+    let pipeline = device.createRenderPipeline({
+      layout: device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]}),
+      vertex: {
+        module,
+        buffers: [{arrayStride: 8, attributes: [{shaderLocation: 0, offset: 0, format: 'float32x2'}]}],
+      },
+      fragment: {module, targets: [{format}]},
+      primitive: {topology: 'triangle-strip'},
+    });
+    let sampler0 = device.createSampler({
+      magFilter: 'linear',
+    });
+    globalThis.keep = sampler0;
+    let textureBindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [
+        {binding: 0, resource: texture.createView()},
+        {binding: 1, resource: sampler0},
+      ],
+    });
+    let frameCount = 0;
+    let oneFrame = async _ => {
+      let commandEncoder = device.createCommandEncoder();
+      let passEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{
+          view: context.getCurrentTexture().createView(),
+          clearValue: [0.5, 0.5, 0.5, 1],
+          loadOp: 'clear', storeOp: 'store',
+        }],
+      });
+      passEncoder.setPipeline(pipeline);
+      passEncoder.setBindGroup(0, textureBindGroup);
+      passEncoder.setVertexBuffer(0, vertexBuffer);
+      passEncoder.draw(4);
+      passEncoder.end();
+      device.pushErrorScope('validation');
+      device.queue.submit([commandEncoder.finish()]);
+      await device.queue.onSubmittedWorkDone();
+      let error = await device.popErrorScope();
+      if (error) {
+        log(error.message);
+      } else {
+        if (++frameCount < 100) {
+          new ArrayBuffer(2 ** 20);
+          requestAnimationFrame(oneFrame);
+        }
+      }
+      log('Pass');
+      globalThis.testRunner?.dumpAsText();
+      globalThis.testRunner?.notifyDone();
+    };
+    requestAnimationFrame(oneFrame);
+  };
+</script>

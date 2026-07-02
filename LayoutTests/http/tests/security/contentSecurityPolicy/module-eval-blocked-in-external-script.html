@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<script type="module"src="resources/eval-blocked-in-external-script.js"></script>
+<script type="module">
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</head>
+</html>

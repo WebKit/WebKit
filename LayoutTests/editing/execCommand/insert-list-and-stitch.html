@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>The three items below should be stitched together into one ordered list when you click the button.</div>
+<div contenteditable="true">
+<div id="item1">foo</div>
+<div id="item2">bar</div>
+<div id="item3">baz</div>
+</div>
+<script>
+var s = window.getSelection();
+s.setPosition(document.getElementById("item1"), 0);
+document.execCommand("InsertOrderedList", false, "");
+s.setPosition(document.getElementById("item2"), 0);
+document.execCommand("InsertOrderedList", false, "");
+s.setPosition(document.getElementById("item3"), 0);
+document.execCommand("InsertOrderedList", false, "");
+</script>

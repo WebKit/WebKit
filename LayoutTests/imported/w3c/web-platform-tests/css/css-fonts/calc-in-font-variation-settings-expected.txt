@@ -1,0 +1,4 @@
+
+FAIL calc() specified value serialization in font-variation-settings assert_equals: expected "\"XHGT\" calc(0.7)" but got ""
+PASS calc() computed value serialization in font-variation-settings
+

@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    for (let i = 0; i < 64; ++i)
+        device.createCommandEncoder()
+    let canvas = new OffscreenCanvas(2, 8);
+    canvas.getContext('webgpu').configure({ device: device, format: 'rgba16float' });
+    device.destroy();
+    createImageBitmap(canvas);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

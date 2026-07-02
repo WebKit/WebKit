@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+<body>
+<script>
+description("Tests that starting Web Audio rendering requires a transient user activation.");
+jsTestIsAsync = true;
+
+onload = () => {
+    context = new AudioContext();
+
+    if (window.internals)
+        internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+    shouldBeEqualToString('context.state', 'suspended');
+
+    node = context.createBufferSource();
+    evalAndLog('node.connect(context.destination)');
+
+    shouldBeEqualToString('context.state', 'suspended');
+
+    internals.withUserGesture(function() {
+        setTimeout(() => {
+            // We should have transient activation.
+            shouldBeTrue("navigator.userActivation.isActive");
+            context.resume().then(() => {
+                testPassed("resume() promise was resolved");
+                shouldBeEqualToString('context.state', 'running');
+                // Transient activation should not have been consumed.
+                shouldBeTrue("navigator.userActivation.isActive");
+                finishJSTest();
+            }, () => {
+                testFailed("resume() promise was rejected");
+                finishJSTest();
+            });
+        }, 10);
+    });
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Tests for ES6 arrow function declaration body as block
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof af(0) is "undefined"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

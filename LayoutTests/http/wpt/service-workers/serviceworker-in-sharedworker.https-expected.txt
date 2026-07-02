@@ -1,0 +1,3 @@
+
+PASS Register service worker in worker
+

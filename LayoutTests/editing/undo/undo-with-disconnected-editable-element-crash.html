@@ -1,0 +1,15 @@
+<style>
+  * {
+      -webkit-animation: mykeyframes infinite;
+  }
+  *:root{
+      animation-duration: 1s;
+      animation-direction: alternate, normal;
+  }
+  @keyframes mykeyframes { }
+</style>
+<!-- Original crash is only reproducible with an external script. -->
+<script src="undo-with-disconnected-editable-element-crash.js"></script>
+<body>
+  <input id="inputElement" value="A" hidden=""/>
+</body>

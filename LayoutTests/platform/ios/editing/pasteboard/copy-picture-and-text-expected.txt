@@ -1,0 +1,13 @@
+This tests that copying and pasting an image in a picture element and adjacent text, preserves the picture and source elements.
+| "Paste"
+| <picture>
+|   id="picture"
+|   <source>
+|     media="(min-width: 600px)"
+|     srcset="resources/apple.gif"
+|   <source>
+|     srcset="resources/mozilla.gif"
+|   " "
+|   <img>
+|     src=""
+| "After<#selection-caret>"

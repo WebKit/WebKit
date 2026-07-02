@@ -1,0 +1,3 @@
+
+PASS 'self-end self-start' of horizontal-tb/rtl is physically 'bottom right'
+

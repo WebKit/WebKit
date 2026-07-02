@@ -1,0 +1,6 @@
+
+PASS Percentage 'translate(...)' with 'fill-box' transform-box
+PASS Percentage 'translate(...)' with 'view-box' transform-box
+PASS Percentage 'translate(...)' with 'view-box' transform-box in nested <svg> with 'viewBox'
+PASS Percentage 'translate(...)' with 'view-box' transform-box in nested <svg> without 'viewBox'
+

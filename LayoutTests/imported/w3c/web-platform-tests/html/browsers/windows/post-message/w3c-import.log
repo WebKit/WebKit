@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/first-party-to-first-party-cross-partition.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/first-party-to-first-party-same-partition.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/first-party-to-third-party-cross-partition-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/first-party-to-third-party-cross-partition-same-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/third-party-to-first-party-cross-partition-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/third-party-to-first-party-cross-partition-same-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/third-party-to-third-party-cross-partition-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/third-party-to-third-party-cross-partition-same-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/post-message/third-party-to-third-party-same-partition.sub.html

@@ -1,0 +1,15 @@
+This test verifies that IDBTransaction objects are collected when connection to server is lost.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+frameDatabaseOpened():
+PASS internals.numberOfIDBTransactions() is 1
+
+frameTransactionAborted():
+PASS IDBTransaction is collected
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

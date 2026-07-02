@@ -1,0 +1,21 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (20,0) size 460x360
+      RenderSVGRect {rect} at (20,20) size 200x200 [fill={[type=SOLID] [color=#FFFFFF]}] [x=20.00] [y=20.00] [width=200.00] [height=200.00]
+      RenderSVGContainer {g} at (320,0) size 160x360
+        RenderSVGContainer {a} at (320,0) size 160x180
+          RenderSVGRect {rect} at (320,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [x=320.00] [y=0.00] [width=160.00] [height=180.00]
+          RenderSVGText {text} at (330,63) size 96x34 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x34
+              chunk 1 text run 1 at (330.00,90.00) startOffset 0 endOffset 7 width 95.84: "Fade in"
+        RenderSVGContainer {a} at (320,180) size 160x180
+          RenderSVGRect {rect} at (320,180) size 160x180 [fill={[type=SOLID] [color=#800000]}] [x=320.00] [y=180.00] [width=160.00] [height=180.00]
+          RenderSVGText {text} at (330,253) size 113x34 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 113x34
+              chunk 1 text run 1 at (330.00,280.00) startOffset 0 endOffset 8 width 112.50: "Fade out"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

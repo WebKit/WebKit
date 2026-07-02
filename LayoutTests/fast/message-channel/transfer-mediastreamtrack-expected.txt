@@ -1,0 +1,5 @@
+Test that a MediaStreamTrack can be transferred through a MessageChannel in the same context.
+
+PASS: received a MediaStreamTrack
+PASS: track kind is audio
+

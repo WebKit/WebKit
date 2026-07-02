@@ -1,0 +1,44 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+GPU_FILES = [
+    "DistanceFieldAdjustTable.cpp",
+    "DistanceFieldAdjustTable.h",
+    "GlyphUtils.h",
+    "GlyphVector.cpp",
+    "GlyphVector.h",
+    "SDFMaskFilter.cpp",
+    "SDFMaskFilter.h",
+    "Slug.cpp",
+    "SlugImpl.cpp",
+    "SlugImpl.h",
+    "SkChromeRemoteGlyphCache.cpp",
+    "StrikeCache.cpp",
+    "StrikeCache.h",
+    "SubRunAllocator.cpp",
+    "SubRunAllocator.h",
+    "SubRunContainer.cpp",
+    "SubRunContainer.h",
+    "SubRunControl.cpp",
+    "SubRunControl.h",
+    "TextBlob.cpp",
+    "TextBlob.h",
+    "TextBlobRedrawCoordinator.cpp",
+    "TextBlobRedrawCoordinator.h",
+    "VertexFiller.cpp",
+    "VertexFiller.h",
+]
+
+split_srcs_and_hdrs(
+    name = "gpu",
+    files = GPU_FILES,
+    visibility = [
+        "//src/gpu/ganesh:__pkg__",
+        "//src/gpu/graphite:__pkg__",
+    ],
+)

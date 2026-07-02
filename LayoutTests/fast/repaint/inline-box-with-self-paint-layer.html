@@ -1,0 +1,28 @@
+<style>
+.sibling {
+  will-change: transform;
+}
+
+#changeThis {
+  font-family: Monospace;
+  position: relative;
+}
+</style>
+<div class=sibling></div>
+<div><span id=changeThis>PASS if this text ends in '1': 0</span></div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+async function runTest() {
+  document.body.offsetHeight;
+  await UIHelper.renderingUpdate();
+  changeThis.firstChild.nodeValue = "PASS if this text ends in '1': 1";
+  await UIHelper.renderingUpdate();
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

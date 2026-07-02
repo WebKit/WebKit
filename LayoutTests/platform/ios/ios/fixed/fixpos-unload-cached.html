@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      position: fixed;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+    
+    function doTest()
+    {
+      window.setTimeout(function() {
+        window.location = 'resources/fixpos-unload-final.html'
+      }, 10);
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <div class="box"></div>
+</body>
+</html>

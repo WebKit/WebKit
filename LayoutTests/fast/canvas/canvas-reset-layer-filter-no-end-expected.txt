@@ -1,0 +1,3 @@
+This test ensures that calling reset() after starting a layer with a filter does not crash.
+
+

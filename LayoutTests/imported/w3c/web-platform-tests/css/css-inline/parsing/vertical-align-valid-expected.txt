@@ -1,0 +1,14 @@
+
+PASS e.style['vertical-align'] = "baseline" should set the property value
+PASS e.style['vertical-align'] = "sub" should set the property value
+PASS e.style['vertical-align'] = "super" should set the property value
+PASS e.style['vertical-align'] = "top" should set the property value
+PASS e.style['vertical-align'] = "text-top" should set the property value
+PASS e.style['vertical-align'] = "middle" should set the property value
+PASS e.style['vertical-align'] = "bottom" should set the property value
+PASS e.style['vertical-align'] = "text-bottom" should set the property value
+PASS e.style['vertical-align'] = "-10px" should set the property value
+PASS e.style['vertical-align'] = "20%" should set the property value
+PASS e.style['vertical-align'] = "0" should set the property value
+PASS e.style['vertical-align'] = "calc(20% - 10px)" should set the property value
+

@@ -1,0 +1,11 @@
+
+PASS div.innerHTML
+PASS div.insertAdjacentHTML
+PASS document.write on main document
+PASS DOMParser.parseFromString
+PASS template.innerHTML
+PASS document.implementation.createHTMLDocument and innerHTML
+PASS document.implementation.createHTMLDocument and createContextualFragment
+PASS document.implementation.createHTMLDocument and document.write
+PASS XMLHttpRequest
+

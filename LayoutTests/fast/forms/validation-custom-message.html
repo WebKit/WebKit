@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
+<form>
+  Required text input: <input type="text" id="required_text_input" required><input id="required_text_input_submit" type="submit">
+</form>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that the custom validation message set by JavaScript is displayed on UI side.");
+jsTestIsAsync = true;
+
+onload = function() {
+    input = document.getElementById("required_text_input");
+    input.setCustomValidity("This is a custom validity message.");
+    submit = document.getElementById("required_text_input_submit");
+    submit.click();
+
+    getValidationMessage().then((_message) => {
+        message = _message;
+        shouldBeEqualToString("message", "This is a custom validity message.");
+
+        // Reset the validity message to the default one.
+        input.setCustomValidity("");
+        submit.click();
+
+        getValidationMessage().then((_message) => {    
+            message = _message;
+            shouldBeEqualToString("message", "Fill out this field");
+            finishJSTest();
+        });
+    });
+}
+</script>
+</body>
+<html>

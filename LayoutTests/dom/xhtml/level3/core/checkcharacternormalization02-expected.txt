@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/checkcharacternormalization02
+Status	error
+Message	Line 119: TypeError

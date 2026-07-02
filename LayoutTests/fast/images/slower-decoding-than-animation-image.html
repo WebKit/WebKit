@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <img id="image">
+    <canvas id="canvas"></canvas>
+    <script>
+        function drawFrame(image, canvas, frameIndex) {
+            return new Promise((resolve) => {
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, 100, 100, 0, 0, canvas.width, canvas.height);
+
+                if (window.internals) {
+                    shouldBeGreaterThanOrEqual("internals.imageFrameIndex(image)", frameIndex.toString());
+                    image.addEventListener("webkitImageFrameReady", function() {
+                        resolve();
+                    }, false);
+                } else {
+                    setTimeout(() => {
+                        resolve();
+                    }, 40);
+                }
+            });
+        }
+
+        function drawImage(image, canvas, frameCount) {
+            let promise = drawFrame(image, canvas, 0);
+            for (let frameIndex = 1; frameIndex < frameCount; ++frameIndex) {
+                promise = promise.then(() => {
+                    return drawFrame(image, canvas, frameIndex);
+                });
+            }
+            return promise;
+        }
+
+        function loadImage(image, src, canvas, frameCount) {
+            return new Promise((resolve) => {
+                image.onload = (() => {
+                    if (window.internals) {
+                        internals.clearMemoryCache();
+                        internals.setImageFrameDecodingDuration(image, 0.050);
+                        internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+                        internals.settings.setWebkitImageReadyEventEnabled(true);
+                    }
+                    drawImage(image, canvas, frameCount).then(resolve);
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            description("Ensure the image frame is drawn when it finishes decoding even if it takes more than the previous frame duration.");
+            jsTestIsAsync = true;
+
+            var image = document.getElementById("image");
+            var canvas = document.getElementById("canvas");
+
+            loadImage(image, "resources/animated-red-green-blue.gif", canvas, 3).then(() => {
+                finishJSTest();
+            });
+        })();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

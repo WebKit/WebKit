@@ -1,0 +1,11 @@
+
+PASS <button data-focusable="true">
+PASS <section data-focusable="false">
+PASS <div data-focusable="false">
+PASS <span data-focusable="false">
+PASS <a data-focusable="false">
+PASS <section tabindex="-1" data-focusable="true">
+PASS <div tabindex="-1" data-focusable="true">
+PASS <span tabindex="-1" data-focusable="true">
+PASS <a href="#" data-focusable="true">
+

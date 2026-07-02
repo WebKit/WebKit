@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body.hide-everything-except-test-container > :not(#test-container) {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="test-container">
+    <p>Here's to the crazy ones.</p>
+    <p>The misfits.</p>
+    <p>The rebels.</p>
+</div>
+<script>
+let testContainer = document.getElementById("test-container");
+let paragraphs = testContainer.children;
+let selection = window.getSelection();
+
+function toggleOnlyShowTestContainer()
+{
+    document.body.classList.toggle("hide-everything-except-test-container");
+}
+
+async function runTest()
+{
+    toggleOnlyShowTestContainer();
+
+    await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("a", ["metaKey"]) , document, "selectionchange");
+    shouldBeEqualToString("window.getSelection().toString()", "Here's to the crazy ones.\n\nThe misfits.\n\nThe rebels.");
+
+    toggleOnlyShowTestContainer();
+
+    document.body.removeChild(document.getElementById("test-container"));
+    finishJSTest();
+}
+
+window.jsTestIsAsync = true;
+description("Tests pressing Command + a to select all non-editable text.");
+runTest();
+</script>
+</body>
+</html>

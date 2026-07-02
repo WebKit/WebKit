@@ -1,0 +1,11 @@
+
+PASS e.style['text-decoration-inset'] = "none" should not set the property value
+PASS e.style['text-decoration-inset'] = "normal" should not set the property value
+PASS e.style['text-decoration-inset'] = "auto auto" should not set the property value
+PASS e.style['text-decoration-inset'] = "0 auto" should not set the property value
+PASS e.style['text-decoration-inset'] = "auto none" should not set the property value
+PASS e.style['text-decoration-inset'] = "1px auto" should not set the property value
+PASS e.style['text-decoration-inset'] = "auto -1px" should not set the property value
+PASS e.style['text-decoration-inset'] = "10%" should not set the property value
+PASS e.style['text-decoration-inset'] = "45deg" should not set the property value
+

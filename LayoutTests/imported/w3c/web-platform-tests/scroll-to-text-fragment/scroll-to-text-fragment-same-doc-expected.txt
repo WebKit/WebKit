@@ -1,0 +1,5 @@
+This is a test page
+
+PASS Activated for same-document window.location setter
+PASS Activated for same-document window.location.replace
+

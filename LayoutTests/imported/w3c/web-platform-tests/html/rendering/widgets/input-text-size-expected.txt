@@ -1,0 +1,8 @@
+
+
+PASS A misssing attribute is equivalent to size=20
+PASS An invalid attribute value is equivalent to size=20
+PASS The width depends on a size attribute
+PASS Size attribute value affects layout-dependent computed style
+PASS Size attribute value is not a presentational hint
+

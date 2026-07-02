@@ -1,0 +1,65 @@
+/*
+ *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#pragma once
+
+#include "CommonIdentifiers.h"
+#include "InternalFunction.h"
+#include "RegExp.h"
+#include "RegExpCachedResult.h"
+#include "RegExpObject.h"
+
+namespace JSC {
+
+class RegExpPrototype;
+class GetterSetter;
+
+class RegExpConstructor final : public InternalFunction {
+public:
+    typedef InternalFunction Base;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
+    {
+        RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm)) RegExpConstructor(vm, structure);
+        constructor->finishCreation(vm, regExpPrototype);
+        return constructor;
+    }
+
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    DECLARE_INFO;
+
+private:
+    RegExpConstructor(VM&, Structure*);
+    void finishCreation(VM&, RegExpPrototype*);
+};
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(RegExpConstructor, InternalFunction);
+
+JSObject* constructRegExp(JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = JSValue());
+RegExpObject* regExpCreate(JSGlobalObject*, JSValue newTarget, JSValue patternArg, JSValue flagsArg);
+RegExpObject* regExpCreate(JSGlobalObject*, JSValue newTarget, const String& pattern, OptionSet<Yarr::Flags>);
+
+ALWAYS_INLINE bool isRegExp(VM&, JSGlobalObject*, JSValue); // Defined in RegExpConstructorInlines.h
+
+JSC_DECLARE_HOST_FUNCTION(esSpecRegExpCreate);
+JSC_DECLARE_HOST_FUNCTION(esSpecIsRegExp);
+
+} // namespace JSC

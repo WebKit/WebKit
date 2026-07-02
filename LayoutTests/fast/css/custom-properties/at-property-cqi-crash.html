@@ -1,0 +1,16 @@
+
+<style>
+  @property --v {
+    syntax: '<length-percentage>';
+    inherits: false;
+    initial-value: calc(min(0px, 0cqi) * 0 + 1mm + 0%);
+  }
+  body {
+    width: var(--v);
+  }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+This test passes if it doesn't crash.

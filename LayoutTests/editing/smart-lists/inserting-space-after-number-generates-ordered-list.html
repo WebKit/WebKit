@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test-period" contenteditable></div>
+<div id="test-paren" contenteditable></div>
+<script>
+Markup.description('Typing a single digit followed by "." or ")" plus space at the start of two consecutive lines should auto-convert them into an ordered (decimal) list. Both delimiters are accepted.');
+
+var periodTarget = document.getElementById('test-period');
+periodTarget.focus();
+[...'1. Hello\n2. World'].forEach(typeCharacterCommand);
+Markup.dump('test-period', 'Period delimiter');
+
+var parenTarget = document.getElementById('test-paren');
+parenTarget.focus();
+[...'1) Hello\n2) World'].forEach(typeCharacterCommand);
+Markup.dump('test-paren', 'Parenthesis delimiter');
+</script>
+</body>
+</html>

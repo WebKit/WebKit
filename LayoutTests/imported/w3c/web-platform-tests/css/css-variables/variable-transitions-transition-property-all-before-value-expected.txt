@@ -1,0 +1,7 @@
+This text should transition from blue to green over a period of 1 second.
+
+PASS Verify CSS variable value before transition
+PASS Verify substituted color value before transition
+PASS Verify CSS variable value after transition
+PASS Verify substituted color value after transition
+

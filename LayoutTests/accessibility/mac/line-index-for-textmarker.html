@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea id="textarea">abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789</textarea>
+<br>
+<div contenteditable="true" id="contenteditable">abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789</div>
+<br>
+
+<script>
+    description("Test for lineIndexForTextMarker in editable text elements. The text contains soft and hard linebreaks.");
+
+    function logLineIndexesForElement(elementID) {
+        debug(`${elementID}:`);
+        var p = accessibilityController.accessibleElementById(elementID).children[0];
+        var range = p.textMarkerRangeForElement(p);
+        var length = p.textMarkerRangeLength(range);
+        var current = p.startTextMarkerForTextMarkerRange(range);
+        let output = "";
+        for (let i = 0; i < length; ++i) {
+            let character = p.stringForTextMarkerRange(p.textMarkerRangeForMarkers(current, p.nextTextMarker(current)));
+            output += `${i} ${character} ${p.lineIndexForTextMarker(current)}\n`;
+            current = p.nextTextMarker(current);
+        }
+        debug(output);
+    }
+
+    if (window.accessibilityController) {
+        logLineIndexesForElement("textarea");
+        logLineIndexesForElement("contenteditable");
+    }
+</script>
+</body>
+</html>

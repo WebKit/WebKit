@@ -1,0 +1,14 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+EXPECTED (source.streaming == 'true') OK
+EVENT(startstreaming)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+EVENT(endstreaming)
+EXPECTED (source.streaming == 'false') OK
+EVENT(startstreaming)
+EXPECTED (source.streaming == 'true') OK
+END OF TEST
+

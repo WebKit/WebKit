@@ -1,0 +1,3 @@
+This is a test for Bug 65637: Crash beneath PlatformCALayerWinInternal::updateTiles when zooming on Google Maps. The test passes if the browser does not crash.
+
+Did you crash?

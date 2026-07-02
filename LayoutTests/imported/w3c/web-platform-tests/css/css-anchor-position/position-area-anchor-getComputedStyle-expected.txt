@@ -1,0 +1,6 @@
+
+PASS Offsets for top right positioned
+PASS Offsets for bottom right positioned
+PASS Offsets for bottom left positioned
+PASS Offsets for top left positioned
+

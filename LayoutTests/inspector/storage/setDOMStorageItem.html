@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/storage-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMStorage.setDOMStorageItem");
+
+    suite.addTestCase({
+        name: "DOMStorage.setDOMStorageItem.Session",
+        description: "Test that DOMStorage.setDOMStorageItem works with Session storage.",
+        async test() {
+            let sessionStorage = WI.domStorageManager.domStorageObjects.find((x) => !x.isLocalStorage());
+            InspectorTest.expectThat(sessionStorage, "Should have a DOMStorageObject for sessionStorage.");
+
+            await InspectorTest.Storage.logEntries(sessionStorage);
+
+            InspectorTest.log("Setting key 'asd' with value 'new'...");
+            await sessionStorage.setItem("asd", "new");
+
+            await InspectorTest.Storage.logEntries(sessionStorage);
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOMStorage.setDOMStorageItem.Local",
+        description: "Test that DOMStorage.setDOMStorageItem works with Local storage.",
+        async test() {
+            let localStorage = WI.domStorageManager.domStorageObjects.find((x) => x.isLocalStorage());
+            InspectorTest.expectThat(localStorage, "Should have a DOMStorageObject for localStorage.");
+
+            await InspectorTest.Storage.logEntries(localStorage);
+
+            InspectorTest.log("Setting key 'asd' with value 'new'...");
+            await localStorage.setItem("asd", "new");
+
+            await InspectorTest.Storage.logEntries(localStorage);
+        },
+    });
+
+    InspectorTest.evaluateInPage("clearStorages()", () => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for DOMStorage.setDOMStorageItem.</p>
+</body>
+</html>

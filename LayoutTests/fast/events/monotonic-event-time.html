@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+var lastTimeStamp = undefined;
+
+function mouseDown(event)
+{
+    if (typeof(lastTimeStamp) != 'undefined') {
+        shouldBeTrue('lastTimeStamp < event.timeStamp');
+    }
+    lastTimeStamp = event.timeStamp;
+}
+
+function test()
+{
+    description(`This test checks if DOM event timestamps are monotonically
+    increasing when leaping forward.`);
+
+    if (window.eventSender) {
+        var testEle = document.getElementById("target");
+        eventSender.mouseMoveTo(testEle.offsetLeft+testEle.offsetWidth/2, testEle.offsetTop+testEle.offsetHeight/2);
+        testClick();
+    } else if (window.testRunner) {
+        testFailed('This test requires eventSender');
+    }
+}
+
+function testClick()
+{
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    for (var i = 1; i < 5; i++) {
+        eventSender.leapForward(1000);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+</head>
+<body onload="test()">
+
+<div id="target" style="width: 100px; height: 100px; background: red;" onmousedown="mouseDown(event)"></div>
+</body>
+</html>

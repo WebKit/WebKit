@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<form id="testForm" action="" method="GET" style="display:none">
+<input type="text" name="title" value="foo">
+<button type="submit" name="action" value="submit" id="testButton">Submit</button>
+</form>
+<script>
+description("Tests that SubmitEvent.submitter property is properly set for <button type='submit'>.");
+jsTestIsAsync = true;
+
+onload = () => {
+    testButton =  document.getElementById("testButton");
+    document.getElementById("testForm").onsubmit = (_submitEvent) => {
+        submitEvent = _submitEvent;
+        shouldBe("submitEvent.submitter", "testButton");
+        finishJSTest();
+    };
+    testButton.click();
+};
+</script>
+</body>
+</html>

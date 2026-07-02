@@ -1,0 +1,9 @@
+
+PASS Upgrade in tree order in the same tree scope
+PASS Upgrade in shadow-including tree order across tree scopes
+PASS Upgrade order does not depend on shadow root attach order
+PASS Upgrade in association order across documents, then tree order in each document
+PASS Upgrade order is not affected by DOM order between child frames
+PASS Upgrade order is affected by shadow tree adoption across documents
+PASS Elements in the "owner" window of a scoped registry are not always upgraded first
+

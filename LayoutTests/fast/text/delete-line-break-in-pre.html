@@ -1,0 +1,9 @@
+<style>
+#text { white-space:pre-wrap; }
+</style>
+<div><span id=text></span></div>
+<script>
+text.textContent = "a\nb\n\nc\n";
+text.offsetWidth;
+text.firstChild.deleteData(3, 1);
+</script>

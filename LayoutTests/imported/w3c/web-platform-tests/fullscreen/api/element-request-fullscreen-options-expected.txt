@@ -1,0 +1,3 @@
+
+PASS requestFullscreen() with invalid navigationUI values
+

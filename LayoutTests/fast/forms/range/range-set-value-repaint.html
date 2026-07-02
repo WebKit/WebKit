@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-30; totalPixels=0-81">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+.sc { /* slider container, size not dependent on content */
+width: 200px;
+height: 32px;
+border: solid 1px;
+display: flex;
+align-items: center;
+}
+.s { /* slider */
+width: 160px;
+height: 16px;
+overflow: hidden;
+}
+</style>
+</head>
+<body>
+<!-- id contains "initial_target" values -->
+<div class="sc"><input class="s" type="range" min="0" max="100" id="0_100"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="0_80"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="0_50"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="0_25"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="0_1"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="0_0"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="100_0"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="100_50"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="100_80"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="100_99"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="10_90"><br></div><br>
+<div class="sc"><input class="s" type="range" min="0" max="100" id="90_10"><br></div><br>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    if (testRunner.dontForceRepaint)
+        testRunner.dontForceRepaint();
+}
+
+async function runTest() {
+    for (range of document.getElementsByTagName("input"))
+        range.value = range.id.split("_")[0];
+
+    var inputs = document.getElementsByTagName("input");
+    for (var input of inputs) {
+        // Force rendering previous changes, so that large groups of dirty rects don't get united.
+        await UIHelper.renderingUpdate();
+        await UIHelper.renderingUpdate();
+        input.value = input.id.split("_")[1];
+    }
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>
+</body>
+</html>

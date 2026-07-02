@@ -1,0 +1,17 @@
+Tests that Network.getResponseBody works for CSS and JS subresources loaded within a cross-origin iframe.
+
+
+== Running test suite: Network.getResponseBody.CrossOriginIframe.Subresources
+-- Running test case: Network.getResponseBody.CrossOriginIframe.Subresources
+Child frame added: http://localhost:8000/inspector/network/resources/cross-origin-iframe-with-subresources.html
+Subresource added: http://localhost:8000/inspector/network/resources/stylesheet.css
+Subresource added: http://localhost:8000/inspector/network/resources/script.js
+Checking css subresource...
+PASS: css: Should not have an error retrieving content.
+PASS: css: Content should not be base64 encoded.
+PASS: css: Content should not be empty.
+Checking js subresource...
+PASS: js: Should not have an error retrieving content.
+PASS: js: Content should not be base64 encoded.
+PASS: js: Content should not be empty.
+

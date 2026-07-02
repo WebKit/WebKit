@@ -1,0 +1,12 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+  window.testRunner.dumpAsText();
+</script>
+</head>
+<body onload="document.forms[0].reset()">
+<form method=POST onreset="event.preventDefault(); if (event.defaultPrevented) document.getElementById('result').innerHTML = 'PASS'; return false">
+</form>
+<div id="result">FAIL</div>
+</body>

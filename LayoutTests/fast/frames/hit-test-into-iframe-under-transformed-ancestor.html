@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .transformed-ancestor {
+            /* Forces hitTestLayerByApplyingTransform in the outer document when
+               the hit test descends through this layer. */
+            transform: scale(1);
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 400px;
+            height: 300px;
+        }
+
+        iframe {
+            display: block;
+            width: 400px;
+            height: 300px;
+            border: none;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        let hitNode;
+        let childInIframe;
+        window.addEventListener('load', () => {
+            description('Tests that a point-based hit test descending into an iframe whose ancestor has a CSS transform does not trigger the rect-based-through-transform assertion in RenderLayer::hitTestList.');
+
+            if (!window.internals) {
+                testFailed('This test requires window.internals.');
+                return;
+            }
+
+            const iframe = document.getElementsByTagName('iframe')[0];
+            const bounds = iframe.getBoundingClientRect();
+            childInIframe = iframe.contentDocument.getElementById('child');
+
+            // Aim the hit test at a point inside the iframe that's also inside
+            // the child <div>. Use a point-based request that allows descending
+            // into child frames but does NOT collect multiple elements.
+            hitNode = internals.nodeFromPointIncludingChildFrames(document, Math.floor(bounds.x + bounds.width / 2), Math.floor(bounds.y + bounds.height / 2));
+
+            // Before the fix, this whole sequence would have already asserted
+            // in RenderLayer::hitTestList. Surviving to this line is most of
+            // what the test is checking; we additionally assert that we landed
+            // in the iframe's child div rather than on the iframe itself.
+            shouldBe('hitNode', 'childInIframe');
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="transformed-ancestor">
+        <iframe srcdoc="
+        <style>
+            html, body { margin: 0; width: 100%; height: 100%; }
+            /* A composited descendant forces hitTestList to run inside the
+               subframe, which is where the assertion used to fire. */
+            #child {
+                position: absolute;
+                top: 50px;
+                left: 50px;
+                width: 200px;
+                height: 150px;
+                background-color: green;
+                will-change: transform;
+            }
+        </style>
+        <body>
+            <div id='child'></div>
+        </body>
+        "></iframe>
+    </div>
+<div id="console"></div>
+</body>
+</html>

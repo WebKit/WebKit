@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that billingAddress member of ApplePayPaymentMethod is populated in paymentmethodchange callback");
+
+window.jsTestIsAsync = true;
+
+function validPaymentMethod() {
+    return {
+        supportedMethods: 'https://apple.com/apple-pay',
+        data: {
+            version: 2,
+            merchantIdentifier: '',
+            countryCode: 'US',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+        },
+    }
+}
+
+function validPaymentDetails() {
+    return {
+        total: {
+            label: 'Total',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        },
+        displayItems: [{
+            label: 'Item',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        }],
+    }
+}
+
+const expectedGivenName = 'Web';
+const expectedFamilyName = 'Test';
+const expectedName = [expectedGivenName, expectedFamilyName].join(' ');
+const expectedEmailAddress = 'wpt@w3.org';
+const expectedPhoneNumber = '12345678910';
+const expectedAddressLines = ['1 wpt street'];
+const expectedSubLocality = 'AA';
+const expectedLocality = 'BB';
+const expectedPostalCode = '12345';
+const expectedSubAdministrativeArea = 'CC';
+const expectedAdministrativeArea = 'DD';
+const expectedCountry = 'United States';
+const expectedCountryCode = 'US';
+
+function validBillingContact() {
+    return {
+        phoneNumber: expectedPhoneNumber,
+        emailAddress: expectedEmailAddress,
+        givenName: expectedGivenName,
+        familyName: expectedFamilyName,
+        phoneticGivenName: expectedGivenName,
+        phoneticFamilyName: expectedFamilyName,
+        addressLines: expectedAddressLines,
+        subLocality: expectedSubLocality,
+        locality: expectedLocality,
+        postalCode: expectedPostalCode,
+        subAdministrativeArea: expectedSubAdministrativeArea,
+        administrativeArea: expectedAdministrativeArea,
+        country: expectedCountry,
+        countryCode: expectedCountryCode,
+    };
+}
+const paymentType = "visa";
+const paymentNetwork = "credit";
+
+async function runTests() {
+    await new Promise((resolve, reject) => {
+        debug("Testing that PaymentMethodChangeEvent fires with populated billing address field.");
+
+        activateThen(() => {
+            var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails(), {requestBillingAddress: true});
+            try {
+                paymentRequest.onpaymentmethodchange = (event) => {
+                    shouldBe("event.methodName", "'https://apple.com/apple-pay'");
+                    shouldBe("event.methodDetails.type", "'credit'");
+                    shouldBe("event.methodDetails.billingContact.phoneNumber", "expectedPhoneNumber");
+                    shouldBe("event.methodDetails.billingContact.emailAddress", "expectedEmailAddress");
+                    shouldBe("event.methodDetails.billingContact.givenName", "expectedGivenName");
+                    shouldBe("event.methodDetails.billingContact.familyName", "expectedFamilyName");
+                    shouldBe("event.methodDetails.billingContact.phoneticGivenName", "expectedGivenName");
+                    shouldBe("event.methodDetails.billingContact.phoneticFamilyName", "expectedFamilyName");
+                    shouldBe("event.methodDetails.billingContact.addressLines", "expectedAddressLines");
+                    shouldBe("event.methodDetails.billingContact.subLocality", "expectedSubLocality");
+                    shouldBe("event.methodDetails.billingContact.locality", "expectedLocality");
+                    shouldBe("event.methodDetails.billingContact.postalCode", "expectedPostalCode");
+                    shouldBe("event.methodDetails.billingContact.subAdministrativeArea", "expectedSubAdministrativeArea");
+                    shouldBe("event.methodDetails.billingContact.country", "expectedCountry");
+                    shouldBe("event.methodDetails.billingContact.countryCode", "expectedCountryCode");
+                    shouldBe("event.methodDetails.network","'visa'");
+                    shouldBe("event.methodDetails.type","'credit'");
+                    event.updateWith({});
+                    resolve();
+                };
+
+                paymentRequest.show();
+                internals.mockPaymentCoordinator.changePaymentMethod({ type: "credit", network: "visa",billingContact: validBillingContact()});
+            } catch (error) {
+            }
+        });
+    });
+    debug("");
+
+    finishJSTest();
+}
+runTests();
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

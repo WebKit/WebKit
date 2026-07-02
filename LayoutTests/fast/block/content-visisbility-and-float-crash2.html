@@ -1,0 +1,16 @@
+<style>
+audio {
+  float: left;
+  -webkit-shape-outside: url(#blank);
+  padding-top: 8vmax;
+}
+details {
+ overflow: -webkit-paged-x;
+ inline-size: fit-content;
+}
+</style>
+<details>
+<audio controls="false" pathname="blank">PASS if no crash or assert.</audio>
+<script>
+window.testRunner?.dumpAsText();
+</script>

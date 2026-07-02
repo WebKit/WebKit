@@ -1,0 +1,10 @@
+This tests that if try to use a non-rendered node as your labelledby element, it won't crash and it will work.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS platformValueForW3CName(button) is "TITLE"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

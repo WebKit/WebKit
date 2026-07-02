@@ -1,0 +1,3 @@
+
+PASS The released attribute inside an event handler
+

@@ -1,0 +1,17 @@
+
+PASS func: withWebGL, angle: 90, imageBitmap: false, subImage: false, unpackFlipY: true
+PASS func: withWebGL, angle: 90, imageBitmap: false, subImage: true, unpackFlipY: false
+PASS func: withWebGL, angle: 90, imageBitmap: false, subImage: true, unpackFlipY: true
+PASS func: withWebGL, angle: 90, imageBitmap: true, subImage: false, unpackFlipY: false
+PASS func: withWebGL, angle: 90, imageBitmap: true, subImage: false, unpackFlipY: true
+PASS func: withWebGL, angle: 90, imageBitmap: true, subImage: true, unpackFlipY: false
+PASS func: withWebGL, angle: 90, imageBitmap: true, subImage: true, unpackFlipY: true
+PASS func: withWebGL, angle: 180, imageBitmap: false, subImage: false, unpackFlipY: false
+PASS func: withWebGL, angle: 180, imageBitmap: false, subImage: false, unpackFlipY: true
+PASS func: withWebGL, angle: 180, imageBitmap: false, subImage: true, unpackFlipY: false
+PASS func: withWebGL, angle: 180, imageBitmap: false, subImage: true, unpackFlipY: true
+PASS func: withWebGL, angle: 180, imageBitmap: true, subImage: false, unpackFlipY: false
+PASS func: withWebGL, angle: 180, imageBitmap: true, subImage: false, unpackFlipY: true
+PASS func: withWebGL, angle: 180, imageBitmap: true, subImage: true, unpackFlipY: false
+PASS func: withWebGL, angle: 180, imageBitmap: true, subImage: true, unpackFlipY: true
+

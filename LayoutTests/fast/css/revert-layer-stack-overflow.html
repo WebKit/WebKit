@@ -1,0 +1,15 @@
+<style>
+  @layer l0 {
+    html {
+      width: revert;
+    }
+  }
+  html {
+    height: revert-layer;
+  }
+</style>
+This test passes if it doesn't crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

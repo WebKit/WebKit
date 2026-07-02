@@ -1,0 +1,9 @@
+This test verifies that the when scroll happens in the UI process, frame geometry is updated.
+
+PASS: accessibilityController.accessibleElementById('target').y < initialY === true
+PASS: delta > 400 && delta < 600 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Target

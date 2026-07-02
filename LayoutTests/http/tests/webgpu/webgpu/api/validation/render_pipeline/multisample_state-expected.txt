@@ -1,0 +1,12 @@
+
+PASS :count:isAsync=false
+PASS :count:isAsync=true
+PASS :alpha_to_coverage,count:isAsync=false;alphaToCoverageEnabled=false
+PASS :alpha_to_coverage,count:isAsync=false;alphaToCoverageEnabled=true
+PASS :alpha_to_coverage,count:isAsync=true;alphaToCoverageEnabled=false
+PASS :alpha_to_coverage,count:isAsync=true;alphaToCoverageEnabled=true
+PASS :alpha_to_coverage,sample_mask:isAsync=false;alphaToCoverageEnabled=false
+PASS :alpha_to_coverage,sample_mask:isAsync=false;alphaToCoverageEnabled=true
+PASS :alpha_to_coverage,sample_mask:isAsync=true;alphaToCoverageEnabled=false
+PASS :alpha_to_coverage,sample_mask:isAsync=true;alphaToCoverageEnabled=true
+

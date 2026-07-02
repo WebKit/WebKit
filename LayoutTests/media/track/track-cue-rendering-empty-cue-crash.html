@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+        function startTest()
+        {
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+
+            consoleWrite("** Add a text track to the video element **");
+            video.addTextTrack("captions", "regular captions track", "en");
+
+            consoleWrite("** Add an empty cue to the track **");
+            video.textTracks[0].addCue(new VTTCue(0.00, 4.00, ""));
+
+            consoleWrite("** Play the video and render the cue **");
+            video.play();
+
+            consoleWrite("");
+            consoleWrite("No crash. PASS.");
+            consoleWrite("");
+
+            endTest();
+          }
+        </script>
+    </head>
+
+    <body onload="startTest()">
+        <p>Tests that having empty cues does not crash the browser.</p>
+        <video controls />
+    </body>
+</html>

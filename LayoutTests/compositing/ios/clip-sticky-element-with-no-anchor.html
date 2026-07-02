@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ContentInsetBackgroundFillEnabled=true showsScrollIndicators=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    margin: 0;
+}
+
+main {
+    position: sticky;
+    box-sizing: border-box;
+    width: 100%;
+    line-height: 1.8;
+    padding: 1em;
+    background: gray;
+    height: 4000vh;
+}
+
+nav {
+    position: fixed;
+    top: -150px;
+    width: 100%;
+    height: 200px;
+    background: white;
+    z-index: 100;
+}
+</style>
+<script>
+addEventListener("load", async () => {
+    window.testRunner?.waitUntilDone();
+    await UIHelper.setObscuredInsets(100, 0, 0, 0);
+    await UIHelper.renderingUpdate();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(150, 300)
+        .move(150, 100, 0.25)
+        .end()
+        .takeResult());
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+    <nav></nav>
+    <main></main>
+</body>
+</html>

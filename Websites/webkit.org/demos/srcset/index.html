@@ -1,0 +1,64 @@
+<html>
+<head>
+  <title>Image srcset attribute example</title>
+  <style>
+  body {
+      font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+      font-size: 120%;
+      line-height: 1.5;
+      margin: 2em 2em;
+      padding: 0;
+      background-color: #E2E6F5;
+  }
+
+  img {
+      width: 400px;
+      height: 400px;
+  }
+
+  pre {
+      padding: 1em 3em;
+      border: 1px solid #ccc;
+      background-color: #ddd;
+  }
+
+  p {
+      margin: 1em 0;
+  }
+
+  code {
+      font-size: 115%;
+      font-weight: bold;
+      color: #0F5426;
+  }
+  </style>
+</head>
+<body>
+
+<h1>
+    The <code>srcset</code> Attribute.
+</h1>
+
+<p>
+    Below is a image (<code>img</code>) element with both a regular <code>src</code> attribute
+    as well as a <code>srcset</code> attribute. There is a stylesheet that sets the dimensions
+    of images to 400x400px. On browsers without <code>srcset</code> support, the value of
+    the <code>src</code> attribute will be used as the image src [<a href="image-src.png">default image</a>].
+    On regular resolution displays, the 1x variant of the <code>srcset</code> will be used
+    [<a href="image-1x.png">1x image</a>]. On displays with 2 device pixels per CSS pixel,
+    the 2x variant of the <code>srcset</code> will be used [<a href="image-2x.png">2x image</a>]. Similarly,
+    there is a <a href="image-3x.png">3x image</a>, and a <a href="image-4x.png">4x image</a>.
+</p>
+
+<img src="image-src.png" srcset="image-1x.png 1x, image-2x.png 2x, image-3x.png 3x, image-4x.png 4x" alt="Example of the srcset attribute. Image contains a coloured striped pattern with some inline text that indicates which of the candidate images were selected.">
+
+<p>
+    The HTML for the above image is:
+</p>
+
+<pre>
+&lt;img src="image-src.png" srcset="image-1x.png 1x, image-2x.png 2x,
+                                 image-3x.png 3x, image-4x.png 4x"&gt;
+</pre>
+</body>
+</html>

@@ -1,0 +1,6 @@
+2d.path.roundrect.4.radii.2.dompoint
+Verify that when four radii are given to roundRect(), the second radius, specified as a DOMPoint, applies to the top-right corner.
+Actual output:
+
+PASS Verify that when four radii are given to roundRect(), the second radius, specified as a DOMPoint, applies to the top-right corner.
+

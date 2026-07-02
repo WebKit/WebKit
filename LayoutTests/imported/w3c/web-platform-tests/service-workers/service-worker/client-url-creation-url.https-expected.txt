@@ -1,0 +1,12 @@
+
+PASS No navigation creation URL is same as window URL
+PASS Fragment only navigation doesn't change creation URL
+PASS Pushstate doesn't change creation URL
+PASS Replacestate doesn't change creation URL
+PASS Going back over pushstate to other pushstate via back
+PASS Query navigation changes creation URL
+PASS Reloading doesn't change creation URL
+PASS Reloading pushstate URL changes creation URL
+PASS Going back over pushstate to creation URL
+PASS Going back to new document changes creation URL
+

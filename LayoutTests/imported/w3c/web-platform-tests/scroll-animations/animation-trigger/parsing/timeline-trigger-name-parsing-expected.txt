@@ -1,0 +1,30 @@
+
+FAIL e.style['timeline-trigger-name'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "--abc" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "  --abc" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "--aBc" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "--foo, --bar" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "--bar, --foo" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "none, none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['timeline-trigger-name'] = "--a, none, --b" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL Property timeline-trigger-name value 'none' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value '--abc' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value '  --abc' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value '--aBc' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value '--foo, --bar' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value '--bar, --foo' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value 'none, none' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-trigger-name value '--a, none, --b' assert_true: timeline-trigger-name doesn't seem to be supported in the computed style expected true got false
+PASS e.style['timeline-trigger-name'] = "auto" should not set the property value
+PASS e.style['timeline-trigger-name'] = "abc" should not set the property value
+PASS e.style['timeline-trigger-name'] = "default" should not set the property value
+PASS e.style['timeline-trigger-name'] = "10px" should not set the property value
+PASS e.style['timeline-trigger-name'] = "foo bar" should not set the property value
+PASS e.style['timeline-trigger-name'] = "\"foo\" \"bar\"" should not set the property value
+PASS e.style['timeline-trigger-name'] = "rgb(1, 2, 3)" should not set the property value
+PASS e.style['timeline-trigger-name'] = "#fefefe" should not set the property value
+

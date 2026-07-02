@@ -1,0 +1,6 @@
+
+PASS Throw DataError when using a invalid key
+PASS Throw InvalidStateError when the index is deleted
+PASS Throw TransactionInactiveError on aborted transaction
+PASS Throw InvalidStateError on index deleted by aborted upgrade
+

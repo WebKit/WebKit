@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`route.playbackRate = 1`);
+                run(`route.timeRange = { start: 0, duration: 60 }`);
+                run(`video.play()`);
+                await urlPromise;
+
+                const canplaythroughPromise = waitFor(video, 'canplaythrough');
+                run(`route.ready = true`);
+                await canplaythroughPromise;
+
+                await waitFor(video, 'timeupdate');
+                run(`route.currentPlaybackPosition = 30`);
+                // The timebase re-anchors at 30, so currentTime should jump to ~30.
+                // At rate 1 from 0, reaching 29 would take 29s, far beyond the timeout.
+                await waitForConditionOrTimeout('video.currentTime > 29', false, 2000);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that currentTime updates after a seek driven by the route's currentPlaybackPosition.</p>
+    </body>
+</html>

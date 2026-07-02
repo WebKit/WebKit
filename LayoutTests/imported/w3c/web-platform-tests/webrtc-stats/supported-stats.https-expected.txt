@@ -1,0 +1,287 @@
+
+PASS getStats succeeds
+PASS All references resolve
+PASS Validating stats
+PASS codec's payloadType
+PASS codec's transportId
+PASS codec's mimeType
+PASS codec's clockRate
+PASS codec's channels
+PASS codec's sdpFmtpLine
+PASS codec's timestamp
+PASS codec's type
+PASS codec's id
+PASS inbound-rtp's trackIdentifier
+PASS inbound-rtp's mid
+PASS inbound-rtp's remoteId
+PASS inbound-rtp's framesDecoded
+PASS inbound-rtp's keyFramesDecoded
+FAIL inbound-rtp's framesRendered assert_true: Is framesRendered present expected true got false
+PASS inbound-rtp's framesDropped
+PASS inbound-rtp's frameWidth
+PASS inbound-rtp's frameHeight
+PASS inbound-rtp's framesPerSecond
+FAIL inbound-rtp's qpSum assert_true: Is qpSum present expected true got false
+PASS inbound-rtp's totalDecodeTime
+PASS inbound-rtp's totalInterFrameDelay
+PASS inbound-rtp's totalSquaredInterFrameDelay
+PASS inbound-rtp's pauseCount
+PASS inbound-rtp's totalPausesDuration
+PASS inbound-rtp's freezeCount
+PASS inbound-rtp's totalFreezesDuration
+PASS inbound-rtp's lastPacketReceivedTimestamp
+PASS inbound-rtp's headerBytesReceived
+PASS inbound-rtp's packetsDiscarded
+NOTRUN inbound-rtp's fecBytesReceived inbound-rtp.fecBytesReceived marked as not testable.
+PASS inbound-rtp's fecPacketsReceived
+PASS inbound-rtp's fecPacketsDiscarded
+PASS inbound-rtp's bytesReceived
+PASS inbound-rtp's nackCount
+PASS inbound-rtp's firCount
+PASS inbound-rtp's pliCount
+PASS inbound-rtp's totalProcessingDelay
+PASS inbound-rtp's estimatedPlayoutTimestamp
+PASS inbound-rtp's jitterBufferDelay
+PASS inbound-rtp's jitterBufferTargetDelay
+PASS inbound-rtp's jitterBufferEmittedCount
+PASS inbound-rtp's jitterBufferMinimumDelay
+PASS inbound-rtp's totalSamplesReceived
+PASS inbound-rtp's concealedSamples
+PASS inbound-rtp's silentConcealedSamples
+PASS inbound-rtp's concealmentEvents
+PASS inbound-rtp's insertedSamplesForDeceleration
+PASS inbound-rtp's removedSamplesForAcceleration
+PASS inbound-rtp's audioLevel
+PASS inbound-rtp's totalAudioEnergy
+PASS inbound-rtp's totalSamplesDuration
+PASS inbound-rtp's framesReceived
+FAIL inbound-rtp's decoderImplementation assert_true: Is decoderImplementation present expected true got false
+FAIL inbound-rtp's playoutId assert_true: Is playoutId present expected true got false
+FAIL inbound-rtp's powerEfficientDecoder assert_true: Is powerEfficientDecoder present expected true got false
+PASS inbound-rtp's framesAssembledFromMultiplePackets
+PASS inbound-rtp's totalAssemblyTime
+PASS inbound-rtp's retransmittedPacketsReceived
+PASS inbound-rtp's retransmittedBytesReceived
+PASS inbound-rtp's rtxSsrc
+NOTRUN inbound-rtp's fecSsrc inbound-rtp.fecSsrc marked as not testable.
+FAIL inbound-rtp's totalCorruptionProbability assert_true: Is totalCorruptionProbability present expected true got false
+FAIL inbound-rtp's totalSquaredCorruptionProbability assert_true: Is totalSquaredCorruptionProbability present expected true got false
+FAIL inbound-rtp's corruptionMeasurements assert_true: Is corruptionMeasurements present expected true got false
+PASS inbound-rtp's packetsReceived
+FAIL inbound-rtp's packetsReceivedWithEct1 assert_true: Is packetsReceivedWithEct1 present expected true got false
+FAIL inbound-rtp's packetsReceivedWithCe assert_true: Is packetsReceivedWithCe present expected true got false
+FAIL inbound-rtp's packetsReportedAsLost assert_true: Is packetsReportedAsLost present expected true got false
+FAIL inbound-rtp's packetsReportedAsLostButRecovered assert_true: Is packetsReportedAsLostButRecovered present expected true got false
+PASS inbound-rtp's packetsLost
+PASS inbound-rtp's jitter
+PASS inbound-rtp's ssrc
+PASS inbound-rtp's kind
+PASS inbound-rtp's transportId
+PASS inbound-rtp's codecId
+PASS inbound-rtp's timestamp
+PASS inbound-rtp's type
+PASS inbound-rtp's id
+PASS outbound-rtp's mid
+PASS outbound-rtp's mediaSourceId
+PASS outbound-rtp's remoteId
+NOTRUN outbound-rtp's rid outbound-rtp.rid marked as not testable.
+FAIL outbound-rtp's encodingIndex assert_true: Is encodingIndex present expected true got false
+PASS outbound-rtp's headerBytesSent
+PASS outbound-rtp's retransmittedPacketsSent
+PASS outbound-rtp's retransmittedBytesSent
+PASS outbound-rtp's rtxSsrc
+PASS outbound-rtp's targetBitrate
+PASS outbound-rtp's totalEncodedBytesTarget
+PASS outbound-rtp's frameWidth
+PASS outbound-rtp's frameHeight
+PASS outbound-rtp's framesPerSecond
+PASS outbound-rtp's framesSent
+PASS outbound-rtp's hugeFramesSent
+PASS outbound-rtp's framesEncoded
+PASS outbound-rtp's keyFramesEncoded
+PASS outbound-rtp's qpSum
+FAIL outbound-rtp's psnrSum assert_true: Is psnrSum present expected true got false
+FAIL outbound-rtp's psnrMeasurements assert_true: Is psnrMeasurements present expected true got false
+PASS outbound-rtp's totalEncodeTime
+PASS outbound-rtp's totalPacketSendDelay
+PASS outbound-rtp's qualityLimitationReason
+PASS outbound-rtp's qualityLimitationDurations
+PASS outbound-rtp's qualityLimitationResolutionChanges
+PASS outbound-rtp's nackCount
+PASS outbound-rtp's firCount
+PASS outbound-rtp's pliCount
+FAIL outbound-rtp's encoderImplementation assert_true: Is encoderImplementation present expected true got false
+FAIL outbound-rtp's powerEfficientEncoder assert_true: Is powerEfficientEncoder present expected true got false
+PASS outbound-rtp's active
+FAIL outbound-rtp's scalabilityMode assert_true: Is scalabilityMode present expected true got false
+PASS outbound-rtp's packetsSent
+PASS outbound-rtp's bytesSent
+FAIL outbound-rtp's packetsSentWithEct1 assert_true: Is packetsSentWithEct1 present expected true got false
+PASS outbound-rtp's ssrc
+PASS outbound-rtp's kind
+PASS outbound-rtp's transportId
+PASS outbound-rtp's codecId
+PASS outbound-rtp's timestamp
+PASS outbound-rtp's type
+PASS outbound-rtp's id
+PASS remote-inbound-rtp's localId
+PASS remote-inbound-rtp's roundTripTime
+PASS remote-inbound-rtp's totalRoundTripTime
+PASS remote-inbound-rtp's fractionLost
+PASS remote-inbound-rtp's roundTripTimeMeasurements
+FAIL remote-inbound-rtp's packetsWithBleachedEct1Marking assert_true: Is packetsWithBleachedEct1Marking present expected true got false
+FAIL remote-inbound-rtp's packetsReceived assert_true: Is packetsReceived present expected true got false
+FAIL remote-inbound-rtp's packetsReceivedWithEct1 assert_true: Is packetsReceivedWithEct1 present expected true got false
+FAIL remote-inbound-rtp's packetsReceivedWithCe assert_true: Is packetsReceivedWithCe present expected true got false
+FAIL remote-inbound-rtp's packetsReportedAsLost assert_true: Is packetsReportedAsLost present expected true got false
+FAIL remote-inbound-rtp's packetsReportedAsLostButRecovered assert_true: Is packetsReportedAsLostButRecovered present expected true got false
+PASS remote-inbound-rtp's packetsLost
+PASS remote-inbound-rtp's jitter
+PASS remote-inbound-rtp's ssrc
+PASS remote-inbound-rtp's kind
+PASS remote-inbound-rtp's transportId
+PASS remote-inbound-rtp's codecId
+PASS remote-inbound-rtp's timestamp
+PASS remote-inbound-rtp's type
+PASS remote-inbound-rtp's id
+PASS remote-outbound-rtp's localId
+PASS remote-outbound-rtp's remoteTimestamp
+PASS remote-outbound-rtp's reportsSent
+FAIL remote-outbound-rtp's roundTripTime assert_true: Is roundTripTime present expected true got false
+PASS remote-outbound-rtp's totalRoundTripTime
+PASS remote-outbound-rtp's roundTripTimeMeasurements
+PASS remote-outbound-rtp's packetsSent
+PASS remote-outbound-rtp's bytesSent
+FAIL remote-outbound-rtp's packetsSentWithEct1 assert_true: Is packetsSentWithEct1 present expected true got false
+PASS remote-outbound-rtp's ssrc
+PASS remote-outbound-rtp's kind
+PASS remote-outbound-rtp's transportId
+PASS remote-outbound-rtp's codecId
+PASS remote-outbound-rtp's timestamp
+PASS remote-outbound-rtp's type
+PASS remote-outbound-rtp's id
+PASS peer-connection's dataChannelsOpened
+PASS peer-connection's dataChannelsClosed
+PASS peer-connection's timestamp
+PASS peer-connection's type
+PASS peer-connection's id
+PASS data-channel's label
+PASS data-channel's protocol
+PASS data-channel's dataChannelIdentifier
+PASS data-channel's state
+PASS data-channel's messagesSent
+PASS data-channel's bytesSent
+PASS data-channel's messagesReceived
+PASS data-channel's bytesReceived
+PASS data-channel's timestamp
+PASS data-channel's type
+PASS data-channel's id
+PASS media-source's audioLevel
+PASS media-source's totalAudioEnergy
+PASS media-source's totalSamplesDuration
+NOTRUN media-source's echoReturnLoss media-source.echoReturnLoss marked as not testable.
+NOTRUN media-source's echoReturnLossEnhancement media-source.echoReturnLossEnhancement marked as not testable.
+FAIL media-source's width assert_true: Is width present expected true got false
+FAIL media-source's height assert_true: Is height present expected true got false
+PASS media-source's frames
+PASS media-source's framesPerSecond
+PASS media-source's trackIdentifier
+PASS media-source's kind
+PASS media-source's timestamp
+PASS media-source's type
+PASS media-source's id
+FAIL media-playout's kind assert_true: Is kind present expected true got false
+FAIL media-playout's synthesizedSamplesDuration assert_true: Is synthesizedSamplesDuration present expected true got false
+FAIL media-playout's synthesizedSamplesEvents assert_true: Is synthesizedSamplesEvents present expected true got false
+FAIL media-playout's totalSamplesDuration assert_true: Is totalSamplesDuration present expected true got false
+FAIL media-playout's totalPlayoutDelay assert_true: Is totalPlayoutDelay present expected true got false
+FAIL media-playout's totalSamplesCount assert_true: Is totalSamplesCount present expected true got false
+FAIL media-playout's timestamp assert_true: Is timestamp present expected true got false
+FAIL media-playout's type assert_true: Is type present expected true got false
+FAIL media-playout's id assert_true: Is id present expected true got false
+PASS transport's packetsSent
+PASS transport's packetsReceived
+PASS transport's bytesSent
+PASS transport's bytesReceived
+PASS transport's iceRole
+PASS transport's iceLocalUsernameFragment
+PASS transport's dtlsState
+PASS transport's iceState
+PASS transport's selectedCandidatePairId
+PASS transport's localCertificateId
+PASS transport's remoteCertificateId
+PASS transport's tlsVersion
+PASS transport's dtlsCipher
+PASS transport's dtlsRole
+PASS transport's srtpCipher
+PASS transport's selectedCandidatePairChanges
+FAIL transport's ccfbMessagesSent assert_true: Is ccfbMessagesSent present expected true got false
+FAIL transport's ccfbMessagesReceived assert_true: Is ccfbMessagesReceived present expected true got false
+PASS transport's timestamp
+PASS transport's type
+PASS transport's id
+PASS candidate-pair's transportId
+PASS candidate-pair's localCandidateId
+PASS candidate-pair's remoteCandidateId
+PASS candidate-pair's state
+PASS candidate-pair's nominated
+PASS candidate-pair's packetsSent
+PASS candidate-pair's packetsReceived
+PASS candidate-pair's bytesSent
+PASS candidate-pair's bytesReceived
+PASS candidate-pair's lastPacketSentTimestamp
+PASS candidate-pair's lastPacketReceivedTimestamp
+PASS candidate-pair's totalRoundTripTime
+PASS candidate-pair's currentRoundTripTime
+PASS candidate-pair's availableOutgoingBitrate
+NOTRUN candidate-pair's availableIncomingBitrate candidate-pair.availableIncomingBitrate marked as not testable.
+PASS candidate-pair's requestsReceived
+PASS candidate-pair's requestsSent
+PASS candidate-pair's responsesReceived
+PASS candidate-pair's responsesSent
+PASS candidate-pair's consentRequestsSent
+PASS candidate-pair's packetsDiscardedOnSend
+PASS candidate-pair's bytesDiscardedOnSend
+PASS candidate-pair's timestamp
+PASS candidate-pair's type
+PASS candidate-pair's id
+PASS local-candidate's transportId
+FAIL local-candidate's address assert_true: Is address present expected true got false
+PASS local-candidate's port
+PASS local-candidate's protocol
+PASS local-candidate's candidateType
+PASS local-candidate's priority
+NOTRUN local-candidate's url local-candidate.url marked as not testable.
+NOTRUN local-candidate's relayProtocol local-candidate.relayProtocol marked as not testable.
+PASS local-candidate's foundation
+NOTRUN local-candidate's relatedAddress local-candidate.relatedAddress marked as not testable.
+NOTRUN local-candidate's relatedPort local-candidate.relatedPort marked as not testable.
+PASS local-candidate's usernameFragment
+FAIL local-candidate's tcpType assert_true: Is tcpType present expected true got false
+PASS local-candidate's timestamp
+PASS local-candidate's type
+PASS local-candidate's id
+PASS remote-candidate's transportId
+FAIL remote-candidate's address assert_true: Is address present expected true got false
+PASS remote-candidate's port
+PASS remote-candidate's protocol
+PASS remote-candidate's candidateType
+PASS remote-candidate's priority
+NOTRUN remote-candidate's url remote-candidate.url marked as not testable.
+NOTRUN remote-candidate's relayProtocol remote-candidate.relayProtocol marked as not testable.
+PASS remote-candidate's foundation
+NOTRUN remote-candidate's relatedAddress remote-candidate.relatedAddress marked as not testable.
+NOTRUN remote-candidate's relatedPort remote-candidate.relatedPort marked as not testable.
+PASS remote-candidate's usernameFragment
+NOTRUN remote-candidate's tcpType remote-candidate.tcpType marked as not testable.
+PASS remote-candidate's timestamp
+PASS remote-candidate's type
+PASS remote-candidate's id
+PASS certificate's fingerprint
+PASS certificate's fingerprintAlgorithm
+PASS certificate's base64Certificate
+NOTRUN certificate's issuerCertificateId certificate.issuerCertificateId marked as not testable.
+PASS certificate's timestamp
+PASS certificate's type
+PASS certificate's id
+

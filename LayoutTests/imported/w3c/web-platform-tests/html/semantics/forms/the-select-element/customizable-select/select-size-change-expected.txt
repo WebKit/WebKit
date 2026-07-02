@@ -1,0 +1,4 @@
+
+
+PASS Changing the size attribute should not crash.
+

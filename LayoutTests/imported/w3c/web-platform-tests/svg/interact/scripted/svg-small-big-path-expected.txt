@@ -1,0 +1,7 @@
+
+PASS Hit-test on a path whose x/y ranges have different magnitude, path contains point at (5, 104)
+PASS Hit-test on a path whose x/y ranges have different magnitude, path contains point at (5, 107)
+PASS Hit-test on a path whose x/y ranges have different magnitude, path contains point at (5, 110)
+PASS Hit-test on a path whose x/y ranges have different magnitude, path does not contain point at (5, 103)
+PASS Hit-test on a path whose x/y ranges have different magnitude, path does not contain point at (5, 111)
+

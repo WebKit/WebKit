@@ -1,0 +1,8 @@
+
+PASS Same events are ordered by elements
+PASS Same events on pseudo-elements follow the prescribed order
+PASS Same events on pseudo-elements follow the prescribed order (::marker)
+PASS Start and iteration events are ordered by time
+PASS Iteration and end events are ordered by time
+PASS Start and end events are sorted correctly when fired simultaneously
+

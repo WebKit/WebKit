@@ -1,0 +1,102 @@
+/*
+ *  Copyright 2018 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#ifndef PC_CHANNEL_INTERFACE_H_
+#define PC_CHANNEL_INTERFACE_H_
+
+#include <string>
+#include <vector>
+
+#include "absl/functional/any_invocable.h"
+#include "absl/strings/string_view.h"
+#include "api/jsep.h"
+#include "api/media_types.h"
+#include "api/rtc_error.h"
+#include "media/base/media_channel.h"
+#include "media/base/stream_params.h"
+#include "pc/rtp_transport_internal.h"
+#include "pc/session_description.h"
+
+namespace webrtc {
+class Call;
+class RtpPacketReceived;
+class VideoBitrateAllocatorFactory;
+
+
+// Callbacks for packet events in the channel.
+// These are injected at construction time.
+struct ChannelCallbacks {
+  absl::AnyInvocable<void(const RtpPacketReceived&) &&>
+      on_first_packet_received;
+  absl::AnyInvocable<void() &&> on_first_packet_sent;
+  absl::AnyInvocable<void(const RtpPacketReceived&)> on_packet_received;
+};
+
+// A Channel is a construct that groups media streams of the same type
+// (audio or video), both outgoing and incoming.
+// When the PeerConnection API is used, a Channel corresponds one to one
+// to an RtpTransceiver.
+// When Unified Plan is used, there can only be at most one outgoing and
+// one incoming stream. With Plan B, there can be more than one.
+
+// ChannelInterface contains methods common to voice and video channels.
+// As more methods are added to BaseChannel, they should be included in the
+// interface as well.
+// TODO(bugs.webrtc.org/13931): Merge this class into RtpTransceiver.
+class ChannelInterface {
+ public:
+  virtual ~ChannelInterface() = default;
+  virtual MediaType media_type() const = 0;
+
+  virtual MediaSendChannelInterface* media_send_channel() = 0;
+  // Typecasts of media_channel(). Will cause an exception if the
+  // channel is of the wrong type.
+  virtual VideoMediaSendChannelInterface* video_media_send_channel() = 0;
+  virtual VoiceMediaSendChannelInterface* voice_media_send_channel() = 0;
+  virtual MediaReceiveChannelInterface* media_receive_channel() = 0;
+  // Typecasts of media_channel(). Will cause an exception if the
+  // channel is of the wrong type.
+  virtual VideoMediaReceiveChannelInterface* video_media_receive_channel() = 0;
+  virtual VoiceMediaReceiveChannelInterface* voice_media_receive_channel() = 0;
+
+  // Returns a string view for the transport name. Fetching the transport name
+  // must be done on the network thread only and note that the lifetime of
+  // the returned object should be assumed to only be the calling scope.
+  // TODO(deadbeef): This is redundant; remove this.
+  virtual absl::string_view transport_name() const = 0;
+
+  // TODO(tommi): Change return type to string_view.
+  virtual const std::string& mid() const = 0;
+
+  // Enables or disables this channel
+  virtual void Enable(bool enable) = 0;
+
+  // Channel control
+  virtual RTCError SetLocalContent(const MediaContentDescription* content,
+                                   SdpType type) = 0;
+  virtual RTCError SetRemoteContent(const MediaContentDescription* content,
+                                    SdpType type) = 0;
+
+  // Access to the local and remote streams that were set on the channel.
+  virtual const std::vector<StreamParams>& local_streams() const = 0;
+  virtual const std::vector<StreamParams>& remote_streams() const = 0;
+
+  // Set an RTP level transport.
+  // Some examples:
+  //   * An RtpTransport without encryption.
+  //   * An SrtpTransport for SDES.
+  //   * A DtlsSrtpTransport for DTLS-SRTP.
+  virtual bool SetRtpTransport(RtpTransportInternal* rtp_transport) = 0;
+};
+
+}  //  namespace webrtc
+
+
+#endif  // PC_CHANNEL_INTERFACE_H_

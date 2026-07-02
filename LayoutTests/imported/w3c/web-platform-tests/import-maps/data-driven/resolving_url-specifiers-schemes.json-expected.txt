@@ -1,0 +1,24 @@
+
+
+PASS Test helper: fetching and sanity checking test JSON: url-specifiers-schemes.json
+PASS URL-like specifiers: Non-special vs. special schemes: data:text/javascript,console.log('foo')
+PASS URL-like specifiers: Non-special vs. special schemes: data:text/
+PASS URL-like specifiers: Non-special vs. special schemes: about:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: about:text/
+PASS URL-like specifiers: Non-special vs. special schemes: blob:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: blob:text/
+PASS URL-like specifiers: Non-special vs. special schemes: blah:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: blah:text/
+PASS URL-like specifiers: Non-special vs. special schemes: http:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: http:text/
+PASS URL-like specifiers: Non-special vs. special schemes: https:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: https:text/
+PASS URL-like specifiers: Non-special vs. special schemes: ftp:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: ftp:text/
+PASS URL-like specifiers: Non-special vs. special schemes: file:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: file:text/
+PASS URL-like specifiers: Non-special vs. special schemes: ws:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: ws:text/
+PASS URL-like specifiers: Non-special vs. special schemes: wss:text/foo
+PASS URL-like specifiers: Non-special vs. special schemes: wss:text/
+

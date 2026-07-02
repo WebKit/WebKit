@@ -1,0 +1,4 @@
+
+FAIL same-origin > w => w.top promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"
+FAIL cross-origin > w => w.top promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"
+

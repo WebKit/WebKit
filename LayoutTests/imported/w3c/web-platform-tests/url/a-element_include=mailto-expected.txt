@@ -1,0 +1,17 @@
+
+PASS Loading data…
+PASS Test that embedded 0x0A is stripped
+PASS Parsing: <mailto:/example.com/> against <http://example.org/foo/bar>
+PASS Parsing: <mailto:example.com/> against <http://example.org/foo/bar>
+PASS Parsing: <mailto:/example.com/> against <about:blank>
+PASS Parsing: <mailto:example.com/> against <about:blank>
+PASS Parsing: <#x> against <mailto:x@x.com>
+PASS Parsing: <mailto:/../> against <about:blank>
+PASS Parsing: <> against <about:blank>
+PASS Parsing: <mailto://example.com:8080/pathname?search#hash> against <about:blank>
+PASS Parsing: <mailto:///test> against <about:blank>
+PASS Parsing: <mailto://test/a/../b> against <about:blank>
+PASS Parsing: <mailto://:443> against <about:blank>
+PASS Parsing: <mailto://test:test> against <about:blank>
+PASS Parsing: <mailto://[:1]> against <about:blank>
+Link with embedded \n is parsed correctly

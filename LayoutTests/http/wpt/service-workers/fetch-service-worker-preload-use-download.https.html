@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.setShouldLogDownloadSize(true);
+  testRunner.waitUntilDownloadFinished();
+  testRunner.setShouldDownloadUndisplayableMIMETypes(true);
+}
+
+const url = "/WebKit/service-workers/resources/fetch-service-worker-preload-script.py?download=yes&token=" + token();
+async function doTest() {
+    await setupActivatedButNotRunningServiceWorker("/WebKit/service-workers/fetch-service-worker-preload-worker.js", url, registration => {
+        return registration.navigationPreload.enable();
+    });
+
+    await fetch(url + "&value=use-preload", { method: 'POST' });
+
+    // Download size should be size of "use-preload".
+    const promise = withIframe(url + "&promise=getResponseFromNavigationPreload");
+}
+doTest();
+</script>
+</body>
+</html>

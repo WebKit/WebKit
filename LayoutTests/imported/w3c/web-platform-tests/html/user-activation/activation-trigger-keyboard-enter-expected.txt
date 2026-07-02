@@ -1,0 +1,9 @@
+Test for keyboard activation trigger for ENTER key
+
+Tests user activation from a ENTER keyboard event.
+
+
+Press ENTER key.
+
+PASS Activation through ENTER keyboard event
+

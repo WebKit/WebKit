@@ -1,0 +1,5 @@
+Outside target!
+Click me
+
+PASS Event Timing dblclick.
+

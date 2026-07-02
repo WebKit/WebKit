@@ -1,0 +1,8 @@
+
+PASS Blocked eval in ServiceWorkerGlobalScope.
+PASS Blocked indirect eval in ServiceWorkerGlobalScope.
+PASS Blocked Function constructor in ServiceWorkerGlobalScope.
+PASS Blocked AsyncFunction constructor in ServiceWorkerGlobalScope.
+PASS Blocked GeneratorFunction constructor in ServiceWorkerGlobalScope.
+PASS Blocked AsyncGeneratorFunction constructor in ServiceWorkerGlobalScope.
+

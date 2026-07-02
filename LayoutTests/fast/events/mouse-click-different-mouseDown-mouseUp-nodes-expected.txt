@@ -1,0 +1,11 @@
+Tests that the click event is fired at the common ancestor if the mouseDown / mouseUp nodes differ.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parentGotClickEvent is true
+PASS childGotClickEvent is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

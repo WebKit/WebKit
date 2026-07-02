@@ -1,0 +1,10 @@
+Tests that recursive calls to MessagePort.postMessage() do not preempt timers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Timer has fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

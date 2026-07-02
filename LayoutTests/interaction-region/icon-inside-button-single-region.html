@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+</style>
+<body>
+<button><div style="cursor: pointer;" onclick="5">inner</div> button</button>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

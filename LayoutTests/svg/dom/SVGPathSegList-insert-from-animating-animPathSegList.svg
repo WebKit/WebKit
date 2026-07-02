@@ -1,0 +1,29 @@
+<svg id="svg" xmlns="http://www.w3.org/2000/svg">
+    <path id="path1"></path>
+    <path id="path2" d="M 1 1 S 2,2 3,3">
+        <animate id="animate" attributeName="d" values="M 1 1" min="1s" max="2s"/>
+    </path>
+    <text>PASS: did not assert in debug.</text>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var animate = document.getElementById("animate");
+        animate.addEventListener('beginEvent' , function () {
+            var path1 = document.getElementById("path1");
+            var path2 = document.getElementById("path2");
+
+            var path1_pathSegList = path1.pathSegList;
+            var path2_animPathSegList = path2.animatedPathSegList;  
+
+            document.documentElement.setCurrentTime(1);
+
+            var pathseg = path2_animPathSegList.getItem(0); 
+            path1_pathSegList.insertItemBefore(pathseg, 0);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, { once: true});
+    </script>
+</svg>

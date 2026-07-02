@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>CryptoKey OKP serializationt</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const channel = new MessageChannel();
+
+    const keyData1 = {
+        crv: "Ed25519",
+        x: "2OGJY9gJ1IfZVJrMrsZ0Ln7rok2KDTsUt-PK6gaJPcw",
+        kty: "OKP"
+    };
+    const keyData2 = {
+        crv: "Ed25519",
+        d: "88j0xI34eBRujNO_bfTlDjibpwdOFcI1Lc1dMI1MqB8",
+        x: "2OGJY9gJ1IfZVJrMrsZ0Ln7rok2KDTsUt-PK6gaJPcw",
+        kty: "OKP"
+    };
+    const key1 = await crypto.subtle.importKey("jwk", keyData1, "Ed25519", true, ["verify"]);
+    const key2 = await crypto.subtle.importKey("jwk", keyData2, "Ed25519", true, ["sign"]);
+
+    channel.port1.postMessage(key1);
+    const key3 = await new Promise(resolve => channel.port2.onmessage = (event) => resolve(event.data));
+
+    assert_equals(key3.extractable, key1.extractable, "key1 extractable");
+    assert_array_equals(key3.usages, key1.usages, "key1 usages");
+
+    const keyData3 = await crypto.subtle.exportKey("jwk", key3);
+    assert_equals(keyData3.crv, keyData1.crv, "keyData1.crv");
+    assert_equals(keyData3.x, keyData1.x, "keyData1.x");
+    assert_equals(keyData3.kty, keyData1.kty, "keyData1.kty");
+
+    channel.port1.postMessage(key2);
+    const key4 = await new Promise(resolve => channel.port2.onmessage = (event) => resolve(event.data));
+
+    assert_equals(key4.extractable, key2.extractable, "key2 extractable");
+    assert_array_equals(key4.usages, key2.usages, "key2 usages");
+
+    const keyData4 = await crypto.subtle.exportKey("jwk", key4);
+    assert_equals(keyData4.crv, keyData4.crv, "keyData1.crv");
+    assert_equals(keyData4.d, keyData4.d, "keyData4.d");
+    assert_equals(keyData4.kty, keyData4.kty, "keyData4.kty");
+}, "postMessage a CryptoKeyOKP should work");
+</script>
+</body>
+</html>

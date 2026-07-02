@@ -1,0 +1,5 @@
+
+
+PASS HTMLIFrameElement.contentDocument for cross-origin document
+PASS HTMLIFrameElement.getSVGDocument() for cross-origin document
+

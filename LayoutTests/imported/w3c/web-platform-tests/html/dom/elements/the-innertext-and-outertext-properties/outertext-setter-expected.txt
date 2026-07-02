@@ -1,0 +1,52 @@
+A Replaced
+Replaced B
+A Replaced C
+removing node using outerText.
+
+
+
+
+PASS Replacing a node and merging with the previous text node
+PASS Replacing a node and merging with the following text node
+PASS Replacing a node and merging with the previous and following text node
+PASS Only merges with the previous and following text nodes, does not completely normalize
+PASS Empty string
+PASS Empty string with surrounding text nodes
+PASS Setting outerText to a bunch of newlines creates a bunch of <br>s with no text nodes
+PASS Removing a node
+PASS Detached node
+PASS Simplest possible test
+PASS Newlines convert to <br> in non-white-space:pre elements
+PASS Newlines convert to <br> in <pre> element
+PASS Newlines convert to <br> in <textarea> element
+PASS Newlines convert to <br> in white-space:pre element
+PASS CRs convert to <br> in non-white-space:pre elements
+PASS CRs convert to <br> in <pre> element
+PASS Newline/CR pair converts to <br> in non-white-space:pre element
+PASS Newline/newline pair converts to two <br>s in non-white-space:pre element
+PASS CR/CR pair converts to two <br>s in non-white-space:pre element
+PASS CRs convert to <br> in white-space:pre element
+PASS < preserved
+PASS > preserved
+PASS & preserved
+PASS " preserved
+PASS ' preserved
+PASS outerText not supported on SVG elements
+PASS outerText not supported on MathML elements
+PASS Null characters preserved
+PASS Tabs preserved
+PASS Leading whitespace preserved
+PASS Trailing whitespace preserved
+PASS Whitespace not compressed
+PASS Existing text deleted
+PASS Existing <br> deleted
+PASS Assigning the empty string
+PASS Assigning null
+PASS Assigning undefined
+PASS Start with CR
+PASS Start with LF
+PASS Start with CRLF
+PASS End with CR
+PASS End with LF
+PASS End with CRLF
+

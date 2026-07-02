@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ jscOptions=--useShadowRealm=true ] -->
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe src="resources/shadow-realm-iframe.html"></iframe>
+<script src =../resources/testharness.js></script>
+<script src =../resources/testharnessreport.js></script>
+<script>
+ description("Test to ensure correct behaviour of Shadow Realm objects that escape their originating iframe");
+ window.jsTestIsAsync = true;
+
+ function wrappedLog(prefix) {
+     return function (msg) {
+         debug(prefix + ": " + msg);
+     };
+ }
+
+ let frame = window.frames[0];
+ debug(frame);
+ frame.onload = async () => {
+     debug(frame);
+     let realm = frame.realm;
+     debug("detaching iframe");
+     document.getElementsByTagName("iframe")[0].remove()
+     $vm.gc();
+     frame = null;
+     debug(realm);
+     const checkFn2 = await realm.importValue("./resources/example-module.js", "check");
+     debug("dropping realm value")
+     realm = null;
+     $vm.gc();
+     shouldBe(() => checkFn2(wrappedLog("shadowRealm")),
+              "true");
+     finishJSTest();
+ }
+
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    extendSelectionForwardByLineCommand();
+    cutCommand();
+    deleteCommand();
+    moveSelectionBackwardByLineCommand();
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Pasting black (document default color) text into a block of text with a non-default color.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Should see this content in the red box below: <span style="color: red">ab<span style="color: black">cde</span>fg</span>
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+<span style="color: red">abfg</span>
+</div>
+<div class="editing">
+cde
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

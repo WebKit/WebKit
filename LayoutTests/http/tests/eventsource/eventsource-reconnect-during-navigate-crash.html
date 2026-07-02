@@ -1,0 +1,20 @@
+<html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<body>
+<p>Navigate while an EventSource reconnect timer is waiting, then have the reconnect timer trigger before the page unloads. We pass if we don't crash.
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function navigate() {
+    window.location = "resources/wait-then-notify-done.py";
+}
+
+var es = new EventSource("resources/reconnect.py");
+es.onerror = function() {
+    setTimeout(navigate, 0);
+};
+</script>
+</body>
+</html>

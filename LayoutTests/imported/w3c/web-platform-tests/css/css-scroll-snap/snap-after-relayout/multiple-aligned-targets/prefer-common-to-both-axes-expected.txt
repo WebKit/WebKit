@@ -1,0 +1,5 @@
+Box 1Box 2Box 3Box 4Box 5Box 6Box 7Box 8Box 9
+
+FAIL scroller prefers target aligned in both axes. assert_equals: scroller followed box1 in x axis after layout change expected 210 but got 110
+FAIL scroller follows selected snap target after layout shift, regardless of common snap area. assert_equals: scroller followed box8 in y axis after layout change expected 480 but got 380
+

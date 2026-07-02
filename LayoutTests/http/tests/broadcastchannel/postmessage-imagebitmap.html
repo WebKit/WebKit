@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() {
+    var canvas = new OffscreenCanvas(2, 2);
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, 2, 2);
+    return createImageBitmap(canvas);
+}, "ImageBitmap:2x2");
+</script>
+</body>
+</html>

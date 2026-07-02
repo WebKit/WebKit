@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that URLPattern.exec() does not crash when the pattern contains a named capturing group inside a parenthesized regex.");
+
+result = new URLPattern({ pathname: "/:foo((?<x>a))" }).exec({ pathname: "/a" });
+shouldBeNonNull("result");
+shouldBeEqualToString("result.pathname.input", "/a");
+shouldBeEqualToString("result.pathname.groups.foo", "a");
+</script>
+</body>
+</html>

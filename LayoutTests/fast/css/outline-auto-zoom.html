@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0 }
+    #target {
+        outline: auto;
+        width: 100px;
+        height: 100px;
+        margin: 50px;
+    }
+</style>
+<script>
+window.onload = function() {
+    document.getElementById("target").focus();
+    if (window.internals)
+        internals.setPageZoomFactor(2);
+}
+</script>
+</head>
+<body>
+<div id="target" tabindex="0"></div>
+</body>
+</html>

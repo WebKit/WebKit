@@ -1,0 +1,4 @@
+
+
+PASS Empty object-src source list should block the embed and fire a spv
+

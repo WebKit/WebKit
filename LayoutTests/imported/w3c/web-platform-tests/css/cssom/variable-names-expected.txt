@@ -1,0 +1,8 @@
+
+PASS custom property '--a'
+PASS custom property '--a;b'
+PASS custom property '---'
+PASS custom property '--\'
+PASS custom property '--ab'
+PASS custom property '--0'
+

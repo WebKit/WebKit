@@ -1,0 +1,4 @@
+
+PASS "::picker(select):popover-open" should be an invalid selector
+PASS "select::picker(select):popover-open" should be an invalid selector
+

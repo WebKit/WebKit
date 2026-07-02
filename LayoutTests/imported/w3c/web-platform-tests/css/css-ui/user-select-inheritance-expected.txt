@@ -1,0 +1,10 @@
+abc
+xyz
+def
+
+FAIL user-select:all should not be inherited. assert_equals: user-select:all should be supported. expected (string) "all" but got (undefined) undefined
+FAIL user-select:auto should not be inherited. assert_equals: user-select:auto should be supported. expected (string) "auto" but got (undefined) undefined
+FAIL user-select:contain should not be inherited. assert_equals: user-select:contain should be supported. expected (string) "contain" but got (undefined) undefined
+FAIL user-select:none should not be inherited. assert_equals: user-select:none should be supported. expected (string) "none" but got (undefined) undefined
+FAIL user-select:text should not be inherited. assert_equals: user-select:text should be supported. expected (string) "text" but got (undefined) undefined
+

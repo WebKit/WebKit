@@ -1,0 +1,112 @@
+/*
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/SharedWorkerIdentifier.h>
+#include <WebCore/WorkerBadgeProxy.h>
+#include <WebCore/WorkerDebuggerProxy.h>
+#include <WebCore/WorkerLoaderProxy.h>
+#include <WebCore/WorkerObjectProxy.h>
+#include <WebCore/WorkerOptions.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+
+namespace WebCore {
+
+class CacheStorageProvider;
+class Page;
+class SharedWorker;
+class SharedWorkerThread;
+
+struct WorkerFetchResult;
+struct WorkerInitializationData;
+
+class SharedWorkerThreadProxy final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SharedWorkerThreadProxy, WTF::DestructionThread::Main>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SharedWorkerThreadProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedWorkerThreadProxy);
+public:
+    template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }
+    WEBCORE_EXPORT ~SharedWorkerThreadProxy();
+
+    static RefPtr<SharedWorkerThreadProxy> byIdentifier(ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT static bool NODELETE hasInstances();
+
+    SharedWorkerIdentifier NODELETE identifier() const;
+    SharedWorkerThread& thread() { return m_workerThread; }
+
+    bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
+    void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
+
+    uint32_t checkedPtrCount() const final { return CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy>::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy>::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy>::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy>::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy>::setDidBeginCheckedPtrDeletion(); }
+
+private:
+    WEBCORE_EXPORT SharedWorkerThreadProxy(Ref<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
+
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
+
+    // WorkerObjectProxy.
+    void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
+    void reportErrorToWorkerObject(const String&) final;
+    void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
+    void workerGlobalScopeDestroyed() final { }
+    void workerGlobalScopeClosed() final;
+
+    // WorkerLoaderProxy.
+    RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
+    RefPtr<FileSystemStorageConnection> createFileSystemStorageConnection() final;
+    RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
+    RefPtr<IDBClient::IDBConnectionProxy> createIDBConnectionProxy() final;
+    void postTaskToLoader(ScriptExecutionContext::Task&&) final;
+    ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
+
+    // WorkerDebuggerProxy.
+    void postMessageToDebugger(const String&) final;
+    void setResourceCachingDisabledByWebInspector(bool) final;
+
+    // WorkerBadgeProxy
+    void setAppBadge(std::optional<uint64_t>) final;
+
+    static void networkStateChanged(bool isOnLine);
+    void notifyNetworkStateChange(bool isOnline);
+
+    ReportingClient* reportingClient() const final;
+
+    const Ref<Page> m_page;
+    const Ref<Document> m_document;
+    ScriptExecutionContextIdentifier m_contextIdentifier;
+    const Ref<SharedWorkerThread> m_workerThread;
+    WeakRef<CacheStorageProvider> m_cacheStorageProvider;
+    RefPtr<CacheStorageConnection> m_cacheStorageConnection;
+    bool m_isTerminatingOrTerminated { false };
+    ClientOrigin m_clientOrigin;
+};
+
+} // namespace WebCore

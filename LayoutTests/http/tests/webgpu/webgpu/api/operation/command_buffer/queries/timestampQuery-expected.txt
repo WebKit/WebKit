@@ -1,0 +1,28 @@
+
+PASS :many_query_sets:numQuerySets=8;stage="compute"
+PASS :many_query_sets:numQuerySets=8;stage="render"
+PASS :many_query_sets:numQuerySets=16;stage="compute"
+PASS :many_query_sets:numQuerySets=16;stage="render"
+PASS :many_query_sets:numQuerySets=32;stage="compute"
+PASS :many_query_sets:numQuerySets=32;stage="render"
+PASS :many_query_sets:numQuerySets=64;stage="compute"
+PASS :many_query_sets:numQuerySets=64;stage="render"
+PASS :many_query_sets:numQuerySets=256;stage="compute"
+PASS :many_query_sets:numQuerySets=256;stage="render"
+PASS :many_query_sets:numQuerySets=65536;stage="compute"
+FAIL :many_query_sets:numQuerySets=65536;stage="render" assert_unreached:
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+FAIL :many_slots:stage="compute" assert_unreached:
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+FAIL :many_slots:stage="render" assert_unreached:
+  - EXCEPTION: Error: There was an extra error scope on the stack after a test
+    unreachable@http://127.0.0.1:8000/webgpu/common/util/util.js:80:18
+    @http://127.0.0.1:8000/webgpu/common/util/util.js:62:18
+ Reached unreachable code
+

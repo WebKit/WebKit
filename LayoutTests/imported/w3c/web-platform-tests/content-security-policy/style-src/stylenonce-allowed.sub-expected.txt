@@ -1,0 +1,11 @@
+This text should be green.
+
+This text should also be green.
+
+Style correctly allowed via a 'nonce-*' expression in 'style-src' should be applied to the page.
+
+
+PASS Should fire securitypolicyviolation
+PASS stylenonce-allowed
+PASS stylenonce-allowed 1
+

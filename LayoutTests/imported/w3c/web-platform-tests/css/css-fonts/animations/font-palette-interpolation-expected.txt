@@ -1,0 +1,117 @@
+TT
+
+FAIL CSS Transitions: property <font-palette> from [light] to [dark] at (-2) should be [light] assert_equals: expected "light " but got "dark "
+FAIL CSS Transitions: property <font-palette> from [light] to [dark] at (-0.25) should be [light] assert_equals: expected "light " but got "dark "
+FAIL CSS Transitions: property <font-palette> from [light] to [dark] at (0) should be [light] assert_equals: expected "light " but got "dark "
+FAIL CSS Transitions: property <font-palette> from [light] to [dark] at (0.3) should be [palette-mix(in oklab, light, dark 30%)] assert_equals: expected "normal " but got "dark "
+FAIL CSS Transitions: property <font-palette> from [light] to [dark] at (0.6) should be [palette-mix(in oklab, light, dark 60%)] assert_equals: expected "normal " but got "dark "
+PASS CSS Transitions: property <font-palette> from [light] to [dark] at (1) should be [dark]
+PASS CSS Transitions: property <font-palette> from [light] to [dark] at (1.5) should be [dark]
+FAIL CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (-2) should be [light] assert_equals: expected "light " but got "dark "
+FAIL CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (-0.25) should be [light] assert_equals: expected "light " but got "dark "
+FAIL CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (0) should be [light] assert_equals: expected "light " but got "dark "
+FAIL CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (0.3) should be [palette-mix(in oklab, light, dark 30%)] assert_equals: expected "normal " but got "dark "
+FAIL CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (0.6) should be [palette-mix(in oklab, light, dark 60%)] assert_equals: expected "normal " but got "dark "
+PASS CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (1) should be [dark]
+PASS CSS Transitions with transition: all: property <font-palette> from [light] to [dark] at (1.5) should be [dark]
+PASS CSS Animations: property <font-palette> from [light] to [dark] at (-2) should be [light]
+PASS CSS Animations: property <font-palette> from [light] to [dark] at (-0.25) should be [light]
+PASS CSS Animations: property <font-palette> from [light] to [dark] at (0) should be [light]
+FAIL CSS Animations: property <font-palette> from [light] to [dark] at (0.3) should be [palette-mix(in oklab, light, dark 30%)] assert_equals: expected "normal " but got "light "
+FAIL CSS Animations: property <font-palette> from [light] to [dark] at (0.6) should be [palette-mix(in oklab, light, dark 60%)] assert_equals: expected "normal " but got "dark "
+PASS CSS Animations: property <font-palette> from [light] to [dark] at (1) should be [dark]
+PASS CSS Animations: property <font-palette> from [light] to [dark] at (1.5) should be [dark]
+PASS Web Animations: property <font-palette> from [light] to [dark] at (-2) should be [light]
+PASS Web Animations: property <font-palette> from [light] to [dark] at (-0.25) should be [light]
+PASS Web Animations: property <font-palette> from [light] to [dark] at (0) should be [light]
+FAIL Web Animations: property <font-palette> from [light] to [dark] at (0.3) should be [palette-mix(in oklab, light, dark 30%)] assert_equals: expected "normal " but got "light "
+FAIL Web Animations: property <font-palette> from [light] to [dark] at (0.6) should be [palette-mix(in oklab, light, dark 60%)] assert_equals: expected "normal " but got "dark "
+PASS Web Animations: property <font-palette> from [light] to [dark] at (1) should be [dark]
+PASS Web Animations: property <font-palette> from [light] to [dark] at (1.5) should be [dark]
+FAIL CSS Transitions: property <font-palette> from [initial] to [inherit] at (-2) should be [normal] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions: property <font-palette> from [initial] to [inherit] at (-0.25) should be [normal] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions: property <font-palette> from [initial] to [inherit] at (0) should be [normal] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions: property <font-palette> from [initial] to [inherit] at (0.3) should be [palette-mix(in oklab, normal, light 30%)] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions: property <font-palette> from [initial] to [inherit] at (0.6) should be [palette-mix(in oklab, normal, light 60%)] assert_equals: expected "normal " but got "light "
+PASS CSS Transitions: property <font-palette> from [initial] to [inherit] at (1) should be [light]
+PASS CSS Transitions: property <font-palette> from [initial] to [inherit] at (1.5) should be [light]
+FAIL CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (-2) should be [normal] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (-0.25) should be [normal] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (0) should be [normal] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (0.3) should be [palette-mix(in oklab, normal, light 30%)] assert_equals: expected "normal " but got "light "
+FAIL CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (0.6) should be [palette-mix(in oklab, normal, light 60%)] assert_equals: expected "normal " but got "light "
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (1) should be [light]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [inherit] at (1.5) should be [light]
+PASS CSS Animations: property <font-palette> from [initial] to [inherit] at (-2) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [inherit] at (-0.25) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [inherit] at (0) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [inherit] at (0.3) should be [palette-mix(in oklab, normal, light 30%)]
+FAIL CSS Animations: property <font-palette> from [initial] to [inherit] at (0.6) should be [palette-mix(in oklab, normal, light 60%)] assert_equals: expected "normal " but got "light "
+PASS CSS Animations: property <font-palette> from [initial] to [inherit] at (1) should be [light]
+PASS CSS Animations: property <font-palette> from [initial] to [inherit] at (1.5) should be [light]
+PASS Web Animations: property <font-palette> from [initial] to [inherit] at (-2) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [inherit] at (-0.25) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [inherit] at (0) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [inherit] at (0.3) should be [palette-mix(in oklab, normal, light 30%)]
+FAIL Web Animations: property <font-palette> from [initial] to [inherit] at (0.6) should be [palette-mix(in oklab, normal, light 60%)] assert_equals: expected "normal " but got "light "
+PASS Web Animations: property <font-palette> from [initial] to [inherit] at (1) should be [light]
+PASS Web Animations: property <font-palette> from [initial] to [inherit] at (1.5) should be [light]
+FAIL CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (-2) should be [--custom-palette] assert_equals: expected "- - custom - palette " but got "normal "
+FAIL CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (-0.25) should be [--custom-palette] assert_equals: expected "- - custom - palette " but got "normal "
+FAIL CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (0) should be [--custom-palette] assert_equals: expected "- - custom - palette " but got "normal "
+PASS CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (0.3) should be [palette-mix(in oklab, --custom-palette, normal 30%)]
+PASS CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (0.6) should be [palette-mix(in oklab, --custom-palette, normal 60%)]
+PASS CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (1) should be [normal]
+PASS CSS Transitions: property <font-palette> from [--custom-palette] to [normal] at (1.5) should be [normal]
+FAIL CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (-2) should be [--custom-palette] assert_equals: expected "- - custom - palette " but got "normal "
+FAIL CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (-0.25) should be [--custom-palette] assert_equals: expected "- - custom - palette " but got "normal "
+FAIL CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (0) should be [--custom-palette] assert_equals: expected "- - custom - palette " but got "normal "
+PASS CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (0.3) should be [palette-mix(in oklab, --custom-palette, normal 30%)]
+PASS CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (0.6) should be [palette-mix(in oklab, --custom-palette, normal 60%)]
+PASS CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (1) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [--custom-palette] to [normal] at (1.5) should be [normal]
+PASS CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (-2) should be [--custom-palette]
+PASS CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (-0.25) should be [--custom-palette]
+PASS CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (0) should be [--custom-palette]
+FAIL CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (0.3) should be [palette-mix(in oklab, --custom-palette, normal 30%)] assert_equals: expected "normal " but got "- - custom - palette "
+PASS CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (0.6) should be [palette-mix(in oklab, --custom-palette, normal 60%)]
+PASS CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (1) should be [normal]
+PASS CSS Animations: property <font-palette> from [--custom-palette] to [normal] at (1.5) should be [normal]
+PASS Web Animations: property <font-palette> from [--custom-palette] to [normal] at (-2) should be [--custom-palette]
+PASS Web Animations: property <font-palette> from [--custom-palette] to [normal] at (-0.25) should be [--custom-palette]
+PASS Web Animations: property <font-palette> from [--custom-palette] to [normal] at (0) should be [--custom-palette]
+FAIL Web Animations: property <font-palette> from [--custom-palette] to [normal] at (0.3) should be [palette-mix(in oklab, --custom-palette, normal 30%)] assert_equals: expected "normal " but got "- - custom - palette "
+PASS Web Animations: property <font-palette> from [--custom-palette] to [normal] at (0.6) should be [palette-mix(in oklab, --custom-palette, normal 60%)]
+PASS Web Animations: property <font-palette> from [--custom-palette] to [normal] at (1) should be [normal]
+PASS Web Animations: property <font-palette> from [--custom-palette] to [normal] at (1.5) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (-2) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (-0.25) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (0) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (0.3) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (0.6) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (1) should be [normal]
+PASS CSS Transitions: property <font-palette> from [initial] to [normal] at (1.5) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (-2) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (-0.25) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (0) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (0.3) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (0.6) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (1) should be [normal]
+PASS CSS Transitions with transition: all: property <font-palette> from [initial] to [normal] at (1.5) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (-2) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (-0.25) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (0) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (0.3) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (0.6) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (1) should be [normal]
+PASS CSS Animations: property <font-palette> from [initial] to [normal] at (1.5) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (-2) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (-0.25) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (0) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (0.3) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (0.6) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (1) should be [normal]
+PASS Web Animations: property <font-palette> from [initial] to [normal] at (1.5) should be [normal]
+FAIL An interpolation to inherit updates correctly on a parent style change. assert_equals: expected "palette-mix(in oklab, normal, light)" but got "light"
+FAIL Test additive animations assert_equals: expected "palette-mix(in oklab, normal, dark)" but got "dark"
+

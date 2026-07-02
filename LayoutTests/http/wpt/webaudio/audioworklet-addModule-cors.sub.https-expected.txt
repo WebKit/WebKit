@@ -1,0 +1,5 @@
+
+PASS same origin works
+PASS cross origin fails without CORS headers
+PASS cross origin passes with CORS headers
+

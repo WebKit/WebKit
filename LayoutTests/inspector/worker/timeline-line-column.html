@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+let worker = new Worker("resources/worker-timeline.js");
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Worker.Timeline.LineColumn");
+
+    // To avoid flakiness print only events that we always expect.
+    const eventAllowlist = new Set(["RenderingFrame", "ConsoleProfile", "EventDispatch", "FunctionCall"]);
+
+    // The inspector injected script call frame(s) have different line numbers between release and
+    // debug builds. We only want to filter those values for those specific call frames in order to
+    // ensure other line/column numbers remain stable.
+    let functionNameLength = 0;
+    let urlLength = 0;
+
+    function replacer(key, value) {
+        if (key === "functionName") {
+            functionNameLength = value.length;
+            return value;
+        }
+
+        if (key === "children" && this.startTime)
+            return value.filter(e => eventAllowlist.has(e.type));
+        if (key === "startTime" || key === "endTime" || key === "scriptId")
+            return "<filtered>";
+        if ((key === "lineNumber" || key === "columnNumber") && !functionNameLength && !urlLength)
+            return "<filtered>";
+
+        if (key === "url")
+            urlLength = value.length;
+        if (key === "url" || key === "scriptName")
+            return value.replace(/^.+LayoutTests\/inspector\//, "");
+        return value;
+    }
+
+    const tests = [
+        {
+            name: "Worker.Timeline.LineColumn.willCallFunction",
+            description: "Test that column numbers are passed through the willCallFunction instrumentation point.",
+            expression: `worker.postMessage("willCallFunctionTest")`,
+        },
+        {
+            name: "Worker.Timeline.LineColumn.willEvaluateScript",
+            description: "Test that column numbers are passed through the willEvaluateScript instrumentation point.",
+            expression: `worker.postMessage("willEvaluateScriptTest")`,
+        },
+    ];
+
+    for (let {name, description, expression} of tests) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                let eventNames = [];
+
+                function handleEvent(eventName, handler) {
+                    eventNames.push(eventName);
+                    InspectorProtocol.eventHandler[eventName] = handler;
+                }
+
+                handleEvent("Worker.dispatchMessageFromWorker", (event) => {
+                    InspectorProtocol.dispatchMessageFromBackend(JSON.parse(event.params.message));
+                });
+
+                handleEvent("Timeline.eventRecorded", (event) => {
+                    ProtocolTest.log(JSON.stringify(event.params.record, replacer, 2));
+                });
+
+                handleEvent("Timeline.recordingStarted", () => {
+                    ProtocolTest.pass("Capturing started.");
+                });
+
+                handleEvent("Timeline.recordingStopped", () => {
+                    ProtocolTest.pass("Capturing stopped.");
+
+                    for (let eventName of eventNames)
+                        delete InspectorProtocol.eventHandler[eventName];
+
+                    resolve();
+                });
+
+                ProtocolTest.log("Evaluating in page...");
+                ProtocolTest.evaluateInPage(expression).catch(reject);
+            },
+        });
+    }
+
+    InspectorProtocol.sendCommand("Page.enable");
+    InspectorProtocol.sendCommand("Timeline.enable");
+    InspectorProtocol.sendCommand("Worker.enable");
+    InspectorProtocol.awaitEvent({event: "Worker.workerCreated"}).then((result) => {
+        ProtocolTest.pass("Worker created.");
+
+        InspectorProtocol.sendCommand("Worker.sendMessageToWorker", {
+            workerId: result.params.workerId,
+            message: JSON.stringify({
+                id: InspectorProtocol.getNextMessageId(),
+                method: "Timeline.enable",
+            }),
+        });
+
+        suite.runTestCasesAndFinish();
+    });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that script Timeline records have column numbers in a Worker.</p>
+</body>
+</html>

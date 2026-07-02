@@ -1,0 +1,3 @@
+
+PASS View transitions: Algorithms resolve against last @view-transition rule
+

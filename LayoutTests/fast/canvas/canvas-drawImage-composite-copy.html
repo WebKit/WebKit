@@ -1,0 +1,21 @@
+<body>
+    <canvas id="canvas" width="200" height="200"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.fillStyle = "green";
+        ctx.fillRect(width / 2, height / 2, width / 2, height / 2);
+
+        ctx.globalCompositeOperation = "copy";
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.drawImage(
+            canvas,
+            width / 2, height / 2, width / 2, height / 2,
+            0, 0, width / 2, height / 2
+        );
+    </script>
+</body>

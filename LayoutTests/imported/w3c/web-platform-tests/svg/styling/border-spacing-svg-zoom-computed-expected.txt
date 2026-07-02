@@ -1,0 +1,10 @@
+
+PASS Property border-spacing value '1px' single value with SVG zoom: 2
+PASS Property border-spacing value '1px 2px' two values with SVG zoom: 2
+PASS Property border-spacing value 'inherit' inherit with SVG zoom: 2
+PASS Property border-spacing value '5px 10px' explicit values with SVG zoom: 2
+PASS Property border-spacing value '0' zero value with SVG zoom: 2
+PASS Property border-spacing value '1px' single value with SVG zoom: 0.5
+PASS Property border-spacing value '1px 2px' two values with SVG zoom: 0.5
+PASS Property border-spacing value 'inherit' inherit with SVG zoom: 0.5
+

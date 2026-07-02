@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true ] -->
+<!-- runSingly because of the usage of accessibilityController.setForceInitialFrameCaching, which sets a process-global static. -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<math id="math-table">
+<mrow>
+<mo>[</mo>
+<mtable>
+<mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr>
+<mtr><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd></mtr>
+<mtr><mtd><mn>5</mn></mtd><mtd><mn>6</mn></mtd></mtr>
+</mtable>
+<mo>]</mo>
+</mrow>
+</math>
+
+<script>
+var output = "This test ensures MathML table rows and cells have distinct, correct bounding boxes.\n\n";
+
+var mtr1, mtr2, mtr3;
+var cell1, cell2, cell3;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+
+    var mathElement = accessibilityController.accessibleElementById("math-table");
+
+    setTimeout(async function() {
+        // Find the MathML table (mtable). It's nested: math > mrow > mtable.
+        var mrow = mathElement.childAtIndex(0);
+        var mtable;
+        for (var i = 0; i < mrow.childrenCount; i++) {
+            var child = mrow.childAtIndex(i);
+            if (child.subrole.includes("AXMathTable")) {
+                mtable = child;
+                break;
+            }
+        }
+
+        mtr1 = mtable.childAtIndex(0);
+        mtr2 = mtable.childAtIndex(1);
+        mtr3 = mtable.childAtIndex(2);
+
+        // Wait for paint-cached geometry to propagate to the isolated tree. The rows
+        // should have distinct Y positions once their bounds are properly cached.
+        await waitFor(() => {
+            return mtr1.height > 0 && mtr2.height > 0 && mtr3.height > 0
+                && mtr2.pageY > mtr1.pageY;
+        });
+
+        output += "MathML table rows should have increasing Y positions:\n";
+        output += expect("mtr1.height > 0", "true");
+        output += expect("mtr2.height > 0", "true");
+        output += expect("mtr3.height > 0", "true");
+        output += expect("mtr2.pageY > mtr1.pageY", "true");
+        output += expect("mtr3.pageY > mtr2.pageY", "true");
+
+        // Cells within the same row should have distinct X positions.
+        cell1 = mtr1.childAtIndex(0);
+        cell2 = mtr1.childAtIndex(1);
+        output += "\nMathML table cells in first row should have increasing X positions:\n";
+        output += expect("cell1.width > 0", "true");
+        output += expect("cell2.width > 0", "true");
+        output += expect("cell2.pageX > cell1.pageX", "true");
+
+        // Cells in corresponding positions of different rows should have the same X but different Y.
+        cell3 = mtr2.childAtIndex(0);
+        output += "\nFirst cell in second row should be below first cell in first row:\n";
+        output += expect("cell3.pageX === cell1.pageX", "true");
+        output += expect("cell3.pageY > cell1.pageY", "true");
+
+        accessibilityController.setForceInitialFrameCaching(false);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

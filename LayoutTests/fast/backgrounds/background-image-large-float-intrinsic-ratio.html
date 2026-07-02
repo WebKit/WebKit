@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div {
+            background-position: -4000px 0;
+            background-size: auto 100px;
+            height: 100px;
+            width: 100px;
+            display: inline-block;
+            border: 1px solid green;
+            margin: 10px;
+        }
+        .intrinsic-size {
+            background-image: url("data:image/svg+xml;utf-8, \
+                <svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='8000.8px' height='100px'> \
+                    <rect x='4000' y='0' width='101' height='100' fill='green'/> \
+                </svg>");
+        }
+        .non-intrinsic-size {
+            background-image: url("data:image/svg+xml;utf-8, \
+                <svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='8000.8px' viewBox='0 0 8000.8 100'> \
+                    <rect x='4000' y='0' width='101' height='100' fill='green'/> \
+                </svg>");
+        }
+    </style>
+</head>
+<body>
+    <div class="intrinsic-size"></div>
+    <div class="non-intrinsic-size"></div>
+</body>
+<html>

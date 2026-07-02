@@ -1,0 +1,43 @@
+<body>
+<p>Test worker garbage collection. Should print "SUCCESS".</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var interval = setInterval(gc, 0);
+
+var worker = new Worker('resources/worker-common.js');
+worker.postMessage("ping");
+worker.onmessage = function(evt) {
+    this.postMessage("ping");
+    this.onmessage = function() {
+        log("SUCCESS");
+        clearInterval(interval);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+}
+worker = 0;
+gc();
+</script>
+</body>
+</html>

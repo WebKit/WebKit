@@ -1,0 +1,14 @@
+OfflineAudioContexts should not have behavior restrictions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context.state is "suspended"
+node.connect(context.destination)
+node.start()
+PASS context.state is "suspended"
+Calling context.startRendering() without a user gesture
+PASS context.state is "running"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

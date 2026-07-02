@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+	font-family: "Boxis";
+	src: url("resources/Boxis-VF.ttf");
+}
+</style>
+</head>
+<body>
+This test makes sure that the font selection properties affect font variations.
+<div style="font-family: Boxis; font-stretch: 900%;">Hello</div>
+<div style="font-family: Boxis; font-stretch: 900%; font-variation-settings: 'wdth' 100;">Hello</div>
+</body>
+</html>

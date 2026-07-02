@@ -1,0 +1,605 @@
+/*
+ Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012, 2025 Igalia S.L.
+ Copyright (C) 2012 Adobe Systems Incorporated
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+
+ You should have received a copy of the GNU Library General Public License
+ along with this library; see the file COPYING.LIB.  If not, write to
+ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "BitmapTexture.h"
+
+#if USE(TEXTURE_MAPPER)
+
+#include "GLContext.h"
+#include "GraphicsContext.h"
+#include "GraphicsLayer.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
+#include "PlatformDisplay.h"
+#include "TextureMapper.h"
+#include "TextureMapperFlags.h"
+#include "TextureMapperShaderProgram.h"
+#include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#include "RefPtrCairo.h"
+#include <cairo.h>
+#include <wtf/text/CString.h>
+#endif
+
+#if USE(SKIA)
+#include "FontRenderOptions.h"
+#include "SkiaUtilities.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win port
+#include <skia/core/SkImage.h>
+#include <skia/core/SkPixmap.h>
+#include <skia/core/SkSurface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
+#if OS(DARWIN)
+#define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
+static const GLenum s_pixelDataType = GL_UNSIGNED_INT_8_8_8_8_REV;
+#else
+static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
+#endif
+
+// On GLES3, the format we want for packed depth stencil is GL_DEPTH24_STENCIL8, but when added through
+// the extension this format is called GL_DEPTH24_STENCIL8_OES. In any case they hold the same value 0x88F0
+// so we can just use the first one.
+// These definitions may not exist if this is a GLES1/2 context without the GL_OES_packed_depth_stencil
+// extension. We need to define the one we want to use in order to build on every case.
+#ifndef GL_DEPTH24_STENCIL8
+#define GL_DEPTH24_STENCIL8 0x88F0
+#endif
+
+namespace WebCore {
+
+void BitmapTexture::determineRenderTargetAndBinding()
+{
+    if (m_flags.contains(Flags::ExternalOESRenderTarget)) {
+        m_renderTarget = GL_TEXTURE_EXTERNAL_OES;
+        m_binding = GL_TEXTURE_BINDING_EXTERNAL_OES;
+        return;
+    }
+
+    m_binding = GL_TEXTURE_BINDING_2D;
+    m_renderTarget = GL_TEXTURE_2D;
+}
+
+GLenum BitmapTexture::textureFormat() const
+{
+    return m_flags.contains(Flags::UseBGRALayout) ? GL_BGRA : GL_RGBA;
+}
+
+GLenum depthBufferFormat()
+{
+    auto* glContext = GLContext::current();
+    if (glContext->version() >= 300 || glContext->glExtensions().OES_packed_depth_stencil)
+        return GL_DEPTH24_STENCIL8;
+
+    return GL_DEPTH_COMPONENT16;
+}
+
+BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags)
+    : m_flags(flags)
+    , m_size(size)
+    , m_pixelFormat(flags.contains(Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8)
+{
+    determineRenderTargetAndBinding();
+
+    GLint boundTexture = 0;
+    glGetIntegerv(m_binding, &boundTexture);
+
+#if USE(GBM)
+    if (m_flags.contains(Flags::BackedByDMABuf)) {
+        OptionSet<MemoryMappedGPUBuffer::BufferFlag> bufferFlags;
+        if (flags.contains(Flags::ForceLinearBuffer)) {
+            ASSERT(!flags.contains(Flags::ForceVivanteSuperTiledBuffer));
+            bufferFlags.add(MemoryMappedGPUBuffer::BufferFlag::ForceLinear);
+        }
+
+        if (flags.contains(Flags::ForceVivanteSuperTiledBuffer)) {
+            ASSERT(!flags.contains(Flags::ForceLinearBuffer));
+            bufferFlags.add(MemoryMappedGPUBuffer::BufferFlag::ForceVivanteSuperTiled);
+        }
+
+        if (flags.contains(Flags::UseBGRALayout))
+            bufferFlags.add(MemoryMappedGPUBuffer::BufferFlag::UseBGRALayout);
+
+        m_memoryMappedGPUBuffer = MemoryMappedGPUBuffer::create(m_size, bufferFlags);
+
+        // Proceed as usual with GL texture creation if the dma-buf creation failed.
+        // as we only want to allocate the dma-buf, but neither map it, nor create a texture now - but when we
+        // need it (from the thread that needs it!).
+        if (allocateTextureFromMemoryMappedGPUBuffer()) {
+            glBindTexture(m_renderTarget, boundTexture);
+            return;
+        }
+
+        m_flags.remove(Flags::BackedByDMABuf);
+        m_flags.remove(Flags::ForceLinearBuffer);
+        m_flags.remove(Flags::ForceVivanteSuperTiledBuffer);
+    }
+#endif
+
+    allocateTexture();
+
+    glBindTexture(m_renderTarget, boundTexture);
+}
+
+void BitmapTexture::createTexture()
+{
+    ASSERT(!m_id);
+    glGenTextures(1, &m_id);
+    glBindTexture(m_renderTarget, m_id);
+
+    GLenum filter = m_flags.contains(Flags::NearestFiltering) ? GL_NEAREST : GL_LINEAR;
+    glTexParameteri(m_renderTarget, GL_TEXTURE_MIN_FILTER, filter);
+    glTexParameteri(m_renderTarget, GL_TEXTURE_MAG_FILTER, filter);
+    glTexParameteri(m_renderTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(m_renderTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void BitmapTexture::allocateTexture()
+{
+    createTexture();
+    // EXT_texture_format_BGRA8888 mandates internalFormat == format.
+    // https://registry.khronos.org/OpenGL/extensions/EXT/EXT_texture_format_BGRA8888.txt
+    glTexImage2D(m_renderTarget, 0, textureFormat(), m_size.width(), m_size.height(), 0, textureFormat(), s_pixelDataType, nullptr);
+}
+
+size_t BitmapTexture::sizeInBytes() const
+{
+    auto size = allocatedSize();
+    if (size.isEmpty())
+        return 0;
+
+    const auto bytesPerRow = CheckedUint32(size.width()) * 4;
+    return CheckedUint32(size.height()) * bytesPerRow;
+}
+
+#if USE(GBM)
+IntSize BitmapTexture::allocatedSize() const
+{
+    return m_memoryMappedGPUBuffer ? m_memoryMappedGPUBuffer->allocatedSize() : m_size;
+}
+
+bool BitmapTexture::allocateTextureFromMemoryMappedGPUBuffer()
+{
+    if (!m_memoryMappedGPUBuffer)
+        return false;
+
+    if (auto eglImage = m_memoryMappedGPUBuffer->createEGLImageFromDMABuf()) {
+        createTexture();
+        glEGLImageTargetTexture2DOES(m_renderTarget, eglImage);
+
+        auto& display = WebCore::PlatformDisplay::sharedDisplay();
+        display.destroyEGLImage(eglImage);
+        return true;
+    }
+
+    LOG_ERROR("Cannot create EGLImage from dma-buf -- rendering will be broken.");
+    return false;
+}
+#endif
+
+#if USE(GBM) || OS(ANDROID)
+BitmapTexture::BitmapTexture(EGLImage image, const IntSize& size, OptionSet<Flags> flags)
+    : m_flags(flags)
+    , m_size(size)
+{
+    determineRenderTargetAndBinding();
+
+    GLint boundTexture = 0;
+    glGetIntegerv(m_binding, &boundTexture);
+
+    createTexture();
+    glEGLImageTargetTexture2DOES(m_renderTarget, image);
+
+    glBindTexture(m_renderTarget, boundTexture);
+}
+#endif
+
+void BitmapTexture::swapTexture(BitmapTexture& other)
+{
+    RELEASE_ASSERT(m_size == other.m_size);
+    RELEASE_ASSERT(!m_flags.contains(Flags::DepthBuffer));
+    RELEASE_ASSERT(!other.m_flags.contains(Flags::DepthBuffer));
+
+#if USE(GBM)
+    std::swap(m_memoryMappedGPUBuffer, other.m_memoryMappedGPUBuffer);
+#endif
+    std::swap(m_flags, other.m_flags);
+    std::swap(m_id, other.m_id);
+
+    determineRenderTargetAndBinding();
+    other.determineRenderTargetAndBinding();
+
+    // Take the pixel format from the source texture. The source texture
+    // (going back to the pool) is reset to the default pixel format.
+    m_pixelFormat = other.m_pixelFormat;
+    other.m_pixelFormat = PixelFormat::RGBA8;
+}
+
+void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
+{
+#if USE(GBM)
+    // We don't support switching from dmabuf backing to regular textures -- there is no use-case for that scenario.
+    RELEASE_ASSERT(m_flags.contains(Flags::BackedByDMABuf) == flags.contains(Flags::BackedByDMABuf));
+#endif
+
+    m_flags = flags;
+    m_shouldClear = true;
+    m_pixelFormat = flags.contains(Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8;
+    m_filterOperation = nullptr;
+
+    if (!flags.contains(Flags::DepthBuffer)) {
+        if (m_fbo) {
+            glDeleteFramebuffers(1, &m_fbo);
+            m_fbo = 0;
+        }
+
+        if (m_depthBufferObject) {
+            glDeleteRenderbuffers(1, &m_depthBufferObject);
+            m_depthBufferObject = 0;
+        }
+
+        if (m_stencilBufferObject) {
+            glDeleteRenderbuffers(1, &m_stencilBufferObject);
+            m_stencilBufferObject = 0;
+        }
+
+        m_stencilBound = false;
+        m_clipStack = { };
+    }
+
+    if (m_size == size)
+        return;
+    m_size = size;
+
+    determineRenderTargetAndBinding();
+
+    GLint boundTexture = 0;
+    glGetIntegerv(m_binding, &boundTexture);
+
+#if USE(GBM)
+    if (m_memoryMappedGPUBuffer) {
+        if (m_id) {
+            // Recreate GL texture, if it was present before.
+            glDeleteTextures(1, &m_id);
+            m_id = 0;
+        }
+
+        // Recreate MemoryMappedGPUBuffer with new size.
+        m_memoryMappedGPUBuffer = MemoryMappedGPUBuffer::create(m_size, m_memoryMappedGPUBuffer->flags());
+
+        if (allocateTextureFromMemoryMappedGPUBuffer()) {
+            glBindTexture(m_renderTarget, boundTexture);
+            return;
+        }
+    }
+#endif
+
+    glBindTexture(m_renderTarget, m_id);
+    glTexImage2D(m_renderTarget, 0, textureFormat(), m_size.width(), m_size.height(), 0, textureFormat(), s_pixelDataType, nullptr);
+    glBindTexture(m_renderTarget, boundTexture);
+}
+
+void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, PixelFormat pixelFormat)
+{
+    if (m_pixelFormat != pixelFormat) {
+        // Only allow pixel format changes, if the whole texture content changes.
+        ASSERT(targetRect.size() == m_size);
+        ASSERT(targetRect.location().isZero());
+        m_pixelFormat = pixelFormat;
+    }
+
+#if USE(GBM)
+    // Use OpenGL to update multi-plane textures via glTexSubImage2D -- mmap() mode is only intended for single-plane images.
+    if (m_memoryMappedGPUBuffer && (m_memoryMappedGPUBuffer->isLinear() || m_memoryMappedGPUBuffer->isVivanteSuperTiled())) {
+        RELEASE_ASSERT(sourceOffset.isZero());
+        if (auto writeScope = makeGPUBufferWriteScope(*m_memoryMappedGPUBuffer)) {
+            m_memoryMappedGPUBuffer->updateContents(*writeScope, srcData, targetRect, bytesPerLine);
+            return;
+        }
+
+        WTFLogAlways("ERROR: Update Bitmap Texture Contents failed to obtain MemoryMappedGPUBuffer write scope. Aborting fallback to OpenGL..."); // NOLINT
+        CRASH();
+    }
+#endif
+
+    const unsigned bytesPerPixel = 4;
+    auto data = static_cast<const uint8_t*>(srcData);
+    Vector<uint8_t> temporaryData;
+    IntPoint adjustedSourceOffset = sourceOffset;
+
+    // Texture upload requires subimage buffer if driver doesn't support subimage and we don't have full image upload.
+    bool supportsUnpackSubimage = GLContext::current()->glExtensions().EXT_unpack_subimage;
+    bool requireSubImageBuffer = !supportsUnpackSubimage
+        && !(bytesPerLine == static_cast<int>(targetRect.width() * bytesPerPixel) && adjustedSourceOffset == IntPoint::zero());
+
+    // prepare temporaryData if necessary
+    if (requireSubImageBuffer) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
+        temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
+        auto dst = temporaryData.mutableSpan().data();
+        data = dst;
+        auto bits = static_cast<const uint8_t*>(srcData);
+        auto src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
+        const int targetBytesPerLine = targetRect.width() * bytesPerPixel;
+        for (int y = 0; y < targetRect.height(); ++y) {
+            memcpy(dst, src, targetBytesPerLine);
+            src += bytesPerLine;
+            dst += targetBytesPerLine;
+        }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+        bytesPerLine = targetBytesPerLine;
+        adjustedSourceOffset = IntPoint(0, 0);
+    }
+
+    GLint boundTexture = 0;
+    glGetIntegerv(m_binding, &boundTexture);
+
+    glBindTexture(m_renderTarget, m_id);
+
+    if (supportsUnpackSubimage) {
+        // Use the OpenGL sub-image extension, now that we know it's available.
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS, adjustedSourceOffset.y());
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS, adjustedSourceOffset.x());
+    }
+
+    glTexSubImage2D(m_renderTarget, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), textureFormat(), s_pixelDataType, data);
+
+    if (supportsUnpackSubimage) {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    }
+
+    glBindTexture(m_renderTarget, boundTexture);
+}
+
+void BitmapTexture::updateContents(NativeImage* frameImage, const IntRect& targetRect, const IntPoint& offset)
+{
+    if (!frameImage)
+        return;
+
+#if USE(CAIRO)
+    cairo_surface_t* surface = frameImage->platformImage().get();
+    const uint8_t* imageData = cairo_image_surface_get_data(surface);
+    int bytesPerLine = cairo_image_surface_get_stride(surface);
+
+    updateContents(imageData, targetRect, offset, bytesPerLine, PixelFormat::BGRA8);
+#elif USE(SKIA)
+    sk_sp<SkImage> surface = frameImage->platformImage();
+    SkPixmap pixmap;
+    if (surface->peekPixels(&pixmap))
+        updateContents(pixmap.addr(), targetRect, offset, pixmap.rowBytes(), PixelFormat::BGRA8);
+#else
+    UNUSED_PARAM(targetRect);
+    UNUSED_PARAM(offset);
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
+}
+
+void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& offset, float scale)
+{
+    // Making an unconditionally unaccelerated buffer here is OK because this code
+    // isn't used by any platforms that respect the accelerated bit.
+    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return;
+
+    GraphicsContext& context = imageBuffer->context();
+    context.setTextDrawingMode(TextDrawingMode::Fill);
+
+    IntRect sourceRect(targetRect);
+    sourceRect.setLocation(offset);
+    sourceRect.scale(1 / scale);
+    context.applyDeviceScaleFactor(scale);
+    context.translate(-sourceRect.x(), -sourceRect.y());
+
+    sourceLayer->paintGraphicsLayerContents(context, sourceRect);
+
+    auto image = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+    if (!image)
+        return;
+
+    updateContents(image.get(), targetRect, IntPoint());
+}
+
+void BitmapTexture::initializeStencil()
+{
+    if (m_flags.contains(Flags::DepthBuffer)) {
+        // We have a depth buffer and we're asked to have a stencil buffer as well. This is only
+        // possible if packed depth stencil is available. If that's the case, just bind the depth
+        // buffer as the stencil one if haven't done so. If packed depth stencil is not available
+        // don't do anything, which will cause stencil clips on this surface to fail.
+        if (depthBufferFormat() == GL_DEPTH24_STENCIL8 && !m_stencilBound) {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
+            m_stencilBound = true;
+        }
+        return;
+    }
+
+    // We don't have a depth buffer. Use a stencil only buffer.
+    if (m_stencilBufferObject)
+        return;
+
+    glGenRenderbuffers(1, &m_stencilBufferObject);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBufferObject);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_size.width(), m_size.height());
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_stencilBufferObject);
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+}
+
+void BitmapTexture::initializeDepthBuffer()
+{
+    if (m_depthBufferObject)
+        return;
+
+    glGenRenderbuffers(1, &m_depthBufferObject);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferObject);
+    glRenderbufferStorage(GL_RENDERBUFFER, depthBufferFormat(), m_size.width(), m_size.height());
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
+}
+
+void BitmapTexture::clearIfNeeded()
+{
+    if (!m_shouldClear)
+        return;
+
+    m_clipStack.reset(IntRect(IntPoint::zero(), m_size), ClipStack::YAxisMode::Default);
+    m_clipStack.applyIfNeeded();
+    glClearColor(0, 0, 0, 0);
+    glClearStencil(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    m_shouldClear = false;
+}
+
+void BitmapTexture::createFboIfNeeded()
+{
+    if (m_fbo)
+        return;
+
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderTarget, id(), 0);
+    if (m_flags.contains(Flags::DepthBuffer))
+        initializeDepthBuffer();
+    m_shouldClear = true;
+}
+
+void BitmapTexture::bindAsSurface()
+{
+    glBindTexture(m_renderTarget, 0);
+    createFboIfNeeded();
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glViewport(0, 0, m_size.width(), m_size.height());
+    if (m_flags.contains(Flags::DepthBuffer))
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
+    clearIfNeeded();
+    m_clipStack.apply();
+}
+
+BitmapTexture::~BitmapTexture()
+{
+    glDeleteTextures(1, &m_id);
+
+    if (m_fbo)
+        glDeleteFramebuffers(1, &m_fbo);
+
+    if (m_depthBufferObject)
+        glDeleteRenderbuffers(1, &m_depthBufferObject);
+
+    if (m_stencilBufferObject)
+        glDeleteRenderbuffers(1, &m_stencilBufferObject);
+}
+
+void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset)
+{
+    RELEASE_ASSERT(sourceOffset.width() + targetRect.width() <= m_size.width());
+    RELEASE_ASSERT(sourceOffset.height() + targetRect.height() <= m_size.height());
+
+    if (m_pixelFormat != PixelFormat::RGBA8) {
+        // Only allow pixel format changes, if the whole texture content changes.
+        ASSERT(targetRect.size() == m_size);
+        ASSERT(targetRect.location().isZero());
+        m_pixelFormat = PixelFormat::RGBA8;
+    }
+
+    GLint boundFramebuffer = 0;
+    GLint boundActiveTexture = 0;
+    GLint boundTextureOnOriginalUnit = 0;
+
+    determineRenderTargetAndBinding();
+
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFramebuffer);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &boundActiveTexture);
+    glGetIntegerv(m_binding, &boundTextureOnOriginalUnit);
+
+    glBindTexture(m_renderTarget, sourceTextureID);
+
+    GLuint copyFbo = 0;
+    glGenFramebuffers(1, &copyFbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, copyFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_renderTarget, sourceTextureID, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+
+    // Save GL_TEXTURE0's binding separately when switching away from a different unit.
+    GLint boundTextureOnUnit0 = 0;
+    if (static_cast<GLenum>(boundActiveTexture) != GL_TEXTURE0)
+        glGetIntegerv(m_binding, &boundTextureOnUnit0);
+
+    glBindTexture(m_renderTarget, id());
+    glCopyTexSubImage2D(m_renderTarget, 0, targetRect.x(), targetRect.y(), sourceOffset.width(), sourceOffset.height(), targetRect.width(), targetRect.height());
+
+    if (static_cast<GLenum>(boundActiveTexture) != GL_TEXTURE0)
+        glBindTexture(m_renderTarget, boundTextureOnUnit0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
+    glActiveTexture(boundActiveTexture);
+    glBindTexture(m_renderTarget, boundTextureOnOriginalUnit);
+    glDeleteFramebuffers(1, &copyFbo);
+}
+
+OptionSet<TextureMapperFlags> BitmapTexture::colorConvertFlags() const
+{
+    if (m_pixelFormat == PixelFormat::RGBA8)
+        return { };
+
+    if (m_flags.contains(Flags::UseBGRALayout))
+        return { };
+
+    // Our GL textures are stored in RGBA format. If we received an update in BGRA format, we write that BGRA data into
+    // the RGBA GL texture without pixel format conversions, but instead use a shader program to transparently handle
+    // the color conversion on-the-fly, when painting the texture.
+#if CPU(LITTLE_ENDIAN)
+    return TextureMapperFlags::ShouldConvertTextureBGRAToRGBA;
+#else
+    return TextureMapperFlags::ShouldConvertTextureARGBToRGBA;
+#endif
+}
+
+#if USE(SKIA)
+GrBackendTexture BitmapTexture::createSkiaBackendTexture() const
+{
+    return SkiaUtilities::createBackendTexture(*this);
+}
+
+sk_sp<SkSurface> BitmapTexture::createSkiaSurface(GrDirectContext* grContext, GrSurfaceOrigin origin, unsigned sampleCount) const
+{
+    auto properties = FontRenderOptions::singleton().createSurfaceProps();
+    return SkiaUtilities::createSurface(grContext, *this, properties, origin, sampleCount);
+}
+#endif
+
+} // namespace WebCore
+
+#endif // USE(TEXTURE_MAPPER)

@@ -1,0 +1,18 @@
+group compound_assignment "Compound assignments with interesting lvalues"
+
+    case mul_swizzled_vec_by_matrix
+        values { output vec4 out0 = vec4(1.0, 2.0, 3.0, 4.0); }
+        both ""
+            precision highp float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                out0 = vec4(1.0, 2.0, 3.0, 4.0);
+                out0.xy *= mat2(1.0, 0.0, 0.0, 1.0);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # compound_assignment

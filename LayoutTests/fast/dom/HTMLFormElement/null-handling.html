@@ -1,0 +1,23 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests null handling of several HTMLFormElement attributes");
+
+var form = document.createElement("form");
+shouldBeNull("form.getAttribute('method')", "");
+shouldBeNull("form.getAttribute('enctype')", "");
+shouldBeNull("form.getAttribute('encoding')", "");
+evalAndLog("form.method = null");
+shouldBeEqualToString("form.getAttribute('method')", "null");
+evalAndLog("form.enctype = null");
+shouldBeEqualToString("form.getAttribute('enctype')", "null");
+evalAndLog("form.encoding = 'test'");
+shouldBeEqualToString("form.getAttribute('enctype')", "test");
+evalAndLog("form.encoding = null");
+shouldBeEqualToString("form.getAttribute('enctype')", "null");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

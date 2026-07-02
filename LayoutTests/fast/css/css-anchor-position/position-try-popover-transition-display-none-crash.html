@@ -1,0 +1,50 @@
+<style>
+#anchor {
+  width: 100px;
+  height: 100px;
+  background: cyan;
+  anchor-name: --anchor;
+}
+
+#anchored {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  position-anchor: --anchor;
+  position-area: top right;
+  position-try-fallbacks: bottom right;
+  background: green;
+  transition: display 0.1s allow-discrete;
+}
+</style>
+
+<body onload="onLoad()">
+  <p>This test passes if it does not crash</p>
+
+  <button id="toggle" popovertarget="anchored">Toggle popover</button>
+  <div id="anchor"></div>
+  <div id="anchored" popover></div>
+
+  <script>
+    function onLoad() {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+
+      // Simulates clicking the toggle button. toggle.click() and anchored.show/hidePopover()
+      // doesn't trigger the bug otherwise.
+
+      const toggleButtonBoundingRect = toggle.getBoundingClientRect();
+
+      eventSender.mouseMoveTo(toggleButtonBoundingRect.x, toggleButtonBoundingRect.y);
+
+      eventSender.mouseDown();
+      eventSender.mouseUp();
+
+      eventSender.mouseDown();
+      setTimeout(() => {
+        eventSender.mouseUp();
+        testRunner.notifyDone();
+      }, 0);
+    }
+  </script>
+</body>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing that VP8 videos are using limited video range</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <div>Video should be running, a checker be drawn and colors matching the original.</div>
+        <canvas id="canvas1" width="320" height="320"></canvas>
+        <video id="video" autoplay playsInline width="320" height="320"></video>
+        <canvas id="canvas2" width="320" height="320"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+
+var ctx = canvas1.getContext("2d");
+
+// draw black and white checker.
+function drawChecker(ctx, x, y, width, height) {
+  for (var i = 0; i < x; i++) {
+      for (var j = 0; j < y; j++) {
+        if ((i + j) % 2 == 0)
+            ctx.fillStyle = "#000000";
+        else
+            ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(i * width / x, j * height / y, width / x, height / y);
+      }
+  }
+}
+
+function checkPixelData(pixelData, expected, fuzz) {
+    return Math.abs(pixelData[0] - expected[0]) <= fuzz
+            && Math.abs(pixelData[1] - expected[1]) <= fuzz
+            && Math.abs(pixelData[2] - expected[2]) <= fuzz;
+}
+
+const FPS = 30;
+var track;
+var remoteTrack;
+var receivingConnection;
+var localStream;
+
+// TODO. Bug 224960: Investigate why we need to redraw the canvas for the play promise to later be resolved.
+// Repeatedly redraw the checker to get the video stream going.
+setInterval(() => drawChecker(ctx, 2, 2, canvas1.width, canvas1.height), 1000 / FPS);
+
+promise_test(async (test) => {
+    const remoteStream = await new Promise((resolve, reject) => {
+        localStream = canvas1.captureStream(FPS);
+        track = localStream.getVideoTracks()[0];
+
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(track, localStream);
+            firstConnection.getTransceivers()[0].setCodecPreferences([{mimeType: "video/VP8", clockRate: 90000}]);
+        }, (secondConnection) => {
+            receivingConnection = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                remoteTrack = trackEvent.track;
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : test.step_func((offer) => {
+            assert_false(offer.sdp.includes("H264"), "No H264");
+            assert_true(offer.sdp.includes("VP8"), "VP8");
+            return offer;
+        })
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    video.srcObject = remoteStream;
+    return video.play();
+}, "Setting video exchange");
+
+promise_test(async (test) => {
+    await checkVideoBlack(false, canvas2, video);
+    let context = canvas2.getContext('2d');
+    // Check pixel is pure black in top left square.
+    let pixelData = context.getImageData(canvas2.width / 4, canvas2.height / 4, 1, 1).data;
+    assert_true(checkPixelData(pixelData, [0, 0, 0], 1));
+    // Check pixel is pure white in top right square.
+    pixelData = context.getImageData(3 * canvas2.width / 4, canvas2.height / 4, 1, 1).data;
+    assert_true(checkPixelData(pixelData, [255, 255, 255], 1));
+}, "Track is enabled, video should not be black");
+        </script>
+    </body>
+</html>

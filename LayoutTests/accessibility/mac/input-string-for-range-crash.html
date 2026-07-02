@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<style>
+.myInput:after {
+    content: " ";
+    display: table
+}
+</style>
+<body>
+
+<div class="myInput">
+<input id="test" type="input" value="abcd">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that calling stringForRange on an input element won't cause crash.");
+    
+    if (window.accessibilityController) {
+        var input = accessibilityController.accessibleElementById("test");
+        // make sure calling stringForRange won't crash
+        debug(input.stringForRange(0, 4));
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

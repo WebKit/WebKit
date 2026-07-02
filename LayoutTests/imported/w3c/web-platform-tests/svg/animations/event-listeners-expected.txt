@@ -1,0 +1,3 @@
+
+PASS When the animation ends, only the 'onend' attribute + IDL listeners and the 'endEvent' listener should be called
+

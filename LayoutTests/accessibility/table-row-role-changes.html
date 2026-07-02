@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table id="table" role="grid">
+    <thead>
+        <tr id="row1"><th>a</th><th>b</th></tr>
+    </thead>
+    <tbody>
+        <tr id="row2"><td>c</td><td>d</td></tr>
+    </tbody>
+</table>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        let output = "Tests that changes in table and row roles result in the appropriate AX properties being exposed.\n";
+
+        let axTable = accessibilityController.accessibleElementById("table");
+        output += `Originally axTable has ${axTable.columnCount} columns and ${axTable.rowCount} rows\n`;
+
+        // Change the role of the table arbitrarily to "button".
+        let table = document.getElementById("table");
+        table.setAttribute("role", "button");
+        setTimeout(async () => {
+            await waitFor(() => {
+                axTable = accessibilityController.accessibleElementById("table");
+                return axTable && !axTable.columnCount && !axTable.rowCount;
+            });
+            output += `After setting role to button, axTable has ${axTable.columnCount} columns and ${axTable.rowCount} rows\n`;
+
+            // Set the role of the table to a different table role.
+            table.setAttribute("role", "table");
+            await waitFor(() => {
+                axTable = accessibilityController.accessibleElementById("table");
+                return axTable && axTable.columnCount && axTable.rowCount;
+            });
+            output += `After setting role to table, axTable has ${axTable.columnCount} columns and ${axTable.rowCount} rows\n`;
+
+            // Set the role of the trs in the table arbitrarily to "list".
+            document.getElementById("row1").setAttribute("role", "list");
+            document.getElementById("row2").setAttribute("role", "list");
+            await waitFor(() => {
+                axTable = accessibilityController.accessibleElementById("table");
+                return axTable && !axTable.columnCount && !axTable.rowCount;
+            });
+            output += `After setting trs role to list, axTable has ${axTable.columnCount} columns and ${axTable.rowCount} rows\n`;
+
+            // Set the role of the trs to "row".
+            document.getElementById("row1").setAttribute("role", "row");
+            document.getElementById("row2").setAttribute("role", "row");
+            await waitFor(() => {
+                axTable = accessibilityController.accessibleElementById("table");
+                return axTable && axTable.columnCount && axTable.rowCount;
+            });
+            output += `After setting trs role to row, axTable has ${axTable.columnCount} columns and ${axTable.rowCount} rows\n`;
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

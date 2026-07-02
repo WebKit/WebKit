@@ -1,0 +1,17 @@
+Test text insertion after <picture>.
+
+Initial state:
+| <picture>
+|   <source>
+|     srcset="../resources/abe.png"
+|   <img>
+|     src=""
+|   <#selection-caret>
+
+After insertion:
+| <picture>
+|   <source>
+|     srcset="../resources/abe.png"
+|   <img>
+|     src=""
+| "abe<#selection-caret>"

@@ -1,0 +1,3 @@
+
+PASS Alias properties with property-dependant random() values should resolve to the same value
+

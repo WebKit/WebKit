@@ -1,0 +1,6 @@
+
+FAIL navigator.credentials.create() calling the API without user activation should reject with NotAllowedError. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL navigator.credentials.create() with empty protocol array and no user activation needed should reject with TypeError. assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS navigator.credentials.create() with early abort does not consume user activation.
+FAIL navigator.credentials.create() with late abort consumes user activation. assert_unreached: Should have rejected: undefined Reached unreachable code
+

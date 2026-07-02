@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a promise in a cross-origin iframe properly gets resolved after the iframe gets detached.");
+jsTestIsAsync = true;
+
+onmessage = () => {
+    testPassed("Promise was resolved");
+    finishJSTest();
+};
+</script>
+<iframe src="http://localhost:8000/eventloop/resources/promise-from-cross-origin-detached-iframe-subframe.html"></iframe>
+</body>
+</html>

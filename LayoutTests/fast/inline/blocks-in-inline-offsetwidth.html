@@ -1,0 +1,17 @@
+<style>
+.container {
+  width: 400px;
+  font-family: Ahem;
+  font-size: 10px;
+}
+</style>
+<div class=container>
+  <span id=target>
+    <div>text content</div>
+  </span>
+</div>
+<pre id=log></pre>
+<script>
+window.testRunner?.dumpAsText();
+log.textContent = `span offsetWidth: ${target.offsetWidth} offsetHeight:${target.offsetHeight}`;
+</script>

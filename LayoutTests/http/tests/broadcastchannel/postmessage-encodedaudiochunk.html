@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="output"></pre>
+<script src="resources/broadcastchannel-test-harness.js"></script>
+<script>
+broadcastChannelTest(function() {
+    return new EncodedAudioChunk({type: "key", timestamp: 0, data: new Uint8Array([1, 2, 3, 4])});
+}, "EncodedAudioChunk:key:4");
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+
+PASS can be piped to with a string
+PASS can be piped to with an ArrayBuffer
+PASS can be piped to with a Blob
+PASS can be piped to with a param object with write command
+PASS can be piped to with a param object with multiple commands
+PASS multiple operations can be queued
+PASS plays well with fetch
+PASS abort() aborts write
+

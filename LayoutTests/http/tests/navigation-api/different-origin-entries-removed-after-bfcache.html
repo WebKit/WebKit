@@ -1,0 +1,27 @@
+<script src="/js-test-resources/js-test.js"></script>
+
+<script>
+description("This tests that when page A is restored from the bfcache after a different origin page B is visited, navigation.entries contains only the entry for page A.");
+jsTestIsAsync = true;
+
+window.addEventListener('pageshow', function() {
+    if (!sessionStorage.getItem('hasVisited')) {
+        debug('Visting Page 1 for the first time, navigating to page-that-goes-back');
+        sessionStorage.setItem('hasVisited', 'true');
+
+        setTimeout(() => {
+            window.location.href = 'http://localhost:8000/navigation-api/resources/page-that-goes-back.html';
+        }, 0);
+    } else {
+        sessionStorage.removeItem('hasVisited');
+
+        window.navigation.addEventListener('navigate', function() {
+            debug('Visiting Page 1 for the second time');
+            shouldBeEqualToNumber("window.navigation.entries().length", 1);
+            finishJSTest();
+        });
+    }
+});
+</script>
+
+

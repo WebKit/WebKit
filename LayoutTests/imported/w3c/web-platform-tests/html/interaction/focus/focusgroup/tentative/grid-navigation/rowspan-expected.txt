@@ -1,0 +1,11 @@
+r1c1	r1c2	r1c3
+r2c1	r2c2	r3c3
+r3c1	r3c3
+r4c1	r4c3
+r5c1	r5c2	r5c3
+
+FAIL A right arrow press should move the focus to the next column, dealing correctly with rowspans. assert_equals: expected Element node <td id="r2c2" tabindex="-1" rowspan="3">r2c2</td> but got Element node <td id="r2c1" tabindex="0">r2c1</td>
+FAIL A down arrow press should move the focus to the right cell on the next row, dealing correctly with rowspans. assert_equals: expected Element node <td id="r2c2" tabindex="-1" rowspan="3">r2c2</td> but got Element node <td id="r1c2" tabindex="-1">r1c2</td>
+FAIL A left arrow press should move to the previous column, dealing correctly with the rowspans. assert_equals: expected Element node <td id="r2c2" tabindex="-1" rowspan="3">r2c2</td> but got Element node <td id="r2c3" tabindex="-1">r3c3</td>
+FAIL An up arrow press should move the focus to the right cell on the previous row, dealing correctly with rowspans. assert_equals: expected Element node <td id="r2c2" tabindex="-1" rowspan="3">r2c2</td> but got Element node <td id="r5c2" tabindex="-1">r5c2</td>
+

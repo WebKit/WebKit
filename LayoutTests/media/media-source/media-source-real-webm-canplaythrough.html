@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-canplaythrough</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-canplaythrough.html
+    // Tests that loadedmetadata → loadeddata → canplay → canplaythrough events
+    // fire after appending enough data.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+
+        waitForEvent('loadedmetadata');
+        waitForEvent('loadeddata');
+        waitForEvent('canplay');
+        waitForEventAndEnd('canplaythrough');
+
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Append a large block of data to trigger canplaythrough.
+        // Using all sync frames so the decoder can process them.
+        var samples = [];
+        for (var i = 0; i < 100; i++) {
+            samples.push({
+                duration: 1000,
+                isSync: true
+            });
+        }
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: samples }]
+        });
+        sourceBuffer.appendBuffer(media);
+        // Test ends via canplaythrough event handler (waitForEventAndEnd)
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

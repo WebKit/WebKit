@@ -1,0 +1,7 @@
+
+PASS display: block ruby
+PASS display: inline ruby
+PASS display: ruby
+PASS display: ruby-base
+PASS display: ruby-text
+

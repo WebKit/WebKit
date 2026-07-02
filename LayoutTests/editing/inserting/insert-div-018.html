@@ -1,0 +1,44 @@
+<html> 
+<head>
+
+<style>
+body {
+    font-size: 24px; 
+}
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+}
+div {
+    border: 2px solid blue; 
+    padding: 12px; 
+}
+
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionBackwardByCharacterCommand();
+    insertParagraphCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root">
+
+Test inserting paragraphs: should see an empty blue box below "bar"
+
+<div style="border: none; height: 12px"></div>
+
+bar<div class="editing" id="test">baz</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

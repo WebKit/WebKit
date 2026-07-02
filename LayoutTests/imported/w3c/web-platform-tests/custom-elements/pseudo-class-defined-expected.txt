@@ -1,0 +1,27 @@
+
+
+PASS this.matches(:defined) should not match during an upgrade
+PASS <div> should be :defined
+PASS createElement("div") should be :defined
+PASS createElementNS("http://www.w3.org/1999/xhtml", "div") should be :defined
+PASS createElementNS("http://www.w3.org/2000/svg", "div") should be :defined
+PASS Without browsing context: createElement("div") should be :defined
+PASS Without browsing context: createElementNS("http://www.w3.org/1999/xhtml", "div") should be :defined
+PASS Without browsing context: createElementNS("http://www.w3.org/2000/svg", "div") should be :defined
+PASS <a-a> should not be :defined
+PASS createElement("a-a") should not be :defined
+PASS createElementNS("http://www.w3.org/1999/xhtml", "a-a") should not be :defined
+PASS createElementNS("http://www.w3.org/2000/svg", "a-a") should be :defined
+PASS Upgraded createElement("a-a") should be :defined
+PASS Upgraded createElementNS("http://www.w3.org/1999/xhtml", "a-a") should be :defined
+PASS Without browsing context: createElement("a-a") should not be :defined
+PASS Without browsing context: createElementNS("http://www.w3.org/1999/xhtml", "a-a") should not be :defined
+PASS Without browsing context: createElementNS("http://www.w3.org/2000/svg", "a-a") should be :defined
+PASS <font-face> should be :defined
+PASS createElement("font-face") should be :defined
+PASS createElementNS("http://www.w3.org/1999/xhtml", "font-face") should be :defined
+PASS createElementNS("http://www.w3.org/2000/svg", "font-face") should be :defined
+PASS Without browsing context: createElement("font-face") should be :defined
+PASS Without browsing context: createElementNS("http://www.w3.org/1999/xhtml", "font-face") should be :defined
+PASS Without browsing context: createElementNS("http://www.w3.org/2000/svg", "font-face") should be :defined
+

@@ -1,0 +1,110 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=50 obscuredInset.left=50 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        .top {
+            position: fixed;
+            top: 0;
+            height: 60px;
+            left: 0;
+            right: 0;
+        }
+
+        .left {
+            position: fixed;
+            top: 0;
+            width: 60px;
+            left: 0;
+            bottom: 0;
+        }
+
+        .right {
+            position: fixed;
+            top: 0;
+            width: 60px;
+            right: 0;
+            bottom: 0;
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+        }
+
+        .top > .content {
+            background: red;
+        }
+
+        .left > .content {
+            background: green;
+        }
+
+        .right > .content {
+            background: blue;
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.6;
+            background-color: gray;
+            display: none;
+            z-index: 100;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(50, 50, 50, 50);
+        await UIHelper.ensurePresentationUpdate();
+        edgeColorsBeforeShowingPopup = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("edgeColorsBeforeShowingPopup.top", "rgb(255, 0, 0)");
+        shouldBeEqualToString("edgeColorsBeforeShowingPopup.left", "rgb(0, 128, 0)");
+        shouldBeEqualToString("edgeColorsBeforeShowingPopup.right", "rgb(0, 0, 255)");
+        shouldBeNull("edgeColorsBeforeShowingPopup.bottom");
+
+        document.querySelector(".popup").style.display = "block";
+        await UIHelper.ensurePresentationUpdate();
+
+        edgeColorsAfterShowingPopup = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("edgeColorsAfterShowingPopup.top", "rgb(255, 0, 0)");
+        shouldBeEqualToString("edgeColorsAfterShowingPopup.left", "rgb(0, 128, 0)");
+        shouldBeEqualToString("edgeColorsAfterShowingPopup.right", "rgb(0, 0, 255)");
+        shouldBeEqualToString("edgeColorsAfterShowingPopup.bottom", "rgb(128, 128, 128)");
+
+        document.querySelector(".popup").style.display = "none";
+        await UIHelper.ensurePresentationUpdate();
+
+        edgeColorsAfterHidingPopup = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("edgeColorsAfterHidingPopup.top", "rgb(255, 0, 0)");
+        shouldBeEqualToString("edgeColorsAfterHidingPopup.left", "rgb(0, 128, 0)");
+        shouldBeEqualToString("edgeColorsAfterHidingPopup.right", "rgb(0, 0, 255)");
+        shouldBeNull("edgeColorsAfterHidingPopup.bottom");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <div class="right"><div class="content"></div></div>
+    <div class="left"><div class="content"></div></div>
+    <div class="top"><div class="content"></div></div>
+    <div class="popup"></div>
+    <div class="tall"></div>
+</body>
+</html>

@@ -1,0 +1,473 @@
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+from buildbot.process import factory
+from buildbot.steps import trigger
+
+from .steps import *
+from Shared.steps import *
+
+LINUX_PLATFORMS = frozenset({'gtk', 'wpe', 'jsc-only'})
+
+
+class Factory(factory.BuildFactory):
+    findModifiedLayoutTests = False
+    skipBuildIfNoResult = True
+    branches = None
+    excluded_branches = [r'webkitglib/\d+\.\d+']
+    requiresUserValidation = False
+
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target))
+        if checkRelevance:
+            self.addStep(CheckChangeRelevance())
+        excluded = [] if platform in LINUX_PLATFORMS else self.excluded_branches
+        self.addStep(ValidateChange(branches=self.branches, excluded_branches=excluded))
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        if platform.startswith('mac'):
+            self.addStep(PruneCoreSymbolicationdCacheIfTooLarge())
+        self.addStep(SetCredentialHelper())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        # CheckOutSource step pulls the latest revision, since we use alwaysUseLatest=True. Without alwaysUseLatest Buildbot will
+        # automatically apply the patch to the repo, and that doesn't handle ChangeLogs well. See https://webkit.org/b/193138
+        # Therefore we add CheckOutSpecificRevision step to checkout required revision.
+        self.addStep(CheckOutSpecificRevision())
+        if self.findModifiedLayoutTests:
+            self.addStep(GetTestExpectationsBaseline())
+        self.addStep(ShowIdentifier())
+        self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(ValidateChangeContent())
+        if self.requiresUserValidation:
+            self.addStep(ValidateUserForQueue())
+        if self.findModifiedLayoutTests:
+            self.addStep(GetUpdatedTestExpectations())
+            self.addStep(FindModifiedLayoutTests(skipBuildIfNoResult=self.skipBuildIfNoResult))
+
+
+class StyleFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments))
+        self.addStep(ValidateChange())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(SetCredentialHelper())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ShowIdentifier())
+        self.addStep(ApplyPatch())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(ValidateChangeContent())
+        self.addStep(CheckStyle())
+
+
+class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
+    findModifiedLayoutTests = False
+    excluded_branches = [r'webkitglib/\d+\.\d+']
+
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
+        self.addStep(CheckChangeRelevance())
+        excluded = [] if platform in LINUX_PLATFORMS else self.excluded_branches
+        self.addStep(ValidateChange(excluded_branches=excluded))
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(SetCredentialHelper())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(ShowIdentifier())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(ValidateChangeContent())
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(InstallCMake())
+        self.addStep(InstallNinja())
+        self.addStep(GetLLVMVersion())
+        self.addStep(PrintClangVersion())
+        self.addStep(CheckOutLLVMProject())
+        self.addStep(GetSwiftTagName())
+        self.addStep(PrintSwiftVersion())
+        self.addStep(CheckOutSwiftProject())
+        self.addStep(UpdateSwiftCheckouts())
+        self.addStep(BuildSwift())
+        self.addStep(InstallMetalToolchain())
+        self.addStep(FindModifiedSaferCPPExpectations())
+        self.addStep(ScanBuild())
+
+
+class BindingsFactory(Factory):
+    excluded_branches = []
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(RunBindingsTests())
+
+
+class WebKitPerlFactory(Factory):
+    excluded_branches = []
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments)
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(RunWebKitPerlTests())
+
+
+class WebKitPyFactory(Factory):
+    excluded_branches = []
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArgument=additionalArguments, checkRelevance=True)
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(RunWebKitPyTests())
+        self.addStep(SetBuildSummary())
+
+
+class BuildFactory(Factory):
+    skipUpload = False
+
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=False, rebuild_without_change_on_builder=False, deployment_target=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, rebuild_without_change_on_builder=rebuild_without_change_on_builder, deployment_target=deployment_target)
+        self.addStep(KillOldProcesses())
+        if platform == 'gtk':
+            self.addStep(InstallGtkDependencies())
+        elif platform == 'wpe':
+            self.addStep(InstallWpeDependencies())
+        self.addStep(ValidateChange(addURLs=False))
+        if platform in ['gtk', 'wpe']:
+            self.addStep(CleanDerivedSources())
+        self.addStep(CompileWebKit(skipUpload=self.skipUpload))
+
+
+class TestFactory(Factory):
+    LayoutTestClass = None
+    APITestClass = None
+    willTriggerCrashLogSubmission = False
+    skipBuildIfNoResult = False
+
+    def getProduct(self):
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+
+    def __init__(self, platform, configuration=None, architectures=None, triggered_by=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
+        if platform == 'gtk':
+            self.addStep(InstallGtkDependencies())
+        elif platform == 'wpe':
+            self.addStep(InstallWpeDependencies())
+        self.addStep(KillOldProcesses())
+        self.getProduct()
+        if self.willTriggerCrashLogSubmission:
+            self.addStep(WaitForCrashCollection())
+        if self.LayoutTestClass:
+            self.addStep(RunWebKitTestsInStressMode(num_iterations=10, layout_test_class=self.LayoutTestClass))
+            self.addStep(self.LayoutTestClass())
+        if self.APITestClass:
+            self.addStep(self.APITestClass())
+        if self.willTriggerCrashLogSubmission:
+            self.addStep(TriggerCrashLogSubmission())
+        if self.LayoutTestClass or self.APITestClass:
+            self.addStep(SetBuildSummary())
+
+
+class StressTestFactory(TestFactory):
+    findModifiedLayoutTests = True
+    skipBuildIfNoResult = True
+
+    def __init__(self, platform, configuration=None, architectures=None, triggered_by=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
+        self.addStep(KillOldProcesses())
+        self.getProduct()
+        self.addStep(WaitForCrashCollection())
+        self.addStep(RunWebKitTestsInStressMode())
+        self.addStep(RunWebKitTestsInSiteIsolationMode())
+        self.addStep(TriggerCrashLogSubmission())
+        self.addStep(SetBuildSummary())
+
+
+class JSCBuildFactory(Factory):
+    def __init__(self, platform, configuration='release', architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(CompileJSC())
+
+
+class JSCBuildAndTestsFactory(Factory):
+    def __init__(self, platform, configuration='release', architectures=None, remotes=None, additionalArguments=None, runTests='true', **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(CompileJSC(skipUpload=True))
+        if runTests.lower() == 'true':
+            self.addStep(RunJavaScriptCoreTests())
+
+
+class JSCBuildO3AndTestsFactory(Factory):
+    def __init__(self, platform, configuration='debug', architectures=None, remotes=None, additionalArguments=None, runTests='true', **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(SetO3OptimizationLevel())
+        self.addStep(CompileJSC(skipUpload=True))
+        self.addStep(RunJavaScriptCoreTests())
+
+
+class JSCTestsFactory(Factory):
+    def __init__(self, platform, configuration='release', architectures=None, remotes=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(KillOldProcesses())
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+        self.addStep(RunJavaScriptCoreTests())
+
+
+class APITestsFactory(TestFactory):
+    APITestClass = RunAPITests
+
+
+class iOSBuildFactory(BuildFactory):
+    pass
+
+
+class iOSEmbeddedBuildFactory(BuildFactory):
+    skipUpload = True
+
+
+class iOSTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTests
+    findModifiedLayoutTests = True
+    willTriggerCrashLogSubmission = True
+
+
+class visionOSBuildFactory(BuildFactory):
+    pass
+
+
+class visionOSEmbeddedBuildFactory(BuildFactory):
+    skipUpload = True
+
+
+class visionOSTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTests
+    findModifiedLayoutTests = True
+    willTriggerCrashLogSubmission = True
+
+
+class macOSBuildFactory(BuildFactory):
+    pass
+
+
+class macOSBuildOnlyFactory(BuildFactory):
+    skipUpload = True
+
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=True, **kwargs):
+        super().__init__(platform=platform, configuration=configuration, architectures=architectures, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, **kwargs)
+
+
+class watchOSBuildFactory(BuildFactory):
+    skipUpload = True
+
+
+class tvOSBuildFactory(BuildFactory):
+    skipUpload = True
+
+
+class macOSWK1Factory(TestFactory):
+    LayoutTestClass = RunWebKit1Tests
+    findModifiedLayoutTests = True
+    willTriggerCrashLogSubmission = True
+
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        super(macOSWK1Factory, self).__init__(platform=platform, configuration=configuration, architectures=architectures, additionalArguments=additionalArguments, checkRelevance=True, **kwargs)
+
+
+class macOSWK2Factory(TestFactory):
+    LayoutTestClass = RunWebKitTests
+    findModifiedLayoutTests = True
+    willTriggerCrashLogSubmission = True
+
+
+class macOSSiteIsolationFactory(TestFactory):
+    findModifiedLayoutTests = True
+    willTriggerCrashLogSubmission = True
+
+    def __init__(self, platform, configuration=None, architectures=None, triggered_by=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
+        self.addStep(KillOldProcesses())
+        self.getProduct()
+        self.addStep(WaitForCrashCollection())
+        self.addStep(RunWebKitTestsEWSSiteIsolation())
+        self.addStep(TriggerCrashLogSubmission())
+        self.addStep(SetBuildSummary())
+
+
+class PlayStationBuildFactory(BuildFactory):
+    branches = [r'main']
+    requiresUserValidation = True
+    skipUpload = True
+
+
+class WinBuildFactory(BuildFactory):
+    branches = [r'main']
+
+
+class WinTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTests
+
+
+class GTKBuildFactory(BuildFactory):
+    branches = [r'main', r'webkit.+']
+
+
+class GTKTestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTestsRedTree
+    findModifiedLayoutTests = True
+
+
+class WPEBuildFactory(BuildFactory):
+    branches = [r'main', r'webkit.+']
+
+
+class GTK3LibWebRTCBuildFactory(GTKBuildFactory):
+    skipUpload = True
+
+
+class WPETestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTestsRedTree
+    findModifiedLayoutTests = True
+
+
+class ServicesFactory(Factory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
+        self.addStep(RunBuildWebKitOrgUnitTests())
+        self.addStep(RunBuildbotCheckConfigForBuildWebKit())
+        self.addStep(RunEWSUnitTests())
+        self.addStep(RunBuildbotCheckConfigForEWS())
+        self.addStep(RunSharedUnitTests())
+        self.addStep(RunResultsdbpyTests())
+
+
+class CommitQueueFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, deployment_target=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments, deployment_target=deployment_target))
+        self.addStep(ValidateChange(verifycqplus=True))
+        self.addStep(ValidateCommitterAndReviewer())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(SetCredentialHelper())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ShowIdentifier())
+        self.addStep(InstallHooks())
+        self.addStep(ApplyPatch())
+
+        self.addStep(ValidateSquashed())
+        self.addStep(AddReviewerToCommitMessage())
+        self.addStep(ValidateCommitMessage())
+
+        self.addStep(KillOldProcesses())
+        self.addStep(CompileWebKit(skipUpload=True))
+        self.addStep(KillOldProcesses())
+
+        self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
+        self.addStep(CheckStatusOnEWSQueues())
+        self.addStep(RunWebKitTests())
+        self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
+
+        self.addStep(Canonicalize())
+        self.addStep(PushCommitToWebKitRepo())
+        self.addStep(SetBuildSummary())
+
+
+class MergeQueueFactoryBase(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, deployment_target=None, **kwargs):
+        super(MergeQueueFactoryBase, self).__init__()
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments, deployment_target=deployment_target))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(DetermineLabelOwner())
+        self.addStep(ValidateCommitterAndReviewer())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(SetCredentialHelper())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(MapBranchAlias())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(ShowIdentifier())
+        self.addStep(InstallHooks())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(ValidateChangeContent(block_pr_on_failure=True))
+        self.addStep(ValidateRemote())
+        self.addStep(ValidateSquashed())
+        self.addStep(AddReviewerToCommitMessage())
+        self.addStep(ValidateCommitMessage())
+
+
+class MergeQueueFactory(MergeQueueFactoryBase):
+    def __init__(self, platform, **kwargs):
+        super(MergeQueueFactory, self).__init__(platform, **kwargs)
+
+        self.addStep(KillOldProcesses())
+        self.addStep(CompileWebKit(skipUpload=True))
+        self.addStep(KillOldProcesses())
+
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(CheckStatusOnEWSQueues())
+        self.addStep(RunWebKitTests())
+
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(Canonicalize())
+        self.addStep(PushPullRequestBranch())
+        self.addStep(UpdatePullRequest())
+        self.addStep(PushCommitToWebKitRepo())
+        self.addStep(SetBuildSummary())
+
+
+class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
+    def __init__(self, platform, **kwargs):
+        super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
+
+        self.addStep(Canonicalize())
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
+        self.addStep(PushPullRequestBranch())
+        self.addStep(UpdatePullRequest())
+        self.addStep(PushCommitToWebKitRepo())
+        self.addStep(SetBuildSummary())
+
+
+class SafeMergeQueueFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        super().__init__()
+        for project in GITHUB_PROJECTS:
+            self.addStep(RetrievePRDataFromLabel(project, label=GitHub.SAFE_MERGE_QUEUE_LABEL))

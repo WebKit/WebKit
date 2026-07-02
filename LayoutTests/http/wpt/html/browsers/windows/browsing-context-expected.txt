@@ -1,0 +1,5 @@
+
+PASS Check that browsing context has new, ready HTML document
+PASS Check that new document nodes extant, empty
+PASS Check the document properties corresponding to the creator browsing context
+

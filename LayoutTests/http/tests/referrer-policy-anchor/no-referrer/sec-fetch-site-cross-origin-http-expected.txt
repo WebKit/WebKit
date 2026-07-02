@@ -1,0 +1,10 @@
+Tests the behavior of sec-fetch-site header.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS secFetchSite is expected
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

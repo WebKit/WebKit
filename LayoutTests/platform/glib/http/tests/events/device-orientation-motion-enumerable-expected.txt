@@ -1,0 +1,12 @@
+Test that ondevicemotion and ondeviceorientation are enumerable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL Object.getOwnPropertyNames(window).includes('ondeviceorientation') should be true. Was false.
+FAIL Object.getOwnPropertyNames(window).includes('ondevicemotion') should be true. Was false.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

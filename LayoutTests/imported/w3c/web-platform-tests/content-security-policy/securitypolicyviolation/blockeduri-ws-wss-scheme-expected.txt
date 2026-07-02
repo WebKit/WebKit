@@ -1,0 +1,6 @@
+
+PASS ws
+PASS wss
+PASS cross-origin
+FAIL redirect promise_test: Unhandled rejection with value: "timeout"
+

@@ -1,0 +1,6 @@
+
+FAIL captureTime and senderCaptureTimeOffset present in audio receiver if extension is used promise_test: Unhandled rejection with value: "Unexpected senderReceiveTimeOffset"
+PASS captureTime and senderCaptureTimeOffset not present in audio receiver if extension not used
+FAIL captureTime and senderCaptureTimeOffset present in video receiver if extension is used promise_test: Unhandled rejection with value: "Unexpected senderReceiveTimeOffset"
+PASS captureTime and senderCaptureTimeOffset not present in video receiver if extension not used
+

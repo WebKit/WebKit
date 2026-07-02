@@ -1,0 +1,4 @@
+
+PASS Elements are parents of their attributes
+PASS Attributes are not children of their parents
+

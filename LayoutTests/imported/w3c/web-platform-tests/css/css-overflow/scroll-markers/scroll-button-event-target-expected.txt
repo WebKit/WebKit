@@ -1,0 +1,7 @@
+
+
+FAIL CSS Overflow: event.target and event.currentTarget for ::scroll-button is scroller assert_equals: event.currentTarget for ::scroll-button click is scroller expected Element node <div id="scroller">
+  <div></div>
+  <div></div>
+</div> but got null
+

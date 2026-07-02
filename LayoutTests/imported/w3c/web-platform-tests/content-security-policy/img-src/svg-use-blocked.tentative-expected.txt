@@ -1,0 +1,3 @@
+
+PASS Blocked SVG <use> element
+

@@ -1,0 +1,7 @@
+
+
+PASS Permissions-Policy header digital-credentials-get=(self) allows the top-level document.
+PASS Permissions-Policy header digital-credentials-get=(self) allows same-origin iframes.
+PASS Permissions-Policy header digital-credentials-get=(self) disallows cross-origin iframes.
+FAIL Permissions-Policy header explicitly set to digital-credentials-get=(self) cannot be overridden by allow attribute. assert_false: Digital Credential API expected false got true
+

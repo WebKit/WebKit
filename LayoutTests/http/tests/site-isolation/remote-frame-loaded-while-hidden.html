@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script>
+if (window.testRunner) { testRunner.waitUntilDone() }
+onload = ()=>{
+    let i = document.getElementById('testiframe');
+    i.src = 'http://localhost:8000/site-isolation/resources/green-background.html';
+    i.addEventListener('load', () => {
+        i.style.display = "inline";
+        if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    });
+}
+</script>
+</head>
+<body bgcolor=blue>
+<iframe id='testiframe' frameborder=0 style="display:none"></iframe>
+</body>

@@ -1,0 +1,12 @@
+<style>* { display: table; }</style>
+<body>Test passes if it does not crash.</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.designMode = "on";
+range = document.createRange();
+range.selectNodeContents(document.body);
+window.getSelection().addRange(range);
+document.execCommand("FormatBlock", false, "h1");
+</script>

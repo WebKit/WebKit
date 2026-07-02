@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Container query units with page zoom</title>
+    <meta name="assert" content="Container query units should be adjusted for page zoom for sizing properties">
+    <style>
+        body {
+            margin: 0;
+        }
+        .container {
+            width: 200px;
+            height: 100px;
+            background-color: red;
+            container-type: size;
+            overflow: hidden;
+            position: relative;
+        }
+        .inner {
+            width: 100cqw;
+            height: 100cqh;
+            background-color: green;
+        }
+        .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100cqw;
+            text-align: center;
+            font-size: 5cqmin;
+            line-height: 1.2;
+            color: white;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="inner"></div>
+        <div class="caption">Caption Text</div>
+    </div>
+</body>
+<script>
+    if (window.internals)
+        window.internals.setPageZoomFactor(2);
+</script>
+</html>

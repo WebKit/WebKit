@@ -1,0 +1,108 @@
+Name
+
+    ANGLE_metal_commands_scheduled_sync
+
+Name Strings
+
+    EGL_ANGLE_metal_commands_scheduled_sync
+
+Contributors
+
+    Sunny Sachanandani, Google
+
+Contacts
+
+    Sunny Sachanandani, Google (sunnyps `at` google.com)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, 2025-10-09
+
+Number
+
+    EGL Extensions XXX
+
+Extension Type
+
+    EGL display extension
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.5
+    Specification.
+
+Overview
+
+    This extension enables the creation of EGL fence sync objects that are
+    signaled when any pending Metal commands are scheduled on the GPU. The EGL
+    fence sync objects have nearly identical semantics to those sync objects
+    defined by the EGL 1.5 Specification, except where noted.
+
+    Creating the sync object flushes any pending work. These sync objects are
+    thread-safe and can be waited on from any thread with eglClientWaitSync
+    without a current context. Note that eglWaitSync is a no-op for these
+    sync objects since they only track CPU side scheduling of GPU commands. In
+    particular, specifying EGL_SYNC_FLUSH_COMMANDS_BIT has no effect either
+    since pending work is always flushed on creation of the sync object.
+
+New Types
+
+    None.
+
+New Procedures and Functions
+
+    None.
+
+New Tokens
+
+    Accepted by the <type> parameter of eglCreateSync, and returned
+    in <value> when eglGetSyncAttrib is called with <attribute>
+    EGL_SYNC_TYPE:
+
+    EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE             0x34E0
+
+Additions to the EGL Specification
+
+    Add the following after the first paragraph of Section 3.8.1.1 (Creating
+    Fence Sync Objects),
+
+    "If <type> is EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE, an EGL commands
+    scheduled sync object is created. No attributes may be specified in this
+    case.
+
+    The default values for the EGL commands scheduled sync object attributes
+    are as follows:
+
+      Attribute Name                     Initial Attribute Value(s)
+      --------------                     --------------------------
+      EGL_SYNC_TYPE                      EGL_SYNC_METAL_COMMANDS_SCHEDULED_ANGLE
+      EGL_SYNC_STATUS                    EGL_UNSIGNALED
+      EGL_SYNC_CONDITION                 EGL_SYNC_PRIOR_COMMANDS_COMPLETE
+
+    Modify the list of eglCreateSync errors in Section 3.8.1.2 (Creating OpenCL
+    Event Sync Objects)
+
+    "Errors
+     ------
+    ..."
+
+    Modify the second paragraph of Section 3.8.1.1 (Creating Fence Sync Objects),
+
+    "When a fence sync object is created or when an EGL commands scheduled sync
+    object is created, eglCreateSync also inserts a fence command into the
+    command stream of the bound client API’s current context (i.e., the
+    context returned by eglGetCurrentContext), and associates it with the newly
+    created sync object."
+
+Issues
+
+    None.
+
+Revision History
+
+    Version 1, 2025-10-09
+      - Initial draft

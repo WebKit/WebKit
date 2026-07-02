@@ -1,0 +1,4 @@
+
+PASS Streaming Declarative Shadow DOM: template .content() should be null
+PASS Synchronous mutation events should not be fired during streaming declarative shadow DOM parsing
+

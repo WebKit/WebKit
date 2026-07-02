@@ -1,0 +1,13 @@
+<html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
+<!-- This test is intentionally in quirks mode, to access extra CSS system colors used in Attachment shadow trees. -->
+<head>
+</head>
+<body>
+<div id="a" class="attachment" title="Title.pdf" progress="0.75"></div>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+AugmentAttachmentClassElementsWithAttachmentTree();
+document.getElementById("a-attachment-container").classList.add("attachment-has-selection");
+</script>
+</body>
+</html>

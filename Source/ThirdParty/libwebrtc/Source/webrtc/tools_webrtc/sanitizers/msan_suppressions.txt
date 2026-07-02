@@ -1,0 +1,15 @@
+# The rules in this file are only applied at compile time.
+# Because the Chrome buildsystem does not automatically touch the files
+# mentioned here, changing this file requires clobbering all MSan bots.
+#
+# Please think twice before you add or remove these rules.
+
+# This is a stripped down copy of Chromium's ignorelist.txt, to enable
+# adding WebRTC-specific ignorelist entries.
+
+# Uninit in zlib. http://crbug.com/116277
+fun:*MOZ_Z_deflate*
+
+# Uninit in H264. http://crbug.com/webrtc/11702
+src:*/third_party/openh264/src/codec/processing/src/vaacalc/vaacalcfuncs.cpp
+

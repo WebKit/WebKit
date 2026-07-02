@@ -1,0 +1,32 @@
+Tests for the CSS.nodeLayoutFlagsChanged event with the Scrollable enum.
+
+
+
+== Running test suite: CSS.nodeLayoutFlagsChanged.Scrollable
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.InitiallyScrollable
+PASS: Should be scrollable
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.InitiallyOverflowHidden
+Changing to `overflow: scroll`...
+PASS: Should render nodes changed to `display: block`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.InitiallyOverflowVisible
+Changing to `overflow: scroll`...
+PASS: Should have become scrollable
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.ContentShrunk
+Changing content length
+PASS: Should have become non-scrollable
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.IFrameContents
+PASS: iframe element should not be scrollable.
+PASS: iframe's #document node should not be scrollable
+PASS: Iframe <html> element should be scrollable.
+PASS: Iframe <body> element should not be scrollable.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Scrollable.IFrameWithScrollableBody
+PASS: iframe element should not be scrollable.
+PASS: iframe's #document node should not be scrollable
+PASS: Iframe <html> element should not be scrollable.
+PASS: Iframe <body> element should be scrollable.
+

@@ -1,0 +1,19 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+keydown: type=keydown key=a keyCode=65 code=KeyA
+keyup: type=keyup key=a keyCode=65 code=KeyA
+keydown: type=keydown key=Escape keyCode=27 code=Escape
+keyup: type=keyup key=Escape keyCode=27 code=Escape
+keydown: type=keydown key=ArrowLeft keyCode=37 code=ArrowLeft
+keyup: type=keyup key=ArrowLeft keyCode=37 code=ArrowLeft
+keydown: type=keydown key=Enter keyCode=13 code=Enter
+keyup: type=keyup key=Enter keyCode=13 code=Enter
+keydown: type=keydown key=/ keyCode=191 code=Slash
+keyup: type=keyup key=/ keyCode=191 code=Slash
+keydown: type=keydown key=Shift keyCode=16 code=Shift
+keyup: type=keyup key=Shift keyCode=16 code=Shift
+keydown: type=keydown key=Delete keyCode=46 code=Delete
+keyup: type=keyup key=Delete keyCode=46 code=Delete
+keydown: type=keydown key=Backspace keyCode=8 code=Backspace
+keyup: type=keyup key=Backspace keyCode=8 code=Backspace

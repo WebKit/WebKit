@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test if AudioWorklet exists"
+PASS Audit report
+PASS > [Test if AudioWorklet exists]
+PASS   BaseAudioContext.audioWorklet is an instance of AudioWorklet is true.
+PASS < [Test if AudioWorklet exists] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

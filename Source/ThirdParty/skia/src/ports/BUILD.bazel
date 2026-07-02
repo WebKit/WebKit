@@ -1,0 +1,529 @@
+load(
+    "//bazel:skia_rules.bzl",
+    "skia_cc_library",
+    "skia_filegroup",
+    "skia_objc_library",
+    "supports_platforms",
+)
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "fontconfig_interface_srcs",
+    srcs = [
+        "SkFontConfigInterface.cpp",
+        "SkFontConfigInterface_direct.cpp",
+        "SkFontConfigInterface_direct_factory.cpp",
+        "SkFontConfigTypeface.h",
+        "SkFontMgr_FontConfigInterface.cpp",
+    ],
+)
+
+skia_filegroup(
+    name = "global_init",
+    srcs = ["SkGlobalInitialization_default.cpp"],
+)
+
+# In own group to prevent exporting to *.gni files.
+skia_filegroup(
+    name = "osfile_platform",
+    srcs = select({
+        "@platforms//os:windows": [":osfile_win"],
+        "@platforms//os:ios": [
+            "SkOSFile_ios.h",
+            ":osfile_posix",
+            "//include/ports:core_foundation_hdrs",
+        ],
+        "//conditions:default": [":osfile_posix"],
+    }),
+)
+
+skia_filegroup(
+    name = "osfile",
+    srcs = [
+        "SkOSFile_stdio.cpp",
+        ":osfile_platform",
+    ],
+    visibility = ["//tools/skslc:__pkg__"],
+)
+
+skia_filegroup(
+    name = "osfile_posix",
+    srcs = ["SkOSFile_posix.cpp"],
+)
+
+skia_filegroup(
+    name = "osfile_win",
+    srcs = ["SkOSFile_win.cpp"],
+)
+
+skia_filegroup(
+    name = "malloc",
+    srcs = ["SkMemory_malloc.cpp"],  # TODO(kjlubick) add select() if necessary
+)
+
+skia_filegroup(
+    name = "skdebug",
+    srcs = select({
+        "@platforms//os:windows": ["SkLog_win.cpp"],
+        "@platforms//os:android": ["SkLog_android.cpp"],
+        "//conditions:default": ["SkLog_stdio.cpp"],
+    }),
+)
+
+skia_filegroup(
+    name = "base_srcs",
+    srcs = [
+        ":skdebug",
+        # TODO(kjlubick) Chromium will need a way to overwrite the malloc impls. Having malloc
+        # be a module doesn't quite work because ld complains "backward reference detected"
+        # when something in a module like pathops uses malloc without depending on it.
+        ":malloc",
+    ],
+    visibility = ["//src/base:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        ":global_init",
+        ":osfile",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_cc_library(
+    name = "fontmgr_custom",
+    srcs = ["SkFontMgr_custom.cpp"],
+    hdrs = ["SkFontMgr_custom.h"],
+    deps = [
+        ":freetype_support",
+        "//src/base",
+        "//src/core",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "freetype_support",
+    srcs = [
+        "SkFontHost_FreeType.cpp",
+        "SkFontHost_FreeType_common.cpp",
+    ],
+    hdrs = [
+        "SkFontHost_FreeType_common.h",
+        "SkFontScanner_FreeType_priv.h",
+        "SkTypeface_FreeType.h",
+        "//include/ports:typeface_freetype_hdrs",
+    ],
+    defines = ["SK_TYPEFACE_FACTORY_FREETYPE"],
+    implementation_deps = [
+        "//:pathops",
+        "@freetype",
+    ],
+    visibility = [
+        "//:__pkg__",
+        "//tests:__pkg__",
+        "//tools/fonts:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/utils:char_to_glyphcache",
+    ],
+)
+
+skia_cc_library(
+    name = "fontations_support",
+    srcs = [":typeface_fontations_srcs"],
+    hdrs = [
+        ":typeface_fontations_hdrs",
+        "//include/ports:typeface_fontations_hdrs",
+    ],
+    defines = ["SK_TYPEFACE_FACTORY_FONTATIONS"],
+    implementation_deps = [
+        "//src/ports/fontations:deps",
+    ],
+    visibility = [
+        "//tests:__pkg__",
+        "//tools/fonts:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/codec:any_decoder",
+        "//src/utils:char_to_glyphcache",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_android_parser",
+    srcs = [
+        "SkFontMgr_android_parser.cpp",
+    ],
+    hdrs = [
+        "SkFontMgr_android_parser.h",
+    ],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "@expat",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_android",
+    srcs = [
+        "SkFontMgr_android.cpp",
+    ],
+    hdrs = [
+        "//include/ports:android_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_ANDROID_AVAILABLE"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_android_parser",
+        ":typeface_proxy",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_android_ndk",
+    srcs = [
+        "SkFontMgr_android_ndk.cpp",
+    ],
+    hdrs = [
+        "//include/ports:android_ndk_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_ANDROID_NDK_AVAILABLE"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_android_parser",
+        ":typeface_proxy",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_objc_library(
+    name = "fontmgr_coretext",
+    srcs = [
+        "SkFontMgr_mac_ct.cpp",
+    ],
+    hdrs = [
+        "//include/ports:coretext_fontmgr_hdrs",
+    ],
+    defines = [
+        "SK_FONTMGR_CORETEXT_AVAILABLE",
+        "SK_TYPEFACE_FACTORY_CORETEXT",
+    ],
+    features = ["layering_check"],
+    ios_frameworks = [
+        "CoreText",
+        "CoreGraphics",
+        "CoreFoundation",
+    ],
+    mac_frameworks = [
+        "ApplicationServices",
+        "CoreFoundation",
+        "CoreText",
+    ],
+    target_compatible_with = supports_platforms(
+        "@platforms//os:macos",
+        "@platforms//os:ios",
+    ),
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":coretext_typeface",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/utils/mac:mac_utils_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_data_freetype",
+    srcs = [
+        "SkFontMgr_custom_embedded.cpp",
+    ],
+    hdrs = [
+        "//include/ports:data_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FREETYPE_DATA_AVAILABLE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_custom",
+        ":freetype_support",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_directory_freetype",
+    srcs = [
+        "SkFontMgr_custom_directory.cpp",
+    ],
+    hdrs = [
+        "//include/ports:directory_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FREETYPE_DIRECTORY_AVAILABLE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_custom",
+        ":freetype_support",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_empty_freetype",
+    srcs = [
+        "SkFontMgr_custom_empty.cpp",
+    ],
+    hdrs = [
+        "//include/ports:empty_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FREETYPE_EMPTY_AVAILABLE"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        ":fontmgr_custom",
+        ":freetype_support",
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_fontations_hdrs",
+    srcs = [
+        "SkTypeface_fontations_factory.h",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_fontations_srcs",
+    srcs = [
+        "SkFontScanner_fontations.cpp",
+        "SkFontScanner_fontations_priv.h",
+        "SkTypeface_fontations.cpp",
+        "SkTypeface_fontations_priv.h",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr_fontations_empty_srcs",
+    srcs = [
+        "SkFontMgr_fontations_empty.cpp",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_fontations_empty",
+    srcs = [
+        ":fontmgr_fontations_empty_srcs",
+    ],
+    hdrs = [
+        "//include/ports:fontmgr_fontations_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FONTATIONS_AVAILABLE"],
+    visibility = [
+        "//:__pkg__",
+        "//tools/fonts:__pkg__",
+    ],
+    deps = [
+        ":fontations_support",
+        "//:core",
+        "//:pathops",
+        "//src/ports/fontations:deps",
+    ],
+)
+
+skia_cc_library(
+    name = "typeface_proxy",
+    srcs = [":typeface_proxy_srcs"],
+    hdrs = [":typeface_proxy_hdrs"],
+    deps = [
+        "//:core",
+    ],
+)
+
+skia_cc_library(
+    name = "fontmgr_fontconfig",
+    srcs = [
+        "SkFontMgr_fontconfig.cpp",
+    ],
+    hdrs = [
+        "//include/ports:fontconfig_fontmgr_hdrs",
+    ],
+    defines = ["SK_FONTMGR_FONTCONFIG_AVAILABLE"],
+    target_compatible_with = supports_platforms(
+        "@platforms//os:linux",
+    ),
+    visibility = [
+        "//:__pkg__",
+        "//tools/fonts:__pkg__",
+    ],
+    deps = [
+        ":typeface_proxy",
+        "//:core",
+        "//bazel/external/fontconfig",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_mac_hdrs",
+    srcs = ["SkTypeface_mac_ct.h"],
+    visibility = ["//src/utils/mac:__pkg__"],
+)
+
+skia_filegroup(
+    name = "typeface_mac_srcs",
+    srcs = [
+        "SkScalerContext_mac_ct.cpp",
+        "SkScalerContext_mac_ct.h",
+        "SkTypeface_mac_ct.cpp",
+    ],
+)
+
+skia_filegroup(
+    name = "typeface_proxy_hdrs",
+    srcs = ["SkTypeface_proxy.h"],
+)
+
+skia_filegroup(
+    name = "typeface_proxy_srcs",
+    srcs = ["SkTypeface_proxy.cpp"],
+)
+
+skia_objc_library(
+    name = "coretext_typeface",
+    srcs = [
+        ":typeface_mac_srcs",
+    ],
+    hdrs = [
+        ":typeface_mac_hdrs",
+        "//include/ports:mac_typeface",
+    ],
+    features = ["layering_check"],
+    ios_frameworks = [
+        "CoreFoundation",
+        "CoreGraphics",
+        "CoreText",
+    ],
+    mac_frameworks = ["ApplicationServices"],
+    visibility = [
+        "//:__pkg__",
+        "//modules/skshaper:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/utils/mac:mac_utils_priv",
+    ],
+)
+
+skia_objc_library(
+    name = "imagegenerator_coregraphics",
+    srcs = [
+        "SkImageGeneratorCG.cpp",
+    ],
+    hdrs = [
+        "//include/ports:imagegenerator_cg_hdrs",
+    ],
+    features = ["layering_check"],
+    ios_frameworks = [
+        "CoreGraphics",
+        "ImageIO",
+        "MobileCoreServices",
+    ],
+    mac_frameworks = ["ApplicationServices"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/codec:any_decoder",
+        "//src/core:core_priv",
+        "//src/utils/mac:mac_utils_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "imagegenerator_ndk",
+    srcs = ["SkImageGeneratorNDK.cpp"],
+    hdrs = ["//include/ports:imagegenerator_ndk_hdrs"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/codec:any_decoder",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "imagegenerator_wic",
+    srcs = ["SkImageGeneratorWIC.cpp"],
+    hdrs = ["//include/ports:imagegenerator_wic_hdrs"],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/codec:any_decoder",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "imagegenerator",
+    visibility = ["//dm:__pkg__"],
+    deps = select({
+        "@platforms//os:android": [":imagegenerator_ndk"],
+        "@platforms//os:macos": [":imagegenerator_coregraphics"],
+        "@platforms//os:ios": [":imagegenerator_coregraphics"],
+        "@platforms//os:windows": [":imagegenerator_wic"],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "windows_fonts_srcs",
+    srcs = [
+        "SkFontMgr_win_dw.cpp",
+        "SkScalerContext_win_dw.cpp",
+        "SkScalerContext_win_dw.h",
+        "SkTypeface_win_dw.cpp",
+        "SkTypeface_win_dw.h",
+    ],
+)
+
+skia_filegroup(
+    name = "fontmgr_fuchsia_srcs",
+    srcs = ["SkFontMgr_fuchsia.cpp"],
+)
+
+skia_filegroup(
+    name = "fonthost_win_srcs",
+    srcs = ["SkFontHost_win.cpp"],
+)

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDiv" style="font-family: times, courier, arial">
+<script>
+description("Test that the font-family CSSValue is a CSSValueList of CSSPrimitiveValues that are of primitive type CSS_STRING.");
+
+var testDiv = document.getElementById("testDiv");
+var fontFamilyCSSValue = testDiv.style.getPropertyCSSValue('font-family');
+
+shouldBe("fontFamilyCSSValue.__proto__", "CSSValueList.prototype");
+shouldBe("fontFamilyCSSValue.length", "3");
+
+shouldBe("fontFamilyCSSValue[0].__proto__", "CSSPrimitiveValue.prototype");
+shouldBe("fontFamilyCSSValue[0].primitiveType", "CSSPrimitiveValue.CSS_STRING");
+shouldBeEqualToString("fontFamilyCSSValue[0].getStringValue()", "times");
+
+shouldBe("fontFamilyCSSValue[1].__proto__", "CSSPrimitiveValue.prototype");
+shouldBe("fontFamilyCSSValue[1].primitiveType", "CSSPrimitiveValue.CSS_STRING");
+shouldBeEqualToString("fontFamilyCSSValue[1].getStringValue()", "courier");
+
+shouldBe("fontFamilyCSSValue[2].__proto__", "CSSPrimitiveValue.prototype");
+shouldBe("fontFamilyCSSValue[2].primitiveType", "CSSPrimitiveValue.CSS_STRING");
+shouldBeEqualToString("fontFamilyCSSValue[2].getStringValue()", "arial");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<p>This test passes if it does not crash</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  function useAllMemory() {
+    const a = [0];
+    a.__proto__ = {};
+    Object.defineProperty(a, 0, {get: foo});
+    Object.defineProperty(a, 80000000, {});
+
+    function foo() {
+      new Uint8Array(a);
+    }
+
+    new Promise(foo);
+
+    try {
+      for (let i = 0; i < 2**20; i++) {
+        new ArrayBuffer(1000);
+      }
+    } catch {
+    }
+  }
+
+  useAllMemory();
+  for (let i = 0; i < 100; i++) {
+    CSS.paintWorklet.addModule('');
+  }
+  new AudioContext().audioWorklet.addModule('');
+
+  // Clean up before moving on to next test.
+  $vm.gc();
+</script>

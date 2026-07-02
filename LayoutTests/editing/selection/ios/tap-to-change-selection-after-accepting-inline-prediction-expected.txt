@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: 1. Focusing editor
+CONSOLE MESSAGE: 2. Typing in editor
+CONSOLE MESSAGE: 3. Setting inline prediction
+CONSOLE MESSAGE: 4. Accepting inline prediction
+CONSOLE MESSAGE: 5. Verifying text content
+CONSOLE MESSAGE: 6. Tapping target element
+CONSOLE MESSAGE: 7. Waiting for caret selection
+CONSOLE MESSAGE: 8. Dismissing keyboard
+PASS targetContainsCaretSelection() became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I want to c
+This test verifies that you can change an editable selection with a tap gesture after accepting an inline prediction. This test accepts an inline completion, taps the red box below, and verifies that the selection is correctly set. Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+

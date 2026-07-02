@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-preload-after-user-gesture</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+    async function runTest() {
+        run('window.internals.settings.setRequiresUserGestureForVideoPlayback(true);');
+        run('video = document.createElement("video")');
+        run('window.internals.setMediaElementRestrictions(video, "autopreloadingnotpermitted");');
+        run('video.preload="auto"');
+        run('video.src = findMediaFile("video", "content/test")');
+        run('video.playsinline = "playsinline"');
+        run('document.body.appendChild(video)');
+        await waitFor(video, 'loadedmetadata');
+        runWithKeyDown(() => {
+            run('video.play()');
+        });
+        await waitFor(video, 'playing');
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'loadeddata');
+        testExpected("video.readyState", 2, '>=');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

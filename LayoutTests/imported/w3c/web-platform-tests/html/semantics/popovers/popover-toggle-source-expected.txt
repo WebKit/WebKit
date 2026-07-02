@@ -1,0 +1,10 @@
+popovertarget source command source
+
+PASS ToggleEvent.source on popover elements: showPopover() without source.
+PASS ToggleEvent.source on popover elements: showPopover() with source.
+PASS ToggleEvent.source on popover elements: Calling click() on a popovertarget button.
+PASS ToggleEvent.source on popover elements: Calling click() on a command button.
+PASS ToggleEvent.source on popover elements: showPopover() then popovertarget button.
+PASS ToggleEvent.source on popover elements: showPopover(invoker) then popovertarget button.
+PASS ToggleEvent.source on popover elements: popovertarget button then hidePopover().
+

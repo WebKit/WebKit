@@ -1,0 +1,11 @@
+This test ensures that an AX element's position is updated after a dynamic page change.
+
+PASS: Link moved 90px in response to dynamic page change.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+

@@ -1,0 +1,4 @@
+
+FAIL Without srcset assert_unreached: should not trigger an error event Reached unreachable code
+PASS With srcset
+

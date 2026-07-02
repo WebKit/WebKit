@@ -1,0 +1,5 @@
+
+PASS Snaps to the transformed snap start position
+PASS Snaps to the transformed snap end position
+PASS Snaps to visible top left position of the transformed box
+

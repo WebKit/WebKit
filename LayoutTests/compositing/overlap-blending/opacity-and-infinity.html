@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <meta name="fuzzy" content="maxDifference=0-210; totalPixels=0-2000"/>
+    <style>
+        :root {
+            overflow: hidden;
+        }
+        .c {
+            position: absolute;
+            opacity: 0.8;
+            top: 200px;
+            left: 200px;
+            width: 100px;
+            height: 100px;
+            perspective: 100px;
+            transform-style: preserve-3d;
+        }
+        div > div {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .r {
+            background: green;
+            transform: translate3d(50px, 0, 50px) rotateY(-90deg);
+        }
+        .l {
+            background: orange;
+            transform: translate3d(-50px, 0, 50px) rotateY(90deg);
+        }
+        .t {
+            background: blue;
+            transform: translate3d(0, -50px, 50px) rotateX(-90deg);
+        }
+        .b {
+            background: red;
+            transform: translate3d(0, 50px, 50px) rotateX(90deg);
+        }
+    </style>
+    <div class=c>
+        <div class=r></div>
+        <div class=l></div>
+        <div class=t></div>
+        <div class=b></div>
+    </div>
+</html>

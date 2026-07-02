@@ -1,0 +1,4 @@
+
+PASS [Connected move] MutationObserver removal + insertion is tracked by moveBefore()
+PASS [Disconnected move] MutationObserver removal + insertion is tracked by moveBefore()
+

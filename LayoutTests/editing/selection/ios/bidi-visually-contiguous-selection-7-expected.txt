@@ -1,0 +1,13 @@
+هذه جملة باللغة الإنجليزية: The quick brown fox jumped over the lazy dog.
+
+Verifies that the selection remains visually consistent when selecting the entire first line in the paragraph below. To manually run the test, select the text highlighted in red, from right to left
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS isVisuallyContiguous is true
+PASS selectionBounds.width is >= lineBounds.width
+PASS selectionBounds.height is >= lineBounds.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

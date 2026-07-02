@@ -1,0 +1,4 @@
+
+PASS Test that exceptions from the constructor of a custom element inside a module are propagated as expected.
+
+

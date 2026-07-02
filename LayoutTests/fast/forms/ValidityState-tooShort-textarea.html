@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Tests for tooShort flag with &lt;textarea> elements.');
+
+var textarea = document.createElement('textarea');
+document.body.appendChild(textarea);
+
+debug('No minlength and no value');
+shouldBeFalse('textarea.validity.tooShort');
+
+debug('');
+debug('Dirty value and longer than minLength');
+textarea = document.createElement('textarea');
+document.body.appendChild(textarea);
+textarea.defaultValue = 'ab';
+textarea.minLength = 4;
+textarea.focus();
+textarea.setSelectionRange(2, 2); // Move the cursor at the end.
+document.execCommand('insertText', false, 'c');
+shouldBe('textarea.value.length', '3');
+shouldBeTrue('textarea.validity.tooShort');
+// Make the value >= minLength.
+document.execCommand('insertText', false, 'd');
+shouldBeFalse('textarea.validity.tooShort');
+
+debug('');
+debug('Dirty value and longer than minLength (with "readonly" attribute)');
+textarea = document.createElement('textarea');
+document.body.appendChild(textarea);
+textarea.defaultValue = 'ab';
+textarea.minLength = 4;
+textarea.focus();
+textarea.setSelectionRange(2, 2); // Move the cursor at the end.
+document.execCommand('insertText', false, 'c');
+shouldBe('textarea.value.length', '3');
+textarea.readOnly = true;
+shouldBeTrue('textarea.validity.tooShort');
+textarea.readOnly = false;
+// Make the value >= minLength.
+document.execCommand('insertText', false, 'd');
+shouldBeFalse('textarea.validity.tooShort');
+
+debug('');
+debug('Dirty value and longer than minLength (with "disabled" attribute)');
+textarea = document.createElement('textarea');
+document.body.appendChild(textarea);
+textarea.defaultValue = 'ab';
+textarea.minLength = 4;
+textarea.focus();
+textarea.setSelectionRange(2, 2); // Move the cursor at the end.
+document.execCommand('insertText', false, 'c');
+shouldBe('textarea.value.length', '3');
+textarea.disabled = true;
+shouldBeTrue('textarea.validity.tooShort');
+textarea.disabled = false;
+// Make the value >= minLength.
+document.execCommand('insertText', false, 'd');
+shouldBeFalse('textarea.validity.tooShort');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

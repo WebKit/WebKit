@@ -1,0 +1,75 @@
+
+PASS no variable
+PASS variable
+PASS single char variable
+PASS single char '-' variable
+PASS no char variable
+FAIL white space value (single space) assert_equals: Expected Value should match actual value expected " " but got ""
+FAIL white space value (double space) assert_equals: Expected Value should match actual value expected " " but got ""
+PASS overwrite
+FAIL can overwrite with no value assert_equals: Expected Value should match actual value expected " " but got ""
+FAIL can overwrite with space value assert_equals: Expected Value should match actual value expected " " but got ""
+PASS case sensetivity
+PASS case sensetivity2
+PASS parsing three dashes at start of variable
+PASS parsing multiple dashes with one dash at start of variable
+PASS  leading white space (single space)
+PASS  middle white space (single space)
+PASS  trailing white space (single space)
+PASS  leading white space (double space) 2
+PASS  middle white space (double space) 2
+PASS  trailing white space (double space) 2
+PASS !important
+PASS !important 2
+PASS !important (with space)
+PASS no variable (Computed Style)
+PASS variable (Computed Style)
+PASS single char variable (Computed Style)
+PASS single char '-' variable (Computed Style)
+PASS no char variable (Computed Style)
+FAIL white space value (single space) (Computed Style) assert_equals: Expected Value should match actual value expected " " but got ""
+FAIL white space value (double space) (Computed Style) assert_equals: Expected Value should match actual value expected " " but got ""
+PASS overwrite (Computed Style)
+FAIL can overwrite with no value (Computed Style) assert_equals: Expected Value should match actual value expected " " but got ""
+FAIL can overwrite with space value (Computed Style) assert_equals: Expected Value should match actual value expected " " but got ""
+PASS case sensetivity (Computed Style)
+PASS case sensetivity2 (Computed Style)
+PASS parsing three dashes at start of variable (Computed Style)
+PASS parsing multiple dashes with one dash at start of variable (Computed Style)
+PASS  leading white space (single space) (Computed Style)
+PASS  middle white space (single space) (Computed Style)
+PASS  trailing white space (single space) (Computed Style)
+PASS  leading white space (double space) 2 (Computed Style)
+PASS  middle white space (double space) 2 (Computed Style)
+PASS  trailing white space (double space) 2 (Computed Style)
+PASS !important (Computed Style)
+PASS !important 2 (Computed Style)
+PASS !important (with space) (Computed Style)
+PASS no variable (Cascading)
+PASS variable (Cascading)
+PASS single char variable (Cascading)
+PASS single char '-' variable (Cascading)
+PASS no char variable (Cascading)
+FAIL white space value (single space) (Cascading) assert_equals: Expected Value should match actual value expected " " but got ""
+FAIL white space value (double space) (Cascading) assert_equals: Expected Value should match actual value expected " " but got ""
+PASS overwrite (Cascading)
+FAIL can overwrite with no value (Cascading) assert_equals: Expected Value should match actual value expected " " but got ""
+FAIL can overwrite with space value (Cascading) assert_equals: Expected Value should match actual value expected " " but got ""
+PASS case sensetivity (Cascading)
+PASS case sensetivity2 (Cascading)
+PASS parsing three dashes at start of variable (Cascading)
+PASS parsing multiple dashes with one dash at start of variable (Cascading)
+PASS  leading white space (single space) (Cascading)
+PASS  middle white space (single space) (Cascading)
+PASS  trailing white space (single space) (Cascading)
+PASS  leading white space (double space) 2 (Cascading)
+PASS  middle white space (double space) 2 (Cascading)
+PASS  trailing white space (double space) 2 (Cascading)
+PASS !important (Cascading)
+PASS !important 2 (Cascading)
+PASS !important (with space) (Cascading)
+PASS basic CSSOM.setProperty
+FAIL CSSOM.setProperty with space 1 assert_equals: Expected Value should match actual value expected "" but got "green"
+FAIL CSSOM.setProperty with space 2 assert_equals: Expected Value should match actual value expected "" but got "green"
+PASS CSSOM.setProperty with space 3
+

@@ -1,0 +1,214 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#include "src/gpu/graphite/Image_Graphite.h"
+
+#include "include/core/SkCanvas.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkSurface.h"
+#include "include/gpu/graphite/Image.h"
+#include "include/gpu/graphite/Recorder.h"
+#include "include/gpu/graphite/Surface.h"
+#include "src/gpu/SkBackingFit.h"
+#include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/Device.h"
+#include "src/gpu/graphite/DrawContext.h"
+#include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/ResourceProvider.h"
+#include "src/gpu/graphite/Texture.h"
+#include "src/gpu/graphite/TextureFormat.h"
+#include "src/gpu/graphite/TextureInfoPriv.h"
+#include "src/gpu/graphite/TextureUtils.h"
+#include "src/gpu/graphite/task/CopyTask.h"
+
+#if defined(GPU_TEST_UTILS)
+#include "include/gpu/graphite/Context.h"
+#include "src/gpu/graphite/ContextPriv.h"
+#endif
+
+namespace skgpu::graphite {
+
+// Graphite does not cache based on the image's unique ID so always request a new one.
+Image::Image(TextureProxyView view,
+             const SkColorInfo& info)
+    : Image_Base(SkImageInfo::Make(view.proxy()->dimensions(), info), kNeedNewImageUniqueID)
+    , fTextureProxyView(std::move(view)) {}
+
+Image::~Image() = default;
+
+sk_sp<Image> Image::WrapDevice(sk_sp<Device> device, std::optional<SkColorInfo> overrideInfo) {
+    TextureProxyView view = device->target();
+    if (!view || !device->isTexturable()) {
+        return nullptr;
+    }
+
+    // If an overrideInfo is provided, it needs to be compatible with the format still and the
+    // changes to alpha type need to make sense.
+    TextureFormat format = view.proxy()->format();
+    if (overrideInfo.has_value()) {
+        if (!AreColorTypeAndFormatCompatible(overrideInfo->colorType(), format)) {
+            return nullptr;
+        }
+        // For alpha type, it should match the device's alpha type or be changing from kOpaque back
+        // to kPremul or kUnpremul.
+        const SkAlphaType overrideAT = overrideInfo->alphaType();
+        const SkAlphaType devAT = device->imageInfo().alphaType();
+        if (overrideAT != devAT &&
+            (devAT != kOpaque_SkAlphaType || (overrideAT != kPremul_SkAlphaType &&
+                                              overrideAT != kUnpremul_SkAlphaType))) {
+            return nullptr;
+        }
+
+        // Update the swizzle on the texture view to match the change in color type
+        Swizzle readSwizzle = ReadSwizzleForColorType(overrideInfo->colorType(), format);
+        view = view.replaceSwizzle(readSwizzle);
+    } else {
+        // Leave the texture view alone since its swizzle should match the device already
+        overrideInfo = device->imageInfo().colorInfo();
+    }
+
+    // NOTE: If the device was created with an approx backing fit, its SkImageInfo reports the
+    // logical dimensions, but its proxy has the approximate fit. These larger dimensions are
+    // propagated to the SkImageInfo of this image view.
+    sk_sp<Image> image = sk_make_sp<Image>(std::move(view), *overrideInfo);
+    image->linkDevice(std::move(device));
+    return image;
+}
+
+sk_sp<Image> Image::Copy(Recorder* recorder,
+                         DrawContext* drawContext,
+                         const TextureProxyView& srcView,
+                         const SkColorInfo& srcColorInfo,
+                         const SkIRect& subset,
+                         Budgeted budgeted,
+                         Mipmapped mipmapped,
+                         SkBackingFit backingFit,
+                         std::string_view label) {
+    SkASSERT(!drawContext || budgeted == Budgeted::kYes);
+    SkASSERT(!(mipmapped == Mipmapped::kYes && backingFit == SkBackingFit::kApprox));
+    if (!srcView) {
+        return nullptr;
+    }
+
+    SkASSERT(srcView.proxy()->isFullyLazy() ||
+            SkIRect::MakeSize(srcView.proxy()->dimensions()).contains(subset));
+
+    if (!recorder->priv().caps()->isCopyableSrc(srcView.proxy()->textureInfo())) {
+        if (!recorder->priv().caps()->isTexturable(srcView.proxy()->textureInfo())) {
+            // The texture is not blittable nor texturable so copying cannot be done.
+            return nullptr;
+        }
+        // Copy-as-draw
+        sk_sp<Image> srcImage(new Image(srcView, srcColorInfo));
+        return CopyAsDraw(recorder, drawContext, srcImage.get(), subset, srcColorInfo,
+                          budgeted, mipmapped, backingFit, label);
+    }
+
+    skgpu::graphite::TextureInfo textureInfo =
+            recorder->priv().caps()->getTextureInfoForSampledCopy(srcView.proxy()->textureInfo(),
+                                                                  mipmapped);
+
+    sk_sp<TextureProxy> dst = TextureProxy::Make(
+            recorder->priv().caps(),
+            recorder->priv().resourceProvider(),
+            backingFit == SkBackingFit::kApprox ? GetApproxSize(subset.size()) : subset.size(),
+            textureInfo,
+            label,
+            budgeted);
+    if (!dst) {
+        return nullptr;
+    }
+
+    auto copyTask = CopyTextureToTextureTask::Make(srcView.refProxy(), subset, dst, {0, 0});
+    if (!copyTask) {
+        return nullptr;
+    }
+
+    if (drawContext) {
+        drawContext->recordDependency(std::move(copyTask));
+    } else {
+        recorder->priv().add(std::move(copyTask));
+    }
+
+    if (mipmapped == Mipmapped::kYes) {
+        if (!GenerateMipmaps(recorder, drawContext, dst)) {
+            SKGPU_LOG_W("Image::Copy failed to generate mipmaps");
+            return nullptr;
+        }
+    }
+
+    return sk_sp<Image>(new Image({std::move(dst), srcView.swizzle()}, srcColorInfo));
+}
+
+size_t Image::textureSize() const {
+    if (!fTextureProxyView.proxy()) {
+        return 0;
+    }
+
+    if (!fTextureProxyView.proxy()->texture()) {
+        return fTextureProxyView.proxy()->uninstantiatedGpuMemorySize();
+    }
+
+    return fTextureProxyView.proxy()->texture()->gpuMemorySize();
+}
+
+sk_sp<Image> Image::copyImage(Recorder* recorder,
+                              const SkIRect& subset,
+                              Budgeted budgeted,
+                              Mipmapped mipmapped,
+                              SkBackingFit backingFit,
+                              std::string_view label) const {
+    this->notifyInUse(recorder, /*drawContext=*/nullptr);
+    return Image::Copy(recorder, /*drawContext=*/nullptr,
+                       fTextureProxyView, this->imageInfo().colorInfo(),
+                       subset, budgeted, mipmapped, backingFit, label);
+}
+
+sk_sp<SkImage> Image::onReinterpretColorSpace(sk_sp<SkColorSpace> newCS) const {
+    sk_sp<Image> view = sk_make_sp<Image>(fTextureProxyView,
+                                          this->imageInfo().colorInfo()
+                                                           .makeColorSpace(std::move(newCS)));
+    // The new Image object shares the same texture proxy, so it should also share linked Devices
+    view->linkDevices(this);
+    return view;
+}
+
+#if defined(GPU_TEST_UTILS)
+bool Image::readPixelsGraphite(SkRecorder* recorder,
+                               const SkPixmap& dst,
+                               int srcX,
+                               int srcY) const {
+    auto gRecorder = AsGraphiteRecorder(recorder);
+    if (!gRecorder) {
+        return false;
+    }
+    if (Context* context = gRecorder->priv().context()) {
+        // Add all previous commands generated to the command buffer.
+        // If the client snaps later they'll only get post-read commands in their Recording,
+        // but since they're doing a readPixels in the middle that shouldn't be unexpected.
+        std::unique_ptr<Recording> recording = gRecorder->snap();
+        if (!recording) {
+            return false;
+        }
+        InsertRecordingInfo info;
+        info.fRecording = recording.get();
+        if (!context->insertRecording(info)) {
+            return false;
+        }
+        return context->priv().readPixels(dst,
+                                          fTextureProxyView,
+                                          this->imageInfo(),
+                                          srcX,
+                                          srcY);
+    }
+    return false;
+}
+#endif
+
+} // namespace skgpu::graphite

@@ -1,0 +1,5 @@
+
+PASS defaultPolicy with no default created is not an error
+PASS defaultPolicy returns the correct default policy
+PASS defaultPolicy is a read-only property
+

@@ -1,0 +1,5 @@
+
+PASS Animation current time and effect local time are updated after scroller content size changes.
+PASS Animation current time and effect local time are updated after scroller size changes.
+PASS If scroll animation resizes its scroll timeline scroller, layout reruns once per frame.
+

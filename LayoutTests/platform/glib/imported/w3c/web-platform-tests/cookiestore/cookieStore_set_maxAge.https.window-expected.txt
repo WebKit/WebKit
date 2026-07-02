@@ -1,0 +1,6 @@
+
+PASS cookieStore.set with maxAge set to a positive value
+PASS cookieStore.set with maxAge set to a negative value
+FAIL cookieStore.set with maxAge set to zero, cookie change event not dispatched assert_equals: expected null but got object "[object Object]"
+PASS cookieStore.set fails with both maxAge and expires
+

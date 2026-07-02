@@ -1,0 +1,14 @@
+
+PASS Trailing declarations
+PASS Mixed declarations
+PASS CSSNestedDeclarations.style
+PASS Nested group rule
+PASS Nested @scope rule
+PASS Inner rule starting with an ident
+PASS Inserting a CSSNestedDeclaration rule into style rule
+PASS Inserting a CSSNestedDeclaration rule into nested group rule
+PASS Attempting to insert a CSSNestedDeclaration rule into top-level @media rule
+PASS Attempting to insert a CSSNestedDeclaration rule into a stylesheet
+PASS Attempting to insert a CSSNestedDeclaration rule, empty block
+PASS Attempting to insert a CSSNestedDeclaration rule, all invalid declarations
+

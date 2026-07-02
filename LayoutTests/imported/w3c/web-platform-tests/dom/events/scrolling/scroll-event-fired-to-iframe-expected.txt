@@ -1,0 +1,6 @@
+
+PASS scrollX and scrollY should fire scroll event.
+PASS scrollX and scrollY being set with the same value.
+PASS scrollX and scrollY being set with invalid scroll Scroll.
+PASS scrollX and scrollY when scrolling above maximum Scroll.
+

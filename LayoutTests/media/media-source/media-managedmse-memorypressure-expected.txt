@@ -1,0 +1,101 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+RUN(source.endOfStream())
+EVENT(sourceended)
+RUN(video.currentTime = video.duration / 2)
+EVENT(seeked)
+RUN(bufferedStart = sourceBuffer.buffered.start(0))
+RUN(internals.beginSimulatedMemoryPressure())
+EVENT(bufferedchange)
+EXPECTED (bufferedStart != 'sourceBuffer.buffered.start(0)') OK
+RUN(internals.endSimulatedMemoryPressure())
+RUN(sourceBuffer.remove(0, 999999))
+EVENT(updateend)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1))
+RUN(source.endOfStream())
+EVENT(sourceended)
+RUN(video.currentTime = sourceBuffer.buffered.start(0) + (sourceBuffer.buffered.end(0) - sourceBuffer.buffered.start(0)) / 2)
+EVENT(seeked)
+EXPECTED (video.paused == 'false') OK
+RUN(bufferedStart = sourceBuffer.buffered.start(0))
+RUN(internals.beginSimulatedMemoryPressure())
+EVENT(bufferedchange)
+EXPECTED (bufferedStart != 'sourceBuffer.buffered.start(0)') OK
+RUN(internals.endSimulatedMemoryPressure())
+END OF TEST
+

@@ -1,0 +1,7 @@
+
+EVENT(canplaythrough)
+EVENT(seeked)
+EVENT(playing)
+EVENT(ended)
+END OF TEST
+

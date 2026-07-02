@@ -1,0 +1,3 @@
+
+FAIL VT object created on the old Document is skipped before persisting in BFCache assert_true: navigation had viewTransition expected true got false
+

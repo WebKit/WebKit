@@ -1,0 +1,6 @@
+
+PASS open database names don't leak to cross-origin iframe
+PASS open database names don't leak to cross-origin window
+PASS closed database names don't leak to cross-origin iframe
+PASS closed database names don't leak to cross-origin window
+

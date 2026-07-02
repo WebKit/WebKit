@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html id="top">
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+
+html, body { height: 100%; }
+.tall-box { height: 100%; }
+
+</style>
+<div class="tall-box"></div>
+<a id="target" href="#">target</a>
+<div class="tall-box"></div>
+<script>
+
+description('This tests that scrolling to the focused element gets overriden by a fragment navigation.');
+
+window.onload = () => setTimeout(runTest, 0);
+
+function runTest()
+{
+    document.getElementById('target').focus();
+    shouldBe('document.scrollingElement.scrollTop', '0');
+    location.hash = '#top';
+    setTimeout(() => {
+        shouldBe('document.scrollingElement.scrollTop', '0');
+        location.hash = '';
+        finishJSTest();
+    }, 0);
+}
+
+jsTestIsAsync = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

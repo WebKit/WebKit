@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (88,63) size 306x299
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="arrow"] [markerUnits=strokeWidth] [ref at (4,2)] [angle=auto]
+        RenderSVGPath {path} at (1,0) size 6x5 [stroke={[type=SOLID] [color=#5555FF] [line cap=ROUND] [line join=ROUND]}] [data="M 2 0.5 L 6 2 L 2 3.5"]
+      RenderSVGResourceMarker {marker} [id="circle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=auto]
+        RenderSVGEllipse {circle} at (0,0) size 4x4 [fill={[type=SOLID] [color=#5555FF]}] [cx=5.00] [cy=5.00] [r=3.00]
+      RenderSVGResourceMarker {marker} [id="arrow2"] [markerUnits=strokeWidth] [ref at (4,2)] [angle=auto]
+        RenderSVGPath {path} at (1,0) size 6x5 [stroke={[type=SOLID] [color=#5555FF] [opacity=0.25] [line cap=ROUND] [line join=ROUND]}] [data="M 2 0.5 L 6 2 L 2 3.5"]
+      RenderSVGResourceMarker {marker} [id="circle2"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=auto]
+        RenderSVGEllipse {circle} at (0,0) size 4x4 [fill={[type=SOLID] [color=#5555FF] [opacity=0.25]}] [cx=5.00] [cy=5.00] [r=3.00]
+    RenderSVGContainer {g} at (88,63) size 306x99 [opacity=0.25]
+      RenderSVGPath {path} at (88,63) size 306x99 [stroke={[type=SOLID] [color=#5555FF] [stroke width=4.00] [line cap=ROUND]}] [start marker=circle] [end marker=arrow] [data="M 388 156 C 244 135 244 94 100 73"]
+    RenderSVGContainer {g} at (88,163) size 306x99
+      RenderSVGPath {path} at (88,163) size 306x99 [stroke={[type=SOLID] [color=#5555FF] [stroke width=4.00] [line cap=ROUND]}] [start marker=circle] [end marker=arrow] [data="M 388 256 C 244 235 244 194 100 173"]
+    RenderSVGContainer {g} at (88,263) size 306x99
+      RenderSVGPath {path} at (88,263) size 306x99 [stroke={[type=SOLID] [color=#5555FF] [opacity=0.25] [stroke width=4.00] [line cap=ROUND]}] [start marker=circle2] [end marker=arrow2] [data="M 388 356 C 244 335 244 294 100 273"]

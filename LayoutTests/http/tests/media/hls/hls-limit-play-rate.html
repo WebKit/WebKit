@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setAlwaysAcceptCookies(true);
+                testRunner.waitUntilDone();
+            }
+            async function start() 
+            {
+                setTimeout(function () {
+                    consoleWrite("FAIL: test timed out.");
+                    endTest();
+                }, 20000);
+
+                video = document.getElementById('video');
+                window.internals?.setTopDocumentURLForQuirks("https://open.spotify.com");
+
+                waitForEvent('error', () => {
+                    consoleWrite(`video.error = ${video.error ? video.error.code : 'null'}`);
+                });
+
+                // We can't detect HLS before HAVE_METADATA, so setting high defaultPlaybackRate
+                // and playbackRate should be possible.
+                run(`video.defaultPlaybackRate = 2.1`);
+                await waitFor(video, 'ratechange');
+                testExpected(`video.defaultPlaybackRate`, 2.1, '==');
+                testExpected(`video.playbackRate`, 1.0, '==');
+
+                consoleWrite(``);
+                run(`video.playbackRate = 2.1`);
+                await waitFor(video, 'ratechange');
+                testExpected(`video.defaultPlaybackRate`, 2.1, '==');
+                testExpected(`video.playbackRate`, 2.1, '==');
+
+                // Once the file loads and we know it is HLS, the rate should be reset
+                // to 2.0
+                consoleWrite(``);
+                run(`video.src = '../resources/hls/audio-tracks.m3u8'`);
+                await waitFor(video, 'canplaythrough');
+                testExpected(`video.playbackRate`, 2, '==');
+
+                consoleWrite(``);
+                run(`video.playbackRate = 1`);
+                await waitFor(video, 'ratechange');
+                testExpected(`video.playbackRate`, 1, '==');
+
+                consoleWrite(``);
+                run(`video.playbackRate = 2.5`);
+                await waitFor(video, 'ratechange');
+                testExpected(`video.playbackRate`, 2, '==');
+
+                consoleWrite(``);
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video id='video' controls></video>
+    </body>
+</html>

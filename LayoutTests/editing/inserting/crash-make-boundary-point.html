@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  style, script, head {
+    display: block;
+  }
+</style>
+<script>
+function runTest()
+{
+  document.documentElement.appendChild(document.createElement('input'));
+  document.execCommand('SelectAll');
+  document.designMode = 'on';
+  document.execCommand('JustifyRight');
+  document.execCommand('FormatBlock', false, 'div');
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  document.documentElement.textContent = 'PASS. WebKit did not crash.';
+}
+window.onload = runTest;
+</script>
+</head>
+<body></body>
+</html>

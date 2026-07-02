@@ -1,0 +1,18 @@
+
+
+PASS source width and height attributes are used to infer aspect-ratio in <picture>
+PASS Computed style for width/height/aspect-ratio
+PASS Source width/height should take precedence over img attributes.
+PASS Make sure style gets invalidated correctly when the source gets removed.
+PASS If the <source> has only one of width/height, we don't get an aspect ratio, even if the <img> has both.
+PASS If we don't have width/height on the source, we fall back to width/height on the <img>.
+PASS If we only have one width attribute, we should get width mapped but no aspect ratio, even if <img> has attributes.
+PASS If we only have height attribute, we should get height mapped but no aspect ratio, even if <img> has attributes.
+PASS Dynamically changing width/height should change computed style
+PASS Changing which <source> matches should change computed style
+PASS Percentages on source should be ignored for aspect-ratio but used for width/height.
+PASS Trailing garbage should be ignored but not make the attribute invalid
+PASS Loaded picture test: Both <source> and <img> are without width and height attributes
+PASS Loaded picture test: <source> with width and height attributes, <img> without width and height attributes
+PASS Loaded picture test: Both <source> and <img> are with width and height attributes
+

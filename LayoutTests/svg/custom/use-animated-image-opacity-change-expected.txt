@@ -1,0 +1,10 @@
+Animated GIF in SVG image referenced by use element should keep animating when presentation attributes are rapidly changed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+All frames of the animated image were drawn in order.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

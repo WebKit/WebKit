@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+let decoder;
+promise_test(async () => {
+     const response = await fetch("/media-resources/media-source/content/test-bframes-hevc.mp4.annexb");
+     const buffer = new Uint8Array(await response.arrayBuffer());
+     const frames = [
+         [99, 8, 46399],
+         [366, 46408, 50931],
+         [233, 50939, 52302],
+         [167, 52310, 52681],
+         [133, 52681, 52853],
+         [199, 52854, 52973],
+         [300, 52974, 53286],
+    ];
+
+    let frameTimestamps = [];
+    decoder =  new VideoDecoder({
+        output(frame) {
+            frameTimestamps.push(frame.timestamp);
+            frame.close();
+        },
+        error(e) {
+            console.log(e);
+        }
+    });
+    decoder.configure({
+        codec: 'hev1.1.6.L120.90',
+        codedWidth: 852,
+        codedHeight: 480,
+        visibleRect: {x: 0, y: 0, width: 852, height: 480},
+        displayWidth: 852,
+        displayHeight: 480,
+    });
+
+    chunks = frames.map((frame, i) => new EncodedVideoChunk({type: i == 0 ? 'key' : 'delta', timestamp: frame[0], duration: 1, data: buffer.slice(frame[1], frame[2])}));
+
+    chunks.forEach(chunk => decoder.decode(chunk));
+    await decoder.flush();
+
+    assert_array_equals(frameTimestamps, frames.map(frame => frame[0]).sort((a,b) => a - b), "timestamps are ordered");
+}, "Test HEVC reordering - annexb");
+    </script>
+</body>
+</html>

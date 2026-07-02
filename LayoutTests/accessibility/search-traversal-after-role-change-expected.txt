@@ -1,0 +1,43 @@
+This test ensures we can traverse through an object's children after its role is changed dynamically.
+
+Performing search traversal with initial page state.
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Hello world!
+
+AXRole: AXToolbar
+
+AXRole: AXGroup
+
+AXRole: AXButton
+
+AXRole: AXGroup
+
+AXRole: AXStaticText
+AXValue: Lorem ipsum
+
+Performing search traversal after role change.
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: Hello world!
+
+AXRole: AXToolbar
+
+AXRole: AXGroup
+
+AXRole: AXButton
+
+AXRole: AXGroup
+
+AXRole: AXStaticText
+AXValue: Lorem ipsum
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

@@ -1,0 +1,4 @@
+
+PASS Element should scroll back to initial position with smooth behavior
+PASS Element should scroll back to initial position with auto behavior
+

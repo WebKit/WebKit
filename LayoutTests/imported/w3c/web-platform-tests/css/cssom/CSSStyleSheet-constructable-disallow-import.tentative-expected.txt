@@ -1,0 +1,6 @@
+
+PASS Inserting an @import rule through insertRule on a constructed stylesheet throws an exception
+PASS @import rules should not trigger any loads.
+PASS @import rules are not parsed in CSSStyleSheet.replace
+PASS @import rules are not parsed in CSSStyleSheet.replaceSync
+

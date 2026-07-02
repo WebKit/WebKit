@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.hidden-container {
+    width: 320px;
+    height: 320px;
+    overflow: hidden;
+}
+
+p {
+    font-size: 24px;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<div class="hidden-container">
+    <p id="text">Hello</p>
+</div>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection does not appear if it's inside an empty overflow hidden container.");
+
+    console.log("1. Long press to select.");
+    const paragraph = document.querySelector("#text");
+    await UIHelper.longPressElement(paragraph);
+
+    console.log("2. Wait for selection to appear.");
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Selection appeared after long press");
+
+    console.log("3. Change hidden container width/height to 0.");
+    const hiddenDiv = document.querySelector(".hidden-container");
+    hiddenDiv.style.width = "0";
+    hiddenDiv.style.height = "0";
+
+    console.log("4. Wait for selection to disappear.");
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Waited for selection to disappear after making container empty");
+
+    console.log("5. Ensure text is still selected.");
+    shouldBeEqualToString("getSelection().type", "Range");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

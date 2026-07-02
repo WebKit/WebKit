@@ -1,0 +1,237 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+/**
+ * @param {GPUDevice} device
+ * @param {GPUComputePassEncoder} computePassEncoder
+ */
+function clearResourceUsages(device, computePassEncoder) {
+  let code = `@compute @workgroup_size(1) fn c() {}`;
+  let module = device.createShaderModule({code});
+  computePassEncoder.setPipeline(device.createComputePipeline(
+    {
+      layout: 'auto',
+      compute: {module},
+    }));
+  computePassEncoder.dispatchWorkgroups(1);
+}
+
+/**
+ * @template {any} T
+ * @param {GPUDevice} device
+ * @param {string} label
+ * @param {()=>T} payload
+ * @returns {Promise<T>}
+ */
+async function validationWrapper(device, label, payload)  {
+  device.pushErrorScope('internal');
+  device.pushErrorScope('out-of-memory');
+  device.pushErrorScope('validation');
+  let result = payload();
+  let validationError = await device.popErrorScope();
+  let outOfMemoryError = await device.popErrorScope();
+  let internalError = await device.popErrorScope();
+  let error = validationError ?? outOfMemoryError ?? internalError;
+  if (error) {
+    log('*'.repeat(25));
+    log(error[Symbol.toStringTag]);
+    log(error.message);
+    log(label);
+    if (error.stack != `_`) {
+      log(error.stack);
+    }
+    log(location);
+    log('*'.repeat(25));
+    throw error;
+  }
+  return result;
+}
+
+const videoUrls = [
+
+];
+
+/**
+ * @param {number} index
+ * @returns {Promise<HTMLVideoElement>}
+ */
+function videoWithData(index) {
+  let video = document.createElement('video');
+  video.src = videoUrls[index % videoUrls.length];
+  return new Promise(resolve => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
+}
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, color0);
+  gradient.addColorStop(0.1, color1);
+  gradient.addColorStop(0.3, color0);
+  gradient.addColorStop(0.7, color1);
+  gradient.addColorStop(0.9, color0);
+  gradient.addColorStop(1, color1);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'float32-blendable',
+    'float32-renderable',
+    'core-features-and-limits',
+    'timestamp-query',
+  ],
+  requiredLimits: {
+    maxStorageBufferBindingSize: 136341489,
+    maxStorageBuffersPerShaderStage: 8,
+    maxTextureArrayLayers: 256,
+    maxUniformBufferBindingSize: 39360546,
+    maxUniformBuffersPerShaderStage: 12,
+  },
+});
+
+ let shaderModule0 = device0.createShaderModule({   code: ` requires pointer_composite_access; enable f16; struct FragmentInput1 {   @builtin(sample_mask) sample_mask: u32, } override override0: i32 = 141993390; var<private> vp0: array<mat3x4h, 1> = array(mat3x4h(8454.8, 8660.5, -12320.7, 9802.5, 5309.2, 6831.7, 29476.1, 894.8, 3031.7, 17577.2, 36591.4, 19491.9)); struct T1 {   f0: array<u32>, } struct ComputeInput2 {   @builtin(local_invocation_id) local_invocation_id: vec3u, } struct VertexInput0 {   @location(1) @interpolate(perspective) location_1: vec4h,   @location(5) location_5: vec2u,   @location(12) location_12: u32,   @builtin(instance_index) instance_index: u32,   @location(9) @interpolate(flat, centroid) location_9: u32,   @location(14) @interpolate(linear, either) location_14: vec2h,   @location(10) location_10: vec4h,   @location(8) location_8: vec2f,   @location(11) @interpolate(linear) location_11: vec2f, } @group(0) @binding(6) var st0: texture_storage_2d_array<r32uint, write>; struct T2 {   @size(8) f0: atomic<i32>, } struct ComputeInput3 {   @builtin(global_invocation_id) global_invocation_id: vec3u, } fn unconst_bool(v: bool) -> bool { return v; } @id(36586) override override2 = 0.2075e34; struct VertexOutput0 {   @builtin(position) position: vec4f, } @group(1) @binding(6) var st2: texture_storage_2d_array<r32uint, write>; fn unconst_u32(v: u32) -> u32 { return v; } fn unconst_f32(v: f32) -> f32 { return v; } struct VertexInput1 {   @location(4) @interpolate(flat, either) location_4: f32,   @location(0) location_0: vec4f, } fn unconst_f16(v: f16) -> f16 { return v; } fn unconst_i32(v: i32) -> i32 { return v; } /* zero global variables used */fn fn0() -> array<vec2f, 1> {   var out: array<vec2f, 1>;   for (var it0=vec4u(vp0[unconst_u32(213051126)][unconst_i32(0)])[2]; it0<(u32(vp0[0][unconst_i32(2)][0]) & 0xfff); it0++) {   var vf0: vec4h = (vec4h(unconst_f16(2510.9), unconst_f16(1576.5), unconst_f16(28189.6), unconst_f16(-10224.1)) / unconst_f16(20401.2));   let ptr0: ptr<function, vec2f> = &out[unconst_u32(112983654)]; }   return out; } @id(50899) override override1 = 0.2512; struct VertexInput2 {   @location(7) location_7: vec2f,   @location(13) @interpolate(perspective) location_13: f16,   @location(15) @interpolate(flat) location_15: vec2i,   @location(2) location_2: vec2h, } struct ComputeInput1 {   @builtin(local_invocation_index) local_invocation_index: u32, } struct FragmentInput0 {   @builtin(sample_index) sample_index: u32, } struct ComputeInput0 {   @builtin(num_workgroups) num_workgroups: vec3u, } struct T0 {   @align(8) @size(1152) f0: vec2h, } struct FragmentOutput0 {   @location(0) location_0: vec4i,   @location(5) @interpolate(perspective) location_5: vec4f, } /* zero global variables used */@vertex fn vertex0(a0: VertexInput0, a1: VertexInput1, a2: VertexInput2, @location(6) @interpolate(flat) location_6: u32, @location(3) @interpolate(flat) location_3: u32) -> VertexOutput0 {   var out: VertexOutput0;   var vf1: f32 = override2;   vp0[unconst_u32(667137065)] -= mat3x4h(vec4h(out.position.yxxz.xwzy.xxzy), vec4h(out.position.yxzx), vec4h(out.position));   out.position += vec4f(f32(a2.location_13));   var vf2: f32 = a1.location_4;   fn0();   for (var it1=u32(asin(unconst_f16(783.4))); it1<(u32(override2) & 0xfff); it1++) {   fn0();   out.position -= a2.location_7.xyyy;   out.position += unpack4x8snorm(unconst_u32(419412205)); }   var vf3: vec2h = trunc(vec2h(unconst_f16(12586.3), unconst_f16(-2515.2)));   return out;   _ = override2; } /* zero global variables used */@fragment fn fragment0(a0: FragmentInput0, @builtin(position) position: vec4f, a2: FragmentInput1) -> FragmentOutput0 {   var out: FragmentOutput0;   out = FragmentOutput0(unpack4xI8(a2.sample_mask), unpack4x8snorm(a2.sample_mask));   fn0();   return out; } /* used global variables: st0, st2 */@compute @workgroup_size(1, 1, 1) fn compute0(a0: ComputeInput0, a1: ComputeInput1, a2: ComputeInput2, a3: ComputeInput3) {   textureStore(st0, vec2i(unconst_i32(541577248), unconst_i32(163705607)), unconst_i32(157735135), vec4u(vec4u(unconst_u32(283862266), unconst_u32(210284286), unconst_u32(1206410748), unconst_u32(625637116))));   {   for (var it2=a2.local_invocation_id.b; it2<(a2.local_invocation_id.g & 0xfff); it2++) {   let ptr1: ptr<private, array<mat3x4h, 1>> = &vp0;   textureStore(st2, vec2i(unconst_i32(25407179), unconst_i32(1179965141)), unconst_i32(329620255), vec4u(vec4u(unconst_u32(182464371), unconst_u32(1411143740), unconst_u32(1286197823), unconst_u32(43381027))));   vp0[0] += mat3x4h(f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))), f16(pack4xU8(vec4u(unconst_u32(313251725), unconst_u32(2237154963), unconst_u32(1416834610), unconst_u32(512767540)))));   vp0[unconst_u32(1023851933)] = mat3x4h((*ptr1)[0][pack4xU8(vec4u(min(vec4f(unconst_f32(0.1193e-11), unconst_f32(0.2755e-28), unconst_f32(0.2163e8), unconst_f32(0.2213e-36)), vec4f(unconst_f32(0.3285), unconst_f32(0.05205e-11), unconst_f32(0.05778), unconst_f32(0.00958e-25)))))], (*ptr1)[0][pack4xU8(vec4u(min(vec4f(unconst_f32(0.1193e-11), unconst_f32(0.2755e-28), unconst_f32(0.2163e8), unconst_f32(0.2213e-36)), vec4f(unconst_f32(0.3285), unconst_f32(0.05205e-11), unconst_f32(0.05778), unconst_f32(0.00958e-25)))))], (*ptr1)[0][pack4xU8(vec4u(min(vec4f(unconst_f32(0.1193e-11), unconst_f32(0.2755e-28), unconst_f32(0.2163e8), unconst_f32(0.2213e-36)), vec4f(unconst_f32(0.3285), unconst_f32(0.05205e-11), unconst_f32(0.05778), unconst_f32(0.00958e-25)))))]);   _ = st2; }   _ = st2; }   fn0();   _ = fn0();   textureStore(st2, vec2i(unconst_i32(231677241), unconst_i32(286216312)), unconst_i32(592637749), vec4u(vec4u(unconst_u32(525442923), unconst_u32(524036942), unconst_u32(1571668305), unconst_u32(246995456))));   vp0[0] = mat3x4h(vec4h(a0.num_workgroups.bbrb), vec4h(a0.num_workgroups.grgr), vec4h(a0.num_workgroups.zzyz));   textureStore(st0, vec2i(unconst_i32(734315954), unconst_i32(380469975)), unconst_i32(-166699200), vec4u(vec4u(unconst_u32(314335490), unconst_u32(3377386138), unconst_u32(811482326), unconst_u32(287619133))));   vp0[unconst_u32(1214659610)] = mat3x4h(vec4h((vec3u(a3.global_invocation_id[unconst_u32(838566367)]) - unconst_u32(166547897)).xxzy.gbrr.zzzz.ggab), vec4h((vec3u(a3.global_invocation_id[unconst_u32(838566367)]) - unconst_u32(166547897)).rrgr.brba), vec4h((vec3u(a3.global_invocation_id[unconst_u32(838566367)]) - unconst_u32(166547897)).bgrg.xxxx.abgb.agga));   textureStore(st2, vec2i(unconst_i32(16424839), unconst_i32(124508004)), unconst_i32(346255891), vec4u(vec4u(unconst_u32(378715663), unconst_u32(51554374), unconst_u32(948685860), unconst_u32(218151597))));   switch bitcast<vec3i>(a3.global_invocation_id.bgr.xxy).r {    default {   var vf4 = fn0();   _ = fn0(); }   }   textureStore(st0, vec2i(unconst_i32(119212322), unconst_i32(349250139)), unconst_i32(336429723), vec4u(vec4u(unconst_u32(284037742), unconst_u32(7342781), unconst_u32(1463275504), unconst_u32(1129348500))));   _ = st2;   _ = st0; }`, });
+ let shaderModule2_ = device0.createShaderModule({   code: ` requires readonly_and_readwrite_storage_textures; enable f16; fn unconst_f16(v: f16) -> f16 { return v; } struct T0 {   f0: array<u32>, } struct FragmentOutput1 {   @location(0) @interpolate(flat, sample) location_0: vec4i,   @location(4) location_4: vec2f,   @location(1) location_1: u32, } override override4: f16; struct ComputeInput4 {   @builtin(global_invocation_id) global_invocation_id: vec3u, } struct FragmentInput4 {   @builtin(front_facing) front_facing: bool, } /* zero global variables used */fn fn1() {   var vf25: vec3h = (vec3h(unconst_f16(2527.2), unconst_f16(-2026.7), unconst_f16(2147.4)) - vec3h(unconst_f16(2188.4), unconst_f16(28552.3), unconst_f16(-44570.1)));   vf25 -= vec3h(degrees(vec3f(unconst_f32(-0.2520), unconst_f32(0.3174), unconst_f32(0.03535))).zzz.rrg);   vf25 -= vec3h((vec3f(firstTrailingBit(vec2u(unconst_u32(391432521), unconst_u32(856780447))).rrg) < vec3f(unconst_f32(-0.7037), unconst_f32(0.4081), unconst_f32(0.00553))));   vf25 -= vec3h(f16(pack4xU8Clamp(vec4u(unconst_u32(653318886), unconst_u32(366454614), unconst_u32(1946118166), unconst_u32(1053128945)))));   var vf26: vec4i = (unconst_i32(25068625) % vec4i(i32(log(unconst_f32(0.2623e18)))));   vf25 = (mat4x2h(unconst_f16(-13541.0), unconst_f16(6262.7), unconst_f16(2202.4), unconst_f16(12876.0), unconst_f16(7601.8), unconst_f16(5012.2), unconst_f16(4486.4), unconst_f16(5017.4)) * mat3x4h(unconst_f16(25437.3), unconst_f16(13675.1), unconst_f16(9516.6), unconst_f16(6336.3), unconst_f16(6552.4), unconst_f16(5946.3), unconst_f16(7731.3), unconst_f16(3743.8), unconst_f16(-3521.1), unconst_f16(1321.7), unconst_f16(3354.0), unconst_f16(1262.1)))[unconst_i32(0)].yxx;   var vf27: vec4f = unpack4x8snorm(unconst_u32(292408858));   let vf28: vec2f = unpack2x16snorm(unconst_u32(34999790));   var vf29: vec3h = ceil(vec3h(unconst_f16(8953.7), unconst_f16(4095.5), unconst_f16(-8505.8)));   vf27 += vec4f((vec2u(unpack2x16snorm(unconst_u32(444454460))) <= vec2u(unconst_u32(777647554), unconst_u32(540953090))).grrg.rarg);   var vf30: vec3f = degrees(vec3f(vf26.ywy));   let ptr9: ptr<function, vec4i> = &vf26; } /* zero global variables used */@must_use  fn fn3() -> vec4h {   var out: vec4h;   out -= vec4h((vec4f(unconst_f32(0.1462e-44), unconst_f32(0.04888e0), unconst_f32(0.2117), unconst_f32(0.03965e-32)) / vec4f(unconst_f32(0.02745e-19), unconst_f32(-0.2487), unconst_f32(0.03295), unconst_f32(0.1193))));   out = vec4h(f16(override3));   out *= vec4h(f16(pack4x8unorm(vec4f(f32(pack4xI8(vec4i(unconst_i32(124938135), unconst_i32(37240989), unconst_i32(442714720), unconst_i32(170773842))))))));   return out;   _ = override3; } fn unconst_i32(v: i32) -> i32 { return v; } struct ComputeInput6 {   @builtin(local_invocation_index) local_invocation_index: u32, } @group(0) @binding(6) var st6: texture_storage_2d_array<r32uint, write>; /* zero global variables used */fn fn0(a0: texture_storage_1d<rgba8sint, read>) -> array<vec4i, 8> {   var out: array<vec4i, 8>;   var vf22: u32 = textureDimensions(a0);   let vf23: f16 = override4;   vf22 *= pack4xI8Clamp(out[unconst_u32(452608438)]);   {   out[unconst_u32(77002707)] ^= vec4i(cosh(vec3h(f16(inverseSqrt(unconst_f32(0.3750e-24))))).brgb);   var vf24: f16 = override4;   out[unconst_u32(1341239864)] ^= bitcast<vec4i>(unpack4xU8(unconst_u32(561387892)));   let ptr7: ptr<function, f16> = &vf24;   let ptr8: ptr<function, vec4i> = &out[unconst_u32(400581490)];   _ = override4; }   vf22 += pack4xI8(out[7]);   return out;   _ = override4; } /* zero global variables used */fn fn2() -> array<u32, 1> {   var out: array<u32, 1>;   let vf31: vec4i = extractBits(bitcast<vec4i>(unpack2x16unorm(unconst_u32(25418028)).grrg), unconst_u32(76840793), unconst_u32(799508838));   fn1();   return out; } struct FragmentOutput2 {   @location(0) @interpolate(flat, first) location_0: vec4i,   @location(2) location_2: vec2i, } @id(63578) override override3: i32; @group(0) @binding(61) var st7: texture_storage_1d<rgba8sint, read>; struct ComputeInput5 {   @builtin(num_workgroups) num_workgroups: vec3u, } fn unconst_f32(v: f32) -> f32 { return v; } struct FragmentInput3 {   @builtin(sample_index) sample_index: u32, } fn unconst_bool(v: bool) -> bool { return v; } fn unconst_u32(v: u32) -> u32 { return v; } /* used global variables: st7 */@fragment fn fragment2(a0: FragmentInput3) -> FragmentOutput1 {   var out: FragmentOutput1;   out.location_4 += mix(vec3f(unconst_f32(-0.03161), unconst_f32(0.1830), unconst_f32(0.3423e34)), vec3f(unconst_f32(0.1673), unconst_f32(0.5069), unconst_f32(-0.1021e-18)), vec3f(unconst_f32(0.07309e-16), unconst_f32(0.03034), unconst_f32(-0.5272e5))).zy;   let vf32: vec3i = countTrailingZeros(vec3i(bitcast<i32>(out.location_1)));   out.location_0 += out.location_0;   out.location_4 += vec2f(countTrailingZeros(vec3i(unconst_i32(1944013625), unconst_i32(3871936), unconst_i32(645950580))).bg.yx);   out.location_1 = a0.sample_index;   out.location_1 <<= u32((mat3x3h(unconst_f16(5201.6), unconst_f16(-8689.2), unconst_f16(1780.2), unconst_f16(2564.1), unconst_f16(11995.0), unconst_f16(3915.1), unconst_f16(3089.4), unconst_f16(12527.9), unconst_f16(879.6)) * unconst_f16(-4014.2))[unconst_i32(1)].r);   var vf33 = fn0(st7);   return out;   _ = override4;   _ = st7; } /* zero global variables used */@fragment fn fragment3(a0: FragmentInput4) -> FragmentOutput2 {   var out: FragmentOutput2;   let vf34: u32 = pack4xI8(vec4i(unconst_i32(146096941), unconst_i32(74283458), unconst_i32(61179094), unconst_i32(-271198163)));   fn1();   fn1();   var vf35: u32 = dot(vec2u(unconst_u32(290008986), unconst_u32(420857185)), vec2u(unconst_u32(338313158), unconst_u32(157493204)));   while a0.front_facing {   let vf36: vec3f = sign(vec3f(unconst_f32(0.4464e-44), unconst_f32(0.04321e14), unconst_f32(0.06661)));   out.location_0 = bitcast<vec4i>(saturate(vec3f(unconst_f32(0.04768e-42), unconst_f32(0.08665e13), unconst_f32(0.2646))).zxxx);   out.location_2 = vec2i(i32(pack2x16float(vec2f(unconst_f32(0.04169), unconst_f32(0.2683e-37)))));   var vf37: bool = a0.front_facing;   let vf38: bool = a0.front_facing;   var vf39: FragmentInput4 = a0;   break; }   return out; } /* used global variables: st6 */@compute @workgroup_size(1, 1, 1) fn compute2(a0: ComputeInput4, a1: ComputeInput5, a2: ComputeInput6) {   var vf40: ComputeInput6 = a2;   _ = fn2();   while bool(vf40.local_invocation_index) {   var vf41: vec2h = faceForward(vec2h(unconst_f16(10265.7), unconst_f16(9819.5)), vec2h(unconst_f16(6107.2), unconst_f16(3116.9)), vec2h(unconst_f16(9187.1), unconst_f16(234.7)));   return; }   _ = fn2();   textureStore(st6, vec2i(i32(vf40.local_invocation_index)), unconst_i32(-657812284), vec4u(vec4u(unconst_u32(826249381), unconst_u32(1940998725), unconst_u32(321435485), unconst_u32(849253400))));   textureStore(st6, vec2i(unconst_i32(249295001), unconst_i32(-3216665)), unconst_i32(710784438), vec4u(vec4u(unconst_u32(552161050), unconst_u32(117926141), unconst_u32(144885835), unconst_u32(402285673))));   fn1();   textureStore(st6, vec2i(unconst_i32(410816531), unconst_i32(1658070529)), unconst_i32(73844603), vec4u(vec4u(unconst_u32(2876863597), unconst_u32(1559446522), unconst_u32(482010197), unconst_u32(457552028))));   _ = st6; }`, });
+ let shaderModule5_ = device0.createShaderModule({   code: ` enable f16; requires pointer_composite_access; @id(61552) override override10: i32; struct ComputeInput10 {   @builtin(global_invocation_id) global_invocation_id: vec3u, } struct ComputeInput11 {   @builtin(workgroup_id) workgroup_id: vec3u, } struct VertexOutput2 {   @invariant @builtin(position) position: vec4f,   @location(0) @interpolate(flat, center) location_0: vec4u,   @location(3) @interpolate(flat, sample) location_3: vec4i,   @location(1) location_1: vec4f,   @location(2) location_2: vec4h,   @location(12) @interpolate(flat) location_12: vec2i,   @location(10) location_10: u32,   @location(15) @interpolate(flat, first) location_15: vec2i,   @location(13) @interpolate(linear, either) location_13: f32, } struct T0 {   @size(384) f0: vec4u,   @size(64) f1: array<array<array<array<f16, 1>, 1>, 4>, 4>, } fn unconst_u32(v: u32) -> u32 { return v; } struct VertexInput11 {   @location(12) location_12: vec2u,   @location(0) @interpolate(flat) location_0: vec2f,   @location(8) location_8: vec4u, } override override13: u32; @id(18949) override override9: i32; struct VertexInput14 {   @location(14) location_14: vec4u,   @location(4) @interpolate(flat) location_4: vec2f,   @location(2) location_2: vec4f,   @location(10) @interpolate(perspective) location_10: vec4f,   @location(13) @interpolate(flat, first) location_13: vec2i, } struct VertexInput13 {   @location(1) location_1: vec4u, } var<private> vp3: vec2u = vec2u(158949841, 480769446); struct ComputeInput8 {   @builtin(local_invocation_id) local_invocation_id: vec3u, } @id(40207) override override5: i32; /* zero global variables used */@must_use  fn fn0() -> f32 {   var out: f32;   vp3 += vec2u(u32(override6));   vp2 *= vec2h(unpack4x8snorm(unconst_u32(194399436)).xw.xy.gr);   out = bitcast<vec4f>(unpack4xU8(pack2x16snorm(unpack2x16snorm(unconst_u32(303894936)))).yyyz).w;   vp2 += bitcast<vec2h>(pack4xI8(vec4i(unconst_i32(20103810), unconst_i32(528122749), unconst_i32(51245800), unconst_i32(148188442))));   out -= f32(override11);   var vf51: u32 = vp3[unconst_u32(1725271971)];   var vf52: f32 = smoothstep(unconst_f32(0.02340), unconst_f32(0.01391e2), unconst_f32(0.1094));   vp2 *= vec2h(quantizeToF16(vec4f(unconst_f32(0.02040e-32), unconst_f32(0.00291), unconst_f32(0.00374), unconst_f32(0.01817e-21))).br.rr);   if bool(unpack4x8snorm(unconst_u32(212642930))[0]) {   var vf53: vec4f = fma(vec4f(unconst_f32(0.2839), unconst_f32(0.3041e-9), unconst_f32(0.06483e-19), unconst_f32(-0.09079e-1)), vec4f(unconst_f32(0.2436), unconst_f32(0.03765e32), unconst_f32(0.07953), unconst_f32(0.06807e-3)), vec4f(unconst_f32(0.1697), unconst_f32(0.04843), unconst_f32(0.1487e-6), unconst_f32(0.5337e27)));   vp3 <<= vec2u(bitcast<u32>(override8));   vp2 += vec2h(fma(vec4f(unconst_f32(0.1126e-11), unconst_f32(0.4723e-45), unconst_f32(0.1704e12), unconst_f32(0.08159)), vec4f(unconst_f32(0.5461e13), unconst_f32(0.3157), unconst_f32(0.1464e30), unconst_f32(0.06385e38)), vec4f(unconst_f32(0.02744e33), unconst_f32(0.1057), unconst_f32(0.1294e22), unconst_f32(0.1919e-32))).ab.yy.gg);   var vf54: f32 = saturate(bitcast<f32>(sin(vec2h(unconst_f16(10310.8), unconst_f16(1889.9)))));   let vf55: f32 = override7;   {   var vf56: u32 = vp3[unconst_u32(360987503)];   let vf57: f16 = vp2[unconst_u32(712427633)];   var vf58: f16 = override11;   _ = override11; }   _ = override8;   _ = override7;   _ = override11; }   vf52 = smoothstep(vec2f(unconst_f32(0.1178e-10), unconst_f32(0.5012)), vec2f(unconst_f32(0.09103), unconst_f32(0.2664)), vec2f(unconst_f32(0.04098e-38), unconst_f32(0.1001e12))).g;   out = bitcast<f32>(vp2);   let vf59: i32 = dot4I8Packed(unconst_u32(1104018186), unconst_u32(702026487));   return out;   _ = override8;   _ = override6;   _ = override7;   _ = override11; } struct VertexInput12 {   @location(6) @interpolate(flat) location_6: vec2f,   @location(3) @interpolate(flat) location_3: vec2h, } struct ComputeInput9 {   @builtin(num_workgroups) num_workgroups: vec3u, } var<private> vp2: vec2h = vec2h(-344.4, 32570.3); override override7: f32; fn unconst_f16(v: f16) -> f16 { return v; } /* zero global variables used */fn fn1(a0: texture_storage_2d_array<r32uint, write>, a1: texture_storage_2d_array<r32uint, write>, a2: ptr<function, i32>) -> array<array<vec4h, 11>, 1> {   var out: array<array<vec4h, 11>, 1>;   let vf60: f16 = out[u32(out[vp3.g][unconst_u32(1112833729)][unconst_u32(1832221666)])][u32(out[unconst_u32(2235768923)][10][3])][unconst_u32(1665943378)];   let ptr19: ptr<function, i32> = &(*a2);   let ptr20: ptr<function, vec4h> = &out[unconst_u32(262214846)][unconst_u32(235083111)];   {   let vf61: f32 = distance(vec4f(quantizeToF16(unconst_f32(0.01038))), vec4f(unconst_f32(0.5318e8), unconst_f32(0.1687e1), unconst_f32(0.2733), unconst_f32(0.00858)));   loop {   var vf62: bool = override6;   let ptr21: ptr<function, array<vec4h, 11>> = &out[0];   let vf63: f16 = out[unconst_u32(259506982)][10][unconst_u32(515472995)];   break;   _ = override6; }   _ = override6; }   var vf64: f16 = out[0][unconst_u32(85453433)][unconst_u32(97008479)];   textureStore(a1, vec2i(unconst_i32(308283251), unconst_i32(58997735)), i32((*ptr20)[unconst_u32(355344472)]), vec4u(vec4u(unconst_u32(859008460), unconst_u32(831953175), unconst_u32(477970637), unconst_u32(1067220304))));   let vf65: i32 = override9;   let vf66: vec4h = radians(vec4h(unconst_f16(15962.3), unconst_f16(8186.6), unconst_f16(1193.2), unconst_f16(20007.5)));   out[unconst_u32(95371835)][unconst_u32(396611503)] = vec4h(f16(override10));   vf64 *= f16(override5);   vp2 = vec2h(vec2h(unconst_f16(952.7), unconst_f16(681.8)));   return out;   _ = override6;   _ = override5;   _ = override9;   _ = override10; } fn unconst_f32(v: f32) -> f32 { return v; } @id(53835) override override8: f32; override override11: f16; @group(1) @binding(6) var st16: texture_storage_2d_array<r32uint, write>; @id(39399) override override12 = -23476381; @group(0) @binding(6) var st14: texture_storage_2d_array<r32uint, write>; var<workgroup> vw9: vec2u; alias vec3b = vec3<bool>; @id(58039) override override6: bool; fn unconst_i32(v: i32) -> i32 { return v; } fn unconst_bool(v: bool) -> bool { return v; } /* zero global variables used */@vertex fn vertex3(@location(9) location_9: u32, a1: VertexInput11, a2: VertexInput12, a3: VertexInput13, a4: VertexInput14, @location(5) location_5: i32, @location(11) @interpolate(flat) location_11: vec2i, @location(15) location_15: f32) -> VertexOutput2 {   var out: VertexOutput2;   vp3 >>= vec2u(a4.location_2.zx);   let ptr22: ptr<private, vec2u> = &vp3;   if bool(out.location_3[1]) {   out.location_13 = f32(out.location_2[unconst_u32(1019491804)]);   out.position -= (mat3x4f(f32(a4.location_14[unconst_u32(896741342)]), bitcast<f32>(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)]), bitcast<f32>(a4.location_14[unconst_u32(896741342)]), bitcast<f32>(a4.location_14[unconst_u32(896741342)]), bitcast<f32>(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)]), f32(a4.location_14[unconst_u32(896741342)])) * vec3f(unconst_f32(0.02872), unconst_f32(0.05537e-24), unconst_f32(0.5013e-32))); }   vp2 -= bitcast<vec2h>(out.location_15[unconst_u32(22949574)]);   out.position = vec4f((vec3f(f32(pack2x16unorm(vec2f(unconst_f32(0.03400e-19), unconst_f32(0.02912))))) == vec3f(location_15)).zxyy.xzwy);   vp3 ^= bitcast<vec2u>(out.position.aa);   let vf67: vec4f = a4.location_2;   out.position = bitcast<vec4f>(a1.location_8.rrrg.brbg.ywxw.ggbg);   let vf68: vec2u = a1.location_12;   var vf69: vec4f = exp(vec4f(unconst_f32(0.06473), unconst_f32(0.1080e-10), unconst_f32(0.01034), unconst_f32(0.03956e-21)));   return out; } /* used global variables: st14, st16 */@compute @workgroup_size(1, 2, 1) fn compute5(a0: ComputeInput8, @builtin(local_invocation_index) local_invocation_index: u32, a2: ComputeInput9, a3: ComputeInput10, a4: ComputeInput11) {   _ = fn0();   vp2 = vec2h(normalize(vec2f(unconst_f32(0.3317), unconst_f32(0.1283))));   let ptr23: ptr<workgroup, vec2u> = &vw9;   let vf70: f32 = override8;   textureStore(st16, vec2i(unconst_i32(339487801), unconst_i32(21182788)), unconst_i32(557284673), vec4u(vec4u(unconst_u32(1008460964), unconst_u32(207756265), unconst_u32(425079400), unconst_u32(873367766))));   textureStore(st14, vec2i(unconst_i32(625965545), unconst_i32(90060053)), unconst_i32(714977466), vec4u(vec4u(unconst_u32(964143969), unconst_u32(312796223), unconst_u32(799928474), unconst_u32(153271750))));   let vf71: vec4<bool> = (vec4i(a2.num_workgroups.bgbg.wxyx.wwzx.brag.yxxx.arbg.abar) == vec4i(unconst_i32(51461550), unconst_i32(9792377), unconst_i32(1485518), unconst_i32(251666762)));   let vf72: vec3h = cosh(vec3h(unconst_f16(11501.0), unconst_f16(9778.7), unconst_f16(22108.8)));   vp3 |= vec2u((*&vw9)[unconst_u32(470443373)]);   vw9 <<= vec2u(bitcast<u32>(dot(vec2f(unconst_f32(0.1567e-13), unconst_f32(0.7833)), vec2f(unconst_f32(0.09922e-4), unconst_f32(0.00487)))));   _ = override7;   _ = override11;   _ = override8;   _ = override6;   _ = st16;   _ = st14; }`, });
+
+ let pipeline0 = device0.createComputePipeline({layout: 'auto', compute: {module: shaderModule0}});
+ let autogeneratedBindGroupLayout0 = pipeline0.getBindGroupLayout(1);
+
+ let veryExplicitBindGroupLayout1_ = device0.createBindGroupLayout({   entries: [     {       binding: 6,       visibility: GPUShaderStage.COMPUTE,       storageTexture: { format: 'r32uint', access: 'write-only', viewDimension: '2d-array' },     },     {       binding: 61,       visibility: GPUShaderStage.FRAGMENT,       storageTexture: { format: 'rgba8sint', access: 'read-only', viewDimension: '1d' },     },   ], });
+
+ let pipelineLayout2_ = device0.createPipelineLayout({bindGroupLayouts: [autogeneratedBindGroupLayout0, veryExplicitBindGroupLayout1_]});
+ let pipeline17_ = device0.createRenderPipeline({ layout: pipelineLayout2_, fragment: { module: shaderModule2_, entryPoint: 'fragment3', constants: {}, targets: [{ format: 'rgba16sint' }] }, vertex: { module: shaderModule5_, buffers: [{ arrayStride: 20, attributes: [{ format: 'uint32x4', offset: 0, shaderLocation: 14 }, { format: 'sint16x4', offset: 0, shaderLocation: 13 }, { format: 'uint8x4', offset: 0, shaderLocation: 8 }, { format: 'snorm8x4', offset: 0, shaderLocation: 6 }, { format: 'unorm16x2', offset: 0, shaderLocation: 0 }, { format: 'float32', offset: 0, shaderLocation: 10 }, { format: 'uint32', offset: 0, shaderLocation: 9 }, { format: 'unorm10-10-10-2', offset: 0, shaderLocation: 4 }, { format: 'sint32x3', offset: 0, shaderLocation: 5 }, { format: 'float32x3', offset: 0, shaderLocation: 3 }, { format: 'uint16x2', offset: 0, shaderLocation: 1 }, { format: 'snorm16x4', offset: 0, shaderLocation: 15 }, { format: 'float32x3', offset: 4, shaderLocation: 2 }, { format: 'uint32x3', offset: 0, shaderLocation: 12 }, { format: 'sint32', offset: 0, shaderLocation: 11 }, ], }, ], }, primitive: { topology: 'line-strip', stripIndexFormat: 'uint16', frontFace: 'cw', cullMode: 'back' }, });
+
+ let buffer2_ = device0.createBuffer({   size: 44,   usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX, });
+ let buffer28_ = device0.createBuffer({   size: 192,   usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.UNIFORM, });
+
+ let texture0_ = device0.createTexture({   size: {width: 350},   sampleCount: 1,   dimension: '1d',   format: 'rgba8sint',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,   viewFormats: [], });
+ let texture1_ = device0.createTexture({   size: [350, 1, 1],   format: 'r32uint',   usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,   viewFormats: [], });
+
+ let textureView0_ = texture0_.createView({dimension: '1d'});
+ let textureView2_ = texture1_.createView({dimension: '2d-array'});
+ let textureView3_ = texture1_.createView({dimension: '2d-array', aspect: 'all'});
+ let textureView4_ = texture0_.createView({mipLevelCount: 1});
+
+ let bindGroup9_ = device0.createBindGroup({   layout: veryExplicitBindGroupLayout1_,   entries: [{binding: 6, resource: textureView3_}, {binding: 61, resource: textureView4_}], });
+ let bindGroup10_ = device0.createBindGroup({   layout: veryExplicitBindGroupLayout1_,   entries: [{binding: 6, resource: textureView2_}, {binding: 61, resource: textureView0_}], });
+ let bindGroup14_ = device0.createBindGroup({layout: autogeneratedBindGroupLayout0, entries: [{binding: 6, resource: textureView2_}]});
+
+ let renderBundleEncoder2 = device0.createRenderBundleEncoder({colorFormats: ['rgba16sint'], sampleCount: 1});
+ try { renderBundleEncoder2.setPipeline(pipeline17_); } catch {}
+ try { renderBundleEncoder2.setBindGroup(0, bindGroup14_, new Uint32Array(522), 45, 0); } catch {}
+ try { renderBundleEncoder2.setBindGroup(1, bindGroup9_, new Uint32Array(530), 62, 0); } catch {}
+ try { renderBundleEncoder2.setBindGroup(2, bindGroup9_); } catch {}
+ try { renderBundleEncoder2.setBindGroup(3, bindGroup10_); } catch {}
+ try { renderBundleEncoder2.setVertexBuffer(0, buffer2_, 16, 0); } catch {}
+ try { renderBundleEncoder2.setIndexBuffer(buffer28_, 'uint16', 14, 11); } catch {}
+ try { renderBundleEncoder2.drawIndexed(3, 10, 0, 767_713_569, 1_452_707_395); } catch {}
+ try { buffer28_.destroy(); } catch {}
+ let renderBundle6 = renderBundleEncoder2.finish({});
+
+ await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass')
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

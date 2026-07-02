@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test PerformanceObserver callback is a task, not a microtask.");
+window.jsTestIsAsync = true;
+
+window.microtaskExecuted = false;
+window.callbackCount = 0;
+window.list = null;
+
+let observer = new PerformanceObserver((list) => {
+    window.list = list;
+    callbackCount++;
+
+    testPassed("PerformanceObserver callback fired");
+
+    if (callbackCount === 1) {
+        shouldBeFalse(`microtaskExecuted`);
+        shouldBe(`list.getEntries().length`, `1`);
+        performance.mark("mark2");
+        Promise.resolve().then(() => {
+            testPassed("Promise microtask fired");
+            microtaskExecuted = true;
+            performance.mark("mark3");
+        });
+        return;
+    }
+
+    if (callbackCount === 2) {
+        shouldBe(`list.getEntries().length`, `2`);
+        shouldBeTrue(`microtaskExecuted`);
+        finishJSTest();
+        return;
+    }
+
+    testFailed("Callback should not have fired again");
+});
+
+observer.observe({entryTypes: ["mark"]});
+performance.mark("mark1");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

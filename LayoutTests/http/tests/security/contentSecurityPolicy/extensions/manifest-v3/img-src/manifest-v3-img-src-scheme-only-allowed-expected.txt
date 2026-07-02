@@ -1,0 +1,5 @@
+ALERT: PASS: Successfully loaded image.
+
+Test that CSP for extensions allows scheme-only CSP for other directives.
+
+

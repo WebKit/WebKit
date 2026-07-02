@@ -1,0 +1,3 @@
+
+FAIL Test that body's rightmargin and bottommargin attributes are ignored in quirks mode assert_equals: expected "8px" but got "100px"
+

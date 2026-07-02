@@ -1,0 +1,13 @@
+
+
+FAIL generateKeyFrame() throws for audio assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame(null) resolves for video sender, and throws for video receiver assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame throws NotAllowedError for invalid rid assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame throws NotFoundError for unknown rid assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame throws for unset transforms assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame timestamp should advance assert_true: receiver should be set expected true got false
+FAIL await generateKeyFrame, await generateKeyFrame should see an increase in count of keyframes assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame rejects when the sender is negotiated inactive, and resumes succeeding when negotiated back to active assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame rejects when the sender is stopped, even without negotiation assert_true: receiver should be set expected true got false
+FAIL generateKeyFrame rejects with a null track assert_true: receiver should be set expected true got false
+

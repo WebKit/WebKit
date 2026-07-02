@@ -1,0 +1,550 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2001 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ValidatedFormListedElement.h"
+
+#include "AXObjectCache.h"
+#include "ContainerNodeInlines.h"
+#include "DocumentPage.h"
+#include "ElementAncestorIteratorInlines.h"
+#include "Event.h"
+#include "EventHandler.h"
+#include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
+#include "FormAssociatedElement.h"
+#include "FormController.h"
+#include "HTMLDataListElement.h"
+#include "HTMLFieldSetElement.h"
+#include "HTMLFormElement.h"
+#include "HTMLLegendElement.h"
+#include "HTMLParserIdioms.h"
+#include "LocalFrame.h"
+#include "LocalFrameView.h"
+#include "NodeDocument.h"
+#include "PseudoClassChangeInvalidation.h"
+#include "RenderElement.h"
+#include "ScriptDisallowedScope.h"
+#include "ValidationMessage.h"
+#include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Ref.h>
+#include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ValidatedFormListedElement);
+
+using namespace HTMLNames;
+
+ValidatedFormListedElement::ValidatedFormListedElement()
+{
+    ASSERT(!supportsReadOnly() || readOnlyBarsFromConstraintValidation());
+}
+
+ValidatedFormListedElement::~ValidatedFormListedElement()
+{
+    ASSERT(!m_validationMessage);
+}
+
+bool ValidatedFormListedElement::willValidate() const
+{
+    if (!m_willValidateInitialized || m_isInsideDataList == TriState::Indeterminate) {
+        m_willValidateInitialized = true;
+        bool newWillValidate = computeWillValidate();
+        if (m_willValidate != newWillValidate)
+            m_willValidate = newWillValidate;
+    } else {
+        // If the following assertion fails, updateWillValidateAndValidity() is not
+        // called correctly when something which changes computeWillValidate() result
+        // is updated.
+        ASSERT(m_willValidate == computeWillValidate());
+    }
+    return m_willValidate;
+}
+
+bool ValidatedFormListedElement::computeWillValidate() const
+{
+    if (m_isInsideDataList == TriState::Indeterminate) {
+        const Ref element = asHTMLElement();
+        m_isInsideDataList = triState(element->document().hasDataListElements() && ancestorsOfType<HTMLDataListElement>(element.get()).first());
+    }
+    // readonly bars constraint validation for *all* <input> elements, regardless of the <input> type, for compat reasons.
+    return m_isInsideDataList == TriState::False && !isDisabled() && !(m_hasReadOnlyAttribute && readOnlyBarsFromConstraintValidation());
+}
+
+void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement> validationAnchor)
+{
+    Ref element = asHTMLElement();
+    if (!element->document().page() || !element->isConnected())
+        return;
+    String message;
+    if (element->renderer() && willValidate())
+        message = validationMessage().trim(deprecatedIsSpaceOrNewline);
+    if (!m_validationMessage)
+        m_validationMessage = ValidationMessage::create(validationAnchor);
+    protect(m_validationMessage)->updateValidationMessage(validationAnchor, message);
+}
+
+void ValidatedFormListedElement::hideVisibleValidationMessage()
+{
+    if (m_validationMessage)
+        protect(m_validationMessage)->requestToHideMessage();
+}
+
+bool ValidatedFormListedElement::checkValidity(Vector<Ref<ValidatedFormListedElement>>* unhandledInvalidControls)
+{
+    if (!willValidate() || isValidFormControlElement())
+        return true;
+    // An event handler can deref this object.
+    Ref element = asHTMLElement();
+    Ref protectedThis { element };
+    Ref originalDocument { element->document() };
+    auto event = Event::create(eventNames().invalidEvent, Event::CanBubble::No, Event::IsCancelable::Yes);
+    element->dispatchEvent(event);
+    if (!event->defaultPrevented() && unhandledInvalidControls && element->isConnected() && originalDocument.ptr() == &element->document())
+        unhandledInvalidControls->append(*this);
+    return false;
+}
+
+bool ValidatedFormListedElement::reportValidity()
+{
+    Vector<Ref<ValidatedFormListedElement>> elements;
+    if (checkValidity(&elements))
+        return true;
+
+    if (elements.isEmpty())
+        return false;
+
+    // Needs to update layout now because we'd like to call isFocusable(),
+    // which has !renderer()->needsLayout() assertion.
+    protect(asHTMLElement().document())->updateLayoutIgnorePendingStylesheets();
+    if (auto validationAnchor = focusableValidationAnchorElement())
+        focusAndShowValidationMessage(validationAnchor.releaseNonNull());
+    else
+        reportNonFocusableControlError();
+
+    return false;
+}
+
+RefPtr<HTMLElement> ValidatedFormListedElement::focusableValidationAnchorElement()
+{
+    if (RefPtr validationAnchor = validationAnchorElement()) {
+        if (validationAnchor->isConnected() && validationAnchor->isFocusable())
+            return validationAnchor;
+    }
+    return nullptr;
+}
+
+void ValidatedFormListedElement::focusAndShowValidationMessage(Ref<HTMLElement> validationAnchor)
+{
+    Ref protectedThis { *this };
+    bool previousIsFocusingWithValidationMessage = m_isFocusingWithValidationMessage;
+    m_isFocusingWithValidationMessage = true;
+    auto scopeExit = makeScopeExit([&] { m_isFocusingWithValidationMessage = previousIsFocusingWithValidationMessage; });
+
+    // Calling focus() will scroll the element into view.
+    validationAnchor->focus();
+
+    // focus() will scroll the element into view and this scroll may happen asynchronously.
+    // Because scrolling the view hides the validation message, we need to show the validation
+    // message asynchronously as well.
+    if (RefPtr page = validationAnchor->document().page())
+        page->scheduleValidationMessageUpdate(*this, validationAnchor);
+}
+
+void ValidatedFormListedElement::reportNonFocusableControlError()
+{
+    Ref document = asHTMLElement().document();
+    if (document->frame()) {
+        auto message = makeString("An invalid form control with name='"_s, name(), "' is not focusable."_s);
+        document->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
+    }
+}
+
+bool ValidatedFormListedElement::isShowingValidationMessage() const
+{
+    return m_validationMessage && protect(m_validationMessage)->isVisible();
+}
+
+bool ValidatedFormListedElement::validationMessageShadowTreeContains(const Node& node) const
+{
+    return m_validationMessage && m_validationMessage->shadowTreeContains(node);
+}
+
+bool ValidatedFormListedElement::isFocusingWithValidationMessage() const
+{
+    return m_isFocusingWithValidationMessage;
+}
+
+void ValidatedFormListedElement::setDisabledByAncestorFieldset(bool newDisabledByAncestorFieldset)
+{
+    ASSERT(computeIsDisabledByFieldsetAncestor() == newDisabledByAncestorFieldset);
+    setDisabledInternal(m_disabled, newDisabledByAncestorFieldset);
+}
+
+void ValidatedFormListedElement::setDisabledInternal(bool disabled, bool disabledByAncestorFieldset)
+{
+    bool newDisabledState = disabled || disabledByAncestorFieldset;
+    bool changingDisabledState = newDisabledState != isDisabled();
+
+    std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
+    if (changingDisabledState) {
+        emplace(styleInvalidation, protect(asHTMLElement()), {
+            { CSSSelector::PseudoClass::Disabled, newDisabledState },
+            { CSSSelector::PseudoClass::Enabled, !newDisabledState },
+        });
+    }
+
+    m_disabled = disabled;
+    m_disabledByAncestorFieldset = disabledByAncestorFieldset;
+
+    if (changingDisabledState)
+        disabledStateChanged();
+}
+
+static void addInvalidElementToAncestorFromInsertionPoint(const HTMLElement& element, ContainerNode* insertionPoint)
+{
+    auto* insertionPointElement = dynamicDowncast<Element>(insertionPoint);
+    if (!insertionPointElement)
+        return;
+
+    for (Ref ancestor : lineageOfType<HTMLFieldSetElement>(*insertionPointElement))
+        ancestor->addInvalidDescendant(element);
+}
+
+static void removeInvalidElementToAncestorFromInsertionPoint(const HTMLElement& element, ContainerNode* insertionPoint)
+{
+    auto* insertionPointElement = dynamicDowncast<Element>(insertionPoint);
+    if (!insertionPointElement)
+        return;
+
+    for (Ref ancestor : lineageOfType<HTMLFieldSetElement>(*insertionPointElement))
+        ancestor->removeInvalidDescendant(element);
+}
+
+void ValidatedFormListedElement::updateValidity()
+{
+    if (m_delayedUpdateValidityCount)
+        return;
+
+    bool willValidate = this->willValidate();
+    bool newIsValid = this->computeValidity();
+
+    if (newIsValid != m_isValid) {
+        SUPPRESS_UNCOUNTED_LOCAL auto& element = asHTMLElement();
+        Style::PseudoClassChangeInvalidation styleInvalidation(element, {
+            { CSSSelector::PseudoClass::Valid, willValidate && newIsValid },
+            { CSSSelector::PseudoClass::Invalid, willValidate && !newIsValid },
+            { CSSSelector::PseudoClass::UserValid, willValidate && m_wasInteractedWithSinceLastFormSubmitEvent && newIsValid },
+            { CSSSelector::PseudoClass::UserInvalid, willValidate && m_wasInteractedWithSinceLastFormSubmitEvent && !newIsValid },
+        });
+
+        m_isValid = newIsValid;
+
+        if (willValidate) {
+            if (!newIsValid) {
+                if (!belongsToFormThatIsBeingDestroyed())
+                    addInvalidElementToAncestorFromInsertionPoint(element, protect(element.parentNode()).get());
+                if (RefPtr form = this->form())
+                    form->addInvalidFormControl(element);
+            } else {
+                if (!belongsToFormThatIsBeingDestroyed())
+                    removeInvalidElementToAncestorFromInsertionPoint(element, protect(element.parentNode()).get());
+                if (RefPtr form = this->form())
+                    form->removeInvalidFormControlIfNeeded(element);
+            }
+        }
+
+        if (CheckedPtr cache = protect(element)->document().existingAXObjectCache())
+            cache->onValidityChange(element);
+    }
+
+    // Updates only if this control already has a validation message.
+    if (isShowingValidationMessage()) {
+        // Calls updateVisibleValidationMessage() even if m_isValid is not
+        // changed because a validation message can be changed.
+        if (auto validationAnchor = focusableValidationAnchorElement())
+            updateVisibleValidationMessage(validationAnchor.releaseNonNull());
+    }
+}
+
+void ValidatedFormListedElement::parseAttribute(const QualifiedName& name, const AtomString& value)
+{
+    if (name == disabledAttr && asHTMLElement().canBeActuallyDisabled())
+        parseDisabledAttribute(value);
+    else if (name == readonlyAttr && readOnlyBarsFromConstraintValidation())
+        parseReadOnlyAttribute(value);
+    else
+        FormListedElement::parseAttribute(name, value);
+}
+
+void ValidatedFormListedElement::parseDisabledAttribute(const AtomString& value)
+{
+    ASSERT(asHTMLElement().canBeActuallyDisabled());
+
+    bool newDisabled = !value.isNull();
+    setDisabledInternal(newDisabled, m_disabledByAncestorFieldset);
+}
+
+void ValidatedFormListedElement::parseReadOnlyAttribute(const AtomString& value)
+{
+    ASSERT(readOnlyBarsFromConstraintValidation());
+
+    bool newHasReadOnlyAttribute = !value.isNull();
+    if (m_hasReadOnlyAttribute != newHasReadOnlyAttribute) {
+        bool newMatchesReadWrite = supportsReadOnly() && !newHasReadOnlyAttribute;
+        Ref element = asHTMLElement();
+
+        // :in-range/:out-of-range/:valid/:invalid depend on willValidate() which is affected by the readonly state.
+        // Temporarily apply the new readonly state to compute the new pseudo-class values.
+        m_hasReadOnlyAttribute = newHasReadOnlyAttribute;
+        m_willValidateInitialized = false;
+        bool newMatchesValid = matchesValidPseudoClass();
+        bool newMatchesInvalid = matchesInvalidPseudoClass();
+        bool newMatchesInRange = element->isInRange();
+        bool newMatchesOutOfRange = element->isOutOfRange();
+        // Restore old state so PseudoClassChangeInvalidation constructors capture the before-change state.
+        m_hasReadOnlyAttribute = !newHasReadOnlyAttribute;
+        m_willValidateInitialized = false;
+
+        Style::PseudoClassChangeInvalidation readWriteInvalidation(element, { { CSSSelector::PseudoClass::ReadWrite, newMatchesReadWrite }, { CSSSelector::PseudoClass::ReadOnly, !newMatchesReadWrite } });
+        Style::PseudoClassChangeInvalidation rangeAndValidityInvalidation(element, {
+            { CSSSelector::PseudoClass::InRange, newMatchesInRange },
+            { CSSSelector::PseudoClass::OutOfRange, newMatchesOutOfRange },
+            { CSSSelector::PseudoClass::Valid, newMatchesValid },
+            { CSSSelector::PseudoClass::Invalid, newMatchesInvalid },
+        });
+        m_hasReadOnlyAttribute = newHasReadOnlyAttribute;
+        readOnlyStateChanged();
+    }
+}
+
+void ValidatedFormListedElement::insertionSteps(Node::InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    m_isInsideDataList = TriState::Indeterminate;
+    updateWillValidateAndValidity();
+    syncWithFieldsetAncestors(&parentOfInsertedTree);
+
+    FormListedElement::elementInsertedIntoAncestor(protect(asHTMLElement()), insertionType);
+
+    if (!insertionType.connectedToDocument)
+        resetFormOwner();
+    // Need to wait for postConnectionSteps to reset form when this element is inserted into a document
+    // because we rely on TreeScope::getElementById to return the right element.
+}
+
+void ValidatedFormListedElement::setDataListAncestorState(TriState isInsideDataList)
+{
+    m_isInsideDataList = isInsideDataList;
+}
+
+void ValidatedFormListedElement::syncWithFieldsetAncestors(ContainerNode* insertionPoint)
+{
+    Ref element = asHTMLElement();
+    if (matchesInvalidPseudoClass())
+        addInvalidElementToAncestorFromInsertionPoint(element, insertionPoint);
+    if (element->document().hasDisabledFieldsetElement())
+        setDisabledInternal(m_disabled, computeIsDisabledByFieldsetAncestor());
+}
+
+void ValidatedFormListedElement::removingSteps(Node::RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
+{
+    Ref element = asHTMLElement();
+    bool wasMatchingInvalidPseudoClass = matchesInvalidPseudoClass();
+
+    m_validationMessage = nullptr;
+    if (m_disabledByAncestorFieldset)
+        setDisabledInternal(m_disabled, computeIsDisabledByFieldsetAncestor());
+
+    bool wasInsideDataList = m_isInsideDataList == TriState::True;
+    if (wasInsideDataList)
+        m_isInsideDataList = TriState::Indeterminate;
+
+    FormListedElement::elementRemovedFromAncestor(element, removalType);
+
+    if (wasMatchingInvalidPseudoClass)
+        removeInvalidElementToAncestorFromInsertionPoint(element, &oldParentOfRemovedTree);
+
+    if (wasInsideDataList)
+        updateWillValidateAndValidity();
+
+    ASSERT(!m_validationMessage);
+}
+
+bool ValidatedFormListedElement::computeIsDisabledByFieldsetAncestor() const
+{
+    RefPtr<const Element> previousAncestor;
+    for (Ref ancestor : ancestorsOfType<Element>(protect(asHTMLElement()))) {
+        if (RefPtr fieldset = dynamicDowncast<HTMLFieldSetElement>(ancestor); fieldset && ancestor->hasAttributeWithoutSynchronization(disabledAttr)) {
+            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldset->legend();
+            return !isInFirstLegend;
+        }
+        previousAncestor = ancestor.ptr();
+    }
+    return false;
+}
+
+void ValidatedFormListedElement::willChangeForm()
+{
+    if (RefPtr form = this->form())
+        form->removeInvalidFormControlIfNeeded(protect(asHTMLElement()));
+    FormListedElement::willChangeForm();
+}
+
+void ValidatedFormListedElement::didChangeForm()
+{
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+    FormListedElement::didChangeForm();
+    if (RefPtr form = this->form()) {
+        if (m_willValidateInitialized && m_willValidate && !isValidFormControlElement())
+            form->addInvalidFormControl(protect(asHTMLElement()));
+    }
+}
+
+void ValidatedFormListedElement::formWillBeDestroyed()
+{
+    m_belongsToFormThatIsBeingDestroyed = true;
+    FormListedElement::formWillBeDestroyed();
+    m_belongsToFormThatIsBeingDestroyed = false;
+}
+
+void ValidatedFormListedElement::disabledStateChanged()
+{
+    updateWillValidateAndValidity();
+}
+
+void ValidatedFormListedElement::readOnlyStateChanged()
+{
+    updateWillValidateAndValidity();
+}
+
+void ValidatedFormListedElement::updateWillValidateAndValidity()
+{
+    // We need to recalculate willValidate immediately because willValidate change can causes style change.
+    bool newWillValidate = computeWillValidate();
+    if (m_willValidateInitialized && m_willValidate == newWillValidate)
+        return;
+
+    bool wasValid = m_isValid;
+
+    m_willValidateInitialized = true;
+    m_willValidate = newWillValidate;
+
+    updateValidity();
+
+    if (!m_willValidate && !wasValid) {
+        Ref element = asHTMLElement();
+        removeInvalidElementToAncestorFromInsertionPoint(element, protect(element->parentNode()).get());
+        if (RefPtr form = this->form())
+            form->removeInvalidFormControlIfNeeded(element);
+    }
+
+    if (!m_willValidate)
+        hideVisibleValidationMessage();
+}
+
+void ValidatedFormListedElement::postConnectionSteps()
+{
+    resetFormOwner();
+}
+
+void ValidatedFormListedElement::setCustomValidity(const String& error)
+{
+    FormListedElement::setCustomValidity(error);
+    updateValidity();
+}
+
+void ValidatedFormListedElement::endDelayingUpdateValidity()
+{
+    ASSERT(m_delayedUpdateValidityCount);
+    if (!--m_delayedUpdateValidityCount)
+        updateValidity();
+}
+
+bool ValidatedFormListedElement::isCandidateForSavingAndRestoringState() const
+{
+    // We don't save/restore control state in a form with autocomplete=off.
+    return shouldSaveAndRestoreFormControlState() && asHTMLElement().isConnected() && shouldAutocomplete();
+}
+
+bool ValidatedFormListedElement::shouldAutocomplete() const
+{
+    if (!form())
+        return true;
+    return protect(form())->shouldAutocomplete();
+}
+
+FormControlState ValidatedFormListedElement::saveFormControlState() const
+{
+    return { };
+}
+
+void ValidatedFormListedElement::restoreFormControlStateIfNecessary()
+{
+    asHTMLElement().document().formController().restoreControlStateFor(*this);
+}
+
+bool ValidatedFormListedElement::matchesValidPseudoClass() const
+{
+    return willValidate() && isValidFormControlElement();
+}
+
+bool ValidatedFormListedElement::matchesInvalidPseudoClass() const
+{
+    return willValidate() && !isValidFormControlElement();
+}
+
+bool ValidatedFormListedElement::matchesUserInvalidPseudoClass() const
+{
+    return m_wasInteractedWithSinceLastFormSubmitEvent && matchesInvalidPseudoClass();
+}
+
+bool ValidatedFormListedElement::matchesUserValidPseudoClass() const
+{
+    return m_wasInteractedWithSinceLastFormSubmitEvent && matchesValidPseudoClass();
+}
+
+void ValidatedFormListedElement::setInteractedWithSinceLastFormSubmitEvent(bool interactedWith)
+{
+    if (m_wasInteractedWithSinceLastFormSubmitEvent == interactedWith)
+        return;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(asHTMLElement(), {
+        { CSSSelector::PseudoClass::UserValid, interactedWith && matchesValidPseudoClass() },
+        { CSSSelector::PseudoClass::UserInvalid, interactedWith && matchesInvalidPseudoClass() },
+    });
+
+    m_wasInteractedWithSinceLastFormSubmitEvent = interactedWith;
+}
+
+} // namespace WebCore

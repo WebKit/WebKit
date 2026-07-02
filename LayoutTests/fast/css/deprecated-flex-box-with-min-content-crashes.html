@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<style>
+body,
+iframe {
+    aspect-ratio: 1;
+}
+
+body {
+    display: -webkit-box;
+    -webkit-box-orient: block-axis;
+}
+
+iframe {
+    display: block;
+    -webkit-box-flex: 1;
+    max-inline-size: min-content;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    let iframe0 = document.createElement('iframe');
+    document.body.append(iframe0);
+    document.body.getBoundingClientRect();
+    iframe0.style.position = 'fixed';
+    document.body.getBoundingClientRect();
+    document.body.innerHTML = "This test PASS if it doesn't CRASH.";
+};
+</script>
+</html>

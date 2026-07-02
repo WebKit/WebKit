@@ -1,0 +1,194 @@
+/*
+ *  Copyright 2018 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+ */
+
+#include "video/end_to_end_tests/multi_stream_tester.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <utility>
+#include <vector>
+
+#include "api/environment/environment.h"
+#include "api/environment/environment_factory.h"
+#include "api/rtp_parameters.h"
+#include "api/test/create_frame_generator.h"
+#include "api/test/simulated_network.h"
+#include "api/test/video/function_video_encoder_factory.h"
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
+#include "api/video/video_bitrate_allocator_factory.h"
+#include "api/video/video_codec_type.h"
+#include "api/video_codecs/sdp_video_format.h"
+#include "call/call.h"
+#include "call/call_config.h"
+#include "call/fake_network_pipe.h"
+#include "call/video_receive_stream.h"
+#include "call/video_send_stream.h"
+#include "media/engine/internal_decoder_factory.h"
+#include "modules/video_coding/codecs/vp8/include/vp8.h"
+#include "rtc_base/task_queue_for_test.h"
+#include "rtc_base/thread.h"
+#include "test/direct_transport.h"
+#include "test/encoder_settings.h"
+#include "test/frame_generator_capturer.h"
+#include "test/network/simulated_network.h"
+#include "video/config/video_encoder_config.h"
+
+namespace webrtc {
+
+MultiStreamTester::MultiStreamTester() {
+  // TODO(sprang): Cleanup when msvc supports explicit initializers for array.
+  codec_settings[0] = {.ssrc = 1, .width = 640, .height = 480};
+  codec_settings[1] = {.ssrc = 2, .width = 320, .height = 240};
+  codec_settings[2] = {.ssrc = 3, .width = 240, .height = 160};
+}
+
+MultiStreamTester::~MultiStreamTester() = default;
+
+void MultiStreamTester::RunTest() {
+  Environment env = CreateEnvironment();
+  // Use high prioirity since this task_queue used for fake network delivering
+  // at correct time. Those test tasks should be prefered over code under test
+  // to make test more stable.
+  auto network_thread = Thread::CreateWithSocketServer();
+  network_thread->Start();
+  CallConfig sender_config(env);
+  CallConfig receiver_config(env);
+  std::unique_ptr<Call> sender_call;
+  std::unique_ptr<Call> receiver_call;
+  std::unique_ptr<test::DirectTransport> sender_transport;
+  std::unique_ptr<test::DirectTransport> receiver_transport;
+
+  VideoSendStream* send_streams[kNumStreams];
+  VideoReceiveStreamInterface* receive_streams[kNumStreams];
+  test::FrameGeneratorCapturer* frame_generators[kNumStreams];
+  test::FunctionVideoEncoderFactory encoder_factory(
+      [](const Environment& env, const SdpVideoFormat& format) {
+        return CreateVp8Encoder(env);
+      });
+  std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory =
+      CreateBuiltinVideoBitrateAllocatorFactory();
+  InternalDecoderFactory decoder_factory;
+
+  SendTask(network_thread.get(), [&]() {
+    sender_call = Call::Create(std::move(sender_config));
+    receiver_call = Call::Create(std::move(receiver_config));
+    sender_transport =
+        CreateSendTransport(env, network_thread.get(), sender_call.get());
+    receiver_transport =
+        CreateReceiveTransport(env, network_thread.get(), receiver_call.get());
+    sender_transport->SetReceiver(receiver_call->Receiver());
+    receiver_transport->SetReceiver(sender_call->Receiver());
+
+    for (size_t i = 0; i < kNumStreams; ++i) {
+      uint32_t ssrc = codec_settings[i].ssrc;
+      int width = codec_settings[i].width;
+      int height = codec_settings[i].height;
+
+      VideoSendStream::Config send_config(sender_transport.get());
+      send_config.rtp.ssrcs.push_back(ssrc);
+      send_config.encoder_settings.encoder_factory = &encoder_factory;
+      send_config.encoder_settings.bitrate_allocator_factory =
+          bitrate_allocator_factory.get();
+      send_config.rtp.payload_name = "VP8";
+      send_config.rtp.payload_type = kVideoPayloadType;
+      VideoEncoderConfig encoder_config;
+      test::FillEncoderConfiguration(kVideoCodecVP8, 1, &encoder_config);
+      encoder_config.max_bitrate_bps = 100000;
+
+      UpdateSendConfig(i, &send_config, &encoder_config, &frame_generators[i]);
+
+      send_streams[i] = sender_call->CreateVideoSendStream(
+          send_config.Copy(), encoder_config.Copy());
+      send_streams[i]->Start();
+
+      VideoReceiveStreamInterface::Config receive_config(
+          receiver_transport.get());
+      receive_config.rtp.remote_ssrc = ssrc;
+      receive_config.decoder_factory = &decoder_factory;
+      VideoReceiveStreamInterface::Decoder decoder =
+          test::CreateMatchingDecoder(send_config);
+      receive_config.decoders.push_back(decoder);
+
+      UpdateReceiveConfig(i, &receive_config);
+
+      receive_streams[i] =
+          receiver_call->CreateVideoReceiveStream(std::move(receive_config));
+      receive_streams[i]->Start();
+
+      auto* frame_generator = new test::FrameGeneratorCapturer(
+          &env.clock(),
+          test::CreateSquareFrameGenerator(width, height, std::nullopt,
+                                           std::nullopt),
+          30, env.task_queue_factory());
+      frame_generators[i] = frame_generator;
+      send_streams[i]->SetSource(frame_generator,
+                                 DegradationPreference::MAINTAIN_FRAMERATE);
+      frame_generator->Init();
+      frame_generator->Start();
+    }
+  });
+
+  Wait();
+
+  SendTask(network_thread.get(), [&]() {
+    for (size_t i = 0; i < kNumStreams; ++i) {
+      frame_generators[i]->Stop();
+      sender_call->DestroyVideoSendStream(send_streams[i]);
+      receiver_call->DestroyVideoReceiveStream(receive_streams[i]);
+      delete frame_generators[i];
+    }
+
+    sender_transport.reset();
+    receiver_transport.reset();
+
+    sender_call.reset();
+    receiver_call.reset();
+  });
+  network_thread->Stop();
+}
+
+void MultiStreamTester::UpdateSendConfig(
+    size_t stream_index,
+    VideoSendStream::Config* send_config,
+    VideoEncoderConfig* encoder_config,
+    test::FrameGeneratorCapturer** frame_generator) {}
+
+void MultiStreamTester::UpdateReceiveConfig(
+    size_t stream_index,
+    VideoReceiveStreamInterface::Config* receive_config) {}
+
+std::unique_ptr<test::DirectTransport> MultiStreamTester::CreateSendTransport(
+    const Environment& env,
+    Thread* network_thread,
+    Call* sender_call) {
+  std::vector<RtpExtension> extensions = {};
+  return std::make_unique<test::DirectTransport>(
+      env, network_thread,
+      std::make_unique<FakeNetworkPipe>(
+          &env.clock(),
+          std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
+      sender_call, payload_type_map_, extensions, extensions);
+}
+
+std::unique_ptr<test::DirectTransport>
+MultiStreamTester::CreateReceiveTransport(const Environment& env,
+                                          Thread* network_thread,
+                                          Call* receiver_call) {
+  std::vector<RtpExtension> extensions = {};
+  return std::make_unique<test::DirectTransport>(
+      env, network_thread,
+      std::make_unique<FakeNetworkPipe>(
+          &env.clock(),
+          std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
+      receiver_call, payload_type_map_, extensions, extensions);
+}
+}  // namespace webrtc

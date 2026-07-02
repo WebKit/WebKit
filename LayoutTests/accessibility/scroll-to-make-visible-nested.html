@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
+
+<div id="outer_container" style="height: 100px; overflow: scroll">
+  <div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
+  <div id="inner_container" style="height: 100px; overflow: scroll">
+    <div style="border: 1px solid #000; height: 5000px;">5000-pixel box</div>
+    <button id="target">Target</button>
+  </div>
+</div>
+
+<script>
+var output = "Tests that scrolling to make an element visible successfully scrolls multiple nested scrolling views'.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    window.outerContainer = document.getElementById("outer_container");
+    window.innerContainer = document.getElementById("inner_container");
+    window.target = document.getElementById("target");
+
+    var targetAccessibleObject;
+    setTimeout(async function() {
+        targetAccessibleObject = await waitForFocus("target");
+
+        // Reset the initial scroll positions (since calling focus() can scroll the page too).
+        window.scrollTo(0, 0);
+        outerContainer.scrollTop = 0;
+        innerContainer.scrollTop = 0;
+        output += expect("window.pageYOffset", "0");
+        output += expect("outerContainer.scrollTop", "0");
+        output += expect("innerContainer.scrollTop", "0");
+        output += expect("target.getBoundingClientRect().top >= 15000", "true");
+
+        // Scroll to make target visible.
+        targetAccessibleObject.scrollToMakeVisible();
+
+        // Instead of testing the exact scroll offsets of the two containers, just test that
+        // the new absolute position of the target is on-screen.
+        output += await expectAsync("window.innerHeight >= target.getBoundingClientRect().bottom", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

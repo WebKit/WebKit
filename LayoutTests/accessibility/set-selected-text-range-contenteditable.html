@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div contenteditable id="content" tabindex="0">hello <b>world</b> test</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that selected text ranges can be set on a contenteditable element.");
+
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        document.getElementById("content").focus();
+        var sel = window.getSelection();
+        var range = document.createRange();
+        range.setStart(sel.anchorNode, 1);
+        range.setEnd(sel.anchorNode, 1);
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        var content = accessibilityController.accessibleElementById("content");
+        debug("Initial selected range: " + content.selectedTextRange);
+
+        debug("\nSet range: {3, 0}");
+        content.setSelectedTextRange(3, 0);
+        shouldBecomeEqual("content.selectedTextRange", "'{3, 0}'", function() {
+            debug("\nSet range: {100, 0}");
+            content.setSelectedTextRange(100, 0);
+            shouldBecomeEqual("content.selectedTextRange", "'{16, 0}'", function() {
+                debug("\nSet range: {0, 0}");
+                content.setSelectedTextRange(0, 0);
+                shouldBecomeEqual("content.selectedTextRange", "'{0, 0}'", function() {
+                    debug("\nSet range: {1, 12}");
+                    content.setSelectedTextRange(1, 12);
+                    shouldBecomeEqual("content.selectedTextRange", "'{1, 12}'", function() {
+                        debug("\nSet range: {-1, 0}");
+                        content.setSelectedTextRange(-1, 0);
+                        shouldBecomeEqual("content.selectedTextRange", "'{0, 0}'", function() {
+                            debug("\nSet range: {7, 3}");
+                            content.setSelectedTextRange(7, 3);
+                            shouldBecomeEqual("content.selectedTextRange", "'{7, 3}'", finishJSTest);
+                        });
+                    });
+                });
+            });
+        }); 
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

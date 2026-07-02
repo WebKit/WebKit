@@ -1,0 +1,4 @@
+
+PASS localStorage should be not rendered unusable by setting a key with the same name as a storage function such that the function is hidden
+PASS sessionStorage should be not rendered unusable by setting a key with the same name as a storage function such that the function is hidden
+

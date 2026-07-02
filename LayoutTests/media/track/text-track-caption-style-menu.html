@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <script src=../video-test.js></script>
+    <script src=../media-file.js></script>
+    <script>
+        function allCueElements() {
+            return internals.shadowRoot(video).querySelectorAll('[useragentpart="-internal-cue-background"]');
+        }
+
+        function firstCueElement() {
+            return internals.shadowRoot(video).querySelector('[useragentpart="-internal-cue-background"]');
+        }
+
+        async function runTest() {
+            findMediaElement();
+
+            video.src = findMediaFile('video', '../content/test') + '#t=0.5';
+
+            run('video.textTracks[0].mode = "showing"');
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
+            testExpected('firstCueElement().textContent', 'Lorem');
+
+            consoleWrite('');
+            consoleWrite('Pretend to show the subtitle style menu:');
+            run('internals.showCaptionDisplaySettingsPreviewForMediaElement(video)');
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
+            testExpected('firstCueElement().textContent', 'This is a preview');
+
+            consoleWrite('');
+            consoleWrite('Ensure that activeCues does not change:');
+            testExpected('video.textTracks[0].activeCues[0].text', "Lorem")
+
+            consoleWrite('');
+            consoleWrite('Pretend to hide the subtitle style menu:');
+            run('internals.hideCaptionDisplaySettingsPreviewForMediaElement(video)');
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
+            testExpected('firstCueElement().textContent', 'Lorem');
+
+            consoleWrite('');
+            consoleWrite('Disable the text track:');
+            run('video.textTracks[0].mode = "disabled"');
+            await testExpectedEventually('allCueElements().length', 0, '==', 500);
+
+            consoleWrite('');
+            consoleWrite('Pretend to show the subtitle style menu:');
+            run('internals.showCaptionDisplaySettingsPreviewForMediaElement(video)');
+            await testExpectedEventually('allCueElements().length', 1, '==', 500);
+            testExpected('firstCueElement().textContent', 'This is a preview');
+
+            consoleWrite('');
+            consoleWrite('Pretend to hide the subtitle style menu:');
+            run('internals.hideCaptionDisplaySettingsPreviewForMediaElement(video)');
+            await testExpectedEventually('allCueElements().length', 0, '==', 500);
+        }
+
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        })
+    </script>
+</head>
+<body>
+    <video>
+        <track src="captions-webvtt/captions.vtt" kind="captions" default>
+    </video>
+</body>
+</html>

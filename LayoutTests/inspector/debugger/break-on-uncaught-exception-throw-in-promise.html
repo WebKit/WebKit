@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/break-on-exception-tests.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+
+function test()
+{
+    // Pause on uncaught exception behavior in Promises is likely to change. This tests our
+    // current behavior of not pausing for uncaught exception when the Promise swallows
+    // the exception. See these bugs:
+    // FIXME: <https://webkit.org/b/124066> Uncaught exceptions raised in promise completion functions are not printed to console
+    // FIXME: <https://webkit.org/b/147502> Uncaught Exception in promise does not trigger break on uncaught exception breakpoint
+
+    WI.debuggerManager.uncaughtExceptionsBreakpoint.disabled = false;
+
+    let suite = InspectorTest.createAsyncSuite("BreakOnUncaughtException.Promise");
+
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                InspectorTest.evaluateInPage(`setTimeout(() => { TestPage.dispatchEventToFrontend("AfterTestFunction"); }, 50)`);
+
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.fail("Should not have paused.");
+                    WI.debuggerManager.resume();
+                    reject();
+                });
+
+                InspectorTest.singleFireEventListener("AfterTestFunction", (event) => {
+                    InspectorTest.pass("Should not pause, exception is 'caught' by Promise.");
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseConstructor",
+        description: "Break on an exception thrown in Promise constructor.",
+        expression: "setTimeout(testThrowingInPromise)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithoutCatch",
+        description: "Break on an exception thrown in Promise then handler with no catch handler.",
+        expression: "setTimeout(testThrowingInPromiseThen)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseThenWithCatch",
+        description: "Break on an exception thrown in Promise then handler with a catch handler.",
+        expression: "setTimeout(testThrowingInPromiseThenWithCatch)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseCatch",
+        description: "Break on an exception thrown in Promise catch with no then handler.",
+        expression: "setTimeout(testThrowingInPromiseWithCatch)",
+    });
+
+    addTestCase({
+        name: "BreakOnUncaughtException.Promise.ExceptionInPromiseThenAndRethrownInCatch",
+        description: "Break on an exception thrown in Promise then handler, and then again when rethrown in catch handler.",
+        expression: "setTimeout(testThrowingInPromiseWithRethrowInCatch)",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking no pauses within Promises when pausing on uncaught exceptions.</p>
+</body>
+</html>

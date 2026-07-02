@@ -1,0 +1,4 @@
+
+PASS fetchpriority attribute on <script> elements should reflect valid IDL values
+PASS default fetchpriority attribute on <script> elements should be 'auto'
+

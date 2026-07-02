@@ -1,0 +1,12 @@
+<script>
+  if (window.testRunner) { testRunner.dumpAsText(); }
+(async () => {
+  for (let i=0; i<1000; i++) {
+    try {
+      await new OfflineAudioContext({numberOfChannels: 1, length: 1, sampleRate: 3000}).decodeAudioData(new ArrayBuffer(1));
+    } catch {}
+    new Blob().stream();
+  }
+})()
+</script>
+This test passes if it never crashes.

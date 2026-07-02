@@ -1,0 +1,126 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'float32-blendable',
+    'float16-renderable',
+    'float32-renderable',
+    'core-features-and-limits',
+    'timestamp-query',
+  ],
+  requiredLimits: {
+    maxBindGroups: 4,
+    maxBindingsPerBindGroup: 1000,
+    maxStorageBufferBindingSize: 139264339,
+    maxUniformBufferBindingSize: 66046090,
+  },
+});
+// START
+
+let shaderModule0 = device0.createShaderModule({ code: `
+@group(0) @binding(221) var<storage, read_write> buffer1: vec2h;
+@group(2) @binding(3) var<uniform> buffer5: vec4f;
+
+@group(1) @binding(52) var<storage, read_write> buffer4: array<FragmentOutput1>;
+@group(1) @binding(14) var<storage, read_write> buffer3: array<array<array<array<array<f16, 37>, 1>, 8>, 2>>;
+
+struct FragmentOutput1 {
+  @location(2) @interpolate(flat) location_2: u32,
+}
+
+@compute @workgroup_size(1, 1, 1) fn compute0() {
+  switch u32(buffer3[0][0][0][0][0]) {
+    default {
+      buffer3[1][0][0][0][0] = buffer3[0][0][0][0][0];
+      switch bitcast<u32>(buffer5.g) {
+        default: {
+          buffer4[0].location_2 = 0;
+        }
+        case 590589182: {
+          buffer4[0].location_2 = 1u;
+          return;
+        }
+        case 1385788756, 350663882 {
+        }
+      }
+      buffer1.x = buffer1.y;
+    }
+  }
+}
+`, });
+let pipeline0 = device0.createComputePipeline({
+    layout: 'auto',
+    compute: {
+        module: shaderModule0,
+        constants: {}
+    }
+});
+// END
+await device0.queue.onSubmittedWorkDone();
+
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let promises = [ window0() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass');
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

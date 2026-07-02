@@ -1,0 +1,29 @@
+{
+  "name": "babylon-startup",
+  "version": "1.0.0",
+  "main": "benchmark-node.mjs",
+  "scripts": {
+    "test:startup": "babel-node benchmark/startup-node.mjs",
+    "test:scene": "babel-node benchmark/scene-node.mjs",
+    "clean": "rm -rf dist/*",
+    "build": "webpack",
+    "build:data": "node build/build.mjs",
+    "build:dev": "webpack --mode development"
+  },
+  "dependencies": {
+    "@babel/core": "^7.28.3",
+    "@babel/node": "^7.28.0",
+    "@babel/preset-env": "^7.28.3",
+    "@babylonjs/core": "^8.23.0",
+    "@babylonjs/loaders": "^8.23.1",
+    "ammojs-typed": "^1.0.6",
+    "assert": "^2.1.0",
+    "babel-loader": "^10.0.0",
+    "generate-license-file-webpack-plugin": "^4.0.0",
+    "path-browserify": "^1.0.1",
+    "terser-webpack-plugin": "^5.3.14",
+    "webpack": "^5.101.1",
+    "webpack-cli": "^6.0.1",
+    "@dapplets/unicode-escape-webpack-plugin": "^0.1.1"
+  }
+}

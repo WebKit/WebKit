@@ -1,0 +1,19 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({requiredFeatures: ['depth32float-stencil8']});
+    device.pushErrorScope('validation');
+    let texture = device.createTexture({format: 'rg11b10ufloat', size: [1, 1, 1], usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    log(texture.format);
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log(`no validation error`);
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

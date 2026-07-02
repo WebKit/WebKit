@@ -1,0 +1,12 @@
+
+<svg width="500px" height="610px" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <filter id="filter" filterUnits="objectBoundingBox">
+        <feFlood x="-120" y="85"/>
+    </filter>
+</defs>
+<rect x="110" y="150" width="400" height="320" fill="none" filter="url(#filter)"/>
+<circle cx="250" cy="200" r="80" fill="rgb(0, 255, 0)"/>
+<circle cx="250" cy="200" r="85" fill="none" stroke="gray" stroke-width="20"/>
+
+</svg>

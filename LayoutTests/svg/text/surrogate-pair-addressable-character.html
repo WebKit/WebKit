@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<title>SVG text: a non-BMP code point consumes a single x/y list position</title>
+<link rel="help" href="https://svgwg.org/svg2-draft/text.html#TextLayoutAlgorithm">
+<meta name="assert" content="Each character (Unicode code point), not each UTF-16 code unit, advances the x/y value list. A surrogate pair must consume one list entry, so x='0 100' places the first non-BMP glyph at x=0 and the second at x=100.">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg width="200" height="100">
+  <!-- Test: second code point wrapped in a tspan. -->
+  <text id="withTspan" font-size="50" x="0 100" y="50"></text>
+  <!-- Reference layout: both code points as direct children. -->
+  <text id="flat" font-size="50" x="0 100" y="50"></text>
+</svg>
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+// U+1100F is a non-BMP code point, i.e. a surrogate pair in UTF-16.
+const astral = String.fromCodePoint(0x1100F);
+
+const withTspan = document.getElementById("withTspan");
+withTspan.appendChild(document.createTextNode(astral));
+const tspan = document.createElementNS(svgNS, "tspan");
+tspan.appendChild(document.createTextNode(astral));
+withTspan.appendChild(tspan);
+
+const flat = document.getElementById("flat");
+flat.appendChild(document.createTextNode(astral + astral));
+
+// The first/last addressable glyph regardless of whether the DOM char APIs
+// index by code unit or by character: index 0 is the first glyph, and
+// getNumberOfChars() - 1 lands inside (and clamps to the start of) the second.
+function firstGlyphX(text) {
+  return text.getStartPositionOfChar(0).x;
+}
+function lastGlyphX(text) {
+  return text.getStartPositionOfChar(text.getNumberOfChars() - 1).x;
+}
+
+test(() => {
+  assert_equals(firstGlyphX(flat), 0, "first glyph uses x list entry 0");
+  assert_equals(lastGlyphX(flat), 100, "second glyph uses x list entry 1, not entry 2");
+}, "A surrogate pair consumes one x list position (flat layout)");
+
+test(() => {
+  assert_equals(firstGlyphX(withTspan), 0, "first glyph uses x list entry 0");
+  assert_equals(lastGlyphX(withTspan), 100, "second glyph (in tspan) uses x list entry 1, not entry 2");
+}, "A surrogate pair consumes one x list position (tspan layout)");
+
+test(() => {
+  assert_equals(firstGlyphX(withTspan), firstGlyphX(flat), "first glyph matches reference");
+  assert_equals(lastGlyphX(withTspan), lastGlyphX(flat), "second glyph matches reference");
+}, "Wrapping the second code point in a tspan does not change its position");
+</script>

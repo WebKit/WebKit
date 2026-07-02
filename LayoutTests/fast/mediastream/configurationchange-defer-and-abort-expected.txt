@@ -1,0 +1,5 @@
+
+
+PASS configurationchange task is deferred until track is no longer muted
+PASS configurationchange task aborts if track readyState is 'ended'
+

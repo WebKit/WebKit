@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Debugger.setShouldBlackboxURL");
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.sourceRanges.Ignored",
+        description: "Check that the given sourceRanges is ignored if the given shouldBlackbox is false.",
+        async test() {
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: "test.js", shouldBlackbox: false, sourceRanges: [1, 2, 3]},
+            });
+            ProtocolTest.pass("Should not error for invalid format.");
+
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: "test.js", shouldBlackbox: false, sourceRanges: ["a", "b", "c", "d"]},
+            });
+            ProtocolTest.pass("Should not error for non-integer values.");
+
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: "test.js", shouldBlackbox: false, sourceRanges: [-1, -2, -3, -4]},
+            });
+            ProtocolTest.pass("Should not error for negative integers.");
+
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: "test.js", shouldBlackbox: false, sourceRanges: [2, 0, 1, 0]},
+            });
+            ProtocolTest.pass("Should not error if endLine is before startLine.");
+
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: "test.js", shouldBlackbox: false, sourceRanges: [0, 2, 0, 1]},
+            });
+            ProtocolTest.pass("Should not error if endColumn is before startColumn.");
+
+            await InspectorProtocol.awaitCommand({
+                method: "Debugger.setShouldBlackboxURL",
+                params: {url: "test.js", shouldBlackbox: false, sourceRanges: [0, 1, 0, 1]},
+            });
+            ProtocolTest.pass("Should not error if endColumn is equal to startColumn.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.emptyURL",
+        description: "Check that an error is thrown if the given url is empty.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "", shouldBlackbox: true},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.injectedScript",
+        description: "Check that an error is thrown if the given url matches an injected script url.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "__InjectedScript__test.js", shouldBlackbox: true},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.sourceRanges.Format",
+        description: "Check that an error is thrown if the given sourceRanges has an invalid format.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "test.js", shouldBlackbox: true, sourceRanges: [1, 2, 3]},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.sourceRanges.NonInteger",
+        description: "Check that an error is thrown if the given sourceRanges contains non-integer values.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "test.js", shouldBlackbox: true, sourceRanges: ["a", "b", "c", "d"]},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.sourceRanges.Negative",
+        description: "Check that an error is thrown if the given sourceRanges contains negative integers.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "test.js", shouldBlackbox: true, sourceRanges: [-1, -2, -3, -4]},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.sourceRanges.EndLineBeforeStartLine",
+        description: "Check that an error is thrown if the given sourceRanges contains negative integers.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "test.js", shouldBlackbox: true, sourceRanges: [2, 0, 1, 0]},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.sourceRanges.EndColumnBeforeStartColumn",
+        description: "Check that an error is thrown if the given sourceRanges contains negative integers.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "test.js", shouldBlackbox: true, sourceRanges: [0, 2, 0, 1]},
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setShouldBlackboxURL.Invalid.sourceRanges.EndColumnEqualsStartColumn",
+        description: "Check that an error is thrown if the given sourceRanges contains negative integers.",
+        async test() {
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Debugger.setShouldBlackboxURL",
+                    params: {url: "test.js", shouldBlackbox: true, sourceRanges: [0, 1, 0, 1]},
+                });
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests Debugger.setShouldBlackboxURL.</p>
+</body>
+</html>

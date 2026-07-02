@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "WebPageProxyIdentifier.h"
+#include <WebCore/SocketProvider.h>
+#include <wtf/Lock.h>
+
+namespace IPC {
+class Connection;
+}
+
+namespace WebKit {
+
+class WebSocketProvider final : public WebCore::SocketProvider {
+public:
+    static Ref<WebSocketProvider> create(WebPageProxyIdentifier webPageProxyID) { return adoptRef(*new WebSocketProvider(webPageProxyID)); }
+    ~WebSocketProvider();
+private:
+    RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker) final;
+    std::pair<RefPtr<WebCore::WebTransportSession>, Ref<WebCore::WebTransportSessionPromise>> initializeWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&, const URL&, const WebCore::WebTransportOptions&) final;
+    void countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&&) final;
+
+    explicit WebSocketProvider(WebPageProxyIdentifier);
+
+#if USE(LIBRICE)
+    RefPtr<WebCore::RiceBackend> createRiceBackend(WebCore::RiceBackendClient&) final;
+#endif
+
+    WebPageProxyIdentifier m_webPageProxyID;
+    Lock m_networkProcessConnectionLock;
+    Ref<IPC::Connection> m_networkProcessConnection WTF_GUARDED_BY_LOCK(m_networkProcessConnectionLock);
+};
+
+}

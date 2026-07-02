@@ -1,0 +1,9 @@
+
+
+
+
+FAIL in-body assert_equals: legend.offsetLeft expected 0 but got 50
+FAIL rendered-legend assert_equals: legend.offsetTop expected 0 but got 1
+FAIL in-fieldset-second-child assert_equals: legend.offsetLeft expected 2 but got 52
+FAIL in-fieldset-descendant assert_equals: legend.offsetLeft expected 2 but got 104
+

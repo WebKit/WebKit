@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that navigating the main frame while adding an iframe only increments history.length by one.");
+jsTestIsAsync = true;
+
+onmessage = () => {
+    onmessage = null;
+    setTimeout(() => {
+        sessionStorage.didNavigate = true;
+        location.href = 'data:text/html,<script> history.back(); <\/script>';
+    }, 10);
+}
+
+onload = async () => {
+    if (sessionStorage.didNavigate) {
+        delete sessionStorage.didNavigate;
+        shouldBe("history.length", "2");
+        finishJSTest();
+    } else {
+        await testRunner?.clearBackForwardList();
+        setInterval(() => {
+            const iframe = document.createElement('iframe');
+            iframe.src = 'http://localhost:8000/site-isolation/resources/green-background.html';
+            document.body.appendChild(iframe);
+        }, 1);
+    }
+}
+</script>

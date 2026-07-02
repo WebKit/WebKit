@@ -1,0 +1,60 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 95 of #text > A > DIV > LI > OL > BODY > HTML > #document to 95 of #text > A > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > A > DIV > LI > OL > BODY > HTML > #document to 95 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of #text > A > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > A > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 121 of #text > A > DIV > LI > OL > BODY > HTML > #document to 121 of #text > A > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > A > DIV > LI > OL > BODY > HTML > #document to 121 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 13 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > LI > OL > BODY > HTML > #document to 0 of P > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > A > P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This is a test of execCommand(CreateLink, ...). It tests:
+
+Creating a link from a selection that is completely unlinked.
+Creating a link from a selection that is inside an existing link.
+Creating a link from a selection that is partially linked.
+Creating a link from a selection that contains lists, tables, styled text, and images.
+This paragraph starts unlinked. The entire paragraph should end up being a link to google.com.
+This paragraph starts out as a link to apple.com. The second word in the paragraph should end up being a link to google.com.
+This line starts out with a link in the middle. The second half of this paragraph, starting after the bold 'a' should end up being a link to google.com.
+This editable region contains lists, tables, styled text, and images. The entire region should end up being a link to google.com.
+
+Item 1
+Item 2
+1	2	3
+
+This line contains  an image.
+innerHTML of editable regions after the test:
+
+<a href="http://www.google.com/">This paragraph starts unlinked. The entire paragraph should end up being a link to google.com.</a>
+<a href="http://www.apple.com/">This</a><a href="http://www.google.com/"> paragraph</a><a href="http://www.apple.com/"> starts out as a link to apple.com. The second word in the paragraph should end up being a link to google.com.</a>
+<a href="http://www.apple.com/">This</a><a href="http://www.google.com/"> paragraph</a><a href="http://www.apple.com/"> starts out as a link to apple.com. The second word in the paragraph should end up being a link to google.com.</a>
+<p><a href="http://www.google.com/">This <i>editable region</i> contains lists, tables, styled text, and images. The entire region should end up being a link to google.com.</a></p> <ul> <li><a href="http://www.google.com/">Item 1</a></li> <li><a href="http://www.google.com/">Item 2</a></li> </ul> <table border="1"><tbody><tr><td><a href="http://www.google.com/">1</a></td><td><a href="http://www.google.com/">2</a></td><td><a href="http://www.google.com/">3</a></td></tr></tbody></table> <a href="http://www.google.com/"><br> This <b>line</b> contains <img src="../resources/abe.png"> an image. </a>

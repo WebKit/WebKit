@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests mutating autocorrect and autocapitalize IDL attributes inside a connected callback.<br>
+WebKit should not hit a release assertion.</p>
+<div id="result">FAIL</div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+customElements.define('editor-element', class extends HTMLElement {
+    connectedCallback() {
+        this.autocorrect = true;
+        this.autocapitalize = true;
+        document.getElementById('result').textContent = 'PASS';
+    }
+})
+
+</script>
+<editor-element></editor-element>
+</body>
+</html>

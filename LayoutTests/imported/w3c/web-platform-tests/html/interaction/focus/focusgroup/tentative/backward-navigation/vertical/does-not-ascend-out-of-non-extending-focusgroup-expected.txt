@@ -1,0 +1,4 @@
+item2
+
+PASS When the focus is set on the first element of a non-extending focusgroup located inside another focusgroup, we should be able to ascend to that other focusgroup.
+

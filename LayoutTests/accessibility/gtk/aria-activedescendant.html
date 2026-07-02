@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" tabindex="0" aria-activedescendant="" role="application">
+    <div id="child1" role="group">test</div>
+  </div>
+  <div id="test2" tabindex="0" aria-activedescendant="child2" role="application">
+    <div id="child2" role="group">test</div>
+  </div>
+  <div id="test3" tabindex="0" aria-activedescendant="" role="searchbox">
+    <div id="child3" role="group">test</div>
+  </div>
+  <div id="test4" tabindex="0" aria-activedescendant="child4" role="searchbox">
+    <div id="child4" role="group">test</div>
+  </div>
+  <div id="test5" tabindex="0" aria-activedescendant="" role="group">
+    <div id="child5" role="checkbox">test</div>
+  </div>
+  <div id="test6" tabindex="0" aria-activedescendant="child6" role="group">
+    <div id="child6" role="checkbox">test</div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the exposure of aria-activedescendant");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 6; i++) {
+            var container = document.getElementById("test" + i);
+            debug("\ntest" + i + " descendant: '" + container.getAttribute("aria-activedescendant") + "'");
+
+            container.focus();
+            var axContainer = accessibilityController.focusedElement;
+            debug("parent " + axContainer.role + ", " +
+	          "isFocusable: " + axContainer.isFocusable + ", " +
+                  "isFocused: " + axContainer.isFocused);
+
+            var axChild = accessibilityController.accessibleElementById("child" + i);
+            debug("child" + i + " " + axChild.role + ", " +
+                  "isFocusable: " + axChild.isFocusable + ", " +
+                  "isFocused: " + axChild.isFocused);
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

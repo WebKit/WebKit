@@ -1,0 +1,17 @@
+Test cases when the multiple selectors are provided
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.querySelectorAll("t0, t1").length is 4
+PASS document.body.querySelectorAll("#t2, t3").length is 1
+PASS document.body.querySelectorAll("t4> #t5, t6 t7.ok").length is 2
+PASS document.body.querySelectorAll("t8 + t9, t10 t11.ok").length is 1
+PASS document.body.querySelectorAll("t8 + t9, t10 t11.ok").length is 1
+PASS document.body.querySelectorAll(".t12, .t13, .t14, .t15").length is 2
+CSS JIT compile may fail, fallback to the slow path.
+PASS document.body.querySelectorAll(".t16, .t17>t18:nth-last-child(1)").length is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

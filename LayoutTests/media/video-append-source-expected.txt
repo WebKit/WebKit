@@ -1,0 +1,4 @@
+
+
+PASS Verify that a media element's currentSrc is correctly set to source element's src
+

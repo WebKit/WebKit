@@ -1,0 +1,2368 @@
+/*
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+
+#include "MathCommon.h"
+#include "PCToCodeOriginMap.h"
+#include "SimpleRegisterAllocator.h"
+#include "WasmCallingConvention.h"
+#include "WasmCompilationContext.h"
+#include "WasmFunctionParser.h"
+#include "WasmLimits.h"
+#include "js/JSWebAssemblyInstance.h"
+#include <span>
+#include <wtf/CheckedArithmetic.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+namespace JSC { namespace Wasm {
+
+class IPIntCallee;
+class MergedProfile;
+class Module;
+
+namespace BBQJITImpl {
+
+class BBQJIT {
+public:
+    using ErrorType = String;
+    using PartialResult = Expected<void, ErrorType>;
+    using Address = MacroAssembler::Address;
+    using BaseIndex = MacroAssembler::BaseIndex;
+    using Imm32 = MacroAssembler::Imm32;
+    using Imm64 = MacroAssembler::Imm64;
+    using TrustedImm32 = MacroAssembler::TrustedImm32;
+    using TrustedImm64 = MacroAssembler::TrustedImm64;
+    using TrustedImmPtr = MacroAssembler::TrustedImmPtr;
+    using RelationalCondition = MacroAssembler::RelationalCondition;
+    using ResultCondition = MacroAssembler::ResultCondition;
+    using DoubleCondition = MacroAssembler::DoubleCondition;
+    using StatusCondition = MacroAssembler::StatusCondition;
+    using Jump = MacroAssembler::Jump;
+    using JumpList = MacroAssembler::JumpList;
+    using DataLabelPtr = MacroAssembler::DataLabelPtr;
+
+    // Functions can have up to 1000000 instructions, so 32 bits is a sensible maximum number of stack items or locals.
+    using LocalOrTempIndex = uint32_t;
+
+    static constexpr unsigned LocalIndexBits = 21;
+    static_assert(maxFunctionLocals < 1 << LocalIndexBits);
+
+    static constexpr GPRReg wasmScratchGPR = GPRInfo::nonPreservedNonArgumentGPR0; // Scratch registers to hold temporaries in operations.
+#if USE(JSVALUE32_64)
+    static constexpr GPRReg wasmScratchGPR2 = GPRInfo::nonPreservedNonArgumentGPR2;
+#else
+    static constexpr GPRReg wasmScratchGPR2 = InvalidGPRReg;
+#endif
+    static constexpr FPRReg wasmScratchFPR = FPRInfo::nonPreservedNonArgumentFPR0;
+
+#if CPU(X86_64)
+    static constexpr GPRReg shiftRCX = X86Registers::ecx;
+#else
+    static constexpr GPRReg shiftRCX = InvalidGPRReg;
+#endif
+
+#if USE(JSVALUE64)
+    static constexpr GPRReg wasmBaseMemoryPointer = GPRInfo::wasmBaseMemoryPointer;
+    static constexpr GPRReg wasmBoundsCheckingSizeRegister = GPRInfo::wasmBoundsCheckingSizeRegister;
+#else
+    static constexpr GPRReg wasmBaseMemoryPointer = InvalidGPRReg;
+    static constexpr GPRReg wasmBoundsCheckingSizeRegister = InvalidGPRReg;
+#endif
+
+public:
+    struct Location {
+        enum Kind : uint8_t {
+            None = 0,
+            Stack = 1,
+            Gpr = 2,
+            Fpr = 3,
+            Global = 4,
+            StackArgument = 5,
+            Gpr2 = 6
+        };
+
+        Location()
+            : m_kind(None)
+        { }
+
+        static Location NODELETE none();
+
+        static Location NODELETE fromStack(int32_t stackOffset);
+
+        static Location NODELETE fromStackArgument(int32_t stackOffset);
+
+        static Location NODELETE fromGPR(GPRReg gpr);
+
+        static Location fromGPR2(GPRReg hi, GPRReg lo);
+
+        static Location NODELETE fromFPR(FPRReg fpr);
+
+        static Location NODELETE fromGlobal(int32_t globalOffset);
+
+        static Location NODELETE fromArgumentLocation(ArgumentLocation argLocation, TypeKind type);
+
+        static bool rangesOverlap(Location a, uint32_t aSize, Location b, uint32_t bSize);
+
+        bool NODELETE isNone() const;
+
+        bool NODELETE isGPR() const;
+
+        bool NODELETE isGPR2() const;
+
+        bool NODELETE isFPR() const;
+
+        bool NODELETE isRegister() const;
+
+        bool NODELETE isStack() const;
+
+        bool NODELETE isStackArgument() const;
+
+        bool NODELETE isGlobal() const;
+
+        bool NODELETE isMemory() const;
+
+        int32_t NODELETE asStackOffset() const;
+
+        Address NODELETE asStackAddress() const;
+
+        int32_t NODELETE asGlobalOffset() const;
+
+        Address NODELETE asGlobalAddress() const;
+
+        int32_t NODELETE asStackArgumentOffset() const;
+
+        Address NODELETE asStackArgumentAddress() const;
+
+        Address NODELETE asAddress() const;
+
+        GPRReg NODELETE asGPR() const;
+        FPRReg NODELETE asFPR() const;
+        Reg asReg() const { return isGPR() ? Reg(asGPR()) : Reg(asFPR()); }
+
+        GPRReg NODELETE asGPRlo() const;
+
+        GPRReg NODELETE asGPRhi() const;
+
+        void dump(PrintStream& out) const;
+
+        bool NODELETE operator==(Location other) const;
+
+        Kind NODELETE kind() const;
+
+    private:
+        union {
+            // It's useful to we be able to cram a location into a 4-byte space, so that
+            // we can store them efficiently in ControlData.
+            struct {
+                unsigned m_kind : 3;
+                int32_t m_offset : 29;
+            };
+            struct {
+                Kind m_padGpr;
+                GPRReg m_gpr;
+            };
+            struct {
+                Kind m_padFpr;
+                FPRReg m_fpr;
+            };
+            struct {
+                Kind m_padGpr2;
+                GPRReg m_gprhi, m_gprlo;
+            };
+        };
+    };
+
+    static_assert(sizeof(Location) == 4);
+
+    static bool NODELETE isValidValueTypeKind(TypeKind kind);
+
+    static TypeKind NODELETE pointerType();
+
+    static bool NODELETE isFloatingPointType(TypeKind type);
+
+    static bool typeNeedsGPR2(TypeKind type);
+
+public:
+    static uint32_t sizeOfType(TypeKind type);
+
+    static TypeKind NODELETE toValueKind(TypeKind kind);
+
+    class Value {
+    public:
+        // Represents the location in which this value is stored.
+        enum Kind : uint8_t {
+            None = 0,
+            Const = 1,
+            Temp = 2,
+            Local = 3,
+            Pinned = 4 // Used if we need to represent a Location as a Value, mostly in operation calls
+        };
+
+        ALWAYS_INLINE bool isNone() const
+        {
+            return m_kind == None;
+        }
+
+        ALWAYS_INLINE bool isTemp() const
+        {
+            return m_kind == Temp;
+        }
+
+        ALWAYS_INLINE bool isLocal() const
+        {
+            return m_kind == Local;
+        }
+
+        ALWAYS_INLINE bool isPinned() const
+        {
+            return m_kind == Pinned;
+        }
+
+        ALWAYS_INLINE Kind kind() const
+        {
+            return m_kind;
+        }
+
+        ALWAYS_INLINE int32_t asI32() const
+        {
+            ASSERT(m_kind == Const);
+            return m_i32;
+        }
+
+        ALWAYS_INLINE int64_t asI64() const
+        {
+            ASSERT(m_kind == Const);
+            return m_i64;
+        }
+
+        ALWAYS_INLINE float asF32() const
+        {
+            ASSERT(m_kind == Const);
+            return m_f32;
+        }
+
+        ALWAYS_INLINE double asF64() const
+        {
+            ASSERT(m_kind == Const);
+            return m_f64;
+        }
+
+        ALWAYS_INLINE EncodedJSValue asRef() const
+        {
+            ASSERT(m_kind == Const);
+            return m_ref;
+        }
+
+        ALWAYS_INLINE LocalOrTempIndex asTemp() const
+        {
+            ASSERT(m_kind == Temp);
+            return m_index;
+        }
+
+        ALWAYS_INLINE LocalOrTempIndex asLocal() const
+        {
+            ASSERT(m_kind == Local);
+            return m_index;
+        }
+
+        ALWAYS_INLINE bool isConst() const
+        {
+            return m_kind == Const;
+        }
+
+        ALWAYS_INLINE Location asPinned() const
+        {
+            ASSERT(m_kind == Pinned);
+            return m_pinned;
+        }
+
+        ALWAYS_INLINE static Value fromI32(int32_t immediate)
+        {
+            Value val;
+            val.m_kind = Const;
+            val.m_type = TypeKind::I32;
+            val.m_i32 = immediate;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value fromI64(int64_t immediate)
+        {
+            Value val;
+            val.m_kind = Const;
+            val.m_type = TypeKind::I64;
+            val.m_i64 = immediate;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value fromF32(float immediate)
+        {
+            Value val;
+            val.m_kind = Const;
+            val.m_type = TypeKind::F32;
+            val.m_f32 = immediate;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value fromF64(double immediate)
+        {
+            Value val;
+            val.m_kind = Const;
+            val.m_type = TypeKind::F64;
+            val.m_f64 = immediate;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value fromPointer(void* pointer)
+        {
+#if USE(JSVALUE64)
+            return fromI64(std::bit_cast<uintptr_t>(pointer));
+#else
+            return fromI32(std::bit_cast<uintptr_t>(pointer));
+#endif
+        }
+
+        ALWAYS_INLINE static Value fromRef(TypeKind refType, EncodedJSValue ref)
+        {
+            Value val;
+            val.m_kind = Const;
+            val.m_type = toValueKind(refType);
+            val.m_ref = ref;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value fromTemp(TypeKind type, LocalOrTempIndex temp)
+        {
+            Value val;
+            val.m_kind = Temp;
+            val.m_type = toValueKind(type);
+            val.m_index = temp;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value fromLocal(TypeKind type, LocalOrTempIndex local)
+        {
+            Value val;
+            val.m_kind = Local;
+            val.m_type = toValueKind(type);
+            val.m_index = local;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value pinned(TypeKind type, Location location)
+        {
+            Value val;
+            val.m_kind = Pinned;
+            val.m_type = toValueKind(type);
+            val.m_pinned = location;
+            return val;
+        }
+
+        ALWAYS_INLINE static Value none()
+        {
+            Value val;
+            val.m_kind = None;
+            return val;
+        }
+
+        ALWAYS_INLINE uint32_t size() const
+        {
+            return sizeOfType(m_type);
+        }
+
+        ALWAYS_INLINE bool isFloat() const
+        {
+            return isFloatingPointType(m_type);
+        }
+
+        ALWAYS_INLINE TypeKind type() const
+        {
+            ASSERT(isValidValueTypeKind(m_type));
+            return m_type;
+        }
+
+        ALWAYS_INLINE Value()
+            : m_kind(None)
+        { }
+
+        int32_t asI64hi() const;
+
+        int32_t asI64lo() const;
+
+        void dump(PrintStream& out) const;
+
+    private:
+        union {
+            int32_t m_i32;
+            struct {
+                int32_t lo, hi;
+            } m_i32_pair;
+            int64_t m_i64;
+            float m_f32;
+            double m_f64;
+            LocalOrTempIndex m_index;
+            Location m_pinned;
+            EncodedJSValue m_ref;
+        };
+
+        Kind m_kind;
+        TypeKind m_type;
+    };
+
+public:
+    struct RegisterBinding {
+        enum Kind : uint8_t {
+            None = 0,
+            Local = 1,
+            Temp = 2,
+            Scratch = 3, // Denotes a register bound for use as a scratch, not as a local or temp's location.
+        };
+
+        static RegisterBinding none() { return RegisterBinding(); }
+        static RegisterBinding NODELETE fromValue(Value);
+        static RegisterBinding NODELETE scratch();
+
+        Value NODELETE toValue() const;
+
+        bool isNone() const { return m_kind == None; }
+        bool isValid() const { return m_kind != None; }
+        bool isScratch() const { return m_kind == Scratch; }
+
+        bool operator==(RegisterBinding other) const;
+
+        void dump(PrintStream& out) const;
+
+        unsigned NODELETE hash() const;
+
+        TypeKind m_type { 0 };
+        unsigned m_kind : 3 { None };
+        unsigned m_index : LocalIndexBits { 0 };
+    };
+
+    // Register bank definitions for SimpleRegisterAllocator
+    struct GPRBank {
+        using JITBackend = BBQJIT;
+        using Register = GPRReg;
+        static constexpr Register invalidRegister = InvalidGPRReg;
+        // FIXME: Make this more precise
+        static constexpr unsigned numberOfRegisters = 32;
+        static constexpr Width defaultWidth = widthForBytes(sizeof(CPURegister));
+    };
+
+    struct FPRBank {
+        using JITBackend = BBQJIT;
+        using Register = FPRReg;
+        static constexpr Register invalidRegister = InvalidFPRReg;
+        // FIXME: Make this more precise
+        static constexpr unsigned numberOfRegisters = 32;
+        static constexpr Width defaultWidth = Width128;
+    };
+
+    using SpillHint = uint32_t;
+
+    void flush(GPRReg, const RegisterBinding&);
+    void flush(FPRReg, const RegisterBinding&);
+
+    using GPRAllocator = SimpleRegisterAllocator<GPRBank>;
+    using FPRAllocator = SimpleRegisterAllocator<FPRBank>;
+
+    // Tables mapping from each register to the current value bound to it. Used for slow paths.
+    struct RegisterBindings {
+        void dump(PrintStream& out) const;
+        // FIXME: We should really compress this since it's copied by slow paths to know how to restore the correct state.
+        GPRAllocator::RegisterBindings m_gprBindings { RegisterBinding::none() }; // Tables mapping from each register to the current value bound to it.
+        FPRAllocator::RegisterBindings m_fprBindings { RegisterBinding::none() };
+    };
+    RegisterBindings copyBindings() { return { m_gprAllocator.copyBindings(), m_fprAllocator.copyBindings() }; }
+
+    template<unsigned GPRs, unsigned FPRs>
+    class ScratchScope {
+        WTF_MAKE_NONCOPYABLE(ScratchScope);
+        WTF_FORBID_HEAP_ALLOCATION;
+    public:
+        template<typename... Args>
+        ScratchScope(BBQJIT& generator, Args... locationsToPreserve)
+            : m_generator(generator)
+        {
+            initializedPreservedSet(locationsToPreserve...);
+            for (JSC::Reg reg : m_preserved) {
+                if (reg.isGPR())
+                    preserveGPR(reg.gpr());
+                else
+                    preserveFPR(reg.fpr());
+            }
+
+            for (unsigned i = 0; i < GPRs; i ++) {
+                m_tempGPRs[i] = m_generator.m_gprAllocator.allocate(m_generator, RegisterBinding::scratch(), std::nullopt);
+                m_generator.m_gprAllocator.lock(m_tempGPRs[i]);
+            }
+            for (unsigned i = 0; i < FPRs; i ++) {
+                m_tempFPRs[i] = m_generator.m_fprAllocator.allocate(m_generator, RegisterBinding::scratch(), std::nullopt);
+                m_generator.m_fprAllocator.lock(m_tempFPRs[i]);
+            }
+        }
+
+        ~ScratchScope()
+        {
+            unbindEarly();
+        }
+
+        void unbindEarly()
+        {
+            unbindScratches();
+            unbindPreserved();
+        }
+
+        void unbindScratches()
+        {
+            if (m_unboundScratches)
+                return;
+
+            m_unboundScratches = true;
+            for (unsigned i = 0; i < GPRs; i ++)
+                unbindGPR(m_tempGPRs[i]);
+            for (unsigned i = 0; i < FPRs; i ++)
+                unbindFPR(m_tempFPRs[i]);
+        }
+
+        void unbindPreserved()
+        {
+            if (m_unboundPreserved)
+                return;
+
+            m_unboundPreserved = true;
+            for (JSC::Reg reg : m_preserved) {
+                if (reg.isGPR())
+                    unbindGPR(reg.gpr());
+                else
+                    unbindFPR(reg.fpr());
+            }
+        }
+
+        inline GPRReg gpr(unsigned i) const
+        {
+            ASSERT(i < GPRs);
+            ASSERT(!m_unboundScratches);
+            return m_tempGPRs[i];
+        }
+
+        inline FPRReg fpr(unsigned i) const
+        {
+            ASSERT(i < FPRs);
+            ASSERT(!m_unboundScratches);
+            return m_tempFPRs[i];
+        }
+
+    private:
+        GPRReg preserveGPR(GPRReg reg)
+        {
+            if (!m_generator.validGPRs().contains(reg, IgnoreVectors))
+                return reg;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_gprAllocator.lock(reg);
+            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isNone()) {
+                if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                    dataLogLn("BBQ\tPreserving GPR ", MacroAssembler::gprName(reg), " currently bound to ", binding);
+                return reg; // If the register is already bound, we don't need to preserve it ourselves.
+            }
+            ASSERT(binding.isNone());
+            m_generator.m_gprAllocator.bind(reg, RegisterBinding::scratch(), 0);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tPreserving scratch GPR ", MacroAssembler::gprName(reg));
+            return reg;
+        }
+
+        FPRReg preserveFPR(FPRReg reg)
+        {
+            if (!m_generator.validFPRs().contains(reg, Width::Width128))
+                return reg;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_fprAllocator.lock(reg);
+            if (m_preserved.contains(reg, Width::Width128) && !binding.isNone()) {
+                if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                    dataLogLn("BBQ\tPreserving FPR ", MacroAssembler::fprName(reg), " currently bound to ", binding);
+                return reg; // If the register is already bound, we don't need to preserve it ourselves.
+            }
+            ASSERT(binding.isNone());
+            m_generator.m_fprAllocator.bind(reg, RegisterBinding::scratch(), 0);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tPreserving scratch FPR ", MacroAssembler::fprName(reg));
+            return reg;
+        }
+
+        void unbindGPR(GPRReg reg)
+        {
+            if (!m_generator.validGPRs().contains(reg, IgnoreVectors))
+                return;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_gprAllocator.unlock(reg);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tReleasing GPR ", MacroAssembler::gprName(reg), " preserved? ", m_preserved.contains(reg, IgnoreVectors), " binding: ", binding);
+            if (m_preserved.contains(reg, IgnoreVectors) && !binding.isScratch())
+                return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
+            ASSERT(binding.isScratch());
+            m_generator.m_gprAllocator.unbind(reg);
+        }
+
+        void unbindFPR(FPRReg reg)
+        {
+            if (!m_generator.validFPRs().contains(reg, Width::Width128))
+                return;
+            const RegisterBinding& binding = m_generator.bindingFor(reg);
+            m_generator.m_fprAllocator.unlock(reg);
+            if (Options::verboseBBQJITAllocation()) [[unlikely]]
+                dataLogLn("BBQ\tReleasing FPR ", MacroAssembler::fprName(reg), " preserved? ", m_preserved.contains(reg, Width::Width128), " binding: ", binding);
+            if (m_preserved.contains(reg, Width::Width128) && !binding.isScratch())
+                return; // It's okay if the register isn't bound to a scratch if we meant to preserve it - maybe it was just already bound to something.
+            ASSERT(binding.isScratch());
+            m_generator.m_fprAllocator.unbind(reg);
+        }
+
+        template<typename... Args>
+        void initializedPreservedSet(Location location, Args... args)
+        {
+            if (location.isGPR())
+                m_preserved.add(location.asGPR(), IgnoreVectors);
+            else if (location.isFPR())
+                m_preserved.add(location.asFPR(), Width::Width128);
+            else if (location.isGPR2()) {
+                m_preserved.add(location.asGPRlo(), IgnoreVectors);
+                m_preserved.add(location.asGPRhi(), IgnoreVectors);
+            }
+            initializedPreservedSet(args...);
+        }
+
+        template<typename... Args>
+        void initializedPreservedSet(RegisterSet registers, Args... args)
+        {
+            for (JSC::Reg reg : registers)
+                initializedPreservedSet(reg);
+            initializedPreservedSet(args...);
+        }
+
+        template<typename... Args>
+        void initializedPreservedSet(JSC::Reg reg, Args... args)
+        {
+            if (reg.isGPR())
+                m_preserved.add(reg.gpr(), IgnoreVectors);
+            else
+                m_preserved.add(reg.fpr(), Width::Width128);
+            initializedPreservedSet(args...);
+        }
+
+        inline void initializedPreservedSet() { }
+
+        BBQJIT& m_generator;
+        GPRReg m_tempGPRs[GPRs];
+        FPRReg m_tempFPRs[FPRs];
+        RegisterSet m_preserved;
+        bool m_unboundScratches { false };
+        bool m_unboundPreserved { false };
+    };
+
+    struct ControlData {
+        static bool isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
+        static bool isElse(const ControlData& control) { return control.blockType() == BlockType::Else; }
+        static bool isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
+        static bool isAnyCatch(const ControlData& control) { return control.blockType() == BlockType::Catch; }
+        static bool isCatch(const ControlData& control) { return isAnyCatch(control) && control.catchKind() == CatchKind::Catch; }
+        static bool isTopLevel(const ControlData& control) { return control.blockType() == BlockType::TopLevel; }
+        static bool isLoop(const ControlData& control) { return control.blockType() == BlockType::Loop; }
+        static bool isBlock(const ControlData& control) { return control.blockType() == BlockType::Block; }
+
+        ControlData()
+            : m_enclosedHeight(0)
+        { }
+
+        ControlData(BBQJIT& generator, BlockType, BlockSignature&&, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs, RegisterSet liveScratchFPRs);
+
+        // Re-use the argument layout of another block (eg. else will re-use the argument/result locations from if)
+        enum BranchCallingConventionReuseTag { UseBlockCallingConventionOfOtherBranch };
+        ControlData(BranchCallingConventionReuseTag, BlockType blockType, ControlData& otherBranch)
+            : m_signature(otherBranch.m_signature)
+            , m_blockType(blockType)
+            , m_argumentLocations(otherBranch.m_argumentLocations)
+            , m_resultLocations(otherBranch.m_resultLocations)
+            , m_enclosedHeight(otherBranch.m_enclosedHeight)
+        {
+        }
+
+        // This function is intentionally not using implicitSlots since arguments and results should not include implicit slot.
+        Location NODELETE allocateArgumentOrResult(BBQJIT& generator, TypeKind type, unsigned i, RegisterSet& remainingGPRs, RegisterSet& remainingFPRs);
+
+        template<typename Stack>
+        void flushAtBlockBoundary(BBQJIT& generator, unsigned targetArity, Stack& expressionStack, bool endOfWasmBlock)
+        {
+            // First, we flush all locals that were allocated outside of their designated slots in this block.
+            for (unsigned i = 0; i < expressionStack.size(); ++i) {
+                if (expressionStack[i].value().isLocal())
+                    m_touchedLocals.add(expressionStack[i].value().asLocal());
+            }
+            for (LocalOrTempIndex touchedLocal : m_touchedLocals) {
+                Value value = Value::fromLocal(generator.m_localTypes[touchedLocal], touchedLocal);
+                if (generator.locationOf(value).isRegister())
+                    generator.flushValue(value);
+            }
+
+            // If we are a catch block, we need to flush the exception value, since it's not represented on the expression stack.
+            if (isAnyCatch(*this)) {
+                Value value = generator.exception(*this);
+                if (!endOfWasmBlock)
+                    generator.flushValue(value);
+                else
+                    generator.consume(value);
+            }
+
+            for (unsigned i = 0; i < expressionStack.size(); ++i) {
+                Value& value = expressionStack[i].value();
+                int resultIndex = static_cast<int>(i) - static_cast<int>(expressionStack.size() - targetArity);
+
+                // Next, we turn all constants into temporaries, so they can be given persistent slots on the stack.
+                // If this is the end of the enclosing wasm block, we know we won't need them again, so this can be skipped.
+                if (value.isConst() && (resultIndex < 0 || !endOfWasmBlock)) {
+                    Value constant = value;
+                    value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(enclosedHeight() + implicitSlots() + i));
+                    Location slot = generator.locationOf(value);
+                    generator.emitMoveConst(constant, slot);
+                }
+
+                // Next, we flush or consume all the temp values on the stack.
+                if (value.isTemp()) {
+                    if (!endOfWasmBlock)
+                        generator.flushValue(value);
+                    else if (resultIndex < 0)
+                        generator.consume(value);
+                }
+            }
+        }
+
+        template<typename Stack, size_t N>
+        bool addExit(BBQJIT& generator, const Vector<Location, N>& targetLocations, Stack& expressionStack)
+        {
+            unsigned targetArity = targetLocations.size();
+
+            if (!targetArity)
+                return false;
+
+            // We move all passed temporaries to the successor, in its argument slots.
+            unsigned offset = expressionStack.size() - targetArity;
+
+            Vector<Value, 8> resultValues;
+            Vector<Location, 8> resultLocations;
+            for (unsigned i = 0; i < targetArity; ++i) {
+                resultValues.append(expressionStack[i + offset].value());
+                resultLocations.append(targetLocations[i]);
+            }
+            generator.emitShuffle(resultValues, resultLocations);
+            return true;
+        }
+
+        template<typename Stack>
+        void finalizeBlock(BBQJIT& generator, unsigned targetArity, Stack& expressionStack, bool preserveArguments)
+        {
+            // Finally, as we are leaving the block, we convert any constants into temporaries on the stack, so we don't blindly assume they have
+            // the same constant values in the successor.
+            unsigned offset = expressionStack.size() - targetArity;
+            for (unsigned i = 0; i < targetArity; ++i) {
+                Value& value = expressionStack[i + offset].value();
+                if (value.isConst()) {
+                    Value constant = value;
+                    value = Value::fromTemp(value.type(), static_cast<LocalOrTempIndex>(enclosedHeight() + implicitSlots() + i + offset));
+                    if (preserveArguments)
+                        generator.emitMoveConst(constant, generator.canonicalSlot(value));
+                } else if (value.isTemp()) {
+                    if (preserveArguments)
+                        generator.flushValue(value);
+                    else
+                        generator.consume(value);
+                }
+            }
+        }
+
+        template<typename Stack>
+        void flushAndSingleExit(BBQJIT& generator, ControlData& target, Stack& expressionStack, bool isChildBlock, bool endOfWasmBlock, bool unreachable = false)
+        {
+            // Helper to simplify the common case where we don't need to handle multiple exits.
+            const auto& targetLocations = isChildBlock ? target.argumentLocations() : target.targetLocations();
+            flushAtBlockBoundary(generator, targetLocations.size(), expressionStack, endOfWasmBlock);
+            if (!unreachable)
+                addExit(generator, targetLocations, expressionStack);
+            finalizeBlock(generator, targetLocations.size(), expressionStack, false);
+        }
+
+        template<typename Stack>
+        void startBlock(BBQJIT& generator, Stack& expressionStack)
+        {
+            ASSERT(expressionStack.size() >= m_argumentLocations.size());
+
+            for (unsigned i = 0; i < m_argumentLocations.size(); ++i) {
+                ASSERT(!expressionStack[i + expressionStack.size() - m_argumentLocations.size()].value().isConst());
+                generator.bind(expressionStack[i].value(), m_argumentLocations[i]);
+            }
+        }
+
+        template<typename Stack>
+        void resumeBlock(BBQJIT& generator, const ControlData& predecessor, Stack& expressionStack)
+        {
+            ASSERT(expressionStack.size() >= predecessor.resultLocations().size());
+
+            for (unsigned i = 0; i < predecessor.resultLocations().size(); ++i) {
+                unsigned offset = expressionStack.size() - predecessor.resultLocations().size();
+                // Intentionally not using implicitSlots since results should not include implicit slot.
+                expressionStack[i + offset].value() = Value::fromTemp(expressionStack[i + offset].type().kind, predecessor.enclosedHeight() + i);
+                generator.bind(expressionStack[i + offset].value(), predecessor.resultLocations()[i]);
+            }
+        }
+
+        void NODELETE convertIfToBlock();
+
+        void NODELETE convertLoopToBlock();
+
+        void addBranch(Jump jump);
+
+        void addLabel(Box<CCallHelpers::Label>&& label);
+
+        void delegateJumpsTo(ControlData& delegateTarget);
+
+        void linkJumps(MacroAssembler::AbstractMacroAssemblerType* masm);
+
+        void linkJumpsTo(MacroAssembler::Label label, MacroAssembler::AbstractMacroAssemblerType* masm);
+
+        void linkIfBranch(MacroAssembler::AbstractMacroAssemblerType* masm);
+
+        void NODELETE dump(PrintStream& out) const;
+
+        LocalOrTempIndex NODELETE enclosedHeight() const;
+
+        unsigned NODELETE implicitSlots() const;
+
+        const Vector<Location, 2>& NODELETE targetLocations() const;
+
+        const Vector<Location, 2>& NODELETE argumentLocations() const;
+
+        const Vector<Location, 2>& NODELETE resultLocations() const;
+
+        BlockType NODELETE blockType() const;
+        const BlockSignature& NODELETE signature() const;
+
+        FunctionArgCount branchTargetArity() const;
+
+        Type branchTargetType(unsigned i) const;
+
+        Type argumentType(unsigned i) const;
+
+        CatchKind NODELETE catchKind() const;
+
+        void NODELETE setCatchKind(CatchKind catchKind);
+
+        unsigned NODELETE tryStart() const;
+
+        unsigned NODELETE tryEnd() const;
+
+        unsigned NODELETE tryCatchDepth() const;
+
+        void NODELETE setTryInfo(unsigned tryStart, unsigned tryEnd, unsigned tryCatchDepth);
+
+        struct TryTableTarget {
+            CatchKind type;
+            uint32_t tag;
+            const RTT* exceptionSignature;
+            ControlRef target;
+        };
+        using TargetList = Vector<TryTableTarget>;
+
+        void setTryTableTargets(TargetList&&);
+
+        void NODELETE setIfBranch(MacroAssembler::Jump branch);
+
+        void NODELETE setLoopLabel(MacroAssembler::Label label);
+
+        const MacroAssembler::Label& NODELETE loopLabel() const;
+
+        void touch(LocalOrTempIndex local);
+
+    private:
+        friend class BBQJIT;
+
+        void NODELETE fillLabels(CCallHelpers::Label label);
+
+        BlockSignature m_signature;
+        BlockType m_blockType;
+        CatchKind m_catchKind { CatchKind::Catch };
+        Vector<Location, 2> m_argumentLocations; // List of input locations to write values into when entering this block.
+        Vector<Location, 2> m_resultLocations; // List of result locations to write values into when exiting this block.
+        JumpList m_branchList; // List of branch control info for branches targeting the end of this block.
+        Vector<Box<CCallHelpers::Label>> m_labels; // List of labels filled.
+        MacroAssembler::Label m_loopLabel;
+        MacroAssembler::Jump m_ifBranch;
+        LocalOrTempIndex m_enclosedHeight; // Height of enclosed expression stack, used as the base for all temporary locations.
+        BitVector m_touchedLocals; // Number of locals allocated to registers in this block.
+        unsigned m_tryStart { 0 };
+        unsigned m_tryEnd { 0 };
+        unsigned m_tryCatchDepth { 0 };
+        TargetList m_tryTableTargets;
+    };
+
+    friend struct ControlData;
+
+    using ExpressionType = Value;
+    using ControlType = ControlData;
+    using CallType = CallLinkInfo::CallType;
+    using ResultList = Vector<ExpressionType, 8>;
+    using ControlEntry = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::ControlEntry;
+    using TypedExpression = typename FunctionParserTypes<ControlType, ExpressionType, CallType>::TypedExpression;
+    using Stack = FunctionParser<BBQJIT>::Stack;
+    using ControlStack = FunctionParser<BBQJIT>::ControlStack;
+    using CatchHandler = FunctionParser<BBQJIT>::CatchHandler;
+    using ArgumentList = FunctionParser<BBQJIT>::ArgumentList;
+
+    uint32_t stackCheckSize() const { return m_frameSize; }
+
+private:
+    unsigned m_loggingIndent = 0;
+
+    template<typename... Args>
+    void logInstructionData(bool first, const Value& value, const Location& location, const Args&... args)
+    {
+        if (!first)
+            dataLog(", ");
+
+        dataLog(value);
+        if (location.kind() != Location::None)
+            dataLog(":", location);
+        logInstructionData(false, args...);
+    }
+
+    template<typename... Args>
+    void logInstructionData(bool first, const Value& value, const Args&... args)
+    {
+        if (!first)
+            dataLog(", ");
+
+        dataLog(value);
+        if (!value.isConst() && !value.isPinned())
+            dataLog(":", locationOf(value));
+        logInstructionData(false, args...);
+    }
+
+    template<size_t N, typename OverflowHandler, typename... Args>
+    void logInstructionData(bool first, const Vector<TypedExpression, N, OverflowHandler>& expressions, const Args&... args)
+    {
+        for (const TypedExpression& expression : expressions) {
+            if (!first)
+                dataLog(", ");
+
+            const Value& value = expression.value();
+            dataLog(value);
+            if (!value.isConst() && !value.isPinned())
+                dataLog(":", locationOf(value));
+            first = false;
+        }
+        logInstructionData(false, args...);
+    }
+
+    template<size_t N, typename OverflowHandler, typename... Args>
+    void logInstructionData(bool first, const Vector<Value, N, OverflowHandler>& values, const Args&... args)
+    {
+        for (const Value& value : values) {
+            if (!first)
+                dataLog(", ");
+
+            dataLog(value);
+            if (!value.isConst() && !value.isPinned())
+                dataLog(":", locationOf(value));
+            first = false;
+        }
+        logInstructionData(false, args...);
+    }
+
+    template<size_t N, typename OverflowHandler, typename... Args>
+    void logInstructionData(bool first, const Vector<Location, N, OverflowHandler>& values, const Args&... args)
+    {
+        for (const Location& value : values) {
+            if (!first)
+                dataLog(", ");
+            dataLog(value);
+            first = false;
+        }
+        logInstructionData(false, args...);
+    }
+
+    inline void logInstructionData(bool)
+    {
+        dataLogLn();
+    }
+
+    template<typename... Data>
+    ALWAYS_INLINE void logInstruction(const char* opcode, SIMDLaneOperation op, const Data&... data)
+    {
+        dataLog("BBQ\t");
+        for (unsigned i = 0; i < m_loggingIndent; i ++)
+            dataLog(" ");
+        dataLog(opcode, SIMDLaneOperationDump(op), " ");
+        logInstructionData(true, data...);
+    }
+
+    template<typename... Data>
+    ALWAYS_INLINE void logInstruction(const char* opcode, const Data&... data)
+    {
+        dataLog("BBQ\t");
+        for (unsigned i = 0; i < m_loggingIndent; i ++)
+            dataLog(" ");
+        dataLog(opcode, " ");
+        logInstructionData(true, data...);
+    }
+
+    template<typename T>
+    struct Result {
+        T value;
+
+        Result(const T& value_in)
+            : value(value_in)
+        { }
+    };
+
+    template<typename... Args>
+    void logInstructionData(bool first, const char* const& literal, const Args&... args)
+    {
+        if (!first)
+            dataLog(" ");
+
+        dataLog(literal);
+        if (!std::strcmp(literal, "=> "))
+            logInstructionData(true, args...);
+        else
+            logInstructionData(false, args...);
+    }
+
+    template<typename T, typename... Args>
+    void logInstructionData(bool first, const Result<T>& result, const Args&... args)
+    {
+        if (!first)
+            dataLog(" ");
+
+        dataLog("=> ");
+        logInstructionData(true, result.value, args...);
+    }
+
+    template<typename T, typename... Args>
+    void logInstructionData(bool first, const T& t, const Args&... args)
+    {
+        if (!first)
+            dataLog(", ");
+        dataLog(t);
+        logInstructionData(false, args...);
+    }
+
+#define RESULT(...) Result { __VA_ARGS__ }
+#define LOG_INSTRUCTION(...) do { if (Options::verboseBBQJITInstructions()) [[unlikely]] { logInstruction(__VA_ARGS__); } } while (false)
+#define LOG_INDENT() do { if (Options::verboseBBQJITInstructions()) [[unlikely]] { m_loggingIndent += 2; } } while (false);
+#define LOG_DEDENT() do { if (Options::verboseBBQJITInstructions()) [[unlikely]] { m_loggingIndent -= 2; } } while (false);
+
+public:
+    // Enable fused branch compare for all platforms
+    static constexpr bool shouldFuseBranchCompare = true;
+
+    static constexpr bool tierSupportsSIMD() { return true; }
+    static constexpr bool validateFunctionBodySize = true;
+
+    BBQJIT(CompilationContext&, const RTT& signature, Module&, CalleeGroup&, IPIntCallee& profiledCallee, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation);
+
+    ALWAYS_INLINE static Value emptyExpression()
+    {
+        return Value::none();
+    }
+
+    void NODELETE setParser(FunctionParser<BBQJIT>* parser);
+
+    bool addArguments(const RTT& signature);
+
+    Value addConstant(Type type, uint64_t value);
+
+    PartialResult addDrop(Value value);
+
+    PartialResult addLocal(Type type, uint32_t numberOfLocals);
+
+    Value NODELETE instanceValue();
+
+    // Tables
+    [[nodiscard]] PartialResult addTableGet(unsigned tableIndex, Value index, Value& result);
+
+    [[nodiscard]] PartialResult addTableSet(unsigned tableIndex, Value index, Value value);
+
+    [[nodiscard]] PartialResult addTableInit(unsigned elementIndex, unsigned tableIndex, ExpressionType dstOffset, ExpressionType srcOffset, ExpressionType length);
+
+    [[nodiscard]] PartialResult addElemDrop(unsigned elementIndex);
+
+    [[nodiscard]] PartialResult addTableSize(unsigned tableIndex, Value& result);
+
+    [[nodiscard]] PartialResult addTableGrow(unsigned tableIndex, Value fill, Value delta, Value& result);
+
+    [[nodiscard]] PartialResult addTableFill(unsigned tableIndex, Value offset, Value fill, Value count);
+
+    [[nodiscard]] PartialResult addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex, Value dstOffset, Value srcOffset, Value length);
+
+    // Locals
+
+    [[nodiscard]] PartialResult getLocal(uint32_t localIndex, Value& result);
+
+    [[nodiscard]] PartialResult setLocal(uint32_t localIndex, Value value);
+
+    [[nodiscard]] PartialResult teeLocal(uint32_t localIndex, Value, Value& result);
+
+    // Globals
+
+    Value NODELETE topValue(TypeKind type, unsigned offset = 0);
+
+    Value NODELETE exception(const ControlData& control);
+
+    [[nodiscard]] PartialResult getGlobal(uint32_t index, Value& result);
+
+    void emitWriteBarrier(GPRReg cellGPR);
+    void emitMutatorFence();
+
+    [[nodiscard]] PartialResult setGlobal(uint32_t index, Value value);
+
+    // Memory
+
+    inline Location emitCheckAndPreparePointer(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex)
+    {
+        if (WTF::sumOverflows<uint64_t>(static_cast<uint64_t>(sizeOfOperation), uoffset)) {
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+            return Location::fromGPR(wasmBaseMemoryPointer);
+        }
+
+        ScratchScope<1, 0> scratches(*this);
+        Location pointerLocation;
+
+        std::optional<ScratchScope<2, 0>> nonZeroMemoryScratches;
+        GPRReg baseRegister = wasmBaseMemoryPointer;
+        GPRReg boundsCheckingSizeRegister = wasmBoundsCheckingSizeRegister;
+        if (memoryIndex) {
+            nonZeroMemoryScratches.emplace(*this);
+            baseRegister = nonZeroMemoryScratches->gpr(0);
+            boundsCheckingSizeRegister = nonZeroMemoryScratches->gpr(1);
+            m_jit.loadPtr(
+                Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(memoryIndex)),
+                baseRegister);
+            m_jit.loadPtr(
+                Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(memoryIndex) + sizeof(void*)),
+                boundsCheckingSizeRegister);
+        }
+
+        uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
+
+        if (pointer.isConst()) {
+            uint64_t constantPointer = m_info.memory(memoryIndex).isMemory64()
+                ? pointer.asI64()
+                : static_cast<uint32_t>(pointer.asI32());
+
+            if (sumOverflows<uint64_t>(constantPointer, boundary)) {
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+                return Location::fromGPR(wasmBaseMemoryPointer);
+            }
+
+            pointerLocation = Location::fromGPR(scratches.gpr(0));
+            emitMoveConst(pointer, pointerLocation);
+        } else
+            pointerLocation = loadIfNecessary(pointer);
+        ASSERT(pointerLocation.isGPR());
+
+#if USE(JSVALUE32_64)
+        ScratchScope<2, 0> globals(*this);
+        GPRReg wasmBaseMemoryPointer = globals.gpr(0);
+        GPRReg wasmBoundsCheckingSizeRegister = globals.gpr(1);
+        loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
+#endif
+
+        // conservatively force bounds checking if memoryIndex != 0
+        switch (memoryIndex ? MemoryMode::BoundsChecking : m_mode) {
+        case MemoryMode::BoundsChecking: {
+            // We're not using signal handling only when the memory is not shared.
+            // Regardless of signaling, we must check that no memory access exceeds the current memory size.
+
+            if (m_info.memory(memoryIndex).isMemory64()) {
+                if (boundary) {
+                    m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
+                    Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
+                    recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
+                } else
+                    m_jit.move(pointerLocation.asGPR(), wasmScratchGPR);
+            } else {
+                m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+                if (boundary)
+                    m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
+            }
+
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, boundsCheckingSizeRegister));
+            break;
+        }
+
+        case MemoryMode::Signaling: {
+            RELEASE_ASSERT(!m_info.memory(memoryIndex).isMemory64());
+            // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
+            // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
+            // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
+            // the 32-bit limit (the offset is unsigned 32-bit). The redzone will catch most small offsets, and we'll explicitly bounds check any
+            // register + large offset access. We don't think this will be generated frequently.
+            //
+            // We could check that register + large offset doesn't exceed 4GiB+redzone since that's technically the limit we need to avoid overflowing the
+            // PROT_NONE region, but it's better if we use a smaller immediate because it can codegens better. We know that anything equal to or greater
+            // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
+            // any access equal to or greater than 4GiB will trap, no need to add the redzone.
+            if (uoffset >= Memory::fastMappedRedzoneBytes()) {
+                uint64_t maximum = m_info.memory(memoryIndex).maximum() ? m_info.memory(memoryIndex).maximum().bytes() : std::numeric_limits<uint32_t>::max();
+                m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+                if (boundary)
+                    m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
+            }
+            break;
+        }
+        }
+
+#if CPU(ARM64)
+        if (m_info.memory(memoryIndex).isMemory64())
+            m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+        else
+            m_jit.addZeroExtend64(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+#else
+        if (m_info.memory(memoryIndex).isMemory64())
+            m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+        else {
+            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+            m_jit.addPtr(baseRegister, wasmScratchGPR);
+        }
+#endif
+
+        consume(pointer);
+        return Location::fromGPR(wasmScratchGPR);
+    }
+
+    template<typename Functor>
+    auto emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, Functor&&) -> decltype(auto);
+
+    static inline uint32_t sizeOfLoadOp(LoadOpType op)
+    {
+        switch (op) {
+        case LoadOpType::I32Load8S:
+        case LoadOpType::I32Load8U:
+        case LoadOpType::I64Load8S:
+        case LoadOpType::I64Load8U:
+            return 1;
+        case LoadOpType::I32Load16S:
+        case LoadOpType::I64Load16S:
+        case LoadOpType::I32Load16U:
+        case LoadOpType::I64Load16U:
+            return 2;
+        case LoadOpType::I32Load:
+        case LoadOpType::I64Load32S:
+        case LoadOpType::I64Load32U:
+        case LoadOpType::F32Load:
+            return 4;
+        case LoadOpType::I64Load:
+        case LoadOpType::F64Load:
+            return 8;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    static inline TypeKind typeOfLoadOp(LoadOpType op)
+    {
+        switch (op) {
+        case LoadOpType::I32Load8S:
+        case LoadOpType::I32Load8U:
+        case LoadOpType::I32Load16S:
+        case LoadOpType::I32Load16U:
+        case LoadOpType::I32Load:
+            return TypeKind::I32;
+        case LoadOpType::I64Load8S:
+        case LoadOpType::I64Load8U:
+        case LoadOpType::I64Load16S:
+        case LoadOpType::I64Load16U:
+        case LoadOpType::I64Load32S:
+        case LoadOpType::I64Load32U:
+        case LoadOpType::I64Load:
+            return TypeKind::I64;
+        case LoadOpType::F32Load:
+            return TypeKind::F32;
+        case LoadOpType::F64Load:
+            return TypeKind::F64;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    Address materializePointer(Location pointerLocation, uint32_t uoffset);
+
+    constexpr static const char* LOAD_OP_NAMES[14] = {
+        "I32Load", "I64Load", "F32Load", "F64Load",
+        "I32Load8S", "I32Load8U", "I32Load16S", "I32Load16U",
+        "I64Load8S", "I64Load8U", "I64Load16S", "I64Load16U", "I64Load32S", "I64Load32U"
+    };
+
+    [[nodiscard]] PartialResult load(LoadOpType loadOp, Value pointer, Value& result, uint64_t uoffset, uint8_t memoryIndex);
+
+    inline uint32_t sizeOfStoreOp(StoreOpType op)
+    {
+        switch (op) {
+        case StoreOpType::I32Store8:
+        case StoreOpType::I64Store8:
+            return 1;
+        case StoreOpType::I32Store16:
+        case StoreOpType::I64Store16:
+            return 2;
+        case StoreOpType::I32Store:
+        case StoreOpType::I64Store32:
+        case StoreOpType::F32Store:
+            return 4;
+        case StoreOpType::I64Store:
+        case StoreOpType::F64Store:
+            return 8;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    constexpr static const char* STORE_OP_NAMES[9] = {
+        "I32Store", "I64Store", "F32Store", "F64Store",
+        "I32Store8", "I32Store16",
+        "I64Store8", "I64Store16", "I64Store32",
+    };
+
+    [[nodiscard]] PartialResult store(StoreOpType storeOp, Value pointer, Value value, uint64_t uoffset, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult addGrowMemory(Value delta, Value& result, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult addCurrentMemory(Value& result, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult addMemoryFill(Value dstAddress, Value targetValue, Value count, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult addMemoryCopy(Value dstAddress, Value srcAddress, Value count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex);
+
+    [[nodiscard]] PartialResult addMemoryInit(unsigned dataSegmentIndex, Value dstAddress, Value srcAddress, Value length, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult addDataDrop(unsigned dataSegmentIndex);
+
+    // Atomics
+
+    static inline Width accessWidth(ExtAtomicOpType op)
+    {
+        return static_cast<Width>(memoryLog2Alignment(op));
+    }
+
+    static inline uint32_t sizeOfAtomicOpMemoryAccess(ExtAtomicOpType op)
+    {
+        return bytesForWidth(accessWidth(op));
+    }
+
+    void emitSanitizeAtomicResult(ExtAtomicOpType op, TypeKind resultType, GPRReg source, GPRReg dest);
+    void emitSanitizeAtomicResult(ExtAtomicOpType op, TypeKind resultType, GPRReg result);
+    void emitSanitizeAtomicResult(ExtAtomicOpType op, TypeKind resultType, Location source, Location dest);
+    void emitSanitizeAtomicOperand(ExtAtomicOpType op, TypeKind operandType, Location source, Location dest);
+
+    Location emitMaterializeAtomicOperand(Value value);
+
+    template<typename Functor>
+    void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg oldGPR, GPRReg scratchGPR, const Functor& functor);
+
+    template<typename Functor>
+    void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, Location old, Location cur, const Functor& functor);
+
+    [[nodiscard]] Value emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint64_t uoffset);
+
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
+
+    void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value, uint64_t uoffset);
+
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint64_t uoffset, uint8_t memoryIndex);
+
+    Value emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location pointer, Value value, uint64_t uoffset);
+
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
+
+    [[nodiscard]] Value emitAtomicCompareExchange(ExtAtomicOpType op, Type, Location pointer, Value expected, Value value, uint64_t uoffset);
+
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
+
+    [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t);
+
+    // Saturated truncation.
+
+    struct FloatingPointRange {
+        Value min, max;
+        bool closedLowerEndpoint;
+    };
+
+    enum class TruncationKind {
+        I32TruncF32S,
+        I32TruncF32U,
+        I64TruncF32S,
+        I64TruncF32U,
+        I32TruncF64S,
+        I32TruncF64U,
+        I64TruncF64S,
+        I64TruncF64U
+    };
+
+    TruncationKind NODELETE truncationKind(OpType truncationOp);
+
+    TruncationKind NODELETE truncationKind(Ext1OpType truncationOp);
+
+    FloatingPointRange NODELETE lookupTruncationRange(TruncationKind truncationKind);
+
+    void truncInBounds(TruncationKind truncationKind, Location operandLocation, Location resultLocation, FPRReg scratch1FPR, FPRReg scratch2FPR);
+
+    [[nodiscard]] PartialResult truncTrapping(OpType truncationOp, Value operand, Value& result, Type returnType, Type operandType);
+    [[nodiscard]] PartialResult truncSaturated(Ext1OpType truncationOp, Value operand, Value& result, Type returnType, Type operandType);
+
+    // Wide arithmetic
+    [[nodiscard]] PartialResult addI64Add128(Value lhsLo, Value lhsHi, Value rhsLo, Value rhsHi, Value& resultLo, Value& resultHi);
+    [[nodiscard]] PartialResult addI64Sub128(Value lhsLo, Value lhsHi, Value rhsLo, Value rhsHi, Value& resultLo, Value& resultHi);
+    [[nodiscard]] PartialResult addI64MulWideS(Value lhs, Value rhs, Value& resultLo, Value& resultHi);
+    [[nodiscard]] PartialResult addI64MulWideU(Value lhs, Value rhs, Value& resultLo, Value& resultHi);
+
+    // GC
+    [[nodiscard]] PartialResult addRefI31(ExpressionType value, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addI31GetS(TypedExpression value, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addI31GetU(TypedExpression value, ExpressionType& result);
+
+    // Given a type index for an array signature, look it up, expand it and
+    // return the element type
+    StorageType getArrayElementType(TypeSignatureIndex typeIndex);
+
+    // This will replace the existing value with a new value. Note that if this is an F32 then the top bits may be garbage but that's ok for our current usage.
+    Value marshallToI64(Value value);
+
+    void emitAllocateGCArrayUninitialized(GPRReg result, TypeSignatureIndex typeIndex, ExpressionType size, GPRReg scratchGPR, GPRReg scratchGPR2);
+    [[nodiscard]] PartialResult addArrayNew(TypeSignatureIndex typeIndex, ExpressionType size, ExpressionType initValue, ExpressionType& result);
+    [[nodiscard]] PartialResult addArrayNewDefault(TypeSignatureIndex typeIndex, ExpressionType size, ExpressionType& result);
+
+    using ArraySegmentOperation = EncodedJSValue SYSV_ABI (&)(JSC::JSWebAssemblyInstance*, uint32_t, uint32_t, uint32_t, uint32_t);
+    void pushArrayNewFromSegment(ArraySegmentOperation, TypeSignatureIndex typeIndex, uint32_t segmentIndex, ExpressionType arraySize, ExpressionType offset, ExceptionType, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addArrayNewData(TypeSignatureIndex typeIndex, uint32_t dataIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addArrayNewElem(TypeSignatureIndex typeIndex, uint32_t elemSegmentIndex, ExpressionType arraySize, ExpressionType offset, ExpressionType& result);
+
+    void emitArrayStoreElementUnchecked(StorageType elementType, GPRReg payloadGPR, Location index, Value value, bool preserveIndex = false);
+    void emitArrayStoreElementUnchecked(StorageType elementType, GPRReg payloadGPR, Value index, Value value);
+    void emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref, Value index, Value value);
+
+    [[nodiscard]] PartialResult addArrayNewFixed(TypeSignatureIndex typeIndex, ArgumentList& args, ExpressionType& result);
+
+    void emitArrayGetPayload(StorageType, GPRReg arrayGPR, GPRReg payloadGPR);
+
+    [[nodiscard]] PartialResult addArrayGet(ExtGCOpType arrayGetKind, TypeSignatureIndex typeIndex, TypedExpression arrayref, ExpressionType index, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addArraySet(TypeSignatureIndex typeIndex, TypedExpression arrayref, ExpressionType index, ExpressionType value);
+
+    [[nodiscard]] PartialResult addArrayLen(TypedExpression arrayref, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addArrayFill(TypeSignatureIndex typeIndex, TypedExpression arrayref, ExpressionType offset, ExpressionType value, ExpressionType size);
+
+    [[nodiscard]] PartialResult addArrayCopy(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, TypeSignatureIndex srcTypeIndex, TypedExpression src, ExpressionType srcOffset, ExpressionType size);
+
+    [[nodiscard]] PartialResult addArrayInitElem(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size);
+
+    [[nodiscard]] PartialResult addArrayInitData(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size);
+
+    // Returns true if a writeBarrier/mutatorFence is needed.
+    [[nodiscard]] bool emitStructSet(GPRReg structGPR, const RTT& structType, uint32_t fieldIndex, Value value);
+
+    void emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIndex typeIndex, GPRReg scratchGPR, GPRReg scratchGPR2);
+    [[nodiscard]] PartialResult addStructNewDefault(TypeSignatureIndex typeIndex, ExpressionType& result);
+    [[nodiscard]] PartialResult addStructNew(TypeSignatureIndex typeIndex, ArgumentList& args, Value& result);
+
+    [[nodiscard]] PartialResult addStructGet(ExtGCOpType structGetKind, TypedExpression structValue, const RTT& structType, uint32_t fieldIndex, Value& result);
+
+    [[nodiscard]] PartialResult addStructSet(TypedExpression structValue, const RTT& structType, uint32_t fieldIndex, Value value);
+
+    enum class CastKind { Test, Cast };
+    void emitRefTestOrCast(CastKind, const TypedExpression&, GPRReg, bool allowNull, int32_t toHeapType, JumpList& failureCases);
+
+    [[nodiscard]] PartialResult addRefTest(TypedExpression reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addRefCast(TypedExpression reference, bool allowNull, int32_t heapType, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addAnyConvertExtern(ExpressionType reference, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addExternConvertAny(ExpressionType reference, ExpressionType& result);
+
+    // Basic operators
+    [[nodiscard]] PartialResult addSelect(Value condition, Value lhs, Value rhs, Value& result);
+
+    template<typename Fold, typename RegReg, typename RegImm>
+    inline PartialResult binary(const char* opcode, TypeKind resultType, Value& lhs, Value& rhs, Value& result, Fold fold, RegReg regReg, RegImm regImm)
+    {
+        if (lhs.isConst() && rhs.isConst()) {
+            result = fold(lhs, rhs);
+            LOG_INSTRUCTION(opcode, lhs, rhs, RESULT(result));
+            return { };
+        }
+
+        Location lhsLocation = Location::none(), rhsLocation = Location::none();
+
+        // Ensure all non-constant parameters are loaded into registers.
+        if (!lhs.isConst())
+            lhsLocation = loadIfNecessary(lhs);
+        if (!rhs.isConst())
+            rhsLocation = loadIfNecessary(rhs);
+
+        ASSERT(lhs.isConst() || lhsLocation.isRegister());
+        ASSERT(rhs.isConst() || rhsLocation.isRegister());
+
+        consume(lhs); // If either of our operands are temps, consume them and liberate any bound
+        consume(rhs); // registers. This lets us reuse one of the registers for the output.
+
+        Location toReuse = lhs.isConst() ? rhsLocation : lhsLocation; // Select the location to reuse, preferring lhs.
+
+        result = topValue(resultType); // Result will be the new top of the stack.
+        Location resultLocation = allocateWithHint(result, toReuse);
+        ASSERT(resultLocation.isRegister());
+
+        LOG_INSTRUCTION(opcode, lhs, lhsLocation, rhs, rhsLocation, RESULT(result));
+
+        if (lhs.isConst() || rhs.isConst())
+            regImm(lhs, lhsLocation, rhs, rhsLocation, resultLocation);
+        else
+            regReg(lhs, lhsLocation, rhs, rhsLocation, resultLocation);
+
+        return { };
+    }
+
+    template<typename Fold, typename Reg>
+    inline PartialResult unary(const char* opcode, TypeKind resultType, Value& operand, Value& result, Fold fold, Reg reg)
+    {
+        if (operand.isConst()) {
+            result = fold(operand);
+            LOG_INSTRUCTION(opcode, operand, RESULT(result));
+            return { };
+        }
+
+        Location operandLocation = loadIfNecessary(operand);
+        ASSERT(operandLocation.isRegister());
+
+        consume(operand); // If our operand is a temp, consume it and liberate its register if it has one.
+
+        result = topValue(resultType); // Result will be the new top of the stack.
+        Location resultLocation = allocateWithHint(result, operandLocation); // Try to reuse the operand location.
+        ASSERT(resultLocation.isRegister());
+
+        LOG_INSTRUCTION(opcode, operand, operandLocation, RESULT(result));
+
+        reg(operand, operandLocation, resultLocation);
+        return { };
+    }
+
+    struct ImmHelpers {
+        ALWAYS_INLINE static Value& imm(Value& lhs, Value& rhs)
+        {
+            return lhs.isConst() ? lhs : rhs;
+        }
+
+        ALWAYS_INLINE static Location& immLocation(Location& lhsLocation, Location& rhsLocation)
+        {
+            return lhsLocation.isRegister() ? rhsLocation : lhsLocation;
+        }
+
+        ALWAYS_INLINE static Value& reg(Value& lhs, Value& rhs)
+        {
+            return lhs.isConst() ? rhs : lhs;
+        }
+
+        ALWAYS_INLINE static Location& regLocation(Location& lhsLocation, Location& rhsLocation)
+        {
+            return lhsLocation.isRegister() ? lhsLocation : rhsLocation;
+        }
+    };
+
+#define BLOCK(...) __VA_ARGS__
+
+#define EMIT_BINARY(opcode, resultType, foldExpr, regRegStatement, regImmStatement) \
+        return binary(opcode, resultType, lhs, rhs, result, \
+            [&](Value& lhs, Value& rhs) -> Value { \
+                UNUSED_PARAM(lhs); \
+                UNUSED_PARAM(rhs); \
+                return foldExpr; /* Lambda to be called for constant folding, i.e. when both operands are constants. */ \
+            }, \
+            [&](Value& lhs, Location lhsLocation, Value& rhs, Location rhsLocation, Location resultLocation) -> void { \
+                UNUSED_PARAM(lhs); \
+                UNUSED_PARAM(rhs); \
+                UNUSED_PARAM(lhsLocation); \
+                UNUSED_PARAM(rhsLocation); \
+                UNUSED_PARAM(resultLocation); \
+                regRegStatement /* Lambda to be called when both operands are registers. */ \
+            }, \
+            [&](Value& lhs, Location lhsLocation, Value& rhs, Location rhsLocation, Location resultLocation) -> void { \
+                UNUSED_PARAM(lhs); \
+                UNUSED_PARAM(rhs); \
+                UNUSED_PARAM(lhsLocation); \
+                UNUSED_PARAM(rhsLocation); \
+                UNUSED_PARAM(resultLocation); \
+                regImmStatement /* Lambda to be when one operand is a register and the other is a constant. */ \
+            });
+
+#define EMIT_UNARY(opcode, resultType, foldExpr, regStatement) \
+        return unary(opcode, resultType, operand, result, \
+            [&](Value& operand) -> Value { \
+                UNUSED_PARAM(operand); \
+                return foldExpr; /* Lambda to be called for constant folding, i.e. when both operands are constants. */ \
+            }, \
+            [&](Value& operand, Location operandLocation, Location resultLocation) -> void { \
+                UNUSED_PARAM(operand); \
+                UNUSED_PARAM(operandLocation); \
+                UNUSED_PARAM(resultLocation); \
+                regStatement /* Lambda to be called when both operands are registers. */ \
+            });
+
+    [[nodiscard]] PartialResult addI32Add(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Add(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Add(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Add(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Sub(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Sub(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Sub(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Sub(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Mul(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Mul(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Mul(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Mul(Value lhs, Value rhs, Value& result);
+
+    template<typename Func>
+    void addLatePath(WasmOrigin, Func&&);
+
+    void emitThrowException(ExceptionType type);
+
+    void recordJumpToThrowException(ExceptionType, Jump);
+    void recordJumpToThrowException(ExceptionType, const JumpList&);
+
+    void emitThrowOnNullReference(ExceptionType type, Location ref);
+    void emitThrowOnNullReferenceBeforeAccess(Location ref, ptrdiff_t offset);
+
+    template<typename IntType, bool IsMod>
+    void emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location rhsLocation, Value& result, Location resultLocation);
+
+    // signed INT_MIN / -1 is the only integer div/rem that can overflow.
+    enum class ConstantDivOverflow { CanOverflow, CannotOverflow };
+
+    template<typename IntType, ConstantDivOverflow = ConstantDivOverflow::CannotOverflow>
+    Value checkConstantDivision(const Value& lhs, const Value& rhs);
+
+    [[nodiscard]] PartialResult addI32DivS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64DivS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32DivU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64DivU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32RemS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64RemS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32RemU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64RemU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Div(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Div(Value lhs, Value rhs, Value& result);
+
+    enum class MinOrMax { Min, Max };
+
+    template<MinOrMax IsMinOrMax, typename FloatType>
+    void emitFloatingPointMinOrMax(FPRReg left, FPRReg right, FPRReg result);
+
+    template<MinOrMax IsMinOrMax, typename FloatType>
+    FloatType computeFloatingPointMinOrMax(FloatType left, FloatType right)
+    {
+        if constexpr (IsMinOrMax == MinOrMax::Min)
+            return Math::fMin<FloatType>(left, right);
+        else
+            return Math::fMax<FloatType>(left, right);
+    }
+
+    [[nodiscard]] PartialResult addF32Min(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Min(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Max(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Max(Value lhs, Value rhs, Value& result);
+
+    inline float floatCopySign(float lhs, float rhs)
+    {
+        uint32_t lhsAsInt32 = std::bit_cast<uint32_t>(lhs);
+        uint32_t rhsAsInt32 = std::bit_cast<uint32_t>(rhs);
+        lhsAsInt32 &= 0x7fffffffu;
+        rhsAsInt32 &= 0x80000000u;
+        lhsAsInt32 |= rhsAsInt32;
+        return std::bit_cast<float>(lhsAsInt32);
+    }
+
+    inline double doubleCopySign(double lhs, double rhs)
+    {
+        uint64_t lhsAsInt64 = std::bit_cast<uint64_t>(lhs);
+        uint64_t rhsAsInt64 = std::bit_cast<uint64_t>(rhs);
+        lhsAsInt64 &= 0x7fffffffffffffffu;
+        rhsAsInt64 &= 0x8000000000000000u;
+        lhsAsInt64 |= rhsAsInt64;
+        return std::bit_cast<double>(lhsAsInt64);
+    }
+
+    [[nodiscard]] PartialResult addI32And(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64And(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Xor(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Xor(Value lhs, Value rhs, Value& result);
+
+
+    [[nodiscard]] PartialResult addI32Or(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Or(Value lhs, Value rhs, Value& result);
+
+    void moveShiftAmountIfNecessary(Location& rhsLocation);
+
+    [[nodiscard]] PartialResult addI32Shl(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Shl(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32ShrS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64ShrS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32ShrU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64ShrU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Rotl(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Rotl(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Rotr(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Rotr(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Clz(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Clz(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32Ctz(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Ctz(Value operand, Value& result);
+
+    PartialResult emitCompareI32(const char* opcode, Value& lhs, Value& rhs, Value& result, RelationalCondition condition, bool (*comparator)(int32_t lhs, int32_t rhs));
+
+    PartialResult emitCompareI64(const char* opcode, Value& lhs, Value& rhs, Value& result, RelationalCondition condition, bool (*comparator)(int64_t lhs, int64_t rhs));
+
+    [[nodiscard]] PartialResult addI32Eq(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Eq(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32Ne(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64Ne(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32LtS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64LtS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32LeS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64LeS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32GtS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64GtS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32GeS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64GeS(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32LtU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64LtU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32LeU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64LeU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32GtU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64GtU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI32GeU(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addI64GeU(Value lhs, Value rhs, Value& result);
+
+    PartialResult emitCompareF32(const char* opcode, Value& lhs, Value& rhs, Value& result, DoubleCondition condition, bool (*comparator)(float lhs, float rhs));
+
+    PartialResult emitCompareF64(const char* opcode, Value& lhs, Value& rhs, Value& result, DoubleCondition condition, bool (*comparator)(double lhs, double rhs));
+
+    [[nodiscard]] PartialResult addF32Eq(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Eq(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Ne(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Ne(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Lt(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Lt(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Le(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Le(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Gt(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Gt(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Ge(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Ge(Value lhs, Value rhs, Value& result);
+
+    PartialResult addI32WrapI64(Value operand, Value& result);
+
+    PartialResult addI32Extend8S(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32Extend16S(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Extend8S(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Extend16S(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Extend32S(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64ExtendSI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64ExtendUI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32Eqz(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Eqz(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32Popcnt(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64Popcnt(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32ReinterpretF32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64ReinterpretF64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32ReinterpretI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64ReinterpretI64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32DemoteF64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64PromoteF32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32ConvertSI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32ConvertUI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32ConvertSI64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32ConvertUI64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64ConvertSI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64ConvertUI32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64ConvertSI64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64ConvertUI64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Copysign(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF64Copysign(Value lhs, Value rhs, Value& result);
+
+    [[nodiscard]] PartialResult addF32Floor(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Floor(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Ceil(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Ceil(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Abs(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Abs(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Sqrt(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Sqrt(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Neg(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Neg(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Nearest(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Nearest(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF32Trunc(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addF64Trunc(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32TruncSF32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32TruncSF64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32TruncUF32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI32TruncUF64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64TruncSF32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64TruncSF64(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64TruncUF32(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addI64TruncUF64(Value operand, Value& result);
+
+    // References
+
+    [[nodiscard]] PartialResult addRefIsNull(Value operand, Value& result);
+
+    [[nodiscard]] PartialResult addRefAsNonNull(Value value, Value& result);
+
+    [[nodiscard]] PartialResult addRefEq(Value ref0, Value ref1, Value& result);
+
+    [[nodiscard]] PartialResult addRefFunc(FunctionSpaceIndex index, Value& result);
+
+    void emitEntryTierUpCheck();
+
+    // Control flow
+    [[nodiscard]] ControlData addTopLevel(BlockSignature&&);
+
+    bool NODELETE hasLoops() const;
+
+    MacroAssembler::Label addLoopOSREntrypoint();
+
+    [[nodiscard]] PartialResult addBlock(BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
+
+    B3::Type NODELETE toB3Type(Type);
+
+    B3::Type toB3Type(TypeKind);
+
+    B3::ValueRep toB3Rep(Location);
+
+    StackMap makeStackMap(const ControlData&, std::span<const TypedExpression> enclosingStack);
+
+    void emitLoopTierUpCheckAndOSREntryData(const ControlData&, std::span<const TypedExpression> enclosingStack, unsigned loopIndex);
+
+    [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression> args, ControlType& result, uint32_t loopIndex);
+
+    [[nodiscard]] PartialResult addIf(Value condition, BlockSignature&&, std::span<TypedExpression> args, ControlData& result);
+
+    [[nodiscard]] PartialResult addElse(ControlData& data, std::span<TypedExpression> ifBranchResults);
+
+    [[nodiscard]] PartialResult addElseToUnreachable(ControlData& data);
+
+    [[nodiscard]] PartialResult addTry(BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
+    [[nodiscard]] PartialResult addTryTable(BlockSignature&&, std::span<TypedExpression> args, const Vector<CatchHandler>& targets, ControlType& result);
+
+    void emitCatchPrologue();
+
+    void emitCatchAllImpl(ControlData& dataCatch);
+
+    void emitCatchImpl(ControlData& dataCatch, const RTT& exceptionSignature, ResultList& results);
+    void emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTarget&);
+
+    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, std::span<TypedExpression> expressionStack, ControlType& data, ResultList& results);
+
+    [[nodiscard]] PartialResult addCatchToUnreachable(unsigned exceptionIndex, const RTT& exceptionSignature, ControlType& data, ResultList& results);
+
+    [[nodiscard]] PartialResult addCatchAll(std::span<TypedExpression> expressionStack, ControlType& data);
+
+    [[nodiscard]] PartialResult addCatchAllToUnreachable(ControlType& data);
+
+    [[nodiscard]] PartialResult addDelegate(ControlType& target, ControlType& data);
+
+    [[nodiscard]] PartialResult addDelegateToUnreachable(ControlType& target, ControlType& data);
+
+    [[nodiscard]] PartialResult addThrow(unsigned exceptionIndex, ArgumentList& arguments, std::span<TypedExpression>);
+
+    [[nodiscard]] PartialResult addRethrow(unsigned, ControlType& data);
+
+    [[nodiscard]] PartialResult addThrowRef(ExpressionType exception, std::span<TypedExpression>);
+
+    void prepareForExceptions();
+
+    [[nodiscard]] PartialResult addReturn(const ControlData& data, std::span<const TypedExpression> returnValues);
+
+    [[nodiscard]] PartialResult addBranch(ControlData& target, Value condition, std::span<TypedExpression> results);
+
+    [[nodiscard]] PartialResult addBranchNull(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool shouldNegate, ExpressionType& result);
+
+    [[nodiscard]] PartialResult addBranchCast(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool allowNull, int32_t heapType, bool shouldNegate);
+
+    [[nodiscard]] PartialResult addSwitch(Value condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, std::span<TypedExpression> results);
+
+    [[nodiscard]] PartialResult endBlock(ControlEntry& entry, std::span<TypedExpression> enclosedStack);
+
+    [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry& entry, std::span<TypedExpression> enclosedStack);
+
+    [[nodiscard]] PartialResult addEndToUnreachableImpl(ControlEntry& entry, std::span<TypedExpression> enclosedStack, bool unreachable);
+
+    int alignedFrameSize(int frameSize) const;
+
+    [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>);
+
+    enum BranchFoldResult {
+        BranchAlwaysTaken,
+        BranchNeverTaken,
+        BranchNotFolded
+    };
+
+    [[nodiscard]] BranchFoldResult NODELETE tryFoldFusedBranchCompare(OpType, ExpressionType);
+    [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location);
+    [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
+    [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
+
+    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, std::span<TypedExpression>);
+    [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, ExpressionType, std::span<TypedExpression>);
+    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression> args, ControlType&);
+    [[nodiscard]] PartialResult addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression> args, ControlType&);
+
+    // Flush a value to its canonical slot.
+    void flushValue(Value value);
+
+    void restoreWebAssemblyContextInstance();
+
+    void restoreWebAssemblyGlobalState();
+
+    void loadWebAssemblyGlobalState(GPRReg wasmBaseMemoryPointer, GPRReg wasmBoundsCheckingSizeRegister);
+
+    void restoreWebAssemblyGlobalStateAfterWasmCall();
+
+    void flushRegistersForException();
+
+    void flushRegisters();
+
+    template<typename Args>
+    void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation&, const RTT& signature);
+
+    void slowPathSpillBindings(const RegisterBindings&);
+    void slowPathRestoreBindings(const RegisterBindings&);
+    void NODELETE restoreValuesAfterCall(const CallInformation&);
+
+    template<size_t N>
+    void returnValuesFromCall(Vector<Value, N>& results, const RTT& functionType, const CallInformation&);
+
+    template<typename Func>
+    void emitCCall(Func function, std::span<const Value> arguments);
+
+    template<typename Func>
+    void emitCCall(Func function, std::span<const Value> arguments, Value& result);
+
+    void emitTailCall(FunctionSpaceIndex, const RTT& signature, ArgumentList& arguments);
+    [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex, const RTT& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
+
+    void emitIndirectCall(const char* opcode, unsigned callProfileIndex, const Value& callee, GPRReg importableFunction, const RTT& signature, ArgumentList& arguments, ResultList& results);
+    void emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg importableFunction, const RTT& signature, ArgumentList& arguments);
+
+    [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned tableIndex, const RTT& expandedSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+
+    [[nodiscard]] PartialResult addCallRef(unsigned, const RTT& expandedSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+
+    [[nodiscard]] PartialResult addUnreachable();
+
+    [[nodiscard]] PartialResult addCrash();
+
+    ALWAYS_INLINE void willParseOpcode();
+
+    ALWAYS_INLINE void willParseExtendedOpcode();
+
+    ALWAYS_INLINE void didParseOpcode();
+
+    // SIMD
+
+    bool NODELETE usesSIMD();
+
+    void NODELETE notifyFunctionUsesSIMD();
+
+    PartialResult addSIMDLoad(ExpressionType, uint32_t, ExpressionType&, uint8_t);
+
+    PartialResult addSIMDStore(ExpressionType, ExpressionType, uint32_t, uint8_t);
+
+    PartialResult addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDShuffle(v128_t, ExpressionType, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDShift(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDExtmul(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDLoadSplat(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t);
+
+    PartialResult addSIMDLoadLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, ExpressionType&, uint8_t);
+
+    PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint32_t, uint8_t, uint8_t);
+
+    PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t);
+
+    PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint32_t, ExpressionType&, uint8_t);
+
+    void materializeVectorConstant(v128_t, Location);
+
+    ExpressionType addSIMDConstant(v128_t);
+
+    PartialResult addSIMDExtractLane(SIMDInfo, uint8_t, Value, Value&);
+
+    PartialResult addSIMDReplaceLane(SIMDInfo, uint8_t, ExpressionType, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDI_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDV_V(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDBitwiseSelect(ExpressionType, ExpressionType, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDRelOp(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, B3::Air::Arg, ExpressionType&);
+
+    void emitVectorMul(SIMDInfo info, Location left, Location right, Location result);
+
+    [[nodiscard]] PartialResult fixupOutOfBoundsIndicesForSwizzle(Location a, Location b, Location result);
+
+    PartialResult addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&);
+
+    PartialResult addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&);
+
+    void dump(const ControlStack&, const Stack*);
+    void NODELETE didFinishParsingLocals();
+    void NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral);
+
+    void finalize();
+
+    Vector<UnlinkedHandlerInfo>&& NODELETE takeExceptionHandlers();
+    FixedBitVector&& NODELETE takeDirectCallees();
+    Vector<CCallHelpers::Label>&& NODELETE takeCatchEntrypoints();
+    Box<PCToCodeOriginMapBuilder> takePCToCodeOriginMapBuilder();
+
+    std::unique_ptr<BBQDisassembler> takeDisassembler();
+
+private:
+    static bool NODELETE isScratch(Location);
+
+    void emitStoreConst(Value constant, Location dst);
+    void emitStoreConst(StorageType, Value constant, BaseIndex dst);
+    void emitStoreConst(StorageType, Value constant, Address dst);
+
+    void emitMoveConst(Value constant, Location loc);
+
+    void emitStore(TypeKind type, Location src, Location dst);
+    void emitStore(StorageType, Location src, BaseIndex dst);
+    void emitStore(StorageType, Location src, Address dst);
+
+    void emitStore(Value src, Location dst);
+
+    void emitMoveMemory(TypeKind type, Location src, Location dst);
+    void emitMoveMemory(StorageType, Location src, BaseIndex dst);
+    void emitMoveMemory(StorageType, Location src, Address dst);
+
+    void emitMoveMemory(Value src, Location dst);
+
+    void emitMoveRegister(TypeKind type, Location src, Location dst);
+
+    void emitMoveRegister(Value src, Location dst);
+
+    void emitLoad(TypeKind type, Location src, Location dst);
+
+    void emitLoad(Value src, Location dst);
+
+    void emitMove(TypeKind type, Location src, Location dst);
+
+    void emitMove(Value src, Location dst);
+    void emitMove(StorageType, Value src, BaseIndex dst);
+    void emitMove(StorageType, Value src, Address dst);
+
+    using ShuffleStatus = CCallHelpers::ShuffleStatus;
+
+    template<size_t N, typename OverflowHandler>
+    void emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Vector<ShuffleStatus, N, OverflowHandler>& statusVector, unsigned index);
+
+    template<size_t N, typename OverflowHandler>
+    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector);
+
+    ControlData& NODELETE currentControlData();
+
+    void NODELETE setLRUKey(Location, LocalOrTempIndex key);
+    void NODELETE increaseLRUKey(Location);
+    uint32_t nextLRUKey() { return ++m_lastUseTimestamp; }
+
+    Location bind(Value);
+
+    Location allocate(Value);
+
+    Location allocateWithHint(Value, Location hint);
+
+    Location NODELETE locationOfWithoutBinding(Value);
+
+    Location locationOf(Value);
+
+    Location loadIfNecessary(Value);
+
+    // This should generally be avoided if possible but sometimes you just *need* a value in a register.
+    Location materializeToGPR(Value, std::optional<ScratchScope<1, 0>>&);
+
+    void consume(Value);
+
+    Location bind(Value, Location);
+
+    void unbind(Value, Location);
+
+    void unbindAllRegisters();
+
+    const RegisterBinding& bindingFor(JSC::Reg reg) { return reg.isGPR() ? m_gprAllocator.bindingFor(reg.gpr()) : m_fprAllocator.bindingFor(reg.fpr()); }
+    RegisterSet validGPRs() const { return m_gprAllocator.validRegisters(); }
+    RegisterSet validFPRs() const { return m_fprAllocator.validRegisters(); }
+
+    // We use this to free up specific registers that might get clobbered by an instruction.
+    void clobber(GPRReg gpr) { m_gprAllocator.clobber(*this, gpr); }
+    void clobber(FPRReg fpr) { m_fprAllocator.clobber(*this, fpr); }
+    void clobber(JSC::Reg reg) { reg.isGPR() ? clobber(reg.gpr()) : clobber(reg.fpr()); }
+
+    Location NODELETE canonicalSlot(Value);
+
+    Location allocateStack(Value value);
+
+    constexpr static int tempSlotSize = 16; // Size of the stack slot for a stack temporary. Currently the size of the largest possible temporary (a v128).
+
+    enum class RotI64HelperOp { Left, Right };
+    void rotI64Helper(RotI64HelperOp op, Location lhsLocation, Location rhsLocation, Location resultLocation);
+
+    bool canTierUpToOMG() const;
+
+    void emitIncrementCallProfileCount(unsigned callProfileIndex);
+
+    void emitPushCalleeSaves();
+    void emitRestoreCalleeSaves();
+
+    WasmOrigin origin();
+
+    CompilationContext& m_context;
+    CCallHelpers& m_jit;
+    Module& m_module;
+    CalleeGroup& m_calleeGroup;
+    IPIntCallee& m_profiledCallee;
+    BBQCallee& m_callee;
+    const FunctionData& m_function;
+    const Ref<const RTT> m_functionSignature;
+    FunctionCodeIndex m_functionIndex;
+    const ModuleInformation& m_info;
+    MemoryMode m_mode;
+    Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls;
+    FixedBitVector m_directCallees;
+    FunctionParser<BBQJIT>* m_parser;
+    Vector<uint32_t, 4> m_arguments;
+    ControlData m_topLevel;
+    Vector<unsigned> m_outerLoops;
+    unsigned m_osrEntryScratchBufferSize { 1 };
+
+    Vector<Location, 8> m_locals; // Vectors mapping local and temp indices to binding indices.
+    Vector<Location, 8> m_temps;
+    Vector<Location, 8> m_localSlots; // Persistent stack slots for local variables.
+    Vector<TypeKind, 8> m_localTypes; // Types of all non-argument locals in this function.
+    GPRAllocator m_gprAllocator; // SimpleRegisterAllocator for GPRs
+    FPRAllocator m_fprAllocator; // SimpleRegisterAllocator for FPRs
+    SpillHint m_lastUseTimestamp; // Monotonically increasing integer incrementing with each register use.
+    Vector<std::tuple<WasmOrigin, Function<void(BBQJIT&, CCallHelpers&)>>, 8> m_latePaths; // Late paths to emit after the rest of the function body.
+    Vector<std::tuple<WasmOrigin, MacroAssembler::JumpList, MacroAssembler::Label, RegisterBindings, Function<void(BBQJIT&, CCallHelpers&)>>> m_slowPaths; // Like a late path but for when we need to make a CCall thus need to restore our state.
+
+    uint32_t m_frameSize { 0 };
+    uint32_t m_frameSizeForValidation { 0 };
+    uint32_t m_maxCalleeStackSizeForValidation { 0 };
+    int m_localAndCalleeSaveStorage { 0 }; // Stack offset pointing to the local and callee save with the lowest address.
+    bool m_usesSIMD { false }; // Whether the function we are compiling uses SIMD instructions or not.
+    bool m_usesExceptions { false };
+    Checked<unsigned> m_tryCatchDepth { 0 };
+    Checked<unsigned> m_callSiteIndex { 0 };
+
+    RegisterSet m_callerSaveGPRs;
+    RegisterSet m_callerSaveFPRs;
+    RegisterSet m_callerSaves;
+
+    InternalFunction* m_compilation;
+
+    std::array<JumpList, numberOfExceptionTypes> m_exceptions { };
+    Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
+    Vector<CCallHelpers::Label> m_catchEntrypoints;
+
+    PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
+    std::unique_ptr<BBQDisassembler> m_disassembler;
+    std::unique_ptr<MergedProfile> m_profile;
+
+#if ASSERT_ENABLED
+    Vector<Value, 8> m_justPoppedStack;
+    OpType m_prevOpcode;
+#endif
+};
+
+using LocalOrTempIndex = BBQJIT::LocalOrTempIndex;
+using Location = BBQJIT::Location;
+using Value = BBQJIT::Value;
+using ExpressionType = BBQJIT::Value;
+using RegisterBinding = BBQJIT::RegisterBinding;
+using ControlData = BBQJIT::ControlData;
+using PartialResult = BBQJIT::PartialResult;
+using Address = BBQJIT::Address;
+using TruncationKind = BBQJIT::TruncationKind;
+using FloatingPointRange = BBQJIT::FloatingPointRange;
+using MinOrMax = BBQJIT::MinOrMax;
+
+} // namespace JSC::Wasm::BBQJITImpl
+
+using BBQJIT = BBQJITImpl::BBQJIT;
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, IPIntCallee&, BBQCallee&, const FunctionData&, const RTT&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex);
+
+} } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)

@@ -1,0 +1,5 @@
+
+PASS Document is in quirks mode
+PASS Quirks: explicit width + aspect-ratio 2/1, top: 50%
+PASS Quirks: auto width block + aspect-ratio 2/1, top: 50%
+

@@ -1,0 +1,15 @@
+<script src="/js-test-resources/js-test.js"></script>
+<iframe src="http://localhost:8000/permissions/resources/storage-access-permission-query-iframe.html"></iframe>
+<script>
+description("This test checks that navigator.permissions.query() works for storage-access permission.");
+jsTestIsAsync = true;
+
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'test-result') {
+        window[event.data.message] = event.data.actual;
+        shouldBeEqualToString(event.data.message, event.data.expected);
+    } else if (event.data.type === 'test-complete')
+        finishJSTest();
+});
+
+</script>

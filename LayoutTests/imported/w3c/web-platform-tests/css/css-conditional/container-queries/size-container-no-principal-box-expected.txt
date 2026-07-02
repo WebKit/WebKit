@@ -1,0 +1,8 @@
+
+PASS (min-width: 0) can match a container with a principal box
+PASS (min-width: 0) does not match a container without a principal box (display:none)
+PASS (min-width: 0) does not match a container without a principal box (display:contents)
+PASS not (max-width: 0) can match a container with a principal box
+PASS not (max-width: 0) does not match a container without a principal box (display:none)
+PASS not (max-width: 0) does not match a container without a principal box (display:contents)
+

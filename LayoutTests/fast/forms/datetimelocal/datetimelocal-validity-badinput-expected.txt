@@ -1,0 +1,3 @@
+
+PASS A datetime-local input field with a bad user input should make validity.badInput true and have :invalid style.
+

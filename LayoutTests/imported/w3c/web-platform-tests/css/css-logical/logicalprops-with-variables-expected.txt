@@ -1,0 +1,14 @@
+
+PASS Logical longhands with variables - margin-inline-start
+PASS Logical longhands with variables - margin-inline-end
+PASS Logical longhands with variables - margin-inline
+PASS Logical shorthand with 1 variable - margin-inline-start
+PASS Logical shorthand with 1 variable - margin-inline-end
+PASS Logical shorthand with 1 variable - margin-inline
+PASS Logical shorthand with 2 variables - margin-inline-start
+PASS Logical shorthand with 2 variables - margin-inline-end
+PASS Logical shorthand with 2 variables - margin-inline
+PASS Logical shorthand with 1 variable and 1 length - margin-inline-start
+PASS Logical shorthand with 1 variable and 1 length - margin-inline-end
+PASS Logical shorthand with 1 variable and 1 length - margin-inline
+

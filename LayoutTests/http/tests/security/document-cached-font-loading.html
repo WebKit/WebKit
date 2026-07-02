@@ -1,0 +1,22 @@
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+</script>
+<style>
+/* cache the font */
+@font-face {
+    font-family: 'uaf';
+    src: url(a.ttf);
+}
+body {
+    font-family: 'uaf';
+}
+</style>
+</head>
+<body>
+    This test passes if it does not crash.
+    <iframe id="a" onload="document.getElementById('a').remove();" src="../resources/document-cached-font-loading-helper.html"></iframe>
+    <iframe id="b" onload="document.getElementById('b').remove();" src="../resources/document-cached-font-loading-helper.html"></iframe>
+</body>

@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>WatchOSMediaControls</code> constructor.");
+
+const mediaControls = new WatchOSMediaControls;
+
+shouldBeEqualToString("mediaControls.element.localName", "div");
+shouldBeEqualToString("mediaControls.element.className", "watchos media-controls");
+shouldBeType("mediaControls.layoutTraits", "WatchOSLayoutTraits");
+shouldBe("mediaControls.state", "WatchOSMediaControls.State.Paused");
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

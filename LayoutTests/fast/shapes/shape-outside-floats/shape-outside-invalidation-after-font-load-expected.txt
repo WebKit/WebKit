@@ -1,0 +1,11 @@
+OOnce upon a time there was text that wrapped around a float.
+Test that shape-outside is invalidated when font changes, even when CSS shape properties remain unchanged.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Content position changed, indicating shape was properly invalidated
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

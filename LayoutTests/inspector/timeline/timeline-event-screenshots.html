@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testRequestScreenshots() {
+    document.getElementById("test").style.width = "200px";
+
+    savePageData({invalidatedLayout: true});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.FireScreenshots");
+
+    suite.addTestCase({
+        name: "TimelineEvent.FireScreenshots.requestScreenshots",
+        async test() {
+            WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Screenshots];
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testRequestScreenshots()`,
+                timelineType: WI.TimelineRecord.Type.Screenshots,
+            });
+            InspectorTest.assert(pageRecordingData.invalidatedLayout);
+
+            let recording = WI.timelineManager.activeRecording;
+            let screenshotTimeline = recording.timelines.get(WI.TimelineRecord.Type.Screenshots);
+            let records = screenshotTimeline.records;
+            let oldLength = records.length;
+            InspectorTest.expectGreaterThan(oldLength, 0, "Should have at least 1 Screenshot record.");
+
+            InspectorTest.assert(records[0].startTime, "Screenshot record should have a timestamp.");
+            InspectorTest.expectGreaterThan(records[0].imageData.length, 0, "Screenshot record should contain image data.");
+
+            InspectorTest.log("Adding screenshot from console...");
+            await InspectorTest.evaluateInPage(`console.screenshot()`);
+
+            InspectorTest.expectEqual(records.length, oldLength + 1, "Should have added another Screenshot record.");
+
+            InspectorTest.assert(records[oldLength].startTime, "Screenshot record from console should have a timestamp.");
+            InspectorTest.expectGreaterThan(records[oldLength].imageData.length, 0, "Screenshot record from console should contain image data.");
+
+            InspectorTest.assert(records[oldLength].startTime > records[oldLength - 1].startTime, "Screenshot record from console should be newer than the last screenshot record.");
+            InspectorTest.assert(records[oldLength].imageData !== records[oldLength - 1].imageData, "Screenshot record from console should have different content than the last screenshot record.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+<style>
+#test {
+    width: 100px;
+    height: 100px;
+    background-color: darkseagreen;
+}
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests 'Screenshot' Timeline event records.</p>
+    <div id="test"></div>
+</body>
+</html>

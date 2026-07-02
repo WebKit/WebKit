@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Cookie Store API: cookiechange event in ServiceWorker with already-expired cookie. Test timed out
+NOTRUN Cookie Store API: cookiechange event in ServiceWorker with already-expired cookie. 1
+

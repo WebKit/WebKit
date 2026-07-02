@@ -1,0 +1,27 @@
+<html>
+<head>
+<script>
+var pauseCount = 0;
+
+function setup() {
+    var video = document.getElementById("video");
+    video.addEventListener("pause", function() {
+        pauseCount++;
+        // Simulate a site that retries play() on pause.
+        video.play().catch(function() { });
+    });
+    video.play().catch(function() {
+        // One-time result post after first play.
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("pause-count:" + pauseCount);
+            } catch(e) { }
+        }, 100);
+    });
+}
+</script>
+</head>
+<body onload="setup()">
+<video id="video" playsinline src="test.mp4"></video>
+</body>
+</html>

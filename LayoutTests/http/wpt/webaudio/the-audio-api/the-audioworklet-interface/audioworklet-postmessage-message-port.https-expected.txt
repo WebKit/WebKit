@@ -1,0 +1,10 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Test postMessage of MessagePort from AudioWorkletNode to AudioWorkletProcessor"
+PASS Audit report
+PASS > [Test postMessage of MessagePort from AudioWorkletNode to AudioWorkletProcessor]
+PASS   audio worklet was created is equal to created.
+PASS   audio worklet received the MessagePort is equal to port-received.
+PASS < [Test postMessage of MessagePort from AudioWorkletNode to AudioWorkletProcessor] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

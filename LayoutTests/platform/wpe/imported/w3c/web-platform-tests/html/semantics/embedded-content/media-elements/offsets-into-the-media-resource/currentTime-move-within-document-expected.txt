@@ -1,0 +1,3 @@
+
+FAIL playback should not reset when moving within a document assert_greater_than_equal: expected a number greater than or equal to 10 but got 0
+

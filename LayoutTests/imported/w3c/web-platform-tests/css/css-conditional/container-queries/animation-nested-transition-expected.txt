@@ -1,0 +1,4 @@
+Test
+
+PASS Animated container size triggers transition
+

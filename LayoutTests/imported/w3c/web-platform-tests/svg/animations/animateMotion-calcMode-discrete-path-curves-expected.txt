@@ -1,0 +1,3 @@
+
+FAIL Test animateMotion with calcMode="discrete" and complex paths assert_equals: curves: moveTo (x) expected 0 but got 33.828853607177734
+

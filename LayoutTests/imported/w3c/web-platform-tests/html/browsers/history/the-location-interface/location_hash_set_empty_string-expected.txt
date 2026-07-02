@@ -1,0 +1,3 @@
+
+PASS window.location.hash is an empty string
+

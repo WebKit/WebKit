@@ -1,0 +1,225 @@
+/*
+ * Copyright 2012 Google Inc.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#ifndef SkMathPriv_DEFINED
+#define SkMathPriv_DEFINED
+
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkCPUTypes.h"
+#include "include/private/base/SkTemplates.h"
+
+#include <bit>
+#include <cstddef>
+#include <cstdint>
+
+/**
+ * Return the number of leading zero bits.
+ */
+static constexpr int SkCLZ(uint32_t x) {
+    return std::countl_zero<uint32_t>(x);
+}
+
+/**
+ * Return the number of trailing zero bits.
+ */
+static constexpr int SkCTZ(uint32_t x) {
+    return std::countr_zero<uint32_t>(x);
+}
+
+/*
+ * Return the number of set bits (i.e., the population count) in the provided uint32_t.
+ */
+static constexpr int SkPopCount(uint32_t x) {
+    return std::popcount<uint32_t>(x);
+}
+
+/**
+ *  Return the integer square root of value, with a bias of bitBias
+ */
+int32_t SkSqrtBits(int32_t value, int bitBias);
+
+/** Return the integer square root of n, treated as a SkFixed (16.16)
+ */
+static inline int32_t SkSqrt32(int32_t n) { return SkSqrtBits(n, 15); }
+
+/**
+ *  Returns (value < 0 ? 0 : value) efficiently (i.e. no compares or branches)
+ */
+static inline int SkClampPos(int value) {
+    return value & ~(value >> 31);
+}
+
+/**
+ * Stores numer/denom and numer%denom into div and mod respectively.
+ */
+template <typename In, typename Out>
+inline void SkTDivMod(In numer, In denom, Out* div, Out* mod) {
+    *div = static_cast<Out>(numer/denom);
+    *mod = static_cast<Out>(numer%denom);
+}
+
+/** Returns -1 if n < 0, else returns 0
+ */
+#define SkExtractSign(n)    ((int32_t)(n) >> 31)
+
+/** If sign == -1, returns -n, else sign must be 0, and returns n.
+ Typically used in conjunction with SkExtractSign().
+ */
+static inline int32_t SkApplySign(int32_t n, int32_t sign) {
+    SkASSERT(sign == 0 || sign == -1);
+    return (n ^ sign) - sign;
+}
+
+/** Return x with the sign of y */
+static inline int32_t SkCopySign32(int32_t x, int32_t y) {
+    return SkApplySign(x, SkExtractSign(x ^ y));
+}
+
+/** Given a positive value and a positive max, return the value
+ pinned against max.
+ Note: only works as long as max - value doesn't wrap around
+ @return max if value >= max, else value
+ */
+static inline unsigned SkClampUMax(unsigned value, unsigned max) {
+    if (value > max) {
+        value = max;
+    }
+    return value;
+}
+
+// If a signed int holds min_int (e.g. 0x80000000) it is undefined what happens when
+// we negate it (even though we *know* we're 2's complement and we'll get the same
+// value back). So we create this helper function that casts to size_t (unsigned) first,
+// to avoid the complaint.
+static inline size_t sk_negate_to_size_t(int32_t value) {
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4146)  // Thanks MSVC, we know what we're negating an unsigned
+#endif
+    return -static_cast<size_t>(value);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/** Return a*b/255, truncating away any fractional bits. Only valid if both
+ a and b are 0..255
+ */
+static inline U8CPU SkMulDiv255Trunc(U8CPU a, U8CPU b) {
+    SkASSERT((uint8_t)a == a);
+    SkASSERT((uint8_t)b == b);
+    unsigned prod = a*b + 1;
+    return (prod + (prod >> 8)) >> 8;
+}
+
+/** Return (a*b)/255, taking the ceiling of any fractional bits. Only valid if
+ both a and b are 0..255. The expected result equals (a * b + 254) / 255.
+ */
+static inline U8CPU SkMulDiv255Ceiling(U8CPU a, U8CPU b) {
+    SkASSERT((uint8_t)a == a);
+    SkASSERT((uint8_t)b == b);
+    unsigned prod = a*b + 255;
+    return (prod + (prod >> 8)) >> 8;
+}
+
+/** Just the rounding step in SkDiv255Round: round(value / 255)
+ */
+static inline unsigned SkDiv255Round(unsigned prod) {
+    prod += 128;
+    return (prod + (prod >> 8)) >> 8;
+}
+
+/**
+ * Swap byte order of a 4-byte value, e.g. 0xaarrggbb -> 0xbbggrraa.
+ */
+#if defined(_MSC_VER)
+    #include <stdlib.h>
+    static inline uint32_t SkBSwap32(uint32_t v) { return _byteswap_ulong(v); }
+#else
+    static inline uint32_t SkBSwap32(uint32_t v) { return __builtin_bswap32(v); }
+#endif
+
+/**
+ *  Returns the log2 of the specified value, were that value to be rounded up
+ *  to the next power of 2. It is undefined to pass 0. Examples:
+ *  SkNextLog2(1) -> 0
+ *  SkNextLog2(2) -> 1
+ *  SkNextLog2(3) -> 2
+ *  SkNextLog2(4) -> 2
+ *  SkNextLog2(5) -> 3
+ */
+static constexpr int SkNextLog2(uint32_t value) {
+    SkASSERT(value != 0);
+    return 32 - SkCLZ(value - 1);
+}
+
+/**
+*  Returns the log2 of the specified value, were that value to be rounded down
+*  to the previous power of 2. It is undefined to pass 0. Examples:
+*  SkPrevLog2(1) -> 0
+*  SkPrevLog2(2) -> 1
+*  SkPrevLog2(3) -> 1
+*  SkPrevLog2(4) -> 2
+*  SkPrevLog2(5) -> 2
+*/
+static constexpr int SkPrevLog2(uint32_t value) {
+    SkASSERT(value != 0);
+    return 32 - SkCLZ(value >> 1);
+}
+
+/**
+ *  Returns the smallest power-of-2 that is >= the specified value. If value
+ *  is already a power of 2, then it is returned unchanged. It is undefined
+ *  if value is <= 0.
+ */
+static constexpr int SkNextPow2(int value) {
+    SkASSERT(value > 0);
+    return 1 << SkNextLog2(static_cast<uint32_t>(value));
+}
+
+/**
+*  Returns the largest power-of-2 that is <= the specified value. If value
+*  is already a power of 2, then it is returned unchanged. It is undefined
+*  if value is <= 0.
+*/
+static constexpr int SkPrevPow2(int value) {
+    SkASSERT(value > 0);
+    return 1 << SkPrevLog2(static_cast<uint32_t>(value));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns the next power of 2 >= n or n if the next power of 2 can't be represented by size_t.
+ */
+static constexpr size_t SkNextSizePow2(size_t n) {
+    constexpr int kNumSizeTBits = 8 * sizeof(size_t);
+    constexpr size_t kHighBitSet = size_t(1) << (kNumSizeTBits - 1);
+
+    if (!n) {
+        return 1;
+    } else if (n >= kHighBitSet) {
+        return n;
+    }
+
+    n--;
+    uint32_t shift = 1;
+    while (shift < kNumSizeTBits) {
+        n |= n >> shift;
+        shift <<= 1;
+    }
+    return n + 1;
+}
+
+// conservative check. will return false for very large values that "could" fit
+template <typename T> static inline bool SkFitsInFixed(T x) {
+    return SkTAbs(x) <= 32767.0f;
+}
+
+#endif

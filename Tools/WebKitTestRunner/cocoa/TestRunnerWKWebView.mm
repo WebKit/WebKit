@@ -1,0 +1,830 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "TestRunnerWKWebView.h"
+
+#import "PlatformViewHelpers.h"
+#import "TestController.h"
+#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFormInputSession.h>
+#import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Seconds.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+#import <WebKit/WKImmersiveEnvironment.h>
+#import <WebKit/WKImmersiveEnvironmentDelegate.h>
+#endif
+
+#if PLATFORM(MAC)
+#import "WebKitTestRunnerDraggingInfo.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPIForTesting.h"
+#import <WebKit/WKWebViewPrivate.h>
+
+@interface WKWebView ()
+
+// FIXME: move these to WKWebView_Private.h
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
+- (void)_didFinishScrolling:(UIScrollView *)scrollView;
+- (void)_scheduleVisibleContentRectUpdate;
+
+@end
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIEditMenuInteraction)
+#endif
+#endif // PLATFORM(IOS_FAMILY)
+
+struct CustomMenuActionInfo {
+    RetainPtr<NSString> name;
+    BOOL dismissesAutomatically { NO };
+    BlockPtr<void()> callback;
+};
+
+@interface TestRunnerWKWebView () <WKUIDelegatePrivate, _WKInputDelegate
+#if PLATFORM(IOS_FAMILY)
+    , UIGestureRecognizerDelegate
+#endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    , WKImmersiveEnvironmentDelegate
+#endif
+> {
+    RetainPtr<NSNumber> _stableStateOverride;
+    BOOL _isInteractingWithFormControl;
+    BOOL _scrollingUpdatesDisabled;
+    RetainPtr<NSArray<NSString *>> _allowedMenuActions;
+#if PLATFORM(MAC)
+    int _draggingSequenceNumber;
+    RetainPtr<WebKitTestRunnerDraggingInfo> _currentDraggingInfo;
+#endif
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<UITapGestureRecognizer> _windowTapGestureRecognizer;
+    BlockPtr<void()> _windowTapRecognizedCallback;
+    UIInterfaceOrientationMask _supportedInterfaceOrientations;
+    BOOL _didCallEnsurePositionInformationIsUpToDate;
+#endif
+}
+
+@property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
+@property (nonatomic, copy) void (^retrieveSpeakSelectionContentCompletionHandler)(void);
+@property (nonatomic, getter=isShowingKeyboard, setter=setIsShowingKeyboard:) BOOL showingKeyboard;
+@property (nonatomic, getter=isShowingMenu, setter=setIsShowingMenu:) BOOL showingMenu;
+@property (nonatomic, getter=isDismissingMenu, setter=setIsDismissingMenu:) BOOL dismissingMenu;
+@property (nonatomic, getter=isShowingPopover, setter=setIsShowingPopover:) BOOL showingPopover;
+@property (nonatomic, getter=isShowingFormValidationBubble, setter=setIsShowingFormValidationBubble:) BOOL showingFormValidationBubble;
+@property (nonatomic, getter=isShowingContextMenu, setter=setIsShowingContextMenu:) BOOL showingContextMenu;
+@property (nonatomic, getter=isShowingContactPicker, setter=setIsShowingContactPicker:) BOOL showingContactPicker;
+
+@end
+
+@implementation TestRunnerWKWebView
+
+@dynamic _stableStateOverride;
+
+#if PLATFORM(MAC)
+- (void)_startTestDragWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source
+{
+    ++_draggingSequenceNumber;
+    RetainPtr draggingInfo = adoptNS([[WebKitTestRunnerDraggingInfo alloc] initWithImage:image offset:offset pasteboard:pasteboard source:source sequenceNumber:_draggingSequenceNumber]);
+    _currentDraggingInfo = draggingInfo;
+    [self draggingEntered:draggingInfo.get()];
+    [self draggingUpdated:draggingInfo.get()];
+}
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
+- (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
+IGNORE_WARNINGS_END
+{
+    [self _startTestDragWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj];
+}
+
+- (NSDraggingSession *)beginDraggingSessionWithItems:(NSArray<NSDraggingItem *> *)items event:(NSEvent *)event source:(id<NSDraggingSource>)source
+{
+    RetainPtr pasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameDrag];
+
+    // Save and restore legacy pasteboard data around clearContents + writeObjects:,
+    // since this override fires draggingEntered: synchronously (before the caller
+    // can restore the data itself).
+    RetainPtr savedTypes = adoptNS([[pasteboard types] copy]);
+    RetainPtr savedData = adoptNS([[NSMutableDictionary alloc] init]);
+    for (NSString *type in savedTypes.get()) {
+        if (RetainPtr data = [pasteboard dataForType:type])
+            [savedData setObject:data.get() forKey:type];
+    }
+
+    [pasteboard clearContents];
+    RetainPtr pasteboardObjects = [NSMutableArray arrayWithCapacity:items.count];
+    NSMutableArray<NSString *> *promisedFileTypes = [NSMutableArray array];
+    for (NSDraggingItem *item in items) {
+        id pasteboardObject = item.item;
+        if ([pasteboardObject isKindOfClass:[NSFilePromiseProvider class]])
+            [promisedFileTypes addObject:[(NSFilePromiseProvider *)pasteboardObject fileType]];
+        else
+            [pasteboardObjects addObject:pasteboardObject];
+    }
+    if ([pasteboardObjects count])
+        [pasteboard writeObjects:pasteboardObjects.get()];
+    if (promisedFileTypes.count) {
+        [pasteboard setPropertyList:promisedFileTypes forType:NSFilesPromisePboardType];
+        [pasteboard addTypes:@[@"NSPromiseContentsPboardType", (NSString *)kPasteboardTypeFileURLPromise] owner:nil];
+    }
+
+    if ([savedTypes count]) {
+        [pasteboard clearContents];
+        [pasteboard addTypes:savedTypes.get() owner:nil];
+        for (NSString *type in savedTypes.get()) {
+            if (RetainPtr data = [savedData objectForKey:type])
+                [pasteboard setData:data.get() forType:type];
+        }
+    }
+
+    RetainPtr dragImage = dynamic_objc_cast<NSImage>(items.firstObject.imageComponents.firstObject.contents);
+    [self _startTestDragWithImage:dragImage.get() offset:NSZeroSize pasteboard:pasteboard.get() source:source];
+
+    return adoptNS([[NSDraggingSession alloc] init]).autorelease();
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    if (_currentDraggingInfo) {
+        NSLog(@"[WKWebViewMac mouseDown:] with unexpected _currentDraggingInfo, missing mouseUp?");
+        _currentDraggingInfo = nil;
+    }
+    [super mouseDown:event];
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
+    if (RetainPtr<WebKitTestRunnerDraggingInfo> draggingInfo = _currentDraggingInfo) {
+        [self prepareForDragOperation:draggingInfo.get()];
+        [self performDragOperation:draggingInfo.get()];
+        _currentDraggingInfo = nil;
+    } else
+        [super mouseUp:event];
+}
+
+- (void)mouseDragged:(NSEvent *)event
+{
+    if (RetainPtr<WebKitTestRunnerDraggingInfo> draggingInfo = _currentDraggingInfo)
+        [self draggingUpdated:draggingInfo.get()];
+    else
+        [super mouseDragged:event];
+}
+#endif
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (self = [super initWithFrame:frame configuration:configuration]) {
+        NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+#if PLATFORM(MAC)
+        [center addObserver:self selector:@selector(_didShowMenu) name:NSMenuDidBeginTrackingNotification object:nil];
+        [center addObserver:self selector:@selector(_didHideMenu) name:NSMenuDidEndTrackingNotification object:nil];
+#else
+        [center addObserver:self selector:@selector(_invokeShowKeyboardCallbackIfNecessary) name:UIKeyboardDidShowNotification object:nil];
+        [center addObserver:self selector:@selector(_invokeHideKeyboardCallbackIfNecessary) name:UIKeyboardDidHideNotification object:nil];
+        [center addObserver:self selector:@selector(_keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [center addObserver:self selector:@selector(_didShowMenu) name:UIMenuControllerDidShowMenuNotification object:nil];
+        [center addObserver:self selector:@selector(_willHideMenu) name:UIMenuControllerWillHideMenuNotification object:nil];
+        [center addObserver:self selector:@selector(_didHideMenu) name:UIMenuControllerDidHideMenuNotification object:nil];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        [center addObserver:self selector:@selector(_willPresentPopover:) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
+        [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
+        self.inspectable = YES;
+        self.UIDelegate = self;
+        self._inputDelegate = self;
+        self.focusStartsInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
+        self.supportedInterfaceOrientations = UIInterfaceOrientationMaskAll;
+        self.traitOverrides.displayScale = 2.0f;
+#endif
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+        self.immersiveEnvironmentDelegate = self;
+#endif
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    [self resetInteractionCallbacks];
+#if PLATFORM(IOS_FAMILY)
+    self.accessibilitySpeakSelectionContent = nil;
+#endif
+
+    self.zoomToScaleCompletionHandler = nil;
+    self.retrieveSpeakSelectionContentCompletionHandler = nil;
+
+    [super dealloc];
+}
+
+- (void)_didShowContextMenu
+{
+    if (self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = YES;
+    if (self.didShowContextMenuCallback)
+        self.didShowContextMenuCallback();
+}
+
+- (void)_didDismissContextMenu
+{
+    if (!self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = NO;
+    if (self.didDismissContextMenuCallback)
+        self.didDismissContextMenuCallback();
+}
+
+- (void)_didShowMenu
+{
+    if (self.showingMenu)
+        return;
+
+    self.showingMenu = YES;
+    if (self.didShowMenuCallback)
+        self.didShowMenuCallback();
+}
+
+- (void)_didHideMenu
+{
+#if PLATFORM(IOS_FAMILY)
+    self.dismissingMenu = NO;
+#endif
+
+    if (!self.showingMenu)
+        return;
+
+    self.showingMenu = NO;
+    if (self.didHideMenuCallback)
+        self.didHideMenuCallback();
+}
+
+- (void)dismissActiveMenu
+{
+#if PLATFORM(IOS_FAMILY)
+    [self _dismissAllContextMenuInteractions];
+    [self resignFirstResponder];
+#else
+    auto menu = retainPtr(self._activeMenu);
+    [menu removeAllItems];
+    [menu update];
+    [menu cancelTracking];
+#endif
+}
+
+- (void)resetInteractionCallbacks
+{
+    self.didShowContextMenuCallback = nil;
+    self.didDismissContextMenuCallback = nil;
+    self.didShowMenuCallback = nil;
+    self.didHideMenuCallback = nil;
+    self.didShowContactPickerCallback = nil;
+    self.didHideContactPickerCallback = nil;
+#if PLATFORM(IOS_FAMILY)
+    self.didStartFormControlInteractionCallback = nil;
+    self.didEndFormControlInteractionCallback = nil;
+    self.willBeginZoomingCallback = nil;
+    self.didEndZoomingCallback = nil;
+    self.didShowKeyboardCallback = nil;
+    self.didHideKeyboardCallback = nil;
+    self.willStartInputSessionCallback = nil;
+    self.willPresentPopoverCallback = nil;
+    self.didDismissPopoverCallback = nil;
+    self.didPresentViewControllerCallback = nil;
+    self.didEndScrollingCallback = nil;
+    self.rotationDidEndCallback = nil;
+    self.windowTapRecognizedCallback = nil;
+#endif // PLATFORM(IOS_FAMILY)
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+- (UITextEffectsWindow *)textEffectsWindow
+{
+    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
+}
+
+- (void)_willHideMenu
+{
+    self.dismissingMenu = YES;
+}
+
+- (void)didStartFormControlInteraction
+{
+    _isInteractingWithFormControl = YES;
+
+    if (self.didStartFormControlInteractionCallback)
+        self.didStartFormControlInteractionCallback();
+}
+
+- (void)didEndFormControlInteraction
+{
+    _isInteractingWithFormControl = NO;
+
+    if (self.didEndFormControlInteractionCallback)
+        self.didEndFormControlInteractionCallback();
+}
+
+- (void)didEnsurePositionInformationIsUpToDate
+{
+    _didCallEnsurePositionInformationIsUpToDate = YES;
+}
+
+- (BOOL)isInteractingWithFormControl
+{
+    return _isInteractingWithFormControl;
+}
+
+- (void)immediatelyDismissContextMenuIfNeeded
+{
+    if (!self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = NO;
+
+    [self _dismissAllContextMenuInteractions];
+}
+
+- (void)_dismissAllContextMenuInteractions
+{
+#if USE(UICONTEXTMENU)
+    auto dismissContextMenuInteractionsForView = ^(UIView *view) {
+        for (id<UIInteraction> interaction in view.interactions) {
+            if (auto contextMenuInteraction = dynamic_objc_cast<UIContextMenuInteraction>(interaction)) {
+                [UIView performWithoutAnimation:^{
+                    [contextMenuInteraction dismissMenu];
+                }];
+            }
+        }
+    };
+
+    for (UIView *subview in self.contentView.subviews) {
+        if ([subview isKindOfClass:UIButton.class])
+            dismissContextMenuInteractionsForView(subview);
+    }
+    dismissContextMenuInteractionsForView(self.contentView);
+#endif // USE(UICONTEXTMENU)
+}
+
+- (void)setAllowedMenuActions:(NSArray<NSString *> *)actions
+{
+    _allowedMenuActions = actions;
+}
+
+- (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
+{
+    ASSERT(!self.zoomToScaleCompletionHandler);
+
+    if (self.scrollView.zoomScale == scale) {
+        dispatch_async(mainDispatchQueueSingleton(), ^{
+            completionHandler();
+        });
+        return;
+    }
+
+    self.zoomToScaleCompletionHandler = completionHandler;
+    [self.scrollView setZoomScale:scale animated:animated];
+}
+
+- (void)_keyboardWillHide
+{
+    _keyboardWillHideCount++;
+}
+
+- (void)_invokeShowKeyboardCallbackIfNecessary
+{
+    if (self.showingKeyboard)
+        return;
+
+    self.showingKeyboard = YES;
+    if (self.didShowKeyboardCallback)
+        self.didShowKeyboardCallback();
+}
+
+- (void)_invokeHideKeyboardCallbackIfNecessary
+{
+    if (!self.showingKeyboard)
+        return;
+
+    self.showingKeyboard = NO;
+    if (self.didHideKeyboardCallback)
+        self.didHideKeyboardCallback();
+}
+
+- (void)_willPresentPopover:(NSNotification *)notification
+{
+    if (self.showingPopover)
+        return;
+
+    auto controller = dynamic_objc_cast<UIPopoverPresentationController>(notification.object);
+    static Class validationBubbleDelegateClass = [&] {
+        return NSClassFromString(@"WebValidationBubbleDelegate");
+    }();
+    self.showingFormValidationBubble = controller.delegate.class == validationBubbleDelegateClass;
+    self.showingPopover = YES;
+    if (self.willPresentPopoverCallback)
+        self.willPresentPopoverCallback();
+}
+
+- (void)_didDismissPopover
+{
+    if (!self.showingPopover)
+        return;
+
+    self.showingFormValidationBubble = NO;
+    self.showingPopover = NO;
+    if (self.didDismissPopoverCallback)
+        self.didDismissPopoverCallback();
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
+{
+    [super scrollViewWillBeginZooming:scrollView withView:view];
+
+    if (self.willBeginZoomingCallback)
+        self.willBeginZoomingCallback();
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
+{
+    [super scrollViewDidEndZooming:scrollView withView:view atScale:scale];
+    
+    if (self.didEndZoomingCallback)
+        self.didEndZoomingCallback();
+
+    if (self.zoomToScaleCompletionHandler) {
+        self.zoomToScaleCompletionHandler();
+        self.zoomToScaleCompletionHandler = nullptr;
+    }
+}
+
+static bool isZoomingOrScrolling(UIScrollView *scroller)
+{
+    if (scroller.isZooming || scroller.isAnimatingZoom || scroller.isAnimatingScroll
+        || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing
+        || scroller.decelerating || scroller.dragging || scroller.scrollAnimating || scroller.tracking)
+        return YES;
+
+    static NeverDestroyed<RetainPtr<NSSet>> animationKeyNames = [NSSet setWithArray:@[
+        @"bounds.size",
+        @"bounds.origin",
+        @"bounds",
+        @"transform"
+    ]];
+
+    for (NSString *key in scroller.layer.animationKeys) {
+        if ([animationKeyNames.get() containsObject:key])
+            return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)isZoomingOrScrolling
+{
+    if (self._keyboardScrollingAnimationRunning)
+        return YES;
+
+    for (UIScrollView *scroller in findAllViewsInHierarchyOfType(self, UIScrollView.class)) {
+        if (isZoomingOrScrolling(scroller))
+            return YES;
+    }
+
+    return NO;
+}
+
+- (void)_didFinishScrolling:(UIScrollView *)scrollView
+{
+    [super _didFinishScrolling:scrollView];
+
+    if (self.didEndScrollingCallback)
+        self.didEndScrollingCallback();
+}
+
+- (NSNumber *)_stableStateOverride
+{
+    return _stableStateOverride.get();
+}
+
+- (void)_setStableStateOverride:(NSNumber *)overrideBoolean
+{
+    _stableStateOverride = overrideBoolean;
+    [self _scheduleVisibleContentRectUpdate];
+}
+
+- (BOOL)_scrollingUpdatesDisabledForTesting
+{
+    return _scrollingUpdatesDisabled;
+}
+
+- (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
+{
+    _scrollingUpdatesDisabled = disabled;
+}
+
+- (void)_didEndRotation
+{
+    if (self.rotationDidEndCallback)
+        self.rotationDidEndCallback();
+}
+
+- (void)didRecognizeTapOnWindow
+{
+    ASSERT(self.windowTapRecognizedCallback);
+    if (self.windowTapRecognizedCallback)
+        self.windowTapRecognizedCallback();
+}
+
+- (void(^)())windowTapRecognizedCallback
+{
+    return _windowTapRecognizedCallback.get();
+}
+
+- (void)setWindowTapRecognizedCallback:(void(^)())windowTapRecognizedCallback
+{
+    _windowTapRecognizedCallback = windowTapRecognizedCallback;
+
+    if (windowTapRecognizedCallback && !_windowTapGestureRecognizer) {
+        ASSERT(self.window);
+        _windowTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] init]);
+        [_windowTapGestureRecognizer setDelegate:self];
+        [_windowTapGestureRecognizer addTarget:self action:@selector(didRecognizeTapOnWindow)];
+        [self.window addGestureRecognizer:_windowTapGestureRecognizer.get()];
+    } else if (!windowTapRecognizedCallback && _windowTapGestureRecognizer) {
+        [self.window removeGestureRecognizer:_windowTapGestureRecognizer.get()];
+        _windowTapGestureRecognizer = nil;
+    }
+}
+
+- (void)willMoveToWindow:(UIWindow *)window
+{
+    [super willMoveToWindow:window];
+
+    if (_windowTapGestureRecognizer)
+        [self.window removeGestureRecognizer:_windowTapGestureRecognizer.get()];
+}
+
+- (void)didMoveToWindow
+{
+    [super didMoveToWindow];
+
+    if (_windowTapGestureRecognizer)
+        [self.window addGestureRecognizer:_windowTapGestureRecognizer.get()];
+}
+
+- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content
+{
+    self.accessibilitySpeakSelectionContent = content;
+    if (self.retrieveSpeakSelectionContentCompletionHandler)
+        self.retrieveSpeakSelectionContentCompletionHandler();
+}
+
+- (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler
+{
+    self.retrieveSpeakSelectionContentCompletionHandler = completionHandler;
+    [self _accessibilityRetrieveSpeakSelectionContent];
+}
+
+- (void)setOverrideSafeAreaInsets:(UIEdgeInsets)insets
+{
+    _overrideSafeAreaInsets = insets;
+
+// FIXME: Likely we can remove this special case for watchOS.
+#if !PLATFORM(WATCHOS)
+    [self _updateSafeAreaInsets];
+#endif
+}
+
+- (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
+{
+    return _overrideSafeAreaInsets;
+}
+
+- (void)setSupportedInterfaceOrientations:(UIInterfaceOrientationMask)orientations
+{
+    _supportedInterfaceOrientations = orientations;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return _supportedInterfaceOrientations;
+}
+
+- (UIView *)contentView
+{
+    return [self valueForKeyPath:@"_currentContentView"];
+}
+
+static bool isQuickboardViewController(UIViewController *viewController)
+{
+#if HAVE(PEPPER_UI_CORE)
+    if ([viewController isKindOfClass:NSClassFromString(@"PUICQuickboardViewController")])
+        return true;
+#if HAVE(QUICKBOARD_CONTROLLER)
+    if ([viewController isKindOfClass:NSClassFromString(@"PUICQuickboardRemoteViewController")])
+        return true;
+#endif // HAVE(QUICKBOARD_CONTROLLER)
+#endif // HAVE(PEPPER_UI_CORE)
+    return false;
+}
+
+- (void)_didPresentViewController:(UIViewController *)viewController
+{
+    if (self.didPresentViewControllerCallback)
+        self.didPresentViewControllerCallback();
+
+    if (isQuickboardViewController(viewController))
+        [self _invokeShowKeyboardCallbackIfNecessary];
+}
+
+#pragma mark - WKUIDelegatePrivate
+
+// In extra zoom mode, fullscreen form control UI takes on the same role as keyboards and input view controllers
+// in UIKit. As such, we allow keyboard presentation and dismissal callbacks to work in extra zoom mode as well.
+- (void)_webView:(WKWebView *)webView didPresentFocusedElementViewController:(UIViewController *)controller
+{
+    [self _invokeShowKeyboardCallbackIfNecessary];
+}
+
+- (void)_webView:(WKWebView *)webView didDismissFocusedElementViewController:(UIViewController *)controller
+{
+    [self _invokeHideKeyboardCallbackIfNecessary];
+}
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+- (void)webView:(WKWebView *)webView willPresentEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:[strongSelf = RetainPtr { self }] {
+        [strongSelf _didShowMenu];
+    }];
+}
+
+- (void)webView:(WKWebView *)webView willDismissEditMenuWithAnimator:(id<UIEditMenuInteractionAnimating>)animator
+{
+    [animator addCompletion:[strongSelf = RetainPtr { self }] {
+        [strongSelf _didHideMenu];
+    }];
+}
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
+
+#pragma mark - _WKInputDelegate
+
+- (void)_webView:(WKWebView *)webView willStartInputSession:(id <_WKFormInputSession>)inputSession
+{
+    if (self.willStartInputSessionCallback)
+        self.willStartInputSessionCallback();
+    inputSession.accessoryViewShouldNotShow = self.suppressInputAccessoryView;
+}
+
+- (_WKFocusStartsInputSessionPolicy)_webView:(WKWebView *)webView decidePolicyForFocusedElement:(id<_WKFocusedElementInfo>)info
+{
+    return self.focusStartsInputSessionPolicy;
+}
+
+- (void)_webView:(WKWebView *)webView focusRequiresStrongPasswordAssistance:(id<_WKFocusedElementInfo>)info completionHandler:(void(^)(BOOL))completionHandler
+{
+    auto delay = Seconds { self.showKeyboardAfterElementFocusDelay };
+    if (!delay)
+        return completionHandler(NO);
+
+    RunLoop::mainSingleton().dispatchAfter(delay, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler(NO);
+    });
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return gestureRecognizer == _windowTapGestureRecognizer;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+- (void)_didPresentContactPicker
+{
+    if (self.showingContactPicker)
+        return;
+
+    self.showingContactPicker = YES;
+    if (self.didShowContactPickerCallback)
+        self.didShowContactPickerCallback();
+}
+
+- (void)_didDismissContactPicker
+{
+    if (!self.showingContactPicker)
+        return;
+
+    self.showingContactPicker = NO;
+    if (self.didHideContactPickerCallback)
+        self.didHideContactPickerCallback();
+}
+
+- (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler
+{
+    [super _didLoadAppInitiatedRequest:completionHandler];
+}
+
+- (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler
+{
+    [super _didLoadNonAppInitiatedRequest:completionHandler];
+}
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+- (void)immediatelyDismissEditMenuInteractionIfNeeded
+{
+    if (!self.isShowingMenu)
+        return;
+
+    self.showingMenu = NO;
+
+    [UIView performWithoutAnimation:^{
+        for (id<UIInteraction> interaction in self.contentView.interactions) {
+            if ([interaction isKindOfClass:getUIEditMenuInteractionClassSingleton()])
+                [(UIEditMenuInteraction *)interaction dismissMenu];
+        }
+    }];
+}
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
+
+#if PLATFORM(IOS_FAMILY)
+
+- (BOOL)didCallEnsurePositionInformationIsUpToDateSinceLastCheck
+{
+    const auto hasUpdated = _didCallEnsurePositionInformationIsUpToDate;
+    _didCallEnsurePositionInformationIsUpToDate = NO;
+    return hasUpdated;
+}
+
+- (void)clearEnsurePositionInformationIsUpToDateTracking
+{
+    _didCallEnsurePositionInformationIsUpToDate = NO;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+
+#pragma mark - WKImmersiveEnvironmentDelegate
+
+- (void)webView:(WKWebView *)webView shouldAllowImmersiveEnvironmentFromFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler
+{
+    completionHandler(self.shouldAcceptImmersiveEnvironmentRequests);
+}
+
+- (void)webView:(WKWebView *)webView presentImmersiveEnvironment:(WKImmersiveEnvironment *)environment completionHandler:(void (^)(NSError * _Nullable))completionHandler
+{
+    completionHandler(nil);
+}
+
+- (void)webView:(WKWebView *)webView dismissImmersiveEnvironment:(WKImmersiveEnvironment *)environment completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+}
+
+#endif
+
+@end

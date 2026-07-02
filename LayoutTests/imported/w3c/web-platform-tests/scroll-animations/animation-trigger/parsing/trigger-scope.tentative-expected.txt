@@ -1,0 +1,27 @@
+
+FAIL e.style['trigger-scope'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "none" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "all" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "--a" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "--a, --b" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "--a, --b, --c" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "--foo, --bar" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['trigger-scope'] = "--bar, --foo" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL Property trigger-scope value 'initial' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value 'none' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value 'all' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value '--a' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value '--a, --b' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value '--a, --b, --c' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value '--foo, --bar' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property trigger-scope value '--bar, --foo' assert_true: trigger-scope doesn't seem to be supported in the computed style expected true got false
+PASS e.style['trigger-scope'] = "--a none" should not set the property value
+PASS e.style['trigger-scope'] = "none --a" should not set the property value
+PASS e.style['trigger-scope'] = "none all" should not set the property value
+PASS e.style['trigger-scope'] = "--a --b" should not set the property value
+PASS e.style['trigger-scope'] = "a, b, c" should not set the property value
+PASS e.style['trigger-scope'] = "" should not set the property value
+

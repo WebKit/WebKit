@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Container query units with page zoom - expected</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        .container {
+            /* 200px * 2x zoom = 400px */
+            width: 400px;
+            /* 100px * 2x zoom = 200px */
+            height: 200px;
+            background-color: red;
+            overflow: hidden;
+            position: relative;
+        }
+        .inner {
+            width: 400px;
+            height: 200px;
+            background-color: green;
+        }
+        .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            /* 100cqw = 200px CSS * 2x zoom = 400px */
+            width: 400px;
+            text-align: center;
+            /* 5cqmin = 5% of min(400,200) = 10px CSS, 2x zoom = 20px */
+            font-size: 20px;
+            line-height: 1.2;
+            color: white;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="inner"></div>
+        <div class="caption">Caption Text</div>
+    </div>
+</body>
+</html>

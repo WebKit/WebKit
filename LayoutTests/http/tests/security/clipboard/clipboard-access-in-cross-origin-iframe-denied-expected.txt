@@ -1,0 +1,21 @@
+Verifies that a cross-origin iframe cannot read or write the clipboard by consuming transient user activation from the top-level page via postMessage. navigator.clipboard.readText(), navigator.clipboard.read(), navigator.clipboard.writeText(), and navigator.clipboard.write() in the iframe should all be rejected with NotAllowedError because transient activation does not propagate to cross-origin iframes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Result for navigator.clipboard.readText():
+PASS iframeStatus is "rejected"
+PASS iframeErrorName is "NotAllowedError"
+Result for navigator.clipboard.read():
+PASS iframeStatus is "rejected"
+PASS iframeErrorName is "NotAllowedError"
+Result for navigator.clipboard.writeText():
+PASS iframeStatus is "rejected"
+PASS iframeErrorName is "NotAllowedError"
+Result for navigator.clipboard.write():
+PASS iframeStatus is "rejected"
+PASS iframeErrorName is "NotAllowedError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

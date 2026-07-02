@@ -1,0 +1,5 @@
+
+
+PASS Ensure that video elements that get drawn on canvas do not get paused due to being backgrounded
+PASS Ensure that video elements that get drawn on canvas get resumed even if backgrounded
+

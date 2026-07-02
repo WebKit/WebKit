@@ -1,0 +1,24 @@
+Test escaping of filename passed to FormData.append().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Sending FormData containing blob with plain filename and MIME type:
+file=no-tricks.txt:text/plain:1234567890
+PASS window.response is 'file=no-tricks.txt:text/plain:1234567890'
+Sending FormData containing Blob with quote in filename:
+file=has%22quote.txt:text/plain:1234567890
+PASS response is 'file=has%22quote.txt:text/plain:1234567890'
+Sending FormData containing Blob with LF in filename:
+file=has%0Alf.txt:text/plain:1234567890
+PASS response is 'file=has%0Alf.txt:text/plain:1234567890'
+Sending FormData containing Blob with CR in filename:
+file=has%0Dcr.txt:text/plain:1234567890
+PASS response is 'file=has%0Dcr.txt:text/plain:1234567890'
+Sending FormData containing Blob with CR LF and " in filename:
+file=has%0D%0Acrlf%22andquote.txt:text/plain:1234567890
+PASS response is 'file=has%0D%0Acrlf%22andquote.txt:text/plain:1234567890'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

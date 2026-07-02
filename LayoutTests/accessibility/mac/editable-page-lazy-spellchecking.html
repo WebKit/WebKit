@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true ] -->
+<!-- runSingly because this test sets Page-wide state, which can impact the behavior of other tests that are run simulatenously. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="contenteditable">
+wrods is misspelled aab lotsi nowadays. euep.
+</div>
+
+<script>
+var output = "This test ensures that the proper attributes are present when \"lazy\" spellchecking happens in a page marked as editable.\n\n";
+
+if (window.accessibilityController && window.textInputController) {
+    accessibilityController.setForceDeferredSpellChecking(true);
+    textInputController.setPageEditable(true);
+
+    var contenteditable = accessibilityController.accessibleElementById("contenteditable");
+    var range = contenteditable.textMarkerRangeForElement(contenteditable);
+    output += `Attributed string with range: ${contenteditable.attributedStringForTextMarkerRangeWithDidSpellCheck(range)}\n`;
+    textInputController.setPageEditable(false);
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <script type="text/javascript">
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+      }
+      onload = function() {
+        if (location.hash != '#2') {
+          if (location.hash == '')
+            location.hash = '#1';
+          else
+            location.hash = "#" + (parseInt(location.hash.slice(1)) + 1).toString();
+          setTimeout(function(){ location.reload() }, 0);
+        } else {
+          document.body.innerText = 'PASS: WebKit did not crash in Asan or assert in Debug.';
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }
+      }
+    </script>
+
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <font>
+            <font-face font-family="any" id="foo"></font-face>
+            <use xlink:href="#foo">
+               <set attributeName="text-anchor"></set>
+            </use>
+        </font>
+    </svg>
+</html>

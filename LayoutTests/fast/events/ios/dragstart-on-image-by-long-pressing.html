@@ -1,0 +1,55 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dragInteractionPolicy=always-enable useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test requires WebKitTestRunner. To manually test, load the page in a configuration where drag and drop is enabled by default; start a drag on the image above by long-pressing it, and then drag the image off to the side of the screen and let go. 'dragstart' and 'dragend' events should be dispatched.");
+
+    let image = document.querySelector("img");
+    image.addEventListener("dragstart", () => {
+        testPassed("Started drag");
+    });
+
+    endedDrag = false;
+    image.addEventListener("dragend", () => {
+        endedDrag = true;
+    });
+
+    if (!window.testRunner)
+        return;
+
+    let clientRect = image.getBoundingClientRect();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(clientRect.left + (clientRect.width / 2), clientRect.top + (clientRect.height / 2))
+        .wait(1.5)
+        .move(300, 300, 1)
+        .wait(0.5)
+        .end()
+        .takeResult());
+
+    await new Promise(resolve => shouldBecomeEqual("endedDrag", "true", resolve));
+    while (true) {
+        if (!await UIHelper.isAnimatingDragCancel())
+            break;
+    }
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <img src="../resources/abe.png">
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>

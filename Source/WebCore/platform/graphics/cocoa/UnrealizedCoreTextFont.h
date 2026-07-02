@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "FontCacheCoreText.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreText/CoreText.h>
+#include <optional>
+#include <wtf/RetainPtr.h>
+
+namespace WebCore {
+
+class FontCreationContext;
+class FontDescription;
+
+class UnrealizedCoreTextFont {
+public:
+    UnrealizedCoreTextFont(RetainPtr<CTFontRef>&& baseFont)
+        : m_baseFont(WTF::move(baseFont))
+    {
+    }
+
+    UnrealizedCoreTextFont(RetainPtr<CTFontDescriptorRef>&& baseFont)
+        : m_baseFont(WTF::move(baseFont))
+    {
+    }
+
+    template <typename T>
+    void modify(T&& functor)
+    {
+        if (static_cast<bool>(*this))
+            functor(m_attributes.get());
+    }
+
+    void setSize(CGFloat size)
+    {
+        if (static_cast<bool>(*this))
+            CFDictionarySetValue(m_attributes.get(), kCTFontSizeAttribute, adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size)).get());
+    }
+
+    operator bool() const;
+
+    void modifyFromContext(const FontDescription&, const FontCreationContext&, FontTypeForPreparation = FontTypeForPreparation::NonSystemFont, ApplyTraitsVariations = ApplyTraitsVariations::Yes, bool shouldEnhanceTextLegibility = false);
+
+    RetainPtr<CTFontRef> realize() const;
+
+private:
+    CGFloat getSize() const;
+
+    enum class OpticalSizingType : uint8_t {
+        None,
+        JustVariation,
+        Everything,
+    };
+
+    static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription&, const FontCreationContext&, ApplyTraitsVariations, float weight, float width, float slope, CGFloat size, const OpticalSizingType&);
+
+    using VariationsMap = HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits>;
+    static void addAttributesForOpticalSizing(CFMutableDictionaryRef attributes, VariationsMap& variationsToBeApplied, const OpticalSizingType&, CGFloat size);
+    static void applyVariations(CFMutableDictionaryRef attributes, const VariationsMap& variationsToBeApplied);
+
+    Variant<RetainPtr<CTFontRef>, RetainPtr<CTFontDescriptorRef>> m_baseFont;
+    RetainPtr<CFMutableDictionaryRef> m_attributes { adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)) };
+
+    ApplyTraitsVariations m_applyTraitsVariations { ApplyTraitsVariations::Yes };
+    float m_weight { 0 };
+    float m_width { 0 };
+    float m_slope { 0 };
+    CGFloat m_size { 0 };
+    FontStyleAxis m_fontStyleAxis { FontStyleAxis::normal };
+    OpticalSizingType m_opticalSizingType { OpticalSizingType::None };
+    FontVariationSettings m_variationSettings;
+};
+
+} // namespace WebCore

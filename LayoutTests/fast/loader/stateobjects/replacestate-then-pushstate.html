@@ -1,0 +1,45 @@
+<html>
+<head>
+<script>
+function log(txt)
+{
+    document.getElementById("logger").innerText += txt + "\n";
+}
+    
+async function runTest()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        await testRunner.clearBackForwardList();
+    }
+    history.replaceState("OriginalHistoryItem", "Replaced title");
+    log("History length is " + history.length);
+    history.pushState("NewHistoryItem", "Pushed title");
+    log("History length is " + history.length);
+    history.back();
+}
+
+onpopstate = function(event)
+{
+    log("State popped - " + event.state + " (type " + typeof event.state + ")");
+    if (event.state == "OriginalHistoryItem")
+        history.forward();
+    else if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<body onload="runTest();">
+<pre>
+This test does the following:
+-Makes a call to replaceState()
+-Makes sure the history length is correct
+-Makes a call to pushState()
+-Makes sure the history length is correct
+-Goes back, and makes sure the popstate event is correct
+-Goes forward, and makes sure the popstate event is correct
+</pre><br>
+<pre id="logger"></pre>
+</body>
+</html>

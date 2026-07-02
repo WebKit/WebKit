@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p>Test that a &lt;select multiple&gt; fires the change event when a drag selection ends outside the element.</p>
+
+<select multiple="multiple" size="5" id="selectId">
+    <option value="P1">P1</option>
+    <option value="P2">P2</option>
+    <option value="P3">P3</option>
+    <option value="P4">P4</option>
+    <option value="P5">P5</option>
+</select>
+
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+if (!window.testRunner || !window.eventSender)
+    debug("Test manually: drag-select options in the list, release the mouse far below the element, and verify that the change event fires.");
+
+onload = async () => {
+    window.changeCount = 0;
+    window.inputCount = 0;
+    var selectObject = document.getElementById("selectId");
+    selectObject.addEventListener("change", () => { changeCount++; });
+    selectObject.addEventListener("input", () => { inputCount++; });
+
+    var optionHeight = selectObject.offsetHeight / selectObject.size;
+    var x = selectObject.offsetLeft + selectObject.offsetWidth / 2;
+    var firstOptionY = selectObject.offsetTop + optionHeight / 2;
+
+    eventSender.dragMode = false;
+
+    // Test 1: Drag from first option to third option, release far below the element.
+    debug("Test 1: Drag selection ending far below the select element");
+    changeCount = 0;
+    inputCount = 0;
+    await eventSender.asyncMouseMoveTo(x, firstOptionY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, firstOptionY + optionHeight * 2);
+    await eventSender.asyncMouseMoveTo(x, selectObject.offsetTop + selectObject.offsetHeight + 200);
+    await eventSender.asyncMouseUp();
+
+    shouldBe("document.getElementById('selectId').options[0].selected", "true");
+    shouldBe("document.getElementById('selectId').options[1].selected", "true");
+    shouldBe("document.getElementById('selectId').options[2].selected", "true");
+    shouldBe("changeCount", "1");
+    shouldBe("inputCount", "1");
+
+    // Deselect all by clicking first option.
+    await eventSender.asyncMouseMoveTo(x, firstOptionY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+
+    // Test 2: Drag from first option, release far to the right outside the element.
+    debug("");
+    debug("Test 2: Drag selection ending far to the right of the select element");
+    changeCount = 0;
+    inputCount = 0;
+    await eventSender.asyncMouseMoveTo(x, firstOptionY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, firstOptionY + optionHeight * 2);
+    await eventSender.asyncMouseMoveTo(selectObject.offsetLeft + selectObject.offsetWidth + 200, firstOptionY + optionHeight * 2);
+    await eventSender.asyncMouseUp();
+
+    shouldBe("document.getElementById('selectId').options[0].selected", "true");
+    shouldBe("document.getElementById('selectId').options[1].selected", "true");
+    shouldBe("document.getElementById('selectId').options[2].selected", "true");
+    shouldBe("changeCount", "1");
+    shouldBe("inputCount", "1");
+
+    // Deselect all by clicking first option.
+    await eventSender.asyncMouseMoveTo(x, firstOptionY);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+
+    // Test 3: Drag from first option, release far above the element.
+    debug("");
+    debug("Test 3: Drag selection ending far above the select element");
+    changeCount = 0;
+    inputCount = 0;
+    await eventSender.asyncMouseMoveTo(x, firstOptionY + optionHeight * 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, firstOptionY);
+    await eventSender.asyncMouseMoveTo(x, selectObject.offsetTop - 200);
+    await eventSender.asyncMouseUp();
+
+    shouldBe("document.getElementById('selectId').options[0].selected", "true");
+    shouldBe("document.getElementById('selectId').options[1].selected", "true");
+    shouldBe("document.getElementById('selectId').options[2].selected", "true");
+    shouldBe("changeCount", "1");
+    shouldBe("inputCount", "1");
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

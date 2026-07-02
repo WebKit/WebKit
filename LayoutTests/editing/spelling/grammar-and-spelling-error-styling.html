@@ -1,0 +1,82 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html>
+<head>
+<style>
+
+#editor {
+    width: 300px;
+    height: 20px;
+    border: 1px solid black;
+}
+
+::spelling-error {
+    color: red;
+    background-color: yellow;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: green;
+}
+
+::grammar-error {
+    color: darkred;
+    background-color: lightblue;
+    text-decoration-line: underline;
+    text-decoration-style: double;
+    text-decoration-color: red;
+}
+
+</style>
+</head>
+
+<body>
+<script src="../../resources/ui-helper.js"></script>
+<div id="editor" contenteditable="true"></div>
+<script>
+
+const incorrectPhrase = "the the adlj adaasj sdklj. there there";
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+function runTest()
+{
+    var editor = document.getElementById("editor");
+    editor.focus();
+
+    document.execCommand("InsertText", false, incorrectPhrase);
+
+    // Add a word separator so that both spelling and grammar markers will appear.
+    document.execCommand("InsertText", false, " ");
+
+    editor.blur();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+UIHelper.setSpellCheckerResults({
+    "the the adlj adaasj sdklj. there there\u00A0" : [
+        { type : "spelling", from : 8, to : 12 },
+        { type : "spelling", from : 13, to : 19 },
+        { type : "spelling", from : 20, to : 25 },
+        {
+            type : "grammar",
+            from : 4,
+            to : 7,
+            details : [{ from : 0, to : 3 }]
+        },
+        {
+            type : "grammar",
+            from : 33,
+            to : 38,
+            details : [{ from : 0, to : 5 }]
+        }
+    ]
+}).then(runTest);
+
+</script>
+</body>
+</html>

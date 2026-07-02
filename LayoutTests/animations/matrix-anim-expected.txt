@@ -1,0 +1,3 @@
+This test performs an animation of the matrix operator. It animates over 2 seconds. At 1 second it takes a snapshot and expects the result to be within range.
+PASS - "webkitTransform" property for "box" element at 0.5s saw something close to: 1,0,0,1
+

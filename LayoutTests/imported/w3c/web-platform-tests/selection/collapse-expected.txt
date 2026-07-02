@@ -1,0 +1,3 @@
+
+PASS Selection: Collapse the selection using collapse()
+Add a range to the selection

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Makes sure that we don't throw an exception when constructing an AudioNode with a closed context.");
+
+async function runTest() {
+    iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    context = new iframe.contentWindow.AudioContext();
+    document.body.removeChild(iframe);
+
+    shouldNotThrow("new AnalyserNode(context)");
+    shouldNotThrow("new AudioBufferSourceNode(context)");
+    shouldNotThrow("new BiquadFilterNode(context)");
+    shouldNotThrow("new ChannelMergerNode(context)");
+    shouldNotThrow("new ChannelSplitterNode(context)");
+    shouldNotThrow("new ConstantSourceNode(context)");
+    shouldNotThrow("new ConvolverNode(context)");
+    shouldNotThrow("new DelayNode(context)");
+    shouldNotThrow("new DynamicsCompressorNode(context)");
+    shouldNotThrow("new GainNode(context)");
+    shouldNotThrow("new IIRFilterNode(context, { feedforward: [1], feedback: [1, -0.9] })");
+    shouldNotThrow("new MediaElementAudioSourceNode(context, { mediaElement: new Audio })");
+    shouldThrowErrorName("new MediaStreamAudioDestinationNode(context)", "NotAllowedError"); // Not per specification but this is Blink's behavior.
+    shouldNotThrow("new OscillatorNode(context)");
+    shouldNotThrow("new PannerNode(context)");
+    shouldNotThrow("new PeriodicWave(context)");
+    shouldNotThrow("new StereoPannerNode(context)");
+    shouldNotThrow("new WaveShaperNode(context)");
+
+    shouldNotThrow("context.createAnalyser()");
+    shouldNotThrow("context.createBufferSource()");
+    shouldNotThrow("context.createBiquadFilter()");
+    shouldNotThrow("context.createChannelMerger()");
+    shouldNotThrow("context.createChannelSplitter()");
+    shouldNotThrow("context.createConstantSource()");
+    shouldNotThrow("context.createConvolver()");
+    shouldNotThrow("context.createDelay()");
+    shouldNotThrow("context.createDynamicsCompressor()");
+    shouldNotThrow("context.createGain()");
+    shouldNotThrow("context.createIIRFilter([1], [1, -0.9])");
+    shouldNotThrow("context.createMediaElementSource(new Audio)");
+    shouldThrowErrorName("context.createMediaStreamDestination()", "NotAllowedError"); // Not per specification but this is Blink's behavior.
+    shouldNotThrow("context.createOscillator()");
+    shouldNotThrow("context.createPanner()");
+    shouldNotThrow("context.createPeriodicWave([1, 2], [1, 2])");
+    shouldNotThrow("context.createStereoPanner()");
+    shouldNotThrow("context.createWaveShaper()");
+    shouldNotThrow("context.createScriptProcessor()");
+
+    await shouldRejectWithErrorName("context.suspend()", "InvalidStateError");
+    await shouldRejectWithErrorName("context.resume()", "InvalidStateError");
+    await shouldRejectWithErrorName("context.close()", "InvalidStateError");
+}
+
+onload = runTest;
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+
+PASS end event fires when immersive session ends and device reports when shutdown has completed - webgl
+PASS end event fires when immersive session ends and device reports when shutdown has completed - webgl2
+

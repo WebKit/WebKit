@@ -1,0 +1,10 @@
+input_stepDown
+
+
+
+PASS Forms
+PASS Calling stepDown() on input - number - where value < min should not modify value.
+PASS Calling stepDown() on input - date - where value < min should not modify value.
+PASS Calling stepDown() on input - datetime-local - where value < min should not modify value.
+PASS Calling stepDown() on input - time - where value < min should not modify value.
+

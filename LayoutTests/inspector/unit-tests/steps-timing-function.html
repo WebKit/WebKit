@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("WI.StepsTimingFunction");
+
+    suite.addTestCase({
+        name: "WI.StepsTimingFunction.fromString.Valid",
+        test() {
+            let test = (inputString, expectedString) => {
+                expectedString ||= inputString;
+                InspectorTest.expectEqual(WI.StepsTimingFunction.fromString(inputString).toString(), expectedString, `Should parse '${inputString}' as '${expectedString}'.`);
+            };
+
+            test("steps(1)", "step-end");
+            test("steps(2, jump-start)");
+            test("steps(3, jump-end)");
+            test("steps(4, jump-none)");
+            test("steps(5, jump-both)");
+            test("steps(6, end)");
+            test("steps(7, start)");
+            test("step-start");
+            test("step-end");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.StepsTimingFunction.fromString.Invalid",
+        test() {
+            let test = (inputString) => {
+                InspectorTest.expectNull(WI.StepsTimingFunction.fromString(inputString), `Should not parse invalid '${inputString}'.`);
+            };
+
+            test("steps()");
+            test("steps(0)");
+            test("steps(0, 1)");
+            test("steps(0, 1, 2)");
+            test("steps(\"test\")");
+            test("steps(0, \"test\")");
+            test("steps(0, 1, \"test\")");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for WI.StepsTimingFunction.</p>
+</body>
+</html>

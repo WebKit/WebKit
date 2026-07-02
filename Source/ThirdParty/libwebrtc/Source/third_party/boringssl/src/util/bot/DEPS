@@ -1,0 +1,269 @@
+# Copyright 2015 The BoringSSL Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+
+  'checkout_bazel': False,
+  # 'checkout_clang': True,  # // TODO(crbug.com/42220000): remove.
+  'checkout_cmake': True,
+  'checkout_go': True,
+  'checkout_fuzzer': False,
+  'checkout_perl': True,
+  'checkout_rust': False,
+  'checkout_sde': False,
+  'checkout_nasm': False,
+  'checkout_libcxx': False,
+  'checkout_riscv64': False,
+
+  # Run the following command to see the latest builds in CIPD:
+  #  cipd describe PACKAGE_NAME -version latest
+
+  # infra/3pp/tools/android_ndk/linux-amd64
+  # This package does not get updates automatically. To update, bump the version
+  # in infra's 3pp/android_ndk/fetch.py (see https://crrev.com/c/6470969), then
+  # wait a few hours for the new package to be built.
+  'android_ndk_version': 'version:3@r29.chromium.1',
+  # infra/3pp/tools/cmake/linux-amd64
+  'cmake_version': 'version:3@3.31.11.chromium.8',
+  # infra/3pp/tools/go/linux-amd64
+  'go_version': 'version:3@1.26.1',
+  # infra/3pp/tools/perl/windows-amd64
+  'perl_version': 'version:3@5.42.0.1',
+  # infra/3pp/tools/qemu_static/linux-amd64
+  'qemu_static_version': 'version:3@10.0.8+ds-0+deb13u1+b1',
+  # chrome_internal/third_party/sdk/windows, but if an update switches this to a
+  # new major VS release, keep some bots at the older version.
+  'windows_sdk_version': 'uploaded:2026-05-06',
+
+  # We test using the latest release of the oldest supported Bazel version
+  # listed in [oss-policies-info]. Browse recent packages in [cipd-bazel] and
+  # pick the latest such release.
+  #
+  # [cipd-bazel]: https://chrome-infra-packages.appspot.com/p/infra/3pp/tools/bazel_bootstrap/linux-amd64
+  # [oss-policies-info]: https://github.com/google/oss-policies-info/blob/main/foundational-cxx-support-matrix.md
+  #
+  # Keep this in sync with .bazelversion and util/bazel-example/.bazelversion.
+  # After updating Bazel, bazelisk mod deps --lockfile_mode=refresh from the
+  # root and util/bazel-example
+  'bazel_version': 'version:3@8.6.0.chromium.1',
+
+  # Update the following from
+  # https://chromium.googlesource.com/chromium/src/+/main/DEPS
+  'android_sdk_platform-tools_version': 'qTD9QdBlBf3dyHsN1lJ0RH6AhHxR42Hmg2Ih-Vj4zIEC',
+  'libfuzzer_revision': 'bea408a6e01f0f7e6c82a43121fe3af4506c932e',
+  'libcxx_revision': '7ab65651aed6802d2599dcb7a73b1f82d5179d05',
+  'libcxxabi_revision': '8f11bb1d4438d0239d0dfc1bd9456a9f31629dda',
+  'llvm_libc_revision': '2a826f2fda3cf8d75b47cbc3bb1d9b244f13a6ab',
+  'ninja_version': 'version:3@1.12.1.chromium.4',
+
+  # Update to the latest revision of
+  # https://chromium.googlesource.com/chromium/src/tools/clang
+  'tools_clang_revision': '956f5b673f981d317e4c5d2d01a43a7f56259557',
+
+  # Update to the latest revision of
+  # https://chromium.googlesource.com/chromium/src/tools/rust
+  # and also ensure that `tools_clang_revision` above is up-to-date.
+  'tools_rust_revision': '69bb79a132d32d67b6f6820226b02e50f1945202',
+}
+
+deps = {
+  'boringssl/util/bot/android_ndk': {
+    'packages': [{
+      'package': 'infra/3pp/tools/android_ndk/linux-amd64',
+      'version': Var('android_ndk_version'),
+    }],
+    'condition': 'checkout_android',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/android_sdk/public': {
+    'packages': [{
+      'package': 'chromium/third_party/android_sdk/public/platform-tools',
+      'version': Var('android_sdk_platform-tools_version'),
+    }],
+    'condition': 'checkout_android',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/bazel': {
+    'packages': [{
+      'package': 'infra/3pp/tools/bazel_bootstrap/${{platform}}',
+      'version': Var('bazel_version'),
+    }],
+    'condition': 'checkout_bazel',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/cmake': {
+    'packages': [{
+      'package': 'infra/3pp/tools/cmake/${{platform}}',
+      'version': Var('cmake_version'),
+    }],
+    'condition': 'checkout_cmake',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/golang': {
+    'packages': [{
+      'package': 'infra/3pp/tools/go/${{platform}}',
+      'version': Var('go_version'),
+    }],
+    'condition': 'checkout_go',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/libFuzzer': {
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + Var('libfuzzer_revision'),
+    'condition': 'checkout_fuzzer',
+  },
+
+  'boringssl/util/bot/libcxx': {
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxx.git' + '@' + Var('libcxx_revision'),
+    'condition': 'checkout_libcxx',
+  },
+  'boringssl/util/bot/libcxxabi': {
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' + Var('libcxxabi_revision'),
+    'condition': 'checkout_libcxx',
+  },
+  'boringssl/util/bot/llvm-libc': {
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libc.git' + '@' + Var('llvm_libc_revision'),
+    'condition': 'checkout_libcxx',
+  },
+
+  'boringssl/util/bot/ninja': {
+    'packages': [{
+      'package': 'infra/3pp/tools/ninja/${{platform}}',
+      'version': Var('ninja_version'),
+    }],
+    'condition': 'checkout_cmake',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/perl-win32': {
+    'packages': [{
+      'package': 'infra/3pp/tools/perl/${{platform}}',
+      'version': Var('perl_version'),
+    }],
+    'condition': 'host_os == "win" and checkout_perl',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/qemu-static': {
+      'packages': [{
+          'package': 'infra/3pp/tools/qemu_static/linux-amd64',
+          'version': Var('qemu_static_version')
+      }],
+      'condition': 'checkout_riscv64',
+      'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/windows_sdk': {
+    'packages': [{
+      'package': 'chrome_internal/third_party/sdk/windows',
+      'version': Var('windows_sdk_version'),
+    }],
+    'condition': 'host_os == "win"',
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/tools/clang': {
+    'url': Var('chromium_git') + '/chromium/src/tools/clang.git' + '@' + Var('tools_clang_revision'),
+    # tools/rust/update_rust.py depends upon tools/clang/scripts/update.py.
+    # Also, on non-Mac builds, packaged clang is needed for pregenerate.
+  },
+
+  'boringssl/util/bot/tools/rust': {
+    'url': Var('chromium_git') + '/chromium/src/tools/rust.git' + '@' + Var('tools_rust_revision'),
+    'condition': 'checkout_rust',
+  },
+}
+
+recursedeps = [
+  # android_tools pulls in the NDK from a separate repository.
+  'boringssl/util/bot/android_tools',
+]
+
+hooks = [
+  {
+    'name': 'nasm_win32',
+    'pattern': '.',
+    'condition': 'host_os == "win" and checkout_nasm',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--platform=win32',
+                '--bucket', 'chromium-tools',
+                '-s', 'boringssl/util/bot/nasm-win32.exe.sha1',
+    ],
+  },
+  {
+    'name': 'clang',
+    'pattern': '.',
+    # bindgen in the packaged rust-toolchain requires packaged clang.
+    # Also, on non-Mac builds, packaged clang is needed for pregenerate.
+    'action': [ 'python3',
+                'boringssl/util/bot/tools/clang/scripts/update.py',
+                '--output-dir', 'boringssl/util/bot/llvm-build',
+    ],
+  },
+  {
+    'name': 'rust',
+    'pattern': '.',
+    'condition': 'checkout_rust',
+    'action': [ 'python3',
+                'boringssl/util/bot/tools/rust/update_rust.py',
+                '--output-dir', 'boringssl/util/bot/rust-toolchain',
+    ],
+  },
+  {
+    'name': 'sde_linux64',
+    'pattern': '.',
+    'condition': 'checkout_sde and host_os == "linux"',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--bucket', 'chrome-boringssl-sde',
+                '-s', 'boringssl/util/bot/sde-linux64.tar.xz.sha1'
+    ],
+  },
+  {
+    'name': 'sde_linux64_extract',
+    'pattern': '.',
+    'condition': 'checkout_sde and host_os == "linux"',
+    'action': [ 'python3',
+                'boringssl/util/bot/extract.py',
+                'boringssl/util/bot/sde-linux64.tar.xz',
+                'boringssl/util/bot/sde-linux64/',
+    ],
+  },
+  {
+    'name': 'sde_win32',
+    'pattern': '.',
+    'condition': 'checkout_sde and host_os == "win"',
+    'action': [ 'download_from_google_storage',
+                '--no_resume',
+                '--bucket', 'chrome-boringssl-sde',
+                '-s', 'boringssl/util/bot/sde-win32.tar.xz.sha1'
+    ],
+  },
+  {
+    'name': 'sde_win32_extract',
+    'pattern': '.',
+    'condition': 'checkout_sde and host_os == "win"',
+    'action': [ 'python3',
+                'boringssl/util/bot/extract.py',
+                'boringssl/util/bot/sde-win32.tar.xz',
+                'boringssl/util/bot/sde-win32/',
+    ],
+  },
+]

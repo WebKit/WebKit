@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.setTimeout(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const streamConnection = CoreIPC.newStreamConnection();
+
+    const renderingBackendIdentifier = Math.floor(Math.random() * 0x1000000);
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackendIdentifier,
+        connectionHandle: streamConnection
+    });
+    const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const imageBufferIdentifier = Math.floor(Math.random() * 0x1000000);
+    const contextIdentifier = Math.floor(Math.random() * 0x1000000);
+    remoteRenderingBackend.CreateImageBuffer({
+        logicalSize : { width : 3.231004106349356e-28, height : 1.401298464e-45 },
+        renderingMode : 0,
+        renderingPurpose : 7,
+        resolutionScale : 3.650556716916852e+32,
+        colorSpace : { serializableColorSpace : { alias : { optionalValue : { m_cgColorSpace : { alias : { variantType : 'WebCore::ColorSpace', variant : 17 } } } } } },
+        bufferFormat : { pixelFormat : 3, useLosslessCompression : 0 },
+        identifier: imageBufferIdentifier,
+        contextIdentifier: contextIdentifier
+    });
+
+    const remoteImageBuffer = streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
+    remoteImageBuffer.ConvertToLuminanceMask({});
+
+    streamConnection.connection.invalidate();
+
+    // Allow some time for the GPUP to receive the ConvertToLuminanceMask message, otherwise we can finish
+    // the test before we detect a possible GPUP crash.
+    setTimeout(() => {
+        window.testRunner?.notifyDone();
+    }, 500);
+}, 20);
+
+</script>
+
+This test passes if WebKit does not crash.

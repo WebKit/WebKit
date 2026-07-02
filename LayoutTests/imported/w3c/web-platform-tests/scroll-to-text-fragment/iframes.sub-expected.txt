@@ -1,0 +1,10 @@
+Same-Origin with text fragment in src attribute:
+Same-Origin:
+Cross-Origin:
+
+PASS Text fragment specified in iframe.src
+FAIL Navigate same-origin iframe via window.location assert_equals: Expected fragment directive to be stripped from the URL. expected -1 but got 73
+FAIL Navigate cross-origin iframe via window.location assert_equals: Expected fragment directive to be stripped from the URL. expected -1 but got 77
+FAIL Non-matching text with element-id fallback assert_equals: Should scroll to the element-id anchor. expected "elementid" but got "top"
+FAIL Cross-origin with element-id fallback assert_equals: Should scroll to the element-id anchor. expected "elementid" but got "top"
+

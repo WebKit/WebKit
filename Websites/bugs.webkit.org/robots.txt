@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /index.cgi
+Allow: /show_bug.cgi
+Disallow: /
+Crawl-delay: 20

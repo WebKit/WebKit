@@ -1,0 +1,4 @@
+
+PASS slot element with display: block should be focusable
+FAIL slot element with default style should be focusable assert_equals: slot is now focused expected Element node <slot tabindex="1" style=""></slot> but got null
+

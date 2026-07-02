@@ -1,0 +1,4 @@
+
+PASS Make sure the page is ready for animation.
+PASS scrollTop should be updated after a mid-scroll scrollTop change
+

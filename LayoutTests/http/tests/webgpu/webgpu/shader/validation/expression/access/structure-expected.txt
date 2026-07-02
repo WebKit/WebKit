@@ -1,0 +1,11 @@
+
+PASS :identifier_mismatch:decl="value"
+PASS :identifier_mismatch:decl="ref"
+PASS :shadowed_member:decl="value"
+PASS :shadowed_member:decl="ref"
+PASS :result_type:decl="value"
+PASS :result_type:decl="ref"
+PASS :result_type_f16:decl="value"
+PASS :result_type_f16:decl="ref"
+PASS :result_type_runtime_array:
+

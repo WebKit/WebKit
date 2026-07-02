@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var mouseMoveInOtherFrame = false;
+var mouseUpInOtherFrame = false;
+
+function log(msg) {
+    var msgNode = document.createTextNode(msg);
+    var li = document.createElement("li");
+    li.appendChild(msgNode);
+    document.getElementById("log").appendChild(li);
+}
+
+function dragStarted() {
+    log("Drag started");
+}
+
+window.onmouseup = function() {
+    log("FAIL! Received unexpected mouseup on root frame");
+}
+
+window.onload = async function() {
+    try {
+        if (!frames[0] || !frames[0].document) {
+            log("Window.onload fired before subframe completed load.");
+        }
+        
+        if (!window.testRunner) {
+            log("This test needs to be run in DRT.  To test manually drag from the text 'Drag Me!' out into the child frame.");
+            return;
+        }
+        var dragSource = document.getElementById("dragSource");
+        var targetFrame = document.getElementById("targetFrame");
+        var startX = dragSource.offsetLeft + 10;
+        var startY = dragSource.offsetTop + dragSource.offsetHeight / 2;
+        var endX = targetFrame.offsetLeft + 10;
+        var endY = targetFrame.offsetTop + 10;
+        await eventSender.asyncMouseMoveTo(startX, startY);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseMoveTo(endX, endY);
+        await eventSender.asyncMouseUp();
+    } finally {
+        if (mouseUpInOtherFrame && mouseMoveInOtherFrame)
+            log("PASS!");
+        else
+            log("FAIL! Drag was not reflected in subframe");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body>
+    <div>This tests that dragging from an element that returns <emph>false</emph> from its mousedown handler will let the subsequent mousemove events be captured by the containing frame, and not by other frames.</div>
+    <div id="dragSource" onmousedown="parent.dragStarted(); return false;">Drag Me!</div>
+    <iframe id="targetFrame" style="width: 100px; height: 50px;" src="resources/mouse-drag-from-frame-target-subframe.html"></iframe>
+    <ul id="log">
+    </ul>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+
+
+
+submit
+
+
+
+PASS default submit action should supersede input onclick submit()
+PASS default submit action should supersede button onclick submit()
+PASS default submit action should supersede form onclick submit()
+PASS default submit action should supersede form onsubmit submit()
+PASS default submit action should supersede form onclick/onsubmit submit()
+

@@ -1,0 +1,11 @@
+Tests that aria-activedescendant is supported on a contenteditable textbox.
+
+PASS: axTextbox.activeElement.role === "AXRole: AXCell"
+PASS: axTextbox.activeElement.title === "AXTitle: Cell 1"
+PASS: axTextbox.activeElement.role === "AXRole: AXCell"
+PASS: axTextbox.activeElement.title === "AXTitle: Cell 2"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

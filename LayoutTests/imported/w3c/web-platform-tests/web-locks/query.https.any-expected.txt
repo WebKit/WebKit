@@ -1,0 +1,11 @@
+
+PASS query() returns dictionaries with expected properties
+PASS query() reports individual held locks
+PASS query() reports multiple held locks
+PASS query() reports pending and held locks
+PASS query() reports held shared locks with appropriate count
+PASS query() reports pending shared locks with appropriate count
+PASS query() reports the same clientId for held locks from the same context
+PASS query() reports different ids for held locks from different contexts
+PASS query() can observe a deadlock
+

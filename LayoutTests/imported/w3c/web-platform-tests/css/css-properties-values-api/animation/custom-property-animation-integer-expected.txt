@@ -1,0 +1,7 @@
+
+PASS Animating a custom property of type <integer>
+PASS Animating a custom property of type <integer> with a single keyframe
+PASS Animating a custom property of type <integer> with additivity
+PASS Animating a custom property of type <integer> with a single keyframe and additivity
+PASS Animating a custom property of type <integer> with iterationComposite
+

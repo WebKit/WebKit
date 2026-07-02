@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="test()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that texSubImage does not crash on with EXT_norm16_texture.");
+var wtu = WebGLTestUtils;
+var gl = document.createElement('canvas').getContext('webgl2');
+var subcases = [];
+var formats = [ "RED", "RG", "RGB", "RGBA" ];
+var internalFormats = [ "R16_EXT", "RG16_EXT", "RGB16_EXT", "RGBA16_EXT" ];
+var signedInternalFormats = [ "R16_SNORM_EXT", "RG16_SNORM_EXT", "RGB16_SNORM_EXT", "RGBA16_SNORM_EXT" ];
+
+for (let f of ["2d", "3d"]) {
+    for (let c of [0, 1, 2, 3])
+    {
+        let dataInt = new Int16Array(Array((c + 1)* 10).fill(1000));
+        let dataUint = new Uint16Array(Array((c + 1)* 10).fill(1000));
+        subcases.push({
+            func: f,
+            internalFormat: internalFormats[c],
+            format: formats[c],
+            type: "UNSIGNED_SHORT",
+            error: "NO_ERROR",
+            data: dataUint
+        });
+        subcases.push({
+            func: f,
+            internalFormat: signedInternalFormats[c],
+            format: formats[c],
+            type: "SHORT",
+            error: "NO_ERROR",
+            data: dataInt
+        });
+        subcases.push({
+            func: f,
+            internalFormat: internalFormats[c],
+            format: formats[c],
+            type: "SHORT",
+            error: "INVALID_OPERATION",
+            data: dataInt
+        });
+        subcases.push({
+            func: f,
+            internalFormat: signedInternalFormats[c],
+            format: formats[c],
+            type: "UNSIGNED_SHORT",
+            error: "INVALID_OPERATION",
+            data: dataUint
+        });
+    }
+}
+
+function runTest(subcase)
+{
+    debug(`Test: ${subcase.func} ${subcase.internalFormat} ${subcase.format} ${subcase.type}`);
+    if (gl) {
+        const ext = gl.getExtension("EXT_texture_norm16");
+        if (ext) {
+            const tex = gl.createTexture();
+            if (subcase.func == "3d") {
+                gl.bindTexture(gl.TEXTURE_3D, tex);
+                gl.texImage3D(gl.TEXTURE_3D, 0, ext[subcase.internalFormat], 10, 1, 1, 0, gl[subcase.format], gl[subcase.type], subcase.data);
+            } else if (subcase.func == "2d") {
+                gl.bindTexture(gl.TEXTURE_2D, tex);
+                gl.texImage2D(gl.TEXTURE_2D, 0, ext[subcase.internalFormat], 10, 1, 0, gl[subcase.format], gl[subcase.type], subcase.data);
+            }
+            wtu.glErrorShouldBe(gl, gl[subcase.error]);
+            if (subcase.func == "3d")
+                gl.texSubImage3D(gl.TEXTURE_3D, 0, 0, 0, 0, 10, 1, 1, gl[subcase.format], gl[subcase.type], subcase.data);
+            else if (subcase.func == "2d")
+                gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 10, 1, gl[subcase.format], gl[subcase.type], subcase.data);
+            wtu.glErrorShouldBe(gl, gl[subcase.error]);
+        }
+    }
+    testPassed(`Test: ${subcase.internalFormat} ${subcase.format} ${subcase.type} did not crash.`);
+}
+
+function test()
+{
+    for (let subcase of subcases)
+        runTest(subcase);
+    finishTest();
+}
+</script>
+</body>
+</html>

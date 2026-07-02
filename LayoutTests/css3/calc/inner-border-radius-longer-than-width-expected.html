@@ -1,0 +1,19 @@
+<html>
+<head>
+<link rel="help" href="https://developer.mozilla.org/en-US/docs/Web/CSS/border-top-right-radius">
+<style>
+.class4 {
+  /* bug happens when width < border-bottom-left-radius + border-bottom-right-radius (horizontal) with vertical axis of the elipse values set to 0 */
+  border-bottom: solid;
+  width: 200px;
+  height: 200px;
+  background-color: darkgoldenrod;
+  border-right: 100px solid red;
+  border-bottom-width: 43px;
+}
+</style>
+</head>
+<body>
+<div class="class4"></div>
+</body>
+</html>

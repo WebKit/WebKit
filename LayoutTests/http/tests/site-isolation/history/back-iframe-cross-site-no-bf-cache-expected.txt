@@ -1,0 +1,24 @@
+Nested iframe history navigation works correctly with cross-site iframe when back/forward cache is disabled, including JS-driven history.back().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Page1 loaded
+Page1 displayed first time.
+Page2 loaded
+Page2 displayed first time.
+Other page loaded
+Other page displayed.
+Page2 loaded
+Page2 displayed after browser back.
+Page1 loaded
+PASS Page1 displayed again after JS history.back().
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Open a new window with back-iframe-popup.html. It has a same-site iframe with page1 loaded initially.
+Navigate iframe to cross-site page2.
+Navigate main frame to other (same-site).
+Go back. (back-iframe-popup.html with iframe showing cross-site page2)
+Go back again. (iframe back to same-site page1)
+Ensures nested iframe content is correctly restored via both browser back and JS history.back().

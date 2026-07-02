@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=true VerifyWindowOpenUserGestureFromUIProcess=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can verify a touch event from the UI process</title>
+<script src="../../../resources/basic-gestures.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+
+body {
+    margin: 0;
+}
+
+#target #target-fake {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    display: contents;
+}
+</style>
+</head>
+<body>
+<div id="target">FAIL</div>
+<div id="target-fake">FAIL</div>
+<script>
+testRunner.waitUntilDone();
+testRunner.dumpAsText();
+
+
+(async function() {
+    const targetForFakeClick = document.getElementById("target-fake");
+    window.addEventListener("touchstart", (event) => {
+        win = window.open("about:blank");
+        if (!win)
+            target.innerText = "PASS";
+    });
+
+    window.addEventListener("touchmove", (event) => {
+        win = window.open("about:blank");
+        if (win)
+            target.innerText = "FAIL";
+    });
+
+    window.addEventListener("touchend", (event) => {
+        win = window.open("about:blank");
+        if (!win)
+            target.innerText = "FAIL";
+        targetForFakeClick.click();
+    });
+
+    targetForFakeClick.addEventListener("click", (event) => {
+        win = window.open("about:blank");
+        if (!win)
+            targetForFakeClick.innerText = "PASS";
+        testRunner.notifyDone();
+    })
+
+    await UIHelper.tapAt(5, 5);
+})();
+
+</script>
+</body>
+</html>

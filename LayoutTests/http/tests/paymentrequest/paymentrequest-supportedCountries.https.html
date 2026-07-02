@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `supportedCountries` in `data` as part of `PaymentMethodData`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        assert_array_equals(internals.mockPaymentCoordinator.supportedCountries, [], "check that `supportedCountries` is still empty after an update");
+        event.updateWith({ });
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_array_equals(internals.mockPaymentCoordinator.supportedCountries, [], "check that `supportedCountries` is still empty after the payment is accepted");
+
+    await response.complete("success");
+}, "Should not have a default value for `supportedCountries`.");
+
+user_activation_test(async (test) => {
+    const method = validPaymentMethod();
+    method.data.supportedCountries = ['CA', 'GB', 'US'];
+
+    let request = new PaymentRequest([method], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        assert_array_equals(internals.mockPaymentCoordinator.supportedCountries, method.data.supportedCountries, "check that `supportedCountries` still matches after an update");
+        event.updateWith({ });
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_array_equals(internals.mockPaymentCoordinator.supportedCountries, method.data.supportedCountries, "check that `supportedCountries` still matches after the payment is accepted");
+
+    await response.complete("success");
+}, "Should propagate `supportedCountries` if provided.");
+done();
+</script>

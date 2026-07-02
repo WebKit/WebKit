@@ -1,0 +1,11 @@
+Built on 2025-01-28T13:57:51Z
+Toolchain versions
+rustc 1.81.0 (eeb90cda1 2024-09-04)
+cargo 1.81.0 (2dbb1af80 2024-08-20)
+wasm-pack 0.13.1
+Getting sources...
+Cloning into '8bitbench'...
+Updating files:  98% (4618/4667)Updating files:  99% (4621/4667)Updating files: 100% (4667/4667)Updating files: 100% (4667/4667), done.
+Building...
+Copying files from 8bitbench/ into build/
+Build success

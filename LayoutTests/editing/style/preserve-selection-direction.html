@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Preserve selection direction</title>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="editable" contenteditable>This is some sample text</div>
+<div id="console"></div>
+<script>
+var editable = document.getElementById("editable");
+var selection = window.getSelection();
+
+Markup.description(`Bug 110979: Selection direction is not preserved when applying styles
+This test verifies that selection direction is preserved when applying styles.`);
+
+selection.collapse(editable.firstChild, 3);
+selection.extend(editable.firstChild, 8);
+Markup.dump('editable', 'Before foreColor 1');
+document.execCommand('foreColor', false, 'green');
+Markup.dump('editable', 'After foreColor 1');
+
+editable.innerHTML = 'This is some sample text';
+selection.collapse(editable.firstChild, 8);
+selection.extend(editable.firstChild, 3);
+Markup.dump('editable', 'Before foreColor 2');
+document.execCommand('foreColor', false, 'green');
+Markup.dump('editable', 'After foreColor 2');
+
+</script>
+</body>
+</html>

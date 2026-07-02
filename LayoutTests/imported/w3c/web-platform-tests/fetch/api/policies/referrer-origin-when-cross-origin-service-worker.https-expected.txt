@@ -1,0 +1,4 @@
+
+PASS Fetch in service worker: referrer with origin-when-cross-origin policy
+FAIL Request's referrer is origin promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+

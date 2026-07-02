@@ -1,0 +1,3 @@
+
+PASS Test that scroll anchor adjustments can happen by a sub device-pixel amount.
+

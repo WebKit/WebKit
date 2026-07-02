@@ -1,0 +1,23 @@
+Testing the OverflowSupport behavior for Playback Speed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.overflow') became different from null
+PASS shadowRoot.querySelector('button.overflow').getBoundingClientRect().width became different from 0
+Tapping overflow button...
+PASS checkedItems.length is 1
+PASS checkedItems[0].title is "1×"
+Changing playback speed via JavaScript...
+Tapping overflow button...
+PASS checkedItems.length is 1
+PASS checkedItems[0].title is "2×"
+Selecting '1.5×' playback speed...
+PASS media.playbackRate is 1.5
+Tapping overflow button...
+PASS checkedItems.length is 1
+PASS checkedItems[0].title is "1.5×"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

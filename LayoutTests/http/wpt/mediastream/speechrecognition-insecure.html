@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+if (window.internals)
+    internals.markContextAsInsecure();
+
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async () => {
+    const frame = await with_iframe("/");
+    const w = frame.contentWindow;
+    assert_equals(w.SpeechRecognition, undefined);
+    assert_equals(w.SpeechRecognitionAlternative, undefined);
+    assert_equals(w.SpeechRecognitionErrorEvent, undefined);
+    assert_equals(w.SpeechRecognitionEvent, undefined);
+    assert_equals(w.SpeechRecognitionResult, undefined);
+},'SpeechRecognition and friends should not exist in insecure context');
+</script>
+</body>
+</html>

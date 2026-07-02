@@ -1,0 +1,17 @@
+This test verifies the scroll view's content inset is adjusted when the find navigator is presented.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS adjustedContentInset.bottom is 0
+
+Presenting find navigator.
+PASS adjustedContentInset.bottom is not 0
+
+Dismissing find navigator.
+PASS adjustedContentInset.bottom is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<style>
+.editing { 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+textarea {
+    width: 300px;
+    height: 200px;
+}
+</style>
+</head> 
+<body>
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Smart paste when pasting a paragraph between two paragraphs in an input element.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+A newline should be added between the preexisting paragraphs and the paragraph that's pasted. It should like this:
+<BR>
+Test paragraph.
+<BR>
+<BR>
+Test paragraph.
+<BR>
+<BR>
+Last test paragraph.
+</div>
+</div>
+
+<textarea id="test">
+Test paragraph.
+
+Last test paragraph.</textarea>
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+async function editingTest() {
+    internals.settings.setEditingBehavior("ios");
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
+    extendSelectionForwardByLineBoundaryCommand();
+    copyCommand();
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    pasteCommand();
+}
+
+runDumpAsTextEditingTest(true);
+</script>
+</body>
+</html>

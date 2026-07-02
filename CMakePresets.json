@@ -1,0 +1,483 @@
+{
+    "version": 2,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "release",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Release"
+                }
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "Debug"
+                }
+            }
+        },
+        {
+            "name": "dev",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "DEVELOPER_MODE": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "ON"
+                }
+            }
+        },
+        {
+            "name": "gtk",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "GTK"
+                }
+            }
+        },
+        {
+            "name": "gtk-release",
+            "displayName": "GTK Release",
+            "inherits": ["gtk", "release"],
+            "binaryDir": "WebKitBuild/GTK/Release"
+        },
+        {
+            "name": "gtk-debug",
+            "displayName": "GTK Debug",
+            "inherits": ["gtk", "debug"],
+            "binaryDir": "WebKitBuild/GTK/Debug"
+        },
+        {
+            "name": "gtk-dev-release",
+            "displayName": "GTK Development Release",
+            "inherits": ["gtk-release", "dev"]
+        },
+        {
+            "name": "gtk-dev-debug",
+            "displayName": "GTK Development Debug",
+            "inherits": ["gtk-debug", "dev"]
+        },
+        {
+            "name": "mac",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "Mac"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                },
+                "CMAKE_MAKE_PROGRAM": {
+                    "type": "FILEPATH",
+                    "value": "${sourceDir}/Source/cmake/ninja-wrapper"
+                }
+            },
+            "environment": {
+                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
+                "CCACHE_BASEDIR": "${sourceDir}"
+            }
+        },
+        {
+            "name": "mac-release",
+            "displayName": "macOS Release",
+            "inherits": ["mac", "release"],
+            "binaryDir": "WebKitBuild/cmake-mac/Release",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                },
+                "CMAKE_CXX_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                },
+                "CMAKE_OBJC_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                },
+                "CMAKE_OBJCXX_FLAGS_RELEASE": {
+                    "type": "STRING",
+                    "value": "-O3 -DNDEBUG -g"
+                }
+            }
+        },
+        {
+            "name": "mac-debug",
+            "displayName": "macOS Debug",
+            "inherits": ["mac", "debug"],
+            "binaryDir": "WebKitBuild/cmake-mac/Debug"
+        },
+        {
+            "name": "mac-dev-release",
+            "displayName": "macOS Development (Release, ccache, compile_commands)",
+            "inherits": ["mac-release", "dev"]
+        },
+        {
+            "name": "mac-dev-debug",
+            "displayName": "macOS Development (Debug, ccache, compile_commands)",
+            "inherits": ["mac-debug", "dev"]
+        },
+        {
+            "name": "mac-dev-debug-o3",
+            "displayName": "macOS Development (Debug O3 optimization, ccache, compile_commands)",
+            "inherits": ["mac-debug", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/DebugO3",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_CXX_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_OBJC_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_OBJCXX_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                }
+            }
+        },
+        {
+            "name": "mac-dev-relwithdebinfo",
+            "displayName": "macOS Development (RelWithDebInfo -- optimized + debuggable)",
+            "inherits": ["mac", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/RelWithDebInfo",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "RelWithDebInfo"
+                },
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                },
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                },
+                "CMAKE_OBJC_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                },
+                "CMAKE_OBJCXX_FLAGS_RELWITHDEBINFO": {
+                    "type": "STRING",
+                    "value": "-O3 -g -DNDEBUG"
+                }
+            }
+        },
+        {
+            "name": "mac-asan",
+            "displayName": "macOS ASan (AddressSanitizer, RelWithDebInfo, ccache)",
+            "inherits": ["mac", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/ASan",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "RelWithDebInfo"
+                },
+                "ENABLE_SANITIZERS": {
+                    "type": "STRING",
+                    "value": "address"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
+            "name": "mac-tsan",
+            "displayName": "macOS TSan (ThreadSanitizer, RelWithDebInfo, ccache)",
+            "inherits": ["mac", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/TSan",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "RelWithDebInfo"
+                },
+                "ENABLE_SANITIZERS": {
+                    "type": "STRING",
+                    "value": "thread"
+                },
+                "USE_SYSTEM_MALLOC": {
+                    "type": "BOOL",
+                    "value": "ON"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
+            "name": "ios",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "IOS"
+                }
+            },
+            "environment": {
+                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
+                "CCACHE_BASEDIR": "${sourceDir}"
+            }
+        },
+        {
+            "name": "ios-release",
+            "displayName": "iOS Release",
+            "inherits": ["ios", "release"],
+            "binaryDir": "WebKitBuild/cmake-iphoneos/Release"
+        },
+        {
+            "name": "ios-debug",
+            "displayName": "iOS Debug",
+            "inherits": ["ios", "debug"],
+            "binaryDir": "WebKitBuild/cmake-iphoneos/Debug"
+        },
+        {
+            "name": "ios-dev-release",
+            "displayName": "iOS Development (Release, ccache, compile_commands)",
+            "inherits": ["ios-release", "dev"],
+            "cacheVariables": {
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
+                }
+            }
+        },
+        {
+            "name": "ios-dev-debug",
+            "displayName": "iOS Development (Debug, ccache, compile_commands)",
+            "inherits": ["ios-debug", "dev"]
+        },
+        {
+            "name": "ios-sim",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "IOS"
+                },
+                "CMAKE_OSX_ARCHITECTURES": {
+                    "type": "STRING",
+                    "value": "arm64"
+                },
+                "CMAKE_IOS_SIMULATOR": {
+                    "type": "BOOL",
+                    "value": "ON"
+                }
+            },
+            "environment": {
+                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
+                "CCACHE_BASEDIR": "${sourceDir}"
+            }
+        },
+        {
+            "name": "ios-sim-debug",
+            "displayName": "iOS Simulator Debug",
+            "inherits": ["ios-sim", "debug"],
+            "binaryDir": "WebKitBuild/cmake-iphonesimulator/Debug"
+        },
+        {
+            "name": "ios-sim-dev-debug",
+            "displayName": "iOS Simulator Development (Debug, ccache, compile_commands)",
+            "inherits": ["ios-sim-debug", "dev"]
+        },
+        {
+            "name": "ios-sim-release",
+            "displayName": "iOS Simulator Release",
+            "inherits": ["ios-sim", "release"],
+            "binaryDir": "WebKitBuild/cmake-iphonesimulator/Release"
+        },
+        {
+            "name": "ios-sim-dev-release",
+            "displayName": "iOS Simulator Development (Release, ccache, compile_commands)",
+            "inherits": ["ios-sim-release", "dev"]
+        },
+        {
+            "name": "wpe",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "WPE"
+                }
+            }
+        },
+        {
+            "name": "wpe-release",
+            "displayName": "WPE Release",
+            "inherits": ["wpe", "release"],
+            "binaryDir": "WebKitBuild/WPE/Release"
+        },
+        {
+            "name": "wpe-debug",
+            "displayName": "WPE Debug",
+            "inherits": ["wpe", "debug"],
+            "binaryDir": "WebKitBuild/WPE/Debug"
+        },
+        {
+            "name": "wpe-dev-release",
+            "displayName": "WPE Development Release",
+            "inherits": ["wpe-release", "dev"]
+        },
+        {
+            "name": "wpe-dev-debug",
+            "displayName": "WPE Development Debug",
+            "inherits": ["wpe-debug", "dev"]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "mac-release",
+            "displayName": "macOS Release",
+            "configurePreset": "mac-release"
+        },
+        {
+            "name": "mac-debug",
+            "displayName": "macOS Debug",
+            "configurePreset": "mac-debug"
+        },
+        {
+            "name": "mac-dev-release",
+            "displayName": "macOS Development Release",
+            "configurePreset": "mac-dev-release"
+        },
+        {
+            "name": "mac-dev-debug",
+            "displayName": "macOS Development Debug",
+            "configurePreset": "mac-dev-debug"
+        },
+        {
+            "name": "mac-dev-debug-o3",
+            "displayName": "macOS Development Debug O3",
+            "configurePreset": "mac-dev-debug-o3"
+        },
+        {
+            "name": "mac-dev-relwithdebinfo",
+            "displayName": "macOS Development RelWithDebInfo",
+            "configurePreset": "mac-dev-relwithdebinfo"
+        },
+        {
+            "name": "mac-asan",
+            "displayName": "macOS ASan",
+            "configurePreset": "mac-asan"
+        },
+        {
+            "name": "mac-tsan",
+            "displayName": "macOS TSan",
+            "configurePreset": "mac-tsan"
+        },
+        {
+            "name": "gtk-release",
+            "displayName": "GTK Release",
+            "configurePreset": "gtk-release"
+        },
+        {
+            "name": "gtk-debug",
+            "displayName": "GTK Debug",
+            "configurePreset": "gtk-debug"
+        },
+        {
+            "name": "gtk-dev-release",
+            "displayName": "GTK Development Release",
+            "configurePreset": "gtk-dev-release"
+        },
+        {
+            "name": "gtk-dev-debug",
+            "displayName": "GTK Development Debug",
+            "configurePreset": "gtk-dev-debug"
+        },
+        {
+            "name": "wpe-release",
+            "displayName": "WPE Release",
+            "configurePreset": "wpe-release"
+        },
+        {
+            "name": "wpe-debug",
+            "displayName": "WPE Debug",
+            "configurePreset": "wpe-debug"
+        },
+        {
+            "name": "wpe-dev-release",
+            "displayName": "WPE Development Release",
+            "configurePreset": "wpe-dev-release"
+        },
+        {
+            "name": "wpe-dev-debug",
+            "displayName": "WPE Development Debug",
+            "configurePreset": "wpe-dev-debug"
+        },
+        {
+            "name": "ios-release",
+            "displayName": "iOS Release",
+            "configurePreset": "ios-release"
+        },
+        {
+            "name": "ios-debug",
+            "displayName": "iOS Debug",
+            "configurePreset": "ios-debug"
+        },
+        {
+            "name": "ios-dev-release",
+            "displayName": "iOS Development Release",
+            "configurePreset": "ios-dev-release"
+        },
+        {
+            "name": "ios-dev-debug",
+            "displayName": "iOS Development Debug",
+            "configurePreset": "ios-dev-debug"
+        },
+        {
+            "name": "ios-sim-debug",
+            "displayName": "iOS Simulator Debug",
+            "configurePreset": "ios-sim-debug"
+        },
+        {
+            "name": "ios-sim-dev-debug",
+            "displayName": "iOS Simulator Development Debug",
+            "configurePreset": "ios-sim-dev-debug"
+        },
+        {
+            "name": "ios-sim-release",
+            "displayName": "iOS Simulator Release",
+            "configurePreset": "ios-sim-release"
+        },
+        {
+            "name": "ios-sim-dev-release",
+            "displayName": "iOS Simulator Development Release",
+            "configurePreset": "ios-sim-dev-release"
+        }
+    ]
+}

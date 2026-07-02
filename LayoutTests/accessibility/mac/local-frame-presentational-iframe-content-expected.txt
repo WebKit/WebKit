@@ -1,0 +1,18 @@
+This test ensures the content of a presentational (accessibility-ignored) iframe is hoisted in the accessibility tree, with childrenCount and indexOfChild consistent with the hoisted children, and can reach the root via ancestry walk.
+
+PASS: host.childrenCount === 4
+PASS: host.childAtIndex(0).domIdentifier === 'before'
+PASS: host.childAtIndex(1).domIdentifier === 'frame-button-1'
+PASS: host.childAtIndex(1).role === 'AXRole: AXButton'
+PASS: host.childAtIndex(2).domIdentifier === 'frame-button-2'
+PASS: host.childAtIndex(3).domIdentifier === 'after'
+PASS: host.indexOfChild(host.childAtIndex(1)) === 1
+PASS: host.indexOfChild(host.childAtIndex(2)) === 2
+PASS: host.indexOfChild(host.childAtIndex(3)) === 3
+PASS: (button && host ? ancestryReaches(button, host) : false) === true
+PASS: (button && root ? ancestryReaches(button, root) : false) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before  After

@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/ipc.js"></script>
+<title>Sending remote user input event data through DidReceiveEvent IPC should not crash the UI process with an empty mouse event deque.</title>
+</head>
+<body>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.IPC) {
+    import('./coreipc.js').then(async ({ CoreIPC }) => {
+        CoreIPC.UI.WebPageProxy.DidReceiveEventIPC(IPC.webPageProxyID, {
+            eventType: 1, // MouseDown
+            handled: false,
+            remoteUserInputEventData: {
+                optionalValue: {
+                    targetFrameID: Number(IPC.frameID),
+                    transformedPoint: { x: 100.0, y: 100.0 }
+                }
+            }
+        });
+
+        await asyncFlush('UI');
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }).catch(e => {
+        document.body.textContent = "FAIL: " + e;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+} else if (window.testRunner) {
+    testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

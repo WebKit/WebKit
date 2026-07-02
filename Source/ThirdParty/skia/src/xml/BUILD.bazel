@@ -1,0 +1,39 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+XML_FILES = [
+    "SkDOM.cpp",
+    "SkDOM.h",
+    "SkXMLParser.cpp",
+    "SkXMLParser.h",
+    "SkXMLWriter.cpp",
+    "SkXMLWriter.h",
+]
+
+split_srcs_and_hdrs(
+    name = "_xml",
+    files = XML_FILES,
+)
+
+skia_cc_library(
+    name = "xml",
+    srcs = [":_xml_srcs"],
+    hdrs = [":_xml_hdrs"],
+    defines = ["SK_XML"],
+    features = ["layering_check"],
+    visibility = [
+        "//modules/svg:__subpackages__",
+        "//src/svg:__pkg__",
+    ],
+    deps = [
+        "//src/base",
+        "//src/core",
+        "//src/core:core_priv",
+        "@expat",
+    ],
+)

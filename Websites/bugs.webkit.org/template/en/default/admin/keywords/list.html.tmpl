@@ -1,0 +1,55 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # keywords: array keyword objects having the properties:
+  #   - id: number. The ID of the keyword.
+  #   - name: string. The name of the keyword.
+  #   - description: string. The description of the keyword.
+  #   - bug_count: number. The number of bugs with the keyword.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Select keyword"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit keyword..."
+       contentlink => "editkeywords.cgi?action=edit&amp;id=%%id%%" 
+     },
+     { 
+       name => "description"
+       heading => "Description"
+       allow_html_content => 1
+     },
+     { 
+       name => "bug_count"
+       heading => "$terms.Bugs"
+       class => "right"
+       contentlink => "buglist.cgi?keywords=%%name%%"
+     },
+     { 
+       heading => "Action" 
+       content => "Delete"
+       contentlink => "editkeywords.cgi?action=del&amp;id=%%id%%"
+     }
+   ]
+%]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = keywords
+     footer = footer_row
+%]
+
+<p><a href="editkeywords.cgi?action=add">Add a new keyword</a></p>
+
+[% PROCESS global/footer.html.tmpl %]

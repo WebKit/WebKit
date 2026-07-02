@@ -1,0 +1,33 @@
+<!doctype html>
+<title>Make sure we don't crash if the AudioWorklet gets constructed with parameters out of range.</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+var context;
+promise_setup(async (t) => {
+  const processorCode = `class P extends AudioWorkletProcessor { process() { return true; } } registerProcessor('p', P);`;
+  context = new AudioContext();
+  const blob = new Blob([processorCode], { type: 'application/javascript' });
+  await context.audioWorklet.addModule(URL.createObjectURL(blob));
+});
+
+promise_test(async (t) => {
+  const options = {
+    numberOfInputs: -1,
+    numberOfOutputs: -1,
+    processorOptions: { win: window }
+  };
+
+  assert_throws_js(RangeError, () => { new AudioWorkletNode(context, 'p', options) });
+}, 'Test with -1');
+
+promise_test(async (t) => {
+  const options = {
+    numberOfInputs: Number.MAX_SAFE_INTEGER,
+    numberOfOutputs: Number.MAX_SAFE_INTEGER,
+    processorOptions: { win: window }
+  };
+
+  assert_throws_js(RangeError, () => { new AudioWorkletNode(context, 'p', options) });
+}, 'Test with Number.MAX_SAFE_INTEGER');
+</script>

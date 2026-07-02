@@ -1,0 +1,3 @@
+
+PASS The duration of a view timeline is 100%
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+onload = function() {
+  var elem = document.getElementById("test");
+  // This will select from before <img> to after <br>.
+  window.getSelection().setBaseAndExtent(elem, 0, elem, 4);
+  document.execCommand('JustifyCenter', false, null);
+}
+</script>
+Should not crash when selection start is unrooted (caused by reattachment of render objects).
+<span id="test" contenteditable="true">
+  <b><img></b>
+  <br>
+</span>

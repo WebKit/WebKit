@@ -1,0 +1,3 @@
+
+PASS SVGSVGElement.getCurrentTime() with setCurrentTime() when animation is paused and unpaused
+

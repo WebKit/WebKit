@@ -1,0 +1,17 @@
+<html>
+<head>
+    <script>
+    function init() {
+        if (!window.testRunner)
+            return;
+
+        testRunner.waitUntilDone();
+        testRunner.setBackingScaleFactor(2, function () { testRunner.notifyDone(); });
+    }
+    window.onload = init;
+    </script>
+</head>
+<p>This test passes if both of the circles have sharp edges when deviceScaleFactor=2.</p>
+<img style="width: 128px;" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'><circle fill='black' cx='64' cy='64' r='64' /></svg>">
+<img style="width: 128px;" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><circle fill='black' cx='64' cy='64' r='64' /></svg>">
+</html>

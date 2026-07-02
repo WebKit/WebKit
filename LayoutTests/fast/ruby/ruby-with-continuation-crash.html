@@ -1,0 +1,17 @@
+PASS if no crash.
+<ruby>
+  <object id=object style="display: block"></object>
+  <rt style="display: contents">
+    <span>
+      <div></div>
+    </span>
+  </rt>
+  <rt></rt>
+  <span></span>
+</ruby>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+object.style.display = "inline";
+</script>

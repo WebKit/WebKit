@@ -1,0 +1,4 @@
+
+PASS discard element
+PASS SVGDiscardElement
+

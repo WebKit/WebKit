@@ -1,0 +1,19 @@
+This test ensures we compute the relative frame of aria-owned objects correctly.
+
+
+{ AXRole: AXGroup #body } has AXRelativeFrame: NSRect: {{8, 8}, {784, 584}}
+
+{ AXRole: AXTable #table } has AXRelativeFrame: NSRect: {{8, 8}, {784, 192}}
+
+{ AXRole: AXRow #row1 } has AXRelativeFrame: NSRect: {{58, 94}, {633, 106}}
+
+{ AXRole: AXCell #row1-cell1 } has AXRelativeFrame: NSRect: {{8, 8}, {784, 18}}
+
+{ AXRole: AXCell #row1-cell2 } has AXRelativeFrame: NSRect: {{8, 26}, {784, 18}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Bar
+

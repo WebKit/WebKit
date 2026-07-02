@@ -1,0 +1,6 @@
+
+FAIL [VP8] setMetadata() carries over codec-specific properties promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.createEncodedStreams is not a function. (In 'transceiver.sender.createEncodedStreams()', 'transceiver.sender.createEncodedStreams' is undefined)"
+FAIL [VP8] constructor carries over codec-specific properties promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.createEncodedStreams is not a function. (In 'transceiver.sender.createEncodedStreams()', 'transceiver.sender.createEncodedStreams' is undefined)"
+FAIL [VP8] constructor with metadata carries over codec-specific properties promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.createEncodedStreams is not a function. (In 'transceiver.sender.createEncodedStreams()', 'transceiver.sender.createEncodedStreams' is undefined)"
+FAIL [VP8] constructor without metadata does not carry over modified metadata  promise_test: Unhandled rejection with value: object "TypeError: transceiver.sender.createEncodedStreams is not a function. (In 'transceiver.sender.createEncodedStreams()', 'transceiver.sender.createEncodedStreams' is undefined)"
+

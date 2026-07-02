@@ -1,0 +1,3 @@
+
+PASS Test summing junction behavior of AudioParam with multiple audio-rate sources and intrinsic gain
+

@@ -1,0 +1,4 @@
+
+PASS HTML parser must instantiate custom elements inside document.write
+PASS HTML parser should call connectedCallback before appending child nodes inside document.write
+hello world

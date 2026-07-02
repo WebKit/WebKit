@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-content-type-and-body.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-origin-when-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-strict-origin-when-cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-strict-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-unsafe-url.https.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer.js

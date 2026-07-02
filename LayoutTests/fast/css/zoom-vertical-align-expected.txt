@@ -1,0 +1,6 @@
+
+PASS 'vertical-align: 16px' at zoom level 1
+PASS 'vertical-align: calc(16px)' at zoom level 1
+PASS 'vertical-align: 16px' at zoom level 2
+PASS 'vertical-align: calc(16px)' at zoom level 2
+

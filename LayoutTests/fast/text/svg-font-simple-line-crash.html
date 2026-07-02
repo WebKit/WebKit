@@ -1,0 +1,21 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        setTimeout(function () { testRunner.notifyDone(); }, 50);
+    }
+</script>
+<style>
+    @font-face {
+        font-family: freesans;
+        src: url(../../svg/custom/resources/SVGFreeSans.svg) format("svg");
+    }
+
+    div {
+        font-family: freesans;
+        -webkit-font-kerning: normal;
+    }
+</style>
+<div id=test>
+    This test passes if it does not crash.
+</div>

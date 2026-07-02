@@ -1,0 +1,37 @@
+This test ensures that the attributed string for inline predictions is accurate.
+
+Good mo{
+    UIAccessibilityTokenFontFamily = ".AppleSystemUIFont";
+    UIAccessibilityTokenFontName = "System Font Regular";
+    UIAccessibilityTokenFontSize = 11;
+}
+
+Simulating presented completion:
+Good mo{
+    UIAccessibilityTokenFontFamily = ".AppleSystemUIFont";
+    UIAccessibilityTokenFontName = "System Font Regular";
+    UIAccessibilityTokenFontSize = 11;
+}rning{
+    UIAccessibilityInlineTextCompletion = rning;
+    UIAccessibilityTokenFontFamily = ".AppleSystemUIFont";
+    UIAccessibilityTokenFontName = "System Font Regular";
+    UIAccessibilityTokenFontSize = 11;
+}
+
+Simulating accepted completion:
+Good {
+    UIAccessibilityTokenFontFamily = ".AppleSystemUIFont";
+    UIAccessibilityTokenFontName = "System Font Regular";
+    UIAccessibilityTokenFontSize = 11;
+}morning{
+    UIAccessibilityAcceptedInlineTextCompletion = morning;
+    UIAccessibilityTokenFontFamily = ".AppleSystemUIFont";
+    UIAccessibilityTokenFontName = "System Font Regular";
+    UIAccessibilityTokenFontSize = 11;
+}
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+Test that seeking does not crash when a multi-audio-track WebM has more TrackBuffers than enabled track identifiers.
+
+
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.audioTracks.length == '2') OK
+EXPECTED (video.audioTracks[0].enabled == 'true') OK
+EXPECTED (video.audioTracks[1].enabled == 'false') OK
+EVENT(canplay)
+EVENT(seeking)
+EVENT(seeked)
+EVENT(seeking)
+EVENT(seeked)
+EVENT(seeking)
+EVENT(seeked)
+PASS: seek with extra unselected audio track did not crash
+END OF TEST
+

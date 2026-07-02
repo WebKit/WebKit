@@ -1,0 +1,7 @@
+
+
+PASS Shared worker in subframe
+PASS Nested worker in shared worker in subframe
+FAIL Shared worker in popup assert_true: SharedWorker connection should error out. expected true got false
+FAIL Nested worker from shared worker in popup assert_true: SharedWorker connection should error out. expected true got false
+

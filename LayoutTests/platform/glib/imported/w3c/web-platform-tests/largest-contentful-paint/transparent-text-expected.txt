@@ -1,0 +1,4 @@
+fake LCP
+
+FAIL Transparent text should not be LCP. assert_true: The LCP entry should be the image. expected true got false
+

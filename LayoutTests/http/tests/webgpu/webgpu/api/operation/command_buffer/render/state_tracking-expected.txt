@@ -1,0 +1,7 @@
+
+PASS :set_index_buffer_without_changing_buffer:
+PASS :set_vertex_buffer_without_changing_buffer:
+PASS :change_pipeline_before_and_after_vertex_buffer:
+PASS :set_vertex_buffer_but_not_used_in_draw:
+PASS :set_index_buffer_before_non_indexed_draw:
+

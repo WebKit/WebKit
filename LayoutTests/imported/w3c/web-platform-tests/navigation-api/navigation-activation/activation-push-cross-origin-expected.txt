@@ -1,0 +1,4 @@
+
+
+PASS navigation.activation after push cross-origin
+

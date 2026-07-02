@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that text-decoration properties on ::cue are applied correctly</title>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <style>
+    video::cue {
+        text-decoration-line: underline;
+        text-decoration-style: dashed;
+        text-decoration-color: cyan;
+        text-decoration-thickness: 3px;
+    }
+    </style>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function cueElement() {
+        return internals.shadowRoot(video).querySelector('[useragentpart="cue"]');
+    }
+
+    window.addEventListener('load', function() {
+        findMediaElement();
+        video.src = findMediaFile('video', '../content/test');
+        video.textTracks[0].mode = 'showing';
+
+        waitForEvent('canplaythrough', function() {
+            video.currentTime = 0.5;
+        });
+
+        waitForEvent('seeked', function() {
+            var cue = cueElement();
+            if (!cue) {
+                consoleWrite("FAIL: Could not find cue element in shadow root.");
+                endTest();
+                return;
+            }
+
+            window.cueStyle = getComputedStyle(cue);
+            consoleWrite("Test that text-decoration properties are applied to ::cue pseudo-element.");
+            consoleWrite("");
+            testExpected("cueStyle.textDecorationLine", "underline");
+            testExpected("cueStyle.textDecorationStyle", "dashed");
+            testExpected("cueStyle.textDecorationColor", "rgb(0, 255, 255)");
+            testExpected("cueStyle.textDecorationThickness", "3px");
+            endTest();
+        });
+    });
+    </script>
+</head>
+<body>
+    <video>
+        <track src="captions-webvtt/captions.vtt" kind="captions" default>
+    </video>
+</body>
+</html>

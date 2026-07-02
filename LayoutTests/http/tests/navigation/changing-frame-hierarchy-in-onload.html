@@ -1,0 +1,18 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+
+window.onload = function () {
+  document.body.appendChild(document.getElementById('from1'));
+}
+</script>
+<div>
+This tests that we won't crash when an onload method changes the frame hierarchy when the main frame load is stopped.
+</div>
+<div>SUCCESS - didn't crash</div>
+<iframe id="from1" src="/navigation/resources/slow-resource-1-sec.pl"></iframe>
+<script>setTimeout(stop, 0);</script>
+</html>
+

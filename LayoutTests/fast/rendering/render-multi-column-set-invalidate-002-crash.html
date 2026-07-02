@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script>
+  onload = () => {
+    testRunner?.dumpAsText();
+    field.outerHTML = `A<div style="column-span: all;"></div>B`;
+    window.getSelection().selectAllChildren(document.body);
+    document.designMode = "on";
+    document.execCommand("fontName",false,"serif");
+    document.execCommand("insertOrderedList",false,null);
+    document.body.innerHTML = "PASS if no crash or assertion.";
+  }
+</script>
+A<div style="transform-style: preserve-3d; outline-style: auto;">
+  <fieldset style="overflow: -webkit-paged-y;">
+    <legend>A</legend>
+    <span id="field"></span>
+  </fieldset>
+</div>

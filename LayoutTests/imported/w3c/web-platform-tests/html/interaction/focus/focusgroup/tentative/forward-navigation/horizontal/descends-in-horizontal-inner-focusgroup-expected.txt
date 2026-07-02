@@ -1,0 +1,5 @@
+item1
+item2
+
+FAIL When the focus is set on the root of an extending focusgroup that supports an orthogonal axis to the outer focusgroup, an arrow key press aligned with the inner focusgroup axis should move the focus within that inner focusgroup. assert_equals: expected Element node <span id="item2" tabindex="-1">item2</span> but got Element node <div id="fg2" tabindex="-1" focusgroup="extend horizontal...
+

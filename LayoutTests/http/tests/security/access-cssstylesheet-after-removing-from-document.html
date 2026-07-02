@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<head>
+
+<title>Accessing CSSStyleSheet after removing from document</title>
+<script src="/resources/js-test-pre.js"></script>
+
+<!--
+    Explicitly use <link> here instead of dynamically creating <link> elements
+    in JavaScript, so they're loaded before the JavaScript runs.
+-->
+
+<!-- Inline style -->
+<style id="local-style">#element { margin: 10px; }</style>
+
+<!-- Same origin -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="/security/resources/cssStyle.css"
+      data-accessible="true">
+
+<!-- Cross origin, no CORS -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="http://localhost:8000/security/resources/cssStyle.css"
+      data-accessible="false">
+
+<!-- Cross origin, CORS succeeds -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="http://localhost:8000/security/resources/xorigincss1-allow-star.py"
+      crossorigin=""
+      data-accessible="true">
+
+<!-- Same origin -> same origin -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/cssStyle.css"
+      data-accessible="true">
+
+<!-- Same origin -> cross origin, no CORS -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="/resources/redirect.py?url=http://localhost:8000/security/resources/cssStyle.css"
+      data-accessible="false">
+
+<!-- Cross origin -> same origin, no CORS -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/cssStyle.css"
+      data-accessible="false">
+
+<!-- Cross origin -> same origin, CORS succeeds -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="http://localhost:8000/security/resources/redirect-allow-star.py?url=http://127.0.0.1:8000/security/resources/xorigincss1-allow-star.py"
+      crossorigin=""
+      data-accessible="true">
+
+<!-- Same origin -> cross origin -> same origin -->
+<link class="test-stylesheet"
+      rel="stylesheet"
+      href="http://127.0.0.1:8000/resources/redirect.py?url=http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/cssStyle.css"
+      data-accessible="false">
+
+</head>
+
+<body>
+
+<script>
+    description("Tests accessing CSSStyleSheet after removing from the document");
+
+    const link_elements = Array.from(document.getElementsByClassName("test-stylesheet"));
+    for (const element of link_elements) {
+        const stylesheet = element.sheet;
+
+        window.document.head.removeChild(element);
+
+        if (element.dataset.accessible === "true") {
+            shouldNotThrow(() => stylesheet.cssRules);
+            shouldNotThrow(() => stylesheet.insertRule('#element2 { margin: 10px; }'));
+            shouldNotThrow(() => stylesheet.deleteRule(0));
+        } else {
+            shouldThrowErrorName(() => stylesheet.cssRules, "SecurityError");
+            shouldThrowErrorName(() => stylesheet.insertRule('body { margin: 10px; } '), "SecurityError");
+            shouldThrowErrorName(() => stylesheet.deleteRule(0), "SecurityError");
+        }
+    }
+</script>
+
+<script src="/resources/js-test-post.js"></script>
+
+</body>

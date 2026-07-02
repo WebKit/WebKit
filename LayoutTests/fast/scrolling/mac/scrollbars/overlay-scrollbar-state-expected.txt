@@ -1,0 +1,18 @@
+Test scrollbar state internals
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Document
+enabled
+none
+overflow:auto
+PASS verticalScrollbarStateForAuto is "enabled"
+PASS horizontalScrollbarStateForAuto is "none"
+overflow:scroll
+PASS verticalScrollbarStateForScroll is "enabled"
+PASS horizontalScrollbarStateForScroll is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

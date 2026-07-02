@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <script>
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function getUIScript()
+        {
+            return document.getElementById('ui-script').text;
+        }
+
+        function runTest()
+        {
+            if (testRunner.runUIScript)
+                testRunner.runUIScript(`(() => uiController.twoFingerSingleTapAtPoint(50, 50, () => uiController.uiScriptComplete()))()`);
+        }
+        
+        function boxClicked(event)
+        {
+            if (event.metaKey)
+                document.getElementById('target').textContent = 'PASS: received click event with metaKey set to true';
+            else
+                document.getElementById('target').textContent = 'FAIL: received click event with metaKey set to false';
+            testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+
+<div id="target" onclick="boxClicked(event)">
+    FAIL: did not receive click event.
+</div>
+
+</body>
+</html>

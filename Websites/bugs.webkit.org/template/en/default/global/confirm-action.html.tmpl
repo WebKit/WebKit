@@ -1,0 +1,53 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # script_name: the script generating this warning.
+  # token: a valid token for the current action.
+  # reason: reason of the failure.
+  #%]
+
+[% PROCESS global/header.html.tmpl title = "Suspicious Action"
+                                   style_urls = ['skins/standard/global.css'] %]
+
+<div class="throw_error">
+<!--reason=[%reason FILTER html %]-->
+  [% IF reason == "expired_token" %]
+    Your changes have been rejected because you exceeded the time limit
+    of [% constants.MAX_TOKEN_AGE FILTER html %] days before submitting your
+    changes to [% script_name FILTER html %]. Your page may have been displayed
+    for too long, or old changes have been resubmitted by accident.
+
+  [% ELSIF reason == "missing_token" %]
+    It looks like you didn't come from the right page.
+    One reason could be that you entered the URL in the address bar of your
+    web browser directly, which should be safe. Another reason could be that
+    you clicked on a URL which redirected you here <b>without your consent</b>.
+
+  [% ELSIF reason == "invalid_token" %]
+    You submitted changes to [% script_name FILTER html %] with an invalid
+    token, which may indicate that someone tried to abuse you, for instance
+    by making you click on a URL which redirected you here <b>without your
+    consent</b>.
+  [% END %]
+  <p>
+    Are you sure you want to commit these changes?
+  </p>
+</div>
+
+<form name="check" id="check" method="post" action="[% script_name FILTER html %]">
+  [% PROCESS "global/hidden-fields.html.tmpl"
+             exclude="^(Bugzilla_login|Bugzilla_password|token)$" %]
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="confirm" value="Yes, Confirm Changes">
+</form>
+
+<p><a href="index.cgi">No, throw away these changes</a> (you will be redirected
+to the home page).</p>
+
+[% PROCESS global/footer.html.tmpl %]

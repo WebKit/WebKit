@@ -1,0 +1,4 @@
+
+
+FAIL ResizeObserver causes image to no longer allow lazy loading assert_equals: image's source should be set based on sizes=1px expected "/images/green-1x1.png" but got "/images/green-16x16.png"
+

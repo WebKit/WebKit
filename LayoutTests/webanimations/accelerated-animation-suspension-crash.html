@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<style>
+
+#target {
+    width:100px;
+    height:100px;
+    background:red;
+}
+
+.scroller {
+    overflow:scroll;
+    width:50px;
+    height:50px;
+}
+
+.scroller > div {
+    height:400px;
+}
+
+</style>
+
+<div id="target">PASS if this does not crash.</div>
+
+<script>
+
+(async function() {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    // (A) Seed m_timelines with extra entries so DocumentTimeline is not the last-iterated bucket.
+    let extraTimelines = [];
+    for (let i = 0; i < 32; i++) {
+      const source = document.createElement('div');
+      source.className='scroller';
+      source.appendChild(document.createElement('div'));
+      document.body.appendChild(source);
+      extraTimelines.push(new ScrollTimeline({ source }));   // each calls addTimeline()
+    }
+
+    // (B) Elements whose scroll-timeline-name will be dirtied later.
+    let pending = [];
+    for (let i = 0; i < 200; i++) {
+        const scroller = document.createElement('div');
+        scroller.className = 'scroller';
+        scroller.appendChild(document.createElement('div'));
+        document.body.appendChild(scroller);
+        pending.push(scroller);
+    }
+
+    // (C) Accelerated, width-dependent transform animation (translateX(%)).
+    let animation = target.animate(
+        { transform: 'translateX(50%)' },
+        1e6
+    );
+
+    // Wait two frames so the animation ticks, gets AcceleratedAction::Play, and runs accelerated.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    // (D) Re-arm m_needsForcedLayout.
+    animation.effect.setKeyframes({ transform: 'translateX(100%)' });
+    getComputedStyle(target).transform;      // flush style only
+    target.offsetWidth;                      // ensure renderer/layout up-to-date
+
+    // (E) Dirty style with new scroll-timeline-name on many elements WITHOUT flushing.
+    for (let i = 0; i < pending.length; i++)
+        pending[i].style.scrollTimelineName = '--st' + i;
+
+    // (F) Trigger AnimationTimelinesController::suspendAnimations() — the live m_timelines
+    //     iteration will reach DocumentTimeline, force layout via applyPendingAcceleratedAnimations(),
+    //     which calls addTimeline() for each dirtied element, rehashing the backing buffer mid-iteration.
+    window.internals?.suspendAnimations();
+    window.testRunner?.notifyDone();
+})();
+
+</script>

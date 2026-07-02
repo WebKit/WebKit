@@ -1,0 +1,10 @@
+
+PASS auto - rows
+PASS min - rows
+PASS max - rows
+PASS size - rows
+PASS min max - rows
+PASS min size - rows
+PASS max size - rows
+PASS min max size - rows
+

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<textarea id="textarea">Hello wolrd.</textarea>
+
+<script>
+let output = "This tests that when the AX client is VoiceOver, we do not spellcheck.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    output += "Attributed String (without client set):\n"	
+    output += `${accessibilityController.accessibleElementById("textarea").attributedStringForRange(0, 12)}\n`;
+	
+    output += "Attributed String (with VoiceOver specified as the client):\n"	
+    accessibilityController.overrideClient("voiceover");
+
+    // Change the text to clear the cached attributed string
+    document.getElementById("textarea").innerText = "Hello wolrd!";
+    setTimeout(async () => {
+        await waitFor(() => {
+            attributedString = accessibilityController.accessibleElementById("textarea").attributedStringForRange(0, 12);
+            return attributedString.indexOf("AXMisspelled = 1") == -1;
+        });
+        output += `${accessibilityController.accessibleElementById("textarea").attributedStringForRange(0, 12)}\n`;
+
+        // Reset client (important for stress test runs)
+        accessibilityController.overrideClient("");
+        debug(output);
+        finishJSTest();
+    })
+}
+</script>
+</body>
+</html>
+

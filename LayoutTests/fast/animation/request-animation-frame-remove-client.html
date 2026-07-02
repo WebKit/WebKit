@@ -1,0 +1,30 @@
+<p>This test does not crash.</p>
+<iframe></iframe>
+<iframe></iframe>
+<iframe></iframe>
+<iframe></iframe>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var frame = document.querySelector("iframe");
+
+window.onload = function() {
+    // Convert NodeList to Array so that we can use forEach.
+    var windows = Array.prototype.slice.call(window.frames);
+    var numOutstandingCalls = windows.length - 1; // Remember we remove one client.
+    windows.forEach(function (win) {
+        win.requestAnimationFrame(function () {});
+        win.requestAnimationFrame(function () {
+            if (frame.parentNode)
+                frame.parentNode.removeChild(frame);
+            numOutstandingCalls--;
+            if (!numOutstandingCalls && window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+}
+</script>

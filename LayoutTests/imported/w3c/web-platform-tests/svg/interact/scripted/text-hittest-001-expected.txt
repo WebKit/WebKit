@@ -1,0 +1,4 @@
+UNDEROVER
+
+PASS Hit-test of <text> with overlapping <tspan> hits the top-most node
+

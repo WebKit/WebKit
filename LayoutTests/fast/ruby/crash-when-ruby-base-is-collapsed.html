@@ -1,0 +1,23 @@
+<style></style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+  onload = () => {
+    document.styleSheets[0].insertRule(`what { -webkit-user-modify`);
+    document.body.offsetTop;
+    document.querySelector('style').appendChild(document.createElement('div'));
+    let ruby0 = document.createElement('ruby');
+    let div0 = document.createElement('div');
+    div0.appendChild(document.createElement('frame'));
+    ruby0.appendChild(div0);
+    ruby0.appendChild(document.createElement('rt'));
+    document.body.appendChild(ruby0);
+    let div1 = document.createElement('div');
+    document.body.appendChild(div1);
+    div1.appendChild(document.createElement('q'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('Bold');
+    document.execCommand('InsertOrderedList');
+  };
+</script>

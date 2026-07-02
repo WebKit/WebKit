@@ -1,0 +1,30 @@
+
+PASS Should be known: '(overflow-inline)'
+PASS Should be known: '(overflow-inline: none)'
+PASS Should be known: '(overflow-inline: scroll)'
+PASS Should be parseable: 'overflow-inline'
+PASS Should be unknown: 'overflow-inline'
+PASS Should be parseable: '(overflow-inline: ?)'
+PASS Should be unknown: '(overflow-inline: ?)'
+PASS Should be parseable: '(overflow-inline: 10px)'
+PASS Should be unknown: '(overflow-inline: 10px)'
+PASS Should be parseable: '(overflow-inline: 0)'
+PASS Should be unknown: '(overflow-inline: 0)'
+PASS Should be known: '(overflow-block)'
+PASS Should be known: '(overflow-block: none)'
+PASS Should be known: '(overflow-block: scroll)'
+PASS Should be known: '(overflow-block: paged)'
+PASS Should be parseable: 'overflow-block'
+PASS Should be unknown: 'overflow-block'
+PASS Should be parseable: '(overflow-block: ?)'
+PASS Should be unknown: '(overflow-block: ?)'
+PASS Should be parseable: '(overflow-block: 10px)'
+PASS Should be unknown: '(overflow-block: 10px)'
+PASS Should be parseable: '(overflow-block: 0)'
+PASS Should be unknown: '(overflow-block: 0)'
+PASS Check that overflow-inline: scroll always matches non printing documents
+PASS Check that overflow-block: scroll always matches non printing documents
+PASS Check that overflow-inline: none doesn't match non printing documents
+PASS Check that overflow-block: none doesn't match non printing documents
+PASS Check that overflow-block: paged doesn't match non printing documents
+

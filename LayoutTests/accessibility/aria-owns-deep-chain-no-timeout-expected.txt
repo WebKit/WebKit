@@ -1,0 +1,9 @@
+This test ensures deeply chained aria-owns relations don't cause a timeout due to quadratic cycle detection.
+
+PASS: axContainer.childrenCount > 0 === true
+PASS: Did not timeout.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

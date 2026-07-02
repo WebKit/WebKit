@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+var firstTimeStamp;
+var secondTimeStamp;
+
+function mouseDownHandler(event)
+{
+    if (firstTimeStamp === undefined)
+        firstTimeStamp = event.timeStamp;
+    else
+        secondTimeStamp = event.timeStamp;
+}
+
+async function test()
+{
+    description(`This test checks that DOM event timestamps advance to
+    reflect real wall-clock time between events, even without an explicit
+    eventSender.leapForward() call.`);
+
+    if (!window.eventSender) {
+        testFailed('This test requires eventSender');
+        finishJSTest();
+        return;
+    }
+
+    const target = document.getElementById('target');
+    eventSender.mouseMoveTo(
+        target.offsetLeft + target.offsetWidth / 2,
+        target.offsetTop + target.offsetHeight / 2);
+
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    shouldBeDefined('firstTimeStamp');
+    shouldBeDefined('secondTimeStamp');
+
+    // Generous lower bound (50 ms) to absorb timer jitter
+    shouldBeTrue('(secondTimeStamp - firstTimeStamp) > 50');
+    shouldBeTrue('(secondTimeStamp - firstTimeStamp) < 5000');
+
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="test()">
+<div id="target"
+     style="width: 100px; height: 100px; background: red;"
+     onmousedown="mouseDownHandler(event)"></div>
+</body>
+</html>

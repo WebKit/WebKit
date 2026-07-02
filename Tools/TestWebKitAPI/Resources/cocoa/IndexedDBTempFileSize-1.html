@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+
+var openRequest = window.indexedDB.open("IndexedDBTempFileSize");
+openRequest.onupgradeneeded = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('UpgradeNeeded');
+
+    event.target.result.createObjectStore("TestObjectStore");
+} 
+
+openRequest.onsuccess = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('Success');
+    var transaction = event.target.result.transaction(["TestObjectStore"], "readwrite");
+    var objectStore = transaction.objectStore("TestObjectStore");
+    for (let i = 0; i < 100; i++) {
+        objectStore.add(i, i);
+    }
+}
+
+openRequest.onerror = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('Error');
+}
+
+</script>

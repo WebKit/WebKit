@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Basic test for the memory warning simulation mechanism.");
+
+debug("Verify that we're not running under memory warning from the beginning.");
+shouldBe("internals.isUnderMemoryWarning", "false");
+
+debug("Begin simulated memory warning.");
+internals.beginSimulatedMemoryWarning();
+
+shouldBe("internals.isUnderMemoryWarning", "true");
+
+debug("End simulated memory warning.");
+internals.endSimulatedMemoryWarning();
+
+shouldBe("internals.isUnderMemoryWarning", "false");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<head>
+    <title>Tests that getBoundingClientRect and getClientRects account for CSS zoom</title>
+    <style>
+    body {
+        zoom: 1.5;
+    }
+    iframe {
+        zoom: 2;
+        border: none;
+    }
+    </style>
+</head>
+
+<body>
+<div id="test" style="position:absolute; left:10px; top:10px; width:10px; height:10px;"></div>
+<iframe id="zoomedFrame" style="position:absolute; left:1px; top:25px; width:40px; height:40px;"></iframe>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// Set up iframe content
+const iframe = document.getElementById("zoomedFrame");
+iframe.src = "about:blank";
+iframe.onload = () => {
+    const iframeDoc = iframe.contentDocument;
+    const div = iframeDoc.createElement("div");
+    div.id = "iframeTest";
+    div.style.position = "absolute";
+    div.style.left = "10px";
+    div.style.top = "10px";
+    div.style.width = "10px";
+    div.style.height = "10px";
+    iframeDoc.body.appendChild(div);
+};
+
+// Helper to wait for iframe element to be available
+async function getIframeElement() {
+    const iframe = document.getElementById("zoomedFrame");
+    await new Promise((resolve) => {
+        const checkLoaded = () => {
+            if (iframe.contentDocument && iframe.contentDocument.body && iframe.contentDocument.getElementById("iframeTest")) {
+                resolve();
+            } else {
+                requestAnimationFrame(checkLoaded);
+            }
+        };
+        checkLoaded();
+    });
+    return iframe.contentDocument.getElementById("iframeTest");
+}
+
+const zoomFactor = 1.5;
+const iframeZoom = 2;
+const elementSize = 10;
+const iframeSize = 40;
+const iframeLeft = 1;
+const iframeTop = 25;
+
+test(() => {
+    const element = document.getElementById("test");
+    const bounds = element.getBoundingClientRect();
+
+    assert_approx_equals(bounds.left, elementSize * zoomFactor, 0.01);
+    assert_approx_equals(bounds.top, elementSize * zoomFactor, 0.01);
+    assert_approx_equals(bounds.right, elementSize * zoomFactor * 2, 0.01);
+    assert_approx_equals(bounds.bottom, elementSize * zoomFactor * 2, 0.01);
+    assert_approx_equals(bounds.width, elementSize * zoomFactor, 0.01);
+    assert_approx_equals(bounds.height, elementSize * zoomFactor, 0.01);
+}, 'getBoundingClientRect() should account for CSS zoom');
+
+test(() => {
+    const element = document.getElementById("test");
+    const rects = element.getClientRects();
+
+    assert_approx_equals(rects[0].left, elementSize * zoomFactor, 0.01);
+    assert_approx_equals(rects[0].top, elementSize * zoomFactor, 0.01);
+    assert_approx_equals(rects[0].right, elementSize * zoomFactor * 2, 0.01);
+    assert_approx_equals(rects[0].bottom, elementSize * zoomFactor * 2, 0.01);
+    assert_approx_equals(rects[0].width, elementSize * zoomFactor, 0.01);
+    assert_approx_equals(rects[0].height, elementSize * zoomFactor, 0.01);
+}, 'getClientRects() should account for CSS zoom');
+
+test(() => {
+    const iframe = document.getElementById("zoomedFrame");
+    // Iframe position and size with combined zoom factor
+    const combinedZoom = zoomFactor * iframeZoom;
+    const bounds = iframe.getBoundingClientRect();
+
+    assert_approx_equals(bounds.left, iframeLeft * combinedZoom, 0.01);
+    assert_approx_equals(bounds.top, iframeTop * combinedZoom, 0.01);
+    assert_approx_equals(bounds.right, (iframeLeft + iframeSize) * combinedZoom, 0.01);
+    assert_approx_equals(bounds.bottom, (iframeTop + iframeSize) * combinedZoom, 0.01);
+    assert_approx_equals(bounds.width, iframeSize * combinedZoom, 0.01);
+    assert_approx_equals(bounds.height, iframeSize * combinedZoom, 0.01);
+}, 'getBoundingClientRect() should account for CSS zoom on iframe');
+
+test(() => {
+    const iframe = document.getElementById("zoomedFrame");
+    const combinedZoom = zoomFactor * iframeZoom;
+    const rects = iframe.getClientRects();
+
+    assert_approx_equals(rects[0].left, iframeLeft * combinedZoom, 0.01);
+    assert_approx_equals(rects[0].top, iframeTop * combinedZoom, 0.01);
+    assert_approx_equals(rects[0].right, (iframeLeft + iframeSize) * combinedZoom, 0.01);
+    assert_approx_equals(rects[0].bottom, (iframeTop + iframeSize) * combinedZoom, 0.01);
+    assert_approx_equals(rects[0].width, iframeSize * combinedZoom, 0.01);
+    assert_approx_equals(rects[0].height, iframeSize * combinedZoom, 0.01);
+}, 'getClientRects() should account for CSS zoom on iframe');
+
+promise_test(async () => {
+    const iframeElement = await getIframeElement();
+    const bounds = iframeElement.getBoundingClientRect();
+
+    // Element inside iframe: no zoom applies inside iframe document
+    assert_approx_equals(bounds.left, elementSize, 0.01);
+    assert_approx_equals(bounds.top, elementSize, 0.01);
+    assert_approx_equals(bounds.right, elementSize * 2, 0.01);
+    assert_approx_equals(bounds.bottom, elementSize * 2, 0.01);
+    assert_approx_equals(bounds.width, elementSize, 0.01);
+    assert_approx_equals(bounds.height, elementSize, 0.01);
+}, 'getBoundingClientRect() should not apply iframe zoom to elements inside iframe');
+
+promise_test(async () => {
+    const iframeElement = await getIframeElement();
+    const rects = iframeElement.getClientRects();
+
+    // Element inside iframe: no zoom applies inside iframe document
+    assert_approx_equals(rects[0].left, elementSize, 0.01);
+    assert_approx_equals(rects[0].top, elementSize, 0.01);
+    assert_approx_equals(rects[0].right, elementSize * 2, 0.01);
+    assert_approx_equals(rects[0].bottom, elementSize * 2, 0.01);
+    assert_approx_equals(rects[0].width, elementSize, 0.01);
+    assert_approx_equals(rects[0].height, elementSize, 0.01);
+}, 'getClientRects() should not apply iframe zoom to elements inside iframe');
+
+promise_test(async () => {
+    const iframe = document.getElementById("zoomedFrame");
+    await new Promise((resolve) => {
+        const checkLoaded = () => {
+            if (iframe.contentWindow && iframe.contentDocument.body) {
+                resolve();
+            } else {
+                requestAnimationFrame(checkLoaded);
+            }
+        };
+        checkLoaded();
+    });
+
+    const mainDevicePixelRatio = window.devicePixelRatio;
+    const iframeWindow = iframe.contentWindow;
+    const iframeDevicePixelRatio = iframeWindow.devicePixelRatio;
+
+    // The ratio between iframe and main window devicePixelRatio should reflect the combined CSS zoom on the iframe
+    const ratio = iframeDevicePixelRatio / mainDevicePixelRatio;
+    assert_approx_equals(ratio, iframeZoom * zoomFactor , 0.01);
+}, 'devicePixelRatio ratio should reflect combined zoom effect');
+</script>
+</body>

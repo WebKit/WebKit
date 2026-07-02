@@ -1,0 +1,3 @@
+
+PASS navigation.currentEntry/entries()/canGoBack/canGoForward after iframe removal
+

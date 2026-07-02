@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+        var video;
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
+            internals.settings.setAllowsInlineMediaPlayback(false);
+            internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true);
+            consoleWrite('');
+
+            video = document.createElement("video");
+            video.src = findMediaFile("video", "content/test");
+
+            video.play();
+
+            // This code can only work on iOS device as webkitEnterFullscreen will error if the video element isn't part of a document.
+            waitForEvent('webkitbeginfullscreen', () => {
+                testExpected('window.internals.mediaPlayerRenderingCanBeAccelerated(video)', true);
+                endTest();
+            }, false, true, video);
+        });
+    </script>
+</head>
+<body>
+    <div>Test that playing a video in fullscreen is accelerated.</div>
+</body>
+</html>

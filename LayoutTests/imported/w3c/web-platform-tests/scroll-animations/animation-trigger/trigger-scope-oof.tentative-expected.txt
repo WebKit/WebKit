@@ -1,0 +1,8 @@
+In-scope In-Flow Target
+In-scope OOF Target
+SOURCE
+Out-of-scope In-Flow False Target
+Out-of-scope OOF False Target
+
+FAIL In-scope targets find trigger of oof source; out-of-scope targets do not. assert_equals: animation on in_scope_target has playState paused. expected "paused" but got "running"
+

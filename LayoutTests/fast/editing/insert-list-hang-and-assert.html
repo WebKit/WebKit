@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<div id="container" style="white-space: pre-line;">&#xA;<div contenteditable="false"><u contenteditable></u><span contenteditable>&#xA;</span></div>&#xA;A</div>
+<script>
+  window.testRunner?.dumpAsText();
+  window.getSelection().selectAllChildren(document.getElementById("container"));
+  document.designMode = "on";
+  document.execCommand("insertUnorderedList",false,null);
+  document.body.innerHTML = "PASS if no assert or timeout.";
+</script>

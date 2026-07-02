@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+</script>
+</head>
+<body>
+<div style="float: right; border: 1px solid black; width: 50px; height: 40px" contenteditable="true"></div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+</script>
+</body>
+</html>

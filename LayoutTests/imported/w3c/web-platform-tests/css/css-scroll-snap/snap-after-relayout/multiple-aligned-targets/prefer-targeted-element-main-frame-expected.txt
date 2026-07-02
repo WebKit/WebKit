@@ -1,0 +1,3 @@
+
+PASS targeted box is selected snap target.
+

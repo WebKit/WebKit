@@ -1,0 +1,30 @@
+Tests basic correctness of ES Map's clear() API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stringMap.size is 0
+PASS stringMap.values.length is 0
+PASS stringMap.has('Oliver') is false
+PASS stringMap.has('Benjamin') is false
+PASS valueMap.size is 0
+PASS valueMap.values.length is 0
+PASS valueMap.has(0) is false
+PASS valueMap.has(1) is false
+PASS objectMap.size is 0
+PASS objectMap.values.length is 0
+PASS objectMap.has(anArray) is false
+PASS objectMap.has(anObject) is false
+PASS objectMap.has(otherObject) is false
+PASS mixedTypeMap.size is 0
+PASS mixedTypeMap.values.length is 0
+PASS mixedTypeMap.has(0) is false
+PASS mixedTypeMap.has('Oliver') is false
+PASS mixedTypeMap.has(stringMap) is false
+PASS mixedTypeMap.has(valueMap) is false
+PASS mixedTypeMap.has(objectMap) is false
+PASS mixedTypeMap.has(anObject) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

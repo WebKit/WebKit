@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description("Test that choosing a select option in a cross-origin iframe updates the element's value when site isolation is enabled.");
+jsTestIsAsync = true;
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "result") {
+        window.selectedValue = event.data.value;
+        shouldBeEqualToString("selectedValue", "April");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    const iframe = document.getElementById("frame");
+    const iframeRect = iframe.getBoundingClientRect();
+
+    const clickX = iframeRect.left + 50;
+    const clickY = iframeRect.top + 10;
+    await UIHelper.activateAt(clickX, clickY);
+    await UIHelper.waitForContextMenuToShow();
+
+    await UIHelper.selectFormAccessoryPickerRow(3);
+    await UIHelper.waitForContextMenuToHide();
+}
+</script>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/select-element.html" onload="runTest()"></iframe>
+</body>
+</html>

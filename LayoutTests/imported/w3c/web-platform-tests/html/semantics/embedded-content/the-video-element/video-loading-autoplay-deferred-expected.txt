@@ -1,0 +1,6 @@
+
+
+Harness Error (FAIL), message = Error: assert_unreached: Video should not fire loadstart event when not visible in viewport Reached unreachable code
+
+PASS Video with loading=lazy and autoplay that is not visible in viewport does not load video data or autoplay
+

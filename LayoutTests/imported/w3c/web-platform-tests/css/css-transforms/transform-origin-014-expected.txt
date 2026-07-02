@@ -1,0 +1,6 @@
+
+PASS Percentage 'transform-origin' with 'fill-box' transform-box
+PASS Percentage 'transform-origin' with 'view-box' transform-box
+PASS Percentage 'transform-origin' with 'view-box' transform-box in nested <svg> with 'viewBox'
+PASS Percentage 'transform-origin' with 'view-box' transform-box in nested <svg> without 'viewBox'
+

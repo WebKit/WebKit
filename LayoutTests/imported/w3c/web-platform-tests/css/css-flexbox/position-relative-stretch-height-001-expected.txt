@@ -1,0 +1,6 @@
+
+PASS height: stretch against definite parent, top: 50%
+PASS height: stretch against auto parent, top: 50%
+PASS height: stretch inside stretched flex item, top: 50%
+PASS height: stretch inside auto-height column flex item, top: 50%
+

@@ -1,0 +1,7 @@
+
+PASS The second input should be focused since it has autofocus
+PASS Focus should not be delegated to the autofocus element because the inner host doesn't have delegates focus
+PASS Focus should be delegated to the autofocus element when the inner host has delegates focus
+PASS Focus should not be delegated to the slotted elements
+PASS Focus should be delegated to the nested div which has autofocus based on the tree order
+

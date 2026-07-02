@@ -1,0 +1,4 @@
+0123456789 ABCDEFGHIJ
+
+FAIL We should use the inline custom font to render the page when the primary remote font is loading assert_false: Remote font is still pending expected false got true
+

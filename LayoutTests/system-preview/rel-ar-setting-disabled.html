@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SystemPreviewEnabled=false ] -->
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+test(() => {
+    assert_false(document.createElement("a").relList.supports("ar"));
+}, `a.relList.supports("ar") should be false when SystemPreviewEnabled is false.`);
+
+</script>
+</body>

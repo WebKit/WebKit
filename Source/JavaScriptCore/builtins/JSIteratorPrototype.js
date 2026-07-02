@@ -1,0 +1,500 @@
+/*
+ * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.map
+function map(mapper)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.map requires that |this| be an Object.");
+
+    if (!@isCallable(mapper)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.map callback must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var counter = 0;
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            var value = result.value;
+            @ifAbruptCloseIterator(iterated, (
+                yield mapper(value, counter++)
+            ));
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.filter
+function filter(predicate)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.filter requires that |this| be an Object.");
+
+    if (!@isCallable(predicate)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.filter callback must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var counter = 0;
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            var value = result.value;
+            @ifAbruptCloseIterator(iterated, (
+                predicate(value, counter++) && (yield value)
+            ));
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.take
+function take(limit)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.take requires that |this| be an Object.");
+
+    var numLimit;
+    @ifAbruptCloseIterator(this, numLimit = @toNumber(limit));
+    if (numLimit !== numLimit) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.take argument must not be NaN.");
+        }
+    }
+
+    if (@isFinite(numLimit) && numLimit > @MAX_SAFE_INTEGER) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.take argument must be non-negative safe integer or +Infinity");
+        }
+    }
+
+    var intLimit = @toIntegerOrInfinity(numLimit);
+    if (intLimit < 0) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.take argument must be non-negative safe integer or +Infinity");
+        }
+    }
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var remaining = intLimit;
+        for (;;) {
+            if (remaining === 0) {
+                @iteratorGenericClose(iterated);
+                return;
+            }
+
+            if (remaining !== @Infinity)
+                remaining--;
+
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            var value = result.value;
+            @ifAbruptCloseIterator(iterated, (
+                yield value
+            ));
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.drop
+function drop(limit)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.drop requires that |this| be an Object.");
+
+    var numLimit;
+    @ifAbruptCloseIterator(this, (numLimit = @toNumber(limit)));
+    if (numLimit !== numLimit) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.drop argument must not be NaN.");
+        }
+    }
+
+    if (@isFinite(numLimit) && numLimit > @MAX_SAFE_INTEGER) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.drop argument must be non-negative safe integer or +Infinity");
+        }
+    }
+
+    var intLimit = @toIntegerOrInfinity(numLimit);
+    if (intLimit < 0) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.drop argument must be non-negative safe integer or +Infinity");
+        }
+    }
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var remaining = intLimit;
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            if (remaining > 0) {
+                if (remaining !== @Infinity)
+                    remaining--;
+            } else {
+                var value = result.value;
+                @ifAbruptCloseIterator(iterated, (
+                    yield value
+                ));
+            }
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.flatmap
+function flatMap(mapper)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.flatMap requires that |this| be an Object.");
+
+    if (!@isCallable(mapper)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.flatMap callback must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+    var iteratedWrapper = {
+        @@iterator: function() { return this; },
+        next: function() { return iteratedNextMethod.@call(iterated); },
+        return: function() {
+            var iteratedReturnMethod = iterated.return;
+            if (!@isUndefinedOrNull(iteratedReturnMethod))
+                return iteratedReturnMethod.@call(iterated);
+            return { done: true };
+        },
+    };
+
+    var generator = (function*() {
+        var counter = 0;
+        for (var item of iteratedWrapper) {
+            var mapped = mapper(item, counter++);
+            var innerIterator = @getIteratorFlattenable(mapped, /* rejectStrings: */ true);
+
+            for (var innerItem of { @@iterator: function() { return innerIterator; } })
+                yield innerItem;
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.some
+function some(predicate)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.some requires that |this| be an Object.");
+
+    if (!@isCallable(predicate)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.some callback must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var count = 0;
+    var wrapper = { @@iterator: function () { return iterated; }};
+    for (var item of wrapper) {
+        if (predicate(item, count++))
+            return true;
+    }
+
+    return false;
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.every
+function every(predicate)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.every requires that |this| be an Object.");
+
+    if (!@isCallable(predicate)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.every callback must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var count = 0;
+    var wrapper = { @@iterator: function () { return iterated; }};
+    for (var item of wrapper) {
+        if (!predicate(item, count++))
+            return false;
+    }
+
+    return true;
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.find
+function find(predicate)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.find requires that |this| be an Object.");
+
+    if (!@isCallable(predicate)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.find callback must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var count = 0;
+    var wrapper = { @@iterator: function () { return iterated; }};
+    for (var item of wrapper) {
+        if (predicate(item, count++))
+            return item;
+    }
+
+    return @undefined;
+}
+
+// https://tc39.es/ecma262/#sec-iterator.prototype.reduce
+function reduce(reducer /*, initialValue */)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.reduce requires that |this| be an Object.");
+
+    if (!@isCallable(reducer)) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.reduce reducer argument must be a function.");
+        }
+    }
+
+    var iterated = this;
+    var iteratedNextMethod = this.next;
+
+    var accumulator;
+    var counter = 0;
+    if (@argumentCount() <= 1) {
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+        if (result.done)
+            @throwTypeError("Iterator.prototype.reduce requires an initial value or an iterator that is not done.");
+        accumulator = result.value;
+        counter = 1;
+    } else
+        accumulator = @argument(1);
+
+    for (;;) {
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+        if (result.done)
+            break;
+
+        var value = result.value;
+        @ifAbruptCloseIterator(iterated, (
+            accumulator = reducer(accumulator, value, counter++)
+        ));
+    }
+
+    return accumulator;
+}
+
+// https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.chunks
+function chunks(chunkSize)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.chunks requires that |this| be an Object.");
+
+    var numChunkSize = @toNumber(chunkSize);
+    if (numChunkSize !== numChunkSize)
+        @throwRangeError("Iterator.prototype.chunks requires that first argument not be NaN.");
+
+    var intChunkSize = @toIntegerOrInfinity(numChunkSize);
+    if (intChunkSize < 1 || intChunkSize > @MAX_ARRAY_INDEX)
+        @throwRangeError("Iterator.prototype.chunks requires that first argument be between 1 and 2**32 - 1.");
+
+    var iterated = this;
+    var iteratedNextMethod = this.next;
+
+    var generator = (function*() {
+        var buffer = [];
+
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done) {
+                if (buffer.length)
+                    yield buffer;
+                return;
+            }
+
+            @arrayPush(buffer, result.value);
+
+            if (buffer.length === intChunkSize) {
+                @ifAbruptCloseIterator(iterated, (
+                    yield buffer
+                ));
+
+                buffer = [];
+            }
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.windows
+function windows(windowSize /*, undersized */)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.windows requires that |this| be an Object.");
+
+    var numWindowSize = @toNumber(windowSize);
+    if (numWindowSize !== numWindowSize)
+        @throwRangeError("Iterator.prototype.windows requires that first argument not be NaN.");
+
+    var intWindowSize = @toIntegerOrInfinity(numWindowSize);
+    if (intWindowSize < 1 || intWindowSize > @MAX_ARRAY_INDEX)
+        @throwRangeError("Iterator.prototype.windows requires that first argument be between 1 and 2**32 - 1.");
+
+    var undersized = @argument(1) ?? "only-full";
+    if (undersized !== "only-full" && undersized !== "allow-partial")
+        @throwTypeError("Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+
+    var iterated = this;
+    var iteratedNextMethod = this.next;
+
+    var generator = (function*() {
+        var buffer = [];
+
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done) {
+                if (undersized === "allow-partial" && buffer.length && buffer.length < intWindowSize)
+                    yield buffer;
+                return;
+            }
+
+            if (buffer.length === intWindowSize) {
+                for (var i = 0; i < buffer.length - 1; ++i)
+                    buffer[i] = buffer[i + 1];
+                buffer[buffer.length - 1] = result.value;
+            } else
+                @arrayPush(buffer, result.value);
+
+            if (buffer.length === intWindowSize) {
+                var copy = @newArrayWithSize(buffer.length);
+                for (var i = 0; i < buffer.length; ++i)
+                    copy[i] = buffer[i];
+
+                @ifAbruptCloseIterator(iterated, (
+                    yield copy
+                ));
+            }
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/proposal-explicit-resource-management/#sec-%iteratorprototype%-object
+@overriddenName="[Symbol.dispose]"
+function dispose()
+{
+    "use strict";
+
+    var returnMethod = this.return;
+    if (!@isUndefinedOrNull(returnMethod))
+        returnMethod.@call(this);
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="../resources/js-test.js"></script>
+<script src="../resources/gc.js"></script>
+<script>
+description("This test asserts that Document doesn't leak when a CSS Animation is created.");
+if (window.internals)
+    jsTestIsAsync = true;
+
+async function runTest() {
+    if (!window.internals)
+        return;
+
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            let frameIdentifiers = [];
+            for (var i = 0; i < documentCount; i++) {
+                let frame = document.body.appendChild(document.createElement("iframe"));
+                frame.src = 'resources/animation-leak-iframe.html';
+                await new Promise(resolve => { frame.onload = resolve; });
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            return frameIdentifiers;
+        });
+        testPassed(message);
+    } catch (error) {
+        testFailed(error.message);
+    }
+    finishJSTest();
+}
+</script>
+</body>
+</html>

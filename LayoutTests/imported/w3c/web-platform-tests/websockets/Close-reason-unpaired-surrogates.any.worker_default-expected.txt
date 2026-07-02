@@ -1,0 +1,3 @@
+
+PASS Create WebSocket - Close the Connection - close(reason with unpaired surrogates) - connection should get closed
+

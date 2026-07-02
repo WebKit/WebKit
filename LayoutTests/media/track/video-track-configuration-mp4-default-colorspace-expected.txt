@@ -1,0 +1,9 @@
+
+RUN(video.src = "../content/video-as-img.mp4")
+EVENT(canplay)
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix != 'null') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries != 'null') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer != 'null') OK
+END OF TEST
+

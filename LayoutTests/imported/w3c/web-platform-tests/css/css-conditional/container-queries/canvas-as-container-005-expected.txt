@@ -1,0 +1,6 @@
+Test passes if there is a filled green square.
+
+
+PASS Initially display:none, not focusable
+PASS Focusable after container size change
+

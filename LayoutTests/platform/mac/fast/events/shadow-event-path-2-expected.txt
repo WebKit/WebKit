@@ -1,0 +1,1210 @@
+This test records target and relatedTarget at each element while dispatching a mouse click event at an input element.
+
+
+Content:<div id="detailsContainer"><input id="target" type="file"></div>
+
+mouseover@input#target
+    target:input#target
+    relatedTarget:null
+
+mouseover@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mouseover@body
+    target:input#target
+    relatedTarget:null
+
+mouseover@html
+    target:input#target
+    relatedTarget:null
+
+mouseover@document
+    target:input#target
+    relatedTarget:null
+
+mouseover@window
+    target:input#target
+    relatedTarget:null
+
+mouseenter@html
+    target:html
+    relatedTarget:null
+
+mouseenter@body
+    target:body
+    relatedTarget:null
+
+mouseenter@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mouseenter@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mousemove@input#target
+    target:input#target
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:input#target
+    relatedTarget:null
+
+mousemove@body
+    target:input#target
+    relatedTarget:null
+
+mousemove@html
+    target:input#target
+    relatedTarget:null
+
+mousemove@document
+    target:input#target
+    relatedTarget:null
+
+mousemove@window
+    target:input#target
+    relatedTarget:null
+
+mouseout@input#target
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseout@div#detailsContainer
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseout@body
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseout@html
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseout@document
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseout@window
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseleave@input#target
+    target:input#target
+    relatedTarget:div#detailsContainer
+
+mouseover@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:input#target
+
+mouseover@body
+    target:div#detailsContainer
+    relatedTarget:input#target
+
+mouseover@html
+    target:div#detailsContainer
+    relatedTarget:input#target
+
+mouseover@document
+    target:div#detailsContainer
+    relatedTarget:input#target
+
+mouseover@window
+    target:div#detailsContainer
+    relatedTarget:input#target
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@div#detailsContainer
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@body
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@html
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@document
+    target:div#detailsContainer
+    relatedTarget:null
+
+mousemove@window
+    target:div#detailsContainer
+    relatedTarget:null
+
+

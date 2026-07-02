@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+ <head>
+  <title>audio.canPlayType() - supported format w/o codecs parameter</title>
+  <script src="../../w3cwrapper.js"></script>
+ </head>
+ <body>
+  <p><a href="http://dev.w3.org/html5/spec/Overview.html#dom-navigator-canplaytype">spec reference</a></p>
+  <audio id="a">
+  </audio>
+  <div id="log"></div>
+  <script>
+test(function() {
+ var v = document.getElementById("a");
+ if (v.canPlayType('audio/mp4; codecs="mp4a.40.2"') == "probably") {
+  assert_equals(
+   v.canPlayType("audio/mp4"),
+   "maybe",
+   "audioElement.canPlayType() should return 'maybe' on supported format w/o codecs parameter");
+ }
+});
+  </script>
+ </body>
+</html>

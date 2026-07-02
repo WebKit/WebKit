@@ -1,0 +1,21 @@
+Tests the OfflineAudioCompletionEvent constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event = new OfflineAudioCompletionEvent; threw exception TypeError: Not enough arguments.
+PASS event = new OfflineAudioCompletionEvent('foo'); threw exception TypeError: Not enough arguments.
+PASS event = new OfflineAudioCompletionEvent('foo', { renderedBuffer: null }); threw exception TypeError: Type error.
+PASS buffer = context.createBuffer(2, 100, 46000); did not throw exception.
+PASS event = new OfflineAudioCompletionEvent('foo', { renderedBuffer: buffer, bubbles: true }); did not throw exception.
+PASS event.type is "foo"
+PASS event.bubbles is true
+PASS event.cancelable is false
+PASS event.composed is false
+PASS event.renderedBuffer.length is buffer.length
+PASS event.renderedBuffer.duration is buffer.duration
+PASS event.renderedBuffer.sampleRate is buffer.sampleRate
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

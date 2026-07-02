@@ -1,0 +1,29 @@
+Tests that Tab and Shift+Tab close a base-select picker and advance focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.matches(":open") is true
+PASS document.activeElement.id is "opt1"
+PASS select.matches(":open") is false
+PASS document.activeElement.id is "after"
+PASS select.value is "one"
+PASS select.matches(":open") is true
+PASS document.activeElement.id is "opt2"
+PASS select.matches(":open") is false
+PASS document.activeElement.id is "after"
+PASS select.value is "two"
+PASS select.matches(":open") is true
+PASS document.activeElement.id is "opt1"
+PASS select.matches(":open") is false
+PASS document.activeElement.id is "before"
+PASS select.value is "one"
+PASS document.activeElement.id is "opt1"
+PASS document.activeElement.id is "opt2"
+PASS select.matches(":open") is false
+PASS document.activeElement.id is "after"
+PASS select.value is "one"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

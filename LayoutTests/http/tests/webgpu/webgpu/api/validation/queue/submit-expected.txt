@@ -1,0 +1,6 @@
+
+PASS :command_buffer,device_mismatch:
+PASS :command_buffer,duplicate_buffers:
+PASS :command_buffer,submit_invalidates:
+PASS :command_buffer,invalid_submit_invalidates:
+

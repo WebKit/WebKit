@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<style>
+
+.relative200x400 {
+    position: relative;
+    width: 200px;
+    height: 400px;
+    font-size: 10px;
+}
+
+#test {
+    position: absolute;
+}
+
+</style>
+<div id="tests">
+<div class="relative200x400"><div id="test"></div></div>
+</div>
+<script>
+
+description("Test to make sure top/bottom/left/right properly returns pixel values for any input.")
+
+var test = document.getElementById('test');
+
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('No offsets (zero width/height)');
+debug('');
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'400px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+// On padding/border/margin on actual node
+debug('');
+evalAndLog("test.setAttribute('style', 'padding: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'190px'");
+shouldBe("getComputedStyle(test).bottom", "'390px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+debug('');
+evalAndLog("test.setAttribute('style', 'border: solid 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'190px'");
+shouldBe("getComputedStyle(test).bottom", "'390px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+debug('');
+evalAndLog("test.setAttribute('style', 'margin: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'190px'");
+shouldBe("getComputedStyle(test).bottom", "'390px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+evalAndLog("test.setAttribute('style', '')");
+
+// On padding/border/margin on parent node
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 5px;')");
+shouldBe("getComputedStyle(test).top", "'5px'");
+shouldBe("getComputedStyle(test).left", "'5px'");
+shouldBe("getComputedStyle(test).right", "'205px'");
+shouldBe("getComputedStyle(test).bottom", "'405px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'400px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'400px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'0px'");
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('No offsets (50px width/height)');
+debug('');
+var commonStyle = "width: 50px; height: 50px;";
+evalAndLog("test.setAttribute('style', '" + commonStyle + "')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'150px'");
+shouldBe("getComputedStyle(test).bottom", "'350px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+
+// On padding/border/margin on actual node
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + " padding: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'140px'");
+shouldBe("getComputedStyle(test).bottom", "'340px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + " border: solid 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'140px'");
+shouldBe("getComputedStyle(test).bottom", "'340px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + " margin: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'140px'");
+shouldBe("getComputedStyle(test).bottom", "'340px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+evalAndLog("test.removeAttribute('style', 'margin')");
+
+// On padding/border/margin on parent node
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + "')");
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 5px;')");
+shouldBe("getComputedStyle(test).top", "'5px'");
+shouldBe("getComputedStyle(test).left", "'5px'");
+shouldBe("getComputedStyle(test).right", "'155px'");
+shouldBe("getComputedStyle(test).bottom", "'355px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'150px'");
+shouldBe("getComputedStyle(test).bottom", "'350px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'150px'");
+shouldBe("getComputedStyle(test).bottom", "'350px'");
+shouldBe("getComputedStyle(test).width", "'50px'");
+shouldBe("getComputedStyle(test).height", "'50px'");
+
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('No offsets (100% width/height)');
+debug('');
+var commonStyle = "width: 100%; height: 100%;";
+evalAndLog("test.setAttribute('style', '" + commonStyle + "')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'0px'");
+shouldBe("getComputedStyle(test).bottom", "'0px'");
+shouldBe("getComputedStyle(test).width", "'200px'");
+shouldBe("getComputedStyle(test).height", "'400px'");
+
+// On padding/border/margin on actual node
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + " padding: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'-10px'");
+shouldBe("getComputedStyle(test).bottom", "'-10px'");
+shouldBe("getComputedStyle(test).width", "'200px'");
+shouldBe("getComputedStyle(test).height", "'400px'");
+evalAndLog("test.removeAttribute('style', 'padding')");
+
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + " border: solid 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'-10px'");
+shouldBe("getComputedStyle(test).bottom", "'-10px'");
+shouldBe("getComputedStyle(test).width", "'200px'");
+shouldBe("getComputedStyle(test).height", "'400px'");
+evalAndLog("test.removeAttribute('style', 'border')");
+
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + " margin: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'-10px'");
+shouldBe("getComputedStyle(test).bottom", "'-10px'");
+shouldBe("getComputedStyle(test).width", "'200px'");
+shouldBe("getComputedStyle(test).height", "'400px'");
+evalAndLog("test.removeAttribute('style', 'margin')");
+
+// On padding/border/margin on parent node
+debug('');
+evalAndLog("test.setAttribute('style', '" + commonStyle + "')");
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 5px;')");
+shouldBe("getComputedStyle(test).top", "'5px'");
+shouldBe("getComputedStyle(test).left", "'5px'");
+shouldBe("getComputedStyle(test).right", "'-5px'");
+shouldBe("getComputedStyle(test).bottom", "'-5px'");
+shouldBe("getComputedStyle(test).width", "'210px'");
+shouldBe("getComputedStyle(test).height", "'410px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'0px'");
+shouldBe("getComputedStyle(test).bottom", "'0px'");
+shouldBe("getComputedStyle(test).width", "'200px'");
+shouldBe("getComputedStyle(test).height", "'400px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 5px;')");
+shouldBe("getComputedStyle(test).top", "'0px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'0px'");
+shouldBe("getComputedStyle(test).bottom", "'0px'");
+shouldBe("getComputedStyle(test).width", "'200px'");
+shouldBe("getComputedStyle(test).height", "'400px'");
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('% offsets (top/left)');
+debug('');
+evalAndLog("test.setAttribute('style', 'top: 10%; left: 10%; width: 50%; height: 60%;')");
+shouldBe("getComputedStyle(test).top", "'40px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'80px'");
+shouldBe("getComputedStyle(test).bottom", "'120px'");
+shouldBe("getComputedStyle(test).width", "'100px'");
+shouldBe("getComputedStyle(test).height", "'240px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 25px;')");
+shouldBe("getComputedStyle(test).top", "'45px'");
+shouldBe("getComputedStyle(test).left", "'25px'");
+shouldBe("getComputedStyle(test).right", "'100px'");
+shouldBe("getComputedStyle(test).bottom", "'135px'");
+shouldBe("getComputedStyle(test).width", "'125px'");
+shouldBe("getComputedStyle(test).height", "'270px'");
+evalAndLog("test.parentNode.removeAttribute('style', 'padding')");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 25px;')");
+shouldBe("getComputedStyle(test).top", "'40px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'80px'");
+shouldBe("getComputedStyle(test).bottom", "'120px'");
+shouldBe("getComputedStyle(test).width", "'100px'");
+shouldBe("getComputedStyle(test).height", "'240px'");
+evalAndLog("test.parentNode.removeAttribute('style', 'border')");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 25px;')");
+shouldBe("getComputedStyle(test).top", "'40px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'80px'");
+shouldBe("getComputedStyle(test).bottom", "'120px'");
+shouldBe("getComputedStyle(test).width", "'100px'");
+shouldBe("getComputedStyle(test).height", "'240px'");
+evalAndLog("test.parentNode.removeAttribute('style', 'margin')");
+
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('% offsets (right/bottom)');
+debug('');
+evalAndLog("test.setAttribute('style', 'right: 10%; bottom: 10%; width: 90%; height: 80%;')");
+shouldBe("getComputedStyle(test).top", "'40px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'20px'");
+shouldBe("getComputedStyle(test).bottom", "'40px'");
+shouldBe("getComputedStyle(test).width", "'180px'");
+shouldBe("getComputedStyle(test).height", "'320px'");
+
+
+// On padding/border/margin on parent node
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 25px;')");
+shouldBe("getComputedStyle(test).top", "'45px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'25px'");
+shouldBe("getComputedStyle(test).bottom", "'45px'");
+shouldBe("getComputedStyle(test).width", "'225px'");
+shouldBe("getComputedStyle(test).height", "'360px'");
+evalAndLog("test.parentNode.removeAttribute('style', 'padding')");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 25px;')");
+shouldBe("getComputedStyle(test).top", "'40px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'20px'");
+shouldBe("getComputedStyle(test).bottom", "'40px'");
+shouldBe("getComputedStyle(test).width", "'180px'");
+shouldBe("getComputedStyle(test).height", "'320px'");
+evalAndLog("test.parentNode.removeAttribute('style', 'border')");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 25px;')");
+shouldBe("getComputedStyle(test).top", "'40px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'20px'");
+shouldBe("getComputedStyle(test).bottom", "'40px'");
+shouldBe("getComputedStyle(test).width", "'180px'");
+shouldBe("getComputedStyle(test).height", "'320px'");
+evalAndLog("test.parentNode.removeAttribute('style', 'margin')");
+
+
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('em offsets');
+debug('');
+evalAndLog("test.setAttribute('style', 'top: 1em; left: 2em; width: 3em; height: 4em;')");
+shouldBe("getComputedStyle(test).top", "'10px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'150px'");
+shouldBe("getComputedStyle(test).bottom", "'350px'");
+shouldBe("getComputedStyle(test).width", "'30px'");
+shouldBe("getComputedStyle(test).height", "'40px'");
+
+// On padding/border/margin on parent node
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 25px;')");
+shouldBe("getComputedStyle(test).top", "'10px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'400px'");
+shouldBe("getComputedStyle(test).width", "'30px'");
+shouldBe("getComputedStyle(test).height", "'40px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 25px;')");
+shouldBe("getComputedStyle(test).top", "'10px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'150px'");
+shouldBe("getComputedStyle(test).bottom", "'350px'");
+shouldBe("getComputedStyle(test).width", "'30px'");
+shouldBe("getComputedStyle(test).height", "'40px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 25px;')");
+shouldBe("getComputedStyle(test).top", "'10px'");
+shouldBe("getComputedStyle(test).left", "'20px'");
+shouldBe("getComputedStyle(test).right", "'150px'");
+shouldBe("getComputedStyle(test).bottom", "'350px'");
+shouldBe("getComputedStyle(test).width", "'30px'");
+shouldBe("getComputedStyle(test).height", "'40px'");
+
+//-----------------------------------------------------------------------------
+debug('');
+debug('Absolute Offsets');
+debug('');
+evalAndLog("test.setAttribute('style', 'position: absolute; top: 30px; height: 300px;')");
+shouldBe("getComputedStyle(test).top", "'30px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'70px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'300px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'padding: 25px;')");
+shouldBe("getComputedStyle(test).top", "'30px'");
+shouldBe("getComputedStyle(test).left", "'25px'");
+shouldBe("getComputedStyle(test).right", "'225px'");
+shouldBe("getComputedStyle(test).bottom", "'120px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'300px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'border: solid 25px;')");
+shouldBe("getComputedStyle(test).top", "'30px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'70px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'300px'");
+
+debug('');
+evalAndLog("test.parentNode.setAttribute('style', 'margin: 25px;')");
+shouldBe("getComputedStyle(test).top", "'30px'");
+shouldBe("getComputedStyle(test).left", "'0px'");
+shouldBe("getComputedStyle(test).right", "'200px'");
+shouldBe("getComputedStyle(test).bottom", "'70px'");
+shouldBe("getComputedStyle(test).width", "'0px'");
+shouldBe("getComputedStyle(test).height", "'300px'");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

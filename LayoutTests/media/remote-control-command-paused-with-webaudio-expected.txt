@@ -1,0 +1,31 @@
+Test that the "seekToPlaybackPosition" remote control command works.
+
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+RUN(audio.src = findMediaFile("audio", "content/test"))
+EVENT(canplay)
+RUN(context = new AudioContext())
+-
+Start the AudioContext
+RUN(context.resume())
+Promise resolved OK
+-
+Play then pause the audio element
+RUN(audio.play())
+EVENT(playing)
+RUN(audio.pause())
+EVENT(pause)
+-
+Play then pause the video element
+RUN(video.play())
+EVENT(playing)
+RUN(video.pause())
+EVENT(pause)
+-
+Send a "play" remote control command
+RUN(internals.postRemoteControlCommand('play'))
+EVENT(play)
+EXPECTED (event.target === video == 'true') OK
+END OF TEST
+

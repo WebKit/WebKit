@@ -1,0 +1,11 @@
+<script>
+function handleLoad()
+{
+    window.parent.postMessage("IFrameLoaded", "*");
+}
+
+throw "IframeException";
+
+</script>
+<body onload="handleLoad()">
+</body>

@@ -1,0 +1,10 @@
+
+PASS 00B1  PLUS-MINUS SIGN may appear at line start if de and normal
+PASS 20AC  EURO SIGN may appear at line start if de and normal
+PASS 2116  NUMERO SIGN may appear at line start if de and normal
+PASS FE69  SMALL DOLLAR SIGN may appear at line start if de and normal
+PASS FF04  FULLWIDTH DOLLAR SIGN may appear at line start if de and normal
+PASS FFE1  FULLWIDTH POUND SIGN may appear at line start if de and normal
+PASS FFE5  FULLWIDTH YEN SIGN may appear at line start if de and normal
+PASS FFE6  FULLWIDTH WON SIGN may appear at line start if de and normal
+

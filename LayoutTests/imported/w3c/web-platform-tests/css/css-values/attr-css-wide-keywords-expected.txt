@@ -1,0 +1,25 @@
+Parent Child
+
+
+PASS font-style: attr(data-foo type(*)) with data-foo="inherit"
+PASS font-style: attr(data-foo type(*)) with data-foo="revert"
+PASS color: attr(data-foo type(*)) with data-foo="initial"
+PASS color: attr(data-foo type(*)) with data-foo="unset"
+PASS --x: attr(data-foo type(*)) with data-foo="inherit"
+PASS --y: attr(data-foo type(*)) with data-foo="initial"
+PASS --y: attr(data-foo type(*)) with data-foo="unset"
+PASS font-style: attr(invalid, inherit) with data-foo=""
+PASS font-style: attr(invalid, revert) with data-foo=""
+PASS color: attr(invalid, initial) with data-foo=""
+PASS color: attr(invalid, unset) with data-foo=""
+PASS --x: attr(invalid, inherit) with data-foo=""
+PASS --y: attr(invalid, initial) with data-foo=""
+PASS --y: attr(invalid, unset) with data-foo=""
+PASS --z: attr(invalid, inherit) with data-foo=""
+PASS --z: attr(invalid, initial) with data-foo=""
+PASS font-style: attr(data-foo type(*)) with data-foo="attr(invalid, inherit)"
+PASS --x: attr(data-foo type(*)) with data-foo="attr(invalid, inherit)"
+PASS --y: attr(data-foo type(*)) with data-foo="attr(invalid, initial)"
+PASS --y: attr(data-foo type(*)) with data-foo="attr(invalid, unset)"
+PASS --z: attr(data-foo type(*)) with data-foo="attr(invalid, inherit)"
+

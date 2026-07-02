@@ -1,0 +1,4 @@
+partial interface ShadowRealmGlobalScope {
+    [EnabledBySetting=WebAPIsInShadowRealmEnabled] attribute ExposedStarConstructor ExposedStar;
+    attribute ShadowRealmGlobalScopeConstructor ShadowRealmGlobalScope;
+};

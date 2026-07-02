@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+Markup.description("This tests that copying and pasting an image in a picture element preserves the picture and source elements.");
+Markup.noAutoDump();
+
+function runTest()
+{
+    var picture = document.getElementById("picture");
+    execSetSelectionCommand(picture, 2, picture, 3);
+    execCopyCommand();
+
+    document.getElementById("paste-contenteditable").innerHTML = "";
+    selection.setPosition(document.getElementById("paste-contenteditable"), 0);
+    execPasteCommand();
+    Markup.dump("paste-contenteditable");
+}
+
+window.onload = function()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    runTest();
+
+    Markup.notifyDone();
+};
+</script>
+</head>
+<body>
+<div id="copy-contenteditable" contenteditable>
+Test<picture id="picture"><source srcset="resources/apple.gif" media="(min-width: 600px)"/><source srcset="resources/mozilla.gif"/><img src=""></picture>
+</div>
+
+<div id="paste-contenteditable" contentEditable="true"></div>
+</body>
+</html>

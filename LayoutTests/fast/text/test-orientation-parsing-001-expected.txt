@@ -1,0 +1,11 @@
+PASS window.getComputedStyle(document.getElementById('test1')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test2')).webkitTextOrientation is "sideways"
+PASS window.getComputedStyle(document.getElementById('test3')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test4')).webkitTextOrientation is "mixed"
+PASS window.getComputedStyle(document.getElementById('test5')).webkitTextOrientation is "mixed"
+PASS window.getComputedStyle(document.getElementById('test6')).webkitTextOrientation is "upright"
+PASS window.getComputedStyle(document.getElementById('test7')).webkitTextOrientation is "upright"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

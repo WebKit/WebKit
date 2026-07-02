@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input>
+<iframe tabindex="0" srcdoc="<input tabindex='0'><script>parent.innerInput = document.querySelector('input');</script>"></iframe>
+<script>
+let iframe = document.querySelector('iframe');
+let outerInput = document.querySelector('input');
+let innerInput = null;
+
+if (window.testRunner && window.GCController) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    iframe.onload = () => setTimeout(runTest, 0);
+} else
+    document.write('<p>FAIL - This test requires testRunner and GCController</p>');
+
+function runTest() {
+    let innerInput = window.innerInput;
+    window.innerInput = null;
+
+    outerInput.addEventListener('blur', () => {
+        document.adoptNode(innerInput);
+        innerInput = null;
+        iframe.remove();
+        iframe = null;
+        GCController.collect();
+    }, { once: true });
+
+    outerInput.focus();
+    outerInput.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, cancelable: true, view: window, detail: 0,
+        key: 'Tab', code: 'Tab', keyIdentifier: 'U+0009', location: 222, ctrlKey: false, altKey: true, shiftKey: false, metaKey: false }));
+
+    document.body.innerHTML = '<p>This test passes if PASS (no crash)</p>';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

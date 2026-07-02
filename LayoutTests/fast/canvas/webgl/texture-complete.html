@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL "Texture Complete" texture conformance test.</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+</head>
+<body>
+<canvas id="example" width="40" height="40" style="width: 40px; height: 40px;"></canvas>
+<canvas id="canvas2d" width="16" height="16" style="width: 40px; height: 40px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+#ifdef GL_ES
+precision highp float;
+#endif
+attribute vec4 vPosition;
+attribute vec2 texCoord0;
+varying vec2 texCoord;
+void main()
+{
+    gl_Position = vPosition;
+    texCoord = texCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D tex;
+varying vec2 texCoord;
+void main()
+{
+    gl_FragColor = texture2D(tex, texCoord);
+}
+</script>
+
+<script>
+function init()
+{
+  if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(false);
+  }
+
+  if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+  debug("Checks that a texture that is not -texture-complete- does not draw if"+
+        " filtering needs mips");
+  debug("");
+
+  var canvas2d = document.getElementById("canvas2d");
+  var ctx2d = canvas2d.getContext("2d");
+  ctx2d.fillStyle = "rgba(0,192,128,255)";
+  ctx2d.fillRect(0, 0, 16, 16);
+
+  gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "texCoord0"],
+                 [ 0, 0, 0, 1 ], 1);
+
+  gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.BLEND);
+
+  var vertexObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(gl.ARRAY_BUFFER,
+                new Float32Array([ -1,1,0, 1,1,0, -1,-1,0,
+                                   -1,-1,0, 1,1,0, 1,-1,0 ]),
+                gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+  var vertexObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(gl.ARRAY_BUFFER,
+                new Float32Array([ 0,0, 1,0, 0,1,
+                                   0,1, 1,0, 1,1 ]),
+                gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(1);
+  gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  // 16x16 texture no mips
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+
+  var loc = gl.getUniformLocation(gl.program, "tex");
+  gl.uniform1i(loc, 0);
+
+  checkBuffer(0,0,0,255,
+      "texture that is not -texture-complete- when " +
+      "TEXTURE_MIN_FILTER not NEAREST or LINEAR should draw with 0,0,0,255");
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+
+  gl.activeTexture(gl.TEXTURE1);
+  checkBuffer(0,0,0,255,
+      "meaningless change of the active texture should not affect the black-texture fallback.");
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+  gl.activeTexture(gl.TEXTURE0);
+
+  function checkBuffer(r, g, b, a, msg) {
+    gl.clearColor(1,1,1,1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.flush();
+    var buf = new Uint8Array(4 * 4 * 4);
+    gl.readPixels(0, 0, 4, 4, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    for (var i = 0; i < 4 * 4; ++i) {
+      var offset = i * 4;
+      if (buf[offset + 0] != r ||
+          buf[offset + 1] != g ||
+          buf[offset + 2] != b ||
+          buf[offset + 3] != a) {
+        debug('expected: ' + r + ', ' + g + ', ' + b + ', ' + a +
+              ' was: ' +
+              buf[offset + 0] + ', ' +
+              buf[offset + 1] + ', ' +
+              buf[offset + 2] + ', ' +
+              buf[offset + 3]);
+        testFailed(msg);
+        return;
+      }
+    }
+    testPassed(msg);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
+

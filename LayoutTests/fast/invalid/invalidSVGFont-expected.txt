@@ -1,0 +1,3 @@
+Test case for bug 18862: Crash while handling SVG font in the wrong namespace imported with @font-face
+
+PASSED (did not crash or ASSERT)

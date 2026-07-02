@@ -1,0 +1,5 @@
+main frame - has 1 onunload handler(s)
+
+PASS The planned navigation of a form should be cancelled by a window stop
+  in the same task as the form submission
+

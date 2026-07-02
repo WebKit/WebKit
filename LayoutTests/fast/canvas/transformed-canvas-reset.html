@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<canvas id="can" width=200 height=256 style="-webkit-transform: translateZ(0)"></canvas>
+Test passes if DRT doesn't crash.
+<script>
+var can = document.querySelector("#can");
+var ctx = can.getContext("2d");
+ctx.fillStyle = "green";
+ctx.fillRect(0, 0, 300, 300);
+document.body.offsetTop;
+can.width = 300;
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

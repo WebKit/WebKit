@@ -1,0 +1,52 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/README.md
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/backcolor.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/bold.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/createlink.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/delete-list-items-in-table-cells.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/delete.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/fontname.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/fontsize.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/forecolor.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/formatblock.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/forwarddelete.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/hilitecolor.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/indent.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/insert-list-items-in-table-cells.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/inserthorizontalrule.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/inserthtml.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/insertimage.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/insertlinebreak.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/insertorderedlist.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/insertparagraph.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/inserttext.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/insertunorderedlist.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/italic.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/justifycenter.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/justifyfull.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/justifyleft.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/justifyright.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/misc.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/multitest.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/outdent.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/removeformat.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/strikethrough.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/subscript.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/superscript.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/underline.js
+/LayoutTests/imported/w3c/web-platform-tests/editing/data/unlink.js

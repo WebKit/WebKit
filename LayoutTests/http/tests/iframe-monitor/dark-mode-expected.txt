@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://127.0.0.1:8000/iframe-monitor/resources/--eligible--/iframe.html
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://127.0.0.1:8000/iframe-monitor/resources/--eligible--/iframe.html
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit: 10240 bytes, url=http://127.0.0.1:8000/iframe-monitor/resources/--eligible--/iframe.html
+Test unloaded HTML supports dark mode correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS setupDone is true
+In header, scheme is light and dark.
+PASS iframeElem.srcdoc is not ""
+PASS window.getComputedStyle(pElem).getPropertyValue('color') is 'rgb(0, 0, 0)'
+PASS window.getComputedStyle(pElem).getPropertyValue('color') is 'rgb(255, 255, 255)'
+In main, scheme is normal.
+PASS iframeElem.srcdoc is not ""
+PASS window.getComputedStyle(pElem).getPropertyValue('color') is 'rgb(0, 0, 0)'
+PASS window.getComputedStyle(pElem).getPropertyValue('color') is 'rgb(0, 0, 0)'
+In footer, scheme is dark only.
+PASS iframeElem.srcdoc is not ""
+PASS window.getComputedStyle(pElem).getPropertyValue('color') is 'rgb(255, 255, 255)'
+PASS window.getComputedStyle(pElem).getPropertyValue('color') is 'rgb(255, 255, 255)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

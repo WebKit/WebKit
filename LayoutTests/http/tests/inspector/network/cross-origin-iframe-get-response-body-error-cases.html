@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadCrossOriginIframe() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/plain&content=error-test";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.CrossOriginIframe.ErrorCases");
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.ErrorCases.InvalidRequestId",
+        description: "getResponseBody with a completely invalid requestId should return an error.",
+        async test() {
+            try {
+                await NetworkAgent.getResponseBody("not-a-valid-request-id");
+                InspectorTest.fail("Should have thrown for invalid requestId.");
+            } catch (e) {
+                InspectorTest.pass("Should throw for invalid requestId.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.ErrorCases.NonexistentResource",
+        description: "getResponseBody with a well-formed but nonexistent requestId should return an error.",
+        async test() {
+            // Use the legacy format (numeric) which will hit InspectorNetworkAgent, not ProxyingNetworkAgent.
+            try {
+                await NetworkAgent.getResponseBody("99999999");
+                InspectorTest.fail("Should have thrown for nonexistent resource.");
+            } catch (e) {
+                InspectorTest.pass("Should throw for nonexistent resource.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.ErrorCases.ValidResourceSucceeds",
+        description: "Verify a valid cross-origin resource succeeds, as a control.",
+        test(resolve, reject) {
+            WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded)
+                .then((event) => {
+                    let childFrame = event.data.childFrame;
+                    let mainResource = childFrame.mainResource;
+
+                    if (mainResource.finished)
+                        return mainResource.requestContent();
+
+                    return new Promise((resolveLoad) => {
+                        mainResource.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, () => resolveLoad());
+                    }).then(() => mainResource.requestContent());
+                })
+                .then(({error, content}) => {
+                    InspectorTest.expectThat(!error, "Valid resource should not have an error.");
+                    InspectorTest.expectEqual(content, "error-test", "Content should match expected value.");
+                })
+                .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("loadCrossOriginIframe()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests error handling for Network.getResponseBody with invalid or nonexistent requestIds.</p>
+</body>
+</html>

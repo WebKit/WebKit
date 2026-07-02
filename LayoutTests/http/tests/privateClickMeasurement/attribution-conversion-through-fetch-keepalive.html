@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description">Tests triggering of private click measurement attributions with fetch on pagehide.</div>
+<a id="targetLink" href="http://localhost:8000/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html?stepTwo" attributionsourceid=3 attributiondestination="http://localhost:8000">Link</a><br>
+<div id="output"></div>
+<script>
+    prepareTest();
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function triggerFetch(conversionData) {
+        return fetch("https://127.0.0.1:8443/privateClickMeasurement/resources/redirectToConversion.py?conversionData="+ conversionData + "&delay_ms=100", { keepalive: true });
+    }
+
+    function runTest() {
+        if (window.location.search === "?stepTwo") {
+            // Start private click attribution fetch but navigate away before the fetch redirection happens.
+            triggerFetch(12);
+            document.location.href = "http://127.0.0.1:8000/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html?stepThree";
+            return;
+        }
+        if (window.location.search === "?stepThree") {
+            document.body.removeChild(document.getElementById("targetLink"));
+            // Do an invalid private click attribution fetch to ensure the previous correct click attribution fetch will be finished.
+            triggerFetch("whatever").catch(() => {
+                if (window.testRunner)
+                    testRunner.dumpPrivateClickMeasurement();
+                tearDownAndFinish();
+            });
+            return;
+        }
+        activateElement("targetLink");
+    }
+</script>
+</body>
+</html>

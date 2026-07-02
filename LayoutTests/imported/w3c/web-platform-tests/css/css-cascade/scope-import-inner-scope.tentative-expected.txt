@@ -1,0 +1,6 @@
+Inside
+Outside
+
+FAIL @scope within scope-imported stylesheet matches assert_equals: expected "1" but got ""
+PASS @scope within scope-imported does not ignore import scope
+

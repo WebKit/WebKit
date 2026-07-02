@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <link rel="stylesheet" href="../../css/webkit.css"></link>
+        <link rel="shortcut icon" sizes="32x32" type="image/x-icon" href="https://webkit.org/favicon.ico">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="app"></div>
+        <script type="module">
+            import {DOM} from "../Ref.js";
+            import {TestController} from "../Test.js";
+            import {TestApp} from "../components/TestComponents.js";
+            const testController = new TestController();
+            async function main() {
+                // Test file list: Root Path will be Test.js's folder
+                await testController.collectFile("./test/RefTest.js");
+                DOM.inject(document.getElementById("app"), TestApp(testController));
+            };
+            main();
+        </script>
+    </body>
+</html>

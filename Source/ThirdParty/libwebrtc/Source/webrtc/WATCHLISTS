@@ -1,0 +1,142 @@
+# Copyright (c) 2011 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# Inspired by chromium.org:
+# http://dev.chromium.org/developers/contributing-code/watchlists
+
+{
+  'WATCHLIST_DEFINITIONS': {
+    'this_file': {
+      'filepath': '^WATCHLISTS$',
+    },
+    'all_webrtc': {
+      # NOTE: if you like this you might like webrtc-reviews@webrtc.org!
+      'filepath': '^.*',
+    },
+    'root_files': {
+      # Non-recursive contents of ./
+      'filepath': '^[^/]*$',
+    },
+    'build_files': {
+      'filepath': '\.gni$|\.gn$',
+    },
+    'java_files': {
+      'filepath': '\.java$|\.xml$',
+    },
+    'api': {
+      'filepath': 'api/.*',
+    },
+    'audio': {
+      'filepath': 'audio/.*',
+    },
+    'base': {
+      'filepath': 'rtc_base/.*',
+    },
+    'call': {
+      'filepath': 'call/.*',
+    },
+    'media_engine': {
+      'filepath': 'media/engine/.*',
+    },
+    'video': {
+      'filepath': 'video/.*',
+    },
+    'common_audio': {
+      'filepath': 'common_audio/.*',
+    },
+    'common_video': {
+      'filepath': 'common_video/.*',
+    },
+    'video_capture': {
+      'filepath': 'modules/video_capture/.*',
+    },
+    'audio_device': {
+      'filepath': 'modules/audio_device/.*',
+    },
+    'audio_coding': {
+      'filepath': 'modules/audio_coding/.*',
+    },
+    'neteq': {
+      'filepath': 'modules/audio_coding/neteq/.*',
+    },
+    'audio_mixer': {
+      'filepath': 'modules/audio_mixer/.*',
+    },
+    'audio_processing': {
+      'filepath': 'modules/audio_processing/.*',
+    },
+    'video_coding': {
+      'filepath': 'modules/video_coding/.*',
+    },
+    'bitrate_controller': {
+      'filepath': 'modules/bitrate_controller/.*'
+    },
+    'congestion_controller': {
+      'filepath': 'modules/congestion_controller/.*'
+    },
+    'remote_bitrate_estimator': {
+      'filepath': 'modules/remote_bitrate_estimator/.*'
+    },
+    'pacing': {
+      'filepath': 'modules/pacing/.*'
+    },
+    'rtp_rtcp': {
+      'filepath': 'modules/rtp_rtcp/.*'
+    },
+    'system_wrappers': {
+      'filepath': 'system_wrappers/.*',
+    },
+    'pc': {
+      'filepath': '^pc/.*',
+    },
+    'logging' : {
+      'filepath': 'logging/.*',
+    },
+  },
+
+  'WATCHLISTS': {
+    'this_file': [],
+    'all_webrtc': [],
+    'root_files': ['peah@webrtc.org'],
+    'build_files': ['mbonadei@webrtc.org'],
+    'common_audio': ['peah@webrtc.org',
+                     'saza@webrtc.org'],
+    'audio': ['peah@webrtc.org'],
+    'api': ['hta@webrtc.org',
+            'peah@webrtc.org'],
+    'base': ['hta@webrtc.org'],
+    'call': ['stefan@webrtc.org'],
+    'video': ['stefan@webrtc.org'],
+    'video_capture': ['perkj@webrtc.org'],
+    'audio_device': ['henrika@webrtc.org',
+                     'peah@webrtc.org',
+                     'saza@webrtc.org'],
+    'audio_coding': ['henrik.lundin@webrtc.org',
+                     'peah@webrtc.org',
+                     'saza@webrtc.org'],
+    'neteq': ['henrik.lundin@webrtc.org',
+              'saza@webrtc.org'],
+    'audio_mixer': ['henrik.lundin@webrtc.org',
+                    'peah@webrtc.org',
+                    'saza@webrtc.org'],
+    'audio_processing': ['henrik.lundin@webrtc.org',
+                         'peah@webrtc.org',
+                         'saza@webrtc.org'],
+    'video_coding': ['stefan@webrtc.org'],
+    'bitrate_controller': ['stefan@webrtc.org'],
+    'congestion_controller': [],
+    'remote_bitrate_estimator': ['stefan@webrtc.org'],
+    'pacing': ['stefan@webrtc.org'],
+    'rtp_rtcp': ['stefan@webrtc.org',
+                 'danilchap@webrtc.org'],
+    'system_wrappers': ['henrika@webrtc.org',
+                        'peah@webrtc.org'],
+    'pc': [],
+    'logging': ['terelius@webrtc.org'],
+  },
+}

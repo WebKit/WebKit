@@ -1,0 +1,10 @@
+Tests calling a window.document getter on another window instance does not work
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.getOwnPropertyDescriptor(window, "document").get.call(otherWindow) threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(window, "document").get.call').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

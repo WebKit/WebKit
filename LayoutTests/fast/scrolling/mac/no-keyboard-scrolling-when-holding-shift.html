@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body {
+    font-family: system-ui;
+}
+
+#scroller {
+    width: 20%;
+    height: 20%;
+    overflow: scroll;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.tall {
+    background-image: linear-gradient(blue, red);
+    height: 3000px;
+    width: 100px;
+    z-index: -1;
+}
+
+.text {
+    width: 300px;
+    height: 300px;
+}
+</style>
+<meta charset="utf-8">
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async function() {
+    description("Verifies that pressing Shift + Up modifies an extant selection, and does not begin keyboard scrolling after the selection is completely cleared. To manually run the test, press Shift + Up until the selection disappears, and then keep pressing Shift + Up — the page should not scroll")
+    getSelection().selectAllChildren(document.querySelector("p.text"));
+    await UIHelper.ensurePresentationUpdate();
+    scrollTo(0, 5000);
+
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    scrollTopBeforeKeyPresses = document.scrollingElement.scrollTop;
+
+    // Verify that pressing Shift + Up modifies the selection until it's no longer visible.
+    while (getSelection().type === "Range") {
+        await UIHelper.keyDown("upArrow", ["shiftKey"]);
+    }
+
+    // Verify that pressing Shift + Up afterwards does not trigger keyboard scrolling.
+    await UIHelper.rawKeyDown("upArrow", ["shiftKey"]);
+    await UIHelper.delayFor(250);
+    await UIHelper.rawKeyUp("upArrow", ["shiftKey"]);
+    shouldBe("document.scrollingElement.scrollTop", "scrollTopBeforeKeyPresses");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="tall"></div>
+    <p class="text">Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>
+</body>
+</html>

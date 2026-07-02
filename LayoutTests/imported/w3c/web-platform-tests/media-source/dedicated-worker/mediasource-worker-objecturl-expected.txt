@@ -1,0 +1,8 @@
+
+
+PASS Test main context load of a DedicatedWorker MediaSource object URL should fail
+PASS MediaSource in DedicatedWorker context must have true-valued canConstructInDedicatedWorker if Window context had it
+PASS MediaSource construction succeeds with initial closed readyState in DedicatedWorker
+PASS URL.createObjectURL(mediaSource) in DedicatedWorker does not throw exception
+PASS URL.revokeObjectURL(mediaSource) in DedicatedWorker with two url for same MediaSource
+

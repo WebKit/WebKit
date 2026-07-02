@@ -1,0 +1,12 @@
+An unpaired surrogate should show a glyph. "a\uD800b" should be longer than "ab"
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.clientWidth is > ref.clientWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a�b
+ab
+

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="textbox" type="text" size=20 aria-labelledby="textbox-label">
+<label id="textbox-label" for="textbox">Hello</label>
+
+<script>
+let output = "This tests that the aria-labelledby pointing to a label works when the label has a `for` attribute.\n\n";
+
+var platformText;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var textbox = accessibilityController.accessibleElementById("textbox");
+    output += `${platformTextAlternatives(textbox)}\n`;
+
+    document.getElementById("textbox-label").innerHTML = "World";
+    output += "Changing inner HTML of label:\n";
+    setTimeout(async function() {
+        await waitFor(() => {
+            platformText = platformTextAlternatives(textbox);
+            return platformText.includes("World");
+        });
+        output += `${platformTextAlternatives(textbox)}\n`;
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+previous line
+
+middle line
+
+last line
+
+
+PASS extending selection from middle of first word of the middle line shouldn't extend the range to the previous line
+PASS extending selection from middle of last word of the middle line shouldn't extend the range to the next line
+

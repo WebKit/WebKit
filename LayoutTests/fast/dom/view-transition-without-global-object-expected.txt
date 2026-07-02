@@ -1,0 +1,2 @@
+ALERT: result should be null:null
+This test passes if it does not crash.

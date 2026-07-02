@@ -1,0 +1,35 @@
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+
+var element, className, classToRemove;
+
+// Test 1 tests that remove is linear when there are N class names.
+
+function setupFunction1(magnitude)
+{
+    element = document.createElement('div');
+    classToRemove = 'b';
+    className = Array(magnitude).join('a ') + classToRemove;
+}
+
+// Test 2 tests that remove is linear when the length of the class name is N.
+
+function setupFunction2(magnitude)
+{
+    element = document.createElement('div');
+    classToRemove = Array(magnitude + 1).join('a');
+    className = classToRemove;
+}
+
+function test(magnitude)
+{
+    element.className = className;
+    element.classList.remove(classToRemove);
+}
+
+Magnitude.description('Tests that classList remove is linear.');
+Magnitude.run(setupFunction1, test, Magnitude.LINEAR);
+Magnitude.run(setupFunction2, test, Magnitude.LINEAR);
+
+</script>
+</body>

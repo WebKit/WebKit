@@ -1,0 +1,431 @@
+group if "If Statements"
+
+    case single_statement
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 1.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                out0 = 0.0;
+                if (in0 >= 1.0)
+                    out0 = 1.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case compound_statement
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 1.0 ];
+            output float out1 = [ 1.0 | 0.0 | 0.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                out0 = 0.0;
+                out1 = 1.0;
+                if (in0 >= 1.0)
+                {
+                    out0 = 1.0;
+                    out1 = 0.0;
+                }
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case sequence_statements
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 1.0 ];
+            output float out1 = [ 1.0 | 0.0 | 0.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                out0 = 0.0;
+                out1 = 1.0;
+                if (in0 >= 1.0)
+                    out0 = 1.0, out1 = 0.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case sequence_condition
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 1.0 ];
+            output float out1 = [ 1.0 | 0.0 | 0.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                out0 = 0.0;
+                out1 = 1.0;
+                if (false, in0 >= 1.0)
+                    out0 = 1.0, out1 = 0.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case complex_condition
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 1.0 ];
+            output float out1 = [ 1.0 | 0.0 | 0.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                out0 = 0.0;
+                out1 = 1.0;
+                if (false || (in0 >= 1.0) && (in0 - 2.0*in0 < 0.0))
+                    out0 = 1.0, out1 = 0.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case if_else
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 1.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                if (in0 >= 1.0)
+                    out0 = 1.0;
+                else
+                    out0 = 0.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case if_elseif
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 2.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                out0 = 0.0;
+                if (in0 >= 2.0)
+                    out0 = 2.0;
+                else if (in0 >= 1.0)
+                    out0 = 1.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case if_elseif_else
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 2.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                if (in0 >= 2.0)
+                    out0 = 2.0;
+                else if (in0 >= 1.0)
+                    out0 = 1.0;
+                else
+                    out0 = 0.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case mixed_if_elseif_else
+        values
+        {
+            input float in0 = [ 0.0 | 1.0 | 2.0 ];
+            output float out0 = [ 0.0 | 1.0 | 2.0 ];
+        }
+
+        both ""
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                if (in0 >= 2.0)
+                {
+                    out0 = 2.0;
+                }
+                else if (in0 >= 1.0)
+                    out0 = 2.0, out0 = 1.0;
+                else
+                    out0 = 0.0;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case constant_conditional_assignment_to_matrix
+        vertex ""
+                        // This variant doesn't provoke the crash seen in the versions below.
+            ${VERTEX_DECLARATIONS}
+            varying mediump float FragVarying;
+            const float in0 = 0.0;
+            void main()
+            {
+                mat2 projectionMatrix = mat2(0.0, 0.0, 0.0, 0.0);
+                if (in0 == 1.0)
+                {
+                    projectionMatrix[0][0] = 1.0;
+                }
+
+                FragVarying = 1.0;
+                gl_Position = dEQP_Position + vec4(projectionMatrix[1][0], 0.0, 0.0, 0.0);
+            }
+        ""
+        fragment ""
+            precision mediump float;
+            varying float FragVarying;
+            void main()
+            {
+                gl_FragColor = vec4(FragVarying, 1.0, 1.0, 1.0);
+            }
+        ""
+    end
+
+    case input_conditional_assignment_to_matrix
+        values
+        {
+            input float in0 = [ 0.0 ];
+        }
+        vertex ""
+            ${VERTEX_DECLARATIONS}
+            varying mediump float FragVarying;  // Necessary to reproduce.
+            void main()
+            {
+                // Crashes with mat4 as well. Does not crash with vectors.
+                mat2 projectionMatrix = mat2(0.0, 0.0, 0.0, 0.0);
+                // Testing a non-constant variable is necessary.
+                if (in0 == 1.0)
+                {
+                    // Using the matrix variable appears necessary.
+                    projectionMatrix[0][0] = 1.0;
+                }
+
+                FragVarying = 1.0;
+                // Referencing the matrix is necessary though clearly the compiler
+                // doesn't realize the assignment is useless.
+                gl_Position = dEQP_Position + vec4(projectionMatrix[1][0], 0.0, 0.0, 0.0);
+            }
+        ""
+        fragment ""
+            precision mediump float;
+            varying float FragVarying;
+            void main()
+            {
+                gl_FragColor = vec4(FragVarying, 1.0, 1.0, 1.0);
+            }
+        ""
+    end
+
+    case uniform_conditional_assignment_to_matrix
+        values
+        {
+            uniform float uni0 = [ 0.0 ];
+        }
+        vertex ""
+            ${VERTEX_DECLARATIONS}
+            varying mediump float FragVarying;  // Necessary to reproduce.
+            void main()
+            {
+                // Crashes with mat4 as well. Does not crash with vectors.
+                mat2 projectionMatrix = mat2(0.0, 0.0, 0.0, 0.0);
+                // Testing a non-constant variable is necessary.
+                if (uni0 == 1.0)
+                {
+                    // Using the matrix variable appears necessary.
+                    projectionMatrix[0][0] = 1.0;
+                }
+
+                FragVarying = 1.0;
+                // Referencing the matrix is necessary though clearly the compiler
+                // doesn't realize the assignment is useless.
+                gl_Position = dEQP_Position + vec4(projectionMatrix[1][0], 0.0, 0.0, 0.0);
+            }
+        ""
+        fragment ""
+            precision mediump float;
+            varying float FragVarying;
+            void main()
+            {
+                gl_FragColor = vec4(FragVarying, 1.0, 1.0, 1.0);
+            }
+        ""
+    end
+
+end # if
+
+group invalid_if "Invalid If Conditionals"
+
+    case missing_parenthesis
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if true
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case unclosed_parenthesis
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (true
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case int_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (5)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case int_zero_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (0)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case int_one_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (1)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case int_uniform_condition
+        expect compile_fail
+
+        both ""
+            precision mediump float;
+            precision mediump int;
+            uniform int u0;
+            void main()
+            {
+                if (u0)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case float_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (5.0)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case float_zero_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (0.0)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case float_one_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            void main()
+            {
+                if (1.0)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case sampler_condition
+        expect compile_fail
+        both ""
+            precision mediump float;
+            uniform sampler2D s0;
+            void main()
+            {
+                if (s0)
+                    ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+end # invalid_if

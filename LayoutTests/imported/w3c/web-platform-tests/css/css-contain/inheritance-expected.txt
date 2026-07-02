@@ -1,0 +1,4 @@
+
+PASS Property contain has initial value none
+PASS Property contain does not inherit
+

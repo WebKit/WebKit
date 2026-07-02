@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script>
+            function start() {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                consoleWrite('Forcing VP9 decoder to be enabled.')
+                internals.setVP9DecoderDisabledForTesting(false);
+                testExpected("MediaSource.isTypeSupported('video/webm; codecs=vp8')", true);
+
+                consoleWrite('Forcing VP9 decoder to be disabled.')
+                internals.setVP9DecoderDisabledForTesting(true);
+                // vp8.0 is used since isTypeSupported caches results
+                testExpected("MediaSource.isTypeSupported('video/webm; codecs=vp8.0')", true);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test that WebM VP8 is supported when the VP9 decoder is not available.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
+    </body>
+</html>

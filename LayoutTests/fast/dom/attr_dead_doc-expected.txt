@@ -1,0 +1,3 @@
+Tests that setting the src attribute of an img element inside a detached document does not crash.
+
+

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>bug 159513</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      /* This test requires the Latin Modern Math font. */
+      math {
+        font-family: Latin Modern Math;
+        font-size: 200%;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test passes if horizontal operators stretch.</p>
+    <math>
+      <mover>
+        <mspace width="60px" height="30px" mathbackground="green"/>
+        <mo stretchy="true">&#x005E;</mo>
+      </mover>
+    </math>
+    <math>
+      <munder>
+        <mspace width="60px" height="30px" mathbackground="green"/>
+        <mo stretchy="true">&#x005F;</mo>
+      </munder>
+    </math>
+    <math>
+      <mover>
+        <mspace width="60px" height="30px" mathbackground="green"/>
+        <mo stretchy="true">&#x007E;</mo>
+      </mover>
+    </math>
+    <math>
+      <mover>
+        <mspace width="60px" height="30px" mathbackground="green"/>
+        <mo stretchy="true">&#x00AF;</mo>
+      </mover>
+    </math>
+    <math>
+      <mover>
+        <mspace width="60px" height="30px" mathbackground="green"/>
+        <mo stretchy="true">&#x02C6;</mo>
+      </mover>
+    </math>
+    <math>
+      <mover>
+        <mspace width="60px" height="30px" mathbackground="green"/>
+        <mo stretchy="true">&#x02C7;</mo>
+      </mover>
+    </math>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL Generic Sensor report only mode Can't find variable: Accelerometer
+

@@ -1,0 +1,31 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+
+function receiveMessage(e)
+{
+    alert(e.data == 'b' ? 'PASS' : 'FAIL');
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+window.addEventListener("message", receiveMessage, false);
+
+function runtest() {
+    var iframe = document.createElement('iframe');
+    iframe.src = 'resources/a.html';
+    iframe.name = 'framename';
+    document.body.appendChild(iframe);
+
+    var form = document.createElement('form');
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', 'resources/b.html');
+    form.setAttribute('target', 'framename');
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+<body onload='runtest()'/>

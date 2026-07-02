@@ -1,0 +1,7 @@
+
+FAIL cookieStore.subscribe without name or url in options assert_equals: expected (string) "cookie-name" but got (undefined) undefined
+PASS cookieStore.subscribe with empty option
+PASS cookieStore.subscribe with invalid url path in option
+PASS cookieStore.subscribe is idempotent
+PASS CookieStore.unsubscribe is idempotent
+

@@ -1,0 +1,4 @@
+
+PASS Set a cookie on a secure origin and test it's not sent to an insecure origin.
+FAIL Check scheme bounding behavior is working. assert_equals: Cookie should not be sent to an insecure origin expected (object) null but got (string) "1"
+

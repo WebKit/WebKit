@@ -1,0 +1,11 @@
+Test that when the first scrolling tree commit for an overflow scroller contains a delta, the UI process ends up with the correct scroll position
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is 4600
+PASS uiScrollY is 4600
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

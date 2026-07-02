@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test WebGL2 default draw buffer behavior without explicit drawBuffers call</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that WebGL2 framebuffer rendering works correctly without an explicit drawBuffers call.");
+
+var wtu = WebGLTestUtils;
+
+function runTest()
+{
+    var canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    document.body.appendChild(canvas);
+
+    var gl = wtu.create3DContext(canvas, undefined, 2);
+
+    if (!gl) {
+        testFailed("WebGL2 context does not exist");
+        finishTest();
+        return;
+    }
+    testPassed("WebGL2 context created");
+
+    var vertexShaderSource = `#version 300 es
+        in vec4 vPosition;
+        void main() {
+            gl_Position = vPosition;
+        }`;
+
+    var fragmentShaderSource = `#version 300 es
+        precision mediump float;
+        out vec4 fragColor;
+        void main() {
+            fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }`;
+
+    var program = wtu.setupProgram(gl, [vertexShaderSource, fragmentShaderSource], ["vPosition"]);
+    if (!program) {
+        testFailed("Failed to create program");
+        finishTest();
+        return;
+    }
+    wtu.setupUnitQuad(gl);
+
+    // Create framebuffer and attach texture without calling drawBuffers()
+    var fb = gl.createFramebuffer();
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        testFailed("Framebuffer is not complete");
+        finishTest();
+        return;
+    }
+    testPassed("WebGL2 framebuffer created WITHOUT calling drawBuffers()");
+
+    // Draw and verify red pixels
+    gl.viewport(0, 0, 16, 16);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    wtu.drawUnitQuad(gl);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "draw should succeed");
+    wtu.checkCanvas(gl, [255, 0, 0, 255], "framebuffer should contain red pixels after draw", 1);
+
+    // Cleanup
+    gl.deleteFramebuffer(fb);
+    gl.deleteTexture(texture);
+    gl.deleteProgram(program);
+    finishTest();
+}
+</script>
+</body>
+</html>

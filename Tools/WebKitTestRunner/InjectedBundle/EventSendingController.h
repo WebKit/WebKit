@@ -1,0 +1,132 @@
+/*
+ * Copyright (C) 2010, 2011, 2014-2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "JSWrappable.h"
+#include <WebKit/WKEvent.h>
+#include <WebKit/WKGeometry.h>
+#include <WebKit/WKRetainPtr.h>
+#include <wtf/Ref.h>
+
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSString* JSStringRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+
+namespace WTR {
+
+struct MonitorWheelEventsOptions {
+    bool resetLatching { true };
+};
+
+MonitorWheelEventsOptions* toMonitorWheelEventsOptions(JSContextRef, JSValueRef);
+
+class EventSendingController final : public JSWrappable {
+public:
+    static Ref<EventSendingController> create(uint64_t testIdentifier);
+
+    void makeWindowObject(JSContextRef);
+
+    void mouseDown(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType);
+    void mouseUp(JSContextRef, int button, JSValueRef modifierArray, JSStringRef pointerType);
+    void mouseMoveTo(double x, double y, JSStringRef pointerType);
+    void mouseForceClick();
+    void startAndCancelMouseForceClick();
+    void mouseForceDown();
+    void mouseForceUp();
+    void mouseForceChanged(double force);
+    void mouseScrollBy(int x, int y);
+    void mouseScrollByWithWheelAndMomentumPhases(int x, int y, JSStringRef phase, JSStringRef momentum);
+    void setWheelHasPreciseDeltas(bool);
+    void continuousMouseScrollBy(int x, int y, bool paged);
+    JSValueRef contextClick(JSContextRef);
+    void leapForward(int milliseconds);
+    void scheduleAsynchronousClick();
+
+    void setMousePosition(double x, double y) { m_position = WKPointMake(x, y); }
+
+    void monitorWheelEvents(MonitorWheelEventsOptions*);
+    void callAfterScrollingCompletes(JSContextRef, JSValueRef functionCallback);
+    
+    void sentWheelPhaseEndOrCancel() { m_sentWheelPhaseEndOrCancel = true; }
+    void sentWheelMomentumPhaseEnd() { m_sentWheelMomentumPhaseEnd = true; }
+
+    void keyDown(JSContextRef, JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyDown(JSContextRef, JSStringRef key, JSValueRef modifierArray, int location);
+    void rawKeyUp(JSContextRef, JSStringRef key, JSValueRef modifierArray, int location);
+    void scheduleAsynchronousKeyDown(JSStringRef key);
+
+    void textZoomIn();
+    void textZoomOut();
+    void zoomPageIn();
+    void zoomPageOut();
+
+#if ENABLE(TOUCH_EVENTS)
+    void addTouchPoint(int x, int y);
+    void updateTouchPoint(int index, int x, int y);
+    void setTouchModifier(JSStringRef modifier, bool enable);
+    void setTouchPointRadius(int radiusX, int radiusY);
+    void touchStart();
+    void touchMove();
+    void touchEnd();
+    void touchCancel();
+    void clearTouchPoints();
+    void releaseTouchPoint(int index);
+    void cancelTouchPoint(int index);
+#endif
+
+    void smartMagnify();
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void scaleGestureStart(double scale);
+    void scaleGestureChange(double scale);
+    void scaleGestureEnd(double scale);
+#endif
+
+    void disable() { m_isDisabled = true; }
+
+private:
+    EventSendingController(uint64_t testIdentifier)
+        : m_testIdentifier(testIdentifier)
+    { }
+
+    WKRetainPtr<WKMutableDictionaryRef> createEventSenderDictionary(const char* submessage);
+    WKRetainPtr<WKMutableDictionaryRef> createKeyDownMessageBody(JSStringRef key, WKEventModifiers, int location);
+    WKRetainPtr<WKMutableDictionaryRef> createRawKeyDownMessageBody(JSStringRef key, WKEventModifiers, int location);
+    WKRetainPtr<WKMutableDictionaryRef> createRawKeyUpMessageBody(JSStringRef key, WKEventModifiers, int location);
+
+    enum MouseState { MouseUp, MouseDown };
+    WKRetainPtr<WKDictionaryRef> createMouseMessageBody(MouseState, int button, WKEventModifiers, JSStringRef pointerType);
+
+    JSClassRef wrapperClass() final;
+
+    uint64_t m_testIdentifier { 0 };
+    WKPoint m_position;
+    bool m_sentWheelPhaseEndOrCancel { false };
+    bool m_sentWheelMomentumPhaseEnd { false };
+    bool m_isDisabled { false };
+};
+
+} // namespace WTR

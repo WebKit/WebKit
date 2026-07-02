@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Preferred width computation performance test</title>
+    <script src="../resources/runner.js"></script>
+</head>
+<body>
+    <pre id="log"></pre>
+    <div id="target" style="display: none;">
+        <div style="float: left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut elit lacus, non convallis odio. Integer facilisis, dolor quis porttitor auctor, nisi tellus aliquet urna, a dignissim orci nisl in nunc. Vivamus elit risus, sagittis et lacinia quis, blandit ac elit. Suspendisse non turpis vitae lorem molestie imperdiet sit amet in justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In at quam sapien. Nam nunc eros, interdum ut commodo nec, sollicitudin ultrices magna. Mauris eu fringilla massa. Phasellus facilisis augue in lectus luctus scelerisque. Proin quis facilisis lacus. Morbi tempor, mauris vitae posuere scelerisque, turpis massa pulvinar tortor, quis congue dolor eros iaculis elit. Quisque blandit blandit elit, sed suscipit justo scelerisque ut. Aenean sed diam at ligula bibendum rhoncus quis in nunc. Suspendisse semper auctor dui vitae gravida. Fusce et risus in velit ullamcorper placerat. Pellentesque sollicitudin commodo porta. Nam eu enim orci, at euismod ipsum.</div>
+        <div style="float: right">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut elit lacus, non convallis odio. Integer facilisis, dolor quis porttitor auctor, nisi tellus aliquet urna, a dignissim orci nisl in nunc. Vivamus elit risus, sagittis et lacinia quis, blandit ac elit. Suspendisse non turpis vitae lorem molestie imperdiet sit amet in justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In at quam sapien. Nam nunc eros, interdum ut commodo nec, sollicitudin ultrices magna. Mauris eu fringilla massa. Phasellus facilisis augue in lectus luctus scelerisque. Proin quis facilisis lacus. Morbi tempor, mauris vitae posuere scelerisque, turpis massa pulvinar tortor, quis congue dolor eros iaculis elit. Quisque blandit blandit elit, sed suscipit justo scelerisque ut. Aenean sed diam at ligula bibendum rhoncus quis in nunc. Suspendisse semper auctor dui vitae gravida. Fusce et risus in velit ullamcorper placerat. Pellentesque sollicitudin commodo porta. Nam eu enim orci, at euismod ipsum.</div>
+        <div style="float: left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut elit lacus, non convallis odio. Integer facilisis, dolor quis porttitor auctor, nisi tellus aliquet urna, a dignissim orci nisl in nunc. Vivamus elit risus, sagittis et lacinia quis, blandit ac elit. Suspendisse non turpis vitae lorem molestie imperdiet sit amet in justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In at quam sapien. Nam nunc eros, interdum ut commodo nec, sollicitudin ultrices magna. Mauris eu fringilla massa. Phasellus facilisis augue in lectus luctus scelerisque. Proin quis facilisis lacus. Morbi tempor, mauris vitae posuere scelerisque, turpis massa pulvinar tortor, quis congue dolor eros iaculis elit. Quisque blandit blandit elit, sed suscipit justo scelerisque ut. Aenean sed diam at ligula bibendum rhoncus quis in nunc. Suspendisse semper auctor dui vitae gravida. Fusce et risus in velit ullamcorper placerat. Pellentesque sollicitudin commodo porta. Nam eu enim orci, at euismod ipsum.</div>
+        <div style="float: right">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut elit lacus, non convallis odio. Integer facilisis, dolor quis porttitor auctor, nisi tellus aliquet urna, a dignissim orci nisl in nunc. Vivamus elit risus, sagittis et lacinia quis, blandit ac elit. Suspendisse non turpis vitae lorem molestie imperdiet sit amet in justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In at quam sapien. Nam nunc eros, interdum ut commodo nec, sollicitudin ultrices magna. Mauris eu fringilla massa. Phasellus facilisis augue in lectus luctus scelerisque. Proin quis facilisis lacus. Morbi tempor, mauris vitae posuere scelerisque, turpis massa pulvinar tortor, quis congue dolor eros iaculis elit. Quisque blandit blandit elit, sed suscipit justo scelerisque ut. Aenean sed diam at ligula bibendum rhoncus quis in nunc. Suspendisse semper auctor dui vitae gravida. Fusce et risus in velit ullamcorper placerat. Pellentesque sollicitudin commodo porta. Nam eu enim orci, at euismod ipsum.</div>
+        <div style="float: left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut elit lacus, non convallis odio. Integer facilisis, dolor quis porttitor auctor, nisi tellus aliquet urna, a dignissim orci nisl in nunc. Vivamus elit risus, sagittis et lacinia quis, blandit ac elit. Suspendisse non turpis vitae lorem molestie imperdiet sit amet in justo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In at quam sapien. Nam nunc eros, interdum ut commodo nec, sollicitudin ultrices magna. Mauris eu fringilla massa. Phasellus facilisis augue in lectus luctus scelerisque. Proin quis facilisis lacus. Morbi tempor, mauris vitae posuere scelerisque, turpis massa pulvinar tortor, quis congue dolor eros iaculis elit. Quisque blandit blandit elit, sed suscipit justo scelerisque ut. Aenean sed diam at ligula bibendum rhoncus quis in nunc. Suspendisse semper auctor dui vitae gravida. Fusce et risus in velit ullamcorper placerat. Pellentesque sollicitudin commodo porta. Nam eu enim orci, at euismod ipsum.</div>
+    </div>
+    <script>
+        var target = document.getElementById("target");
+        var style = target.style;
+
+        function test() {
+            style.display = "block";
+            style.width = "8000px";
+            target.offsetLeft;
+            style.width = "10000px";
+            target.offsetLeft;
+            style.width = "20000px";
+            target.offsetLeft;
+            style.display = "none";
+        }
+
+        PerfTestRunner.measureRunsPerSecond({ run: test });
+    </script>
+</body>
+</html>

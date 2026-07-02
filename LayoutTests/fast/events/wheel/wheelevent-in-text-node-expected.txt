@@ -1,0 +1,6 @@
+'Real' MouseWheel events should not be dispatched on the text node, but instead on its parent.
+PASS theEvent.target.nodeName is "DIV"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a div containing text. Wheel events originating on the text node should target the div.

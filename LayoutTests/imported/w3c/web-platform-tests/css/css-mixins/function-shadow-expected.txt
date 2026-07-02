@@ -1,0 +1,13 @@
+
+PASS @function works inside shadow
+PASS Looking up document-global function
+PASS @function works inside nested shadow
+PASS @function defined in outer shadow is visible
+PASS Combining functions from various scopes
+PASS ::part() can not see inner functions
+PASS ::slotted() can see inner functions
+PASS :host can see inner functions
+PASS Outer functions can't see inner functions
+PASS Outer functions can't see inner functions (local vars)
+PASS Function with same name in different scopes
+

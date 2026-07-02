@@ -1,0 +1,5 @@
+
+option
+
+PASS Option initial focus should still work when a display animation is present.
+

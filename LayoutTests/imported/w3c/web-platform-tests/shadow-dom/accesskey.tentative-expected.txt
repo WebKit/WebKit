@@ -1,0 +1,4 @@
+
+PASS button element with accesskey in the shadow tree of open mode
+PASS button element with accesskey in the shadow tree of closed mode
+

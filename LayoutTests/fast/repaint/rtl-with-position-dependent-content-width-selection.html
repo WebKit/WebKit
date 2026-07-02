@@ -1,0 +1,40 @@
+<style>
+div {
+  direction: rtl;
+  white-space: pre;
+  font-size: 40px;
+  float: left;
+}
+</style>
+<div id=select_this>	X</div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function repaintTest() {
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  let range = document.createRange();
+  range.selectNodeContents(select_this);  
+  window.getSelection().addRange(range);
+
+  await UIHelper.renderingUpdate();
+ 
+  if (window.internals) {
+    var repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    var pre = document.createElement('pre');
+    document.body.appendChild(pre);
+    pre.innerHTML = repaintRects;
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+setTimeout(repaintTest, 0);
+
+</script>

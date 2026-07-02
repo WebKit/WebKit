@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        .container {
+            position: relative;
+            width: 500px;
+            height: 200px;
+            margin: 20px;
+            border: 1px solid black;
+        }
+
+        .editable {
+            -webkit-user-modify: read-write;
+            background-color: aquamarine;
+            border: 2px solid green;
+        }
+        
+        .overlapper {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            background-color: rgba(255, 255, 255, 0.75);
+            border: 1px solid black;
+            z-index: 1;
+            box-shadow: 0 0 10px black;
+        }
+        
+        .tap-point {
+            position: absolute;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background-color: red;
+            z-index: 1;
+        }
+    </style>
+    
+</head>
+<body>
+    <h2>Non-composited overlap</h2>
+    <div class="container">
+        <div class="editable" style="margin: 10px; height: 100px">
+        </div>
+        <div class="overlapper">
+        </div>
+    </div>
+
+    <h2>Composited overlap</h2>
+    <div class="container">
+        <div class="editable" style="margin: 10px; height: 100px">
+        </div>
+        <div class="overlapper" style="transform: translateZ(0)">
+        </div>
+    </div>
+    
+    <div class="tap-point" style="top: 150px; left: 270px"></div>
+    <div class="tap-point" style="top: 400px; left: 270px"></div>
+    <p>Tap near the red dots</p>
+</body>
+</html>

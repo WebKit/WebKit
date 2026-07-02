@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+var startTime = new Date().getTime();
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function finish()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.notifyDone();
+    }
+}
+
+window.addEventListener('load', function()
+{
+    var endTime = new Date().getTime();
+    var loadTime = endTime - startTime;
+    if(loadTime > 2000)
+        document.getElementById('load-time').innerHTML = 'Load Time > 2s' + '  FAIL';
+    else
+        document.getElementById('load-time').innerHTML = 'Load Time < 2s' + '  PASS';
+    finish();
+}, false);
+
+</script>
+<body>
+
+<video id="video" controls preload="none">
+</video>
+<script>
+    var vid = document.getElementById('video');
+    vid.src = findMediaFile("video", "content/test.mp4");
+</script>
+<div>Document load event triggered: <span id="load-time">not yet</span></div>
+
+</body>
+</html>

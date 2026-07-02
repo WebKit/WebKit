@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let fetchIFrame;
+let abortIFrame;
+
+function addFetchIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    fetchIFrame = document.createElement("iframe");
+    fetchIFrame.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html`;
+    document.body.appendChild(fetchIFrame);
+}
+
+function addAbortIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    abortIFrame = document.createElement("iframe");
+    abortIFrame.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/iframe-with-abort.html`;
+    document.body.appendChild(abortIFrame);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameLoadingLifecycle");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.LoadingDidFinish",
+        description: "A successful fetch from a cross-origin iframe should fire LoadingDidFinish.",
+        async test() {
+            // Create cross-origin iframe and wait for frame target.
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addFetchIFrame()");
+            let targetEvent = await targetAddedPromise;
+            let frameTarget = targetEvent.data.target;
+
+            // Wait for execution context.
+            if (!frameTarget.executionContext)
+                await frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+
+            // Trigger the fetch and wait for the resource.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+
+            // Wait for loading to finish if it hasn't already.
+            if (!resource.finished)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+
+            InspectorTest.expectThat(resource.finished, "Resource should be marked as finished.");
+            InspectorTest.expectThat(!resource.failed, "Resource should not be marked as failed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.LoadingDidFail",
+        description: "An aborted fetch from a cross-origin iframe should fire LoadingDidFail.",
+        async test() {
+            // Create a second cross-origin iframe for the abort test.
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addAbortIFrame()");
+            let targetEvent = await targetAddedPromise;
+            let frameTarget = targetEvent.data.target;
+
+            // Wait for execution context.
+            if (!frameTarget.executionContext)
+                await frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+
+            // Trigger the aborted fetch and wait for the resource.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerAbortedFetch()", objectGroup: "test"});
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+
+            // Wait for loading to fail if it hasn't already.
+            if (!resource.failed)
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFail);
+
+            InspectorTest.expectThat(resource.failed, "Resource should be marked as failed.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that cross-origin iframe resource loading lifecycle events fire correctly for both success and failure.</p>
+</body>

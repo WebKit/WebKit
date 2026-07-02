@@ -1,0 +1,9 @@
+{
+    "timeout": 300,
+    "count": 5,
+    "remote_archive": "https://github.com/chromium/octane-benchmark/archive/fab09aef01c2a5560c22cdc1c1a2451c0d0f4cdc.zip",
+    "webserver_benchmark_patch": "data/patches/webserver/Octane.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/Octane.patch",
+    "entry_point": "index.html?auto=1",
+    "output_file": "octane.result"
+}

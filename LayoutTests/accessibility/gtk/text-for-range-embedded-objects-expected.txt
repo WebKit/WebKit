@@ -1,0 +1,18 @@
+Choose: foo bar (pick one)
+
+Choose:  (pick one)
+
+
+
+This tests the ability to get element text for a specified range.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS paragraph1.stringForRange(0, -1) is 'Choose: ï¿¼foo ï¿¼bar (pick one)'
+PASS paragraph2.stringForRange(0, -1) is 'Choose: ï¿¼ (pick one)'
+PASS paragraph3.stringForRange(0, -1) is 'ï¿¼'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+
+PASS e.style['perspective'] = "-10px" should not set the property value
+PASS e.style['perspective'] = "10" should not set the property value
+PASS e.style['perspective'] = "-10" should not set the property value
+PASS e.style['-webkit-perspective'] = "-10px" should not set the property value
+PASS e.style['-webkit-perspective'] = "-10" should not set the property value
+

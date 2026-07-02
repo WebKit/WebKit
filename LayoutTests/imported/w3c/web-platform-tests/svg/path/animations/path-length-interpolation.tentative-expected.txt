@@ -1,0 +1,22 @@
+
+FAIL CSS Transitions: property <path-length> from [0] to [100] at (-0.3) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <path-length> from [0] to [100] at (0) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <path-length> from [0] to [100] at (0.5) should be [50] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <path-length> from [0] to [100] at (1) should be [100] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <path-length> from [0] to [100] at (1.5) should be [150] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <path-length> from [0] to [100] at (-0.3) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <path-length> from [0] to [100] at (0) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <path-length> from [0] to [100] at (0.5) should be [50] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <path-length> from [0] to [100] at (1) should be [100] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <path-length> from [0] to [100] at (1.5) should be [150] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <path-length> from [0] to [100] at (-0.3) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <path-length> from [0] to [100] at (0) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <path-length> from [0] to [100] at (0.5) should be [50] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <path-length> from [0] to [100] at (1) should be [100] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <path-length> from [0] to [100] at (1.5) should be [150] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <path-length> from [0] to [100] at (-0.3) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <path-length> from [0] to [100] at (0) should be [0] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <path-length> from [0] to [100] at (0.5) should be [50] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <path-length> from [0] to [100] at (1) should be [100] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <path-length> from [0] to [100] at (1.5) should be [150] assert_true: 'from' value should be supported expected true got false
+

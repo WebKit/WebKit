@@ -1,0 +1,4 @@
+  option
+
+PASS select should not match :open when light dismissed.
+

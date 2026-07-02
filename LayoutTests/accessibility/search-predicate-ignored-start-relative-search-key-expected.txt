@@ -1,0 +1,8 @@
+This test ensures that a relative search key (SameType) whose start element has become ignored still compares candidates against the original start's role, resuming from the correct position instead of jumping back to an earlier same-type element.
+
+PASS: nextDOMId === 'img2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  Button 1    Button 2

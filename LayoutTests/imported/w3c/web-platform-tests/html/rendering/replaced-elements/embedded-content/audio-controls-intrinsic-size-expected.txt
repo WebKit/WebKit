@@ -1,0 +1,4 @@
+
+
+PASS Audio intrinsic size doesn't depend on its max size
+

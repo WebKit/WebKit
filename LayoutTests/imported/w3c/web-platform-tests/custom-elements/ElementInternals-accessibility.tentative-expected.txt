@@ -1,0 +1,5 @@
+
+FAIL ariaColIndexText is defined in ElementInternals assert_inherits: property "ariaColIndexText" not found in prototype chain
+FAIL ariaDescription is defined in ElementInternals assert_inherits: property "ariaDescription" not found in prototype chain
+FAIL ariaRowIndexText is defined in ElementInternals assert_inherits: property "ariaRowIndexText" not found in prototype chain
+

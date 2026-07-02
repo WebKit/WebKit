@@ -1,0 +1,3 @@
+
+FAIL late-attached trigger timeline plays animation assert_true: expected true got false
+

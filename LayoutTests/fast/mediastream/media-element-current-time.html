@@ -1,0 +1,37 @@
+<body>
+<video id="video" autoplay playsInline></video>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../media/utilities.js"></script>
+<script>
+
+promise_test(async test => {
+
+    const stream = await navigator.mediaDevices.getUserMedia({video : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    video.srcObject = stream;
+    assert_equals(video.currentTime, 0);
+
+    await video.play();
+    let currentTime = video.currentTime;
+    assert_not_equals(currentTime, 0, "Playback has started, currentTime must not be zero");
+
+    assert_less_than(currentTime, 3, "currentTime should be small initially");
+
+    await waitForVideoFrame(video);
+    await waitForVideoFrame(video);
+    assert_greater_than(video.currentTime, currentTime, "video is playing, time should advance");
+
+    video.pause();
+    currentTime = video.currentTime;
+    await once(video, 'pause');
+    assert_equals(video.currentTime, currentTime, "video is paused, currentTime must not advance");
+
+    video.play();
+    await once(video, 'playing');
+    assert_greater_than(video.currentTime, currentTime, "Playback has started, currentTime should advance");
+
+}, "Check video.currentTime behavior");
+</script>
+</body>

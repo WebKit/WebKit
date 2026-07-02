@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-fullscreen-pause-inline</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+
+    <script>
+    function go()
+    {
+        if (!window.internals) {
+            failTest('This test requires window.internals.');
+            return;
+        }
+
+        findMediaElement();
+
+        internals.settings.setAllowsInlineMediaPlayback(false);
+        internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true);
+        // Disable the Fullscreen API (element fullscreen) support
+        internals.settings.setFullScreenEnabled(false);
+        internals.setMockVideoPresentationModeEnabled(true);
+        internals.setMediaElementRestrictions(video, "NoRestrictions");
+
+        waitForEventOnce('canplaythrough', canplaythrough);
+        run('video.src = findMediaFile("video", "content/test")');
+    }
+
+    function canplaythrough()
+    {
+        run('video.play().then(playing);');
+    }
+
+    async function playing()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
+        waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
+        run('video.webkitExitFullscreen()');
+    }
+
+    async function endfullscreen()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
+        testExpected('video.paused', false);
+        waitForEventOnce('pause', paused);
+        run('video.pause()');
+    }
+
+    function paused()
+    {
+        testExpected('video.paused', true);
+        setTimeout(function(){ run('video.play().then(playingAgain)'); }, 0);
+    }
+
+    async function playingAgain()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="go()">
+    <video controls></video>
+    <p>Test that a &lt;video&gt; keeps playing after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is true.</p>
+</body>
+</html>

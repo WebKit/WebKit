@@ -1,0 +1,7 @@
+# SPI used by JavaScriptCore on iOS.
+# More info: https://github.com/WebKit/WebKit/wiki/Using-SPI-on-Apple-platforms
+
+[[not-web-essential]]
+request = "rdar://157890653"
+symbols = ["dyld_program_sdk_at_least"]
+requires = ["USE_APPLE_INTERNAL_SDK"]

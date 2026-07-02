@@ -1,0 +1,16 @@
+
+PASS Property grid-template-columns value 'subgrid'
+PASS Property grid-template-columns value 'subgrid [a]'
+PASS Property grid-template-columns value 'subgrid [a] [b]'
+PASS Property grid-template-columns value 'subgrid [a] [] [b]'
+PASS Property grid-template-columns value 'subgrid repeat(auto-fill, [a])'
+PASS Property grid-template-columns value 'subgrid repeat(2, [a] [b])'
+PASS Property grid-template-columns value 'subgrid [a] repeat(auto-fill, [b]) [c]'
+FAIL Property grid-template-rows value 'subgrid' assert_equals: expected "none" but got "subgrid"
+FAIL Property grid-template-rows value 'subgrid [a]' assert_equals: expected "none" but got "subgrid [a]"
+FAIL Property grid-template-rows value 'subgrid [a] [b]' assert_equals: expected "none" but got "subgrid [a] [b]"
+FAIL Property grid-template-rows value 'subgrid [a] [] [b]' assert_equals: expected "none" but got "subgrid [a] [] [b]"
+FAIL Property grid-template-rows value 'subgrid repeat(auto-fill, [a])' assert_equals: expected "none" but got "subgrid repeat(auto-fill, [a])"
+FAIL Property grid-template-rows value 'subgrid repeat(2, [a] [b])' assert_equals: expected "none" but got "subgrid repeat(2, [a] [b])"
+FAIL Property grid-template-rows value 'subgrid [a] repeat(auto-fill, [b]) [c]' assert_equals: expected "none" but got "subgrid [a] repeat(auto-fill, [b]) [c]"
+

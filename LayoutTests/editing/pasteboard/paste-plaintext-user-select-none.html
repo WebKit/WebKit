@@ -1,0 +1,35 @@
+<html> 
+<head>
+    <style>
+        body {
+            -webkit-user-select: none;
+        }
+
+        .editing { 
+            border: 2px solid red; 
+            padding: 12px; 
+            font-size: 24px;
+            -webkit-user-select: text;
+            -webkit-user-modify: read-write-plaintext-only;
+        }
+    </style>
+    <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+    <script>
+        function editingTest() {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            
+            document.getElementById('tf').focus();
+            copyCommand();
+
+            document.getElementById('root').focus();
+            pasteCommand();
+        }
+    </script>
+</head> 
+    <body onload="runEditingTest();">
+        This tests that you can paste into a plain-text editable area even if the body has user-select:none set on it.
+        <input id="tf" value="Test Passed">
+        <div id="root" class="editing"></div>
+    </body>
+</html>

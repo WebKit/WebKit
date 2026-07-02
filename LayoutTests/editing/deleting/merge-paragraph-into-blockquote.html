@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html> 
+<body>
+<p id="description">This tests deleting line break after blockquote.
+WebKit should not cancel styles added by blockquote by those of document's default style.</p>
+<div id="test" contenteditable>
+<blockquote>hello</blockquote>
+world
+</div>
+</div>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineBoundaryCommand();
+    moveSelectionForwardByCharacterCommand();
+    deleteCommand();
+
+    Markup.description(document.getElementById('description').textContent);
+    Markup.dump('test');
+}
+
+runEditingTest();
+</script>
+</body>
+</html>

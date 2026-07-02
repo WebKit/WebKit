@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test: Check if the tab stop positions are computed properly when their runs are not adjacent to the parent's content box.</title>
+<style>
+pre {
+    font-size: 12px;
+}
+</style>
+</head>
+<body>
+<pre id=content>lines should match      with tabs
+</pre>
+</body>
+<script>
+content.appendChild(document.createTextNode("lines should match "));
+content.appendChild(document.createTextNode("	with tabs"));
+</script>
+</html>

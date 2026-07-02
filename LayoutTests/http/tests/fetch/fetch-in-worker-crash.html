@@ -1,0 +1,25 @@
+<body>
+<p>Test that terminating an ongoing fetch in a worker does not cause a crash.</p> <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    worker = new Worker("fetch-in-worker.js");
+
+    worker.onmessage = function(e) {
+        console.log(e.data);
+        if (e.data == 0) {
+            worker.postMessage("start");
+        } else {
+            worker.terminate();
+            setTimeout(() => {
+                document.body.innerHTML += "<p>PASS: No crash.</p>";
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 100);
+        }
+    };
+    worker.postMessage("start");
+</script>
+</body>

@@ -1,0 +1,9 @@
+
+EVENT(sourceopen)
+RUN(source.duration = 0)
+EVENT(updateend)
+EXPECTED (source.duration == '0') OK
+EVENT(updateend)
+EXPECTED (source.duration == '10') OK
+END OF TEST
+

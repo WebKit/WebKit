@@ -1,0 +1,10 @@
+This tests holding onto a node via TreeWalker. WebKit should keep the root node alive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS treeWalker.currentNode.getRootNode().localName is "div"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

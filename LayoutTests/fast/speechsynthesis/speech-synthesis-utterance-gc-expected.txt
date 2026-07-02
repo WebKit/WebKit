@@ -1,0 +1,9 @@
+This tests speaking an utterance multiple times will not crash due to garbage collection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

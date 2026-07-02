@@ -1,0 +1,6 @@
+
+PASS :dispatch,linear_indexing_range:builtin="global_invocation_index"
+PASS :dispatch,linear_indexing_range:builtin="workgroup_index"
+PASS :dispatchIndirect,linear_indexing_range:builtin="global_invocation_index"
+PASS :dispatchIndirect,linear_indexing_range:builtin="workgroup_index"
+

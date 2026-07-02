@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+*{a:1;b:2;c:3}
+body>*{a:1;b:2;c:3}
+@media all {body>div{a:1;b:2;c:3}}
+@media only screen and (min-width:0px) {body>#test-node{a:1;b:2;c:3}}
+@media only screen and (min-width:0px) {@media only screen and (min-height:0px) {body>div#test-node{a:1;b:2;c:3}}}
+</style>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let nodeStyles = null;
+
+    let suite = InspectorTest.createSyncSuite("WI.CSSStyelDeclaration.prototype.generateFormattedText");
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle",
+        description: "Check the formatting of the generated inline style string.",
+        test() {
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText());
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.includeGroupingsAndSelectors",
+        description: "Check the formatting of the generated inline style string (including groupings and selectors).",
+        test() {
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText({includeGroupingsAndSelectors: true}));
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.Multiline",
+        description: "Check the formatting of the generated inline style string (multiline).",
+        test() {
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText({multiline: true}));
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.Multiline.includeGroupingsAndSelectors",
+        description: "Check the formatting of the generated inline style string (multiline, and including groupings and selectors).",
+        test() {
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText({multiline: true, includeGroupingsAndSelectors: true}));
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.WithCommentedProperty",
+        description: "Check the formatting of the generated inline style string if a property is commented out.",
+        test() {
+            nodeStyles.inlineStyle.properties[1].commentOut(true);
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText());
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.WithCommentedProperty.includeGroupingsAndSelectors",
+        description: "Check the formatting of the generated inline style string (including groupings and selectors) if a property is commented out.",
+        test() {
+            nodeStyles.inlineStyle.properties[1].commentOut(true);
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText({includeGroupingsAndSelectors: true}));
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.WithCommentedProperty.Multiline",
+        description: "Check the formatting of the generated inline style string (multiline) if a property is commented out.",
+        test() {
+            nodeStyles.inlineStyle.properties[1].commentOut(true);
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText({multiline: true}));
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.InlineStyle.WithCommentedProperty.includeGroupingsAndSelectors.Multiline",
+        description: "Check the formatting of the generated inline style string (multiline, and including groupings and selectors) if a property is commented out.",
+        test() {
+            nodeStyles.inlineStyle.properties[1].commentOut(true);
+            InspectorTest.log(nodeStyles.inlineStyle.generateFormattedText({includeGroupingsAndSelectors: true, multiline: true}));
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules",
+        description: "Check the formatting of the generated string for all matched CSS rules.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                InspectorTest.log(rule.style.generateFormattedText());
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.includeGroupingsAndSelectors",
+        description: "Check the formatting of the generated string (including groupings and selectors) for all matched CSS rules.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                InspectorTest.log(rule.style.generateFormattedText({includeGroupingsAndSelectors: true}));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.Multiline",
+        description: "Check the formatting of the generated string (multiline) for all matched CSS rules.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                InspectorTest.log(rule.style.generateFormattedText({multiline: true}));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.includeGroupingsAndSelectors.Multiline",
+        description: "Check the formatting of the generated string (multiline, and including groupings and selectors) for all matched CSS rules.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                InspectorTest.log(rule.style.generateFormattedText({includeGroupingsAndSelectors: true, multiline: true}));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.WithCommentedProperties",
+        description: "Check the formatting of the generated string for all matched CSS rules if a property is commented out in each.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                rule.style.properties[1].commentOut(true);
+                InspectorTest.log(rule.style.generateFormattedText());
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.WithCommentedProperties.includeGroupingsAndSelectors",
+        description: "Check the formatting of the generated string (including groupings and selectors) for all matched CSS rules if a property is commented out in each.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                rule.style.properties[1].commentOut(true);
+                InspectorTest.log(rule.style.generateFormattedText({includeGroupingsAndSelectors: true}));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.WithCommentedProperties.Multiline",
+        description: "Check the formatting of the generated string (multiline) for all matched CSS rules if a property is commented out in each.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                rule.style.properties[1].commentOut(true);
+                InspectorTest.log(rule.style.generateFormattedText({multiline: true}));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.generateFormattedText.MatchedRules.WithCommentedProperties.includeGroupingsAndSelectors.Multiline",
+        description: "Check the formatting of the generated string (multiline, and including groupings and selectors) for all matched CSS rules if a property is commented out in each.",
+        test() {
+            for (let rule of nodeStyles.matchedRules) {
+                if (!rule.style.editable)
+                    continue;
+                rule.style.properties[1].commentOut(true);
+                InspectorTest.log(rule.style.generateFormattedText({includeGroupingsAndSelectors: true, multiline: true}));
+            }
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        documentNode.querySelector("#test-node", async (contentNodeId) => {
+            if (!contentNodeId) {
+                InspectorTest.log("DOM node not found.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            let domNode = WI.domManager.nodeForId(contentNodeId);
+            nodeStyles = WI.cssManager.stylesForNode(domNode);
+            if (nodeStyles.needsRefresh)
+                await nodeStyles.awaitEvent(WI.DOMNodeStyles.Event.Refreshed);
+
+            suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that generated CSS rule strings have proper formatting.</p>
+    <div id="test-node" style="a:1;b:2;c:3"></div>
+</body>
+</html>

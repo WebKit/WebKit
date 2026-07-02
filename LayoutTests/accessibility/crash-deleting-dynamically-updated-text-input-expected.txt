@@ -1,0 +1,11 @@
+This test ensures we don't crash when deleting the parent of a text input that has had at least one value change.
+
+PASS: input.role === 'AXRole: AXTextField'
+PASS: accessibilityController.accessibleElementById('form').childAtIndex(0).role === 'AXRole: AXTextField'
+PASS: input.stringValue === 'AXValue: abc'
+PASS: input.role === 'AXRole: '
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

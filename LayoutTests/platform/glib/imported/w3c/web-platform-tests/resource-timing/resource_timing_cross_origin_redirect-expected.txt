@@ -1,0 +1,14 @@
+
+
+PASS redirectStart should be 0 in cross-origin redirect.
+PASS redirectEnd should be 0 in cross-origin redirect.
+PASS domainLookupStart should be 0 in cross-origin redirect.
+PASS domainLookupEnd should be 0 in cross-origin redirect.
+PASS connectStart should be 0 in cross-origin redirect.
+PASS connectEnd should be 0 in cross-origin redirect.
+PASS requestStart should be 0 in cross-origin redirect.
+PASS responseStart should be 0 in cross-origin redirect.
+PASS secureConnectionStart should be 0 in cross-origin redirect.
+PASS fetchStart should be greater than 0 in cross-origin redirect.
+PASS responseEnd should be greater than 0 in cross-origin redirect.
+

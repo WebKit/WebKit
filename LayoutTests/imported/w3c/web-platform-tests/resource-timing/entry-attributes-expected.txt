@@ -1,0 +1,11 @@
+Description
+
+This test validates that PerformanceResourceTiming entries' attributes are populated with the correct values.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Image resources should generate conformant entries Test timed out
+NOTRUN Font resources should generate conformant entries
+NOTRUN Same-origin redirects should populate redirectStart/redirectEnd
+

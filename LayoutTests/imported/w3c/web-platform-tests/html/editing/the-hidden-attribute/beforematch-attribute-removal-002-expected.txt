@@ -1,0 +1,4 @@
+Hidden
+
+PASS hidden=until-found and details revealing algorithm should abort if attribute states are mutated on beforematch events.
+

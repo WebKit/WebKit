@@ -1,0 +1,148 @@
+#!/bin/bash
+#
+# clang-wrapper <compile-command...>
+#
+# When WK_UNIFIED_SOURCES_BUNDLE_POLICY is "Bundle", or when compiling
+# a non-unified-source file, this script is a simple pass-through.
+#
+# Otherwise, this script makes N copies of <compile-command...>, one for each
+# unified source bundle member, and uses ninja + clang + libtool to compile
+# each one and then merge the results into a unified .o and .d file.
+#
+# The end result is as-if we built the unified bundle, but with the performance
+# of building indivdiual member files with individual dependency tracking.
+#
+# This works because ninja's only contract is: input => tool => (output, deps).
+# From the outer ninja's perspective, it doesn't matter how 'tool' computes
+# (output, deps).
+#
+# Bundling is purely an optimization decision. Either policy is always valid.
+#
+# The pass-through path is bash to minimize startup cost. The NoBundle path
+# re-execs this same file under perl -x, which skips ahead to the perl
+# shebang below.
+
+if [[ "$WK_UNIFIED_SOURCES_BUNDLE_POLICY" != NoBundle ]]; then
+    exec "$@"
+fi
+
+exec /usr/bin/perl -x "$0" "$@"
+
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Extract the flags that describe our input and output, and preserve the rest
+# for reuse in our ninja commands.
+my $sourceFile;
+my $outputFile;
+my $depFile;
+my @driverArgs;
+for (my $i = 0; $i < scalar(@ARGV); ++$i) {
+    my $arg = $ARGV[$i];
+    if ($arg eq '-c') {
+        $sourceFile = $ARGV[++$i];
+        next;
+    }
+    if ($arg eq '-o') {
+        $outputFile = $ARGV[++$i];
+        next;
+    }
+    if ($arg eq '-MF') {
+        $depFile = $ARGV[++$i];
+        next;
+    }
+    if ($arg eq '-MT' || $arg eq '-x') {
+        ++$i;
+        next;
+    }
+    push(@driverArgs, $arg);
+}
+
+# Pass through non-unified sources.
+if ($sourceFile !~ m{/unified-sources/UnifiedSource}) {
+    exec(@ARGV);
+}
+
+my ($extension) = $sourceFile =~ /\.(\w+)$/;
+my $membersFolder = "$outputFile.members";
+mkdir($membersFolder);
+
+# Expand the bundle into one stub source file per member.
+my @memberObjects;
+my $ccEdges = '';
+my $memberCount = 0;
+open(my $bundle, '<', $sourceFile) or die("$sourceFile: $!\n");
+while (my $line = <$bundle>) {
+    chomp($line);
+    if ($line !~ /^#include /) {
+        next;
+    }
+    my $stub = "$membersFolder/m$memberCount.$extension";
+    my $object = "$membersFolder/m$memberCount.o";
+    writeFileIfChanged($stub, "$line\n");
+    $ccEdges .= "build $object | $object.d: cc $stub\n";
+    push(@memberObjects, $object);
+    ++$memberCount;
+}
+close($bundle);
+
+my $ccPrefix = join(' ', map { shellQuote($_) } @driverArgs);
+my $quotedDepFile = shellQuote($depFile);
+my $memberObjectList = join(' ', @memberObjects);
+my $memberDepList = join(' ', map { "$_.d" } @memberObjects);
+
+# Rule bodies are literal: $cc_prefix, $in, $out, etc. are all ninja variables.
+my $rules = <<'END_OF_RULES';
+rule cc
+  command = $cc_prefix -MD -MT $out -MF $out.d -o $out -c $in
+  depfile = $out.d
+  description = member $in
+
+rule merge
+  command = $cc_prefix -Qunused-arguments -r -nostdlib -Wl,-keep_private_externs -o $out $in && cat $member_deps > $bundle_dep
+  description = merge $out
+END_OF_RULES
+
+my $buildNinja = <<"END_OF_NINJA";
+ninja_required_version = 1.3
+builddir = $membersFolder
+cc_prefix = $ccPrefix
+bundle_dep = $quotedDepFile
+member_deps = $memberDepList
+$rules
+$ccEdges
+build $outputFile | $depFile: merge $memberObjectList
+default $outputFile
+END_OF_NINJA
+
+writeFileIfChanged("$membersFolder/build.ninja", $buildNinja);
+
+chomp(my $ninja = `which ninja 2>/dev/null` || `xcrun -f ninja`);
+exec($ninja, '--quiet', '-f', "$membersFolder/build.ninja");
+die("exec ninja: $!\n");
+
+sub shellQuote {
+    my ($s) = @_;
+    if ($s =~ /^[A-Za-z0-9_\-+=:,.\/]+$/) {
+        return $s;
+    }
+    $s =~ s/'/'\\''/g;
+    return "'$s'";
+}
+
+sub writeFileIfChanged {
+    my ($path, $newContent) = @_;
+    if (-f $path) {
+        local $/;
+        open(my $in, '<', $path);
+        my $oldContent = <$in>;
+        close($in);
+        if (defined($oldContent) && $oldContent eq $newContent) {
+            return;
+        }
+    }
+    open(my $out, '>', $path) or die("$path: $!\n");
+    print($out $newContent);
+    close($out);
+}

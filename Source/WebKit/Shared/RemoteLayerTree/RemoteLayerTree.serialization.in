@@ -1,0 +1,306 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+header: "RemoteLayerTreeTransaction.h"
+[OptionSet] enum class WebKit::LayerChange : uint64_t {
+    NameChanged
+    TransformChanged
+    SublayerTransformChanged
+    ShapeRoundedRectChanged
+    ChildrenChanged
+    AnimationsChanged
+    PositionChanged
+    AnchorPointChanged
+    BoundsChanged
+    ContentsRectChanged
+    BackingStoreChanged
+    FiltersChanged
+    ShapePathChanged
+    MaskLayerChanged
+    ClonedContentsChanged
+    TimeOffsetChanged
+    SpeedChanged
+    ContentsScaleChanged
+    CornerRadiusChanged
+    BorderWidthChanged
+    OpacityChanged
+    BackgroundColorChanged
+    BorderColorChanged
+    CustomAppearanceChanged
+    MinificationFilterChanged
+    MagnificationFilterChanged
+    BlendModeChanged
+    WindRuleChanged
+    VideoGravityChanged
+    AntialiasesEdgesChanged
+    HiddenChanged
+    BackingStoreAttachmentChanged
+    GeometryFlippedChanged
+    DoubleSidedChanged
+    MasksToBoundsChanged
+    ContentsHiddenChanged
+    UserInteractionEnabledChanged
+    BackdropRootChanged
+    BackdropRootIsOpaqueChanged
+    TonemappingEnabledChanged
+    EventRegionChanged
+#if ENABLE(SCROLLING_THREAD)
+    ScrollingNodeIDChanged
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    SeparatedChanged
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    SeparatedPortalChanged
+    DescendentOfSeparatedPortalChanged
+#endif
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    VisibleRectChanged
+#endif
+#if HAVE(CORE_MATERIAL)
+    AppleVisualEffectChanged
+#endif
+    ShadowPathChanged
+};
+
+header: "RemoteLayerBackingStore.h"
+[Nested] enum class WebKit::RemoteLayerBackingStore::Type : bool;
+
+[RValue, CustomHeader, LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerBackingStoreProperties {
+    std::optional<WebKit::ImageBufferBackendHandle> m_bufferHandle;
+    std::optional<WebKit::ImageBufferSetIdentifier> m_bufferSet;
+    [NotSerialized] std::optional<WebKit::BufferAndBackendInfo> m_frontBufferInfo;
+    [NotSerialized] std::optional<WebKit::BufferAndBackendInfo> m_backBufferInfo;
+    [NotSerialized] std::optional<WebKit::BufferAndBackendInfo> m_secondaryBackBufferInfo;
+    std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
+    std::optional<WebCore::IntRect> m_paintedRect;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<WebCore::DynamicContentScalingDisplayList> m_displayListBufferHandle;
+#endif
+    bool m_isOpaque;
+    WebKit::RemoteLayerBackingStore::Type m_type;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    float m_maxRequestedEDRHeadroom;
+#endif
+};
+
+[LegacyPopulateFromEmptyConstructor, DisableMissingMemberCheck] class WebKit::RemoteLayerTreeTransaction {
+{
+    Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
+    WebKit::ChangedLayers m_changedLayers;
+
+    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
+
+    Vector<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
+    Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayerIDs;
+    Vector<WebCore::PlatformLayerIdentifier> m_layerIDsWithNewlyUnreachableBackingStore;
+
+    WebCore::IntSize m_contentsSize;
+    WebCore::IntSize m_scrollGeometryContentSize;
+    WebCore::IntPoint m_scrollOrigin;
+    WebCore::IntPoint m_scrollPosition;
+
+#if ENABLE(THREADED_ANIMATIONS)
+    WebCore::AcceleratedTimelinesUpdate m_timelinesUpdate;
+#endif
+}
+
+headers: "LayerProperties.h" "PlatformCALayerRemote.h"
+[CustomEncoder, CustomHeader] struct WebKit::ChangedLayers {
+    [NotSerialized] HashSet<Ref<PlatformCALayerRemote>> changedLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<WebKit::LayerProperties>> changedLayerProperties;
+}
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData {
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
+    WebKit::PlaybackSessionContextIdentifier playerIdentifier;
+    WebCore::FloatSize initialSize;
+    WebCore::FloatSize naturalSize;
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData {
+    uint32_t hostingContextID;
+#if ENABLE(MACH_PORT_LAYER_HOSTING)
+    std::optional<MachSendRightAnnotated> sendRightAnnotated;
+#endif
+    float hostingDeviceScaleFactor;
+    bool preservesFlip;
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties {
+    Markable<WebCore::PlatformLayerIdentifier> layerID;
+    WebCore::PlatformCALayerLayerType type;
+    std::optional<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData> videoElementData;
+#if ENABLE(MODEL_ELEMENT) && ENABLE(MODEL_PROCESS)
+    Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, Ref<WebCore::ModelContext>, WebCore::LayerHostingContextIdentifier> additionalData;
+#endif
+#if ENABLE(MODEL_ELEMENT) && !ENABLE(MODEL_PROCESS)
+    Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, WebCore::LayerHostingContextIdentifier> additionalData;
+#endif
+#if !ENABLE(MODEL_PROCESS) && !ENABLE(MODEL_ELEMENT)
+    Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, WebCore::LayerHostingContextIdentifier> additionalData;
+#endif
+};
+
+[Nested] struct WebKit::LayerProperties::AnimationChanges {
+    Vector<std::pair<String, WebKit::PlatformCAAnimationRemoteProperties>> addedAnimations;
+    HashSet<String> keysOfAnimationsToRemove;
+#if ENABLE(THREADED_ANIMATIONS)
+    Vector<Ref<WebCore::AcceleratedEffect>> effects;
+    WebCore::AcceleratedEffectValues baseValues;
+#endif
+};
+
+[CustomEncoder, CustomHeader] struct WebKit::RemoteLayerBackingStoreOrProperties {
+    [NotSerialized] std::unique_ptr<RemoteLayerBackingStore> backingStore;
+    std::unique_ptr<WebKit::RemoteLayerBackingStoreProperties> properties;
+};
+
+[LegacyPopulateFromEmptyConstructor] struct WebKit::LayerProperties {
+    [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties;
+    [NotSerialized] OptionSet<WebKit::LayerChange> everChangedProperties;
+
+    [OptionalTupleBit=WebKit::LayerChange::NameChanged] String name;
+    [OptionalTupleBit=WebKit::LayerChange::TransformChanged] std::unique_ptr<WebCore::TransformationMatrix> transform;
+    [OptionalTupleBit=WebKit::LayerChange::SublayerTransformChanged] std::unique_ptr<WebCore::TransformationMatrix> sublayerTransform;
+    [OptionalTupleBit=WebKit::LayerChange::ShapeRoundedRectChanged] std::unique_ptr<WebCore::FloatRoundedRect> shapeRoundedRect;
+
+    [OptionalTupleBit=WebKit::LayerChange::ChildrenChanged] Vector<WebCore::PlatformLayerIdentifier> children;
+
+    [OptionalTupleBit=WebKit::LayerChange::AnimationsChanged] WebKit::LayerProperties::AnimationChanges animationChanges;
+
+    [OptionalTupleBit=WebKit::LayerChange::PositionChanged] WebCore::FloatPoint3D position;
+    [OptionalTupleBit=WebKit::LayerChange::AnchorPointChanged] WebCore::FloatPoint3D anchorPoint;
+    [OptionalTupleBit=WebKit::LayerChange::BoundsChanged] WebCore::FloatRect bounds;
+    [OptionalTupleBit=WebKit::LayerChange::ContentsRectChanged] WebCore::FloatRect contentsRect;
+    [OptionalTupleBit=WebKit::LayerChange::BackingStoreChanged] WebKit::RemoteLayerBackingStoreOrProperties backingStoreOrProperties;
+    [OptionalTupleBit=WebKit::LayerChange::FiltersChanged] std::unique_ptr<WebCore::FilterOperations> filters;
+    [OptionalTupleBit=WebKit::LayerChange::ShapePathChanged] WebCore::Path shapePath;
+    [OptionalTupleBit=WebKit::LayerChange::MaskLayerChanged] Markable<WebCore::PlatformLayerIdentifier> maskLayerID;
+    [OptionalTupleBit=WebKit::LayerChange::ClonedContentsChanged] Markable<WebCore::PlatformLayerIdentifier> clonedLayerID;
+    [OptionalTupleBit=WebKit::LayerChange::TimeOffsetChanged] double timeOffset;
+    [OptionalTupleBit=WebKit::LayerChange::SpeedChanged] float speed;
+    [OptionalTupleBit=WebKit::LayerChange::ContentsScaleChanged] float contentsScale;
+    [OptionalTupleBit=WebKit::LayerChange::CornerRadiusChanged] float cornerRadius;
+    [OptionalTupleBit=WebKit::LayerChange::BorderWidthChanged] float borderWidth;
+    [OptionalTupleBit=WebKit::LayerChange::OpacityChanged] float opacity;
+    [OptionalTupleBit=WebKit::LayerChange::BackgroundColorChanged] WebCore::Color backgroundColor;
+    [OptionalTupleBit=WebKit::LayerChange::BorderColorChanged] WebCore::Color borderColor;
+    [OptionalTupleBit=WebKit::LayerChange::CustomAppearanceChanged] WebCore::GraphicsLayer::CustomAppearance customAppearance;
+    [OptionalTupleBit=WebKit::LayerChange::MinificationFilterChanged] WebCore::PlatformCALayerFilterType minificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::MagnificationFilterChanged] WebCore::PlatformCALayerFilterType magnificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::BlendModeChanged] WebCore::BlendMode blendMode;
+    [OptionalTupleBit=WebKit::LayerChange::WindRuleChanged] WebCore::WindRule windRule;
+    [OptionalTupleBit=WebKit::LayerChange::VideoGravityChanged] WebCore::MediaPlayerVideoGravity videoGravity;
+    [OptionalTupleBit=WebKit::LayerChange::AntialiasesEdgesChanged] bool antialiasesEdges;
+    [OptionalTupleBit=WebKit::LayerChange::HiddenChanged] bool hidden;
+    [OptionalTupleBit=WebKit::LayerChange::BackingStoreAttachmentChanged] bool backingStoreAttached;
+    [OptionalTupleBit=WebKit::LayerChange::GeometryFlippedChanged] bool geometryFlipped;
+    [OptionalTupleBit=WebKit::LayerChange::DoubleSidedChanged] bool doubleSided;
+    [OptionalTupleBit=WebKit::LayerChange::MasksToBoundsChanged] bool masksToBounds;
+    [NotSerialized] bool opaque;
+    [OptionalTupleBit=WebKit::LayerChange::ContentsHiddenChanged] bool contentsHidden;
+    [OptionalTupleBit=WebKit::LayerChange::UserInteractionEnabledChanged] bool userInteractionEnabled;
+    [OptionalTupleBit=WebKit::LayerChange::BackdropRootChanged] bool backdropRoot;
+    [OptionalTupleBit=WebKit::LayerChange::BackdropRootIsOpaqueChanged] bool backdropRootIsOpaque;
+    [OptionalTupleBit=WebKit::LayerChange::TonemappingEnabledChanged] bool tonemappingEnabled;
+    [OptionalTupleBit=WebKit::LayerChange::EventRegionChanged] WebCore::EventRegion eventRegion;
+#if ENABLE(SCROLLING_THREAD)
+    [OptionalTupleBit=WebKit::LayerChange::ScrollingNodeIDChanged] Markable<WebCore::ScrollingNodeID> scrollingNodeID;
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    [OptionalTupleBit=WebKit::LayerChange::SeparatedChanged] bool isSeparated;
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    [OptionalTupleBit=WebKit::LayerChange::SeparatedPortalChanged] bool isSeparatedPortal;
+    [OptionalTupleBit=WebKit::LayerChange::DescendentOfSeparatedPortalChanged] bool isDescendentOfSeparatedPortal;
+#endif
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [OptionalTupleBit=WebKit::LayerChange::VisibleRectChanged] WebCore::FloatRect visibleRect;
+#endif
+    [NotSerialized] WebCore::ContentsFormat contentsFormat;
+#if HAVE(CORE_MATERIAL)
+    [OptionalTupleBit=WebKit::LayerChange::AppleVisualEffectChanged] WebCore::AppleVisualEffectData appleVisualEffectData;
+#endif
+    [OptionalTupleBit=WebKit::LayerChange::ShadowPathChanged] WebCore::Path shadowPath;
+};
+
+using WebKit::LayerHostingContextID = uint32_t;
+
+header: "RemoteLayerTreeCommitBundle.h"
+
+using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
+
+[CustomHeader] struct WebKit::PageData {
+    Vector<WebKit::PageData::TransactionCallbackID> callbackIDs;
+    uint64_t renderTreeSize;
+};
+
+[CustomHeader] struct WebKit::MainFrameData {
+    WebCore::LayoutSize baseLayoutViewportSize;
+    WebCore::LayoutPoint minStableLayoutViewportOrigin;
+    WebCore::LayoutPoint maxStableLayoutViewportOrigin;
+    WebCore::Color themeColor;
+    WebCore::Color pageExtendedBackgroundColor;
+    WebCore::Color sampledPageTopColor;
+    std::optional<WebCore::FixedContainerEdges> fixedContainerEdges;
+
+#if PLATFORM(MAC)
+    Markable<WebCore::PlatformLayerIdentifier> pageScalingLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID;
+#endif
+
+    double pageScaleFactor;
+    double minimumScaleFactor;
+    double maximumScaleFactor;
+    double initialScaleFactor;
+    double viewportMetaTagWidth;
+    WebKit::ActivityStateChangeID activityStateChangeID;
+    OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones;
+    bool scaleWasSetByUIProcess;
+    bool allowsUserScaling;
+    bool avoidsUnsafeArea;
+    bool viewportMetaTagWidthWasExplicit;
+    bool viewportMetaTagCameFromImageDocument;
+    bool isInStableState;
+    WebCore::InteractiveWidget viewportMetaTagInteractiveWidget;
+
+#if PLATFORM(IOS_FAMILY)
+    std::optional<uint64_t> dynamicViewportSizeUpdateID;
+#endif
+};
+
+using WebKit::RemoteLayerTreeCommitBundle::RootFrameData = std::pair<WebKit::RemoteLayerTreeTransaction, WebKit::RemoteScrollingCoordinatorTransaction>;
+
+struct WebKit::RemoteLayerTreeCommitBundle {
+    Vector<WebKit::RemoteLayerTreeCommitBundle::RootFrameData> transactions;
+    WebKit::PageData pageData;
+    std::optional<WebKit::MainFrameData> mainFrameData;
+
+    std::optional<WebKit::EditorState> editorState;
+    
+    WebKit::TransactionID transactionID;
+    MonotonicTime startTime;
+};

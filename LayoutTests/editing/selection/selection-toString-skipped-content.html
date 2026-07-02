@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<div id="content">hello<div style="content-visibility: hidden;">secret content</div></div>
+<script>
+
+let range = document.createRange();
+range.selectNode(content);
+window.getSelection().addRange(range);
+shouldBeEqualToString('getSelection().toString()', 'hello');
+
+</script>

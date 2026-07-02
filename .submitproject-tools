@@ -1,0 +1,9 @@
+[submitproject "filter"]
+    includedSubdirectoryPatterns = Source/ThirdParty/gmock
+    includedSubdirectoryPatterns = Source/ThirdParty/gtest
+    includedSubdirectoryPatterns = Tools/DumpRenderTree
+    includedSubdirectoryPatterns = Tools/ImageDiff
+    includedSubdirectoryPatterns = Tools/MiniBrowser
+    includedSubdirectoryPatterns = Tools/TestRunnerShared
+    includedSubdirectoryPatterns = Tools/WebKitTestRunner
+    excludedSubdirectoryPatterns = Tools/WebKitTestRunner/gtk

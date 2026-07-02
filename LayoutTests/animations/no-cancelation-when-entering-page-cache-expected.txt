@@ -1,0 +1,3 @@
+This tests that CSS Animations do not get canceled when restored from the page cache.
+
+PASS: animation was not canceled when restored from the page cache.

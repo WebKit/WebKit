@@ -1,0 +1,12 @@
+
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, encrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, encrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [wrapKey, decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [wrapKey, decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, wrapKey, decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, wrapKey, decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, false, [unwrapKey, decrypt])
+PASS Success: generateKey({hash: SHA-1, modulusLength: 2048, name: RSA-OAEP, publicExponent: {0: 1, 1: 0, 2: 1}}, true, [unwrapKey, decrypt])
+

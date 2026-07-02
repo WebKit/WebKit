@@ -1,0 +1,4 @@
+
+FAIL replay behavior restarts a paused animation assert_equals: expected "paused" but got "running"
+FAIL replay behavior restarts a finished animation assert_equals: expected "running" but got "paused"
+

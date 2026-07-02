@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/apt"
+
+PACKAGES+=(
+    # These are dependencies necessary for building WPE.
+    g++
+    gcc
+    libatk-bridge2.0-dev
+    libcairo2-dev
+    libgbm-dev
+    libgnutls28-dev
+    libharfbuzz-dev
+    libicu-dev
+    libxml2-dev
+    pkg-config
+    qt6-declarative-private-dev
+    unifdef
+    wayland-protocols
+    zlib1g-dev
+    $(aptIfExists libopenxr-dev)
+
+    # These are dependencies necessary for running tests.
+    python3-psutil
+
+    # These are dependencies necessary for building the jhbuild.
+    libegl-mesa0
+    libmount-dev
+    libopus-dev
+    libpulse-dev
+    libsrtp2-dev
+    libtheora-dev
+    libvorbis-dev
+    libvpx-dev
+    libxcb-glx0-dev
+    libxcb-xkb-dev
+    libxkbcommon-dev
+    libxrandr-dev
+    libunwind-dev
+
+    # These are dependencies necessary for building Cog.
+    libxcb-cursor-dev
+    $(aptIfExists libportal-dev)
+    $(aptIfExists libportal-gtk4-dev)
+)

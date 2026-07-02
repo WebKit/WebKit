@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    margin: 0;
+}
+
+section {
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<section id="container"></section>
+<section>Example page with shadow host</section>
+<script>
+const host = document.getElementById("container");
+const shadowRoot = host.attachShadow({ mode: "open" });
+shadowRoot.innerHTML = `
+    <style>
+        div {
+            width: 200px;
+            height: 100px;
+        }
+        .red { background-color: red; }
+        .green { background-color: green; }
+        .blue { background-color: blue; }
+    </style>
+    <div class="red"></div>
+    <div class="green"></div>
+    <div class="blue"></div>
+`;
+</script>
+</body>
+</html>

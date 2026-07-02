@@ -1,0 +1,4 @@
+
+PASS Verify k-rate AudioParam input works correctly for playbackRate
+FAIL Verify k-rate AudioParam input works correctly for detune assert_array_approx_equals: AudioBufferSourceNode detune: actual matches expected for k-rate AudioParam input property 405, expected 0.11203312128782272 +/- 0, expected 0.11203312128782272 but got 0.11203312873840332
+

@@ -1,0 +1,144 @@
+load("@skia_user_config//:copts.bzl", "DEFAULT_OBJC_COPTS")
+load("//bazel:skia_rules.bzl", "skia_filegroup", "skia_objc_library", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# A list of files that is included by C++ files, but whose
+# implementation resides in .mm files. The latter may need to
+# be compiled separately (e.g. with Automatic Reference Counting [ARC]).
+skia_filegroup(
+    name = "mtl_cpp_hdrs",
+    srcs = [
+        "GrMtlCppUtil.h",
+        "GrMtlTrampoline.h",
+    ],
+)
+
+MTL_FILES = [
+    "GrMtlAttachment.h",
+    "GrMtlAttachment.mm",
+    "GrMtlBackendSemaphore.mm",
+    "GrMtlBackendSurface.mm",
+    "GrMtlBuffer.h",
+    "GrMtlBuffer.mm",
+    "GrMtlCaps.h",
+    "GrMtlCaps.mm",
+    "GrMtlCommandBuffer.h",
+    "GrMtlCommandBuffer.mm",
+    "GrMtlDepthStencil.h",
+    "GrMtlDepthStencil.mm",
+    "GrMtlDirectContext.mm",
+    "GrMtlFramebuffer.h",
+    "GrMtlFramebuffer.mm",
+    "GrMtlGpu.h",
+    "GrMtlGpu.mm",
+    "GrMtlOpsRenderPass.h",
+    "GrMtlOpsRenderPass.mm",
+    "GrMtlPipeline.h",
+    "GrMtlPipelineState.h",
+    "GrMtlPipelineState.mm",
+    "GrMtlPipelineStateBuilder.h",
+    "GrMtlPipelineStateBuilder.mm",
+    "GrMtlPipelineStateDataManager.h",
+    "GrMtlPipelineStateDataManager.mm",
+    "GrMtlRenderCommandEncoder.h",
+    "GrMtlRenderTarget.h",
+    "GrMtlRenderTarget.mm",
+    "GrMtlResourceProvider.h",
+    "GrMtlResourceProvider.mm",
+    "GrMtlSampler.h",
+    "GrMtlSampler.mm",
+    "GrMtlSemaphore.h",
+    "GrMtlSemaphore.mm",
+    "GrMtlTexture.h",
+    "GrMtlTexture.mm",
+    "GrMtlTextureRenderTarget.h",
+    "GrMtlTextureRenderTarget.mm",
+    "GrMtlTrampoline.mm",
+    "GrMtlTypesPriv.h",
+    "GrMtlTypesPriv.mm",
+    "GrMtlUniformHandler.h",
+    "GrMtlUniformHandler.mm",
+    "GrMtlUtil.h",
+    "GrMtlUtil.mm",
+    "GrMtlVaryingHandler.h",
+    "GrMtlVaryingHandler.mm",
+]
+
+split_srcs_and_hdrs(
+    name = "mtl",
+    files = MTL_FILES,
+)
+
+skia_objc_library(
+    name = "ganesh_metal",
+    srcs = [
+        ":mtl_cpp_hdrs",
+        ":mtl_hdrs",
+        ":mtl_srcs",
+        "//src/gpu/ganesh/surface:mtl_objc_srcs",
+    ],
+    hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
+        "//include/gpu/ganesh/mtl:public_hdrs",
+        "//include/gpu/mtl:public_hdrs",
+        "//include/ports:core_foundation_hdrs",
+    ],
+    copts = DEFAULT_OBJC_COPTS + ["-fobjc-arc"],
+    defines = ["SK_METAL"],
+    sdk_frameworks = [
+        "Metal",
+        "MetalKit",
+        "Foundation",
+    ],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/gpu/ganesh",
+        "//src/gpu/mtl:gpu_mtl",
+        "//src/sksl/codegen:metal",
+    ],
+)
+
+skia_objc_library(
+    name = "ganesh_metal_TEST_UTIL",
+    testonly = True,
+    srcs = [
+        ":mtl_cpp_hdrs",
+        ":mtl_hdrs",
+        ":mtl_srcs",
+        "//src/gpu/ganesh/surface:mtl_objc_srcs",
+    ],
+    hdrs = [
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/ganesh:ganesh_hdrs",
+        "//include/gpu/ganesh/mtl:public_hdrs",
+        "//include/gpu/mtl:public_hdrs",
+        "//include/ports:core_foundation_hdrs",
+    ],
+    copts = ["-fobjc-arc"],
+    defines = ["SK_METAL"],
+    sdk_frameworks = [
+        "Metal",
+        "MetalKit",
+        "Foundation",
+    ],
+    visibility = ["//tools/window:__pkg__"],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
+        "//src/gpu/mtl:gpu_mtl",
+        "//src/sksl/codegen:metal",
+    ],
+)

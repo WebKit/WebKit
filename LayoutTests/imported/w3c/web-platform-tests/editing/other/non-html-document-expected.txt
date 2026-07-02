@@ -1,0 +1,3 @@
+
+PASS editing APIs on an XML document should be disabled
+

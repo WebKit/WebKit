@@ -1,0 +1,21 @@
+<html>
+<head>
+<body>
+<meter id="native" value="0" min="0" max="100"></meter>
+<meter id="shadow" value="0" min="0" max="100" style="-webkit-appearance: none;"></meter>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+document.body.onload = function() {
+    window.setTimeout(function() {
+        document.getElementById("native").value = 50;
+        document.getElementById("shadow").value = 50;
+        window.setTimeout(function() {
+             if (window.testRunner)
+                 testRunner.notifyDone();
+        }, 0);
+    }, 50);
+}
+</script>
+</body>
+</html>

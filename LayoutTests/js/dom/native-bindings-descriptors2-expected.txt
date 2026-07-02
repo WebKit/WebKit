@@ -1,0 +1,11 @@
+PASS document.title is "old title"
+Object.defineProperty(Document.prototype, "title", { value: 5 })
+PASS originalDescriptor.value is not newDescriptor.value
+PASS document.title is 5
+PASS document.title is "old title"
+document.title = "new title"
+PASS document.title is "new title"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

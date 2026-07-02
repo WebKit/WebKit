@@ -1,0 +1,6 @@
+
+PASS Verify connect() method chaining for common AudioNode types returns destination
+PASS Verify connect() method chaining for MediaElementSourceNode and MediaStreamSourceNode
+PASS Test exceptions thrown by invalid connect() chaining
+PASS Test correct signal flow and output value after chaining .connect() on gain nodes
+

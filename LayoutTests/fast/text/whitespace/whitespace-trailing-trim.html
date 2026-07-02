@@ -1,0 +1,26 @@
+<style>
+#container { 
+  font-family: Ahem;
+  font-size: 20px;
+  text-wrap-mode: nowrap;
+  white-space-collapse: preserve-breaks;
+  direction: RTL;
+  width: 100px;
+}
+</style>
+<div id=container>
+  <div id=content> PASS if
+ X no crash</div>
+</div>
+<script>
+document.body.offsetHeight;
+content.remove();
+
+document.body.offsetHeight;
+container.style.whiteSpace = "normal";
+let same_content = document.createElement("div");
+same_content.appendChild(document.createTextNode(" PASS if\n X no crash"));
+container.appendChild(same_content);
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

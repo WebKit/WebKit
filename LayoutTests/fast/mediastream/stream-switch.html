@@ -1,0 +1,48 @@
+<body>
+<video id="localVideo" autoplay playsInline></video>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../media/media-file.js"></script>
+<script src="../../media/utilities.js"></script>
+<script src="../../webrtc/routines.js"></script>
+<script>
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio : true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+    let cptr = 0;
+    let videoFile = "../../media/" + findMediaFile('video', 'content/test');
+    while (++cptr < 20) {
+        localVideo.srcObject = stream;
+        await localVideo.play();
+        await new Promise(resolve => setTimeout(resolve, 10));
+        localVideo.srcObject = null;
+        localVideo.src = videoFile;
+        localVideo.load();
+        await localVideo.play();
+        await waitForVideoFrameWithTimeout(localVideo, 15 * 1000, `timed out waiting for video frame ${cptr}`);
+    }
+    stream.getTracks().forEach(t => t.stop());
+}, "Check switching between playing with and without stream");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio : true, video: true});
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    localVideo.srcObject = stream;
+    await localVideo.play();
+
+    const audioTrack = stream.getAudioTracks()[0].clone();
+    localVideo.srcObject = stream;
+    await localVideo.play();
+
+    let cptr = 0;
+    while (++cptr < 20) {
+        stream.removeTrack(audioTrack);
+        once(stream, 'onremovetrack');
+        stream.addTrack(audioTrack);
+        once(stream, 'onaddtrack');
+    }
+    stream.getTracks().forEach(t => t.stop());
+}, "Check adding and removing a track to a stream");
+</script>
+</body>

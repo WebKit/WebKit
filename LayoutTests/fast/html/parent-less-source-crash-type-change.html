@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script>
+var run_count = 0;
+function main() {
+  if (window.testRunner)
+         testRunner.dumpAsText();
+  x34.addEventListener("DOMNodeRemoved",f3);
+}
+function f1() {
+  run_count++;
+  if (run_count > 2) return;
+  var x34 = document.getElementById("x34");
+  try { x47.append(x34); } catch { }
+  x34.type = "image/png";
+  v59 = document.createRange();
+  v59.setEndAfter(x37);
+  v59.extractContents();
+}
+function f3() {
+  x25.addEventListener("DOMSubtreeModified",f1);
+  x12.setAttribute("vector-effect","non-scaling-size");
+  x4.prepend(x34);
+}
+</script>
+<body onload="main()"><p>PASS if no crash</p>
+<source id="x34">
+<font id="x25">
+<picture id="x4">
+<dl id="x37">
+<svg id="x47">
+<path id="x12">
+<animate attributeName="clip-path" end="100ms" onend="f1()">

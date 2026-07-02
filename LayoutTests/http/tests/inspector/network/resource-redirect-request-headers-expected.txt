@@ -1,0 +1,14 @@
+Tests that a resource request's headers have correct information after a redirect.
+
+
+== Running test suite: Resource.Redirect.RequestHeaders
+-- Running test case: Resource.Redirect.RequestHeadersPostToGet
+PASS: Resource final request method should be `GET`.
+PASS: Resource final status code should be `200`.
+PASS: Resource final status text should be `OK`.
+PASS: Resource should have one redirect.
+PASS: Redirected request method should be `POST`
+PASS: Redirected request status code should be `302`.
+PASS: Redirected request status text should be `Found`.
+PASS: Redirected request response should have a location header of `redirect.py`
+

@@ -1,0 +1,379 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("emulated_network") {
+  testonly = true
+  sources = [
+    "cross_traffic.cc",
+    "cross_traffic.h",
+    "emulated_network_manager.cc",
+    "emulated_network_manager.h",
+    "emulated_turn_server.cc",
+    "emulated_turn_server.h",
+    "fake_network_socket_server.cc",
+    "fake_network_socket_server.h",
+    "network_emulation.cc",
+    "network_emulation.h",
+    "network_emulation_manager.cc",
+    "network_emulation_manager.h",
+    "traffic_route.cc",
+    "traffic_route.h",
+  ]
+  deps = [
+    ":simulated_network",
+    "..:create_test_environment",
+    "../../api:async_dns_resolver",
+    "../../api:field_trials_view",
+    "../../api:network_emulation_manager_api",
+    "../../api:packet_socket_factory",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../api:simulated_network_api",
+    "../../api:time_controller",
+    "../../api/environment",
+    "../../api/numerics",
+    "../../api/task_queue",
+    "../../api/task_queue:pending_task_safety_flag",
+    "../../api/test/network_emulation",
+    "../../api/transport:ecn_marking",
+    "../../api/transport:stun_types",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../p2p:p2p_server_utils",
+    "../../p2p:port_interface",
+    "../../rtc_base:async_packet_socket",
+    "../../rtc_base:checks",
+    "../../rtc_base:copy_on_write_buffer",
+    "../../rtc_base:ip_address",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:net_helper",
+    "../../rtc_base:net_helpers",
+    "../../rtc_base:network",
+    "../../rtc_base:network_constants",
+    "../../rtc_base:random",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base:safe_minmax",
+    "../../rtc_base:socket",
+    "../../rtc_base:socket_address",
+    "../../rtc_base:socket_factory",
+    "../../rtc_base:socket_server",
+    "../../rtc_base:stringutils",
+    "../../rtc_base:task_queue_for_test",
+    "../../rtc_base:threading",
+    "../../rtc_base/network:received_packet",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:no_unique_address",
+    "../../rtc_base/task_utils:repeating_task",
+    "../../system_wrappers",
+    "../scenario:column_printer",
+    "../time_controller",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_library("network_emulation_pc_unittest") {
+    testonly = true
+    sources = [ "network_emulation_pc_unittest.cc" ]
+    deps = [
+      ":emulated_network",
+      ":simulated_network",
+      "..:create_test_environment",
+      "..:test_support",
+      "..:wait_until",
+      "../../api:audio_options_api",
+      "../../api:create_modular_peer_connection_factory",
+      "../../api:enable_media_with_defaults",
+      "../../api:jsep",
+      "../../api:media_stream_interface",
+      "../../api:network_emulation_manager_api",
+      "../../api:peer_connection_interface",
+      "../../api:rtc_error_matchers",
+      "../../api:scoped_refptr",
+      "../../api:simulated_network_api",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
+      "../../api/rtc_event_log:rtc_event_log_factory",
+      "../../api/task_queue:default_task_queue_factory",
+      "../../api/test/network_emulation",
+      "../../modules/audio_device:test_audio_device_module",
+      "../../p2p:port_allocator",
+      "../../pc:pc_test_utils",
+      "../../pc:peerconnection_wrapper",
+      "../../rtc_base:network",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:threading",
+    ]
+  }
+}
+
+rtc_library("cross_traffic_unittest") {
+  testonly = true
+  sources = [ "cross_traffic_unittest.cc" ]
+  deps = [
+    ":emulated_network",
+    "..:test_support",
+    "../../api:network_emulation_manager_api",
+    "../../api:simulated_network_api",
+    "../../api/test/network_emulation",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:ip_address",
+    "../../rtc_base:logging",
+    "../../rtc_base:task_queue_for_test",
+    "../../system_wrappers",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("network_emulation_unittest") {
+    testonly = true
+    sources = [ "network_emulation_unittest.cc" ]
+    deps = [
+      ":emulated_network",
+      ":simulated_network",
+      "..:test_support",
+      "..:wait_until",
+      "../../api:network_emulation_manager_api",
+      "../../api:rtc_error_matchers",
+      "../../api:simulated_network_api",
+      "../../api/task_queue",
+      "../../api/test/network_emulation",
+      "../../api/transport:ecn_marking",
+      "../../api/transport:stun_types",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:buffer",
+      "../../rtc_base:byte_buffer",
+      "../../rtc_base:checks",
+      "../../rtc_base:copy_on_write_buffer",
+      "../../rtc_base:ip_address",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:net_helpers",
+      "../../rtc_base:socket",
+      "../../rtc_base:socket_address",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:threading",
+      "../../rtc_base/synchronization:mutex",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+    ]
+  }
+
+  rtc_library("feedback_generator") {
+    testonly = true
+    sources = [
+      "feedback_generator.cc",
+      "feedback_generator.h",
+    ]
+    deps = [
+      ":emulated_network",
+      ":simulated_network",
+      "../../api:create_network_emulation_manager",
+      "../../api:network_emulation_manager_api",
+      "../../api:rtp_header_extension_id",
+      "../../api:rtp_parameters",
+      "../../api:simulated_network_api",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
+      "../../api/rtc_event_log",
+      "../../api/rtc_event_log:rtc_event_log_factory",
+      "../../api/transport:network_control",
+      "../../api/transport:test_feedback_generator_interface",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../logging:rtc_event_rtp_rtcp",
+      "../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../rtc_base:checks",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  if (rtc_enable_protobuf) {
+    rtc_library("feedback_generator_unittest") {
+      testonly = true
+      sources = [ "feedback_generator_unittest.cc" ]
+      deps = [
+        "..:test_support",
+        "../../api:create_network_emulation_manager",
+        "../../api:network_emulation_manager_api",
+        "../../api:simulated_network_api",
+        "../../api/rtc_event_log",
+        "../../api/transport:test_feedback_generator",
+        "../../api/transport:test_feedback_generator_interface",
+        "../../api/units:time_delta",
+        "../../logging:rtc_event_log_parser",
+        "../logging:log_writer",
+      ]
+    }
+  }
+
+  if (!build_with_chromium) {
+    rtc_library("network_emulation_unittests") {
+      testonly = true
+      deps = [
+        ":cross_traffic_unittest",
+        ":network_emulation_pc_unittest",
+        ":network_emulation_unittest",
+        ":simulated_network_unittest",
+      ]
+      if (rtc_enable_protobuf) {
+        deps += [
+          ":feedback_generator_unittest",
+          ":schedulable_network_behavior_test",
+          ":token_bucket_network_behavior_test",
+        ]
+      }
+    }
+  }
+}
+
+rtc_library("simulated_network") {
+  sources = [
+    "simulated_network.cc",
+    "simulated_network.h",
+  ]
+  deps = [
+    "../../api:sequence_checker",
+    "../../api:simulated_network_api",
+    "../../api/test/network_emulation:network_queue",
+    "../../api/transport:ecn_marking",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:race_checker",
+    "../../rtc_base:random",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("simulated_network_unittest") {
+    testonly = true
+    sources = [ "simulated_network_unittest.cc" ]
+    deps = [
+      ":simulated_network",
+      "..:test_support",
+      "../../api:simulated_network_api",
+      "../../api/test/network_emulation:network_queue",
+      "../../api/transport:ecn_marking",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+    ]
+  }
+}
+
+rtc_library("token_bucket_network_behavior") {
+  sources = [
+    "token_bucket_network_behavior.cc",
+    "token_bucket_network_behavior.h",
+  ]
+
+  deps = [
+    "../../api:function_view",
+    "../../api:network_emulation_manager_api",
+    "../../api:sequence_checker",
+    "../../api:simulated_network_api",
+    "../../api/test/network_emulation:network_queue",
+    "../../api/test/network_emulation:token_bucket_network_behavior_config",
+    "../../api/transport:ecn_marking",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:random",
+    "../../rtc_base/synchronization:mutex",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+if (rtc_include_tests) {
+  rtc_library("token_bucket_network_behavior_test") {
+    sources = [ "token_bucket_network_behavior_unittest.cc" ]
+
+    testonly = true
+    deps = [
+      ":token_bucket_network_behavior",
+      "..:test_support",
+      "../../api:create_network_emulation_manager",
+      "../../api:network_emulation_manager_api",
+      "../../api:simulated_network_api",
+      "../../api/test/network_emulation:network_queue",
+      "../../api/test/network_emulation:token_bucket_network_behavior_builder",
+      "../../api/test/network_emulation:token_bucket_network_behavior_config",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+    ]
+  }
+}
+
+if (rtc_enable_protobuf) {
+  rtc_library("schedulable_network_behavior") {
+    sources = [
+      "schedulable_network_behavior.cc",
+      "schedulable_network_behavior.h",
+    ]
+    deps = [
+      ":simulated_network",
+      "../../api:sequence_checker",
+      "../../api:simulated_network_api",
+      "../../api/task_queue",
+      "../../api/test/network_emulation:network_config_schedule_proto",
+      "../../api/test/network_emulation:network_queue",
+      "../../api/units:data_rate",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:checks",
+      "../../rtc_base:macromagic",
+      "../../rtc_base/task_utils:repeating_task",
+      "../../system_wrappers",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    rtc_library("schedulable_network_behavior_test") {
+      testonly = true
+      sources = [ "schedulable_network_behavior_test.cc" ]
+      deps = [
+        ":schedulable_network_behavior",
+        "..:test_support",
+        "../../api:create_network_emulation_manager",
+        "../../api:network_emulation_manager_api",
+        "../../api:simulated_network_api",
+        "../../api/test/network_emulation:network_config_schedule_proto",
+        "../../api/test/network_emulation:network_queue",
+        "../../api/units:time_delta",
+        "../../api/units:timestamp",
+        "../../system_wrappers",
+      ]
+    }
+  }
+}

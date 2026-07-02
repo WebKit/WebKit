@@ -1,0 +1,6 @@
+
+PASS hidden documents must reject went trying to call lock or unlock
+PASS hidden documents must reject went trying to call unlock
+FAIL hidden documents must not unlock the screen orientation promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+FAIL Once maximized, a minimized window can lock or unlock the screen orientation again promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+

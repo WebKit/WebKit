@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-after-bfcache.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-for-full-session-history.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-for-navigation-in-child.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-same-document-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-same-document-navigate-during.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-same-document-reload-with-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-same-document-replace-with-intercept.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-same-document-replaceState.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-same-document.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-skip-current-on-truncate.html

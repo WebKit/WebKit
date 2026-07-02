@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <rect x="10" y="35" width="115" height="55" fill="green"/>
+    <rect x="125" y="35" width="345" height="55" fill="blue"/>
+
+    <rect x="10" y="120" width="115" height="55" fill="green"/>
+    <rect x="125" y="120" width="115" height="55" fill="blue"/>
+    <rect x="240" y="120" width="115" height="55" fill="blue"/>
+    <rect x="355" y="120" width="115" height="55" fill="green"/>
+
+    <rect x="10" y="205" width="115" height="55" fill="green"/>
+    <rect x="125" y="205" width="115" height="55" fill="blue"/>
+    <rect x="240" y="205" width="115" height="55" fill="green"/>
+    <rect x="355" y="205" width="115" height="55" fill="blue"/>
+</svg>

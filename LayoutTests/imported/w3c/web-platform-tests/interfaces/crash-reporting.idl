@@ -1,0 +1,11 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into webref
+// (https://github.com/w3c/webref)
+// Source: Crash Reporting (https://wicg.github.io/crash-reporting/)
+
+dictionary CrashReportBody : ReportBody {
+  DOMString reason;
+  DOMString stack;
+  boolean is_top_level;
+  DocumentVisibilityState page_visibility;
+};

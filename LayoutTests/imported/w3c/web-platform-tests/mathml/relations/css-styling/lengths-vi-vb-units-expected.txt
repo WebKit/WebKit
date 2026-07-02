@@ -1,0 +1,4 @@
+
+FAIL vi/vb in horizontal-tb writing modes assert_approx_equals: vi in horizontal writing modes expected 64 +/- 0.5 but got 0
+FAIL vi/vb in vertical-rl writing modes assert_approx_equals: vi in vertical writing modes expected 40 +/- 0.5 but got 0
+

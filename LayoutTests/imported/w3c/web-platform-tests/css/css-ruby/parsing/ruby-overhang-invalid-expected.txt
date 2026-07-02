@@ -1,0 +1,8 @@
+
+PASS e.style['ruby-overhang'] = "auto none" should not set the property value
+PASS e.style['ruby-overhang'] = "none auto" should not set the property value
+PASS e.style['ruby-overhang'] = "auto auto" should not set the property value
+PASS e.style['ruby-overhang'] = "none none" should not set the property value
+PASS e.style['ruby-overhang'] = "auto 2px" should not set the property value
+PASS e.style['ruby-overhang'] = "none 2px" should not set the property value
+

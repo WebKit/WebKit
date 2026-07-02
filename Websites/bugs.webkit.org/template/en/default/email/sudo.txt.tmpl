@@ -1,0 +1,29 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+Content-Type: text/plain
+From: [% Param('mailfrom') %]
+To: [% user.email %]
+Subject: [[% terms.Bugzilla %]] Your account [% user.login -%]
+ is being impersonated
+X-Bugzilla-Type: admin
+
+    [%+ sudoer.identity %] has used the 'sudo' feature to access 
+[%+ terms.Bugzilla %] using your account.
+
+[% IF reason %]
+    [%+ sudoer.identity %] provided the following reason for doing this:
+
+[% reason FILTER wrap_comment %]
+[% ELSE %]
+    [%+ sudoer.identity %] did not provide a reason for doing this.
+[% END %]
+
+    If you feel that this action was inappropriate, please contact 
+[%+ Param("maintainer") %].  For more information on this feature, 
+visit <[% urlbase %]page.cgi?id=sudo.html>.

@@ -1,0 +1,82 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_static_library("ns") {
+  visibility = [ "*" ]
+  configs += [ "..:apm_debug_dump" ]
+  sources = [
+    "fast_math.cc",
+    "fast_math.h",
+    "histograms.cc",
+    "histograms.h",
+    "noise_estimator.cc",
+    "noise_estimator.h",
+    "noise_suppressor.cc",
+    "noise_suppressor.h",
+    "ns_common.h",
+    "ns_config.h",
+    "ns_fft.cc",
+    "ns_fft.h",
+    "prior_signal_model.cc",
+    "prior_signal_model.h",
+    "prior_signal_model_estimator.cc",
+    "prior_signal_model_estimator.h",
+    "quantile_noise_estimator.cc",
+    "quantile_noise_estimator.h",
+    "signal_model.cc",
+    "signal_model.h",
+    "signal_model_estimator.cc",
+    "signal_model_estimator.h",
+    "speech_probability_estimator.cc",
+    "speech_probability_estimator.h",
+    "suppression_params.cc",
+    "suppression_params.h",
+    "wiener_filter.cc",
+    "wiener_filter.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    "..:audio_buffer",
+    "../../../common_audio/third_party/ooura:fft_size_256",
+    "../../../rtc_base:checks",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("ns_unittests") {
+    testonly = true
+
+    configs += [ "..:apm_debug_dump" ]
+    sources = [ "noise_suppressor_unittest.cc" ]
+
+    deps = [
+      ":ns",
+      "..:audio_buffer",
+      "../../../rtc_base:stringutils",
+      "../../../test:test_support",
+    ]
+
+    defines = []
+
+    if (rtc_enable_protobuf) {
+      sources += []
+    }
+
+    if (!build_with_chromium) {
+      deps += [ "..:audio_processing_unittests" ]
+    }
+  }
+}

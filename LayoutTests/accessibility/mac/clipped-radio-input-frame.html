@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true -->
+<!-- runSingly because of the usage of accessibilityController.setForceInitialFrameCaching, which sets a process-global static. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.sr-only {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    border: 0;
+    clip-path: inset(0 0 99.9% 99.9%);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    width: 1px;
+}
+</style>
+</head>
+<body>
+
+<div style="margin-left: 300px">
+    <!-- Does not have .sr-only, so the radio should be visible and thus painted as part of the accessibility paint. -->
+    <input type="radio" name="radio1" id="radio1">
+    <label for="radio1">Foo</label>
+
+    <!-- Add tons of space to greatly separate the .sr-only radio from the "normal" radio, allowing us to expect a
+         large y-distance between the two. -->
+    <br/><br/><br/><br/><br/><br/><br/><br/>
+    <br/><br/><br/><br/><br/><br/><br/><br/>
+    <br/><br/><br/><br/><br/><br/><br/><br/>
+
+    <input type="radio" name="radio2" id="radio2" class="sr-only">
+    <label for="radio2">Bar</label>
+</div>
+
+<script>
+function absoluteDifference(num1, num2) {
+    if (num1 > num2)
+        return num1 - num2;
+    return num2 - num1;
+}
+
+// This is a relatively common pattern where "default" style controls will be used for accessibility semantics, but visually
+// clipped, with a label overlapping the area to provide a custom visual appearance for the control.
+var output = "This test ensures we compute a valid frame for a radio button that is visually clipped out of the viewport.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var radio1 = accessibilityController.accessibleElementById("radio1");
+    var radio2 = accessibilityController.accessibleElementById("radio2");
+
+    setTimeout(async function() {
+        // If we return the right frame for #radio2, it will have the margin-left:300px baked into its position.
+        await waitFor(() => absoluteDifference(webArea.x, radio2.x) >= 300);
+        // If we return the right frame for #radio2, it will be below #radio1.
+        await waitFor(() => {
+            const yRadio1 = radio1.y;
+            const yRadio2 = radio2.y;
+            return yRadio2 < yRadio1 && absoluteDifference(yRadio1, yRadio2) >= 300;
+        });
+        accessibilityController.setForceInitialFrameCaching(false);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

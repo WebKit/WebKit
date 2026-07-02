@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<script>
+function with_iframe(url) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      frame.onload = function() { resolve(frame); };
+      document.body.appendChild(frame);
+    });
+}
+
+promise_test(async (t) => {
+    const frame = await with_iframe('/');
+    const response = await frame.contentWindow.fetch('/');
+    await response.clone().text();
+    frame.remove();
+    response.clone();
+}, "Cloning a response succeeds even if its body is stream based");
+
+promise_test(async (t) => {
+    let frame = await with_iframe('/WebKit/fetch/resources/clone-realm-iframe.html');
+
+    if (window.internals) {
+        assert_false(internals.isFetchObjectContextStopped(testResponse), "response before");
+        assert_false(internals.isFetchObjectContextStopped(testRequest), "request before");
+    }
+
+    frame.remove();
+
+    const clonedResponse = testResponse.clone();
+    const clonedRequest = testRequest.clone();
+
+    if (window.internals) {
+        assert_true(internals.isFetchObjectContextStopped(testResponse), "response after");
+        assert_true(internals.isFetchObjectContextStopped(clonedResponse), "clonedResponse");
+        assert_true(internals.isFetchObjectContextStopped(testRequest), "request after");
+        assert_true(internals.isFetchObjectContextStopped(clonedRequest), "clonedRequest");
+    }
+}, "Cloning request/response when its frame is detached");
+
+</script>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+CSS variable defining 'color' property should be applied to ::first-line and its color should be blue.
+
+CSS variable defining 'font-size' property should be applied to ::first-line and its font-size should be 25px.
+
+CSS variable defining 'font-weight' property should be applied to ::first-line and its font-weight should be 900.
+
+CSS variable defining 'position' property should not be applied to ::first-line and its position should be static.
+
+CSS variable referencing another CSS variable that defines 'color' property should be applied to ::first-line and its color should be blue.
+
+CSS variable referencing another CSS variable that defines 'position' property should not be applied to ::first-line and its position should be static.
+
+PASS color
+PASS font-size
+PASS font-weight
+FAIL position assert_equals: expected "absolute" but got "static"
+PASS nested color
+FAIL abspos assert_equals: expected "absolute" but got "static"
+

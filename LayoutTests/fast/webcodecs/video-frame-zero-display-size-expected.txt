@@ -1,0 +1,12 @@
+Tests that VideoFrame construction rejects a zero displayWidth or displayHeight with a TypeError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new VideoFrame(data, makeInit({ displayWidth: 0, displayHeight: 2 })) threw exception TypeError: buffer init is not valid.
+PASS new VideoFrame(data, makeInit({ displayWidth: 2, displayHeight: 0 })) threw exception TypeError: buffer init is not valid.
+PASS new VideoFrame(data, makeInit({ displayWidth: 2, displayHeight: 2 })).close() did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

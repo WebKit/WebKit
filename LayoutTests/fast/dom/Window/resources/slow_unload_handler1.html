@@ -1,0 +1,40 @@
+<html>
+<head>
+<script>
+window.addEventListener('unload', nopause1, false);
+window.addEventListener('unload', nopause2, false);
+window.addEventListener('unload', pause, false);
+
+function pause() {
+    var now = new Date();
+    var exitTime = now.getTime() + 10000;
+    while (true) {
+        now = new Date();
+        if (now.getTime() > exitTime)
+            break;
+    }
+    parent.document.getElementById("results").appendChild(document.createTextNode("FAIL"));
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+function nopause() {
+    try {
+        var time1 = (new Date()).getTime();
+    } catch(e) {
+        parent.document.getElementById("results").appendChild(document.createTextNode("FAIL"));
+        if (testRunner)
+            testRunner.notifyDone();
+    }
+}
+function nopause1() {
+    nopause();
+}
+
+function nopause2() {
+    nopause();
+}
+</script>
+</head>
+<body></body>
+</html>

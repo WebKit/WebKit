@@ -1,0 +1,10 @@
+Test that a MediaSource can actually have multiple video tracks and only one of them (the first one) will be selected by default.
+EXPECTED (mediaElement.videoTracks.length == '3') OK
+EXPECTED (mediaElement.videoTracks[0].id == '101') OK
+EXPECTED (mediaElement.videoTracks[0].selected == 'true') OK
+EXPECTED (mediaElement.videoTracks[1].id == '102') OK
+EXPECTED (mediaElement.videoTracks[1].selected == 'false') OK
+EXPECTED (mediaElement.videoTracks[2].id == '103') OK
+EXPECTED (mediaElement.videoTracks[2].selected == 'false') OK
+END OF TEST
+

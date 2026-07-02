@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Test radio and checkbox without labels. -->
+<input type="radio" name="radio" id="radio">Test<br>
+<input type="checkbox" name="checkbox" id="checkbox">Test<br>
+
+<!-- Test radio and checkbox with labels. -->
+<input type="radio" name="radio-with-label" id="radio-with-label"><label for="radio-with-label">This is a long test label that should be included in the size of this object</label><br>
+<input type="checkbox" name="checkbox-with-label" id="checkbox-with-label"><label for="checkbox-with-label">This is a long test label that should be included in the size of this object</label><br>
+
+<script>
+var output = "This test ensures we properly compute the height and width of radiobuttons and checkboxes.\n\n";
+
+if (window.accessibilityController) {
+    var radio = accessibilityController.accessibleElementById("radio");
+    output += expect("radio.width > 0", "true");
+    output += expect("radio.height > 0", "true");
+
+    var checkbox = accessibilityController.accessibleElementById("checkbox");
+    output += expect("checkbox.width > 0", "true");
+    output += expect("checkbox.height > 0", "true");
+
+    var radioWithLabel = accessibilityController.accessibleElementById("radio-with-label");
+    output += expect("radioWithLabel.width > 100", "true");
+    output += expect("radioWithLabel.height > 0", "true");
+
+    var checkboxWithLabel = accessibilityController.accessibleElementById("checkbox-with-label");
+    output += expect("checkboxWithLabel.width > 100", "true");
+    output += expect("checkboxWithLabel.height > 0", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

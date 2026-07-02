@@ -1,0 +1,13 @@
+supportsFullScreen() == true
+enterFullScreenForElement()
+beganEnterFullScreen() - initialRect.size: {300, 150}, finalRect.size: {800, 600}
+exitFullScreenForElement()
+beganExitFullScreen() - initialRect.size: {800, 600}, finalRect.size: {300, 150}
+
+Size after entering fullscreen: 600x800
+iframe border style after transition: 0px none rgb(0, 0, 0)
+
+Size after exiting fullscreen: 150x300
+iframe border style after transition: 0px inset rgb(0, 0, 0)
+
+

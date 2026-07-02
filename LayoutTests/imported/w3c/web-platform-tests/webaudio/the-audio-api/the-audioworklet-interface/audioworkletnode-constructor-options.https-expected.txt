@@ -1,0 +1,7 @@
+
+PASS Construct AudioWorkletNode without options and check default values
+PASS Construct AudioWorkletNode with explicit AudioNodeOptions
+PASS Validate channelCount boundaries for AudioWorkletNode
+PASS Validate allowed and disallowed channelCountMode options
+PASS Validate allowed and disallowed channelInterpretation values
+

@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <!-- Testing that in HTML documents CSS selectors use case-insensitive tag name matching. -->
+    <div id="content">
+        <div style="display: none">
+            <ul id="ul1">
+                <li>
+                    <textarea id="textarea1"></textarea>
+                    <SPAN id="upper1">
+                        <img id="img1" />
+                    </SPAN>
+                </li>
+            </ul>
+            <unknownTag id="unknownTag1"></unknownTag>
+        </div>
+    </div>
+    <script>
+        var content = document.getElementById("content");
+        function checkMatchingSelector(selector, elementId) {
+            shouldBe("document.querySelector('" + selector + "')", "document.getElementById('" + elementId + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').webkitMatchesSelector('" + selector + "')");
+        }
+
+        function checkNonMatchingSelector(selector) {
+            shouldBeNull("content.querySelector('" + selector + "')");
+        }
+
+        checkMatchingSelector("SPAN", "upper1");
+        checkMatchingSelector("SPAN > img", "img1");
+        checkMatchingSelector("SPAN img", "img1");
+        checkMatchingSelector("div ul li SPAN", "upper1");
+        checkMatchingSelector("div ul li textarea + SPAN", "upper1");
+        checkMatchingSelector("div ul li span", "upper1");
+        checkMatchingSelector("div ul li spAn", "upper1");
+        checkMatchingSelector("DIV ul li span", "upper1");
+        checkMatchingSelector("div UL li span", "upper1");
+        checkNonMatchingSelector("span1");
+        checkNonMatchingSelector("span#UPPER1");
+
+        checkMatchingSelector("unknownTag", "unknownTag1");
+        checkMatchingSelector("div unknownTag", "unknownTag1");
+        checkMatchingSelector("ul + unknownTag", "unknownTag1");
+        checkMatchingSelector("DIV unknownTag", "unknownTag1");
+        checkMatchingSelector("UL + unknownTag", "unknownTag1");
+        checkMatchingSelector("unknowntag", "unknownTag1");
+        checkMatchingSelector("Unknowntag", "unknownTag1");
+        checkMatchingSelector("div unknowntag", "unknownTag1");
+        checkMatchingSelector("ul", "ul1");
+        checkMatchingSelector("UL", "ul1");
+        checkNonMatchingSelector("unknowntag1");
+        checkNonMatchingSelector("ol");
+        checkNonMatchingSelector("OL");
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

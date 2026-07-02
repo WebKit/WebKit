@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x320
+  RenderBlock {HTML} at (0,0) size 800x320
+    RenderBody {BODY} at (8,10) size 784x300
+layer at (18,10) size 300x300 layerType: background only
+layer at (168,160) size 100x100
+  RenderBlock (positioned) zI: -1 {DIV} at (150,150) size 100x100 [bgcolor=#FFA500]
+layer at (18,10) size 300x300 layerType: foreground only
+  RenderBlock (relative positioned) {DIV} at (10,0) size 300x300 [bgcolor=#008000]
+layer at (28,20) size 200x200
+  RenderBlock (positioned) {DIV} at (10,10) size 200x200 [bgcolor=#0000FF]

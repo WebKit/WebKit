@@ -1,0 +1,5 @@
+
+FAIL isPointInRange() test for collapsed selection assert_true: Selection should be collapsed expected true got false
+PASS isPointInRange() test for non-collapsed selection
+Start
+End

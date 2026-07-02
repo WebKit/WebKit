@@ -1,0 +1,4 @@
+
+PASS Static import of a JSON module should send a valid HTTP Accept header.
+PASS Dynamic import of a JSON module should send a valid HTTP Accept header.
+

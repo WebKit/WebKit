@@ -1,0 +1,86 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a reverse index cursor doesn't use-after-free when a record " +
+            "is deleted whose index key is the next-higher value from the " +
+            "cursor's current position.");
+
+removeVendorPrefixes();
+
+var dbname = "index-cursor-reverse-delete-next-higher-key-private";
+var db, tx, store, index;
+var cursorKeys = [];
+
+var request = indexedDB.open(dbname);
+request.onupgradeneeded = function(event) {
+    db = event.target.result;
+    store = db.createObjectStore("store", { keyPath: "pk" });
+    index = store.createIndex("idx", "v");
+};
+request.onsuccess = function(event) {
+    db = event.target.result;
+    runTest();
+};
+request.onerror = unexpectedErrorCallback;
+
+function runTest() {
+    tx = db.transaction("store", "readwrite");
+    store = tx.objectStore("store");
+    index = store.index("idx");
+
+    // Add 3 records with distinct index keys: 10, 20, 30.
+    store.put({ pk: 1, v: 10 });
+    store.put({ pk: 2, v: 20 });
+    store.put({ pk: 3, v: 30 });
+
+    // Open a reverse key cursor on the index.
+    var cursorReq = index.openKeyCursor(null, "prev");
+    var step = 0;
+
+    cursorReq.onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (!cursor) {
+            shouldBe("cursorKeys.length", "3");
+            shouldBe("cursorKeys[0]", "30");
+            shouldBe("cursorKeys[1]", "20");
+            shouldBe("cursorKeys[2]", "10");
+            return;
+        }
+
+        cursorKeys.push(cursor.key);
+
+        if (step === 0) {
+            // Cursor at indexKey=30, pk=3. The reverse_iterator base() = end().
+            // Advance to next lower key.
+            step++;
+            cursor.continue();
+        } else if (step === 1) {
+            // Cursor at indexKey=20, pk=2.  base() now = iterator-to-node-30.
+            // Delete pk=3 (indexKey=30).  This frees the node that base() references
+            // while indexValueChanged() early-returns (m_currentKey 20 != 30).
+            // Then advance -- without the fix this dereferences the freed node.
+            step++;
+            store.delete(3);
+            cursor.continue();
+        } else {
+            // Cursor at indexKey=10, pk=1 (should reach here after fix).
+            step++;
+            cursor.continue();
+        }
+    };
+
+    cursorReq.onerror = unexpectedErrorCallback;
+    tx.onerror = unexpectedErrorCallback;
+    tx.oncomplete = function() {
+        debug("Transaction completed successfully.");
+        finishJSTest();
+    };
+}
+</script>
+</body>
+</html>

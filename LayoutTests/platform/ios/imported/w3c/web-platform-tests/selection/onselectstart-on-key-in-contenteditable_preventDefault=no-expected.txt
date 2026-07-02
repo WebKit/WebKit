@@ -1,0 +1,44 @@
+abc
+def
+ghi
+jkl
+mno
+pqr
+stu
+vwx
+yz0
+123
+456
+789
+
+PASS Shift+ArrowLeft when <div contenteditable>[]abc<br>
+PASS Shift+ArrowLeft when <div contenteditable>a[]bc<br>
+PASS Shift+ArrowRight when <div contenteditable>a[]bc<br>
+PASS Shift+ArrowRight when 789[]<br></div>
+PASS Shift+ArrowUp when <div contenteditable>[]abc<br>
+PASS Shift+ArrowUp when <div contenteditable>a[]bc<br>
+PASS Shift+ArrowDown when <div contenteditable>a[]bc<br>
+PASS Shift+ArrowDown when 789[]<br></div>
+PASS Shift+ArrowDown when 78[]9<br></div>
+PASS Shift+ArrowUp when 78[]9<br></div>
+PASS Shift+PageUp when <div contenteditable>[]abc<br>
+PASS Shift+PageUp when <div contenteditable>a[]bc<br>
+PASS Shift+PageDown when <div contenteditable>a[]bc<br>
+PASS Shift+PageDown when 789[]<br></div>
+PASS Shift+PageDown when 78[]9<br></div>
+PASS Shift+PageUp when 78[]9<br></div>
+PASS Shift+Home when <div contenteditable>[]abc<br>
+PASS Shift+Home when <div contenteditable>a[]bc<br>
+PASS Shift+End when <div contenteditable>a[]bc<br>
+PASS Shift+End when 789[]<br></div>
+PASS Select All when 789[]<br></div>
+PASS Shift+ArrowLeft when d[e]f<br>
+PASS Shift+ArrowRight when d[e]f<br>
+PASS Shift+ArrowUp when d[e]f<br>
+PASS Shift+ArrowDown when d[e]f<br>
+PASS Shift+PageDown when d[e]f<br>
+PASS Shift+PageUp when d[e]f<br>
+PASS Shift+Home when d[e]f<br>
+PASS Shift+End when d[e]f<br>
+PASS Select All when d[e]f<br>
+

@@ -1,0 +1,18 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkiaVulkan.h",
+    ],
+    visibility = [
+        "//src/gpu/ganesh/vk:__pkg__",
+        "//src/gpu/vk:__pkg__",
+    ],
+)

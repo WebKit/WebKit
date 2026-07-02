@@ -1,0 +1,13 @@
+Tests that scrolling an element to a specific point successfully scrolls the main window.
+
+PASS: window.pageYOffset === 0
+PASS: target.getBoundingClientRect().top === 0
+PASS: target.getBoundingClientRect().top === 300
+PASS: target.getBoundingClientRect().top === 3000
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+5000-pixel box
+Target
+5000-pixel box

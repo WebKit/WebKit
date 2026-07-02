@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    let fontLoadResult;
+
+    let fontWorkerSource = new Blob([`
+        self.onmessage = function(e) {
+            const { fontFamily, fontUrl, options } = e.data;
+
+            async function loadFont(fontFamily, fontUrl, options = {}) {
+                try {
+                    const fontFace = new FontFace(fontFamily, fontUrl, options);
+                    const loadedFont = await fontFace.load();
+                    fonts.add(loadedFont);
+                    return { success: true, fontFamily };
+                } catch (error) {
+                    return { success: false, fontFamily, error: error.message };
+                }
+            }
+
+            loadFont(fontFamily, fontUrl, options)
+                .then(result => {
+                    self.postMessage(result);
+                }).catch(error => {
+                    self.postMessage({
+                        success: false,
+                        fontFamily,
+                        error: error.message
+                    });
+                });
+        };`], {type: 'application/javascript'});
+
+    let fontWorker = new Worker(URL.createObjectURL(fontWorkerSource));
+
+    fontWorker.onmessage = function(e) {
+        const { success, fontFamily, error } = e.data;
+        if (success) {
+            fontLoadResult = "success";
+        } else {
+            fontLoadResult = error;
+        }
+
+        console.log(fontLoadResult);
+    };
+
+    fontWorker.onerror = function(error) {
+        fontLoadResult = error.message;
+        console.log(fontLoadResult);
+    };
+    </script>
+</head>
+<body>
+</body>
+</html>

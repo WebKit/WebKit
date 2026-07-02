@@ -1,0 +1,11 @@
+Tests that pagehide is fired in iframe when site isolation is enabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caughtEvent.name is "pagehide"
+PASS caughtEvent.params.persisted is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

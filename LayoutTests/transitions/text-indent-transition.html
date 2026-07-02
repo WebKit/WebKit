@@ -1,0 +1,48 @@
+<!DOCTYPE>
+<html>
+<head>
+  <style>
+    .box {
+      width: 400px;
+      height: 100px;
+      margin: 10px;
+      border: 1px solid blue;
+      -webkit-transition-property: text-indent;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+    }
+    
+    .indent {
+      text-indent: 0;
+    }
+
+    #container.final .indent {
+      text-indent: 100px;
+    }
+
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box1', 'text-indent', 50, 2],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('container').className = 'final';
+    }
+  
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  
+  <div id="container">
+    <div id="box1" class='indent box'>Text is affected by transition of text-indent.</div>
+  </div>
+
+  <div id="result"></div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS A dynamic import succeeds
+PASS After a dynamic import(), import maps work fine
+

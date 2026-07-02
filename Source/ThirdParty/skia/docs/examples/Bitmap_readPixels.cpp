@@ -1,0 +1,26 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(Bitmap_readPixels, 256, 128, false, 0) {
+void draw(SkCanvas* canvas) {
+    const int width = 256;
+    const int height = 64;
+    SkImageInfo srcInfo = SkImageInfo::MakeN32Premul(width, height);
+    const SkColor4f colors[] = { SkColors::kRed, SkColors::kBlue.withAlpha(0.5f) };
+    const SkPoint   points[] = { { 0, 0 }, { 256, 0 } };
+    SkPaint paint;
+    paint.setShader(SkShaders::LinearGradient(points, {{colors, {}, SkTileMode::kClamp}, {}}));
+    SkBitmap bitmap;
+    bitmap.allocPixels(srcInfo);
+    SkCanvas srcCanvas(bitmap);
+    srcCanvas.drawRect(SkRect::MakeWH(width, height), paint);
+    canvas->drawImage(bitmap.asImage(), 0, 0);
+    SkImageInfo dstInfo = srcInfo.makeColorType(kARGB_4444_SkColorType);
+    std::vector<int16_t> dstPixels;
+    dstPixels.resize(height * width);
+    bitmap.readPixels(dstInfo, &dstPixels.front(), width * 2, 0, 0);
+    SkPixmap dstPixmap(dstInfo, &dstPixels.front(), width * 2);
+    bitmap.installPixels(dstPixmap);
+    canvas->drawImage(bitmap.asImage(), 0, 64);
+}
+}  // END FIDDLE

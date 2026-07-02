@@ -1,0 +1,137 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+  
+[% PROCESS "global/reason-descs.none.tmpl" %]
+
+[% isnew = bug.lastdiffed ? 0 : 1 %]
+<html>
+    <head>
+      <base href="[% urlbase FILTER html %]">
+    </head>
+    <body>
+      [% Hook.process('start') %]
+      [% PROCESS generate_diffs %]
+      <p>
+      [% FOREACH comment = new_comments.reverse %]
+        <div>
+          [% IF comment.count %]
+            <b>[% INCLUDE bug/link.html.tmpl bug = bug, link_text = "Comment # ${comment.count}",
+                                             comment_num = comment.count, full_url = 1, user = to_user %]
+              on [% INCLUDE bug/link.html.tmpl bug = bug, link_text = "$terms.bug $bug.id",
+                                               full_url = 1, user = to_user %]
+              from [% INCLUDE global/user.html.tmpl user = to_user, who = comment.author %]</b>
+          [% END %]
+        <pre>[% comment.body_full({ wrap => 1 }) FILTER quoteUrls(bug, comment, to_user) %]</pre>
+        </div>
+      [% END %]
+      </p>
+
+      [% IF referenced_bugs.size %]
+        <div id="referenced">
+          <hr style="border: 1px dashed #969696">
+          <b>Referenced [% terms.Bugs %]:</b>
+          <ul>
+            [% FOREACH ref_bug = referenced_bugs %]
+              <li>
+                [[% "${terms.Bug} ${ref_bug.id}" FILTER bug_link(ref_bug, {full_url => 1, user => to_user}) FILTER none %]] 
+                [% ref_bug.short_desc FILTER html %]
+              </li>
+            [% END %]
+          </ul>
+        </div>
+        <br>
+      [% END %]
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+      [% FOREACH reason = reasons %]
+        [%  IF reason_descs.$reason  %]
+          <li>[% reason_descs.$reason FILTER html %]</li>
+        [% END %]
+      [% END %]
+      [% FOREACH reason = reasons_watch %]
+        [% IF watch_reason_descs.$reason %]
+          <li>[% watch_reason_descs.$reason FILTER html %]</li>
+        [% END %]
+      [% END %]
+      </ul>
+    </body>
+</html>
+
+[% BLOCK generate_diffs %]
+  [% SET in_table = 0 %]
+  [% last_changer = 0 %]
+    [% FOREACH change = diffs %]
+      [% IF !isnew && change.who.id != last_changer %]
+        [% last_changer = change.who.id %]
+        [% IF in_table == 1 %]
+          </table>
+          [% SET in_table = 0 %]
+        [% END %]
+        [% IF change.blocker %]
+          [% INCLUDE bug/link.html.tmpl bug = bug, link_text = "$terms.Bug $bug.id", full_url = 1, user = to_user %]
+          depends on
+          [%+ INCLUDE bug/link.html.tmpl bug = change.blocker, link_text = "$terms.bug $change.blocker.id",
+                                         full_url = 1, user = to_user %],
+          which changed state.
+        [% ELSE %]
+          [% INCLUDE global/user.html.tmpl user = to_user, who = change.who %] changed
+          [%+ INCLUDE bug/link.html.tmpl bug = bug, link_text = "$terms.bug $bug.id", full_url = 1, user = to_user %]
+        [% END %]
+          <br>
+          [% IF in_table == 0 %]
+             <table border="1" cellspacing="0" cellpadding="8">
+             [% SET in_table = 1 %]
+          [% END %]
+          <tr>
+            <th>What</th>
+            <th>Removed</th>
+            <th>Added</th>
+          </tr>
+      [% END %]
+
+      [% PROCESS "email/bugmail-common.txt.tmpl" %]
+      [% IF in_table == 0 %]
+         <table border="1" cellspacing="0" cellpadding="8">
+         [% SET in_table = 1 %]
+      [% END %]
+      [% IF isnew %]
+        <tr>
+          <th>[% field_label FILTER html %]</th>
+          <td>
+            [% IF change.field_name == "bug_id" %]
+              [% INCLUDE bug/link.html.tmpl bug = bug, link_text = new_value, full_url = 1, user = to_user %]
+            [% ELSE %]
+              [% new_value FILTER html %]
+            [% END %]
+          </td>
+        </tr>
+      [% ELSE %]
+         <tr>
+           <td style="text-align:right;">[% field_label FILTER html %]</td>
+           <td>
+             [% IF old_value %]
+               [% old_value FILTER html %]
+             [% ELSE %]
+               &nbsp;
+             [% END%]
+           </td>
+           <td>
+             [% IF new_value %]
+               [% new_value FILTER html %]
+             [% ELSE %]
+               &nbsp;
+             [% END%]
+           </td>
+         </tr>
+      [% END %]
+    [% END %]
+  [% '</table>' IF in_table %]
+[% END %]

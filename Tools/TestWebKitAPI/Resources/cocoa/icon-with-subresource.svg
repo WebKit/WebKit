@@ -1,0 +1,7 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'>
+    <image href='data:image/svg+xml,
+        &lt;svg xmlns="http://www.w3.org/2000/svg">
+            &lt;rect width="10" height="10" fill="lime"/>
+        &lt;/svg>
+    '/>
+</svg>

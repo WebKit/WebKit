@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that layout viewport used for content-visibility: auto is up-to-date</title>
+    <meta name="viewport" content="initial-scale=1">
+    <style>
+        html, body { margin: 0; padding: 0; }
+        section {
+            height: 100px;
+            border-bottom: 1px solid blue;
+            box-sizing: border-box;
+            content-visibility: auto;
+        }
+        #console {
+            position: fixed;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+        <section><p> </p></section>
+    </main>
+    <div id="console"></div>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        function nthSection(n) {
+            return document.querySelectorAll("p")[n - 1];
+        }
+
+        function numberOfVisibleItems() {
+            return [...document.querySelectorAll("p")]
+                .filter(element => element.checkVisibility({ contentVisibilityAuto: true }))
+                .length;
+        }
+
+        function scrollingStartScript({ y }) {
+            return `(function() {
+                uiController.stableStateOverride = false;
+                uiController.beginInteractiveObscuredInsetsChange();
+                uiController.immediateScrollToOffset(0, ${y});
+                uiController.doAfterPresentationUpdate(function() {
+                    uiController.doAfterPresentationUpdate(function() {
+                        uiController.doAfterPresentationUpdate(function() {
+                            uiController.uiScriptComplete();
+                        });
+                    });
+                });
+            })()`;
+        }
+        function scrollingEndScript() {
+            return `(function() {
+                uiController.stableStateOverride = true;
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.endInteractiveObscuredInsetsChange();
+                    uiController.uiScriptComplete();
+                });
+            })()`;
+        }
+
+        function waitForScript(script) {
+            return new Promise(resolve => {
+                testRunner.runUIScript(script, resolve);
+            });
+        }
+
+        addEventListener("load", async () => {
+            await UIHelper.ensurePresentationUpdate();
+
+            const initialVisibleItems = numberOfVisibleItems();
+            shouldBeTrue(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(2).checkVisibility({ contentVisibilityAuto: true })`);
+
+            await waitForScript(scrollingStartScript({ y: 300 }));
+
+            shouldBeTrue(`numberOfVisibleItems() >= ${initialVisibleItems}`);
+            shouldBeFalse(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(4).checkVisibility({ contentVisibilityAuto: true })`);
+
+            await waitForScript(scrollingEndScript());
+
+            shouldBeTrue(`numberOfVisibleItems() >= ${initialVisibleItems}`);
+            shouldBeFalse(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(4).checkVisibility({ contentVisibilityAuto: true })`);
+
+            await waitForScript(scrollingStartScript({ y: 0 }));
+
+            shouldBeTrue(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(2).checkVisibility({ contentVisibilityAuto: true })`);
+
+            await waitForScript(scrollingEndScript());
+
+            shouldBeTrue(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(2).checkVisibility({ contentVisibilityAuto: true })`);
+
+            await waitForScript(scrollingStartScript({ y: 1000 }));
+
+            shouldBeTrue(`numberOfVisibleItems() >= ${initialVisibleItems}`);
+            shouldBeFalse(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(10).checkVisibility({ contentVisibilityAuto: true })`);
+
+            await waitForScript(scrollingEndScript());
+
+            shouldBeTrue(`numberOfVisibleItems() >= ${initialVisibleItems}`);
+            shouldBeFalse(`nthSection(1).checkVisibility({ contentVisibilityAuto: true })`);
+            shouldBeTrue(`nthSection(10).checkVisibility({ contentVisibilityAuto: true })`);
+
+            finishJSTest();
+        });
+    </script>
+</body>
+</html>

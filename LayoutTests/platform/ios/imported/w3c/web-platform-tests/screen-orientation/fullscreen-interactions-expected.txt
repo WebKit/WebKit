@@ -1,0 +1,4 @@
+
+PASS fullscreen and orientation support
+PASS Iframe can't itself know if it's parent is fullscreen when changing orientation
+

@@ -1,0 +1,3 @@
+Test that we do not fire the svg load event when the SVGElement is detached.
+
+This test passes if you see no alert.

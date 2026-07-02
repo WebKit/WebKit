@@ -1,0 +1,15 @@
+Tests ONLY the default generic mappings defined in SVG-AAM: 5.1.2 Including Elements in the Accessibility Tree.
+
+Simple Elements
+
+
+PASS el-circle
+PASS el-ellipse
+PASS el-foreignObject
+PASS el-g
+PASS el-line
+PASS el-path
+PASS el-polygon
+PASS el-polyline
+PASS el-rect
+

@@ -1,0 +1,7 @@
+2d.transformation.scale.zero
+
+scale() with a scale factor of zero works
+
+
+PASS scale() with a scale factor of zero works
+

@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="../../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/close-and-exceptions");
+ws.onopen = function()
+{
+    // send "socket1" to server, so that "socket1" will be broadcasted to web sockets connected to close-on-unload when this web socket is closed.
+    ws.send("socket1");
+};
+ws.onmessage = function(evt)
+{
+    // "socket1" is received by server, so ready to unload this document.
+    parent.document.iframeReady(evt.data);
+}
+</script>
+</body>
+</html>

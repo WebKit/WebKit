@@ -1,0 +1,5 @@
+PASS Load event fired on frame's owner element
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

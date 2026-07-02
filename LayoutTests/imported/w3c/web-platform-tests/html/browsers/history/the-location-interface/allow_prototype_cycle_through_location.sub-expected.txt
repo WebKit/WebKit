@@ -1,0 +1,6 @@
+
+FAIL same-origin, same-window location cycle cyclic __proto__ value
+PASS cross-origin location has null prototype
+FAIL same-origin, different-window location cycle cyclic __proto__ value
+FAIL cross-origin, but joined via document.domain, location cycle cyclic __proto__ value
+

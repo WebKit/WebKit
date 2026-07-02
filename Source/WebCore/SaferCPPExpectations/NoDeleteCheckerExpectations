@@ -1,0 +1,20 @@
+Modules/notifications/NotificationPayload.cpp
+Modules/streams/ReadableByteStreamController.cpp
+Modules/streams/ReadableStreamBYOBRequest.cpp
+Modules/webauthn/cbor/CBORValue.cpp
+Modules/webtransport/WebTransportDatagramsWritable.cpp
+css/CSSComputedStyleDeclaration.cpp
+css/CSSPropertyInitialValues.cpp
+[ iOS ] css/DOMMatrixReadOnly.cpp
+css/PropertySetCSSDescriptors.cpp
+css/StyleSheetList.cpp
+css/parser/CSSPropertyParserConsumer+String.cpp
+dom/Document.cpp
+[ macOS ] inspector/InspectorFrontendHost.cpp
+loader/EmptyClients.cpp
+page/EventHandler.cpp
+[ iOS ] page/Quirks.cpp
+page/text-extraction/TextExtraction.cpp
+rendering/RenderGeometryMap.cpp
+rendering/svg/RenderSVGHiddenContainer.cpp
+rendering/svg/legacy/LegacyRenderSVGHiddenContainer.cpp

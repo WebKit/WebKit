@@ -1,0 +1,18 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that time control doesn't overlap right button container in inline media controls.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
+
+const timeControlRect = mediaControls.timeControl.element.getBoundingClientRect();
+const rightContainerRect = mediaControls.rightContainer.element.getBoundingClientRect();
+
+shouldBeTrue("timeControlRect.right <= rightContainerRect.left");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

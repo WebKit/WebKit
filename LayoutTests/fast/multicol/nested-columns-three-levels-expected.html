@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.outer {
+    width: 200px;
+    height: 100px;
+    column-width: 100px;
+    column-fill: auto;
+    column-gap: 0;
+    font-size: 20px;
+    line-height: 20px;
+    orphans: 1;
+    widows: 1;
+}
+</style>
+</head>
+<body>
+<p>Three levels of nested multicolumn should paginate correctly.</p>
+<div class="outer">
+    <div style="height: 20px; background: red;"></div>
+    <div style="height: 20px; background: orange;"></div>
+    <div style="height: 20px; background: yellow;"></div>
+    <div style="height: 20px; background: green;"></div>
+    <div style="height: 20px; background: blue;"></div>
+    <div style="height: 20px; background: red;"></div>
+    <div style="height: 20px; background: orange;"></div>
+    <div style="height: 20px; background: yellow;"></div>
+    <div style="height: 20px; background: green;"></div>
+    <div style="height: 20px; background: blue;"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/formatting-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HTMLFormatter");
+
+    addFormattingTests(suite, "text/html", [
+        "resources/html-tests/attributes.html",
+        "resources/html-tests/auto-close-normal.html",
+        "resources/html-tests/auto-close-special.html",
+        "resources/html-tests/basic-1.html",
+        "resources/html-tests/basic-2.html",
+        "resources/html-tests/comments.html",
+        "resources/html-tests/eof-1.html",
+        "resources/html-tests/eof-2.html",
+        "resources/html-tests/eof-3.html",
+        "resources/html-tests/eof-4.html",
+        "resources/html-tests/eof-5.html",
+        "resources/html-tests/eof-6.html",
+        "resources/html-tests/eof-7.html",
+        "resources/html-tests/eof-8.html",
+        "resources/html-tests/eof-9.html",
+        "resources/html-tests/inline-script.html",
+        "resources/html-tests/inline-style.html",
+        "resources/html-tests/list.html",
+        "resources/html-tests/not-well-formed-1.html",
+        "resources/html-tests/not-well-formed-2.html",
+        "resources/html-tests/not-well-formed-3.html",
+        "resources/html-tests/p.html",
+        "resources/html-tests/self-closing.html",
+        "resources/html-tests/table.html",
+        "resources/html-tests/tag-case.html",
+    ]);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test HTML formatting.</p>
+</body>
+</html>

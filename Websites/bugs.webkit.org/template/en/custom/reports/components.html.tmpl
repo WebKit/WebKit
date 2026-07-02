@@ -1,0 +1,186 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object. The product for which we want to display component
+  # descriptions.
+  #%]
+
+[% title = BLOCK %]
+  [% product.name FILTER html %] Components
+[% END %]
+
+[% PROCESS global/header.html.tmpl 
+  style_urls = ['skins/standard/buglist.css']
+  title = title
+%]
+
+[% IF Param("useqacontact") %]
+  [% numcols = 3 %]
+[% ELSE %]
+  [% numcols = 2 %]
+[% END %]
+
+<header class="component-chooser">
+    <h1>[% product.name FILTER html %]</h1>
+    <p class="description">[% product.description FILTER html_light %]</p>
+    <p class="prompt">Select a component to see open [% terms.bugs %] in that component.</p>
+</header>
+
+[% IF product.name == "WebKit" %]
+
+[% 
+components_shown = ['']
+component_groups = [
+    {
+      label = "Web Platform"  
+      components = [ 'CSS', 'Forms', 'Tables', 'HTML Editing', 'Frames', 'Accessibility' ]
+    }, 
+    {
+      label = "API"  
+      components = [ 'Animations', 'Bindings', 'DOM', 'UI Events', 'WebRTC', 'Service Workers']
+    },
+    
+    {
+      label = "Developer Tools"  
+      components = [ 'Web Inspector', 'WebDriver' ]
+    }, 
+    {
+      label = "Rendering"
+      components = [ 'Layout and Rendering', 'Compositing', 'Text', 'Scrolling' ]
+    },
+    
+    {
+      label = "Graphics"
+      components = [ 'Canvas', 'ANGLE', 'WebGL', 'WebXR' ]
+    },
+    {
+      label = "Media"
+      components = [ 'Media', 'Images', 'Web Audio', 'SVG' ]
+    },
+    
+    {
+      label = "JavaScript & WASM" 
+      components = [ 'JavaScriptCore', 'WebAssembly', 'WebCore JavaScript' ]
+    },
+    { 
+      label = "Linux"
+      components = [ 'WebKitGTK', 'WebKit EFL', 'WPE WebKit' ]
+    },
+    
+    {
+      label = "Architecture"
+      components = [ 'Page Loading', 'WebKit2', 'WebKit API', 'WebKit Misc.', 'WebKit Process Model', 'bmalloc', 'WebCore Misc.', 'Web Template Framework' ]
+    },
+    {
+      label = "Platform"
+      components = [ 'Platform', 'Page Loading', 'WebKit Extensions', 'Printing', 'PDF', 'History', 'Website Storage' ]
+    },
+    
+    { 
+      label = "Tooling"
+      components = [ 'Tools / Tests', 'CMake', 'Perf Dashboard', 'WebKit Website', 'Evangelism' ]
+    },
+    { 
+      label = "Deprecated"
+      components = [ 'Web Inspector (Deprecated)', 'WebKit BlackBerry', 'WebKit BREWMP', 'WebKit wx', 'WebKit Qt', 'Java', 'Plug-ins']
+    }
+]
+%]
+[% i = 0 %]
+[% FOREACH comp = product.components %]
+  [% component_map.${comp.name} = i %]
+  [% i = i + 1 %]
+[% END %]
+
+<div id="component_table">
+  <form id="component-selector-form" class="form-dropdown">
+  <label for="component-selector">Find a component:</label>
+  <input list="webkit-components" id="component-selector" name="component-selector" autocomplete="off" />
+  
+  <datalist id="webkit-components">
+  [% FOREACH comp = product.components %]
+    <option value="[% comp.name FILTER html %]"><strong>[% comp.name FILTER html %]</strong> &mdash; [% comp.description %]</option>
+  [% END %]
+  </datalist>
+  </form>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let componentSelectorForm = document.getElementById("component-selector-form");
+    let componentSelector = document.getElementById("component-selector");
+    let webkitComponentList = document.getElementById("webkit-components");
+    
+    let componentSelectorHandler = (e) => {
+      e.preventDefault();
+      webkitComponentList.querySelectorAll("option").forEach(optionElement => {
+        if (componentSelector.value == optionElement.value)
+          window.location = "/buglist.cgi?product=
+         [%- product.name FILTER uri %]&amp;component="+optionElement.value+"&amp;resolution=---";
+      });
+    }
+    
+    componentSelectorForm.addEventListener("submit", componentSelectorHandler)
+    componentSelector.addEventListener("change", componentSelectorHandler);
+  });
+  </script>
+  
+  <div class="chooser">
+  [% component_name = "New Bugs" %]
+  [% comp = product.components.${component_map.$component_name} %]
+  [% INCLUDE describe_comp %]
+  [% component_shown.${comp.name} = 1 %]
+  </div>
+  
+  [% FOREACH group = component_groups %]  
+    <div class="group">
+      <h2>[% group.label FILTER html %]</h2>
+      <div class="chooser">
+      [% FOREACH component_name = group.components %]
+      [% comp = product.components.${component_map.$component_name} %]
+      [% INCLUDE describe_comp %]
+      [% component_shown.${comp.name} = 1 %]
+      [% END %]
+      </div>
+    </div>
+  [% END %]
+  
+  
+  <div class="group">
+    <h2>Other</h2>
+    <div class="chooser">
+    [% FOREACH comp = product.components %]
+      [% INCLUDE describe_comp UNLESS component_shown.${comp.name}%]
+    [% END %]
+    </div>
+  </div>
+
+</div>
+[% ELSE %]
+
+<div class="chooser">
+  [% FOREACH comp = product.components %]
+    [% INCLUDE describe_comp %]
+  [% END %]
+</div>
+
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]
+
+[%############################################################################%]
+[%# BLOCK for components                                                      %]
+[%############################################################################%]
+
+[% BLOCK describe_comp %]
+    <a href="buglist.cgi?product=
+       [%- product.name FILTER uri %]&amp;component=
+       [%- comp.name FILTER uri %]&amp;resolution=---" class="product component">
+        <h3>[% comp.name FILTER html %]</h3>
+        <p>[% comp.description FILTER html_light %]</p>
+    </a>
+[% END %]

@@ -1,0 +1,3 @@
+
+PASS FileReader created after a worker self.close()
+

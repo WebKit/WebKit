@@ -1,0 +1,8 @@
+This tests that getting the indicator's value from a removed slider won't cause crash.
+
+PASS: indicator.intValue === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

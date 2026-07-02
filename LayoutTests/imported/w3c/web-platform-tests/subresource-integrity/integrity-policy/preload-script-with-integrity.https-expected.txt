@@ -1,0 +1,3 @@
+
+PASS Script with integrity in initial HTML should not trigger Integrity-Policy reports (tests preload scanner)
+

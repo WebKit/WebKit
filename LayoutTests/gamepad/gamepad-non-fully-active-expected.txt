@@ -1,0 +1,4 @@
+Connected 3 gamepads.
+Gamepads fully active: 3
+Gamepads not fully active: 0
+

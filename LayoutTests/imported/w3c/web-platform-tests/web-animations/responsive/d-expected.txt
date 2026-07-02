@@ -1,0 +1,3 @@
+
+PASS d responsive to inherited d changes
+

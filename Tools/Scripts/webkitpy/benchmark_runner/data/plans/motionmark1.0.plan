@@ -1,0 +1,13 @@
+{
+    "timeout": 1800,
+    "count": 1,
+    "local_git_archive": "PerformanceTests/MotionMark@119e2d3f1c8f23a32bde610b51b03dd3ab416f6a",
+    "github_source": "https://github.com/WebKit/WebKit/tree/119e2d3f1c8f23a32bde610b51b03dd3ab416f6a/PerformanceTests/MotionMark",
+    "webserver_benchmark_patch": "data/patches/webserver/MotionMark.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark.patch",
+    "entry_point": "index.html",
+    "config": {
+        "orientation": "landscape"
+    },
+    "output_file": "motionmark.result"
+}

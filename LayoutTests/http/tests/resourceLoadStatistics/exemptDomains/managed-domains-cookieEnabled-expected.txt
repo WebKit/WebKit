@@ -1,0 +1,11 @@
+Tests that navigator.cookieEnabled returns correct value when managed domains are added.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Step 1: navigator.cookieEnabled is false
+Step 2: navigator.cookieEnabled is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

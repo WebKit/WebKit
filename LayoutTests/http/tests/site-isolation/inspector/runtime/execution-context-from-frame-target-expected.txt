@@ -1,0 +1,26 @@
+Test that FrameTargets have proper execution contexts and support Runtime.evaluate under site isolation.
+
+
+== Running test suite: SiteIsolation.Runtime.ExecutionContext
+-- Running test case: SiteIsolation.Runtime.MainFrameTarget.HasExecutionContext
+PASS: Should have at least one FrameTarget (for the main frame).
+PASS: Main frame target should have an ExecutionContext.
+PASS: Main frame target should have a RuntimeAgent.
+PASS: Frame target RuntimeAgent should be separate from page target RuntimeAgent.
+
+-- Running test case: SiteIsolation.Runtime.AppendIframe.CreatesFrameTarget
+PASS: Added target should have Frame type.
+PASS: New frame target should have a RuntimeAgent.
+Frame targets count: 2
+
+-- Running test case: SiteIsolation.Runtime.EvaluateInFrameTarget
+PASS: Evaluating '1 + 2' in frame target should return 3.
+PASS: Evaluation should not throw.
+
+-- Running test case: SiteIsolation.Runtime.EvaluateInFrameTarget.DOMAccess
+PASS: Frame target should have access to document.
+
+-- Running test case: SiteIsolation.Runtime.RemoveIframe.RemovesTarget
+PASS: Removed target should have Frame type.
+PASS: Frame target count should decrease by one.
+

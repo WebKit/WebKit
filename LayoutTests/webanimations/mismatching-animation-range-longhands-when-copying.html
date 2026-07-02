@@ -1,0 +1,22 @@
+<html>
+<head>
+<style>
+* { animation-range: entry exit; }
+#htmlvar00001, #htmlvar00003 {-webkit-text-security: circle }
+#htmlvar00006 {animation-range-start: normal, normal; }
+</style>
+<script>
+function jsfuzzer() {
+    window.testRunner?.dumpAsText();
+    document.execCommand('selectAll', false);
+    window.testRunner?.execCommand('copy');
+    document.getElementById("htmlvar00001").remove();
+}
+</script>
+</head>
+<body onload=jsfuzzer()>
+<p>This test passes if it does not crash.</p>
+<span id="htmlvar00001">
+<map id="htmlvar00006">
+</body>
+</html>

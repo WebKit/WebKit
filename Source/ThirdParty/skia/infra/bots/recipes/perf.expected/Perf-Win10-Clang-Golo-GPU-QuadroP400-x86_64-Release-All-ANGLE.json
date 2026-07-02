@@ -1,0 +1,183 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]\\tmp"
+    ],
+    "infra_step": true,
+    "name": "makedirs tmp_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]\\skia\\infra\\bots\\assets\\skp\\VERSION",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "Get skp VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@VERSION@42@@@",
+      "@@@STEP_LOG_END@VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "42",
+      "[START_DIR]\\tmp\\SKP_VERSION"
+    ],
+    "infra_step": true,
+    "name": "write SKP_VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@SKP_VERSION@42@@@",
+      "@@@STEP_LOG_END@SKP_VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]\\skia\\infra\\bots\\assets\\svg\\VERSION",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "Get svg VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@VERSION@42@@@",
+      "@@@STEP_LOG_END@VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "42",
+      "[START_DIR]\\tmp\\SVG_VERSION"
+    ],
+    "infra_step": true,
+    "name": "write SVG_VERSION",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@SVG_VERSION@42@@@",
+      "@@@STEP_LOG_END@SVG_VERSION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]\\[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "rmtree [SWARM_OUT_DIR]"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]\\[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs [SWARM_OUT_DIR]"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]\\resources\\get_env_var.py",
+      "SWARMING_BOT_ID"
+    ],
+    "name": "get swarming bot id"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]\\resources\\get_env_var.py",
+      "SWARMING_TASK_ID"
+    ],
+    "name": "get swarming task id"
+  },
+  {
+    "cmd": [
+      "powershell",
+      "-ExecutionPolicy",
+      "Unrestricted",
+      "-File",
+      "RECIPE_MODULE[skia::flavor]\\resources\\win_run_and_check_log.ps1",
+      "[START_DIR]\\build\\nanobench",
+      "--example",
+      "--flags",
+      "--properties",
+      "bot",
+      "skia-bot-123",
+      "key1",
+      "value1",
+      "task",
+      "123456",
+      "-i",
+      "[START_DIR]\\skia\\resources",
+      "--skps",
+      "[START_DIR]\\skp",
+      "--svgs",
+      "[START_DIR]\\svg",
+      "--outResultsFile",
+      "[START_DIR]\\[SWARM_OUT_DIR]\\nanobench_abc123_1337000001.json"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>;RECIPE_REPO[depot_tools]"
+    },
+    "name": "nanobench"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]\\resources\\fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]\\[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs perf_dir"
+  },
+  {
+    "name": "$result"
+  }
+]

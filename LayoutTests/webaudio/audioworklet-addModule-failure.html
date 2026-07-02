@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that AudioWorklet.addModule() rejects the promise when the URL is invalid.");
+jsTestIsAsync = true;
+
+const invalidURL = "http://invalid:url";
+
+async function test() {
+    context = new OfflineAudioContext(2, 100, 44100);
+    await shouldRejectWithErrorName("context.audioWorklet.addModule(invalidURL);", "SyntaxError");
+    await shouldRejectWithErrorName("context.audioWorklet.addModule('doesnotExist.js');", "AbortError");
+    finishJSTest();
+}
+
+test();
+</script>
+</body>
+</html>

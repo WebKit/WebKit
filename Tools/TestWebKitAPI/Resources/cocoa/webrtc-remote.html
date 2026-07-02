@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <iframe src="webrtc-remote-iframe.html" id="myFrame"></iframe>
+    <video controls autoplay playsinline muted id="local"></video>
+    <br>
+    <video controls autoplay playsinline id="remote"></video>
+    <script>
+function startCapture(stream)
+{
+    local.srcObject = stream;
+    // We emulate the remote stream by cloning the local stream.
+    remote.srcObject = stream.clone();
+
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+async function startPlaying()
+{
+    await local.play();
+    await remote.play();
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+function startTest()
+{
+    startPlaying();
+}
+
+let currentCommand;
+function sendCommand(command)
+{
+    if (!window.internals) {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("FAIL");
+        return;
+    }
+    currentCommand = command;
+    if (window.webkit)
+        window.internals.postRemoteControlCommand(command);
+}
+
+function registerHandlers()
+{
+    navigator.mediaSession.setActionHandler("play", () => {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage(currentCommand == "play" ? "PASS" : "FAIL, got play but expected " + currentCommand);
+    });
+    navigator.mediaSession.setActionHandler("pause", () => {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage(currentCommand == "pause" ? "PASS" : "FAIL, got pause but expected " + currentCommand);
+    });
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+    </script>
+</body>
+</html>

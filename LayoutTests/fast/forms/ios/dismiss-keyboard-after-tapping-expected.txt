@@ -1,0 +1,11 @@
+
+Verifies that tapping over a large element with a click handler dismisses the keyboard when keyboardDismissalGestureEnabled is enabled, even if the event handler prevents default. Requires WebKitTestRunner
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS initialKeyboardWillHideCount is keyboardWillHideCountAfterTap
+PASS Dismissed keyboard after tap
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

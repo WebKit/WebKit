@@ -1,0 +1,4 @@
+12345
+
+PASS `intended direction` scroll snaps only at points ahead of the scroll direction
+

@@ -1,0 +1,7 @@
+PASS
+
+ 
+
+
+PASS Clicking on the html element itself should fire a click event targeted at the html element
+

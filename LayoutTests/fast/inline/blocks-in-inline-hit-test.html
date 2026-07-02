@@ -1,0 +1,14 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<span>
+<div>one</div>
+<div id="test">two</div>three
+<div>four</div>
+<div id=log>Hit: </div>
+</span>
+
+<script>
+x = test.offsetLeft + test.offsetWidth / 2;
+y = test.offsetTop + test.offsetHeight / 2;
+
+log.textContent += document.elementFromPoint(x, y).textContent;
+</script>

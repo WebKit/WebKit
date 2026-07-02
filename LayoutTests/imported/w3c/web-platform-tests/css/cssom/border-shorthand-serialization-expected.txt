@@ -1,0 +1,5 @@
+
+PASS Declaration with border longhands is not serialized to a border shorthand declaration.
+PASS Declaration with border longhands and border-image is not serialized to a border shorthand declaration.
+PASS Border shorthand is serialized correctly if all border-image-* are set to their initial specified values.
+

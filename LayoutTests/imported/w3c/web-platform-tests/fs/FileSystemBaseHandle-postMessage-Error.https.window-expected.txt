@@ -1,0 +1,12 @@
+
+PASS Fail to send and receive messages using a cross origin iframe.
+PASS Fail to send and receive messages using a cross origin message port in an iframe.
+PASS Fail to send to a sandboxed iframe.
+PASS Fail to send messages using a message port to a sandboxed iframe.
+PASS Fail to send messages to a data URI iframe.
+PASS Fail to send messages using a message port in a data URI iframe.
+PASS Fail to send and receive messages using a cross origin window.
+PASS Fail to send and receive messages using a cross origin message port in a window.
+PASS Fail to send messages to  a sandboxed window.
+PASS Fail to send messages using a message port to a sandboxed window.
+

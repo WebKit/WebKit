@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSCounterStyleAtRuleImageSymbolsEnabled=false ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+    @counter-style foo {
+        system: cyclic;
+        suffix: " ";
+        symbols: linear-gradient(yellow, blue);
+    }
+</style>
+<script>
+    test(function() {
+        const cssRules = document.styleSheets[0].cssRules
+        assert_equals(cssRules.length, 1, 'Should\'ve been able to parse @counter-style.')
+        assert_equals(cssRules[0].symbols, '', 'Shouldn\'t have been able to parse image symbol value with the runtime feature flag disabled.')
+    }, '@counter-style image symbols are not exposed')
+</script>

@@ -1,0 +1,5 @@
+First
+Second
+
+PASS Children of multicol inline-size container should match inline-size of the container
+

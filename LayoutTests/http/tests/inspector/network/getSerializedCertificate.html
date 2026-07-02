@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createSecureRequest() {
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png";
+    document.body.appendChild(img);
+}
+
+function createInsecureRequest() {
+    let img = document.createElement("img");
+    img.src = "http://localhost:8000/resources/square100.png";
+    document.body.appendChild(img);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getSerializedCertificate");
+
+    suite.addTestCase({
+        name: "Network.getSerializedCertificate.HTTP",
+        description: "Check if an insecure resource is able to serialize its certificate.",
+        test(resolve, reject) {
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => InspectorTest.expectException(() => NetworkAgent.getSerializedCertificate(event.target.requestIdentifier)))
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createInsecureRequest()`)
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getSerializedCertificate.HTTPS",
+        description: "Check of a secure resource is able to serialize its certificate.",
+        test(resolve, reject) {
+            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            .then((event) => NetworkAgent.getSerializedCertificate(event.target.requestIdentifier))
+            .then(({serializedCertificate}) => {
+                InspectorTest.expectGreaterThan(serializedCertificate.length, 0, "Request should have serializable certificate.");
+            })
+            .then(resolve, reject);
+
+            InspectorTest.evaluateInPage(`createSecureRequest()`)
+            .catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.getSerializedCertificate.Invalid",
+        async test() {
+            const invalidRequestIdentifier = "INVALID";
+            await InspectorTest.expectException(() => NetworkAgent.getSerializedCertificate(invalidRequestIdentifier));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that the NetworkAgent is able to get a serialized certificate for a given request.</p>
+</body>
+</html>

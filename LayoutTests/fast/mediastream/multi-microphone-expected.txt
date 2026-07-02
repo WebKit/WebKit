@@ -1,0 +1,6 @@
+
+PASS Capturing with different microphones should move previous capture out of echo cancellation
+PASS Enable echo cancellation with applyConstraints should disallow echo cancellation for other device tracks
+PASS Enable echo cancellation with applyConstraints should disallow echo cancellation for the other track again
+PASS Stopping tracks
+

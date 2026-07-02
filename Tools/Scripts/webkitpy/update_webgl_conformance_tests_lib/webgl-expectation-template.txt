@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: %(test_link_url)s
+[ PASS ] All tests passed

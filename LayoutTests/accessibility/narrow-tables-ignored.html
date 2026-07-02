@@ -1,0 +1,105 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<!-- Ignore table -- not enough rows -->
+<table id="table1" tabindex="0">
+<tr><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td>
+<td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td></tr>
+</table>
+
+<!-- Ignore table -- not enough columns -->
+<table id="table2" tabindex="0">
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+<tr><td>td</td></tr>
+</table>
+
+<!-- Show table - enough rows -->
+<table id="table3" tabindex="0">
+<tr><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td>
+<td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td>
+<td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td><td>td</td></tr>
+</table>
+
+<!-- Show table -- enough cols -->
+<table id="table4" tabindex="0">
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+<tr><td>td</td><td>td</td></tr>
+</table>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that very narrow or very wide tables are ignored.");
+    if (window.accessibilityController) {
+
+        // Ignore tables because they're too narrow.
+        var table1 = accessibilityController.accessibleElementById("table1");
+        debug("table1: " + table1.role);
+
+        var table2 = accessibilityController.accessibleElementById("table2");
+        debug("table2: " + table2.role);
+
+        // Tables not ignored, because they are wide enough.
+        var table3 = accessibilityController.accessibleElementById("table3");
+        debug("table3: " + table3.role);
+
+        var table4 = accessibilityController.accessibleElementById("table4");
+        debug("table4: " + table4.role);
+        document.getElementById("content").style.display = "none";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

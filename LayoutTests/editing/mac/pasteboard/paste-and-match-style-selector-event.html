@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script>
+            var onPasteEventFired = false;
+
+            function test() {
+                if (window.testRunner)
+                    testRunner.dumpAsText();
+
+                var result = document.getElementById("result");
+                window.getSelection().setBaseAndExtent(result, 0, result, 1);
+                document.execCommand("Cut");
+                if (window.testRunner)
+                    testRunner.execCommand('PasteAsPlainText');
+            }
+            function onpastehandler(event) {
+                event.preventDefault();
+                result.innerText = 'SUCCESS';
+            }
+        </script>
+    </head>
+    <body onload="test()" onpaste="onpastehandler(event)" contenteditable>
+        This tests pasting as plain text, which is what happens when you paste and match style, fires the onpaste event.<br>
+        To manually test, select & cut "FAILURE" below and "paste and match style" from menu.
+        <div id="result">FAILURE</div>
+    </body>
+</html>

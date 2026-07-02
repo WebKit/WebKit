@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script src="../resources/stepping-async.js"></script>
+<script>
+function test()
+{
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        WI.debuggerManager.stepNext();
+    });
+
+    InspectorTest.SteppingAsync.run("Debugger.stepNext.await");
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping with "stepNext".</p>
+</body>
+</html>

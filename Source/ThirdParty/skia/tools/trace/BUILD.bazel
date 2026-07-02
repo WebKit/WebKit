@@ -1,0 +1,32 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "trace",
+    testonly = True,
+    srcs = [
+        "ChromeTracingTracer.cpp",
+        "ChromeTracingTracer.h",
+        "EventTracingPriv.cpp",
+        "EventTracingPriv.h",
+        "SkDebugfTracer.cpp",
+        "SkDebugfTracer.h",
+    ],
+    hdrs = [
+        "ChromeTracingTracer.h",
+        "SkDebugfTracer.h",
+    ],
+    visibility = [
+        "//dm:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//tools/flags:cmd_flags",
+    ],
+)

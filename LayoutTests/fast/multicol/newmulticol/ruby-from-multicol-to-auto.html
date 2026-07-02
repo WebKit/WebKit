@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- https://bugs.webkit.org/show_bug.cgi?id=137929 -->
+		<style>
+			#target {
+				position: absolute;
+				top: 100px;
+				left: 20px;
+			}
+			.multicol { -webkit-column-count: 2; }
+			.noMulticol { -webkit-column-count: auto; }
+		</style>
+	</head>
+	<body>
+		<p>Test that a ruby element with multicol style is correctly laid out when it loses the multicol style.</p>
+		<p>On success you see PASS below.</p>
+		<ruby id="target" class="multicol">PASS</ruby>
+		<script>
+			if (window.testRunner)
+				testRunner.dumpAsText();
+			document.body.offsetTop;
+			document.getElementById("target").className = "noMulticol";
+		</script>
+	</body>
+</html>

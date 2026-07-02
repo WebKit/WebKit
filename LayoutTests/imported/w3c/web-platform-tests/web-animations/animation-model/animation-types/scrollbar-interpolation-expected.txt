@@ -1,0 +1,3 @@
+
+PASS Verify scrollbar-color-interpolation
+

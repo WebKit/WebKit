@@ -1,0 +1,16 @@
+
+PASS Dialog show will not light dismiss if clicked inside of the dialog bounds
+PASS Dialog show will not light dismiss if clicked inside of the dialog bounds (bottom right)
+PASS Dialog show will not light dismiss if clicked inside the overflowing div bounds (center)
+PASS Dialog show will not light dismiss if clicked inside the overflowing div bounds (bottom right)
+PASS Dialog show light dismisses when clicked outside of the bounds of both the dialog and the div
+PASS Dialog show light dismisses when clicked outside of the bounds of the dialog - where the Y direction is in-line with the div still
+PASS Dialog show light dismisses when clicked outside of the bounds of the dialog - where the X direction is in-line with the div still
+PASS Dialog showModal will not light dismiss if clicked inside of the dialog bounds
+PASS Dialog showModal will not light dismiss if clicked inside of the dialog bounds (bottom right)
+PASS Dialog showModal will not light dismiss if clicked inside the overflowing div bounds (center)
+PASS Dialog showModal will not light dismiss if clicked inside the overflowing div bounds (bottom right)
+PASS Dialog showModal light dismisses when clicked outside of the bounds of both the dialog and the div
+PASS Dialog showModal light dismisses when clicked outside of the bounds of the dialog - where the Y direction is in-line with the div still
+PASS Dialog showModal light dismisses when clicked outside of the bounds of the dialog - where the X direction is in-line with the div still
+

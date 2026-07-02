@@ -1,0 +1,4 @@
+
+PASS initialize: AudioWorklet module loading
+PASS test: Active processing emits expected channel-count changes
+

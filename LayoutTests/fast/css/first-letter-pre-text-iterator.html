@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<style>
+pre::first-letter {
+    color: red;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<pre id="test">Hello World</pre>
+<pre id="result"></pre>
+<script>
+var pre = document.getElementById('test');
+var text = pre.firstChild;
+var results = [];
+
+// Range spanning first-letter boundary
+var r1 = document.createRange();
+r1.setStart(text, 0);
+r1.setEnd(text, 5);
+results.push('0-5: "' + r1.toString() + '" (expected "Hello")');
+
+// Range starting in remaining fragment
+var r2 = document.createRange();
+r2.setStart(text, 1);
+r2.setEnd(text, 5);
+results.push('1-5: "' + r2.toString() + '" (expected "ello")');
+
+// Range within remaining fragment
+var r3 = document.createRange();
+r3.setStart(text, 2);
+r3.setEnd(text, 4);
+results.push('2-4: "' + r3.toString() + '" (expected "ll")');
+
+// Select all
+var r4 = document.createRange();
+r4.setStart(text, 0);
+r4.setEnd(text, 11);
+results.push('0-11: "' + r4.toString() + '" (expected "Hello World")');
+
+document.getElementById('result').textContent = results.join('\n');
+</script>

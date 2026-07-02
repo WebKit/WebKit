@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    #test {
+        will-change: opacity;
+    }
+
+    iframe {
+        width: 300px;
+        height: 200px;
+    }
+    #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        z-index: 10;
+        opacity: 0.8;
+        will-change: opacity;
+
+        background-color: #333;
+    }
+    .composited {
+        will-change: transform;
+    }
+    #faded {
+        width: 200px;
+        height: 200px;
+
+        will-change: opacity;
+        opacity: 0;
+    }
+    #resized {
+        background-color: lightblue;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+    .shape {
+        float: left;
+        background: blue;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+    #radius {
+        border-radius: 16px;
+    }
+    #partial-radius {
+        border-radius: 14px 0 0 14px;
+    }
+    #non-uniform-radius {
+        border-radius: 10px 11px 12px 13px;
+    }
+
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+    <div>
+        <button>button</button>
+    </div>
+    <iframe></iframe>
+    <div id="overlay">
+        <a href="#">link</a>
+        <div class="composited">layered content</div>
+        <div class="composited">
+            layered content <a href="#">with interactions</a>
+            <div class="composited">
+                layered content
+                <div class="composited" id="to-hide">
+                    layered content <a href="#">with interactions</a>
+                </div>
+            </div>
+        </div>
+        <div class="composited">layered content</div>
+    </div>
+    <div id="faded">
+        <a href="#">Faded link</a>
+    </div>
+    <div id="noradius" class="shape">
+    </div>
+    <div id="radius" class="shape">
+    </div>
+    <div id="partial-radius" class="shape">
+    </div>
+    <div id="non-uniform-radius" class="shape">
+    </div>
+    <div id="resized" onclick="click()">
+        will be resized
+    </div>
+</div>
+
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    const testEl = document.getElementById('test');
+
+    // Resizing - reuses the layer while maintaining its position in the sublayers array.
+    await UIHelper.animationFrame();
+    document.getElementById("resized").style.width = "200px";
+
+    // Adding - appends a new layer.
+    await UIHelper.animationFrame();
+    document.querySelector("iframe").srcdoc = "<div style='cursor:pointer;width:100%;height:200px'; onclick='click()'>tappable</div>";
+    document.getElementById("resized").style.backgroundColor = "blue";
+
+    // Removing - moves layers arround.
+    await UIHelper.animationFrame();
+    document.getElementById("to-hide").style.display = "none";
+
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent = await UIHelper.getCALayerTreeForCompositedElement(testEl);
+    testEl.remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

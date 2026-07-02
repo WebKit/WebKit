@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures XSLT processing does not occur when loading an XML resource in LDM.");
+
+var xmlDocument;
+
+function runTest() {
+
+    xmlDocument = document.getElementById("xml-iframe").contentDocument;
+
+    shouldBe("xmlDocument.children.length", "1");
+    shouldBeEqualToString("xmlDocument.children[0].tagName", "doc");
+    shouldBe("xmlDocument.children[0].children.length", "1");
+    shouldBeEqualToString("xmlDocument.children[0].children[0].tagName", "example");
+    shouldBeEqualToString("xmlDocument.children[0].children[0].innerHTML", "text");
+}
+</script>
+<iframe id="xml-iframe" src="resources/XSLT-disabled.xml" onload="runTest()"></iframe>
+</body>
+</html>

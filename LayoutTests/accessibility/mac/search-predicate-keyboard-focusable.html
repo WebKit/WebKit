@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+<blockquote id="start">first blockquote level 1</blockquote>
+<form>
+<input type="text" /><br />
+<input type="checkbox" value="Checkbox" /> checkbox<br />
+<input type="submit" value="Submit" />
+<input type="text" role="combobox">
+</form>
+<img id="image" src="resources/cake.png" alt="Test">
+<h1>first heading level 1</h1>
+<a href="#image">link</a>
+<ol><li>list item</li></ol>
+<ul role="radiogroup"><li role="radio">radio button</li></ul>
+<table>
+<thead><tr><td>first table heading level 1</td></tr></thead>
+</table>
+<ul role="tree"><li role="treeitem">tree item</li></ul>
+
+<div id="group" style="overflow: scroll; width:100px; height:100px;">
+    <button id="button">test button 1</button><BR>
+</div>
+<button id="button">test button 2</button>
+</div>
+
+<script>
+let output = "This tests AXKeyboardFocusableSearchKey gives the default focusable elements.\n\n";
+
+if (window.accessibilityController) {
+    var containerElement = accessibilityController.accessibleElementById("content");
+    var resultElement = accessibilityController.accessibleElementById("start");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXTextField'");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXCheckBox'");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXButton'");
+    output += expect("resultElement.title", "'AXTitle: Submit'");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXComboBox'");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXLink'");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXButton'");
+    output += expect("resultElement.title", "'AXTitle: test button 1'");
+
+    resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXButton'");
+    output += expect("resultElement.title", "'AXTitle: test button 2'");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+diff --git a/resources/runner/motionmark.js b/resources/runner/motionmark.js
+index 600998847f06b66e8a9290c6e90f4b19740f4099..b046ec8f1c1af1dbe074107e3c07150b6264e9be 100644
+--- a/resources/runner/motionmark.js
++++ b/resources/runner/motionmark.js
+@@ -429,6 +429,48 @@ window.benchmarkRunnerClient = {
+     didFinishLastIteration: function()
+     {
+         benchmarkController.showResults();
++    },
++
++    _computeTestReport: function(testName, testResults)
++    {
++        return [testResults[Strings.json.score]];
++    },
++
++    _computeSuiteReports: function(suiteName, suiteResults)
++    {
++        var testsReports = {};
++        for (var testName in suiteResults) {
++            var testReports = this._computeTestReport(testName, suiteResults[testName]);
++            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
++        }
++        return testsReports;
++    },
++
++    _computeIterationReports: function(iterationResults)
++    {
++        var suitesReports = {};
++        for (var suiteName in iterationResults[Strings.json.results.tests]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.tests][suiteName]);
++            suitesReports[suiteName] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
++        }
++        return suitesReports;
++    },
++
++    _computeResultsReports: function()
++    {
++        var results = this.results.results[0];
++        var iterationReports = this._computeIterationReports(results);
++        iterationReports['debugOutput'] = {
++            options: benchmarkRunnerClient.results.options,
++            data: benchmarkRunnerClient.results.data,
++        }
++        return iterationReports;
++    },
++
++    didFinishLastIteration: function()
++    {
++        var results = JSON.stringify(this._computeResultsReports());
++        window.webdriver_results = results;
+     }
+ };
+ 
+@@ -530,6 +572,8 @@ window.benchmarkController = {
+ 
+         this._startButton.textContent = Strings.text.runBenchmark;
+         this._startButton.disabled = false;
++
++        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 2000);
+     },
+ 
+     determineCanvasSize: function()

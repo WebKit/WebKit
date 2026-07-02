@@ -1,0 +1,3 @@
+
+PASS Promise rejection event should be received for the cross-origin CORS script
+

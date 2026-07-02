@@ -1,0 +1,11 @@
+
+EVENT(sourceopen)
+EXPECTED (source.sourceBuffers.length == '1') OK
+addsourcebuffer event on sourceBuffers: fired
+EVENT(updateend)
+EXPECTED (source.activeSourceBuffers.length == '1') OK
+RUN(source.removeSourceBuffer(sourceBuffer))
+EXPECTED (source.sourceBuffers.length == '0') OK
+removesourcebuffer event on sourceBuffers: fired
+END OF TEST
+

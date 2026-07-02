@@ -1,0 +1,4 @@
+[
+	{ "keys": ["super+ctrl+shift+c"], "command": "copy_web_kit_permalink" },
+    { "keys": ["super+ctrl+option+shift+c"], "command": "copy_web_kit_permalink", "args": { "annotate_blame": true } }
+]

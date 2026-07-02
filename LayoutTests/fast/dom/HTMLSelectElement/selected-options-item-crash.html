@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+description('This tests accesses a particular index in selectedOptions via HTMLSelectElement\'s item. WebKit should not crash.');
+
+let select = document.createElement('select');
+document.body.appendChild(select);
+let div = document.createElement('div');
+select.appendChild(div);
+select.appendChild(document.createElement('option'));
+let select2 = document.createElement('select');
+select2.appendChild(document.createElement('option'));
+div.appendChild(select2);
+
+shouldBe('select.selectedOptions.item(2)', 'null');
+
+</script>
+</body>
+</html>

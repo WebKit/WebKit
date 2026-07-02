@@ -1,0 +1,16 @@
+
+PASS "location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to true
+PASS "location,menubar,resizable,scrollbars,status" should set BarProp visibility to true
+PASS "toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to true
+PASS "resizable,scrollbars,status" should set BarProp visibility to false
+PASS "location=no,menubar=no,resizable,scrollbars,status" should set BarProp visibility to false
+PASS "location,toolbar,resizable,scrollbars,status" should set BarProp visibility to false
+PASS "location,toolbar,menubar,scrollbars,status" should set BarProp visibility to true
+PASS "location,toolbar,menubar,resizable=no,scrollbars,status" should set BarProp visibility to false
+PASS "location,toolbar,menubar,resizable,status" should set BarProp visibility to false
+PASS "location,toolbar,menubar,resizable,scrollbars" should set BarProp visibility to false
+PASS "popup=1,location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to false
+PASS "popup=yes,location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to false
+PASS "popup=true,location,toolbar,menubar,resizable,scrollbars,status" should set BarProp visibility to false
+PASS "popup=0,location,toolbar,menubar,resizable,scrollbars" should set BarProp visibility to true
+

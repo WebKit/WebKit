@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<style>
+body > div {
+	display: inline-block;
+	border: 1px solid black;
+	width: 400px;
+        font-size: 30px;
+}
+</style>
+<body>
+<p>This test makes sure that whitespace collapsing occurs correctly in the presence of bidi isolates.</p>
+<div id="control">
+<p>123
+ <span>456</span> 789</p>
+<p>123 <span>456</span> 789</p>
+<p>123
+ <span>4       56
+</span> 789</p>
+<p>123
+ <span>
+ 456
+ </span>
+ 789</p>
+<p>1  2  3
+ <span>
+ 4  5  6
+ </span>
+ 7    8    9    </p>
+<p>123
+ <span></span> 789</p>
+<p>123
+ <span>  </span> 789</p>
+</div>
+</body></html>

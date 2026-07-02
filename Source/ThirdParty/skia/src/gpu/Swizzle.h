@@ -1,0 +1,205 @@
+/*
+ * Copyright 2016 Google Inc.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#ifndef skgpu_Swizzle_DEFINED
+#define skgpu_Swizzle_DEFINED
+
+#include "include/core/SkColor.h"
+#include "include/core/SkString.h"
+#include "include/private/base/SkAssert.h"
+#include "include/private/base/SkTypeTraits.h"
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <type_traits>
+
+class SkRasterPipeline;
+enum SkAlphaType : int;
+
+namespace skgpu {
+
+/** Represents a rgba swizzle. It can be converted either into a string or a eight bit int. */
+class Swizzle {
+public:
+    // Equivalent to "rgba", but Clang doesn't always manage to inline this
+    // if we're too deep in the inlining already.
+    constexpr Swizzle() : Swizzle(0x3210) {}
+    explicit constexpr Swizzle(const char c[4]);
+
+    constexpr Swizzle(const Swizzle&) = default;
+    constexpr Swizzle& operator=(const Swizzle& that) = default;
+
+    static constexpr Swizzle Concat(const Swizzle& a, const Swizzle& b);
+
+    constexpr explicit operator bool() const { return fKey != 0x3210; }
+
+    constexpr bool operator==(const Swizzle& that) const { return fKey == that.fKey; }
+    constexpr bool operator!=(const Swizzle& that) const { return !(*this == that); }
+
+    /** Compact representation of the swizzle suitable for a key. */
+    constexpr uint16_t asKey() const { return fKey; }
+
+    /** 4 char null terminated string consisting only of chars 'r', 'g', 'b', 'a', '0', and '1'. */
+    SkString asString() const;
+
+    constexpr char operator[](int i) const { return IToC(this->channelIndex(i)); }
+
+    // Returns a new swizzle that moves the swizzle component in index i to index 0 (e.g. "R") and
+    // sets all other channels to 0. For a swizzle `s`, this is constructing "s[i]000".
+    constexpr Swizzle selectChannelInR(int i) const;
+
+    // Returns as close to an inverse of this swizzle as possible. If this swizzle is one-to-one
+    // (e.g. has all of RGBA, no duplicates, and no references to 0 or 1), the inverse is exact.
+    // Repeated channel values will map to the earliest encountered channel. Channels not present
+    // use their default value (0 for RGB and 1 for A).
+    constexpr Swizzle invert() const;
+
+    /** Applies this swizzle to the input color and returns the swizzled color. */
+    constexpr std::array<float, 4> applyTo(std::array<float, 4> color) const;
+
+    /** Convenience version for SkRGBA colors. */
+    template <SkAlphaType AlphaType>
+    constexpr SkRGBA4f<AlphaType> applyTo(SkRGBA4f<AlphaType> color) const {
+        std::array<float, 4> result = this->applyTo(color.array());
+        return {result[0], result[1], result[2], result[3]};
+    }
+
+    void apply(SkRasterPipeline*) const;
+
+    static constexpr Swizzle RGBA() { return Swizzle("rgba"); }
+    static constexpr Swizzle BGRA() { return Swizzle("bgra"); }
+    static constexpr Swizzle RRRA() { return Swizzle("rrra"); }
+    static constexpr Swizzle RGB1() { return Swizzle("rgb1"); }
+
+    using sk_is_trivially_relocatable = std::true_type;
+
+private:
+    friend class SwizzleCtorAccessor;
+
+    explicit constexpr Swizzle(uint16_t key) : fKey(key) {}
+
+    constexpr int channelIndex(int i) const {
+        SkASSERT(i >= 0 && i < 4);
+        return (fKey >> (4*i)) & 0xfU;
+    }
+
+    static constexpr float ComponentIndexToFloat(std::array<float, 4>, size_t idx);
+    static constexpr int CToI(char c);
+    static constexpr char IToC(int idx);
+
+    uint16_t fKey;
+
+    static_assert(::sk_is_trivially_relocatable<decltype(fKey)>::value);
+};
+
+constexpr Swizzle::Swizzle(const char c[4])
+        : fKey(static_cast<uint16_t>((CToI(c[0]) << 0) | (CToI(c[1]) << 4) | (CToI(c[2]) << 8) |
+                                     (CToI(c[3]) << 12))) {}
+
+constexpr Swizzle Swizzle::selectChannelInR(int i) const {
+    return Swizzle(static_cast<uint16_t>((this->channelIndex(i) << 0) | (CToI('0') << 4) |
+                                         (CToI('0') << 8) | (CToI('0') << 12)));
+}
+
+constexpr std::array<float, 4> Swizzle::applyTo(std::array<float, 4> color) const {
+    uint32_t key = fKey;
+    // Index of the input color that should be mapped to output r.
+    size_t idx = (key & 15);
+    float outR = ComponentIndexToFloat(color, idx);
+    key >>= 4;
+    idx = (key & 15);
+    float outG = ComponentIndexToFloat(color, idx);
+    key >>= 4;
+    idx = (key & 15);
+    float outB = ComponentIndexToFloat(color, idx);
+    key >>= 4;
+    idx = (key & 15);
+    float outA = ComponentIndexToFloat(color, idx);
+    return { outR, outG, outB, outA };
+}
+
+constexpr float Swizzle::ComponentIndexToFloat(std::array<float, 4> color, size_t idx) {
+    if (idx <= 3) {
+        return color[idx];
+    }
+    if (idx == static_cast<size_t>(CToI('1'))) {
+        return 1.0f;
+    }
+    if (idx == static_cast<size_t>(CToI('0'))) {
+        return 0.0f;
+    }
+    SkUNREACHABLE;
+}
+
+constexpr int Swizzle::CToI(char c) {
+    switch (c) {
+        // r...a must map to 0...3 because other methods use them as indices into fSwiz.
+        case 'r': return 0;
+        case 'g': return 1;
+        case 'b': return 2;
+        case 'a': return 3;
+        case '0': return 4;
+        case '1': return 5;
+        default:  SkUNREACHABLE;
+    }
+}
+
+constexpr char Swizzle::IToC(int idx) {
+    switch (idx) {
+        case CToI('r'): return 'r';
+        case CToI('g'): return 'g';
+        case CToI('b'): return 'b';
+        case CToI('a'): return 'a';
+        case CToI('0'): return '0';
+        case CToI('1'): return '1';
+        default:        SkUNREACHABLE;
+    }
+}
+
+constexpr Swizzle Swizzle::Concat(const Swizzle& a, const Swizzle& b) {
+    uint16_t key = 0;
+    for (unsigned i = 0; i < 4; ++i) {
+        int idx = (b.fKey >> (4U * i)) & 0xfU;
+        if (idx != CToI('0') && idx != CToI('1')) {
+            SkASSERT(idx >= 0 && idx < 4);
+            // Get the index value stored in a at location idx.
+            idx = ((a.fKey >> (4 * idx)) & 0xfU);
+        }
+        key |= (idx << (4U * i));
+    }
+    return Swizzle(key);
+}
+
+constexpr Swizzle Swizzle::invert() const {
+    // Our starting value will be "0001", but with a blank mask so everything can be overridden by a
+    // swizzle component reference
+    uint16_t key = Swizzle("0001").asKey();
+    uint16_t mask = 0;
+    for (unsigned i = 0; i < 4; ++i) {
+        // This swizzle maps the sampled channel 'idx' to the final channel 'i'
+        int idx = (fKey >> (4U * i)) & 0xfU;
+        // The inverse is to store 'i' at 'idx' in key, if 'idx' is r,g,b,a (in [0,3])
+        if (idx <= 3) {
+            // Set the 4 bits of the idx channel, unless idx has already been written to (blocked
+            // by mask).
+            int channelMask = (0xfU << (4U * idx)) & ~mask;
+            key = (key & ~channelMask) | ((i << (4U * idx)) & channelMask);
+            mask |= 0xfU << (4U * idx); // update mask to block future writes
+        } else {
+            // Push the '0' or '1' constant value into channel i if it hasn't been set yet, which
+            // preserves non-default constant values. We don't update the mask so future channel
+            // references could still overwrite it with an actual swizzle.
+            int channelMask = (0xfU << (4U * i)) & ~mask;
+            key = (key & ~channelMask) | ((idx << (4U * i)) & channelMask);
+        }
+    }
+    return Swizzle(key);
+}
+
+} // namespace skgpu
+#endif

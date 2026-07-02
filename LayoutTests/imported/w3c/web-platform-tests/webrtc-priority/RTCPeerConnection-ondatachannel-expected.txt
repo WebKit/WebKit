@@ -1,0 +1,4 @@
+
+FAIL In-band negotiated channel created on remote peer should match the same configuration as local peer assert_equals: expected "high" but got "low"
+PASS In-band negotiated channel created on remote peer should match the same (default) configuration as local peer
+

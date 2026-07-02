@@ -1,0 +1,6 @@
+
+PASS Creating policy works for policy in the allowlist.
+PASS Creating policy works for policy in the blocklist, since it's report-only.
+PASS Test report-uri works with trusted-types violation.
+PASS Test number of sent reports.
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+div {
+  position: absolute;
+  font-family: Ahem;
+  color: green;
+  font-size: 100px;
+}
+
+.test {
+  width: 0px;
+}
+
+.reference {
+  color: red;
+  white-space: pre;
+}
+
+span {
+  padding-left: 100px;
+  word-break: break-word;
+}
+</style>
+<!-- we should be able to break the inline box content after the first 'X' -->
+<div class="reference"> X
+X</div>
+
+<div class=test><span>XX</span></div>

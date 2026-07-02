@@ -1,0 +1,11 @@
+Foo
+BAR
+This verifies that list items with pseudo elements and styles do not trigger an assertion.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

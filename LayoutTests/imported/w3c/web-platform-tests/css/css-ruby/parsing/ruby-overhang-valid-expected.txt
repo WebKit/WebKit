@@ -1,0 +1,4 @@
+
+PASS e.style['ruby-overhang'] = "auto" should set the property value
+PASS e.style['ruby-overhang'] = "none" should set the property value
+

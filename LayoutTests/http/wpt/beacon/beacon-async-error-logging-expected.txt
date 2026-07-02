@@ -1,0 +1,3 @@
+
+PASS Should log an error message in the console
+

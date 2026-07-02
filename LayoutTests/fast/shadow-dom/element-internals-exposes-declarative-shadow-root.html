@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/gc.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<component-1>
+    <template shadowrootmode="closed">
+        <slot>hello, world.</slot>
+    </template>
+</component-1>
+<component-2>
+    <template shadowrootmode="open">
+        <slot>hello, world.</slot>
+    </template>
+</component-2>
+<component-3>
+    <template shadowrootmode="closed">
+        <slot>hello, world.</slot>
+    </template>
+</component-3>
+<component-4>
+    <template shadowrootmode="open">
+        <slot>hello, world.</slot>
+    </template>
+</component-4>
+<script>
+
+promise_test(async function () {
+    let internals = null;
+    customElements.define('component-1', class SomeElement extends HTMLElement {
+        constructor()
+        {
+            super();
+            internals = this.attachInternals();
+        }
+    });
+    assert_true(!!internals);
+    assert_true(!!internals.shadowRoot);
+    assert_equals(internals.shadowRoot.mode, 'closed');
+    assert_equals(internals.shadowRoot.innerHTML.trim(), '<slot>hello, world.</slot>');
+}, 'Declarative Shadow DOM in "closed" mode is exposed via ElementInternals.prototype.shadowRoot');
+
+promise_test(async function () {
+    let internals = null;
+    customElements.define('component-2', class SomeElement extends HTMLElement {
+        constructor()
+        {
+            super();
+            internals = this.attachInternals();
+        }
+    });
+    assert_true(!!internals);
+    assert_true(!!internals.shadowRoot);
+    assert_equals(internals.shadowRoot.mode, 'open');
+    assert_equals(internals.shadowRoot.innerHTML.trim(), '<slot>hello, world.</slot>');
+}, 'Declarative Shadow DOM in "open" mode is exposed via ElementInternals.prototype.shadowRoot');
+
+promise_test(async function () {
+    let internals = null;
+    const shadowRoot = document.querySelector('component-3').attachShadow({mode: 'closed'});
+    customElements.define('component-3', class SomeElement extends HTMLElement {
+        constructor()
+        {
+            super();
+            internals = this.attachInternals();
+        }
+    });
+    assert_true(!!internals);
+    assert_true(!!internals.shadowRoot);
+    assert_equals(shadowRoot.mode, 'closed');
+    assert_equals(shadowRoot.innerHTML, '');
+}, 'Declarative Shadow DOM in "closed" mode is exposed via ElementInternals.prototype.shadowRoot after calling attachShadow');
+
+promise_test(async function () {
+    let internals = null;
+    const shadowRoot = document.querySelector('component-4').attachShadow({mode: 'open'});
+    customElements.define('component-4', class SomeElement extends HTMLElement {
+        constructor()
+        {
+            super();
+            internals = this.attachInternals();
+        }
+    });
+    assert_true(!!internals);
+    assert_true(!!internals.shadowRoot);
+    assert_equals(shadowRoot.mode, 'open');
+    assert_equals(shadowRoot.innerHTML, '');
+}, 'Declarative Shadow DOM in "open" mode is exposed via ElementInternals.prototype.shadowRoot after calling attachShadow');
+
+</script>
+</body>
+</html>

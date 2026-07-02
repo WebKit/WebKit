@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests setting the value to a readonly or disabled text field which was previously editable</p>
+<pre id="log"></pre>
+<input type="text">
+<script>
+
+if (!window.accessibilityController)
+    document.write('This test requires accessibilityController');
+else {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    accessibilityController.enableEnhancedAccessibility(true);
+
+    function sortByKey(unsortedObject) {
+        const sortedObject = {};
+        for (const key of Object.keys(unsortedObject).sort())
+            sortedObject[key] = unsortedObject[key];
+        return sortedObject;
+    }
+
+    const webArea = accessibilityController.rootElement.childAtIndex(0);
+    const notifications = [];
+    webArea.addNotificationListener((notification, userInfo) => {
+        if (notification == 'AXLoadComplete') {
+            webArea.removeNotificationListener();
+            testRunner.notifyDone();
+            return;
+        }
+        if (notification != 'AXValueChanged')
+            return;
+
+        document.getElementById('log').textContent
+            += `AXTextStateChangeType=${userInfo['AXTextStateChangeType']}`
+            + ` AXTextChangeValues=${JSON.stringify(userInfo['AXTextChangeValues'].map(object => sortByKey(object)))}\n`
+    });
+
+    const input = document.querySelector('input');
+    input.focus();
+    eventSender.keyDown('a');
+    input.value = 'hello';
+    eventSender.keyDown('b');
+    input.readOnly = true;
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    input.value = 'world';
+    input.readOnly = false;
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    eventSender.keyDown('c');
+    input.disabled = true;
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    input.value = 'WebKit';
+    input.disabled = false;
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    eventSender.keyDown('d');
+}
+
+</script>
+</body>
+</html>

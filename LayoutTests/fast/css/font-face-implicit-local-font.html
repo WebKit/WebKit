@@ -1,0 +1,19 @@
+<style>
+    @font-face {
+        font-family: 'courier';
+        src: local('Times'), local('Times New Roman');
+        unicode-range: U+003?;
+    }
+</style>
+<p>
+    This tests that when @font-face rules with unicode-range are specified for a
+    font that exists on the system, the system font is used for all characters
+    not explictly overridden.
+</p>
+<p>
+    In the next line, the digits should be in Times, but the letters should be
+    in Courier.
+</p>
+<span style="font-family: 'courier'; font-size: 24px;">
+    ABCDEFGHIJ 1234567890
+</span>

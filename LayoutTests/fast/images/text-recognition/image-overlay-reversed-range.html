@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+img {
+    width: 300px;
+    height: 300px;
+}
+</style>
+</head>
+<body>
+<textarea id="textarea"></textarea>
+<img src="../resources/green-400x400.png"></img>
+<pre id="console"></pre>
+<script>
+addEventListener("load", () => {
+    const image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.3),
+            bottomLeft : new DOMPointReadOnly(0, 0.3),
+            hasTrailingNewline: false,
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.5, 0),
+                    bottomRight : new DOMPointReadOnly(0.5, 0.3),
+                    bottomLeft : new DOMPointReadOnly(0, 0.3),
+                },
+                {
+                    text : " ",
+                    topLeft : new DOMPointReadOnly(0.51, 0),
+                    topRight : new DOMPointReadOnly(0.5, 0),
+                    bottomRight : new DOMPointReadOnly(0.5, 0.3),
+                    bottomLeft : new DOMPointReadOnly(0.51, 0.3),
+                },
+                {
+                    text : "bar",
+                    topLeft : new DOMPointReadOnly(0.51, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.3),
+                    bottomLeft : new DOMPointReadOnly(0.51, 0.3),
+                }
+            ],
+        }
+    ]);
+
+    const imageOverlay = internals.shadowRoot(image).getElementById("image-overlay");
+    internals.setSelectionWithoutValidation(imageOverlay, 0, imageOverlay, imageOverlay.childNodes.length);
+    document.execCommand("Copy");
+
+    textarea.focus();
+    document.execCommand("Paste");
+
+    shouldBeEqualToString("textarea.value", "foo bar")
+});
+</script>
+</body>
+</html>

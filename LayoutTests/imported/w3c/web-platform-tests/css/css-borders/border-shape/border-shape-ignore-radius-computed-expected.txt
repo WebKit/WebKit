@@ -1,0 +1,3 @@
+
+PASS border-radius and corner-shape are NOT reset in computed style when border-shape is specified
+

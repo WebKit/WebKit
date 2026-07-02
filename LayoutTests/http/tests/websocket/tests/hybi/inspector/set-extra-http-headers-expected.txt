@@ -1,0 +1,9 @@
+Tests for Network.setExtraHTTPHeaders.
+
+
+== Running test suite: Network.setExtraHTTPHeaders
+-- Running test case: Network.setExtraHTTPHeaders.WebSocket.Request
+PASS: Resource should be a WebSocket.
+PASS: Resource request headers should include "X-WebKit-Test-Extra-Header: TestValue123".
+PASS: Server should have received header "X-WebKit-Test-Extra-Header" with value "TestValue123".
+

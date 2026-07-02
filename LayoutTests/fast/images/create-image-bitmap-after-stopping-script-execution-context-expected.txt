@@ -1,0 +1,4 @@
+This tests calling createImageBitmap on a window without a browsing context.
+WebKit should not crash and should show pass below.
+
+Partial PASS

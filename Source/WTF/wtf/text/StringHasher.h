@@ -1,0 +1,101 @@
+/*
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <unicode/utypes.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/Latin1Character.h>
+
+namespace WTF {
+
+// Golden ratio. Arbitrary start value to avoid mapping all zeros to a hash value of zero.
+static constexpr unsigned stringHashingStartValue = 0x9E3779B9U;
+
+class ASCIILiteral;
+class SuperFastHash;
+class RapidHash;
+
+class StringHasher {
+public:
+    static constexpr unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
+    static constexpr unsigned maskHash = (1U << (sizeof(unsigned) * 8 - flagCount)) - 1;
+
+    struct DefaultConverter {
+        template<typename CharType>
+        static constexpr char16_t convert(CharType character)
+        {
+            return unsignedCast(character);
+        }
+    };
+
+    template<typename T, typename Converter = DefaultConverter>
+    static unsigned computeHashAndMaskTop8Bits(std::span<const T> data);
+
+    template<typename T, unsigned characterCount>
+    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount]);
+
+    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(ASCIILiteral);
+
+private:
+    friend class SuperFastHash;
+    friend class RapidHash;
+
+    ALWAYS_INLINE static constexpr unsigned avalancheBits(unsigned hash)
+    {
+        unsigned result = hash;
+
+        result ^= result << 3;
+        result += result >> 5;
+        result ^= result << 2;
+        result += result >> 15;
+        result ^= result << 10;
+
+        return result;
+    }
+
+    ALWAYS_INLINE static constexpr unsigned finalize(unsigned hash)
+    {
+        return avoidZero(avalancheBits(hash));
+    }
+
+    ALWAYS_INLINE static constexpr unsigned finalizeAndMaskTop8Bits(unsigned hash)
+    {
+        // Reserving space from the high bits for flags preserves most of the hash's
+        // value, since hash lookup typically masks out the high bits anyway.
+        return avoidZero(avalancheBits(hash) & StringHasher::maskHash);
+    }
+
+    // This avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet". Setting the high bit maintains
+    // reasonable fidelity to a hash code of 0 because it is likely to yield
+    // exactly 0 when hash lookup masks out the high bits.
+    ALWAYS_INLINE static constexpr unsigned avoidZero(unsigned hash)
+    {
+        if (hash)
+            return hash;
+        return 0x80000000 >> flagCount;
+    }
+};
+
+} // namespace WTF
+
+using WTF::StringHasher;

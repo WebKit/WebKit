@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+        window.addEventListener('load', async evt => {
+
+            if (!window.internals) {
+                failTest("This test requires internals.")
+                return;
+            }
+
+let hack = internals.nowPlayingState;
+
+            findMediaElement();
+
+            video.src = findMediaFile("video", "content/test");
+
+            await waitFor(video, 'loadedmetadata');
+
+            run("internals.settings.setFullScreenEnabled(false)");
+            testExpected("video.webkitSupportsFullscreen", false);
+
+            run("internals.settings.setFullScreenEnabled(true)");
+            testExpected("video.webkitSupportsFullscreen", true);
+
+            endTest();
+        }, { once: true });
+
+    </script>
+</head>
+<body>
+    <video controls playsinline></video>
+    <p>Test that video.webkitSupportsFullscreen returns false unless the setting is enbled.</p>
+</body>
+</html>

@@ -1,0 +1,23 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "BentleyOttmann1.cpp",
+        "BruteForceCrossings.cpp",
+        "Contour.cpp",
+        "EventQueue.cpp",
+        "Int96.cpp",
+        "Myers.cpp",
+        "Point.cpp",
+        "Segment.cpp",
+        "SweepLine.cpp",
+    ],
+    visibility = ["//modules/bentleyottmann:__pkg__"],
+)

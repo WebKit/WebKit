@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<h1>Test: getSVGDocument on iframe, embed, frame and object elements</h1>
+<div id="log"></div>
+<script>
+    setup({ explicit_done: true });
+
+    promise_test(async (t) => {
+        let iframe = document.createElement("iframe");
+        iframe.src = "resources/getsvgdocument.svg";
+        document.body.appendChild(iframe);
+        await new Promise(resolve => iframe.onload = resolve);
+        assert_true(!!iframe.getSVGDocument, "iframe should have getSVGDocument");
+        assert_equals(iframe.getSVGDocument().toString(), "[object XMLDocument]");
+        iframe.remove(); }, "Testing getSVGDocument on iframe");
+
+    promise_test(async (t) => {
+        let embed = document.createElement("embed");
+        embed.src = "resources/getsvgdocument.svg";
+        document.body.appendChild(embed);
+        await new Promise(resolve => embed.onload = resolve);
+        assert_true(!!embed.getSVGDocument, "embed should have getSVGDocument");
+        assert_equals(embed.getSVGDocument().toString(), "[object XMLDocument]");
+        embed.remove(); }, "Testing getSVGDocument on embed");
+
+    promise_test(async (t) => {
+        let object = document.createElement("object");
+        object.data = "resources/getsvgdocument.svg";
+        document.body.appendChild(object);
+        await new Promise(resolve => object.onload = resolve);
+        assert_true(!!object.getSVGDocument, "object should have getSVGDocument");
+        assert_equals(object.getSVGDocument().toString(), "[object XMLDocument]");
+        object.remove(); }, "Testing getSVGDocument on object");
+
+    promise_test(async (t) => {
+        let frame = document.createElement("frame");
+        frame.src = "resources/getsvgdocument.svg";
+        document.body.appendChild(frame);
+        await new Promise(resolve => frame.onload = resolve);
+        assert_false(!!frame.getSVGDocument, "frame should not have getSVGDocument");
+        frame.remove(); }, "Testing getSVGDocument on frame (should not be exposed)");
+
+    done();
+</script>
+</body>
+</html>

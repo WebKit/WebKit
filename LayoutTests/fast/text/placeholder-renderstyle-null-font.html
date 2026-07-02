@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html id="htmlElement">
+<head>
+<script>
+</script>
+</head>
+<body>
+This test makes sure that placeholder RenderStyles that we use during external stylesheet loads have a non-null font family. The test passes if there is no crash.
+<svg id="target"></svg>
+<script>
+if (window.testRunner)
+	testRunner.dumpAsText();
+
+document.getElementById("htmlElement").offsetTop;
+
+var link = document.createElement("link");
+link.rel = "stylesheet";
+link.href = "test.css";
+document.head.appendChild(link);
+
+var groupNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
+groupNode.style.display = "none";
+var target = document.getElementById("target");
+target.appendChild(groupNode);
+window.getComputedStyle(groupNode).fontFamily;
+</script>
+</body>
+</html>

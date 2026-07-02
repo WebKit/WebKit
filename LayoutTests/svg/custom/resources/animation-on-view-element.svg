@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <g style="fill: none; stroke-width: 24; stroke-linecap: round">
+    <g style="stroke: #c9ecba">
+      <line x1="20" y1="20" x2="75" y2="20"/>
+      <line x1="47" y1="20" x2="47" y2="94"/>
+    </g>
+    <g style="stroke: #b0f2f4">
+      <path style="stroke-linejoin: round" d="m 167.5,76 1,74 -46,0 -0.5,-74"/>
+      <path style="stroke-linejoin: square" d="m 75,76,0,74,45,0"/>
+    </g>
+  </g>
+
+  <view id="customView" viewBox="60 85 121 74">
+    <animate attributeName="viewBox" dur="2s" begin="1s" to="0 0 200 200" fill="freeze"/>
+  </view>
+</svg>

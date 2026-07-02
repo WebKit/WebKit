@@ -1,0 +1,6 @@
+
+PASS Expected navigator.globalPrivacyControl value (true) is read from the window
+PASS Expected navigator.globalPrivacyControl value (true) is read from the dedicated worker
+PASS Expected navigator.globalPrivacyControl value (false) is read from the window
+PASS Expected navigator.globalPrivacyControl value (false) is read from the dedicated worker
+

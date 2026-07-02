@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+test(() => {
+    const model = document.createElement("model");
+    assert_idl_attribute(model, "width", "width is defined");
+    assert_idl_attribute(model, "height", "width is defined");
+}, "HTMLModelElement has width and height properties");
+
+test(() => {
+    const model = document.createElement("model");
+    model.setAttribute("width", "100");
+    model.setAttribute("height", "200");
+    assert_equals(model.width, 100, "width attribute value is reflected by HTMLModelElement width property");
+    assert_equals(model.height, 200, "height attribute value is reflected by HTMLModelElement height property");
+}, "HTMLModelElement width and height properties reflect width and height attribute values");
+
+test(() => {
+    const model = document.createElement("model");
+    model.width = 100;
+    model.height = 200;
+    assert_equals(model.getAttribute("width"), "100", "HTMLModelElement width property value is reflected by width attribute");
+    assert_equals(model.getAttribute("height"), "200", "HTMLModelElement height property value is reflected by height attribute");
+}, "<model> width and height attributes reflect HTMLModelElement width and height properties");
+
+test(() => {
+    const model = document.createElement("model");
+    document.body.append(model);
+    assert_equals(getComputedStyle(model).width, "300px", "default width is 300");
+    assert_equals(getComputedStyle(model).height, "150px", "default height is 150");
+    model.remove();
+}, "<model> has default CSS size when no width or height attribute is used");
+
+test(() => {
+    const model = document.createElement("model");
+    model.width = "400";
+    model.height = "100";
+    document.body.append(model);
+    assert_equals(getComputedStyle(model).width, "400px", "automatic size is influenced by width attribute");
+    assert_equals(getComputedStyle(model).height, "100px", "automatic size is influenced by height attribute");
+    model.remove();
+}, "<model> width and height attributes influence automatic size");
+
+test(() => {
+    const model = document.createElement("model");
+    model.style.width = "200px";
+    model.style.height = "50px";
+    model.width = "400";
+    model.height = "100";
+    document.body.append(model);
+    assert_equals(getComputedStyle(model).width, "200px", "non-auto width value wins over width attribute");
+    assert_equals(getComputedStyle(model).height, "50px", "non-auto height value wins over height attribute");
+    model.remove();
+}, "<model> width and height attributes do not win over non-auto width and height property values");
+
+test(() => {
+    const model = document.createElement("model");
+    model.width = 200;
+    model.style.aspectRatio = "1 / 2";
+    document.body.append(model);
+    assert_equals(getComputedStyle(model).height, "400px", "aspect-ratio influences size");
+    model.remove();
+}, "<model> size computation takes aspect-ratio property into account");
+</script>

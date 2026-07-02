@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:s="http://www.w3.org/2000/svg">
+    <script><![CDATA[
+        function createSVGElement(name, attrs, parentElement) {
+            const svgNamespace = "http://www.w3.org/2000/svg";
+            var element = document.createElementNS(svgNamespace, name);
+
+            for (var key in attrs)
+                element.setAttribute(key, attrs[key]);
+
+            parentElement.appendChild(element);
+            return element;
+        }
+
+        function createHTMLElement(name) {
+            const xhtmlNamespace = "http://www.w3.org/1999/xhtml";
+            return document.createElementNS(xhtmlNamespace, name);
+        }
+
+        var root = document.documentElement;
+
+        var foreignObject1 = createSVGElement("foreignObject", { x: 10, y: 10, width: 100, height: 100 }, root);
+        foreignObject1.appendChild(createHTMLElement("div"));
+        foreignObject1.lastChild.innerHTML =
+            "<h2>ABC</h2>" +
+            "<table style='border: 1px solid black;'>" +
+                "<thead>" +
+                    "<tr>" +
+                        "<th>A</th>" +
+                        "<th>B</th>" +
+                        "<th>C</th>" +
+                    "</tr>" +
+                "</thead>" +
+            "</table>";
+
+
+        var foreignObject2 = createSVGElement("foreignObject", { x: 120, y: 10, width: 100, height: 100 }, root);
+        foreignObject2.appendChild(createHTMLElement("h:div"));
+        foreignObject2.lastChild.innerHTML =
+            "<h:h2>DEF</h:h2>" +
+            "<h:table style='border: 1px solid black;'>" +
+                "<h:thead>" +
+                    "<h:tr>" +
+                        "<h:th>D</h:th>" +
+                        "<h:th>E</h:th>" +
+                        "<h:th>F</h:th>" +
+                    "</h:tr>" +
+                "</h:thead>" +
+            "</h:table>";
+
+        var foreignObject3 = createSVGElement("foreignObject", { x: 10, y: 120, width: 100, height: 100 }, root);
+        foreignObject3.appendChild(createHTMLElement("h:div"));
+        foreignObject3.lastChild.innerHTML = 
+            "<svg>" +
+                "<rect width='100' height='100' fill='green'/>" +
+            "</svg>";
+
+        var foreignObject4 = createSVGElement("foreignObject", { x: 120, y: 120, width: 100, height: 100 }, root);
+        foreignObject4.appendChild(createHTMLElement("h:div"));
+        foreignObject4.lastChild.innerHTML = 
+            "<s:svg>" +
+                "<s:rect width='100' height='100' fill='green'/>" +
+            "</s:svg>";
+
+        var svg1 = createSVGElement("svg", { }, root);
+        var g1 = createSVGElement("g", { transform: 'translate(10, 230)' }, svg1);
+        g1.innerHTML = "<rect width='100' height='100' fill='green'/>";
+
+        var svg2 = createSVGElement("s:svg", { }, root);
+        var g2 = createSVGElement("s:g", { transform: 'translate(120, 230)' }, svg2);
+        g2.innerHTML = "<s:rect width='100' height='100' fill='green'/>";
+    ]]></script>
+</svg>

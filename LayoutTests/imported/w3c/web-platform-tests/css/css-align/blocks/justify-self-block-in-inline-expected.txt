@@ -1,0 +1,11 @@
+wide inline-block
+block-in-inline
+inline-block
+
+FAIL .block-in-inline 1 assert_equals:
+<div style="background: orange; height: 50px;" class="block-in-inline" data-expected-width="200">
+    block-in-inline
+  </div>
+width expected 200 but got 782
+PASS .block-in-inline 2
+

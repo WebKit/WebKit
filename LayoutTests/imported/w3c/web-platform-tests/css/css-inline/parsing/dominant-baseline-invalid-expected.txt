@@ -1,0 +1,6 @@
+
+PASS e.style['dominant-baseline'] = "normal" should not set the property value
+PASS e.style['dominant-baseline'] = "none" should not set the property value
+PASS e.style['dominant-baseline'] = "alphabetic, ideographic" should not set the property value
+PASS e.style['dominant-baseline'] = "middle central" should not set the property value
+

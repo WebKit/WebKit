@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div contenteditable=true id="content" role="textbox">
+wrods is misspelled aab lotsi nowadays. euep.
+</div>
+
+<script>
+let output = "This tests that misspelling ranges are properly retrieved in the fashion that a spell checker would.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    var content = document.getElementById("content");
+    content.focus();
+    var text = accessibilityController.focusedElement;
+
+    var textMarkerRange = text.textMarkerRangeForElement(text);
+    var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    output += `textMarkerRange start: ${text.indexForTextMarker(startMarker)}\n`;
+    var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
+    output += `textMarkerRange end: ${text.indexForTextMarker(endMarker)}\n`;
+
+    // Find the first misspelling, "wrods".
+    var startRange = text.textMarkerRangeForMarkers(startMarker, startMarker);
+    startMarker = text.startTextMarkerForTextMarkerRange(startRange);
+    output += `startRange start: ${text.indexForTextMarker(startMarker)}\n`;
+    endMarker = text.endTextMarkerForTextMarkerRange(startRange);
+    output += `startRange end: ${text.indexForTextMarker(endMarker)}\n`;
+
+    setTimeout(async () => {
+        misspellingRange = null;
+        await waitFor(() => {
+            misspellingRange = text.misspellingTextMarkerRange(startRange, true);
+            return text.stringForTextMarkerRange(misspellingRange) == "wrods";
+        });
+        startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling start: ${text.indexForTextMarker(startMarker)}\n`;
+        endMarker = text.endTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling end: ${text.indexForTextMarker(endMarker)}\n`;
+        output += expect("text.stringForTextMarkerRange(misspellingRange)", "'wrods'");
+
+        // Find the next one, "aab".
+        startRange = misspellingRange;
+        misspellingRange = text.misspellingTextMarkerRange(startRange, true);
+        startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling start: ${text.indexForTextMarker(startMarker)}\n`;
+        endMarker = text.endTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling end: ${text.indexForTextMarker(endMarker)}\n`;
+        output += expect("text.stringForTextMarkerRange(misspellingRange)", "'aab'");
+
+        // Find the next one, "lotsi".
+        startRange = misspellingRange;
+        misspellingRange = text.misspellingTextMarkerRange(startRange, true);
+        startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling start: ${text.indexForTextMarker(startMarker)}\n`;
+        endMarker = text.endTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling end: ${text.indexForTextMarker(endMarker)}\n`;
+        output += expect("text.stringForTextMarkerRange(misspellingRange)", "'lotsi'");
+
+        // Find the next one, "euep".
+        startRange = misspellingRange;
+        misspellingRange = text.misspellingTextMarkerRange(startRange, true);
+        startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling start: ${text.indexForTextMarker(startMarker)}\n`;
+        endMarker = text.endTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling end: ${text.indexForTextMarker(endMarker)}\n`;
+        output += expect("text.stringForTextMarkerRange(misspellingRange)", "'euep'");
+
+        // Find the previous one, "lotsi".
+        startRange = misspellingRange;
+        misspellingRange = text.misspellingTextMarkerRange(startRange, false);
+        startMarker = text.startTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling start: ${text.indexForTextMarker(startMarker)}\n`;
+        endMarker = text.endTextMarkerForTextMarkerRange(misspellingRange);
+        output += `misspelling end: ${text.indexForTextMarker(endMarker)}\n`;
+        output += expect("text.stringForTextMarkerRange(misspellingRange)", "'lotsi'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Tests that immediateDescendantsOnly search on an ignored FrameHost returns no results.
+The FrameHost is ignored with ENABLE_ACCESSIBILITY_LOCAL_FRAME. Without the fix, the search
+dispatches to the child frame and returns its content, which VoiceOver cannot place in the
+FrameHost's (empty) children list, causing an infinite navigation loop.
+
+PASS: frameHost.rawRoleForTesting.includes('FrameHost') === true
+PASS: frameHost.isIgnored === true
+PASS: backwardResults.length === 0
+PASS: forwardResults.length === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Content Before Iframe
+
+
+Content After Iframe

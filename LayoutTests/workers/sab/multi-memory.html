@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+</head>
+<body>
+<script>
+function getOrCreate(id, tagName)
+{
+    var element = document.getElementById(id);
+    if (element)
+        return element;
+    
+    element = document.createElement(tagName);
+    element.id = id;
+    var parent = document.body || document.documentElement;
+    var refNode = parent.firstChild;
+    
+    parent.insertBefore(element, refNode);
+    return element;
+}
+
+function debug(msg)
+{
+    var span = document.createElement("span");
+    getOrCreate("console", "div").appendChild(span); // insert it first so XHTML knows the namespace
+    span.innerHTML = msg + '<br />';
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var verbose = false;
+
+var sab = new SharedArrayBuffer(3 * 4);
+
+var didStart = new Int32Array(sab, 0, 1);
+var shouldGo = new Int32Array(sab, 4, 1);
+var didEnd = new Int32Array(sab, 8, 1);
+
+var numWorkers = 0;
+function startWorker(file)
+{
+    if (verbose)
+        debug("Starting worker: " + file);
+    numWorkers++;
+    var worker = new Worker(file);
+    worker.onmessage = function(event) {
+        if (event.data == "done") {
+            if (verbose)
+                debug("Finished worker: " + file);
+            if (--numWorkers)
+                return;
+            debug("All workers done!");
+            done();
+            return;
+        }
+        if (event.data.indexOf("Error") == 0) {
+            debug("Test failed: "+ event.data);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        if (verbose)
+            debug("Event from " + file + ": " + event.data);
+    };
+    worker.postMessage({didStart: didStart, shouldGo: shouldGo, didEnd: didEnd, shouldShareBuffer: true});
+}
+
+function done()
+{
+    if (didStart[0] != 1)
+        throw "Error: Bad value at didStart[0]: " + didStart[0];
+    if (shouldGo[0] != 1)
+        throw "Error: Bad value at shouldGo[0]: " + shouldGo[0];
+    if (didEnd[0] != 1)
+        throw "Error: Bad value at didEnd[0]: " + didEnd[0];
+    debug("Test passed!");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+startWorker("multi-memory-worker-1.js");
+startWorker("multi-memory-worker-2.js");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+A Z
+
+PASS testing word-spacing: normal
+PASS testing word-spacing: 0
+PASS testing word-spacing: 1.27cm
+PASS testing word-spacing: 1em
+PASS testing word-spacing: 0.5in
+PASS testing word-spacing: 25.4mm
+PASS testing word-spacing: 5pc
+PASS testing word-spacing: 18pt
+PASS testing word-spacing: 7px
+PASS testing word-spacing: 101.6Q
+PASS testing word-spacing: 3rem
+PASS testing word-spacing: 0ch
+

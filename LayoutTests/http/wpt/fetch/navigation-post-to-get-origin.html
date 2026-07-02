@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Navigation and POST to GET redirect</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+<form id="myform" method="POST" action="/common/redirect.py?status=302&location=/WebKit/fetch/resources/echo-origin.py" target="targetFrame">
+  <input name="the-input" value="input value goes here">
+</form>
+<iframe name="targetFrame" src="about:blank"></iframe>
+<form id="myform2" method="POST" action="/common/redirect.py?status=303&location=/WebKit/fetch/resources/echo-origin.py" target="targetFrame2">
+  <input name="the-input" value="input value goes here">
+</form>
+<iframe name="targetFrame2" src="about:blank"></iframe>
+<script>
+promise_test(async t => {
+    myform.submit();
+    const data = await new Promise(resolve => onmessage = (e) => resolve(e.data));
+    assert_equals(data, "no header");
+}, "No origin header after POST submission and 302 redirection");
+
+promise_test(async t => {
+    myform2.submit();
+    const data = await new Promise(resolve => onmessage = (e) => resolve(e.data));
+    assert_equals(data, "no header");
+}, "No origin header after POST submission and 303 redirection");
+</script>
+  </body>
+</html>

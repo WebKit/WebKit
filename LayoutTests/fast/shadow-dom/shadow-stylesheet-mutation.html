@@ -1,0 +1,9 @@
+<div id=host></div>
+<script>
+const shadow = host.attachShadow({ mode: "open" });
+shadow.innerHTML = `<style></style><div>This should be green</div>`;
+const style = shadow.querySelector("style");
+style.sheet.addRule("div", "color: red");
+host.offsetWidth;
+style.sheet.addRule("div", "color: green");
+</script>

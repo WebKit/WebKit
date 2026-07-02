@@ -1,0 +1,6 @@
+b1
+d1
+b2
+
+FAIL document.setSequentialFocusStartingPoint should set the sequential focus starting point on any element. promise_test: Unhandled rejection with value: object "TypeError: document.setSequentialFocusStartingPoint is not a function. (In 'document.setSequentialFocusStartingPoint(d1)', 'document.setSequentialFocusStartingPoint' is undefined)"
+

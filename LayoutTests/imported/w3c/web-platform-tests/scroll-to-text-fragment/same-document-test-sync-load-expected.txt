@@ -1,0 +1,4 @@
+This is a line of text.
+
+PASS Same-document text directive navigation before loading the document has finished
+

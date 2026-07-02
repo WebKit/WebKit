@@ -1,0 +1,17 @@
+
+PASS resolved height with styles {"height":"auto"}
+PASS resolved height with styles {"height":"auto","box-sizing":"border-box"}
+PASS resolved height with styles {"height":"calc-size(auto, size)"}
+PASS resolved height with styles {"height":"calc-size(auto, size)","box-sizing":"border-box"}
+FAIL resolved height with styles {"height":"calc-size(auto, size * 2)"} assert_equals: getComputedStyle(target).height expected "14px" but got "7px"
+FAIL resolved height with styles {"height":"calc-size(auto, size * 2)","box-sizing":"content-box"} assert_equals: getComputedStyle(target).height expected "14px" but got "7px"
+FAIL resolved height with styles {"height":"calc-size(auto, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).height expected "38px" but got "19px"
+FAIL resolved height with styles {"height":"calc-size(min-content, size * 2)"} assert_equals: getComputedStyle(target).height expected "14px" but got "7px"
+FAIL resolved height with styles {"height":"calc-size(fit-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).height expected "38px" but got "19px"
+FAIL resolved height with styles {"min-height":"calc-size(min-content, size * 2)"} assert_equals: getComputedStyle(target).height expected "14px" but got "7px"
+FAIL resolved height with styles {"min-height":"calc-size(fit-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).height expected "38px" but got "19px"
+FAIL resolved height with styles {"height":"200px","max-height":"calc-size(min-content, size * 2)"} assert_equals: getComputedStyle(target).height expected "14px" but got "200px"
+FAIL resolved height with styles {"height":"200px","max-height":"calc-size(fit-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).height expected "38px" but got "200px"
+FAIL resolved height with styles {"height":"calc-size(11px, size * 2)"} assert_equals: getComputedStyle(target).height expected "22px" but got "7px"
+FAIL resolved height with styles {"height":"calc-size(11px, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).height expected "22px" but got "19px"
+

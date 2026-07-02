@@ -1,0 +1,155 @@
+load("//bazel:skia_rules.bzl", "skia_cc_binary", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_binary(
+    name = "skottie_tool_cpu",
+    testonly = True,
+    srcs = [
+        "//modules/skottie/src:skottie_tool",
+    ],
+    defines = ["CPU_ONLY"],
+    deps = [
+        ":skottie",
+        "//:core",
+        "//:fontmgr_empty_freetype",
+        "//:jpeg_decode_codec",
+        "//:png_decode_codec",
+        "//:png_encode_codec",
+        "//:webp_decode_codec",
+        "//modules/skottie/utils:skottie_utils",
+        "//modules/skresources",
+        "//modules/skshaper:skshaper_harfbuzz",
+        "//modules/skshaper:skshaper_unicode",
+        "//modules/skunicode:skunicode_icu",
+        "//src/base",
+        "//src/core:core_priv",
+        "//tools/flags:cmd_flags",
+    ] + select({
+        "@platforms//os:linux": [
+            "@skia//:fontmgr_fontconfig",
+            "@skia//:freetype_support",
+        ],
+        "@platforms//os:macos": ["//:fontmgr_coretext"],
+        "//conditions:default": ["//:fontmgr_empty_freetype"],
+    }),
+)
+
+skia_cc_binary(
+    name = "skottie_tool_gpu",
+    testonly = True,
+    srcs = [
+        "//modules/skottie/src:skottie_tool",
+    ],
+    defines = ["GPU_ONLY"],
+    deps = [
+        ":skottie",
+        "//:core",
+        "//:fontmgr_empty_freetype",
+        "//:jpeg_decode_codec",
+        "//:png_decode_codec",
+        "//:png_encode_codec",
+        "//:webp_decode_codec",
+        "//modules/skottie/utils:skottie_utils",
+        "//modules/skresources",
+        "//modules/skshaper:skshaper_harfbuzz",
+        "//modules/skshaper:skshaper_unicode",
+        "//modules/skunicode:skunicode_icu",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu/ganesh/gl:ganesh_gl_TEST_UTIL",
+        "//tools/flags:cmd_flags",
+        "//tools/ganesh:ganesh_gl_utils",
+    ],
+)
+
+skia_cc_binary(
+    name = "skottie_preshape_tool",
+    testonly = True,
+    srcs = [
+        "//modules/skottie/utils:skottie_preshape_tool",
+    ],
+    deps = [
+        ":skottie",
+        "//:core",
+        "//modules/skottie/utils:skottie_utils",
+        "//modules/skottie/utils:text_preshape",
+        "//modules/skresources",
+        "//modules/skshaper:skshaper_harfbuzz",
+        "//modules/skshaper:skshaper_unicode",
+        "//modules/skunicode:skunicode_icu",
+        "//src/base",
+        "//src/core:core_priv",
+        "//tools/flags:cmd_flags",
+    ] + select({
+        "@platforms//os:linux": [
+            "@skia//:fontmgr_fontconfig",
+            "@skia//:freetype_support",
+        ],
+        "@platforms//os:macos": ["//:fontmgr_coretext"],
+        "//conditions:default": ["//:fontmgr_empty_freetype"],
+    }),
+)
+
+skia_cc_library(
+    name = "skottie",
+    srcs = [
+        "//modules/skottie/src:private_hdrs",
+        "//modules/skottie/src:srcs",
+    ],
+    hdrs = ["//modules/skottie/include:hdrs"],
+    defines = [
+        "SK_ENABLE_SKOTTIE",
+    ],
+    features = ["layering_check"],
+    local_defines = [
+        "SK_ENABLE_SKOTTIE_SKSLEFFECT",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        ":textshaper",
+        "//:core",
+        "//modules/jsonreader",
+        "//modules/skresources",
+        "//modules/sksg",
+        "//modules/sksg:sksg_priv",
+        "//modules/skshaper:skshaper_core",
+        "//modules/skunicode:skunicode_core",
+        "//src/base",
+        "//src/codec:codec_support_priv",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "skottie_priv",
+    hdrs = [
+        "//modules/skottie/include:hdrs",
+        "//modules/skottie/src:private_hdrs",
+        "//modules/skottie/src/text:private_hdrs",
+    ],
+    visibility = ["//modules/skottie/utils:__pkg__"],
+    deps = [":skottie"],
+)
+
+# A tiny subset of Skottie, exposing text-shaping related functions
+# for clients which require low-level access to shaping metrics.
+# There is no animation code available here.
+skia_cc_library(
+    name = "textshaper",
+    srcs = ["//modules/skottie/src/text:text_shaper_srcs"],
+    hdrs = ["//modules/skottie/include:text_shaper_hdrs"],
+    features = ["layering_check"],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:core",
+        "//modules/skshaper:skshaper_core",
+        "//modules/skunicode:skunicode_core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)

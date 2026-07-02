@@ -1,0 +1,89 @@
+# carton snapshot format: version 1.0
+DISTRIBUTIONS
+  ExtUtils-MakeMaker-7.32
+    pathname: B/BI/BINGOS/ExtUtils-MakeMaker-7.32.tar.gz
+    provides:
+      ExtUtils::Command 7.32
+      ExtUtils::Command::MM 7.32
+      ExtUtils::Liblist 7.32
+      ExtUtils::Liblist::Kid 7.32
+      ExtUtils::MM 7.32
+      ExtUtils::MM_AIX 7.32
+      ExtUtils::MM_Any 7.32
+      ExtUtils::MM_BeOS 7.32
+      ExtUtils::MM_Cygwin 7.32
+      ExtUtils::MM_DOS 7.32
+      ExtUtils::MM_Darwin 7.32
+      ExtUtils::MM_MacOS 7.32
+      ExtUtils::MM_NW5 7.32
+      ExtUtils::MM_OS2 7.32
+      ExtUtils::MM_QNX 7.32
+      ExtUtils::MM_UWIN 7.32
+      ExtUtils::MM_Unix 7.32
+      ExtUtils::MM_VMS 7.32
+      ExtUtils::MM_VOS 7.32
+      ExtUtils::MM_Win32 7.32
+      ExtUtils::MM_Win95 7.32
+      ExtUtils::MY 7.32
+      ExtUtils::MakeMaker 7.32
+      ExtUtils::MakeMaker::Config 7.32
+      ExtUtils::MakeMaker::Locale 7.32
+      ExtUtils::MakeMaker::_version 7.32
+      ExtUtils::MakeMaker::charstar 7.32
+      ExtUtils::MakeMaker::version 7.32
+      ExtUtils::MakeMaker::version::regex 7.32
+      ExtUtils::MakeMaker::version::vpp 7.32
+      ExtUtils::Mkbootstrap 7.32
+      ExtUtils::Mksymlists 7.32
+      ExtUtils::testlib 7.32
+      MM 7.32
+      MY 7.32
+    requirements:
+      Data::Dumper 0
+      Encode 0
+      File::Basename 0
+      File::Spec 0.8
+      Pod::Man 0
+      perl 5.006
+  Parallel-ForkManager-1.19
+    pathname: Y/YA/YANICK/Parallel-ForkManager-1.19.tar.gz
+    provides:
+      Parallel::ForkManager 1.19
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      File::Path 0
+      File::Spec 0
+      File::Temp 0
+      POSIX 0
+      Storable 0
+      perl 5.006
+      strict 0
+  YAML-1.24
+    pathname: T/TI/TINITA/YAML-1.24.tar.gz
+    provides:
+      YAML 1.24
+      YAML::Any 1.24
+      YAML::Dumper undef
+      YAML::Dumper::Base undef
+      YAML::Error undef
+      YAML::Loader undef
+      YAML::Loader::Base undef
+      YAML::Marshall undef
+      YAML::Mo undef
+      YAML::Node undef
+      YAML::Tag undef
+      YAML::Type::blessed undef
+      YAML::Type::code undef
+      YAML::Type::glob undef
+      YAML::Type::ref undef
+      YAML::Type::regexp undef
+      YAML::Type::undef undef
+      YAML::Types undef
+      YAML::Warning undef
+      yaml_mapping undef
+      yaml_scalar undef
+      yaml_sequence undef
+    requirements:
+      ExtUtils::MakeMaker 0
+      perl 5.008001

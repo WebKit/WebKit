@@ -1,0 +1,98 @@
+
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="atLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atDefault";testValueName="overLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="atLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="underDefault";testValueName="overLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="atLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="atMaximum";testValueName="overLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="atLimit";order="shiftByHalf"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";order="forward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";order="backward"
+PASS :createBindGroupLayout,at_over:limitTest="overMaximum";testValueName="overLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="atLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atDefault";testValueName="overLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="atLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="underDefault";testValueName="overLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="atLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="atMaximum";testValueName="overLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="atLimit";order="shiftByHalf"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";order="forward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";order="backward"
+PASS :createPipelineLayout,at_over:limitTest="overMaximum";testValueName="overLimit";order="shiftByHalf"
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="atDefault";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="underDefault";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="betweenDefaultAndMaximum";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="atMaximum";testValueName="overLimit";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="atLimit";async=true
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=false
+PASS :createPipeline,at_over:limitTest="overMaximum";testValueName="overLimit";async=true
+FAIL :auto_upgrades_per_stage,maxStorageBuffersPerShaderStage: assert_unreached:
+  - EXPECTATION FAILED: device.limits.maxStorageBuffersPerShaderStage(8) is >= adapter.limits.maxStorageBuffersInVertexStage(44)
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:375:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:1317:15
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:528:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:680:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
+ Reached unreachable code
+FAIL :auto_upgraded_from_per_stage,maxStorageBuffersPerShaderStage: assert_unreached:
+  - EXPECTATION FAILED: maxStorageBuffersInVertexStage(8) === 44
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:375:43
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/capability_checks/limits/limit_utils.js:1343:13
+    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:528:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:680:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
+ Reached unreachable code
+

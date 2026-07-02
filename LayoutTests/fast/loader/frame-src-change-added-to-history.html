@@ -1,0 +1,28 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.dumpChildFramesAsText();
+  testRunner.dumpBackForwardList();
+  testRunner.waitUntilDone();
+}
+
+var count = 4;
+
+function frameLoaded() {
+  if (count == 0) {
+    if (window.testRunner)
+      testRunner.notifyDone();
+  } else {
+    document.getElementsByTagName('iframe')[0].src = "data:," + count--;
+  }
+}
+
+</script>
+</head>
+<body>
+<iframe onload="setTimeout(frameLoaded, 0)"></iframe>
+</body>
+</html>

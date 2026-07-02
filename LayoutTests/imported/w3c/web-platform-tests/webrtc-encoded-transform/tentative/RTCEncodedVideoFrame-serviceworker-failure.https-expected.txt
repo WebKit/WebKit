@@ -1,0 +1,3 @@
+
+FAIL RTCEncodedVideoFrame cannot cross agent clusters, service worker edition promise_test: Unhandled rejection with value: object "TypeError: videoSender.createEncodedStreams is not a function. (In 'videoSender.createEncodedStreams()', 'videoSender.createEncodedStreams' is undefined)"
+

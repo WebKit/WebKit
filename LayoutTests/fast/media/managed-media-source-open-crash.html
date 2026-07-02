@@ -1,0 +1,14 @@
+<script>
+  onload = async () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let video0 = document.createElement('video');
+    let managedMediaSource = new ManagedMediaSource();
+    video0.srcObject = managedMediaSource;
+    await navigator.locks.query();
+    video0.src = 'data:';
+    managedMediaSource.duration = 0;
+    document.body.offsetHeight;
+  };
+</script>
+<body>PASS if no crash.</body>

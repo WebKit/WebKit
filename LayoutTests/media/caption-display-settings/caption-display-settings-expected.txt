@@ -1,0 +1,4 @@
+
+EXPECTED (video.showCaptionDisplaySettings != 'undefined') OK
+END OF TEST
+

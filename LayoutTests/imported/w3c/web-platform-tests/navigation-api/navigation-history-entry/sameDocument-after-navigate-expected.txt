@@ -1,0 +1,4 @@
+
+
+PASS entry.sameDocument after cross-document navigation
+

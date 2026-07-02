@@ -1,0 +1,8 @@
+Test for pointerevent click activation trigger
+
+Tests user activation from a pointer click.
+
+Click anywhere in the document.
+
+PASS Activation through mouse pointerevent click
+

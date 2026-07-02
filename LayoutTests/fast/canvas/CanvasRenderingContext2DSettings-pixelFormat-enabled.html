@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the colorType member of CanvasRenderingContext2DSettings is supported when CanvasColorTypeEnabled=true.");
+
+    function testColorType(settings, expectedColorType) {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d", settings);
+        window.testSettings = context.getContextAttributes();
+        shouldBeEqualToString("testSettings.colorType", expectedColorType);
+    }
+
+    // Test default value of colorType is "unorm8".
+    testColorType(undefined, "unorm8");
+
+    // Test setting colorType to a valid value works.
+    testColorType({ colorType: "unorm8" }, "unorm8");
+    testColorType({ colorType: "float16" }, "float16");
+
+    // Test setting colorType to an unsupported value.
+    shouldThrowErrorName(`document.createElement("canvas").getContext("2d", { colorType: "foo" })`, "TypeError")
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

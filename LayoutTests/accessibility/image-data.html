@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<img src="resources/cake.png" id="image" onload="runTest();">
+<div id="nonimage">Not an image</div>
+
+<script>
+var output = "This tests that AXImageDataSize and AXImageData can be retrieved for image elements.\n\n";
+
+window.jsTestIsAsync = true;
+
+var image, nonImage;
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    image = accessibilityController.accessibleElementById("image");
+    // imageDataSize should return non-empty dimensions for an image.
+    output += expect("image.imageDataSize.indexOf('AXImageDataSize') >= 0", "true");
+    output += expect("image.imageDataSize.indexOf('{0, 0}') >= 0", "false");
+
+    // imageDataForParameters with resize 100x100 should return 100*100*4 = 40000 bytes.
+    output += expect("image.imageDataForParameters(100, 100)", "'AXImageData: 40000 bytes'");
+
+    // Native-size fetch (0, 0 means use original dimensions). cake.png is 280x209 = 234080 bytes.
+    output += expect("image.imageDataForParameters(0, 0)", "'AXImageData: 234080 bytes'");
+
+    // Invalid format should return null.
+    output += expect("image.imageDataForParametersWithFormat(100, 100, 'PNG')", "'(null)'");
+
+    // Subrect extraction: resize to 200x200, extract a 50x50 subrect = 50*50*4 = 10000 bytes.
+    output += expect("image.imageDataForSubrect(200, 200, 10, 10, 50, 50)", "'AXImageData: 10000 bytes'");
+
+    // Out-of-bounds subrect: resize to 100x100, request subrect starting at (80, 80) with size 50x50.
+    // The extraction rect extends beyond the buffer, but getPixelBuffer clips and zero-fills.
+    // The returned buffer is still 50*50*4 = 10000 bytes.
+    output += expect("image.imageDataForSubrect(100, 100, 80, 80, 50, 50)", "'AXImageData: 10000 bytes'");
+
+    // Out-of-bounds subrect without resize: native size is 280x209, request subrect at (250, 200) with size 100x100.
+    // The returned buffer is still 100*100*4 = 40000 bytes due to aforementioned zero-filling.
+    output += expect("image.imageDataForSubrect(0, 0, 250, 200, 100, 100)", "'AXImageData: 40000 bytes'");
+
+    nonImage = accessibilityController.accessibleElementById("nonimage");
+    output += expect("nonImage.imageDataForParameters(100, 100)", "'(null)'");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

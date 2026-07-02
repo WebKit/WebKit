@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("resources/ruby-expansion.svg#Litherum") format(svg);
+}
+body {
+  text-align: justify;
+  font: 40px Litherum, 'Lucida Grande';
+  -webkit-font-smoothing: none;
+  margin: 0px;
+}
+span {
+  color: transparent;
+}
+div {
+  height: 100px;
+}
+</style>
+</head>
+<body>
+<div dir="rtl">&#x5e2;<ruby><rb>&#x304e;</rb></ruby>&#x5e2; aaaaaaaaaaaaaaaaaaaa</div>
+<div dir="rtl">&#x5e2;&#x5e2;<ruby><rb>&#x304e;</rb></ruby>&#x5e2; aaaaaaaaaaaaaaaaaaaa</div>
+<div dir="rtl">&#x5e2;<ruby><rb>&#x304e;</rb></ruby>&#x5e2;&#x5e2; aaaaaaaaaaaaaaaaaaaa</div>
+<div dir="rtl">&#x5e2;&#x5e2;<ruby><rb>&#x304e;</rb></ruby>&#x5e2;&#x5e2; aaaaaaaaaaaaaaaaaaaa</div>
+<div><ruby><rb>&#x304e;</rb></ruby>a<ruby><rb>&#x304e;</rb></ruby> aaaaaaaaaaaaaaaaaaaa</div>
+</body>
+</html>

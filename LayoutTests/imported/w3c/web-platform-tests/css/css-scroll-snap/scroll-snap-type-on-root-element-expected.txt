@@ -1,0 +1,5 @@
+
+PASS The scroll-snap-type on the root element is applied
+PASS The writing-mode (vertical-lr) on the body is used
+PASS The writing-mode (horizontal-tb) on the body is used
+

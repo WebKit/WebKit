@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function blurHandler() {
+    var body = document.getElementById("testBody");
+    var frame = document.getElementById("testFrame");
+    body.appendChild(frame);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function audioHandler() {
+    var frameSet = document.createElement("frameset");
+    frameSet.setAttribute("onblur", "blurHandler()");
+
+    var frame = document.getElementById("testFrame");
+    frame.focus();
+}
+</script>
+</head>
+<body id="testBody">
+    The test passes if it does not crash or assert in debug mode.
+    <audio src="test" onloadstart="audioHandler()"></audio>
+    <iframe id="testFrame" srcdoc="test"></iframe>
+</body>
+</html>

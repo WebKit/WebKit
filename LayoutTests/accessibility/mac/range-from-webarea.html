@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<p id="content">
+Hello world
+</p>
+
+<script>
+var output = "This test verifies the the correct ranges are returned when one of the markers points to a webarea.\n";
+
+if (window.accessibilityController) {
+    const webArea = accessibilityController.rootElement.childAtIndex(0);
+    const webAreaRange = webArea.textMarkerRangeForElement(webArea);
+    const webareaStartMarker = webArea.startTextMarkerForTextMarkerRange(webAreaRange);
+
+    const contentMarkerRange = webArea.textMarkerRangeForElement(accessibilityController.accessibleElementById("content").childAtIndex(0));
+    const endOfContentMarker = webArea.endTextMarkerForTextMarkerRange(contentMarkerRange);
+    const webAreaToContentRange = webArea.textMarkerRangeForMarkers(webareaStartMarker, endOfContentMarker);
+    output += `Web area to end of content string: ${webArea.stringForTextMarkerRange(webAreaToContentRange)}\n`;
+
+    const contentToWebAreaRange = webArea.textMarkerRangeForMarkers(endOfContentMarker, webareaStartMarker);
+    output += `End of content to web area start string: ${webArea.stringForTextMarkerRange(webAreaToContentRange)}\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>

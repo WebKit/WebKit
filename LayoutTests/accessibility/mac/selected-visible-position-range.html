@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="./resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content" contenteditable=true>
+    <p id="p1">First paragraph.</p>
+    <p id="p2">Last paragraph.</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests getting and setting the selected VisiblePosition range.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        // Select the last paragraph using DOM API.
+        selectTextInNode("p2");
+
+        // Get current selection range via accessibility API.
+        var content = accessibilityController.accessibleElementById("content");
+        setTimeout(async function() {
+            var selectedRange = null;
+            var selectedString = "";
+            var selectedIndex = -1;
+
+            await waitFor(() => {
+                selectedRange = content.selectedTextMarkerRange();
+                selectedString = content.stringForTextMarkerRange(selectedRange);
+                return selectedString == "Last paragraph.";
+            });
+            debug("PASS current selection is '" + selectedString + "'");
+
+            // Set the selection to the first paragraph via accessibility API.
+            var end = content.startTextMarkerForTextMarkerRange(selectedRange);
+            var start = content.previousParagraphStartTextMarkerForTextMarker(end);
+            var range = content.textMarkerRangeForMarkers(start, end);
+            content.setSelectedTextMarkerRange(range);
+
+            await waitFor(() => {
+                selectedRange = content.selectedTextMarkerRange();
+                selectedString = content.stringForTextMarkerRange(selectedRange);
+                return selectedString == "First paragraph.\n\n";
+            });
+            debug("PASS current selection is '" + selectedString + "'");
+
+            // Set the selection range to a collapsed range at the second character of the last paragraph.
+            end = content.nextTextMarker(end);
+            range = content.textMarkerRangeForMarkers(end, end);
+            content.setSelectedTextMarkerRange(range);
+
+            var index = -1;
+            await waitFor(() => {
+                selectedRange = content.selectedTextMarkerRange();
+                selectedString = content.stringForTextMarkerRange(selectedRange);
+                index = content.indexForTextMarker(content.startTextMarkerForTextMarkerRange(selectedRange));
+                return selectedString == "" && index == 19;
+            });
+            debug("PASS current selection is '" + selectedString + "'");
+            debug("PASS current selection index is " + index);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

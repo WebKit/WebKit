@@ -1,0 +1,3 @@
+evalCode1: function () { return evalCode1 + ' ' + captured; } ok
+evalCode2: function () { return evalCode2 + ' ' + captured; } bob in setCode2
+evalCode3: function () { return evalCode3 + ' ' + captured; } ok

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="contenteditable" contenteditable tabindex="0">helloworld</div>
+
+<script>
+var output = "This test exercises a combination of selectedTextRange, stringForRange, and newline manipulation.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var contenteditable;
+    setTimeout(async function() {
+        contenteditable = await waitForFocus("contenteditable");
+        contenteditable.setSelectedTextRange(5, 0);
+
+        output += await expectAsync("contenteditable.selectedTextRange", "'{5, 0}'");
+        contenteditable.insertText("\n");
+        output += await expectAsync("contenteditable.stringForRange(0, 11).replace(new RegExp('(?:\\r\\n|\\r|\\n)', 'g'), '[newline]')", "'hello[newline]world'");
+
+        output += await expectAsync("contenteditable.selectedTextRange", "'{6, 0}'");
+        output += await expectAsync("contenteditable.stringForRange(6, 5)", "'world'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

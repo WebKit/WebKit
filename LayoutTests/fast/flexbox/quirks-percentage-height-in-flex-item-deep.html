@@ -1,0 +1,36 @@
+<!doctype quirks>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<link rel="match" href="quirks-percentage-height-in-flex-item-deep-expected.html">
+<style>
+.flex {
+    display: flex;
+    font: 20px/1 Ahem;
+}
+
+.wrapper {
+    background: red;
+}
+
+.pct {
+    height: 100%;
+    min-height: 10px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+    background: green;
+}
+
+.px {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+    background: green;
+}
+</style>
+<p>Test passes if there is a filled green square and no red.</p>
+<!-- Same as quirks-percentage-height-in-flex-item.html but with several
+     wrapper divs between the flex item and the percentage-height element.
+     The stretch relayout must propagate through intermediate auto-height
+     ancestors to reach the percentage-height descendant. -->
+<div class="flex"><div class="wrapper"><div><div><div class="pct"></div><div class="px"></div></div></div></div></div>

@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    width: 320px;
+    height: 320px;
+    border: solid 2px silver;
+    box-sizing: border-box;
+}
+
+#editor {
+    width: inherit;
+    height: inherit;
+    font-size: 24px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="editor" contenteditable>
+        Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes.
+        The ones who see things differently. They're not fond of rules. You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things.
+    </div>
+</div>
+<p>Verifies that selection UI is hidden after the editable area becomes hidden, following a selection change. This test requires WebKitTestRunner.</p>
+<div>Caret rect after focus: <span id="focus-caret"></span></div>
+<div>Selection rects after select all: <span id="selection"></span></div>
+<div>Caret rect after collapsing: <span id="collapse-caret"></span></div>
+<script>
+function rectToString(rect) {
+    return `(left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)})`;
+}
+
+(async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 160);
+    document.querySelector("#focus-caret").textContent = rectToString(await UIHelper.getUICaretViewRect());
+
+    editor.style.opacity = 0;
+    document.execCommand("selectAll");
+    document.querySelector("#selection").textContent = (await UIHelper.getUISelectionViewRects()).map(rectToString).join(", ");
+
+    editor.style.opacity = 1;
+    getSelection().collapseToEnd();
+    document.querySelector("#collapse-caret").textContent = rectToString(await UIHelper.getUICaretViewRect());
+
+    testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

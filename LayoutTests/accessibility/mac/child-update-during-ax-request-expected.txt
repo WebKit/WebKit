@@ -1,0 +1,19 @@
+This test ensures that the accessiblity tree doesn't become broken when accessible children change in the middle of servicing an AT request.
+
+TRAVERSAL 1
+
+TRAVERSAL 2
+
+TRAVERSAL 3
+
+TRAVERSAL 4
+
+TRAVERSAL 5
+
+TRAVERSAL 6
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

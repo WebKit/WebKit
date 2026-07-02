@@ -1,0 +1,13 @@
+This tests that aria-multiselectable is exposed correctly for grids.
+
+PASS: gridMultiselectableUnspecified.isMultiSelectable === true
+PASS: gridMultiselectableTrue.isMultiSelectable === true
+PASS: gridMultiselectableFalse.isMultiSelectable === false
+
+Updating aria-multiselectable for #grid3 from false to true.
+PASS: accessibilityController.accessibleElementById('grid3').isMultiSelectable === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

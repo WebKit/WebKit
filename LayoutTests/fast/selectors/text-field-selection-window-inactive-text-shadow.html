@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+textarea {
+    font-size: 3em;
+    height: 300px;
+    outline: none;
+}
+::selection { text-shadow: 1px 1px 2px blue; }
+::selection:window-inactive {
+    text-shadow: 1px 1px 2px rgba(63, 128, 33, 0.95); /* green; alpha < 1 so that we don't blend the background color with white. */
+}
+</style>
+<textarea>Any textual selection in this sentence should have a green shadow when the window is inactive.</textarea>
+<script>
+var textarea = document.querySelector("textarea");
+textarea.select();
+if (window.testRunner)
+    testRunner.setWindowIsKey(false);
+</script>

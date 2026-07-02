@@ -1,0 +1,26 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation fails (obsolete-keywords.wast:2)
+PASS #3 Test that WebAssembly compilation fails (obsolete-keywords.wast:10)
+PASS #4 Test that WebAssembly compilation fails (obsolete-keywords.wast:19)
+PASS #5 Test that WebAssembly compilation fails (obsolete-keywords.wast:26)
+PASS #6 Test that WebAssembly compilation fails (obsolete-keywords.wast:33)
+PASS #7 Test that WebAssembly compilation fails (obsolete-keywords.wast:40)
+PASS #8 Test that WebAssembly compilation fails (obsolete-keywords.wast:47)
+PASS #9 Test that WebAssembly compilation fails (obsolete-keywords.wast:55)
+PASS #10 Test that WebAssembly compilation fails (obsolete-keywords.wast:63)
+PASS #11 Test that WebAssembly compilation fails (obsolete-keywords.wast:70)
+PASS #12 Test that WebAssembly compilation fails (obsolete-keywords.wast:77)
+PASS #13 Reinitialize the default imports
+PASS #14 Test that WebAssembly compilation fails (obsolete-keywords.wast:2)
+PASS #15 Test that WebAssembly compilation fails (obsolete-keywords.wast:10)
+PASS #16 Test that WebAssembly compilation fails (obsolete-keywords.wast:19)
+PASS #17 Test that WebAssembly compilation fails (obsolete-keywords.wast:26)
+PASS #18 Test that WebAssembly compilation fails (obsolete-keywords.wast:33)
+PASS #19 Test that WebAssembly compilation fails (obsolete-keywords.wast:40)
+PASS #20 Test that WebAssembly compilation fails (obsolete-keywords.wast:47)
+PASS #21 Test that WebAssembly compilation fails (obsolete-keywords.wast:55)
+PASS #22 Test that WebAssembly compilation fails (obsolete-keywords.wast:63)
+PASS #23 Test that WebAssembly compilation fails (obsolete-keywords.wast:70)
+PASS #24 Test that WebAssembly compilation fails (obsolete-keywords.wast:77)
+

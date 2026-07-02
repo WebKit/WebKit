@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Composited <foreignObject> with composited HTML descendants (one negative z-index) paints with HTML z-order and builds no segments. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <foreignObject x="0" y="0" width="200" height="200">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="position: relative; width: 200px; height: 200px">
+            <div style="position: absolute; left: 0; top: 0; width: 100px; height: 100px; background: green; transform: translateZ(0)"></div>
+            <div style="position: absolute; left: 100px; top: 100px; width: 100px; height: 100px; background: blue; z-index: -1; transform: translateZ(0)"></div>
+        </div>
+    </foreignObject>
+</svg>
+</body>
+</html>

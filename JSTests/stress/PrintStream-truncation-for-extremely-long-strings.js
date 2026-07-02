@@ -1,0 +1,17 @@
+//@ memoryHog!
+//@ skip if $architecture == "arm"
+//@ runDefault
+
+let a = '?'.repeat(5000001);
+var desc = describe(a);
+
+/*
+desc is expected to be a string that looks like this:
+```
+String,8Bit:(1),length:(5000001): ????????????????????????...[4999001 characters not shown], StructureID: 16777808
+```
+*/
+if (!desc.startsWith("String,8Bit:(1),length:(5000001):"))
+    throw "FAILED";
+if (!desc.includes("????????????????????????...[4999001 characters not shown]"))
+    throw "FAILED";

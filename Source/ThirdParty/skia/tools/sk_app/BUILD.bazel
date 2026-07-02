@@ -1,0 +1,68 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup", "skia_objc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "sk_app",
+    testonly = True,
+    visibility = ["//tools:__subpackages__"],
+    deps = select({
+        "@platforms//os:linux": [":sk_app_linux"],
+        "@platforms//os:macos": [":sk_app_mac"],
+        "@platforms//os:ios": [":sk_app_ios"],
+    }),
+)
+
+skia_cc_library(
+    name = "sk_app_linux",
+    testonly = True,
+    srcs = [
+        "CommandSet.cpp",
+        "Window.cpp",
+        "//tools/sk_app/unix:srcs",
+    ],
+    hdrs = [
+        "Application.h",
+        "CommandSet.h",
+        "Window.h",
+    ],
+    deps = [
+        "//tools/fonts:font_tool_utils",
+        "//tools/skui",
+        "//tools/timer",
+        "//tools/window",
+    ],
+)
+
+skia_objc_library(
+    name = "sk_app_mac",
+    testonly = True,
+    srcs = [
+        "CommandSet.cpp",
+        "Window.cpp",
+    ],
+    hdrs = [
+        "Application.h",
+        "CommandSet.h",
+        "Window.h",
+    ],
+    non_arc_srcs = ["//tools/sk_app/mac:non_arc_srcs"],
+    deps = [
+        "//tools/fonts:font_tool_utils",
+        "//tools/skui",
+        "//tools/timer",
+        "//tools/window",
+    ],
+)
+
+skia_filegroup(
+    name = "hdrs",
+    srcs = [
+        "Window.h",
+    ],
+    visibility = ["//tools/window:__pkg__"],
+)

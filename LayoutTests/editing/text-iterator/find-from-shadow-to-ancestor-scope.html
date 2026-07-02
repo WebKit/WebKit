@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test-content">doc-before <span id="host"></span> doc-after</div>
+<pre id="console" style="visibility: hidden;"></pre>
+<script>
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+var host = document.getElementById('host');
+var shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = 'shadow-text';
+shadowRoot.id = 'shadow-root';
+
+function nodeLabel(node)
+{
+    if (node.nodeType != Node.TEXT_NODE)
+        return '#' + node.id;
+    let offset = 0;
+    for (let child = node.previousSibling; child; child = child.previousSibling)
+        offset++;
+    return `(#${node.parentNode.id}, ${offset})`;
+}
+
+function rangeText(range)
+{
+    if (!range)
+        return null;
+    if (range.startContainer == range.endContainer)
+        return `${nodeLabel(range.startContainer)} ${range.startOffset} to ${range.endOffset}`;
+    return `(${nodeLabel(range.startContainer)}, ${range.startOffset}) to (${nodeLabel(range.endContainer)}, ${range.endOffset})`;
+}
+
+async function navigateSelectionIntoShadow()
+{
+    getSelection().empty();
+    await testRunner.findString('shadow-text', []);
+}
+
+function testWindowFind(target, backwards, expected, description)
+{
+    // window.find uses DoNotTraverseFlatTree,
+    var found = window.find(target, false, backwards);
+    if (expected === null) {
+        if (!found)
+            log("PASS: " + description);
+        else
+            log("FAIL: " + description + " (unexpectedly found)");
+    } else {
+        if (!found) {
+            log("FAIL: " + description + " (not found)");
+        } else {
+            var result = rangeText(internals.selectedRange());
+            if (result === expected)
+                log("PASS: " + description + " at " + result);
+            else
+                log("FAIL: " + description + " at " + result + ", expected " + expected);
+        }
+    }
+}
+
+onload = async () => {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    log("Find from shadow root to ancestor document scope (forward)");
+    await navigateSelectionIntoShadow();
+    testWindowFind('doc-after', false, '(#test-content, 2) 1 to 10', "find 'doc-after' forward from shadow");
+
+    log("");
+    log("Find from shadow root to ancestor document scope (backward)");
+    await navigateSelectionIntoShadow();
+    testWindowFind('doc-before', true, '(#test-content, 0) 0 to 10', "find 'doc-before' backward from shadow");
+
+    document.getElementById("console").style.removeProperty("visibility");
+    testRunner.notifyDone();
+};
+
+</script>
+</body>
+</html>

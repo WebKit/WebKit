@@ -1,0 +1,4 @@
+button
+
+PASS Setting href in appended script still creates history entry
+

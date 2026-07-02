@@ -1,0 +1,51 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
+index 7a3c8c6cb387..e53e2c405b32 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
+@@ -269,12 +269,25 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
+     conf_win_bottom_offset = reader.ReadExponentialGolomb();
+   }
+ 
++#if WEBRTC_WEBKIT_BUILD
++  // log2_max_pic_order_cnt_lsb_minus4 is used with
++  // BitstreamReader::ConsumeBits, which can read at most INT_MAX bits at
++  // a time. We also have to avoid overflow when adding 4 to the on-wire
++  // golomb value, e.g., for evil input data.
++  const uint32_t kMaxLog2LsbMinus4 = std::numeric_limits<int>::max() - 4;
++#endif
++
+   // bit_depth_luma_minus8: ue(v)
+   reader.ReadExponentialGolomb();
+   // bit_depth_chroma_minus8: ue(v)
+   reader.ReadExponentialGolomb();
+   // log2_max_pic_order_cnt_lsb_minus4: ue(v)
+   sps.log2_max_pic_order_cnt_lsb_minus4 = reader.ReadExponentialGolomb();
++#if WEBRTC_WEBKIT_BUILD
++  if (!reader.Ok() || sps.log2_max_pic_order_cnt_lsb_minus4 > kMaxLog2LsbMinus4) {
++    return absl::nullopt;
++  }
++#endif
+   uint32_t sps_sub_layer_ordering_info_present_flag = 0;
+   // sps_sub_layer_ordering_info_present_flag: u(1)
+   sps_sub_layer_ordering_info_present_flag = reader.Read<bool>();
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc
+index 3e1b94d8d411..2442d1664eed 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc
+@@ -81,7 +81,12 @@ int BitstreamReader::ReadBit() {
+ void BitstreamReader::ConsumeBits(int bits) {
+   RTC_DCHECK_GE(bits, 0);
+   set_last_read_is_verified(false);
+-  if (remaining_bits_ < bits) {
++#if WEBRTC_WEBKIT_BUILD
++  if (remaining_bits_ < bits || bits < 0)
++#else
++  if (remaining_bits_ < bits)
++#endif
++  {
+     Invalidate();
+     return;
+   }
+-- 
+2.39.3 (Apple Git-145)
+

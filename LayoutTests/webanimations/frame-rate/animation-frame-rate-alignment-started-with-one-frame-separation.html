@@ -1,0 +1,59 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Animation.frameRate</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const timestamps = [];
+    const numberOfTimestamps = 4;
+
+    const frameRate = 30;
+    const timing = { duration: 10_000, iterations: Infinity };
+
+    const label1 = "one";
+    const label2 = "two";
+
+    await new Promise(resolve => {
+        let numberOfCallbacks = 0;
+
+        const animations = [];
+
+        const addTimestamp = label => {
+            timestamps.push({ label, value: document.timeline.currentTime });
+            if (timestamps.length == numberOfTimestamps)
+                resolve();
+        };
+
+        const addAnimation = label => {
+            const animation = document.timeline.animate(progress => addTimestamp(label), timing);
+            animation.frameRate = frameRate;
+            animations.push(animation);
+            t.add_cleanup(() => animation.cancel());
+        };
+
+        // Add one animation now.
+        addAnimation(label1);
+
+        // And another one in a different frame
+        requestAnimationFrame(() => addAnimation(label2));
+    });
+
+    assert_equals(timestamps.length, numberOfTimestamps, "The expected number of timestamps were recorded");
+
+    assert_equals(timestamps[0].label, label1, `The first timestamp was for animation "${label1}"`);
+    assert_equals(timestamps[1].label, label2, `The second timestamp was for animation "${label2}"`);
+    assert_equals(timestamps[2].label, label1, `The third timestamp was for animation "${label1}"`);
+    assert_equals(timestamps[3].label, label2, `The fourth timestamp was for animation "${label2}"`);
+
+    assert_not_equals(timestamps[0].value, timestamps[1].value, "The first two do not match");
+    assert_equals(timestamps[2].value, timestamps[3].value, "The last two timestamps match");
+    assert_not_equals(timestamps[0].value, timestamps[3].value, "The first and last timestamps don't match");
+}, "Animations with the same frameRate started separately fire at the same timeline time");
+
+</script>
+</body>

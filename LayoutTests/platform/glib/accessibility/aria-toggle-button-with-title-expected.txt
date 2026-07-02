@@ -1,0 +1,11 @@
+This tests that a toggle button properly exposes the title when there isn't a direct relation and textUnderElement is required to be used.
+PASS: tbutton1.role === 'AXRole: AXToggleButton'
+PASS: tbutton1.title === 'AXTitle: Toggle button'
+PASS: button.role === 'AXRole: AXButton'
+PASS: button.title === 'AXTitle: Button title'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Toggle button
+Button title

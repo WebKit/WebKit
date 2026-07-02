@@ -1,0 +1,82 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function worker0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice();
+// START
+shaderModule0 = device0.createShaderModule({
+  code : `
+fn fn0() {
+  for (var it1=u32(vp2.fract); it1<(u32(28465.3) );) {
+  }
+}
+
+var<workgroup> vw0: atomic<i32>;
+var<private> vp2 = modf(f32());
+
+@compute @workgroup_size(111) fn compute0() {
+  vp2 = modf(f32(atomicLoad(&(vw0))));
+  fn0();
+}
+`});
+device0.createComputePipeline(
+  {layout : 'auto', compute : {module : shaderModule0, }})
+// END
+  await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let promises = [ worker0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  log('Pass');
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

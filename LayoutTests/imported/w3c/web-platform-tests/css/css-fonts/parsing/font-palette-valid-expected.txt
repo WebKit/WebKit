@@ -1,0 +1,7 @@
+
+PASS e.style['font-palette'] = "normal" should set the property value
+PASS e.style['font-palette'] = "light" should set the property value
+PASS e.style['font-palette'] = "dark" should set the property value
+PASS e.style['font-palette'] = "--pitchfork" should set the property value
+PASS e.style['font-palette'] = "--" should set the property value
+

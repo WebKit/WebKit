@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function createCallArgumentWithValue(value) {
+        return {value};
+    }
+
+    async function getSavedResult(savedResultPrefix, savedResultIndex) {
+        InspectorTest.log(`Getting saved value at '${savedResultPrefix}${savedResultIndex}'...`);
+        let {result, wasThrown} = await RuntimeAgent.evaluate.invoke({
+            expression: savedResultPrefix + savedResultIndex,
+            objectGroup: "test",
+            includeCommandLineAPI: true,
+            returnByValue: true,
+        });
+        if (wasThrown)
+            throw new Error(result.description);
+        return result.value;
+    }
+
+    async function changeSavedResultAlias(alias) {
+        InspectorTest.log(`Changing saved result alias to "${alias}"...`);
+        await RuntimeAgent.setSavedResultAlias(alias);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Runtime.setSavedResultAlias");
+
+    suite.addTestCase({
+        name: "Runtime.setSavedResultAlias",
+        description: "Saving a new value should produce a new $n value.",
+        async test() {
+            const value = 123;
+
+            InspectorTest.log("Saving value...");
+            let {savedResultIndex} = await RuntimeAgent.saveResult(createCallArgumentWithValue(value));
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(value, await getSavedResult("$", savedResultIndex), `Saved value should match $${savedResultIndex}.`);
+            await InspectorTest.expectException(() => getSavedResult("temp", savedResultIndex));
+
+            InspectorTest.newline();
+
+            await changeSavedResultAlias("temp");
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(value, await getSavedResult("$", savedResultIndex), `Saved value should still match $${savedResultIndex}.`);
+            InspectorTest.expectEqual(value, await getSavedResult("temp", savedResultIndex), `Saved value should now match temp${savedResultIndex}.`);
+
+            InspectorTest.newline();
+
+            await changeSavedResultAlias("");
+
+            InspectorTest.newline();
+
+            InspectorTest.expectEqual(value, await getSavedResult("$", savedResultIndex), `Saved value should still match $${savedResultIndex}.`);
+            await InspectorTest.expectException(() => getSavedResult("temp", savedResultIndex));
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Runtime.setSavedResultAlias command.</p>
+</body>
+</html>

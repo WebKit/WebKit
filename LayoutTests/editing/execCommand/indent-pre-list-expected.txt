@@ -1,0 +1,124 @@
+
+Indenting:
+| <#selection-anchor>
+| "\n"
+| <pre>
+|   <ul>
+|     <li>
+|       "hello"
+| "\n"
+| <#selection-focus>
+
+yields:
+| "\n"
+| <pre>
+|   <ul>
+|     <ul>
+|       <li>
+|         "<#selection-anchor>hello<#selection-focus>"
+| "\n"
+
+Indenting:
+| <#selection-anchor>
+| "\n"
+| <pre>
+|   <ul>
+|     <li>
+|       "hello\nworld"
+|     "\n"
+| "\n"
+| <#selection-focus>
+
+yields:
+| "\n"
+| <pre>
+|   <ul>
+|     <ul>
+|       <li>
+|         "<#selection-anchor>hello"
+|       <li>
+|         "world<#selection-focus>"
+|     "\n"
+| "\n"
+
+Indenting:
+| <#selection-anchor>
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       "hello\nworld\nwebkit\n"
+| "\n"
+| <#selection-focus>
+
+yields:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       <blockquote>
+|         style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|         "<#selection-anchor>hello"
+|         <br>
+|         "world"
+|         <br>
+|         "webkit<#selection-focus>"
+| "\n"
+
+Indenting:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       "<#selection-anchor>hello<#selection-focus>\nworld\nwebkit\n"
+| "\n"
+
+yields:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       <blockquote>
+|         style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|         "<#selection-anchor>hello<#selection-focus>"
+|       "world\nwebkit\n"
+| "\n"
+
+Indenting:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       "hello\n<#selection-anchor>world<#selection-focus>\nwebkit\n"
+| "\n"
+
+yields:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       "hello\n"
+|       <blockquote>
+|         style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|         "<#selection-anchor>world<#selection-focus>"
+|       "webkit\n"
+| "\n"
+
+Indenting:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       "hello\nworld\n<#selection-anchor>webki<#selection-focus>t\n"
+| "\n"
+
+yields:
+| "\n"
+| <ul>
+|   <li>
+|     <pre>
+|       "hello\nworld\n"
+|       <blockquote>
+|         style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|         "<#selection-anchor>webki<#selection-focus>t"
+| "\n"

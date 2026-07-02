@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"><span><b><i><em>target</em></i></b></span></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests removing a event target from its ancestor. WebKit should keep the root node alive.');
+
+jsTestIsAsync = true;
+
+const container = document.getElementById('container');
+container.remove();
+
+container.querySelector('i').addEventListener('dummy', () => {
+    container.replaceChildren();
+});
+
+let savedEvent = null;
+container.querySelector('b').addEventListener('dummy', (event) => {
+    savedEvent = event;
+});
+
+container.querySelector('em').dispatchEvent(new Event('dummy', {bubbles: true}));
+
+if (!window.GCController) {
+    testFailed('This test requires GCController.');
+    finishJSTest();
+} else {
+    requestAnimationFrame(() => {
+        GCController.collect();
+        requestAnimationFrame(() => {
+            shouldBeEqualToString('savedEvent.target.getRootNode().localName', 'span');
+            finishJSTest();
+        });
+    });
+}
+
+</script>
+</body>
+</html>

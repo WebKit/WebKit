@@ -1,0 +1,59 @@
+tree_status_host: "webrtc-status.appspot.com"
+links {
+  name: "Consoles"
+  links {
+    text: "WebRTC"
+    url: "/p/webrtc/g/ci"
+    alt: "WebRTC Main CI Console"
+  }
+  links {
+    text: "WebRTC Cron"
+    url: "/p/webrtc/g/cron"
+    alt: "WebRTC Cron Console"
+  }
+  links {
+    text: "WebRTC Perf"
+    url: "/p/webrtc/g/perf"
+    alt: "WebRTC Perf Console"
+  }
+  links {
+    text: "Chromium"
+    url: "/p/chromium/g/chromium.webrtc"
+    alt: "Chromium WebRTC Console"
+  }
+  links {
+    text: "Chromium FYI"
+    url: "/p/chromium/g/chromium.webrtc.fyi"
+    alt: "Chromium WebRTC FYI Console"
+  }
+  links {
+    text: "Try WebRTC"
+    url: "/p/webrtc/g/try"
+    alt: "WebRTC Try Builders"
+  }
+}
+links {
+  name: "Links"
+  links {
+    text: "Source"
+    url: "https://webrtc.googlesource.com/src/+/main/"
+  }
+  links {
+    text: "Reviews"
+    url: "https://webrtc-review.googlesource.com/"
+  }
+  links {
+    text: "Bugs"
+    url: "https://bugs.webrtc.org/"
+  }
+  links {
+    text: "LKGR status"
+    url: "https://storage.cloud.google.com/chromium-webrtc/lkgr-status/webrtc-lkgr-status.html"
+  }
+}
+console_groups {
+  console_ids: "webrtc/ci"
+  console_ids: "webrtc/perf"
+  console_ids: "chromium/chromium.webrtc"
+  console_ids: "chromium/chromium.webrtc.fyi"
+}

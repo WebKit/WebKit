@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/breakpoint-options-utilities.js"></script>
+<script>
+function triggerMicrotask() {
+    queueMicrotask(() => {
+        TestPage.dispatchEventToFrontend("TestPage-microtask");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.setPauseOnMicrotasks");
+
+    const tests = [
+        {
+            name: "queueMicrotask",
+            expression: `queueMicrotask(() => {})`,
+        },
+        {
+            name: "Promise.resolve",
+            expression: `Promise.resolve().then(() => {})`,
+        },
+        {
+            name: "Promise.reject",
+            expression: `Promise.reject().catch(() => {})`,
+        },
+    ];
+
+    for (let {name, expression} of tests) {
+        suite.addTestCase({
+            name: "Debugger.setPauseOnMicrotasks.Disabled." + name,
+            description: "Do not pause on microtasks when disabled.",
+            test(resolve, reject) {
+                WI.debuggerManager.createAllMicrotasksBreakpoint({disabled: true});
+                InspectorTest.assert(WI.debuggerManager.allMicrotasksBreakpoint, "Should have created all microtasks breakpoint.");
+                InspectorTest.assert(WI.debuggerManager.allMicrotasksBreakpoint.disabled, "All microtasks breakpoint should be disabled.");
+
+                let didPause = false;
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    WI.debuggerManager.resume();
+                    didPause = true;
+                });
+
+                InspectorTest.evaluateInPage(expression, () => {
+                    InspectorTest.expectThat(!didPause, "Should not have paused.");
+                    if (!didPause)
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    WI.debuggerManager.allMicrotasksBreakpoint.remove();
+                    InspectorTest.assert(!WI.debuggerManager.allMicrotasksBreakpoint, "Should have destroyed all microtasks breakpoint.");
+                    resolve();
+                });
+            }
+        });
+
+        suite.addTestCase({
+            name: "Debugger.setPauseOnMicrotasks.Enabled." + name,
+            description: "Do not pause on microtasks when disabled.",
+            test(resolve, reject) {
+                WI.debuggerManager.createAllMicrotasksBreakpoint();
+                InspectorTest.assert(WI.debuggerManager.allMicrotasksBreakpoint, "Should have created all microtasks breakpoint.");
+                InspectorTest.assert(!WI.debuggerManager.allMicrotasksBreakpoint.disabled, "All microtasks breakpoint should be enabled.");
+
+                let didPause = false;
+                let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    WI.debuggerManager.resume();
+                    didPause = true;
+                });
+
+                InspectorTest.evaluateInPage(expression, () => {
+                    InspectorTest.expectThat(didPause, "Should have paused.");
+                    if (!didPause)
+                        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    WI.debuggerManager.allMicrotasksBreakpoint.remove();
+                    InspectorTest.assert(!WI.debuggerManager.allMicrotasksBreakpoint, "Should have destroyed all microtasks breakpoint.");
+                    resolve();
+                });
+            }
+        });
+    }
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        createBreakpoint() {
+            WI.debuggerManager.createAllMicrotasksBreakpoint();
+            return WI.debuggerManager.allMicrotasksBreakpoint;
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-microtask"),
+                InspectorTest.evaluateInPage(`triggerMicrotask()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Debugger.setPauseOnMicrotasks command.</p>
+</body>
+</html>

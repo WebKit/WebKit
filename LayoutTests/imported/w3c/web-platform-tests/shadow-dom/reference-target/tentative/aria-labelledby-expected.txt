@@ -1,0 +1,8 @@
+  Label 2
+
+PASS Label 1
+PASS Label 2
+PASS Label 3
+FAIL Label from host Label 1 assert_equals: <input class="ex" aria-labelledby="x-label4" data-expectedlabel="Label from host Label 1"> expected "Label from host Label 1" but got ""
+PASS aria-labelledby
+

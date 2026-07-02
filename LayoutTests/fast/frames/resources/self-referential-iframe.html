@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        .container {
+            height: 100%;
+        }
+        iframe {
+            display: block;
+            border: 0.5px solid gray;
+            width: 99.99%;
+            height: 99.99%;
+        }
+    </style>
+    <script>
+        addEventListener("load", () => {
+            let iframe = document.getElementsByTagName("iframe")[0];
+            let params = new URL(location.href).searchParams;
+            let currentDepth = params.has("depth") ? parseInt(params.get("depth")) : 0;
+            iframe.src = `self-referential-iframe.html?depth=${currentDepth + 1}`;
+            top.postMessage(currentDepth, "*");
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+    <div class="container">
+    <div class="container">
+        <iframe scrolling="no"></iframe>
+    </div>
+    </div>
+    </div>
+</body>
+</html>

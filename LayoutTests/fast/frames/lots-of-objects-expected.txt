@@ -1,0 +1,3 @@
+Created precisely 1000 objects.
+PASS
+

@@ -1,0 +1,4 @@
+
+
+PASS navigate() in initial about:blank document
+

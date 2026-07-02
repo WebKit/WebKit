@@ -1,0 +1,31 @@
+<body>
+<style>
+
+body {
+    background-color: red;
+    animation: anim 1s infinite;
+}
+
+@keyframes anim {
+    from, to { background-color: green }
+}
+
+iframe {
+    border: 0;
+}
+
+</style>
+
+<script>
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+window.addEventListener("message", event => {
+    document.body.textContent = event.data;
+    window.testRunner?.notifyDone();
+});
+
+</script>
+
+<iframe src="resources/reverse-animation-iframe.html"></iframe>
+</body>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests to see that selected editable nodes that are not in both the start and end editable roots are cleared.  You should see one non-editable piece and an editable one and then two empty table cells.  The table cells are editable but are preserved and not removed because they are in a non-editable region.  They should be completely cleared out, even the second one that contains a non-editable piece. &lt;radr://problem/5026848&gt;</p>
+<div id="div" contenteditable="true">
+<table border="1" contenteditable="false">
+    <tr>
+        <td>Non-editable</td>
+        <td contenteditable="true">Editable <span id="start">content</span></td>
+        <!-- The following cell should be removed, even though it contains non-editable pieces. -->
+        <td contenteditable="true">Editable</td>
+        <td contenteditable="true">Edit<span contenteditable="false">(non-editable content that should be removed because its in an editable region)</span>able</td>
+    </tr>
+</table>
+Editable <span id="end">content</span>
+</div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+var sel = window.getSelection();
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+sel.setBaseAndExtent(start, 0, end, 0);
+document.execCommand("Delete");
+Markup.description(description.textContent);
+Markup.dump("div");
+</script>
+
+</body>
+</html>

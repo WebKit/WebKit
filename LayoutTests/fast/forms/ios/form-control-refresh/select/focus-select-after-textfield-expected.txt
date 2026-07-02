@@ -1,0 +1,11 @@
+This test verifies that tapping on a text input and then tapping on a select element does not unexpectedly change the scrolling position.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

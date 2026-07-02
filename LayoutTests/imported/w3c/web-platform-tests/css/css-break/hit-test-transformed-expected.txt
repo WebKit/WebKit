@@ -1,0 +1,19 @@
+
+PASS before
+PASS between before and transform
+PASS target1
+FAIL target1 overflow assert_equals: expected Element node <div id="target1" style="height: 100px; background: green... but got Element node <html><head><link rel="help" href="https://www.w3.org/TR/...
+FAIL top gap in column 2 assert_equals: expected Element node <div id="multicol" style="columns:4; column-gap:0; column... but got Element node <div id="target1" style="height: 100px; background: green...
+PASS target1 in column 2 top
+PASS target1 in column 2 bottom
+PASS target2 in column 2
+FAIL target2 in column 2 overflow assert_equals: expected Element node <div id="target2" style="height: 200px; background: blue"... but got Element node <html><head><link rel="help" href="https://www.w3.org/TR/...
+FAIL top gap in column 3 assert_equals: expected Element node <div id="multicol" style="columns:4; column-gap:0; column... but got Element node <div id="target2" style="height: 200px; background: blue"...
+PASS target2 in column 3 top
+FAIL target2 in column 3 bottom assert_equals: expected Element node <div id="target2" style="height: 200px; background: blue"... but got Element node <html><head><link rel="help" href="https://www.w3.org/TR/...
+FAIL top gap in column 4 assert_equals: expected Element node <div id="multicol" style="columns:4; column-gap:0; column... but got Element node <div id="target2" style="height: 200px; background: blue"...
+PASS target2 in column 4 top
+PASS target2 in column 4 bottom
+PASS after
+PASS below
+

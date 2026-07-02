@@ -1,0 +1,4 @@
+
+
+PASS event and promise ordering when navigate() is called to a cross-document destination, interrupting another navigate() to a cross-document destination
+

@@ -1,0 +1,3 @@
+
+PASS IntersectionObserver reports a (non-intersecting) entry if different-document from the doc
+

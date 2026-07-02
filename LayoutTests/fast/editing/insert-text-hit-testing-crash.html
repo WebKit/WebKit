@@ -1,0 +1,15 @@
+<script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function main() {
+        x2.setSelectionRange(1, 0);
+        x1.contentDocument.body.style.setProperty("scale", "1 0.5122158757062186 -1");
+        document.execCommand("insertText");
+    }
+</script>
+
+<body onload=main()>
+<textarea id="x2">crash</textarea>
+This test passes if it does crash
+<iframe id="x1">

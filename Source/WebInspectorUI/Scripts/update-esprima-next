@@ -1,0 +1,147 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This script updates the esprima-next library to the latest version:
+# Source/WebInspectorUI/UserInterface/External/Esprima/esprima.js
+
+REPO_URL="https://github.com/node-projects/esprima-next.git"
+REPO_NAME="esprima-next"
+REPO_EXISTS=false;
+TSUP_CONFIG_FILENAME="tsup.config.ts"
+
+check_command() {
+    command -v "$1" &> /dev/null
+}
+
+check_command "git" || { echo "git is not installed or not in PATH"; exit 1; }
+check_command "npm" || { echo "npm is not installed or not in PATH"; exit 1; }
+
+cd "$(dirname "$0")/../UserInterface/External/Esprima"
+echo "↳ Changed directory into: $(pwd)"
+echo "Cloning repository: $REPO_URL"
+
+if git clone $REPO_URL; then
+    echo "✓ Repository cloned to: $(pwd)/$REPO_NAME"
+else
+    if [ -d $REPO_NAME ] && [ -d "$REPO_NAME/.git" ]; then
+        echo "Warning: A git repository already exists in '$REPO_NAME'"
+        REPO_EXISTS=true
+    else
+        echo "Error: Failed to clone repository"
+        exit 1
+    fi
+fi
+
+cd "$REPO_NAME"
+echo "↳ Changed directory into: $(pwd)"
+
+if [ $REPO_EXISTS ]; then
+    echo "Pulling latest changes from $REPO_URL"
+
+    if ! git pull; then
+        echo "Error: Failed to pull latest changes"
+        echo "Aborting update"
+        exit 1
+    fi
+fi
+
+echo "Installing npm dependencies..."
+
+if npm install --ignore-scripts; then
+    echo "✓ Successfully installed npm dependencies"
+else
+    echo "Error: Failed to install npm dependencies"
+    exit 1
+fi
+
+# The default bundler configuration for esprima-next generates an ES module.
+# Web Inspector cannot use this. Instead, we generate a custom configuration
+# file that outputs an IIFE (Immediately Invoked Function Expression)
+# which exposes the Esprima library as `esprima` in the the global scope.
+echo "Creating tsup configuration file: $TSUP_CONFIG_FILENAME"
+
+echo "
+    import { defineConfig } from 'tsup'
+    export default defineConfig({
+      entry: ['src/esprima.ts'],
+      format: ['iife'],
+      globalName: 'esprima',
+      outDir: 'dist',
+      clean: true,
+      minify: true,
+      sourcemap: false,
+      dts: true,
+      outExtension({ format }) {
+        return {
+          js: '.js' // 'iife' format generates .global.js by default
+        }
+      },
+    })
+" > $TSUP_CONFIG_FILENAME
+
+if [ -f "$TSUP_CONFIG_FILENAME" ]; then
+    echo "✓ Successfully created configuration file: $(pwd)/$TSUP_CONFIG_FILENAME"
+else
+    echo "Error: Failed to create tsup configuration file"
+    exit 1
+fi
+
+# Bypass the esprima-next build script defined in package.json (npm run tsup).
+# Use the same bunder but with our generated config.
+echo "Building esprima.js using tsup"
+
+NEW_ESPRIMA="$(pwd)/dist/esprima.js"
+
+npx tsup --config $TSUP_CONFIG_FILENAME;
+if [ ! -f "$NEW_ESPRIMA" ]; then
+    echo "Error: Failed to build"
+    exit 1
+fi
+
+cd "$(pwd)/../"
+echo "↳ Changed directory into: $(pwd)"
+
+CURRENT_ESPRIMA="$(pwd)/esprima.js"
+
+# Check whether the latest build output is different from the existing file.
+CURRENT_HASH=$(md5sum "$CURRENT_ESPRIMA" | cut -d' ' -f1)
+NEW_HASH=$(md5sum "$NEW_ESPRIMA" | cut -d' ' -f1)
+
+if [ "$CURRENT_HASH" != "$NEW_HASH" ]; then
+    echo "Copying build output to $CURRENT_ESPRIMA"
+
+    if cp "$NEW_ESPRIMA" "$CURRENT_ESPRIMA"; then
+        echo "✓ Successfully updated esprima.js"
+    fi
+else
+    echo "✓ No updates compared to existing esprima.js"
+fi
+
+# Clean up
+read -p "Do you want to clean up and delete the repository clone $REPO_NAME? (y/N): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -rf "$REPO_NAME"
+    echo "Removed $REPO_NAME directory"
+fi

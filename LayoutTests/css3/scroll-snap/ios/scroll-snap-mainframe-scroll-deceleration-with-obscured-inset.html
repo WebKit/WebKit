@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true obscuredInset.top=50 ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+:root {
+    scroll-snap-type: y mandatory;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.snap-child {
+    width: 100%;
+    height: 600px;
+    scroll-snap-align: start;
+}
+
+#output-container {
+    position: fixed;
+    top: 0;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function tryTest() {
+    const initialOffset = (await UIHelper.contentOffset()).y;
+    let lastKnownOffset = initialOffset;
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(150, 300)
+        .move(150, 100, 0.2)
+        .end()
+        .takeResult());
+
+    while (lastKnownOffset < 500) {
+        await UIHelper.delayFor(50);
+        lastKnownOffset = (await UIHelper.contentOffset()).y;
+    }
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(150, 800)
+        .wait(0.1)
+        .end()
+        .takeResult());
+
+    // Wait for the scroll position to reach the second page.
+    while (lastKnownOffset > initialOffset && lastKnownOffset < 550) {
+        await UIHelper.delayFor(50);
+        lastKnownOffset = (await UIHelper.contentOffset()).y;
+    }
+
+    return lastKnownOffset >= 550;
+}
+
+addEventListener("load", async () => {
+    description(`This test verifies that tapping immediately after swiping to the next snap point
+        doesn't cause us to snap backwards to the previous snap point when a top obscured inset is
+        specified. This test requires WebKitTestRunner, though you can also load the page in iOS
+        Safari to test (or any app that sets obscured insets).`);
+
+    if (!window.testRunner)
+        return;
+
+    while (true) {
+        if (await tryTest())
+            break;
+    }
+
+    testPassed("Snapped to second container");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="snap-child" style="background-color: rgb(0, 122, 255);"></div>
+    <div class="snap-child" style="background-color: rgb(52, 199, 89);"></div>
+    <div class="snap-child" style="background-color: rgb(88, 86, 214);"></div>
+    <div class="snap-child" style="background-color: rgb(255, 149, 0);"></div>
+    <div class="snap-child" style="background-color: rgb(175, 82, 222);"></div>
+    <div class="snap-child" style="background-color: rgb(255, 59, 48);"></div>
+    <div id="output-container">
+        <pre id="description"></pre>
+        <pre id="console"></pre>
+    </div>
+</body>
+</html>

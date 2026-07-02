@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+  <title>Non-scaling-stroke with animated transform should not leave artifacts</title>
+  <script src="../../resources/ui-helper.js"></script>
+  <style>
+    body { margin: 0; background: white; }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dontForceRepaint();
+    }
+
+    window.addEventListener('load', async function() {
+      let g = document.getElementById('g');
+      let scale = 1.0;
+      let step = 0;
+      const totalSteps = 20;
+
+      function animate() {
+        if (step < totalSteps) {
+          scale = 1.0 - (step / totalSteps) * 0.7;
+          g.setAttribute('transform', 'scale(' + scale + ')');
+          step++;
+          requestAnimationFrame(animate);
+        } else {
+          g.setAttribute('transform', 'scale(0.3)');
+          finishTest();
+        }
+      }
+
+      async function finishTest() {
+        await UIHelper.renderingUpdate();
+        await UIHelper.renderingUpdate();
+        document.documentElement.classList.remove('reftest-wait');
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+
+      requestAnimationFrame(animate);
+    });
+  </script>
+</head>
+<body>
+  <svg width="400" height="300">
+    <g id="g">
+      <rect x="100" y="80" width="200" height="120"
+            fill="none"
+            stroke="blue"
+            stroke-width="2"
+            vector-effect="non-scaling-stroke"/>
+    </g>
+  </svg>
+</body>
+</html>

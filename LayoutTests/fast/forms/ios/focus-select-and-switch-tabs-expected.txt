@@ -1,0 +1,10 @@
+This test verifies that focusing a select element, choosing an option, and then switching tabs, does not re-open a menu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS didShowContextMenu is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+td, th {
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<table id="table">
+<thead id="thead">
+    <tr id="r0">
+        <th id="r0c0">Header 0</th>
+        <th id="r0c1">Header 1</th>
+        <th id="r0c2">Header 2</th>
+    </tr>
+</thead>
+<tbody id="tbody">
+    <tr id="r1">
+        <td id="r1c0">R1C0</td>
+        <td id="r1c1">R1C1</td>
+        <td id="r1c2">R1C2</td>
+    </tr>
+    <tr id="r2">
+        <td id="r2c0">R2C0</td>
+        <td id="r2c1">R2C1</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures that the 'cell for column and row' API works correctly after dynamic rowspan changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var table = accessibilityController.accessibleElementById("table");
+    output += expect("table.cellForColumnAndRow(0, 0).domIdentifier", "'r0c0'");
+    output += expect("table.cellForColumnAndRow(2, 2) === null", "true");
+    output += expect("accessibilityController.accessibleElementById('r1c2').rowIndexRange()", "'{1, 1}'");
+
+    output += evalAndReturn("document.getElementById('r1c2').setAttribute('rowspan', '2')");
+    setTimeout(async function() {
+        await waitFor(() => table.cellForColumnAndRow(2, 2) !== null);
+        output += expect("table.cellForColumnAndRow(2, 2).domIdentifier", "'r1c2'");
+        output += expect("accessibilityController.accessibleElementById('r1c2').rowIndexRange()", "'{1, 2}'");
+
+        output += evalAndReturn("document.getElementById('r1c2').removeAttribute('rowspan')");
+        output += await expectAsync("table.cellForColumnAndRow(2, 2) === null", "true");
+        output += expect("accessibilityController.accessibleElementById('r1c2').rowIndexRange()", "'{1, 1}'");
+
+        output += evalAndReturn("document.getElementById('r1c2').setAttribute('aria-rowspan', '2')");
+        await waitFor(() => table.cellForColumnAndRow(2, 2) !== null);
+        output += expect("table.cellForColumnAndRow(2, 2).domIdentifier", "'r1c2'");
+        output += expect("accessibilityController.accessibleElementById('r1c2').rowIndexRange()", "'{1, 2}'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

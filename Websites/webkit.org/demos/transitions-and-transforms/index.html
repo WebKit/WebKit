@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Leopard Features Demo</title>
+<link rel="stylesheet" href="leopard.css">
+</head>
+<body>
+
+<h1>Leopard Features Demo</h1>
+
+<ul id="features">
+<li>
+  <h2 class="name">Stacks</h2>
+  <div class="picture"><img src="Stacks.png" alt="Screenshot of the Leopard desktop with a Stack open as a fan on the lower left."></div>
+  <div class="description">
+    <b>Stacks</b> are Dock items that gives you fast access to a
+    folder of files. When you click a stack, the files within spring
+    from the Dock in a fan or a grid, depending on the number of items
+    (or the preference you set). Leopard starts you off with two
+    premade stacks: one for downloads and the other for documents.
+  </div>
+</li>
+<li>
+  <h2 class="name">Cover Flow</h2>
+  <div class="picture"><img src="Finder%20Coverflow.png" alt="Screenshot of a Finder window, showing a Cover Flow view of the user's Documents directory."></div>
+  <div class="description">
+    <b>Cover Flow</b> lets you flip through your documents as easily
+    as you flip through album art in iTunes. Cover Flow displays each
+    file as a large preview of its first page, and you can click
+    through multipage documents or play movies. Now you can actually
+    see your files in the Finder - not just as icons, but as they
+    really look.
+  </div>
+</li>
+<li>
+  <h2 class="name">Quick Look</h2>
+  <div class="picture"><img src="Quick%20Look.png" alt="Screenshot of a QuickLook full screen movie preview."></div>
+  <div class="description">
+    <b>Quick Look</b> works with nearly every file on your system,
+    including images, text files, PDF documents and movies. Just tap
+    the Space bar to see a file in Quick Look, or click the Quick Look
+    icon in the Finder window (if it's not there already, add it by
+    selecting Customize Toolbar from the View menu in the Finder).
+  </div>
+</li>
+<li>
+  <h2 class="name">Time Machine</h2>
+  <div class="picture"><img src="Time%20Machine.png" alt="Screenshot of Time machine; a stack of Finder windows recedes into the horizon."></div>
+  <div class="description">
+    <b>Time Machine</b> backs up your system files, applications,
+    accounts, preferences, music, photos, movies, and documents. But
+    what makes Time Machine different from other backup applications
+    is that it not only keeps a spare copy of every file, it remembers
+    how your system looked on a given day.
+  </div>
+</li>
+<li>
+  <h2 class="name">Mail Stationery</h2>
+  <div class="picture"><img src="Mail%20Stationery.png" alt="A screenshot of two Mail windows. The one in front shows the Stationery chooser, the one behind shows a received email using Stationery."></div>
+  <div class="description">
+    <b>Mail Stationery</b> features 30 professionally designed
+    templates that make a virtual keepsake out of every email you
+    send. From invitations to birthday greetings, stationery templates
+    feature coordinated layouts, fonts, colors, and drag-and-drop
+    photo placement from your iPhoto library - everything to help you
+    get your point across.
+  </div>
+</li>
+<li>
+  <h2 class="name">Spaces</h2>
+  <div class="picture"><img src="Spaces.png" alt="Screenshot of spaces, showing four scaled down desktops in a two by two grid."></div>
+  <div class="description">
+    <b>Spaces</b> lets you group your application windows and banish
+    clutter completely. Leopard gives you a space for everything and
+    makes it easy to switch between your spaces. Start by simply
+    clicking the Spaces icon in the Dock.
+  </div>
+</li>
+</ul>
+
+<script>
+var selected = null;
+
+for (var n = document.getElementById("features").firstChild; n; n = n.nextSibling) {
+    n.onclick = function() {
+        if (this == selected) {
+            selected.className = "";
+            selected = null;
+        } else if(selected) {
+            selected.className = "";
+            selected = this;
+            selected.className = "enabled";
+        } else {
+            selected = this;
+            selected.className = "enabled";
+        }
+    }
+}
+</script>
+</body>
+</html>

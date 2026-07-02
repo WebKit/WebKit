@@ -1,0 +1,17 @@
+Test rejection handled event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS error.type is "unhandledrejection"
+PASS error.cancelable is true
+PASS error.promise is promise
+PASS error.reason is "ERROR"
+PASS reason is "ERROR"
+PASS handled.type is "rejectionhandled"
+PASS handled.cancelable is false
+PASS handled.promise is promise
+PASS handled.reason is "ERROR"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

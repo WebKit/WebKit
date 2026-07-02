@@ -1,0 +1,4 @@
+
+
+PASS Moving a transition across documents should reset its state
+

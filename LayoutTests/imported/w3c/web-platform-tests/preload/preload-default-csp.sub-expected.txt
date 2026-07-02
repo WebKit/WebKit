@@ -1,0 +1,3 @@
+
+PASS Preload requests are blocked by CSP ("default-src 'none').
+

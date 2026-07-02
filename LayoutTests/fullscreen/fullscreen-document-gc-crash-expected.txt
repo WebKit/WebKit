@@ -1,0 +1,2 @@
+This tests requesting a fullscreen then removing the element. WebKit should not crash.
+PASS

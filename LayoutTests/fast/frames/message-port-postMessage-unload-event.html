@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that MessagePort.postMessage() works from inside an iframe's unload event handler.");
+jsTestIsAsync = true;
+
+let eventsReceivedByFrameWindow = 0;
+let eventsReceivedByTopWindow = 0;
+let eventsReceivedByTopWindowMessagePort = 0;
+
+function finishIfNecessary()
+{
+    if (eventsReceivedByTopWindow < 3 || eventsReceivedByTopWindowMessagePort < 3)
+        return;
+
+    setTimeout(() => {
+        shouldBe("eventsReceivedByFrameWindow", "3");
+        shouldBe("eventsReceivedByTopWindow", "3");
+        shouldBe("eventsReceivedByTopWindowMessagePort", "3");
+        finishJSTest();
+    }, 0);
+}
+
+onload = () => {
+    const testFrame = document.getElementById("testFrame");
+    testFrame.contentWindow.addEventListener("message", (e) => {
+        const framePort = e.data.port;
+        for (let event of ["unload", "pagehide", "visibilitychange"]) {
+            testFrame.contentWindow.addEventListener(event, () => {
+                eventsReceivedByFrameWindow++;
+                window.parent.testPassed(`iframe received "${event}" event`);
+                framePort.postMessage({ trigger: event });
+                window.parent.postMessage({ trigger: event });
+            });
+        }
+    });
+
+    const channel = new MessageChannel();
+    testFrame.contentWindow.postMessage({
+        port: channel.port1,
+    }, testFrame.contentWindow.origin, [channel.port1]);
+    channel.port2.onmessage = (e) => {
+        eventsReceivedByTopWindowMessagePort++;
+        testPassed("MessagePort in parent frame received message", e.data);
+        finishIfNecessary();
+    };
+
+    addEventListener("message", (e) => {
+        eventsReceivedByTopWindow++;
+        testPassed('Parent frame received "message" event', e.data);
+        finishIfNecessary();
+    });
+    setTimeout(() => {
+        testFrame.remove();
+        setTimeout(finishJSTest, 100);
+    }, 0);
+};
+</script>
+<iframe id="testFrame"></iframe>
+</body>
+</html>

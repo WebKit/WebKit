@@ -1,0 +1,201 @@
+/*
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "config.h"
+#include "FontCustomPlatformData.h"
+
+#include "CSSFontFaceSrcValue.h"
+#include "Font.h"
+#include "FontCache.h"
+#include "FontCacheCoreText.h"
+#include "FontCreationContext.h"
+#include "FontDescription.h"
+#include "FontPlatformData.h"
+#include "SharedBuffer.h"
+#include "StyleFontSizeFunctions.h"
+#include "UnrealizedCoreTextFont.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreGraphics/CoreGraphics.h>
+#include <CoreText/CoreText.h>
+#include <pal/spi/cf/CoreTextSPI.h>
+
+namespace WebCore {
+
+FontCustomPlatformData::~FontCustomPlatformData() = default;
+
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
+{
+    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
+    UnrealizedCoreTextFont unrealizedFont = { RetainPtr { fontDescriptor } };
+    unrealizedFont.setSize(size);
+    unrealizedFont.modify([&](CFMutableDictionaryRef attributes) {
+        addAttributesForWebFonts(attributes, fontDescription.shouldAllowUserInstalledFonts());
+    });
+
+    FontOrientation orientation = fontDescription.orientation();
+    FontWidthVariant widthVariant = fontDescription.widthVariant();
+
+    auto font = preparePlatformFont(WTF::move(unrealizedFont), fontDescription, fontCreationContext);
+    ASSERT(font);
+
+    auto variationAxes = defaultVariationValues(font.get(), ShouldLocalizeAxisNames::No);
+    bool hasWeightVariationAxis = variationAxes.contains(FontVariationAxisTag::wght);
+    bool hasSlopeVariationAxis = variationAxes.contains(FontVariationAxisTag::slnt) || variationAxes.contains(FontVariationAxisTag::ital);
+    bool syntheticBold = computeSyntheticBold(hasWeightVariationAxis, fontDescription, fontCreationContext);
+    bool syntheticItalic = computeSyntheticItalic(hasSlopeVariationAxis, fontDescription, fontCreationContext);
+    FontPlatformData platformData(font.get(), size, syntheticBold, syntheticItalic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
+
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
+    return platformData;
+}
+
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataShared(RetainPtr<CFArrayRef>&& array, const String& itemInCollection)
+{
+    if (!array)
+        return nullptr;
+
+    FPFontRef font = nullptr;
+
+    auto length = CFArrayGetCount(array.get());
+    if (length <= 0)
+        return nullptr;
+    if (!itemInCollection.isNull()) {
+        if (auto desiredName = itemInCollection.createCFString()) {
+            for (CFIndex i = 0; i < length; ++i) {
+                auto candidate = static_cast<FPFontRef>(CFArrayGetValueAtIndex(array.get(), i));
+                auto postScriptName = adoptCF(FPFontCopyPostScriptName(candidate));
+                if (CFStringCompare(postScriptName.get(), desiredName.get(), 0) == kCFCompareEqualTo) {
+                    font = candidate;
+                    break;
+                }
+            }
+        }
+    }
+    if (!font)
+        font = static_cast<FPFontRef>(CFArrayGetValueAtIndex(array.get(), 0));
+
+    // Retain the extracted font contents, so the GPU process doesn't have to extract it a second time later.
+    // This is a power optimization.
+    return adoptCF(FPFontCopySFNTData(font));
+}
+
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataSystemParser(const SharedBuffer& buffer, const String& itemInCollection)
+{
+    RetainPtr bufferData = buffer.createCFData();
+
+    RetainPtr array = adoptCF(FPFontCreateFontsFromData(bufferData.get()));
+    return extractFontCustomPlatformDataShared(WTF::move(array), itemInCollection);
+}
+
+#if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
+static RetainPtr<CFDataRef> extractFontCustomPlatformDataMemorySafe(const SharedBuffer& buffer, const String& itemInCollection)
+{
+    RetainPtr bufferData = buffer.createCFData();
+
+    RetainPtr array = adoptCF(FPFontCreateMemorySafeFontsFromData(bufferData.get()));
+    return extractFontCustomPlatformDataShared(WTF::move(array), itemInCollection);
+}
+#endif
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
+{
+    RetainPtr extractedData = extractFontCustomPlatformDataSystemParser(buffer, itemInCollection);
+    if (!extractedData) {
+        // Something is wrong with the font.
+        return nullptr;
+    }
+
+    RetainPtr fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(extractedData.get()));
+    Ref bufferRef = SharedBuffer::create(extractedData.get());
+
+    FontPlatformData::CreationData creationData = { WTF::move(bufferRef), itemInCollection };
+    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTF::move(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer& buffer, const String& itemInCollection)
+{
+#if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
+    RetainPtr extractedData = extractFontCustomPlatformDataMemorySafe(buffer, itemInCollection);
+    if (!extractedData) {
+        // Something is wrong with the font.
+        return nullptr;
+    }
+
+    RetainPtr fontDescriptor = adoptCF(CTFontManagerCreateMemorySafeFontDescriptorFromData(extractedData.get()));
+
+    // Safe Font parser could not handle this font. This is already logged by CachedFontLoadRequest::ensureCustomFontData
+    if (!fontDescriptor)
+        return nullptr;
+
+    Ref bufferRef = SharedBuffer::create(extractedData.get());
+
+    FontPlatformData::CreationData creationData = { WTF::move(bufferRef), itemInCollection };
+    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTF::move(creationData)));
+#else
+    UNUSED_PARAM(buffer);
+    UNUSED_PARAM(itemInCollection);
+    return nullptr;
+#endif
+}
+
+std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data, bool shouldUseLockdownFontParser )
+{
+    RefPtr fontCustomPlatformData = shouldUseLockdownFontParser ? FontCustomPlatformData::createMemorySafe(WTF::move(data.fontFaceData), data.itemInCollection) : FontCustomPlatformData::create(WTF::move(data.fontFaceData), data.itemInCollection);
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+    fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;
+    return fontCustomPlatformData.releaseNonNull();
+}
+
+FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
+{
+    return FontCustomPlatformSerializedData { creationData.fontFaceData, creationData.itemInCollection, m_renderingResourceIdentifier };
+}
+
+bool FontCustomPlatformData::supportsFormat(const String& format)
+{
+    return equalLettersIgnoringASCIICase(format, "truetype"_s)
+        || equalLettersIgnoringASCIICase(format, "opentype"_s)
+        || equalLettersIgnoringASCIICase(format, "woff2"_s)
+        || equalLettersIgnoringASCIICase(format, "woff2-variations"_s)
+        || equalLettersIgnoringASCIICase(format, "woff-variations"_s)
+        || equalLettersIgnoringASCIICase(format, "truetype-variations"_s)
+        || equalLettersIgnoringASCIICase(format, "opentype-variations"_s)
+        || equalLettersIgnoringASCIICase(format, "woff"_s)
+        || equalLettersIgnoringASCIICase(format, "svg"_s);
+}
+
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology& tech)
+{
+    switch (tech) {
+    case FontTechnology::ColorColrv0:
+    case FontTechnology::ColorSbix:
+    case FontTechnology::ColorSvg:
+    case FontTechnology::FeaturesAat:
+    case FontTechnology::FeaturesOpentype:
+    case FontTechnology::Palettes:
+    case FontTechnology::Variations:
+        return true;
+    default:
+        return false;
+    }
+}
+
+}

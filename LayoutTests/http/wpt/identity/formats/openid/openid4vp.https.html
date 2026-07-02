@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Digital Credential API: openid4vp legacy implementation.</title>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body></body>
+<script>
+    promise_test(async (t) => {
+        await test_driver.bless();
+
+        assert_true(
+            navigator.userActivation.isActive,
+            "User activation should be active after test_driver.bless()."
+        );
+
+        const p = navigator.credentials.get({
+            digital: {
+                requests: [
+                    {
+                        protocol: "openid4vp",
+                        data: {},
+                    },
+                ],
+            },
+            mediation: "required",
+        });
+        await promise_rejects_js(t, TypeError, p);
+    }, "A single legacy openid4vp protocol string request must be rejected with TypeError.");
+</script>

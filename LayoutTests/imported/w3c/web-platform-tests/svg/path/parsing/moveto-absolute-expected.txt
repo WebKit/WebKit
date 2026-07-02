@@ -1,0 +1,11 @@
+
+PASS Single moveto: M 100,100
+PASS Single moveto has no path length
+PASS Moveto followed by implicit lineto: M 50,50 150,50
+PASS Moveto with multiple coordinate pairs creates implicit lineto commands
+PASS Multiple coordinate pairs after M become implicit lineto
+PASS Moveto without whitespace: M100,100
+PASS Multiple moveto commands create separate subpaths
+PASS Moveto with comma and spaces: M 100 , 200
+PASS Moveto without comma: M 100 200
+

@@ -1,0 +1,38 @@
+<html> 
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function runTest() {
+    var selection = window.getSelection();
+    var e = document.getElementById("test");
+    var r = document.getElementById("removeme");
+    
+    selection.setBaseAndExtent(e, 0, r.childNodes[0], 2);
+    
+    r.parentNode.removeChild(r);
+    selectAllCommand();
+}
+
+</script>
+
+<title>Removing the endpoints of a selection</title>
+</head> 
+<body>
+<p>This tests behavior when a node that serves as the start or end of a selection is removed from the document.  Ideally, we would just adjust the selection when an endpoint is removed, for now, we just blow away the selection.</p>
+<p>This test creates a selection that ends inside of a node that will be removed.  Then the node is removed.  Then a Select All is executed.  The entire document should be selected.</p>
+<div id="test">
+hello <span style="color:red;" id="removeme">removeme</span> world!
+</div>
+
+<script>runTest()</script>
+
+</body>
+</html>

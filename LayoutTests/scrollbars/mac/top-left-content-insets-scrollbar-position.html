@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.wide {
+    width: 8000px;
+    height: 50px;
+    background: orange;
+}
+
+.tall {
+    width: 50px;
+    height: 6000px;
+    background: plum;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+async function verticalScrollerPosition() {
+    const layerID = internals.verticalScrollbarLayerID();
+    return (await UIHelper.propertiesOfLayerWithID(layerID)).position;
+}
+
+async function horizontalScrollerPosition() {
+    const layerID = internals.horizontalScrollbarLayerID();
+    return (await UIHelper.propertiesOfLayerWithID(layerID)).position;
+}
+
+jsTestIsAsync = true;
+window.internals?.setUsesOverlayScrollbars(true);
+
+addEventListener("load", async () => {
+    description("Verifies that setting a left and top obscured content insets correctly offsets vertical and horizontal scrollbars. This requires WebKitTestRunner.");
+
+    horizontalPositionBefore = await horizontalScrollerPosition();
+    verticalPositionBefore = await verticalScrollerPosition();
+
+    await window.testRunner?.setObscuredContentInsets(100, 0, 0, 200);
+    await UIHelper.ensurePresentationUpdate();
+
+    horizontalPositionAfter = await horizontalScrollerPosition();
+    verticalPositionAfter = await verticalScrollerPosition();
+
+    shouldBeGreaterThan("horizontalPositionAfter.x", "horizontalPositionBefore.x");
+    shouldBe("horizontalPositionAfter.y", "horizontalPositionBefore.y");
+
+    shouldBe("verticalPositionAfter.x", "verticalPositionBefore.x");
+    shouldBeGreaterThan("verticalPositionAfter.y", "verticalPositionBefore.y");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="tall"></div>
+</body>
+</html>

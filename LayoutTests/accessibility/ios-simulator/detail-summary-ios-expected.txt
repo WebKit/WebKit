@@ -1,0 +1,22 @@
+Summary1
+
+Detail1
+
+link
+Summary2
+
+This tests the details element on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS summary1.isExpanded is true
+PASS detail1.isExpanded is false
+PASS summary2.isExpanded is false
+PASS document.getElementById('summary1') === document.activeElement is false
+PASS document.getElementById('details1') === document.activeElement is false
+PASS document.getElementById('link') === document.activeElement is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+
+PASS Count SecurityPolicyViolation events.
+PASS script.src default
+PASS div.innerHTML default
+PASS script.text default
+

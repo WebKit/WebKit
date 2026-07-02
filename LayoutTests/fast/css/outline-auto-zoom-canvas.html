@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+canvas {
+    display: block;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas1" width="100" height="100">
+    <button id="btn1" tabindex="0">X</button>
+</canvas>
+<canvas id="canvas2" width="100" height="100" style="zoom: 2">
+    <button id="btn2" tabindex="0">X</button>
+</canvas>
+<canvas id="canvas3" width="100" height="100">
+    <button id="btn3" tabindex="0">X</button>
+</canvas>
+<script>
+description("This test ensures that the canvas drawFocusIfNeeded focus ring scales with CSS zoom and canvas scale.");
+
+function countFocusRingPixels(canvas, scale) {
+    var context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (scale) {
+        context.save();
+        context.scale(scale, scale);
+    }
+
+    var button = canvas.querySelector("button");
+    context.beginPath();
+    context.rect(10, 10, 30, 30);
+    button.focus();
+    context.drawFocusIfNeeded(button);
+    button.blur();
+
+    if (scale)
+        context.restore();
+
+    var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    var count = 0;
+    for (var i = 3; i < imageData.length; i += 4) {
+        if (imageData[i] > 0)
+            count++;
+    }
+    return count;
+}
+
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+var canvas3 = document.getElementById("canvas3");
+
+var pixels1x = countFocusRingPixels(canvas1);
+var pixels2xZoom = countFocusRingPixels(canvas2);
+var pixels2xScale = countFocusRingPixels(canvas3, 2);
+
+// At 2x zoom the focus ring radius should be doubled, producing more painted
+// pixels. We check that the zoomed canvas has strictly more focus ring pixels.
+shouldBeTrue("pixels2xZoom > pixels1x");
+
+// Similarly, ctx.scale(2, 2) should also produce a scaled
+// focus ring with more pixels than the unscaled version.
+shouldBeTrue("pixels2xScale > pixels1x");
+</script>
+</body>
+</html>

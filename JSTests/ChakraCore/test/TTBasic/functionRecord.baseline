@@ -1,0 +1,5 @@
+f !== null: true
+f === g: true
+g.foo: 3
+f(): called f
+g(): called f

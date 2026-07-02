@@ -1,0 +1,5 @@
+Other focus
+
+PASS Avoid left scroll-padding
+PASS Avoid right scroll-padding
+

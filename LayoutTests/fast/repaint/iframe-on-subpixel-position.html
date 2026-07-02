@@ -1,0 +1,53 @@
+<script>
+function runRepaintTest() {
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(function() {
+    let shrink = document.getElementById("subpixel_iframe").contentDocument.getElementById("shrink");
+    if (!window.testRunner) {
+        setTimeout('shrink.style.height = "0px"', 100);
+        return;
+    }
+
+    testRunner.dumpAsText();
+    document.body.offsetTop;
+    internals.startTrackingRepaints();
+
+    shrink.style.height = "0px";
+    document.getElementById("subpixel_iframe").contentDocument.body.offsetHeight;
+
+    let layerTreeAsText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+    internals.stopTrackingRepaints();
+
+    let pre = document.createElement('pre');
+    document.body.appendChild(pre);
+    pre.innerHTML = layerTreeAsText;
+    testRunner.notifyDone();
+}, 0);
+
+}
+</script>
+<style>
+.container {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  padding: 0.5px;
+}
+</style>
+<body>
+<div class=container><div><iframe onload="runRepaintTest()" id=subpixel_iframe frameborder=no srcdoc="
+<style>
+body {
+  margin:0px;
+}
+div {
+  background-color: green;
+  height: 100px;
+  width: 100px;
+}
+</style>
+<div id=shrink></div>">
+</body>

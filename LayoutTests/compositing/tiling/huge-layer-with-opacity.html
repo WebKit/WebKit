@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            html {
+                overflow: hidden;
+            }
+            div {
+                width: 100000px;
+                height: 100000px;
+                background: green;
+                border: 10px solid blue;
+                opacity: 0.5;
+                will-change: transform;
+            }
+        </style>
+    </head>
+    <body>
+        Rendering a huge opacity layer shouldn't crash <a href="https://webkit.org/b/214817">Bug 214817</a>.
+        <div>
+            <div>
+                <div></div>
+            </div>
+        </div>
+    </body>
+</html>

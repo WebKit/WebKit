@@ -1,0 +1,61 @@
+Tests for the console.screenshot API in a Worker.
+
+
+== Running test suite: console.screenshot
+-- Running test case: console.screenshot.ImageData
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.ImageBitmap
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.OffscreenCanvas
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.OffscreenCanvasRenderingContext2D
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.String.Valid
+PASS: Error: Could not capture screenshot
+
+-- Running test case: console.screenshot.String.dataURL.Valid
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.String.dataURL.InvalidMIME
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image should not load.
+
+-- Running test case: console.screenshot.String.dataURL.InvalidContent
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image should not load.
+
+-- Running test case: console.screenshot.String.dataURL.InvalidNoContent
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image should not load.
+
+-- Running test case: console.screenshot.String.dataURL.ValidNoContent
+PASS: Error: Could not capture screenshot
+
+-- Running test case: console.screenshot.NonScreenshotableTarget
+PASS: Error: Could not capture screenshot
+
+-- Running test case: console.screenshot.NoArguments
+PASS: Error: Could not capture screenshot
+

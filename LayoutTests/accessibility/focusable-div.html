@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <!-- A link always gets its accessible text from contents. -->
+    <a id="link" href="#">A</a>
+
+    <!-- A generic focusable div should not get its accessible text from contents. -->
+    <div id="div" tabindex="0">B</div>
+    <div id="div2" tabindex="0"><div></div>C</div>
+    <div id="div3" tabindex="0" aria-label="D"></div>
+
+    <!-- A generic focusable div should not get accessible text from children that are focusable or containers. -->
+    <div id="div4" tabindex="0"><a href="#">Link</a></div>
+    <div id="div5" tabindex="0">Initial text before link<a href="#">Link</a></div>
+    <div id="div6" tabindex="0"><ul><li>List item</li></ul></div>
+    <div id="div7" tabindex="0">Initial text before list<ul><li>List item</li></ul></div>
+</div>
+
+<script>
+    description("This test makes sure that a generic focusable div can get accessibility focus. It should not get accessible text from its children automatically though.");
+
+    function lastChar(str) {
+        return str.substr(str.length - 1);
+    }
+
+    async function waitForFocus(id) {
+        document.getElementById(id).focus();
+        shouldBe("document.activeElement.id", `"${id}"`);
+        let axFocusedElement;
+        await waitFor(() => {
+            axFocusedElement = accessibilityController.focusedElement;
+            return axFocusedElement && axFocusedElement.domIdentifier === id;
+        });
+        return axFocusedElement;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            window.axLink = await waitForFocus("link");
+            shouldBe("lastChar(axLink.title)", "\"A\"");
+
+            window.axDiv = await waitForFocus("div");
+            shouldBe("lastChar(axDiv.title)", "' '");
+
+            window.axDiv2 = await waitForFocus("div2");
+            shouldBe("lastChar(axDiv2.title)", "' '");
+
+            window.accNameForDiv3 = platformValueForW3CName(await waitForFocus("div3"));
+            shouldBe("lastChar(accNameForDiv3)", "\"D\"");
+
+            window.axDiv4 = await waitForFocus("div4");
+            shouldBe("axDiv4.title.indexOf('Link')", "-1");
+
+            window.axDiv5 = await waitForFocus("div5");
+            shouldBe("axDiv5.title.indexOf('Link')", "-1");
+            shouldBe("axDiv5.title.indexOf('Initial text before link') >= 0", "false");
+
+            window.axDiv6 = await waitForFocus("div6");
+            shouldBe("axDiv6.title.indexOf('List item')", "-1");
+
+            window.axDiv7 = await waitForFocus("div7");
+            shouldBe("axDiv7.title.indexOf('List item')", "-1");
+            shouldBe("axDiv7.title.indexOf('Initial text before list') >= 0", "false");
+
+            document.getElementById("content").style.visibility = "hidden";
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

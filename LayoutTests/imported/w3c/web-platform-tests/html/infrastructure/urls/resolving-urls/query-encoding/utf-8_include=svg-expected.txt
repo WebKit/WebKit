@@ -1,0 +1,6 @@
+
+PASS SVG <a>
+TIMEOUT SVG <feImage> Test timed out
+PASS SVG <image>
+PASS SVG <use>
+

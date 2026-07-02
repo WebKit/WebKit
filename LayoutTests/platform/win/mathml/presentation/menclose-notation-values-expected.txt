@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x221
+  RenderBlock {HTML} at (0,0) size 800x221
+    RenderBody {BODY} at (8,8) size 784x205
+      RenderMathMLMath {math} at (0,8) size 112x58
+        RenderMathMLRow {mrow} at (0,0) size 112x58
+          RenderMathMLMenclose {menclose} at (0,0) size 112x58
+            RenderMathMLSpace {mspace} at (7,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (111,47) size 5x19
+        text run at (111,47) width 5: " "
+      RenderMathMLMath {math} at (115,8) size 108x58
+        RenderMathMLRow {mrow} at (0,0) size 108x58
+          RenderMathMLMenclose {menclose} at (0,0) size 108x58
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (222,47) size 5x19
+        text run at (222,47) width 5: " "
+      RenderMathMLMath {math} at (226,8) size 109x58
+        RenderMathMLRow {mrow} at (0,0) size 108x58
+          RenderMathMLMenclose {menclose} at (0,0) size 108x58
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (334,47) size 5x19
+        text run at (334,47) width 5: " "
+      RenderMathMLMath {math} at (338,8) size 109x58
+        RenderMathMLRow {mrow} at (0,0) size 108x58
+          RenderMathMLMenclose {menclose} at (0,0) size 108x58
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (446,47) size 5x19
+        text run at (446,47) width 5: " "
+      RenderMathMLMath {math} at (450,0) size 145x74
+        RenderMathMLRow {mrow} at (0,0) size 144x74
+          RenderMathMLMenclose {menclose} at (0,0) size 144x74
+            RenderMathMLSpace {mspace} at (21,11) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (594,47) size 5x19
+        text run at (594,47) width 5: " "
+      RenderMathMLMath {math} at (598,9) size 105x57
+        RenderMathMLRow {mrow} at (0,0) size 104x57
+          RenderMathMLMenclose {menclose} at (0,0) size 104x57
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (0,0) size 0x0
+      RenderMathMLMath {math} at (0,74) size 104x57
+        RenderMathMLRow {mrow} at (0,0) size 104x57
+          RenderMathMLMenclose {menclose} at (0,0) size 104x57
+            RenderMathMLSpace {mspace} at (0,3) size 100x51 [bgcolor=#FF0000]
+      RenderText {#text} at (103,112) size 5x19
+        text run at (103,112) width 5: " "
+      RenderMathMLMath {math} at (107,73) size 108x54
+        RenderMathMLRow {mrow} at (0,0) size 107x54
+          RenderMathMLMenclose {menclose} at (0,0) size 107x54
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (214,112) size 5x19
+        text run at (214,112) width 5: " "
+      RenderMathMLMath {math} at (218,77) size 107x54
+        RenderMathMLRow {mrow} at (0,0) size 107x54
+          RenderMathMLMenclose {menclose} at (0,0) size 107x54
+            RenderMathMLSpace {mspace} at (3,0) size 101x50 [bgcolor=#FF0000]
+      RenderText {#text} at (324,112) size 5x19
+        text run at (324,112) width 5: " "
+      RenderMathMLMath {math} at (328,77) size 102x51
+        RenderMathMLRow {mrow} at (0,0) size 101x51
+          RenderMathMLMenclose {menclose} at (0,0) size 101x51
+            RenderMathMLSpace {mspace} at (0,0) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (429,112) size 5x19
+        text run at (429,112) width 5: " "
+      RenderMathMLMath {math} at (433,77) size 102x51
+        RenderMathMLRow {mrow} at (0,0) size 101x51
+          RenderMathMLMenclose {menclose} at (0,0) size 101x51
+            RenderMathMLSpace {mspace} at (0,0) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (534,112) size 5x19
+        text run at (534,112) width 5: " "
+      RenderMathMLMath {math} at (538,77) size 101x50
+        RenderMathMLRow {mrow} at (0,0) size 100x50
+          RenderMathMLMenclose {menclose} at (0,0) size 100x50
+            RenderMathMLSpace {mspace} at (0,0) size 100x50 [bgcolor=#FF0000]
+      RenderText {#text} at (638,112) size 5x19
+        text run at (638,112) width 5: " "
+      RenderMathMLMath {math} at (642,77) size 101x50
+        RenderMathMLRow {mrow} at (0,0) size 100x50
+          RenderMathMLMenclose {menclose} at (0,0) size 100x50
+            RenderMathMLSpace {mspace} at (0,0) size 100x50 [bgcolor=#FF0000]
+      RenderText {#text} at (0,0) size 0x0
+      RenderMathMLMath {math} at (0,141) size 108x58
+        RenderMathMLRow {mrow} at (0,0) size 108x58
+          RenderMathMLMenclose {menclose} at (0,0) size 108x58
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (107,179) size 5x19
+        text run at (107,179) width 5: " "
+      RenderText {#text} at (0,0) size 0x0
+      RenderMathMLMath {math} at (111,132) size 144x74
+        RenderMathMLRow {mrow} at (0,0) size 144x74
+          RenderMathMLMenclose {menclose} at (0,0) size 144x74
+            RenderMathMLSpace {mspace} at (21,11) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (254,179) size 5x19
+        text run at (254,179) width 5: " "
+      RenderMathMLMath {math} at (258,140) size 109x58
+        RenderMathMLRow {mrow} at (0,0) size 108x58
+          RenderMathMLMenclose {menclose} at (0,0) size 108x58
+            RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
+      RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,13 @@
+A select with text-align pointing toward the chevron should still have internal padding on the logical end, preventing text from overlapping with the chevron.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ltrStyle.paddingRight is not "0px"
+PASS ltrStyle.paddingLeft is "0px"
+PASS rtlStyle.paddingLeft is not "0px"
+PASS rtlStyle.paddingRight is "0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

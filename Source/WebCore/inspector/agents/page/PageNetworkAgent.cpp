@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "PageNetworkAgent.h"
+#include "DocumentPage.h"
+
+#include "DocumentLoader.h"
+#include "FrameConsoleClient.h"
+#include "FrameDestructionObserverInlines.h"
+#include "InspectorBackendClient.h"
+#include "InspectorIdentifierRegistry.h"
+#include "InstrumentingAgents.h"
+#include "LocalFrameInlines.h"
+#include "Page.h"
+#include "PageInspectorController.h"
+#include "Settings.h"
+#include "ThreadableWebSocketChannel.h"
+#include "WebSocket.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageNetworkAgent);
+
+PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorBackendClient* client)
+    : InspectorNetworkAgent(context, { context.inspectedPage->settings().inspectorMaximumResourcesContentSize(), context.inspectedPage->settings().inspectorSupportsShowingCertificate() })
+    , m_inspectedPage(context.inspectedPage)
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    , m_client(client)
+#endif
+{
+#if !ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    UNUSED_PARAM(client);
+#endif
+}
+
+PageNetworkAgent::~PageNetworkAgent() = default;
+
+Inspector::Protocol::ErrorStringOr<void> PageNetworkAgent::enable()
+{
+    // Under Site Isolation, ProxyingNetworkAgent in the UIProcess handles Network
+    // events for all processes. PageNetworkAgent should not be enabled to avoid
+    // duplicate events for same-process frames.
+    if (RefPtr page = m_inspectedPage.get(); page && page->settings().siteIsolationEnabled())
+        return { };
+
+    return InspectorNetworkAgent::enable();
+}
+
+Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
+{
+    if (loader)
+        return m_inspectedPage->inspectorController().identifierRegistry().loaderId(loader);
+    return { };
+}
+
+Inspector::Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
+{
+    if (loader)
+        return m_inspectedPage->inspectorController().identifierRegistry().frameId(loader->frame());
+    return { };
+}
+
+Vector<Ref<WebSocket>> PageNetworkAgent::activeWebSockets()
+{
+    Vector<Ref<WebSocket>> webSockets;
+
+    for (CheckedPtr webSocket : WebSocket::allActiveWebSockets()) {
+        RefPtr channel = webSocket->channel();
+        if (!channel)
+            continue;
+
+        if (!channel->hasCreatedHandshake())
+            continue;
+
+        RefPtr document = dynamicDowncast<Document>(webSocket->scriptExecutionContext());
+        if (!document)
+            continue;
+
+        // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
+        if (document->page() != m_inspectedPage.ptr())
+            continue;
+
+        webSockets.append(*webSocket);
+    }
+
+    return webSockets;
+}
+
+void PageNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
+{
+    m_inspectedPage->setResourceCachingDisabledByWebInspector(disabled);
+}
+
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit)
+{
+    return m_client && m_client->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
+}
+
+#endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
+
+ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
+{
+    RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+    if (!frame)
+        return nullptr;
+
+    SUPPRESS_UNCOUNTED_LOCAL auto* document = frame->document();
+    if (!document) {
+        errorString = "Missing frame of docuemnt for given frameId"_s;
+        return nullptr;
+    }
+
+    return document;
+}
+
+void PageNetworkAgent::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
+{
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
+    if (!localMainFrame)
+        return;
+    localMainFrame->console().addMessage(WTF::move(message));
+}
+
+} // namespace WebCore

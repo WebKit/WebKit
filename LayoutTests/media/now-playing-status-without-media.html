@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script>
+
+            let state;
+
+            window.addEventListener('load', async event => {
+
+                if (!window.internals) {
+                    failTest(`<br>This test requires internals!`);
+                    return;
+                }
+
+                consoleWrite("<br>** Check state initially.")
+                state = internals.nowPlayingState;
+                testExpected('state.haveEverRegisteredAsNowPlayingApplication', false);
+
+                consoleWrite("<br>** Suspend process.")
+                run('internals.applicationWillBecomeInactive()');
+                state = internals.nowPlayingState;
+                testExpected('state.haveEverRegisteredAsNowPlayingApplication', false);
+
+                consoleWrite("<br>** Activate process.")
+                run('internals.applicationDidBecomeActive()');
+                state = internals.nowPlayingState;
+                testExpected('state.haveEverRegisteredAsNowPlayingApplication', false);
+
+                endTest();
+            });
+
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>NowPlaying status should not be updated when no media is active.</p>
+    </body>
+</html>

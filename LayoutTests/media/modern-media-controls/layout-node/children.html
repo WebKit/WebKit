@@ -1,0 +1,74 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/scheduler.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/layout-node.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+description("Testing the <code>LayoutNode.children</code> property.");
+
+window.jsTestIsAsync = true;
+
+const node = new LayoutNode;
+
+debug("Check default state");
+shouldBeTrue("Array.isArray(node.children)");
+shouldBeTrue("node.children.length === 0");
+
+const a = new LayoutNode;
+const b = new LayoutNode;
+const c = new LayoutNode;
+
+const children = [a, b, c];
+node.children = children;
+
+debug("");
+debug("Set children to [a, b, c]");
+shouldBeTrue("node.children.length === 3");
+shouldBeTrue("node.children[0] === a");
+shouldBeTrue("node.children[1] === b");
+shouldBeTrue("node.children[2] === c");
+shouldBeTrue("node.children !== children");
+
+let numberOfFrames = 0;
+scheduler.frameDidFire = function()
+{
+    debug("");
+    debug("Layout was performed");
+
+    switch (++numberOfFrames) {
+    case 1:
+        shouldBeTrue("node.element.childElementCount === 3");
+        shouldBeTrue("node.element.firstElementChild === a.element");
+        shouldBeTrue("node.element.firstElementChild.nextElementSibling === b.element");
+        shouldBeTrue("node.element.lastElementChild === c.element");
+        debug("");
+        debug("Set children to be a copy of itself");
+        node.children = Array.from(node.children);
+        shouldBeFalse("node.children[0].needsLayout");
+        shouldBeFalse("node.children[1].needsLayout");
+        shouldBeFalse("node.children[2].needsLayout");
+        debug("");
+        debug("Set children to [b, a]");
+        node.children = [b, a];
+        shouldBeTrue("node.children.length === 2");
+        shouldBeTrue("node.children[0] === b");
+        shouldBeTrue("node.children[1] === a");
+        break;
+    case 2:
+        shouldBeTrue("node.element.childElementCount === 2");
+        shouldBeTrue("node.element.firstElementChild === b.element");
+        shouldBeTrue("node.element.lastElementChild === a.element");
+        debug("");
+        debug("Set children to []");
+        node.children = [];
+        shouldBeTrue("node.children.length === 0");
+        break;
+    case 3:
+        shouldBeTrue("node.element.childElementCount === 0");
+        finishMediaControlsTest();
+        break;
+    }
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

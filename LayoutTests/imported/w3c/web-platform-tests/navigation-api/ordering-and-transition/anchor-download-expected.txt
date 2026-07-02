@@ -1,0 +1,4 @@
+
+
+PASS <a download> fires navigate, but not navigatesuccess or navigateerror when not intercepted by intercept()
+

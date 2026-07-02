@@ -1,0 +1,4 @@
+
+
+PASS click using pen is a PointerEvent
+

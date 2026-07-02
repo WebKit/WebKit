@@ -1,0 +1,1 @@
+../../../../wpt/webxr/resources/webxr_test_constants_single_view.js

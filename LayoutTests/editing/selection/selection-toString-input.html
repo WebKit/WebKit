@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<input id="inputElement" value="hello, world">
+<script>
+
+inputElement.focus();
+inputElement.setSelectionRange(0, 5);
+shouldBeEqualToString('getSelection().toString()', 'hello');
+
+</script>

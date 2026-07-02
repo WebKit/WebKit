@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<template id="slotted-label-template">
+    <slot class="label-slot">Fallback</slot>
+    <button class="shadow-button" aria-labelledby="label-slot">Action</button>
+</template>
+
+<slotted-label-component id="test-slotted"><span>Slotted</span></slotted-label-component>
+
+<slotted-label-component id="test-slotted-with-hidden"><span>Visible</span><span class="hidden">Hidden</span></slotted-label-component>
+
+<slotted-label-component id="test-fallback">
+</slotted-label-component>
+
+<slotted-label-component id="test-hidden-only">
+    <span class="hidden">Hidden</span>
+</slotted-label-component>
+
+<slotted-label-component id="test-dynamic">
+</slotted-label-component>
+
+<script>
+var componentCount = 0;
+customElements.define(
+    "slotted-label-component",
+    class extends HTMLElement {
+        constructor() {
+            super();
+            var template = document.getElementById("slotted-label-template").content;
+            this.attachShadow({ mode: "open" }).appendChild(template.cloneNode(true));
+            // Give each shadow button and slot a unique ID.
+            this.uniqueId = componentCount++;
+            this.shadowRoot.querySelector(".label-slot").id = "label-slot-" + this.uniqueId;
+            this.shadowRoot.querySelector(".shadow-button").id = "shadow-button-" + this.uniqueId;
+            this.shadowRoot.querySelector(".shadow-button").setAttribute("aria-labelledby", "label-slot-" + this.uniqueId);
+        }
+
+        getButtonId() {
+            return "shadow-button-" + this.uniqueId;
+        }
+    }
+);
+
+var output = "This test ensures slot elements referenced by aria-labelledby correctly use slotted content over fallback, and exclude hidden slotted content.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var slottedButton;
+    var slottedWithHiddenButton;
+    var fallbackButton;
+    var hiddenOnlyButton;
+    var dynamicButton;
+
+    setTimeout(async function() {
+        output += "Test 1: Button labelled by slot with slotted content should use slotted content.\n";
+        slottedButton = accessibilityController.accessibleElementById(document.getElementById("test-slotted").getButtonId());
+        output += checkTextAlternatives(slottedButton, { expected: ["Slotted"], unexpected: ["Fallback"] });
+
+        output += "\nTest 2: Button labelled by slot should exclude hidden slotted content.\n";
+        slottedWithHiddenButton = accessibilityController.accessibleElementById(document.getElementById("test-slotted-with-hidden").getButtonId());
+        output += checkTextAlternatives(slottedWithHiddenButton, { expected: ["Visible"], unexpected: ["Hidden", "Fallback"] });
+
+        output += "\nTest 3: Button labelled by slot with no slotted content should use fallback.\n";
+        fallbackButton = accessibilityController.accessibleElementById(document.getElementById("test-fallback").getButtonId());
+        output += checkTextAlternatives(fallbackButton, { expected: ["Fallback"] });
+
+        output += "\nTest 4: Button labelled by slot with only hidden slotted content should use fallback.\n";
+        hiddenOnlyButton = accessibilityController.accessibleElementById(document.getElementById("test-hidden-only").getButtonId());
+        output += checkTextAlternatives(hiddenOnlyButton, { expected: ["Fallback"], unexpected: ["Hidden"] });
+
+        output += "\nTest 5: Dynamically adding slotted content should update the label.\n";
+        var dynamicComponent = document.getElementById("test-dynamic");
+        dynamicButton = accessibilityController.accessibleElementById(dynamicComponent.getButtonId());
+        output += checkTextAlternatives(dynamicButton, { expected: ["Fallback"] });
+
+        var newSpan = document.createElement("span");
+        newSpan.textContent = "Dynamic";
+        dynamicComponent.appendChild(newSpan);
+
+        await waitFor(() => {
+            var alternatives = platformTextAlternatives(dynamicButton);
+            return alternatives.includes("Dynamic") && !alternatives.includes("Fallback");
+        });
+        output += checkTextAlternatives(dynamicButton, { expected: ["Dynamic"], unexpected: ["Fallback"] });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+This test checks a few cases of extended (> 127) characters in repeat regular expressions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "foo\xa0\xa0\xa0".replace(/\xa0*/, "") is "foo\xa0\xa0\xa0"
+PASS "foo\xa0\xa0\xa0".replace(/\xa0+/, "") is "foo"
+PASS "foo\xa0\xa0\xa0".replace(/\xa0*$/, "") is "foo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

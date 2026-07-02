@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ModelElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=false ] -->
+<meta charset="utf-8">
+<title>&lt;model> immersive iframe restrictions</title>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../resources/testdriver-vendor.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="../resources/model-utils.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    assert_true('immersiveEnabled' in document, 'document.immersiveEnabled should exist');
+    assert_true(document.immersiveEnabled, 'document.immersiveEnabled should be true on top-level document');
+}, 'document.immersiveEnabled is true on top-level document');
+
+promise_test(async t => {
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    t.add_cleanup(() => iframe.remove());
+
+    assert_false(iframe.contentDocument.immersiveEnabled, 'document.immersiveEnabled should be false in iframe');
+}, 'document.immersiveEnabled is false on iframe document');
+
+promise_test(async t => {
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = `
+        <model>
+            <source src="../resources/cube.usdz">
+        </model>
+    `;
+    document.body.appendChild(iframe);
+    t.add_cleanup(() => iframe.remove());
+    await new Promise(resolve => iframe.onload = resolve);
+
+    const model = iframe.contentDocument.querySelector('model');
+
+    await test_driver.bless("immersive", () => {}, iframe.contentWindow);
+
+    await promise_rejects_dom(t, 'InvalidAccessError', iframe.contentWindow.DOMException,
+        model.requestImmersive(),
+        'requestImmersive should reject with InvalidAccessError in iframe'
+    );
+}, 'requestImmersive rejects with InvalidAccessError in iframe');
+
+promise_test(async t => {
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = `
+        <model>
+            <source src="../resources/cube.usdz">
+        </model>
+    `;
+    document.body.appendChild(iframe);
+    t.add_cleanup(() => iframe.remove());
+    await new Promise(resolve => iframe.onload = resolve);
+
+    const model = iframe.contentDocument.querySelector('model');
+
+    let errorMessage;
+    await test_driver.bless("immersive", () => {}, iframe.contentWindow);
+
+    try {
+        await model.requestImmersive();
+    } catch (e) {
+        errorMessage = e.message;
+    }
+
+    assert_equals(errorMessage, 'Immersive API is only available in a top-level frame.',
+        'Error message should indicate iframe restriction');
+}, 'requestImmersive error message is correct for iframe');
+
+promise_test(async t => {
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = `
+        <model>
+            <source src="../resources/cube.usdz">
+        </model>
+    `;
+    document.body.appendChild(iframe);
+    t.add_cleanup(() => iframe.remove());
+    await new Promise(resolve => iframe.onload = resolve);
+
+    const model = iframe.contentDocument.querySelector('model');
+
+    let errorFired = false;
+    model.addEventListener('immersiveerror', () => { errorFired = true; });
+
+    await test_driver.bless("immersive", () => {}, iframe.contentWindow);
+    await promise_rejects_dom(t, 'InvalidAccessError', iframe.contentWindow.DOMException,
+        model.requestImmersive(),
+        'requestImmersive should reject with InvalidAccessError in iframe'
+    );
+
+    await t.step_wait(() => errorFired, 'immersiveerror event should fire');
+}, 'immersiveerror event fires for iframe restriction');
+
+</script>
+</body>

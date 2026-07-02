@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<style>
+input:before {
+  display: block;
+  content: "VISIBLE";
+}
+</style>
+
+<label>
+<input type="checkbox" id="cb">
+</label>
+<script>
+  var checkbox = document.getElementById("cb");
+  checkbox.appendChild(document.createTextNode("Checkbox"));
+</script>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description("This test ensures WebKit uses shorthand notations for cssText; most of what was originally in this test is now covered by Web Platform Tests");
+
+var tests = [
+    ['-webkit-border-horizontal-spacing: 1px; -webkit-border-vertical-spacing: 2px;', 'border-spacing: 1px 2px;'],
+
+    // We don't use the font shorthand for this case yet, for historical editing compatibility reasons.
+    ['font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold;',
+     'font-family: sans-serif; line-height: 2em; font-size: 3em; font-style: italic; font-weight: bold;'],
+];
+
+function normalizeCssText(text) { return text.trim().split(/;\s*/).sort().slice(1).join("; "); }
+
+var element;
+tests.forEach(function (test) {
+    var styleAttribute = test[0];
+    var expectedCssText = test[1];
+
+    element = document.createElement('div');
+    element.setAttribute('style', styleAttribute);
+
+    shouldBe('normalizeCssText(element.style.cssText)', '"' + normalizeCssText(expectedCssText) + '"');
+});
+
+</script>
+</body>
+</html>

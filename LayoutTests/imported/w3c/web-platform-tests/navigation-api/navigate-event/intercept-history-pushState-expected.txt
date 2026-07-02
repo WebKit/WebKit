@@ -1,0 +1,3 @@
+
+PASS event.intercept() should proceed if the given promise resolves
+

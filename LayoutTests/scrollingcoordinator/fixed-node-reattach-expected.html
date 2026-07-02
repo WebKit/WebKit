@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        iframe {
+            border: 1px solid black;
+            height: 100px;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', async () => {
+            if (!window.testRunner)
+                return;
+
+            testRunner.waitUntilDone();
+            await new Promise(requestAnimationFrame);
+            testRunner.notifyDone();
+        }, false);
+    </script>
+    
+</head>
+<body>
+
+    <iframe id=frame onload='test()' srcdoc='
+    <style>
+    .fixed {
+        position: fixed;
+        height: 100px;
+        width: 200px;
+        bottom: 100px;
+        transform: translate3d(0, 100%, 0);
+        background-color: green;
+    }
+    </style>
+    <div class=fixed>
+    </div>'></iframe>
+    
+</body>
+</html>

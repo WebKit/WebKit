@@ -1,0 +1,14 @@
+
+FAIL @counter-style 'speak-as: auto' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'speak-as: bullets' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'speak-as: numbers' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'speak-as: words' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'speak-as: spell-out' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'speak-as: bar' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'speak-as: spellout' is valid assert_not_equals: got disallowed value -1
+PASS @counter-style 'speak-as: bullets numbers' is invalid
+PASS @counter-style 'speak-as: none' is invalid
+PASS @counter-style 'speak-as: initial' is invalid
+PASS @counter-style 'speak-as: inherit' is invalid
+PASS @counter-style 'speak-as: unset' is invalid
+

@@ -1,0 +1,17 @@
+<script>
+  onload = async () => {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    internals.withUserGesture(() => {});
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    document.body.append(svg);
+    await svg.requestFullscreen();
+    document.querySelector("[popover]").showPopover();
+    document.body.innerHTML = 'PASS if no crash';
+    if (window.testRunner)
+      testRunner.notifyDone();
+  };
+</script>
+<div popover="auto"></div>

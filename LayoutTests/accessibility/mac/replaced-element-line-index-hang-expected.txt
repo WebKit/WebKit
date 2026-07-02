@@ -1,0 +1,10 @@
+Verifies that lineIndexForTextMarker reports the actual line index for an inline replaced element (not the previously-hardcoded 0), and doesn't hang when called on a marker beyond the replaced element.
+
+PASS: editable.lineIndexForTextMarker(iconMarker) === 5
+PASS: editable.lineIndexForTextMarker(endMarker) === 9
+PASS: No hang.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ABCDEFGHIJ

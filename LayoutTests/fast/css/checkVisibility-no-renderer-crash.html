@@ -1,0 +1,28 @@
+<style>* { display: block; } ::first-line { color: green; } </style>
+<script>
+(async () => {
+  testRunner?.dumpAsText();
+  testRunner?.waitUntilDone();
+  let cssStyleRule = document.styleSheets[0].cssRules[1];
+  let output = document.createElement('output');
+  document.documentElement.append(output);
+  let styleElement = document.createElement('style');
+  document.documentElement.append(styleElement);
+  let base = document.createElement('base');
+  document.documentElement.appendChild(base);
+  let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  base.appendChild(svg);
+  await history.back();
+  styleElement.innerText = `@scope { @container (block-size: 260ex) } * { border-inline-end-width: calc((9.45dvmax)); `;
+  if (frames.caches)
+    await frames.caches.has("foo");
+  document.styleSheets[0].disabled = true;
+  if (!window.cookieStore)
+    await window.cookieStore.set("foo", "bar");
+  await output.checkVisibility( { checkVisibilityCSS: false });
+  cssStyleRule.selectorText = `:dir(ltr)`;
+  await svg.checkVisibility( { checkVisibilityCSS: true });
+  document.write("PASS if no crash.");
+  testRunner?.notifyDone();
+})();
+</script>

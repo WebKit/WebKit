@@ -1,0 +1,56 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that IPC error strings can be retrieved after validation failures</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async (t) => {        
+    if (!window.IPC) {
+        done();
+        return;
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    // IPCTester has a CheckTestParameter message which has the following validations:
+    //  - Parameter validation for `value > 10`
+    //  - MESSAGE_CHECK for `value < 100`
+
+    // Test case 1: Value = 10, that should fail IPC validation
+    CoreIPC.GPU.IPCTester.CheckTestParameter(0, { param: { value: 10 } });
+    CoreIPC.GPU.GPUConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, (reply) => {
+        const errorString = reply.error;
+        assert_true(errorString != "", "Error string should be set for value 10 (IPC validation failure)");
+        assert_true(errorString.includes("Validation failed") && errorString.includes("value > 10"), 
+                    `Error string should contain IPC validator message for value 10, got: "${errorString}"`);
+    });
+
+    // Test case 2: Value = 99, boundary value that should pass both validations
+    CoreIPC.GPU.IPCTester.CheckTestParameter(0, { param: { value: 99 } });
+    CoreIPC.GPU.GPUConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, (reply) => {
+        const errorString = reply.error;
+        assert_true(errorString == "", "Value 99 should pass validation");
+    });
+
+    // Test case 3: Value = 100, boundary value that should pass IPC validation but fail MESSAGE_CHECK
+    CoreIPC.GPU.IPCTester.CheckTestParameter(0, { param: { value: 100 } });
+    CoreIPC.GPU.GPUConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, (reply) => {
+        const errorString = reply.error; 
+        assert_true(errorString != "", "Error string should be set for value 100 (MESSAGE_CHECK failure)");
+        assert_true(errorString.includes("Message check failed") && errorString.includes("Test parameter must be less than 100"),
+            `Error string should contain MESSAGE_CHECK message for value 100, got: "${errorString}"`);
+    });
+
+    // Test case 4: Value = 200, should pass IPC validation but fail MESSAGE_CHECK
+    CoreIPC.GPU.IPCTester.CheckTestParameter(0, { param: { value: 200 } });
+    CoreIPC.GPU.GPUConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, (reply) => {
+        const errorString = reply.error;
+        assert_true(errorString != "", "Error string should be set for value 200 (MESSAGE_CHECK failure)");
+        assert_true(errorString.includes("Message check failed") && errorString.includes("Test parameter must be less than 100"),
+            `Error string should contain MESSAGE_CHECK message for value 200, got: "${errorString}"`);
+    });
+}, "IPC error string retrieval after validation failure");
+
+done();
+</script>
+</body>

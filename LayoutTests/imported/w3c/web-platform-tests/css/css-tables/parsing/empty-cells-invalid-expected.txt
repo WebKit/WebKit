@@ -1,0 +1,4 @@
+
+PASS e.style['empty-cells'] = "auto" should not set the property value
+PASS e.style['empty-cells'] = "show hide" should not set the property value
+

@@ -1,0 +1,9 @@
+Test that printing a console message in a detached frame does not result in a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

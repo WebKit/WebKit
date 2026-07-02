@@ -1,0 +1,81 @@
+accessibility/isolated-tree [ Pass ]
+
+# Text failures
+#
+# Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
+accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
+accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Crash ]
+# Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
+accessibility/mac/frame-with-title.html [ Failure ]
+accessibility/mac/pseudo-element-text-markers.html [ Failure ]
+accessibility/mac/ruby-hierarchy-roles.html [ Failure Pass ]
+accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
+accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
+accessibility/mac/set-value-editable-types.html [ Failure ]
+accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
+
+# This test only passes with ITM due to a workaround in the test that we should fix.
+# accessibility/mac/text-marker-from-typing-notification.html
+
+# Used to be a timeout until https://github.com/WebKit/WebKit/commit/c69e4c0caaf5368db791652eee3a057ed2751144, now is a text failure.
+accessibility/frame-disconnect-textmarker-cache-crash.html [ Pass Failure ]
+
+# Test times out without ITM, so we need to reconcile behavior here.
+accessibility/mac/style-range.html [ Pass ]
+
+# Flaky: https://bugs.webkit.org/show_bug.cgi?id=290946
+accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Failure ]
+
+# With ENABLE(ACCESSIBILITY_LOCAL_FRAME), child frames have their own AXObjectCache.
+# The child frame's isolated tree is created lazily, but the parent frame's tree
+# isn't reliably notified to re-fetch cross-frame children after the child loads.
+# This causes the iframe's accessibility subtree to sometimes be absent from the
+# parent's isolated tree. Fixing requires ensuring the parent's isolated tree is
+# updated when a child frame's AXObjectCache is created and content becomes available.
+accessibility/loading-iframe-sends-notification.html [ Pass Failure ]
+
+# Fails in ITM since introduced.
+accessibility/text-marker/text-marker-bidi-element-arabic.html [ Failure ]
+accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Failure ]
+
+accessibility/mac/search-text-with-image-hang.html [ Failure ]
+
+# Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
+accessibility/content-editable-as-textarea.html [ Failure ]
+accessibility/mac/attributed-string-for-text-marker-range-using-webarea.html [ Failure ]
+accessibility/mac/attributed-string-includes-misspelled-with-selection.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-for-range-with-options.html [ Failure ]
+accessibility/mac/attributed-string/attributed-string-for-range.html [ Failure ]
+accessibility/mac/line-range-continuity.html [ Failure ]
+accessibility/mac/content-editable-attributed-string.html [ Failure ]
+accessibility/mac/misspelled-attributed-string.html [ Failure ]
+accessibility/mac/spellcheck-with-voiceover.html [ Failure ]
+accessibility/mac/text-marker-for-index.html [ Failure ]
+accessibility/mac/text-marker-p-tags.html [ Failure ]
+accessibility/mac/text-marker-string-for-document-end-replaced-node.html [ Failure ]
+accessibility/mac/text-marker-word-nav-collapsed-whitespace.html [ Failure ]
+accessibility/mac/text-markers-for-input-with-placeholder.html [ Failure ]
+accessibility/mac/textmarker-range-for-range.html [ Failure ]
+accessibility/native-text-control-attributed-string.html [ Failure ]
+accessibility/text-marker/text-marker-previous-next.html [ Failure ]
+accessibility/mac/text-marker-for-index-2.html [ Failure ]
+accessibility/mac/text-marker-word-nav.html [ Failure ]
+accessibility/mac/selected-visible-position-range.html [ Failure ]
+accessibility/mac/text-marker-word-nav.html [ Timeout ]
+accessibility/textarea-insertion-point-line-number.html [ Failure ]
+
+# We compute the wrong line index relative to what is actually visually laid out.
+accessibility/mac/replaced-element-line-index-hang.html [ Failure ]
+
+accessibility/mac/html5-input-number.html [ Timeout ]
+
+# Fails because we don't get paint calls for SVG shapes and thus can't cache a path for them.
+accessibility/mac/bezier-path-curves.html [ Failure ]
+
+# Regressions from ENABLE(ACCESSIBILITY_LOCAL_FRAME).
+accessibility/mac/iframe-position-after-scroll.html [ Failure ]
+accessibility/scroll-to-global-point-main-window.html [ Failure ]
+accessibility/scroll-to-make-visible-iframe-offscreen.html [ Timeout ]
+

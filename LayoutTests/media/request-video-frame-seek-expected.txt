@@ -1,0 +1,8 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.requestVideoFrameCallback(callback))
+RUN(video.currentTime = 0.5)
+Promise resolved OK
+END OF TEST
+

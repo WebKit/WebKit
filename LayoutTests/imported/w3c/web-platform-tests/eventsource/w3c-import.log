@@ -1,0 +1,64 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/README.md
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/event-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-close.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-document-domain.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-non-same-origin.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-stringify.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-multi-window.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-cross-origin.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-eventtarget.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage-realm.htm
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage-trusted.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onmessage.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-onopen.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-prototype.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-reconnect.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-request-cancellation.any.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/eventsource-url.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-bom-2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-bom.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-comments.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-data-before-final-empty-line.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-event-empty.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-event.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-3.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id-null.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-id.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-parsing.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-retry-bogus.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-retry-empty.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-retry.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-field-unknown.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-leading-space.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-mime-trailing-semicolon.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-mime-valid-bogus.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-newlines.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-null-character.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/format-utf-8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/request-accept.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/request-cache-control.any.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/request-credentials.any.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/request-redirect.any.window.js
+/LayoutTests/imported/w3c/web-platform-tests/eventsource/request-status-error.window.js

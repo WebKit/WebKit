@@ -1,0 +1,8 @@
+
+PASS tlsVersion is acceptable on data-only
+PASS tlsVersion is acceptable on video-only
+PASS dtlsCipher is acceptable on data-only
+PASS dtlsCipher is acceptable on video-only
+PASS srtpCipher is acceptable on data-only
+PASS srtpCipher is acceptable on video-only
+

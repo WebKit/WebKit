@@ -1,0 +1,50 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("repeating_task") {
+  sources = [
+    "repeating_task.cc",
+    "repeating_task.h",
+  ]
+  deps = [
+    "..:checks",
+    "..:macromagic",
+    "../../api:location",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../api/task_queue",
+    "../../api/task_queue:pending_task_safety_flag",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("repeating_task_unittests") {
+    testonly = true
+    sources = [ "repeating_task_unittest.cc" ]
+    deps = [
+      ":repeating_task",
+      "..:rtc_event",
+      "..:task_queue_for_test",
+      "../../api:location",
+      "../../api/task_queue",
+      "../../api/task_queue/test:mock_task_queue_base",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+}

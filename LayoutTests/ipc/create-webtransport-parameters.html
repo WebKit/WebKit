@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebTransportEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(async () => {
+    if (!window.IPC)
+        return testRunner?.notifyDone();
+
+    import('./coreipc.js').then(({ CoreIPC }) => {
+                  CoreIPC.Networking.NetworkConnectionToWebProcess
+                    .InitializeWebTransportSession(
+                      0,
+                      {
+                        identifier : 262146,
+                        url : { string : 'https://127.0.0.1:4443/ws' },
+                        options : {
+                          allowPooling : true,
+                          requireUnreliable : true,
+                          serverCertificateHashes : [
+                            { algorithm :'', value : { span : [90] } },
+                            {
+                              algorithm :'',
+                              value : { span : [ 0, 196, 0, 106 ] }
+                            },
+                            { algorithm :'', value : { span : [218] } },
+                            {
+                              algorithm :'',
+                              value : { span : [ 7, 0, 0, 128, 64, 47, 194 ] }
+                            }
+                          ],
+                          congestionControl : 1
+                        },
+                        pageID : IPC.pageID,
+                        clientOrigin : {
+                          topOrigin : {
+                            data : {
+                              variantType : 'WebCore::SecurityOriginData::Tuple',
+                              variant :
+                                { protocol :'', host : '127.0.0.1', port : {} }
+                            }
+                          },
+                          clientOrigin : {
+                            data : {
+                              variantType : 'WebCore::SecurityOriginData::Tuple',
+                              variant :
+                                { protocol : 'http', host : '127.0.0.1', port : {} }
+                            }
+                          }
+                        }
+                      });
+                });
+    testRunner?.notifyDone();
+}, 10);
+</script>
+<body>
+    <p>This test passes if WebKit does not crash.</p>
+</body>

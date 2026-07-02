@@ -1,0 +1,2 @@
+PASS: echo-cookies returned the expected value
+

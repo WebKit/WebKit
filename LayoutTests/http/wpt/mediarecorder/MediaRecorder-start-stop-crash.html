@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <title>Starting and stopping a MediaRecorder should trigger no crash</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+     promise_test(async (t) => {
+         const audioContext = new AudioContext();
+         const destination = audioContext.createMediaStreamDestination();
+         const recorder = new MediaRecorder(destination.stream);
+
+         recorder.start();
+         recorder.stop();
+     }, "Starting and stopping a MediaRecorder should trigger no crash");
+    </script>
+</body>
+</html>

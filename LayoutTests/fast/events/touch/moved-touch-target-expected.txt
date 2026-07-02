@@ -1,0 +1,6 @@
+Should see two touches. The first should be at 20,20
+[TouchEvent X: 20 Y: 20]
+Now move the element from one parent to another. Second touch should be at 110,20
+[TouchEvent X: 110 Y: 20]
+PASSED
+

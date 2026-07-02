@@ -1,0 +1,21 @@
+This test ensures border shorthand property initializes longhand properties such as border-top-style and border-right-color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div.setAttribute('style', 'border: 1px');div.style.borderTopStyle is "none"
+PASS div.style.borderRightStyle is "none"
+PASS div.style.borderBottomStyle is "none"
+PASS div.style.borderLeftStyle is "none"
+PASS div.style.borderTopColor is "currentcolor"
+PASS div.style.borderRightColor is "currentcolor"
+PASS div.style.borderBottomColor is "currentcolor"
+PASS div.style.borderLeftColor is "currentcolor"
+PASS div.setAttribute('style', 'border: solid');div.style.borderTopWidth is "medium"
+PASS div.style.borderRightWidth is "medium"
+PASS div.style.borderBottomWidth is "medium"
+PASS div.style.borderLeftWidth is "medium"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

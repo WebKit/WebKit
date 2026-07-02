@@ -1,0 +1,3 @@
+
+PASS Test that await navigation.back().finished during onnavigate should reject
+

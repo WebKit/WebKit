@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <img src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=fbadd2af-52ff-4bc6-8d7f-33fff8a9c86e&amp;encodingcheck=&Gbreve;" crossorigin>
+
+
+
+PASS Speculative parsing, document.write(): img-src-crossorigin
+

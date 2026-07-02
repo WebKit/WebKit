@@ -1,0 +1,23 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(Path_close, 256, 256, false, 0) {
+void draw(SkCanvas* canvas) {
+    SkPaint paint;
+    paint.setStrokeWidth(15);
+    paint.setStrokeCap(SkPaint::kRound_Cap);
+    SkPathBuilder path;
+    const SkPoint points[] = {{20, 20}, {70, 20}, {40, 90}};
+    path.addPolygon(points, false);
+    for (int loop = 0; loop < 2; ++loop) {
+        for (auto style : {SkPaint::kStroke_Style, SkPaint::kFill_Style,
+                SkPaint::kStrokeAndFill_Style} ) {
+            paint.setStyle(style);
+            canvas->drawPath(path.snapshot(), paint);
+            canvas->translate(85, 0);
+        }
+        path.close();
+        canvas->translate(-255, 128);
+    }
+}
+}  // END FIDDLE

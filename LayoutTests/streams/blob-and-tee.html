@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(t => {
+    const blob = new Blob(["1234"], {type: "application/octet-stream"});
+    const stream = blob.stream();
+    const [branch1, branch2] = stream.tee();
+
+    const reader = new ReadableStreamBYOBReader(branch1);
+    const buffer = new BigUint64Array(10);
+
+    return promise_rejects_js(t, TypeError, reader.read(buffer));
+}, "Tee a blob readable stream");
+</script>
+</body>
+</html>

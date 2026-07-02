@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute y="1 -1 62"
+CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute width="-1cm"
+ALERT: This test passes if it does not crash
+

@@ -1,0 +1,8 @@
+
+PASS fit-content + inset:0: child height:100% treated as auto, sizes to content
+PASS max-content + inset:0: child height:100% treated as auto, sizes to content
+PASS min-content + inset:0: child height:100% treated as auto, sizes to content
+PASS fit-content + top only: child height:100% treated as auto (sanity check)
+PASS height:auto + inset:0: constraint equation provides definite height
+PASS height:stretch + inset:0: stretch provides definite height (regression check)
+

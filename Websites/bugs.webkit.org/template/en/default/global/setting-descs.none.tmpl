@@ -1,0 +1,50 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Remember to PROCESS rather than INCLUDE this template. %]
+
+[% setting_descs = { 
+   "comment_sort_order"               => "When viewing $terms.abug, show comments in this order",
+   "csv_colsepchar"                   => "Field separator character for CSV files",
+   "display_quips"                    => "Show a quip at the top of each $terms.bug list",
+   "zoom_textareas"                   => "Zoom textareas large when in use (requires JavaScript)",
+   "newest_to_oldest"                 => "Newest to Oldest",
+   "newest_to_oldest_desc_first"      => "Newest to Oldest, but keep Description at the top",
+   "off"                              => "Off",
+   "oldest_to_newest"                 => "Oldest to Newest",
+   "on"                               => "On",
+   "post_bug_submit_action"           => "After changing $terms.abug",
+   "next_bug"                         => "Show next $terms.bug in my list",
+   "same_bug"                         => "Show the updated $terms.bug",
+   "standard"                         => "Classic",
+   "skin"                             => "$terms.Bugzilla's general appearance (skin)",
+   "nothing"                          => "Do Nothing",
+   "state_addselfcc"                  => "Automatically add me to the CC list of $terms.bugs I change",
+   "always"                           => "Always",
+   "never"                            => "Never",
+   "cc_unless_role"                   => "Only if I have no role on them",
+   "lang"                             => "Language used in email",
+   "quote_replies"                    => "Quote the associated comment when you click on its reply link",
+   "quoted_reply"                     => "Quote the full comment",
+   "simple_reply"                     => "Reference the comment number only",
+   "comment_box_position"             => "Position of the Additional Comments box",
+   "before_comments"                  => "Before other comments",
+   "after_comments"                   => "After other comments",
+   "timezone"                         => "Timezone used to display dates and times",
+   "local"                            => "Same as the server",
+   "quicksearch_fulltext"             => "Include comments when performing quick searches (slower)",
+   "email_format"                     => "Preferred email format",
+   "html"                             => "HTML",
+   "text_only"                        => "Text Only",
+   "requestee_cc"                     => "Automatically add me to the CC list of $terms.bugs I am requested to review",
+   "bugmail_new_prefix"               => "Add 'New:' to subject line of email sent when a new $terms.bug is filed",
+   "possible_duplicates"              => "Display possible duplicates when reporting a new $terms.bug", 
+                   } 
+%]
+
+[% Hook.process('settings') %]

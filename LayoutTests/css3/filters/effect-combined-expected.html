@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <script src="resources/filter-helpers.js"></script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'sepia(1) saturate(3) hue-rotate(0.5turn)',
+            'saturate(3) hue-rotate(0.25turn)',
+            'grayscale(1) blur(3px)',
+            'blur(3px) hue-rotate(-0.25turn) sepia(1)',
+            'blur(3px) opacity(0.5) hue-rotate(-0.25turn) sepia(1)',
+            'blur(3px) brightness(1.2) contrast(2)',
+        ];
+
+        buildSVGFilteredBoxes(filters);
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+typeof (xb): object
+xb === yb: true
+xb !== zb: true
+xb == true: true
+xb === true: false
+xb.foob: 3
+typeof (xn): object
+xn === yn: true
+xn !== zn: true
+xn == 5: true
+xn === 5: false
+xn.foon: 3
+typeof (xs): object
+xs === ys: true
+xs !== zs: true
+xs == 'bob': true
+xs === 'bob': false
+xs.foos: 3

@@ -1,0 +1,7 @@
+This tests overriding rel content attribute with the same value.
+You should see 1 below:
+
+1
+link-preload-load-once.html - willSendRequest <NSURLRequest URL link-preload-load-once.html, main document URL link-preload-load-once.html, http method GET> redirectResponse (null)
+link-preload-load-once.html - didReceiveResponse <NSURLResponse link-preload-load-once.html, http status code 0>
+link-preload-load-once.html - didFinishLoading

@@ -1,0 +1,74 @@
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+}
+blockquote {
+    border-left: 2px solid blue;
+    padding: 1em;
+    margin: 0;
+}
+</style>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    Markup.description('rdar://problems/4038408&4154187&4125087&4125381, This tests deletion from underneath quoted text:');
+
+    Markup.dump('test', 'before deletion');
+
+    // Move the caret to the end of #test
+    selectAllCommand();
+    moveSelectionForwardByCharacterCommand();
+
+    // Delete the reply text
+    deleteCommand();
+    deleteCommand();
+    deleteCommand();
+    deleteCommand();
+    Markup.dump('test', 'after deletion');
+
+    insertNewlineInQuotedContentCommand();
+    document.execCommand("InsertText", false, "This text should not be quoted.");
+
+    Markup.dump('test', 'after insert text');
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<p>Radar: <a href="rdar://problems/4038408&4154187&4125087&4125381">rdar://problems/4038408&4154187&4125087&4125381</a>
+Deletion of reply text should not produce reply text style unless the caret is inside the reply text blockquote.</p>
+<p>This tests deletion from underneath quoted text:</p>
+<div contenteditable id="test" class="editing">
+<div><BR class="khtml-block-placeholder"></div>
+<div>
+<blockquote style="color:blue;" type="cite">
+<div>Here is some reply text</div>
+<div>It should have the reply text style</div>
+<div><BR class="khtml-block-placeholder"></div>
+<div><BR class="khtml-block-placeholder"></div>
+<div><BR class="khtml-block-placeholder"></div>
+</blockquote>
+
+
+<div><BR class="khtml-block-placeholder"></div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

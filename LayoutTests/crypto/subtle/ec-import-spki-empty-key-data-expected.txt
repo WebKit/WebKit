@@ -1,0 +1,10 @@
+Test importing a SPKI ECDSA key where index equals keyData.size()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.importKey("spki", emptyKeyDataSpki, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["verify"]) rejected promise.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

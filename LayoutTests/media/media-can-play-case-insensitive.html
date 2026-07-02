@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            function start() {
+                video = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType('video/mp4') === video.canPlayType('video/MP4')", true);
+                testExpected("video.canPlayType('VIDEO/mp4') === video.canPlayType('video/mp4')", true);
+                testExpected("video.canPlayType('video/ogg') === video.canPlayType('video/OGG')", true);
+                testExpected("video.canPlayType('video/ogg') === video.canPlayType('VIDEO/ogg')", true);
+                testExpected("video.canPlayType('video/webm') === video.canPlayType('video/WEBM')", true);
+                testExpected("video.canPlayType('video/webm') === video.canPlayType('VIDEO/webm')", true);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method.</p>
+    </body>
+</html>

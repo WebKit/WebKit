@@ -1,0 +1,15 @@
+
+PASS CompressionStream constructor should throw on invalid format
+PASS deflate empty data should be reinflated back to its origin
+PASS deflate small amount data should be reinflated back to its origin
+PASS deflate large amount data should be reinflated back to its origin
+PASS deflate-raw empty data should be reinflated back to its origin
+PASS deflate-raw small amount data should be reinflated back to its origin
+PASS deflate-raw large amount data should be reinflated back to its origin
+PASS gzip empty data should be reinflated back to its origin
+PASS gzip small amount data should be reinflated back to its origin
+PASS gzip large amount data should be reinflated back to its origin
+FAIL brotli empty data should be reinflated back to its origin promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+FAIL brotli small amount data should be reinflated back to its origin promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+FAIL brotli large amount data should be reinflated back to its origin promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+

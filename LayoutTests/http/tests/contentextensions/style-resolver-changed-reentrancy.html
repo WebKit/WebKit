@@ -1,0 +1,9 @@
+<head>
+<script>
+if (window.testRunner)
+	testRunner.dumpAsText();
+</script>
+<link rel="stylesheet" type="text/css" href="resources/woff-stylesheet.css">
+</head>
+This test loads an external stylesheet, which then tries to load an external font file, which then triggers a contentextension action adding custom CSS selectors.<br>
+With the appropriate content extension json installed, the test should not crash.

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div>
+    <table border=1 id="table" role="group">
+        <tbody role="list">
+            <tr aria-hidden="false" role="presentation">
+                <td>
+                    <ul>
+                        <li>
+                            <button id="button">
+                        </li>
+                    </ul>
+                </td>
+                <td>test</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var output = "This test ensures we still navigate malformed tables.\n\n";
+    if (window.accessibilityController) {
+        var button = accessibilityController.accessibleElementById("button");
+        var table = accessibilityController.accessibleElementById("table");
+        output += expect("button.parentElement().parentElement().parentElement().parentElement().isEqual(table)", "true");
+        debug(output);
+    }
+</script>
+</body>
+</html>

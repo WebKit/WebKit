@@ -1,0 +1,4 @@
+
+
+PASS Largest Contentful Paint: changing src causes a new entry to be dispatched.
+

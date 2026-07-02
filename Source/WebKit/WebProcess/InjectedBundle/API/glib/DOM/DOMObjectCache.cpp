@@ -1,0 +1,256 @@
+/*
+ *  Copyright (C) 2010, 2015 Igalia S.L.
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#include "config.h"
+#include "DOMObjectCache.h"
+
+#include <WebCore/Document.h>
+#include <WebCore/FrameDestructionObserver.h>
+#include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/LocalDOMWindow.h>
+#include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NodeDocument.h>
+#include <WebCore/NodeInlines.h>
+#include <glib-object.h>
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
+
+namespace WebKit {
+
+struct DOMObjectCacheData {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DOMObjectCacheData);
+    DOMObjectCacheData(GObject* wrapper)
+        : object(wrapper)
+        , cacheReferences(1)
+    {
+    }
+
+    void clearObject()
+    {
+        ASSERT(object);
+        ASSERT(cacheReferences >= 1);
+        ASSERT(object->ref_count >= 1);
+
+        // Make sure we don't unref more than the references the object actually has. It can happen that user
+        // unreffed a reference owned by the cache.
+        cacheReferences = std::min(static_cast<unsigned>(object->ref_count), cacheReferences);
+        GRefPtr<GObject> protect(object);
+        do {
+            g_object_unref(object);
+        } while (--cacheReferences);
+        object = nullptr;
+    }
+
+    void* refObject()
+    {
+        ASSERT(object);
+
+        cacheReferences++;
+        return g_object_ref(object);
+    }
+
+    GObject* object;
+    unsigned cacheReferences;
+};
+
+class DOMObjectCacheFrameObserver;
+typedef HashMap<WebCore::LocalFrame*, RefPtr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
+
+static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
+{
+    static NeverDestroyed<DOMObjectCacheFrameObserverMap> map;
+    return map;
+}
+
+class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserver, public RefCounted<DOMObjectCacheFrameObserver> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMObjectCacheFrameObserver);
+public:
+    static RefPtr<DOMObjectCacheFrameObserver> create(WebCore::LocalFrame& frame)
+    {
+        return adoptRef(*new DOMObjectCacheFrameObserver(frame));
+    }
+
+    ~DOMObjectCacheFrameObserver()
+    {
+        ASSERT(m_objects.isEmpty());
+    }
+
+    // WebCore::FrameDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    void addObjectCacheData(DOMObjectCacheData& data)
+    {
+        ASSERT(!m_objects.contains(&data));
+
+        auto* window = m_frame->document()->window();
+        if (window && (!m_domWindowObserver || m_domWindowObserver->window() != window)) {
+            // New LocalDOMWindow, clear the cache and create a new DOMWindowObserver.
+            clear();
+            m_domWindowObserver = DOMWindowObserver::create(*window, *this);
+        }
+
+        m_objects.append(&data);
+        g_object_weak_ref(data.object, DOMObjectCacheFrameObserver::objectFinalizedCallback, this);
+    }
+
+private:
+    class DOMWindowObserver final : public RefCounted<DOMWindowObserver>, public WebCore::LocalDOMWindowObserver {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMWindowObserver);
+    public:
+        static Ref<DOMWindowObserver> create(WebCore::LocalDOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
+        {
+            return adoptRef(*new DOMWindowObserver(window, frameObserver));
+        }
+
+        ~DOMWindowObserver()
+        {
+            if (m_window)
+                m_window->unregisterObserver(*this);
+        }
+
+        WebCore::LocalDOMWindow* window() const { return m_window.get(); }
+
+        // WebCore::LocalDOMWindowObserver.
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
+
+    private:
+        DOMWindowObserver(WebCore::LocalDOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
+            : m_window(window)
+            , m_frameObserver(frameObserver)
+        {
+            window.registerObserver(*this);
+        }
+
+        void willDetachGlobalObjectFromFrame() override
+        {
+            if (m_frameObserver)
+                m_frameObserver->willDetachGlobalObjectFromFrame();
+        }
+
+        WeakPtr<WebCore::LocalDOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
+        WeakPtr<DOMObjectCacheFrameObserver> m_frameObserver;
+    };
+
+    static void objectFinalizedCallback(gpointer userData, GObject* finalizedObject)
+    {
+        DOMObjectCacheFrameObserver* observer = static_cast<DOMObjectCacheFrameObserver*>(userData);
+        observer->m_objects.removeFirstMatching([finalizedObject](DOMObjectCacheData* data) {
+            return data->object == finalizedObject;
+        });
+    }
+
+    void clear()
+    {
+        if (m_objects.isEmpty())
+            return;
+
+        auto objects = WTF::move(m_objects);
+
+        // Deleting of DOM wrappers might end up deleting the wrapped core object which could cause some problems
+        // for example if a Document is deleted during the frame destruction, so we remove the weak references now
+        // and delete the objects on next run loop iteration. See https://bugs.webkit.org/show_bug.cgi?id=151700.
+        for (auto* data : objects)
+            g_object_weak_unref(data->object, DOMObjectCacheFrameObserver::objectFinalizedCallback, this);
+
+        RunLoop::mainSingleton().dispatch([objects] {
+            for (auto* data : objects)
+                data->clearObject();
+        });
+    }
+
+    void willDetachPage() override
+    {
+        clear();
+    }
+
+    void frameDestroyed() override
+    {
+        clear();
+        auto* frame = m_frame.get();
+        FrameDestructionObserver::frameDestroyed();
+        domObjectCacheFrameObservers().remove(frame);
+    }
+
+    void willDetachGlobalObjectFromFrame()
+    {
+        clear();
+        m_domWindowObserver = nullptr;
+    }
+
+    DOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
+        : FrameDestructionObserver(&frame)
+    {
+    }
+
+    Vector<DOMObjectCacheData*, 8> m_objects;
+    RefPtr<DOMWindowObserver> m_domWindowObserver;
+};
+
+static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCore::LocalFrame& frame)
+{
+    DOMObjectCacheFrameObserverMap::AddResult result = domObjectCacheFrameObservers().add(&frame, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = DOMObjectCacheFrameObserver::create(frame);
+    return *result.iterator->value;
+}
+
+typedef HashMap<void*, std::unique_ptr<DOMObjectCacheData>> DOMObjectMap;
+
+static DOMObjectMap& domObjects()
+{
+    static NeverDestroyed<DOMObjectMap> staticDOMObjects;
+    return staticDOMObjects;
+}
+
+void DOMObjectCache::forget(void* objectHandle)
+{
+    ASSERT(domObjects().contains(objectHandle));
+    domObjects().remove(objectHandle);
+}
+
+void* DOMObjectCache::get(void* objectHandle)
+{
+    DOMObjectCacheData* data = domObjects().get(objectHandle);
+    return data ? data->refObject() : nullptr;
+}
+
+void DOMObjectCache::put(void* objectHandle, void* wrapper)
+{
+    DOMObjectMap::AddResult result = domObjects().add(objectHandle, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = makeUnique<DOMObjectCacheData>(G_OBJECT(wrapper));
+}
+
+void DOMObjectCache::put(WebCore::Node* objectHandle, void* wrapper)
+{
+    DOMObjectMap::AddResult result = domObjects().add(objectHandle, nullptr);
+    if (!result.isNewEntry)
+        return;
+
+    result.iterator->value = makeUnique<DOMObjectCacheData>(G_OBJECT(wrapper));
+    if (auto* frame = objectHandle->document().frame())
+        getOrCreateDOMObjectCacheFrameObserver(*frame).addObjectCacheData(*result.iterator->value);
+}
+
+}

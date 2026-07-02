@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="testDiv"><p></p></div>
+<script>
+description("Tests that calls of appendChild() lead to mutation events even if they are no-ops.");
+jsTestIsAsync = true;
+
+var testDiv = document.getElementById("testDiv");
+
+function testMutationObserver()
+{
+    var config = { childList: true };
+    var observer = new MutationObserver(function(mutations) {
+        testPassed("Mutation observer was notified");
+        observer.disconnect();
+        testMutationEventListener();
+    });
+
+    observer.observe(testDiv, config);
+    testDiv.appendChild(testDiv.lastChild);
+}
+
+function testMutationEventListener()
+{
+    wasMutationEventListenerCalled = false;
+    testDiv.addEventListener("DOMSubtreeModified", function() {
+        wasMutationEventListenerCalled = true;
+    });
+    testDiv.appendChild(testDiv.lastChild);
+    shouldBeTrue("wasMutationEventListenerCalled");
+    finishJSTest();
+}
+
+testMutationObserver();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

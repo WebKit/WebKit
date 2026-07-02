@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+        
+
+            var output = '';
+            await longPressAndHoldAtPoint(51, 12);
+            var result = await continueTouchAndDragFromPointToPoint(51, 12, 100, 134.9);
+            if (document.getSelection().toString() == "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to reduce selection. Incorrect Selection: ' + document.getSelection().toString();
+            output += result;
+
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+    
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #container {
+            position: relative;
+            top: 10.1px;
+            left: 0px;
+            width: 300px;
+            font-family: monospace;
+            font-size: 18px;
+            line-height: 30px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id=container>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div> 
+    <div id="target">
+        This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

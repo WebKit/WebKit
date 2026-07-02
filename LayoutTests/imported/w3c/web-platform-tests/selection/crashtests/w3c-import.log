@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+user-select
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/find-with-moving-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/move-track-from-video-after-selection-setBaseAndExtent-from-outside-video-to-before-track.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selectall-and-find-svg-text-on-selectstart.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-clip-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-deleteFromDocument-after-audio-control-visible-when-selecting-audio-children.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-deleteFromDocument-after-extend-from-summary-to-outside-details.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-deleteFromDocument-starting-from-details-ends-in-data.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-detached-range-find-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-details-editor-ui.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-extend-into-input-from-inside-button.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-extend-to-area-after-attaching-shadow-to-scrollingElement.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-from-svg-use-to-its-child.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-around-input.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-around-textarea.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-extend-forward-on-option.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-extend-foward-line-across-video-in-html.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-boundary-around-empty-details.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-boundary-around-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-from-contenteditable-to-textarea.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-next-to-input-and-make-it-invisible.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-next-to-textarea.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-per-word-in-table-header-group.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-word-left-with-selecting-editable-select.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-setBaseAndExtent-from-end-of-video-to-child-of-video.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-setBaseAndExtent-from-label-to-end-of-audio-and-hide-audio-controls.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-setBaseAndExtent-video-in-shadow-and-another-shadowroot.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/table.html

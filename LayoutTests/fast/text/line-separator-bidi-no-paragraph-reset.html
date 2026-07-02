@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<!-- U+2028 LINE SEPARATOR has bidi class WS and must NOT reset the bidi paragraph context.
+     This test ensures U+2028 does not go through handleBidiParagraphStart.
+     All cases use Ahem 10px (1 char = 10px). -->
+
+<!-- U+2028 in white-space: normal (wholesale bidi path). -->
+<div id="normal" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: normal;"></div>
+
+<!-- U+2028 in white-space: pre (per-item bidi path). -->
+<div id="pre" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: pre;"></div>
+
+<!-- U+2028 in white-space: pre-wrap. -->
+<div id="pre-wrap" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: pre-wrap;"></div>
+
+<!-- U+2028 in white-space: pre-line. -->
+<div id="pre-line" style="font-family: Ahem; font-size: 10px; line-height: 10px; white-space: pre-line;"></div>
+
+<script>
+description("U+2028 LINE SEPARATOR forces a line break but does not reset bidi paragraph context (bidi class WS, not B).");
+
+var ls = "\u2028";
+document.getElementById("normal").textContent = "a" + ls + "b";
+document.getElementById("pre").textContent = "a" + ls + "b";
+document.getElementById("pre-wrap").textContent = "a" + ls + "b";
+document.getElementById("pre-line").textContent = "a" + ls + "b";
+
+// All modes produce two lines.
+shouldBe("document.getElementById('normal').offsetHeight", "20");
+shouldBe("document.getElementById('pre').offsetHeight", "20");
+shouldBe("document.getElementById('pre-wrap').offsetHeight", "20");
+shouldBe("document.getElementById('pre-line').offsetHeight", "20");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

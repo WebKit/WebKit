@@ -1,0 +1,51 @@
+Test aborting transaction revert add record
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+store = database.createObjectStore('store')
+store.add('value1', 'key1')
+store.add('value2', 'key2')
+
+onDatabasePrepared():
+database = event.target.result
+database.close()
+openRequest = indexedDB.open(dbname, 2)
+
+onDatabaseUpgrade():
+transcation = request.transaction
+store = transcation.objectStore('store')
+store.delete('key2')
+store.add('value2_new', 'key2')
+store.add('value3', 'key3')
+store.add('value3_new', 'key3')
+
+onTranactionAbort():
+event.target.db.close()
+
+onDatabaseError():
+openRequest = indexedDB.open(dbname)
+
+onDatabaseOpen():
+database = event.target.result
+PASS database.version is 1
+transcation = database.transaction('store')
+store = transcation.objectStore('store')
+request = store.getAllKeys()
+
+onGetAllKeysSuccess():
+PASS JSON.stringify(event.target.result) is "[\"key1\",\"key2\"]"
+request = store.get('key2')
+
+onGetSuccess():
+PASS event.target.result is "value2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

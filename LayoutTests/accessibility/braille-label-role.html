@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input id="label" type="text" value="text" aria-braillelabel="braille" aria-label="label" aria-brailleroledescription="braille role"/>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("Validate aria-braillelabel and aria-brailleroledescription");
+
+    if (window.accessibilityController) {
+        var label = accessibilityController.accessibleElementById("label");
+        shouldBe("label.stringAttributeValue('AXBrailleLabel')", "'braille'");
+        shouldBe("label.stringAttributeValue('AXBrailleRoleDescription')", "'braille role'");
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

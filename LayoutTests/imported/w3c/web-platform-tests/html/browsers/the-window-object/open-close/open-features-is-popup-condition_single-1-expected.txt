@@ -1,0 +1,23 @@
+
+PASS undefined should set BarProp visibility to true
+PASS "popup" should set BarProp visibility to false
+PASS "popup=1" should set BarProp visibility to false
+PASS "popup=true" should set BarProp visibility to false
+PASS "popup=0" should set BarProp visibility to true
+PASS "location" should set BarProp visibility to false
+PASS "location=yes" should set BarProp visibility to false
+PASS "location=true" should set BarProp visibility to false
+PASS "location=no" should set BarProp visibility to false
+PASS "toolbar" should set BarProp visibility to false
+PASS "toolbar=yes" should set BarProp visibility to false
+PASS "toolbar=true" should set BarProp visibility to false
+PASS "toolbar=no" should set BarProp visibility to false
+PASS "menubar" should set BarProp visibility to false
+PASS "menubar=yes" should set BarProp visibility to false
+PASS "menubar=true" should set BarProp visibility to false
+PASS "menubar=no" should set BarProp visibility to false
+PASS "resizable" should set BarProp visibility to false
+PASS "resizable=yes" should set BarProp visibility to false
+PASS "resizable=true" should set BarProp visibility to false
+PASS "resizable=no" should set BarProp visibility to false
+

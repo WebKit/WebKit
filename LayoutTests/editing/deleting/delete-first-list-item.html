@@ -1,0 +1,15 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests deletion when the caret is in an empty list item at the beginning of the document. It also makes sure that the style inside the empty list item is retained.  You should see '<b>foo</b>' followed by a list item containing 'bar'.</p>
+<div id="div" contenteditable="true"><ul><li id="start" style="font-weight:bold;"></li><li>bar</li></ul></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("start");
+
+s.setPosition(e, 0);
+document.execCommand("Delete");
+document.execCommand("InsertText", false, "foo");
+</script>

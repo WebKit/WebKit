@@ -1,0 +1,15 @@
+Test that the window.navigator.xr wrapper preserves custom properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.navigator.xr.customProperty is undefined.
+window.navigator.xr.customProperty = 1
+PASS window.navigator.xr.customProperty is 1
+PASS window.navigator.xr.customProperty is 1
+PASS window.navigator.xr.customProperty is 1
+PASS window.navigator.xr.customProperty is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

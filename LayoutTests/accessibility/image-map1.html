@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+    <map id="apple" name="imagemap1">
+        <area shape="rect" coords="10,10,133,72" href="http://www.apple.com" title="Link1" />
+        <area shape="rect" coords="12,74,134,88" href="http://www.apple.com" title="Link2" />
+        <area shape="rect" coords="11,91,133,105" href="http://www.apple.com" title="Link3" />
+        <area shape="default" nohref="nohref" alt="" />
+    </map>
+
+    <img src="resources/cake.png" border="0" align="left" usemap="#imagemap1" vspace="1">
+</div>
+
+<script>
+    description("This tests that you can reach the links within an image map.");
+
+    if (window.accessibilityController) {
+        let content = accessibilityController.accessibleElementById("content");
+        let output = "";
+        for (let k = 0; k < 3; ++k) {
+            let link = content.childAtIndex(k);
+            output += `Link${k + 1} ${link.role}\n`;
+            output += `Link${k + 1} ${link.title}\n`;
+            output += `Link${k + 1} ${link.description}\n\n`;
+        }
+        debug(output);
+    }
+</script>
+</body>
+</html>

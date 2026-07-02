@@ -1,0 +1,3 @@
+
+PASS Scroll timeline snapshotting should not happen for elementsFromPoint()
+

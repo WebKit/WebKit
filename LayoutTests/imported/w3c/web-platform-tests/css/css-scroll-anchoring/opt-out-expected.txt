@@ -1,0 +1,4 @@
+
+PASS Disabled on document, enabled on div.
+PASS Enabled on document, disabled on div.
+

@@ -1,0 +1,24 @@
+Test checks the behavior of willReadFrequently canvas 2D context setting
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result.data[0] is 0
+PASS result.data[1] is 255
+PASS result.data[2] is 0
+PASS result.data[3] is 255
+willReadFrequently: undefined, effective rendering mode:Accelerated
+PASS result.data[0] is 0
+PASS result.data[1] is 255
+PASS result.data[2] is 0
+PASS result.data[3] is 255
+willReadFrequently: true, effective rendering mode:Unaccelerated
+PASS result.data[0] is 0
+PASS result.data[1] is 255
+PASS result.data[2] is 0
+PASS result.data[3] is 255
+willReadFrequently: false, effective rendering mode:Accelerated
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

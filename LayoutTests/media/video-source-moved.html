@@ -1,0 +1,205 @@
+<!doctype HTML>
+<html>
+    <head>
+        <title>moving &lt;source&gt; element test</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+
+            var testInfo = 
+            {
+                current : -1,
+                tests : 
+                [
+                    { fcn : moveToEnd, errorCount : 0, moved : null, done : false, iteration : 1},
+                    { fcn : moveToEnd, errorCount : 0, moved : null, done : false, iteration : 2},
+                    { fcn : moveToEnd, errorCount : 0, moved : null, done : false, iteration : 3},
+                    { fcn : moveEarlier, errorCount : 0, moved : null, iteration : 1 },
+                    { fcn : moveEarlier, errorCount : 0, moved : null, iteration : 2 },
+                    { fcn : moveEarlier, errorCount : 0, moved : null, iteration : 3 },
+                    { fcn : moveEarlier, errorCount : 0, moved : null, iteration : 4 }
+                ]
+            };
+
+            function findCurrentSourceElement()
+            {
+                var sources = video.getElementsByTagName('source');
+                var currentSrc = video.currentSrc;
+                var ndx;
+                for (ndx = 0; ndx < sources.length; ++ndx) {
+                    if (sources[ndx].src == currentSrc)
+                        break;
+                }
+                if (ndx >= sources.length) {
+                    failTest(currentSrc + " not found in &lt;source&gt; list");
+                    return null;
+                }
+                return sources[ndx];
+            }
+
+            function moveEarlier(test, event)
+            {
+                if (test.done)
+                    return;
+
+                switch (++test.errorCount)
+                {
+                    case 1:
+                        // Do nothing on the first error event
+                        break;
+
+                    case 2:
+                        var current = findCurrentSourceElement();
+                        switch (test.iteration)
+                        {
+                            case 1:
+                                consoleWrite("Moving <b>current<" + "/b> &lt;source&gt; element to beginning of list, it should not be processed again.");
+                                test.moved = video.removeChild(current);
+                                break;
+                            case 2:
+                                consoleWrite("Moving <b>next<" + "/b> &lt;source&gt; element to beginning of list, it should never processed.");
+                                test.moved = video.removeChild(current.nextSibling);
+                                break;
+                            case 3:
+                                consoleWrite("&lt;span&gt; inserted after <b>current<" + "/b> &lt;source&gt; element before it is removed, processing should proceed normally.");
+                                var span = document.createElement("span")
+                                span.appendChild(document.createTextNode("Your browser doesn't support HTML5 video!"));
+                                video.insertBefore(span, current.nextSibling);
+                                test.moved = video.removeChild(current);
+                                break;
+                            case 4:
+                                consoleWrite("&lt;span&gt; inserted after <b>next<" + "/b> &lt;source&gt; element before it is removed, processing should proceed normally.");
+                                var span = document.createElement("span")
+                                span.appendChild(document.createTextNode("Your browser doesn't support HTML5 video!"));
+                                video.insertBefore(span, current.nextSibling.nextSibling);
+                                test.moved = video.removeChild(current.nextSibling);
+                                break;
+                            default:
+                                failTest("Malformed test data!");
+                                break;
+                        }
+
+                        testExpected(test.moved, null, '!=');
+                        video.insertBefore(test.moved, video.firstChild);
+                        break;
+
+                    default:
+                        // We should never get an error for the element we moved.
+                        if (event.target == test.moved) {
+                            failTest("Error fired for &lt;source&gt; moved to beginning of list.");
+                            test.done = true;
+                            return;
+                        } else if (!event.target.nextSibling) {
+                            logResult(true, "&lt;source&gt; moved was not processed"); 
+                            setTimeout(configureNextTest, 100);
+                        }
+                        break;
+                }
+            }
+
+            function moveToEnd(test, event)
+            {
+                switch (++test.errorCount)
+                {
+                    case 1:
+                        // Do nothing on the first error event
+                        break;
+
+                    case 2:
+                        var current = findCurrentSourceElement();
+                        switch (test.iteration)
+                        {
+                            case 1:
+                                consoleWrite("Moving <b>previous<" + "/b> &lt;source&gt; element to end of list, it should be processed again.");
+                                test.moved = video.removeChild(current.previousSibling);
+                                break;
+                            case 2:
+                                consoleWrite("Moving <b>current<" + "/b> &lt;source&gt; element, it should be processed again.");
+                                test.moved = video.removeChild(current);
+                                break;
+                            case 3:
+                                consoleWrite("Moving <b>next<" + "/b> &lt;source&gt; element, it should be processed again.");
+                                test.moved = video.removeChild(current.nextSibling);
+                                break;
+                            default:
+                                failTest("Malformed test data!");
+                                break;
+                        }
+
+                        testExpected(test.moved, null, '!=');
+                        video.appendChild(test.moved);
+                        break;
+
+                    default:
+                        if (event.target == test.moved) {
+                            logResult(true, "&lt;source&gt; moved was processed a second time."); 
+                            setTimeout(configureNextTest, 100);
+                        }  else if (!event.target.nextSibling) {
+                            // We should never reach the end of the source list since the tests stops
+                            // when the error fires for the moved element.
+                            failTest("Error never fired for &lt;source&gt; moved!");
+                        }
+                        break;
+                }
+            }
+
+            function runOneTest(evt)
+            {
+                var test = testInfo.tests[testInfo.current];
+                test.fcn(test, evt);
+            }
+
+            function addSource(index)
+            {
+                var source = document.createElement('source');
+                source.src = findMediaFile("video", index + "-" + Date.now());
+                source.type = mimeTypeForExtension(source.src.split('.').pop());
+                video.appendChild(source);
+            }
+            
+            function runNextTest()
+            {
+                consoleWrite("");
+                if (++testInfo.current >= testInfo.tests.length) {
+                    consoleWrite("PASS<br>");
+                    endTest();
+                    return;
+                }
+
+                testInfo.errorCount = 0;
+                video = mediaElement = document.createElement('video');
+                document.body.appendChild(video);
+
+                // Add a bunch of source elements with bogus urls because we want to rearrange elements 
+                // after the media engine begins processing sources, and we can't predict the delay 
+                // between when the media element fires an 'error' event and our handler is called,
+                // but we need to guarantee that there are <source> elements that haven't been processed
+                // when we run the test.
+                for (var ndx = 1; ndx <= 10; ndx++)
+                    addSource(ndx);
+            }
+
+            function configureNextTest()
+            {
+                var videos = document.querySelectorAll('video');
+                for (var ndx = 0; ndx < videos.length; ++ndx)
+                    videos[ndx].parentNode.removeChild(videos[ndx]);
+                video = mediaElement = null;
+                setTimeout(runNextTest, 100);
+            }
+
+            function setup()
+            {
+                document.addEventListener("error", runOneTest, true);
+                configureNextTest();
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <div>Test to make sure a &lt;source&gt; moved after the media element begins processing 
+        is handled correctly.</div>
+        <script>setup()</script>
+    </body>
+</html>

@@ -1,0 +1,9 @@
+HelloWorld
+HelloWorld
+HelloWorld
+
+FAIL Type space key in editable <summary> should be handled by the <summary> when it's focused assert_true: <details> shouldn't keep collapsed expected true got false
+FAIL Type space key in editable <summary> shouldn't be handled by the <summary> when it's not focused assert_equals: A space should be inserted into the <summary> expected "<summary>Hello World</summary>Details" but got "<summary>HelloWorld</summary>Details"
+FAIL Type space key in <summary contenteditable> should be handled by the <summary> assert_true: <details> shouldn't keep collapsed expected true got false
+FAIL Type space key in editable element in <summary> shouldn't be handled by the <summary> assert_equals: A space should be inserted expected "<summary><div contenteditable=\"\">Hello World</div></summary>Details" but got "<summary><div contenteditable=\"\">HelloWorld</div></summary>Details"
+

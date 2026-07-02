@@ -1,0 +1,7 @@
+
+PASS about: allowed in embed
+PASS blob: allowed in embed
+PASS data: allowed in embed
+PASS https: allowed in embed
+PASS http: allowed in embed
+

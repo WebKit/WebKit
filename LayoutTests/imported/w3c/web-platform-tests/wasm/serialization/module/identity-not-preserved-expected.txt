@@ -1,0 +1,5 @@
+
+PASS postMessaging to this window does not give back the same WebAssembly.Module
+PASS postMessaging to a worker and back does not give back the same WebAssembly.Module
+PASS postMessaging to an iframe and back does not give back the same WebAssembly.Module
+

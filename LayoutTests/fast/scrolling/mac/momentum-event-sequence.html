@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 200%;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+        
+        async function testEventSequence()
+        {
+            const wheelEventSquence = {
+                "events" : [
+                    {
+                        type : "wheel",
+                        viewX : 100,
+                        viewY : 100,
+                        deltaY : -10,
+                        phase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -10,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -8,
+                        phase : "changed"
+                    },
+                    {
+                        type : "wheel",
+                        phase : "ended"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -10,
+                        momentumPhase : "began"
+                    },
+                    {
+                        type : "wheel",
+                        deltaY : -12,
+                        momentumPhase : "changed"
+                    },
+                    {
+                        type: "wheel",
+                        deltaY: -6,
+                        momentumPhase: "changed"
+                    },
+                    {
+                        type : "wheel",
+                        momentumPhase : "ended"
+                    }
+                ]
+            };
+
+            await UIHelper.mouseWheelSequence(wheelEventSquence);
+            shouldBe('window.scrollY', '56');
+        }
+
+        async function scrollTest()
+        {
+            await testEventSequence();
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+/*
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
+ */
+
+#pragma once
+
+// FIXME: Remove the `__has_feature(modules)` condition when possible.
+#if !__has_feature(modules)
+
+#if ENABLE(WEBXR)
+
+#import <pal/spi/cocoa/CompositorServicesSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CompositorServices)
+
+SOFT_LINK_CLASS_FOR_HEADER(PAL, CP_OBJECT_cp_layer_renderer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, CP_OBJECT_cp_swapchain)
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_compute_projection, simd_float4x4, (cp_drawable_t drawable, cp_axis_direction_convention convention, size_t index), (drawable, convention, index))
+#define cp_drawable_compute_projection PAL::softLink_CompositorServices_cp_drawable_compute_projection
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_frame_timing, cp_frame_timing_t, (cp_drawable_t drawable), (drawable))
+#define cp_drawable_get_frame_timing PAL::softLink_CompositorServices_cp_drawable_get_frame_timing
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_color_texture, id<MTLTexture>, (cp_drawable_t drawable, size_t index), (drawable, index))
+#define cp_drawable_get_color_texture PAL::softLink_CompositorServices_cp_drawable_get_color_texture
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_depth_texture, id<MTLTexture>, (cp_drawable_t drawable, size_t index), (drawable, index))
+#define cp_drawable_get_depth_texture PAL::softLink_CompositorServices_cp_drawable_get_depth_texture
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_view, cp_view_t, (cp_drawable_t drawable, size_t index), (drawable, index))
+#define cp_drawable_get_view PAL::softLink_CompositorServices_cp_drawable_get_view
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_view_count, size_t, (cp_drawable_t drawable), (drawable))
+#define cp_drawable_get_view_count PAL::softLink_CompositorServices_cp_drawable_get_view_count
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_present, void, (cp_drawable_t drawable), (drawable))
+#define cp_drawable_present PAL::softLink_CompositorServices_cp_drawable_present
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_set_depth_range, void, (cp_drawable_t drawable, simd_float2 depth_range), (drawable, depth_range))
+#define cp_drawable_set_depth_range PAL::softLink_CompositorServices_cp_drawable_set_depth_range
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_set_device_anchor, void, (cp_drawable_t drawable, ar_device_anchor_t device_anchor), (drawable, device_anchor))
+#define cp_drawable_set_device_anchor PAL::softLink_CompositorServices_cp_drawable_set_device_anchor
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_rasterization_rate_map_descriptor, MTLRasterizationRateMapDescriptor*, (cp_drawable_t drawable, size_t index), (drawable, index))
+#define cp_drawable_get_rasterization_rate_map_descriptor PAL::softLink_CompositorServices_cp_drawable_get_rasterization_rate_map_descriptor
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_drawable_get_rasterization_rate_map, id<MTLRasterizationRateMap>, (cp_drawable_t drawable, size_t index), (drawable, index))
+#define cp_drawable_get_rasterization_rate_map PAL::softLink_CompositorServices_cp_drawable_get_rasterization_rate_map
+
+// FIXME: <rdar://134998122> Remove may fail when CC update lands.
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CompositorServices, cp_drawable_set_write_forward_depth, void, (cp_drawable_t drawable, bool is_forward_z), (drawable, is_forward_z));
+#define cp_drawable_set_write_forward_depth PAL::softLink_CompositorServices_cp_drawable_set_write_forward_depth
+#define can_load_cp_drawable_set_write_forward_depth PAL::canLoad_CompositorServices_cp_drawable_set_write_forward_depth
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_end_submission, void, (cp_frame_t frame), (frame))
+#define cp_frame_end_submission PAL::softLink_CompositorServices_cp_frame_end_submission
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_get_frame_index, cp_layer_frame_index_t, (cp_frame_t frame), (frame))
+#define cp_frame_get_frame_index PAL::softLink_CompositorServices_cp_frame_get_frame_index
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_query_drawable, cp_drawable_t, (cp_frame_t frame), (frame))
+#define cp_frame_query_drawable PAL::softLink_CompositorServices_cp_frame_query_drawable
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_predict_timing, cp_frame_timing_t, (cp_frame_t frame), (frame))
+#define cp_frame_predict_timing PAL::softLink_CompositorServices_cp_frame_predict_timing
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_skip_frame, void, (cp_frame_t frame), (frame))
+#define cp_frame_skip_frame PAL::softLink_CompositorServices_cp_frame_skip_frame
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_start_submission, void, (cp_frame_t frame), (frame))
+#define cp_frame_start_submission PAL::softLink_CompositorServices_cp_frame_start_submission
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_set_minimum_frame_repeat_count, void, (cp_layer_renderer_t layer_renderer, int frame_repeat_count), (layer_renderer, frame_repeat_count))
+#define cp_layer_renderer_set_minimum_frame_repeat_count PAL::softLink_CompositorServices_cp_layer_renderer_set_minimum_frame_repeat_count
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_get_completion_event, id<MTLEvent>, (cp_layer_renderer_t layer), (layer))
+#define cp_layer_renderer_get_completion_event PAL::softLink_CompositorServices_cp_layer_renderer_get_completion_event
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_get_device, id<MTLDevice>, (cp_layer_renderer_t layer), (layer))
+#define cp_layer_renderer_get_device PAL::softLink_CompositorServices_cp_layer_renderer_get_device
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_get_state, cp_layer_renderer_state, (cp_layer_renderer_t layer), (layer))
+#define cp_layer_renderer_get_state PAL::softLink_CompositorServices_cp_layer_renderer_get_state
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_get_swapchain, cp_swapchain_t, (cp_layer_renderer_t layer), (layer))
+#define cp_layer_renderer_get_swapchain PAL::softLink_CompositorServices_cp_layer_renderer_get_swapchain
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_query_next_frame, cp_frame_t, (cp_layer_renderer_t layer), (layer))
+#define cp_layer_renderer_query_next_frame PAL::softLink_CompositorServices_cp_layer_renderer_query_next_frame
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_wait_until_running, void, (cp_layer_renderer_t layer), (layer))
+#define cp_layer_renderer_wait_until_running PAL::softLink_CompositorServices_cp_layer_renderer_wait_until_running
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_capabilities_copy_system_default, cp_layer_renderer_capabilities_t, (CFErrorRef *error), (error))
+#define cp_layer_renderer_capabilities_copy_system_default PAL::softLink_CompositorServices_cp_layer_renderer_capabilities_copy_system_default
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_capabilities_supported_minimum_near_plane_distance, float, (cp_layer_renderer_capabilities_t layer_capabilities), (layer_capabilities))
+#define cp_layer_renderer_capabilities_supported_minimum_near_plane_distance PAL::softLink_CompositorServices_cp_layer_renderer_capabilities_supported_minimum_near_plane_distance
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_copy_system_default, cp_layer_renderer_configuration_t, (CFErrorRef *error), (error))
+#define cp_layer_renderer_configuration_copy_system_default PAL::softLink_CompositorServices_cp_layer_renderer_configuration_copy_system_default
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_get_default_depth_range, simd_float2, (cp_layer_renderer_configuration_t configuration), (configuration))
+#define cp_layer_renderer_configuration_get_default_depth_range PAL::softLink_CompositorServices_cp_layer_renderer_configuration_get_default_depth_range
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_get_contents_inverted_vertically, bool, (cp_layer_renderer_configuration_t configuration), (configuration))
+#define cp_layer_renderer_configuration_get_contents_inverted_vertically PAL::softLink_CompositorServices_cp_layer_renderer_configuration_get_contents_inverted_vertically
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_contents_inverted_vertically, void, (cp_layer_renderer_configuration_t configuration, bool inverted_vertically), (configuration, inverted_vertically))
+#define cp_layer_renderer_configuration_set_contents_inverted_vertically PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_contents_inverted_vertically
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_foveation_enabled, void, (cp_layer_renderer_configuration_t configuration, bool foveation_enabled), (configuration, foveation_enabled))
+#define cp_layer_renderer_configuration_set_foveation_enabled PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_foveation_enabled
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_get_foveation_enabled, bool, (cp_layer_renderer_configuration_t configuration), (configuration))
+#define cp_layer_renderer_configuration_get_foveation_enabled PAL::softLink_CompositorServices_cp_layer_renderer_configuration_get_foveation_enabled
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_layout, void, (cp_layer_renderer_configuration_t configuration, cp_layer_renderer_layout layout), (configuration, layout))
+#define cp_layer_renderer_configuration_set_layout PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_layout
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_get_layout, cp_layer_renderer_layout, (cp_layer_renderer_configuration_t configuration), (configuration))
+#define cp_layer_renderer_configuration_get_layout PAL::softLink_CompositorServices_cp_layer_renderer_configuration_get_layout
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_drawable_render_context_raster_sample_count, void, (cp_layer_renderer_configuration_t configuration, int raster_sample_count), (configuration, raster_sample_count))
+#define cp_layer_renderer_configuration_set_drawable_render_context_raster_sample_count PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_drawable_render_context_raster_sample_count
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_color_format, void, (cp_layer_renderer_configuration_t configuration, MTLPixelFormat color_format), (configuration, color_format))
+#define cp_layer_renderer_configuration_set_color_format PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_color_format
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_depth_format, void, (cp_layer_renderer_configuration_t configuration, MTLPixelFormat depth_format), (configuration, depth_format))
+#define cp_layer_renderer_configuration_set_depth_format PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_depth_format
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_configuration_set_use_shared_events, void, (cp_layer_renderer_configuration_t configuration, bool use_shared_events), (configuration, use_shared_events))
+#define cp_layer_renderer_configuration_set_use_shared_events PAL::softLink_CompositorServices_cp_layer_renderer_configuration_set_use_shared_events
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_properties_create_using_configuration, cp_layer_renderer_properties_t, (cp_layer_renderer_configuration_t configuration, CFErrorRef *error), (configuration, error))
+#define cp_layer_renderer_properties_create_using_configuration PAL::softLink_CompositorServices_cp_layer_renderer_properties_create_using_configuration
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_layer_renderer_properties_get_texture_topology_count, size_t, (cp_layer_renderer_properties_t layer_properties), (layer_properties))
+#define cp_layer_renderer_properties_get_texture_topology_count PAL::softLink_CompositorServices_cp_layer_renderer_properties_get_texture_topology_count
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_time_to_cf_time_interval, CFTimeInterval, (cp_time_t time), (time))
+#define cp_time_to_cf_time_interval PAL::softLink_CompositorServices_cp_time_to_cf_time_interval
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_time_wait_until, void, (cp_time_t time), (time))
+#define cp_time_wait_until PAL::softLink_CompositorServices_cp_time_wait_until
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_timing_get_presentation_time, cp_time_t, (cp_frame_timing_t frame_timing), (frame_timing))
+#define cp_frame_timing_get_presentation_time PAL::softLink_CompositorServices_cp_frame_timing_get_presentation_time
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_frame_timing_get_optimal_input_time, cp_time_t, (cp_frame_timing_t frame_timing), (frame_timing))
+#define cp_frame_timing_get_optimal_input_time PAL::softLink_CompositorServices_cp_frame_timing_get_optimal_input_time
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_view_get_transform, simd_float4x4, (cp_view_t view), (view))
+#define cp_view_get_transform PAL::softLink_CompositorServices_cp_view_get_transform
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_view_get_view_texture_map, cp_view_texture_map_t, (cp_view_t view), (view))
+#define cp_view_get_view_texture_map PAL::softLink_CompositorServices_cp_view_get_view_texture_map
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_view_texture_map_get_texture_index, size_t, (cp_view_texture_map_t view_texture_map), (view_texture_map))
+#define cp_view_texture_map_get_texture_index PAL::softLink_CompositorServices_cp_view_texture_map_get_texture_index
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_view_texture_map_get_viewport, MTLViewport, (cp_view_texture_map_t view_texture_map), (view_texture_map))
+#define cp_view_texture_map_get_viewport PAL::softLink_CompositorServices_cp_view_texture_map_get_viewport
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CompositorServices, cp_view_texture_map_get_slice_index, size_t, (cp_view_texture_map_t view_texture_map), (view_texture_map))
+#define cp_view_texture_map_get_slice_index PAL::softLink_CompositorServices_cp_view_texture_map_get_slice_index
+
+#endif // ENABLE(WEBXR)
+
+#endif // !__has_feature(modules)

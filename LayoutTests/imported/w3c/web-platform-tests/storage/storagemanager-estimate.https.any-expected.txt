@@ -1,0 +1,5 @@
+
+PASS estimate() method returns a Promise
+PASS estimate() resolves to dictionary with members
+PASS estimate() shows usage increase after 1MB IndexedDB record is stored
+

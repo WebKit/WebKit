@@ -1,0 +1,21 @@
+<iframe onload="runTest1()" style="display:none" srcdoc="<div style='font-size: 20px; font-family: Ahem;'>some content</div>" id=iframe1></iframe>
+<iframe onload="runTest2()" style="display:none; border: none;" srcdoc="some content" id=iframe2></iframe>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.waitUntilDone();
+
+let completed = 0;
+function notify() {
+  if (++completed == 2 && testRunner)
+    testRunner.notifyDone();
+}
+function runTest1() {
+  result.innerText = iframe1.contentDocument.body.offsetHeight;
+  notify();
+}
+function runTest2() {
+  iframe2.style.display = "inline";
+  notify();
+}
+</script>

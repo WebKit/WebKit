@@ -1,0 +1,3 @@
+This tests looking up form elements from a form that is not yet appended to a document. See bug 10188.
+
+Passed

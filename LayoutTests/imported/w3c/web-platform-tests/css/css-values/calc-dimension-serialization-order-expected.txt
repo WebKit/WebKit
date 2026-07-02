@@ -1,0 +1,46 @@
+
+PASS all dimensions reverse-sorted serialize back in canonical order
+PASS cap sorts after %
+PASS ch sorts after cap
+PASS cqb sorts after ch
+PASS cqh sorts after cqb
+PASS cqi sorts after cqh
+PASS cqmax sorts after cqi
+PASS cqmin sorts after cqmax
+PASS cqw sorts after cqmin
+PASS dvb sorts after cqw
+PASS dvh sorts after dvb
+PASS dvi sorts after dvh
+PASS dvmax sorts after dvi
+PASS dvmin sorts after dvmax
+PASS dvw sorts after dvmin
+PASS em sorts after dvw
+PASS ex sorts after em
+PASS ic sorts after ex
+PASS lh sorts after ic
+PASS lvb sorts after lh
+PASS lvh sorts after lvb
+PASS lvi sorts after lvh
+PASS lvmax sorts after lvi
+PASS lvmin sorts after lvmax
+PASS lvw sorts after lvmin
+PASS px sorts after lvw
+PASS rcap sorts after px
+PASS rch sorts after rcap
+PASS rem sorts after rch
+PASS rex sorts after rem
+PASS ric sorts after rex
+PASS rlh sorts after ric
+PASS svb sorts after rlh
+PASS svh sorts after svb
+PASS svi sorts after svh
+PASS svmax sorts after svi
+PASS svmin sorts after svmax
+PASS svw sorts after svmin
+PASS vb sorts after svw
+PASS vh sorts after vb
+PASS vi sorts after vh
+PASS vmax sorts after vi
+PASS vmin sorts after vmax
+PASS vw sorts after vmin
+

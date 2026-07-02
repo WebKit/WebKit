@@ -1,0 +1,10 @@
+
+PASS coep-none coep-none corp-cross-origin
+PASS coep-none coep-none corp-undefined
+PASS coep-none coep-require-corp corp-cross-origin
+PASS coep-none coep-require-corp corp-undefined
+PASS coep-require-corp coep-none corp-cross-origin
+PASS coep-require-corp coep-none corp-undefined
+PASS coep-require-corp coep-require-corp corp-cross-origin
+PASS coep-require-corp coep-require-corp corp-undefined
+

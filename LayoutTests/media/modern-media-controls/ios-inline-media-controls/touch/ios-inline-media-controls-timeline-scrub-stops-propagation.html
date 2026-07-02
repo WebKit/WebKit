@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../resources/media-controls-utils.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script src="../../../video-test.js"></script>
+</head>
+<body>
+    <video id="video" src="../../../content/test.mp4" controls style="width: 400px;"></video>
+    <script>
+        window.jsTestIsAsync = true;
+        
+        description("Test that scrubbing the timeline does not propagate touch events to parent elements.");
+        
+        // Make video globally accessible for testExpectedEventuallySilent
+        window.video = document.getElementById('video');
+        var video = window.video;
+        let containerReceivedTouchStart = false;
+        let containerReceivedTouchMove = false;
+        let containerReceivedTouchEnd = false;
+        
+        video.addEventListener('touchstart', () => { containerReceivedTouchStart = true; }, {once: true});
+        video.addEventListener('touchmove', () => { containerReceivedTouchMove = true; }, {once: true});
+        video.addEventListener('touchend', () => { containerReceivedTouchEnd = true; }, {once: true});
+        
+        video.addEventListener('loadedmetadata', async () => {
+            await testExpectedEventuallySilent("window.internals.shadowRoot(window.video)", null, "!=", 500);
+            
+            const shadowRoot = window.internals.shadowRoot(video);
+            if (!shadowRoot) {
+                testFailed("Could not get shadow root");
+                finishJSTest();
+                return;
+            }
+            
+            const controlsElement = shadowRoot.querySelector('.media-controls');
+            if (!controlsElement) {
+                testFailed("Could not find media controls element");
+                finishJSTest();
+                return;
+            }
+            
+            const rect = controlsElement.getBoundingClientRect();
+            const start = UIHelper.midPointOfRect(rect);
+            
+            await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+                .begin(start.x, start.y)
+                .move(start.x + 50, start.y, 0.5)
+                .end()
+                .takeResult());
+            
+            shouldBeFalse("containerReceivedTouchStart");
+            shouldBeFalse("containerReceivedTouchMove");
+            shouldBeFalse("containerReceivedTouchEnd");
+            
+            video.remove();
+            finishJSTest();
+        });
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

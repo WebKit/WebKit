@@ -1,0 +1,13 @@
+Test that selection across multiple elements with ::first-letter works correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().toString().replace(/\n/g, '|') is "First paragraph|Second paragraph"
+PASS window.getSelection().toString().replace(/\n/g, '|') is "st paragraph|Second"
+PASS window.getSelection().toString().replace(/\n/g, '|') is "First paragraph|S"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First paragraph
+Second paragraph

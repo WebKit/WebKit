@@ -1,0 +1,10 @@
+
+PASS hidden-ua-stylesheet
+PASS div.removeAttribute('hidden')
+PASS div.setAttribute('hidden', '')
+PASS div.setAttribute('hidden', 'asdf')
+PASS div.setAttribute('hidden', 'until-found')
+PASS div.setAttribute('hidden', 'UNTIL-FOUND')
+PASS div.setAttribute('hidden', 'UnTiL-FoUnD')
+PASS div.setAttribute('hidden', '0')
+

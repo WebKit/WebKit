@@ -1,0 +1,10 @@
+make sure the last line is scrolled off
+and use find-in-page to search for it.
+some text here
+to make sure
+the last line
+is really
+scrolled off.
+find me
+
+window.find('find me') says: true

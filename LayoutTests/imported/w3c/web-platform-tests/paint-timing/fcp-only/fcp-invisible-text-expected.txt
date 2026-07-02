@@ -1,0 +1,6 @@
+INVISIBLE
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT First contentful paint fires due to pseudo-element becoming visible. Test timed out
+

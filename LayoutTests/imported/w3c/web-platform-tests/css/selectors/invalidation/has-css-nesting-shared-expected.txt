@@ -1,0 +1,14 @@
+
+PASS add .test to trigger1 - check subject1_1
+PASS add .test to trigger1 - check subject1_2
+PASS remove .test from trigger1 - check subject1_1
+PASS remove .test from trigger1 - check subject1_2
+PASS add .test to trigger2 - check subject2_1
+PASS add .test to trigger2 - check subject2_2
+PASS remove .test from trigger2 - check subject2_1
+PASS remove .test from trigger2 - check subject2_2
+PASS add .test to trigger3 - check subject3_1
+PASS add .test to trigger3 - check subject3_2
+PASS remove .test from trigger3 - check subject3_1
+PASS remove .test from trigger3 - check subject3_2
+

@@ -1,0 +1,4 @@
+Body needed for test_driver.click()
+
+FAIL Verify write and read clipboard with scripts removed given text/html. The string "<script>const a = 5;</script>" has been removed. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
+

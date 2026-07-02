@@ -1,0 +1,9 @@
+SOURCE 1
+SOURCE 2
+SOURCE 3
+SOURCE 4
+SOURCE 5
+Target
+
+FAIL Among un-scoped triggers with same name, last in tree-order is selected. assert_equals: animation on target has playState paused. expected "paused" but got "running"
+

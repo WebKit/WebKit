@@ -1,0 +1,16 @@
+
+PASS Panner kâ€‘rate vs aâ€‘rate â€“ positionX
+PASS Panner kâ€‘rate vs aâ€‘rate â€“ positionY
+PASS Panner kâ€‘rate vs aâ€‘rate â€“ orientationX
+PASS Panner kâ€‘rate vs aâ€‘rate â€“ orientationY
+PASS Panner kâ€‘rate vs aâ€‘rate â€“ orientationZ
+PASS Listener k-rate positionX
+PASS Listener k-rate positionY
+PASS Listener k-rate positionZ
+PASS Listener k-rate forwardX
+PASS Listener k-rate forwardY
+PASS Listener k-rate forwardZ
+PASS Listener k-rate upX
+PASS Listener k-rate upY
+PASS Listener k-rate upZ
+

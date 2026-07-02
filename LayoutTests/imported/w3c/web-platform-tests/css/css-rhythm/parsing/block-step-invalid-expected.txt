@@ -1,0 +1,9 @@
+
+PASS e.style['block-step'] = "auto auto" should not set the property value
+PASS e.style['block-step'] = "start end" should not set the property value
+PASS e.style['block-step'] = "center start" should not set the property value
+PASS e.style['block-step'] = "none none" should not set the property value
+PASS e.style['block-step'] = "300px none" should not set the property value
+PASS e.style['block-step'] = "300px start none" should not set the property value
+PASS e.style['block-step'] = "300px start border-box padding-box" should not set the property value
+

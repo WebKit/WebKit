@@ -1,0 +1,5 @@
+PASS if this is red
+(repaint rects
+  (rect 8 8 784 20)
+)
+

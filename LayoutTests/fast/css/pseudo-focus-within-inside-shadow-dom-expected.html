@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html class="focus-within">
+<head>
+<style>
+    * {
+        border: none;
+    }
+    .focus-within {
+        border: 2px solid green;
+    }
+</style>
+</head>
+<body class="focus-within">
+    <div id="root" class="focus-within">
+    </div>
+    <script>
+        let rootElement = document.getElementById('root');
+        let firstRoot = rootElement.attachShadow({mode: 'closed'});
+        let insideDiv = document.createElement("div");
+        insideDiv.innerText = "Foobar";
+        insideDiv.className = "focus-within";
+        let inputElement = document.createElement("input")
+        inputElement.className = "focus-within";
+        insideDiv.appendChild(inputElement);
+        firstRoot.appendChild(insideDiv);
+        inputElement.focus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+/*
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if USE(MEDIATOOLBOX)
+#include "SharedCARingBuffer.h"
+
+#include "Logging.h"
+#include <WebCore/CARingBuffer.h>
+#include <utility>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedCARingBufferBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConsumerSharedCARingBuffer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProducerSharedCARingBuffer);
+
+SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory> storage)
+    : CARingBuffer(bytesPerFrame, frameCount, numChannelStream)
+    , m_storage(WTF::move(storage))
+{
+}
+
+std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint32_t bytesPerFrame, uint32_t numChannelStreams, ConsumerSharedCARingBuffer::Handle&& handle)
+{
+    if (!std::in_range<size_t>(handle.frameCount)) {
+        RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: handle.frameCount doesn't fit in a size_t");
+        return nullptr;
+    }
+
+    auto frameCount = roundUpToPowerOfTwo(static_cast<size_t>(handle.frameCount));
+
+    // Validate the parameters as they may be coming from an untrusted process.
+    auto expectedStorageSize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
+    if (expectedStorageSize.hasOverflowed()) {
+        RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Overflowed when trying to compute the storage size");
+        return nullptr;
+    }
+    auto storage = WebCore::SharedMemory::map(WTF::move(handle.memory), WebCore::SharedMemory::Protection::ReadOnly);
+    if (!storage) {
+        RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Failed to map memory");
+        return nullptr;
+    }
+    if (storage->size() < expectedStorageSize) {
+        RELEASE_LOG_FAULT(Media, "ConsumerSharedCARingBuffer::map: Storage size is insufficient for format and frameCount");
+        return nullptr;
+    }
+
+    std::unique_ptr<ConsumerSharedCARingBuffer> result { new ConsumerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, storage.releaseNonNull() } };
+    result->initialize();
+    return result;
+}
+
+std::optional<ProducerSharedCARingBuffer::Pair> ProducerSharedCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+{
+    frameCount = roundUpToPowerOfTwo(frameCount);
+    auto bytesPerFrame = format.bytesPerFrame();
+    auto numChannelStreams = format.numberOfChannelStreams();
+
+    auto checkedSharedMemorySize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
+    if (checkedSharedMemorySize.hasOverflowed()) {
+        RELEASE_LOG_FAULT(Media, "ProducerSharedCARingBuffer::allocate: Overflowed when trying to compute the storage size");
+        return std::nullopt;
+    }
+    auto sharedMemory = WebCore::SharedMemory::allocate(checkedSharedMemorySize.value());
+    if (!sharedMemory)
+        return std::nullopt;
+
+    auto handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
+    if (!handle)
+        return std::nullopt;
+
+    new (NotNull, sharedMemory->mutableSpan().data()) TimeBoundsBuffer;
+    std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
+    result->initialize();
+    return Pair { WTF::move(result), { WTF::move(*handle), frameCount } };
+}
+
+} // namespace WebKit
+
+#endif

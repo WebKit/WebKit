@@ -1,0 +1,9 @@
+
+PASS .inline-flexbox 1
+PASS .inline-flexbox 2
+PASS .inline-flexbox 3
+
+Some text
+
+Some text
+

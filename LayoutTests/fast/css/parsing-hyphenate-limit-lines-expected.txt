@@ -1,0 +1,10 @@
+PASS: '-webkit-hyphenate-limit-lines: initial;' parsed as 'initial'
+PASS: '-webkit-hyphenate-limit-lines: inherit;' parsed as 'inherit'
+PASS: '-webkit-hyphenate-limit-lines: no-limit;' parsed as 'no-limit'
+PASS: '-webkit-hyphenate-limit-lines: 0;' parsed as '0'
+PASS: '-webkit-hyphenate-limit-lines: 4;' parsed as '4'
+PASS: '-webkit-hyphenate-limit-lines: 2 2;' parsed as ''
+PASS: '-webkit-hyphenate-limit-lines: 2px;' parsed as ''
+PASS: '-webkit-hyphenate-limit-lines: -1;' parsed as ''
+PASS: '-webkit-hyphenate-limit-lines: "1";' parsed as ''
+

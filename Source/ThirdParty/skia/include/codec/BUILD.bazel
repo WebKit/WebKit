@@ -1,0 +1,124 @@
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+CORE_HDRS = ["SkEncodedOrigin.h"]
+
+skia_filegroup(
+    name = "core_hdrs",
+    srcs = CORE_HDRS,
+    visibility = ["//src/core:__pkg__"],
+)
+
+ANY_CODEC_HDRS = [
+    "SkCodec.h",
+    "SkCodecAnimation.h",
+    "SkEncodedImageFormat.h",
+    "SkPixmapUtils.h",
+]
+
+skia_filegroup(
+    name = "any_codec_hdrs",
+    srcs = ANY_CODEC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+ANDROID_PUBLIC_HDRS = ["SkAndroidCodec.h"]
+
+skia_filegroup(
+    name = "android_public_hdrs",
+    srcs = ANDROID_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+BMP_PUBLIC_HDRS = ["SkBmpDecoder.h"]
+
+skia_filegroup(
+    name = "bmp_public_hdrs",
+    srcs = BMP_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+GIF_PUBLIC_HDRS = ["SkGifDecoder.h"]
+
+skia_filegroup(
+    name = "gif_public_hdrs",
+    srcs = GIF_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+ICO_PUBLIC_HDRS = ["SkIcoDecoder.h"]
+
+skia_filegroup(
+    name = "ico_public_hdrs",
+    srcs = ICO_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+JPEG_PUBLIC_HDRS = ["SkJpegDecoder.h"]
+
+skia_filegroup(
+    name = "jpeg_public_hdrs",
+    srcs = JPEG_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+JPEGXL_PUBLIC_HDRS = ["SkJpegxlDecoder.h"]
+
+skia_filegroup(
+    name = "jpegxl_public_hdrs",
+    srcs = JPEGXL_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+PNG_PUBLIC_HDRS = [
+    "SkPngChunkReader.h",
+    "SkPngDecoder.h",
+]
+
+skia_filegroup(
+    name = "libpng_public_hdrs",
+    srcs = PNG_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+skia_filegroup(
+    name = "rust_png_public_hdrs",
+    srcs = ["SkPngRustDecoder.h"],
+    visibility = ["//src/codec:__pkg__"],
+)
+
+WBMP_PUBLIC_HDRS = ["SkWbmpDecoder.h"]
+
+skia_filegroup(
+    name = "wbmp_public_hdrs",
+    srcs = WBMP_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+WEBP_PUBLIC_HDRS = ["SkWebpDecoder.h"]
+
+skia_filegroup(
+    name = "webp_public_hdrs",
+    srcs = WEBP_PUBLIC_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = CORE_HDRS +
+              ANY_CODEC_HDRS +
+              ANDROID_PUBLIC_HDRS +
+              BMP_PUBLIC_HDRS +
+              GIF_PUBLIC_HDRS +
+              ICO_PUBLIC_HDRS +
+              JPEG_PUBLIC_HDRS +
+              JPEGXL_PUBLIC_HDRS +
+              PNG_PUBLIC_HDRS +
+              WBMP_PUBLIC_HDRS +
+              WEBP_PUBLIC_HDRS,
+)

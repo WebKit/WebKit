@@ -1,0 +1,11 @@
+This tests that for/in statements properly scope a variable that's declared in one. In previous versions of JavaScriptCore there were two bugs that caused problems. First, the loop variable declaration would not be processed. Second, the code to set the loop variable would incorrectly walk the scope chain even after setting the loop variable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS i is 'start i'
+PASS j is 'propName'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+
+Test that an audible <video> that is already playing continues to play after it is moved outside the viewport.
+
+** setting video.src on a visible audible video
+
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+** moving the video outside the viewport
+RUN(video.style.top = "-9999px")
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

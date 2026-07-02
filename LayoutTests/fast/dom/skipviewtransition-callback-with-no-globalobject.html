@@ -1,0 +1,22 @@
+<body>
+    <p>This test passes if WebKit does not crash</p>
+    <div id="result"></div>
+    <script>
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
+        async function test() {
+            const frame = document.createElement('iframe');
+            document.body.appendChild(frame);
+            const win = frame.contentWindow;
+            const doc = frame.contentDocument;
+            let z = doc.startViewTransition(() => {});
+            z.skipTransition();
+            frame.remove();
+            setTimeout(() => {
+                result.textContent = 'PASS';
+                window.testRunner?.notifyDone();
+            }, 10);
+        }
+        test();
+    </script>
+</body>

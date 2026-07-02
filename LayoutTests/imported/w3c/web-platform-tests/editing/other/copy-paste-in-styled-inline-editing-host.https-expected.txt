@@ -1,0 +1,4 @@
+ABC DEF GHI
+
+FAIL Copying text in styled inline editing host should not duplicate the editing host assert_equals: expected "ABC DEF GHIDEF " but got "ABC DEF GHI"
+

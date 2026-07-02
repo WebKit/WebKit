@@ -1,0 +1,5 @@
+
+PASS SVGMarkerElement.orientType synchronization, setting orientType to 'auto'
+PASS SVGMarkerElement.orientType synchronization, setting orientAngle using valueInSpecifiedUnits
+PASS SVGMarkerElement.orientType synchronization, setting orientAngle using convertToSpecifiedUnits
+

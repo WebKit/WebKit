@@ -1,0 +1,6 @@
+
+PASS Fetch ../resources/top.txt with no-cors mode
+PASS Fetch http://web-platform.test:8800/fetch/api/resources/top.txt with no-cors mode
+PASS Fetch https://web-platform.test:9443/fetch/api/resources/top.txt with no-cors mode
+PASS Fetch http://web-platform.test:8801/fetch/api/resources/top.txt with no-cors mode
+

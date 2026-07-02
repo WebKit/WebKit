@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="frame-src 'none'; child-src 'self'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests that an &lt;iframe&gt; load is blocked when using Content Security Policy <code>frame-src 'none'; child-src 'self'</code> because the deprecated directive frame-src takes precedence over the directive child-src. This test PASSED if there is no JavaScript alert.</p>
+<iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html"></iframe>
+</body>
+</html>

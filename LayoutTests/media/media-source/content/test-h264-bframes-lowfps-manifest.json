@@ -1,0 +1,18 @@
+{
+  "url": "content/test-h264-bframes-lowfps.mp4",
+  "type": "video/mp4; codecs=\"avc1\"",
+  "init": {
+    "offset": 0,
+    "size": 1069
+  },
+  "media": [
+    {
+      "offset": 1069,
+      "size": 9284
+    },
+    {
+      "offset": 10353,
+      "size": 36701
+    }
+  ]
+}

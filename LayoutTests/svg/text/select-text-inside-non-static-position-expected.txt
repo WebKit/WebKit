@@ -1,0 +1,4 @@
+This tests selecting text inside a non-statically positioned SVG content. WebKit should not hit assertions.
+
+svg text
+ PASS

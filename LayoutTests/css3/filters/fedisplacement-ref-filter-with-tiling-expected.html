@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    body {
+        overflow: hidden;
+    }
+    .test {
+        height: 300px;
+        width: 600px;
+    }
+
+    .filtered {
+        background-color: green;
+        border: 10px solid black;
+        filter: url(#filter);
+    }
+    
+    .composited {
+        margin: 100px;
+        transform: translateZ(0);
+        width: 1024px;
+    }
+
+    svg {
+        position: absolute;
+        width: 0;
+        height: 0;
+    }
+</style>
+</head>
+<body>
+    <svg>
+    <filter id="filter" x=0 y=0 width="120%" height=100%>
+        <feFlood flood-color="black" flood-opacity="1"/>
+        <feDisplacementmap in="SourceGraphic" scale="100" xchannelselector="G"/>
+    </filter>
+    </svg>
+    <div class="composited">
+        <div class="test filtered"></div>
+    </div>
+</body>
+</html>

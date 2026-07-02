@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="test-container">
+    <textarea id="input">H</textarea>
+    <textarea id="output" readonly></textarea>
+</div>
+<script>
+window.jsTestIsAsync = true;
+
+let input = document.getElementById("input");
+let inputDidFocus = false;
+let inputEventCount = 0;
+
+function appendANewline()
+{
+    let outputElement = document.getElementById("output");
+    outputElement.value = outputElement.value + "\n";
+}
+
+async function runTest()
+{
+    input.addEventListener("focus", () => inputDidFocus = true);
+    input.addEventListener("input", () => ++inputEventCount);
+
+    if (window.testRunner) {
+        await UIHelper.setHardwareKeyboardAttached(false);
+        console.log("Activating element and waiting for input session.");
+        await UIHelper.activateElementAndWaitForInputSession(input);
+    }
+
+    console.log("Waiting for element focus.");
+    await new Promise(resolve => shouldBecomeEqual("inputDidFocus", "true", resolve));
+
+    console.log("Typing 'i'.");
+    if (window.testRunner)
+        await UIHelper.keyDown("i");
+
+    console.log("Waiting for first input event.");
+    await new Promise(resolve => shouldBecomeEqual("inputEventCount", "1", resolve));
+    shouldBeEqualToString('document.getElementById("input").value', "Hi");
+
+    console.log("Hitting backspace.");
+    if (window.testRunner)
+        await UIHelper.keyDown("\b");
+
+    console.log("Waiting for second input event.");
+    await new Promise(resolve => shouldBecomeEqual("inputEventCount", "2", resolve));
+    shouldBeEqualToString('document.getElementById("input").value', "H");
+
+    console.log("Hitting backspace again.");
+    if (window.testRunner)
+        await UIHelper.keyDown("\b");
+
+    console.log("Waiting for third input event.");
+    await new Promise(resolve => shouldBecomeEqual("inputEventCount", "3", resolve));
+    shouldBeEqualToString('document.getElementById("input").value', "");
+
+    console.log("Test complete.");
+    document.body.removeChild(document.getElementById("test-container"));
+    finishJSTest();
+}
+
+description("This tests using the software keyboard and pressing 'i' then <kbd>backspace</kbd> twice to delete 'Hi'. This should not cause a debug assertion.");
+input.addEventListener("keydown", appendANewline);
+
+runTest();
+</script>
+</body>
+</html>

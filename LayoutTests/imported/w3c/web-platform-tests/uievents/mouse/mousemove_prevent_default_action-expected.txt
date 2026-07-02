@@ -1,0 +1,7 @@
+div a
+div b
+div c
+
+PASS selectionchange event firing when mousemove event is prevented
+PASS dragstart event firing when mousemove event is prevented
+

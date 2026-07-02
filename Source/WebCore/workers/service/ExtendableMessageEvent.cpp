@@ -1,0 +1,113 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#include "ExtendableMessageEvent.h"
+
+#include "EventNames.h"
+#include "JSDOMConvertInterface.h"
+#include "JSExtendableMessageEvent.h"
+#include "JSValueInWrappedObjectInlines.h"
+#include "SecurityOrigin.h"
+#include <JavaScriptCore/StrongInlines.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExtendableMessageEvent);
+
+static JSC::Strong<JSC::JSObject> createWrapperAndSetData(JSC::JSGlobalObject& globalObject, ExtendableMessageEvent& event, JSC::JSValue value)
+{
+    auto& vm = globalObject.vm();
+    JSC::Strong<JSC::Unknown> strongData(vm, value);
+
+    Locker<JSC::JSLock> locker(vm.apiLock());
+    JSC::Strong<JSC::JSObject> strongWrapper(vm, downcast<JSC::JSObject>(toJSNewlyCreated<IDLInterface<ExtendableMessageEvent>>(globalObject,  downcast<JSDOMGlobalObject>(globalObject), Ref { event })));
+    event.data().set(globalObject, strongWrapper.get(), value);
+
+    return strongWrapper;
+}
+
+auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, const AtomString& type, const Init& initializer, IsTrusted isTrusted) -> ExtendableMessageEventWithStrongData
+{
+    Ref event = adoptRef(*new ExtendableMessageEvent(type, initializer, isTrusted));
+    auto strongWrapper = createWrapperAndSetData(globalObject, event.get(), initializer.data);
+
+    return { WTF::move(event), WTF::move(strongWrapper) };
+}
+
+auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Ref<MessagePort>>&& ports, Ref<SerializedScriptValue>&& data, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source) -> ExtendableMessageEventWithStrongData
+{
+    auto& vm = globalObject.vm();
+    Locker<JSC::JSLock> locker(vm.apiLock());
+
+    bool didFail = false;
+
+    auto deserialized = data->deserialize(globalObject, &globalObject, ports, SerializationErrorMode::NonThrowing, &didFail);
+
+    Ref event = adoptRef(*new ExtendableMessageEvent(didFail ? eventNames().messageerrorEvent : eventNames().messageEvent, WTF::move(origin), lastEventId, WTF::move(source), WTF::move(ports)));
+    auto strongWrapper = createWrapperAndSetData(globalObject, event.get(), deserialized);
+
+    return { WTF::move(event), WTF::move(strongWrapper) };
+}
+
+ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, const Init& init, IsTrusted isTrusted)
+    : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, type, init, isTrusted)
+    , m_origin(init.origin)
+    , m_lastEventId(init.lastEventId)
+    , m_source(init.source)
+    , m_ports(init.ports)
+{
+}
+
+ExtendableMessageEvent::ExtendableMessageEvent(const AtomString& type, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports)
+    : ExtendableEvent(EventInterfaceType::ExtendableMessageEvent, type, CanBubble::No, IsCancelable::No)
+    , m_origin(WTF::move(origin))
+    , m_lastEventId(lastEventId)
+    , m_source(WTF::move(source))
+    , m_ports(WTF::move(ports))
+{
+}
+
+ExtendableMessageEvent::~ExtendableMessageEvent() = default;
+
+String ExtendableMessageEvent::origin() const
+{
+    return WTF::switchOn(m_origin, [](const Ref<SecurityOrigin>& origin) {
+        return origin->toString();
+    },
+    [](const String& origin) {
+        return origin;
+    });
+}
+
+const RefPtr<SecurityOrigin> ExtendableMessageEvent::securityOrigin() const
+{
+    auto* origin = std::get_if<Ref<SecurityOrigin>>(&m_origin);
+    return origin ? origin->ptr() : nullptr;
+}
+
+} // namespace WebCore

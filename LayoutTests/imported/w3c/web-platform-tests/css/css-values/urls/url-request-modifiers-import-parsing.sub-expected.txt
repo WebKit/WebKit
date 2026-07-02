@@ -1,0 +1,12 @@
+
+FAIL cross-origin(anonymous) in @import assert_equals: should have one rule expected 1 but got 0
+FAIL referrer-policy(no-referrer) in @import assert_equals: should have one rule expected 1 but got 0
+FAIL integrity() in @import assert_equals: should have one rule expected 1 but got 0
+FAIL multiple modifiers in @import assert_equals: should have one rule expected 1 but got 0
+FAIL all three modifiers in @import assert_equals: should have one rule expected 1 but got 0
+FAIL cross-origin(anonymous) serialized in @import cssText assert_equals: should have one rule expected 1 but got 0
+FAIL multiple modifiers serialized in canonical order in @import cssText assert_equals: should have one rule expected 1 but got 0
+PASS duplicate cross-origin in @import
+PASS duplicate cross-origin in @import between referrer-policy
+PASS unquoted url() with cross-origin in @import
+

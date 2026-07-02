@@ -1,0 +1,3 @@
+
+PASS navigate() in a detached window
+

@@ -1,0 +1,6 @@
+
+PASS select can be nested inside a popover
+PASS a popover can be nested inside select
+PASS select can be nested inside a modal dialog
+PASS a modal dialog can be nested inside select
+

@@ -1,0 +1,24 @@
+<style>
+#container {
+  overflow: scroll;
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+#block {
+  width: 100px;
+  height: 100px;
+}
+</style>
+<div id=container>
+  <span><div id=block></div></span>
+</div>
+<pre id=result></pre>
+<script>
+window.testRunner?.dumpAsText();
+
+document.body.offsetHeight;
+block.innerHTML = "1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10";
+// scroll height is supposed to be > 100px.
+result.innerText = "container's scroll height: " + container.scrollHeight;
+</script>

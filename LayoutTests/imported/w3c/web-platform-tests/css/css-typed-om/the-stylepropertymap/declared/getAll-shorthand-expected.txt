@@ -1,0 +1,4 @@
+
+PASS StylePropertyMap.getAll() with a shorthand property set explicitly in css rule returns a base CSSStyleValue
+PASS StylePropertyMap.getAll() with a shorthand property that is partially in css rule returns empty list
+

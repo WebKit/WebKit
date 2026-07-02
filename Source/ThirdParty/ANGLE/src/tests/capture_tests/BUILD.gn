@@ -1,0 +1,64 @@
+# Copyright 2023 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../../gni/angle.gni")
+import("../angle_traces.gni")
+
+angle_trace("angle_capture_tests_multi_frame_trace") {
+  _trace = "CapturedTest_MultiFrame_ES3_Vulkan"
+
+  json_file_name = "expected/CapturedTest_MultiFrame_ES3_Vulkan.json"
+  rebased_path = "expected/"
+
+  data = [
+    "$_trace.json",
+    "$_trace.angledata",
+  ]
+
+  deps = [ "$angle_root/util:angle_trace_fixture" ]
+}
+
+angle_trace("angle_capture_tests_active_textures_trace") {
+  _trace = "CapturedTest_ActiveTextures_ES3_Vulkan"
+
+  json_file_name = "expected/CapturedTest_ActiveTextures_ES3_Vulkan.json"
+  rebased_path = "expected/"
+
+  data = [
+    "$_trace.json",
+    "$_trace.angledata",
+  ]
+
+  deps = [ "$angle_root/util:angle_trace_fixture" ]
+}
+
+angle_trace("angle_capture_tests_external_ahb_trace") {
+  _trace = "CapturedTest_ExternalAHB_ES3_Vulkan"
+
+  json_file_name = "expected/CapturedTest_ExternalAHB_ES3_Vulkan.json"
+  rebased_path = "expected/"
+
+  data = [
+    "$_trace.json",
+    "$_trace.angledata",
+  ]
+
+  deps = [ "$angle_root/util:angle_trace_fixture" ]
+}
+
+if (angle_enable_cl) {
+  angle_trace("angle_capture_tests_multi_frame_cl_trace") {
+    _trace = "CapturedTestCL_MultiFrameCL_ES3_Vulkan"
+
+    json_file_name = "expected/CapturedTestCL_MultiFrameCL_ES3_Vulkan.json"
+    rebased_path = "expected/"
+
+    data = [
+      "$_trace.json",
+      "$_trace.angledata",
+    ]
+
+    deps = [ "$angle_root/src/libOpenCL:OpenCL_ANGLE" ]
+  }
+}

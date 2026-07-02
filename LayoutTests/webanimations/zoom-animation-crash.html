@@ -1,0 +1,29 @@
+<style>
+
+@keyframes anim {
+    50% { zoom: 0.25 }
+}
+
+div {
+    animation: anim 20ms cubic-bezier(0, 1000, 0, 1) forwards;
+}
+
+span {
+    line-height: 10px;
+}
+
+</style>
+<div><span>This test passes if it does not crash.</span></div>
+<script>
+
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+document.querySelector("div").addEventListener("animationend", () => {
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+});
+
+</script>

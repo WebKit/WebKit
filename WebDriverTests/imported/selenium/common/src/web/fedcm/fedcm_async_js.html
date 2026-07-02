@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FedCM Example</title>
+</head>
+<body>
+    <button id="triggerButton" onclick="triggerFedCm()">Trigger FedCM</button>
+    <div id="result"></div>
+
+    <script>
+        // Use a relative path for the configURL
+        let configURL = `http://${location.host}/common/fedcm/config.json`;
+        console.log(configURL)
+        let result = null;
+
+        async function triggerFedCm() {
+            console.log("Config URL:", configURL);
+            try {
+                let promise = await navigator.credentials.get({
+                    identity: {
+                        providers: [{
+                            configURL: configURL,
+                            clientId: '1',
+                        }]
+                    }
+                });
+                result = promise;
+
+                console.log("Promised!")
+                console.log(result)
+                document.getElementById('result').innerText = JSON.stringify(result);
+            } catch (error) {
+                console.error("FedCM Error:", error);
+                result = { error: error.message };
+                document.getElementById('result').innerText = JSON.stringify(result);
+            }
+        }
+    </script>
+</body>
+</html>

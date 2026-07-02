@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="../resources/runner.js"></script>
+<style>
+#target {
+    display: none;
+}
+</style>
+<style id="a" media="print">
+#target {
+    display: block;
+    width: 280px;
+}
+</style>
+<style id="b" media="print">
+#target {
+    display: block;
+    width: 300px;
+}
+</style>
+<style id="c" media="print">
+#target {
+    display: block;
+    width: 290px;
+}
+</style>
+</head>
+<body>
+    <pre id="log"></pre>
+    <div id="target" style="font-family: system-ui;">
+    <p>😎</p>
+    </div>
+    <script>
+        var target = document.getElementById("target");
+        var a = document.getElementById("a");
+        var b = document.getElementById("b");
+        var c = document.getElementById("c");
+
+        function test() {
+            a.media = "screen";
+            target.offsetLeft;
+            b.media = "screen";
+            target.offsetLeft;
+            c.media = "screen";
+            target.offsetLeft;
+            a.media = "print";
+            b.media = "print";
+            c.media = "print";
+        }
+
+        PerfTestRunner.measureRunsPerSecond({ run: test });
+    </script>
+</body>
+</html>

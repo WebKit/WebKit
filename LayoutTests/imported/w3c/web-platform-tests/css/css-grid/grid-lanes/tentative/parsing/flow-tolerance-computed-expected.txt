@@ -1,0 +1,9 @@
+
+PASS Property flow-tolerance value 'normal'
+PASS Property flow-tolerance value 'infinite'
+PASS Property flow-tolerance value '10px'
+PASS Property flow-tolerance value '20%'
+PASS Property flow-tolerance value 'calc(20% + 10px)'
+PASS Property flow-tolerance value 'calc(-0.5em + 10px)'
+PASS Property flow-tolerance value 'calc(0.5em + 10px)'
+

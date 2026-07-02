@@ -1,0 +1,27 @@
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<iframe id="testFrame" src="resources/messageport-pong-after-xhr.html" style="display:none"></iframe>
+<script>
+description("Tests that MessagePort doesn't get GC'd while still entangled.");
+jsTestIsAsync = true;
+
+window.onload = () => {
+    let { port1, port2 } = new MessageChannel();
+    debug("Posting message to the iframe.");
+    document.getElementById('testFrame').contentWindow.postMessage("ping", "*", [port2]);
+    port1.onmessage = (e) => {
+        testPassed("Received the message from the iframe. The MessagePort was not GC'd");
+        finishJSTest();
+    };
+
+    setInterval(gc, 100);
+
+    setTimeout(() => {
+        testFailed("Did not receive the message from the iframe. The MessagePort was probably GC'd.");
+        finishJSTest();
+    }, 5000);
+};
+</script>
+</body>
+</html>

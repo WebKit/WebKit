@@ -1,0 +1,52 @@
+Storage/StorageAreaImpl.cpp
+Storage/WebDatabaseProvider.cpp
+WebCoreSupport/WebResourceLoadScheduler.cpp
+WebCoreSupport/WebSocketChannel.cpp
+[ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
+[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
+[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
+[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
+mac/DOM/DOM.mm
+mac/DOM/DOMAbstractView.mm
+mac/DOM/DOMDocument.mm
+mac/DOM/DOMElement.mm
+mac/DOM/DOMHTML.mm
+mac/DOM/DOMInternal.mm
+mac/DOM/DOMMouseEvent.mm
+mac/DOM/DOMNamedNodeMap.mm
+mac/DOM/DOMObject.mm
+[ iOS ] mac/DOM/DOMUIKitExtensions.mm
+mac/DOM/DOMUtility.mm
+mac/DOM/WebDOMOperations.mm
+mac/History/HistoryPropertyList.mm
+mac/History/WebBackForwardList.mm
+mac/History/WebHistory.mm
+mac/History/WebHistoryItem.mm
+mac/Misc/WebElementDictionary.mm
+[ Mac ] mac/Misc/WebNSPasteboardExtras.mm
+[ Mac ] mac/Misc/WebSharingServicePickerController.mm
+mac/Plugins/WebPluginContainerCheck.mm
+[ iOS ] mac/Plugins/WebPluginController.mm
+[ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
+[ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
+mac/WebCoreSupport/WebEditorClient.mm
+mac/WebCoreSupport/WebFrameLoaderClient.mm
+mac/WebCoreSupport/WebGeolocationClient.mm
+[ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
+mac/WebCoreSupport/WebPluginInfoProvider.mm
+[ Mac ] mac/WebCoreSupport/WebSelectionServiceController.mm
+mac/WebInspector/WebInspector.mm
+mac/WebView/WebArchive.mm
+[ Mac ] mac/WebView/WebClipView.mm
+mac/WebView/WebDataSource.mm
+[ Mac ] mac/WebView/WebDynamicScrollBarsView.mm
+mac/WebView/WebFrame.mm
+mac/WebView/WebFrameView.mm
+mac/WebView/WebHTMLRepresentation.mm
+mac/WebView/WebHTMLView.mm
+[ Mac ] mac/WebView/WebImmediateActionController.mm
+[ Mac ] mac/WebView/WebPDFView.mm
+mac/WebView/WebResource.mm
+mac/WebView/WebScriptDebugDelegate.mm
+mac/WebView/WebScriptDebugger.mm
+mac/WebView/WebView.mm

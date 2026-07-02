@@ -1,0 +1,25 @@
+<head>
+<script>
+window.onload = async function () {
+    if (window.testRunner) {
+        testRunner.dumpAsText(); 
+        testRunner.waitUntilDone();
+    }
+
+    var abe = document.getElementById("abe");
+    var dragTarget = document.getElementById("dragTarget");
+
+    await eventSender.asyncMouseMoveTo(abe.offsetLeft + 50, abe.offsetTop + 50);
+    await eventSender.asyncMouseDown();
+    eventSender.leapForward(500);
+    await eventSender.asyncMouseMoveTo(dragTarget.offsetLeft + 10, dragTarget.offsetTop + 10);
+    await eventSender.asyncMouseUp();
+    testRunner.notifyDone();
+}
+</script>
+</head>
+
+<p>This page tests that we don't crash if we drag something to an iframe that has an invalid source.</p>
+<img id="abe" src="http://127.0.0.1:8000/security/resources/abe.png">
+<div>SUCCESS - didn't crash</div>
+<iframe id="dragTarget" src="file:"></iframe> 

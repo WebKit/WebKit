@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=115;totalPixels=28000-29000" />
+</head>
+<body>
+<div id=log></div>
+<p>Tests that the video frames of an HTMLVideoElement are black if no video MediaStreamTrack is enabled.</p>
+<div style="width:200px;height:100px;overflow:hidden">
+<video id=video autoplay playsinline></video>
+</div>
+
+<script>
+    function debug(msg)
+    {
+        let span = document.createElement('span');
+        document.body.appendChild(span);
+        span.innerHTML = `${msg} <br />`;
+    }
+
+    async function start()
+    {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}});
+            video.srcObject = mediaStream;
+            await video.play();
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            log.innerHTML = 'muted';
+            mediaStream.getVideoTracks()[0].enabled = false;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            log.innerHTML = 'ok';
+        } catch (e) {
+            log.innerHTML = 'Failed with ' + e;
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+    window.onload = start;
+
+
+</script>
+</body>
+</html>

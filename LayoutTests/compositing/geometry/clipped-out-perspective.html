@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+          overflow: hidden;
+      }
+
+      #perspective {
+          perspective: 600px;
+          position: absolute;
+          width: 400px;
+          left: -400px;
+      }
+
+      #transformed {
+          transform: rotateY(90deg);
+          transform-origin: right;
+          background: green;
+          height: 600px;
+      }
+
+      #container {
+          position: relative;
+          margin: 100px;
+          overflow: hidden;
+          width: 600px;
+          height: 400px;
+          border: 1px solid black;
+      }
+    </style>
+  </style>
+  </head>
+  <body>
+    <div id="container">
+        <div id="perspective">
+            <div id="transformed"></div>
+        </div>
+    </div>
+  </body>
+</html>
+

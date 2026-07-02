@@ -1,0 +1,10 @@
+This test verifies that we get the correct right word range when we are at the border of containing blocks.
+
+PASS: textChild.stringForTextMarkerRange(range) === ''
+PASS: textChild.stringForTextMarkerRange(range) === ''
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello
+World

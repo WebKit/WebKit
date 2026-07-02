@@ -1,0 +1,10 @@
+Visibility collapse and overflow
+
+Collapsed row should not contribute to overflow
+
+Collapsed section should not contribute to overflow
+
+
+PASS collapsed row should not contribute to overflow
+PASS collapsed section should not contribute to overflow
+

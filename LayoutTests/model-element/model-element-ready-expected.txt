@@ -1,0 +1,6 @@
+
+PASS <model> rejects the ready promise when provided with an unknown resource.
+PASS <model> rejects the ready promise when provided with a resource that can't be loaded.
+PASS <model> rejects the ready promise when its resource load is aborted.
+PASS <model> resolves the ready promise when provided with a known resource.
+

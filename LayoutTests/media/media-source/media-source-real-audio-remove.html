@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-audio-remove</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests remove() on an audio-only SourceBuffer. All audio frames are sync
+    // frames (AAC frames are independently decodable), so removal should be
+    // exact rather than extending to a sync frame boundary.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.AUDIO_TYPE)) {
+            consoleWrite('SKIPPED: ' + MP4.AUDIO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.AUDIO_TYPE);
+
+        sourceBuffer.appendBuffer(MP4.initSegment({
+            timescale: 44100,
+            tracks: [{ id: 1, type: 'audio', timescale: 44100 }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 8 seconds of audio
+        var samples = [];
+        for (var i = 0; i < 8; i++)
+            samples.push({ duration: 44100, isSync: true });
+        sourceBuffer.appendBuffer(MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'audio', baseDecodeTime: 0, samples }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 8, 0.05);
+
+        // Remove [2, 6) — since all audio frames are sync, removal should be
+        // exact (no need to extend to next sync frame like video)
+        sourceBuffer.remove(2, 6);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(1)', 6, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(1)', 8, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

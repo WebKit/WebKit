@@ -1,0 +1,22 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Divide the first media segment in two.
+RUN(partial1 = loader.mediaSegment(0).slice(0, loader.mediaSegment(0).byteLength / 2))
+RUN(partial2 = loader.mediaSegment(0).slice(loader.mediaSegment(0).byteLength / 2))
+Append a partial media segment.
+RUN(sourceBuffer.appendBuffer(partial1))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0).toFixed(2) == '0.64') OK
+Complete the partial media segment.
+RUN(sourceBuffer.appendBuffer(partial2))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0).toFixed(2) == '1.34') OK
+EXPECTED (sourceBuffer.buffered.end(0) == source.duration == 'true') OK
+END OF TEST
+

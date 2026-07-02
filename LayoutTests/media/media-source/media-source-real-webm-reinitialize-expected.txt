@@ -1,0 +1,18 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (sourceBuffer.videoTracks.length == '1') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+EVENT(updateend)
+EXPECTED (source.readyState == 'open') OK
+EXPECTED (sourceBuffer.videoTracks.length == '1') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+EVENT(updateend)
+EXPECTED (source.readyState == 'open') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '6') OK
+END OF TEST
+

@@ -1,0 +1,32 @@
+This tests that inserting a newline at the beginning of quoted content doesn't add an extra quoted line.
+The test has passed if there are no empty lines (quoted or unquoted).
+| "\n        "
+| <p>
+| "\n        "
+| <div>
+|   contenteditable="true"
+|   "\n            "
+|   "unquoted"
+|   <br>
+|   <blockquote>
+|     type="cite"
+|     <div>
+|       id="qt"
+|       "quote level one"
+|   "\n            "
+|   <blockquote>
+|     type="cite"
+|     <div>
+|       "quote level one"
+|   "unquoted<#selection-caret>"
+|   <br>
+|   <blockquote>
+|     type="cite"
+|     <div>
+|       <blockquote>
+|         type="cite"
+|         <div>
+|           id="qt2"
+|           "quote level two"
+|   "\n        "
+| "\n    \n\n"

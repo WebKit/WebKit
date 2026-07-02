@@ -1,0 +1,6 @@
+Tests that loads from dedicated worker still get intercepted by the service worker after a reload.
+
+PASS: Load from dedicated worker was properly intercepted by the service worker
+* Reloading...
+PASS: Load from dedicated worker was properly intercepted by the service worker
+

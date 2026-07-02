@@ -1,0 +1,3 @@
+
+PASS 'devicechange' event fired when getUserMedia is called with microphone and then with camera
+

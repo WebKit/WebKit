@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- #label does not exist initially, which is key to reproducing the bug. -->
+<div id="host"></div>
+
+<script>
+let output = "This test checks that a relation resolves once its aria-labelledby target is inserted via innerHTML after the initial relations build.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // 1. Force the initial relations build by calling titleUIElement().
+    accessibilityController.rootElement.titleUIElement();
+
+    var source, label;
+    setTimeout(async function() {
+        // 2. Now insert #label via innerHTML (this is important for triggering the bug).
+        document.getElementById("host").innerHTML = "<button id='source' aria-labelledby='label'>fallback name</button><p id='label'>the resolved label</p>";
+
+        // 3. The source's titleUIElement should now resolve to the inserted #label target.
+        await waitFor(() => {
+            source = accessibilityController.accessibleElementById("source");
+            label = accessibilityController.accessibleElementById("label");
+            return source && label && label.isEqual(source.titleUIElement());
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

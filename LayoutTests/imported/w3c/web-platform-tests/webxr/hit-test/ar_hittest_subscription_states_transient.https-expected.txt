@@ -1,0 +1,8 @@
+
+PASS Transient hit test subscription succeeds if the feature was requested - webgl
+PASS Transient hit test subscription succeeds if the feature was requested - webgl2
+PASS Transient hit test subscription fails if the feature was not requested - webgl
+PASS Transient hit test subscription fails if the feature was not requested - webgl2
+PASS Transient test subscription fails if the feature was requested but the session already ended - webgl
+PASS Transient test subscription fails if the feature was requested but the session already ended - webgl2
+

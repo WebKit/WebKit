@@ -1,0 +1,10 @@
+Tests that sequential focus navigation through many consecutive non-focusable shadow hosts does not cause a stack overflow. See https://bugs.webkit.org/show_bug.cgi?id=311742.
+
+
+
+Focused: before
+After Tab - Focused: after
+PASS forward
+After Shift+Tab - Focused: before
+PASS backward
+

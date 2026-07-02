@@ -1,0 +1,5 @@
+
+
+PASS Test new callbacks are only called on the next frame.
+PASS Test chaining calls to video.rVFC, and verify the required parameters.
+

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<a tabindex=0 id="link" href="#here" title="This is a hint">link label</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This makes sure that the title attribute is used as accessibilityHint");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("link").focus();
+        var link = accessibilityController.focusedElement;
+        shouldBe("link.helpText", "'AXHint: This is a hint'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest()
+{
+    parent.document.open();
+    parent.document.write('FAIL: document.open() has canceled the navigation');
+    parent.document.close();
+}
+</script>
+</head>
+<body onpagehide="runTest()">
+<p>FAIL
+</body>
+</html>

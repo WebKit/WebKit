@@ -1,0 +1,5 @@
+Original text
+
+
+FAIL clipboard change during paste event handler assert_equals: expected "New text" but got "Original text"
+

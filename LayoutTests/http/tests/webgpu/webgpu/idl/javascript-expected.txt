@@ -1,0 +1,128 @@
+
+PASS :obj,Object_keys:type="gpu"
+PASS :obj,Object_keys:type="buffer"
+PASS :obj,Object_keys:type="texture"
+PASS :obj,Object_keys:type="querySet"
+PASS :obj,Object_keys:type="adapter"
+PASS :obj,Object_keys:type="device"
+PASS :obj,Object_keys:type="adapter.limits"
+PASS :obj,Object_keys:type="device.limits"
+PASS :obj,spread:type="gpu"
+PASS :obj,spread:type="buffer"
+PASS :obj,spread:type="texture"
+PASS :obj,spread:type="querySet"
+PASS :obj,spread:type="adapter"
+PASS :obj,spread:type="device"
+PASS :obj,spread:type="adapter.limits"
+PASS :obj,spread:type="device.limits"
+PASS :obj,for_in:type="gpu"
+PASS :obj,for_in:type="buffer"
+PASS :obj,for_in:type="texture"
+PASS :obj,for_in:type="querySet"
+PASS :obj,for_in:type="adapter"
+FAIL :obj,for_in:type="device" assert_unreached:
+  - EXPECTATION FAILED: onuncapturederror in GPUDevice exists
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
+    hasRequiredKeys@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:209:13
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:260:18
+ Reached unreachable code
+PASS :obj,for_in:type="adapter.limits"
+PASS :obj,for_in:type="device.limits"
+PASS :obj,for_of:type="gpu"
+PASS :obj,for_of:type="buffer"
+PASS :obj,for_of:type="texture"
+PASS :obj,for_of:type="querySet"
+PASS :obj,for_of:type="adapter"
+PASS :obj,for_of:type="device"
+PASS :obj,for_of:type="adapter.limits"
+PASS :obj,for_of:type="device.limits"
+PASS :obj,getOwnPropertyDescriptors:type="gpu"
+PASS :obj,getOwnPropertyDescriptors:type="buffer"
+PASS :obj,getOwnPropertyDescriptors:type="texture"
+PASS :obj,getOwnPropertyDescriptors:type="querySet"
+PASS :obj,getOwnPropertyDescriptors:type="adapter"
+PASS :obj,getOwnPropertyDescriptors:type="device"
+PASS :obj,getOwnPropertyDescriptors:type="adapter.limits"
+PASS :obj,getOwnPropertyDescriptors:type="device.limits"
+PASS :setlike,spread:type="adapterFeatures"
+PASS :setlike,spread:type="deviceFeatures"
+PASS :setlike,spread:type="wgslLanguageFeatures"
+PASS :setlike,set:type="adapterFeatures"
+PASS :setlike,set:type="deviceFeatures"
+PASS :setlike,set:type="wgslLanguageFeatures"
+PASS :setlike,requiredFeatures:type="adapterFeatures"
+PASS :setlike,requiredFeatures:type="deviceFeatures"
+PASS :limits:type="adapter"
+PASS :limits:type="device"
+PASS :readonly_properties:type="gpu"
+PASS :readonly_properties:type="buffer"
+PASS :readonly_properties:type="texture"
+PASS :readonly_properties:type="querySet"
+PASS :readonly_properties:type="adapter"
+PASS :readonly_properties:type="device"
+PASS :readonly_properties:type="adapter.limits"
+PASS :readonly_properties:type="device.limits"
+PASS :getter_replacement:type="gpu"
+PASS :getter_replacement:type="buffer"
+PASS :getter_replacement:type="texture"
+PASS :getter_replacement:type="querySet"
+PASS :getter_replacement:type="adapter"
+FAIL :getter_replacement:type="device" assert_unreached:
+  - EXPECTATION FAILED: Object.getOwnPropertyDescriptor(instance of device, 'onuncapturederror') === undefined
+      at (elided: below max severity)
+  - EXCEPTION: Error: Object.getOwnPropertyDescriptor(device, 'onuncapturederror') !== undefined
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:433:11
+ Reached unreachable code
+PASS :getter_replacement:type="adapter.limits"
+PASS :getter_replacement:type="device.limits"
+PASS :method_replacement:type="gpu"
+PASS :method_replacement:type="buffer"
+PASS :method_replacement:type="texture"
+PASS :method_replacement:type="querySet"
+PASS :method_replacement:type="adapter"
+PASS :method_replacement:type="device"
+PASS :method_replacement:type="adapter.limits"
+PASS :method_replacement:type="device.limits"
+PASS :sameObject:type="gpu"
+PASS :sameObject:type="buffer"
+PASS :sameObject:type="texture"
+PASS :sameObject:type="querySet"
+PASS :sameObject:type="adapter"
+PASS :sameObject:type="device"
+PASS :sameObject:type="adapter.limits"
+PASS :sameObject:type="device.limits"
+PASS :inheritance:type="GPUDevice"
+PASS :inheritance:type="GPUPipelineError"
+FAIL :inheritance:type="GPUValidationError" assert_unreached:
+  - EXCEPTION: ReferenceError: Can't find variable: GPUError
+    GPUValidationError@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:550:77
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:568:14
+ Reached unreachable code
+FAIL :inheritance:type="GPUOutOfMemoryError" assert_unreached:
+  - EXCEPTION: ReferenceError: Can't find variable: GPUError
+    GPUOutOfMemoryError@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:551:79
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:568:14
+ Reached unreachable code
+FAIL :inheritance:type="GPUInternalError" assert_unreached:
+  - EXCEPTION: ReferenceError: Can't find variable: GPUError
+    GPUInternalError@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:552:73
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:568:14
+ Reached unreachable code
+PASS :inheritance:type="GPUUncapturedErrorEvent"
+PASS :device,EventTarget:test="canPassEventThroughDevice"
+PASS :device,EventTarget:test="canPassCustomEventThroughDevice"
+FAIL :device,EventTarget:test="patchingEventTargetAffectsDevice" assert_unreached:
+  - EXPECTATION FAILED: overriding EventTarget addEventListener worked
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
+    patchingEventTargetAffectsDevice@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:644:13
+  - EXPECTATION FAILED: overriding EventTarget dispatchEvent worked
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
+    patchingEventTargetAffectsDevice@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:645:13
+  - EXPECTATION FAILED: overriding EventTarget removeEventListener worked
+      at (elided: only 2 shown)
+ Reached unreachable code
+PASS :device,EventTarget:test="passingGPUUncapturedErrorEventWorksThoughEventTarget"
+PASS :device,addEventListener:test="EventHandler"
+PASS :device,addEventListener:test="EventListener"
+

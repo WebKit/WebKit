@@ -1,0 +1,4 @@
+
+FAIL Tests that scrollend is fired after scroll snap animation completion. assert_false: expected false got true
+FAIL Tests that scrollend is fired after fling snap animation completion. assert_false: expected false got true
+

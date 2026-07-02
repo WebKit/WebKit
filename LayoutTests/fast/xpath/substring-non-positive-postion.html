@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p>
+</p>
+
+<script>
+    description("Test for bug 41913 (http://bugs.webkit.org/show_bug.cgi?id=41913): XPath substring function does not correctly handle non-positive values for the position argument.");
+    shouldBe("document.evaluate(\"substring('abcde', 0)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcde'");
+    shouldBe("document.evaluate(\"substring('abcde', -2)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcde'");
+    shouldBe("document.evaluate(\"substring('abcde', 0, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcd'");
+    shouldBe("document.evaluate(\"substring('abcde', -2, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'ab'");
+
+</script>
+</body>
+</html>

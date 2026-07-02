@@ -1,0 +1,30 @@
+<html>
+<html>
+<head>
+<script src='../../resources/js-test-pre.js'></script>
+</head>
+<body id='body'>
+
+    <div id="plain" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: plain;"></div>
+    <div id="buy" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: buy;"></div>
+    <div id="donate" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: donate;"></div>
+    <div id="setup" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: set-up;"></div>
+
+
+    <script>
+        if (window.accessibilityController) {
+            var plain = accessibilityController.accessibleElementById("plain");
+            var buy = accessibilityController.accessibleElementById("buy");
+            var donate = accessibilityController.accessibleElementById("donate");
+            var setup = accessibilityController.accessibleElementById("setup");
+
+            shouldBe("plain.role", "'AXRole: AXButton'");
+            shouldBe("plain.description", "'AXDescription: Apple Pay'");
+            shouldBe("buy.description", "'AXDescription: Buy with Apple Pay'");
+            shouldBe("donate.description", "'AXDescription: Donate with Apple Pay'");
+            shouldBe("setup.description", "'AXDescription: Set up with Apple Pay'");
+        }
+    </script>
+<script src='../../resources/js-test-post.js'></script>
+</body>
+</html>

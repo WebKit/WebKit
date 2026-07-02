@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/counting.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>OverflowSupport</code> behavior for Playback Speed.");
+
+const multiplicationSign = "\u00d7";
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+let contextmenu = null;
+let checkedItems = null;
+
+media.addEventListener("play", function() {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0", async () => {
+            debug("Tapping overflow button...");
+            await pressOnElement(shadowRoot.querySelector("button.overflow"));
+            contextmenu = await getTracksContextMenu();
+            checkedItems = contextmenu[0].children.filter((item) => item.checked);
+            shouldBe("checkedItems.length", "1");
+            shouldBeEqualToString("checkedItems[0].title", `1${multiplicationSign}`);
+
+            await new Promise((resolve, reject) => {
+                testRunner.runUIScript(`
+                    uiController.dismissMenu();
+                    uiController.uiScriptComplete();
+                `, resolve);
+            });
+            await UIHelper.waitForContextMenuToHide();
+
+            debug("Changing playback speed via JavaScript...");
+            media.playbackRate = 2.0;
+
+            debug("Tapping overflow button...");
+            await pressOnElement(shadowRoot.querySelector("button.overflow"));
+            contextmenu = await getTracksContextMenu();
+            checkedItems = contextmenu[0].children.filter((item) => item.checked);
+            shouldBe("checkedItems.length", "1");
+            shouldBeEqualToString("checkedItems[0].title", `2${multiplicationSign}`);
+
+            debug(`Selecting '1.5${multiplicationSign}' playback speed...`);
+            await UIHelper.chooseMenuAction(`1.5${multiplicationSign}`);
+            await UIHelper.waitForContextMenuToHide();
+
+            shouldBe("media.playbackRate", "1.5");
+
+            debug("Tapping overflow button...");
+            await pressOnElement(shadowRoot.querySelector("button.overflow"));
+            contextmenu = await getTracksContextMenu();
+            checkedItems = contextmenu[0].children.filter((item) => item.checked);
+            shouldBe("checkedItems.length", "1");
+            shouldBeEqualToString("checkedItems[0].title", `1.5${multiplicationSign}`);
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

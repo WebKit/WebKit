@@ -1,0 +1,4 @@
+
+
+PASS moveBefore() on a cross-document target node
+

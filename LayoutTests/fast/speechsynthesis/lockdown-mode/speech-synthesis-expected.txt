@@ -1,0 +1,10 @@
+This test ensures SpeechSynthesis is not available in LDM.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.speechSynthesis is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

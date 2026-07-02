@@ -1,0 +1,77 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+SHARED_FILES = [
+    "AsyncReadTypes.h",
+    "MaskFormat.h",
+    "Blend.cpp",
+    "Blend.h",
+    "BlendFormula.cpp",
+    "BlendFormula.h",
+    "BlurUtils.cpp",
+    "BlurUtils.h",
+    "BufferWriter.h",
+    "DataUtils.cpp",
+    "DataUtils.h",
+    "DitherUtils.cpp",
+    "DitherUtils.h",
+    "GpuRefCnt.h",
+    "GpuTypesPriv.h",
+    "KeyBuilder.h",
+    "MutableTextureState.cpp",
+    "MutableTextureStatePriv.h",
+    "Rectanizer.h",
+    "RectanizerPow2.cpp",
+    "RectanizerPow2.h",
+    "RectanizerSkyline.cpp",
+    "RectanizerSkyline.h",
+    "RefCntedCallback.h",
+    "ResourceKey.cpp",
+    "ResourceKey.h",
+    "ShaderErrorHandler.cpp",
+    "SkBackingFit.cpp",
+    "SkBackingFit.h",
+    "SkRenderEngineAbortf.h",
+    "SkSLToBackend.cpp",
+    "SkSLToBackend.h",
+    "Swizzle.cpp",
+    "Swizzle.h",
+    "SwizzlePriv.h",
+    "TiledTextureUtils.cpp",
+    "TiledTextureUtils.h",
+    "Token.h",
+]
+
+split_srcs_and_hdrs(
+    name = "shared",
+    files = SHARED_FILES,
+)
+
+skia_cc_library(
+    name = "gpu",
+    srcs = [
+        ":shared_srcs",
+        "//src/gpu/tessellate:tessellate_srcs",
+    ],
+    hdrs = [
+        ":shared_hdrs",
+        "//include/gpu:shared_gpu_hdrs",
+        "//src/gpu/tessellate:tessellate_hdrs",
+        "//src/sksl/codegen:codegen_shared_exported",
+    ],
+    visibility = [
+        "//src/gpu:__subpackages__",
+        "//src/sksl/codegen:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/utils:shader_utils",
+    ],
+)

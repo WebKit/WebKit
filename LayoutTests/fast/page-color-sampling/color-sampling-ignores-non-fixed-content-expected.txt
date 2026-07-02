@@ -1,0 +1,6 @@
+PASS colorBeforeFading.top is "rgb(255, 100, 0)"
+PASS colorAfterFading.top is "rgb(255, 100, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

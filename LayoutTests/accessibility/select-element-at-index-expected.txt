@@ -1,0 +1,36 @@
+This test ensures we can use AX APIs to set and remove option selection state.
+
+PASS: selectElement.selectedChildrenCount === 0
+
+Setting selected index to 0.
+PASS: selectElement.selectedChildrenCount === 1
+PASS: option1.isSelected === true
+PASS: selectElement.selectedChildAtIndex(0).isEqual(option1) === true
+
+Setting selected index to 1.
+PASS: selectElement.selectedChildrenCount === 2
+PASS: option2.isSelected === true
+PASS: selectElement.selectedChildAtIndex(1).isEqual(option2) === true
+PASS: option3.isSelected === false
+
+Setting selected index to 3.
+PASS: selectElement.selectedChildrenCount === 3
+PASS: option4.isSelected === true
+PASS: selectElement.selectedChildAtIndex(2).isEqual(option4) === true
+
+Removing selection at index 3.
+PASS: option4.isSelected === false
+PASS: selectElement.selectedChildrenCount === 2
+
+Removing selection at index 1.
+PASS: option2.isSelected === false
+PASS: selectElement.selectedChildrenCount === 1
+
+Removing selection at index 0.
+PASS: option1.isSelected === false
+PASS: selectElement.selectedChildrenCount === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

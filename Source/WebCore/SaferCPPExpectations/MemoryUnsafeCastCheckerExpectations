@@ -1,0 +1,6 @@
+[ iOS ] editing/TypingCommand.cpp
+[ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
+[ iOS ] platform/ios/wak/WAKView.mm
+[ iOS ] platform/ios/wak/WAKWindow.mm

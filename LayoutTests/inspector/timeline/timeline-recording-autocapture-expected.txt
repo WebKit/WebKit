@@ -1,0 +1,24 @@
+Tests for auto-capture timeline recording.
+
+
+== Running test suite: Timeline.AutoCapture
+-- Running test case: Timeline.AutoCapture
+Loaded
+PASS: TimelineManager should not be capturing.
+Reload
+PASS: TimelineManager should be capturing after reload with auto-capture enabled.
+PASS: TimelineRecording should be capturing.
+Stop
+PASS: TimelineManager should not be capturing.
+PASS: TimelineRecording should not be capturing.
+
+-- Running test case: Timeline.AutoCaptureSuppressedDuringActiveRecording
+Start
+PASS: TimelineManager should be capturing.
+Reload
+PASS: TimelineManager should still be capturing after reload.
+PASS: TimelineManager active recording should not have changed.
+PASS: Auto-capture should not have stopped the active recording.
+Stop
+PASS: TimelineManager should not be capturing.
+

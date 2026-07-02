@@ -1,0 +1,12 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT sharedworker-script-src Test timed out
+PASS Cross-origin `importScripts()` not blocked in http: withour CSP
+PASS `eval()` not blocked in http: without CSP
+PASS `setTimeout([string])` not blocked in http: without CSP
+TIMEOUT Cross-origin `importScripts()` blocked in http: with script-src 'self' Test timed out
+NOTRUN `eval()` blocked in http: with script-src 'self'
+NOTRUN `setTimeout([string])` blocked in http: with script-src 'self'
+NOTRUN Reports are sent for http: with script-src 'self'
+

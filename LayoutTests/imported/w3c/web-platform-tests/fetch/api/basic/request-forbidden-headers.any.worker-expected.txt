@@ -1,0 +1,98 @@
+
+PASS Accept-Charset is a forbidden request header
+PASS Accept-Encoding is a forbidden request header
+PASS Access-Control-Request-Headers is a forbidden request header
+PASS Access-Control-Request-Method is a forbidden request header
+PASS Connection is a forbidden request header
+PASS Content-Length is a forbidden request header
+PASS Cookie is a forbidden request header
+PASS Cookie2 is a forbidden request header
+PASS Date is a forbidden request header
+PASS DNT is a forbidden request header
+PASS Expect is a forbidden request header
+PASS Host is a forbidden request header
+PASS Keep-Alive is a forbidden request header
+PASS Origin is a forbidden request header
+PASS Referer is a forbidden request header
+PASS TE is a forbidden request header
+PASS Trailer is a forbidden request header
+PASS Transfer-Encoding is a forbidden request header
+PASS Upgrade is a forbidden request header
+PASS Via is a forbidden request header
+PASS Proxy- is a forbidden request header
+PASS Proxy-Test is a forbidden request header
+PASS Sec- is a forbidden request header
+PASS Sec-Test is a forbidden request header
+PASS header x-http-method-override is forbidden to use value TRACE
+PASS header x-http-method is forbidden to use value TRACE
+PASS header x-method-override is forbidden to use value TRACE
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value TRACE
+PASS header X-HTTP-METHOD is forbidden to use value TRACE
+PASS header X-METHOD-OVERRIDE is forbidden to use value TRACE
+PASS header x-http-method-override is forbidden to use value TRACK
+PASS header x-http-method is forbidden to use value TRACK
+PASS header x-method-override is forbidden to use value TRACK
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value TRACK
+PASS header X-HTTP-METHOD is forbidden to use value TRACK
+PASS header X-METHOD-OVERRIDE is forbidden to use value TRACK
+PASS header x-http-method-override is forbidden to use value CONNECT
+PASS header x-http-method is forbidden to use value CONNECT
+PASS header x-method-override is forbidden to use value CONNECT
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value CONNECT
+PASS header X-HTTP-METHOD is forbidden to use value CONNECT
+PASS header X-METHOD-OVERRIDE is forbidden to use value CONNECT
+PASS header x-http-method-override is forbidden to use value trace
+PASS header x-http-method is forbidden to use value trace
+PASS header x-method-override is forbidden to use value trace
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value trace
+PASS header X-HTTP-METHOD is forbidden to use value trace
+PASS header X-METHOD-OVERRIDE is forbidden to use value trace
+PASS header x-http-method-override is forbidden to use value track
+PASS header x-http-method is forbidden to use value track
+PASS header x-method-override is forbidden to use value track
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value track
+PASS header X-HTTP-METHOD is forbidden to use value track
+PASS header X-METHOD-OVERRIDE is forbidden to use value track
+PASS header x-http-method-override is forbidden to use value connect
+PASS header x-http-method is forbidden to use value connect
+PASS header x-method-override is forbidden to use value connect
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value connect
+PASS header X-HTTP-METHOD is forbidden to use value connect
+PASS header X-METHOD-OVERRIDE is forbidden to use value connect
+PASS header x-http-method-override is forbidden to use value trace,
+PASS header x-http-method is forbidden to use value trace,
+PASS header x-method-override is forbidden to use value trace,
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value trace,
+PASS header X-HTTP-METHOD is forbidden to use value trace,
+PASS header X-METHOD-OVERRIDE is forbidden to use value trace,
+PASS header x-http-method-override is forbidden to use value GET,track
+PASS header x-http-method is forbidden to use value GET,track
+PASS header x-method-override is forbidden to use value GET,track
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value GET,track
+PASS header X-HTTP-METHOD is forbidden to use value GET,track
+PASS header X-METHOD-OVERRIDE is forbidden to use value GET,track
+PASS header x-http-method-override is forbidden to use value  connect
+PASS header x-http-method is forbidden to use value  connect
+PASS header x-method-override is forbidden to use value  connect
+PASS header X-HTTP-METHOD-OVERRIDE is forbidden to use value  connect
+PASS header X-HTTP-METHOD is forbidden to use value  connect
+PASS header X-METHOD-OVERRIDE is forbidden to use value  connect
+PASS header x-http-method-override is allowed to use value GETTRACE
+PASS header x-http-method is allowed to use value GETTRACE
+PASS header x-method-override is allowed to use value GETTRACE
+PASS header X-HTTP-METHOD-OVERRIDE is allowed to use value GETTRACE
+PASS header X-HTTP-METHOD is allowed to use value GETTRACE
+PASS header X-METHOD-OVERRIDE is allowed to use value GETTRACE
+PASS header x-http-method-override is allowed to use value GET
+PASS header x-http-method is allowed to use value GET
+PASS header x-method-override is allowed to use value GET
+PASS header X-HTTP-METHOD-OVERRIDE is allowed to use value GET
+PASS header X-HTTP-METHOD is allowed to use value GET
+PASS header X-METHOD-OVERRIDE is allowed to use value GET
+PASS header x-http-method-override is allowed to use value ",TRACE",
+PASS header x-http-method is allowed to use value ",TRACE",
+PASS header x-method-override is allowed to use value ",TRACE",
+PASS header X-HTTP-METHOD-OVERRIDE is allowed to use value ",TRACE",
+PASS header X-HTTP-METHOD is allowed to use value ",TRACE",
+PASS header X-METHOD-OVERRIDE is allowed to use value ",TRACE",
+

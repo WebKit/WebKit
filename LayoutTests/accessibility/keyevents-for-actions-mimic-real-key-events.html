@@ -1,0 +1,87 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="slider"
+           role="slider"
+           tabindex="0"
+           aria-valuemin="0"
+           aria-valuenow="0"
+           aria-valuemax="255"
+           aria-labelledby="idRed"></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test verifies that the increment/decrement actions post keyboard events that appear identical to real keyboard events.");
+
+    var atKeyEvent = 0;
+    var realKeyEvent = 0;
+    function handleKeyDown(event) {
+        if (!atKeyEvent) {
+            atKeyEvent = event;
+            debug("Received AT event");
+        }
+        else if (!realKeyEvent) {
+            realKeyEvent = event;
+            debug("Received real event");
+        }
+
+        if (realKeyEvent && atKeyEvent) {
+            shouldBe("realKeyEvent.altGraphKey", "atKeyEvent.altGraphKey");
+            shouldBe("realKeyEvent.altKey", "atKeyEvent.altKey");
+            shouldBe("realKeyEvent.bubbles", "atKeyEvent.bubbles");
+            shouldBe("realKeyEvent.cancelBubble", "atKeyEvent.cancelBubble");
+            shouldBe("realKeyEvent.cancelable", "atKeyEvent.cancelable");
+            shouldBe("realKeyEvent.charCode", "atKeyEvent.charCode");
+            shouldBe("realKeyEvent.code", "atKeyEvent.code");
+            shouldBe("realKeyEvent.composed", "atKeyEvent.composed");
+            shouldBe("realKeyEvent.ctrlKey", "atKeyEvent.ctrlKey");
+            shouldBe("realKeyEvent.detail", "atKeyEvent.detail");
+            shouldBe("realKeyEvent.isComposing", "atKeyEvent.isComposing");
+            shouldBe("realKeyEvent.isTrusted", "atKeyEvent.isTrusted");
+            shouldBe("realKeyEvent.key", "atKeyEvent.key");
+            shouldBe("realKeyEvent.keyCode", "atKeyEvent.keyCode");
+            shouldBe("realKeyEvent.keyIdentifier", "atKeyEvent.keyIdentifier");
+            shouldBe("realKeyEvent.layerX", "atKeyEvent.layerX");
+            shouldBe("realKeyEvent.layerY", "atKeyEvent.layerY");
+            shouldBe("realKeyEvent.location", "atKeyEvent.location");
+            shouldBe("realKeyEvent.metaKey", "atKeyEvent.metaKey");
+            shouldBe("realKeyEvent.pageX", "atKeyEvent.pageX");
+            shouldBe("realKeyEvent.pageY", "atKeyEvent.pageY");
+            shouldBe("realKeyEvent.repeat", "atKeyEvent.repeat");
+            shouldBe("realKeyEvent.returnValue", "atKeyEvent.returnValue");
+            shouldBe("realKeyEvent.shiftKey", "atKeyEvent.shiftKey");
+            shouldBe("realKeyEvent.srcElement", "atKeyEvent.srcElement");
+            shouldBe("realKeyEvent.target", "atKeyEvent.target");
+            shouldBe("realKeyEvent.type", "atKeyEvent.type");
+            shouldBe("realKeyEvent.which", "atKeyEvent.which");
+            shouldBe("realKeyEvent.windowProxy", "atKeyEvent.windowProxy");
+            finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        document.getElementById("slider").addEventListener('keydown', handleKeyDown);
+        document.getElementById("slider").focus();
+        
+        // Get the parent element.
+        var axSlider = accessibilityController.accessibleElementById("slider");
+
+        // Generate a AT based key event.
+        debug("Sending AT event");
+        axSlider.increment();
+
+        // Generate a real key event.
+        debug("Sending real event");
+        eventSender.keyDown("rightArrow");
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

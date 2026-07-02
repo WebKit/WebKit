@@ -1,0 +1,149 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use POSIX;
+
+# We first want to run the test once to determine what the number of encountered
+# checks is. Then we want to run it again some number of times with random check
+# amounts. The test is successful if after printing a message that we're
+# intending to throw the fuzz exception, it prints another message saying that it
+# caught the exception.
+
+my $repeat = 100;
+my $seed = time();
+my $verbose = 0;
+
+# We allow flags to be passed via environment variables, which is rather useful for
+# running with the run-jsc-stress-tests harness.
+if (defined($ENV{JS_EFUZZ_REPEAT})) {
+    $repeat = $ENV{JS_EFUZZ_REPEAT};
+}
+if (defined($ENV{JS_EFUZZ_SEED})) {
+    $seed = $ENV{JS_EFUZZ_SEED};
+}
+if (defined($ENV{JS_EFUZZ_VERBOSE})) {
+    $verbose = $ENV{JS_EFUZZ_VERBOSE};
+}
+
+GetOptions(
+    'repeat=s' => \$repeat,
+    'seed=s' => \$seed,
+    'verbose' => \$verbose
+);
+
+my $commandString = shift @ARGV;
+
+my $checkCount;
+
+sub fail {
+    my $context = shift;
+    select((select(STDOUT), $ |= 1)[0]); # This is a perlism for flush. We need to do it this way to support older perls.
+    select((select(STDERR), $ |= 1)[0]);
+    die "Failure for command $commandString with seed $seed, repeat $repeat: $context";
+}
+
+if (shift @ARGV) {
+    die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
+}
+
+open (my $testInput, "$commandString |") or fail("Cannot execute initial command when getting check count");
+while (my $inputLine = <$testInput>) {
+    chomp($inputLine);
+    my $handled = 0;
+    if ($inputLine =~ /^JSC EXCEPTION FUZZ:/) {
+        if ($' =~ /encountered ([0-9]+) checks\./) {
+            $checkCount = $1;
+        }
+        $handled = 1;
+    }
+    if (!$handled || $verbose) {
+        print "checkCount: $inputLine\n";
+    }
+}
+close($testInput);
+
+if ($verbose) {
+    print "Check count: $checkCount\n";
+    print "Seed: $seed\n";
+}
+
+if (!$checkCount) {
+    print "Exception fuzz testing not supported by jsc binary.\n";
+    exit 0;
+}
+
+srand($seed);
+
+for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
+    my $target = int(rand() * ($checkCount - 1)) + 2;
+    if ($verbose) {
+        print "iteration($iteration) target($target): Running.\n";
+    }
+    open ($testInput, "$commandString --fireExceptionFuzzAt=$target |") or fail("Cannot execute command on iteration $iteration");
+    my $state = "waiting";
+    while (my $inputLine = <$testInput>) {
+        chomp($inputLine);
+        my $handled = 0;
+        if ($inputLine =~ /^JSC EXCEPTION FUZZ:/) {
+            if ($' =~ /Throwing fuzz exception/) {
+                if ($verbose) {
+                    print "iteration($iteration) target($target): Threw fuzz exception.\n";
+                }
+                if ($state eq "waiting") {
+                    $state = "thrown";
+                } else {
+                    fail("Unexpected $inputLine while in state $state for target $target");
+                }
+            } elsif ($' =~ /Caught exception/) {
+                if ($verbose) {
+                    print "iteration($iteration) target($target): Caught fuzz exception.\n";
+                }
+                if ($state eq "thrown") {
+                    $state = "waiting";
+                } else {
+                    fail("Unexpected $inputLine while in state $state for target $target");
+                }
+            }
+            $handled = 1;
+        }
+        if (!$handled || $verbose) {
+            print "iteration($iteration) target($target): $inputLine\n";
+        }
+    }
+    if ($state ne "waiting") {
+        fail("Unexpected state $state at end for target $target");
+    }
+    close($testInput);
+    if ($? != 0) {
+        fail("Unexpected exit status $? for target $target");
+    }
+}
+
+if ($verbose) {
+    print "Success!\n";
+}

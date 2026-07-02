@@ -1,0 +1,257 @@
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS tArray.includes(2) is true
+PASS !tArray.includes(4) is true
+PASS !tArray.includes(3, 3) is true
+PASS tArray.includes(3, -1) is true
+PASS tArray.includes(3, {valueOf: () => -1}) is true
+PASS tArray.includes(2.0) is true
+PASS !tArray.includes(2.5) is true
+PASS !tArray.includes("abc") is true
+PASS !tArray.includes(null) is true
+PASS !tArray.includes(undefined) is true
+PASS !tArray.includes({1: ''}) is true
+PASS !tArray.includes("") is true
+PASS !(new Uint8Array([NaN]).includes(NaN)) is true
+PASS new Float32Array([NaN]).includes(NaN) is true
+PASS new Float64Array([NaN]).includes(NaN) is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS !descriptor.enumerable is true
+PASS descriptor.get === undefined is true
+PASS descriptor.set === undefined is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.name === "includes" is true
+PASS Object.getPrototypeOf(gTypedArray.prototype).includes.length === 1 is true
+PASS arr.includes(0) is true
+PASS arr.includes(254) is true
+PASS !arr.includes(255) is true
+PASS !arr.includes(-1) is true
+PASS arr.includes(-128) is true
+PASS arr.includes(127) is true
+PASS !arr.includes(128) is true
+PASS !arr.includes(-129) is true
+PASS arr.includes(255) is true
+PASS arr.includes(0) is true
+PASS !arr.includes(-128) is true
+PASS !arr.includes(-256) is true
+PASS arr.includes(0) is true
+PASS arr.includes(65535) is true
+PASS !arr.includes(65536) is true
+PASS !arr.includes(-1) is true
+PASS arr.includes(-32768) is true
+PASS arr.includes(32767) is true
+PASS !arr.includes(32768) is true
+PASS !arr.includes(-32769) is true
+PASS arr.includes(0) is true
+PASS arr.includes(4294967295) is true
+PASS !arr.includes(4294967296) is true
+PASS !arr.includes(-1) is true
+PASS arr.includes(-2147483648) is true
+PASS arr.includes(2147483647) is true
+PASS !arr.includes(2147483648) is true
+PASS !arr.includes(-2147483649) is true
+PASS arr.includes(-3.402820018375656e+38) is true
+PASS arr.includes(3.402820018375656e+38) is true
+PASS !arr.includes(3.50282e+38) is true
+PASS !arr.includes(-3.50282e+38) is true
+PASS arr.includes(-1.79769e+308) is true
+PASS arr.includes(1.79769e+308) is true
+PASS !arr.includes(-1.89769e+308) is true
+PASS !arr.includes(1.89769e+308) is true
+PASS arr.includes(Infinity) is true
+PASS !arr.includes(-Infinity) is true
+PASS !arr.includes(NaN) is true
+PASS arr.includes(-Infinity) is true
+PASS !arr.includes(Infinity) is true
+PASS !arr.includes(NaN) is true
+PASS arr.includes(Infinity) is true
+PASS !arr.includes(-Infinity) is true
+PASS !arr.includes(NaN) is true
+PASS arr.includes(-Infinity) is true
+PASS !arr.includes(Infinity) is true
+PASS !arr.includes(NaN) is true
+PASS !(new Float32Array([2.40282e+38]).includes(2.40282e+38)) is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS funcCallCount.callCount === 1 is true
+PASS funcCallCount.callCount === 2 is true
+PASS funcCallCount.callCount === 3 is true
+PASS funcCallCount.callCount === 4 is true
+PASS funcCallCount.callCount === 5 is true
+PASS funcCallCount.callCount === 6 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

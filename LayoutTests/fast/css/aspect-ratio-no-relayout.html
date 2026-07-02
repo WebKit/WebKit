@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<pre id=log></pre>
+<div id=target style="aspect-ratio: 1 / 2;"></div>
+<script>
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    document.body.offsetTop;
+    internals.startTrackingLayoutUpdates();
+    target.style.color = "blue";
+    document.body.offsetTop;
+    log.textContent = `Layout count: ${internals.layoutUpdateCount()}`;
+}
+</script>

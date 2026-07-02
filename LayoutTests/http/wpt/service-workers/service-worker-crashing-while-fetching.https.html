@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+var activeWorker;
+
+promise_test(async (test) => {
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    var registration = await navigator.serviceWorker.register("service-worker-lengthy-worker.js", { scope : "lengthy-fetch" });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    withIframe("lengthy-fetch");
+    // We wait for 1 second for the service worker to get the fetch event and start responding. 
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (window.testRunner)
+        testRunner.terminateServiceWorkers();
+    await waitForServiceWorkerNoLongerRunning(activeWorker);
+}, "Service worker process crashes while handling a fetch event");
+</script>
+</body>
+</html>

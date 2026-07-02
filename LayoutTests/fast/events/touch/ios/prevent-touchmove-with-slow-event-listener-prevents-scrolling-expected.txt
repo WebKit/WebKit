@@ -1,0 +1,12 @@
+Panning over this element should not cause scrolling.
+This test verifies that panning up and down over an element that prevents 'touchmove' events does not allow scrolling to happen, even if the touchmove event handler temporarily hangs the web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Prevented touchmove
+PASS observedTouchEnd became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/document-leak-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that AudioEncoder callbacks do not leak the document object.");
+    onload = () => runDocumentLeakTest({ frameURL: "./resources/audio-encoder-callbacks-frame.html", framesToCreate: 20 });
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

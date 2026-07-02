@@ -1,0 +1,43 @@
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+
+PASS Initially red
+PASS sibling selector enclosed by :is() no longer matching after removal (1)
+PASS sibling selector enclosed by :is() no longer matching after removal (2)
+PASS sibling selector enclosed by :is() no longer matching after removal (3)
+PASS sibling selector enclosed by :is() no longer matching after removal (4)
+PASS sibling selector in non-subject enclosed by :is() no longer matching after removal (1)
+PASS sibling selector in non-subject enclosed by :is() no longer matching after removal (2)
+PASS sibling selector in non-subject enclosed by :is() no longer matching after removal (3)
+PASS sibling selector in non-subject enclosed by :is() no longer matching after removal (4)
+PASS sibling selector in non-subject enclosed by :is() no longer matching after removal (5)
+PASS :nth-child() enclosed by :is() no longer matching after removal (1)
+PASS :nth-child() enclosed by :is() no longer matching after removal (2)
+PASS :nth-last-child() enclosed by :is() no longer matching after removal (1)
+PASS :nth-last-child() enclosed by :is() no longer matching after removal (2)
+PASS :nth-child() in non-subject enclosed by :is() no longer matching after removal (1)
+PASS :nth-child() in non-subject enclosed by :is() no longer matching after removal (2)
+PASS :nth-last-child() in non-subject enclosed by :is() no longer matching after removal (1)
+PASS :nth-last-child() in non-subject enclosed by :is() no longer matching after removal (2)
+PASS sibling selector in parent selector enclosed by :is() no longer matching after removal
+PASS sibling selector in parent selector non-subject position enclosed by :is() no longer matching after removal (1)
+PASS sibling selector in parent selector non-subject position enclosed by :is() no longer matching after removal (2)
+

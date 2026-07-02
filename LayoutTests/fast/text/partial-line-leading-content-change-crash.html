@@ -1,0 +1,17 @@
+<style>
+div {
+  white-space: nowrap;
+}
+</style>
+<div><span id=remove_this></span>
+<basefont>
+some_text</div><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+remove_this.remove();
+document.execCommand("selectAll", false);
+window.getSelection().deleteFromDocument();
+document.body.offsetHeight;
+document.body.innerText = "PASS if no crash or assert";
+</script>

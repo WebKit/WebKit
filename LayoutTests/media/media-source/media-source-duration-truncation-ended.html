@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ended event must fire after endOfStream when playback is parked at a buffered range end whose position now equals the truncated duration</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Regression test: ended event was never fired when
+    //  1) playback parked at the end of the buffered range while duration was still
+    //     greater than currentTime (so the stall-boundary callback took the
+    //     mid-content branch, not the end-of-media branch), then
+    //  2) JS truncated duration down to equal currentTime (equality case — does not
+    //     trigger HTMLMediaElement's seekInternal in mediaPlayerDurationChanged), then
+    //  3) JS called endOfStream().
+    // After the fix, MediaPlayerPrivateMediaSourceAVFObjC::mediaSourceHasRetrievedAllData
+    // re-checks end-of-media when MediaSource transitions to 'ended' and notifies
+    // HTMLMediaElement::mediaPlayerTimeChanged so the 'ended' event fires.
+
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        run('video.autoplay = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        // Register the 'playing' promise BEFORE appending so we don't miss the
+        // event firing synchronously-ish during the appends.
+        const playingPromise = waitFor(video, 'playing', true);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        // Append the first two 1-second fragments; leave the rest out so playback
+        // will stall at the end of the buffered range while duration is still
+        // whatever the mp4 MOOV reports (well above 2 s).
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+
+        run('video.play()');
+
+        await playingPromise;
+
+        // NOW register the 'waiting' listener — only the 'waiting' that fires
+        // after playback has actually started and reached the buffered-range end
+        // is interesting. Earlier 'waiting' events during initial load are noise.
+        const waitingPromise = waitFor(video, 'waiting', true);
+
+        // Wait for playback to exhaust the buffered range. This is the moment the
+        // stall-boundary observer fires. duration() at that moment is still the
+        // full mp4 duration (>> buffered.end), so the boundary callback takes the
+        // mid-content branch (no timeChanged, no ended).
+        await waitingPromise;
+        testExpected('video.currentTime > 0', true);
+        testExpected('video.duration > video.currentTime', true);
+
+        // Truncate duration down to the buffered-range end — the equality case
+        // that HTMLMediaElement::mediaPlayerDurationChanged's `if (now > dur)
+        // seekInternal(dur);` guard does NOT cover when currentTime already
+        // equals the new duration. Nothing here re-evaluates end-of-media.
+        run('source.duration = sourceBuffer.buffered.end(0)');
+        await waitFor(video, 'durationchange');
+        testExpected('video.duration > 0', true);
+
+        // MediaSource is still 'open' here — per MSE semantics 'ended' must not
+        // fire yet. (Note: video.ended is not a useful signal at this point — it's
+        // computed per-spec as now >= duration, which is true because setDuration
+        // just placed duration at currentTime; the 'ended' event firing is
+        // independent of that attribute value.)
+        testExpected('source.readyState', 'open');
+
+        // endOfStream transitions MediaSource to 'ended'. After this, the
+        // HTMLMediaElement 'ended' event must fire — without the fix, this
+        // waitFor(video, 'ended') times out.
+        run('source.endOfStream()');
+        await waitFor(source, 'sourceended');
+        await waitFor(video, 'ended');
+
+        testExpected('video.ended', true);
+        testExpected('source.readyState', 'ended');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

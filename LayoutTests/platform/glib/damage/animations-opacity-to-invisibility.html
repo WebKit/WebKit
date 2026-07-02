@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 50px;
+      }
+      .rect {
+          width: 64px;
+          height: 64px;
+          margin-left: 50px;
+          background-color: green;
+          animation-name: animate;
+          animation-duration: 0.2s;
+          animation-iteration-count: 1;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
+      }
+      @keyframes animate {
+          from {
+              opacity: 1.0;
+          }
+          to {
+              opacity: 0.0;
+          }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      setTimeout(() => {
+          var frameDamages = allFramesDamages();
+          if (frameDamages.length < 2) {
+              failTest("Frame damage history is unexpectedly short");
+              return;
+          }
+          var layerRemovalFrameDamage = frameDamages.at(-1);
+          if (!assertEq(layerRemovalFrameDamage.rects.length, 1, "wrong number of damage rects")
+              || !assertRectsEq(layerRemovalFrameDamage.rects, [[50, 50, 64, 64]])) {
+              failTest(failure);
+              return;
+          }
+          var lastAnimationFrameDamage = frameDamages.at(-2);
+          if (!assertEq(lastAnimationFrameDamage.rects.length, 1, "wrong number of damage rects")
+              || !assertRectsEq(lastAnimationFrameDamage.rects, [[50, 50, 64, 64]])) {
+              failTest(`FAIL: Last animation frame damage is incorrect - ${failure}`);
+              return;
+          }
+          passTest();
+      }, 2000);
+    </script>
+  </body>
+</html>

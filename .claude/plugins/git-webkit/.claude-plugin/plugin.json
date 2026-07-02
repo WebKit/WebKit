@@ -1,0 +1,5 @@
+{
+  "name": "git-webkit",
+  "description": "Teaches Claude to use git-webkit tools for working with the WebKit repository",
+  "version": "1.0.0"
+}

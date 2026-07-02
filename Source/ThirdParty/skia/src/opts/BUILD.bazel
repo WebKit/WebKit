@@ -1,0 +1,103 @@
+"""
+SkOpts is built differently than the rest of our source files. See //src/core/SkOpts.h for
+a bit more background about what SkOpts is for and how it works.
+
+Instead of bubbling all the headers and sources up to the top level where they are compiled in
+one large library, we only bubble up the headers, so the default implementations in those files
+can be built against the minimum version of Skia (which the whole library is compiled with).
+
+We create several libraries that contain a single source file and may need to access any of
+Skia's headers. These libraries are each compiled with a different set of compiler flags
+(e.g. architecture options) and linked into the final library or binary.
+"""
+
+load("@skia_user_config//:copts.bzl", "DEFAULT_COPTS")
+load("//bazel:flags.bzl", "selects")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+    features = [
+        # While the OPTS_HDRS are already pulled in as textual_headers,
+        # any implicit dependency on the system headers also needs to be textual.
+        "-use_header_modules",
+    ],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    # https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels and this is level 3
+    name = "ml3",
+    srcs = [
+        "SkOpts_ml3.cpp",
+        "//include/core:opts_srcs",
+        "//src/core:opts_srcs",
+        "//src/shaders:opts_srcs",
+        "//src/sksl/tracing:opts_srcs",
+    ],
+    # TODO(kjlubick) use -march=x86-64-v3
+    copts = DEFAULT_COPTS + ["-march=haswell"],
+    textual_hdrs = [
+        "SkRasterPipeline_opts.h",
+        ":textual_hdrs",
+    ],
+    deps = [
+        "//modules/skcms",  # Needed to implement SkRasterPipeline_opts.h
+        "//src/base",
+        "@skia_user_config//:user_config",
+    ],
+)
+
+skia_cc_library(
+    # Microarchitecture Level 4
+    name = "ml4",
+    srcs = [
+        "SkOpts_ml4.cpp",
+        "//include/core:opts_srcs",
+        "//src/core:opts_srcs",
+        "//src/shaders:opts_srcs",
+        "//src/sksl/tracing:opts_srcs",
+    ],
+    # TODO(kjlubick) use -march=x86-64-v4
+    copts = DEFAULT_COPTS + ["-march=skylake-avx512"],
+    textual_hdrs = [
+        "SkRasterPipeline_opts.h",
+        ":textual_hdrs",
+    ],
+    deps = [
+        "//modules/skcms",  # Needed to implement SkRasterPipeline_opts.h
+        "//src/base",
+        "@skia_user_config//:user_config",
+    ],
+)
+
+skia_cc_library(
+    name = "opts",
+    visibility = ["//src/core:__pkg__"],
+    deps = selects.with_or({
+        ("@platforms//cpu:x86_64", "@platforms//cpu:x86_32"): [
+            ":ml3",
+            ":ml4",
+        ],
+        "//bazel/common_config_settings:cpu_wasm": [],
+        "//conditions:default": [],
+    }),
+)
+
+skia_filegroup(
+    name = "textual_hdrs",
+    srcs = [
+        "SkBitmapProcState_opts.h",
+        "SkBlitMask_opts.h",
+        "SkBlitRow_opts.h",
+        "SkMemset_opts.h",
+        "SkOpts_RestoreTarget.h",
+        "SkOpts_SetTarget.h",
+        "SkRasterPipeline_opts.h",
+        "SkSwizzler_opts.inc",
+    ],
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)

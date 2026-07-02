@@ -1,0 +1,157 @@
+<html>
+<head>
+<title>Spellcheck Attribute Test</title>
+<link rel="help" href="http://damowmow.com/playground/spellcheck.txt">
+<script src="../editing.js"></script>
+<script src="resources/util.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="testRoot">
+<div id="div1" spellcheck="true"></div>
+<div id="div2" spellcheck="false"></div>
+<div id="div3" spellcheck="true"></div>
+<div id="div4" spellcheck="false"></div>
+</div>
+<script>
+description('This tests if the "spellcheck" attribute is implemented '
+    + 'as written in its specification. If this test succeeds, you can see '
+    + 'forms filled with an invalid word "zz". Nevertheless, the "zz" is not '
+    + 'marked as misspelled in all of them.');
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
+function addInputElement(parentId, id, type, spellcheck)
+{
+    var input = document.createElement('input');
+    input.setAttribute('type', type);
+    input.setAttribute('id', id);
+    input.setAttribute('value', 'zz ');
+    if (spellcheck !== undefined)
+        input.setAttribute('spellcheck', spellcheck);
+
+    var div = document.getElementById(parentId);
+    div.appendChild(document.createTextNode(id));
+    div.appendChild(input);
+    div.appendChild(document.createElement('br'));
+
+    return input;
+}
+
+function testMarkerForMisspelledWord(parentId, shouldBeMisspelled, id, type, spellcheck)
+{
+    var input = addInputElement(parentId, id, type, spellcheck);
+    input.focus();
+    // Activate spellchecking.
+    if (window.internals)
+        internals.updateEditorUINowIfScheduled();
+    setTimeout(function () {
+        moveSelectionForwardByWordCommand();
+
+        logMarkup(id, spellcheck, true);
+
+        if (window.internals)
+            shouldBecomeEqual('internals.hasSpellingMarker(0, 2)', shouldBeMisspelled ? 'true' : 'false', done);
+        else
+            done();
+    }, 10);
+}
+
+function logMarkup(id, spellcheckValue, shouldCloseTag)
+{
+    var element = document.getElementById(id);
+    var elementMarkup =  '&lt;' + element.tagName;
+    elementMarkup += ' id=' + element.id;
+
+    if (element.type)
+        elementMarkup += ' type=' + element.type;
+
+    var spellcheckAttrString = '';
+    if (spellcheckValue !== undefined) {
+        if (spellcheckValue != '')
+            spellcheckAttrString = ' spellcheck=' + spellcheckValue;
+        else
+            spellcheckAttrString = ' spellcheck';
+    }
+    elementMarkup += spellcheckAttrString;
+    elementMarkup += '>';
+
+    if (element.value)
+        elementMarkup += element.value;
+
+    if (shouldCloseTag)
+        elementMarkup += '&lt;/' + element.tagName + '>';
+
+    debug(elementMarkup);
+}
+
+function encloseTag(id)
+{
+    var element = document.getElementById(id);
+    logMarkup(id, element.spellcheck ? "true" : "false", false);
+    done();
+}
+
+function closeTag(id)
+{
+    var element = document.getElementById(id);
+    debug('&lt;/' + element.tagName + '>' + '\n');
+    done();
+}
+
+var tests = [
+    function() { encloseTag('div1'); },
+    function() { testMarkerForMisspelledWord('div1', true, 'test1_1', 'text' /*, undefined */); },
+    function() { testMarkerForMisspelledWord('div1', true, 'test1_2', 'text', 'true'); },
+    function() { testMarkerForMisspelledWord('div1', false, 'test1_3', 'text', 'false'); },
+    function() { testMarkerForMisspelledWord('div1', true, 'test1_4', 'text', 'InvalidValue'); },
+    function() { testMarkerForMisspelledWord('div1', true, 'test1_5', 'text', ''); },
+    function() { closeTag('div1'); },
+
+    function() { encloseTag('div2'); },
+    function() { testMarkerForMisspelledWord('div2', false, 'test2_1', 'text' /*, undefined */); },
+    function() { testMarkerForMisspelledWord('div2', true, 'test2_2', 'text', 'true'); },
+    function() { testMarkerForMisspelledWord('div2', false, 'test2_3', 'text', 'false'); },
+    function() { testMarkerForMisspelledWord('div2', false, 'test2_4', 'text', 'InvalidValue'); },
+    function() { testMarkerForMisspelledWord('div2', true, 'test2_5', 'text', ''); },
+    function() { closeTag('div2'); },
+
+    function() { encloseTag('div3'); },
+    function() { testMarkerForMisspelledWord('div3', true, 'test3_1', 'search' /*, undefined */); },
+    function() { testMarkerForMisspelledWord('div3', true, 'test3_2', 'search', 'true'); },
+    function() { testMarkerForMisspelledWord('div3', false, 'test3_3', 'search', 'false'); },
+    function() { testMarkerForMisspelledWord('div3', true, 'test3_4', 'search', 'InvalidValue'); },
+    function() { testMarkerForMisspelledWord('div3', true, 'test3_5', 'search', ''); },
+    function() { closeTag('div3'); },
+
+    function() { encloseTag('div4'); },
+    function() { testMarkerForMisspelledWord('div4', false, 'test4_1', 'search' /*, undefined */); },
+    function() { testMarkerForMisspelledWord('div4', true, 'test4_2', 'search', 'true'); },
+    function() { testMarkerForMisspelledWord('div4', false, 'test4_3', 'search', 'false'); },
+    function() { testMarkerForMisspelledWord('div4', false, 'test4_4', 'search', 'InvalidValue'); },
+    function() { testMarkerForMisspelledWord('div4', true, 'test4_5', 'search', ''); },
+    function() { closeTag('div4'); }
+];
+
+function done()
+{
+    var next = tests.shift();
+    if (next)
+        return window.setTimeout(next, 0);
+
+    if (window.testRunner) {
+        // Cleaning up for expectation text if running on DRT.
+        document.getElementById("testRoot").style.display = "none";
+    }
+    finishJSTest();
+}
+done();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

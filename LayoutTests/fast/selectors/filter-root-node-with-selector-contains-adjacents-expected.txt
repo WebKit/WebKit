@@ -1,0 +1,34 @@
+Test filtering the root nodes by leveraging #id inside selectors with adjacents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("span#first + t1").length is 1
+PASS document.querySelectorAll("span#second ~ t2").length is 1
+PASS document.querySelectorAll("span#third + t3 > t4").length is 1
+PASS document.querySelectorAll("span#third + t3 > t5").length is 0
+PASS document.querySelectorAll("span#fourth t6 ~ t7").length is 3
+PASS document.querySelectorAll(".ok#first + t1").length is 1
+PASS document.querySelectorAll(".ok#second ~ t2").length is 1
+PASS document.querySelectorAll(".ok#third + t3 > t4").length is 1
+PASS document.querySelectorAll(".ok#third + t3 > t5").length is 0
+PASS document.querySelectorAll(".ok#fourth t6 ~ t7").length is 3
+PASS document.querySelectorAll("#first.ok + t1").length is 1
+PASS document.querySelectorAll("#second.ok ~ t2").length is 1
+PASS document.querySelectorAll("#third.ok + t3 > t4").length is 1
+PASS document.querySelectorAll("#third.ok + t3 > t5").length is 0
+PASS document.querySelectorAll("#fourth.ok t6 ~ t7").length is 3
+PASS document.querySelectorAll("span#first.ok + t1").length is 1
+PASS document.querySelectorAll("span#second.ok ~ t2").length is 1
+PASS document.querySelectorAll("span#third.ok + t3 > t4").length is 1
+PASS document.querySelectorAll("span#third.ok + t3 > t5").length is 0
+PASS document.querySelectorAll("span#fourth.ok t6 ~ t7").length is 3
+PASS document.querySelectorAll("span.ok#first + t1").length is 1
+PASS document.querySelectorAll("span.ok#second ~ t2").length is 1
+PASS document.querySelectorAll("span.ok#third + t3 > t4").length is 1
+PASS document.querySelectorAll("span.ok#third + t3 > t5").length is 0
+PASS document.querySelectorAll("span.ok#fourth t6 ~ t7").length is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

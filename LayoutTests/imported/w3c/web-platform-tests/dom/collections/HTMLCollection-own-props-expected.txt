@@ -1,0 +1,10 @@
+
+PASS Setting non-array index while named property exists (loose)
+PASS Setting non-array index while named property exists (strict)
+PASS Setting non-array index while named property doesn't exist (loose)
+PASS Setting non-array index while named property doesn't exist (strict)
+PASS Setting array index while indexed property exists (loose)
+PASS Setting array index while indexed property exists (strict)
+PASS Setting array index while indexed property doesn't exist (loose)
+PASS Setting array index while indexed property doesn't exist (strict)
+

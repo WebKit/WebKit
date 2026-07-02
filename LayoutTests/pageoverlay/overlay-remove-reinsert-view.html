@@ -1,0 +1,87 @@
+<html>
+<style>
+body {
+    height: 5000px;
+    width: 5000px;
+}
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function getWaitForPresentationUpdateUIScript()
+    {
+        return `
+        (function() {
+            uiController.doAfterPresentationUpdate(function() {
+                uiController.uiScriptComplete('');
+            });
+        })();`
+    }
+
+    function getUnparentUIScript()
+    {
+        return `
+        (function() {
+            uiController.removeViewFromWindow(function() {
+                uiController.uiScriptComplete('');
+            });
+        })();`
+    }
+
+    function getReinsertUIScript()
+    {
+        return `
+        (function() {
+            uiController.addViewToWindow(function() {
+                uiController.uiScriptComplete('');
+            });
+        })();`
+    }
+
+    function dumpLayers(outputId)
+    {
+        if (window.internals) {
+            document.getElementById(outputId).innerText = window.internals.pageOverlayLayerTreeAsText(internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+        }
+    }
+
+    function doTest()
+    {
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        internals.installMockPageOverlay("document");
+        internals.installMockPageOverlay("view");
+
+        // Waiting for a presentation update is needed to get the document overlay to become tiled.
+        testRunner.runUIScript(getWaitForPresentationUpdateUIScript(), function(result) {
+            dumpLayers('before-layers');
+
+            testRunner.runUIScript(getUnparentUIScript(), function(result) {
+                dumpLayers('view-removed-layers');
+
+                testRunner.runUIScript(getReinsertUIScript(), function(result) {
+                    dumpLayers('view-reinsertion-layers');
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                });
+            });
+        });
+    }
+
+    window.addEventListener('load', doTest, false);
+</script>
+<body>
+    <h2>Initial layers</h2>
+    <pre id="before-layers">Layer tree goes here</pre>
+
+    <h2>Layers after removal</h2>
+    <pre id="view-removed-layers">Layer tree goes here</pre>
+
+    <h2>Layers after re-insertion</h2>
+    <pre id="view-reinsertion-layers">Layer tree goes here</pre>
+</body>
+</html>

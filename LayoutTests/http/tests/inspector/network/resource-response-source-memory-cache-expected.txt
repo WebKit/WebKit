@@ -1,0 +1,11 @@
+Test for `Resource.ResponseSource.MemoryCache`.
+
+
+== Running test suite: Resource.ResponseSource.MemoryCache
+-- Running test case: Resource.ResponseSource.MemoryCache
+PASS: Resource should exist.
+PASS: statusCode should be 200
+PASS: responseSource should be Symbol(memory-cache)
+PASS: Response `body` should not be empty.
+PASS: Response should not be base64 encoded.
+

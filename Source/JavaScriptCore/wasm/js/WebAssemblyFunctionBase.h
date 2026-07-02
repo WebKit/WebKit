@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Platform.h>
+
+#if ENABLE(WEBASSEMBLY)
+
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/WasmFormat.h>
+
+namespace JSC {
+
+class JSGlobalObject;
+class JSWebAssemblyInstance;
+using Wasm::WasmToWasmImportableFunction;
+using Wasm::WasmOrJSImportableFunctionCallLinkInfo;
+
+class WebAssemblyFunctionBase : public JSFunction {
+    friend JSC::LLIntOffsetsExtractor;
+
+public:
+    using Base = JSFunction;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
+
+    DECLARE_INFO;
+
+    DECLARE_VISIT_CHILDREN;
+
+    JSWebAssemblyInstance* instance() const LIFETIME_BOUND { return m_importableFunction.targetInstance.get(); }
+
+    Wasm::Type type() const { return { Wasm::TypeKind::Ref, m_importableFunction.rtt->asTypeIndex() }; }
+    WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
+    CalleeBits boxedCallee() const { return m_importableFunction.boxedCallee; }
+    const Wasm::WasmOrJSImportableFunction& importableFunction() const LIFETIME_BOUND { return m_importableFunction; }
+    const Wasm::RTT* rtt() const { return m_importableFunction.rtt; }
+    const Wasm::RTT& signature() const;
+    WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
+
+    static constexpr ptrdiff_t offsetOfImportableFunction() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction); }
+    static constexpr ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
+    static constexpr ptrdiff_t offsetOfBoxedCallee() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedCallee(); }
+    static constexpr ptrdiff_t offsetOfTargetInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfTargetInstance(); }
+    static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfRTT(); }
+
+protected:
+    DECLARE_DEFAULT_FINISH_CREATION;
+    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, Wasm::WasmOrJSImportableFunction&&, Wasm::WasmOrJSImportableFunctionCallLinkInfo*);
+
+    Wasm::WasmOrJSImportableFunction m_importableFunction;
+    // It's safe to just hold the raw WasmToWasmImportableFunctionCallLinkInfo because we have a reference
+    // to our Instance, which points to the CodeBlock, which points to the Module
+    // that exported us, which ensures that the actual Signature/RTT/code doesn't get deallocated.
+    Wasm::WasmOrJSImportableFunctionCallLinkInfo* m_callLinkInfo;
+};
+
+} // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

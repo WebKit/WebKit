@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<html>
+<body>
+<script>
+// This test verifies that animation suspension does not crash when
+// the effect's document has no AnimationTimelinesController.
+// See rdar://173391422.
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+// Create a div and animate it.
+var div = document.createElement('div');
+document.body.appendChild(div);
+var anim = div.animate({ opacity: [0, 1] }, 1000);
+
+// Create a new KeyframeEffect with a null target.
+// m_document will be set to the current document from KeyframeEffect::create()
+// but m_target is null.
+var effect = new KeyframeEffect(null, { opacity: [0, 1] }, 1000);
+anim.effect = effect;
+
+// Set the target to a detached element (not in any document tree).
+// This element's document is the main document. After document.write()
+// replaces the document content, the animation state may become inconsistent.
+effect.target = document.createElement('div');
+
+// Force suspension via alert.
+alert('');
+
+document.open();
+document.write('PASS');
+document.close();
+
+window.testRunner?.notifyDone();
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+/*
+ * Copyright 2013 Google Inc.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#include "bench/Benchmark.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkPaint.h"
+#include "src/base/SkRandom.h"
+
+/**
+ * Draws full screen opaque rectangles. It is designed to test any optimizations in the GPU backend
+ * to turn such draws into clears.
+ */
+class FSRectBench : public Benchmark {
+public:
+    FSRectBench() : fInit(false) { }
+
+protected:
+    const char* onGetName() override { return "fullscreen_rects"; }
+
+    void onDelayedSetup() override {
+        if (!fInit) {
+            SkRandom rand;
+            static const SkScalar kMinOffset = 0;
+            static const SkScalar kMaxOffset = 100 * SK_Scalar1;
+            static const SkScalar kOffsetRange = kMaxOffset - kMinOffset;
+            for (int i = 0; i < N; ++i) {
+                fRects[i].fLeft = -kMinOffset - rand.nextUScalar1() * kOffsetRange;
+                fRects[i].fTop = -kMinOffset - rand.nextUScalar1() * kOffsetRange;
+                fRects[i].fRight = W + kMinOffset + rand.nextUScalar1() * kOffsetRange;
+                fRects[i].fBottom = H + kMinOffset + rand.nextUScalar1() * kOffsetRange;
+                fColors[i] = rand.nextU() | 0xFF000000;
+            }
+            fInit = true;
+        }
+    }
+
+    void onDraw(int loops, SkCanvas* canvas) override {
+        SkPaint paint;
+        for (int i = 0; i < loops; ++i) {
+            paint.setColor(fColors[i % N]);
+            canvas->drawRect(fRects[i % N], paint);
+        }
+    }
+
+private:
+    static constexpr int W = 640;
+    static constexpr int H = 480;
+    static constexpr int N = 300;
+
+    SkRect  fRects[N];
+    SkColor fColors[N];
+    bool fInit;
+
+    using INHERITED = Benchmark;
+};
+
+DEF_BENCH(return new FSRectBench();)

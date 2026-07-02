@@ -1,0 +1,236 @@
+/*
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Platform.h>
+
+#if USE(CF)
+
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/Forward.h>
+#include <wtf/Vector.h>
+#include <wtf/cf/TypeCastsCF.h>
+#include <wtf/text/WTFString.h>
+
+namespace WTF {
+
+template <typename A, typename... B>
+struct ParameterTypeTraits {
+    using firstParamType = A;
+};
+
+// Derive return type and parameters from lamba using decltype(&LambdaType::operator()).
+// See: <http://coliru.stacked-crooked.com/a/da415f1f536b1a31>
+// Via: <https://stackoverflow.com/questions/33222673/c11-template-programming-delegates-and-lambdas>
+
+template <typename LambdaType>
+struct LambdaTypeTraits : LambdaTypeTraits<decltype(&LambdaType::operator())> { };
+
+template <typename R, typename C, typename... Params>
+struct LambdaTypeTraits<R(C::*)(Params...)> {
+    using firstParamType = typename ParameterTypeTraits<Params...>::firstParamType;
+    using returnType = R;
+
+    static constexpr size_t paramCount = sizeof...(Params);
+};
+
+template <typename R, typename C, typename... Params>
+struct LambdaTypeTraits<R(C::*)(Params...) const> {
+    using firstParamType = typename ParameterTypeTraits<Params...>::firstParamType;
+    using returnType = R;
+
+    static constexpr size_t paramCount = sizeof...(Params);
+};
+
+// Specialize the behavior of these functions by overloading the makeCFArrayElement
+// functions and makeVectorElement functions. The makeCFArrayElement function takes
+// a const& to a collection element and can return either a RetainPtr<CFTypeRef> or a CFTypeRef
+// if the value is autoreleased. The makeVectorElement function takes an ignored
+// pointer to the vector element type, making argument-dependent lookup work, and a
+// CFTypeRef for the array element, and returns an std::optional<T> of the the vector element,
+// allowing us to filter out array elements that are not of the expected type.
+//
+//    RetainPtr<CFTypeRef> makeCFArrayElement(const CollectionElementType& collectionElement);
+//        -or-
+//    CFTypeRef makeCFArrayElement(const VectorElementType& vectorElement);
+//
+//    std::optional<VectorElementType> makeVectorElement(const VectorElementType*, CFTypeRef arrayElement);
+//
+// Note that a specific CF type may be used in place of the generic CFTypeRef above.
+
+template<typename CollectionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&&);
+template<typename VectorElementType, typename CFType> Vector<VectorElementType> makeVector(CFArrayRef);
+
+// Allow for abbreviated specializations like makeVector<String>(CFArrayRef) containing CFStringRef objects.
+template<typename VectorElementType> Vector<VectorElementType> makeVector(CFArrayRef);
+template<> inline Vector<String> makeVector<String>(CFArrayRef array) { return makeVector<String, CFStringRef>(array); }
+
+// This overload of createCFArray takes a function to map each vector element to an CF object.
+// The map function has the same interface as the makeCFArrayElement function above, but can be any
+// function including a lambda, a function-like object, or Function<>.
+template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&&, MapFunctionType&&);
+
+// This overload of makeVector takes a function to map each CF object to a vector element.
+// Currently, the map function needs to return a std::optional<T>.
+template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>::returnType::value_type> makeVector(CFArrayRef, MapLambdaType&&);
+
+// Implementation details of the function templates above.
+
+inline void addUnlessNil(CFMutableArrayRef array, CFTypeRef value)
+{
+    if (value)
+        CFArrayAppendValue(array, value);
+}
+
+// Conversion function declarations must appear before use. See also WTFString.h.
+RetainPtr<CFNumberRef> makeCFArrayElement(const float&);
+std::optional<float> makeVectorElement(const float*, CFNumberRef);
+
+template<typename CollectionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&& collection)
+{
+    auto array = adoptCF(CFArrayCreateMutable(nullptr, Checked<CFIndex>(std::size(collection)), &kCFTypeArrayCallBacks));
+    for (auto&& element : collection)
+        addUnlessNil(array.get(), getPtr(makeCFArrayElement(std::forward<decltype(element)>(element))));
+    return array;
+}
+
+template<typename CollectionType, typename MapFunctionType> RetainPtr<CFMutableArrayRef> createCFArray(CollectionType&& collection, MapFunctionType&& function)
+{
+    auto array = adoptCF(CFArrayCreateMutable(nullptr, Checked<CFIndex>(std::size(collection)), &kCFTypeArrayCallBacks));
+    for (auto&& element : collection)
+        addUnlessNil(array.get(), getPtr(std::invoke(function, std::forward<decltype(element)>(element))));
+    return array;
+}
+
+template<typename VectorElementType, typename CFType> Vector<VectorElementType> makeVector(CFArrayRef array)
+{
+    return Vector<VectorElementType>(CFArrayGetCount(array), [&](size_t index) -> std::optional<VectorElementType> {
+        constexpr const VectorElementType* typedNull = nullptr;
+        if (RetainPtr element = dynamic_cf_cast<CFType>(CFArrayGetValueAtIndex(array, index)))
+            return makeVectorElement(typedNull, element.get());
+        return std::nullopt;
+    });
+}
+
+template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>::returnType::value_type> makeVector(CFArrayRef array, MapLambdaType&& lambda)
+{
+    using ElementType = typename LambdaTypeTraits<MapLambdaType>::returnType::value_type;
+    using CFType = typename LambdaTypeTraits<MapLambdaType>::firstParamType;
+
+    static_assert(std::is_same_v<typename LambdaTypeTraits<MapLambdaType>::returnType, std::optional<ElementType>>, "MapLambdaType returns std::optional<ElementType>");
+    static_assert(LambdaTypeTraits<MapLambdaType>::paramCount == 1, "MapLambdaType takes a single CFTypeRef argument");
+
+    return Vector<ElementType>(CFArrayGetCount(array), [&](size_t index) -> std::optional<ElementType> {
+        if (RetainPtr element = dynamic_cf_cast<CFType>(CFArrayGetValueAtIndex(array, index)))
+            return std::invoke(std::forward<MapLambdaType>(lambda), element.get());
+        return std::nullopt;
+    });
+}
+
+inline std::span<const char> CFStringGetASCIICStringSpan(CFStringRef string)
+{
+    auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingASCII);
+    if (!characters)
+        return { };
+    return unsafeMakeSpan(characters, CFStringGetLength(string));
+}
+
+inline std::span<const Latin1Character> CFStringGetLatin1CStringSpan(CFStringRef string)
+{
+    auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1);
+    if (!characters)
+        return { };
+    return unsafeMakeSpan(reinterpret_cast<const Latin1Character*>(characters), CFStringGetLength(string));
+}
+
+inline std::span<const char16_t> CFStringGetCharactersSpan(CFStringRef string)
+{
+    auto* characters = CFStringGetCharactersPtr(string);
+    if (!characters)
+        return { };
+    return unsafeMakeSpan(reinterpret_cast<const char16_t*>(characters), CFStringGetLength(string));
+}
+
+inline void CFStringCopyCharactersSpan(CFStringRef string, std::span<char16_t> span)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    CFStringGetCharacters(string, CFRangeMake(0, std::min<CFIndex>(span.size(), CFStringGetLength(string))), reinterpret_cast<UniChar*>(span.data()));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
+inline std::span<const uint8_t> span(CFDataRef data)
+{
+    return unsafeMakeSpan(static_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)));
+}
+
+inline std::span<uint8_t> mutableSpan(CFMutableDataRef data)
+{
+    return unsafeMakeSpan(static_cast<uint8_t*>(CFDataGetMutableBytePtr(data)), Checked<size_t>(CFDataGetLength(data)));
+}
+
+inline RetainPtr<CFDataRef> toCFData(std::span<const uint8_t> span)
+{
+    return adoptCF(CFDataCreate(kCFAllocatorDefault, span.data(), span.size()));
+}
+
+inline RetainPtr<CFDataRef> toCFDataNoCopy(std::span<const uint8_t> span, CFAllocatorRef bytesDeallocator)
+{
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, span.data(), span.size(), bytesDeallocator));
+}
+
+inline Vector<uint8_t> makeVector(CFDataRef data)
+{
+    return span(data);
+}
+
+// Conversion function implementations. See also StringCF.cpp.
+
+inline RetainPtr<CFNumberRef> makeCFArrayElement(const float& number)
+{
+    return adoptCF(CFNumberCreate(nullptr, kCFNumberFloatType, &number));
+}
+
+inline std::optional<float> makeVectorElement(const float*, CFNumberRef cfNumber)
+{
+    float number = 0;
+    CFNumberGetValue(cfNumber, kCFNumberFloatType, &number);
+    return { number };
+}
+
+} // namespace WTF
+
+using WTF::CFStringGetASCIICStringSpan;
+using WTF::CFStringGetLatin1CStringSpan;
+using WTF::CFStringGetCharactersSpan;
+using WTF::CFStringCopyCharactersSpan;
+using WTF::createCFArray;
+using WTF::makeVector;
+using WTF::mutableSpan;
+using WTF::span;
+using WTF::toCFData;
+using WTF::toCFDataNoCopy;
+
+#endif // USE(CF)

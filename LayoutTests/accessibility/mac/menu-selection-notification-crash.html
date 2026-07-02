@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<select id="menu">
+</select>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that inserting a node into a select menu won't cause a crash.");
+
+    var axNotificationElement = null;
+    function notificationCallback(element, notification, state) {
+        if (notification == "AXMenuItemSelected") {
+            debug("Notification received successfully.");
+            finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        var addedNotification = accessibilityController.addNotificationListener(notificationCallback);
+        shouldBeTrue("addedNotification");
+
+        var menu = accessibilityController.accessibleElementById("menu");
+        debug("menu role: " + menu.role);
+        
+        setTimeout(function() {
+            var opt = document.createElement('option');
+            opt.value = "c";
+            opt.innerHTML = "c";
+            document.getElementById("menu").appendChild(opt);
+        }, 0);
+    }
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

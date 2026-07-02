@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<script src="../../resources/js-test.js"></script>
+<style>
+    .container {
+        width: 500px;
+        height: 500px;
+        border: 1px solid black;
+        overflow: hidden;
+        position: relative;
+    }
+    .intial-box {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        will-change: transform;
+        display: none;
+    }
+    .final-box {
+        left: -50%;
+        top: -50%;
+        width: 200%;
+        height: 200%;
+        position: absolute;
+        transform: scale(0.5);
+        will-change: transform;
+        display: none;
+        background-color: red;
+    }
+    img {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="intial-box"></div>
+        <div class="final-box"></div>
+    </div>
+    <script>
+        description("Ensures a renderer will decode its image synchronously if it intersects with another renderer with a different sizeForDrawing.");
+        window.jsTestIsAsync = true;
+ 
+         function loadImageAndDraw(box, image, src) {
+            return new Promise((resolve) => {
+                image.onload = (() => {
+                    if (!window.internals) {
+                        box.style.display = "block";
+                        resolve();
+                        return;
+                    }
+
+                    box.style.display = "block";
+
+                    // Force layout and display so the image gets drawn.
+                    document.body.offsetHeight;
+                    testRunner.display();
+
+                    image.addEventListener("webkitImageFrameReady", function() {
+                        resolve();
+                    }, false);
+                });
+
+                image.src = src;
+            });
+        }
+
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.settings.setWebkitImageReadyEventEnabled(true);
+            internals.settings.setLargeImageAsyncDecodingEnabled(true);
+        }
+ 
+        let intialBox = document.querySelector(".intial-box");
+        let finalBox = document.querySelector(".final-box");
+
+        let image1 = new Image;
+        intialBox.appendChild(image1);
+ 
+        loadImageAndDraw(intialBox, image1, "resources/green-400x400.png").then(() => {
+            requestAnimationFrame(() => {
+                debug("decodingOptions = " + internals.imageLastDecodingOptions(image1));
+
+                finalBox.appendChild(image1.cloneNode(true));
+                finalBox.style.display = "block";
+
+                // Force layout and display so the image gets drawn.
+                document.body.offsetHeight;
+                if (window.testRunner)
+                    testRunner.display();
+
+                requestAnimationFrame(() => {
+                    debug("decodingOptions = " + internals.imageLastDecodingOptions(image1));
+                    finishJSTest();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

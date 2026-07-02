@@ -1,0 +1,6 @@
+popover 3show popover 3
+
+PASS CommandEvent.source should be retargeted during and after event dispatch.
+PASS CommandEvent.source should be retargeted when manually dispatched with composed set to true.
+PASS CommandEvent.source should not be set to null after dispatch without ShadowDOM.
+

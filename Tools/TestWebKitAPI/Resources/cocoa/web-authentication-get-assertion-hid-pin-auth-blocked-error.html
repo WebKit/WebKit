@@ -1,0 +1,27 @@
+<input type="text" id="input">
+<script>
+    const testCtapPinAuthInvalidErrorBase64 = "Mw==";
+    const testPinGetRetriesResponseBase64 = "AKEDCA==";
+    const testPinGetKeyAgreementResponseBase64 = "AKEBpQECAzgYIAEhWCDodiWJbuTkbcAydm6Ah5YvNt+d/otWfzdjAVsZkKYOFCJYICfeYS1mQYvaGVBYHrxcjB2tcQyxTCL4yXBF9GEvsgyR";
+    const testPinGetPinTokenResponseBase64 = "AKECUBOk7rcOyRrqAB6TFvYeQfc=";
+    const testCtapPinAuthBlockedErrorBase64 = "NA==";
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ hid: { supportClientPin: true, payloadBase64: [testCtapPinAuthInvalidErrorBase64, testPinGetRetriesResponseBase64, testPinGetKeyAgreementResponseBase64, testPinGetPinTokenResponseBase64, testCtapPinAuthBlockedErrorBase64] } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+            timeout: 100
+        }
+    };
+
+    navigator.credentials.get(options).then(credential => {
+        // console.log("Succeeded!");
+        window.webkit.messageHandlers.testHandler.postMessage("Succeeded!");
+    }, error => {
+        // console.log(error.message);
+        window.webkit.messageHandlers.testHandler.postMessage(error.message);
+    });
+</script>

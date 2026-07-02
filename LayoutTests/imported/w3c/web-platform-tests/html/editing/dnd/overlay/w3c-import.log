@@ -1,0 +1,93 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/015.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/025.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/026.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/027.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/028.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/029.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/030.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/031.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/032.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/033.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/034.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/035.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/036.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/038.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/039.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/040.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/041.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/042.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/043.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/044.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/045.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/046.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/047.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/048.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/049.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/050.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/051.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/052.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/053.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/054.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/055.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/056.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/057.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/058.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/059.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/060.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/061.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/062.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/heavy-styling-009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/outside-viewport-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/outside-viewport-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/outside-viewport-003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/outside-viewport-004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/outside-viewport-005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/outside-viewport-006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/overlay/oversized-001.html

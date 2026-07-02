@@ -1,0 +1,61 @@
+<body>
+<style>
+    
+    body {
+        background-color: green;
+    }
+    
+    div {
+        position: absolute;
+        top: 0;
+        height: 100px;
+        animation-duration: 1s;
+    }
+
+    #implicit {
+        left: 0;
+        width: 100px;
+        background-color: red;
+        animation-name: implicit;
+    }
+
+    /* Allow for a 1px error on either side */
+    #explicit {
+        left: -1px;
+        width: 102px;
+        background-color: green;
+        animation-name: explicit;
+        animation-timing-function: ease;
+    }
+
+    @keyframes implicit {
+        0.001% { transform: translate(400px) }
+    }
+
+    @keyframes explicit {
+        0.001% {
+            transform: translate(400px);
+            animation-timing-function: ease;
+        }
+    }
+
+</style>
+<div id="implicit"></div>
+<div id="explicit"></div>
+<script>
+
+(async function() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    await Promise.all(document.getAnimations().map(animation => animation.ready));
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>
+</body>

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<title>Test Convenience Methods</title>
+</head>
+<body>
+
+<!-- Focus test element. -->
+<div id="focus" role="button" style="height:25px; width:25px;" tabindex="0"></div>
+
+<script>
+var output = "This tests that test convenience methods behave correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // isFocused test.
+    var focus = accessibilityController.accessibleElementById("focus");
+    var isFocusedAttribute = focus.boolAttributeValue("AXFocused");
+    var isFocusedConvenience = focus.isFocused;
+    output += expect("isFocusedConvenience", "isFocusedConvenience");
+
+    setTimeout(async function() {
+        await waitForFocus("focus");
+        isFocusedAttribute = focus.boolAttributeValue("AXFocused");
+        isFocusedConvenience = focus.isFocused;
+        output += expect("isFocusedConvenience", "isFocusedAttribute");
+        
+        // FIXME: Test remaining convenience methods.
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

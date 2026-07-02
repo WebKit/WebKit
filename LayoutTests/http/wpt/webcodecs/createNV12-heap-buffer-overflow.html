@@ -1,0 +1,19 @@
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+function createVideoFrame() {
+    new VideoFrame(new Uint8Array(4), {
+      format: 'NV12',
+      codedWidth: 2,
+      codedHeight: 2,
+      timestamp: 0,
+      layout: [
+        {offset: 0, stride: 2},
+        {offset: 0, stride: 2},
+      ],
+    });
+  }
+test(() => {
+  assert_throws_js(TypeError, () => createVideoFrame());
+}, "VideoFrame constructor should throw type error with bad data");
+</script>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+</head>
+<body>
+<p>Test that the keyboard disappears when the focused element is removed.<br>
+To manually test, focus the text field below and type any character on iOS. The keyboard should be dismissed.</p>
+<input oninput="this.remove();">
+<div id="result"></div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.testRunner && testRunner.runUIScript) {
+    testRunner.waitUntilDone();
+
+    var input = document.querySelector('input');
+
+    const x = input.offsetLeft + 5;
+    const y = input.offsetTop + 5;
+    testRunner.runUIScript(`
+        uiController.didShowKeyboardCallback = function() { uiController.uiScriptComplete(); }
+        uiController.singleTapAtPoint(${x}, ${y}, function() {});`,
+    function () {
+        function endTest(result) {
+            document.getElementById('result').textContent = result;
+            testRunner.notifyDone();
+        }
+        setTimeout(endTest.bind(this, 'FAIL'), 5000);
+        testRunner.runUIScript(`
+            uiController.didHideKeyboardCallback = function() { uiController.uiScriptComplete(); }
+            uiController.typeCharacterUsingHardwareKeyboard('a', function () { });`,
+            endTest.bind(this, 'PASS'));
+    });
+}
+
+</script>
+</body>
+</html>

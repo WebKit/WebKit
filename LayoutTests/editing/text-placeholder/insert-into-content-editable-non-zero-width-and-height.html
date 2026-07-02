@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../resources/ui-helper.js"></script>
+<link rel="stylesheet" href="resources/test.css">
+</head>
+<body>
+<p>This tests that a text placeholder with non-zero width and height is inserted into a <code>contenteditable</code> element. This test can only be run in WebKitTestRunner or DumpRenderTree.</p>
+<div id="test" class="test" style="width: 200px; height: 200px; border: 1px solid black" contenteditable="true">Hello from Cupertino!</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest()
+{
+    let testElement = document.getElementById("test");
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(testElement);
+    else
+        await UIHelper.callFunctionAndWaitForEvent(() => testElement.focus(), testElement, "focus");
+
+    let positionOfFrom = testElement.textContent.indexOf("from");
+    window.getSelection().setBaseAndExtent(testElement.firstChild, positionOfFrom, testElement.firstChild, positionOfFrom);
+
+    if (window.internals) {
+        // Because we are using the Ahem font almost all glyphs have the same width.
+        let glyphWidth = parseInt(window.getComputedStyle(testElement, null).fontSize, 10);
+        internals.insertTextPlaceholder(glyphWidth, 3 * glyphWidth);
+    }
+
+    // Defocus field to hide the cursor.
+    await UIHelper.callFunctionAndWaitForEvent(() => testElement.blur(), testElement, "blur");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+runTest();
+</script>
+</body>
+</html>

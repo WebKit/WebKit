@@ -1,0 +1,28 @@
+
+PASS :for_basic:preventValueOptimizations=true
+PASS :for_basic:preventValueOptimizations=false
+PASS :for_break:preventValueOptimizations=true
+PASS :for_break:preventValueOptimizations=false
+PASS :for_continue:preventValueOptimizations=true
+PASS :for_continue:preventValueOptimizations=false
+PASS :for_initializer:preventValueOptimizations=true
+PASS :for_initializer:preventValueOptimizations=false
+PASS :for_complex_initializer:preventValueOptimizations=true
+PASS :for_complex_initializer:preventValueOptimizations=false
+PASS :for_condition:preventValueOptimizations=true
+PASS :for_condition:preventValueOptimizations=false
+PASS :for_complex_condition:preventValueOptimizations=true
+PASS :for_complex_condition:preventValueOptimizations=false
+PASS :for_continuing:preventValueOptimizations=true
+PASS :for_continuing:preventValueOptimizations=false
+PASS :for_complex_continuing:preventValueOptimizations=true
+PASS :for_complex_continuing:preventValueOptimizations=false
+PASS :nested_for_break:preventValueOptimizations=true
+PASS :nested_for_break:preventValueOptimizations=false
+PASS :nested_for_continue:preventValueOptimizations=true
+PASS :nested_for_continue:preventValueOptimizations=false
+PASS :for_logical_and_condition:preventValueOptimizations=true
+PASS :for_logical_and_condition:preventValueOptimizations=false
+PASS :for_logical_or_condition:preventValueOptimizations=true
+PASS :for_logical_or_condition:preventValueOptimizations=false
+

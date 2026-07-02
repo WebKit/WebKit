@@ -1,0 +1,17 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+UTILS_FILES = [
+    "TestFontCollection.cpp",
+    "TestFontCollection.h",
+]
+
+split_srcs_and_hdrs(
+    name = "utils",
+    files = UTILS_FILES,
+)

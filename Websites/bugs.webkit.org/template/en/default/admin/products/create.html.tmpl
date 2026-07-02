@@ -1,0 +1,75 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # classification: Bugzilla::Classification object; If classifications
+  #                         are enabled, then this is 
+  #                         the currently selected classification
+  #
+  #%]
+
+[% title = BLOCK %]Add Product[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  generate_api_token = 1
+  style_urls = ['skins/standard/admin.css']
+  javascript_urls = ['js/util.js', 'js/field.js']
+  yui = [ 'autocomplete' ]
+%]
+
+[% DEFAULT
+  product.is_active = 1,
+  version = "unspecified",
+  product.defaultmilestone = constants.DEFAULT_MILESTONE
+  product.allows_unconfirmed = 1
+%]
+
+<form method="post" action="editproducts.cgi">
+  <table id="admin_table_edit">
+
+    [% PROCESS "admin/products/edit-common.html.tmpl" %]
+
+    <tr>
+      <th>Version:</th>
+      <td><input size="20" maxlength="64" name="version" 
+                value="[% version FILTER html %]" required>
+      </td>
+    </tr>
+    <tr>
+      <th>Create chart datasets for this product:</th>
+      <td>
+        <input type="checkbox" name="createseries" value="1" checked="checked">
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        This product must have at least one component.
+        You will be able to create additional components later:
+      </td>
+    </tr>
+
+    [% PROCESS "admin/components/edit-common.html.tmpl" desc_name = "comp_desc" %]
+  </table>
+
+  <input type="submit" id="add-product" value="Add">
+  <input type="hidden" name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="hidden" name="classification"
+        value="[% classification.name FILTER html %]">
+</form>
+
+[% PROCESS "admin/products/footer.html.tmpl"
+   no_add_product_link = 1 
+   no_edit_product_link = 1 %]
+
+[% PROCESS global/footer.html.tmpl %]

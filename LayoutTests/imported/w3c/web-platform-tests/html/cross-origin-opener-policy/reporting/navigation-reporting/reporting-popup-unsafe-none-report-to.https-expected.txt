@@ -1,0 +1,6 @@
+
+PASS coop reporting test reporting same origin with report-to to SAME_ORIGIN with same-origin; report-to="coop-popup-report-endpoint", , ,
+PASS coop reporting test reporting same origin with report-to to SAME_ORIGIN with same-origin, , ,
+PASS coop reporting test reporting same origin with report-to to CROSS_ORIGIN with same-origin; report-to="coop-popup-report-endpoint", , ,
+PASS verify remaining reports
+

@@ -1,0 +1,18 @@
+<style>
+div {
+  font-family: Monospace;
+  font-size: 10px;
+}
+span {
+  text-decoration: underline;
+}
+</style>
+<!-- test if underline is positioned properly when inline box's content box has non-zero vertical offset -->
+<div>X</div>
+<div>X<span>X</span>X</div>
+<div>X<span style="padding: 50px;">X</span>X</div>
+<div>X<span style="border: 50px solid transparent; padding: 50px;">X</span>X</div>
+<div>X<span style="padding: 50px;">X<span style="padding: 50px;">X</span>X</span>X</div>
+<div>X<span style="border: 50px solid transparent; padding: 50px;">X<span style="border: 50px solid transparent; padding: 50px;">X</span>X</span>X</div>
+<div style="line-height: 200px">X<span style="border: 50px solid transparent; padding: 50px;">X<span style="border: 50px solid transparent; padding: 50px;">X</span>X</span>X</div>
+<div style="line-height: 0px;">X<span style="padding: 0px 100px;">X<span style="padding: 0px 100px;">X</span>X</span>X</div>

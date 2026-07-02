@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .wrapper {
+            position: absolute;
+            height: 400px;
+            width: 400px;
+            border: 1px solid black;
+            z-index: 0;
+        }
+        
+        .container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 0;
+        }
+
+        .tile {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            left: 100px;
+            top: 100px;
+            background-color: orange;
+        }
+
+        .green {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <p>The green box should be on top.</p>
+    <div class="wrapper">
+        <div class="container" style="transform: translate3d(0px, 0px, 0px);">
+            <div class="container">
+                <div class="tile"></div>
+            </div>
+        </div>
+        <div class="green"></div>
+    </div>
+</body>
+</html>

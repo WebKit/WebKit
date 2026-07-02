@@ -1,0 +1,6 @@
+
+PASS 'shape-margin: 16px' at zoom level 1
+PASS 'shape-margin: calc(16px)' at zoom level 1
+PASS 'shape-margin: 16px' at zoom level 2
+PASS 'shape-margin: calc(16px)' at zoom level 2
+

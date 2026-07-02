@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useDollarVM=true ] -->
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="foo"></div>
+<script>
+    description("Test taintedness is tracked via several ways to inject scripts in WebCore");
+    // jsTestIsAsync = true;
+
+    window.jsTestIsAsync = true;
+
+    let foo = document.getElementById("foo");
+
+    shouldBeIndirectlyTaintedString = "shouldBeEqualToString(\\'$vm.vmTaintedState()\\', \\'IndirectlyTainted\\')";
+    shouldBeIndirectlyTaintedByHistoryString = "shouldBeEqualToString(\\'$vm.vmTaintedState()\\', \\'IndirectlyTaintedByHistory\\')";
+
+    function checkFromOuterScript() {
+        shouldBeEqualToString("$vm.vmTaintedState()", "IndirectlyTaintedByHistory");
+        finishJSTest();
+    }
+    $vm.runTaintedString(`
+        setTimeout(\`
+            // IndirectlyTainted because this code is created by the setTimeout function.
+            shouldBeEqualToString("$vm.vmTaintedState()", "IndirectlyTainted");
+            Promise.resolve().then(checkFromOuterScript);
+            42 + 0;
+        \`, 0);
+    `);
+
+</script>
+</body>
+</html>

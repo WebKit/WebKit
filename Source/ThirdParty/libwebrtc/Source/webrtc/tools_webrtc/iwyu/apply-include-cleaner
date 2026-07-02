@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+tools_webrtc/iwyu/apply_include_cleaner.py "$@"

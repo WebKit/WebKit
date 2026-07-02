@@ -1,0 +1,17 @@
+
+PASS setProperty - CSS property name
+PASS setProperty - camel-cased property name (ignored)
+PASS setProperty - webkit-cased property name (ignored)
+PASS removeProperty - CSS property name
+PASS removeProperty - camel-cased property name (ignored)
+PASS removeProperty - webkit-cased property name (ignored)
+PASS property assignment - CSS property name
+PASS property assignment - camel-cased property name
+PASS property assignment - webkit-cased property name
+PASS getPropertyValue - CSS property name
+PASS getPropertyValue - camel-cased property name (ignored)
+PASS getPropertyValue - webkit-cased property name (ignored)
+PASS property access - CSS property name
+PASS property access - camel-cased property name
+PASS property access - webkit-cased property name
+

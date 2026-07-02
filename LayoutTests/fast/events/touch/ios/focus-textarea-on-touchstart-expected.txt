@@ -1,0 +1,11 @@
+Verifies that the keyboard does not immediately dismiss after tapping on an editable element that is focused during `touchstart`. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS willHideCountBeforeTapping is willHideCountAfterTapping
+PASS Dismissed keyboard
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.getMediaStats");
+
+    suite.addTestCase({
+        name: "GetMediaStats-InvalidElement",
+        description: "Call GetMediaStats on an invalid element.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#notAVideo");
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.assert(domNode, "DOMNode exists");
+            await InspectorTest.expectException(async () => {
+                let stats = await domNode.getMediaStats();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetMediaStats-EmptyVideo",
+        description: "Call GetMediaStats on an empty Video element.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#emptyVideo");
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.assert(domNode, "DOMNode exists");
+            let stats = await domNode.getMediaStats();
+            InspectorTest.log("PASS: Did not throw when calling getMediaStats on video#emptyVideo");
+            InspectorTest.expectFalse("video" in stats, "Empty Video elements should not provide a stats.video");
+            InspectorTest.expectFalse("audio" in stats, "Empty Video elements should not provide a stats.audio");
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetMediaStats-ValidVideo",
+        description: "Call GetMediaStats on an loaded Video element.",
+        test: async () => {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#validVideo");
+            let domNode = WI.domManager.nodeForId(nodeId);
+            InspectorTest.assert(domNode, "DOMNode exists");
+            let stats = await domNode.getMediaStats();
+            InspectorTest.log("PASS: Did not throw when calling getMediaStats on video#validVideo");
+            InspectorTest.expectNotEqual(stats.video, undefined, "Empty Audio elements should not have empty stats.video");
+            InspectorTest.expectNotEqual(stats.video.codec, "", "Empty Audio elements should not have empty stats.video.codec");
+            InspectorTest.expectNotEqual(stats.video.humanReadableCodecString, "", "Empty Audio elements should not have empty stats.video.humanReadableCodecString");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <div id=notAVideo></div>
+    <video controls id=emptyVideo></video>
+    <video controls id=validVideo>
+        <source src="../../media/content/test.mp4" type="video/mp4">
+        <source src="../../media/content/test.webm" type="video/webm">
+    </video>
+</body>
+</html>

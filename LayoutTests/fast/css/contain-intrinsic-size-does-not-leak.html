@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/document-leak-test.js"></script>
+<script>
+    description("Tests that ResizeObserver with contain-intrinsic-size does not leak the document object");
+    onload = () => runDocumentLeakTest({ frameURL: "resources/contain-intrinsic-size-leak-test.html", framesToCreate: 20 });
+</script>
+</body>
+</html>

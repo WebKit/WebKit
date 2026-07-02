@@ -1,0 +1,7 @@
+
+FAIL e.style['box-shadow-spread'] = "0" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['box-shadow-spread'] = "1px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['box-shadow-spread'] = "1em" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['box-shadow-spread'] = "-1px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['box-shadow-spread'] = "calc(1em + 2px)" should set the property value assert_not_equals: property should be set got disallowed value ""
+

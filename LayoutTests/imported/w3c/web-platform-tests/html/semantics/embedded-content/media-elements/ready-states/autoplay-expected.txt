@@ -1,0 +1,12 @@
+
+PASS audio.autoplay
+PASS audio.autoplay and load()
+PASS audio.autoplay and play()
+PASS audio.autoplay and pause()
+PASS audio.autoplay and internal pause steps
+PASS video.autoplay
+PASS video.autoplay and load()
+PASS video.autoplay and play()
+PASS video.autoplay and pause()
+PASS video.autoplay and internal pause steps
+

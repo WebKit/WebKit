@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="target" style="position: absolute; left: 100px; top: 50px; width: 80px; height: 30px;">Click me</button>
+
+<script>
+var output = "This test ensures accessibility element screen positions update after a page scale factor change.\n\n";
+
+var target, initialX, scaledX, deltaX;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    (async function() {
+        await waitFor(() => {
+            var rootElement = accessibilityController.rootElement;
+            return rootElement && rootElement.x !== 0;
+        });
+
+        target = accessibilityController.accessibleElementById("target");
+        initialX = target.x;
+        await testRunner.setPageScaleFactor(2, 0, 0);
+
+        await waitFor(() => {
+            target = accessibilityController.accessibleElementById("target");
+            return target.x !== initialX;
+        });
+
+        scaledX = target.x;
+        deltaX = Math.abs(scaledX - initialX);
+
+        // At 2x scale, an element at left:100px should shift 100px in screen space.
+        output += expectNumber("deltaX", 100, /* allowedVariance */ 1);
+
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

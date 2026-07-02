@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>hello, world</p>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('This tests calling window.find twice. getSelection().getRangeAt(0) should return distinct ranges.');
+
+window.find("hello");
+let range1 = getSelection().getRangeAt(0);
+window.find("world");
+let range2 = getSelection().getRangeAt(0);
+shouldBeTrue('range1 != range2');
+
+</script>
+</body>
+</html>

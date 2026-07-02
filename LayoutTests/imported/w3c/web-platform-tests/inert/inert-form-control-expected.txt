@@ -1,0 +1,5 @@
+ Something
+ Something else
+
+PASS Inert doesn't prevent initiated click from changing form control
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        dialog {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 300px;
+            height: 200px;
+        }
+
+        .box {
+            position: absolute;
+            z-index: 0;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .negative {
+            margin: 50px;
+            z-index: -1;
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <dialog id="theDialog">
+        <div class="box"></div>
+        <div class="negative box"></div>
+    </dialog>
+<script>
+    document.getElementById('theDialog').showModal();
+</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+//
+// Copyright 2025 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
+#include "compiler/translator/ir/src/compile.h"
+
+#include "compiler/translator/Compiler.h"
+#include "compiler/translator/PoolAlloc.h"
+
+namespace sh
+{
+namespace ir
+{
+namespace
+{
+void SetEnabledExtensions(const TExtensionBehavior &behavior, ffi::ExtensionsEnabled *extensions)
+{
+    extensions->ANDROID_extension_pack_es31a =
+        IsExtensionEnabled(behavior, TExtension::ANDROID_extension_pack_es31a);
+    extensions->ANGLE_base_vertex_base_instance_shader_builtin =
+        IsExtensionEnabled(behavior, TExtension::ANGLE_base_vertex_base_instance_shader_builtin);
+    extensions->ANGLE_clip_cull_distance =
+        IsExtensionEnabled(behavior, TExtension::ANGLE_clip_cull_distance);
+    extensions->ANGLE_multi_draw = IsExtensionEnabled(behavior, TExtension::ANGLE_multi_draw);
+    extensions->ANGLE_shader_pixel_local_storage =
+        IsExtensionEnabled(behavior, TExtension::ANGLE_shader_pixel_local_storage);
+    extensions->ANGLE_texture_multisample =
+        IsExtensionEnabled(behavior, TExtension::ANGLE_texture_multisample);
+    extensions->APPLE_clip_distance = IsExtensionEnabled(behavior, TExtension::APPLE_clip_distance);
+    extensions->ARB_fragment_shader_interlock =
+        IsExtensionEnabled(behavior, TExtension::ARB_fragment_shader_interlock);
+    extensions->ARB_texture_rectangle =
+        IsExtensionEnabled(behavior, TExtension::ARB_texture_rectangle);
+    extensions->ARM_shader_framebuffer_fetch =
+        IsExtensionEnabled(behavior, TExtension::ARM_shader_framebuffer_fetch);
+    extensions->ARM_shader_framebuffer_fetch_depth_stencil =
+        IsExtensionEnabled(behavior, TExtension::ARM_shader_framebuffer_fetch_depth_stencil);
+    extensions->EXT_YUV_target = IsExtensionEnabled(behavior, TExtension::EXT_YUV_target);
+    extensions->EXT_blend_func_extended =
+        IsExtensionEnabled(behavior, TExtension::EXT_blend_func_extended);
+    extensions->EXT_clip_cull_distance =
+        IsExtensionEnabled(behavior, TExtension::EXT_clip_cull_distance);
+    extensions->EXT_conservative_depth =
+        IsExtensionEnabled(behavior, TExtension::EXT_conservative_depth);
+    extensions->EXT_draw_buffers = IsExtensionEnabled(behavior, TExtension::EXT_draw_buffers);
+    extensions->EXT_frag_depth   = IsExtensionEnabled(behavior, TExtension::EXT_frag_depth);
+    extensions->EXT_fragment_shading_rate =
+        IsExtensionEnabled(behavior, TExtension::EXT_fragment_shading_rate);
+    extensions->EXT_fragment_shading_rate_primitive =
+        IsExtensionEnabled(behavior, TExtension::EXT_fragment_shading_rate_primitive);
+    extensions->EXT_geometry_shader = IsExtensionEnabled(behavior, TExtension::EXT_geometry_shader);
+    extensions->EXT_gpu_shader5     = IsExtensionEnabled(behavior, TExtension::EXT_gpu_shader5);
+    extensions->EXT_primitive_bounding_box =
+        IsExtensionEnabled(behavior, TExtension::EXT_primitive_bounding_box);
+    extensions->EXT_separate_shader_objects =
+        IsExtensionEnabled(behavior, TExtension::EXT_separate_shader_objects);
+    extensions->EXT_shader_framebuffer_fetch =
+        IsExtensionEnabled(behavior, TExtension::EXT_shader_framebuffer_fetch);
+    extensions->EXT_shader_framebuffer_fetch_non_coherent =
+        IsExtensionEnabled(behavior, TExtension::EXT_shader_framebuffer_fetch_non_coherent);
+    extensions->EXT_shader_io_blocks =
+        IsExtensionEnabled(behavior, TExtension::EXT_shader_io_blocks);
+    extensions->EXT_shader_non_constant_global_initializers =
+        IsExtensionEnabled(behavior, TExtension::EXT_shader_non_constant_global_initializers);
+    extensions->EXT_shader_texture_lod =
+        IsExtensionEnabled(behavior, TExtension::EXT_shader_texture_lod);
+    extensions->EXT_shadow_samplers = IsExtensionEnabled(behavior, TExtension::EXT_shadow_samplers);
+    extensions->EXT_tessellation_shader =
+        IsExtensionEnabled(behavior, TExtension::EXT_tessellation_shader);
+    extensions->EXT_texture_buffer = IsExtensionEnabled(behavior, TExtension::EXT_texture_buffer);
+    extensions->EXT_texture_cube_map_array =
+        IsExtensionEnabled(behavior, TExtension::EXT_texture_cube_map_array);
+    extensions->EXT_texture_query_lod =
+        IsExtensionEnabled(behavior, TExtension::EXT_texture_query_lod);
+    extensions->EXT_texture_shadow_lod =
+        IsExtensionEnabled(behavior, TExtension::EXT_texture_shadow_lod);
+    extensions->INTEL_fragment_shader_ordering =
+        IsExtensionEnabled(behavior, TExtension::INTEL_fragment_shader_ordering);
+    extensions->KHR_blend_equation_advanced =
+        IsExtensionEnabled(behavior, TExtension::KHR_blend_equation_advanced);
+    extensions->NV_EGL_stream_consumer_external =
+        IsExtensionEnabled(behavior, TExtension::NV_EGL_stream_consumer_external);
+    extensions->NV_fragment_shader_interlock =
+        IsExtensionEnabled(behavior, TExtension::NV_fragment_shader_interlock);
+    extensions->NV_shader_noperspective_interpolation =
+        IsExtensionEnabled(behavior, TExtension::NV_shader_noperspective_interpolation);
+    extensions->OES_EGL_image_external =
+        IsExtensionEnabled(behavior, TExtension::OES_EGL_image_external);
+    extensions->OES_EGL_image_external_essl3 =
+        IsExtensionEnabled(behavior, TExtension::OES_EGL_image_external_essl3);
+    extensions->OES_geometry_shader = IsExtensionEnabled(behavior, TExtension::OES_geometry_shader);
+    extensions->OES_gpu_shader5     = IsExtensionEnabled(behavior, TExtension::OES_gpu_shader5);
+    extensions->OES_primitive_bounding_box =
+        IsExtensionEnabled(behavior, TExtension::OES_primitive_bounding_box);
+    extensions->OES_sample_variables =
+        IsExtensionEnabled(behavior, TExtension::OES_sample_variables);
+    extensions->OES_shader_image_atomic =
+        IsExtensionEnabled(behavior, TExtension::OES_shader_image_atomic);
+    extensions->OES_shader_io_blocks =
+        IsExtensionEnabled(behavior, TExtension::OES_shader_io_blocks);
+    extensions->OES_shader_multisample_interpolation =
+        IsExtensionEnabled(behavior, TExtension::OES_shader_multisample_interpolation);
+    extensions->OES_standard_derivatives =
+        IsExtensionEnabled(behavior, TExtension::OES_standard_derivatives);
+    extensions->OES_tessellation_shader =
+        IsExtensionEnabled(behavior, TExtension::OES_tessellation_shader);
+    extensions->OES_texture_3D     = IsExtensionEnabled(behavior, TExtension::OES_texture_3D);
+    extensions->OES_texture_buffer = IsExtensionEnabled(behavior, TExtension::OES_texture_buffer);
+    extensions->OES_texture_cube_map_array =
+        IsExtensionEnabled(behavior, TExtension::OES_texture_cube_map_array);
+    extensions->OES_texture_storage_multisample_2d_array =
+        IsExtensionEnabled(behavior, TExtension::OES_texture_storage_multisample_2d_array);
+    extensions->OVR_multiview       = IsExtensionEnabled(behavior, TExtension::OVR_multiview);
+    extensions->OVR_multiview2      = IsExtensionEnabled(behavior, TExtension::OVR_multiview2);
+    extensions->WEBGL_video_texture = IsExtensionEnabled(behavior, TExtension::WEBGL_video_texture);
+}
+
+void SetLimits(const ShBuiltInResources &resources,
+               const ShCompileOptions &options,
+               ffi::Limits *limits)
+{
+    limits->max_draw_buffers             = resources.MaxDrawBuffers;
+    limits->max_dual_source_draw_buffers = resources.MaxDualSourceDrawBuffers;
+    limits->max_combined_draw_buffers_and_pixel_local_storage_planes =
+        resources.MaxCombinedDrawBuffersAndPixelLocalStoragePlanes;
+    limits->min_point_size = resources.MinPointSize;
+    limits->max_point_size = resources.MaxPointSize;
+    limits->max_expression_complexity =
+        options.limitExpressionComplexity ? resources.MaxExpressionComplexity : 1'000'000;
+}
+
+void SetOptions(TCompiler *compiler, const ShCompileOptions &options, ffi::CompileOptions *opt)
+{
+    opt->shader_version = compiler->getShaderVersion();
+    opt->output         = static_cast<ffi::OutputLanguage>(compiler->getOutputType());
+    opt->is_es1         = compiler->getShaderVersion() == 100;
+
+    opt->initialize_uninitialized_variables = options.initializeUninitializedLocals ||
+                                              options.initOutputVariables || options.initGLPosition;
+    opt->loops_allowed_when_initializing_variables = !options.dontUseLoopsToInitializeVariables;
+    opt->initializer_allowed_on_non_constant_global_variables =
+        !options.forceDeferNonConstGlobalInitializers;
+    opt->pass_highp_to_pack_unorm_snorm_built_ins = options.passHighpToPackUnormSnormBuiltins;
+    opt->emulate_instanced_multiview              = options.initializeBuiltinsForInstancedMultiview;
+    opt->select_viewport_layer_in_emulated_multiview = options.selectViewInNvGLSLVertexShader;
+    opt->emulate_draw_id                             = options.emulateGLDrawID;
+    opt->emulate_base_vertex_instance                = options.emulateGLBaseVertexBaseInstance;
+    opt->add_base_vertex_to_vertex_id                = options.addBaseVertexToVertexID;
+    opt->clamp_point_size                            = options.clampPointSize;
+    opt->clamp_frag_depth                            = options.clampFragDepth;
+    opt->transform_float_uniform_to_fp16             = options.transformFloatUniformTo16Bits;
+    opt->remove_inactive_interface_variables         = options.removeInactiveVariables;
+    opt->retain_inactive_fragment_outputs            = options.retainInactiveFragmentOutputs;
+    opt->scalarize_vec_and_mat_constructor_args      = options.scalarizeVecAndMatConstructorArgs;
+    opt->clamp_indirect_indices                      = options.clampIndirectArrayBounds;
+
+    opt->rewrite_pixel_local_storage = compiler->hasPixelLocalStorageUniforms();
+    opt->pls_options.implementation  = static_cast<ffi::PixelLocalStorageImpl>(options.pls.type);
+    opt->pls_options.fragment_sync =
+        static_cast<ffi::PixelLocalStorageSync>(options.pls.fragmentSyncType);
+    opt->pls_options.supports_noncoherent = options.pls.supportsNoncoherent;
+    opt->pls_options.supports_native_rgba8_image_formats =
+        options.pls.supportsNativeRGBA8ImageFormats;
+
+    // MSL-specific flags
+    opt->ensure_loop_forward_progress = options.ensureLoopForwardProgress;
+}
+
+std::vector<ShaderVariable> ConvertShaderVariables(const rust::Vec<ffi::ShaderVariable> &variables)
+{
+    std::vector<ShaderVariable> result;
+    result.reserve(variables.size());
+    for (const ffi::ShaderVariable &variable : variables)
+    {
+        ShaderVariable converted;
+        converted.type       = variable.gl_type;
+        converted.precision  = variable.gl_precision;
+        converted.name       = static_cast<std::string>(variable.name);
+        converted.mappedName = static_cast<std::string>(variable.mapped_name);
+        converted.arraySizes =
+            std::vector<uint32_t>(variable.array_sizes.begin(), variable.array_sizes.end());
+        converted.staticUse         = variable.static_use;
+        converted.active            = variable.active;
+        converted.structOrBlockName = static_cast<std::string>(variable.struct_or_block_name);
+        converted.mappedStructOrBlockName =
+            static_cast<std::string>(variable.mapped_struct_or_block_name);
+        converted.isRowMajorLayout    = variable.is_row_major;
+        converted.location            = variable.location;
+        converted.hasImplicitLocation = variable.is_location_implicit;
+        converted.binding             = variable.binding;
+        converted.imageUnitFormat     = variable.gl_image_unit_format;
+        converted.offset              = variable.offset;
+        converted.rasterOrdered       = variable.raster_ordered;
+        converted.readonly            = variable.readonly;
+        converted.writeonly           = variable.writeonly;
+        converted.isFragmentInOut     = variable.is_fragment_inout;
+        converted.index               = variable.index;
+        converted.yuv                 = variable.yuv;
+        converted.interpolation       = static_cast<InterpolationType>(variable.interpolation);
+        converted.isInvariant         = variable.is_invariant;
+        converted.isShaderIOBlock     = variable.is_io_block;
+        converted.isPatch             = variable.is_patch;
+        converted.texelFetchStaticUse = variable.texel_fetch_static_use;
+        converted.id                  = variable.id;
+        converted.isFloat16           = variable.is_float16;
+
+        converted.fields = ConvertShaderVariables(variable.fields);
+        result.push_back(converted);
+    }
+    return result;
+}
+
+std::vector<InterfaceBlock> ConvertInterfaceBlocks(const rust::Vec<ffi::InterfaceBlock> &blocks)
+{
+    std::vector<InterfaceBlock> result;
+    result.reserve(blocks.size());
+    for (const ffi::InterfaceBlock &block : blocks)
+    {
+        InterfaceBlock converted;
+        converted.name         = static_cast<std::string>(block.name);
+        converted.mappedName   = static_cast<std::string>(block.mapped_name);
+        converted.instanceName = static_cast<std::string>(block.instance_name);
+        converted.arraySize    = block.array_size;
+        converted.layout       = static_cast<BlockLayoutType>(block.block_layout);
+        converted.binding      = block.binding;
+        converted.staticUse    = block.static_use;
+        converted.active       = block.active;
+        converted.isReadOnly   = block.readonly;
+        converted.blockType    = static_cast<BlockType>(block.block_type);
+        converted.id           = block.id;
+
+        converted.fields = ConvertShaderVariables(block.fields);
+        result.push_back(converted);
+    }
+    return result;
+}
+}  // namespace
+
+Output GenerateAST(IR ir, TCompiler *compiler, const ShCompileOptions &options)
+{
+    ffi::CompileOptions opt;
+    SetOptions(compiler, options, &opt);
+    SetEnabledExtensions(compiler->getExtensionBehavior(), &opt.extensions);
+    SetLimits(compiler->getResources(), options, &opt.limits);
+
+    ffi::Output output = ffi::generate_ast(std::move(ir), compiler, GetGlobalPoolAllocator(), opt);
+
+    Output out;
+    out.root          = output.ast;
+    out.inputs        = ConvertShaderVariables(output.inputs);
+    out.outputs       = ConvertShaderVariables(output.outputs);
+    out.uniforms      = ConvertShaderVariables(output.uniforms);
+    out.shared        = ConvertShaderVariables(output.shared);
+    out.uniformBlocks = ConvertInterfaceBlocks(output.uniform_blocks);
+    out.storageBlocks = ConvertInterfaceBlocks(output.storage_blocks);
+
+    return out;
+}
+}  // namespace ir
+}  // namespace sh

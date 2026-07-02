@@ -1,0 +1,21 @@
+<html>
+<style>
+div
+{
+	width: 100px;
+	height: 100px;
+	margin: 10px;
+}
+</style>
+<script>
+if(window.testRunner)
+	testRunner.waitUntilDone();
+
+setTimeout(function() {
+	if(window.testRunner)
+		testRunner.notifyDone();
+}, 200);
+</script>
+<!--The first cross-fade should appear as a light green square with a darker green circle inside it.-->
+<div style="background-image: -webkit-cross-fade(url(resources/green-circle.svg), url(resources/green-100.png), 50%);"></div>
+</html>

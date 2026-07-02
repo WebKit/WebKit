@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Create the platform speech wrapper in the UI process so it registers as an
+// observer for AVSpeechSynthesisAvailableVoicesDidChangeNotification.
+speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+speechSynthesis.cancel();
+
+if (window.testRunner) {
+    testRunner.runUIScript(`
+        uiController.simulateAvailableSpeechVoicesDidChangeOnBackgroundThread(function() {
+            uiController.uiScriptComplete("");
+        });
+    `, function() {
+        document.body.textContent = "PASS if no crash.";
+        testRunner.notifyDone();
+    });
+} else
+    document.body.textContent = "This test requires WebKitTestRunner.";
+</script>

@@ -1,0 +1,7 @@
+
+Testing anchoring with 10 of size 10 - expect anchoring true
+PASS anchoringActive is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

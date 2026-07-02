@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+var methodName = '';
+function doTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    shouldBeEqualToString("objCPlugin['testConversionColon_'](1)", 'testConversionColon:(int)useless');
+    shouldBeEqualToString("objCPlugin['testConversionEscapeChar$$a$_b$$$__'](2)", 'testConversionEscapeChar$a_b$_:(int)useless');
+
+    // "$" alone is just ignored by the conversion.
+    shouldBeEqualToString("objCPlugin['tes$tCo$nver$sion$Col$on_'](1)", 'testConversionColon:(int)useless');
+    shouldBeEqualToString("objCPlugin['testC$onv$ersi$onEs$capeC$har$$a$_b$$$__'](2)", 'testConversionEscapeChar$a_b$_:(int)useless');
+
+    // Since "$" is skipped. Test a trailing dollar does not overflow the input.
+    shouldBeEqualToString("objCPlugin['testConversionColon_$'](1)", 'testConversionColon:(int)useless');
+    shouldBeEqualToString("objCPlugin['testConversionEscapeChar$$a$_b$$$__$'](2)", 'testConversionEscapeChar$a_b$_:(int)useless');
+
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="doTest();">
+<embed id="testCPlugin" type="application/x-webkit-test-netscape"></embed>
+<script>
+    description("Test the name conversion when invoking Objective-C from JavaScript.");
+    jsTestIsAsync=true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

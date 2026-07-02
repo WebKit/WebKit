@@ -1,0 +1,3 @@
+
+PASS history.back() does not fire a navigate event when there's nothing to navigate
+

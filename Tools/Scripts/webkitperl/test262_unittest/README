@@ -1,0 +1,7 @@
+These unit tests test:
+  webkit/Tools/Scripts/test262-runner
+
+Helper perl modules for these scripts are located in:
+  webkit/Tools/Scripts/test262/
+
+The directory  `./fixtures/test/` contains example test262 tests.

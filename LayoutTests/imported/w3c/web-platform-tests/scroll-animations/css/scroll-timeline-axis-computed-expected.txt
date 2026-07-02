@@ -1,0 +1,16 @@
+
+PASS Property scroll-timeline-axis value 'initial'
+PASS Property scroll-timeline-axis value 'inherit'
+PASS Property scroll-timeline-axis value 'unset'
+PASS Property scroll-timeline-axis value 'revert'
+PASS Property scroll-timeline-axis value 'block'
+PASS Property scroll-timeline-axis value 'inline'
+PASS Property scroll-timeline-axis value 'y'
+PASS Property scroll-timeline-axis value 'x'
+PASS Property scroll-timeline-axis value 'block, inline'
+PASS Property scroll-timeline-axis value 'inline, block'
+PASS Property scroll-timeline-axis value 'block, y, x, inline'
+PASS Property scroll-timeline-axis value 'inline, inline, inline, inline'
+PASS The scroll-timeline-axis property shows up in CSSStyleDeclaration enumeration
+PASS The scroll-timeline-axis property shows up in CSSStyleDeclaration.cssText
+

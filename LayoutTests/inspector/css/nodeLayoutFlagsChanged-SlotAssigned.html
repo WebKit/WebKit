@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+customElements.define("test-element", class TestElement extends HTMLElement {
+    connectedCallback() {
+        let shadowRoot = this.attachShadow({
+            mode: "open",
+            slotAssignment: this.id.substring(0, this.id.indexOf("-")),
+        });
+
+        this._slotElement = shadowRoot.appendChild(document.createElement("slot"));
+        this._slotElement.name = "test-slot";
+    }
+
+    assign(...nodes) {
+        this._slotElement.assign(...nodes);
+    }
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutFlagsChanged.SlotAssigned");
+
+    function addTestCase({name, selector, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+
+                let childNodeId = await documentNode.querySelector(selector + "-child");
+                let childNode = WI.domManager.nodeForId(childNodeId);
+                InspectorTest.assert(childNode, `Should find DOM Node for selector '${selector}-child'.`);
+
+                await domNodeHandler(childNode);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.SlotAssigned.Named.Empty",
+        selector: "#named-empty",
+        async domNodeHandler(childNode) {
+            InspectorTest.expectFalse(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should not be slotted.");
+
+            InspectorTest.log("Adding slot...");
+            await Promise.all([
+                childNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                InspectorTest.evaluateInPage(`document.querySelector("#named-empty-child").slot = "test-slot"`),
+            ]);
+            InspectorTest.expectTrue(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should be slotted.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.SlotAssigned.Named.Filled",
+        selector: "#named-filled",
+        async domNodeHandler(childNode) {
+            InspectorTest.expectTrue(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should be slotted.");
+
+            InspectorTest.log("Removing slot...");
+            await Promise.all([
+                childNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                InspectorTest.evaluateInPage(`document.querySelector("#named-filled-child").slot = "invalid-slot"`),
+            ]);
+            InspectorTest.expectFalse(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should not be slotted.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.SlotAssigned.Manual.Empty",
+        selector: "#manual-empty",
+        async domNodeHandler(childNode) {
+            InspectorTest.expectFalse(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should not be slotted.");
+
+            InspectorTest.log("Adding assigned node...");
+            await Promise.all([
+                childNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                InspectorTest.evaluateInPage(`document.querySelector("#manual-empty").assign(document.querySelector("#manual-empty-child"))`),
+            ]);
+            InspectorTest.expectTrue(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should be slotted.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.SlotAssigned.Manual.Filled",
+        selector: "#manual-filled",
+        async domNodeHandler(childNode) {
+            InspectorTest.expectTrue(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should be slotted.");
+
+            InspectorTest.log("Removing assigned node...");
+            await Promise.all([
+                childNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                InspectorTest.evaluateInPage(`document.querySelector("#manual-filled").assign()`),
+            ]);
+            InspectorTest.expectFalse(childNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.SlotAssigned), "Should not be slotted.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <test-element id="named-empty">
+        <span slot="invalid-slot" id="named-empty-child"></span>
+    </test-element>
+
+    <test-element id="named-filled">
+        <span slot="test-slot" id="named-filled-child"></span>
+    </test-element>
+
+    <test-element id="manual-empty">
+        <span slot="test-slot" id="manual-empty-child"></span>
+    </test-element>
+
+    <test-element id="manual-filled">
+        <span slot="invalid-slot" id="manual-filled-child"></span>
+    </test-element>
+
+    <script>
+        document.querySelector("#manual-filled").assign(document.querySelector("#manual-filled-child"));
+    </script>
+</body>
+</html>

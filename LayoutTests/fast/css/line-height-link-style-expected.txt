@@ -1,0 +1,11 @@
+This test verifies that line-height gets applied from link-only style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS regularComputedStyle.lineHeight is '100px'
+PASS linkComputedStyle.lineHeight is '200px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

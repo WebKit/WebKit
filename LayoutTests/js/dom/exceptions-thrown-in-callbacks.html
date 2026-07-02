@@ -1,0 +1,45 @@
+This test ensures that exceptions are handled correctly by the various callback mechanisms present in WebCore.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPositionUnavailableError('error');
+}
+
+function errorObject(msg) {
+    return { message: "FAIL: message incorrectly pulled from thrown object in " + msg, 
+             toString: function() {return "PASS: toString called on exception value thrown from " + msg} }
+}
+
+function eventTest() {
+    setTimeout(rafTest, 0);
+    throw errorObject("event handler");
+}
+
+function rafTest() {
+    requestAnimationFrame(function() { 
+        setTimeout(getCurrentPositionTest, 0);
+        throw errorObject("request animation callback");
+    });
+}
+
+function getCurrentPositionTest() {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        setTimeout(timerTest, 0);
+        console.log('FAIL: getCurrentPosition unexpectedly succeeded.');
+    }, function(error) {
+        setTimeout(timerTest, 0);
+        throw errorObject("position callback");
+    });
+}
+
+function timerTest() {
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 0);
+    throw errorObject("timer");
+}
+
+window.onload = eventTest;
+</script>
+

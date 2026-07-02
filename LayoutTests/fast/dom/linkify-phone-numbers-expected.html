@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests the most common cases of linkifying/not linkifying phone numbers on iOS</title>
+</head>
+<body>
+<a href="tel:408 111 222">408 111 222</a><br>
+<span><a href="tel:408 111 222">408 111 222</a></span>
+<div><a href="tel:408 111 222">408 111 222</a></div>
+<a>408 111 222</a><br>
+<a href="foobar.html">408 111 222</a>
+<pre>408 111 222</pre>
+<code>408 111 222</code>
+<div>$\displaystyle \left(x + 1234567)\right$</div>
+<math><mfrac><mn>389.1067</mn> <mn>29.1067</mn></mfrac><mo>=</mo><mn>13.3683</mn></math>
+</body>
+</html>

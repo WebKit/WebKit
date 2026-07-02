@@ -1,0 +1,6 @@
+
+PASS Moving the current snap target should make the scroller resnap to it.
+PASS Changing the layout of other elements should be able to cause resnapping to the target.
+PASS Transforming the current snap target should make the scroller resnap to it.
+PASS Applying two property changes that do not change the visual offset of the target should not change the scroll offset.
+

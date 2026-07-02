@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body>
+<p>This tests observing a disconnected element twice. WebKit should not hit any assertions.</p>
+<div id="result"></div>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            testRunner.notifyDone();
+        }, 0);
+    })
+}
+
+let container = document.createElement('div');
+const observer = new ResizeObserver(() => {
+    result.textContent = 'PASS';
+});
+observer.observe(container);
+observer.observe(container, {box: 'border-box'});
+
+</script>

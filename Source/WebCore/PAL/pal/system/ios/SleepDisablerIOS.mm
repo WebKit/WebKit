@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "SleepDisablerCocoa.h"
+
+#if PLATFORM(IOS_FAMILY)
+#import "Logging.h"
+#import <pal/spi/ios/UIKitSPI.h>
+#import <wtf/NeverDestroyed.h>
+
+#import <pal/ios/UIKitSoftLink.h>
+
+namespace PAL {
+
+class ScreenSleepDisabler {
+public:
+    static ScreenSleepDisabler& singleton()
+    {
+        static MainThreadNeverDestroyed<ScreenSleepDisabler> screenSleepDisabler;
+        return screenSleepDisabler;
+    }
+
+    ScreenSleepDisablerCounterToken takeAssertion()
+    {
+        return m_screenSleepDisablerCount.count();
+    }
+
+    void setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
+    {
+        m_screenWakeLockHandler = WTF::move(screenWakeLockHandler);
+    }
+
+private:
+    friend NeverDestroyed<ScreenSleepDisabler, WTF::MainThreadAccessTraits>;
+
+    ScreenSleepDisabler()
+        : m_screenSleepDisablerCount([this](RefCounterEvent) { updateState(); })
+    { }
+
+    void updateState()
+    {
+        if (m_screenSleepDisablerCount.value() > 1)
+            return;
+
+        bool shouldKeepScreenAwake = !!m_screenSleepDisablerCount.value();
+        RELEASE_LOG(Media, "ScreenSleepDisabler::updateState() shouldKeepScreenAwake=%d", shouldKeepScreenAwake);
+        ensureOnMainRunLoop([this, shouldKeepScreenAwake] {
+            if (m_screenWakeLockHandler && m_screenWakeLockHandler(shouldKeepScreenAwake))
+                return;
+            [[PAL::getUIApplicationClassSingleton() sharedApplication] _setIdleTimerDisabled:shouldKeepScreenAwake forReason:@"WebKit SleepDisabler"];
+        });
+    }
+    ScreenSleepDisablerCounter m_screenSleepDisablerCount;
+    Function<bool(bool shouldKeepScreenAwake)> m_screenWakeLockHandler;
+};
+
+void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String&)
+{
+    m_screenSleepDisablerToken = ScreenSleepDisabler::singleton().takeAssertion();
+}
+
+void SleepDisablerCocoa::setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
+{
+    ScreenSleepDisabler::singleton().setScreenWakeLockHandler(WTF::move(screenWakeLockHandler));
+}
+
+} // namespace PAL
+
+#endif // PLATFORM(IOS_FAMILY)

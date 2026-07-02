@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.scroller {
+    margin-top: 200px;
+    width: 300px;
+    height: 300px;
+    overflow: scroll;
+    border: 1px solid black;
+}
+.contents {
+    width: 500px;
+    height: 500px;
+}
+</style>
+</head>
+<body>
+<div class="scroller">
+    <div class="contents">
+        <input type="text">
+        <div style="margin-top: 225px; margin-left: 10px; border: 1px solid blue; width: 300px; height: 100px;" contenteditable="true"></div>
+    </div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+if (window.internals)
+    results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+PASS scrollIntoView in same-origin iframe can scroll in inner window
+PASS scrollIntoView in same-origin iframe can scroll in parent window
+PASS scrollIntoView in cross-origin iframe can scroll in inner window
+PASS scrollIntoView in cross-origin iframe can't scroll in parent window
+
+

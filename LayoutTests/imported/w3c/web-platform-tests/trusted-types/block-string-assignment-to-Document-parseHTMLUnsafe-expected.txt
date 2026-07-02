@@ -1,0 +1,7 @@
+
+PASS Document.parseHTMLUnsafe assigned via policy (successful HTML transformation).
+PASS `Document.parseHTMLUnsafe(string)` throws.
+PASS 'Document.parseHTMLUnsafe(null)' throws
+PASS 'Document.parseHTMLUnsafe(string)' assigned via default policy (successful HTML transformation).
+PASS 'Document.parseHTMLUnsafe(null)' assigned via default policy does not throw
+

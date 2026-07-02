@@ -1,0 +1,5 @@
+
+PASS target1 should scroll with anchor1
+PASS target2 should scroll with anchor2
+PASS target3 should scroll with anchor3
+

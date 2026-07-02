@@ -1,0 +1,44 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# GPU utilities shared by Graphite and Ganesh testing
+skia_cc_library(
+    name = "shared_utils",
+    testonly = True,
+    srcs = [
+        "BackendSurfaceFactory.cpp",
+        "BackendSurfaceFactory.h",
+        "BackendTextureImageFactory.cpp",
+        "BackendTextureImageFactory.h",
+        "CompressedTexture.cpp",
+        "ContextType.cpp",
+        "FlushFinishTracker.cpp",
+        "FlushFinishTracker.h",
+        "ManagedBackendTexture.cpp",
+        "ManagedBackendTexture.h",
+    ],
+    hdrs = [
+        "CompressedTexture.h",
+        "ContextType.h",
+        "ProtectedUtils.h",
+    ],
+    visibility = [
+        "//bench:__subpackages__",
+        "//modules/skottie:__pkg__",
+        "//tools:__subpackages__",
+        "//tools/ganesh:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        # Currently the cpp/h files in this target are not cleanly separated into pure shared,
+        # ganesh, and graphite pieces. So we still rely on Ganesh macros and includes.
+        "//src/gpu/ganesh:ganesh_TEST_UTIL",
+    ],
+)

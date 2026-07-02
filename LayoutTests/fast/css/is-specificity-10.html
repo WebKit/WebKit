@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    /* Specificity (3, 0, 2). */
+    #f#f#f > padding > target {
+        background-color: purple;
+    }
+
+    /* Specificity (1, 0, 2). */
+    #f > padding > target {
+        background-color: red;
+        color: green;
+    }
+
+    /* Specificity (0, 0, 5) */
+    padding padding foo padding target {
+        color: green;
+    }
+
+    /* Specificity (0, 0, 4) */
+    padding padding padding target {
+        border: 5px blue solid;
+    }
+
+    /* Specificity (3, 0, 1) */
+    :is(aBlock, #b) > :is(#c, d) > :is(e, #f) target {
+        background-color: green;
+        color: white;
+        border: none;
+    }
+
+    /* Specificity (3, 0, 2) */
+    #c#c#c padding target {
+        background-color: green;
+    }
+
+    /* Specificity (3, 0, 1) */
+    #f#f#f target {
+        background-color: green;
+    }
+
+    /* Specificity (3, 0, 2) */
+    a #f#f#f target {
+        color: green;
+    }
+</style>
+</head>
+<body>
+    <foo id="b">
+        <foo id="c">
+            <e> <!-- Success case from here. -->
+                <padding>
+                    <b> <!-- Fail here as we need <aBlock> or #b -->
+                        <d>
+                            <e>
+                                <padding>
+                                    <aBlock>
+                                        <c> <!-- Fail here as we need <d> or #c -->
+                                            <foo id="f">
+                                                <padding>
+                                                    <target>White text on green background.</target>
+                                                </padding>
+                                            </foo>
+                                        </c>
+                                    </aBlock>
+                                </padding>
+                            </e>
+                        </d>
+                    </b>
+                <padding>
+            </e>
+        </foo>
+    </foo>
+
+    <foo id="b">
+        <d>
+            <e> <!-- Success case from here. -->
+                <padding>
+                    <b> <!-- Fail here as we need <aBlock> or #b -->
+                        <d>
+                            <e>
+                                <padding>
+                                    <aBlock>
+                                        <c> <!-- Fail here as we need <d> or #c -->
+                                            <foo id="f">
+                                                <padding>
+                                                    <target>White text on purple background.</target>
+                                                </padding>
+                                            </foo>
+                                        </c>
+                                    </aBlock>
+                                </padding>
+                            </e>
+                        </d>
+                    </b>
+                <padding>
+            </e>
+        </d>
+    </foo>
+
+    <aBlock>
+        <d>
+            <e> <!-- Success case from here. -->
+                <padding>
+                    <b> <!-- Fail here as we need <aBlock> or #b -->
+                        <d>
+                            <e>
+                                <padding>
+                                    <a>
+                                        <c> <!-- Fail here as we need <d> or #c -->
+                                            <foo id="f">
+                                                <padding>
+                                                    <target>Green text on purple background.</target>
+                                                </padding>
+                                            </foo>
+                                        </c>
+                                    </a>
+                                </padding>
+                            </e>
+                        </d>
+                    </b>
+                <padding>
+            </e>
+        </d>
+    </aBlock>
+</body>
+</html>

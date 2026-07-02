@@ -1,0 +1,70 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/basic-gestures.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        #overflow_container {
+            height: 300px;
+            overflow: scroll;
+            border: 2px solid black;
+        }
+
+        #overflow {
+            background: linear-gradient(180deg, rgba(255, 199, 153, 1) 0%, rgba(255, 0, 102, 1) 100%);
+            height: 600px;
+        }
+    </style>
+</head>
+<script>
+    jsTestIsAsync = true;
+    testRunner.dumpAsText();
+
+    async function scroll() {
+        var fromX = overflow_container.offsetLeft + 50;
+        var fromY = overflow_container.offsetTop + overflow_container.offsetHeight - 5;
+        var toX = fromX;
+        var toY = fromY - 100;
+        await touchAndDragFromPointToPoint(fromX, fromY, toX, toY);
+        await liftUpAtPoint(toX, toY);
+        overflow_container.scrollTop = 0;
+    }
+
+    async function scrollAndCheckIfPositionInformationUpdated(correctValue) {
+        await scroll();
+        didWait = await UIHelper.didCallEnsurePositionInformationIsUpToDateSinceLastCheck();
+        if (didWait == correctValue)
+            testPassed("After navigating from a page with model elements to a page without any and performing the scroll gesture, ensurePositionInformationIsUpToDate was not called.");
+        else
+            testFailed("After navigating from a page with model elements to a page without any and performing the scroll gesture, ensurePositionInformationIsUpToDate was called but should not have been.");
+    }
+
+    addEventListener("load", async () => {
+        if (window.testRunner) {
+            description(`ensurePositionInformationIsUpToDate should only be called when a scroll gesture occurs if a model
+                element exists in the page. After navigating from a page with a model element to a page without one and
+                attempting to scroll, ensurePositionInformationIsUpToDate should not be called.`);
+
+            await scrollAndCheckIfPositionInformationUpdated(false);
+            finishJSTest();
+        }
+    });
+</script>
+<body>
+    <div id="overflow_container">
+        <div id="overflow"></div>
+    </div>
+    <div id="model-container">
+    </div>
+    <div id="console"></div>
+</body>
+</html>

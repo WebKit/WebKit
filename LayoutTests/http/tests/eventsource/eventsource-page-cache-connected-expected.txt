@@ -1,0 +1,22 @@
+Tests that a page with an EventSource that is connected can enter the PageCache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+PASS Received open event
+PASS Received message before entering page cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page did enter and was restored from the page cache
+PASS Received error event
+PASS restoredFromPageCache is true
+PASS openEventCount is 1
+PASS Received open event
+PASS Received message after restoring from page cache
+PASS openEventCount is 2
+PASS errorEventCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

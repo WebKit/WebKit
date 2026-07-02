@@ -1,0 +1,65 @@
+<style>
+div {
+  width: 80px;
+  word-break: break-all;
+}
+.inline-block {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: blue;
+}
+</style>
+<div id=text_container>some text content</div>
+<div id=mixed_container>some <div class=inline-block></div> and more</div>
+<script>
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode("and more"));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode(" and more"));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode("and more "));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode(" and more "));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode("and some more more"));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode("and more more more"));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode(" and more more more more more "));
+document.body.offsetHeight;
+text_container.appendChild(document.createTextNode("and this last one."));
+
+
+function createInlineBlock() {
+  let inline_block = document.createElement("div");
+  inline_block.className = "inline-block";
+  return inline_block;
+};
+
+document.body.offsetHeight;
+mixed_container.appendChild(document.createTextNode("and more"));
+document.body.offsetHeight;
+mixed_container.appendChild(document.createTextNode(" and more"));
+document.body.offsetHeight;
+
+mixed_container.appendChild(createInlineBlock());
+mixed_container.appendChild(document.createTextNode("and more "));
+document.body.offsetHeight;
+
+mixed_container.appendChild(document.createTextNode(" and more "));
+document.body.offsetHeight;
+
+mixed_container.appendChild(document.createTextNode("and some more more"));
+mixed_container.appendChild(createInlineBlock());
+document.body.offsetHeight;
+
+mixed_container.appendChild(document.createTextNode("and more more more"));
+document.body.offsetHeight;
+mixed_container.appendChild(document.createTextNode(" and more more more more more "));
+mixed_container.appendChild(createInlineBlock());
+
+document.body.offsetHeight;
+mixed_container.appendChild(document.createTextNode("and this last one."));
+
+</script>

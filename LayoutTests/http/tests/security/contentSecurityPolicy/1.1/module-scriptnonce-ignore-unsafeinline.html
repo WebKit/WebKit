@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'nonce-noncynonce' 'nonce-noncy+/=nonce' 'unsafe-inline'">
+        <script nonce="noncynonce">
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function done(msg) {
+            document.querySelector("pre").innerHTML = msg;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        </script>
+        <script type="module">
+            alert('FAIL (1/1)');
+        </script>
+        <script type="module" nonce="noncynonce">
+            alert('PASS (1/2)');
+        </script>
+        <script type="module" nonce="noncy+/=nonce">
+            alert('PASS (2/2)');
+            done("PASS");
+        </script>
+    </head>
+    <body>
+        <p>
+            This tests that a valid nonce disables inline JavaScript, even if 'unsafe-inline' is present.
+        </p>
+        <pre></pre>
+    </body>
+</html>

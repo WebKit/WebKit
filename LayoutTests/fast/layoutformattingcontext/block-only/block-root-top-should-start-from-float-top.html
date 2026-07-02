@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+.left {
+  float: left;
+  width: 100px;
+  height: 40px;
+}
+
+.avoider {
+  width: auto;
+  height: 60px;
+}
+</style>
+<div style="background-color: green; width: 300px; overflow: hidden;">
+  <div class=left></div>
+  <div class=avoider style="clear: left"></div>
+  <div class=left style="height: 300px"></div>
+</div>

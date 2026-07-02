@@ -1,0 +1,183 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# In own group for exporting to sksl.gni:skslc_deps.
+CORE_SKSLC_FILES = [
+    "SkParse.cpp",
+    "SkOSPath.h",
+    "SkOSPath.cpp",
+    "SkShaderUtils.cpp",
+    "SkShaderUtils.h",
+]
+
+split_srcs_and_hdrs(
+    name = "utils_skslc",
+    files = CORE_SKSLC_FILES,
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = [
+        "SkBitSet.h",
+        "SkCallableTraits.h",
+        "SkCanvasStack.h",
+        "SkDashPathPriv.h",
+        "SkJSONWriter.h",
+        "SkMatrix22.h",
+        "SkOSPath.h",
+        "SkPatchUtils.h",
+        "SkPolyUtils.h",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = [
+        "SkCamera.cpp",
+        "SkCanvasStack.cpp",
+        "SkCustomTypeface.cpp",
+        "SkDashPath.cpp",
+        "SkEventTracer.cpp",
+        "SkFloatUtils.h",
+        "SkJSONWriter.cpp",
+        "SkMatrix22.cpp",
+        "SkNWayCanvas.cpp",
+        "SkNullCanvas.cpp",
+        "SkOSPath.cpp",
+        "SkOrderedFontMgr.cpp",
+        "SkPaintFilterCanvas.cpp",
+        "SkParse.cpp",
+        "SkParseColor.cpp",
+        "SkParsePath.cpp",
+        "SkPatchUtils.cpp",
+        "SkPolyUtils.cpp",
+        "SkShadowTessellator.cpp",
+        "SkShadowTessellator.h",
+        "SkShadowUtils.cpp",
+        "SkTextUtils.cpp",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "canvas_state_utils",
+    srcs = [
+        "SkCanvasStateUtils.cpp",
+    ],
+)
+
+skia_cc_library(
+    name = "shader_utils",
+    srcs = [
+        "SkShaderUtils.cpp",
+    ],
+    hdrs = [
+        "SkShaderUtils.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//src/gpu:__pkg__",
+        "//src/gpu/ganesh/gl:__pkg__",
+        "//src/gpu/ganesh/vk:__pkg__",
+        "//src/gpu/graphite:__pkg__",
+        "//src/gpu/graphite/vk:__pkg__",
+        "//src/sksl/codegen:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "multi_picture_document",
+    srcs = [
+        "SkMultiPictureDocument.cpp",
+        "SkMultiPictureDocumentPriv.h",
+    ],
+    hdrs = [
+        "//include/docs:multi_picture_document_hdrs",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//dm:__pkg__",
+        "//tools:__pkg__",
+        "//tools/debugger:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+    ],
+)
+
+skia_cc_library(
+    name = "float_to_decimal",
+    srcs = [
+        "SkFloatToDecimal.cpp",
+    ],
+    hdrs = [
+        "SkFloatToDecimal.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//src/pdf:__pkg__",
+    ],
+    deps = [
+        "//:core",
+    ],
+)
+
+skia_cc_library(
+    name = "clip_stack_utils",
+    srcs = [
+        "SkClipStackUtils.cpp",
+    ],
+    hdrs = [
+        "SkClipStackUtils.h",
+    ],
+    features = ["layering_check"],
+    visibility = [
+        "//src/pdf:__pkg__",
+    ],
+    deps = [
+        "//:pathops",
+        "//src/core",
+        "//src/core:core_priv",
+    ],
+)
+
+skia_cc_library(
+    name = "get_executable_path",
+    srcs = select({
+        "@platforms//os:windows": ["SkGetExecutablePath_win.cpp"],
+        "@platforms//os:macos": ["SkGetExecutablePath_mac.cpp"],
+        "@platforms//os:linux": ["SkGetExecutablePath_linux.cpp"],
+    }),
+    hdrs = ["SkGetExecutablePath.h"],
+    features = ["layering_check"],
+    visibility = [
+        "//src/core:__pkg__",
+        "//tools/sksl-minify:__pkg__",
+    ],
+)
+
+skia_cc_library(
+    name = "char_to_glyphcache",
+    srcs = ["SkCharToGlyphCache.cpp"],
+    hdrs = ["SkCharToGlyphCache.h"],
+    features = ["layering_check"],
+    visibility = [
+        "//src/ports:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+    ],
+)

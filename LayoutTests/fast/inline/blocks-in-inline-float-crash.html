@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<div>
+  <span>
+    <div id=change_this>
+      <p style="float: left"></p>
+    </div>
+  </span>
+  <div>
+    <span>
+      <div>PASS if no crash or assert.</div>
+    </span>
+  </div>
+</div>
+<script>
+change_this.style.position = 'absolute';
+</script>

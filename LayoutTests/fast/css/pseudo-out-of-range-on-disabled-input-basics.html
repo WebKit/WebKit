@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+      :out-of-range {
+          background-color: red;
+          color: green;
+          border: 2px solid blue;
+          -webkit-appearance: none;
+      }
+      #testcase * {
+          margin: 0;
+          padding: 0;
+      }
+      #testcase input {
+          width: 50px;
+      }
+  </style>
+</head>
+<body>
+    <p>Check styling of disabled input elements with the :out-of-range pseudo selector</p>
+    <div id=testcase>
+        <div>
+            <input type="text" disabled>
+            <input type="text" disabled min=1>
+            <input type="text" disabled min=1 value=0>
+            <input type="text" disabled min=1 value=1>
+            <input type="text" disabled max=42>
+            <input type="text" disabled max=42 value=42>
+            <input type="text" disabled max=42 value=43>
+            <input type="text" disabled min=1 max=42>
+            <input type="text" disabled min=1 max=42 value=0>
+            <input type="text" disabled min=1 max=42 value=1>
+            <input type="text" disabled min=1 max=42 value=2>
+            <input type="text" disabled min=1 max=42 value=41>
+            <input type="text" disabled min=1 max=42 value=42>
+            <input type="text" disabled min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="number" disabled>
+            <input type="number" disabled min=1>
+            <input type="number" disabled min=1 value=0>
+            <input type="number" disabled min=1 value=1>
+            <input type="number" disabled max=42>
+            <input type="number" disabled max=42 value=42>
+            <input type="number" disabled max=42 value=43>
+            <input type="number" disabled min=1 max=42>
+            <input type="number" disabled min=1 max=42 value=0>
+            <input type="number" disabled min=1 max=42 value=1>
+            <input type="number" disabled min=1 max=42 value=2>
+            <input type="number" disabled min=1 max=42 value=41>
+            <input type="number" disabled min=1 max=42 value=42>
+            <input type="number" disabled min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="number" disabled min>
+            <input type="number" disabled min value=0>
+            <input type="number" disabled max>
+            <input type="number" disabled max value=42>
+            <input type="number" disabled min max>
+            <input type="number" disabled min max=42>
+            <input type="number" disabled min=1 max>
+            <input type="number" disabled min max value=0>
+            <input type="number" disabled min=1 max value=0>
+            <input type="number" disabled min=1 max value=1>
+            <input type="number" disabled min max=42 value=42>
+            <input type="number" disabled min max=42 value=43>
+        </div>
+        <div>
+            <input type="number" disabled min="webkit">
+            <input type="number" disabled min="webkit" value=0>
+            <input type="number" disabled max="webkit">
+            <input type="number" disabled max="webkit" value=42>
+            <input type="number" disabled min="webkit" max="webkit">
+            <input type="number" disabled min="webkit" max=42>
+            <input type="number" disabled min=1 max="webkit">
+            <input type="number" disabled min="webkit" max="webkit" value=0>
+            <input type="number" disabled min=1 max="webkit" value=0>
+            <input type="number" disabled min=1 max="webkit" value=1>
+            <input type="number" disabled min="webkit" max=42 value=42>
+            <input type="number" disabled min="webkit" max=42 value=43>
+        </div>
+        <div>
+            <input type="range" disabled>
+            <input type="range" disabled min=1>
+            <input type="range" disabled min=1 value=0>
+            <input type="range" disabled min=1 value=1>
+            <input type="range" disabled max=42>
+            <input type="range" disabled max=42 value=42>
+            <input type="range" disabled max=42 value=43>
+            <input type="range" disabled min=1 max=42>
+            <input type="range" disabled min=1 max=42 value=0>
+            <input type="range" disabled min=1 max=42 value=1>
+            <input type="range" disabled min=1 max=42 value=2>
+            <input type="range" disabled min=1 max=42 value=41>
+            <input type="range" disabled min=1 max=42 value=42>
+            <input type="range" disabled min=1 max=42 value=43>
+        </div>
+        <div>
+            <input type="range" disabled min>
+            <input type="range" disabled min value=0>
+            <input type="range" disabled max>
+            <input type="range" disabled max value=42>
+            <input type="range" disabled min max>
+            <input type="range" disabled min max=42>
+            <input type="range" disabled min=1 max>
+            <input type="range" disabled min max value=0>
+            <input type="range" disabled min=1 max value=0>
+            <input type="range" disabled min=1 max value=1>
+            <input type="range" disabled min max=42 value=42>
+            <input type="range" disabled min max=42 value=43>
+        </div>
+        <div>
+            <input type="range" disabled min="webkit">
+            <input type="range" disabled min="webkit" value=0>
+            <input type="range" disabled max="webkit">
+            <input type="range" disabled max="webkit" value=42>
+            <input type="range" disabled min="webkit" max="webkit">
+            <input type="range" disabled min="webkit" max=42>
+            <input type="range" disabled min=1 max="webkit">
+            <input type="range" disabled min="webkit" max="webkit" value=0>
+            <input type="range" disabled min=1 max="webkit" value=0>
+            <input type="range" disabled min=1 max="webkit" value=1>
+            <input type="range" disabled min="webkit" max=42 value=42>
+            <input type="range" disabled min="webkit" max=42 value=43>
+        </div>
+    </div>
+</body>
+</html>

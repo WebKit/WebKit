@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-samples-out-of-order</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var mediaSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        consoleWrite('First segment has normal, monotonically increasing samples, and ends with two key frames.');
+        mediaSegment = concatenateSamples([
+            makeAInit(4, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(0, 0, 2, 1, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample(2, 2, 2, 1, 0, SAMPLE_FLAG.NONE, 0),
+            makeASample(4, 4, 2, 1, 0, SAMPLE_FLAG.SYNC, 0),
+            makeASample(6, 6, 2, 1, 0, SAMPLE_FLAG.SYNC, 0),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 4);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite('Second, overlapping segment has out-of-display-order samples. This append should replace the last two samples from the previous append.');
+        mediaSegment = concatenateSamples([
+            makeAInit(3, [makeATrack(0, 'mock', TRACK_KIND.VIDEO)]),
+            makeASample(8,  3, 2, 1, 0, SAMPLE_FLAG.SYNC, 1),
+            makeASample(10, 5, 2, 1, 0, SAMPLE_FLAG.NONE, 1),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 0);
+        testExpected("bufferedSamples.length", 4);
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

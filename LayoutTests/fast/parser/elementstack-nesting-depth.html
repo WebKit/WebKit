@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('Test that element stack successfully handles large amount of nested divs. This test passes if it does not timeout.');
+
+const depth = 500000;
+let markup = "";
+for (let i = 0; i < depth; ++i)
+    markup += "<div id='d" + i + "'>";
+const doc = document.implementation.createHTMLDocument();
+doc.body.innerHTML = markup;
+</script>
+</body>
+</html>

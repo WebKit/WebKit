@@ -1,0 +1,125 @@
+load("//bazel:flags.bzl", "selects")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# @platforms is found at https://github.com/bazelbuild/platforms
+
+config_setting(
+    name = "linux_x64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:linux",
+    ],
+)
+
+# Apple devices with intel processors released before the shift to the M1 chip
+# will use this config setting.
+config_setting(
+    name = "mac_x64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:macos",
+    ],
+)
+
+# M1 Macs (and later) will use this setting.
+config_setting(
+    name = "mac_arm64",
+    constraint_values = [
+        "@platforms//cpu:arm64",
+        "@platforms//os:macos",
+    ],
+)
+
+config_setting(
+    name = "windows_x64",
+    constraint_values = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:windows",
+    ],
+)
+
+config_setting(
+    name = "linux_arm64",
+    constraint_values = [
+        "@platforms//cpu:arm64",
+        "@platforms//os:linux",
+    ],
+)
+
+config_setting(
+    name = "debug_build",
+    values = {"compilation_mode": "dbg"},
+)
+
+config_setting(
+    name = "fast_build",
+    values = {"compilation_mode": "fastbuild"},
+)
+
+config_setting(
+    name = "release_build",
+    values = {"compilation_mode": "opt"},
+)
+
+constraint_value(
+    name = "fuchsia",
+    constraint_setting = "@platforms//os:os",
+)
+
+config_setting(
+    name = "fuchsia_arm64",
+    constraint_values = [
+        "@platforms//cpu:arm64",
+        ":fuchsia",
+    ],
+)
+
+# We define this here because the emscripten toolchain calls the cpu wasm, whereas the
+# bazelbuild/platforms call it wasm32. https://github.com/emscripten-core/emsdk/issues/919
+config_setting(
+    name = "cpu_wasm",
+    values = {
+        "cpu": "wasm",
+    },
+)
+
+selects.config_setting_group(
+    name = "release_build_mac",
+    match_all = [
+        "@platforms//os:macos",
+        ":release_build",
+    ],
+    visibility = ["//:__subpackages__"],
+)
+
+selects.config_setting_group(
+    name = "release_build_linux",
+    match_all = [
+        "@platforms//os:linux",
+        ":release_build",
+    ],
+    visibility = ["//:__subpackages__"],
+)
+
+selects.config_setting_group(
+    name = "fast_build_mac",
+    match_all = [
+        "@platforms//os:macos",
+        ":fast_build",
+    ],
+    visibility = ["//:__subpackages__"],
+)
+
+selects.config_setting_group(
+    name = "fast_build_linux",
+    match_all = [
+        "@platforms//os:linux",
+        ":fast_build",
+    ],
+    visibility = ["//:__subpackages__"],
+)

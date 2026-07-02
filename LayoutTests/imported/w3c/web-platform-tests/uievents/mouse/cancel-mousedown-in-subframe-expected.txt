@@ -1,0 +1,6 @@
+Dragging the mouse from child frame to parent frame causes both mousedown and mouseup events being dispatched to child frame, regardless of whether the mousedown event is canceled or not.
+
+
+PASS Child frame receives mousedown/mouseup when mousedown is not-canceled
+PASS Child frame receives mousedown/mouseup when mousedown is canceled
+

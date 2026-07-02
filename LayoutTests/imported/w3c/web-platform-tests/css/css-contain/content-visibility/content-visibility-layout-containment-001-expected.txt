@@ -1,0 +1,14 @@
+
+PASS content-visibility: visible
+PASS content-visibility: hidden
+PASS content-visibility: auto (far from viewport)
+PASS content-visibility: auto (close from viewport)
+PASS switching content-visibility from visible to hidden
+PASS switching content-visibility from hidden to visible
+PASS switching content-visibility from visible to auto
+PASS switching content-visibility from auto to visible
+X
+X
+X
+X
+

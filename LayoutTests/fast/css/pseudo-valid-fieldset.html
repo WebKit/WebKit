@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        fieldset {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+        :valid {
+            background-color: green;
+        }
+        :not(:valid) {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <p>Test the styling with the pseudo class :valid with the &lt;fieldset&gt; element.</p>
+
+    <!-- Fieldset by itself. -->
+    <fieldset>Text</fieldset>
+
+    <!-- Fieldset with a direct child inputs without any requirements. -->
+    <fieldset>
+        Text
+        <input>
+        <input value>
+        <input value="text">
+    </fieldset>
+
+    <!-- Fieldset with an indirect direct child inputs without any requirements. -->
+    <fieldset>
+        Text
+        <div>
+            Text
+            <div>
+                Text
+                <input>
+                <input value>
+                <input value="text">
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Fieldset with a direct child inputs with unsatisfied requirements. -->
+    <fieldset>
+        <input required>
+        <input required value>
+        <input required value="">
+    </fieldset>
+
+    <!-- Fieldset with an indirect direct child inputs with unsatisfied requirements. -->
+    <fieldset>
+        Text
+        <div>
+            Text
+            <div>
+                Text
+                <input required>
+                <input required value>
+                <input required value="">
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Fieldset with a direct child inputs with satisfied requirements. -->
+    <fieldset>
+        <input required value="text">
+    </fieldset>
+
+    <!-- Fieldset with an indirect direct child inputs with satisfied requirements. -->
+    <fieldset>
+        Text
+        <div>
+            Text
+            <div>
+                Text
+                <input required value="text">
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Fieldset with a direct child inputs with a mix of satisfied and unsatisfied requirements. -->
+    <fieldset>
+        <input required>
+        <input required value>
+        <input required value="">
+        <input required value="text">
+    </fieldset>
+
+    <!-- Fieldset with an indirect direct child inputs with satisfied and unsatisfied requirements. -->
+    <fieldset>
+        Text
+        <div>
+            Text
+            <div>
+                Text
+                <input required>
+                <input required value>
+                <input required value="">
+                <input required value="text">
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- The cases above repeated with multiple nested fieldset -->
+    <fieldset>
+        <div>
+            <fieldset>
+                <fieldset>
+                    Text
+                    <div>
+                        Text
+                        <div>
+                            Text
+                            <input>
+                            <input value>
+                            <input value="text">
+                        </div>
+                    </div>
+                </fieldset>
+            </fieldset>
+        </div>
+    </fieldset>
+    <fieldset>
+        <div>
+            <fieldset>
+                <fieldset>
+                    Text
+                    <div>
+                        Text
+                        <div>
+                            Text
+                            <input required>
+                            <input required value>
+                            <input required value="">
+                        </div>
+                    </div>
+                </fieldset>
+            </fieldset>
+        </div>
+    </fieldset>
+    <fieldset>
+        <div>
+            <fieldset>
+                <fieldset>
+                    Text
+                    <div>
+                        Text
+                        <div>
+                            Text
+                            <input required value="text">
+                        </div>
+                    </div>
+                </fieldset>
+            </fieldset>
+        </div>
+    </fieldset>
+    <fieldset>
+        <div>
+            <fieldset>
+                <fieldset>
+                    Text
+                    <div>
+                        Text
+                        <div>
+                            Text
+                            <input required>
+                            <input required value>
+                            <input required value="">
+                            <input required value="text">
+                        </div>
+                    </div>
+                </fieldset>
+            </fieldset>
+        </div>
+    </fieldset>
+</body>
+</html>

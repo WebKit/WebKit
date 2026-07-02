@@ -1,0 +1,11 @@
+
+PASS update() should succeed when new script is available.
+PASS update() should fail when mime type is invalid.
+FAIL update() should fail when a response for the main script is redirect. promise_rejects_js: function "function() { throw e }" threw object "SecurityError: Script https://localhost:9443/service-workers/service-worker/resources/update-worker.py?Key=8d35aa07-06e8-4e20-a316-320b99a87c5b&Mode=redirect load failed" ("SecurityError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+PASS update() should fail when a new script contains a syntax error.
+PASS update() should resolve when the install event throws.
+PASS update() should fail when the pending uninstall flag is set.
+PASS update() should succeed when the script shrinks.
+

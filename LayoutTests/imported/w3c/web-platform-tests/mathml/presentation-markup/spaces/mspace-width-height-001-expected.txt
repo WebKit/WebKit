@@ -1,0 +1,6 @@
+
+PASS width attribute + width property
+PASS height/depth attributes + height property
+PASS height attribute + height property
+PASS depth attribute + height property
+

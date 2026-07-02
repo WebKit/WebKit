@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-as-img-output-pts</title>
+    <script src="video-test.js"></script>
+    <script>
+
+    window.addEventListener('load', async event => {
+        consoleWrite('Tests that an &lt;img&gt; with a .mp4 source where that .mp4 has an edit list will correctly decode.')
+        run("img = new Image()");
+        run("img.src = 'content/video-as-img.mp4'");
+        run("promise = img.decode()");
+
+        await shouldResolve(promise);
+
+        endTest();
+    });
+    </script>
+</head>
+</html>

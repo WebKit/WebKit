@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="testDiv"></div>
+<script>
+description("Test support for CSSStyleDeclaration.cssFloat");
+
+const testDiv = document.getElementById("testDiv");
+shouldBeTrue("'cssFloat' in testDiv.style");
+shouldBe("Object.getOwnPropertyNames(testDiv.style).indexOf('cssFloat')", "-1");
+shouldBeTrue("Object.getOwnPropertyNames(Object.getPrototypeOf(testDiv.style)).indexOf('cssFloat') != -1");
+
+shouldBeEqualToString("testDiv.style.cssFloat", "");
+evalAndLog("testDiv.style.cssFloat = 'right'");
+shouldBeEqualToString("testDiv.style.cssFloat", "right");
+
+evalAndLog("testDiv.style.cssFloat = 'invalid'");
+shouldBeEqualToString("testDiv.style.cssFloat", "right");
+
+evalAndLog("testDiv.style.cssFloat = 'left'");
+shouldBeEqualToString("testDiv.style.cssFloat", "left");
+
+evalAndLog("testDiv.style.cssFloat = null");
+shouldBeEqualToString("testDiv.style.cssFloat", "");
+</script>
+</body>
+</html>

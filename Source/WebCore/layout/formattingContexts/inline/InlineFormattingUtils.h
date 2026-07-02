@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "BlockLayoutState.h"
+#include "InlineLine.h"
+#include "InlineLineBuilder.h"
+#include <WebCore/InlineLineTypes.h>
+
+namespace WebCore {
+namespace Layout {
+
+class FloatingContext;
+class InlineFormattingContext;
+class InlineLevelBox;
+
+class InlineFormattingUtils {
+public:
+    InlineFormattingUtils(const InlineFormattingContext&);
+
+    InlineLayoutUnit logicalTopForNextLine(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&) const;
+
+    enum class IsIntrinsicWidthMode : bool { No, Yes };
+    enum class LineEndsWithLineBreak : bool { No, Yes };
+    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, IsFirstFormattedLine, std::optional<LineEndsWithLineBreak> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const;
+
+    bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&) const;
+
+    InlineLayoutUnit initialLineHeight(bool isFirstLine) const;
+
+    FloatingContext::Constraints floatConstraintsForLine(InlineLayoutUnit lineLogicalTop, InlineLayoutUnit contentLogicalHeight, const FloatingContext&) const;
+
+    static InlineRect NODELETE flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
+
+    static InlineLayoutUnit horizontalAlignmentOffset(const Style::ComputedStyle& rootStyle, InlineLayoutUnit contentLogicalRight, InlineLayoutUnit lineLogicalRight, InlineLayoutUnit hangingTrailingWidth, bool isLastLineOrLineEndsWithForcedLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride = std::nullopt);
+
+    static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveOrNewlyPlacedFloat, InlineItemPosition layoutRangeEnd);
+
+    InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const;
+
+    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, std::span<const InlineItem>) const;
+
+    static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
+
+    static LineEndingTruncationPolicy NODELETE lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful);
+
+    static std::optional<LineLayoutResult::InlineContentEnding> inlineContentEnding(const Line::Result&);
+
+    bool NODELETE shouldDiscardRemainingContentInBlockDirection() const;
+
+    enum class SnapDirection : uint8_t { Floor, Ceil, Round };
+    static InlineLayoutUnit snapToInt(InlineLayoutUnit, const InlineLevelBox&, SnapDirection = SnapDirection::Round);
+    static InlineLayoutUnit snapToInt(InlineLayoutUnit, const Box&, SnapDirection = SnapDirection::Round);
+
+    static InlineLayoutUnit NODELETE ascent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
+    static InlineLayoutUnit NODELETE descent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
+
+    static InlineLayoutUnit ascent(const FontMetrics&, FontBaseline, const Box&);
+    static InlineLayoutUnit descent(const FontMetrics&, FontBaseline, const Box&);
+
+private:
+    bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;
+
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
+
+private:
+    const InlineFormattingContext& m_inlineFormattingContext;
+};
+
+}
+}
+

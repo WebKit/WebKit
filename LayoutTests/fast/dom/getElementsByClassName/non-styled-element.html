@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that getElementsByClassName() is able to return non-styled elements");
+
+var nonStyledElement = document.createElementNS(null, "test");
+nonStyledElement.classList = "myClass";
+document.body.appendChild(nonStyledElement);
+
+var collection = document.getElementsByClassName("myClass");
+shouldBe("collection.length", "1");
+shouldBe("collection[0]", "nonStyledElement");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<body>
+</html>

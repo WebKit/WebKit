@@ -1,0 +1,5 @@
+
+PASS Initial color-scheme
+PASS Inserted meta color-scheme applies
+PASS Inserted meta color-scheme before existing in head applies
+

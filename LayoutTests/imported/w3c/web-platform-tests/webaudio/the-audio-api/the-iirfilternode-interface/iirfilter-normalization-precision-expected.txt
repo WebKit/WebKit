@@ -1,0 +1,3 @@
+
+PASS IIR coefficient normalization stays precise when feedback[0] is not exactly representable as a float
+

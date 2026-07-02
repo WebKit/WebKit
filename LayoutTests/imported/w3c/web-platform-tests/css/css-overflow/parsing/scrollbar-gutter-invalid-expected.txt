@@ -1,0 +1,28 @@
+
+PASS e.style['scrollbar-gutter'] = "auto both" should not set the property value
+PASS e.style['scrollbar-gutter'] = "force auto" should not set the property value
+PASS e.style['scrollbar-gutter'] = "auto always" should not set the property value
+PASS e.style['scrollbar-gutter'] = "always stable" should not set the property value
+PASS e.style['scrollbar-gutter'] = "force" should not set the property value
+PASS e.style['scrollbar-gutter'] = "both" should not set the property value
+PASS e.style['scrollbar-gutter'] = "force both" should not set the property value
+PASS e.style['scrollbar-gutter'] = "" should not set the property value
+PASS e.style['scrollbar-gutter'] = "0" should not set the property value
+PASS e.style['scrollbar-gutter'] = "1px" should not set the property value
+PASS e.style['scrollbar-gutter'] = "3em" should not set the property value
+PASS e.style['scrollbar-gutter'] = "1 2 3" should not set the property value
+PASS e.style['scrollbar-gutter'] = "none" should not set the property value
+PASS e.style['scrollbar-gutter'] = "red" should not set the property value
+PASS e.style['scrollbar-gutter'] = "stable both" should not set the property value
+PASS e.style['scrollbar-gutter'] = "stable force" should not set the property value
+PASS e.style['scrollbar-gutter'] = "stable both force" should not set the property value
+PASS e.style['scrollbar-gutter'] = "always" should not set the property value
+PASS e.style['scrollbar-gutter'] = "always both" should not set the property value
+PASS e.style['scrollbar-gutter'] = "always force" should not set the property value
+PASS e.style['scrollbar-gutter'] = "always both force" should not set the property value
+PASS e.style['scrollbar-gutter'] = "auto stable" should not set the property value
+PASS e.style['scrollbar-gutter'] = "auto both-edges" should not set the property value
+PASS e.style['scrollbar-gutter'] = "both-edges" should not set the property value
+PASS e.style['scrollbar-gutter'] = "both-edges auto" should not set the property value
+PASS e.style['scrollbar-gutter'] = "stable auto" should not set the property value
+

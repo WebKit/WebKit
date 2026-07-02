@@ -1,0 +1,105 @@
+<style>
+    :root {
+        background: #102030e0; color: #99ddbbcc; font-size: 15px;
+    }
+</style>
+<script id="shared">
+    const log = console.log;
+    
+</script>
+<script>
+    globalThis.testRunner?.waitUntilDone();
+    
+    async function window0() {
+        let promise0 = navigator.gpu.requestAdapter(
+        {
+        });
+        let adapter0 = await promise0;
+        let device0 = await adapter0.requestDevice();
+        // START
+        
+        let canvas0 = document.createElement(
+        'canvas'
+        );
+        let shaderModule2 = device0.createShaderModule(
+        {
+            code: ` 
+  @id(13668) override override7: f32;
+  
+  @group(0) @binding(0) var<storage, read_write> buffer13: array<array<array<array<f32, 23>, 8>, 1>>;
+ 
+ struct FragmentOutput0 {
+    @location(0) location_0: vec4f,
+ }
+ 
+ @fragment fn fragment0() -> FragmentOutput0 {   
+    var out: FragmentOutput0;
+   
+    return out;   _ = override7;     
+ }
+  
+ @vertex fn vertex4() -> @builtin(position) vec4f {
+   var out: vec4f;
+   return out;
+ }
+ 
+ `,
+        }
+        );
+        
+        
+        let veryExplicitBindGroupLayout3 = device0.createBindGroupLayout(
+        {
+            entries: [     {
+                binding: 0,       visibility: GPUShaderStage.FRAGMENT,       buffer: {
+                    type: 'storage', hasDynamicOffset: false
+                },
+            }
+            ,   ],
+        }
+        );
+        
+        let pipelineLayout3 = device0.createPipelineLayout(
+        {
+            bindGroupLayouts: [veryExplicitBindGroupLayout3],
+        }
+        );
+        
+        let pipeline33 = device0.createRenderPipeline(
+        {
+            layout: pipelineLayout3,   fragment: {
+                module: shaderModule2,   targets: [{
+                    format: 'r32float', writeMask: GPUColorWrite.GREEN}
+                ], }
+            ,   vertex: {
+                module: shaderModule2, }
+            ,
+        }
+        );
+        
+        
+        // END
+        await device0.queue.onSubmittedWorkDone();
+        console.debug('Pass');
+        globalThis.testRunner?.dumpAsText();
+        globalThis.testRunner?.notifyDone();
+    }
+    onload = async () => {
+        try {
+            let workers = [
+            ];
+            let promises = [ window0() ];
+        } catch (
+        e
+        ) {
+            if (
+            e instanceof GPUPipelineError
+            ) {
+                if (
+                e.name === 'OperationError'
+                ) {
+      }
+    }
+  }
+};
+</script>

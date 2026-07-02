@@ -1,0 +1,88 @@
+<html>
+<head>
+<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function editingTest() {
+        
+    var s = window.getSelection();
+    var d;
+    
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+    
+    // Fully select the line in the first div.
+    d = document.getElementById("test1");
+    s.setPosition(d, 0);
+    extendSelectionForwardByLineCommand();
+    createLinkCommand("http://www.google.com/");
+    
+    log(d.innerHTML);
+
+    // Partially select the line in the second div.    
+    d = document.getElementById("test2");
+    s.setPosition(d, 0);
+    moveSelectionForwardByWordCommand();
+    extendSelectionForwardByWordCommand();
+    createLinkCommand("http://www.google.com/");
+    
+    log(d.innerHTML);
+    
+    // Partially select the link in the third div
+    var e = document.getElementById("starthere");
+    s.setPosition(e, 0);
+    extendSelectionForwardByLineCommand();
+    createLinkCommand("http://www.google.com/");
+
+    log(d.innerHTML);
+    
+    // Select all the content in the fourth div
+    d = document.getElementById("test4");
+    s.setPosition(d, 0);
+    selectAllCommand();
+    createLinkCommand("http://www.google.com/");
+    
+    log(d.innerHTML);
+    
+}
+</script>
+</head>
+
+<body style="font-size: 12px;">
+<p>This is a test of execCommand(CreateLink, ...).  It tests:</p>
+<ol>
+<li>Creating a link from a selection that is completely unlinked.</li>
+<li>Creating a link from a selection that is inside an existing link.</li>
+<li>Creating a link from a selection that is partially linked.</li>
+<li>Creating a link from a selection that contains lists, tables, styled text, and images.</li>
+</ol>
+<ol>
+<li><div id="test1" contenteditable="true">This paragraph starts unlinked.  The entire paragraph should end up being a link to google.com.</div></li>
+<li><div id="test2" contenteditable="true"><a href="http://www.apple.com/">This paragraph starts out as a link to apple.com.  The second word in the paragraph should end up being a link to google.com.</a></div></li>
+<li><div id="test3" contenteditable="true">This line starts out with <a href="http://www.apple.com"><b>a</b><span id="starthere"> link</span></a> in the middle.  The second half of this paragraph, starting after the bold 'a' should end up being a link to google.com.</div></li>
+<li><div id="test4" contenteditable="true">
+<p>This <i>editable region</i> contains lists, tables, styled text, and images.  The entire region should end up being a link to google.com.</p>
+<ul>
+<li>Item 1</li>
+<li>Item 2</li>
+</ul>
+<table border=1><tr><td>1</td><td>2</td><td>3</td></tr></table>
+<br>
+This <b>line</b> contains <img src="../resources/abe.png"> an image.
+</div></li>
+</ol>
+<p>innerHTML of editable regions after the test:</p>
+<ol id="console"></ol>
+<script>
+runEditingTest();
+</script>
+</body>
+
+</html>

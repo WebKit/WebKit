@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<style>
+[data-webkit][data-rocks]>[data-when]>[data-it-does-not-crash] {
+    background-color:green;
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+  <div data-rocks data-webkit>
+    <ul data-when>
+      <li></li>
+      <li data-it-does-not-crash id=target></li>
+      <li></li>
+    </ul>
+    <!-- Lacks the data-when -->
+    <ul>
+      <li data-it-does-not-crash></li>
+      <li></li>
+    </ul>
+  </div>
+  <!-- Lacks the data-webkit -->
+  <div data-rocks>
+    <ul data-when>
+      <li></li>
+      <li data-it-does-not-crash></li>
+      <li></li>
+    </ul>
+  </div>
+</div>
+</body>
+<script>
+description('The CSS JIT was incorrectly saving a backtracking entry point for the rightmost chain of simple selectors with child relation.');
+
+shouldBe('document.querySelectorAll("[data-webkit][data-rocks]>[data-when]>[data-it-does-not-crash]").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[data-webkit][data-rocks]>[data-when]>[data-it-does-not-crash]")[0].id', 'target');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

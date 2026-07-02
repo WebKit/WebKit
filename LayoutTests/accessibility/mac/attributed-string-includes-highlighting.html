@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body" role="group">
+
+<div id="item0">item0</div>
+<div id="item1"><mark>item 1</mark></div>
+<div id="item2">item2</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This verifies that using the mark tag will add the appropriate attribute to the attributed string and that we can find elements with highlighting using searching.");
+
+    if (window.accessibilityController) {
+        var item1 = accessibilityController.accessibleElementById("item1");
+        var markerRange = item1.textMarkerRangeForElement(item1);
+        shouldBeTrue("item1.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)");
+
+        var item2 = accessibilityController.accessibleElementById("item2");
+        markerRange = item2.textMarkerRangeForElement(item2);
+        shouldBeFalse("item2.attributedStringForTextMarkerRangeContainsAttribute('AXHighlight', markerRange)");
+
+        // Search for a highlighted element from the top of the webpage.
+        var body = accessibilityController.accessibleElementById("body");
+        var resultElement = body.uiElementForSearchPredicate("", true, "AXHighlightedSearchKey", "", false);
+        shouldBeTrue("resultElement.isEqual(item1.childAtIndex(0))");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

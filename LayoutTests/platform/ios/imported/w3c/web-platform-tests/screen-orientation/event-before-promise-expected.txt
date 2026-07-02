@@ -1,0 +1,3 @@
+
+PASS The 'change' event must fire before the [[orientationPendingPromise]] is resolved.
+

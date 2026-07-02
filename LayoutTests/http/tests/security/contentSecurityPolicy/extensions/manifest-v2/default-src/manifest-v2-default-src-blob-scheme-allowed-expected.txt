@@ -1,0 +1,4 @@
+ALERT: PASS executed blob-URL script.
+ALERT: PASS successfully loaded blob-URL script.
+
+Tests CSP for extensions permits the blob: scheme.

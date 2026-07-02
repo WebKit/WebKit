@@ -1,0 +1,5 @@
+
+PASS Dragging over a <model> has no effect on the camera when interactive is false
+PASS Dragging over a <model> affects the camera when interactive is true
+PASS Dragging over a <model> affects the camera when interactive is set to true using the HTML attribute as the element is created
+

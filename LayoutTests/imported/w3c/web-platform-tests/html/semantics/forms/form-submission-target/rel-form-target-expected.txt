@@ -1,0 +1,9 @@
+
+PASS <form rel=""> with <form target>
+PASS <form rel="noopener"> with <form target>
+PASS <form rel="noreferrer"> with <form target>
+PASS <form rel="opener"> with <form target>
+PASS <form rel="noopener noreferrer"> with <form target>
+PASS <form rel="noreferrer opener"> with <form target>
+PASS <form rel="opener noopener"> with <form target>
+

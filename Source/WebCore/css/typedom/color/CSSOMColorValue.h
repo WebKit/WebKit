@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "CSSNumericValue.h"
+#include "CSSOMKeywordValue.h"
+#include "CSSStyleValue.h"
+
+namespace WebCore {
+
+class CSSOMKeywordValue;
+
+using CSSOMKeywordish = Variant<String, Ref<CSSOMKeywordValue>>;
+using CSSColorPercent = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using RectifiedCSSColorPercent = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>>;
+using CSSColorNumber = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using RectifiedCSSColorNumber = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>>;
+using CSSColorAngle = Variant<double, Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using RectifiedCSSColorAngle = Variant<Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>>;
+
+class CSSOMColorValue : public CSSStyleValue {
+public:
+    RefPtr<CSSOMKeywordValue> NODELETE colorSpace();
+    RefPtr<CSSOMColorValue> to(CSSOMKeywordish);
+    static std::optional<Variant<Ref<CSSOMColorValue>, Ref<CSSStyleValue>>> NODELETE parse(const String&);
+
+    static ExceptionOr<RectifiedCSSColorPercent> rectifyCSSColorPercent(CSSColorPercent&&);
+    static ExceptionOr<RectifiedCSSColorAngle> rectifyCSSColorAngle(CSSColorAngle&&);
+    static ExceptionOr<RectifiedCSSColorNumber> rectifyCSSColorNumber(CSSColorNumber&&);
+    static CSSColorPercent toCSSColorPercent(const RectifiedCSSColorPercent&);
+    static CSSColorPercent toCSSColorPercent(const CSSNumberish&);
+    static CSSColorAngle toCSSColorAngle(const RectifiedCSSColorAngle&);
+    static CSSColorNumber toCSSColorNumber(const RectifiedCSSColorNumber&);
+
+    RefPtr<CSSValue> toCSSValue() const final;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSOMColorValue)
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return WebCore::isCSSColorValue(styleValue.styleValueType()); }
+SPECIALIZE_TYPE_TRAITS_END()

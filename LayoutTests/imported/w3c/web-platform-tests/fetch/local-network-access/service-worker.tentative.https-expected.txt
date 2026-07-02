@@ -1,0 +1,13 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT LNA Service Worker Public to Loopback Fetch with permission Test timed out
+NOTRUN LNA Service Worker Public to Loopback Fetch without permission
+NOTRUN LNA Service Worker Public to Loopback WebTransport with permission
+NOTRUN LNA Service Worker Public to Loopback WebTransport without permission
+NOTRUN LNA Service Worker Public to Loopback WebSocket with permission
+NOTRUN LNA Service Worker Public to Loopback WebSocket without permission
+NOTRUN LNA Service Worker Public navigate to Loopback main frame without permission
+NOTRUN LNA Service Worker Public navigate to Loopback in iframe with permission
+NOTRUN LNA Service Worker Public navigate to Loopback in iframe without permission
+

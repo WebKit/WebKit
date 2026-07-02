@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=WK_WEB_EXTENSIONS,
+    ReturnsPromiseWhenCallbackIsOmitted,
+] interface WebExtensionAPINamespace {
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction action;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAlarms alarms;
+
+    [MainWorldOnly, Dynamic, Conditional=WK_WEB_EXTENSIONS_BOOKMARKS] readonly attribute WebExtensionAPIBookmarks bookmarks;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPICookies cookies;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPICommands commands;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus contextMenus;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIDeclarativeNetRequest declarativeNetRequest;
+
+    [Dynamic, Conditional=INSPECTOR_EXTENSIONS] readonly attribute WebExtensionAPIDevTools devtools;
+
+    readonly attribute WebExtensionAPIDOM dom;
+
+    readonly attribute WebExtensionAPIExtension extension;
+
+    readonly attribute WebExtensionAPILocalization i18n;
+
+    readonly attribute WebExtensionAPIRuntime runtime;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus menus;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
+
+    [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIScripting scripting;
+
+    [MainWorldOnly, Dynamic, Conditional=WK_WEB_EXTENSIONS_SIDEBAR] readonly attribute WebExtensionAPISidebarAction sidebarAction;
+
+    [MainWorldOnly, Dynamic, Conditional=WK_WEB_EXTENSIONS_SIDEBAR] readonly attribute WebExtensionAPISidePanel sidePanel;
+
+    [Dynamic] readonly attribute WebExtensionAPIStorage storage;
+
+    [MainWorldOnly] readonly attribute WebExtensionAPITabs tabs;
+
+    [MainWorldOnly] readonly attribute WebExtensionAPIWindows windows;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebNavigation webNavigation;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIWebRequest webRequest;
+
+    [Dynamic] readonly attribute WebExtensionAPITest test;
+
+};

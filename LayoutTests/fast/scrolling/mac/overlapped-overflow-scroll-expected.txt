@@ -1,0 +1,16 @@
+
+Test scroll over content
+PASS overflowScrollEventCount > 0 is true
+PASS windowScrollEventCount == 0 is true
+
+Test scroll over overlapping element
+PASS overflowScrollEventCount == 0 is true
+PASS windowScrollEventCount > 0 is true
+
+Test scroll over overlapping element outside border
+PASS overflowScrollEventCount > 0 is true
+PASS windowScrollEventCount == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

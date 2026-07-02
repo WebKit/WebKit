@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>margin-trim: block-in-inline block-start</title>
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square-only.html">
+<meta name="assert" content="margin-trim: block-start should trim the block-start margin of a block-in-inline when its margin is adjacent to the container's block-start edge">
+<style>
+.container {
+    background-color: green;
+    width: 100px;
+    margin-trim: block-start;
+}
+
+.block-in-inline {
+    margin-top: 100px;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+</head>
+<body>
+    <p>Test passes if there is a filled green square.</p>
+    <div class="container"><span><div class="block-in-inline"></div></span></div>
+</body>
+</html>

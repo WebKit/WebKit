@@ -1,0 +1,6 @@
+
+PASS :hover via :scope in subject
+PASS :hover via :scope in non-subject
+PASS :hover in limit, :scope in subject
+PASS :hover in intermediate limit, :scope in subject
+

@@ -1,0 +1,4 @@
+WebKit build archives are not code signed. Please open run-webkit-archive
+using the context menu in Finder.
+
+See https://support.apple.com/kb/PH25088 for more details.

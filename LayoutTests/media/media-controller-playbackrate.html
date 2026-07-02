@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var start = function() {
+                findMediaElement();
+                waitForEvent('canplay',canplay);
+                video.src = findMediaFile('video', 'content/test');
+            };
+
+            var canplay = function() {
+                video.mediaGroup = "group";
+                video.playbackRate = 0;
+                video.defaultPlaybackRate = 0;
+                video.controller.playbackRate = 0;
+                video.controller.defaultPlaybackRate = 0;
+                waitForEvent('play', play);
+                video.play();
+            };
+
+            var play = function() {
+                video.controller.playbackRate = 2;
+                waitForEventOnce('timeupdate', timeupdate);
+            };
+
+            var timeupdate = function() {
+                testExpected('video.currentTime', 0, '!=');
+                endTest();
+            };
+            </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+    </body>
+</html>

@@ -1,0 +1,3 @@
+This test passes if it does not crash when toggling BiquadFilterNode.type while the channel count changes on the audio thread.
+
+PASS: did not crash.

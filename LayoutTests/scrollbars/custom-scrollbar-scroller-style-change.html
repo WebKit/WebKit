@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false ] -->
+<html>
+<head>
+    <title>Scroller style changes should not change the size of custom scrollbars.</title>
+    <style>
+        ::-webkit-scrollbar {
+            width: 48px;
+            height: 48px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #E3E3E3;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: black;
+        }
+
+        .scroll-container {
+            overflow: scroll;
+            width: 200px;
+            height: 200px;
+        }
+
+        .overflowing {
+            width: 400px;
+            height: 400px;
+            background: green;
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+        }
+
+        function doTest() {
+            if (window.internals)
+                internals.setUsesOverlayScrollbars(true);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                doTest()
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <!-- The scrollbars below should always sized 48x48 regardless of any scroller style changes. -->
+    <div class="scroll-container">
+        <div class="overflowing composited"></div>
+    </div>
+</body>
+</html>

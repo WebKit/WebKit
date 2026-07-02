@@ -1,0 +1,27 @@
+
+PASS Local with self-cycle
+PASS Cycle reference without fallback makes result invalid
+PASS Local with self-cycle in unused fallback
+PASS Local shadowing cyclic property --x
+PASS Local shadowing cyclic outer local --x
+PASS Argument shadowing cyclic outer local --x
+PASS Arguments shadowing cyclic properties
+PASS Observing property cycle locally
+PASS Using cyclic values with no fallback
+PASS Self-cycle in non-used local variable
+PASS Using cyclic value in unused fallback
+PASS Using cyclic value in unused fallback (local)
+PASS Dashed-function, self-cycle
+PASS Cycle through other function (--g)
+PASS Cycle through other function (--f)
+PASS Cycle through local, self
+FAIL Cycle through unused local assert_equals: expected "PASS" but got "FAIL-result"
+PASS Cycle through global, self
+PASS Cycle through local, other function
+PASS Cycle through local, other function, fallback in function
+PASS Cycle through various variables and other functions
+PASS Function in a cycle with its own default
+PASS Cyclic defaults
+PASS Cyclic outer --b shadows custom property
+PASS Locals are function specific
+

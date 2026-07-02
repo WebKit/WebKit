@@ -1,0 +1,9 @@
+
+PASS e.style['shape-outside'] = "path()" should not set the property value
+PASS e.style['shape-outside'] = "path('')" should not set the property value
+PASS e.style['shape-outside'] = "path(evenodd)" should not set the property value
+PASS e.style['shape-outside'] = "path(evenodd, 'not-a-path')" should not set the property value
+PASS e.style['shape-outside'] = "path(badfillrule, 'M10,10')" should not set the property value
+PASS e.style['shape-outside'] = "path(10, 20)" should not set the property value
+PASS e.style['shape-outside'] = "path('M10,10', evenodd)" should not set the property value
+

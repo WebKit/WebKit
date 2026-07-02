@@ -1,0 +1,111 @@
+/*
+ * Copyright 2012 Google Inc.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#include "src/shaders/gradients/SkLinearGradient.h"
+
+#include "include/core/SkColor.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkMatrix.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
+#include "include/core/SkShader.h"
+#include "include/effects/SkGradient.h"
+#include "include/private/base/SkFloatingPoint.h"
+#include "include/private/base/SkTArray.h"
+#include "src/core/SkReadBuffer.h"
+#include "src/core/SkWriteBuffer.h"
+#include "src/shaders/SkShaderBase.h"
+
+#include <cstdint>
+#include <utility>
+
+class SkArenaAlloc;
+class SkRasterPipeline;
+enum class SkTileMode;
+
+static SkMatrix pts_to_unit_matrix(const SkPoint pts[2]) {
+    SkVector    vec = pts[1] - pts[0];
+    SkScalar    mag = vec.length();
+    SkScalar    inv = mag ? SkScalarInvert(mag) : 0;
+
+    vec.scale(inv);
+    SkMatrix matrix;
+    matrix.setSinCos(-vec.fY, vec.fX, pts[0].fX, pts[0].fY);
+    matrix.postTranslate(-pts[0].fX, -pts[0].fY);
+    matrix.postScale(inv, inv);
+    return matrix;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+SkLinearGradient::SkLinearGradient(const SkPoint pts[2], const SkGradient& desc)
+        : SkGradientBaseShader(desc, pts_to_unit_matrix(pts)), fStart(pts[0]), fEnd(pts[1]) {}
+
+sk_sp<SkFlattenable> SkLinearGradient::CreateProc(SkReadBuffer& buffer) {
+    SkGradientScope scope;
+    SkMatrix legacyLocalMatrix, *lmPtr = nullptr;
+    auto grad = scope.unflatten(buffer, &legacyLocalMatrix);
+    if (!grad) {
+        return nullptr;
+    }
+    if (!legacyLocalMatrix.isIdentity()) {
+        lmPtr = &legacyLocalMatrix;
+    }
+    SkPoint pts[2];
+    pts[0] = buffer.readPoint();
+    pts[1] = buffer.readPoint();
+    return SkShaders::LinearGradient(pts, *grad, lmPtr);
+}
+
+void SkLinearGradient::flatten(SkWriteBuffer& buffer) const {
+    this->INHERITED::flatten(buffer);
+    buffer.writePoint(fStart);
+    buffer.writePoint(fEnd);
+}
+
+void SkLinearGradient::appendGradientStages(SkArenaAlloc*, SkRasterPipeline*,
+                                            SkRasterPipeline*) const {
+    // No extra stage needed for linear gradients.
+}
+
+SkShaderBase::GradientType SkLinearGradient::asGradient(GradientInfo* info,
+                                                        SkMatrix* localMatrix) const {
+    if (info) {
+        commonAsAGradient(info);
+        info->fPoint[0] = fStart;
+        info->fPoint[1] = fEnd;
+    }
+    if (localMatrix) {
+        *localMatrix = SkMatrix::I();
+    }
+    return GradientType::kLinear;
+}
+
+sk_sp<SkShader> SkShaders::LinearGradient(const SkPoint pts[2], const SkGradient& grad,
+                                          const SkMatrix* lm) {
+    if (!pts || !SkIsFinite((pts[1] - pts[0]).length())) {
+        return nullptr;
+    }
+
+    GRADIENT_FACTORY_EARLY_EXIT(grad, lm);
+
+    if (SkScalarNearlyZero((pts[1] - pts[0]).length(),
+                           SkGradientBaseShader::kDegenerateThreshold)) {
+        // Degenerate gradient, the only tricky complication is when in clamp mode, the limit of
+        // the gradient approaches two half planes of solid color (first and last). However, they
+        // are divided by the line perpendicular to the start and end point, which becomes undefined
+        // once start and end are exactly the same, so just use the end color for a stable solution.
+        return SkGradientBaseShader::MakeDegenerateGradient(grad.colors());
+    }
+
+    sk_sp<SkShader> s = sk_make_sp<SkLinearGradient>(pts, grad);
+    return s->makeWithLocalMatrix(lm ? *lm : SkMatrix::I());
+}
+
+void SkRegisterLinearGradientShaderFlattenable() {
+    SK_REGISTER_FLATTENABLE(SkLinearGradient);
+}

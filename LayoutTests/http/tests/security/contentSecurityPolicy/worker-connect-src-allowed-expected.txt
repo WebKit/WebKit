@@ -1,0 +1,2 @@
+ALERT: xhr allowed
+
