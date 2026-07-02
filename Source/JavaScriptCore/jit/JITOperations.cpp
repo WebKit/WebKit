@@ -401,13 +401,15 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdDirectOptimize, EncodedJSValue, (Encode
 
 static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, StructureStubInfo* stubInfo, JSValue baseValue, JSValue thisValue, CacheableIdentifier identifier, GetByKind kind)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     auto* uid = identifier.uid();
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
 
     if (!baseValue.isObject()) [[unlikely]] {
         if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
             repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
-        return baseValue.get(globalObject, uid, slot);
+        RELEASE_AND_RETURN(scope, baseValue.get(globalObject, uid, slot));
     }
 
     JSObject* baseObject = asObject(baseValue);
@@ -418,8 +420,10 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
         if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) [[unlikely]] {
             if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                 repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
-            if (object->getNonIndexPropertySlot(globalObject, uid, slot))
-                return slot.getValue(globalObject, uid);
+            bool hasProperty = object->getNonIndexPropertySlot(globalObject, uid, slot);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (hasProperty)
+                RELEASE_AND_RETURN(scope, slot.getValue(globalObject, uid));
             return jsUndefined();
         }
 
@@ -444,7 +448,7 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
                 if (shouldGiveUp && stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                     repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
             }
-            return slot.getValue(globalObject, uid);
+            RELEASE_AND_RETURN(scope, slot.getValue(globalObject, uid));
         }
 
         if (!structure->propertyAccessesAreCacheableForAbsence()) {
