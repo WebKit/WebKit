@@ -42,7 +42,7 @@ class PlacedGridItem;
 // depends on the axis being sized, so GridItemSizingFunctions supplies them as
 // callbacks — built with inlineAxis() for columns and blockAxis() for rows.
 struct GridItemSizingFunctions {
-    GridItemSizingFunctions(Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContributionFunction, Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> maxContentContributionFunction,
+    GridItemSizingFunctions(Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint, std::optional<LayoutUnit> oppositeAxisStretchedSize)> minContentContributionFunction, Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint, std::optional<LayoutUnit> oppositeAxisStretchedSize)> maxContentContributionFunction,
         Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit oppositeAxisConstraint)> usedMinimumSizeFunction)
             : minContentContribution(WTF::move(minContentContributionFunction))
             , maxContentContribution(WTF::move(maxContentContributionFunction))
@@ -53,8 +53,8 @@ struct GridItemSizingFunctions {
     static GridItemSizingFunctions inlineAxis(const IntegrationUtils&);
     static GridItemSizingFunctions blockAxis(const GridFormattingContext&);
 
-    Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> minContentContribution;
-    Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint)> maxContentContribution;
+    Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint, std::optional<LayoutUnit> oppositeAxisStretchedSize)> minContentContribution;
+    Function<LayoutUnit(const PlacedGridItem&, LayoutUnit oppositeAxisConstraint, std::optional<LayoutUnit> oppositeAxisStretchedSize)> maxContentContribution;
     Function<LayoutUnit(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit availableSpace, LayoutUnit oppositeAxisConstraint)> usedMinimumSize;
 };
 

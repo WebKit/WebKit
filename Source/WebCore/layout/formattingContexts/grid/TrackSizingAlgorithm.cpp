@@ -191,7 +191,7 @@ static Vector<LayoutUnit> minContentContributions(const TrackSizingItemList& tra
     const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     return gridItemIndexes.map([&](size_t gridItemIndex) {
-        return gridItemSizingFunctions.minContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint);
+        return gridItemSizingFunctions.minContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint, trackSizingItems[gridItemIndex].oppositeAxisStretchedSize);
     });
 }
 
@@ -199,7 +199,7 @@ static Vector<LayoutUnit> maxContentContributions(const TrackSizingItemList& tra
     const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     return gridItemIndexes.map([&](size_t gridItemIndex) {
-        return gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint);
+        return gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint, trackSizingItems[gridItemIndex].oppositeAxisStretchedSize);
     });
 }
 
@@ -216,7 +216,7 @@ static Vector<LayoutUnit> minimumContributions(const TrackSizingItemList& trackS
         if (GridLayoutUtils::preferredSizeBehavesAsAuto(preferredSize) || GridLayoutUtils::preferredSizeDependsOnContainingBlockSize(preferredSize))
             return gridItemSizingFunctions.usedMinimumSize(trackSizingItems[gridItemIndex].gridItem, trackSizingFunctions, borderAndPaddingList[gridItemIndex], { }, trackSizingItems[gridItemIndex].oppositeAxisConstraint);
         // else the item’s minimum contribution is its min-content contribution.
-        return gridItemSizingFunctions.minContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint);
+        return gridItemSizingFunctions.minContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint, trackSizingItems[gridItemIndex].oppositeAxisStretchedSize);
     });
 }
 
@@ -651,7 +651,7 @@ static void expandFlexibleTracksForMaxContent(UnsizedTracks& unsizedTracks, cons
         if (!itemCrossesFlexibleTrack(unsizedTracks, gridItemSpan))
             continue;
 
-        auto maxContentContribution = gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint);
+        auto maxContentContribution = gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint, trackSizingItems[gridItemIndex].oppositeAxisStretchedSize);
         auto itemTracks = unsizedTracks.subspan(gridItemSpan.begin(), gridItemSpan.distance());
         double candidateFlexFraction = findSizeOfFr(itemTracks, maxContentContribution, gapSize);
 

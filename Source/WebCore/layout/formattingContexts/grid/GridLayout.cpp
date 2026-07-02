@@ -32,6 +32,7 @@
 #include "GridLayoutUtils.h"
 #include "ImplicitGrid.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutChildIterator.h"
 #include "LayoutElementBox.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
@@ -456,7 +457,7 @@ TrackSizes GridLayout::sizeColumnTracks(const PlacedGridItems& placedGridItems, 
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto rowSpan = WTF::Range<size_t> { gridItem.rowStartLine(), gridItem.rowEndLine() };
         return { gridItem, gridItem.inlineAxisSizes(), gridItem.usedInlineBorderAndPadding(),
-            { gridItem.columnStartLine(), gridItem.columnEndLine() }, oppositeAxisConstraintForTrackSizing(rowSizesForFirstColumnSizing, rowSpan) };
+            { gridItem.columnStartLine(), gridItem.columnEndLine() }, oppositeAxisConstraintForTrackSizing(rowSizesForFirstColumnSizing, rowSpan), { } };
     });
 
     return TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
@@ -476,12 +477,67 @@ TrackSizes GridLayout::sizeRowTracks(const PlacedGridItems& placedGridItems, con
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto columnSpan = WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
         return { gridItem, gridItem.blockAxisSizes(), gridItem.usedBlockBorderAndPadding(),
-            { gridItem.rowStartLine(), gridItem.rowEndLine() }, oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan) };
+            { gridItem.rowStartLine(), gridItem.rowEndLine() }, oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan), { } };
     });
 
     return TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
         layoutConstraints.blockAxis, GridItemSizingFunctions::blockAxis(formattingContext()),
         layoutState.usedRowGap, layoutState.usedAlignContent);
+}
+
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 3.
+// Sizing the rows (step 2) gives a block-stretched item a definite block size, which can change the inline
+// contribution of an item whose inline size depends on it.
+static bool hasItemWithInlineSizeDependentOnGridAreaBlockSize(const PlacedGridItems& placedGridItems)
+{
+    auto hasChildWithInlineSizeComputedFromAspectRatio = [](const PlacedGridItem& gridItem) {
+        for (auto& child : childrenOfType<ElementBox>(gridItem.layoutBox())) {
+            if (GridLayoutUtils::gridItemChildHasInlineSizeComputedFromAspectRatio(child))
+                return true;
+        }
+        return false;
+    };
+
+    return placedGridItems.containsIf([&](const PlacedGridItem& gridItem) {
+        return GridLayoutUtils::hasStretchedBlockSize(gridItem) && hasChildWithInlineSizeComputedFromAspectRatio(gridItem);
+    });
+}
+
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 3.
+// The block size a stretched grid item is fixed to when measuring its inline contribution in the second
+// column-sizing pass, since that size can affect the item's inline content contribution.
+static std::optional<LayoutUnit> stretchedBlockSizeForSecondColumnPass(const PlacedGridItem& gridItem, LayoutUnit oppositeAxisConstraint,
+    const TrackSizes& columnSizes, const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const GridFormattingContext& formattingContext)
+{
+    if (!GridLayoutUtils::hasStretchedBlockSize(gridItem))
+        return { };
+
+    // The item is block-stretched, so its used block size is the stretched (row) size clamped by its
+    // min/max block sizes.
+    auto columnSpan = WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
+    auto inlineAxisConstraint = oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan);
+    auto blockBorderAndPadding = gridItem.usedBlockBorderAndPadding();
+    return GridLayoutUtils::blockUsedSize(gridItem, rowTrackSizingFunctionsList, blockBorderAndPadding, oppositeAxisConstraint, formattingContext, inlineAxisConstraint);
+}
+
+// https://www.w3.org/TR/css-grid-1/#algo-grid-sizing — step 3.
+TrackSizes GridLayout::sizeColumnTracksSecondPass(const PlacedGridItems& placedGridItems, const TrackSizingFunctionsList& columnTrackSizingFunctionsList,
+    const TrackSizingFunctionsList& rowTrackSizingFunctionsList, const TrackSizes& columnSizes, const TrackSizes& rowSizes, const GridLayoutState& layoutState) const
+{
+    auto& layoutConstraints = layoutState.gridLayoutConstraints;
+
+    auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
+        auto rowSpan = WTF::Range<size_t> { gridItem.rowStartLine(), gridItem.rowEndLine() };
+        auto oppositeAxisConstraint = oppositeAxisConstraintForTrackSizing(rowSizes, rowSpan);
+        auto stretchedBlockSize = stretchedBlockSizeForSecondColumnPass(gridItem, oppositeAxisConstraint, columnSizes, rowTrackSizingFunctionsList, formattingContext());
+
+        return { gridItem, gridItem.inlineAxisSizes(), gridItem.usedInlineBorderAndPadding(),
+            { gridItem.columnStartLine(), gridItem.columnEndLine() }, oppositeAxisConstraint, stretchedBlockSize };
+    });
+
+    return TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
+        layoutConstraints.inlineAxis, GridItemSizingFunctions::inlineAxis(formattingContext().integrationUtils()),
+        layoutState.usedColumnGap, layoutState.usedJustifyContent);
 }
 
 // https://www.w3.org/TR/css-grid-1/#algo-grid-sizing
@@ -500,10 +556,8 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& lay
     // 3. Then, if the min-content contribution of any grid item has changed based on the
     // row sizes and alignment calculated in step 2, re-resolve the sizes of the grid
     // columns with the new min-content and max-content contributions (once only).
-    auto resolveGridColumnSizesIfAnyMinContentContributionChanged = [] {
-        notImplemented();
-    };
-    UNUSED_VARIABLE(resolveGridColumnSizesIfAnyMinContentContributionChanged);
+    if (hasItemWithInlineSizeDependentOnGridAreaBlockSize(placedGridItems))
+        columnSizes = sizeColumnTracksSecondPass(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList, columnSizes, rowSizes, layoutState);
 
     // 4. Next, if the min-content contribution of any grid item has changed based on the
     // column sizes and alignment calculated in step 3, re-resolve the sizes of the grid

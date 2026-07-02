@@ -53,6 +53,8 @@ public:
     LayoutUnit maxContentContributionHeightForGridItem(const ElementBox&, LayoutUnit inlineAxisConstraint) const;
     LayoutUnit minContentLogicalWidthContribution(const ElementBox&) const;
     LayoutUnit maxContentLogicalWidthContribution(const ElementBox&) const;
+    LayoutUnit minContentLogicalWidthContributionForStretchedGridItem(const ElementBox&, LayoutUnit stretchedBlockSize) const;
+    LayoutUnit maxContentLogicalWidthContributionForStretchedGridItem(const ElementBox&, LayoutUnit stretchedBlockSize) const;
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
 
     static BlockLayoutState::MarginState NODELETE toMarginState(const RenderBlockFlow::MarginInfo&);
