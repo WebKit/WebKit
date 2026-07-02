@@ -919,6 +919,11 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
 
     splitEncoder = true;
     indexedIndirectBuffer.indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount);
+    encoder.parentEncoder().addOnCommitHandler([weakBuffer = ThreadSafeWeakPtr { indexedIndirectBuffer }, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount](CommandBuffer&, CommandEncoder&) {
+        if (RefPtr buffer = weakBuffer.get())
+            buffer->indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, true);
+        return true;
+    });
     checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer);
 
     return std::make_pair(indexedIndirectBuffer.indirectIndexedBuffer(), 0ull);
@@ -954,6 +959,11 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
 
     splitEncoder = true;
     indirectBuffer.indirectBufferRecomputed(indirectOffset, minVertexCount, minInstanceCount);
+    encoder.parentEncoder().addOnCommitHandler([weakBuffer = ThreadSafeWeakPtr { indirectBuffer }, indirectOffset, minVertexCount, minInstanceCount](CommandBuffer&, CommandEncoder&) {
+        if (RefPtr buffer = weakBuffer.get())
+            buffer->indirectBufferRecomputed(indirectOffset, minVertexCount, minInstanceCount, true);
+        return true;
+    });
     checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer.indirectBuffer());
 
     return std::make_pair(indirectBuffer.indirectBuffer(), 0ull);
