@@ -22,6 +22,19 @@
 			name = Check;
 			productName = Check;
 		};
+		DDAD7E502FF6450E0054DF83 /* Setup */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DDAD7E542FF6450E0054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */;
+			buildPhases = (
+				DDAD7E552FF645450054DF83 /* Public SDK gate */,
+			);
+			dependencies = (
+			);
+			name = Setup;
+			packageProductDependencies = (
+			);
+			productName = Setup;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -212,6 +225,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 40C84989101A36A60083642A;
 			remoteInfo = "sample1_unittest-static";
+		};
+		DDAD7E572FF645B30054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD7E502FF6450E0054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD7E592FF645B60054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD7E502FF6450E0054DF83;
+			remoteInfo = Setup;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -621,6 +648,7 @@
 				3171513E2D8250F500D53C18 /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD7E582FF645B30054DF83 /* PBXTargetDependency */,
 			);
 			name = "gtest-static";
 			productName = "gtest-static";
@@ -636,6 +664,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD7E5A2FF645B60054DF83 /* PBXTargetDependency */,
 			);
 			name = "gtest_main-static";
 			productName = "gtest_main-static";
@@ -708,6 +737,11 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					DDAD7E502FF6450E0054DF83 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+				};
 			};
 			buildConfigurationList = 4FADC24608B4156D00ABE55E /* Build configuration list for PBXProject "gtest" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -730,6 +764,7 @@
 				4089A0120FFACEFC000B29AE /* sample1_unittest-framework */,
 				40C84989101A36A60083642A /* sample1_unittest-static */,
 				3B238F5F0E828B5400846E11 /* Check */,
+				DDAD7E502FF6450E0054DF83 /* Setup */,
 			);
 		};
 /* End PBXProject section */
@@ -760,6 +795,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Remember, this \"Run Script\" build phase will be executed from $SRCROOT\n/bin/bash Scripts/runtests.sh\n";
+		};
+		DDAD7E552FF645450054DF83 /* Public SDK gate */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+				"$(WK_AVAILABILITY_OVERLAY_YAML)",
+			);
+			name = "Public SDK gate";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/public-sdk-ready.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -884,6 +940,16 @@
 			isa = PBXTargetDependency;
 			target = 40C84989101A36A60083642A /* sample1_unittest-static */;
 			targetProxy = 40C849F8101A43490083642A /* PBXContainerItemProxy */;
+		};
+		DDAD7E582FF645B30054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD7E502FF6450E0054DF83 /* Setup */;
+			targetProxy = DDAD7E572FF645B30054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD7E5A2FF645B60054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD7E502FF6450E0054DF83 /* Setup */;
+			targetProxy = DDAD7E592FF645B60054DF83 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1125,6 +1191,30 @@
 			};
 			name = Release;
 		};
+		DDAD7E512FF6450E0054DF83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DDAD7E522FF6450E0054DF83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		DDAD7E532FF6450E0054DF83 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1214,6 +1304,16 @@
 				4FADC24708B4156D00ABE55E /* Debug */,
 				4FADC24808B4156D00ABE55E /* Release */,
 				44C48E0414A409DE00A2D9C7 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DDAD7E542FF6450E0054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DDAD7E512FF6450E0054DF83 /* Debug */,
+				DDAD7E522FF6450E0054DF83 /* Release */,
+				DDAD7E532FF6450E0054DF83 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

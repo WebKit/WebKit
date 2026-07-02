@@ -52,6 +52,19 @@
 			name = "Tools (ANGLE)";
 			productName = "Tools (ANGLE)";
 		};
+		DDAD70112FF59CB70054DF83 /* Setup */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DDAD70152FF59CB70054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */;
+			buildPhases = (
+				DDAD70162FF59CC60054DF83 /* Public SDK gate */,
+			);
+			dependencies = (
+			);
+			name = Setup;
+			packageProductDependencies = (
+			);
+			productName = Setup;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -2715,6 +2728,41 @@
 			proxyType = 1;
 			remoteGlobalIDString = A3E045FAB988D2834BEDCF23;
 			remoteInfo = ANGLEDeqpGLES2Tests;
+		};
+		DDAD70172FF59CF40054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD70192FF59CF70054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD701B2FF59CFA0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD701D2FF59CFD0054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
+			remoteInfo = Setup;
+		};
+		DDAD701F2FF59D000054DF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDAD70112FF59CB70054DF83;
+			remoteInfo = Setup;
 		};
 		FF194FF52744331A006A97A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -8192,6 +8240,7 @@
 				31A9E9A0249AA04200C7E243 /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD70182FF59CF40054DF83 /* PBXTargetDependency */,
 				FF194FF62744331A006A97A3 /* PBXTargetDependency */,
 			);
 			name = "ANGLE (dynamic)";
@@ -8248,6 +8297,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD701A2FF59CF70054DF83 /* PBXTargetDependency */,
 				7BFAF9372DE6FDD800327F7F /* PBXTargetDependency */,
 				7B820C582DE992CD00DAC5E4 /* PBXTargetDependency */,
 			);
@@ -8313,6 +8363,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD701C2FF59CFA0054DF83 /* PBXTargetDependency */,
 			);
 			name = translator;
 			productName = translator;
@@ -8419,6 +8470,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDAD701E2FF59CFD0054DF83 /* PBXTargetDependency */,
 			);
 			name = utils;
 			productName = translator;
@@ -8513,6 +8565,7 @@
 				FF194FFA27443C07006A97A3 /* PBXBuildRule */,
 			);
 			dependencies = (
+				DDAD70202FF59D000054DF83 /* PBXTargetDependency */,
 			);
 			name = ANGLEMetalLib;
 			productName = ANGLEMetalLib;
@@ -8555,6 +8608,9 @@
 					7BF554B52C81EEDB002B101E = {
 						CreatedOnToolsVersion = 16.0;
 					};
+					DDAD70112FF59CB70054DF83 = {
+						CreatedOnToolsVersion = 26.5;
+					};
 					FFDA50C4269F845100AE11E2 = {
 						CreatedOnToolsVersion = 13.0;
 						ProvisioningStyle = Automatic;
@@ -8574,6 +8630,7 @@
 			projectRoot = "";
 			targets = (
 				31DB794F2491C33300982878 /* ANGLE */,
+				DDAD70112FF59CB70054DF83 /* Setup */,
 				31CDFDF32491819E00486F27 /* ANGLE (dynamic) */,
 				7BB971FF2DE47B8A00455D13 /* ANGLE (static) */,
 				7BF5549A2C81EDE0002B101E /* translator */,
@@ -8753,6 +8810,27 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\nD=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"; S=\"$SRCROOT\"\nmkdir -p \"$D/vk_gl_cts_data/data\"\n/usr/bin/rsync -a --delete \"$S/third_party/VK-GL-CTS/src/data/gles3/\" \"$D/vk_gl_cts_data/data/gles3/\"\nmkdir -p \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main\" \"$D/src/tests/deqp_support\"\n/bin/cp \"$S/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt\" \"$D/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/\"\n/bin/cp \"$S/src/tests/deqp_support/deqp_gles3_test_expectations.txt\" \"$D/src/tests/deqp_support/\"";
 			showEnvVarsInLog = 0;
+		};
+		DDAD70162FF59CC60054DF83 /* Public SDK gate */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+				"$(WK_AVAILABILITY_OVERLAY_YAML)",
+			);
+			name = "Public SDK gate";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/public-sdk-ready.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11042,6 +11120,31 @@
 			target = 9FDB44EAA70594111A0ED0EA /* ANGLEDeqpGLES3Tests */;
 			targetProxy = 31294C019492778D9D742220 /* PBXContainerItemProxy */;
 		};
+		DDAD70182FF59CF40054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD70112FF59CB70054DF83 /* Setup */;
+			targetProxy = DDAD70172FF59CF40054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD701A2FF59CF70054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD70112FF59CB70054DF83 /* Setup */;
+			targetProxy = DDAD70192FF59CF70054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD701C2FF59CFA0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD70112FF59CB70054DF83 /* Setup */;
+			targetProxy = DDAD701B2FF59CFA0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD701E2FF59CFD0054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD70112FF59CB70054DF83 /* Setup */;
+			targetProxy = DDAD701D2FF59CFD0054DF83 /* PBXContainerItemProxy */;
+		};
+		DDAD70202FF59D000054DF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDAD70112FF59CB70054DF83 /* Setup */;
+			targetProxy = DDAD701F2FF59D000054DF83 /* PBXContainerItemProxy */;
+		};
 		FF194FF62744331A006A97A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */;
@@ -11500,6 +11603,30 @@
 			};
 			name = Production;
 		};
+		DDAD70122FF59CB70054DF83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DDAD70132FF59CB70054DF83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		DDAD70142FF59CB70054DF83 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		FB39D0711200ED9200088E69 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
@@ -11743,6 +11870,16 @@
 				3332450181D6667B032A60AA /* Debug */,
 				6FAC471F99BD174315920DDD /* Release */,
 				AF6640E096DC860854C31233 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		DDAD70152FF59CB70054DF83 /* Build configuration list for PBXAggregateTarget "Setup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DDAD70122FF59CB70054DF83 /* Debug */,
+				DDAD70132FF59CB70054DF83 /* Release */,
+				DDAD70142FF59CB70054DF83 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

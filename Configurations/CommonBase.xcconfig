@@ -59,7 +59,7 @@ WK_GCC_PREPROCESSOR_DEFINITIONS = $(WK_GCC_PREPROCESSOR_DEFINITIONS_$(USE_INTERN
 WK_GCC_PREPROCESSOR_DEFINITIONS_YES = $(WK_OS_UNFAIR_LOCK_INLINE_CFLAGS) __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0;
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(WK_GCC_PREPROCESSOR_DEFINITIONS);
 
-WK_COMMON_OTHER_CFLAGS = $(WK_SANITIZER_OTHER_CFLAGS) $(WK_COMMON_OTHER_CFLAGS_PGO_$(WK_OR_$(WK_ENABLE_PGO_USE)_$(ENABLE_LLVM_PROFILE_GENERATION)));
+WK_COMMON_OTHER_CFLAGS = $(WK_AVAILABILITY_OVERLAY_FLAGS) $(WK_SANITIZER_OTHER_CFLAGS) $(WK_COMMON_OTHER_CFLAGS_PGO_$(WK_OR_$(WK_ENABLE_PGO_USE)_$(ENABLE_LLVM_PROFILE_GENERATION)));
 // Work around rdar://141760829 until the fix is available on all clang-1700
 // based toolchains.
 // Fix from rdar://178983382 to avoid symbol module prefix differences causing performance loss.
@@ -67,7 +67,7 @@ WK_COMMON_OTHER_CFLAGS_PGO_YES = -mllvm -system-headers-coverage -mllvm -static-
 
 OTHER_CFLAGS = $(inherited) $(WK_COMMON_OTHER_CFLAGS);
 
-WK_COMMON_OTHER_CPLUSPLUSFLAGS = $(WK_LIBCPP_ASSERTIONS_CFLAGS);
+WK_COMMON_OTHER_CPLUSPLUSFLAGS = $(WK_AVAILABILITY_OVERLAY_FLAGS) $(WK_LIBCPP_ASSERTIONS_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(inherited) $(WK_COMMON_OTHER_CPLUSPLUSFLAGS);
 
 _EXPERIMENTAL_SWIFT_EXPLICIT_MODULES = YES;
@@ -83,7 +83,7 @@ WK_COMMON_OTHER_LDFLAGS = $(WK_SANITIZER_OTHER_LDFLAGS) $(WK_COMMON_OTHER_LDFLAG
 WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_YES = -Wl,-rename_section,__DATA,__llvm_prf_cnts,__MMAP_DATA,__llvm_prf_cnts;
 OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
 
-WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2b -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS);
+WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2b -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS) $(WK_AVAILABILITY_OVERLAY_FLAGS);
 OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 
 WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_AND_$(WK_NOT_$(WK_ANY_SANITIZER_ENABLED))_$(OVERRIDE_SUPPORTS_TEXT_BASED_API:default=YES));
@@ -130,7 +130,7 @@ WK_SWIFT_CLANG_DEPLOYMENT_TARGET = $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET_$(WK_PLATF
 WK_SWIFT_CLANG_DEPLOYMENT_TARGET_macosx = -clang-target $(CURRENT_ARCH)-apple-macos$(MACOSX_DEPLOYMENT_TARGET);
 
 // rdar://170129992: remove -track-system-dependencies when resolved
-OTHER_SWIFT_FLAGS = $(inherited) -Xcc -fvisibility=hidden -Werror ExistentialAny -Werror NoUseUnstructuredThrowingTask -Werror NoUsage -enable-upcoming-feature ExistentialAny $(WK_SWIFT_MEMORY_SAFETY_FLAGS) $(WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS) $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET) $(WK_SANITIZER_OTHER_SWIFT_FLAGS) -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility -track-system-dependencies -enable-experimental-feature ImportCxxMembersLazily;
+OTHER_SWIFT_FLAGS = $(inherited) $(WK_AVAILABILITY_OVERLAY_SWIFT_FLAGS) -Xcc -fvisibility=hidden -Werror ExistentialAny -Werror NoUseUnstructuredThrowingTask -Werror NoUsage -enable-upcoming-feature ExistentialAny $(WK_SWIFT_MEMORY_SAFETY_FLAGS) $(WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS) $(WK_SWIFT_CLANG_DEPLOYMENT_TARGET) $(WK_SANITIZER_OTHER_SWIFT_FLAGS) -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility -track-system-dependencies -enable-experimental-feature ImportCxxMembersLazily;
 // Work around rdar://157581667 on affected toolchains.
 OTHER_SWIFT_FLAGS[sdk=*26.2*] = $(inherited) -Xcc -fno-modulemap-allow-subdirectory-search;
 OTHER_SWIFT_FLAGS[sdk=*26.3*] = $(inherited) -Xcc -fno-modulemap-allow-subdirectory-search;
