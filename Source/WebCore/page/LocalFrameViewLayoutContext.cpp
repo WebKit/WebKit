@@ -880,10 +880,15 @@ void LocalFrameViewLayoutContext::removeScrollerFromAnchorScrollAdjusters(const 
     if (!renderView() || renderView()->renderTreeBeingDestroyed())
         m_anchorScrollAdjusters.clear();
     else {
+        HashSet<CheckedRef<RenderBox>> anchoredToUnregister;
+
         for (auto& adjuster : m_anchorScrollAdjusters) {
             if (adjuster.invalidateForScroller(scroller))
-                unregisterAnchorScrollAdjusterFor(*adjuster.anchored());
+                anchoredToUnregister.add(*adjuster.anchored());
         }
+
+        for (CheckedRef anchored : anchoredToUnregister)
+            unregisterAnchorScrollAdjusterFor(anchored);
     }
 }
 
