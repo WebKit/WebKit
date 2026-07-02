@@ -1,4 +1,3 @@
-//@ skip if ["WPE", "GTK"].include?($platform)
 // This benchmark tests NumberFormat with unit style which creates {type, value, unit} objects
 // The pre-built Structure with unit property optimization should show improvement here
 function test() {
