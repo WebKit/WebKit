@@ -2406,7 +2406,7 @@ bool containsPlainText(const String& document, const String& target, FindOptions
     SearchBuffer buffer { target, options };
     StringView remainingText { document };
     while (!remainingText.isEmpty()) {
-        size_t charactersAppended = buffer.append(document);
+        size_t charactersAppended = buffer.append(remainingText);
         remainingText = remainingText.substring(charactersAppended);
         if (remainingText.isEmpty())
             buffer.reachedBreak();

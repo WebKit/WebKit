@@ -780,6 +780,7 @@
 				WebCore/SVGImageCasts.cpp,
 				WebCore/TextBoundaries.cpp,
 				WebCore/TextCodec.cpp,
+				WebCore/TextIterator.cpp,
 				WebCore/TimeRanges.cpp,
 				WebCore/TransformationMatrix.cpp,
 				WebCore/U2fCommandConstructorTest.cpp,

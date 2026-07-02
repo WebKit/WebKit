@@ -253,6 +253,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/SharedBuffer.cpp
         Tests/WebCore/SharedBufferTest.cpp
         Tests/WebCore/StyleGradient.cpp
+        Tests/WebCore/TextIterator.cpp
         Tests/WebCore/TimeRanges.cpp
         Tests/WebCore/TransformationMatrix.cpp
         Tests/WebCore/URLParserTextEncoding.cpp
