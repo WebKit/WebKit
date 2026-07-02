@@ -483,6 +483,7 @@
         {
             "name": "getAccessibilityPropertiesForNode",
             "description": "Returns a dictionary of accessibility properties for the node.",
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for which to get accessibility properties." }
             ],
