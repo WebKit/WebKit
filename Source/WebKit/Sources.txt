@@ -215,6 +215,7 @@ NetworkProcess/webtransport/NetworkTransportSession.cpp
 NetworkProcess/webtransport/NetworkTransportStream.cpp
 
 Platform/IPC/DaemonCoders.cpp
+Platform/IPC/FormDataReference.cpp
 
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp

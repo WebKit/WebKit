@@ -8778,6 +8778,7 @@
 		E3EA8F0D2F439059006CC6B3 /* ProcessActivityGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessActivityGroup.cpp; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
+		E3F9E68F2FBCDADA007E5C25 /* FormDataReference.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataReference.cpp; sourceTree = "<group>"; };
 		E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
 		E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
 		E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteIOS.h; sourceTree = "<group>"; };
@@ -10978,6 +10979,7 @@
 				BC032D9E10F437D10058C15A /* Decoder.h */,
 				BC032D9F10F437D10058C15A /* Encoder.cpp */,
 				BC032DA010F437D10058C15A /* Encoder.h */,
+				E3F9E68F2FBCDADA007E5C25 /* FormDataReference.cpp */,
 				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				465237FA2B055C41005B3097 /* FormDataReference.serialization.in */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
