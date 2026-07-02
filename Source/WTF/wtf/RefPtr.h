@@ -27,6 +27,7 @@
 #include <wtf/RawPtrTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 
@@ -216,6 +217,19 @@ inline RefPtr<T, U, V> adoptRef(T* p)
     return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
 }
 
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
+    requires HasRefPtrMemberFunctions<T>::value
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(T* ptr)
+{
+    return RefPtr<T, PtrTraits, RefDerefTraits>(ptr);
+}
+
+template<typename T, typename PtrTraits, typename RefDerefTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(const RefPtr<T, PtrTraits, RefDerefTraits>& ptr)
+{
+    return ptr.copyRef();
+}
+
 template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
 inline RefPtr<T, U, V> upcast(const RefPtr<X, Y, Z>& p)
 {
@@ -300,6 +314,7 @@ ALWAYS_INLINE void lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
 
 using WTF::RefPtr;
 using WTF::adoptRef;
+using WTF::protect;
 using WTF::upcast;
 using WTF::unsafeRefPtrDowncast;
 using WTF::lazyInitialize;
