@@ -54,8 +54,12 @@ function shouldThrowRangeError(fn, msg) {
         ["PlainDate", "1976111"],
         ["PlainDate", "19761"],
     ];
-    for (const [type, string] of crashers)
+    for (const [type, string] of crashers) {
+        // ZonedDateTime is not implemented on this branch; skip unavailable types.
+        if (!Temporal[type])
+            continue;
         shouldThrowRangeError(() => Temporal[type].from(string), `${type}.from(${JSON.stringify(string)})`);
+    }
 }
 
 // Valid strings must keep working.
@@ -68,7 +72,8 @@ function shouldThrowRangeError(fn, msg) {
 
     shouldBe(Temporal.PlainYearMonth.from("2024-01").toString(), "2024-01", "YearMonth hyphenated");
     shouldBe(Temporal.PlainYearMonth.from("202401").toString(), "2024-01", "YearMonth compact");
-    shouldBe(Temporal.PlainYearMonth.from("2024-01[u-ca=iso8601]").toString(), "2024-01", "YearMonth annotated");
+    // Annotated PlainYearMonth/PlainMonthDay parsing and ZonedDateTime are not
+    // implemented on this branch (they postdate the fork), so those cases are omitted.
     shouldBe(Temporal.PlainYearMonth.from("19761118").toString(), "1976-11", "YearMonth compact full date");
     shouldBe(Temporal.PlainYearMonth.from("1976-11-18").toString(), "1976-11", "YearMonth full date");
     shouldBe(Temporal.PlainYearMonth.from("1976-11-18T15:23:30").toString(), "1976-11", "YearMonth full datetime");
@@ -78,11 +83,8 @@ function shouldThrowRangeError(fn, msg) {
     shouldBe(Temporal.PlainMonthDay.from("1214").toString(), "12-14", "MonthDay compact");
     shouldBe(Temporal.PlainMonthDay.from("--12-14").toString(), "12-14", "MonthDay double hyphen");
     shouldBe(Temporal.PlainMonthDay.from("--1214").toString(), "12-14", "MonthDay double hyphen compact");
-    shouldBe(Temporal.PlainMonthDay.from("1130[u-ca=iso8601]").toString(), "11-30", "MonthDay annotated");
-    shouldBe(Temporal.PlainMonthDay.from("1118[+01:00]").toString(), "11-18", "MonthDay timezone annotation");
     shouldBe(Temporal.PlainMonthDay.from("1976-11-18").toString(), "11-18", "MonthDay full date");
     shouldBe(Temporal.PlainMonthDay.from("1976-11-18T15:23:30").toString(), "11-18", "MonthDay full datetime");
 
     shouldBe(Temporal.PlainDateTime.from("2024-01-15T12:30").toString(), "2024-01-15T12:30:00", "PlainDateTime");
-    shouldBe(Temporal.ZonedDateTime.from("2024-01-15T12:30[UTC]").toString(), "2024-01-15T12:30:00+00:00[UTC]", "ZonedDateTime");
 }
