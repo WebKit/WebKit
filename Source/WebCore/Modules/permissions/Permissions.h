@@ -27,6 +27,8 @@
 
 #include <JavaScriptCore/Strong.h>
 #include <WebCore/IDLTypes.h>
+#include <wtf/ObjectIdentifier.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,14 +52,14 @@ enum class PermissionState : uint8_t;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-class Permissions : public RefCounted<Permissions> {
+class Permissions : public RefCountedAndCanMakeWeakPtr<Permissions> {
     WTF_MAKE_TZONE_ALLOCATED(Permissions);
 public:
-    static Ref<Permissions> NODELETE create(NavigatorBase&);
+    static Ref<Permissions> create(NavigatorBase&);
     ~Permissions();
 
     NavigatorBase* NODELETE navigator();
-    void query(JSC::Strong<JSC::JSObject>, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&&);
+    void query(JSC::Strong<JSC::JSObject>, Ref<DeferredPromise>&&);
     WEBCORE_EXPORT static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext&);
     WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(const String&);
 
@@ -65,6 +67,10 @@ private:
     explicit Permissions(NavigatorBase&);
 
     WeakPtr<NavigatorBase> m_navigator;
+
+    enum class PromiseIdentifierType { };
+    using PromiseIdentifier = AtomicObjectIdentifier<PromiseIdentifierType>;
+    HashMap<PromiseIdentifier, Ref<DeferredPromise>> m_queryPromises;
 };
 
 } // namespace WebCore
