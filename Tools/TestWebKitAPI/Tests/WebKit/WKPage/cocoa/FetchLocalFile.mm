@@ -31,6 +31,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
+#import <wtf/text/MakeString.h>
 
 #define HTML_FORMAT_STRING @" \
     <body> \
@@ -102,7 +103,7 @@ TEST(WebKit, FetchLocalFileInParentDirectory)
 
     RetainPtr networkProcessTempDirectory = [NSTemporaryDirectory() stringByAppendingPathComponent:@"com.apple.WebKit.Networking+com.apple.WebKit.TestWebKitAPI"];
 
-    auto [tempFileHandle, tempFilePath] = FileSystem::createTemporaryFileInDirectory(networkProcessTempDirectory.get(), ".html"_s);
+    auto [tempFileHandle, tempFilePath] = FileSystem::createTemporaryFileInDirectory(NSTemporaryDirectory(), ".html"_s);
     ASCIILiteral fileData = "Testdata"_s;
     auto fileDataSpan = fileData.span8();
     tempFileHandle.write(fileDataSpan);
@@ -112,7 +113,7 @@ TEST(WebKit, FetchLocalFileInParentDirectory)
 
     RetainPtr tempDirectory = [networkProcessTempDirectory stringByAppendingPathComponent:@"FetchLocalFileInParentDirectory"];
     FileSystem::makeAllDirectories(tempDirectory.get());
-    RetainPtr parentFilePath = [tempDirectory stringByAppendingPathComponent:@".."];
+    RetainPtr parentFilePath = [tempDirectory stringByAppendingPathComponent:@"../.."];
     parentFilePath = [parentFilePath stringByAppendingPathComponent:tempFileName];
 
     RetainPtr payload = adoptNS([[NSString alloc] initWithFormat:HTML_FORMAT_STRING, parentFilePath.get().UTF8String]);
@@ -198,5 +199,53 @@ TEST(WebKit, FetchLocalFileFromTempDirectory)
     TestWebKitAPI::Util::run(&done);
 
     FileSystem::deleteFile(tempFilePath);
+    FileSystem::deleteFile(fetchFilePath);
+}
+
+static String libraryRootDirectory()
+{
+    static NeverDestroyed<RetainPtr<NSURL>> libraryDirectory = [] {
+        RetainPtr libraryDirectory = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        RELEASE_ASSERT(libraryDirectory);
+        return libraryDirectory;
+    }();
+
+    return libraryDirectory.get().get().absoluteURL.path;
+}
+
+TEST(WebKit, FetchCookieFile)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr controller = adoptNS([[WKUserContentController alloc] init]);
+    configuration.get().userContentController = controller.get();
+    [[configuration preferences] _setAllowFileAccessFromFileURLs:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    String cookieFilePath = makeString(libraryRootDirectory(), "/Cookies/Cookies.binarycookies"_s);
+
+    URL fileURL = URL::fileURLWithFileSystemPath(cookieFilePath);
+    RetainPtr payload = adoptNS([[NSString alloc] initWithFormat:HTML_FORMAT_STRING, fileURL.string().utf8().data()]);
+
+    auto [fetchFilePath, fetchFileHandle] = FileSystem::openTemporaryFile("fetch"_s, ".html"_s);
+    fetchFileHandle.write(String(payload.get()).span8());
+    fetchFileHandle = { };
+    URL fetchFileURL = URL::fileURLWithFileSystemPath(fetchFilePath);
+
+    RetainPtr request = [NSURLRequest requestWithURL:fetchFileURL.createNSURL().get()];
+
+    __block bool fetchDone = false;
+    [webView performAfterReceivingMessage:@"done" action:^{ fetchDone = true; }];
+    [webView synchronouslyLoadRequest:request.get()];
+    TestWebKitAPI::Util::run(&fetchDone);
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"window.local_file_content" completionHandler:^(id result, NSError *err) {
+        EXPECT_TRUE(result == nil);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
     FileSystem::deleteFile(fetchFilePath);
 }

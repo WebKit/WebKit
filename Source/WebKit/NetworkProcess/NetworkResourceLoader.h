@@ -302,7 +302,7 @@ private:
 #endif
 
 #if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
-    bool isLocalFileLoadAllowedWithoutSandboxExtension(const URL& url);
+    bool isLocalFileLoadAllowed(const URL&);
 #endif
 
     NetworkResourceLoadParameters m_parameters;
