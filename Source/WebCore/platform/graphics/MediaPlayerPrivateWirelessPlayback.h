@@ -129,9 +129,9 @@ private:
     // MediaDeviceRouteClient
     void timeRangeDidChange(MediaDeviceRoute&) final;
     void readyDidChange(MediaDeviceRoute&) final;
-    void playbackErrorDidChange(MediaDeviceRoute&) final;
+    void errorDidChange(MediaDeviceRoute&) final;
     void audioOptionsDidChange(MediaDeviceRoute&) final;
-    void currentPlaybackPositionDidChange(MediaDeviceRoute&) final;
+    void playbackPositionDidChange(MediaDeviceRoute&) final;
 
     CMTimebaseRef ensureTimebase();
     void destroyTimebase();

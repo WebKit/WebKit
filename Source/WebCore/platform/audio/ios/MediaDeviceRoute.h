@@ -39,7 +39,7 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_CLASS WebMediaSourceObserver;
+OBJC_CLASS WebPlaybackControlObserver;
 
 namespace WebCore {
 
@@ -91,9 +91,9 @@ public:
     virtual void timeRangeDidChange(MediaDeviceRoute&) { }
     virtual void readyDidChange(MediaDeviceRoute&) { }
     virtual void bufferingDidChange(MediaDeviceRoute&) { }
-    virtual void playbackErrorDidChange(MediaDeviceRoute&) { }
+    virtual void errorDidChange(MediaDeviceRoute&) { }
     virtual void audioOptionsDidChange(MediaDeviceRoute&) { }
-    virtual void currentPlaybackPositionDidChange(MediaDeviceRoute&) { }
+    virtual void playbackPositionDidChange(MediaDeviceRoute&) { }
     virtual void playingDidChange(MediaDeviceRoute&) { }
     virtual void playbackSpeedDidChange(MediaDeviceRoute&) { }
     virtual void scanSpeedDidChange(MediaDeviceRoute&) { }
@@ -120,16 +120,16 @@ public:
     MediaTimeRange timeRange() const;
     bool ready() const;
     bool buffering() const;
-    std::optional<MediaPlaybackSourceError> playbackError() const;
+    std::optional<MediaPlaybackSourceError> error() const;
     Vector<MediaSelectionOption> audioOptions() const;
-    MediaTime currentPlaybackPosition() const;
+    MediaTime playbackPosition() const;
     bool playing() const;
     float playbackSpeed() const;
     float scanSpeed() const;
     bool muted() const;
     float volume() const;
 
-    void setCurrentPlaybackPosition(MediaTime);
+    void setPlaybackPosition(MediaTime);
     void setPlaying(bool);
     void setPlaybackSpeed(float);
     void setScanSpeed(float);
@@ -141,7 +141,7 @@ private:
 
     WTF::UUID m_identifier;
     RetainPtr<WebMediaDevicePlatformRoute> m_platformRoute;
-    RetainPtr<WebMediaSourceObserver> m_mediaSourceObserver;
+    RetainPtr<WebPlaybackControlObserver> m_playbackControlObserver;
     WeakPtr<MediaDeviceRouteClient> m_client;
 #if HAVE(AVROUTING_FRAMEWORK)
     RetainPtr<WebMediaDevicePlatformRouteSession> m_routeSession;
