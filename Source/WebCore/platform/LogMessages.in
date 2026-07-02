@@ -157,6 +157,7 @@ MediaSessionManagerCocoaSessionCanProduceAudioChanged, "MediaSessionManagerCocoa
 MediaSessionManagerCocoaUpdateSessionState, "MediaSessionManagerCocoa::updateSessionState: AudioCapture(%d), AudioTrack(%d), Video(%d), Audio(%d), VideoAudio(%d), WebAudio(%d), DOMMediaSession(%d)", (int, int, int, int, int, int, int), DEFAULT, Media
 MediaSessionManagerInterfaceAddSession, "MediaSessionManagerInterface::addSession, session ID = %" PRIu64 "", (uint64_t), DEFAULT, Media
 MediaSessionManagerInterfaceMaybeActivateAudioSessionActiveSessionNotRequired, "MediaSessionManagerInterface::maybeActivateAudioSession:  active audio session not required", (), DEFAULT, Media
+MediaSessionManagerInterfaceProcessWillSuspendWhileCapturing, "MediaSessionManagerInterface::processWillSuspend: ongoing active microphone capture", (), ERROR, Media
 MediaSessionManagerInterfaceRemoveSession, "MediaSessionManagerInterface::removeSession, session ID = %" PRIu64 "", (uint64_t), DEFAULT, Media
 MediaSessionManagerInterfaceSessionCanProduceAudioChanged, "MediaSessionManagerInterface::sessionCanProduceAudioChanged", (), DEFAULT, Media
 MediaSessionManagerInterfaceSessionWillEndPlayback, "MediaSessionManagerInterface::sessionWillEndPlayback, session ID = %" PRIu64 "", (uint64_t), DEFAULT, Media

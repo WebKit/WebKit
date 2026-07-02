@@ -183,7 +183,8 @@ protected:
     Vector<WeakPtr<PlatformMediaSessionInterface>> sessionsMatching(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&) const;
     WeakPtr<PlatformMediaSessionInterface> firstSessionMatching(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>&) const;
 
-    void maybeDeactivateAudioSession();
+    enum class ShouldCheckRequiredSession : bool { No, Yes };
+    void maybeDeactivateAudioSession(ShouldCheckRequiredSession = ShouldCheckRequiredSession::Yes);
     Ref<GenericPromise> maybeActivateAudioSession();
 
     void nowPlayingMetadataChanged(const NowPlayingMetadata&);

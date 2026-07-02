@@ -36,7 +36,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioSession.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentPage.h"
 #include "ExceptionCode.h"
@@ -207,7 +206,10 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 
             if (RefPtr audioTrack = stream->getFirstAudioTrack()) {
 #if USE(AUDIO_SESSION)
-                AudioSession::singleton().tryToSetActive(true)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
+                if (RefPtr page = document.page()) {
+                    if (RefPtr manager = page->mediaSessionManager())
+                        manager->audioCaptureSourceStateChanged(MediaSessionManagerInterface::IsCaptureStarting::Yes);
+                }
 #endif
                 if (std::holds_alternative<MediaTrackConstraints>(protectedThis->m_audioConstraints))
                     audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTF::move(protectedThis->m_audioConstraints)));

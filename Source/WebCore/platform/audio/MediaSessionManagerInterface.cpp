@@ -346,8 +346,12 @@ void MediaSessionManagerInterface::processWillSuspend()
     });
 #endif
 
+    if (std::ranges::any_of(m_audioCaptureSources, [](auto& source) { return Ref { source }->isCapturingAudio(); }))
+        MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(ProcessWillSuspendWhileCapturing);
+
+
 #if USE(AUDIO_SESSION)
-    maybeDeactivateAudioSession();
+    maybeDeactivateAudioSession(ShouldCheckRequiredSession::No);
 #endif
 }
 
@@ -651,7 +655,7 @@ void MediaSessionManagerInterface::audioCaptureSourceStateChanged(IsCaptureStart
 #if USE(AUDIO_SESSION)
     if (isCaptureStarting == IsCaptureStarting::Yes)
         maybeActivateAudioSession();
-    else if (!activeAudioSessionRequired())
+    else
         maybeDeactivateAudioSession();
 #else
     UNUSED_PARAM(isCaptureStarting);
@@ -742,7 +746,7 @@ void MediaSessionManagerInterface::removeSession(PlatformMediaSessionInterface& 
     MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(RemoveSession, session.logIdentifier());
 #endif
 
-    if (hasNoSession() && !activeAudioSessionRequired())
+    if (hasNoSession())
         maybeDeactivateAudioSession();
 
 #if !RELEASE_LOG_DISABLED && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
@@ -765,11 +769,16 @@ bool MediaSessionManagerInterface::computeSupportsSeeking() const
     return false;
 }
 
-void MediaSessionManagerInterface::maybeDeactivateAudioSession()
+void MediaSessionManagerInterface::maybeDeactivateAudioSession(ShouldCheckRequiredSession shouldCheckRequiredSession)
 {
 #if USE(AUDIO_SESSION)
     if (!m_becameActive || !shouldDeactivateAudioSession())
         return;
+
+    if (shouldCheckRequiredSession == ShouldCheckRequiredSession::Yes && activeAudioSessionRequired()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "skipping AudioSession deactivation, capture or media session still requires it");
+        return;
+    }
 
     // Honor an explicit category override (e.g., navigator.audioSession.type =
     // "play-and-record"): the page has expressed intent that the session remain
@@ -787,6 +796,8 @@ void MediaSessionManagerInterface::maybeDeactivateAudioSession()
     ALWAYS_LOG(LOGIDENTIFIER, "tried to set inactive AudioSession");
     AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
     m_becameActive = false;
+#else
+    UNUSED_PARAM(shouldCheckRequiredSession);
 #endif
 }
 
