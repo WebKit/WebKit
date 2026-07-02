@@ -1315,14 +1315,14 @@ static std::optional<MarkedText> NODELETE markedTextForTextDecorationLineSpellin
 {
     if (!renderer.style().textDecorationLineInEffect().isSpellingError())
         return std::nullopt;
-    return std::make_optional<MarkedText>({ 0, static_cast<unsigned>(renderer.length()), MarkedText::Type::SpellingError });
+    return std::make_optional<MarkedText>(0, static_cast<unsigned>(renderer.length()), MarkedText::Type::SpellingError);
 }
 
 static std::optional<MarkedText> NODELETE markedTextForTextDecorationLineGrammarError(const RenderText& renderer)
 {
     if (!renderer.style().textDecorationLineInEffect().isGrammarError())
         return std::nullopt;
-    return std::make_optional<MarkedText>({ 0, static_cast<unsigned>(renderer.length()), MarkedText::Type::GrammarError });
+    return std::make_optional<MarkedText>(0, static_cast<unsigned>(renderer.length()), MarkedText::Type::GrammarError);
 }
 
 void TextBoxPainter::paintPlatformDocumentMarkers()

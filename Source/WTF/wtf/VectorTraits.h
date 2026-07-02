@@ -58,7 +58,7 @@ namespace WTF {
     // Requiring std::has_unique_object_representations_v<T> to make sure the type doesn't have padding and can
     // be used with memcmp().
     template<typename T>
-    struct VectorTraits : VectorTraitsBase<std::is_standard_layout_v<T> && std::is_trivial_v<T> && std::has_unique_object_representations_v<T>, T> { };
+    struct VectorTraits : VectorTraitsBase<std::is_standard_layout_v<T> && std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T> && std::has_unique_object_representations_v<T>, T> { };
 
     struct SimpleClassVectorTraits : VectorTraitsBase<false, void>
     {

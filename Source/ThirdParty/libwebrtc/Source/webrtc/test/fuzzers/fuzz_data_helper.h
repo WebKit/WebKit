@@ -33,13 +33,13 @@ class FuzzDataHelper {
 
   // Reads and returns data of type T.
   template <typename T>
-    requires(std::is_trivial_v<T>)
+    requires(std::is_trivially_copyable_v<T> && is_trivially_default_constructible_v<T>)
   T Read();
 
   // Reads and returns data of type T. Returns default_value if not enough
   // fuzzer input remains to read a T.
   template <typename T>
-    requires(std::is_trivial_v<T>)
+    requires(std::is_trivially_copyable_v<T> && is_trivially_default_constructible_v<T>)
   T ReadOrDefaultValue(T default_value) {
     if (!CanReadBytes(sizeof(T))) {
       return default_value;
@@ -105,7 +105,7 @@ class FuzzDataHelper {
   // If sizeof(T) > BytesLeft then the remaining bytes will be used and the rest
   // of the object will be zero initialized.
   template <typename T>
-    requires(std::is_trivial_v<T>)
+    requires(std::is_trivially_copyable_v<T> && is_trivially_default_constructible_v<T>)
   void CopyTo(T& object) {
     std::span<uint8_t, sizeof(T)> object_memory(
         reinterpret_cast<uint8_t*>(&object), sizeof(T));
@@ -133,7 +133,7 @@ class FuzzDataHelper {
 };
 
 template <typename T>
-  requires(std::is_trivial_v<T>)
+  requires(std::is_trivially_copyable_v<T> && is_trivially_default_constructible_v<T>)
 T FuzzDataHelper::Read() {
   if constexpr (sizeof(T) == 1) {
     if (BytesLeft() == 0) {

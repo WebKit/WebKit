@@ -63,7 +63,8 @@ public:
         size_t oldSize = m_vector.size();
         m_vector.resize(size);
         // Vector::resize doesn't initialize new elements for trivial types.
-        if constexpr (std::is_trivial_v<Value>) {
+        if constexpr (std::is_trivially_copyable_v<Value>
+            && std::is_trivially_default_constructible_v<Value>) {
             if (size > oldSize)
                 std::fill(m_vector.begin() + oldSize, m_vector.end(), Value());
         }

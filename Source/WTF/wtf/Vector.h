@@ -65,7 +65,7 @@ struct VectorCopier {
     template<typename U, std::size_t Extent>
     static void uninitializedCopy(std::span<const U, Extent> src, std::span<T> dst)
     {
-        if constexpr (std::is_trivial_v<T> && std::same_as<T, U>)
+        if constexpr (std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T> && std::same_as<T, U>)
             memcpySpan(dst, src);
         else {
             for (size_t i = 0; i < src.size(); ++i)
@@ -768,8 +768,8 @@ public:
     static constexpr ptrdiff_t bufferMemoryOffset() { return Base::bufferMemoryOffset(); }
     [[nodiscard]] size_t capacity() const { return Base::capacity(); }
     [[nodiscard]] bool isEmpty() const { return !size(); }
-    [[nodiscard]] std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
-    [[nodiscard]] std::span<T> mutableSpan() LIFETIME_BOUND { return { data(), size() }; }
+    [[nodiscard]] std::span<const T> span() const LIFETIME_BOUND { return std::span<const T>(data(), size()); }
+    [[nodiscard]] std::span<T> mutableSpan() LIFETIME_BOUND { return std::span<T>(data(), size()); }
 
     Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
     {

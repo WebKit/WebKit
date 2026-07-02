@@ -291,7 +291,7 @@ class LogMetadata {
   // both with a single instruction.)
   uint32_t line_and_sev_;
 };
-static_assert(std::is_trivial<LogMetadata>::value, "");
+static_assert(std::is_trivially_copyable_v<LogMetadata> && std::is_trivially_default_constructible_v<LogMetadata>, "");
 
 struct LogMetadataErr {
   LogMetadata meta;
