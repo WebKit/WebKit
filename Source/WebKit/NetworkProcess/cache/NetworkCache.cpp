@@ -302,6 +302,9 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     if (response.cacheControlContainsNoStore())
         return StoreDecision::NoDueToNoStoreResponse;
 
+    if (response.httpStatusCode() == httpStatus304NotModified)
+        return StoreDecision::NoDueToHTTPStatusCode;
+
     if (!WebCore::isStatusCodeCacheableByDefault(response.httpStatusCode())) {
         // http://tools.ietf.org/html/rfc7234#section-4.3.2
         bool hasExpirationHeaders = response.expires() || response.cacheControlMaxAge();
@@ -463,6 +466,13 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
         ASSERT(record.key == storageKey);
 
         auto entry = Entry::decodeStorageRecord(record);
+
+        // FIXME: This is a workaround for rdar://181130091, which we can drop after a release.
+        if (entry && entry->response().httpStatusCode() == httpStatus304NotModified) {
+            LOG(NetworkCache, "(NetworkProcess) discarding poisoned 304 entry from disk cache (rdar://181130091)");
+            completeRetrieve(WTF::move(completionHandler), nullptr, info);
+            return false;
+        }
 
         auto useDecision = entry ? makeUseDecision(networkProcess, sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
         info.useDecision = useDecision;
