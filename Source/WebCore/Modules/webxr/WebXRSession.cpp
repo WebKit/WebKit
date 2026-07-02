@@ -406,11 +406,17 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 
     // 3. If the active immersive session is equal to session, set the active immersive session to null.
     // 4. Remove session from the list of inline sessions.
+<<<<<<< HEAD
     for (WeakPtr listener : m_sessionListeners) {
         if (RefPtr protectedListener = listener)
             protectedListener->onSessionEnded(*this);
     }
     m_sessionListeners.clear();
+=======
+    RefPtr xrSystem = m_xrSystem.get();
+    if (xrSystem)
+        xrSystem->sessionEnded(*this);
+>>>>>>> 99867d817a6d ([WebXR] Use-after-free when ending an XRSession whose owning WebXRSystem has been garbage collected)
 
     m_inputSources->clear();
 
