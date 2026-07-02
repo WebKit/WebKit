@@ -715,6 +715,13 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             cancelMainResourceLoad(protect(frameLoader())->blockedError(newRequest));
             return completionHandler(WTF::move(newRequest));
         }
+        if (newRequest.url().hasCredentials() && isLocalIPAddressSpace(newRequest.url()) && !isLocalIPAddressSpace(redirectResponse.url())) {
+            DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - redirecting to a URL with a disallowed IP address with credentials");
+            if (frame)
+                FrameLoader::reportBlockedCredentialedLocalLoadFailed(*frame, newRequest.url());
+            cancelMainResourceLoad(protect(frameLoader())->blockedError(newRequest));
+            return completionHandler(WTF::move(newRequest));
+        }
     }
 
     ASSERT(frame);

@@ -2058,6 +2058,12 @@ void FrameLoader::reportBlockedLoadFailed(LocalFrame& frame, const URL& url)
     protect(frame.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 }
 
+void FrameLoader::reportBlockedCredentialedLocalLoadFailed(LocalFrame& frame, const URL& url)
+{
+    ASSERT(!url.isEmpty());
+    protect(frame.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Not allowed to load local network address with credentials: "_s, url.string()));
+}
+
 bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 {
 #if PLATFORM(IOS_FAMILY)

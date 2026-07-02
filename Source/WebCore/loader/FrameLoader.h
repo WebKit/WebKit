@@ -158,6 +158,7 @@ public:
 
     static void reportLocalLoadFailed(LocalFrame*, const String& url);
     static void reportBlockedLoadFailed(LocalFrame&, const URL&);
+    static void reportBlockedCredentialedLocalLoadFailed(LocalFrame&, const URL&);
 
     // FIXME: These are all functions which stop loads. We have too many.
     void stopAllLoadersAndCheckCompleteness();
