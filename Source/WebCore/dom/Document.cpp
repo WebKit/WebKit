@@ -11408,7 +11408,7 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
             callback(ScheduleLocationChangeResult::Stopped);
             return;
         }
-        frame->protectedNavigationScheduler()->scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, [callback = WTF::move(callback)](auto result) mutable {
+        frame->protectedNavigationScheduler()->scheduleLocationChange(*weakThis, weakThis->protectedSecurityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, NavigationHistoryBehavior::Auto, [callback = WTF::move(callback)](auto result) mutable {
             callback(result);
         });
     });

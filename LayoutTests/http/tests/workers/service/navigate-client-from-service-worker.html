@@ -1,0 +1,80 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+const PREFIX = "resources/navigate-client-from-service-worker-";
+
+setTimeout(() => {
+    log("FAIL: Hard timeout");
+    finishSWTest();
+}, 15000);
+
+let targetIframe;
+let iframe1;
+let registration;
+
+function navHandler(ev) {
+    targetIframe.contentDocument.open();
+    targetIframe.contentDocument.close();
+    gc();
+    for (let i = 0; i < 5000; i++)
+        new ArrayBuffer(112);
+}
+
+function afterPreSwap() {
+    setTimeout(() => {
+        targetIframe.contentWindow.navigation.addEventListener('navigate', navHandler);
+
+        iframe1.remove();
+        iframe1 = null;
+        gc();
+
+        setTimeout(() => {
+            gc();
+            registration.active.postMessage({ action: 'navigate' });
+
+            setTimeout(() => {
+                log("PASS");
+                finishSWTest();
+            }, 4000);
+        }, 50);
+    }, 0);
+}
+
+async function main() {
+    registration = await navigator.serviceWorker.register(PREFIX + "worker.js");
+    if (!registration.active) {
+        let worker = registration.installing || registration.waiting;
+        await waitForState(worker, 'activated');
+    }
+
+    targetIframe = document.createElement('iframe');
+    window.targetIframe = targetIframe;
+    targetIframe.src = PREFIX + "target.html";
+    iframe1 = document.createElement('iframe');
+    iframe1.src = PREFIX + "child.html";
+
+    let loaded = 0;
+    function onload() {
+        if (++loaded < 2)
+            return;
+        targetIframe.onload = null;
+        iframe1.onload = null;
+        setTimeout(iframe1.contentWindow.doPreSwap, 0);
+    }
+    targetIframe.onload = onload;
+    iframe1.onload = onload;
+    document.body.append(targetIframe, iframe1);
+}
+
+window.onload = () => {
+    main().catch(err => {
+        log("FAIL: " + err);
+        finishSWTest();
+    });
+};
+</script>
+</body>
+</html>
