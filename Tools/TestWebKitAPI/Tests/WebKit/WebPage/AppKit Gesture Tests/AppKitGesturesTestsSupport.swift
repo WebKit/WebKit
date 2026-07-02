@@ -55,6 +55,8 @@ actor Recap {
 protocol AppKitGestureTestSuite {
     static var text: String { get }
 
+    static var topInset: CGFloat { get }
+
     var recap: Recap { get }
 
     var page: WebPage { get }
@@ -65,6 +67,9 @@ protocol AppKitGestureTestSuite {
 }
 
 extension AppKitGestureTestSuite {
+    static var topInset: CGFloat {
+        0
+    }
 }
 
 @Suite(.serialized, .timeLimit(.minutes(1)))
@@ -88,7 +93,7 @@ private func convertToCoreGraphicsScreenCoordinates(pointInWindowCoordinates: CG
 }
 
 @MainActor
-private func convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: DOMRect, window: NSWindow) -> CGRect {
+private func convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: DOMRect, window: NSWindow, topInset: CGFloat) -> CGRect {
     guard let contentViewController = window.contentViewController else {
         preconditionFailure()
     }
@@ -97,7 +102,8 @@ private func convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: D
         preconditionFailure()
     }
 
-    let inViewportCoordinates = CGRect(rectInViewportCoordinates)
+    var inViewportCoordinates = CGRect(rectInViewportCoordinates)
+    inViewportCoordinates.origin.y += topInset
 
     let inWindowCoordinates = CGRect(
         x: inViewportCoordinates.origin.x,
@@ -126,17 +132,17 @@ extension AppKitGestureTestSuite {
             JavaScriptMessages.BoundingClientRect(in: "div", range: range)
         )
 
-        let screenCoordinates = convertToCoreGraphicsScreenCoordinates(
-            rectInViewportCoordinates: viewportCoordinates,
-            window: window
-        )
-
+        let screenCoordinates = screenBounds(ofRectInViewportCoordinates: viewportCoordinates)
         return screenCoordinates
     }
 
     func screenBounds(ofElementWithID id: String) async throws -> CGRect {
         let viewportCoordinates = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: id))
-        return convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: viewportCoordinates, window: window)
+        return convertToCoreGraphicsScreenCoordinates(
+            rectInViewportCoordinates: viewportCoordinates,
+            window: window,
+            topInset: Self.topInset
+        )
     }
 
     func screenBounds(ofPointInWindowCoordinates point: NSPoint) -> NSPoint {
@@ -144,7 +150,7 @@ extension AppKitGestureTestSuite {
     }
 
     func screenBounds(ofRectInViewportCoordinates point: DOMRect) -> CGRect {
-        convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: point, window: window)
+        convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: point, window: window, topInset: Self.topInset)
     }
 }
 

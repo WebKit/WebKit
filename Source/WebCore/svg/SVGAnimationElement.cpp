@@ -552,7 +552,8 @@ void SVGAnimationElement::startedActiveInterval()
         if (!splinesCount
             || (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && m_keyPoints.size() - 1 != splinesCount)
             || (animationMode == AnimationMode::Values && m_values.size() - 1 != splinesCount)
-            || (hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && keyTimes.size() - 1 != splinesCount))
+            || (hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && keyTimes.size() - 1 != splinesCount)
+            || (!keyTimes.isEmpty() && keyTimes.last() != 1))
             return;
     }
 

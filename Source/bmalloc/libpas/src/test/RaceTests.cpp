@@ -28,9 +28,14 @@
 #include <functional>
 #include "iso_heap.h"
 #include "iso_heap_config.h"
+#include "iso_heap_ref.h"
 #include <map>
 #include <mutex>
+#include "pas_heap.h"
+#include "pas_primitive_heap_ref.h"
 #include "pas_race_test_hooks.h"
+#include "pas_segregated_heap_inlines.h"
+#include "pas_segregated_size_directory.h"
 #include "pas_thread_local_cache.h"
 #include <set>
 #include <thread>
@@ -251,6 +256,82 @@ void testLocalAllocatorStopRaceAgainstScavenge(pas_race_test_hook_kind kindToSto
     CHECK(shrinkDidFinish);
 }
 
+void testMediumDirectoryTornInsertRace()
+{
+    pas_scavenger_suspend();
+
+    pas_primitive_heap_ref heap = ISO_PRIMITIVE_HEAP_REF_INITIALIZER;
+    constexpr size_t kBigSize = 8192;
+    constexpr size_t kNewSize = 1024;
+
+    /* This is a bit of a hack: we want to catch a race on the medium-tuple
+       insertion path, but in order to set up the race we need to go through
+       the insertion path once without getting stopped by the hook.
+       So we start with a no-op hook and only afterwards install the effectful one. */
+    hookCallback = [] (pas_race_test_hook_kind) { };
+    void* seedBig = iso_allocate_primitive(&heap, kBigSize, pas_non_compact_allocation_mode);
+    CHECK(seedBig);
+
+    bool didGetToHook = false;
+    bool hookShouldStop = false;
+    bool hookDidStop = false;
+
+    hookCallback =
+        [&] (pas_race_test_hook_kind kind) {
+            if (kind != pas_race_test_hook_medium_directory_after_directory_store)
+                return;
+
+            unique_lock<mutex> locker(globalLock);
+            didGetToHook = true;
+            globalCond.notify_all();
+            while (!hookShouldStop && !isHoldingContendedLocks())
+                globalCond.wait(locker);
+            hookDidStop = true;
+        };
+
+    thread writer = thread(
+        [&] () {
+            /* Inserts a smaller medium tuple at slot 0, shifting the original
+               tuple to slot 1.
+               Once the hook fires, slot[0]'s directory ptr will have been overwritten,
+               but its begin_index/end_index fields won't yet have been.
+               If there is a race here, then the reader will see
+               { new_directory_ptr, old_begin_index, old_end_index } */
+            void* small = iso_allocate_primitive(&heap, kNewSize, pas_non_compact_allocation_mode);
+            CHECK(small);
+        });
+
+    {
+        unique_lock<mutex> locker(globalLock);
+        while (!didGetToHook)
+            globalCond.wait(locker);
+    }
+
+    /* A NULL cached_index forces the lookup to skip the
+       basic-size-directory path, which ensures we take the medium path.
+       Since the slot-write hasn't finished yet, we should expect to see
+       the original directory, with object_size == kBigSize.
+       If we see a directory with kNewSize, then there is a race.
+       If the lock-free medium path doesn't respect the seqlock, it will
+       observe the torn slot we created above. */
+    size_t bigIndex = pas_segregated_heap_index_for_size(kBigSize, iso_heap_config);
+    pas_segregated_size_directory* observed =
+        pas_segregated_heap_size_directory_for_index(
+            &heap.base.heap->segregated_heap, bigIndex, NULL, &iso_heap_config,
+            pas_lock_is_not_held);
+
+    {
+        unique_lock<mutex> locker(globalLock);
+        hookShouldStop = true;
+        globalCond.notify_all();
+    }
+    writer.join();
+
+    CHECK(hookDidStop);
+    CHECK(observed);
+    CHECK_GREATER_EQUAL((size_t)observed->object_size, kBigSize);
+}
+
 } // anonymous namespace
 
 #endif // PAS_ENABLE_TESTING && PAS_ENABLE_ISO
@@ -268,6 +349,8 @@ void addRaceTests()
         ADD_TEST(testLocalAllocatorStopRace(pas_race_test_hook_local_allocator_stop_before_unlock));
         ADD_TEST(testLocalAllocatorStopRaceAgainstScavenge(pas_race_test_hook_local_allocator_stop_before_did_stop_allocating));
         ADD_TEST(testLocalAllocatorStopRaceAgainstScavenge(pas_race_test_hook_local_allocator_stop_before_unlock));
+
+        ADD_TEST(testMediumDirectoryTornInsertRace());
     }
 #endif // PAS_ENABLE_TESTING && PAS_ENABLE_ISO
 }

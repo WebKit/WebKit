@@ -143,6 +143,18 @@ public:
     // Methods used by MediaSourcePrivate
     bool NODELETE hasReceivedFirstInitializationSegment() const;
 
+    // Returns true if this SourceBuffer has an audio track whose buffered
+    // ranges include `time`. If `excluded` is set, the track with that ID is
+    // skipped (used so an audio TrackBuffer doesn't claim self-coverage when
+    // querying the unified gap policy).
+    bool isAudioBufferedAt(const MediaTime&, std::optional<TrackID> excluded) const;
+
+    // Union of all audio TrackBuffers' buffered ranges in this
+    // SourceBuffer. Caller must be on the dispatcher; the result is a
+    // copy that's safe to merge into MediaSourcePrivate's lock-protected
+    // audio-buffered cache.
+    PlatformTimeRanges audioBufferedRanges() const;
+
     virtual size_t platformMaximumBufferSize() const { return 0; }
     Ref<GenericPromise> setMaximumBufferSize(size_t);
 
@@ -184,7 +196,6 @@ protected:
 
     virtual Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) = 0;
     virtual void resetParserStateInternal() = 0;
-    virtual MediaTime timeFudgeFactor() const { return PlatformTimeRanges::timeFudgeFactor(); }
     virtual void flush(TrackID) { }
     virtual void enqueueSample(Ref<MediaSample>&&, TrackID) { }
     virtual void allSamplesInTrackEnqueued(TrackID) { }

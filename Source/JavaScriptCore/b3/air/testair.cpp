@@ -168,6 +168,7 @@ void testShuffleSimpleSwap()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -203,6 +204,7 @@ void testShuffleSimpleShift()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -240,6 +242,7 @@ void testShuffleLongShift()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -292,6 +295,7 @@ void testShuffleLongShiftBackwards()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -344,6 +348,7 @@ void testShuffleSimpleRotate()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -380,6 +385,7 @@ void testShuffleSimpleBroadcast()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -416,6 +422,7 @@ void testShuffleBroadcastAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     const Vector<Reg>& regs = code.regsInPriorityOrder(GP);
 
     BasicBlock* root = code.addBlock();
@@ -457,6 +464,7 @@ void testShuffleTreeShift()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -509,6 +517,7 @@ void testShuffleTreeShiftBackward()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -564,6 +573,7 @@ void testShuffleTreeShiftOtherBackward()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -616,6 +626,7 @@ void testShuffleMultipleShifts()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -659,6 +670,7 @@ void testShuffleRotateWithFringe()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -704,6 +716,7 @@ void testShuffleRotateWithFringeInWeirdOrder()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -749,6 +762,7 @@ void testShuffleRotateWithLongFringe()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -794,6 +808,7 @@ void testShuffleMultipleRotates()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -839,6 +854,7 @@ void testShuffleShiftAndRotate()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 1, Tmp(GPRInfo::regT0));
     loadConstant(root, 2, Tmp(GPRInfo::regT1));
@@ -883,6 +899,7 @@ void testRotateFringeClobber()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
 
     int32_t things[8];
@@ -955,6 +972,7 @@ void testShuffleShiftAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     const Vector<Reg>& regs = code.regsInPriorityOrder(GP);
 
     BasicBlock* root = code.addBlock();
@@ -991,6 +1009,7 @@ void testShuffleRotateAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     const Vector<Reg>& regs = code.regsInPriorityOrder(GP);
 
     BasicBlock* root = code.addBlock();
@@ -1030,6 +1049,7 @@ void testShuffleSimpleSwap64()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 10000000000000000ll, Tmp(GPRInfo::regT0));
     loadConstant(root, 20000000000000000ll, Tmp(GPRInfo::regT1));
@@ -1065,6 +1085,7 @@ void testShuffleSimpleShift64()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 10000000000000000ll, Tmp(GPRInfo::regT0));
     loadConstant(root, 20000000000000000ll, Tmp(GPRInfo::regT1));
@@ -1103,6 +1124,7 @@ void testShuffleSwapMixedWidth()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 10000000000000000ll, Tmp(GPRInfo::regT0));
     loadConstant(root, 20000000000000000ll, Tmp(GPRInfo::regT1));
@@ -1138,6 +1160,7 @@ void testShuffleShiftMixedWidth()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadConstant(root, 10000000000000000ll, Tmp(GPRInfo::regT0));
     loadConstant(root, 20000000000000000ll, Tmp(GPRInfo::regT1));
@@ -1178,6 +1201,7 @@ void testShuffleShiftMemory()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int32_t memory[2];
     memory[0] = 35;
     memory[1] = 36;
@@ -1215,6 +1239,7 @@ void testShuffleShiftMemoryLong()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int32_t memory[2];
     memory[0] = 35;
     memory[1] = 36;
@@ -1263,6 +1288,7 @@ void testShuffleShiftMemoryAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int32_t memory[2];
     memory[0] = 35;
     memory[1] = 36;
@@ -1315,6 +1341,7 @@ void testShuffleShiftMemoryAllRegs64()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int64_t memory[2];
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
@@ -1376,6 +1403,7 @@ void testShuffleShiftMemoryAllRegsMixedWidth()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int64_t memory[2];
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
@@ -1433,6 +1461,7 @@ void testShuffleRotateMemory()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int32_t memory[2];
     memory[0] = 35;
     memory[1] = 36;
@@ -1480,6 +1509,7 @@ void testShuffleRotateMemory64()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int64_t memory[2];
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
@@ -1525,6 +1555,7 @@ void testShuffleRotateMemoryMixedWidth()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int64_t memory[2];
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
@@ -1570,6 +1601,7 @@ void testShuffleRotateMemoryAllRegs64()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int64_t memory[2];
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
@@ -1622,6 +1654,7 @@ void testShuffleRotateMemoryAllRegsMixedWidth()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     int64_t memory[2];
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
@@ -1676,6 +1709,7 @@ void testShuffleSwapDouble()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadDoubleConstant(root, 1, Tmp(FPRInfo::fpRegT0), Tmp(GPRInfo::regT0));
     loadDoubleConstant(root, 2, Tmp(FPRInfo::fpRegT1), Tmp(GPRInfo::regT0));
@@ -1711,6 +1745,7 @@ void testShuffleShiftDouble()
     B3::Procedure proc;
     Code& code = proc.code();
 
+    proc.setUsesShuffle(true);
     BasicBlock* root = code.addBlock();
     loadDoubleConstant(root, 1, Tmp(FPRInfo::fpRegT0), Tmp(GPRInfo::regT0));
     loadDoubleConstant(root, 2, Tmp(FPRInfo::fpRegT1), Tmp(GPRInfo::regT0));

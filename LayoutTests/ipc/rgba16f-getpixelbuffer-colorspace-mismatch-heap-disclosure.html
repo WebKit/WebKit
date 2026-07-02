@@ -1,0 +1,120 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const log = (s) => { document.getElementById('log').textContent += s + '\n'; };
+
+window.setTimeout(async () => {
+    if (!window.IPC) {
+        log("PASS");
+        return window.testRunner?.notifyDone();
+    }
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const PF = {};
+    for (const e of IPC.serializedEnumInfo['WebCore::PixelFormat'].valueMap) PF[e.name] = e.value;
+    const CS = {};
+    for (const e of IPC.serializedEnumInfo['WebCore::ColorSpace'].valueMap) CS[e.name] = e.value;
+
+    if (PF.RGBA16F === undefined) {
+        log("PASS");
+        return window.testRunner?.notifyDone();
+    }
+
+    // std::optional<CoreIPCCGColorSpace> needs its bool discriminator exposed.
+    CoreIPC.typeInfo['WebCore::PlatformColorSpace'] = [
+        { type: 'std::optional<WebKit::CoreIPCCGColorSpace>', name: 'alias' }
+    ];
+    const makeCS = (v) => ({
+        serializableColorSpace: { alias: { optionalValue: {
+            m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: v } }
+        } } }
+    });
+    const SRGB_CS = makeCS(CS.SRGB);
+    const P3_CS = makeCS(CS.DisplayP3);
+
+    const W = 16, H = 16;
+    const NBYTES = W * H * 8;
+
+    const sc = CoreIPC.newStreamConnection();
+    const rbId = Math.floor(Math.random() * 0x1000000);
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: rbId,
+        connectionHandle: sc
+    });
+    const rb = sc.newInterface('RemoteRenderingBackend', rbId);
+    const init = sc.connection.waitForMessage(rbId, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name);
+    sc.connection.setSemaphores(init[0].value, init[1].value);
+
+    const bufId = Math.floor(Math.random() * 0x1000000);
+    const ctxId = Math.floor(Math.random() * 0x1000000);
+    rb.CreateImageBuffer({
+        logicalSize: { width: W, height: H },
+        renderingMode: 1,
+        renderingPurpose: 0,
+        resolutionScale: 1.0,
+        colorSpace: SRGB_CS,
+        bufferFormat: { pixelFormat: PF.RGBA16F, useLosslessCompression: 0 },
+        identifier: bufId,
+        contextIdentifier: ctxId
+    });
+    const ib = sc.newInterface('RemoteImageBuffer', bufId);
+    // Drain the unsolicited DidCreateBackend in-turn; otherwise it reaches the stream
+    // connection's dummy receiver, which ASSERT_NOT_REACHED()s in debug builds.
+    sc.connection.waitForMessage(bufId, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name);
+
+    // Seed the IOSurface with Float16 1.0 (00 3C) as a sentinel.
+    const sentinel = new Uint8Array(NBYTES);
+    for (let i = 0; i < NBYTES; i += 2) { sentinel[i] = 0x00; sentinel[i + 1] = 0x3C; }
+    ib.PutPixelBuffer({
+        pixelBuffer: {
+            format: { alphaFormat: 0, pixelFormat: PF.RGBA16F, colorSpace: SRGB_CS },
+            size: { width: W, height: H },
+            bytes: Array.from(sentinel)
+        },
+        srcPoint: { x: 0, y: 0 },
+        srcSize: { width: W, height: H },
+        destPoint: { x: 0, y: 0 },
+        destFormat: 0
+    });
+
+    // Install the shared-memory destination via a matching (SRGB) readback.
+    const shm = IPC.createSharedMemory(NBYTES);
+    shm.writeBytes(new Uint8Array(NBYTES).fill(0xAA));
+    ib.GetPixelBufferWithNewMemory({
+        handle: { handle: shm, protection: 'ReadWrite' },
+        outputFormat: { alphaFormat: 1, pixelFormat: PF.RGBA16F, colorSpace: SRGB_CS },
+        srcPoint: { x: 0, y: 0 },
+        srcSize: { width: W, height: H }
+    });
+
+    // Trigger: mismatched-color-space readback. Pre-fill 0xAA to detect a no-op write.
+    shm.writeBytes(new Uint8Array(NBYTES).fill(0xAA));
+    ib.GetPixelBuffer({
+        outputFormat: { alphaFormat: 1, pixelFormat: PF.RGBA16F, colorSpace: P3_CS },
+        srcPoint: { x: 0, y: 0 },
+        srcSize: { width: W, height: H }
+    });
+
+    // GetPixelBuffer is synchronous, so shm is populated once it returns.
+    const u8 = new Uint8Array(shm.readBytes(0, NBYTES));
+    let allAA = true, sentinelPairs = 0;
+    for (let i = 0; i < NBYTES; ++i) {
+        if (u8[i] !== 0xAA) allAA = false;
+    }
+    for (let i = 0; i < NBYTES - 1; i += 2) {
+        if (u8[i] === 0x00 && u8[i + 1] === 0x3C) sentinelPairs++;
+    }
+    if (allAA)
+        log("FAIL: GPU process did not write destination");
+    else if (sentinelPairs === NBYTES / 2)
+        log("PASS");
+    else
+        log(`FAIL: destination contains non-sentinel bytes (sentinelPairs=${sentinelPairs}/${NBYTES / 2})`);
+    window.testRunner?.notifyDone();
+}, 20);
+</script>

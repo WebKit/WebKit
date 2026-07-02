@@ -184,10 +184,9 @@ bool GraphicsContextGLTextureMapperGBM::bindNextDrawingBuffer()
         m_drawingBuffer = WTF::move(buffer);
     }
 
-    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
-    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
-    GL_BindTexture(textureTarget, m_texture);
-    GL_EGLImageTargetTexture2DOES(textureTarget, m_drawingBuffer.image);
+    ScopedRestoreTextureBinding restoreBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
+    GL_BindTexture(GL_TEXTURE_2D, m_texture);
+    GL_EGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_drawingBuffer.image);
     return true;
 }
 

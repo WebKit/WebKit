@@ -131,6 +131,9 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             if (!key || !CFStringGetLength(key.get()))
                 continue;
 
+            if (PAL::canLoad_CoreMedia_kCMTextMarkupAttribute_PreventLineWrapping() && (CFStringCompare(key.get(), PAL::kCMTextMarkupAttribute_PreventLineWrapping, 0) == kCFCompareEqualTo))
+                cueData->setPreventLineWrapping(value.get() == kCFBooleanTrue);
+
             if (CFStringCompare(key.get(), PAL::kCMTextMarkupAttribute_Alignment, 0) == kCFCompareEqualTo) {
                 RetainPtr valueString = dynamic_cf_cast<CFStringRef>(value.get());
                 if (!valueString || !CFStringGetLength(valueString.get()))

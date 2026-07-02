@@ -98,6 +98,7 @@ std::optional<ImageDataArray> ImageDataArray::tryCreate(size_t length, ImageData
             fillTypedArray(*typedArray, optionalBytes);
             array.emplace(typedArray.releaseNonNull());
         }
+        break;
     }
     return array;
 }

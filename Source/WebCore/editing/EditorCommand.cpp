@@ -60,6 +60,7 @@
 #include "Pasteboard.h"
 #include "Range.h"
 #include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include "ReplaceSelectionCommand.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -232,7 +233,7 @@ static unsigned verticalScrollDistance(LocalFrame& frame)
     CheckedRef style = renderBox->style();
     if (!(style->overflowY() == Overflow::Scroll || style->overflowY() == Overflow::Auto || focusedElement->hasEditableStyle()))
         return 0;
-    int height = std::min<int>(renderBox->clientHeight(), frame.view()->visibleHeight());
+    int height = std::min<int>(renderBox->paddingBoxHeight(), frame.view()->visibleHeight());
     return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 

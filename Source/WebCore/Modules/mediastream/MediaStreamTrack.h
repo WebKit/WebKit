@@ -259,6 +259,7 @@ private:
     const bool m_isCaptureTrack { false };
     bool m_isInterrupted { false };
     bool m_shouldFireMuteEventImmediately { false };
+    bool m_isConfigurationChangePending { false };
     bool m_isDetached { false };
     mutable AtomString m_kind;
     mutable AtomString m_contentHint;

@@ -34,6 +34,7 @@
 #include "FontCascade.h"
 #include "Logging.h"
 #include "RenderBlock.h"
+#include "RenderElementInlines.h"
 #include "RenderListMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"

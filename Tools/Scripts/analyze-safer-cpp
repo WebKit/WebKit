@@ -468,10 +468,10 @@ def resolve_analyzer_clang(args):
     if not sys.stdin.isatty():
         sys.exit('Pass --clang PATH, or --download-toolchain to fetch a swift.org snapshot.')
     try:
-        answer = input('Download the latest swift.org development snapshot (~1.5 GB)? [y/N] ')
+        answer = input('`analyze-safer-cpp` requires an up-to-date toolchain. Download the latest swift.org development snapshot (~1.5 GB)? [Y/n] ')
     except (EOFError, KeyboardInterrupt):
         answer = ''
-    if answer.strip().lower() in ('y', 'yes'):
+    if answer.strip().lower() in ('y', 'yes', ''):
         clang, display = download_swift_toolchain()
         print('Using analyzer: {} ({})'.format(clang, display), file=sys.stderr)
         return clang

@@ -345,6 +345,11 @@ inline void FEGaussianBlurSoftwareApplier::boxBlurGeneric(PixelBuffer& ioBuffer,
     }
 #endif
 
+    // boxBlurAlphaOnly() fills the alpha channel only. Make
+    // sure the other channels are initialized in this case.
+    if (isAlphaImage)
+        tempBuffer.zeroFill();
+
     boxBlurUnaccelerated(ioBuffer, tempBuffer, kernelSizeX, kernelSizeY, stride, paintSize, isAlphaImage, edgeMode);
 }
 

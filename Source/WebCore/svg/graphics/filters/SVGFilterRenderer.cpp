@@ -354,7 +354,7 @@ RefPtr<FilterImage> SVGFilterRenderer::apply(FilterImage* sourceImage, FilterRes
                 return nullptr;
 
             // Add sourceImage as an input to the SourceGraphic.
-            stack.append(Ref { *sourceImage });
+            stack.append(protect(*sourceImage));
         }
 
         // Need to remove the inputs here in case the effect already has a result.

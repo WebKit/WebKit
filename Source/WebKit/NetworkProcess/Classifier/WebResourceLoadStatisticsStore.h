@@ -149,7 +149,7 @@ public:
     void hasHadUserInteraction(RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(SubFrameDomain&&, TopFrameDomain&&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier);
-    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope, WebCore::HasOrShouldIgnoreUserGesture, CompletionHandler<void(RequestStorageAccessResult)>&&);
+    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope, WebCore::HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(RequestStorageAccessResult)>&&);
     void queryStorageAccessPermission(SubFrameDomain&&, TopFrameDomain&&, std::optional<WebPageProxyIdentifier>, CompletionHandler<void(WebCore::PermissionState)>&&);
     void setLoginStatus(RegistrableDomain&&, IsLoggedIn, std::optional<LoginStatus>&&, CompletionHandler<void()>&&);
     void isLoggedIn(RegistrableDomain&&, CompletionHandler<void(bool)>&&);

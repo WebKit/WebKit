@@ -324,6 +324,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StringSubstr:
     case ToUpperCase:
     case ToLowerCase:
+    case StringTrim:
     case MapGet:
     case LoadMapValue:
     case MapOrSetSize:

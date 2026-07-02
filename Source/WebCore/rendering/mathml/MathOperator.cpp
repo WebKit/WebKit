@@ -97,6 +97,7 @@ void MathOperator::setOperator(const Style::ComputedStyle& style, char32_t baseC
 void MathOperator::reset(const Style::ComputedStyle& style)
 {
     m_stretchType = StretchType::Unstretched;
+    m_variantGlyph = 0;
     m_maxPreferredWidth = 0;
     m_width = 0;
     m_ascent = 0;

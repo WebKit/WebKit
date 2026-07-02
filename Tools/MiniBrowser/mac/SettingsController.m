@@ -76,6 +76,7 @@ static NSString * const AdvancedPrivacyProtectionsPreferenceKey = @"AdvancedPriv
 static NSString * const AllowsContentJavascriptPreferenceKey = @"AllowsContentJavascript";
 static NSString * const AllowUniversalAccessFromFileURLsPreferenceKey = @"AllowUniversalAccessFromFileURLs";
 static NSString * const TabFocusesLinksEnabledPreferenceKey = @"TabFocusesLinksEnabled";
+static NSString * const AcceptAllTLSCertificatesPreferenceKey = @"AcceptAllTLSCertificates";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -207,6 +208,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Advanced Privacy Protections", @selector(toggleAdvancedPrivacyProtections:));
     addItem(@"Disable local file restrictions", @selector(toggleAllowUniversalAccessFromFileURLs:));
     addItem(@"Enable focusing on links/form controls by pressing tab key", @selector(toggleTabFocusesLinksEnabled:));
+    addItem(@"Accept all TLS certificates", @selector(toggleAcceptAllTLSCertificates:));
 
     NSMenu *attachmentElementMenu = addSubmenu(@"Enable Attachment Element");
     addItemToMenu(attachmentElementMenu, @"Disabled", @selector(changeAttachmentElementEnabled:), NO, AttachmentElementDisabledTag);
@@ -410,6 +412,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self appleColorFilterEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleSiteSpecificQuirksModeEnabled:))
         [menuItem setState:[self siteSpecificQuirksModeEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleAcceptAllTLSCertificates:))
+        [menuItem setState:[self acceptAllTLSCertificates] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePunchOutWhiteBackgroundsInDarkMode:))
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
@@ -741,6 +745,19 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)siteSpecificQuirksModeEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:SiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
+- (void)toggleAcceptAllTLSCertificates:(id)sender
+{
+    [self _toggleBooleanDefault:AcceptAllTLSCertificatesPreferenceKey];
+}
+
+- (BOOL)acceptAllTLSCertificates
+{
+    id acceptTLSCertificates = [[NSUserDefaults standardUserDefaults] objectForKey:AcceptAllTLSCertificatesPreferenceKey];
+    if (acceptTLSCertificates)
+        return [acceptTLSCertificates boolValue];
+    return NO;
 }
 
 - (void)toggleTabFocusesLinksEnabled:(id)sender

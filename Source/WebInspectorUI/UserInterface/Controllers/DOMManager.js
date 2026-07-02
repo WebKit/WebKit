@@ -576,11 +576,30 @@ WI.DOMManager = class DOMManager extends WI.Object
         this.requestDocument(function(){});
     }
 
-    pushNodeToFrontend(objectId, callback)
+    pushNodeToFrontend(objectId, callback, target)
     {
-        let target = WI.assumingMainTarget();
-        this._dispatchWhenDocumentAvailable((callbackWrapper) => {
-            target.DOMAgent.requestNode(objectId, callbackWrapper);
+        target ||= WI.assumingMainTarget();
+
+        let callbackWrapper = DOMManager.wrapClientCallback(callback);
+        let dispatch = () => target.DOMAgent.requestNode(objectId, callbackWrapper);
+
+        if (target.type === WI.TargetType.Frame) {
+            if (this._frameTargetDOMData.get(target)?.document) {
+                dispatch();
+                return;
+            }
+            let handler = (event) => {
+                if (event.data.target !== target)
+                    return;
+                this.removeEventListener(WI.DOMManager.Event.FrameDocumentAvailable, handler);
+                dispatch();
+            };
+            this.addEventListener(WI.DOMManager.Event.FrameDocumentAvailable, handler);
+            return;
+        }
+
+        this._dispatchWhenDocumentAvailable((wrapper) => {
+            target.DOMAgent.requestNode(objectId, wrapper);
         }, callback);
     }
 
@@ -1112,17 +1131,8 @@ WI.DOMManager = class DOMManager extends WI.Object
             this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged, {lastInspectedNode});
         };
 
-        // FIXME: <https://webkit.org/b/298980> `DOM.setInspectedNode` for cross-origin frame nodes is not yet supported;
-        // `node.id` for frame-owned nodes is a composite "frameId:nodeId" string, not a numeric backend node id.
-        if (node.owningTarget) {
-            let lastInspectedNode = this._inspectedNode;
-            this._inspectedNode = node;
-            this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged, {lastInspectedNode});
-            return;
-        }
-
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.setInspectedNode(node.id, callback);
+        let target = node.owningTarget || WI.assumingMainTarget();
+        target.DOMAgent.setInspectedNode(node.backendNodeId, callback);
     }
 
     getSupportedEventNames(callback)

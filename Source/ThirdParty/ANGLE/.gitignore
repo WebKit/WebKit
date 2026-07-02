@@ -97,7 +97,37 @@
 /third_party/spirv-tools/src
 /third_party/SwiftShader
 /third_party/turbine/cipd
-/third_party/VK-GL-CTS/src
+/third_party/VK-GL-CTS/src/*
+!/third_party/VK-GL-CTS/src/framework
+!/third_party/VK-GL-CTS/src/execserver
+!/third_party/VK-GL-CTS/src/executor
+!/third_party/VK-GL-CTS/src/modules
+/third_party/VK-GL-CTS/src/modules/*
+!/third_party/VK-GL-CTS/src/modules/gles2
+!/third_party/VK-GL-CTS/src/modules/gles3
+!/third_party/VK-GL-CTS/src/modules/glshared
+!/third_party/VK-GL-CTS/src/data
+/third_party/VK-GL-CTS/src/data/*
+!/third_party/VK-GL-CTS/src/data/gles2
+!/third_party/VK-GL-CTS/src/data/gles3
+# Drill down to the two GLES2/GLES3 mustpass case lists the runner reads (the
+# rest of external/openglcts stays ignored). Each parent dir is re-included so
+# git descends to the files; one recursive exclude keeps everything else out
+# (a plain ignore of external would stop git descending -- nested re-includes
+# then have no effect; re-including ALL dirs would drag in upstream's own nested
+# .gitignore files, so only the dirs on the path are re-included).
+!/third_party/VK-GL-CTS/src/external
+/third_party/VK-GL-CTS/src/external/**
+!/third_party/VK-GL-CTS/src/external/openglcts
+!/third_party/VK-GL-CTS/src/external/openglcts/data
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles2-main.txt
+!/third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/mustpass/gles/aosp_mustpass/main/gles3-main.txt
 /third_party/vulkan-deps
 /third_party/vulkan-headers/src
 /third_party/vulkan-loader/src

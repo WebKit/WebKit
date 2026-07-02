@@ -130,6 +130,8 @@ String InbandGenericCue::toJSONString() const
     if (!m_cueData.m_fontName.isEmpty())
         object->setString("font"_s, m_cueData.m_fontName);
 
+    object->setString("preventLineWrapping"_s, m_cueData.m_preventLineWrapping ? "true"_s : "false"_s);
+
     return object->toJSONString();
 }
 
@@ -146,7 +148,8 @@ bool GenericCueData::equalNotConsideringTimesOrId(const GenericCueData& other) c
         && m_highlightColor == other.m_highlightColor
         && m_fontName == other.m_fontName
         && m_id == other.m_id
-        && m_content == other.m_content;
+        && m_content == other.m_content
+        && m_preventLineWrapping == other.m_preventLineWrapping;
 }
 
 }

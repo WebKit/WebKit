@@ -58,24 +58,13 @@ void lowerAfterRegAlloc(Code& code)
 
     if (AirLowerAfterRegAllocInternal::verbose)
         dataLog("Code before lowerAfterRegAlloc:\n", code);
-    
+
+    if (!code.proc().usesColdCCall() && !code.proc().usesShuffle())
+        return;
+
     auto isRelevant = [] (Inst& inst) -> bool {
         return inst.kind.opcode == Shuffle || inst.kind.opcode == ColdCCall;
     };
-    
-    bool haveAnyRelevant = false;
-    for (BasicBlock* block : code) {
-        for (Inst& inst : *block) {
-            if (isRelevant(inst)) {
-                haveAnyRelevant = true;
-                break;
-            }
-        }
-        if (haveAnyRelevant)
-            break;
-    }
-    if (!haveAnyRelevant)
-        return;
 
     padInterference(code);
 

@@ -32,7 +32,6 @@
 #import "WKContentRuleListInternal.h"
 #import "WKContentWorldInternal.h"
 #import "WKFrameInfoInternal.h"
-#import "WKJSScriptingBufferInternal.h"
 #import "WKNSArray.h"
 #import "WKScriptMessageHandler.h"
 #import "WKScriptMessageHandlerWithReply.h"
@@ -42,7 +41,6 @@
 #import "WebPageProxy.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
-#import "_WKJSBuffer.h"
 #import "_WKUserContentFilterInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserStyleSheetInternal.h"
@@ -50,7 +48,10 @@
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedScriptValue.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/spi/cocoa/MachVMSPI.h>
 
 @implementation WKUserContentController
 
@@ -231,9 +232,44 @@ private:
     protect(*_userContentControllerProxy)->removeAllUserMessageHandlers();
 }
 
-- (void)addBuffer:(WKJSScriptingBuffer *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world
+- (void)addBuffer:(NSData *)buffer name:(NSString *)name contentWorld:(WKContentWorld *)world
 {
-    protect(*_userContentControllerProxy)->addJSBuffer(Ref { *buffer->_buffer }, Ref { *world->_contentWorld }, name);
+    auto isInReadOnlyRegion = [] (std::span<const uint8_t> span) {
+        if (span.empty())
+            return false;
+
+        auto addr = reinterpret_cast<mach_vm_address_t>(const_cast<uint8_t*>(span.data()));
+        auto end = addr + span.size();
+        auto regionAddr = addr;
+        mach_vm_size_t regionSize = 0;
+        vm_region_basic_info_data_64_t info { };
+        mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
+        mach_port_t vmObject = MACH_PORT_NULL;
+        auto scopeExit = makeScopeExit([&] {
+            if (vmObject != MACH_PORT_NULL)
+                mach_port_deallocate(mach_task_self(), vmObject);
+        });
+
+        auto kr = mach_vm_region(mach_task_self(), &regionAddr, &regionSize, VM_REGION_BASIC_INFO_64, (vm_region_info_t)&info, &count, &vmObject);
+        if (kr != KERN_SUCCESS)
+            return false;
+
+        auto regionEnd = regionAddr + regionSize;
+        return (info.protection & VM_PROT_READ) && !(info.protection & VM_PROT_WRITE) && addr >= regionAddr && end <= regionEnd;
+    };
+
+    RefPtr<WebCore::SharedMemory> sharedMemory;
+    auto dataSpan = span(buffer);
+    if (isInReadOnlyRegion(dataSpan))
+        sharedMemory = WebCore::SharedMemory::wrapMap(dataSpan, WebCore::SharedMemoryProtection::ReadOnly);
+    if (!sharedMemory)
+        sharedMemory = WebCore::SharedMemory::copyBuffer(WebCore::SharedBuffer::create(buffer));
+    if (!sharedMemory) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    protect(*_userContentControllerProxy)->addJSBuffer(sharedMemory.releaseNonNull(), Ref { *world->_contentWorld }, name);
 }
 
 - (void)removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world
@@ -321,16 +357,6 @@ private:
 - (void)_removeAllUserStyleSheetsAssociatedWithContentWorld:(WKContentWorld *)contentWorld
 {
     protect(*_userContentControllerProxy)->removeAllUserStyleSheets(Ref { *contentWorld->_contentWorld });
-}
-
-- (void)_addBuffer:(_WKJSBuffer *)buffer contentWorld:(WKContentWorld *)world name:(NSString *)name
-{
-    [self addBuffer:buffer name:name contentWorld:world];
-}
-
-- (void)_removeBufferWithName:(NSString *)name contentWorld:(WKContentWorld *)world
-{
-    [self removeBufferWithName:name contentWorld:world];
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

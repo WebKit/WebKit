@@ -1,0 +1,5 @@
+
+PASS should not throw for [Unscopable] with property in @@unscopables
+PASS should throw for [Unscopable] with property missing from @@unscopables
+PASS should not throw if [Unscopable] is used but property is in @@unscopables
+

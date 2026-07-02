@@ -27,6 +27,7 @@
 #include "TextExtractionCache.h"
 
 #include <optional>
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +45,9 @@ void TextExtractionCache::add(const String& url, Vector<TextExtractionLineConten
         if (auto nodeIdentifier = entry.lines[index].nodeIdentifier)
             entry.lineIndexForUID.add(WTF::move(*nodeIdentifier), index);
     }
+
+    if (entry.lineIndexForUID.isEmpty())
+        return;
 
     m_entries.append(WTF::move(entry));
     if (m_entries.size() > maxEntries)
@@ -87,58 +91,53 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
     if (m_entries[newestIndex].lineIndexForUID.contains(identifier))
         return { identifier, NodeResolution::Current };
 
-    std::optional<size_t> sourceEntryIndex;
-    unsigned sourceLineIndex = 0;
+    Vector<size_t, maxEntries> sourceEntryIndices;
     for (size_t index = 0; index < newestIndex; ++index) {
-        if (auto it = m_entries[index].lineIndexForUID.find(identifier); it != m_entries[index].lineIndexForUID.end()) {
-            sourceEntryIndex = index;
-            sourceLineIndex = it->value;
-        }
+        if (m_entries[index].lineIndexForUID.contains(identifier))
+            sourceEntryIndices.append(index);
     }
 
-    if (!sourceEntryIndex)
+    if (sourceEntryIndices.isEmpty())
         return { identifier, NodeResolution::Unknown };
 
     auto& newestURL = m_entries[newestIndex].url;
-    auto& source = m_entries[*sourceEntryIndex];
-    auto& sourceLineContent = source.lines[sourceLineIndex].contentWithoutIdentifier;
-    auto sourceContextBefore = contextWindowBefore(source.lines, sourceLineIndex);
-    auto sourceContextAfter = contextWindowAfter(source.lines, sourceLineIndex);
-
-    for (size_t entryIndex = newestIndex; entryIndex > *sourceEntryIndex; --entryIndex) {
-        auto& entry = m_entries[entryIndex];
-        if (entry.url != newestURL)
+    for (size_t targetIndex = newestIndex; targetIndex > sourceEntryIndices.first(); --targetIndex) {
+        auto& target = m_entries[targetIndex];
+        if (target.url != newestURL)
             continue;
 
-        std::optional<unsigned> uniqueTargetIndex;
-        unsigned matchCount = 0;
-        for (unsigned candidate = 0; candidate < entry.lines.size(); ++candidate) {
-            if (entry.lines[candidate].contentWithoutIdentifier != sourceLineContent)
-                continue;
-
-            bool contextBeforeMatches = contextWindowBefore(entry.lines, candidate) == sourceContextBefore;
-            bool contextAfterMatches = contextWindowAfter(entry.lines, candidate) == sourceContextAfter;
-            if (!contextBeforeMatches && !contextAfterMatches)
-                continue;
-
-            if (++matchCount > 1) {
-                uniqueTargetIndex = { };
+        HashSet<String> remappedIdentifiers;
+        for (auto sourceIndex : sourceEntryIndices) {
+            if (sourceIndex >= targetIndex)
                 break;
-            }
 
-            uniqueTargetIndex = candidate;
+            auto& source = m_entries[sourceIndex];
+            auto sourceLineIndex = source.lineIndexForUID.get(identifier);
+            auto sourceLineContent = source.lines[sourceLineIndex].contentWithoutIdentifier;
+            auto sourceContextBefore = contextWindowBefore(source.lines, sourceLineIndex);
+            auto sourceContextAfter = contextWindowAfter(source.lines, sourceLineIndex);
+
+            for (unsigned candidate = 0; candidate < target.lines.size(); ++candidate) {
+                if (target.lines[candidate].contentWithoutIdentifier != sourceLineContent)
+                    continue;
+
+                bool contextBeforeMatches = contextWindowBefore(target.lines, candidate) == sourceContextBefore;
+                bool contextAfterMatches = contextWindowAfter(target.lines, candidate) == sourceContextAfter;
+                if (!contextBeforeMatches && !contextAfterMatches)
+                    continue;
+
+                if (auto& remapped = target.lines[candidate].nodeIdentifier)
+                    remappedIdentifiers.add(*remapped);
+            }
         }
 
-        if (!matchCount)
+        if (remappedIdentifiers.isEmpty())
             continue;
 
-        if (matchCount > 1)
+        if (remappedIdentifiers.size() > 1)
             return { { }, NodeResolution::Ambiguous };
 
-        if (auto remapped = entry.lines[*uniqueTargetIndex].nodeIdentifier)
-            return { WTF::move(*remapped), NodeResolution::Remapped };
-
-        return { { }, NodeResolution::Stale };
+        return { *remappedIdentifiers.begin(), NodeResolution::Remapped };
     }
 
     return { { }, NodeResolution::Stale };

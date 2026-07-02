@@ -33,6 +33,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ static constexpr auto httpPartialContentText = "Partial Content"_s;
 
 BlobResourceHandleBase::BlobResourceHandleBase(bool async, RefPtr<BlobData>&& blobData)
     : m_blobData(WTF::move(blobData))
+    , m_buffer(Box<Vector<uint8_t>>::create())
 {
     if (async)
         m_stream = makeUnique<AsyncFileStream>(*this);
@@ -294,12 +296,25 @@ bool BlobResourceHandleBase::readDataAsync(const BlobDataItem& item, DataSegment
     return consumeData(span);
 }
 
+void BlobResourceHandleBase::resizeBuffer(size_t newSize)
+{
+    RELEASE_ASSERT(!m_isWritingIntoBuffer);
+    m_buffer->resize(newSize);
+}
+
 void BlobResourceHandleBase::readFileAsync(const BlobDataItem& item, BlobDataFileReference& file)
 {
     ASSERT(isMainThread());
 
     if (m_isFileOpen) {
-        asyncStream()->read(buffer().mutableSpan());
+        m_isWritingIntoBuffer = true;
+        asyncStream()->read(m_buffer, [weakThis = WeakPtr { *this }](int bytesRead) {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
+                return;
+            protectedThis->m_isWritingIntoBuffer = false;
+            protectedThis->didRead(bytesRead);
+        });
         return;
     }
 
@@ -341,7 +356,7 @@ void BlobResourceHandleBase::didRead(int bytesRead)
         return;
     }
 
-    if (consumeData(m_buffer.subspan(0, bytesRead)))
+    if (consumeData(m_buffer->subspan(0, bytesRead)))
         readAsync();
 }
 

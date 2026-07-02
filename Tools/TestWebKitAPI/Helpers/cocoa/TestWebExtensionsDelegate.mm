@@ -32,6 +32,7 @@
 #import <WebKit/WKWebExtensionController.h>
 #import <WebKit/WKWebExtensionMatchPattern.h>
 #import <WebKit/WKWebExtensionPermission.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation TestWebExtensionsDelegate
 
@@ -80,6 +81,33 @@
     [controller didOpenTab:newTab.get()];
 
     completionHandler(newTab.get(), nil);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller moveTabs:(NSArray<id<WKWebExtensionTab>> *)tabs toIndex:(NSUInteger)index inWindow:(id<WKWebExtensionWindow>)window forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_moveTabs)
+        return _moveTabs(tabs, index, window, extensionContext, completionHandler);
+
+    auto *destinationWindow = dynamic_objc_cast<TestWebExtensionWindow>(window);
+    if (!destinationWindow) {
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"tabs.move() destination window is missing" }]);
+        return;
+    }
+
+    NSUInteger placementIndex = index;
+    for (id<WKWebExtensionTab> tab : tabs) {
+        auto *testTab = dynamic_objc_cast<TestWebExtensionTab>(tab);
+        BOOL alreadyInDestination = testTab.window == destinationWindow;
+        NSUInteger lastValidIndex = alreadyInDestination ? destinationWindow.tabs.count - 1 : destinationWindow.tabs.count;
+        NSUInteger clampedIndex = std::min(placementIndex, lastValidIndex);
+
+        [destinationWindow moveTab:testTab toIndex:clampedIndex];
+
+        // The next tab in the batch follows this one.
+        placementIndex = [destinationWindow.tabs indexOfObject:testTab] + 1;
+    }
+
+    completionHandler(nil);
 }
 
 - (void)webExtensionController:(WKWebExtensionController *)controller openOptionsPageForExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError *))completionHandler

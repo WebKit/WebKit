@@ -75,7 +75,6 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 { }, /* clickLocationInRootViewCoordinates */
                 { }, /* redirectResponse */
                 false, /* isRequestFromClientOrUserInput */
-                false, /* treatAsSameOriginNavigation */
                 false, /* hasOpenedFrames */
                 false, /* openedByDOMWithOpener */
                 false, /* hasOpener */

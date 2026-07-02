@@ -1,6 +1,8 @@
 
 PASS idl_test setup
-PASS idl_test validation
+FAIL idl_test validation Validation error at line 20 in streams:
+  async iterable<any>
+  ^ `async iterable` is now changed to `async_iterable`.
 PASS CompressionStream includes GenericTransformStream: member names are unique
 PASS DecompressionStream includes GenericTransformStream: member names are unique
 PASS CompressionStream interface: existence and properties of interface object

@@ -138,7 +138,7 @@ private:
     // Repaint needs those positions relative to the repaint container (e.g. the RenderView), and a repaint rect is built by walking up
     // the containing-block chain to that container, accumulating each ancestor's position.
     // During layout, though, some of those ancestors may have already moved, so their current positions can no longer be used to recover the _old_ rect.
-    // (We don't retain previous paint positions; the closest we have is each renderer's m_frameRect, and that is overwritten during layout.)
+    // (We don't retain previous paint positions; the closest we have is each renderer's m_borderBoxRectInContainer, and that is overwritten during layout.)
     // This delta helps to recover the last layout's (paint) position by keeping track of position changes during _this_ layout.
     LayoutSize m_layoutDeltaForRepaint;
 

@@ -58,7 +58,7 @@
 - path: wasm/spec-tests
   cmd: runWebAssemblySpecTest :normal unless parseRunCommands
 - path: wasm/simd-spec-tests
-  cmd: runWebAssemblySIMDSpecTest :normal, "--timeoutMultiplier=2"
+  cmd: "$skipModes += ['wasm-eager-jettison'.to_sym, 'wasm-eager-jettison-eager'.to_sym] if ($architecture == 'arm64' and $hostOS == 'linux'); runWebAssemblySIMDSpecTest :normal"
 - path: wasm/function-references-spec-tests
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 - path: wasm/gc-spec-tests

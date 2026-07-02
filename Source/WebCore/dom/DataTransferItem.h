@@ -41,7 +41,6 @@
 namespace WebCore {
 
 class DOMFileSystem;
-class DataTransferListItem;
 class File;
 class FileSystemEntry;
 class ScriptExecutionContext;

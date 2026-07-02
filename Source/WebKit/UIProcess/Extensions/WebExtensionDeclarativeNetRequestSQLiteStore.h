@@ -87,7 +87,7 @@ private:
 
     RefPtr<JSON::Array> getRulesWithRuleIDsInternal(Vector<double> ruleIDs, String& errorMessage);
     Ref<JSON::Array> getKeysAndValuesFromRowIterator(Ref<WebExtensionSQLiteRowEnumerator> rows);
-    String insertRule(const JSON::Object& rule, Ref<WebExtensionSQLiteDatabase>);
+    String insertRule(double ruleID, const String& ruleData, Ref<WebExtensionSQLiteDatabase>);
 
     WebExtensionDeclarativeNetRequestStorageType m_storageType;
     String m_tableName;

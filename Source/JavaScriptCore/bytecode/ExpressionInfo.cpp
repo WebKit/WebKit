@@ -58,7 +58,7 @@ namespace JSC {
       Extension: [   11111b | 1b |    offset:26                                ]
       AbsInstPC: [   11111b | 0b |     value:26                                ]
       MultiWide: [   11110b | 1b |     111b | numFields:5 | fields[6]:18       ] [ value:32 ] ...
-        DuoWide: [   11110b | 1b | field2:3 | value2:10 | field1:3 | value1:10 ]
+        DuoWide: [   11110b | 1b | field1:3 | value1:10 | field2:3 | value2:10 ]
      SingleWide: [   11110b | 0b |  field:3 | value:23                         ]
    ExtensionEnd: [   11110b | 0b |     111b |     0:23                         ]
           Basic: [ instPC:5 |   divot:7 | start:6 |  end:6 | line:3 | column:5 ]
@@ -140,7 +140,7 @@ namespace JSC {
        over to the extension island. For all encodings, this is just a single word. The only
        exception is the MultiWide encoding, which are followed by N value words. Because the
        decoder expects these words to be contiguous, we move all the value words over too. The
-       slots of the original value words will not be replaced by no-ops (SingleWide with 0).
+       slots of the original value words will now be replaced by no-ops (SingleWide with 0).
 
     AbsInstPC and Chapters
     ======================
@@ -450,6 +450,7 @@ void ExpressionInfo::Encoder::adjustInstPC(unsigned infoIndex, unsigned instPCDe
         // being contiguous.
         unsigned numberOfFields = (firstValue >> multiSizeShift) & multiSizeMask;
 
+        unsigned locationOfExtensionIsland = m_expressionInfoEncodedInfo.size();
         m_expressionInfoEncodedInfo.append({ firstValue }); // MultiWide header.
         for (unsigned i = 1; i < numberOfFields; ++i) {
             auto fieldValue = m_expressionInfoEncodedInfo[infoIndex + i];
@@ -459,7 +460,10 @@ void ExpressionInfo::Encoder::adjustInstPC(unsigned infoIndex, unsigned instPCDe
         // Save the last field in firstValue, and let the extension emitter below append it.
         firstValue = m_expressionInfoEncodedInfo[infoIndex + numberOfFields].value;
         m_expressionInfoEncodedInfo[infoIndex + numberOfFields] = encodeSingle(FieldID::InstPC, 0); // Replace with a no-op.
-        goto emitExtension;
+
+        unsigned extensionOffset = locationOfExtensionIsland - infoIndex;
+        m_expressionInfoEncodedInfo[infoIndex] = encodeExtension(extensionOffset);
+        goto emitExtensionIsland;
     }
 
     // Handle Basic.
@@ -476,9 +480,11 @@ void ExpressionInfo::Encoder::adjustInstPC(unsigned infoIndex, unsigned instPCDe
     isBasic = true;
 
 emitExtension:
-    unsigned extensionOffset = m_expressionInfoEncodedInfo.size() - infoIndex;
-    m_expressionInfoEncodedInfo[infoIndex] = encodeExtension(extensionOffset);
-
+    {
+        unsigned extensionOffset = m_expressionInfoEncodedInfo.size() - infoIndex;
+        m_expressionInfoEncodedInfo[infoIndex] = encodeExtension(extensionOffset);
+    }
+emitExtensionIsland:
     // Because the Basic word is used as a terminator for the current Entry,
     // if the firstValue is a Basic word, it needs to come last. Otherwise, we should
     // just emit firstValue first. AbsInstPC and MultiWide relies on this for correctness.
@@ -490,7 +496,7 @@ emitExtension:
     else {
         // The wides array is really only to enable us to use encodeMultiHeader. Hence,
         // we don't really need to store instPCDelta as the value here. It can be any value
-        // since it's not ued. However, to avoid confusion, we'll just populate it consistently.
+        // since it's not used. However, to avoid confusion, we'll just populate it consistently.
         Wide wides[1] = { { instPCDelta, FieldID::InstPC } };
         m_expressionInfoEncodedInfo.append(encodeMultiHeader(1, wides));
         m_expressionInfoEncodedInfo.append({ instPCDelta });
@@ -1032,7 +1038,7 @@ void ExpressionInfo::dumpEncodedInfo(ExpressionInfo::EncodedInfo* start, Express
                 out.print(" DUO ", fieldID1, " ");
                 print<duoValueBits>(out, fieldID1, value >> duoFirstValueShift);
                 out.print(" ", fieldID2, " ");
-                print<duoValueBits>(out, fieldID2, value >> duoFirstValueShift);
+                print<duoValueBits>(out, fieldID2, value >> duoSecondValueShift);
                 out.println();
 
             } else {

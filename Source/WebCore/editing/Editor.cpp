@@ -4060,7 +4060,11 @@ std::optional<SimpleRange> Editor::findString(const String& target, FindOptions 
         if (!m_matchFinder)
             m_matchFinder = WTF::makeUnique<CachedMatchFinder>(document);
 
-        resultRange = m_matchFinder->findMatchFrom(referenceRange, target, options);
+        auto cachedResult = m_matchFinder->findMatchFrom(referenceRange, target, options);
+        if (cachedResult.has_value())
+            resultRange = *cachedResult;
+        else if (cachedResult.error() == CachedMatchFinder::CacheUnusable::Oversized)
+            resultRange = rangeOfString(target, referenceRange, options);
     }
 
     if (!resultRange)
@@ -4184,12 +4188,10 @@ unsigned Editor::countMatchesForText(const String& target, const std::optional<S
     if (!m_matchFinder)
         m_matchFinder = WTF::makeUnique<CachedMatchFinder>(document);
 
+    auto searchOptions = options - FindOption::Backwards;
     std::optional<unsigned> optionalLimit = limit ? std::make_optional(limit) : std::nullopt;
 
-    unsigned matchCount;
-    if (matches || markMatches) {
-        auto allMatches = m_matchFinder->findMatches(searchRange, target, options - FindOption::Backwards, optionalLimit);
-
+    auto collectAndMark = [&](const Vector<SimpleRange>& allMatches) {
         if (matches)
             matches->appendVector(allMatches);
 
@@ -4197,13 +4199,26 @@ unsigned Editor::countMatchesForText(const String& target, const std::optional<S
             for (const auto& match : allMatches)
                 addMarker(match, DocumentMarkerType::TextMatch);
         }
+    };
 
-        matchCount = allMatches.size();
+    if (matches || markMatches) {
+        auto cachedMatches = m_matchFinder->findMatches(searchRange, target, searchOptions, optionalLimit);
+        if (cachedMatches.has_value()) {
+            collectAndMark(*cachedMatches);
+            return cachedMatches->size();
+        }
+        ASSERT(cachedMatches.error() == CachedMatchFinder::CacheUnusable::Oversized);
     } else {
-        matchCount = m_matchFinder->countMatches(searchRange, target, options - FindOption::Backwards, optionalLimit);
+        auto cachedCount = m_matchFinder->countMatches(searchRange, target, searchOptions, optionalLimit);
+        if (cachedCount.has_value())
+            return *cachedCount;
+        ASSERT(cachedCount.error() == CachedMatchFinder::CacheUnusable::Oversized);
     }
 
-    return matchCount;
+    // The cached buffer was oversized; fall back to an uncached search.
+    auto allMatches = findAllPlainText(*searchRange, target, searchOptions, limit);
+    collectAndMark(allMatches);
+    return allMatches.size();
 }
 
 void Editor::setMarkedTextMatchesAreHighlighted(bool flag)

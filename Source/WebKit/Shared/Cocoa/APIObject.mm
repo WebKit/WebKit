@@ -38,7 +38,6 @@
 #import "WKFrameInfoInternal.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKJSHandleInternal.h"
-#import "WKJSScriptingBufferInternal.h"
 #import "WKJSSerializedNodeInternal.h"
 #import "WKNSArray.h"
 #import "WKNSData.h"
@@ -89,7 +88,6 @@
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorDebuggableInfoInternal.h"
 #import "_WKInspectorInternal.h"
-#import "_WKJSBuffer.h"
 #import "_WKJSHandle.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
@@ -541,10 +539,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::JSHandle:
         SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKJSHandle alloc];
-        break;
-
-    case Type::JSBuffer:
-        SUPPRESS_RETAINPTR_CTOR_ADOPT wrapper = [_WKJSBuffer alloc];
         break;
 
     case Type::FormInfo:

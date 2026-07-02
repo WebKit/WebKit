@@ -326,4 +326,41 @@ INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
         testing::Values(RenderingMode::Unaccelerated, RenderingMode::Accelerated)),
     TestParametersToStringFormatter());
 
+#if USE(CG)
+
+TEST(ImageBufferTests, GetPixelBufferAllZeros)
+{
+    auto sourceColorSpace = DestinationColorSpace::SRGB();
+    auto sourcePixelFormat = PixelFormat::BGRA8;
+    FloatSize size { 1000, 1000 };
+    FloatRect fillRect = FloatRect { { }, size };
+    float scale = 1.f;
+
+    RefPtr<ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, sourceColorSpace, sourcePixelFormat);
+    EXPECT_NE(nullptr, imageBuffer);
+
+    auto& context = imageBuffer->context();
+    context.fillRect(fillRect, Color::green);
+
+    auto getPixelBufferAllZeros = [&](const FloatRect& rect) {
+        RetainPtr platformColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK));
+        auto destinationColorSpace = DestinationColorSpace(WTF::move(platformColorSpace));
+        PixelBufferFormat destinationPixelFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, destinationColorSpace };
+
+        RefPtr pixelBuffer = imageBuffer->getPixelBuffer(destinationPixelFormat, enclosingIntRect(rect));
+        EXPECT_NE(nullptr, pixelBuffer);
+
+        auto bytes = pixelBuffer->bytes();
+        return std::none_of(bytes.begin(), bytes.end(), [](auto byte) {
+            return byte;
+        });
+    };
+
+    EXPECT_TRUE(getPixelBufferAllZeros({ { }, size }));
+    EXPECT_TRUE(getPixelBufferAllZeros({ { }, size / 10 }));
+    EXPECT_TRUE(getPixelBufferAllZeros({ FloatPoint { size - size / 10 }, size / 10 }));
+}
+
+#endif
+
 }

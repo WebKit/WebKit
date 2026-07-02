@@ -183,9 +183,9 @@ void WebSharedWorkerServer::addContextConnection(WebSharedWorkerServerToContextC
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::addContextConnection(%p) webProcessIdentifier=%" PRIu64, &contextConnection, contextConnection.webProcessIdentifier() ? contextConnection.webProcessIdentifier()->toUInt64() : 0);
 
     ContextConnectionKey key { contextConnection.registrableDomain(), contextConnection.crossOriginEmbedderPolicyValue() };
-    ASSERT(!m_contextConnections.contains(key));
-
-    m_contextConnections.add(key, contextConnection);
+    auto result = m_contextConnections.add(key, contextConnection);
+    if (!result.isNewEntry)
+        return;
 
     contextConnectionCreated(contextConnection);
 }

@@ -43,7 +43,6 @@
 #import <WebKit/WKImmersiveEnvironment.h>
 #import <WebKit/WKImmersiveEnvironmentDelegate.h>
 #import <WebKit/WKJSHandle.h>
-#import <WebKit/WKJSScriptingBuffer.h>
 #import <WebKit/WKJSSerializedNode.h>
 #import <WebKit/WKNavigation.h>
 #import <WebKit/WKNavigationAction.h>

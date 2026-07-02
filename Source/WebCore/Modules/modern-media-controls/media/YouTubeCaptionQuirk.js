@@ -169,13 +169,18 @@
         }
 
         _handlePresentationModeChanged() {
+            var captionContainer = this._player.querySelector(this._captionWindowSelector);
             if (this._getIsInline()) {
                 this._mirrorTrack.mode = 'hidden';
+                if (captionContainer)
+                    captionContainer.style.removeProperty('display');
                 return;
             }
 
             this._player.loadModule('captions');
             this._mirrorTrack.mode = 'showing';
+            if (captionContainer)
+                captionContainer.style.setProperty('display', 'none', 'important');
         }
 
         _handleMediaSessionAction(details) {

@@ -41,7 +41,7 @@ GCGLuint GraphicsContextGLTextureMapperANGLE::setupCurrentTexture()
     // when another call causes a texture state sync, which doesn't happen. So, we set the same
     // parmeters here using epoxy to make sure the texture is configured as expected by the
     // texture mapper.
-    GLenum textureTarget = drawingBufferTextureTarget();
+    GLenum textureTarget = GL_TEXTURE_2D;
     glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

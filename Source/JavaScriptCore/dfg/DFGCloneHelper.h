@@ -362,6 +362,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(StringSearch, Common) \
     CLONE_STATUS(StringSubstring, Common) \
     CLONE_STATUS(StringSubstr, Common) \
+    CLONE_STATUS(StringTrim, Common) \
     CLONE_STATUS(StrCat, Common) \
     CLONE_STATUS(Switch, Special) \
     CLONE_STATUS(TailCallForwardVarargsInlinedCaller, Special) \

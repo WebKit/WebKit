@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <wtf/Box.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
@@ -50,7 +51,7 @@ public:
     void getSize(const String& path, std::optional<WallTime> expectedModificationTime);
     void openForRead(const String& path, long long offset, long long length);
     void close();
-    void read(std::span<uint8_t> buffer);
+    void read(const Box<Vector<uint8_t>>& outputBuffer, Function<void(int bytesRead)>&&);
 
 private:
     void start();

@@ -82,8 +82,6 @@ enum class LinkTimeConstant : int32_t;
     macro(throwTypeError) \
     macro(throwRangeError) \
     macro(throwOutOfMemoryError) \
-    macro(tryGetById) \
-    macro(tryGetByIdWithWellKnownSymbol) \
     macro(putByIdDirect) \
     macro(putByIdDirectPrivate) \
     macro(putByValDirect) \

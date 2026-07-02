@@ -2130,7 +2130,7 @@ std::optional<LayoutRect> LocalFrameView::visibleRectOfChild(const Frame& child)
     ASSERT(childOwnerRenderer->frame().frameID() == m_frame->frameID());
 
     auto rects = childOwnerRenderer->computeVisibleRectsInContainer(
-        { childOwnerRenderer->frameRect() },
+        { childOwnerRenderer->borderBoxRectInContainer() },
         &childOwnerRenderer->view(),
         {
             .hasPositionFixedDescendant = false,

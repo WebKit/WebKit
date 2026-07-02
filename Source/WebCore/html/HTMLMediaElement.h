@@ -1002,7 +1002,8 @@ private:
     void pauseInternal();
     void completePlayInternal();
 
-    void prepareForLoad();
+    enum class IsExplicitLoad : bool { No, Yes };
+    void prepareForLoad(IsExplicitLoad = IsExplicitLoad::No);
     void allowVideoRendering();
 
     bool processingMediaPlayerCallback() const { return m_processingMediaPlayerCallback > 0; }
@@ -1337,6 +1338,18 @@ private:
     bool m_sentEndEvent : 1;
 
     bool m_pausedInternal : 1;
+
+    // True between playInternal()'s clientWillBeginPlayback call and its
+    // completion handler. While set, pauseInternal() suppresses
+    // scheduleRejectPendingPlayPromises() so that an in-flight play()'s
+    // pending promises are not rejected with AbortError when (e.g.) the
+    // play event handler synchronously calls pause(), or the player's
+    // mediaPlayerTimeChanged ended-path triggers setPaused(true) +
+    // clientWillPausePlayback. The play promise is resolved by
+    // scheduleNotifyAboutPlaying (queued from setReadyState's natural
+    // transition or from the admission completion handler) on success,
+    // or rejected by the admission completion handler's denial path.
+    bool m_canBeginPlaybackInFlight : 1 { false };
 
     bool m_closedCaptionsVisible : 1;
     bool m_completelyLoaded : 1;

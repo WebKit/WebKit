@@ -101,6 +101,7 @@ Ref<FrameState> toFrameState(const HistoryItem& historyItem)
     frameState->sessionStateObject = historyItem.stateObject();
     frameState->wasCreatedByJSWithoutUserInteraction = historyItem.wasCreatedByJSWithoutUserInteraction();
     frameState->wasRestoredFromSession = historyItem.wasRestoredFromSession();
+    frameState->isInitialAboutBlank = historyItem.isInitialAboutBlank();
     frameState->policyContainer = historyItem.policyContainer();
 
     static constexpr auto maxTitleLength = 1000u; // Closest power of 10 above the W3C recommendation for Title length.
@@ -174,6 +175,7 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
     historyItem.setStateObject(frameState.sessionStateObject.get());
     historyItem.setWasCreatedByJSWithoutUserInteraction(frameState.wasCreatedByJSWithoutUserInteraction);
     historyItem.setWasRestoredFromSession(frameState.wasRestoredFromSession);
+    historyItem.setIsInitialAboutBlank(frameState.isInitialAboutBlank);
     if (auto policyContainer = frameState.policyContainer)
         historyItem.setPolicyContainer(*policyContainer);
 

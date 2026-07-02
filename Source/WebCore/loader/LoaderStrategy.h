@@ -115,6 +115,7 @@ public:
     virtual ResourceError fileDoesNotExistError(const ResourceResponse&) const = 0;
     virtual ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest&) const = 0;
     virtual ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const = 0;
+    virtual bool isHttpNavigationWithHTTPSOnlyError(const ResourceError&) const = 0;
     virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&) const = 0;
 
 protected:

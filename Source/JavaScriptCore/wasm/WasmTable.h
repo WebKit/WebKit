@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/SlotVisitorMacros.h>
+#include <JavaScriptCore/WasmAddressType.h>
 #include <JavaScriptCore/WasmCallee.h>
 #include <JavaScriptCore/WasmFormat.h>
 #include <JavaScriptCore/WasmLimits.h>
@@ -54,11 +55,11 @@ class Table : public ThreadSafeRefCounted<Table> {
     WTF_MAKE_NONCOPYABLE(Table);
     WTF_MAKE_TZONE_ALLOCATED(Table);
 public:
-    static RefPtr<Table> tryCreate(VM&, uint32_t initial, std::optional<uint32_t> maximum, TableElementType, Type);
+    static RefPtr<Table> tryCreate(VM&, uint32_t initial, std::optional<uint64_t> maximum, TableElementType, Type, Wasm::AddressType);
 
     JS_EXPORT_PRIVATE ~Table() = default;
 
-    std::optional<uint32_t> maximum() const { return m_maximum; }
+    std::optional<uint64_t> maximum() const { return m_maximum; }
     uint32_t length() const { return m_length; }
 
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
@@ -77,6 +78,7 @@ public:
     bool isExternrefTable() const { return m_type == TableElementType::Externref; }
     bool isFuncrefTable() const { return m_type == TableElementType::Funcref; }
     Type wasmType() const { return m_wasmType; }
+    Wasm::AddressType addressType() const { return m_addressType; }
     FuncRefTable* NODELETE asFuncrefTable();
 
     static bool isValidLength(uint32_t length) { return length < maxTableEntries; }
@@ -93,7 +95,7 @@ public:
     void operator delete(Table*, std::destroying_delete_t);
 
 protected:
-    Table(uint32_t initial, std::optional<uint32_t> maximum, Type, TableElementType = TableElementType::Externref);
+    Table(uint32_t initial, std::optional<uint64_t> maximum, Type, Wasm::AddressType, TableElementType = TableElementType::Externref);
 
     template<typename Visitor> constexpr decltype(auto) NODELETE visitDerived(Visitor&&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
@@ -103,13 +105,14 @@ protected:
     bool isFixedSized() const { return m_isFixedSized; }
 
     uint32_t m_length;
-    NO_UNIQUE_ADDRESS const std::optional<uint32_t> m_maximum;
+    NO_UNIQUE_ADDRESS const std::optional<uint64_t> m_maximum;
     const TableElementType m_type;
     Type m_wasmType;
     // For concrete (RTT-bearing) heap types, retain the canonical RTT so the
     // pointer embedded in m_wasmType does not dangle.
     RefPtr<const RTT> m_wasmTypeRTT;
     bool m_isFixedSized { false };
+    Wasm::AddressType m_addressType;
     JSWebAssemblyTable* m_owner;
 };
 
@@ -123,7 +126,7 @@ public:
     JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
 
 private:
-    ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
+    ExternOrAnyRefTable(uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType);
 
     MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
 };
@@ -166,11 +169,11 @@ public:
     void registerInstance(JSWebAssemblyInstance&);
 
 private:
-    FuncRefTable(VM&, uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
+    FuncRefTable(VM&, uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType);
 
     Function* tailPointer() { return std::bit_cast<Function*>(std::bit_cast<uint8_t*>(this) + offsetOfTail()); }
 
-    static Ref<FuncRefTable> createFixedSized(VM&, uint32_t size, Type wasmType);
+    static Ref<FuncRefTable> createFixedSized(VM&, uint32_t size, Type wasmType, Wasm::AddressType);
 
     MallocPtr<Function, VMMalloc> m_importableFunctions;
     // FIXME: It seems like we should be able to recover this from the Wasm::Callee + instance but there might be problems for JS

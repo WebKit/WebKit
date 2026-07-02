@@ -142,6 +142,14 @@ void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHand
     unit->retrieveFormatDescription(WTF::move(callback));
 }
 
+void AudioMediaStreamTrackRendererUnit::deleteUnitForTesting()
+{
+    assertIsMainThread();
+
+    Ref unit = ensureDeviceUnit(AudioMediaStreamTrackRenderer::defaultDeviceID());
+    unit->deleteUnitForTesting();
+}
+
 AudioMediaStreamTrackRendererUnit::Unit::Unit(const String& deviceID)
     : m_internalUnit(AudioMediaStreamTrackRendererInternalUnit::create(deviceID, *this))
     , m_isDefaultUnit(deviceID == AudioMediaStreamTrackRenderer::defaultDeviceID())
@@ -212,6 +220,12 @@ void AudioMediaStreamTrackRendererUnit::Unit::setLastDeviceUsed(const String& de
 {
     assertIsMainThread();
     m_internalUnit->setLastDeviceUsed(deviceID);
+}
+
+void AudioMediaStreamTrackRendererUnit::Unit::deleteUnitForTesting()
+{
+    assertIsMainThread();
+    m_internalUnit->deleteUnitForTesting();
 }
 
 void AudioMediaStreamTrackRendererUnit::Unit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)

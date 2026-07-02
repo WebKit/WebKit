@@ -25,7 +25,7 @@
                     intervalId = setInterval(checkCurrentTime, 5);
                 });
                 video.addEventListener('pause', function() {
-                    clearInterval(checkCurrentTime);
+                    clearInterval(intervalId);
                 });
                 video.src = findMediaFile('video', 'content/test');
                 await video.play();

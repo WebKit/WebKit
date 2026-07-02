@@ -136,6 +136,7 @@ set(TestWTF_SOURCES
     Tests/WTF/StringView.cpp
     Tests/WTF/SynchronizedFixedQueue.cpp
     Tests/WTF/TextBreakIterator.cpp
+    Tests/WTF/TinyLRUCache.cpp
     Tests/WTF/ThreadGroup.cpp
     Tests/WTF/ThreadMessages.cpp
     Tests/WTF/Threading.cpp
@@ -218,6 +219,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/Decimal.cpp
         Tests/WebCore/FileMonitor.cpp
         Tests/WebCore/FloatPointTests.cpp
+        Tests/WebCore/FloatQuadTests.cpp
         Tests/WebCore/FloatRectTests.cpp
         Tests/WebCore/FloatSegmentTest.cpp
         Tests/WebCore/FloatSizeTests.cpp

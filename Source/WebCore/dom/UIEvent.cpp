@@ -67,7 +67,7 @@ void UIEvent::initUIEvent(const AtomString& typeArg, bool canBubbleArg, bool can
 
     initEvent(typeArg, canBubbleArg, cancelableArg);
 
-    m_view = viewArg;
+    m_view = WTF::move(viewArg);
     m_detail = detailArg;
 }
 

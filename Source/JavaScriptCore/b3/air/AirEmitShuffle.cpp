@@ -120,7 +120,7 @@ void ShufflePair::dump(PrintStream& out) const
     out.print(width(), ":", src(), "=>", dst());
 }
 
-Inst createShuffle(Value* origin, const Vector<ShufflePair>& pairs)
+Inst createShuffle(Value* origin, std::span<const ShufflePair> pairs)
 {
     Inst result(Shuffle, origin);
     for (const ShufflePair& pair : pairs)

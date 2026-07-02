@@ -641,7 +641,7 @@ void RenderTableSection::layoutRows()
                     cell->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
                 }
 
-                LayoutRect oldCellRect = cell->frameRect();
+                LayoutRect oldCellRect = cell->borderBoxRectInContainer();
 
                 setLogicalPositionForCell(cell, columnIndex);
 
@@ -690,7 +690,7 @@ void RenderTableSection::layoutRows()
         if (CheckedPtr rowRenderer = m_grid[rowIndex].rowRenderer) {
             // FIXME: the x() position of the row should be table()->hBorderSpacing() so that it can
             // report the correct offsetLeft. However, that will require a lot of rebaselining of test results.
-            auto oldRowRect = rowRenderer->frameRect();
+            auto oldRowRect = rowRenderer->borderBoxRectInContainer();
             rowRenderer->setLogicalLocation({ 0_lu, m_rowPos[rowIndex] });
             rowRenderer->setLogicalWidth(logicalWidth());
 
@@ -703,7 +703,7 @@ void RenderTableSection::layoutRows()
             rowRenderer->setLogicalHeight(rowLogicalHeight);
             rowRenderer->updateLayerTransform();
 
-            if (rowRenderer->frameRect() != oldRowRect && !table()->selfNeedsLayout() && rowRenderer->checkForRepaintDuringLayout())
+            if (rowRenderer->borderBoxRectInContainer() != oldRowRect && !table()->selfNeedsLayout() && rowRenderer->checkForRepaintDuringLayout())
                 rowRenderer->repaintDuringLayoutIfMoved(oldRowRect);
 
             // Push the row's offset onto the layout state so that pagination offsets
@@ -1368,7 +1368,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
     CellSpan dirtiedRows { 0, 0 };
     CellSpan dirtiedColumns { 0, 0 };
 
-    if (localRepaintRect.contains(frameRect())) {
+    if (localRepaintRect.contains(borderBoxRectInContainer())) {
         dirtiedRows = fullTableRowSpan();
         dirtiedColumns = fullTableColumnSpan();
     } else {

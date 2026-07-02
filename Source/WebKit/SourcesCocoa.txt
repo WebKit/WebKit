@@ -190,6 +190,7 @@ Shared/Cocoa/InteractionInformationAtPosition.mm @nonARC
 Shared/Cocoa/InteractionInformationRequest.cpp
 Shared/Cocoa/LibAccessibilitySoftLink.mm @nonARC
 Shared/Cocoa/LoadParametersCocoa.mm @nonARC
+Shared/Cocoa/PathsBlockedForSandboxExtensions.mm @nonARC
 Shared/Cocoa/PDFKitSoftLink.mm @nonARC
 Shared/Cocoa/RevealItem.mm @nonARC
 Shared/Cocoa/SandboxExtensionCocoa.mm @nonARC
@@ -367,7 +368,6 @@ UIProcess/API/Cocoa/WKFrameInfo.mm @nonARC
 UIProcess/API/Cocoa/WKHTTPCookieStore.mm @nonARC
 UIProcess/API/Cocoa/WKImmersiveEnvironment.mm @nonARC
 UIProcess/API/Cocoa/WKJSHandle.mm @nonARC
-UIProcess/API/Cocoa/WKJSScriptingBuffer.mm @nonARC
 UIProcess/API/Cocoa/WKJSSerializedNode.mm @nonARC
 UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm @nonARC
 UIProcess/API/Cocoa/WKNavigation.mm @nonARC

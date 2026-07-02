@@ -255,7 +255,7 @@ LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
     if (settings().visualViewportEnabled())
         return isHorizontalWritingMode() ? frameView->layoutViewportRect().width() : frameView->layoutViewportRect().height();
 
-    return clientLogicalWidth();
+    return paddingBoxLogicalWidth();
 }
 
 LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
@@ -272,7 +272,7 @@ LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
     if (settings().visualViewportEnabled())
         return isHorizontalWritingMode() ? frameView->layoutViewportRect().height() : frameView->layoutViewportRect().width();
 
-    return clientLogicalHeight();
+    return paddingBoxLogicalHeight();
 }
 
 void RenderView::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
@@ -485,6 +485,19 @@ bool RenderView::shouldRepaint(const LayoutRect& rect) const
 
 void RenderView::repaintRootContents()
 {
+    // The contents background could come from the root (document element) renderer.
+    // If the root is not composited, repainting this RenderView should repaint it and
+    // its background. But if it's composited, then the background doesn't get repainted
+    // unless we explicitly repaint its layers.
+    if (RefPtr rootElement = protect(document())->documentElement()) {
+        if (CheckedPtr rootRenderer = dynamicDowncast<RenderLayerModelObject>(rootElement->renderer())) {
+            // Only repaint if its has its own backing. Otherwise, it paints into its
+            // ancestor layer (this RenderView), which we're repainting anyway.
+            if (CheckedPtr rootLayer = rootRenderer->layer(); rootLayer && compositedWithOwnBackingStore(*rootLayer))
+                rootLayer->setBackingNeedsRepaint(GraphicsLayerShouldClipToLayer::DoNotClip);
+        }
+    }
+
     if (layer()->isComposited()) {
         layer()->setBackingNeedsRepaint(GraphicsLayerShouldClipToLayer::DoNotClip);
         return;
@@ -732,7 +745,7 @@ bool RenderView::shouldPaintBaseBackground() const
         return true;
 
     if (RefPtr parentFrame = frameView->frame().parent()) {
-        if (auto* documentLoader = document->loader(); documentLoader && documentLoader->isInitialAboutBlank()) {
+        if (auto* documentLoader = document->loader(); documentLoader && documentLoader->isInitialAboutBlank() == IsInitialAboutBlank::Yes) {
             // https://github.com/w3c/csswg-drafts/issues/9624#issuecomment-1944425637
             // > RESOLVED: initial about:blank iframes are always transparent
             return false;

@@ -389,6 +389,7 @@ FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFra
     , m_state(FrameState::Provisional)
     , m_loadType(FrameLoadType::Standard)
     , m_checkTimer(*this, &FrameLoader::checkTimerFired)
+    , m_crossOriginParentSyntheticSameDocLoadEventTimer(*this, &FrameLoader::crossOriginParentSyntheticSameDocLoadEventTimerFired)
     , m_documentPrefetcher(DocumentPrefetcher::create(frame))
 {
 }
@@ -783,6 +784,7 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     protect(frame->navigationScheduler())->clear();
 
     m_checkTimer.stop();
+    m_crossOriginParentSyntheticSameDocLoadEventTimer.stop();
     m_shouldCallCheckCompleted = false;
     m_shouldCallCheckLoadComplete = false;
 
@@ -1034,6 +1036,19 @@ void FrameLoader::checkCompleted()
 void FrameLoader::checkTimerFired()
 {
     checkCompletenessNow();
+}
+
+void FrameLoader::startCrossOriginParentSyntheticSameDocLoadEventTimer()
+{
+    static constexpr Seconds crossOriginParentSyntheticSameDocLoadEventDelay { 100_ms };
+    if (m_crossOriginParentSyntheticSameDocLoadEventTimer.isActive())
+        m_crossOriginParentSyntheticSameDocLoadEventTimer.stop();
+    m_crossOriginParentSyntheticSameDocLoadEventTimer.startOneShot(crossOriginParentSyntheticSameDocLoadEventDelay);
+}
+
+void FrameLoader::crossOriginParentSyntheticSameDocLoadEventTimerFired()
+{
+    protect(m_frame)->dispatchLoadEventToParent();
 }
 
 void FrameLoader::checkCompletenessNow()
@@ -1306,7 +1321,7 @@ void FrameLoader::updateURLAndHistory(const URL& newURL, RefPtr<SerializedScript
 {
     ASSERT(m_frame->document() && documentLoader());
 
-    if (documentLoader()->isInitialAboutBlank())
+    if (documentLoader()->isInitialAboutBlank() == IsInitialAboutBlank::Yes)
         historyHandling = NavigationHistoryBehavior::Replace;
 
     Ref history = m_history.get();
@@ -1418,12 +1433,14 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
         m_client->dispatchDidChangeLocationWithinPage();
     }
 
+    // Asynchronously dispatch a synthetic load event on the iframe owner so a cross-origin
+    // parent cannot distinguish same-doc from cross-doc navigations by load-event timing.
     RefPtr parentFrame = m_frame->tree().parent();
     RefPtr localParentFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
     if (parentFrame
         && (document->processingLoadEvent() || document->loadEventFinished())
         && (!localParentFrame || !protect(document->securityOrigin())->isSameOriginAs(protect(protect(localParentFrame->document())->securityOrigin()))))
-        protect(m_frame)->dispatchLoadEventToParent();
+        startCrossOriginParentSyntheticSameDocLoadEventTimer();
 
     // LocalFrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
     m_client->didFinishLoad();
@@ -1668,7 +1685,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             else
                 historyHandling = NavigationHistoryBehavior::Push;
         }
-        if (newURL.protocolIsJavaScript() || (documentLoader() && documentLoader()->isInitialAboutBlank()))
+        if (newURL.protocolIsJavaScript() || (documentLoader() && documentLoader()->isInitialAboutBlank() == IsInitialAboutBlank::Yes))
             historyHandling = NavigationHistoryBehavior::Replace;
     }
     frameLoadRequest.setNavigationHistoryBehavior(historyHandling);
@@ -2246,6 +2263,7 @@ void FrameLoader::stopAllLoadersAndCheckCompleteness()
         return;
 
     m_checkTimer.stop();
+    m_crossOriginParentSyntheticSameDocLoadEventTimer.stop();
     m_checkingLoadCompleteForDetachment = true;
     checkCompletenessNow();
     m_checkingLoadCompleteForDetachment = false;
@@ -2382,7 +2400,7 @@ void FrameLoader::setState(FrameState newState)
 
 void FrameLoader::clearProvisionalLoad()
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "clearProvisionalLoad: Clearing provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderClearProvisionalLoad, m_provisionalDocumentLoader && m_provisionalDocumentLoader->navigationID() ? m_provisionalDocumentLoader->navigationID()->toUInt64() : 0);
     setProvisionalDocumentLoader(nullptr);
     if (CheckedPtr progressTracker = m_progressTracker.get())
         progressTracker->progressCompleted(FrameProgressTracker::LoadCompletionStatus::Failure);
@@ -3400,6 +3418,7 @@ void FrameLoader::frameDetached()
         m_checkTimer.stop();
         checkCompletenessNow();
     }
+    m_crossOriginParentSyntheticSameDocLoadEventTimer.stop();
 
     if (frame->document()->backForwardCacheState() != Document::InBackForwardCache)
         stopAllLoadersAndCheckCompleteness();
@@ -4206,6 +4225,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess) {
             stopAllLoaders();
             m_checkTimer.stop();
+            m_crossOriginParentSyntheticSameDocLoadEventTimer.stop();
         }
 
         setPolicyDocumentLoader(nullptr, navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess ? LoadWillContinueInAnotherProcess::Yes : LoadWillContinueInAnotherProcess::No);

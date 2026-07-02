@@ -2112,7 +2112,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         slowCases.append(hole);
         addSlowPathGenerator(
             slowPathCall(
-                slowCases, this, operationGetByValObjectInt,
+                slowCases, this, operationGetByValArrayStorageInt,
                 resultRegs, LinkableConstant::globalObject(*this, node), baseReg, propertyReg));
 
         jsValueResult(resultRegs, node);
@@ -2723,6 +2723,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case ToLowerCase: {
         compileToLowerCase(node);
+        break;
+    }
+
+    case StringTrim: {
+        compileStringTrim(node);
         break;
     }
 

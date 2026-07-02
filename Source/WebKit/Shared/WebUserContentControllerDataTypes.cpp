@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-WebJSBufferData::WebJSBufferData(const RefPtr<WebCore::SharedMemory>& data, ContentWorldData&& worldData, const String& name)
+WebJSBufferData::WebJSBufferData(const Ref<WebCore::SharedMemory>& data, ContentWorldData&& worldData, const String& name)
     : data(data)
     , worldData(WTF::move(worldData))
     , name(name) { }

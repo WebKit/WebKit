@@ -95,7 +95,7 @@ private:
 
 typedef Vector<BlobDataItem> BlobDataItemList;
 
-class BlobData : public ThreadSafeRefCounted<BlobData> {
+class BlobData : public ThreadSafeRefCounted<BlobData, WTF::DestructionThread::Main> {
 public:
     static Ref<BlobData> create(const String& contentType)
     {

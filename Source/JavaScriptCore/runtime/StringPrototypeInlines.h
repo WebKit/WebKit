@@ -68,6 +68,34 @@ ALWAYS_INLINE std::tuple<int32_t, int32_t> extractSliceOffsets(int32_t length, i
     return { from, to };
 }
 
+enum class TrimKind : uint8_t {
+    TrimStart = 1,
+    TrimEnd = 2,
+    TrimBoth = TrimStart | TrimEnd
+};
+
+template<TrimKind trimKind>
+ALWAYS_INLINE std::tuple<unsigned, unsigned> extractTrimOffsets(StringView view)
+{
+    unsigned left = 0;
+    unsigned right = view.length();
+    auto scan = [&](auto characters) ALWAYS_INLINE_LAMBDA {
+        if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimStart)) {
+            while (left < right && isStrWhiteSpace(characters[left]))
+                left++;
+        }
+        if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimEnd)) {
+            while (right > left && isStrWhiteSpace(characters[right - 1]))
+                right--;
+        }
+    };
+    if (view.is8Bit())
+        scan(view.span8());
+    else
+        scan(view.span16());
+    return { left, right };
+}
+
 template<typename T> concept Arithmetic = std::is_arithmetic_v<T>;
 
 template<Arithmetic NumberType>

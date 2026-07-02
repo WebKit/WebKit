@@ -1,6 +1,6 @@
 //@ runDefault
 
-var createBuiltin = $vm.createBuiltin;
+var getGetterSetter = $vm.getGetterSetter;
 var loadGetterFromGetterSetter = $vm.loadGetterFromGetterSetter;
 
 var exception;
@@ -28,12 +28,9 @@ if (getter)
     throw "FAILED: unexpected result";
 exception = undefined;
 
-function tryGetByIdText(propertyName) { return `(function (base) { return @tryGetById(base, '${propertyName}'); })`; }
-let getSetterGetter = createBuiltin(tryGetByIdText("bar"));
-
 try {
     noGetterSetter = { };
-    getter = loadGetterFromGetterSetter(getSetterGetter(noGetterSetter, "bar"));
+    getter = loadGetterFromGetterSetter(getGetterSetter(noGetterSetter, "bar"));
 } catch (e) {
     exception = e;
 }
@@ -45,7 +42,7 @@ exception = undefined;
 
 try {
     hasGetter = { get bar() { return 22; } };
-    getter = loadGetterFromGetterSetter(getSetterGetter(hasGetter, "bar"));
+    getter = loadGetterFromGetterSetter(getGetterSetter(hasGetter, "bar"));
 } catch (e) {
     exception = e;
 }
@@ -57,7 +54,7 @@ if (!getter)
 try {
     // When a getter is not specified, a default getter should be assigned as long as there's also a setter.
     hasSetter = { set bar(x) { return 22; } };
-    getter = loadGetterFromGetterSetter(getSetterGetter(hasSetter, "bar"));
+    getter = loadGetterFromGetterSetter(getGetterSetter(hasSetter, "bar"));
 } catch (e) {
     exception = e;
 }

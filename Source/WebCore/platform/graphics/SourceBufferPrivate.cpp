@@ -488,7 +488,7 @@ void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, TrackI
     bool isEnded = false;
     if (RefPtr mediaSource = m_mediaSource.get())
         isEnded = mediaSource->isEnded();
-    if (trackBuffer.reenqueueMediaForTime(time, timeFudgeFactor(), isEnded))
+    if (trackBuffer.reenqueueMediaForTime(time, isEnded))
         provideMediaData(trackBuffer, trackID);
 }
 
@@ -821,7 +821,13 @@ void SourceBufferPrivate::addTrackBuffer(TrackID trackId, RefPtr<MediaDescriptio
 
         // 5.2.9 Add the track description for this track to the track buffer.
         RefPtr mediaSource = buffer.m_mediaSource.get();
-        auto trackBuffer = TrackBuffer::create(WTF::move(description), mediaSource ? mediaSource->timeFudgeFactor() : PlatformTimeRanges::timeFudgeFactor());
+        UniqueRef<TrackBuffer> trackBuffer = mediaSource
+            ? TrackBuffer::create(WTF::move(description),
+                [weakMediaSource = ThreadSafeWeakPtr { *mediaSource }, trackId](const MediaTime& fromTime, const MediaTime& toTime) -> bool {
+                    RefPtr ms = weakMediaSource.get();
+                    return ms && (toTime - fromTime) <= ms->gapToleranceAtTime(fromTime, trackId);
+                })
+            : TrackBuffer::create(WTF::move(description));
 #if !RELEASE_LOG_DISABLED
         // False positive see webkit.org/b/302520
         SUPPRESS_UNCOUNTED_ARG trackBuffer->setLogger(protect(buffer.logger()), buffer.logIdentifier());
@@ -1765,6 +1771,34 @@ void SourceBufferPrivate::iterateTrackBuffers(NOESCAPE const Function<void(const
     assertIsCurrent(m_dispatcher.get());
     for (auto& pair : m_trackBufferMap)
         func(pair.second);
+}
+
+bool SourceBufferPrivate::isAudioBufferedAt(const MediaTime& time, std::optional<TrackID> excluded) const
+{
+    assertIsCurrent(m_dispatcher.get());
+    for (auto& [trackID, trackBuffer] : m_trackBufferMap) {
+        if (excluded && *excluded == trackID)
+            continue;
+        const auto& description = trackBuffer->description();
+        if (!description || !description->isAudio())
+            continue;
+        if (trackBuffer->buffered().contain(time))
+            return true;
+    }
+    return false;
+}
+
+PlatformTimeRanges SourceBufferPrivate::audioBufferedRanges() const
+{
+    assertIsCurrent(m_dispatcher.get());
+    PlatformTimeRanges ranges;
+    for (auto& [_, trackBuffer] : m_trackBufferMap) {
+        const auto& description = trackBuffer->description();
+        if (!description || !description->isAudio())
+            continue;
+        ranges.unionWith(trackBuffer->buffered());
+    }
+    return ranges;
 }
 
 // Issue flushTrack IPCs now (still on m_dispatcher) for any track whose

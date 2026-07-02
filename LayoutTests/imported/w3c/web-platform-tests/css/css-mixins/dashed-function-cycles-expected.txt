@@ -1,7 +1,7 @@
 
 PASS Local with self-cycle
 PASS Cycle reference without fallback makes result invalid
-FAIL Local with self-cycle in unused fallback assert_equals: expected "PASS" but got "FAIL"
+PASS Local with self-cycle in unused fallback
 PASS Local shadowing cyclic property --x
 PASS Local shadowing cyclic outer local --x
 PASS Argument shadowing cyclic outer local --x
@@ -20,8 +20,8 @@ PASS Cycle through global, self
 PASS Cycle through local, other function
 PASS Cycle through local, other function, fallback in function
 PASS Cycle through various variables and other functions
-FAIL Function in a cycle with its own default assert_equals: expected "PASS" but got "10px"
-FAIL Cyclic defaults assert_equals: expected "42px PASS-y PASS-z" but got "42px var(--z) var(--y)"
-FAIL Cyclic outer --b shadows custom property assert_equals: expected "PASS" but got "var(--b)"
+PASS Function in a cycle with its own default
+PASS Cyclic defaults
+PASS Cyclic outer --b shadows custom property
 PASS Locals are function specific
 

@@ -48,11 +48,15 @@ struct InteractionInformationAtPosition;
 }
 
 OBJC_CLASS NSPanGestureRecognizer;
+OBJC_CLASS WKWebView;
 
-#if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsBefore.mm>)
+#if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsBefore.mm>) && !__has_feature(modules)
 #import <WebKitAdditions/WKAppKitGestureControllerAdditionsBefore.mm>
 #endif
 
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+NS_SWIFT_UI_ACTOR
 @interface WKAppKitGestureController : NSObject <NSGestureRecognizerDelegate>
 
 - (instancetype)initWithPage:(std::reference_wrapper<WebKit::WebPageProxy>)page viewImpl:(std::reference_wrapper<WebKit::WebViewImpl>)viewImpl;
@@ -72,15 +76,31 @@ OBJC_CLASS NSPanGestureRecognizer;
 
 @property (nonatomic, readonly, getter=isPotentialClickInProgress) BOOL potentialClickInProgress;
 
+#if !__has_feature(modules)
 - (void)didGetClickHighlightForRequest:(WebKit::ClickIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
 - (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID;
 - (void)commitPotentialClickFailed;
 - (void)didCompleteSyntheticClick;
 - (void)didHandleClickAsHover;
 - (void)didNotHandleClickAsClick:(const WebCore::IntPoint&)point;
+#endif // !__has_feature(modules)
 
-#endif
+#endif // ENABLE(TWO_PHASE_CLICKS)
+
+// Exposed for Swift
+@property (nonatomic, readonly, nullable) WKWebView *webView;
+@property (nonatomic, strong, nullable) NSPanGestureRecognizer *panGestureRecognizer;
+- (void)configureForScrolling:(NSPanGestureRecognizer *)gesture;
+- (void)panGestureRecognized:(NSGestureRecognizer *)gesture;
 
 @end
+
+@interface WKAppKitGestureController (Swift)
+
+- (void)setUpPanGestureRecognizer;
+
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)

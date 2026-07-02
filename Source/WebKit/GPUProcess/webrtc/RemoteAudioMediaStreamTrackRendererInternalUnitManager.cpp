@@ -136,8 +136,11 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::createUnit(AudioMed
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::deleteUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 {
-    if (!m_units.remove(identifier))
+    RefPtr unit = m_units.take(identifier);
+    if (!unit)
         return;
+
+    unit->stop();
 
     if (m_units.isEmpty()) {
         if (auto connection = m_gpuConnectionToWebProcess.get())
@@ -200,6 +203,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
     , m_localUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::create(deviceID, *this))
     , m_canUseCaptureUnit(deviceID == WebCore::AudioMediaStreamTrackRenderer::defaultDeviceID())
 {
+    ASSERT(isMainRunLoop());
     protect(m_localUnit)->retrieveFormatDescription([weakThis = ThreadSafeWeakPtr { *this }, this, callback = WTF::move(callback)](auto&& description) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !description) {
@@ -216,6 +220,8 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
 
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::~RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit()
 {
+    ASSERT(isMainRunLoop());
+    ASSERT(!m_isPlaying);
     stop();
 }
 

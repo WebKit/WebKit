@@ -695,14 +695,6 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackId)
     return false;
 }
 
-MediaTime SourceBufferPrivateAVFObjC::timeFudgeFactor() const
-{
-    if (RefPtr mediaSource = m_mediaSource.get())
-        return mediaSource->timeFudgeFactor();
-
-    return SourceBufferPrivate::timeFudgeFactor();
-}
-
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
     assertIsCurrent(m_dispatcher.get());

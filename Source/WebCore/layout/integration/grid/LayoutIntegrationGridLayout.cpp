@@ -161,8 +161,8 @@ void GridLayout::updateGridItemRenderers()
         auto borderBoxRect = Layout::BoxGeometry::borderBoxRect(gridItemGeometry);
 
         renderer->setLocation(contentBoxOffset + borderBoxRect.topLeft());
-        renderer->setWidth(borderBoxRect.width());
-        renderer->setHeight(borderBoxRect.height());
+        renderer->setBorderBoxWidth(borderBoxRect.width());
+        renderer->setBorderBoxHeight(borderBoxRect.height());
 
         renderer->setMarginBefore(gridItemGeometry.marginBefore());
         renderer->setMarginAfter(gridItemGeometry.marginAfter());
@@ -182,12 +182,21 @@ void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutCon
         auto& rowSizes = usedTrackSizes.rowSizes;
         auto usedRowGutter = Layout::GridFormattingContext::usedGapValue(renderGrid->style().rowGap());
         auto blockContentSize = std::reduce(rowSizes.begin(), rowSizes.end()) + Layout::GridLayoutUtils::totalGuttersSize(rowSizes.size(), usedRowGutter);
-        renderGrid->setHeight(blockContentSize + renderGrid->borderAndPaddingLogicalHeight());
+        renderGrid->setBorderBoxHeight(blockContentSize + renderGrid->borderAndPaddingLogicalHeight());
     } else
-        renderGrid->setHeight(layoutConstraints.blockAxis.availableSpace() + renderGrid->borderAndPaddingLogicalHeight());
+        renderGrid->setBorderBoxHeight(layoutConstraints.blockAxis.availableSpace() + renderGrid->borderAndPaddingLogicalHeight());
 
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
         orderIteratorPopulator.collectChild(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) });
+}
+
+// updateFormattingContextRootRenderer may mutate bits of RenderGrid to properly reflect
+// the state and result of layout since certain clients may query this information
+// (see RenderGrid::paintChildren). Undo this state if we are falling back to legacy
+// so that we run a full layout.
+void GridLayout::invalidateFormattingContextRootRenderer(RenderGrid& renderGrid)
+{
+    renderGrid.currentGrid().setNeedsItemsPlacement(true);
 }
 
 std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()

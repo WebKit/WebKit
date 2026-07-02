@@ -86,6 +86,23 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
 - (void)_webExtensionController:(WKWebExtensionController *)controller didCreateBackgroundWebView:(WKWebView *)webView forExtensionContext:(WKWebExtensionContext *)context;
 
 /*!
+ @abstract Called when an extension context requests one or more tabs be moved to a new position.
+ @param controller The web extension controller that is managing the extension.
+ @param tabs The tabs to move, in the order they should appear at the destination.
+ @param index The zero-based index position to move the tabs to within the destination window. The first tab is
+ moved to this index and the remaining tabs follow it in order. If \c index is greater than or equal to the number
+ of tabs in the destination window, the tabs should be moved to the last position.
+ @param window The destination window. All of the provided tabs are currently in this window, or are being moved into it.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument,
+ which should be provided if any errors occurred.
+ @discussion This method should be implemented by the app to handle requests to move tabs, e.g. via `browser.tabs.move()`. The app is
+ responsible for the final placement, including honoring any constraints such as keeping pinned tabs ahead of unpinned tabs.
+ The provided tabs are always in a single destination window, so an app may move them together as one selection.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller moveTabs:(NSArray<id <WKWebExtensionTab>> *)tabs toIndex:(NSUInteger)index inWindow:(id <WKWebExtensionWindow>)window forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:move:toIndex:in:for:completionHandler:));
+
+/*!
  @abstract Called when a sidebar is requested to be opened.
  @param controller The web extension controller initiating the request.
  @param sidebar The sidebar which should be displayed.

@@ -24,11 +24,13 @@ header: "WebsiteDataFetchOption.h"
 
 [RValue] struct WebKit::WebsiteDataStoreParameters {
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
+    String cookieStoragePath;
     WebKit::SandboxExtensionHandle cookieStoragePathExtensionHandle;
     WebKit::NetworkSessionCreationParameters networkSessionParameters;
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<WebKit::SandboxExtensionHandle> cookieStorageDirectoryExtensionHandle;
+    String containerCachesDirectory;
     std::optional<WebKit::SandboxExtensionHandle> containerCachesDirectoryExtensionHandle;
     std::optional<WebKit::SandboxExtensionHandle> parentBundleDirectoryExtensionHandle;
     std::optional<WebKit::SandboxExtensionHandle> tempDirectoryExtensionHandle;

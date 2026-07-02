@@ -1,3 +1,4 @@
 
-PASS sframe-transform-readable
+
+FAIL sframe-transform-readable promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SFrameEncrypterStream({ cipherSuite: "AES_128_CTR_HMAC_SHA256_80" })')"
 

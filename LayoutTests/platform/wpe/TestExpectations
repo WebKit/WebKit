@@ -869,7 +869,6 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the
 
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ] # Timeout.
 fast/canvas/webgl/lose-context-on-timeout.html [ Skip ] # Timeout.
-http/tests/misc/ftp-eplf-directory.py [ Skip ] # Timeout.
 media/video-audio-session-mode.html [ Skip ] # Timeout.
 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ] # Timeout.
 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ] # Timeout.
@@ -1343,3 +1342,8 @@ webkit.org/b/317976 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful
 
 # Gardening 2026-06-27 (WPE x86_64, builder 40) https://bugs.webkit.org/show_bug.cgi?id=318036
 webkit.org/b/318034 [ x86_64 ] fast/canvas/image-potential-subsample.html [ Failure Pass ]
+
+webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default-colorspace.html [ Failure Pass ]
+
+webkit.org/b/318349 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Failure Pass ]
+webkit.org/b/318350 [ arm64 ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure Pass ]

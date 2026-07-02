@@ -23,6 +23,7 @@ fast/page-color-sampling [ Pass ]
 http/tests/pdf [ Pass ]
 http/tests/quicklook [ Pass ]
 http/tests/swipe [ Pass ]
+ipc/ios [ Pass ]
 media/ios [ Pass ]
 media/audioSession/ios [ Pass ]
 pdf [ Pass ]
@@ -2377,7 +2378,7 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/table-exposure-updates-dynamically.html [ Pass ]
-accessibility/accessibility-node-reparent.html [ Pass ]
+accessibility/accessibility-node-reparent.html [ Pass Timeout ] # rdar://178168616
 accessibility/area-element-bounding-box.html [ Pass ]
 accessibility/aria-actions.html [ Pass ]
 accessibility/aria-owns-text-stitching.html [ Pass ]
@@ -2408,7 +2409,7 @@ accessibility/canvas-drawFocusIfNeeded-bounds-with-object-fit.html [ Pass ]
 accessibility/canvas-drawFocusIfNeeded-bounds-with-transform.html [ Pass ]
 accessibility/changing-aria-hidden-with-display-none-parent.html [ Pass ]
 accessibility/checkbox-mixed-value.html [ Pass ]
-accessibility/clip-path-bounding-box.html [ Pass ]
+accessibility/clip-path-bounding-box.html [ Pass Failure Timeout ] # rdar://177742349, rdar://179387348
 accessibility/css-content-alt-text.html [ Pass ]
 accessibility/dialog-slotted-content.html [ Pass ]
 accessibility/dirty-relations-and-modal-tree-update-crash.html [ Pass ]
@@ -2470,7 +2471,7 @@ accessibility/nested-custom-element-accname.html [ Pass ]
 accessibility/node-only-inert-object.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
 accessibility/checkbox-radio-element-rect.html [ Pass ]
-accessibility/opacity-0-bounding-box.html [ Pass ]
+accessibility/opacity-0-bounding-box.html [ Pass Failure ] # rdar://177981724
 accessibility/out-of-bounds-rowspan.html [ Pass ]
 accessibility/out-of-bounds-rowspan-display-none.html [ Pass ]
 accessibility/out-of-bounds-rowspan-aria-hidden.html [ Pass ]
@@ -2494,6 +2495,7 @@ accessibility/table-display-flex.html [ Pass ]
 accessibility/table-display-grid.html [ Pass ]
 accessibility/table-display-inline-block.html [ Pass ]
 accessibility/text-input-hit-test.html [ Pass ]
+accessibility/textarea-line-for-index.html [ Pass ]
 accessibility/tree-update-with-dirty-layout.html [ Pass ]
 accessibility/tree-update-with-dynamically-ignored-inline-child-div.html [ Pass ]
 accessibility/tree-update-with-dynamically-ignored-tabindex-div.html [ Pass ]
@@ -3274,7 +3276,7 @@ fast/loader/plain-text-document-dark-mode.html [ Pass ]
 
 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
-fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
+fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass Timeout Failure ]
 
 # <rdar://problem/45056204> REGRESSION (iOS 13): Three cookie layout tests failing
 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
@@ -3555,7 +3557,7 @@ http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
 # rdar://80396502 ([ iOS15 ] http/wpt/mediarecorder/pause-recording.html is a flaky crash)
 http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
 
-accessibility/misspelling-range.html [ Pass ]
+accessibility/misspelling-range.html [ Pass Failure ] # rdar://131398291
 
 # Behavior of navigator-language-ru changed in iOS 15.
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
@@ -7751,7 +7753,7 @@ webkit.org/b/290670 imported/w3c/web-platform-tests/css/css-viewport/zoom/relati
 
 webkit.org/b/290767 [ x86_64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
 
-webkit.org/b/290790 editing/selection/ios/show-selection-in-transformed-container.html [ Failure ]
+webkit.org/b/290790 editing/selection/ios/show-selection-in-transformed-container.html [ Pass Failure Timeout ] # rdar://177980999
 
 webkit.org/b/290794 fast/viewport/ios/content-visibility-layout-viewport-during-unstable-scroll.html [ Failure ]
 
@@ -8009,7 +8011,6 @@ webkit.org/b/296202 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/296209 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
 
 # rdar://156353464 ☂️Bug for iOS26 reproduction and expectations
-compositing/layer-creation/sticky-overlap-extent.html [ Failure ]
 editing/pasteboard/copy-paste-bidi.html [ Failure ]
 editing/selection/ios/show-selection-in-transformed-container-2.html [ Failure ]
 fast/mediastream/play-newly-added-audio-track.html [ Failure ]
@@ -8417,7 +8418,7 @@ fast/dom/HTMLLinkElement/prefetch-too-many-clients.html [ Skip ]
 fast/dynamic/crash-paint-no-documentElement-renderer.html [ Skip ]
 fast/editing/ruby-with-edited-text-crash.html [ Skip ]
 fast/events/key-events-in-frame.html [ Skip ]
-fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
+fast/forms/textarea/textarea-state-restore.html [ Pass Timeout Failure ] # rdar://179387373
 [ Debug ] fast/layers/top-layer-ancestor-opacity-and-transform-crash.html [ Skip ]
 [ Release ] fast/mediastream/MediaStream-page-muted.html [ Pass Timeout ]
 fast/table/double-height-table-no-tbody.html [ Skip ]
@@ -8464,7 +8465,7 @@ webkit.org/b/316014 [ Debug ] fast/dom/move-embedded-during-update.html [ Pass F
 
 webkit.org/b/316218 fast/scrolling/ios/scroll-into-view-smooth-after-snap.html [ Pass Failure ]
 
-webkit.org/b/316228 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Failure ]
+webkit.org/b/316228 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Pass Timeout Failure ]
 
 webkit.org/b/316118 imported/w3c/web-platform-tests/url/IdnaTestV2.any.html [ Failure ]
 
@@ -8495,6 +8496,105 @@ imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-off
 
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard-snap-interruption.html [ Skip ] # timeout
 
+compositing/backing/backing-store-attachment-animating-outside-viewport.html [ Pass Failure ] # rdar://178675997
+compositing/color-matching/image-color-matching.html [ Pass Crash ] # rdar://178675338
+editing/editable-region/hit-test-fixed.html [ Pass Failure ] # rdar://178675880
+editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible.html [ Pass Failure ] # rdar://178172917
+editing/input/cocoa/autocorrect-on.html [ Pass Timeout ]
+editing/input/cocoa/extended-proofreading.html [ Pass Timeout ] # rdar://177981315
+editing/input/ios/compose-accent-with-hardware-keyboard-when-preventing-keydown.html [ Pass Failure Timeout ] # rdar://176615540
+editing/selection/ios/caret-rect-after-inserting-newlines-in-textarea.html [ Pass Timeout Crash ] # rdar://177980999
+editing/selection/ios/select-text-by-long-press-with-focused-element.html [ Pass Timeout ] # rdar://180007873
+editing/selection/ios/select-text-by-long-press-with-hardware-keyboard.html [ Pass Timeout ] # rdar://180007873
+editing/selection/ios/select-word-for-replacement-extends-grammar-marker.html [ Pass Timeout ] # rdar://180007873
+editing/selection/ios/selection-clip-in-position-relative-text-field.html [ Pass Timeout ] # rdar://177980999
+editing/selection/ios/selection-moves-between-composited-layers.html [ Pass Timeout Crash ] # rdar://177980999, rdar://179387140
+editing/selection/ios/show-edit-menu-with-transparent-caret.html [ Pass Timeout ] # rdar://177980999
+editing/selection/ios/show-grammar-replacements-on-tap.html [ Pass Timeout ] # rdar://177980999
+editing/selection/ios/tap-focused-input-clears-outside-selection.html [ Timeout ] # rdar://180007798
+editing/text-placeholder/caret-before-zero-width-placeholder-in-content-editable-start-of-word.html [ Pass Timeout ] # rdar://178158441
+fast/dynamic/anchor-lock.html [ Pass Failure ] # rdar://178675751
+fast/events/autoscroll-when-input-is-offscreen.html [ Pass Failure ]
+fast/events/ios/pdf-modifer-key-down-crash.html [ Pass Crash ]
+fast/forms/datalist/data-list-search-input-with-appearance-none.html [ Timeout ] # rdar://178168549
+fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Pass Timeout ]
+fast/forms/ios/select-option-update-1000.html [ Failure Timeout ] # rdar://178168662
+fast/images/imageDocument-title.html [ Pass Crash ] # rdar://178675308
+fast/mediastream/audio-session-category-capture-audio-context.html [ Pass Timeout ]
+fast/mediastream/media-stream-video-track-interrupted.html [ Pass Failure ] # rdar://178673961
+fast/mediastream/mediastreamtrack-clone-muted.html [ Pass Timeout ] # rdar://178215298
+fast/screen-orientation/orientation-in-resize-event.html [ Pass Failure Timeout ] # rdar://177741597
+fast/scrolling/scroll-anchoring/heuristic-enabled-below-threshold.html [ Pass Failure ] # rdar://178168995
+fast/text-extraction/text-extraction-scroll-fallback-to-large-container.html [ Pass Failure ] # rdar://178169238
+fast/viewport/ios/shrink-to-fit-for-page-without-viewport-meta.html [ Failure ] # rdar://178168569
+fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Failure ] # rdar://178168569
+fast/visual-viewport/ios/visual-viewport-dimensions-during-scroll-with-keyboard.html [ Timeout ] # rdar://178016084
+http/tests/cache/cancel-multiple-post-xhrs.html [ Pass Failure ] # rdar://178676120
+http/tests/download/anchor-download-redirect-cross-origin.html [ Pass Crash ] # rdar://178214780
+http/tests/privateClickMeasurement/database-disabled-in-ephemeral-session.html [ Pass Timeout Crash ] # rdar://176608751, rdar://179387095
+http/tests/security/referrer-policy-header-invalid.html [ Pass Timeout ] # rdar://178168636
+http/tests/site-isolation/datalist-cross-origin-iframe.html [ Timeout ] # rdar://179387257
+http/tests/site-isolation/selection-focus.html [ ImageOnlyFailure ] # rdar://163216880
+http/tests/site-isolation/type-in-cross-origin-iframe.html [ Failure Timeout ] # rdar://178168718
+http/wpt/service-workers/persistent-modules.html [ Pass Failure ] # rdar://178676392
+imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.html [ Pass Failure ] # rdar://178158917
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.html [ Pass Failure ] # rdar://178158917
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.worker.html [ Pass Failure ] # rdar://178158917
+imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-000.html [ Pass ImageOnlyFailure ] # rdar://178676781
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-033.html [ Pass Crash ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Pass Failure ] # rdar://178676728
+imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-auto-002.html [ Pass ImageOnlyFailure ] # rdar://178676895
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-finished-promise.html [ Pass Failure ] # rdar://178676670
+imported/w3c/web-platform-tests/css/css-writing-modes/text-orientation-upright-srl-018.xht [ Pass ImageOnlyFailure ] # rdar://178676919
+imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-smooth.html [ Pass Failure ] # rdar://178676605
+imported/w3c/web-platform-tests/custom-elements/reactions/Document.html [ Pass Crash ] # rdar://178158852
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/cross-origin-top-navigation-with-user-activation-in-parent.window.html [ Pass Failure ] # rdar://178214939
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-origin.sub.html [ Failure ] # rdar://178012093
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Pass Crash Timeout ] # rdar://178158581
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-height-constrained-by-max-width.html [ Crash ] # rdar://178169483
+imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html [ Pass Failure ] # rdar://178546346
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Failure ] # rdar://178018070
+imported/w3c/web-platform-tests/html/semantics/forms/form-submission-target/form-target-blank-useractivation.html [ Pass Failure ] # rdar://180007963
+imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-same-document.html [ Pass Crash ]
+imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html [ Pass Failure ] # rdar://178158764
+imported/w3c/web-platform-tests/shadow-dom/event-on-pseudo-element-crash.html [ Pass Timeout ] # rdar://179387553
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-getoutputtimestamp-cross-realm.html [ Pass Failure ] # rdar://179388032
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ] # rdar://178172495
+media/audio-session-category-play-unmute-pause.html [ Failure ] # rdar://178158431
+media/media-visible-in-viewport-in-fullscreen.html [ Timeout ] # rdar://178016189
+media/media-vp8-webm-with-poster.html [ Timeout Crash ] # rdar://178016189
+media/video-pause-immediately.html [ Pass Failure ] # rdar://178675666
+media/video-webm-seek-multi-audio-tracks.html [ Timeout ] # rdar://180007922
+quicklook/word-legacy.html [ Failure ] # rdar://174850780
+quicklook/word.html [ Failure ] # rdar://174850780
+svg/filters/feMorphology-negative-radius.html [ Pass Crash ] # rdar://178675229
+webgl/1.0.x/conformance/textures/misc/texture-srgb-upload.html [ Timeout ] # rdar://176399952
+workers/worker-set-delete-terminate-crash.html [ Timeout ] # rdar://178590046
+svg/transforms/nested-svg-transform-attribute-creates-layer.html [ Failure ] # rdar://180457293
+svg/compositing/segment-removed-after-anchor-decomposited-layer-tree.html [ Failure ] # rdar://180457293
+svg/compositing/transform-change-repainting-viewBox-repaintRects.html [ Failure ] # rdar://180457293
+svg/compositing/anonymous-RenderSVGViewportContainer-no-repaints.html [ Failure ] # rdar://180457293
+fast/events/touch/ios/touch-event-regions-layer-tree/svg-image-with-layer-based-svg-engine.html [ Failure ] # rdar://180457293
+fast/events/touch/ios/touch-event-regions-layer-tree/svg-path-with-layer-based-svg-engine.html [ Failure ] # rdar://180457293
+fast/events/touch/ios/touch-event-regions-layer-tree/svg-text-with-layer-based-svg-engine.html [ Failure ] # rdar://180457293
+fast/events/touch/ios/touch-event-regions-layer-tree/mousemove-mouseup.html [ Failure ] # rdar://180457293
+fast/forms/ios/click-should-not-suppress-misspelling.html [ Failure ] # webkit.org/b/318249
+fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html [ Failure ] # webkit.org/b/318249
+fast/forms/ios/insert-autofill-suggestion.html [ Failure ] # webkit.org/b/318249
+fast/forms/ios/suppress-software-keyboard-while-focusing-input.html [ Failure ] # webkit.org/b/318249
+editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Timeout ] # webkit.org/b/318250
+editing/selection/ios/update-selection-after-iframe-scroll.html [ Timeout ] # webkit.org/b/318250
+fast/events/ios/autocorrect-with-apostrophe.html [ Timeout ] # webkit.org/b/318251
+fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html [ Timeout ] # webkit.org/b/318251
+fast/forms/ios/hide-keyboard-on-node-removal.html [ Timeout ] # webkit.org/b/318252
+fast/forms/ios/zoom-to-reveal-focused-element-after-delay.html [ Timeout ] # webkit.org/b/318252
+editing/caret/ios/place-caret-after-autocorrected-word.html [ Failure ] # webkit.org/b/318253
+editing/input/ios/typing-with-inline-predictions.html [ Pass Timeout ] # webkit.org/b/318254
+imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ] # webkit.org/b/318255
+imported/w3c/web-platform-tests/digital-credentials/mdoc/mixed-requests.https.html [ Failure ] # webkit.org/b/318256
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/number-constraint-validation.html [ Pass Failure ] # webkit.org/b/318257
+ipc/fecolormatrix-type-values-mismatch-crash.html [ Failure ] # webkit.org/b/318258
+
 webkit.org/b/317884 imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html [ Skip ]
 
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Failure ]
@@ -8505,3 +8605,5 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.serviceworker.html [ Failure ]
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.sharedworker.html [ Failure ]
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.any.worker.html [ Failure ]
+
+webkit.org/b/318375 imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-001.html [ Pass ImageOnlyFailure ]

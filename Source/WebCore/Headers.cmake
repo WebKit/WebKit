@@ -1210,6 +1210,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/primitives/CSSKeywordList.h
     css/values/primitives/CSSPosition.h
     css/values/primitives/CSSPrimitiveData.h
+    css/values/primitives/CSSPrimitiveNumeric+Forward.h
     css/values/primitives/CSSPrimitiveNumeric.h
     css/values/primitives/CSSPrimitiveNumericCategory.h
     css/values/primitives/CSSPrimitiveNumericConcepts.h
@@ -1977,6 +1978,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ContextMenuProvider.h
     page/CrossSiteNavigationDataTransfer.h
     page/CryptoClient.h
+    page/CueMatch.h
     page/DOMSelection.h
     page/DOMTimer.h
     page/DOMWindow.h

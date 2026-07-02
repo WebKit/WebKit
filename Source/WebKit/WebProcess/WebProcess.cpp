@@ -2658,11 +2658,6 @@ bool WebProcess::requiresConsistentPrivacyQuirkForDomain(const URL& url) const
     return m_consistentPrivacyQuirkFilter && m_consistentPrivacyQuirkFilter->matches(url, SecurityOrigin::create(url));
 }
 
-bool WebProcess::shouldBlockRequest(const URL& url, const WebCore::SecurityOrigin& topOrigin)
-{
-    return m_scriptTrackingPrivacyFilter && m_scriptTrackingPrivacyFilter->shouldBlockRequest(url, topOrigin);
-}
-
 void WebProcess::enableMediaPlayback()
 {
     m_mediaPlaybackEnabled = true;

@@ -43,14 +43,18 @@ END_OF_RUN_RE = re.compile(r"^\[==========\].*ran\.", re.MULTILINE)
 NO_BANNER_EXIT = -999
 
 
-def default_paths(config):
-    """Return mode → default path mapping for the given build config."""
+def default_paths(config, product="ANGLEEnd2EndTests"):
+    """Return mode → default path mapping for the given build config + product.
+
+    `product` selects the test runner: ANGLEEnd2EndTests (default), or the dEQP
+    runners ANGLEDeqpGLES2Tests / ANGLEDeqpGLES3Tests (Mac-only command-line
+    tools; they have no .app wrapper, so the app-bundle modes don't apply)."""
     return {
-        "mac":          f"WebKitBuild/{config}/ANGLEEnd2EndTests",
-        "maccatalyst":  f"WebKitBuild/{config}-maccatalyst/ANGLEEnd2EndTestsApp.app",
-        "simulator":    f"WebKitBuild/{config}-iphonesimulator/ANGLEEnd2EndTestsApp.app",
-        "ios":          f"WebKitBuild/{config}-iphoneos/ANGLEEnd2EndTestsApp.app",
-        "xros":         f"WebKitBuild/{config}-xros/ANGLEEnd2EndTestsApp.app",
+        "mac":          f"WebKitBuild/{config}/{product}",
+        "maccatalyst":  f"WebKitBuild/{config}-maccatalyst/{product}App.app",
+        "simulator":    f"WebKitBuild/{config}-iphonesimulator/{product}App.app",
+        "ios":          f"WebKitBuild/{config}-iphoneos/{product}App.app",
+        "xros":         f"WebKitBuild/{config}-xros/{product}App.app",
     }
 
 
@@ -496,6 +500,10 @@ def main():
              "--per-suite this surfaces the per-suite/per-test command lines "
              "and the test binary's stdout/stderr that would otherwise be "
              "captured silently.")
+    parser.add_argument("--product", default="ANGLEEnd2EndTests",
+        choices=["ANGLEEnd2EndTests", "ANGLEDeqpGLES2Tests", "ANGLEDeqpGLES3Tests"],
+        help="Which test runner to run (default: ANGLEEnd2EndTests). The "
+             "ANGLEDeqp* runners are Mac-only command-line tools.")
     args, gtest_args = parser.parse_known_args()
 
     # Default to local mac mode if no mode flag was given.
@@ -503,7 +511,7 @@ def main():
             and args.ios_device is None and args.xros_device is None):
         args.mac = True
 
-    paths = default_paths(args.config)
+    paths = default_paths(args.config, args.product)
 
     if args.mac:
         target_path = Path(args.app) if args.app else Path(paths["mac"])

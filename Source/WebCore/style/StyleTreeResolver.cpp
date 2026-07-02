@@ -1695,9 +1695,9 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::generatePositionOption(const
 
         // "If an at-rule or property defines a name that other CSS constructs can refer to it by, ... it must be defined as a tree-scoped name."
         // https://drafts.csswg.org/css-scoping-1/#shadow-names
-        return Style::Scope::resolveTreeScopedReference(protect(styleable.element), *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const AtomString& name) -> RefPtr<const StyleProperties> {
+        return Style::resolveTreeScopedReference(protect(styleable.element), *fallback.ruleAndTactics.rule, [](const Style::Scope& scope, const Style::ScopedName& scopedName) -> RefPtr<const StyleProperties> {
             auto& ruleSet = scope.resolverIfExists()->ruleSets().authorStyle();
-            RefPtr rule = ruleSet.positionTryRuleForName(name);
+            RefPtr rule = ruleSet.positionTryRuleForName(scopedName.name);
             if (!rule)
                 return nullptr;
             return rule->properties();

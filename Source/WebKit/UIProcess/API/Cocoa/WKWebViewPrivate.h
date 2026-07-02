@@ -660,6 +660,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 #endif
 
 - (void)_getSelectorPathDataForNode:(_WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathDataForNode(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
+- (void)_getSelectorPathData:(WKJSHandle *)node completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler WK_SWIFT_ASYNC_NAME(_getSelectorPathData(_:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 - (void)_getNodeForSelectorPathData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void (^)(_WKJSHandle *))completionHandler WK_SWIFT_ASYNC_NAME(_getNodeForSelectorPathData(_:)) WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 
 - (void)_debugTextWithConfiguration:(_WKTextExtractionConfiguration *)configuration completionHandler:(WK_SWIFT_UI_ACTOR void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4)) NS_SWIFT_NAME(_debugText(with:completionHandler:));

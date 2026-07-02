@@ -1,0 +1,46 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "BaseTarget.xcconfig"
+
+// dEQP requires C++ exceptions and RTTI (ANGLE's base disables both).
+GCC_ENABLE_CPP_EXCEPTIONS = YES;
+GCC_ENABLE_CPP_RTTI = YES;
+
+// Common prefix for the VK-GL-CTS source tree, used by HEADER_SEARCH_PATHS.
+DEQP_SRC = $(ANGLE_HEADER_PATH_PREFIX)/third_party/VK-GL-CTS/src;
+HEADER_SEARCH_PATHS = $(DEQP_SRC)/executor $(DEQP_SRC)/execserver $(DEQP_SRC)/framework/platform/null $(DEQP_SRC)/framework/xexml $(DEQP_SRC)/modules/gles2 $(DEQP_SRC)/modules/gles2/functional $(DEQP_SRC)/modules/gles2/accuracy $(DEQP_SRC)/modules/gles2/performance $(DEQP_SRC)/modules/gles2/stress $(DEQP_SRC)/modules/gles2/usecases $(DEQP_SRC)/modules/gles3 $(DEQP_SRC)/modules/gles3/functional $(DEQP_SRC)/modules/gles3/accuracy $(DEQP_SRC)/modules/gles3/performance $(DEQP_SRC)/modules/gles3/stress $(DEQP_SRC)/modules/gles3/usecases $(DEQP_SRC)/modules/glusecases $(DEQP_SRC)/modules/egl $(DEQP_SRC)/framework/common $(DEQP_SRC)/framework/qphelper $(DEQP_SRC)/framework/egl $(DEQP_SRC)/framework/egl/wrapper $(DEQP_SRC)/framework/opengl $(DEQP_SRC)/framework/opengl/wrapper $(DEQP_SRC)/framework/opengl/simplereference $(DEQP_SRC)/framework/referencerenderer $(DEQP_SRC)/framework/randomshaders $(DEQP_SRC)/framework/platform $(DEQP_SRC)/framework/delibs/debase $(DEQP_SRC)/framework/delibs/decpp $(DEQP_SRC)/framework/delibs/depool $(DEQP_SRC)/framework/delibs/dethread $(DEQP_SRC)/framework/delibs/deutil $(DEQP_SRC)/framework/delibs/destream $(DEQP_SRC)/modules/glshared $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS = DEQP_TARGET_NAME=\"angle\" _HAS_EXCEPTIONS=1 _XOPEN_SOURCE=700 _DARWIN_C_SOURCE ANGLE_DEQP_LIBTESTER_IMPLEMENTATION DEQP_EGL_DIRECT_LINK ANGLE_DEQP_DATA_DIR=\"vk_gl_cts_data/data\" QP_SUPPORT_PNG QP_SUPPORT_PNG_IMAGEIO EGL_EGLEXT_PROTOTYPES=1 GL_GLES_PROTOTYPES=1 GL_GLEXT_PROTOTYPES=1 ANGLE_EGL_LIBRARY_NAME=\"\" $(inherited);
+// dEQP is vendored third-party code; upstream's gn build drops ANGLE's
+// constructor/destructor and extra-warning configs for it. Don't gate on its
+// warnings (ANGLE's base builds -Werror).
+GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+WARNING_CFLAGS = $(inherited) -Wno-sizeof-array-div -Wno-string-conversion -Wno-unused-function -Wno-unused-local-typedef -Wno-unused-result -Wno-global-constructors -Wno-delete-non-virtual-dtor -Wno-deprecated -Wno-self-assign;
+OTHER_CFLAGS = $(inherited) -fwrapv;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+
+// Frameworks linked by both the dEQP tool and .app targets. Each target config
+// adds the platform-specific UIKit/Cocoa/IOKit (and, for the .app, the
+// -Wl,-e,_ios_main entry point), which is why ANGLE_OTHER_LDFLAGS itself can't
+// be fully shared here.
+DEQP_LINK_FRAMEWORKS = -framework QuartzCore -framework CoreGraphics -framework Foundation -framework IOSurface -framework Metal -framework ImageIO -framework CoreFoundation;

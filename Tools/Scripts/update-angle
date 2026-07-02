@@ -27,9 +27,13 @@
 #   prepare     Create a temp upstream checkout, fetch upstream, and resolve the
 #               previous commit (from ANGLE.plist) and the target commit.
 #   sync        Write a .gclient and run `gclient sync` to populate third_party.
+#               Syncs at the previous revision (to capture the vendored merge
+#               base) and then at the target revision.
 #   merge       3-way merge upstream into WebKit's tree (may pause on conflicts).
 #               See the "Merge" section below for how/why this works.
-#   thirdparty  Copy the vendored third_party subset (VENDORED) out of the sync.
+#   thirdparty  Bring the vendored third_party subset (VENDORED) from the sync
+#               into the merged tree, 3-way-merging WebKit's local edits to
+#               vendored text files (binary/data files are overwritten).
 #   codegen_a   Run upstream scripts/run_code_generation.py on the merged tree.
 #   codegen_b   Regenerate WebKit-specific files: angle_commit.h, the *.cmake
 #               build files, and ANGLEShaderProgramVersion.h.
@@ -42,6 +46,7 @@
 #
 
 import argparse
+import glob
 import json
 import os
 import re
@@ -71,14 +76,27 @@ PHASES = [
     "finalize",
 ]
 
-# Explicitly vendored third_party source: dropped from the merge, then copied
-# from the synced checkout by the `thirdparty` phase. Extend as the build needs
-# more upstream third_party sources.
+# Explicitly vendored third_party source: dropped from the main merge, then
+# brought in from the synced checkout by the `thirdparty` phase, which 3-way
+# merges WebKit's local edits to vendored text files (binary/data overwritten).
+# Extend as the build needs more upstream third_party sources.
+_MUSTPASS = ("third_party/VK-GL-CTS/src/external/openglcts/data/gl_cts/data/"
+             "mustpass/gles/aosp_mustpass/main")
 VENDORED = [
     "src/third_party/khronos/**",
     "src/third_party/volk/**",
     "src/third_party/ceval/**",
     "src/third_party/libXNVCtrl/**",
+    "third_party/VK-GL-CTS/src/framework/**",
+    "third_party/VK-GL-CTS/src/execserver/**",
+    "third_party/VK-GL-CTS/src/executor/**",
+    "third_party/VK-GL-CTS/src/modules/gles2/**",
+    "third_party/VK-GL-CTS/src/modules/gles3/**",
+    "third_party/VK-GL-CTS/src/modules/glshared/**",
+    "third_party/VK-GL-CTS/src/data/gles2/**",
+    "third_party/VK-GL-CTS/src/data/gles3/**",
+    _MUSTPASS + "/gles2-main.txt",
+    _MUSTPASS + "/gles3-main.txt",
 ]
 
 # Everything else dropped from the merge: WebKit-owned files (must never be
@@ -313,11 +331,45 @@ def phase_prepare(ctx):
     git(["checkout", "-q", "-f", target_hash], cwd=work)
 
 
+def _is_text_file(path):
+    """Heuristic: a file is text (3-way mergeable) unless it has a NUL byte."""
+    try:
+        with open(path, "rb") as f:
+            return b"\0" not in f.read(8192)
+    except OSError:
+        return False
+
+
+def _iter_vendored(root):
+    """Yield (relpath, abspath) for every VENDORED-matched file under `root`,
+    skipping directories and anything inside a .git."""
+    for pat in VENDORED:
+        for m in sorted(glob.glob(os.path.join(root, pat), recursive=True)):
+            rel = os.path.relpath(m, root)
+            if os.path.isfile(m) and ".git" not in rel.split(os.sep):
+                yield rel, m
+
+
+def _gclient_sync(work):
+    log("Running gclient sync (this can take a while) ...")
+    # Hooks are kept on so clang-format is fetched for the codegen_a phase.
+    res = run(["gclient", "sync", "--no-history"], cwd=work, check=False)
+    if res.returncode != 0:
+        fail("gclient sync failed. Re-run with --skip-sync to vendor "
+             "third_party manually.")
+
+
 def phase_sync(ctx):
-    """Write a minimal .gclient and run gclient sync in the work checkout."""
+    """Write a minimal .gclient and run gclient sync in the work checkout.
+
+    Syncs twice: first at the previous upstream revision to capture the vendored
+    files as they were then (the 3-way merge base used by `thirdparty`), then at
+    the target revision (the working state for codegen + the `theirs` vendored)."""
     work = ctx["work"]
+    st = ctx["state"].data
     if ctx["args"].skip_sync:
-        log("Skipping gclient sync (--skip-sync).")
+        log("Skipping gclient sync (--skip-sync); vendored 3-way merge disabled.")
+        st["base_vendored_dir"] = None
         return
     # Disable every optional checkout so sync stays as small as possible.
     custom_vars = {
@@ -342,12 +394,32 @@ def phase_sync(ctx):
     with open(os.path.join(work, ".gclient"), "w") as f:
         f.write(gclient)
 
-    log("Running gclient sync (this can take a while) ...")
-    # Hooks are kept on so clang-format is fetched for the codegen_a phase.
-    res = run(["gclient", "sync", "--no-history"], cwd=work, check=False)
-    if res.returncode != 0:
-        fail("gclient sync failed. Re-run with --skip-sync to vendor "
-             "third_party manually.")
+    # Capture the previous revision's vendored TEXT files as the 3-way merge
+    # base, so WebKit's local edits to vendored files survive the roll instead
+    # of being overwritten. Binary/data files are never base-captured (they are
+    # overwritten wholesale by `thirdparty`). Sync at prev, copy out, then sync
+    # back to the target so the rest of the run sees the target state.
+    base_dir = os.path.join(ctx["work_root"], "base_vendored")
+    if os.path.exists(base_dir):
+        shutil.rmtree(base_dir)
+    log("Syncing previous revision (%s) to capture the vendored merge base ..."
+        % st["previous_hash"][:12])
+    git(["checkout", "-q", "-f", st["previous_hash"]], cwd=work)
+    _gclient_sync(work)
+    nbase = 0
+    for rel, abspath in _iter_vendored(work):
+        if not _is_text_file(abspath):
+            continue
+        dest = os.path.join(base_dir, rel)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        shutil.copy2(abspath, dest)
+        nbase += 1
+    st["base_vendored_dir"] = base_dir
+    log("Captured %d base vendored text file(s)." % nbase)
+
+    log("Syncing target revision (%s) ..." % st["target_hash"][:12])
+    git(["checkout", "-q", "-f", st["target_hash"]], cwd=work)
+    _gclient_sync(work)
 
 
 def _overlay_synced_deps(work, merge):
@@ -548,40 +620,68 @@ def _finish_merge(ctx):
 
 
 def phase_thirdparty(ctx):
-    """Copy the explicitly-vendored third_party subtrees (VENDORED) from the
-    synced checkout into the merged tree. Each VENDORED entry is a 'dir/**'
-    subtree, copied wholesale; WebKit-owned files live outside these dirs, so
-    nothing WebKit owns is overwritten."""
+    """Bring the vendored third_party files (VENDORED) from the target sync into
+    the merged tree, 3-way-merging WebKit's local edits.
+
+    After the main merge, the merge worktree holds WebKit's vendored files
+    (`ours`). For each vendored file in the target sync (`theirs`):
+      * binary/data files are overwritten wholesale (WebKit never edits them);
+      * text files are 3-way merged with `git merge-file ours base theirs`,
+        where `base` is the previous revision captured in phase_sync. This
+        applies upstream's changes onto WebKit's edited file, preserving the
+        local edits and producing conflict markers only where both sides
+        touched the same lines (the run then pauses for manual resolution);
+      * files absent from `ours` (new upstream files) are copied in.
+    Each entry is a glob (a 'dir/**' subtree, a wildcard, or a single file)."""
     work = ctx["work"]
     merge = ctx["merge"]
     if ctx["args"].skip_sync:
         log("Skipping third_party update (--skip-sync).")
         return
 
-    copied = 0
-    for pat in VENDORED:
-        if not pat.endswith("/**"):
-            fail("VENDORED entry %r must be a 'dir/**' subtree." % pat)
-        subdir = pat[:-len("/**")]
-        base = os.path.join(work, subdir)
-        if not os.path.isdir(base):
-            warn("VENDORED subtree missing from sync: %s "
-                 "(moved upstream? update the manifest)" % subdir)
+    base_dir = ctx["state"].data.get("base_vendored_dir")
+    empty = None  # lazily-created empty file, used as base for files new in ours
+    overwritten = merged = added = 0
+    conflicts = []
+    matched_any = False
+    for rel, theirs in _iter_vendored(work):
+        matched_any = True
+        ours = os.path.join(merge, rel)
+        os.makedirs(os.path.dirname(ours), exist_ok=True)
+        if not os.path.exists(ours):
+            shutil.copy2(theirs, ours)            # new upstream file
+            added += 1
             continue
-        before = copied
-        for dirpath, dirnames, filenames in os.walk(base):
-            if ".git" in dirnames:
-                dirnames.remove(".git")
-            for fn in filenames:
-                abspath = os.path.join(dirpath, fn)
-                rel = os.path.relpath(abspath, work)
-                dest = os.path.join(merge, rel)
-                os.makedirs(os.path.dirname(dest), exist_ok=True)
-                shutil.copy2(abspath, dest)
-                copied += 1
-        if copied == before:
-            warn("VENDORED subtree is empty in sync: %s" % subdir)
-    log("Updated %d vendored third_party file(s)." % copied)
+        if not _is_text_file(theirs):
+            shutil.copy2(theirs, ours)            # binary/data: take upstream
+            overwritten += 1
+            continue
+        base = os.path.join(base_dir, rel) if base_dir else None
+        if not base or not os.path.exists(base):
+            if empty is None:
+                fd, empty = tempfile.mkstemp(prefix="angle_empty_base_")
+                os.close(fd)
+            base = empty
+        # git merge-file applies (theirs - base) onto ours, in place.
+        rc = gitcode(["merge-file", "-L", "WebKit", "-L", "base", "-L", "upstream",
+                      ours, base, theirs], merge)
+        if rc != 0:
+            conflicts.append(rel)
+        else:
+            merged += 1
+    if empty:
+        os.remove(empty)
+    if not matched_any:
+        warn("No VENDORED files matched in the sync (manifest stale?).")
+    log("Vendored third_party: %d merged, %d new, %d binary overwritten, "
+        "%d conflict(s)." % (merged, added, overwritten, len(conflicts)))
+    if conflicts:
+        lines = ["", "Vendored third_party files conflicted during the 3-way merge.",
+                 "Resolve the conflict markers in the merge worktree, then resume:",
+                 "  %s" % merge, ""]
+        for c in conflicts:
+            lines.append("  CONFLICT: %s" % c)
+        fail("\n".join(lines))
 
 
 def _run_webkit_source_generators(angle_dir):
@@ -749,6 +849,30 @@ def phase_finalize(ctx):
         log("Removing %d file(s) deleted upstream." % len(deletions))
         git(["rm", "-q", "--ignore-unmatch", "--"] + deletions,
             cwd=WEBKIT_ROOT, check=False, capture=False)
+
+    # A vendored third_party subtree may sit inside a gclient-cloned git repo
+    # (e.g. third_party/VK-GL-CTS/src/.git from a developer's local sync). An
+    # embedded .git makes `git add` record a gitlink instead of the vendored
+    # files, so strip any .git at or above each vendored path (within ANGLE_DIR)
+    # before staging. The non-vendored remainder of the synced tree stays on
+    # disk as plain (gitignored) files; a later `gclient sync` re-clones it.
+    angle_root = os.path.normpath(ANGLE_DIR)
+    stripped = set()
+    for pat in VENDORED:
+        subdir = pat[:-len("/**")] if pat.endswith("/**") else pat
+        cur = os.path.normpath(os.path.join(ANGLE_DIR, subdir))
+        while cur != angle_root and cur.startswith(angle_root + os.sep):
+            dotgit = os.path.join(cur, ".git")
+            if cur not in stripped and os.path.lexists(dotgit):
+                if os.path.isdir(dotgit) and not os.path.islink(dotgit):
+                    shutil.rmtree(dotgit, ignore_errors=True)
+                else:
+                    os.remove(dotgit)
+                stripped.add(cur)
+            cur = os.path.dirname(cur)
+    if stripped:
+        log("Stripped embedded .git from %d vendored subtree root(s)."
+            % len(stripped))
 
     # Stage everything (gitignored gclient artifacts are skipped by git).
     # The commit message draft lives at the WebKit root, outside ANGLE_REL, so

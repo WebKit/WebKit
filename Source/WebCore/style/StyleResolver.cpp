@@ -80,6 +80,7 @@
 #include "StyleEasingFunction.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleKeyword+Mappings.h"
+#include "StylePrimitiveNumericTypes+DeprecatedConversions.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolveForDocument.h"
@@ -102,24 +103,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
-
-namespace WTF {
-
-struct StyleRuleKeyframeKeyHash {
-    static unsigned NODELETE hash(const WebCore::StyleRuleKeyframe::Key& p) { return pairIntHash(p.rangeName, p.offset); }
-    static bool NODELETE equal(const WebCore::StyleRuleKeyframe::Key& a, const WebCore::StyleRuleKeyframe::Key& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-template<> struct HashTraits<WebCore::StyleRuleKeyframe::Key> : GenericHashTraits<WebCore::StyleRuleKeyframe::Key> {
-    static WebCore::StyleRuleKeyframe::Key NODELETE emptyValue() { return { WebCore::CSSValueDefault, 0 }; }
-    static bool NODELETE isEmptyValue(const WebCore::StyleRuleKeyframe::Key& value) { return value.rangeName == WebCore::CSSValueDefault; }
-
-    static void NODELETE constructDeletedValue(WebCore::StyleRuleKeyframe::Key& slot) { slot.rangeName = WebCore::CSSValueNone; }
-    static bool NODELETE isDeletedValue(const WebCore::StyleRuleKeyframe::Key& slot) { return slot.rangeName == WebCore::CSSValueNone; }
-};
-template<> struct DefaultHash<WebCore::StyleRuleKeyframe::Key> : StyleRuleKeyframeKeyHash { };
-
-}
 
 namespace WebCore {
 namespace Style {
@@ -442,6 +425,16 @@ bool Resolver::isAnimationNameValid(const AtomString& name) const
         || userAgentKeyframes().find(name) != userAgentKeyframes().end();
 }
 
+static std::pair<SingleAnimationRangeName, Percentage<>> deprecatedStyleRuleKeyframeKeyToStyle(const StyleRuleKeyframe::Key& key)
+{
+    auto offsetPercentage = deprecatedToStyle(key.offset);
+    auto offsetRangeName = convertCSSValueIDToSingleAnimationRangeName(key.rangeName);
+
+    if (offsetRangeName == SingleAnimationRangeName::Normal || offsetRangeName == SingleAnimationRangeName::Omitted)
+        offsetPercentage = CSS::clampToRange<CSS::ClosedPercentageRange, double>(offsetPercentage.value);
+    return { offsetRangeName, offsetPercentage };
+}
+
 Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName, const TimingFunction* defaultTimingFunction) const
 {
     if (animationName.isEmpty())
@@ -489,14 +482,15 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     Ref keyframesRule = it->value;
     auto* keyframes = &keyframesRule->keyframes();
 
-    using KeyframeUniqueKey = std::tuple<StyleRuleKeyframe::Key, Ref<const TimingFunction>, CompositeOperation>;
+    using KeyframeUniqueKey = std::tuple<SingleAnimationRangeName, double, Ref<const TimingFunction>, CompositeOperation>;
     auto hasDuplicateKeys = [&]() -> bool {
         HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
         for (auto& keyframe : *keyframes) {
             auto compositeOperation = compositeOperationForKeyframe(keyframe);
             auto timingFunction = uniqueTimingFunctionForKeyframe(keyframe);
             for (auto key : keyframe->keys()) {
-                if (!uniqueKeyframeKeys.add({ key, timingFunction, compositeOperation }))
+                auto [offsetRangeName, offsetPercentage] = deprecatedStyleRuleKeyframeKeyToStyle(key);
+                if (!uniqueKeyframeKeys.add({ offsetRangeName, offsetPercentage.value / 100, timingFunction, compositeOperation }))
                     return true;
             }
         }
@@ -514,7 +508,8 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
         for (auto key : originalKeyframe->keys()) {
-            KeyframeUniqueKey uniqueKey { key, timingFunction, compositeOperation };
+            auto [offsetRangeName, offsetPercentage] = deprecatedStyleRuleKeyframeKeyToStyle(key);
+            KeyframeUniqueKey uniqueKey { offsetRangeName, offsetPercentage.value / 100, timingFunction, compositeOperation };
             if (RefPtr existingStyleRuleKeyframe = keyframesMap.get(uniqueKey)) {
                 protect(existingStyleRuleKeyframe->mutableProperties())->mergeAndOverrideOnConflict(originalKeyframe->properties());
                 if (existingStyleRuleKeyframe->keys()[0].rangeName == CSSValueNormal)
@@ -548,7 +543,8 @@ bool Resolver::keyframeStylesForAnimation(Element& element, const Style::Compute
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
         for (auto& key : keyframeRule->keys()) {
-            BlendingKeyframe blendingKeyframe({ Style::convertCSSValueIDToSingleAnimationRangeName(key.rangeName), key.offset }, { nullptr });
+            auto [offsetRangeName, offsetPercentage] = deprecatedStyleRuleKeyframeKeyToStyle(key);
+            BlendingKeyframe blendingKeyframe({ offsetRangeName, offsetPercentage }, { nullptr });
             blendingKeyframe.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), blendingKeyframe));
             if (RefPtr timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 blendingKeyframe.setTimingFunction(createTimingFunctionDeprecated(timingFunctionCSSValue.releaseNonNull()));

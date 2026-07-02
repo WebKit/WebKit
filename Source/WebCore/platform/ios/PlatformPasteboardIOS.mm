@@ -744,15 +744,17 @@ Vector<String> PlatformPasteboard::allStringsForType(const String& type) const
     return strings;
 }
 
-static bool isDisallowedTypeForReadBuffer(NSString *type)
+static bool isDisallowedReadType(const String& type)
 {
-    return [type isEqualToString:UIImagePboardType];
+    // UIPasteboard resolves type identifiers case-insensitively and coerces its private
+    // object types (com.apple.uikit.image / .color / .attributedstring) through
+    // NSKeyedUnarchiver / ImageIO in the UI process; block them regardless of case.
+    return type.startsWithIgnoringASCIICase("com.apple.uikit."_s);
 }
 
 RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index, const String& type) const
 {
-    RetainPtr nsType = type.createNSString();
-    if (isDisallowedTypeForReadBuffer(nsType.get()))
+    if (isDisallowedReadType(type))
         return nullptr;
 
     NSInteger integerIndex = index.value_or(0);
@@ -761,7 +763,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::readBuffer(std::optional<size_t> index,
 
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:integerIndex];
 
-    RetainPtr<NSArray> pasteboardItem = [m_pasteboard dataForPasteboardType:nsType.get() inItemSet:indexSet];
+    RetainPtr<NSArray> pasteboardItem = [m_pasteboard dataForPasteboardType:type.createNSString().get() inItemSet:indexSet];
 
     if (![pasteboardItem count])
         return nullptr;
@@ -778,11 +780,15 @@ String PlatformPasteboard::readString(size_t index, const String& type) const
         return [readURL(index, title).createNSURL() absoluteString];
     }
 
+    if (isDisallowedReadType(type))
+        return { };
+
     if ((NSInteger)index < 0 || (NSInteger)index >= [m_pasteboard numberOfItems])
         return { };
 
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
-    RetainPtr value = [m_pasteboard valuesForPasteboardType:type.createNSString().get() inItemSet:indexSet].firstObject ?: [m_pasteboard dataForPasteboardType:type.createNSString().get() inItemSet:indexSet].firstObject;
+    RetainPtr nsType = type.createNSString();
+    RetainPtr value = [m_pasteboard valuesForPasteboardType:nsType.get() inItemSet:indexSet].firstObject ?: [m_pasteboard dataForPasteboardType:nsType.get() inItemSet:indexSet].firstObject;
     if (!value)
         return { };
 

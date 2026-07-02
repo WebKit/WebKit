@@ -29,6 +29,7 @@
 #include <WebCore/BlobData.h>
 #include <WebCore/FileStreamClient.h>
 #include <WebCore/HTTPParsers.h>
+#include <wtf/Box.h>
 #include <wtf/Forward.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -73,8 +74,8 @@ protected:
     WEBCORE_EXPORT BlobData* NODELETE blobData() const;
     FileStream* syncStream() const;
     AsyncFileStream* asyncStream() const;
-    Vector<uint8_t>& buffer() LIFETIME_BOUND { return m_buffer; }
-    const Vector<uint8_t>& buffer() const LIFETIME_BOUND { return m_buffer; }
+    WEBCORE_EXPORT void resizeBuffer(size_t);
+    const Vector<uint8_t>& buffer() const LIFETIME_BOUND { return *m_buffer; }
 
 private:
     void getSizeForNext();
@@ -85,6 +86,7 @@ private:
     void readFileAsync(const BlobDataItem&, BlobDataFileReference&);
     void dispatchDidReceiveResponse();
     void doStart();
+    void didRead(int); // -1 in case of error.
 
     virtual void didReceiveResponse(ResourceResponse&&) = 0;
     virtual void didFail(Error) = 0;
@@ -98,13 +100,13 @@ private:
     // FileStreamClient methods.
     WEBCORE_EXPORT void didOpen(bool) final;
     WEBCORE_EXPORT void didGetSize(long long) final;
-    WEBCORE_EXPORT void didRead(int) final;
 
     RefPtr<BlobData> m_blobData;
     // For Async or Sync loading.
     Variant<std::unique_ptr<AsyncFileStream>, std::unique_ptr<FileStream>> m_stream;
     std::optional<HTTPRange> m_range;
-    Vector<uint8_t> m_buffer;
+    bool m_isWritingIntoBuffer { false };
+    const Box<Vector<uint8_t>> m_buffer;
     Vector<uint64_t> m_itemLengthList;
     uint64_t m_totalSize { 0 };
     uint64_t m_totalRemainingSize { 0 };

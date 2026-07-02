@@ -63,6 +63,7 @@ enum class JITFailureReason : uint8_t {
     ParenthesisNestedTooDeep,
     ExecutableMemoryAllocationFailure,
     OffsetTooLarge,
+    GeneratedCodeSizeTooLarge,
 };
 
 class BoyerMooreFastCandidates {

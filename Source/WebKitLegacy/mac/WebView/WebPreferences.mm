@@ -1575,26 +1575,6 @@ static RetainPtr<NSString>& NODELETE classIBCreatorID()
     [self _setStringValue:[path stringByStandardizingPath] forKey:WebKitLocalStorageDatabasePathPreferenceKey];
 }
 
-- (NSString *)_ftpDirectoryTemplatePath
-{
-    return [[self _stringValueForKey:WebKitFTPDirectoryTemplatePath] stringByStandardizingPath];
-}
-
-- (void)_setFTPDirectoryTemplatePath:(NSString *)path
-{
-    [self _setStringValue:[path stringByStandardizingPath] forKey:WebKitFTPDirectoryTemplatePath];
-}
-
-- (BOOL)_forceFTPDirectoryListings
-{
-    return [self _boolValueForKey:WebKitForceFTPDirectoryListings];
-}
-
-- (void)_setForceFTPDirectoryListings:(BOOL)force
-{
-    [self _setBoolValue:force forKey:WebKitForceFTPDirectoryListings];
-}
-
 - (BOOL)acceleratedDrawingEnabled
 {
     return [self _boolValueForKey:WebKitAcceleratedDrawingEnabledPreferenceKey];

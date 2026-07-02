@@ -772,7 +772,7 @@ bool isRequestBlockable(const WebCore::ResourceRequest& request)
     TrackerDomainLookupInfo::populateIfNeeded();
 
     auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, request.url().host()) } };
-    if (IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain))
+    if (domain == "tainted.example" || IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain))
         return true;
 
     if (auto info = TrackerDomainLookupInfo::find(domain.string()); info.owner().length()) {
@@ -780,19 +780,12 @@ bool isRequestBlockable(const WebCore::ResourceRequest& request)
     }
     return false;
 }
-
-bool isTaintedScriptURLBlockable(const URL& url)
-{
-    WebCore::RegistrableDomain domain { url };
-    return domain == "tainted.example" || IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain);
-}
 #else
 
 void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 bool isKnownTrackerAddressOrDomain(StringView) { return false; }
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&) { return WebCore::IsKnownCrossSiteTracker::No; }
 bool isRequestBlockable(const WebCore::ResourceRequest&) { return false; }
-bool isTaintedScriptURLBlockable(const URL&) { return false; }
 
 #endif
 
@@ -823,8 +816,6 @@ static WebCore::ScriptTrackingPrivacyFlags allowedScriptTrackingCategories(WPScr
         result.add(WebCore::ScriptTrackingPrivacyFlag::Speech);
     if (categories & WPScriptAccessCategoryFormControls)
         result.add(WebCore::ScriptTrackingPrivacyFlag::FormControls);
-    if (categories & WPScriptAccessCategoryNetworkRequests)
-        result.add(WebCore::ScriptTrackingPrivacyFlag::NetworkRequests);
     return result;
 }
 
@@ -949,8 +940,4 @@ void ConsistentPrivacyQuirkController::didUpdateCachedListData()
 
 } // namespace WebKit
 
-#else
-namespace WebKit {
-bool isTaintedScriptURLBlockable(const URL&) { return false; }
-}
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

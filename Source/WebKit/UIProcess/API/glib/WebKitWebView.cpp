@@ -97,11 +97,14 @@
 #include <wtf/text/CStringView.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(POINTER_LOCK)
+#include "WebKitPointerLockPermissionRequest.h"
+#endif
+
 #if PLATFORM(GTK)
 #include "GUniquePtrGtk.h"
 #include "GtkUtilities.h"
 #include "WebKitInputMethodContextImplGtk.h"
-#include "WebKitPointerLockPermissionRequest.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebViewBasePrivate.h"

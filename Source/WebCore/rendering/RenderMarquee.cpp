@@ -49,6 +49,7 @@
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "LocalFrameView.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
@@ -141,7 +142,7 @@ int RenderMarquee::computePosition(MarqueeDirection dir, bool stopAtContentEdge)
     CheckedRef boxStyle = box->style();
     if (isHorizontal()) {
         bool ltr = boxStyle->writingMode().deprecatedIsLeftToRightDirection();
-        LayoutUnit clientWidth = box->clientWidth();
+        LayoutUnit paddingBoxWidth = box->paddingBoxWidth();
         LayoutUnit contentWidth = ltr ? box->maxContentLogicalWidthContribution() : box->minContentLogicalWidthContribution();
         if (ltr)
             contentWidth += (box->paddingRight() - box->borderLeft());
@@ -151,29 +152,29 @@ int RenderMarquee::computePosition(MarqueeDirection dir, bool stopAtContentEdge)
         }
         if (dir == MarqueeDirection::Right) {
             if (stopAtContentEdge)
-                return std::max<LayoutUnit>(0, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
+                return std::max<LayoutUnit>(0, ltr ? (contentWidth - paddingBoxWidth) : (paddingBoxWidth - contentWidth));
 
-            return ltr ? contentWidth : clientWidth;
+            return ltr ? contentWidth : paddingBoxWidth;
         }
 
         if (stopAtContentEdge)
-            return std::min<LayoutUnit>(0, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
+            return std::min<LayoutUnit>(0, ltr ? (contentWidth - paddingBoxWidth) : (paddingBoxWidth - contentWidth));
 
-        return ltr ? -clientWidth : -contentWidth;
+        return ltr ? -paddingBoxWidth : -contentWidth;
     }
 
     // Vertical
     int contentHeight = box->layoutOverflowRect().maxY() - box->borderTop() + box->paddingBottom();
-    int clientHeight = roundToInt(box->clientHeight());
+    int paddingBoxHeight = roundToInt(box->paddingBoxHeight());
     if (dir == MarqueeDirection::Up) {
         if (stopAtContentEdge)
-            return std::min(contentHeight - clientHeight, 0);
+            return std::min(contentHeight - paddingBoxHeight, 0);
 
-        return -clientHeight;
+        return -paddingBoxHeight;
     }
 
     if (stopAtContentEdge)
-        return std::max(contentHeight - clientHeight, 0);
+        return std::max(contentHeight - paddingBoxHeight, 0);
 
     return contentHeight;
 }
@@ -303,7 +304,7 @@ void RenderMarquee::timerFired()
             addIncrement = !addIncrement;
         }
         bool positive = range > 0;
-        int clientSize = (isHorizontal() ? roundToInt(renderBox->clientWidth()) : roundToInt(renderBox->clientHeight()));
+        int clientSize = (isHorizontal() ? roundToInt(renderBox->paddingBoxWidth()) : roundToInt(renderBox->paddingBoxHeight()));
         int increment = std::abs(Style::evaluate<float>(layer->renderer().style().marqueeIncrement(), clientSize, Style::ZoomNeeded { }));
         int currentPos = (isHorizontal() ? scrollableArea->scrollOffset().x() : scrollableArea->scrollOffset().y());
         newPos =  currentPos + (addIncrement ? increment : -increment);

@@ -39,8 +39,8 @@ public:
         m_sourceNodes.add(SourceGraphic::effectName(), WTF::move(sourceGraphic));
         m_sourceNodes.add(SourceAlpha::effectName(), WTF::move(sourceAlpha));
 
-        setNodeInputs(Ref { *this->sourceGraphic() }, NodeVector { });
-        setNodeInputs(Ref { *this->sourceAlpha() }, NodeVector { *this->sourceGraphic() });
+        setNodeInputs(protect(*this->sourceGraphic()), NodeVector { });
+        setNodeInputs(protect(*this->sourceAlpha()), NodeVector { *this->sourceGraphic() });
     }
 
     void addNamedNode(const AtomString& name, Ref<FilterEffect>&& node) override
@@ -54,7 +54,7 @@ public:
             return;
 
         m_lastNode = WTF::move(node);
-        m_namedNodes.set(name, Ref { *m_lastNode });
+        m_namedNodes.set(name, protect(*m_lastNode));
     }
 
 private:

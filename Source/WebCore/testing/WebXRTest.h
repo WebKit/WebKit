@@ -33,7 +33,6 @@
 #include "WebFakeXRDevice.h"
 #include "XRSessionMode.h"
 #include "XRSimulateUserActivationFunction.h"
-#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -48,8 +47,8 @@ public:
         std::optional<Vector<XRSessionMode>> supportedModes;
         Vector<FakeXRViewInit> views;
 
-        Vector<JSC::JSValue> supportedFeatures;
-        Vector<JSC::JSValue> enabledFeatures;
+        Vector<String> supportedFeatures;
+        Vector<String> enabledFeatures;
 
         std::optional<Vector<FakeXRBoundsPoint>> boundsCoordinates;
 

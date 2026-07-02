@@ -886,17 +886,17 @@ ScrollbarOrientation RenderListBox::scrollbarOrientationForWritingMode() const
 int RenderListBox::scrollWidth() const
 {
     if (writingMode().isHorizontal())
-        return roundToInt(clientWidth());
+        return roundToInt(paddingBoxWidth());
 
-    return roundToInt(std::max(clientWidth(), listLogicalHeight()));
+    return roundToInt(std::max(paddingBoxWidth(), listLogicalHeight()));
 }
 
 int RenderListBox::scrollHeight() const
 {
     if (writingMode().isHorizontal())
-        return roundToInt(std::max(clientHeight(), listLogicalHeight()));
+        return roundToInt(std::max(paddingBoxHeight(), listLogicalHeight()));
 
-    return roundToInt(clientHeight());
+    return roundToInt(paddingBoxHeight());
 }
 
 int RenderListBox::scrollLeft() const

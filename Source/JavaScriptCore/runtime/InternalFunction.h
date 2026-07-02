@@ -65,6 +65,16 @@ public:
         return m_functionForConstruct;
     }
 
+    void setNativeFunctionForDebugger(CodeSpecializationKind kind, TaggedNativeFunction function)
+    {
+        if (kind == CodeSpecializationKind::CodeForCall)
+            m_functionForCall = function;
+        else {
+            ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
+            m_functionForConstruct = function;
+        }
+    }
+
     static constexpr ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
     {
         if (kind == CodeSpecializationKind::CodeForCall)

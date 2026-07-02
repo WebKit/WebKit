@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -314,7 +314,7 @@ Ref<AudioEncoder::EncodePromise> InternalAudioEncoderCocoa::encode(AudioEncoder:
 
     if (*asbd != m_inputDescription) {
         if (RefPtr converter = std::exchange(m_converter, { }))
-            converter->finish();
+            converter->finish()->whenSettled(queueSingleton(), [protectedThis = Ref { *this }] { });
         m_inputDescription = *asbd;
 
         AudioSampleBufferConverter::Options options = {

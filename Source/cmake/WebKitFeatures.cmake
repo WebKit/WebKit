@@ -148,13 +148,30 @@ macro(WEBKIT_OPTION_BEGIN)
     # Default the Swift prototype features on for GTK/WPE, but only when the toolchain
     # can build it: Clang (not GCC) with a new-enough Swift. Otherwise they stay off;
     # an explicit -D against such a toolchain is rejected in WEBKIT_OPTION_END.
-    set(ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT OFF)
-    set(ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT OFF)
-    if (COMPILER_IS_CLANG)
-        _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
-        if (_swift_interop_ok)
-            set(ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT ON)
-            set(ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT ON)
+    #
+    # If either value was already set before this point (e.g. by a platform config),
+    # keep whatever is already defined and only fill in the one(s) still unset.
+    # When cross-building default to off, because the auto-detection here would pick
+    # up the host swiftc instead of a cross-aware one and break the target build.
+    if (NOT DEFINED ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT OR NOT DEFINED ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT)
+        if (CMAKE_CROSSCOMPILING)
+            set(_swift_features_default OFF)
+        elseif (COMPILER_IS_CLANG)
+            _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
+            if (_swift_interop_ok)
+                set(_swift_features_default ON)
+            else ()
+                set(_swift_features_default OFF)
+            endif ()
+        else ()
+            set(_swift_features_default OFF)
+        endif ()
+
+        if (NOT DEFINED ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT)
+            set(ENABLE_SWIFT_DEMO_URI_SCHEME_DEFAULT ${_swift_features_default})
+        endif ()
+        if (NOT DEFINED ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT)
+            set(ENABLE_BACK_FORWARD_LIST_SWIFT_DEFAULT ${_swift_features_default})
         endif ()
     endif ()
 
@@ -203,7 +220,6 @@ macro(WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_ENCRYPTED_MEDIA "Toggle EME V3 support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_EXPERIMENTAL_FEATURES "Enable experimental features" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_FTL_JIT "Toggle FTL JIT support" PRIVATE ${ENABLE_FTL_DEFAULT})
-    WEBKIT_OPTION_DEFINE(ENABLE_FTPDIR "Toggle FTP Directory support" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(ENABLE_FULLSCREEN_API "Toggle Fullscreen API support" PRIVATE ON)
     WEBKIT_OPTION_DEFINE(ENABLE_GAMEPAD "Toggle Gamepad support" PRIVATE OFF)
     WEBKIT_OPTION_DEFINE(ENABLE_GEOLOCATION "Toggle Geolocation support" PRIVATE ON)

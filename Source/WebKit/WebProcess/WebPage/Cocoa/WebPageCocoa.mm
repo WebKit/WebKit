@@ -1696,6 +1696,11 @@ BoxSideSet WebPage::sidesRequiringFixedContainerEdges() const
 
     auto sides = m_page->fixedContainerEdges().fixedEdges();
 
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    if (m_fullScreenTitlebarOverlayIsDisplayed)
+        sides.add(BoxSide::Top);
+#endif
+
     if ((additionalHeight + obscuredInsets.top()) > 0)
         sides.add(BoxSide::Top);
 

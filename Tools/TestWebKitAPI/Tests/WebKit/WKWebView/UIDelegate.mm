@@ -1478,6 +1478,115 @@ TEST(WebKit, SaveDataToFile)
     TestWebKitAPI::Util::run(&done);
 }
 
+@interface OpenPDFWithPreviewDelegate : NSObject <WKUIDelegatePrivate>
+@property (nonatomic, readonly) RetainPtr<NSURL> capturedFileURL;
+@property (nonatomic, readonly) BOOL receivedCallback;
+@end
+
+@implementation OpenPDFWithPreviewDelegate
+
+- (void)_webView:(WKWebView *)webView shouldAllowPDFAtURL:(NSURL *)fileURL toOpenFromFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler
+{
+    _capturedFileURL = fileURL;
+    _receivedCallback = YES;
+    completionHandler(NO);
+}
+
+@end
+
+#if ENABLE(IPC_TESTING_API)
+
+static void runOpenPDFWithPreviewTraversalTest(NSString *injectedFilename, NSString *traversalTargetPath)
+{
+    [[NSFileManager defaultManager] removeItemAtPath:traversalTargetPath error:nil];
+
+    RetainPtr pdfURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"PDFPluginHUDEnabled"] || [feature.key isEqualToString:@"IPCTestingAPIEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView _setWindowOcclusionDetectionEnabled:NO];
+
+    RetainPtr delegate = adoptNS([OpenPDFWithPreviewDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:pdfURL.get()]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([webView] {
+        return !![webView _pdfHUDs].count;
+    }));
+
+    RetainPtr listenerScript = [NSString stringWithFormat:@R"JS(
+        IPC.addIncomingMessageListener('UI', (message) => {
+            const replyMsgInfo = IPC.messages.WebPage_OpenPDFWithPreviewReply;
+            if (!replyMsgInfo)
+                return;
+            const requestMsgInfo = IPC.messages.WebPage_OpenPDFWithPreview;
+            if (!requestMsgInfo || message.name !== requestMsgInfo.name)
+                return;
+            if (typeof message.listenerID === 'undefined')
+                return;
+
+            IPC.sendMessage('UI', message.listenerID, replyMsgInfo.name, [
+                {type: 'String', value: '%@'},
+                {type: 'bool', value: 1},
+                {type: 'FrameInfoData', value: IPC},
+                {type: 'uint64_t', value: 4},
+                new Uint8Array([0x25, 0x50, 0x44, 0x46])
+            ]);
+        });
+        'listener installed';
+    )JS", injectedFilename];
+
+    bool listenerInstalled = false;
+    [webView evaluateJavaScript:listenerScript.get() completionHandler:[&listenerInstalled](id, NSError *error) {
+        EXPECT_NULL(error);
+        listenerInstalled = true;
+    }];
+    TestWebKitAPI::Util::run(&listenerInstalled);
+
+    [[webView _pdfHUDs].anyObject performSelector:NSSelectorFromString(@"_performActionForControl:") withObject:@"preview"];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([delegate] {
+        return [delegate receivedCallback];
+    }));
+
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:traversalTargetPath]);
+
+    RetainPtr writtenPath = [[[delegate capturedFileURL] path] stringByStandardizingPath];
+    RetainPtr temporaryDirectory = [NSTemporaryDirectory() stringByStandardizingPath];
+
+    EXPECT_TRUE([writtenPath hasPrefix:temporaryDirectory.get()]);
+    EXPECT_TRUE([writtenPath containsString:@"/WebKitPDFs-"]);
+    EXPECT_FALSE([writtenPath containsString:@"/../"]);
+
+    [[NSFileManager defaultManager] removeItemAtURL:[delegate capturedFileURL].get() error:nil];
+    [[NSFileManager defaultManager] removeItemAtPath:traversalTargetPath error:nil];
+}
+
+TEST(WebKit, OpenPDFWithPreviewIPCTraversalEncodedFilename)
+{
+    int pid = [[NSProcessInfo processInfo] processIdentifier];
+    RetainPtr traversalTarget = [NSString stringWithFormat:@"/tmp/DEEP-TRAVERSAL-%d-encoded.pdf", pid];
+    RetainPtr injectedFilename = [NSString stringWithFormat:@"..%%2F..%%2F..%%2F..%%2F..%%2F..%%2F..%%2Ftmp%%2FDEEP-TRAVERSAL-%d-encoded.pdf", pid];
+    runOpenPDFWithPreviewTraversalTest(injectedFilename.get(), traversalTarget.get());
+}
+
+TEST(WebKit, OpenPDFWithPreviewIPCTraversalUnencodedFilename)
+{
+    int pid = [[NSProcessInfo processInfo] processIdentifier];
+    RetainPtr traversalTarget = [NSString stringWithFormat:@"/tmp/DEEP-TRAVERSAL-%d-unencoded.pdf", pid];
+    RetainPtr injectedFilename = [NSString stringWithFormat:@"../../../../../../../tmp/DEEP-TRAVERSAL-%d-unencoded.pdf", pid];
+    runOpenPDFWithPreviewTraversalTest(injectedFilename.get(), traversalTarget.get());
+}
+
+#endif // ENABLE(IPC_TESTING_API)
+
 #endif // ENABLE(PDF_HUD)
 
 #define RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT 0

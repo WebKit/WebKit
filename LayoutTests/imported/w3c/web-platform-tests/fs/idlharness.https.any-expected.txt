@@ -1,6 +1,12 @@
 
 PASS idl_test setup
-PASS idl_test validation
+FAIL idl_test validation Validation error at line 45 in fs:
+  async iterable<USVString,
+  ^ `async iterable` is now changed to `async_iterable`.
+
+Validation error at line 20 in streams:
+  async iterable<any>
+  ^ `async iterable` is now changed to `async_iterable`.
 PASS Partial interface StorageManager: original interface defined
 PASS Partial interface StorageManager: member names are unique
 PASS FileSystemHandle interface: existence and properties of interface object

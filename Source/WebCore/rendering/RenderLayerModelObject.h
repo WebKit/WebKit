@@ -42,8 +42,23 @@ class SVGGraphicsElement;
 
 namespace Style {
 struct SVGMarkerResource;
+struct SVGPaint;
 enum class TransformResolverOption : uint8_t;
 }
+
+enum class ContentChangeType : uint8_t {
+    Image,
+    HDRImage,
+    MaskImage,
+    BackgroundImage,
+    Canvas,
+    CanvasPixels,
+    Video,
+    FullScreen,
+    Model
+};
+
+enum class SVGPaintType : bool { Fill, Stroke };
 
 class RenderLayerModelObject : public RenderElement {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerModelObject);
@@ -61,10 +76,6 @@ public:
 
     virtual bool requiresLayer() const = 0;
     bool requiresLayerForSVGIntrinsicReasons() const;
-
-    // Returns true if the background is painted opaque in the given rect.
-    // The query rect is given in local coordinate system.
-    virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
@@ -117,6 +128,8 @@ public:
     RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const Style::ComputedStyle&) const;
     RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const Style::ComputedStyle&) const;
 
+    void invalidateSVGPaintServerCache() const;
+
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceFilter* svgFilterResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
@@ -154,6 +167,10 @@ public:
 
     AffineTransform computeRendererTransform() const;
 
+    void contentChanged(ContentChangeType, const std::optional<FloatRect>& = std::nullopt);
+
+    bool hasAcceleratedCompositing() const;
+
 protected:
     RenderLayerModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderLayerModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -168,6 +185,8 @@ private:
     void removeOnlyThisLayerWithRepaint();
 
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
+
+    RenderSVGResourcePaintServer* svgPaintServerResourceFromStyle(const Style::SVGPaint&, const Style::ComputedStyle&, SVGPaintType) const;
 
     UniquelyOwnedPtr<RenderLayer> m_layer;
 

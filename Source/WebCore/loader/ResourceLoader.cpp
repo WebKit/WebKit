@@ -430,15 +430,6 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         }
     }
 
-    if (RefPtr document = frameLoader ? frameLoader->frame().document() : nullptr) {
-        if (document->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::NetworkRequests)) {
-            RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because of script tracking privacy protection");
-            didFail({ errorDomainWebKitInternal, 0, request.url(), "Blocked by script tracking privacy protection"_s, ResourceError::Type::AccessControl });
-            completionHandler({ });
-            return;
-        }
-    }
-
     if (m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks) {
         if (createdResourceIdentifier && frameLoader)
             frameLoader->notifier().assignIdentifierToInitialRequest(*m_identifier, protect(this->documentLoader()), request);

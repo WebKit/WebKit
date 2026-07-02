@@ -594,17 +594,37 @@ FloatRect AccessibilityObject::convertFrameToSpace(const FloatRect& frameRect, A
         auto scaledRect = geometry.screenTransform.mapRect(FloatRect(snappedFrameRect));
 
         auto screenPosition = geometry.screenPosition;
-        // screenPosition tracks the document origin, which moves with scroll.
-        // The viewport is fixed on screen, so subtract the scroll and content
-        // inset offsets that contentsToView baked into screenPosition.
-        if (this == rootScrollView.get()) {
-            if (RefPtr scrollView = rootScrollView->scrollView()) {
-                auto viewOriginScrollPosition = geometry.screenTransform.mapPoint(FloatPoint(scrollView->documentScrollPositionRelativeToViewOrigin()));
-                screenPosition.move(-roundToInt(viewOriginScrollPosition.x()), -roundToInt(viewOriginScrollPosition.y()));
-            }
-        }
+
+        IntPoint currentScrollOffset;
+        if (RefPtr scrollView = rootScrollView->scrollView())
+            currentScrollOffset = scrollView->documentScrollPositionRelativeToViewOrigin();
+        auto currentScroll = geometry.screenTransform.mapPoint(FloatPoint(currentScrollOffset));
+
+        // This was the scroll at the time |geometry.screenPosition| was taken. The scroll
+        // may have changed since then, and we may not have gotten the corresponding AXFrameGeometry
+        // update yet. We can avoid serving stale geometry in this scenario by taking |cachedScroll|
+        // and undo'ing it from the screen position, and then applying the current-scroll offset (which we
+        // can do in this context, being on the main-thread). This prevents ATs from temporarily reading
+        // a stale value.
+        auto cachedScroll = geometry.screenTransform.mapPoint(FloatPoint(rootScrollView->frameViewOriginScrollPosition()));
 
         // macOS uses bottom-left origin, non-macOS assumes top-left origin.
+        // FIXME: It would be cleaner to store screenPosition as one canonical value
+        // and apply the Mac transformations only as a final step.
+#if PLATFORM(MAC)
+        // accessibility/mac/webkit-scrollarea-position.html demands that we don't
+        // apply the current scroll for the root.
+        const bool applyCurrentScroll = this != rootScrollView.get();
+        constexpr int yScale = -1;
+#else
+        const bool applyCurrentScroll = true;
+        constexpr int yScale = 1;
+#endif
+        FloatPoint scrollDelta = cachedScroll;
+        if (applyCurrentScroll)
+            scrollDelta.move(-currentScroll.x(), -currentScroll.y());
+        screenPosition.move(roundToInt(scrollDelta.x()), yScale * roundToInt(scrollDelta.y()));
+
         FloatPoint position = {
             screenPosition.x() + scaledRect.x(),
 #if PLATFORM(MAC)

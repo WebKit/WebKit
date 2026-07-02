@@ -35,6 +35,56 @@ WEBKIT_COPY_FILES(WebCore_CopyBundleResources
     FLATTENED NO_SYMLINK)
 add_dependencies(WebCore WebCore_CopyBundleResources)
 
+# Modern media controls button icons. RenderThemeCocoa::mediaControlsImageDataForIconNameAndType
+# loads these at runtime from WebCore.framework/Resources/modern-media-controls/images/<name>.<type>;
+# without them every media-control button loads an empty blob and logs "Button failed to load".
+# The macOS variants are copied flat (no platform subdirectory), matching the bundle lookup.
+# Listed explicitly (rather than globbed) so null builds stay clean.
+set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR ${WEBCORE_DIR}/Modules/modern-media-controls/images/macOS)
+set(WebCore_MODERN_MEDIA_CONTROLS_IMAGES
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Airplay-fullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Airplay.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Ellipsis.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/EnterFullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/ExitFullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Forward.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/MediaSelector-fullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/MediaSelector.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Overflow.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Pause.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/PipIn-fullscreen.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/PipIn.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Play.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Rewind.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipBack10.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipBack15.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipForward10.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/SkipForward15.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume0-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume0.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume1-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume1.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume2-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume2.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume3-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/Volume3.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/VolumeMuted-RTL.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/VolumeMuted.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/X.svg
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/airplay-placard@1x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/airplay-placard@2x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/invalid-placard@1x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/invalid-placard@2x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@1x.png
+    ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES_DIR}/pip-placard@2x.png
+)
+file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/modern-media-controls/images")
+WEBKIT_COPY_FILES(WebCore_CopyModernMediaControlsImages
+    DESTINATION "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/modern-media-controls/images"
+    FILES ${WebCore_MODERN_MEDIA_CONTROLS_IMAGES}
+    FLATTENED NO_SYMLINK)
+add_dependencies(WebCore WebCore_CopyModernMediaControlsImages)
+
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(AUDIOUNIT_LIBRARY AudioUnit)
 find_library(CARBON_LIBRARY Carbon)

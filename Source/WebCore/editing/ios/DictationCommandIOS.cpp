@@ -58,11 +58,8 @@ void DictationCommandIOS::doApply()
         resultLength += firstInterpretation.length();
         inputText(firstInterpretation, true);
 
-        if (interpretations.size() > 1) {
-            auto alternatives = interpretations;
-            alternatives.removeAt(0);
-            addMarker(*endingSelection().toNormalizedRange(), DocumentMarkerType::DictationPhraseWithAlternatives, WTF::move(alternatives));
-        }
+        if (interpretations.size() > 1)
+            addMarker(*endingSelection().toNormalizedRange(), DocumentMarkerType::DictationPhraseWithAlternatives, interpretations.subvector(1));
 
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
     }

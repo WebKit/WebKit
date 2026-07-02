@@ -2262,9 +2262,9 @@ custom Shuffle
 # which must be the first operand.
 custom Patch
 
-# Instructions used for lowering C calls. These don't make it to Air generation. They get lowered to
-# CCallSpecials first. The origin Value must be a CCallValue.
-custom CCall
+# Instruction used for lowering cold C calls. Hot C calls are marshalled inline by B3LowerToAir and
+# never reach Air generation as an opcode; cold calls keep this opcode until they are lowered to a
+# CCallSpecial after register allocation. The origin Value must be a CCallValue.
 custom ColdCCall
 
 # This is a special wasm opcode that branches to a trap handler. This uses the generator located to Air::Code

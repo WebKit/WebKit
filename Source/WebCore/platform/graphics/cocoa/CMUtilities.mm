@@ -100,75 +100,19 @@ static RetainPtr<CFStringRef> cfStringFromFourCC(FourCC fourCC)
     return adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, string.begin(), kCFStringEncodingASCII));
 }
 
-static Vector<std::pair<FourCC, Ref<SharedBuffer>>> parseExtensionAtomsDictionary(CFDictionaryRef atomDictionary, size_t indexStart = 0)
-{
-    CFIndex extensionCount = CFDictionaryGetCount(atomDictionary);
-    if (CFIndex(indexStart) >= extensionCount)
-        return { };
-
-    Vector<const void*, 1> keys(extensionCount);
-    Vector<const void*, 1> values(extensionCount);
-    CFDictionaryGetKeysAndValues(atomDictionary, keys.mutableSpan().data(), values.mutableSpan().data());
-    Vector<std::pair<FourCC, Ref<SharedBuffer>>> result;
-    result.reserveInitialCapacity(extensionCount - indexStart);
-    // Per CMFormatDescription.h, each value is either a CFData payload or a CFArray
-    // of CFData (multiple atoms of the same FourCC). Expand arrays into multiple
-    // entries sharing a FourCC.
-    for (CFIndex index = indexStart; index < extensionCount; ++index) {
-        auto fourCC = cfStringToFourCC(checked_cf_cast<CFStringRef>(keys[index]));
-        CFTypeRef value = static_cast<CFTypeRef>(values[index]);
-        if (RetainPtr data = dynamic_cf_cast<CFDataRef>(value))
-            result.append({ fourCC, SharedBuffer::create(data.get()) });
-        else if (RetainPtr array = dynamic_cf_cast<CFArrayRef>(value)) {
-            CFIndex arrayCount = CFArrayGetCount(array.get());
-            for (CFIndex arrayIndex = 0; arrayIndex < arrayCount; ++arrayIndex) {
-                if (RetainPtr entry = dynamic_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(array.get(), arrayIndex)))
-                    result.append({ fourCC, SharedBuffer::create(entry.get()) });
-            }
-        } else
-            RELEASE_LOG_ERROR(Media, "Unexpected value type in SampleDescriptionExtensionAtoms for FourCC %s", fourCC.string().begin());
-    }
-    return result;
-}
-
 static RetainPtr<CFDictionaryRef> createExtensionAtomsDictionary(const Vector<std::pair<FourCC, Ref<SharedBuffer>>>& configurations)
 {
-    Vector<FourCC> orderedKeys;
-    Vector<Vector<RetainPtr<CFDataRef>>> groupedDatas;
-    orderedKeys.reserveInitialCapacity(configurations.size());
-    groupedDatas.reserveInitialCapacity(configurations.size());
-    for (auto& [fourCC, buffer] : configurations) {
-        size_t existingIndex = notFound;
-        for (size_t i = 0; i < orderedKeys.size(); ++i) {
-            if (orderedKeys[i] == fourCC) {
-                existingIndex = i;
-                break;
-            }
-        }
-        if (existingIndex == notFound) {
-            orderedKeys.append(fourCC);
-            groupedDatas.append({ buffer->createCFData() });
-        } else
-            groupedDatas[existingIndex].append(buffer->createCFData());
-    }
-
-    Vector<RetainPtr<CFTypeRef>> retainedKeys = { orderedKeys.size(), [&](auto index) -> RetainPtr<CFTypeRef> {
-        return cfStringFromFourCC(orderedKeys[index]);
+    Vector<RetainPtr<CFTypeRef>> configurationCFStringKeys = { configurations.size(), [&](auto index) {
+        return cfStringFromFourCC(configurations[index].first);
     } };
-    Vector<RetainPtr<CFTypeRef>> retainedValues = { groupedDatas.size(), [&](auto index) -> RetainPtr<CFTypeRef> {
-        auto& datas = groupedDatas[index];
-        if (datas.size() == 1)
-            return datas[0];
-        Vector<CFTypeRef> rawDatas(datas.size(), [&](auto j) {
-            return datas[j].get();
-        });
-        return adoptCF(CFArrayCreate(kCFAllocatorDefault, rawDatas.begin(), rawDatas.size(), &kCFTypeArrayCallBacks));
+    Vector<RetainPtr<CFDataRef>> configurationValues = { configurations.size(), [&](auto index) {
+        return configurations[index].second->createCFData();
     } };
-    Vector<CFTypeRef> rawConfigurationKeys(retainedKeys.size(), [&](auto index) {
-        return retainedKeys[index].get();
+    Vector<CFTypeRef> rawConfigurationKeys(configurationCFStringKeys.size(), [&](auto index) {
+        return configurationCFStringKeys[index].get();
     });
-    Vector<CFTypeRef> rawConfigurationValues(retainedValues.size(), [&](auto index) {
-        return retainedValues[index].get();
+    Vector<CFTypeRef> rawConfigurationValues(configurationValues.size(), [&](auto index) {
+        return configurationValues[index].get();
     });
     ASSERT(rawConfigurationKeys.size() == rawConfigurationValues.size());
 
@@ -210,7 +154,20 @@ static std::optional<EncryptionDataCollection> getEncryptionDataCollection(CMFor
 
     // For video content, the first element of the dictionary is always the video's atomData.
     size_t indexStart = PAL::CMFormatDescriptionGetMediaType(description) == kCMMediaType_Video;
-    auto encryptionInitDatas = parseExtensionAtomsDictionary(extensionAtoms.get(), indexStart);
+    size_t extensionsCount = CFDictionaryGetCount(extensionAtoms.get());
+    if (extensionsCount <= indexStart) {
+        return EncryptionDataCollection {
+            .encryptionData = WTF::move(*encryptionData),
+            .encryptionOriginalFormat = encryptionOriginalFormat
+        };
+    }
+
+    Vector<const void*, 2> keys(extensionsCount);
+    Vector<const void*, 2> values(extensionsCount);
+    CFDictionaryGetKeysAndValues(extensionAtoms.get(), keys.mutableSpan().data(), values.mutableSpan().data());
+    Vector<TrackInfoEncryptionInitData> encryptionInitDatas = { size_t(extensionsCount) - indexStart, [&](auto index) -> TrackInfoEncryptionInitData {
+        return { cfStringToFourCC(static_cast<CFStringRef>(keys[index + indexStart])), SharedBuffer::create(static_cast<CFDataRef>(values[index + indexStart])) };
+    } };
 
     return EncryptionDataCollection {
         .encryptionData = WTF::move(*encryptionData),
@@ -510,8 +467,14 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
         CFIndex extensionCount = CFDictionaryGetCount(atomDictionary.get());
         if (!extensionCount)
             RELEASE_LOG_INFO(Media, "kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms having %ld keys keys expected at least 1", extensionCount);
-        else
-            extensionAtoms = parseExtensionAtomsDictionary(atomDictionary.get());
+        else {
+            Vector<const void*, 1> keys(extensionCount);
+            Vector<const void*, 1> values(extensionCount);
+            CFDictionaryGetKeysAndValues(atomDictionary.get(), keys.mutableSpan().data(), values.mutableSpan().data());
+            extensionAtoms = { size_t(extensionCount), [&](auto index) -> TrackInfo::AtomData {
+                return { cfStringToFourCC(checked_cf_cast<CFStringRef>(keys[index])), SharedBuffer::create(checked_cf_cast<CFDataRef>(values[index])) };
+            } };
+        }
     } else
         RELEASE_LOG_ERROR(Media, "Couldn't retrieve extensionAtoms from CMFormatDescription");
 

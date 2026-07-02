@@ -158,6 +158,10 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
                 return nullptr;
         }
     }
+    else
+    {
+        return nullptr;
+    }
     return variable;
 }
 

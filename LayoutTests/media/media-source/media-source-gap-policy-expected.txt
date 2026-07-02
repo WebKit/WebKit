@@ -1,0 +1,30 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(update)
+EVENT(loadedmetadata)
+EVENT(update)
+EVENT(update)
+=== Start-of-stream allowance (1 s) ===
+Video [1500, 4000]: 1.5 s start gap > 1 s, readyState stays HAVE_METADATA.
+EVENT(update)
+EXPECTED (video.readyState == '1') OK
+Video [500, 1000]: 500 ms start gap <= 1 s, canplay fires.
+EVENT(canplay)
+EVENT(update)
+EXPECTED (video.readyState >= '3') OK
+=== Mid-stream gap tolerance (125 ms) ===
+Remove audio [1000, 1500) so it no longer bridges the 500 ms video gap.
+EVENT(update)
+500 ms gap > 125 ms tolerance: readyState below HAVE_ENOUGH_DATA.
+EXPECTED (video.readyState < '4') OK
+=== Audio-covered gap tolerance (250 ms) ===
+Re-append audio [1000, 1500): audio bridges the video gap.
+EVENT(update)
+500 ms gap > 250 ms audio-covered tolerance: readyState still below HAVE_ENOUGH_DATA.
+EXPECTED (video.readyState < '4') OK
+Append video [1200, 1500] to shrink the gap to 200 ms: canplaythrough fires.
+EVENT(canplaythrough)
+EVENT(update)
+EXPECTED (video.readyState == '4') OK
+END OF TEST
+

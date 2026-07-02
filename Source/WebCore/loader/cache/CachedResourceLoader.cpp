@@ -1277,6 +1277,8 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
 
     if (resource && request.isLinkPreload() && !resource->isLinkPreload())
         resource->setLinkPreload();
+    if (resource && request.isLinkModulePreload() && !resource->isLinkModulePreload())
+        resource->setLinkModulePreload();
 
     Ref cookieJar = page->cookieJar();
 

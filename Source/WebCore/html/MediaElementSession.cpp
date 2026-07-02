@@ -51,6 +51,7 @@
 #include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
+#include "RenderBoxInlines.h"
 #include "RenderMediaInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
@@ -1266,8 +1267,8 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
     if (!mainFrameView)
         return false;
 
-    auto maxVisibleClientWidth = std::min(renderer->clientWidth().toInt(), mainFrameView->visibleWidth());
-    auto maxVisibleClientHeight = std::min(renderer->clientHeight().toInt(), mainFrameView->visibleHeight());
+    auto maxVisibleClientWidth = std::min(renderer->paddingBoxWidth().toInt(), mainFrameView->visibleWidth());
+    auto maxVisibleClientHeight = std::min(renderer->paddingBoxHeight().toInt(), mainFrameView->visibleHeight());
 
     return maxVisibleClientWidth * maxVisibleClientHeight > minimumPercentageOfMainFrameAreaForMainContent * mainFrameView->visibleWidth() * mainFrameView->visibleHeight();
 }
@@ -1283,8 +1284,8 @@ static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element, 
     if (!renderer)
         return false;
 
-    double width = renderer->clientWidth();
-    double height = renderer->clientHeight();
+    double width = renderer->paddingBoxWidth();
+    double height = renderer->paddingBoxHeight();
     double area = width * height;
     double aspectRatio = width / height;
 

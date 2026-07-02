@@ -98,6 +98,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Ref<N
     : m_networkLoad(WTF::move(networkLoad))
     , m_downloadID(downloadID)
     , m_parentProcessConnection(parentProcessConnection)
+    , m_fromDownloadAttribute(FromDownloadAttribute::No)
 {
     m_isAllowedToAskUserForCredentials = m_networkLoad->isAllowedToAskUserForCredentials();
 

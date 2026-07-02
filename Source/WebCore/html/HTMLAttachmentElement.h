@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -138,7 +138,6 @@ private:
 #endif
 
     enum class Implementation: uint8_t { NarrowLayout, WideLayout };
-    Implementation m_implementation { Implementation::NarrowLayout };
 
     RefPtr<File> m_file;
     String m_uniqueIdentifier;
@@ -159,6 +158,7 @@ private:
     RefPtr<HTMLElement> m_saveButton;
     mutable RefPtr<DOMRectReadOnly> m_saveButtonClientRect;
 
+    Implementation m_implementation { Implementation::NarrowLayout };
     bool m_needsIconRequest { true };
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -26,6 +26,7 @@ use strict;
 use warnings;
 
 use parent qw(Bugzilla::Extension);
+use Bugzilla::Util qw(html_quote);
 
 our $VERSION = "1.0.0";
 
@@ -36,14 +37,14 @@ sub bug_format_comment {
     # Should match "r12345" and "trac.webkit.org/r12345" but not "https://trac.webkit.org/r12345"
     push(@$regexes, { match => qr/(?<!\/|\#)\b((r[[:digit:]]{5,}))\b/, replace => \&_replace_reference });
     push(@$regexes, { match => qr/(?<!\/)(trac.webkit.org\/(r[[:digit:]]{5,}))\b/, replace => \&_replace_reference });
-    push(@$regexes, { match => qr/\b((?<!https:\/\/)(?<!\/|\x{2026}|\.)(\d+@\S+))\b/, replace => \&_replace_reference });
-    push(@$regexes, { match => qr/\b((?<!https:\/\/)(?<!\/|\x{2026}|\.)(\d+\.?\d+@\S+))\b/, replace => \&_replace_reference });
+    push(@$regexes, { match => qr/\b((?<!https:\/\/)(?<!\/|\x{2026}|\.)(\d+@[A-Za-z0-9._\/-]+))\b/, replace => \&_replace_reference });
+    push(@$regexes, { match => qr/\b((?<!https:\/\/)(?<!\/|\x{2026}|\.)(\d+\.?\d+@[A-Za-z0-9._\/-]+))\b/, replace => \&_replace_reference });
 }
 
 sub _replace_reference {
     my $args = shift;
-    my $text = $args->{matches}->[0];
-    my $reference = $args->{matches}->[1];
+    my $text = html_quote($args->{matches}->[0]);
+    my $reference = html_quote($args->{matches}->[1]);
     return qq{<a href="https://commits.webkit.org/$reference">$text</a>};
 };
 

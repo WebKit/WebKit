@@ -346,7 +346,6 @@
 		0F61832A1C45BF070072450B /* AirCCallingConvention.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183211C45BF070072450B /* AirCCallingConvention.h */; };
 		0F61832D1C45BF070072450B /* AirEmitShuffle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183241C45BF070072450B /* AirEmitShuffle.h */; };
 		0F61832F1C45BF070072450B /* AirLowerAfterRegAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */; };
-		0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183281C45BF070072450B /* AirLowerMacros.h */; };
 		0F61833C1C45F62A0072450B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		0F61833D1C45F62A0072450B /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		0F6183451C45F6600072450B /* testair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6183441C45F6600072450B /* testair.cpp */; settings = {COMPILER_FLAGS = "-O0 -DRELEASE_WITHOUT_OPTIMIZATIONS"; }; };
@@ -3259,8 +3258,6 @@
 		0F6183241C45BF070072450B /* AirEmitShuffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirEmitShuffle.h; path = b3/air/AirEmitShuffle.h; sourceTree = "<group>"; };
 		0F6183251C45BF070072450B /* AirLowerAfterRegAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerAfterRegAlloc.cpp; path = b3/air/AirLowerAfterRegAlloc.cpp; sourceTree = "<group>"; };
 		0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerAfterRegAlloc.h; path = b3/air/AirLowerAfterRegAlloc.h; sourceTree = "<group>"; };
-		0F6183271C45BF070072450B /* AirLowerMacros.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerMacros.cpp; path = b3/air/AirLowerMacros.cpp; sourceTree = "<group>"; };
-		0F6183281C45BF070072450B /* AirLowerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerMacros.h; path = b3/air/AirLowerMacros.h; sourceTree = "<group>"; };
 		0F6183321C45F35C0072450B /* AirOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirOpcode.h; sourceTree = "<group>"; };
 		0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirOpcodeGenerated.h; sourceTree = "<group>"; };
 		0F6183351C45F3B60072450B /* AirOpcodeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirOpcodeUtils.h; sourceTree = "<group>"; };
@@ -7288,8 +7285,6 @@
 				0F6183261C45BF070072450B /* AirLowerAfterRegAlloc.h */,
 				0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */,
 				0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */,
-				0F6183271C45BF070072450B /* AirLowerMacros.cpp */,
-				0F6183281C45BF070072450B /* AirLowerMacros.h */,
 				0F5CF9821E9D537500C18692 /* AirLowerStackArgs.cpp */,
 				0F5CF9831E9D537500C18692 /* AirLowerStackArgs.h */,
 				E3FB5BED2F0886E00016B5F5 /* AirNaturalLoops.h */,
@@ -11106,7 +11101,6 @@
 				0FE34C1A1C4B39AE0003A512 /* AirLogRegisterPressure.h in Headers */,
 				0F61832F1C45BF070072450B /* AirLowerAfterRegAlloc.h in Headers */,
 				0FDF70861D3F2C2500927449 /* AirLowerEntrySwitch.h in Headers */,
-				0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */,
 				0F5CF9841E9D537700C18692 /* AirLowerStackArgs.h in Headers */,
 				E3FB5BEE2F0886E00016B5F5 /* AirNaturalLoops.h in Headers */,
 				0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */,

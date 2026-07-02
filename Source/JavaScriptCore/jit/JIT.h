@@ -415,7 +415,6 @@ namespace JSC {
         void emit_op_eq_null(const JSInstruction*);
         void emit_op_below(const JSInstruction*);
         void emit_op_beloweq(const JSInstruction*);
-        void emit_op_try_get_by_id(const JSInstruction*);
         void emit_op_get_by_id(const JSInstruction*);
         void emit_op_get_length(const JSInstruction*);
         void emit_op_get_by_id_with_this(const JSInstruction*);
@@ -567,7 +566,6 @@ namespace JSC {
         void emitSlow_op_call_direct_eval(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_eq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_callee(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_try_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_length(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id_with_this(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);

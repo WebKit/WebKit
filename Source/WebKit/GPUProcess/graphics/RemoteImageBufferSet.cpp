@@ -202,6 +202,7 @@ bool RemoteImageBufferSet::makeBuffersVolatile(OptionSet<BufferInSetType> reques
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 void RemoteImageBufferSet::dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&& completionHandler)
 {
+    MESSAGE_CHECK(!isPreparingForDisplay(), "DynamicContentScalingDisplayList requested while preparing for display");
     std::optional<WebCore::DynamicContentScalingDisplayList> displayList;
     if (m_frontBuffer)
         displayList = m_frontBuffer->dynamicContentScalingDisplayList();

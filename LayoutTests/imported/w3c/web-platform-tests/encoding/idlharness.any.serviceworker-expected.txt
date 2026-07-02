@@ -1,6 +1,8 @@
 
 PASS idl_test setup
-PASS idl_test validation
+FAIL idl_test validation Validation error at line 20 in streams:
+  async iterable<any>
+  ^ `async iterable` is now changed to `async_iterable`.
 PASS TextDecoder includes TextDecoderCommon: member names are unique
 PASS TextEncoder includes TextEncoderCommon: member names are unique
 PASS TextDecoderStream includes TextDecoderCommon: member names are unique

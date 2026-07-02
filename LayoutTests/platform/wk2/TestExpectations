@@ -592,6 +592,7 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 [ Debug ] http/tests/ipc/web-authenticator-get-assertion-spoofed-origin-crash.html [ Skip ]
 [ Debug ] http/tests/ipc/web-authenticator-make-credential-spoofed-origin-crash.html [ Skip ]
 [ Debug ] ipc/media-containment-bypass-create-player.html [ Crash ]
+[ Debug ] ipc/pointer-lock-double-lock-uaf.html [ Skip ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################

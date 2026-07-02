@@ -88,7 +88,7 @@ public:
         } else
             layer.clearContents();
 
-        if (RefPtr player = m_modelPlayer.get())
+        if (RefPtr player = m_modelPlayer)
             player->scheduleUpdateIfNeeded();
     }
     WebCore::GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
@@ -142,7 +142,7 @@ WebModelPlayer::WebModelPlayer(WebCore::Page& page, WebCore::ModelPlayerClient& 
 
     if (RefPtr document = page.localTopDocument()) {
         m_screenPropertiesChangedObserver = ScreenPropertiesChangedObserver::create([weakThis = ThreadSafeWeakPtr { *this }](WebCore::PlatformDisplayID displayID) {
-            RefPtr protectedThis = weakThis.get();
+            RefPtr protectedThis { weakThis };
             if (!protectedThis)
                 return;
             auto platformScreen = WebCore::PlatformScreen::singleton();
@@ -192,7 +192,7 @@ static WebCore::ContentsFormat contentsFormatForDynamicRange(bool isStandard)
 
 void WebModelPlayer::load(WebCore::Model& modelSource, WebCore::LayoutSize size, bool)
 {
-    RefPtr corePage = m_page.get();
+    RefPtr corePage { m_page };
     if (!corePage)
         return;
     m_modelLoader = nil;
@@ -262,7 +262,7 @@ void WebModelPlayer::load(WebCore::Model& modelSource, WebCore::LayoutSize size,
             if (!model)
                 return;
 
-            if (RefPtr client = protectedThis->m_client.get(); client && !protectedThis->m_didFinishLoading) {
+            if (RefPtr client = protectedThis->m_client; client && !protectedThis->m_didFinishLoading) {
                 protectedThis->m_didFinishLoading = true;
                 [protectedThis->m_modelLoader setLoop:protectedThis->m_isLooping];
                 protectedThis->m_cachedAnimationState = protectedThis->currentAnimationState();
@@ -312,14 +312,14 @@ void WebModelPlayer::load(WebCore::Model& modelSource, WebCore::LayoutSize size,
     m_retainedData = modelSource.data()->createNSData();
     if ([m_modelLoader loadModel:m_retainedData.get() mimeType:modelSource.mimeType().createNSString().get()])
         startUpdateLoopIfNeeded();
-    else if (RefPtr client = m_client.get())
+    else if (RefPtr client = m_client)
         client->didFailLoading(protectedThis.get(), { });
 }
 
 void WebModelPlayer::notifyEntityTransformUpdated()
 {
     RefPtr model = m_currentModel;
-    RefPtr client = m_client.get();
+    RefPtr client { m_client };
     if (!model || !client || !model->entityTransform())
         return;
 
@@ -333,7 +333,7 @@ void WebModelPlayer::sizeDidChange(WebCore::LayoutSize size)
     if (!currentModel)
         return;
 
-    RefPtr corePage = m_page.get();
+    RefPtr corePage { m_page };
     if (!corePage)
         return;
     RefPtr document = corePage->localTopDocument();
@@ -506,7 +506,7 @@ RefPtr<WebCore::ImageBuffer> WebModelPlayer::snapshotCurrentFrame(const WebCore:
     if (!currentModel || !m_hasRenderedFrame || m_displayTextureIndex >= m_displayBuffers.size())
         return nullptr;
 
-    RefPtr corePage { m_page.get() };
+    RefPtr corePage { m_page };
     if (!corePage)
         return nullptr;
 
@@ -580,7 +580,7 @@ void WebModelPlayer::scheduleUpdateIfNeeded()
     if (!m_isUpdateLoopRunning || m_isUpdateScheduled)
         return;
 
-    RefPtr corePage = m_page.get();
+    RefPtr corePage { m_page };
     if (!corePage)
         return;
 
@@ -676,7 +676,7 @@ bool WebModelPlayer::render()
 
 void WebModelPlayer::scheduleDisplayUpdate()
 {
-    if (RefPtr graphicsLayer = m_graphicsLayer.get())
+    if (RefPtr graphicsLayer = m_graphicsLayer)
         graphicsLayer->setContentsNeedsDisplay();
 }
 
@@ -746,9 +746,11 @@ bool WebModelPlayer::paused() const
 
 Seconds WebModelPlayer::currentTime() const
 {
+    if (m_modelLoader)
+        return Seconds([m_modelLoader currentTime]);
     if (m_cachedAnimationState)
         return m_cachedAnimationState->currentTime();
-    return Seconds([m_modelLoader currentTime]);
+    return 0_s;
 }
 
 void WebModelPlayer::updateClockTimeOnAnimationState()
@@ -817,7 +819,7 @@ void WebModelPlayer::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
     }
     startUpdateLoopIfNeeded();
 
-    if (RefPtr client = m_client.get())
+    if (RefPtr client = m_client)
         client->didFinishEnvironmentMapLoading(*this, success);
 }
 
@@ -831,7 +833,7 @@ void WebModelPlayer::visibilityStateDidChange()
 {
     // When the model becomes invisible, release memory-intensive resources.
     // When it becomes visible again, HTMLModelElement will trigger a reload through startLoadModelTimer().
-    RefPtr client = m_client.get();
+    RefPtr client { m_client };
     if (!client || disableReloading())
         return;
 
@@ -966,7 +968,7 @@ void WebModelPlayer::updateContentsHeadroom()
 
 void WebModelPlayer::updateScreenHeadroomFromPage()
 {
-    RefPtr page = m_page.get();
+    RefPtr page { m_page };
     if (!page)
         return;
 

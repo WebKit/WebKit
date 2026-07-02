@@ -38,6 +38,7 @@
 #include "pas_large_expendable_memory.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_min_heap.h"
+#include "pas_race_test_hooks.h"
 #include "pas_segregated_heap_inlines.h"
 #include "pas_segregated_size_directory.h"
 #include "pas_segregated_page.h"
@@ -324,7 +325,8 @@ pas_segregated_size_directory* pas_segregated_heap_size_directory_for_index_slow
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index,
-    const pas_heap_config* config)
+    const pas_heap_config* config,
+    pas_lock_hold_mode heap_lock_hold_mode)
 {
     if (pas_segregated_heap_index_is_cached_index_and_cached_index_is_set(heap, cached_index, index, config)) {
         pas_segregated_size_directory* result;
@@ -340,7 +342,7 @@ pas_segregated_size_directory* pas_segregated_heap_size_directory_for_index_slow
     return pas_segregated_heap_medium_size_directory_for_index(
         heap, index,
         pas_segregated_heap_medium_size_directory_search_within_size_class_progression,
-        pas_lock_is_held);
+        heap_lock_hold_mode);
 }
 
 typedef struct {
@@ -1506,7 +1508,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
 
     ensure_size_lookup_if_necessary(heap, size_lookup_mode, config, cached_index, index);
 
-    result = pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config);
+    result = pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config, pas_lock_is_held);
 
     if (verbose && result) {
         pas_log("Found result = %p, object_size = %u, min_index = %u\n",
@@ -2183,6 +2185,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
                     &medium_directory->directory, result);
                 medium_directory->allocator_index = 0;
 
+                pas_race_test_hook(pas_race_test_hook_medium_directory_after_directory_store);
+
                 if (verbose) {
                     pas_log("In rare_data = %p, Installing medium tuple %zu...%zu\n",
                             rare_data, index, medium_install_index);
@@ -2222,7 +2226,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
             }
         }
 
-        PAS_ASSERT(pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config)
+        PAS_ASSERT(pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config, pas_lock_is_held)
                    == result);
     }
 

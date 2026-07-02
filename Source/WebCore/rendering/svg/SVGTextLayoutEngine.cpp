@@ -33,6 +33,8 @@
 #include "SVGTextLayoutEngineBaseline.h"
 #include "SVGTextLayoutEngineSpacing.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <unicode/ubrk.h>
+#include <wtf/text/TextBreakIterator.h>
 
 // Set to a value > 0 to dump the text fragments
 #define DUMP_SVG_TEXT_LAYOUT_FRAGMENTS 0
@@ -434,6 +436,9 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
     float baselineShift = baselineLayout.calculateBaselineShift(style);
     baselineShift -= baselineLayout.calculateAlignmentBaselineShift(m_isVerticalText, text);
 
+    // Grapheme-cluster boundaries, keyed by the same code-unit offset the loop walks (m_visualCharacterOffset).
+    NonSharedCharacterBreakIterator clusterIterator(StringView(text.text()));
+
     // Main layout algorithm.
     while (true) {
         // Find the start of the current text box in this list, respecting ligatures.
@@ -629,9 +634,12 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
             m_lastChunkHasTextLength = definesTextLength;
         }
 
+        // Only a cluster start may open a new fragment, so a combining mark stays with its base rather than being shaped alone (dotted circle). Bug 266832.
+        bool isClusterStart = ubrk_isBoundary(clusterIterator, m_visualCharacterOffset);
+
         // Determine whether we have to start a new fragment.
-        bool shouldStartNewFragment = hasXOrY || m_dx || m_dy || m_isVerticalText || m_inPathLayout || angle || angle != lastAngle
-            || orientationAngle || applySpacingToNextCharacter || definesTextLength;
+        bool shouldStartNewFragment = isClusterStart && (hasXOrY || m_dx || m_dy || m_isVerticalText || m_inPathLayout || angle || angle != lastAngle
+            || orientationAngle || applySpacingToNextCharacter || definesTextLength);
 
         // If we already started a fragment, close it now.
         if (didStartTextFragment && shouldStartNewFragment) {

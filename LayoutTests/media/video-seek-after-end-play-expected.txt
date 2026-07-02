@@ -7,9 +7,9 @@ EVENT(ended)
 EVENT(seeking)
 EVENT(seeked)
 EVENT(play)
-EVENT(playing)
 EVENT(seeking)
 EVENT(seeked)
+EVENT(playing)
 EVENT(ended)
 END OF TEST
 

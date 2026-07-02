@@ -1274,16 +1274,16 @@ void AXObjectCache::setFrameInheritedState(LocalFrame& frame, const InheritedFra
 
 void AXObjectCache::setFrameGeometry(LocalFrame& frame, const AXFrameGeometry& geometry)
 {
-    UNUSED_PARAM(frame);
     m_frameGeometry = geometry;
 
+    // Reset to zero to avoid leaving a stale value in the case of a null frame.view().
+    m_frameViewOriginScrollPosition = { };
+    if (CheckedPtr view = frame.view())
+        m_frameViewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
-        IntPoint viewOriginScrollPosition;
-        if (CheckedPtr view = frame.view())
-            viewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
-        tree->setFrameGeometry(AXFrameGeometry { geometry }, viewOriginScrollPosition);
-    }
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
+        tree->setFrameGeometry(AXFrameGeometry { geometry }, m_frameViewOriginScrollPosition);
 #endif
 }
 
@@ -1473,12 +1473,14 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
                 // Inform this ancestor its textUnderElement-dependent data is now out-of-date.
                 postNotification(ancestor.get(), nullptr, AXNotification::TextUnderElementChanged);
             }
-
-            // Any objects this ancestor labeled now also need new AccessibilityText.
-            auto labeledObjects = ancestor->labelForObjects();
-            for (const auto& labeledObject : labeledObjects)
-                postNotification(&downcast<AccessibilityObject>(labeledObject.get()), nullptr, AXNotification::TextChanged);
         }
+
+        // Any objects this ancestor labeled now also need new AccessibilityText. This must run even
+        // when |object| is not static text: a name-source change like aria-label, alt, or title on an
+        // element referenced via aria-labelledby alters the referrer's accessible name just the same.
+        auto labeledObjects = ancestor->labelForObjects();
+        for (const auto& labeledObject : labeledObjects)
+            postNotification(&downcast<AccessibilityObject>(labeledObject.get()), nullptr, AXNotification::TextChanged);
     }
 
     postNotification(object, protect(object->document()).get(), AXNotification::TextChanged);

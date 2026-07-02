@@ -24,6 +24,7 @@
 #
 # Identifier, format string, parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc)
 
+CoreIpcNsurlRequestPropertyKeyNotAllowed, "NSURLRequest property key '%" PUBLIC_LOG_STRING "' not allowed. Skipping this property.", (CString), INFO, API
 GpuProcessConnectionCreate, "GPUProcessConnection::create(%" PRIu64 ")", (uint64_t), DEFAULT, Process
 GpuProcessConnectionDidInitialize, "GPUProcessConnection::didInitialize(%" PRIu64 ")", (uint64_t), DEFAULT, Process
 MediaPlayerPrivateRemoteLayerHostingContextChanged, "MediaPlayerPrivateRemote::layerHostingContextChanged", (), DEFAULT, Media

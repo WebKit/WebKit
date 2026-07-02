@@ -28,6 +28,7 @@
 #include "KeyframeInterpolation.h"
 #include "StyleComputedStyle.h"
 #include "StyleSingleAnimationRangeName.h"
+#include "StylePrimitiveNumericTypes.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
@@ -48,17 +49,29 @@ class BlendingKeyframe final : public KeyframeInterpolation::Keyframe {
 public:
     struct Offset {
         Style::SingleAnimationRangeName name;
-        double value;
+        Style::Percentage<> value;
 
-        Offset(double value)
+        Offset(Style::Percentage<> value)
             : name(Style::SingleAnimationRangeName::Omitted)
             , value(value)
         {
         }
 
-        Offset(Style::SingleAnimationRangeName name, double value)
+        Offset(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+            : name(Style::SingleAnimationRangeName::Omitted)
+            , value(literal)
+        {
+        }
+
+        Offset(Style::SingleAnimationRangeName name, Style::Percentage<> value)
             : name(name)
             , value(value)
+        {
+        }
+
+        Offset(Style::SingleAnimationRangeName name, CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+            : name(name)
+            , value(literal)
         {
         }
     };

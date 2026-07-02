@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Constrainable dictionary shapes (DoubleRange, ULongRange, ConstrainXxxParameters)</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// MediaCapture-Main §"Constrainable Properties" dictionary definitions:
+//   https://w3c.github.io/mediacapture-main/#constrainable-interface
+//
+// IDL shapes asserted:
+//   DoubleRange.{min, max}                              — double
+//   ULongRange.{min, max}                               — [Clamp] unsigned long
+//   ConstrainDoubleRange.{exact, ideal}                 — double required/target
+//   ConstrainULongRange.{exact, ideal}                  — [Clamp] unsigned long
+//   ConstrainDOMStringParameters.{exact, ideal}         — DOMString or sequence<DOMString>
+//   ConstrainBooleanOrDOMStringParameters.{exact, ideal} — boolean or DOMString
+//
+// DoubleRange / ULongRange are *returned* via track.getCapabilities() —
+// we observe their shape directly. ConstrainXxxParameters are *input*
+// types — we verify them by applyConstraints round-trip (apply, then
+// inspect via getConstraints).
+
+if (window.testRunner) {
+    testRunner.setMicrophonePermission(true);
+    testRunner.setCameraPermission(true);
+}
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const caps = stream.getVideoTracks()[0].getCapabilities();
+
+    // ULongRange for width/height. Members are integers (the [Clamp]
+    // attribute means values out of range are clamped, but the type
+    // is still unsigned long -> JS Number that is_integer).
+    if ("width" in caps) {
+        assert_equals(typeof caps.width.min, "number", "width.min is a number");
+        assert_equals(typeof caps.width.max, "number", "width.max is a number");
+        assert_true(Number.isInteger(caps.width.min), "width.min is an integer (ULongRange)");
+        assert_true(Number.isInteger(caps.width.max), "width.max is an integer (ULongRange)");
+        assert_greater_than_equal(caps.width.min, 0, "width.min is non-negative");
+        assert_greater_than_equal(caps.width.max, caps.width.min, "width.max >= width.min");
+    }
+    if ("height" in caps) {
+        assert_equals(typeof caps.height.min, "number", "height.min is a number");
+        assert_equals(typeof caps.height.max, "number", "height.max is a number");
+        assert_true(Number.isInteger(caps.height.min), "height.min is an integer (ULongRange)");
+        assert_true(Number.isInteger(caps.height.max), "height.max is an integer (ULongRange)");
+        assert_greater_than_equal(caps.height.min, 0, "height.min is non-negative");
+        assert_greater_than_equal(caps.height.max, caps.height.min, "height.max >= height.min");
+    }
+
+    // DoubleRange for frameRate / aspectRatio. Members are doubles
+    // (not necessarily integers).
+    if ("frameRate" in caps) {
+        assert_equals(typeof caps.frameRate.min, "number", "frameRate.min is a number");
+        assert_equals(typeof caps.frameRate.max, "number", "frameRate.max is a number");
+        assert_greater_than(caps.frameRate.min, 0, "frameRate.min > 0");
+        assert_greater_than_equal(caps.frameRate.max, caps.frameRate.min, "frameRate.max >= min");
+    }
+    if ("aspectRatio" in caps) {
+        assert_equals(typeof caps.aspectRatio.min, "number", "aspectRatio.min is a number");
+        assert_equals(typeof caps.aspectRatio.max, "number", "aspectRatio.max is a number");
+    }
+}, "DoubleRange/ULongRange capability values have spec-mandated shapes");
+
+promise_test(async test => {
+    // ConstrainDoubleRange.exact / .ideal — double required/target.
+    // ConstrainULongRange.exact / .ideal — unsigned long required/target.
+    // Verified by round-trip: apply, then getConstraints returns the same shape.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    // ConstrainDoubleRange.ideal
+    await track.applyConstraints({ frameRate: { ideal: 30 } });
+    let c = track.getConstraints();
+    assert_equals(typeof c.frameRate, "object",
+        "frameRate constraint round-trips as an object (ConstrainDoubleRange)");
+    assert_equals(c.frameRate.ideal, 30,
+        "ConstrainDoubleRange.ideal round-trips as the applied value");
+
+    // ConstrainULongRange.ideal
+    await track.applyConstraints({ width: { ideal: 640 } });
+    c = track.getConstraints();
+    assert_equals(typeof c.width, "object",
+        "width constraint round-trips as an object (ConstrainULongRange)");
+    assert_equals(c.width.ideal, 640,
+        "ConstrainULongRange.ideal round-trips as the applied value");
+    assert_true(Number.isInteger(c.width.ideal),
+        "ConstrainULongRange.ideal round-trips an integer (ULongRange)");
+    // ConstrainULongRange.exact (using a value the track can actually
+    // satisfy — apply the device's current width back).
+    const currentWidth = track.getSettings().width;
+    await track.applyConstraints({ width: { exact: currentWidth } });
+    c = track.getConstraints();
+    assert_equals(c.width.exact, currentWidth,
+        "ConstrainULongRange.exact round-trips as the applied value");
+    assert_true(Number.isInteger(c.width.exact),
+        "ConstrainULongRange.exact round-trips an integer (ULongRange)");
+}, "ConstrainDoubleRange/ConstrainULongRange round-trip exact/ideal members");
+
+promise_test(async test => {
+    // ConstrainDOMStringParameters.exact / .ideal — DOMString OR
+    // sequence<DOMString>. Tested via facingMode, which uses
+    // ConstrainDOMString.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    // Single DOMString form. Use ideal so an OverconstrainedError doesn't
+    // fire if the device doesn't satisfy.
+    await track.applyConstraints({ facingMode: { ideal: "user" } });
+    let c = track.getConstraints();
+    assert_equals(c.facingMode.ideal, "user",
+        "ConstrainDOMStringParameters.ideal accepts a single DOMString");
+
+    // Sequence<DOMString> form.
+    await track.applyConstraints({ facingMode: { ideal: ["user", "environment"] } });
+    c = track.getConstraints();
+    assert_true(Array.isArray(c.facingMode.ideal),
+        "ConstrainDOMStringParameters.ideal accepts a sequence<DOMString>");
+    assert_array_equals(c.facingMode.ideal, ["user", "environment"],
+        "sequence<DOMString> ideal round-trips with original order");
+}, "ConstrainDOMStringParameters: exact/ideal accept DOMString or sequence<DOMString>");
+
+promise_test(async test => {
+    // ConstrainBooleanOrDOMStringParameters — exact/ideal can be
+    // boolean OR DOMString. echoCancellation uses ConstrainBooleanOrDOMString.
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getAudioTracks()[0];
+
+    // Boolean form
+    await track.applyConstraints({ echoCancellation: { ideal: true } });
+    let c = track.getConstraints();
+    assert_equals(c.echoCancellation.ideal, true,
+        "ConstrainBooleanOrDOMStringParameters.ideal accepts a boolean");
+
+    // String form — the type allows DOMString even if no specific
+    // string value is required to be accepted by the implementation.
+    // We use applyConstraints + ideal so unknown string values don't
+    // throw OverconstrainedError; the assertion is that no TypeError
+    // fires (the IDL accepts the union arm).
+    try {
+        await track.applyConstraints({ echoCancellation: { ideal: "always" } });
+        c = track.getConstraints();
+        // If it round-tripped, great — exercising the string arm.
+        if (typeof c.echoCancellation === "object" && "ideal" in c.echoCancellation) {
+            assert_true(typeof c.echoCancellation.ideal === "string"
+                        || typeof c.echoCancellation.ideal === "boolean",
+                "ConstrainBooleanOrDOMStringParameters.ideal round-trips as boolean or string");
+        }
+    } catch (e) {
+        // Non-TypeError rejection is acceptable (e.g. the implementation
+        // doesn't recognize "always" as a value). A TypeError would
+        // mean the IDL union doesn't accept the DOMString arm.
+        assert_false(e instanceof TypeError,
+            "echoCancellation.ideal = string must not throw TypeError " +
+            "(ConstrainBooleanOrDOMString union accepts DOMString arm)");
+    }
+}, "ConstrainBooleanOrDOMStringParameters: exact/ideal accept boolean or DOMString");
+</script>
+</head>
+<body></body>
+</html>

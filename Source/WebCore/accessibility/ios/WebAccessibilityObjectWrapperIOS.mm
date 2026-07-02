@@ -2753,6 +2753,18 @@ static RenderObject* rendererForView(WAKView* view)
     return @[ startMarker, endMarker ];
 }
 
+// Returns the zero-based line number containing the given character index, or nil when the element
+// exposes no line geometry. Computed in the web process from the render tree (doAXLineForIndex), so
+// a client can obtain the line number in a single query instead of walking line ranges.
+- (NSNumber *)lineNumberForIndex:(NSUInteger)index
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    int lineNumber = protect(self.axBackingObject)->doAXLineForIndex(index);
+    return lineNumber < 0 ? nil : @(lineNumber);
+}
+
 // This method is intended to return the marker at the start of the line starting at
 // the marker that is passed into the method.
 - (WebAccessibilityTextMarker *)lineStartMarkerForMarker:(WebAccessibilityTextMarker *)marker

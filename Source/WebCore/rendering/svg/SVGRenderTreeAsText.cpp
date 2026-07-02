@@ -276,7 +276,7 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& re
 {
     if (behavior.contains(RenderAsTextFlag::ShowSVGGeometry)) {
         if (auto* box = dynamicDowncast<RenderBox>(renderer))
-            ts << ' ' << enclosingIntRect(box->frameRect());
+            ts << ' ' << enclosingIntRect(box->borderBoxRectInContainer());
         ts << " clipped"_s;
     }
 

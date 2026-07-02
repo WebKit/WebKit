@@ -1590,7 +1590,6 @@ html/DateTimeLocalInputType.cpp
 html/DirectoryFileListCreator.cpp
 html/EmailInputType.cpp
 html/EnterKeyHint.cpp
-html/FTPDirectoryDocument.cpp
 html/FallbackPopupMenu.cpp
 html/FileInputType.cpp
 html/FormAssociatedCustomElement.cpp
@@ -2009,6 +2008,7 @@ layout/formattingContexts/flex/FlexFormattingContext.cpp @header:RenderStyleGett
 layout/formattingContexts/flex/FlexFormattingUtils.cpp @header:RenderStyleGetters
 layout/formattingContexts/flex/FlexLayout.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridFormattingContext.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridItemSizingFunctions.cpp
 layout/formattingContexts/grid/GridLayout.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridLayoutUtils.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/ImplicitGrid.cpp @header:RenderStyleGetters
@@ -2090,7 +2090,6 @@ loader/DocumentThreadableLoader.cpp
 loader/DocumentWriter.cpp
 loader/DocumentPrefetcher.cpp
 loader/EmptyClients.cpp
-loader/FTPDirectoryParser.cpp
 loader/FetchIdioms.cpp
 loader/FormState.cpp
 loader/FormSubmission.cpp
@@ -3663,6 +3662,7 @@ svg/graphics/SVGImage.cpp @header:RenderStyleGetters
 svg/graphics/SVGImageCache.cpp
 svg/graphics/SVGImageForContainer.cpp
 svg/graphics/SVGResourceImage.cpp
+svg/graphics/filters/SVGFilterPrimitiveGraph.cpp
 svg/graphics/filters/SVGFilterRenderer.cpp
 svg/properties/SVGAnimatedPropertyBase.cpp
 svg/properties/SVGAnimatedString.cpp

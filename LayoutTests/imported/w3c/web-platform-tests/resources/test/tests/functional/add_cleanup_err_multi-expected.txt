@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Test named 'Test with multiple cleanup functions' specified 2 'cleanup' functions, and 1 failed.
+
+PASS Test with multiple cleanup functions
+NOTRUN Verification test
+

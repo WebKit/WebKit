@@ -541,11 +541,13 @@ class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteMediaSessionCoordinatorProxy;
 class RemoteMediaSessionManagerProxy;
+class RemoteObjectRegistry;
 class RemotePageProxy;
 class RemoteScrollingCoordinatorProxy;
 class RevealItem;
 class SandboxExtensionHandle;
 class SecKeyProxyStore;
+class SessionHistoryTraversalQueue;
 class SpeechRecognitionPermissionManager;
 class SuspendedPageProxy;
 class SystemPreviewController;
@@ -1008,7 +1010,8 @@ public:
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<Ref<WebBackForwardListItem>>&& removed);
     void shouldGoToBackForwardListItem(WebCore::BackForwardItemIdentifier, bool inBackForwardCache, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&);
     void shouldGoToBackForwardListItemSync(WebCore::BackForwardItemIdentifier, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&);
-    void goToBackForwardItemAtIndex(int32_t steps, WebCore::FrameLoadType);
+    void goToBackForwardItemAtIndex(int32_t steps);
+    void enqueueHistoryTraversalDelta(int32_t delta);
 
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem&);
 
@@ -1040,6 +1043,15 @@ public:
 
     double overflowHeightForTopScrollEdgeEffect() const { return m_overflowHeightForTopScrollEdgeEffect; }
     void setOverflowHeightForTopScrollEdgeEffect(double);
+
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    enum class WindowIsInNativeFullScreen : bool { No, Yes };
+    void setWindowIsInNativeFullScreen(WindowIsInNativeFullScreen);
+    void setFullScreenTitlebarOverlayIsRevealed(bool);
+
+    bool fullScreenTitlebarOverlayIsDisplayed() const { return m_windowIsInNativeFullScreen && m_fullScreenTitlebarOverlayIsRevealed; }
+#endif
+
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
     void setScrollbarAvoidanceCornerRadii(WebCore::CornerRadii&&);
 #endif
@@ -1341,6 +1353,9 @@ public:
     void scrollToEdge(WebCore::RectEdges<bool>, WebCore::ScrollIsAnimated);
 
 #if PLATFORM(COCOA)
+    _WKRemoteObjectRegistry* remoteObjectRegistry();
+    RemoteObjectRegistry* uiRemoteObjectRegistry();
+
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void setMainFrameIsScrollable(bool);
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
@@ -1400,7 +1415,6 @@ public:
     void rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect);
 
     RetainPtr<NSView> inspectorAttachmentView();
-    _WKRemoteObjectRegistry *remoteObjectRegistry();
 
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;
 #endif // PLATFORM(MAC)
@@ -3755,6 +3769,8 @@ private:
     HashSet<WebCore::FrameIdentifier> m_framesWithSubresourceLoadingForPageLoadTiming;
     RunLoop::Timer m_generatePageLoadTimingTimer;
 
+    const UniqueRef<SessionHistoryTraversalQueue> m_sessionHistoryTraversalQueue;
+
 #if PLATFORM(COCOA)
     RunLoop::Timer m_textIndicatorFadeTimer;
     RefPtr<WebCore::TextIndicator> m_textIndicator;
@@ -3832,6 +3848,10 @@ private:
 #if PLATFORM(MAC)
     bool m_acceptsFirstMouse { false };
     double m_overflowHeightForTopScrollEdgeEffect { 0 };
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    bool m_windowIsInNativeFullScreen { false };
+    bool m_fullScreenTitlebarOverlayIsRevealed { false };
+#endif
 #endif
 
 #if USE(SYSTEM_PREVIEW)

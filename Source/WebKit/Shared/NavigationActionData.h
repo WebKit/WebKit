@@ -62,7 +62,6 @@ struct NavigationActionData {
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     WebCore::ResourceResponse redirectResponse;
     bool isRequestFromClientOrUserInput { false };
-    bool treatAsSameOriginNavigation { false };
     bool hasOpenedFrames { false };
     bool openedByDOMWithOpener { false };
     bool hasOpener { false };

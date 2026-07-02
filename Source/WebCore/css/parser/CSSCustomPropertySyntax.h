@@ -27,6 +27,10 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+namespace WTF {
+class StringBuilder;
+}
+
 namespace WebCore {
 
 class CSSParserTokenRange;
@@ -73,7 +77,6 @@ struct CSSCustomPropertySyntax {
     static std::optional<CSSCustomPropertySyntax> parse(StringView);
     static std::optional<CSSCustomPropertySyntax> consumeType(CSSParserTokenRange&);
 
-
     static CSSCustomPropertySyntax universal() { return { }; }
 
     bool NODELETE containsUnknownType() const;
@@ -82,5 +85,12 @@ private:
     template<typename CharacterType> static std::optional<Component> parseComponent(std::span<const CharacterType>);
     static Type typeForTypeName(StringView);
 };
+
+// Serializes to the <syntax> string form, e.g. "*", "<length>", "<length>+", "<color> | <length>".
+void serializeCustomPropertySyntax(StringBuilder&, const CSSCustomPropertySyntax&);
+
+// Serializes to the <css-type> form used in @function preludes: a single component is bare, while a
+// multi-component syntax is wrapped in type(). Must not be called on the universal syntax.
+void serializeCustomPropertySyntaxAsCSSType(StringBuilder&, const CSSCustomPropertySyntax&);
 
 }

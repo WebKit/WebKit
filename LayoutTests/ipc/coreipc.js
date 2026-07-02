@@ -759,6 +759,10 @@ export class ArgumentSerializer {
                 if (argument === null) {
                     return [];
                 } else throw new SerializationError(`std::nullptr_t is not null`);
+            case 'std::monostate':
+                if (argument === null) {
+                    return [];
+                } else throw new SerializationError(`std::monostate is not null`);
             case 'WebCore::SharedMemory::Handle':
             case 'WebCore::SharedMemoryHandle':
             case 'MachSendRight':
@@ -1199,7 +1203,9 @@ export class ArgumentParser {
                 return [position, {parsedValue: result, parsedType: 'String'}];
             }
             case 'std::nullptr_t':
-                return [position, {parsedValue: 'null', parsedType: 'std::nullptr_t'}];
+                return [position, {parsedValue: null, parsedType: 'std::nullptr_t'}];
+            case 'std::monostate':
+                return [position, {parsedValue: null, parsedType: 'std::monostate'}];
         }
         return undefined;
     }

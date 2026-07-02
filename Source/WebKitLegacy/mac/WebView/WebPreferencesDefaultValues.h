@@ -58,6 +58,8 @@ bool defaultNeedsKeyboardEventDisambiguationQuirks();
 bool defaultHTMLEnhancedSelectParsingQuirkEnabled();
 #endif
 
+bool defaultSearchInputResultsAttributeEnabled();
+
 bool defaultMutationEventsEnabled();
 bool defaultAttachmentElementEnabled();
 bool defaultShouldRestrictBaseURLSchemes();

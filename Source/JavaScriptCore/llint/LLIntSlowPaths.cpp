@@ -726,56 +726,6 @@ LLINT_SLOW_PATH_DECL(slow_path_create_cloned_arguments)
     LLINT_RETURN(result);
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
-{
-    LLINT_BEGIN();
-    auto bytecode = pc->as<OpTryGetById>();
-    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
-    JSValue baseValue = getOperand(callFrame, bytecode.m_base);
-    PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry, &vm);
-
-    baseValue.getPropertySlot(globalObject, ident, slot);
-    JSValue result = slot.getPureResult();
-
-    if (Options::useLLIntICs() && slot.isCacheable() && !slot.isUnset()) {
-        ASSERT(!slot.isTaintedByOpaqueObject());
-        ASSERT(baseValue.isCell());
-
-        auto& metadata = bytecode.metadata(codeBlock);
-        {
-            StructureID oldStructureID = metadata.m_structureID;
-            if (oldStructureID) {
-                Structure* a = oldStructureID.decode();
-                Structure* b = baseValue.asCell()->structure();
-
-                if (Structure::shouldConvertToPolyProto(a, b)) {
-                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
-                }
-            }
-        }
-
-        JSCell* baseCell = baseValue.asCell();
-        Structure* structure = baseCell->structure();
-        if (slot.isValue() && slot.slotBase() == baseValue) {
-            // Start out by clearing out the old cache.
-            metadata.m_structureID = StructureID();
-            metadata.m_offset = 0;
-
-            if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
-                {
-                    ConcurrentJSLocker locker(codeBlock->m_lock);
-                    metadata.m_structureID = structure->id();
-                    metadata.m_offset = slot.cachedOffset();
-                }
-                vm.writeBarrier(codeBlock);
-            }
-        }
-    }
-
-    LLINT_RETURN_PROFILED(result);
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
 {
     LLINT_BEGIN();

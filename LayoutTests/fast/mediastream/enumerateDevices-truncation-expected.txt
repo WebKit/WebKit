@@ -1,0 +1,6 @@
+
+PASS precondition: mock environment exposes multiple microphones and cameras
+FAIL enumerateDevices truncates microphone list when microphone permission is denied assert_less_than_equal: microphone list is truncated to at most 1 entry when microphone permission is denied expected a number less than or equal to 1 but got 4
+FAIL enumerateDevices truncates camera list when camera permission is denied assert_less_than_equal: camera list is truncated to at most 1 entry when camera permission is denied expected a number less than or equal to 1 but got 2
+PASS enumerateDevices returns full device lists when both permissions are granted
+

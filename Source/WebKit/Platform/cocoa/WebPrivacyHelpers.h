@@ -56,8 +56,6 @@ enum class IsKnownCrossSiteTracker : bool;
 
 namespace WebKit {
 
-bool isTaintedScriptURLBlockable(const URL&);
-
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 enum class RestrictedOpenerType : uint8_t;

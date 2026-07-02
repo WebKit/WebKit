@@ -111,6 +111,16 @@ public:
         Util::run(&canplaythrough);
 
         play();
+        // Wait until the GPU process is registered as the now-playing client.
+        // With async session admission, calling pause() immediately after play()
+        // races with in-flight admission and leaves the session in Paused state
+        // without transitioning through Playing — which prevents now-playing
+        // registration (computeNowPlayingInfo's isPlaying flag requires
+        // state==Playing). Polling for the registration to settle keeps the
+        // test deterministic without depending on sync admission timing.
+        EXPECT_TRUE(Util::waitFor([&] {
+            return gpuProcessPID() == getNowPlayingClientPid();
+        }));
         pause();
         ASSERT_EQ(gpuProcessPID(), getNowPlayingClientPid());
     }

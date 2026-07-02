@@ -642,7 +642,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
 
     // Calculate our new height.
     LayoutUnit oldHeight = logicalHeight();
-    auto afterPaddingEdge = clientLogicalBottom();
+    auto afterPaddingEdge = paddingBoxLogicalBottom();
 
     // Before updating the final size of the flow thread make sure a forced break is applied after the content.
     // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
@@ -1182,7 +1182,7 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     LayoutUnit logicalTopEstimate = estimateLogicalTopPosition(child, marginInfo, estimateWithoutPagination);
 
     // Cache our old rect so that we can dirty the proper repaint rects if the child moves.
-    LayoutRect oldRect = child.frameRect();
+    LayoutRect oldRect = child.borderBoxRectInContainer();
     LayoutUnit oldLogicalTop = logicalTopForChild(child);
 
 #if ASSERT_ENABLED
@@ -2972,7 +2972,7 @@ bool RenderBlockFlow::positionNewFloats()
         if (childBox.containingBlock() != this)
             continue;
 
-        LayoutRect oldRect = childBox.frameRect();
+        LayoutRect oldRect = childBox.borderBoxRectInContainer();
         auto childBoxUsedClear = Style::ComputedStyle::usedClear(childBox);
         if (childBoxUsedClear == UsedClear::Left || childBoxUsedClear == UsedClear::Both)
             logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);

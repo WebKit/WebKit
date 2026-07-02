@@ -329,7 +329,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     // An empty viewport disables rendering.
-    if (borderBoxRect().isEmpty())
+    if (borderBoxSize().isEmpty())
         return;
 
     auto adjustedPaintOffset = paintOffset + location();
@@ -653,7 +653,7 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, OverlayS
 
 void RenderSVGRoot::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append({ accumulatedOffset, borderBoxRect().size() });
+    rects.append({ accumulatedOffset, borderBoxSize() });
 }
 
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const

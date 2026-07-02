@@ -84,13 +84,16 @@ public:
 
     const WebCodecsAudioInternalData& data() const LIFETIME_BOUND { return m_data; }
 
-    size_t memoryCost() const { return m_data.memoryCost(); }
+    // memoryCost() may be called from a GC thread by the JS wrapper's visitChildren, so it must
+    // not touch m_data.audioData (which close() may concurrently null on the main thread).
+    size_t memoryCost() const { return m_memoryCost.load(std::memory_order_relaxed); }
 
 private:
     explicit WebCodecsAudioData(ScriptExecutionContext&);
     WebCodecsAudioData(ScriptExecutionContext&, WebCodecsAudioInternalData&&);
 
     WebCodecsAudioInternalData m_data;
+    std::atomic<size_t> m_memoryCost { 0 };
     bool m_isDetached { false };
 };
 

@@ -19,12 +19,14 @@
             evalAndLog("supportedConstraints = navigator.mediaDevices.getSupportedConstraints()");
             debug("");
             shouldBeTrue("supportedConstraints.aspectRatio");
+            shouldBeTrue("supportedConstraints.backgroundBlur");
             shouldBeTrue("supportedConstraints.deviceId");
             shouldBeTrue("supportedConstraints.echoCancellation");
             shouldBeTrue("supportedConstraints.facingMode");
             shouldBeTrue("supportedConstraints.frameRate");
             shouldBeTrue("supportedConstraints.groupId");
             shouldBeTrue("supportedConstraints.height");
+            shouldBeTrue("supportedConstraints.powerEfficient");
             shouldBeTrue("supportedConstraints.sampleRate");
             shouldBeTrue("supportedConstraints.sampleSize");
             shouldBeTrue("supportedConstraints.volume");

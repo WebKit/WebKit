@@ -133,10 +133,9 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
 
 void ClipboardItemBindingsDataSource::clearItemTypeLoaders()
 {
-    for (auto& itemTypeLoader : m_itemTypeLoaders)
+    auto itemTypeLoaders = std::exchange(m_itemTypeLoaders, { });
+    for (auto& itemTypeLoader : itemTypeLoaders)
         itemTypeLoader->invokeCompletionHandler();
-
-    m_itemTypeLoaders.clear();
 }
 
 void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&& completion)

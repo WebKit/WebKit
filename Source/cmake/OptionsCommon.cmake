@@ -344,10 +344,20 @@ if (NOT APPLE)
     WEBKIT_CHECK_HAVE_STRUCT(HAVE_TM_ZONE "struct tm" tm_zone time.h)
 
     # Check for int types
-    check_type_size("__int128_t" INT128_VALUE)
+    # Some standard libraries (e.g. the Microsoft STL) do not support __int128_t.
+    set(INT128_TEST_SOURCE "
+        #include <limits>
+        #include <utility>
+        static_assert(std::numeric_limits<__int128_t>::is_specialized);
+        static_assert(std::numeric_limits<__int128_t>::is_signed);
+        static_assert(std::numeric_limits<__uint128_t>::is_specialized);
+        static_assert(alignof(std::pair<long long, __int128_t>) == alignof(__int128_t));
+        int main() { return 0; }
+    ")
+    check_cxx_source_compiles("${INT128_TEST_SOURCE}" INT128_IS_USABLE)
 
-    if (HAVE_INT128_VALUE)
-      SET_AND_EXPOSE_TO_BUILD(HAVE_INT128_T INT128_VALUE)
+    if (INT128_IS_USABLE)
+      SET_AND_EXPOSE_TO_BUILD(HAVE_INT128_T TRUE)
     endif ()
 
     # Check which filesystem implementation is available if any

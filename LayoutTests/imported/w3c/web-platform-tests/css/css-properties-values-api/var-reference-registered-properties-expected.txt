@@ -11,8 +11,8 @@ FAIL Invalid values for registered properties are serialized as the empty string
 PASS Valid fallback does not invalidate var()-reference [<length>, 10px]
 PASS Valid fallback does not invalidate var()-reference [<length> | <color>, red]
 PASS Valid fallback does not invalidate var()-reference [<length> | none, none]
-FAIL Invalid fallback doesn't invalidate var()-reference [<length>, red] assert_equals: expected "40px" but got ""
-FAIL Invalid fallback doesn't invalidate var()-reference [<length> | none, nolength] assert_equals: expected "40px" but got ""
-FAIL Invalid fallback doesn't invalidate var()-reference [<length>, var(--novar)] assert_equals: expected "40px" but got ""
+PASS Invalid fallback doesn't invalidate var()-reference [<length>, red]
+PASS Invalid fallback doesn't invalidate var()-reference [<length> | none, nolength]
+PASS Invalid fallback doesn't invalidate var()-reference [<length>, var(--novar)]
 PASS Empty universal custom property can be substituted with var()
 

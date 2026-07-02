@@ -254,7 +254,7 @@ enum class EventHandling : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class ExceptionCode : uint8_t;
 enum class FinalizeRenderingUpdateFlags : uint8_t;
-enum class HasOrShouldIgnoreUserGesture : bool;
+enum class HasUserGestureOrNoUserGestureRequired : bool;
 enum class HighlightRequestOriginatedInApp : bool;
 enum class IFrameUnloadReason : bool;
 enum class ImageDecodingError : uint8_t;
@@ -1787,7 +1787,7 @@ public:
 #endif
 
     void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, WebCore::StorageAccessScope, WebCore::HasOrShouldIgnoreUserGesture, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
+    void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, WebCore::StorageAccessScope, WebCore::HasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     void setLoginStatus(WebCore::RegistrableDomain&&, WebCore::IsLoggedIn, CompletionHandler<void()>&&);
     void isLoggedIn(WebCore::RegistrableDomain&&, CompletionHandler<void(bool)>&&);
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
@@ -2196,6 +2196,9 @@ public:
 
 #if PLATFORM(MAC)
     void setOverflowHeightForTopScrollEdgeEffect(double value) { m_overflowHeightForTopScrollEdgeEffect = value; }
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    void setFullScreenTitlebarOverlayIsDisplayed(bool fullScreenTitlebarOverlayIsDisplayed) { m_fullScreenTitlebarOverlayIsDisplayed = fullScreenTitlebarOverlayIsDisplayed; }
+#endif
 #endif
 
     RefPtr<WebCore::ShareableBitmap> shareableBitmapSnapshotForNode(WebCore::Node&);
@@ -2663,6 +2666,7 @@ private:
     void setIsSuspended(bool, CompletionHandler<void(std::optional<bool>)>&&);
     void suspendWithFrameItem(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(bool)>&&);
     void restoreWithFrameItem(WebCore::BackForwardFrameItemIdentifier, std::optional<std::pair<URL, WebCore::SecurityOriginData>>&&, CompletionHandler<void(bool)>&&);
+    void detachResidualSubframesForBackForwardCacheRestore(WebCore::Page&);
 
     RefPtr<WebImage> snapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions, WebCore::LocalFrame&, WebCore::LocalFrameView&);
     RefPtr<WebImage> snapshotNode(WebCore::Node&, SnapshotOptions, unsigned maximumPixelCount = std::numeric_limits<unsigned>::max());
@@ -3090,12 +3094,14 @@ private:
 
 #if PLATFORM(MAC)
     double m_overflowHeightForTopScrollEdgeEffect { 0 };
-
     // Root-view origin of the in-flight selection-extend drag: captured on the first extent update and
     // cleared by `cancelAutoscroll` (which the UI process calls at gesture begin/end). Lets the edge check
     // require a minimum drag toward an edge before selection autoscroll engages, so a selection that merely
     // originates near an edge doesn't scroll. Persists across hot-zone enter/exit within a single drag.
     std::optional<WebCore::IntPoint> m_selectionAutoscrollDragOrigin;
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    bool m_fullScreenTitlebarOverlayIsDisplayed { false };
+#endif
 #endif
 
     bool m_needsScrollGeometryUpdates { false };

@@ -30,6 +30,7 @@
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @class WKFrameInfo;
+@class WKJSHandle;
 @class WKSecurityOrigin;
 @class WKWebView;
 @class _WKJSHandle;
@@ -93,7 +94,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
 /*!
  Disables all optional metadata in the extraction output: URLs, bounding rects,
  node identifiers, event listeners, and accessibility attributes.
- The output format and other structural configuration (e.g. `targetRect`, `targetNode`)
+ The output format and other structural configuration (e.g. `targetRect`, `targetNodeHandle`)
  are left unchanged. Individual flags can still be re-enabled after calling this method.
  */
 - (void)configureForMinimalOutput;
@@ -190,6 +191,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  The default value is `nil`.
  */
 @property (nonatomic, copy, nullable) _WKJSHandle *targetNode;
+@property (nonatomic, copy, nullable) WKJSHandle *targetNodeHandle WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  If specified, these DOM nodes and their subtrees will be skipped during extraction.
@@ -270,6 +272,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  At least one of `nodeIdentifier` or `searchText` must be specified.
  */
 - (void)requestJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+- (void)requestHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  Asynchronously map a node identifier string (corresponding to a `uid` in
@@ -282,6 +285,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  At least one of `nodeIdentifier` or `searchText` must be specified.
  */
 - (void)requestContainerJSHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+- (void)requestContainerHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
  Asynchronously find the smallest appropriately-sized container element that
@@ -294,6 +298,7 @@ WK_CLASS_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4))
  At least one search text or a non-null node identifier must be specified.
  */
 - (void)requestContainerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(_WKJSHandle * _Nullable))completionHandler;
+- (void)requestContainerHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

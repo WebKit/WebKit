@@ -273,7 +273,7 @@ bool BlobResourceHandle::shouldAbortDispatchDidReceiveResponse()
 void BlobResourceHandle::didReceiveResponse(ResourceResponse&& response)
 {
     client()->didReceiveResponseAsync(this, WTF::move(response), [this, protectedThis = Ref { *this }] {
-        buffer().resize(bufferSize);
+        resizeBuffer(bufferSize);
         readAsync();
     });
 }

@@ -62,6 +62,7 @@
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PageInspectorController.h"
+#include "PageRuntimeAgent.h"
 #include "RemoteFrame.h"
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
@@ -774,6 +775,11 @@ void InspectorPageAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapp
 
     if (m_bootstrapScript.isEmpty())
         return;
+
+    if (auto* pageRuntimeAgent = Ref { m_instrumentingAgents.get() }->enabledPageRuntimeAgent()) {
+        if (pageRuntimeAgent->ignoreDidClearWindowObject())
+            return;
+    }
 
     frame.script().evaluateIgnoringException(ScriptSourceCode(m_bootstrapScript, JSC::SourceTaintedOrigin::Untainted, URL { "web-inspector://bootstrap.js"_str }));
 }

@@ -799,7 +799,7 @@ bool RenderBlock::simplifiedLayout()
     // Make sure a forced break is applied after the content if we are a flow thread in a simplified layout.
     // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
     if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderFragmentedFlow>(*this))
-        fragmentedFlow->applyBreakAfterContent(clientLogicalBottom());
+        fragmentedFlow->applyBreakAfterContent(paddingBoxLogicalBottom());
 
     // Recompute our overflow information.
     // FIXME: Skip recalculation if we didn't actually relayout our in-flow boxes and don't have cached overflow.
@@ -3544,7 +3544,7 @@ LayoutUnit RenderBlock::layoutOverflowLogicalBottom(const RenderBlock& renderer)
         auto childLogicalBottom = renderer.logicalTopForChild(child) + renderer.logicalHeightForChild(child) + renderer.marginAfterForChild(child);
         maxChildLogicalBottom = std::max(maxChildLogicalBottom, childLogicalBottom);
     }
-    return std::max(renderer.clientLogicalBottom(), maxChildLogicalBottom + renderer.paddingAfter());
+    return std::max(renderer.paddingBoxLogicalBottom(), maxChildLogicalBottom + renderer.paddingAfter());
 }
 
 void RenderBlock::updateInFlowDescendantTransformsAfterLayout()

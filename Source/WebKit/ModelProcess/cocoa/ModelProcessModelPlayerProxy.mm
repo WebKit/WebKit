@@ -63,7 +63,9 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/WorkQueue.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/TextStream.h>
 
@@ -236,12 +238,17 @@ public:
     RKUSDModelLoadScheduler() = default;
 
     Ref<REModelLoader> scheduleModelLoad(Model&, const std::optional<String>& attributionTaskID, std::optional<int> entityMemoryLimit, REModelLoaderClient&);
+    void scheduleModelConversion(Ref<WebCore::SharedBuffer>&&, ThreadSafeWeakPtr<ModelProcessModelPlayerProxy>&&, Function<void(ModelProcessModelPlayerProxy&, RetainPtr<NSData>&&)>&&);
 
 private:
     void loadNextModel();
 
+    static constexpr size_t maxLimitOnParallelLoads = 3;
+
     Deque<Ref<RKModelLoaderUSD>> m_pendingLoads;
     size_t m_inProgressLoadsCount { 0 };
+
+    const Ref<WorkQueue> m_conversionQueue { WorkQueue::create("com.apple.WebKit.ModelProcess.USDConversion"_s, WorkQueue::QOS::UserInitiated) };
 };
 
 RKUSDModelLoadScheduler& RKUSDModelLoadScheduler::singleton()
@@ -262,11 +269,26 @@ Ref<REModelLoader> RKUSDModelLoadScheduler::scheduleModelLoad(Model& model, cons
     return loader;
 }
 
+void RKUSDModelLoadScheduler::scheduleModelConversion(Ref<WebCore::SharedBuffer>&& modelData, ThreadSafeWeakPtr<ModelProcessModelPlayerProxy>&& player, Function<void(ModelProcessModelPlayerProxy&, RetainPtr<NSData>&&)>&& completion)
+{
+    m_conversionQueue->dispatch([modelData = WTF::move(modelData), player = WTF::move(player), completion = WTF::move(completion)] () mutable {
+        // Skip the copy + conversion if the player is already gone (e.g. its <model> element was unloaded).
+        if (!player.get())
+            return;
+
+        RetainPtr usdzData = [WKUSDStageConverter convert:modelData->createNSData()];
+
+        dispatch_async(mainDispatchQueueSingleton(), makeBlockPtr([player = WTF::move(player), completion = WTF::move(completion), usdzData = WTF::move(usdzData)] () mutable {
+            if (RefPtr protectedPlayer = player.get())
+                completion(*protectedPlayer, WTF::move(usdzData));
+        }).get());
+    });
+}
+
 void RKUSDModelLoadScheduler::loadNextModel()
 {
     dispatch_assert_queue(mainDispatchQueueSingleton());
 
-    static const size_t maxLimitOnParallelLoads = 3;
     if (m_inProgressLoadsCount >= maxLimitOnParallelLoads)
         return;
 
@@ -388,23 +410,29 @@ void ModelProcessModelPlayerProxy::createLayer()
 
 void ModelProcessModelPlayerProxy::loadModel(Ref<WebCore::Model>&& model, WebCore::LayoutSize layoutSize, bool isForImmersive)
 {
+    dispatch_assert_queue(mainDispatchQueueSingleton());
+
 #if HAVE(CORE_RE)
     if (model->mimeType() != usdzMIMEType) {
-        RetainPtr<NSData> modelData = model->data()->createNSData();
-        RetainPtr<NSData> usdzData = [WKUSDStageConverter convert:modelData.get()];
+        Ref<WebCore::SharedBuffer> modelData = model->data();
+        RKUSDModelLoadScheduler::singleton().scheduleModelConversion(WTF::move(modelData), ThreadSafeWeakPtr { *this }, [model = WTF::move(model), layoutSize, isForImmersive](ModelProcessModelPlayerProxy& proxy, RetainPtr<NSData>&& usdzData) mutable {
+            dispatch_assert_queue(mainDispatchQueueSingleton());
 
-        if (usdzData) {
-            auto convertedBuffer = WebCore::SharedBuffer::create(usdzData.get());
+            if (usdzData) {
+                auto convertedBuffer = WebCore::SharedBuffer::create(usdzData.get());
 
-            // Send converted data back to WebContent for drag-and-drop
-            send(Messages::ModelProcessModelPlayer::DidConvertModelData(convertedBuffer.copyRef(), usdzMIMEType));
+                // Send converted data back to WebContent for drag-and-drop
+                proxy.send(Messages::ModelProcessModelPlayer::DidConvertModelData(convertedBuffer.copyRef(), usdzMIMEType));
 
-            auto convertedModel = WebCore::Model::create(WTF::move(convertedBuffer), usdzMIMEType, model->url());
-            load(convertedModel, layoutSize, isForImmersive);
-            return;
-        }
+                auto convertedModel = WebCore::Model::create(WTF::move(convertedBuffer), usdzMIMEType, model->url());
+                proxy.load(convertedModel, layoutSize, isForImmersive);
+                return;
+            }
 
-        RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::loadModel(): Model conversion failed, continuing with original data", this);
+            RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::loadModel(): Model conversion failed, continuing with original data", &proxy);
+            proxy.load(model, layoutSize, isForImmersive);
+        });
+        return;
     }
 #endif
 

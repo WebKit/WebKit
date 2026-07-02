@@ -409,8 +409,11 @@ void RenderLayer::paintNonLayerChildForFragmentsForSVG(RenderElement& childRende
     if (isSVGRoot)
         svgRootScrollAdjustment = LayoutPoint(-downcast<RenderSVGRoot>(renderer()).scrollPosition());
 
+    // Like collectEventRegionForFragments(), event-region collection runs even for fragments
+    // with no visible content (shouldPaintContent false, empty foreground rect).
+    bool collectingEventRegion = phase == PaintPhase::EventRegion;
     for (const auto& fragment : layerFragments) {
-        if (!fragment.shouldPaintContent || fragment.dirtyForegroundRect().isEmpty())
+        if (!collectingEventRegion && (!fragment.shouldPaintContent || fragment.dirtyForegroundRect().isEmpty()))
             continue;
 
         GraphicsContextStateSaver stateSaver(context, false);
@@ -421,6 +424,8 @@ void RenderLayer::paintNonLayerChildForFragmentsForSVG(RenderElement& childRende
             phase, paintBehavior, subtreePaintRootForRenderer,
             nullptr, nullptr, &paintingInfo.rootLayer->renderer(), this,
             paintingInfo.requireSecurityOriginAccessForWidgets);
+        if (collectingEventRegion)
+            paintInfo.regionContext = paintingInfo.regionContext;
         if (phase == PaintPhase::Foreground)
             paintInfo.overlapTestRequests = paintingInfo.overlapTestRequests;
         paintInfo.updateSubtreePaintRootForChildren(&renderer());
@@ -522,6 +527,14 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
                     childToPaint.accumulatedAncestorOffset, paintingInfo, paintFlags,
                     paintBehavior, subtreePaintRootForRenderer, nominalCorrection);
             }
+            continue;
+        }
+
+        // phasesToPaint only covers normal painting (Foreground/Outline), so drive the
+        // EventRegion phase separately for non-layer children when collecting the event region.
+        if (paintFlags.contains(PaintLayerFlag::CollectingEventRegion)) {
+            paintNonLayerChildForFragmentsForSVG(childRenderer.get(), childToPaint.accumulatedAncestorOffset,
+                PaintPhase::EventRegion, layerFragments, context, paintingInfo, paintBehavior, subtreePaintRootForRenderer, containerBaseOffset, isSVGRoot);
             continue;
         }
 

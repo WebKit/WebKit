@@ -374,6 +374,30 @@ static inline Yarr::FlagsString flagsString(JSGlobalObject* globalObject, JSObje
     return Yarr::flagsString(flags);
 }
 
+static ALWAYS_INLINE bool regExpFlagsWatchpointIsValid(VM& vm, RegExpObject* regExpObject)
+{
+    JSGlobalObject* globalObject = regExpObject->realmMayBeNull();
+    if (!globalObject)
+        return false;
+
+    if (globalObject->regExpPrototype() != regExpObject->getPrototypeDirect())
+        return false;
+
+    if (globalObject->regExpPrimordialPropertiesWatchpointSet().state() != IsWatched)
+        return false;
+
+    if (!regExpObject->hasCustomProperties())
+        return true;
+
+#define JSC_CHECK_REGEXP_FLAG_PROPERTY(key, name, lowerCaseName, index) \
+    if (regExpObject->getDirectOffset(vm, vm.propertyNames->lowerCaseName) != invalidOffset) \
+        return false;
+    JSC_REGEXP_FLAGS(JSC_CHECK_REGEXP_FLAG_PROPERTY)
+#undef JSC_CHECK_REGEXP_FLAG_PROPERTY
+
+    return true;
+}
+
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -544,6 +568,9 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterFlags, (JSGlobalObject* globalObject, 
 
     if (!thisValue.isObject()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "The RegExp.prototype.flags getter can only be called on an object"_s);
+
+    if (auto* regExpObject = dynamicDowncast<RegExpObject>(thisValue); regExpObject && regExpFlagsWatchpointIsValid(vm, regExpObject)) [[likely]]
+        return JSValue::encode(jsString(vm, String::fromLatin1(Yarr::flagsString(regExpObject->regExp()->flags()).data())));
 
     auto flags = flagsString(globalObject, asObject(thisValue));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

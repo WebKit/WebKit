@@ -693,6 +693,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 #if PLATFORM(MAC)
     , m_overflowHeightForTopScrollEdgeEffect(parameters.overflowHeightForTopScrollEdgeEffect)
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    , m_fullScreenTitlebarOverlayIsDisplayed(parameters.fullScreenTitlebarOverlayIsDisplayed)
+#endif
 #endif
 #if ENABLE(META_VIEWPORT)
     , m_forceAlwaysUserScalable(parameters.ignoresViewportScaleLimits)
@@ -1412,7 +1415,7 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
     if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(data);
 
-        switch (data.type) {
+        switch (static_cast<FrameTreeSyncDataType>(data.value.index())) {
         case FrameTreeSyncDataType::FrameRect:
             frame->updateFrameRectFromRemote(coreFrame->frameTreeSyncData().frameRect);
             break;
@@ -8948,8 +8951,31 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
 
     m_isSuspended = false;
     unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    detachResidualSubframesForBackForwardCacheRestore(*page);
     cachedPage->restore(*page);
     completionHandler(true);
+}
+
+void WebPage::detachResidualSubframesForBackForwardCacheRestore(WebCore::Page& page)
+{
+    // Only reached in an iframe process: the main frame is remote, so every child belongs to
+    // the outgoing navigation and detaching all of them is safe.
+    ASSERT(!page.localMainFrame());
+
+    Ref mainFrame = page.mainFrame();
+    Vector<Ref<WebCore::Frame>> children;
+    for (RefPtr child = mainFrame->tree().firstChild(); child; child = child->tree().nextSibling())
+        children.append(*child);
+    for (auto& child : children) {
+        if (RefPtr localChild = dynamicDowncast<WebCore::LocalFrame>(child.get()))
+            localChild->loader().detachFromParent();
+        else {
+            child->disconnectOwnerElement();
+            if (RefPtr parent = child->tree().parent())
+                parent->tree().removeChild(child);
+            child->disconnectView();
+        }
+    }
 }
 
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
@@ -8962,9 +8988,9 @@ void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDo
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frame.frameID(), m_identifier), WTF::move(completionHandler));
 }
 
-void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, StorageAccessScope scope, HasOrShouldIgnoreUserGesture hasOrShouldIgnoreUserGesture, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&& completionHandler)
+void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope, hasOrShouldIgnoreUserGesture), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope, hasUserGestureOrNoUserGestureRequired), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
         if (result.wasGranted == StorageAccessWasGranted::Yes) {
             switch (result.scope) {
             case StorageAccessScope::PerFrame:

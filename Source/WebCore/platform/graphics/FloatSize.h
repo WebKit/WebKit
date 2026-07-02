@@ -124,6 +124,17 @@ public:
         return std::hypot(m_width, m_height);
     }
 
+    FloatSize normalized() const
+    {
+        float length = diagonalLength();
+        return !length ? *this : scaled(1.0f / length);
+    }
+
+    constexpr FloatSize perpendicular() const
+    {
+        return { -m_height, m_width };
+    }
+
     constexpr float diagonalLengthSquared() const
     {
         return m_width * m_width + m_height * m_height;

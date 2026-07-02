@@ -109,8 +109,6 @@ public:
     bool processingUserGesture() const { return m_userGestureToken && m_userGestureToken->processingUserGesture(); }
     RefPtr<UserGestureToken> userGestureToken() const { return m_userGestureToken; }
 
-    bool treatAsSameOriginNavigation() const { return m_treatAsSameOriginNavigation; }
-
     bool hasOpenedFrames() const { return m_hasOpenedFrames; }
     void setHasOpenedFrames(bool value) { m_hasOpenedFrames = value; }
 
@@ -149,7 +147,6 @@ private:
     NavigationType m_type;
     std::optional<NavigationNavigationType> m_navigationAPIType;
 
-    bool m_treatAsSameOriginNavigation { false };
     bool m_hasOpenedFrames { false };
     bool m_openedByDOMWithOpener { false };
     PolicyAlreadyDecided m_policyAlreadyDecided { PolicyAlreadyDecided::No };

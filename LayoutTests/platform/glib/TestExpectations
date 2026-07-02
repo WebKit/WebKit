@@ -152,7 +152,7 @@ imported/w3c/web-platform-tests/css/css-images/object-fit-scale-down-svg-004i.ht
 imported/w3c/web-platform-tests/css/css-images/object-fit-scale-down-svg-004p.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-line-height.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ Pass ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-gutters-explicit-placement.html [ Pass ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html [ Pass ]
 
@@ -2927,6 +2927,7 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/scr
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-encoded-transform.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-sender-worker-single-frame.https.html  [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/idlharness.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-audiolevel.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFrame-timestamps.html [ Skip ]
 webrtc/audio-sframe.html [ Failure ]
@@ -3606,6 +3607,10 @@ ipc/pasteboard-write-custom-data.html [ Skip ]
 ipc/remotedisplaylistrecorder-drawcontrolpart-slidertrackpart-crash.html [ Skip ]
 ipc/media-containment-bypass-create-player.html [ Skip ]
 http/tests/ipc/gpu-load-error-empty-user-info-crssh.html [ Skip ]
+ipc/usermedia-capture-start-producing-data-race.html [ Skip ]
+# Hardcodes Cocoa's WebCore::CertificateInfo::trust field in the IPC payload; SOUP's
+# CertificateInfo serializes a GRefPtr<GTlsCertificate> that coreipc.js cannot construct.
+http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Skip ]
 
 # These tests are specific to Cocoa's definition of WebCore::PlatformColorSpace which is different from Skia's.
 ipc/decode-feConvolveMatrix-kernelSize-overflow.html [ Skip ]
@@ -3845,6 +3850,9 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
 http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Skip ]
 fast/mediastream/audio-session-stays-active-when-removing-session-during-speech-recognition.html [ Skip ]
+fast/mediastream/audio-session-active-when-capture-starts-and-stops.html [ Skip ]
+fast/mediastream/audio-session-stays-active-during-capture.html [ Skip ]
+fast/mediastream/audio-session-stays-active-when-removing-session-during-capture.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]
@@ -4229,7 +4237,6 @@ webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 webkit.org/b/185548 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Timeout ]
 
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
-webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
 webkit.org/b/191497 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
 webkit.org/b/192407 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
@@ -5605,6 +5612,8 @@ webkit.org/b/317607 http/tests/media/track/track-removal-clears-pending-list.htm
 
 webkit.org/b/317966 [ x86_64 ] http/tests/web-locks/web-lock-in-serviceworker.html [ Crash Failure Pass ]
 webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html [ Pass Failure ]
+
+webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Pass ]
 
 # End: Common failures between GTK and WPE.
 

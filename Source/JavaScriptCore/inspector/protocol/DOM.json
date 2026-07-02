@@ -483,6 +483,7 @@
         {
             "name": "getAccessibilityPropertiesForNode",
             "description": "Returns a dictionary of accessibility properties for the node.",
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for which to get accessibility properties." }
             ],
@@ -553,7 +554,7 @@
         {
             "name": "requestNode",
             "description": "Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of <code>setChildNodes</code> notifications.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id to convert into node." }
             ],
@@ -746,7 +747,7 @@
         {
             "name": "resolveNode",
             "description": "Resolves JavaScript node object for given node id.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to resolve." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
@@ -804,7 +805,7 @@
         {
             "name": "setInspectedNode",
             "description": "Enables console to refer to the node with given id via $0 (see Command Line API for more details).",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "DOM node id to be accessible by means of $0 command line API." }
             ]

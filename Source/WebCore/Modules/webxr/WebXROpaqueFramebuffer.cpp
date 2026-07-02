@@ -169,10 +169,8 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 
     m_isForTesting = data.isForTesting;
 
-    auto [textureTarget, textureTargetBinding] = gl->externalImageTextureBindingPoint();
-
     ScopedWebGLRestoreFramebuffer restoreFramebuffer { m_context };
-    ScopedWebGLRestoreTexture restoreTexture { m_context, textureTarget };
+    ScopedWebGLRestoreTexture restoreTexture { m_context, GL::TEXTURE_2D };
     ScopedWebGLRestoreRenderbuffer restoreRenderBuffer { m_context };
 
     m_drawFramebuffer->setInsideWebXRRAF(true);

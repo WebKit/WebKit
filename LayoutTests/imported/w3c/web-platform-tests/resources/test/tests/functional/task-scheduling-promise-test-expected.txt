@@ -1,0 +1,18 @@
+
+PASS promise test without cleanup #1
+PASS sub-test with 0 cleanup functions executes in distinct microtask from a passing sub-test
+FAIL failing promise test without cleanup #1 promise_test: Unhandled rejection with value: object "Error: This error is expected"
+PASS sub-test with 0 cleanup functions executes in distinct microtask from a failing sub-test
+PASS promise test with cleanup #1
+PASS sub-test with some cleanup functions executes in distinct microtask from a passing sub-test
+FAIL failing promise test with cleanup #1 promise_test: Unhandled rejection with value: object "Error: This error is expected"
+PASS sub-test with some cleanup functions executes in distinct microtask from a failing sub-test
+PASS promise test without cleanup #2
+PASS sub-test with 0 cleanup functions executes in the same task as a passing sub-test
+FAIL failing promise test without cleanup #2 promise_test: Unhandled rejection with value: object "Error: This error is expected"
+PASS sub-test with 0 cleanup functions executes in the same task as a failing sub-test
+PASS promise test with cleanup #2
+PASS sub-test with some cleanup functions executes in the same task as a passing sub-test
+FAIL failing promise test with cleanup #2 promise_test: Unhandled rejection with value: object "Error: This error is expected"
+PASS sub-test with some cleanup functions executes in the same task as a failing sub-test
+

@@ -49,6 +49,7 @@
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -96,6 +97,7 @@ Inspector::Protocol::ErrorStringOr<void> PageRuntimeAgent::disable()
 
 void PageRuntimeAgent::frameNavigated(LocalFrame& frame)
 {
+    SetForScope ignoreDidClearWindowObject(m_ignoreDidClearWindowObject, true);
     // Ensure execution context is created for the frame even if it doesn't have scripts.
     mainWorldGlobalObject(frame);
 }
@@ -106,6 +108,10 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapper
     if (frameId.isEmpty())
         return;
 
+    if (m_ignoreDidClearWindowObject)
+        return;
+
+    SetForScope ignoreDidClearWindowObject(m_ignoreDidClearWindowObject, true);
     notifyContextCreated(frameId, frame.script().globalObject(world), world);
 }
 

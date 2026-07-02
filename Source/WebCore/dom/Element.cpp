@@ -1612,7 +1612,7 @@ int Element::clientLeft()
     protect(document())->updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Left, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::IgnorePendingStylesheets });
 
     if (CheckedPtr renderer = renderBox()) {
-        auto clientLeft = LayoutUnit { roundToInt(renderer->clientLeft()) };
+        auto clientLeft = LayoutUnit { roundToInt(renderer->borderLeft()) };
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(clientLeft, *renderer).toDouble());
     }
     return 0;
@@ -1623,7 +1623,7 @@ int Element::clientTop()
     protect(document())->updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Top, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::IgnorePendingStylesheets });
 
     if (CheckedPtr renderer = renderBox()) {
-        auto clientTop = LayoutUnit { roundToInt(renderer->clientTop()) };
+        auto clientTop = LayoutUnit { roundToInt(renderer->borderTop()) };
         return convertToNonSubpixelValue(Style::adjustLayoutUnitForAbsoluteZoom(clientTop, *renderer).toDouble());
     }
     return 0;
@@ -1646,7 +1646,7 @@ int Element::clientWidth()
         return Style::adjustForAbsoluteZoom(protect(renderView->frameView())->layoutWidth(), renderView);
     
     if (CheckedPtr renderer = renderBox()) {
-        auto clientWidth = LayoutUnit { roundToInt(renderer->clientWidth()) };
+        auto clientWidth = LayoutUnit { roundToInt(renderer->paddingBoxWidth()) };
         // clientWidth/Height is the visual portion of the box content, not including
         // borders or scroll bars, but includes padding. And per
         // https://www.w3.org/TR/CSS2/tables.html#model,
@@ -1683,7 +1683,7 @@ int Element::clientHeight()
         return Style::adjustForAbsoluteZoom(protect(renderView->frameView())->layoutHeight(), renderView);
 
     if (CheckedPtr renderer = renderBox()) {
-        auto clientHeight = LayoutUnit { roundToInt(renderer->clientHeight()) };
+        auto clientHeight = LayoutUnit { roundToInt(renderer->paddingBoxHeight()) };
         // clientWidth/Height is the visual portion of the box content, not including
         // borders or scroll bars, but includes padding. And per
         // https://www.w3.org/TR/CSS2/tables.html#model,

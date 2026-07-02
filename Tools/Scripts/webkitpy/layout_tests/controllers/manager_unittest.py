@@ -141,3 +141,14 @@ passes/text.html                       ['PASS']
         # so if the output is not *exactly* as expected including whitespaces, this
         # could lead to unwanted effects, like blocking builds for a long time.
         self.assertEqual(get_printed_expectations(), out)
+
+    def test_print_expectations_no_tests_found(self):
+        # Passing a non-existent path should not raise ValueError from max() on an
+        # empty sequence; it should return 0 cleanly.
+        manager = self._get_manager()
+        manager._options.update(repeat_each=1, iterations=1)
+        device_type_list = manager._port.supported_device_types()
+        manager._create_port_for_driver = Mock(return_value=manager._port)
+        manager._collect_tests = Mock(return_value=({dt: [] for dt in device_type_list}, set()))
+        exit_code = manager.print_expectations(['this/file/does/not/exist.html'])
+        self.assertEqual(exit_code, 0)

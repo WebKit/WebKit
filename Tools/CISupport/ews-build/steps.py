@@ -6021,9 +6021,10 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
             self.handleExcessiveLogging()
             return
 
-        match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful', line)
+        match = re.search(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful(?: \((?P<expected>\d+) expected failures?\))?', line)
         if match:
-            self.failedTestCount = int(match.group('ran')) - int(match.group('passed'))
+            expected = int(match.group('expected')) if match.group('expected') else 0
+            self.failedTestCount = int(match.group('ran')) - int(match.group('passed')) - expected
 
     def handleExcessiveLogging(self):
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'

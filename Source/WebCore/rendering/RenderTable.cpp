@@ -382,7 +382,7 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToC
 
 void RenderTable::layoutCaption(RenderTableCaption& caption)
 {
-    LayoutRect captionRect(caption.frameRect());
+    LayoutRect captionRect(caption.borderBoxRectInContainer());
 
     if (caption.needsLayout()) {
         // The margins may not be available but ensure the caption is at least located beneath any previous sibling caption

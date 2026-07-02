@@ -207,6 +207,10 @@ static std::optional<InputMethodState> inputMethodStateForElement(Element* eleme
 void WebPage::setInputMethodState(Element* element)
 {
     auto state = inputMethodStateForElement(element);
+
+    if (state && !m_userIsInteracting)
+        state->hints.add(InputMethodState::Hint::InhibitOnScreenKeyboard);
+
     if (m_inputMethodState == state)
         return;
 

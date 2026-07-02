@@ -245,13 +245,14 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
 
 void ContentVisibilityDocumentState::updateViewportProximity(const Element& element, ViewportProximity viewportProximity)
 {
+    auto result = m_elementViewportProximities.ensure(element, [] {
+        return ViewportProximity::Far;
+    });
     // No need to schedule content relevancy update for first time call, since
     // that will be handled by determineInitialVisibleContentVisibility.
-    if (m_elementViewportProximities.contains(element))
+    if (!result.isNewEntry)
         protect(element.document())->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
-    m_elementViewportProximities.ensure(element, [] {
-        return ViewportProximity::Far;
-    }).iterator->value = viewportProximity;
+    result.iterator->value = viewportProximity;
 }
 
 void ContentVisibilityDocumentState::removeViewportProximity(const Element& element)

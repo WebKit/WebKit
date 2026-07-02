@@ -10,6 +10,13 @@ selectors = [
     { name = "initWithUUID:andRemotePid:andContextId:", class = "?" },
 ]
 
+[[temporary-usage]]
+request = "rdar://181067589"
+cleanup = "rdar://181067932"
+symbols = [
+    "kCMTextMarkupAttribute_PreventLineWrapping",
+]
+
 [[not-web-essential]]
 request = "rdar://157890384"
 classes = ["MTMaterialLayer"]

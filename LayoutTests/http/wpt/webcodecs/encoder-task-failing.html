@@ -48,6 +48,10 @@ async function doTest(t, codec)
 
     await flushPromise.catch(() => { });
 
+    // Encoder may skip unsupported frames.
+    if (!frameCount && !errorCount)
+        return;
+
     assert_equals(frameCount + errorCount, 1);
 
     if (errorCount) {

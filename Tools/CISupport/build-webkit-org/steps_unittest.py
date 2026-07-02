@@ -1326,6 +1326,29 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
         expected_state_string = '5 api tests failed or timed out'
         return self.failureTest('wpe', 'wpe', 'release', expected_command, generated_stderr_output, expected_state_string)
 
+    def test_expected_failures_only_mac(self):
+        expected_command = f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --json-output={self.jsonFileName} --release --verbose --buildbot-master {CURRENT_HOSTNAME} --builder-name API-Tests --build-number 101 --buildbot-worker bot100 --report https://results.webkit.org'
+        self.configureStep('mac', 'mac-highsierra', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', expected_command + ' 2>&1 | python3 Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        timeout=1200,
+                        )
+            .log('stdio', stderr='Ran 91 tests of 123 with 89 successful (2 expected failures)')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='run-api-tests')
+        return self.run_step()
+
+    def test_failure_excludes_expected_mac(self):
+        expected_command = f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --json-output={self.jsonFileName} --release --verbose --buildbot-master {CURRENT_HOSTNAME} --builder-name API-Tests --build-number 101 --buildbot-worker bot100 --report https://results.webkit.org'
+        generated_stderr_output = f'Failed: {expected_command}\nRan 91 tests of 123 with 89 successful (1 expected failures)'
+        expected_state_string = '1 api test failed or timed out'
+        return self.failureTest('mac', 'mac-highsierra', 'release', expected_command, generated_stderr_output, expected_state_string)
+
 
 class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

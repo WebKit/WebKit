@@ -190,13 +190,42 @@ TEST(FloatQuad, BoundingBoxSaturateInf)
 
 TEST(FloatQuad, BoundingBoxSaturateLarge)
 {
-    constexpr double large = std::numeric_limits<float>::max() * 4;
+    const double large = std::numeric_limits<float>::max() * 4;
     FloatQuad quad(FloatPoint(-large, 3), FloatPoint(5, large), FloatPoint(11, 13), FloatPoint(17, 19));
     FloatRect rect = quad.boundingBox();
     ASSERT_EQ(rect.x(), std::numeric_limits<int>::min());
     ASSERT_EQ(rect.y(), 3.0f);
     ASSERT_EQ(rect.width(), 17.0f - std::numeric_limits<int>::min());
     ASSERT_EQ(rect.height(), static_cast<float>(std::numeric_limits<int>::max()) - 3.0f);
+}
+
+TEST(FloatQuad, IntersectsQuad)
+{
+    // Two overlapping axis-aligned quads.
+    FloatQuad quadA(FloatPoint(0, 0), FloatPoint(10, 0), FloatPoint(10, 10), FloatPoint(0, 10));
+    FloatQuad quadB(FloatPoint(5, 5), FloatPoint(15, 5), FloatPoint(15, 15), FloatPoint(5, 15));
+    EXPECT_TRUE(quadA.intersectsQuad(quadB));
+
+    // Two non-overlapping axis-aligned quads.
+    FloatQuad quadC(FloatPoint(0, 0), FloatPoint(10, 0), FloatPoint(10, 10), FloatPoint(0, 10));
+    FloatQuad quadD(FloatPoint(20, 20), FloatPoint(30, 20), FloatPoint(30, 30), FloatPoint(20, 30));
+    EXPECT_FALSE(quadC.intersectsQuad(quadD));
+
+    // One quad entirely inside the other (no edge crossings, tests containsPoint fallback).
+    FloatQuad outer(FloatPoint(0, 0), FloatPoint(20, 0), FloatPoint(20, 20), FloatPoint(0, 20));
+    FloatQuad inner(FloatPoint(5, 5), FloatPoint(15, 5), FloatPoint(15, 15), FloatPoint(5, 15));
+    EXPECT_TRUE(outer.intersectsQuad(inner));
+    EXPECT_TRUE(inner.intersectsQuad(outer));
+
+    // Two rotated quads crossing in an X shape.
+    FloatQuad diagA(FloatPoint(0, 5), FloatPoint(5, 0), FloatPoint(10, 5), FloatPoint(5, 10));
+    FloatQuad diagB(FloatPoint(3, 0), FloatPoint(7, 0), FloatPoint(7, 10), FloatPoint(3, 10));
+    EXPECT_TRUE(diagA.intersectsQuad(diagB));
+
+    // Two rotated quads that don't intersect.
+    FloatQuad diagC(FloatPoint(0, 0), FloatPoint(4, 0), FloatPoint(4, 4), FloatPoint(0, 4));
+    FloatQuad diagD(FloatPoint(10, 10), FloatPoint(14, 10), FloatPoint(14, 14), FloatPoint(10, 14));
+    EXPECT_FALSE(diagC.intersectsQuad(diagD));
 }
 
 } // namespace TestWebKitAPI

@@ -33,7 +33,8 @@ PAS_BEGIN_EXTERN_C;
 enum pas_race_test_hook_kind {
     pas_race_test_hook_local_allocator_stop_before_did_stop_allocating,
     pas_race_test_hook_local_allocator_stop_before_unlock,
-    pas_race_test_hook_bitfit_directory_take_last_empty_after_loop
+    pas_race_test_hook_bitfit_directory_take_last_empty_after_loop,
+    pas_race_test_hook_medium_directory_after_directory_store
 };
 
 typedef enum pas_race_test_hook_kind pas_race_test_hook_kind;
@@ -47,6 +48,8 @@ static inline const char* pas_race_test_hook_kind_get_string(pas_race_test_hook_
         return "local_allocator_stop_before_unlock";
     case pas_race_test_hook_bitfit_directory_take_last_empty_after_loop:
         return "bitfit_directory_take_last_empty_after_loop";
+    case pas_race_test_hook_medium_directory_after_directory_store:
+        return "medium_directory_after_directory_store";
     }
     PAS_ASSERT_NOT_REACHED();
     return NULL;

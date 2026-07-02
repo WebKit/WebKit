@@ -1789,7 +1789,7 @@ void WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& i
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
-        return completion({ });
+        return completion({ { }, { }, false });
 
     completion(TextExtraction::interactionDescription(interaction, *frame));
 }

@@ -2813,14 +2813,6 @@ RegisterID* BytecodeGenerator::emitInById(RegisterID* dst, RegisterID* base, con
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitTryGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
-{
-    ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties are not supported with tryGetById.");
-
-    OpTryGetById::emit(this, kill(dst), base, addConstant(property), nextValueProfileIndex());
-    return dst;
-}
-
 RegisterID* BytecodeGenerator::emitGetLength(RegisterID* dst, RegisterID* base)
 {
     OpGetLength::emit(this, kill(dst), base, nextValueProfileIndex());
@@ -3687,6 +3679,8 @@ RegisterID* BytecodeGenerator::emitCallDirectEval(RegisterID* dst, RegisterID* f
 
 ExpectedFunction BytecodeGenerator::expectedFunctionForIdentifier(const Identifier& identifier)
 {
+    if (shouldEmitDebugHooks()) [[unlikely]]
+        return NoExpectedFunction;
     if (identifier == propertyNames().Object || identifier == propertyNames().builtinNames().ObjectPrivateName())
         return ExpectObjectConstructor;
     if (identifier == propertyNames().Array || identifier == propertyNames().builtinNames().ArrayPrivateName())

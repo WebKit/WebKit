@@ -246,6 +246,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
 #if PLATFORM(MAC)
     double overflowHeightForTopScrollEdgeEffect;
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    bool fullScreenTitlebarOverlayIsDisplayed;
+#endif
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
     WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
 #endif

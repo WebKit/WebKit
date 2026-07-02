@@ -41,7 +41,7 @@ enum class StorageAccessWasGranted : uint8_t { No, Yes, YesWithException };
 
 enum class StorageAccessPromptWasShown : bool { No, Yes };
 
-enum class HasOrShouldIgnoreUserGesture : bool { No, Yes };
+enum class HasUserGestureOrNoUserGestureRequired : bool { No, Yes };
 
 enum class StorageAccessScope : bool {
     PerFrame,

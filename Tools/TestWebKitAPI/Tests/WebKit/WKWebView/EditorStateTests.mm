@@ -759,6 +759,47 @@ TEST(EditorStateTests, UnionRectInVisibleSelectedRangeForNonEditableRangeSelecti
     EXPECT_TRUE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
 }
 
+TEST(EditorStateTests, NotifyTextInputClientAfterMagnificationChange)
+{
+    __block unsigned didUpdateSelectionCount = 0;
+
+    InstanceMethodSwizzler didUpdateSelectionSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidUpdateSelection),
+        imp_implementationWithBlock(^{
+            didUpdateSelectionCount++;
+        })
+    };
+
+    RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
+    [webView setAllowsMagnification:YES];
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body>Hello world.</body>"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView mouseDownAtPoint:NSMakePoint(50, 390) simulatePressure:NO];
+    [webView mouseUpAtPoint:NSMakePoint(50, 390)];
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    auto countBeforeFirstMagnification = didUpdateSelectionCount;
+    [webView setMagnification:2.0];
+    [webView waitForNextPresentationUpdate];
+
+    Util::waitForConditionWithLogging(^{
+        return didUpdateSelectionCount > countBeforeFirstMagnification;
+    }, 3, @"Timed out waiting for first call to -textInputClientDidUpdateSelection");
+
+    auto countBeforeSecondMagnification = didUpdateSelectionCount;
+    [webView setMagnification:1.0];
+    [webView waitForNextPresentationUpdate];
+
+    Util::waitForConditionWithLogging(^{
+        return didUpdateSelectionCount > countBeforeSecondMagnification;
+    }, 3, @"Timed out waiting for second call to -textInputClientDidUpdateSelection");
+}
+
 #endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

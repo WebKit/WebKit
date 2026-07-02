@@ -105,6 +105,57 @@ SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 
 @end
 
+#if HAVE(UIFINDINTERACTION)
+@interface WTRTextSearchAggregator : NSObject <UITextSearchAggregator>
+- (instancetype)initWithCompletionHandler:(void (^)(NSUInteger matchCount))completionHandler;
+@end
+
+@implementation WTRTextSearchAggregator {
+    RetainPtr<NSMutableOrderedSet<UITextRange *>> _foundRanges;
+    BlockPtr<void(NSUInteger)> _completionHandler;
+}
+
+- (instancetype)initWithCompletionHandler:(void (^)(NSUInteger))completionHandler
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _foundRanges = adoptNS([[NSMutableOrderedSet alloc] init]);
+    _completionHandler = makeBlockPtr(completionHandler);
+
+    return self;
+}
+
+- (NSOrderedSet<UITextRange *> *)allFoundRanges
+{
+    return _foundRanges.get();
+}
+
+- (void)foundRange:(UITextRange *)range forSearchString:(NSString *)string inDocument:(UITextSearchDocumentIdentifier)document
+{
+    if (range)
+        [_foundRanges addObject:range];
+}
+
+- (void)finishedSearching
+{
+    if (_completionHandler)
+        _completionHandler([_foundRanges count]);
+}
+
+- (void)invalidateFoundRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document
+{
+    [_foundRanges removeObject:range];
+}
+
+- (void)invalidate
+{
+    [_foundRanges removeAllObjects];
+}
+
+@end
+#endif // HAVE(UIFINDINTERACTION)
+
 namespace WTR {
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
@@ -1686,6 +1737,26 @@ void UIScriptControllerIOS::presentFindNavigator()
 {
 #if HAVE(UIFINDINTERACTION)
     [webView().findInteraction presentFindNavigatorShowingReplace:NO];
+#endif
+}
+
+void UIScriptControllerIOS::findStringMatchesUsingFindInteraction(JSStringRef string, JSValueRef callback)
+{
+#if HAVE(UIFINDINTERACTION)
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    RetainPtr aggregator = adoptNS([[WTRTextSearchAggregator alloc] initWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](NSUInteger matchCount) {
+        if (!m_context)
+            return;
+        JSValueRef matchCountValue = JSValueMakeNumber(m_context->jsContext(), matchCount);
+        m_context->asyncTaskComplete(callbackID, { matchCountValue });
+    }).get()]);
+
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+    [(id<UITextSearching>)webView() performTextSearchWithQueryString:toWTFString(string).createNSString().get() usingOptions:searchOptions.get() resultAggregator:aggregator.get()];
+#else
+    UNUSED_PARAM(string);
+    UNUSED_PARAM(callback);
 #endif
 }
 

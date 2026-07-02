@@ -40,6 +40,9 @@
     { "name": "igalia17-wpe-ews", "platform": "gtk" },
     { "name": "igalia18-wpe-ews", "platform": "gtk" },
     { "name": "igalia19-wpe-ews", "platform": "gtk" },
+    { "name": "igalia20-wpe-ews", "platform": "wpe" },
+    { "name": "igalia21-wpe-ews", "platform": "wpe" },
+    { "name": "igalia22-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "playstation-ews-001", "platform": "playstation" },
     { "name": "playstation-ews-002", "platform": "playstation" },
@@ -463,7 +466,7 @@
       "factory": "WPEBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["wpe-wk2-tests-ews", "api-tests-wpe-ews"],
-      "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews", "igalia3-wpe-ews"]
+      "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews", "igalia3-wpe-ews", "igalia20-wpe-ews", "igalia21-wpe-ews", "igalia22-wpe-ews"]
     },
     {
       "name": "WPE-WK2-Tests-EWS", "shortname": "wpe-wk2", "icon": "testOnly",

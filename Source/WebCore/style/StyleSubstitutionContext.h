@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StyleScopeOrdinal.h"
 #include <wtf/GenericHashKey.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
@@ -33,18 +34,22 @@ namespace WebCore {
 namespace Style {
 
 // https://drafts.csswg.org/css-values-5/#substitution-context
-// A substitution context is «dependency type, name».
+// A substitution context is the dependency type plus values specific to that type: a property name
+// for Property, an attribute name for Attribute, and the custom function for Function.
 struct SubstitutionContext {
     enum class Type : uint8_t { Property, Attribute, Function };
     Type type;
     AtomString name;
+    // For Function contexts, the scope the function resolved in. Tree-scoping means distinct functions
+    // can share a name, and (name, scope) identifies the function.
+    ScopeOrdinal functionScopeOrdinal { ScopeOrdinal::Element };
 
     bool operator==(const SubstitutionContext&) const = default;
 };
 
 inline void add(Hasher& hasher, const SubstitutionContext& context)
 {
-    add(hasher, context.type, context.name);
+    add(hasher, context.type, context.name, context.functionScopeOrdinal);
 }
 
 // https://drafts.csswg.org/css-values-5/#guarded

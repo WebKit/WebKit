@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+html, body { margin: 0; }
+/* Content wider than the hosting iframe so the iframe's own document scrolls horizontally,
+   mimicking an ePub CSS-column "page-turn" (the frame scrolls its own content). */
+body { width: 3000px; height: 600px; }
+#frame-target { position: absolute; left: 600px; top: 100px; width: 100px; height: 50px; }
+</style>
+</head>
+<body>
+<button id="frame-target">Target</button>
+</body>
+</html>

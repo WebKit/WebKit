@@ -98,7 +98,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSet(ma
     macro(OpGetById) \
     macro(OpGetLength) \
     macro(OpGetByIdWithThis) \
-    macro(OpTryGetById) \
     macro(OpGetByIdDirect) \
     macro(OpGetByValWithThis) \
     macro(OpGetPrototypeOf) \

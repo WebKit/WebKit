@@ -73,6 +73,7 @@ private:
     void fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
     void generateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo&, const std::optional<WebCore::IDBKeyPath>&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, std::optional<int64_t> recordID);
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
+    template<typename Message> void sendResultWithBlobFileAccess(WebIDBResult&&);
 
     WebIDBResult prepareGetResult(const WebCore::IDBResultData&);
     WebIDBResult prepareGetAllResult(const WebCore::IDBResultData&);

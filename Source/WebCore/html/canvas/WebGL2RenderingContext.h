@@ -261,7 +261,7 @@ public:
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;
-    void initializeContextState() final;
+    void initializeContextState() WTF_REQUIRES_LOCK(objectGraphLock()) final;
 
     RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(ASCIILiteral functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);
     RefPtr<ArrayBufferView> sliceArrayBufferView(ASCIILiteral functionName, const ArrayBufferView& data, GCGLuint srcOffset, GCGLuint length);
@@ -269,7 +269,7 @@ private:
     long long getInt64Parameter(GCGLenum) final;
     Vector<bool> getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index);
 
-    void initializeDefaultObjects() final;
+    void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
     void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
     bool validateBufferTarget(ASCIILiteral functionName, GCGLenum target) final;
     bool validateBufferTargetCompatibility(ASCIILiteral, GCGLenum, WebGLBuffer*);

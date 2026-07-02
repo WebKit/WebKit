@@ -10,12 +10,15 @@ jsTestIsAsync = true;
 let onloadCount = 0;
 
 window.addEventListener("message", () => {
-    if (onloadCount == 2)
-        testPassed("onload fired twice.");
-    else
-        testFailed("onload fired " + onloadCount + " time(s).");
+    // Wait for the async synthetic onload from the fragment nav.
+    setTimeout(() => {
+        if (onloadCount == 2)
+            testPassed("onload fired twice.");
+        else
+            testFailed("onload fired " + onloadCount + " time(s).");
 
-    finishJSTest();
+        finishJSTest();
+    }, 200);
 });
 
 function onloadFired() {

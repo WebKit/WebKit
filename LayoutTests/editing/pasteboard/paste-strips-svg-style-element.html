@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="edit" contenteditable="true"></div>
+<pre id="result"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// InsertHTML routes the markup straight through ReplaceSelectionCommand's
+// ReplacementFragment sanitizer (removeContentsWithSideEffects), with no
+// clipboard-side markup sanitizer in front of it. That sanitizer strips
+// <style> elements; this test verifies that an SVG <style> element is
+// stripped too (and not just the HTML one), while other SVG content is kept.
+var markup = "<div>before</div>"
+    + "<style>.html-style { color: red; }</style>"
+    + "<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'>"
+    + "<style>.svg-style { fill: green; }</style>"
+    + "<rect width='10' height='10'></rect>"
+    + "</svg>"
+    + "<div>after</div>";
+
+var edit = document.getElementById("edit");
+edit.focus();
+
+// Place a caret inside the editable region so InsertHTML has a selection to act on.
+var selection = window.getSelection();
+selection.removeAllRanges();
+var range = document.createRange();
+range.setStart(edit, 0);
+range.collapse(true);
+selection.addRange(range);
+
+document.execCommand("InsertHTML", false, markup);
+
+var styleCount = edit.querySelectorAll("style").length;
+var rectCount = edit.querySelectorAll("rect").length;
+
+var lines = [];
+lines.push("This test inserts HTML containing both an HTML <style> element and an SVG <style> element into an editable region via InsertHTML. Both must be stripped by the paste sanitizer, while the rest of the SVG content is preserved.");
+lines.push("Number of <style> elements remaining (HTML or SVG): " + styleCount + (styleCount === 0 ? " (PASS)" : " (FAIL)"));
+lines.push("Number of <rect> elements preserved: " + rectCount + (rectCount === 1 ? " (PASS)" : " (FAIL)"));
+
+document.getElementById("result").textContent = lines.join("\n");
+edit.remove();
+</script>
+</body>
+</html>

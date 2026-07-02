@@ -513,7 +513,7 @@ void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel
     destination.headroom = nativeImage->headroom();
 
     cacheMetadataAtIndex(index, subsamplingLevel, options);
-    decodedSizeIncreased(frame.sizeInBytes());
+    decodedSizeIncreased(destination.sizeInBytes());
 }
 
 const ImageFrame& BitmapImageSource::frameAtIndex(unsigned index) const

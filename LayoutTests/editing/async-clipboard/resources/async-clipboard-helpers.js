@@ -99,3 +99,29 @@ async function checkClipboardItemString(item, type, expectedString)
     else
         testFailed(`getType("${type}") resolved to "${observedString}; expected "${expectedString}"`);
 }
+
+// Calls navigator.clipboard.read() with a fresh user activation, as required by the W3C
+// Clipboard API spec. Adds a transient button to the document, activates it, and reads the
+// clipboard while the relevant global object has transient activation.
+async function readClipboardWithUserActivation()
+{
+    const button = document.createElement("button");
+    button.textContent = "Read clipboard";
+    document.body.appendChild(button);
+
+    // Wait for the freshly-added button to be committed to the UI process's layer tree
+    // before tapping it. Otherwise, on iOS the tap gesture may hit-test before the render
+    // tree update is committed, miss the button, and cause the test to time out waiting for
+    // the click that never arrives.
+    await UIHelper.ensurePresentationUpdate();
+
+    const clicked = new Promise(resolve => button.addEventListener("click", resolve, { once: true }));
+    UIHelper.activateElement(button);
+    await clicked;
+
+    try {
+        return await navigator.clipboard.read();
+    } finally {
+        button.remove();
+    }
+}

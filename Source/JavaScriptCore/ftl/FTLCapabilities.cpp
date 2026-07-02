@@ -450,6 +450,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case StringSubstr:
     case ToUpperCase:
     case ToLowerCase:
+    case StringTrim:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
     case CheckJSCast:

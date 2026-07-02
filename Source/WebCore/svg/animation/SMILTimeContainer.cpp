@@ -254,7 +254,7 @@ void SMILTimeContainer::processScheduledAnimations(NOESCAPE const Function<void(
 {
     for (auto& animations : copyToVector(m_scheduledAnimations.values())) {
         for (auto& weakAnimation : animations)
-            callback(Ref { weakAnimation.get() });
+            callback(protect(weakAnimation));
     }
 }
 

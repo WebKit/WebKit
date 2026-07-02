@@ -74,7 +74,6 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final { }
 
     // WebCore::GraphicsContextGL overrides.
-    std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
     bool supportsExtension(WebCore::GCGLExtension) final;
     bool enableExtension(WebCore::GCGLExtension) final;
@@ -432,8 +431,6 @@ private:
 #if ENABLE(VIDEO)
     RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
-    GCGLenum m_externalImageTarget { 0 };
-    GCGLenum m_externalImageBindingQuery { 0 };
     GCGLint m_maxCombinedTextureImageUnits { 0 };
     GCGLint m_maxVertexAttribs { 0 };
     GCGLint m_maxTextureSize { 0 };

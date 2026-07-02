@@ -305,6 +305,8 @@ public:
     WEBCORE_EXPORT void setFrameInheritedState(LocalFrame&, const InheritedFrameState&);
     WEBCORE_EXPORT void setFrameGeometry(LocalFrame&, const AXFrameGeometry&);
     const std::optional<AXFrameGeometry>& frameGeometry() const LIFETIME_BOUND { return m_frameGeometry; }
+    // The scroll value that was implicitly baked into the latest frameGeometry().screenPosition.
+    IntPoint frameViewOriginScrollPosition() const { return m_frameViewOriginScrollPosition; }
     const std::optional<AXFrameGeometry>& getAndUpdateFrameGeometry() LIFETIME_BOUND;
 #endif
 
@@ -984,6 +986,7 @@ private:
     const FrameIdentifier m_frameID; // constant for object's lifetime.
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     std::optional<AXFrameGeometry> m_frameGeometry;
+    IntPoint m_frameViewOriginScrollPosition;
 #endif
     OptionSet<ActivityState> m_pageActivityState;
     HashMap<AXID, Ref<AccessibilityObject>> m_objects;

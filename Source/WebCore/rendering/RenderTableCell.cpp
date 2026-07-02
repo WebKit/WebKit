@@ -1423,7 +1423,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
         return;
 
     LayoutRect localRepaintRect = paintInfo.rect;
-    LayoutRect paintRect = LayoutRect(paintOffset + location(), frameRect().size());
+    LayoutRect paintRect = LayoutRect(paintOffset + location(), borderBoxSize());
     if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())
         return;
 
@@ -1486,9 +1486,9 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 
 static LayoutRect NODELETE backgroundRectForRow(const RenderBox& tableRow, const RenderTable& table)
 {
-    LayoutRect rect = tableRow.frameRect();
+    LayoutRect rect = tableRow.borderBoxRectInContainer();
     if (!table.collapseBorders()) {
-        // Row frameRects include unwanted hSpacing on both inline ends.
+        // Row border boxes include unwanted hSpacing on both inline ends.
         auto hSpacing = table.hBorderSpacing();
         LayoutUnit vSpacing = 0_lu;
         if (table.writingMode().isHorizontal())
@@ -1643,7 +1643,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
     if (!table->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
         return;
 
-    LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
+    LayoutRect paintRect = LayoutRect(paintOffset, borderBoxSize());
     adjustBorderBoxRectForPainting(paintRect);
 
     BackgroundPainter backgroundPainter { *this, paintInfo };
@@ -1675,7 +1675,7 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (!tableElt->collapseBorders() && style().emptyCells() == EmptyCell::Hide && !firstChild())
         return;
    
-    LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
+    LayoutRect paintRect = LayoutRect(paintOffset, borderBoxSize());
     adjustBorderBoxRectForPainting(paintRect);
 
     paintMaskImages(paintInfo, paintRect);

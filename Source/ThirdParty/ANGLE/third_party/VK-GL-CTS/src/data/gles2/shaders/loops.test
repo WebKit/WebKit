@@ -1,0 +1,26 @@
+group custom "Custom loop tests"
+
+    case continue_in_fragment_for_loop
+        vertex ""
+            ${VERTEX_DECLARATIONS}
+            void main()
+            {
+                ${VERTEX_OUTPUT}
+            }
+        ""
+        fragment ""
+            ${FRAGMENT_DECLARATIONS}
+            void main()
+            {
+                int count1 = 0;
+                for(int i=0;i<4;i++)
+                {
+                    if (count1 == 2)
+                        continue;
+                }
+                ${FRAGMENT_OUTPUT}
+            }
+        ""
+    end
+
+end # custom

@@ -96,7 +96,7 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::Bool: {
             if (![optionValue isKindOfClass:NSNumber.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::Bool unexpected type for key "_s, (String)optionKey);
-            NSNumber *value = optionValue;
+            RetainPtr<NSNumber> value = optionValue;
             CoreIPCSecTrustData::PolicyVariant v = static_cast<bool>([value boolValue]);
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
@@ -104,22 +104,22 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::String: {
             if (![optionValue isKindOfClass:NSString.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::String unexpected type for key "_s, (String)optionKey);
-            NSString *value = optionValue;
-            CoreIPCSecTrustData::PolicyVariant v = CoreIPCString(value);
+            RetainPtr<NSString> value = optionValue;
+            CoreIPCSecTrustData::PolicyVariant v = CoreIPCString(value.get());
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers: {
             if (![optionValue isKindOfClass:NSArray.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
-            NSArray* value = optionValue;
-            if (!value.count)
+            RetainPtr<NSArray> value = optionValue;
+            if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers array length 0 for key "_s, (String)optionKey);
-            if (!arrayElementsTheSameType(value, NSNumber.class))
+            if (!arrayElementsTheSameType(value.get(), NSNumber.class))
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSNumber)"_s);
             Vector<CoreIPCNumber> vector;
-            vector.reserveCapacity(value.count);
-            for (NSNumber *element in value) {
+            vector.reserveCapacity([value count]);
+            for (NSNumber *element in value.get()) {
                 CoreIPCNumber n { element };
                 vector.append(WTF::move(n));
             }
@@ -130,14 +130,14 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings: {
             if (![optionValue isKindOfClass:NSArray.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
-            NSArray* value = optionValue;
-            if (!value.count)
+            RetainPtr<NSArray> value = optionValue;
+            if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings array length 0 for key "_s, (String)optionKey);
-            if (!arrayElementsTheSameType(value, NSString.class))
+            if (!arrayElementsTheSameType(value.get(), NSString.class))
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, (String)optionKey, " (expecting NSString)"_s);
             Vector<CoreIPCString> vector;
-            vector.reserveCapacity(value.count);
-            for (NSString *element in value) {
+            vector.reserveCapacity([value count]);
+            for (NSString *element in value.get()) {
                 CoreIPCString s { element };
                 vector.append(WTF::move(s));
             }
@@ -148,14 +148,14 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData: {
             if (![optionValue isKindOfClass:NSArray.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key %@ "_s, (String)optionKey, " (expecting NSArray)"_s);
-            NSArray* value = optionValue;
-            if (!value.count)
+            RetainPtr<NSArray> value = optionValue;
+            if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData array length 0 for key "_s, (String)optionKey);
-            if (!arrayElementsTheSameType(value, NSData.class))
+            if (!arrayElementsTheSameType(value.get(), NSData.class))
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key "_s, (String)optionKey, " (expecting NSData)"_s);
             Vector<CoreIPCData> vector;
-            vector.reserveCapacity(value.count);
-            for (NSData *element in value) {
+            vector.reserveCapacity([value count]);
+            for (NSData *element in value.get()) {
                 CoreIPCData d { element };
                 vector.append(WTF::move(d));
             }
@@ -166,16 +166,16 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber: {
             if (![optionValue isKindOfClass:NSArray.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
-            NSArray *value = optionValue;
-            if (!value.count)
+            RetainPtr<NSArray> value = optionValue;
+            if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber array length 0 for key "_s, (String)optionKey);
-            if (!arrayElementsTheSameType(value, NSArray.class))
+            if (!arrayElementsTheSameType(value.get(), NSArray.class))
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
 
             CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers outerVector;
-            outerVector.reserveCapacity(value.count);
+            outerVector.reserveCapacity([value count]);
 
-            for (NSArray *secondLevelArray in value) {
+            for (NSArray *secondLevelArray in value.get()) {
                 if (![secondLevelArray isKindOfClass:NSArray.class])
                     return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array unexpected type for key "_s, (String)optionKey);
 
@@ -184,12 +184,12 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
 
                 for (id element in secondLevelArray) {
                     if ([element isKindOfClass:NSNumber.class]) {
-                        NSNumber *e = element;
-                        Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCNumber(e);
+                        RetainPtr<NSNumber> e = element;
+                        Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCNumber(e.get());
                         innerVector.append(WTF::move(v));
                     } else if ([element isKindOfClass:NSDate.class]) {
-                        NSDate *d = element;
-                        Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCDate(d);
+                        RetainPtr<NSDate> d = element;
+                        Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCDate(d.get());
                         innerVector.append(WTF::move(v));
                     } else
                         return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber second level array contents unexpected type for key "_s, (String)optionKey);
@@ -203,10 +203,10 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber: {
             if (![optionValue isKindOfClass:NSDictionary.class])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected type for key "_s, (String)optionKey, " (expecting NSDictionary)"_s);
-            NSDictionary *d = optionValue;
+            RetainPtr<NSDictionary> d = optionValue;
             CoreIPCSecTrustData::PolicyDictionaryValueIsNumber vector;
-            vector.reserveCapacity(d.count);
-            for (NSString* key in d) {
+            vector.reserveCapacity([d count]);
+            for (NSString* key in d.get()) {
                 if (![key isKindOfClass:NSString.class])
                     return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected dictionary key type for key "_s, (String)optionKey, " (expecting NSString)"_s);
                 NSNumber *value = [d objectForKey:key];
@@ -408,7 +408,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 CoreIPCSecTrustData::InfoOption v = WTF::move(s);
                 vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             } else if ([value isKindOfClass:NSNumber.class]) {
-                NSNumber *candidateBool = value;
+                RetainPtr<NSNumber> candidateBool = value;
                 if ([candidateBool isEqualToNumber:@YES] || [candidateBool isEqualToNumber:@NO]) {
                     bool v = [candidateBool boolValue];
                     vector.append(std::make_pair(WTF::move(k), v));
@@ -418,11 +418,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     return;
                 }
             } else if ([value isKindOfClass:NSArray.class]) {
-                NSArray *revocationInfoArray = value;
+                RetainPtr<NSArray> revocationInfoArray = value;
                 CoreIPCSecTrustData::RevocationInfoArray revocationInfo;
                 revocationInfo.reserveCapacity([revocationInfoArray count]);
 
-                for (NSDictionary *entry in revocationInfoArray) {
+                for (NSDictionary *entry in revocationInfoArray.get()) {
                     if (![entry isKindOfClass:NSDictionary.class]) {
                         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' array contains non-dictionary element");
                         ASSERT_NOT_REACHED();
@@ -460,12 +460,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                             id subValue = [subDict objectForKey:subKey];
 
                             if ([subValue isKindOfClass:NSNumber.class]) {
-                                NSNumber *number = subValue;
+                                RetainPtr<NSNumber> number = subValue;
                                 if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
                                     CoreIPCSecTrustData::RevocationInfoSubDictValue v = [number boolValue];
                                     revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
                                 } else {
-                                    CoreIPCNumber n { number };
+                                    CoreIPCNumber n { number.get() };
                                     CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(n);
                                     revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
                                 }
@@ -494,10 +494,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 CoreIPCSecTrustData::InfoOption v = WTF::move(revocationInfo);
                 vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             } else if ([value isKindOfClass:NSDictionary.class]) {
-                NSDictionary *subDict = value;
+                RetainPtr<NSDictionary> subDict = value;
                 CoreIPCSecTrustData::InfoSubDict infoSubDict;
                 infoSubDict.reserveCapacity([subDict count]);
-                for (NSString *subKey in subDict) {
+                for (NSString *subKey in subDict.get()) {
                     if (![subKey isKindOfClass:NSString.class]) {
                         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'info' sub-dictionary key is not a string");
                         ASSERT_NOT_REACHED();
@@ -616,13 +616,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     auto p = std::make_pair(WTF::move(k), WTF::move(v));
                     innerVector.append(WTF::move(p));
                 } else if ([value isKindOfClass:NSNumber.class]) {
-                    NSNumber *number = value;
+                    RetainPtr<NSNumber> number = value;
                     if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
                         bool v = [number boolValue];
                         auto p = std::make_pair(WTF::move(k), v);
                         innerVector.append(WTF::move(p));
                     } else {
-                        CoreIPCNumber n { number };
+                        CoreIPCNumber n { number.get() };
                         auto p = std::make_pair(WTF::move(k), n);
                         innerVector.append(WTF::move(p));
                     }

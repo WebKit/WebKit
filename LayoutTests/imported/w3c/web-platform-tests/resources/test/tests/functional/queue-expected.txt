@@ -1,0 +1,10 @@
+
+PASS First synchronous test
+PASS Second synchronous test
+PASS First async_test (run in parallel)
+PASS Second async_test (run in parallel)
+PASS Third synchronous test
+PASS promise_test
+PASS Third async_test (run in parallel)
+PASS Fourth synchronous test
+

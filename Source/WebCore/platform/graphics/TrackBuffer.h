@@ -46,8 +46,17 @@ class TrackBuffer final
 {
     WTF_MAKE_TZONE_ALLOCATED(TrackBuffer);
 public:
-    static UniqueRef<TrackBuffer> NODELETE create(RefPtr<MediaDescription>&&);
-    static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, const MediaTime&);
+    // Returns true if the timestamp gap between `fromTime` and `toTime`
+    // is acceptable per the gap-skipping policy. Used both with DTS gaps
+    // (between adjacent samples in nextSample) and with PTS gaps
+    // (between a seek target and the next available sample in
+    // reenqueueMediaForTime). Only consulted when the gap exceeds
+    // PlatformTimeRanges::timeFudgeFactor() — gaps below that threshold
+    // are treated as contiguous (matching how the buffered range itself
+    // is reported to clients) and never reach the lambda.
+    using IsAcceptableEnqueueGapFn = Function<bool(const MediaTime& fromTime, const MediaTime& toTime)>;
+
+    static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, IsAcceptableEnqueueGapFn&& = nullptr);
 
     MediaTime NODELETE maximumBufferedTime() const;
     void addBufferedRange(const MediaTime& start, const MediaTime& end, AddTimeRangeOption = AddTimeRangeOption::None);
@@ -58,7 +67,7 @@ public:
     // SampleMap and m_decodeQueue, and adjusts m_buffered to match.
     void adjustSampleStartTime(MediaSample& original, const MediaTime& offset);
 
-    bool reenqueueMediaForTime(const MediaTime&, const MediaTime& timeFudgeFactor, bool isEnded = false);
+    bool reenqueueMediaForTime(const MediaTime&, bool isEnded = false);
     MediaTime findSeekTimeForTargetTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     int64_t removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime);
     PlatformTimeRanges removeSamples(const DecodeOrderSampleMap::MapType&, ASCIILiteral);
@@ -125,8 +134,16 @@ public:
 #endif
 
 private:
-    friend UniqueRef<TrackBuffer> WTF::makeUniqueRefWithoutFastMallocCheck<TrackBuffer>(RefPtr<WebCore::MediaDescription>&&, const WTF::MediaTime&);
-    TrackBuffer(RefPtr<MediaDescription>&&, const MediaTime&);
+    friend UniqueRef<TrackBuffer> WTF::makeUniqueRefWithoutFastMallocCheck<TrackBuffer>(RefPtr<WebCore::MediaDescription>&&, IsAcceptableEnqueueGapFn&&);
+    TrackBuffer(RefPtr<MediaDescription>&&, IsAcceptableEnqueueGapFn&&);
+
+    // Returns true if the DTS gap from `fromTime` to `toTime` is small
+    // enough to enqueue across. Gaps within
+    // PlatformTimeRanges::timeFudgeFactor() are always accepted (the
+    // buffered range itself would be reported as contiguous); larger
+    // gaps consult the constructor-supplied callback (when set —
+    // currently MSE only).
+    bool isAcceptableEnqueueGap(const MediaTime& fromTime, const MediaTime& toTime) const;
 
     const DecodeOrderSampleMap::MapType& decodeQueue() const LIFETIME_BOUND { return m_decodeQueue; }
     DecodeOrderSampleMap::MapType& decodeQueue() LIFETIME_BOUND { return m_decodeQueue; }
@@ -173,7 +190,8 @@ private:
     DecodeOrderSampleMap::KeyType m_lastEnqueuedDecodeKey { MediaTime::invalidTime(), MediaTime::invalidTime() };
 
     MediaTime m_enqueueDiscontinuityBoundary;
-    MediaTime m_discontinuityTolerance;
+    MediaTime m_lastEnqueueDecodeEnd;
+    IsAcceptableEnqueueGapFn m_isAcceptableEnqueueGap;
 
     MediaTime m_roundedTimestampOffset { MediaTime::invalidTime() };
 

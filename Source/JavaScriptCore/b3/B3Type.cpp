@@ -62,7 +62,7 @@ void printInternal(PrintStream& out, Type type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static_assert(std::is_standard_layout_v<JSC::B3::TypeKind> && std::is_trivial_v<JSC::B3::TypeKind>);
+static_assert(std::is_standard_layout_v<JSC::B3::TypeKind> && std::is_trivially_copyable_v<JSC::B3::TypeKind> && std::is_trivially_default_constructible_v<JSC::B3::TypeKind>);
 } // namespace WTF
 
 

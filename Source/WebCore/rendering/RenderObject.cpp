@@ -1363,7 +1363,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         stream << " (::" << *style().pseudoElementType() << ")";
 
     if (auto* renderBox = dynamicDowncast<RenderBox>(*this)) {
-        FloatRect boxRect = renderBox->frameRect();
+        FloatRect boxRect = renderBox->borderBoxRectInContainer();
         if (renderBox->isInFlowPositioned())
             boxRect.move(renderBox->offsetForInFlowPosition());
         stream << " " << boxRect;

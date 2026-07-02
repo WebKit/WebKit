@@ -55,6 +55,7 @@ OBJC_CLASS NSColor;
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
 OBJC_CLASS UIPasteboardConsistencyEnforcer;
+OBJC_CLASS GCMouse;
 OBJC_CLASS WKMouseDeviceObserver;
 OBJC_CLASS WKWebViewConfiguration;
 
@@ -66,6 +67,20 @@ class TestInvocation;
 class TestOptions;
 struct Options;
 struct TestCommand;
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+class FakeMouseDevice {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FakeMouseDevice);
+    WTF_MAKE_NONCOPYABLE(FakeMouseDevice);
+public:
+    FakeMouseDevice();
+    ~FakeMouseDevice();
+private:
+    RetainPtr<GCMouse> m_fakeMouse;
+    std::unique_ptr<ClassMethodSwizzler> m_currentSwizzler;
+    std::unique_ptr<ClassMethodSwizzler> m_miceSwizzler;
+};
+#endif
 
 class AsyncTask {
 public:
@@ -475,6 +490,10 @@ public:
     bool useWorkQueue() const { return m_useWorkQueue; }
 
     void setHasMouseDeviceForTesting(bool);
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    std::unique_ptr<FakeMouseDevice> m_fakeMouseDevice;
+#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void exitImmersive();

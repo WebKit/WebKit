@@ -59,7 +59,6 @@ using PlacedGridItems = Vector<PlacedGridItem>;
 using PlacedGridItemSpanList = Vector<WTF::Range<size_t>>;
 using TrackSizes = Vector<LayoutUnit>;
 using TrackSizingFunctionsList = Vector<TrackSizingFunctions>;
-using TrackSizingGridItemConstraintList = Vector<LayoutUnit>;
 using TrackSizingItemList = Vector<TrackSizingItem>;
 using UnsizedTracks = Vector<UnsizedTrack>;
 using UsedBlockSizes = Vector<LayoutUnit>;

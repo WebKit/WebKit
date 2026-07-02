@@ -48,7 +48,6 @@ ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, TemporalDateFormat, int32_
 template<DifferenceOperation>
 ISO8601::Duration differenceTemporalPlainYearMonth(JSGlobalObject*, const ISO8601::PlainYearMonth&, const ISO8601::PlainYearMonth&, unsigned, TemporalUnit, TemporalUnit, RoundingMode, CalendarID = iso8601CalendarID());
 
-ISO8601::PlainDate addDurationToDate(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 ISO8601::PlainDate calendarDateAdd(JSGlobalObject*, CalendarID, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 ISO8601::Duration calendarDateUntil(CalendarID, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);

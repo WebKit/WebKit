@@ -144,7 +144,7 @@ static void populateAppProperties(NSDictionary *protocolPropertiesDict, Protocol
             continue;
 
         if (isReservedProtocolPropertyKeyPrefix(key.get()) || isTypedAllowlistKey(key.get())) {
-            RELEASE_LOG_ERROR(API, "NSURLRequest property key '%@' not allowed. Skipping this property.", key.get());
+            RELEASE_LOG_INFO_FORWARDABLE(API, CoreIpcNsurlRequestPropertyKeyNotAllowed, String(key.get()).utf8().data());
             continue;
         }
 

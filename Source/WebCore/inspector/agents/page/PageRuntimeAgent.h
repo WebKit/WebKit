@@ -65,6 +65,8 @@ public:
     void frameNavigated(LocalFrame&);
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
+    bool ignoreDidClearWindowObject() const { return m_ignoreDidClearWindowObject; }
+
 private:
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
     void muteConsole();
@@ -78,6 +80,8 @@ private:
     WeakRef<InstrumentingAgents> m_instrumentingAgents;
 
     WeakRef<Page> m_inspectedPage;
+
+    bool m_ignoreDidClearWindowObject { false };
 };
 
 } // namespace WebCore

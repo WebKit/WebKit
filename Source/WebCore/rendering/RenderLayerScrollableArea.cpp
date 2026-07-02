@@ -1121,13 +1121,13 @@ bool RenderLayerScrollableArea::positionOverflowControls(const IntSize& offsetFr
         }
     }
 
-    if (m_scrollCorner && m_scrollCorner->frameRect() != rects.scrollCorner) {
-        m_scrollCorner->setFrameRect(rects.scrollCorner);
+    if (m_scrollCorner && m_scrollCorner->borderBoxRectInContainer() != rects.scrollCorner) {
+        m_scrollCorner->setBorderBoxInContainer(rects.scrollCorner);
         changed = true;
     }
 
-    if (m_resizer && m_resizer->frameRect() != rects.resizer) {
-        m_resizer->setFrameRect(rects.resizer);
+    if (m_resizer && m_resizer->borderBoxRectInContainer() != rects.resizer) {
+        m_resizer->setBorderBoxInContainer(rects.resizer);
         changed = true;
     }
     return changed;
@@ -1213,14 +1213,14 @@ bool RenderLayerScrollableArea::hasHorizontalOverflow() const
 {
     ASSERT(!m_scrollDimensionsDirty);
 
-    return scrollWidth() > roundToInt(m_layer.renderBox()->clientWidth());
+    return scrollWidth() > roundToInt(m_layer.renderBox()->paddingBoxWidth());
 }
 
 bool RenderLayerScrollableArea::hasVerticalOverflow() const
 {
     ASSERT(!m_scrollDimensionsDirty);
 
-    return scrollHeight() > roundToInt(m_layer.renderBox()->clientHeight());
+    return scrollHeight() > roundToInt(m_layer.renderBox()->paddingBoxHeight());
 }
 
 void RenderLayerScrollableArea::updateScrollbarPresenceAndState(std::optional<bool> hasHorizontalOverflow, std::optional<bool> hasVerticalOverflow)
@@ -1363,7 +1363,7 @@ void RenderLayerScrollableArea::updateScrollbarSteps()
     CheckedPtr box = m_layer.renderBox();
     ASSERT(box);
 
-    LayoutRect paddedLayerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
+    LayoutRect paddedLayerBounds(0_lu, 0_lu, box->paddingBoxWidth(), box->paddingBoxHeight());
     paddedLayerBounds.contract(box->scrollPaddingForViewportRect(paddedLayerBounds));
 
     // Set up the  page step/line step.

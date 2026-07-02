@@ -2084,7 +2084,7 @@ public:
                 && terms[1].quantityMaxCount == 1
                 && !terms[1].parentheses.isCopy
                 && (terms.size() == 2
-                    || (terms.size() == 3 && terms[2].type == PatternTerm::Type::AssertionEOL))) {
+                    || (terms.size() == 3 && terms[2].type == PatternTerm::Type::AssertionEOL && !m_pattern.multiline()))) {
                 // We start assuming this is a string list and then prove the negative.
                 isStringList = true;
 

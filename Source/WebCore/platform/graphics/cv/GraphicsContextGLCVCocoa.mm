@@ -74,30 +74,6 @@ static constexpr auto s_yuvVertexShaderTexture2D {
     "}"_s
 };
 
-static constexpr auto s_yuvVertexShaderTextureRectangle {
-    "attribute vec2 a_position;"
-    "uniform vec2 u_yTextureSize;"
-    "uniform vec2 u_uvTextureSize;"
-    "uniform int u_flipY;"
-    "uniform int u_flipX;"
-    "uniform int u_swapXY;"
-    "varying vec2 v_yTextureCoordinate;"
-    "varying vec2 v_uvTextureCoordinate;"
-    "void main()"
-    "{"
-    "    gl_Position = vec4(a_position, 0, 1.0);"
-    "    vec2 normalizedPosition = a_position * .5 + .5;"
-    "    if (u_flipY == 1)"
-    "        normalizedPosition.y = 1.0 - normalizedPosition.y;"
-    "    if (u_flipX == 1)"
-    "        normalizedPosition.x = 1.0 - normalizedPosition.x;"
-    "    if (u_swapXY == 1)"
-    "        normalizedPosition.xy = normalizedPosition.yx;"
-    "    v_yTextureCoordinate = normalizedPosition * u_yTextureSize;"
-    "    v_uvTextureCoordinate = normalizedPosition * u_uvTextureSize;"
-    "}"_s
-};
-
 constexpr auto s_yuvFragmentShaderTexture2D {
     "precision mediump float;"
     "uniform sampler2D u_yTexture;"
@@ -110,23 +86,6 @@ constexpr auto s_yuvFragmentShaderTexture2D {
     "    vec4 yuv;"
     "    yuv.r = texture2D(u_yTexture, v_yTextureCoordinate).r;"
     "    yuv.gb = texture2D(u_uvTexture, v_uvTextureCoordinate).rg;"
-    "    yuv.a = 1.0;"
-    "    gl_FragColor = yuv * u_colorMatrix;"
-    "}"_s
-};
-
-static constexpr auto s_yuvFragmentShaderTextureRectangle {
-    "precision mediump float;"
-    "uniform sampler2DRect u_yTexture;"
-    "uniform sampler2DRect u_uvTexture;"
-    "uniform mat4 u_colorMatrix;"
-    "varying vec2 v_yTextureCoordinate;"
-    "varying vec2 v_uvTextureCoordinate;"
-    "void main()"
-    "{"
-    "    vec4 yuv;"
-    "    yuv.r = texture2DRect(u_yTexture, v_yTextureCoordinate).r;"
-    "    yuv.gb = texture2DRect(u_uvTexture, v_uvTextureCoordinate).rg;"
     "    yuv.a = 1.0;"
     "    gl_FragColor = yuv * u_colorMatrix;"
     "}"_s
@@ -495,17 +454,6 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
         EGL_DestroyContext(display, context);
     });
 
-    const bool useTexture2D = m_owner->drawingBufferTextureTarget() == GL_TEXTURE_2D;
-
-#if PLATFORM(MAC)
-    if (!useTexture2D) {
-        GL_RequestExtensionANGLE("GL_ANGLE_texture_rectangle");
-        GL_RequestExtensionANGLE("GL_EXT_texture_format_BGRA8888");
-        if (GL_GetError() != GL_NO_ERROR)
-            return;
-    }
-#endif
-
     GLint vertexShader = GL_CreateShader(GL_VERTEX_SHADER);
     GLint fragmentShader = GL_CreateShader(GL_FRAGMENT_SHADER);
     GLuint yuvProgram = GL_CreateProgram();
@@ -515,10 +463,10 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
         GL_DeleteProgram(yuvProgram);
     });
     // These are written so strlen might be compile-time.
-    GLint vsLength = useTexture2D ? s_yuvVertexShaderTexture2D.length() : s_yuvVertexShaderTextureRectangle.length();
-    GLint fsLength = useTexture2D ? s_yuvFragmentShaderTexture2D.length() : s_yuvFragmentShaderTextureRectangle.length();
-    const char* vertexShaderSource = useTexture2D ? s_yuvVertexShaderTexture2D : s_yuvVertexShaderTextureRectangle;
-    const char* fragmentShaderSource = useTexture2D ? s_yuvFragmentShaderTexture2D : s_yuvFragmentShaderTextureRectangle;
+    GLint vsLength = s_yuvVertexShaderTexture2D.length();
+    GLint fsLength = s_yuvFragmentShaderTexture2D.length();
+    const char* vertexShaderSource = s_yuvVertexShaderTexture2D;
+    const char* fragmentShaderSource = s_yuvFragmentShaderTexture2D;
 
     GL_ShaderSource(vertexShader, 1, &vertexShaderSource, &vsLength);
     GL_ShaderSource(fragmentShader, 1, &fragmentShaderSource, &fsLength);
@@ -697,20 +645,18 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface.get(), 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface.get(), 1);
 
-    GLenum videoTextureTarget = m_owner->drawingBufferTextureTarget();
-
     GLuint uvTexture = 0;
     GL_GenTextures(1, &uvTexture);
     auto uvTextureCleanup = makeScopeExit([uvTexture] {
         GL_DeleteTextures(1, &uvTexture);
     });
     GL_ActiveTexture(GL_TEXTURE1);
-    GL_BindTexture(videoTextureTarget, uvTexture);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    auto uvHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RG, uvPlaneWidth, uvPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 1);
+    GL_BindTexture(GL_TEXTURE_2D, uvTexture);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    auto uvHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, GL_TEXTURE_2D, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RG, uvPlaneWidth, uvPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 1);
     if (!uvHandle)
         return false;
     auto uvHandleCleanup = makeScopeExit([display = m_display, uvHandle] {
@@ -723,12 +669,12 @@ bool GraphicsContextGLCVCocoa::copyVideoSampleToTexture(const VideoFrameCV& vide
         GL_DeleteTextures(1, &yTexture);
     });
     GL_ActiveTexture(GL_TEXTURE0);
-    GL_BindTexture(videoTextureTarget, yTexture);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    auto yHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RED, yPlaneWidth, yPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 0);
+    GL_BindTexture(GL_TEXTURE_2D, yTexture);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    auto yHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, GL_TEXTURE_2D, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RED, yPlaneWidth, yPlaneHeight, GL_UNSIGNED_BYTE, surface.get(), 0);
     if (!yHandle)
         return false;
     auto yHandleCleanup = makeScopeExit([display = m_display, yHandle] {

@@ -2371,20 +2371,6 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
             return { createNewProcess(), nullptr, "Process swap because this is a first navigation in a DOM popup without opener"_s };
     }
 
-    const bool treatAsSameOriginNavigation = [&targetURL, &navigation, &siteIsolationEnabled, &frame] {
-        if (siteIsolationEnabled) {
-            if (targetURL.protocolIsAbout() && !SecurityPolicy::shouldInheritSecurityOriginFromOwner(targetURL))
-                return false;
-            if (frame.isMainFrame() && targetURL.protocolIsData())
-                return false;
-        }
-
-        return navigation.treatAsSameOriginNavigation();
-    }();
-
-    if (treatAsSameOriginNavigation)
-        return { WTF::move(sourceProcess), nullptr, "The treatAsSameOriginNavigation flag is set"_s };
-
     URL sourceURL;
     if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isNull())
         sourceURL = URL { navigation.requesterOrigin().toString() };
@@ -2397,6 +2383,22 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForNavigationInternal: Using related page's URL as source URL for process swap decision (page=%p)", pageConfiguration->relatedPage());
         }
     }
+
+    const bool treatAsSameOriginNavigation = [&targetURL, &sourceURL, &frame, siteIsolationEnabled] {
+        if (siteIsolationEnabled) {
+            if (targetURL.protocolIsAbout() && !SecurityPolicy::shouldInheritSecurityOriginFromOwner(targetURL))
+                return false;
+            if (frame.isMainFrame() && targetURL.protocolIsData())
+                return false;
+        }
+
+        return targetURL.protocolIsAbout() || targetURL.protocolIsData()
+            || (targetURL.protocolIsBlob() && sourceURL.isValid()
+                && SecurityOrigin::create(targetURL)->isSameOriginAs(SecurityOrigin::create(sourceURL).get()));
+    }();
+
+    if (treatAsSameOriginNavigation)
+        return { WTF::move(sourceProcess), nullptr, "The treatAsSameOriginNavigation flag is set"_s };
 
     // For non-HTTP(s) URLs, we only swap when navigating to a new scheme, unless processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol is set.
     if (!m_configuration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() && !sourceURL.protocolIsInHTTPFamily() && sourceURL.protocol() == targetURL.protocol() && !siteIsolationEnabled)

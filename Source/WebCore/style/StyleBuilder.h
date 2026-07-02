@@ -69,6 +69,7 @@ private:
     void applyLogicalGroupProperties();
     void applyCustomProperties();
     void applyCustomPropertyImpl(const AtomString&, const PropertyCascade::Property&);
+    void applyCustomPropertyFromCallingContext(const AtomString&);
 
     enum CustomPropertyCycleTracking { Enabled = 0, Disabled };
     template<CustomPropertyCycleTracking trackCycles>

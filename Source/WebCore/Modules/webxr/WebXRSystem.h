@@ -46,10 +46,6 @@
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
-namespace JSC {
-class JSGlobalObject;
-}
-
 namespace WebCore {
 
 class LocalDOMWindow;
@@ -105,8 +101,7 @@ private:
     explicit WebXRSystem(Navigator&);
 
     using FeatureList = PlatformXR::Device::FeatureList;
-    using JSFeatureList = Vector<JSC::JSValue>;
-    void obtainCurrentDevice(XRSessionMode, const JSFeatureList& requiredFeatures, const JSFeatureList& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&&);
+    void obtainCurrentDevice(XRSessionMode, const Vector<String>& requiredFeatures, const Vector<String>& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&&);
 
     bool immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow&, Document&) const;
     bool inlineSessionRequestIsAllowedForGlobalObject(LocalDOMWindow&, Document&, const XRSessionInit&) const;
@@ -114,8 +109,8 @@ private:
     bool isFeaturePermitted(PlatformXR::SessionFeature) const;
     bool isFeatureSupported(PlatformXR::SessionFeature, XRSessionMode, const PlatformXR::Device&) const;
     struct ResolvedRequestedFeatures;
-    std::optional<ResolvedRequestedFeatures> resolveRequestedFeatures(XRSessionMode, const XRSessionInit&, RefPtr<PlatformXR::Device>, JSC::JSGlobalObject&) const;
-    void resolveFeaturePermissions(XRSessionMode, const XRSessionInit&, RefPtr<PlatformXR::Device>, JSC::JSGlobalObject&, CompletionHandler<void(std::optional<FeatureList>&&)>&&) const;
+    std::optional<ResolvedRequestedFeatures> resolveRequestedFeatures(XRSessionMode, const XRSessionInit&, RefPtr<PlatformXR::Device>) const;
+    void resolveFeaturePermissions(XRSessionMode, const XRSessionInit&, RefPtr<PlatformXR::Device>, CompletionHandler<void(std::optional<FeatureList>&&)>&&) const;
 
     // https://immersive-web.github.io/webxr/#default-inline-xr-device
     class DummyInlineDevice final : public PlatformXR::Device, public ContextDestructionObserver {

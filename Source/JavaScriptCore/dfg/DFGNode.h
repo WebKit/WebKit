@@ -1966,6 +1966,7 @@ public:
         case CPUIntrinsic:
         case DateGetTime:
         case DateGetInt32OrNaN:
+        case StringTrim:
             return true;
         default:
             return false;

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function makeRequestWithoutUserGesture() {
+            document.requestStorageAccess().then(
+                function () {
+                    top.postMessage("FAIL requestStorageAccess() was granted without user gesture.", "http://127.0.0.1:8000");
+                },
+                function () {
+                    let win = window.open("about:blank", "_blank");
+                    if (win) {
+                        win.close();
+                        top.postMessage("FAIL Rejection handler had user activation despite no user gesture.", "http://127.0.0.1:8000");
+                    } else
+                        top.postMessage("PASS Rejection handler correctly had no user activation.", "http://127.0.0.1:8000");
+                }
+            );
+        }
+    </script>
+</head>
+<body onload="makeRequestWithoutUserGesture()">
+</body>
+</html>

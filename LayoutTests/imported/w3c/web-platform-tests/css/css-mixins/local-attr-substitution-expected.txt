@@ -4,6 +4,6 @@ PASS var() in attribute value substitutes locally, argument
 PASS var() in attribute value substitutes locally, typed
 PASS attr() fallback substitutes locally
 PASS attr() cycle through local
-FAIL attr() cycle through unused fallback in local assert_equals: expected "PASS" but got "FAIL"
+PASS attr() cycle through unused fallback in local
 PASS attr() cycle through function
 

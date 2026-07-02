@@ -495,8 +495,12 @@ static void interceptMarketplaceKitNavigation(Ref<API::NavigationAction>&& actio
     }
 
     [getWKMarketplaceKitClassSingleton() requestAppInstallationWithTopOrigin:requesterTopOriginURL.get() url:url.get() completionHandler:makeBlockPtr([addConsoleError = WTF::move(addConsoleError)](NSError *error) mutable {
-        if (error)
-            addConsoleError(error.description);
+        if (!error)
+            return;
+
+        ensureOnMainRunLoop([addConsoleError = WTF::move(addConsoleError), error = protect(error)] mutable {
+            addConsoleError([error description]);
+        });
     }).get()];
 }
 

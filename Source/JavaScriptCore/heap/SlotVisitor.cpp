@@ -503,11 +503,27 @@ NEVER_INLINE void SlotVisitor::drain(MonotonicTime timeout)
                     return IterationStatus::Continue;
 
                 stack.refill();
-                
+
                 m_isFirstVisit = (&stack == &m_collectorStack);
 
-                for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); stack.canRemoveLast() && countdown--;)
-                    visitChildren(stack.removeLast());
+                // The highest cost of GC marking is a cache miss when reading a cell, coming from the GC marker stack,
+                // because each cell would be likely placed in a random place. We perform software prefetching onto
+                // one next cell while accessing the current cell to make memory fetching in flight while handling
+                // the current cell.
+                unsigned countdown = Options::minimumNumberOfScansBetweenRebalance();
+                auto popAndPrefetch = [&] ALWAYS_INLINE_LAMBDA -> const JSCell* {
+                    if (!countdown || !stack.canRemoveLast())
+                        return nullptr;
+                    --countdown;
+                    const JSCell* cell = stack.removeLast();
+                    __builtin_prefetch(cell);
+                    return cell;
+                };
+                for (const JSCell* next = popAndPrefetch(); next;) {
+                    const JSCell* cell = next;
+                    next = popAndPrefetch();
+                    visitChildren(cell);
+                }
                 return IterationStatus::Done;
             });
         propagateExternalMemoryVisitedIfNecessary();

@@ -1007,6 +1007,57 @@ TEST(WritingTools, ProofreadingReview)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, ProofreadingReviewDoesNotWriteIntoDriftedMarker)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>This is a test of system.</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"This is a test of system.";
+    NSString *mutatedText = @"This is a test of syZZZstem.";
+
+    __block bool finished = false;
+
+    [(id)[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() forProofreadingReview:YES requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
+        RetainPtr suggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(18, 6) replacement:@"the system"]);
+
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ suggestion.get() ] processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
+
+        // Simulate a JS rich-text editor (Lexical / ProseMirror / Slate) reconciling the DOM by
+        // inserting characters inside the marked word "system" [18, 24]. The suggestion marker's
+        // offsets are not shifted by an edit that starts within its range, so they now cover drifted
+        // text ("syZZZs") and the original "system" no longer appears anywhere in the session range.
+        [webView stringByEvaluatingJavaScript:@"document.getElementById('first').firstChild.insertData(20, 'ZZZ')"];
+        [webView waitForNextPresentationUpdate];
+
+        EXPECT_WK_STREQ(mutatedText, [webView contentsAsString]);
+
+        // Accepting the suggestion must not write "the system" into the stale range. Because the
+        // expected text cannot be re-anchored, the controller bails and leaves the content untouched
+        // rather than corrupting it.
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didUpdateState:WTTextSuggestionStateAccepted forSuggestionWithUUID:[suggestion uuid] inContext:contexts.firstObject];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        EXPECT_WK_STREQ(mutatedText, [webView contentsAsString]);
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, CompositionWithAttemptedEditing)
 {
     RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);

@@ -112,7 +112,7 @@ auto Blending<TransformList>::blend(const TransformList& from, const TransformLi
     }
 
     CheckedPtr renderBox = dynamicDowncast<RenderBox>(context.client.renderer());
-    auto boxSize = renderBox ? renderBox->borderBoxRect().size() : LayoutSize();
+    auto boxSize = renderBox ? renderBox->borderBoxSize() : LayoutSize();
 
     bool shouldFallBackToDiscrete = shouldFallBackToDiscreteInterpolation(from, to, boxSize);
 

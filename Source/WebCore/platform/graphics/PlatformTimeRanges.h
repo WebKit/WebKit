@@ -78,6 +78,12 @@ public:
     bool contain(const MediaTime&) const;
     bool containWithEpsilon(const MediaTime&, const MediaTime& epsilon) const;
     bool containWithEpsilon(const PlatformTimeRanges&, const MediaTime& epsilon) const;
+    // Variable-epsilon overloads: `epsilonAtTime(t)` is consulted at every
+    // boundary / gap location (rangeMin, rangeMax, and between adjacent
+    // sub-ranges). Used by the MSE gap-skipping policy where the
+    // tolerance varies by stream position.
+    bool containWithEpsilon(const MediaTime&, NOESCAPE const Function<MediaTime(const MediaTime&)>& epsilonAtTime) const;
+    bool containWithEpsilon(const PlatformTimeRanges&, NOESCAPE const Function<MediaTime(const MediaTime&)>& epsilonAtTime) const;
 
     size_t find(const MediaTime&) const;
     size_t findWithEpsilon(const MediaTime&, const MediaTime& epsilon) const;
@@ -131,6 +137,8 @@ public:
 
         friend bool operator==(const Range&, const Range&) = default;
     };
+
+    std::span<const Range> span() const LIFETIME_BOUND { return m_ranges.span(); }
 
     friend bool operator==(const PlatformTimeRanges&, const PlatformTimeRanges&) = default;
 

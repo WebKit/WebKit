@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "RemoteAudioSessionConfiguration.h"
 #include <WebCore/AudioSession.h>
+#include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace IPC {
@@ -83,7 +84,7 @@ private:
     size_t maximumNumberOfOutputChannels() const final { return configuration().maximumNumberOfOutputChannels; }
     size_t outputLatency() const final { return configuration().outputLatency; }
 
-    bool tryToSetActiveInternal(bool) final;
+    Ref<SetActivePromise> tryToSetActiveInternal(bool) final;
 
     size_t preferredBufferSize() const final { return configuration().preferredBufferSize; }
     void setPreferredBufferSize(size_t) final;
@@ -125,6 +126,17 @@ private:
     std::optional<RemoteAudioSessionConfiguration> m_configuration;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     bool m_isInterruptedForTesting { false };
+
+    // Serialize tryToSetActive IPCs: keep at most one in flight at a time, and coalesce
+    // consecutive same-state requests against the tail of the chain. Different-state
+    // requests append a new entry that's dispatched when the previous reply arrives.
+    void sendNextActivationIPC();
+    struct PendingActivation {
+        bool active;
+        Vector<SetActivePromise::Producer> waiters;
+    };
+    Deque<PendingActivation> m_pendingActivationChain;
+    bool m_activationIPCInFlight { false };
 };
 
 }

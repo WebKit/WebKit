@@ -926,7 +926,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
 
     switch (textureDimension) {
     case WGPUTextureDimension_1D:
-        if (!widthForMetal)
+        if (!widthForMetal || !heightForMetal)
             return;
         break;
     case WGPUTextureDimension_2D:
@@ -1029,7 +1029,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
             {
                 switch (textureDimension) {
                 case WGPUTextureDimension_1D: {
-                    if (!widthForMetal)
+                    if (!widthForMetal || !heightForMetal)
                         return;
 
                     auto region = MTLRegionMake1D(destination.origin.x, widthForMetal);
@@ -1136,7 +1136,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
-        if (!widthForMetal)
+        if (!widthForMetal || !heightForMetal)
             return;
 
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);

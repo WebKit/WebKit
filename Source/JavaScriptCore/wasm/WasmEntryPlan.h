@@ -123,6 +123,8 @@ protected:
     bool isComplete() const override { return m_state == State::Completed; }
     void complete() WTF_REQUIRES_LOCK(m_lock) override;
 
+    bool failIfMixedExceptionHandlingProposals() WTF_REQUIRES_LOCK(m_lock);
+
     virtual bool prepareImpl() = 0;
     virtual void compileFunction(FunctionCodeIndex functionIndex) = 0;
     virtual void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) = 0;

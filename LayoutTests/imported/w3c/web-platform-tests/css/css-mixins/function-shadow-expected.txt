@@ -7,7 +7,7 @@ PASS Combining functions from various scopes
 PASS ::part() can not see inner functions
 PASS ::slotted() can see inner functions
 PASS :host can see inner functions
-FAIL Outer functions can't see inner functions assert_equals: expected "20px C" but got "C C"
-FAIL Outer functions can't see inner functions (local vars) assert_equals: expected "22px C" but got "C C"
-FAIL Function with same name in different scopes assert_equals: expected "24px" but got ""
+PASS Outer functions can't see inner functions
+PASS Outer functions can't see inner functions (local vars)
+PASS Function with same name in different scopes
 

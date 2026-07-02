@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+async function invoke(method) {
+    switch (method) {
+    case "readText":
+        return navigator.clipboard.readText();
+    case "read":
+        return navigator.clipboard.read();
+    case "writeText":
+        return navigator.clipboard.writeText("iframe-written text");
+    case "write": {
+        const blob = new Blob(["iframe-written text"], { type: "text/plain" });
+        return navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]);
+    }
+    }
+    throw new Error(`unknown method: ${method}`);
+}
+
+window.addEventListener("message", async event => {
+    if (!event.data)
+        return;
+
+    const method = event.data.method;
+    let result;
+    try {
+        await invoke(method);
+        result = { type: "iframe-result", method, status: "resolved" };
+    } catch (err) {
+        result = { type: "iframe-result", method, status: "rejected", errorName: err.name };
+    }
+    parent.postMessage(result, "*");
+});
+
+parent.postMessage({ type: "iframe-loaded" }, "*");
+</script>
+</body>
+</html>

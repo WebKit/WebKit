@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +45,7 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
@@ -179,10 +180,9 @@ void HTMLFrameElementBase::postConnectionSteps()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->m_openingURLAfterInserting = true;
+        SetForScope openingURLAfterInserting(protectedThis->m_openingURLAfterInserting, true);
         if (protectedThis->isConnected())
             protectedThis->openURL();
-        protectedThis->m_openingURLAfterInserting = false;
     };
     if (!m_openingURLAfterInserting)
         work();

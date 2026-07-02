@@ -137,8 +137,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, setter=_setUseSiteSpecificSpoofing:) BOOL _useSiteSpecificSpoofing;
 // WARNING: Allowing paste through the DOM API opens a security hole. We only use it for testing purposes.
 @property (nonatomic, getter=isDOMPasteAllowed) BOOL DOMPasteAllowed;
-@property (nonatomic, setter=_setFTPDirectoryTemplatePath:) NSString *_ftpDirectoryTemplatePath;
-@property (nonatomic, setter=_setForceFTPDirectoryListings:) BOOL _forceFTPDirectoryListings;
 @property (nonatomic, setter=_setLocalStorageDatabasePath:) NSString *_localStorageDatabasePath;
 @property (nonatomic) BOOL acceleratedDrawingEnabled;
 @property (nonatomic) BOOL resourceLoadStatisticsEnabled;

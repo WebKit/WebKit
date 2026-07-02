@@ -37,6 +37,8 @@ class HTMLMediaElement;
 struct CueMatch {
     WeakPtr<HTMLMediaElement> mediaElement;
     MediaTime seekTime;
+
+    friend bool operator==(const CueMatch&, const CueMatch&) = default;
 };
 
 } // namespace WebCore

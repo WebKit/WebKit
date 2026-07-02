@@ -65,6 +65,7 @@
 #include "JSDOMIterator.h"
 #include "JSDOMOperation.h"
 #include "JSDOMOperationReturningPromise.h"
+#include "JSDOMPromise.h"
 #include "JSDOMStringList.h"
 #include "JSDOMWindowBase.h"
 #include "JSDOMWrapperCache.h"
@@ -7824,7 +7825,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_returnsPromisePairB
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_returnsPromisePair, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    return IDLOperationReturningPromise<JSTestObj>::callReturningPromisePair<jsTestObjPrototypeFunction_returnsPromisePairBody>(*lexicalGlobalObject, *callFrame, "returnsPromisePair");
+    return IDLOperationReturningPromise<JSTestObj>::callReturningPromisePair<jsTestObjPrototypeFunction_returnsPromisePairBody, TestObj::PromisePair>(*lexicalGlobalObject, *callFrame, "returnsPromisePair");
 }
 
 #if ENABLE(TEST_FEATURE)

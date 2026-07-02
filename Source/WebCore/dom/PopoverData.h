@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,8 +96,8 @@ public:
     };
 
 private:
-    PopoverState m_popoverState;
-    PopoverVisibilityState m_visibilityState;
+    PopoverState m_popoverState { PopoverState::None };
+    PopoverVisibilityState m_visibilityState { PopoverVisibilityState::Hidden };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
     RefPtr<ToggleEventTask> m_toggleEventTask;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_invoker;

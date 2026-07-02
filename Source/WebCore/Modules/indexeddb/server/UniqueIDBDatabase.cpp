@@ -1379,6 +1379,11 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     handleTransactions();
 }
 
+bool UniqueIDBDatabase::isVersionChangeTransactionActive(const UniqueIDBDatabaseConnection& connection) const
+{
+    return m_versionChangeDatabaseConnection == &connection && m_versionChangeTransaction;
+}
+
 void UniqueIDBDatabase::connectionClosedFromServer(UniqueIDBDatabaseConnection& connection)
 {
     ASSERT(!isMainThread());

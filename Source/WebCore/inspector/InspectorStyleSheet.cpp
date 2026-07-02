@@ -925,7 +925,7 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties()
                         }
                     } else {
                         auto previousParsedOk = activeIt->value->getBoolean("parsedOk"_s);
-                        if (previousParsedOk && !previousParsedOk)
+                        if (previousParsedOk && !*previousParsedOk)
                             shouldInactivate = true;
                     }
                 } else

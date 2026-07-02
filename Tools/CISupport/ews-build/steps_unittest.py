@@ -5721,6 +5721,72 @@ All tests successfully passed!
         self.expect_outcome(result=SUCCESS, state_string='run-api-tests')
         return self.run_step()
 
+    def test_expected_failures_only_not_blocking(self):
+        self.setup_step(RunAPITests())
+        self.setProperty('fullPlatform', 'mac-catalina')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'debug')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=20 * 60
+                        )
+            .log('stdio', stdout='''...
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1882 successful (6 expected failures)
+------------------------------
+All tests passed! (6 expected failures)
+
+Expected failures (not blocking):
+    TestWebKitAPI.MediaSessionTest.MinimalCommands
+    TestWebKitAPI.NowPlayingTest.VideoElementWithMutedAudio
+    TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudio
+    TestWebKitAPI.NowPlayingTest.VideoElementWithoutAudioPlayWithUserGesture
+    TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesFromRedirect
+    TestWebKitAPI.WKHTTPCookieStore.WebSocketCookiesThroughRedirect
+''')
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='run-api-tests')
+        return self.run_step()
+
+    def test_unexpected_failures_counted_excluding_expected(self):
+        self.setup_step(RunAPITests())
+        self.setProperty('fullPlatform', 'mac-catalina')
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'debug')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': self.jsonFileName},
+                        timeout=20 * 60
+                        )
+            .log('stdio', stdout='''...
+worker/0 TestWTF.WTF_Variant.VisitorUsingSwitchOn Passed
+worker/0 exiting
+Ran 1888 tests of 1888 with 1880 successful (6 expected failures)
+------------------------------
+Test suite failed
+
+** UNEXPECTED FAILURES **
+
+    TestWTF.WTF.StringConcatenate_Unsigned
+    TestWTF.WTF_Expected.Unexpected
+
+Expected failures (not blocking):
+    TestWebKitAPI.MediaSessionTest.MinimalCommands
+''')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='2 api tests failed or timed out')
+        return self.run_step()
+
 
 class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

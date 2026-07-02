@@ -54,6 +54,8 @@ PASS SVGSVGElement.prototype.pixelUnitToMillimeterX must be removed
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterY must be removed
 PASS SVGSVGElement.prototype.screenPixelToMillimeterX must be removed
 PASS SVGSVGElement.prototype.screenPixelToMillimeterY must be removed
+PASS SVGSVGElement.prototype.setCurrentScale must be removed
+PASS SVGSVGElement.prototype.setCurrentTranslate must be removed
 FAIL SVGSVGElement.prototype.useCurrentView must be removed assert_false: expected false got true
 PASS SVGSVGElement.prototype.viewport must be removed
 PASS SVGViewElement.prototype.viewTarget must be removed

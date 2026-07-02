@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -294,6 +294,7 @@ public:
     void setPseudoElementRenderer(PseudoElementType, RenderBlockFlow&);
 
     ReferencedSVGResources& ensureReferencedSVGResources();
+    ReferencedSVGResources* referencedSVGResources() const;
 
     Overflow NODELETE effectiveOverflowX() const;
     Overflow NODELETE effectiveOverflowY() const;
@@ -454,32 +455,29 @@ private:
     template<typename> Color selectionColor() const;
 
     SingleThreadPackedWeakPtr<RenderObject> m_firstChild;
-    unsigned m_hasInitializedStyle : 1;
+    SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
 
-    unsigned m_hasPausedImageAnimations : 1;
-    unsigned m_hasCounterNodeMap : 1;
+    unsigned m_hasInitializedStyle : 1 { false };
+    unsigned m_hasPausedImageAnimations : 1 { false };
+    unsigned m_hasCounterNodeMap : 1 { false };
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    unsigned m_hasHDRImages : 1;
+    unsigned m_hasHDRImages : 1 { false };
 #endif
-
-    unsigned m_isFirstLetter : 1;
-    unsigned m_renderBlockHasMarginBeforeQuirk : 1;
-    unsigned m_renderBlockHasMarginAfterQuirk : 1;
-    unsigned m_renderBlockShouldForceRelayoutChildren : 1;
+    unsigned m_isFirstLetter : 1 { false };
+    unsigned m_renderBlockHasMarginBeforeQuirk : 1 { false };
+    unsigned m_renderBlockHasMarginAfterQuirk : 1 { false };
+    unsigned m_renderBlockShouldForceRelayoutChildren : 1 { false };
     unsigned m_renderBlockHasRareData : 1 { false };
     unsigned m_renderBoxHasShapeOutsideInfo : 1 { false };
     unsigned m_hasCachedSVGResource : 1 { false };
-    unsigned m_renderBlockFlowLineLayoutPath : 3;
+    unsigned m_renderBlockFlowLineLayoutPath : 3 { 0 }; // RenderBlockFlow::UndeterminedPath
     unsigned m_mayHaveLayerInSubtree : 1 { false };
-
-    SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
-
-    unsigned m_isRegisteredForVisibleInViewportCallback : 1;
-    unsigned m_visibleInViewportState : 2;
-    unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
+    unsigned m_isRegisteredForVisibleInViewportCallback : 1 { false };
+    unsigned m_visibleInViewportState : 2 { static_cast<unsigned>(VisibleInViewportState::Unknown) };
+    unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1 { false };
     unsigned m_scrollAnchoringSuppressionStyleChanged : 1 { false };
     unsigned m_isInPendingSVGTransformAttributeUpdates : 1 { false };
-    // 10 bits free.
+    // 11 bits free.
 
     Style::ComputedStyle m_style;
 };

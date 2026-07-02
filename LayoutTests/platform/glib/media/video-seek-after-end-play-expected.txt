@@ -1,0 +1,15 @@
+Test that calling play while a seek is ongoing will resume.
+
+
+EVENT(play)
+EVENT(playing)
+EVENT(ended)
+EVENT(seeking)
+EVENT(seeked)
+EVENT(play)
+EVENT(playing)
+EVENT(seeking)
+EVENT(seeked)
+EVENT(ended)
+END OF TEST
+

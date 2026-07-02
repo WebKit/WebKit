@@ -157,18 +157,31 @@ WebKitCommitters = (function() {
             return;
         }
 
-        var html = [];
+        function appendSpan(parent, className, text) {
+            var span = document.createElement('span');
+            span.className = className;
+            span.textContent = text;
+            parent.append(span, ' ');
+        }
+
+        var menu = getMenu();
+        menu.textContent = '';
         for (var i = 0; i < contacts.length; i++) {
             var contact = contacts[i];
-            html.push('<div class="committer-suggestion" ' + 'email=' +
-                contact.emails[0] + '><span class="committer-name">' + contact.name + '</span> <span class="committer-email">&lt;' + contact.emails[0] + '&gt;</span> ');
+
+            var suggestion = document.createElement('div');
+            suggestion.className = 'committer-suggestion';
+            suggestion.setAttribute('email', contact.emails[0]);
+
+            appendSpan(suggestion, 'committer-name', contact.name);
+            appendSpan(suggestion, 'committer-email', '<' + contact.emails[0] + '>');
             if (contact.nicks)
-                html.push(' <span class="committer-nick">@' + contact.nicks.join(', @') + '</span>');
+                appendSpan(suggestion, 'committer-nick', '@' + contact.nicks.join(', @'));
             if (contact.type)
-                html.push(' <span class="committer-type">' + contact.type + '</span>');
-            html.push('</div>');
+                appendSpan(suggestion, 'committer-type', contact.type);
+
+            menu.appendChild(suggestion);
         }
-        getMenu().innerHTML = html.join('');
         selectItem(0);
         showMenu(true);
     }

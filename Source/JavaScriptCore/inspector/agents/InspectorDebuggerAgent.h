@@ -112,6 +112,8 @@ public:
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
     void didCreateNativeExecutable(JSC::NativeExecutable&) final;
     void willCallNativeExecutable(JSC::CallFrame*) final;
+    void didCreateInternalFunction(JSC::InternalFunction&) final;
+    void willCallInternalFunction(JSC::InternalFunction&) final;
     void willEnter(JSC::CallFrame*) final;
     void didQueueMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
     void willRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;

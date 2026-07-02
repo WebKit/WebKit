@@ -400,6 +400,9 @@ private:
     void checkTimerFired();
     void checkCompletenessNow();
 
+    void startCrossOriginParentSyntheticSameDocLoadEventTimer();
+    void crossOriginParentSyntheticSameDocLoadEventTimerFired();
+
     void loadSameDocumentItem(HistoryItem&);
     void loadDifferentDocumentItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, FormSubmissionCacheLoadPolicy, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, PolicyAlreadyDecided = PolicyAlreadyDecided::No);
 
@@ -539,6 +542,7 @@ private:
     URL m_submittedFormURL;
 
     Timer m_checkTimer;
+    Timer m_crossOriginParentSyntheticSameDocLoadEventTimer;
     bool m_shouldCallCheckCompleted { false };
     bool m_shouldCallCheckLoadComplete { false };
 

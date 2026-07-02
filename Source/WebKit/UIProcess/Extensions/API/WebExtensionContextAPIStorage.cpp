@@ -149,12 +149,8 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
             if (!keysSuccessfullySet.size())
                 return;
 
-            if (keysSuccessfullySet.size() != data.size()) {
-                for (const auto& key : data.keys()) {
-                    if (!keysSuccessfullySet.contains(key))
-                        data.remove(key);
-                }
-            }
+            if (keysSuccessfullySet.size() != data.size())
+                data.removeIf([&](auto& entry) { return !keysSuccessfullySet.contains(entry.key); });
 
             fireStorageChangedEventIfNeeded(existingKeysAndValues, data, dataType);
         });

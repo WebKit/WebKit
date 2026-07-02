@@ -326,8 +326,8 @@ void PlaybackSessionInterfaceLMK::rateChanged(OptionSet<WebCore::PlaybackSession
 void PlaybackSessionInterfaceLMK::seekableRangesChanged(const WebCore::PlatformTimeRanges& timeRanges, double, double)
 {
     RetainPtr seekableRanges = adoptNS([[NSMutableArray alloc] initWithCapacity:timeRanges.length()]);
-    for (unsigned i = 0; i < timeRanges.length(); ++i) {
-        RetainPtr timeRange = adoptNS([allocWKSLinearMediaTimeRangeInstance() initWithLowerBound:timeRanges.start(i).toDouble() upperBound:timeRanges.end(i).toDouble()]);
+    for (auto& range : timeRanges.span()) {
+        RetainPtr timeRange = adoptNS([allocWKSLinearMediaTimeRangeInstance() initWithLowerBound:range.start.toDouble() upperBound:range.end.toDouble()]);
         [seekableRanges addObject:timeRange.get()];
     }
 

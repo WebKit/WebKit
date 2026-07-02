@@ -567,11 +567,17 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
 bool RenderGrid::layoutUsingGridFormattingContext()
 {
-    if (!m_hasGridFormattingContextLayout.has_value())
-        m_hasGridFormattingContextLayout = LayoutIntegration::canUseForGridLayout(*this);
-
-    if (!*m_hasGridFormattingContextLayout)
+    if (m_hasGridFormattingContextLayout && !*m_hasGridFormattingContextLayout) {
+        // FIXME: Avoid continous content checking on (potentially) unsupported content. This ensures no pref impact on cases like resize etc.
+        // Remove when canUseForGridLayout becomes less expensive.
         return false;
+    }
+
+    m_hasGridFormattingContextLayout = LayoutIntegration::canUseForGridLayout(*this);
+    if (!*m_hasGridFormattingContextLayout) {
+        LayoutIntegration::GridLayout::invalidateFormattingContextRootRenderer(*this);
+        return false;
+    }
 
     auto gridLayout = LayoutIntegration::GridLayout { *this };
     gridLayout.updateFormattingContextGeometries();
@@ -1605,7 +1611,7 @@ void RenderGrid::layoutGridItems(RenderGridLayoutState& gridLayoutState)
         // used during the track sizing algorithm.
         updateGridAreaIncludingAlignment(gridItem);
 
-        LayoutRect oldGridItemRect = gridItem.frameRect();
+        LayoutRect oldGridItemRect = gridItem.borderBoxRectInContainer();
 
         // Stretching logic might force a grid item layout, so we need to run it before the layoutIfNeeded
         // call to avoid unnecessary relayouts. This might imply that grid item margins, needed to correctly
@@ -2234,7 +2240,7 @@ LayoutRange RenderGrid::gridAreaRangeForOutOfFlow(const RenderBox& gridItem, Sty
         return borderBefore();
     }();
 
-    LayoutRange defaultRange(borderEdge, isRowAxis ? clientLogicalWidth() : clientLogicalHeight());
+    LayoutRange defaultRange(borderEdge, isRowAxis ? paddingBoxLogicalWidth() : paddingBoxLogicalHeight());
     if (!gridItem.style().positionArea().isNone() && hasRenderOverflow() && hasPotentiallyScrollableOverflow()) {
         // position-area uses the scrollable containing block
         defaultRange = isRowAxis == writingMode().isHorizontal()
@@ -2260,7 +2266,7 @@ LayoutRange RenderGrid::gridAreaRangeForOutOfFlow(const RenderBox& gridItem, Sty
     auto& positions = this->positions(direction);
     if (positions.isEmpty()) {
         ASSERT_WITH_SECURITY_IMPLICATION(!positions.isEmpty());
-        return LayoutRange(borderEdge, isRowAxis ? clientLogicalWidth() : clientLogicalHeight());
+        return LayoutRange(borderEdge, isRowAxis ? paddingBoxLogicalWidth() : paddingBoxLogicalHeight());
     }
 
     if (startIsAuto)
@@ -2449,7 +2455,7 @@ LayoutOptionalOutsets RenderGrid::allowedLayoutOverflow() const
 
 LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
 {
-    LayoutUnit width = borderLogicalLeft() + borderLogicalRight() + clientLogicalWidth();
+    LayoutUnit width = borderLogicalLeft() + borderLogicalRight() + paddingBoxLogicalWidth();
 
     // If we are in horizontal writing mode and RTL direction the scrollbar is painted on the left,
     // so we need to take into account when computing the position of the columns.

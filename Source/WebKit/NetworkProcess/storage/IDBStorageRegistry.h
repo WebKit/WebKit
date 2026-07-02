@@ -48,7 +48,7 @@ class IDBStorageRegistry : public CanMakeThreadSafeCheckedPtr<IDBStorageRegistry
     WTF_MAKE_TZONE_ALLOCATED(IDBStorageRegistry);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageRegistry);
 public:
-    IDBStorageRegistry();
+    explicit IDBStorageRegistry(NetworkStorageManager&);
     ~IDBStorageRegistry();
     WebCore::IDBServer::IDBConnectionToClient* ensureConnectionToClient(IPC::Connection&, const WebCore::IDBResourceIdentifier&, NetworkStorageManager&);
     WebCore::IDBServer::IDBConnectionToClient* existingConnectionToClient(WebCore::IDBConnectionIdentifier);
@@ -63,6 +63,7 @@ public:
 private:
     bool isValidConnectionForIPC(WebCore::IDBServer::UniqueIDBDatabaseConnection&, IPC::Connection&);
 
+    ThreadSafeWeakRef<NetworkStorageManager> m_manager;
     HashMap<WebCore::IDBConnectionIdentifier, std::unique_ptr<IDBStorageConnectionToClient>> m_connectionsToClient;
     HashMap<WebCore::IDBDatabaseConnectionIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection>> m_connections;
     HashMap<WebCore::IDBResourceIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction>> m_transactions;

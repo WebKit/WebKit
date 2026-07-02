@@ -174,7 +174,7 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
             auto& renderBox = downcast<RenderBox>(*renderer);
 
             LayoutBoxExtent margins(renderBox.marginTop(), renderBox.marginRight(), renderBox.marginBottom(), renderBox.marginLeft());
-            paddingBox = renderBox.clientBoxRect();
+            paddingBox = LayoutRect(renderBox.borderLeft(), renderBox.borderTop(), renderBox.paddingBoxWidth(), renderBox.paddingBoxHeight());
             contentBox = LayoutRect(paddingBox.x() + renderBox.paddingLeft(), paddingBox.y() + renderBox.paddingTop(),
                 paddingBox.width() - renderBox.paddingLeft() - renderBox.paddingRight(), paddingBox.height() - renderBox.paddingTop() - renderBox.paddingBottom());
             borderBox = LayoutRect(paddingBox.x() - renderBox.borderLeft(), paddingBox.y() - renderBox.borderTop(),
@@ -2157,7 +2157,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     auto isRowDirection = wasRowDirection ^ !computedStyle->writingMode().isHorizontal();
     auto isMainAxisDirectionReversed = computedStyle->isReverseFlexDirection() ^ (wasRowDirection ? isRightToLeftDirection : isBlockFlipped);
-    auto isCrossAxisDirectionReversed = (computedStyle->flexWrap() == FlexWrap::Reverse) ^ (wasRowDirection ? isBlockFlipped : isBlockFlipped);
+    auto isCrossAxisDirectionReversed = (computedStyle->flexWrap() == FlexWrap::Reverse) ^ (wasRowDirection ? isBlockFlipped : isRightToLeftDirection);
 
     auto localQuadToRootQuad = [&](const FloatQuad& quad) {
         return FloatQuad(
@@ -2271,7 +2271,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
     for (CheckedPtr renderChild : renderChildrenInFlexOrder) {
         // Build bounds for each child and collect children on the same logical line.
         {
-            auto childRect = renderChild->frameRect();
+            auto childRect = renderChild->borderBoxRectInContainer();
             renderFlex->flipForWritingMode(childRect);
             childRect.expand(renderChild->marginBox());
 

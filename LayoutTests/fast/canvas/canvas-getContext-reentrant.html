@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function gc() {
+    if (window.GCController)
+        return GCController.collect();
+    for (let i = 0; i < 10000; i++)
+        new String("abc");
+}
+
+function reenter(outer, inner) {
+    let canvas = document.createElement("canvas");
+    let innerCtx;
+    let outerCtx = canvas.getContext(outer, {
+        get colorSpace() { innerCtx = canvas.getContext(inner); return "srgb"; },
+        get alpha() { innerCtx = canvas.getContext(inner); return true; },
+    });
+    document.write(`getContext("${outer}") with reentrant getContext("${inner}"): outer=${name(outerCtx)} inner=${name(innerCtx)}<br>`);
+}
+
+function reenterOffscreen(outer, inner) {
+    let canvas = new OffscreenCanvas(10, 10);
+    let innerCtx;
+    let outerCtx = canvas.getContext(outer, {
+        get colorSpace() { innerCtx = canvas.getContext(inner); return "srgb"; },
+        get alpha() { innerCtx = canvas.getContext(inner); return true; },
+    });
+    document.write(`OffscreenCanvas getContext("${outer}") with reentrant getContext("${inner}"): outer=${name(outerCtx)} inner=${name(innerCtx)}<br>`);
+}
+
+function name(ctx) {
+    return ctx ? ctx.constructor.name : "null";
+}
+
+for (let outer of ["2d", "bitmaprenderer", "webgl", "webgl2"])
+    for (let inner of ["2d", "bitmaprenderer", "webgl", "webgl2"])
+        reenter(outer, inner);
+
+for (let outer of ["2d", "bitmaprenderer", "webgl", "webgl2"])
+    for (let inner of ["2d", "bitmaprenderer", "webgl", "webgl2"])
+        reenterOffscreen(outer, inner);
+
+gc();
+document.write("PASS if no crash.");
+</script>

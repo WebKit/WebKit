@@ -538,8 +538,8 @@ protected:
     friend class ScopedWebGLRestoreTexture;
 
     void initializeNewContext(Ref<GraphicsContextGL>);
-    virtual void initializeContextState();
-    virtual void initializeDefaultObjects();
+    virtual void initializeContextState() WTF_REQUIRES_LOCK(objectGraphLock());
+    virtual void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock());
     virtual void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock());
 
     // ActiveDOMObject

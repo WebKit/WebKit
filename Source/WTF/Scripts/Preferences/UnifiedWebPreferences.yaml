@@ -638,6 +638,21 @@ ApplePayEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+AsyncAudioSessionActivationEnabled:
+  type: bool
+  status: stable
+  category: media
+  humanReadableName: "Async Audio Session Activation"
+  humanReadableDescription: "Use async IPC for audio session activation"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+  sharedPreferenceForWebProcess: true
+
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
   type: bool
@@ -2345,7 +2360,7 @@ DataTransferItemsEnabled:
     WebKitLegacy:
       default: true
     WebKit:
-      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN)": true
       default: false
     WebCore:
       default: false
@@ -3023,17 +3038,6 @@ ExtensibleSSOEnabled:
     WebKit:
       default: true
 
-FTPDirectoryTemplatePath:
-  type: String
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: '""_str'
-    WebKit:
-      default: '""_str'
-    WebCore:
-      default: '""_str'
-
 FTPEnabled:
   type: bool
   status: developer
@@ -3168,6 +3172,21 @@ FilterLinkDecorationByDefaultEnabled:
     WebCore:
       default: false
 
+FindInVideoEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Find in Video"
+  humanReadableDescription: "Include video subtitle/caption cues in Find-in-Page results"
+  condition: ENABLE(VIDEO)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FixedFontFamily:
   type: String
   status: embedder
@@ -3239,17 +3258,6 @@ ForceEnhancedSecurity:
   humanReadableDescription: "Force all navigations to use Enhanced Security"
   webcoreBinding: none
   exposed: [ WebKit ]
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
-ForceFTPDirectoryListings:
-  type: bool
-  status: embedder
   defaultValue:
     WebKitLegacy:
       default: false
@@ -7200,21 +7208,7 @@ ScriptTrackingPrivacyNetworkRequestBlockingEnabled:
   type: bool
   status: internal
   humanReadableName: "Script Tracking Privacy Network Requests Blocking"
-  humanReadableDescription: "Block network requests made from tracking scripts"
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-ScriptTrackingPrivacyNetworkRequestBlockingLatchEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Script Tracking Privacy Network Requests Blocking Latch"
-  humanReadableDescription: "Block multiple network requests made to tracking domains"
+  humanReadableDescription: "Block network requests to known tracking domains"
   exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
@@ -7359,6 +7353,19 @@ ScrollingPerformanceTestingEnabled:
       default: false
     WebKit:
       default: false
+    WebCore:
+      default: false
+
+SearchInputResultsAttributeEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "<input type=search> results=N attribute"
+  humanReadableDescription: "Enable the legacy WebKit-only ::-webkit-search-results-button saved-searches dropdown opt-in"
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultSearchInputResultsAttributeEnabled()
+    WebKit:
+      default: WebKit::defaultSearchInputResultsAttributeEnabled()
     WebCore:
       default: false
 

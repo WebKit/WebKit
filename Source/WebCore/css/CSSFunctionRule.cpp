@@ -50,9 +50,11 @@ auto CSSFunctionRule::getParameters() const -> Vector<FunctionParameter>
 {
     return WTF::map(styleRuleFunction().parameters(), [](const auto& parameter) {
         RefPtr defaultValue = parameter.defaultValue;
+        StringBuilder type;
+        serializeCustomPropertySyntax(type, parameter.type);
         return FunctionParameter {
             .name = parameter.name,
-            .type = "*"_s, // FIXME: Implement.
+            .type = type.toString(),
             // FIXME: The spec says:
             //   "The default value of the function parameter, or `null` if the argument does not have a default".
             // But WPT tests currently expect the value to missing/undefined, not `null`, so we are using
@@ -64,7 +66,9 @@ auto CSSFunctionRule::getParameters() const -> Vector<FunctionParameter>
 
 String CSSFunctionRule::returnType() const
 {
-    return "*"_s;
+    StringBuilder builder;
+    serializeCustomPropertySyntax(builder, styleRuleFunction().returnType());
+    return builder.toString();
 }
 
 String CSSFunctionRule::cssText() const
@@ -78,14 +82,25 @@ String CSSFunctionRule::cssText() const
     for (auto& parameter : styleRuleFunction().parameters()) {
         builder.append(separator);
         serializeIdentifier(builder, parameter.name);
-        // FIXME: Serialize the type.
+
+        if (!parameter.type.isUniversal()) {
+            builder.append(' ');
+            serializeCustomPropertySyntaxAsCSSType(builder, parameter.type);
+        }
 
         if (RefPtr defaultValue = parameter.defaultValue)
             builder.append(": "_s, defaultValue->serialize());
         separator = ", "_s;
     }
 
-    builder.append(") { "_s);
+    builder.append(')');
+
+    if (auto& returnType = styleRuleFunction().returnType(); !returnType.isUniversal()) {
+        builder.append(" returns "_s);
+        serializeCustomPropertySyntaxAsCSSType(builder, returnType);
+    }
+
+    builder.append(" { "_s);
 
     for (unsigned index = 0; index < length(); ++index) {
         Ref rule = *item(index);

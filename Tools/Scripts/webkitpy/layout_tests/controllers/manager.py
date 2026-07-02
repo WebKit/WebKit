@@ -955,6 +955,8 @@ class Manager(object):
             aggregate_tests = aggregate_tests_to_run | aggregate_tests_to_skip
 
             self._printer.print_found(len(aggregate_tests), len(aggregate_tests_to_run), self._options.repeat_each, self._options.iterations)
+            if not aggregate_tests:
+                continue
             test_col_width = max(len(test.test_path) for test in aggregate_tests) + 1
 
             self._print_expectations_for_subset(device_type_list[0], test_col_width, tests_to_run_by_device[device_type_list[0]], aggregate_tests_to_skip)

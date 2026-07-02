@@ -144,6 +144,20 @@ inline constexpr auto AllLayoutUnitClampedUnzoomed = Range { minValueForCssLengt
 inline constexpr auto NonnegativeLayoutUnitClamped = Range { 0, maxValueForCssLength, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Ignore };
 inline constexpr auto NonnegativeLayoutUnitClampedUnzoomed = Range { 0, maxValueForCssLength, RangeParseTimeBehavior::Default, RangeParseTimeBehavior::Ignore, RangeZoomOptions::Unzoomed };
 
+// Returns whether range `a` is equal to or is a subrange of range `b`.
+consteval bool isEqualOrSubrange(Range a, Range b)
+{
+    return a.min >= b.min && a.max <= b.max;
+}
+
+// Returns whether range `a` is a strict subrange of range `b`.
+consteval bool isSubrange(Range a, Range b)
+{
+    return isEqualOrSubrange(a, b) && (a.min != b.min || a.max != b.max);
+}
+
+template<Range a, Range b> concept IsSubrange = isSubrange(a, b);
+
 // Clamps a floating point value to within static `range`.
 template<Range range, std::floating_point T, typename U> constexpr T clampToRange(U value)
 {

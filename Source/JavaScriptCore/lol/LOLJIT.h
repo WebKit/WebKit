@@ -147,7 +147,6 @@ namespace JSC::LOL {
     macro(op_add) \
     macro(op_call_direct_eval) \
     macro(op_eq) \
-    macro(op_try_get_by_id) \
     macro(op_in_by_id) \
     macro(op_in_by_val) \
     macro(op_has_private_name) \

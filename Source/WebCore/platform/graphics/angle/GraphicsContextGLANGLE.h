@@ -47,10 +47,6 @@ public:
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
 
-    GCGLenum drawingBufferTextureTarget();
-    std::tuple<GCGLenum, GCGLenum> drawingBufferTextureBindingPoint();
-    static GCGLint NODELETE EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
-
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.
         ReleaseCurrentContext,
@@ -444,8 +440,6 @@ protected:
     GCGLuint m_preserveDrawingBufferTexture { 0 };
     // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
     GCGLuint m_preserveDrawingBufferFBO { 0 };
-    // Queried at display startup.
-    GCGLint m_drawingBufferTextureTarget { -1 };
     GCGLErrorCodeSet m_errors;
     bool m_isForWebGL2 { false };
     bool m_failNextStatusCheck { false };

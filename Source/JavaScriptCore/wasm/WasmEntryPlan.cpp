@@ -229,10 +229,10 @@ void EntryPlan::compileFunctions()
     for (uint32_t index = functionIndex; index < functionIndexEnd; ++index)
         compileFunction(FunctionCodeIndex(index));
 
-    if (m_moduleInformation->m_usesModernExceptions.loadRelaxed() && m_moduleInformation->m_usesLegacyExceptions.loadRelaxed()) {
+    {
         Locker locker { m_lock };
-        fail(makeString("Module uses both legacy exceptions and try_table"_s));
-        return;
+        if (failIfMixedExceptionHandlingProposals())
+            return;
     }
 
     if (!areWasmToWasmStubsCompiled) {
@@ -265,6 +265,16 @@ void EntryPlan::complete()
         moveToState(State::Completed);
         runCompletionTasks();
     }
+}
+
+bool EntryPlan::failIfMixedExceptionHandlingProposals()
+{
+    if (m_moduleInformation->m_usesModernExceptions.loadRelaxed()
+        && m_moduleInformation->m_usesLegacyExceptions.loadRelaxed()) {
+        fail(makeString("Module uses both legacy exceptions and try_table"_s));
+        return true;
+    }
+    return false;
 }
 
 bool EntryPlan::completeSyncIfPossible()

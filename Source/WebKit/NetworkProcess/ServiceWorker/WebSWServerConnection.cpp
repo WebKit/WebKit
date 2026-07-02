@@ -49,6 +49,7 @@
 #include <WebCore/CookieChangeSubscription.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/LegacySchemeRegistry.h>
+#include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/SWServerRegistration.h>
@@ -405,9 +406,17 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
         return;
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
-    server->runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTF::move(message), sourceData = WTF::move(*sourceData)](auto* contextConnection) mutable {
-        if (contextConnection)
-            sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, WTF::move(message), WTF::move(sourceData) });
+    server->runServiceWorkerIfNecessary(destinationIdentifier, [protectedThis = Ref { *this }, destinationIdentifier, message = WTF::move(message), sourceData = WTF::move(*sourceData)](auto* contextConnection) mutable {
+        if (!contextConnection)
+            return;
+
+        // PostMessageToServiceWorker follows a different flow than normal MessagePort post message.
+        // We pre-record the destination so impending message checks pass.
+        Ref networkProcess = protectedThis->networkProcess();
+        CheckedRef registry = networkProcess->messagePortChannelRegistry();
+        for (auto& transferredPort : message.transferredPorts)
+            registry->recordPendingTransferDestination(transferredPort.first, contextConnection->webProcessIdentifier());
+        sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, WTF::move(message), WTF::move(sourceData) });
     });
 }
 
@@ -482,6 +491,12 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
         return;
 
     server->postMessageToServiceWorkerClient(destinationContextIdentifier, message, sourceIdentifier, sourceOrigin, [protectedThis = Ref { *this }] (auto destinationContextIdentifier, auto& message, auto sourceServiceWorkerData, auto& sourceOrigin) {
+        // PostMessageToServiceWorkerClient follows a different flow than normal MessagePort post message.
+        // We pre-record the destination so impending message checks pass.
+        Ref networkProcess = protectedThis->networkProcess();
+        CheckedRef registry = networkProcess->messagePortChannelRegistry();
+        for (auto& transferredPort : message.transferredPorts)
+            registry->recordPendingTransferDestination(transferredPort.first, destinationContextIdentifier.processIdentifier());
         protectedThis->send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorkerData, sourceOrigin }, 0);
     });
 }

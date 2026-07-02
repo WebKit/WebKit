@@ -357,7 +357,7 @@ LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& addit
     ASSERT(hasControlClip());
     auto clipRect = paddingBoxRect();
     if (auto* containerElementRenderer = containerElement() ? containerElement()->renderBox() : nullptr)
-        clipRect = unionRect(clipRect, containerElementRenderer->frameRect());
+        clipRect = unionRect(clipRect, containerElementRenderer->borderBoxRectInContainer());
     clipRect.moveBy(additionalOffset);
     return clipRect;
 }
@@ -437,7 +437,7 @@ int RenderTextControlSingleLine::scrollWidth() const
 {
     if (CheckedPtr innerTextRenderer = this->innerTextRenderer()) {
         // Adjust scrollWidth to inculde input element horizontal paddings and decoration width.
-        auto adjustment = clientWidth() - innerTextRenderer->clientWidth();
+        auto adjustment = paddingBoxWidth() - innerTextRenderer->paddingBoxWidth();
         return innerTextRenderer->scrollWidth() + adjustment;
     }
     return RenderBlockFlow::scrollWidth();
@@ -447,7 +447,7 @@ int RenderTextControlSingleLine::scrollHeight() const
 {
     if (CheckedPtr innerTextRenderer = this->innerTextRenderer()) {
         // Adjust scrollHeight to inculde input element vertical paddings and decoration height.
-        auto adjustment = clientHeight() - innerTextRenderer->clientHeight();
+        auto adjustment = paddingBoxHeight() - innerTextRenderer->paddingBoxHeight();
         return innerTextRenderer->scrollHeight() + adjustment;
     }
     return RenderBlockFlow::scrollHeight();

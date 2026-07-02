@@ -342,8 +342,8 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         if (!fullscreenElement || !fullscreenElement->renderer() || fullscreenElement->renderer()->pseudoElementRenderer(PseudoElementType::Backdrop) != &renderer)
             return false;
 
-        auto rendererRect = box->frameRect();
-        return rendererRect == box->view().frameRect();
+        auto rendererRect = box->borderBoxRectInContainer();
+        return rendererRect == box->view().borderBoxRectInContainer();
     };
     setRequiresBackgroundLayer(isFullsizeBackdrop(layer.renderer()));
 #endif
@@ -4176,14 +4176,11 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
         paintingInfo.regionContext = regionContext;
 
-        // Limit the owning SVG layer's DOM-order child walk to the part of the flat list this GraphicsLayer
-        // owns: the primary segment for the primary layer, the matching segment for each overlay. std::nullopt (no segments)
-        // leaves the common path unchanged. Only m_owningLayer has a flat list.
-        std::optional<WTF::Range<unsigned>> svgPaintOrderItemRange;
-        if (&layer == &m_owningLayer)
-            svgPaintOrderItemRange = svgSegmentRangeForGraphicsLayer(*graphicsLayer);
-
         if (&layer == &m_owningLayer) {
+            // Limit the owning SVG layer's DOM-order child walk to the part of the flat list this GraphicsLayer
+            // owns: the primary segment for the primary layer, the matching segment for each overlay. std::nullopt (no segments)
+            // leaves the common path unchanged. Only m_owningLayer has a flat list.
+            auto svgPaintOrderItemRange = svgSegmentRangeForGraphicsLayer(*graphicsLayer);
             {
                 bool shouldResetCompositeMode = false;
                 if (m_shouldPaintUsingCompositeCopy && context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal }) {

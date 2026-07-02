@@ -67,11 +67,11 @@ void RenderScrollbarPart::layout()
 void RenderScrollbarPart::layoutHorizontalPart()
 {
     if (m_part == ScrollbarBGPart) {
-        setWidth(protect(m_scrollbar.get())->width());
+        setBorderBoxWidth(protect(m_scrollbar.get())->width());
         computeScrollbarHeight();
     } else {
         computeScrollbarWidth();
-        setHeight(protect(m_scrollbar.get())->height());
+        setBorderBoxHeight(protect(m_scrollbar.get())->height());
     }
 }
 
@@ -79,9 +79,9 @@ void RenderScrollbarPart::layoutVerticalPart()
 {
     if (m_part == ScrollbarBGPart) {
         computeScrollbarWidth();
-        setHeight(protect(m_scrollbar.get())->height());
+        setBorderBoxHeight(protect(m_scrollbar.get())->height());
     } else {
-        setWidth(protect(m_scrollbar.get())->width());
+        setBorderBoxWidth(protect(m_scrollbar.get())->width());
         computeScrollbarHeight();
     }
 }
@@ -115,7 +115,7 @@ void RenderScrollbarPart::computeScrollbarWidth()
     auto width = calcScrollbarThicknessUsing(style().width(), zoomFactor);
     auto minWidth = calcScrollbarThicknessUsing(style().minWidth(), zoomFactor);
     auto maxWidth = style().maxWidth().isNone() ? width : calcScrollbarThicknessUsing(style().maxWidth(), zoomFactor);
-    setWidth(std::max(minWidth, std::min(maxWidth, width)));
+    setBorderBoxWidth(std::max(minWidth, std::min(maxWidth, width)));
     
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
     m_marginBox.setLeft(Style::evaluateMinimum<LayoutUnit>(style().marginLeft(), 0_lu, style().usedZoomForLength()));
@@ -130,7 +130,7 @@ void RenderScrollbarPart::computeScrollbarHeight()
     auto height = calcScrollbarThicknessUsing(style().height(), zoomFactor);
     auto minHeight = calcScrollbarThicknessUsing(style().minHeight(), zoomFactor);
     auto maxHeight = style().maxHeight().isNone() ? height : calcScrollbarThicknessUsing(style().maxHeight(), zoomFactor);
-    setHeight(std::max(minHeight, std::min(maxHeight, height)));
+    setBorderBoxHeight(std::max(minHeight, std::min(maxHeight, height)));
 
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
     m_marginBox.setTop(Style::evaluateMinimum<LayoutUnit>(style().marginTop(), 0_lu, style().usedZoomForLength()));
@@ -167,8 +167,8 @@ void RenderScrollbarPart::paintIntoRect(GraphicsContext& graphicsContext, const 
 {
     // Make sure our dimensions match the rect.
     setLocation(rect.location() - toLayoutSize(paintOffset));
-    setWidth(rect.width());
-    setHeight(rect.height());
+    setBorderBoxWidth(rect.width());
+    setBorderBoxHeight(rect.height());
 
     if (graphicsContext.paintingDisabled() || style().opacity().isTransparent())
         return;

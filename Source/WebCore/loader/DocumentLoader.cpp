@@ -1038,13 +1038,6 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
     }
 
     RefPtr frame = m_frame.get();
-#if ENABLE(FTPDIR)
-    // Respect the hidden FTP Directory Listing pref so it can be tested even if the policy delegate might otherwise disallow it
-    if (frame && frame->settings().forceFTPDirectoryListings() && m_response.mimeType() == "application/x-ftp-directory"_s) {
-        continueAfterContentPolicy(PolicyAction::Use);
-        return;
-    }
-#endif
 
     if (!frame) {
         DOCUMENTLOADER_RELEASE_LOG("responseReceived by DocumentLoader with null frame");
@@ -1146,6 +1139,16 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         if (!m_mainResource) {
             DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: cannot show URL");
             mainReceivedError(platformStrategies()->loaderStrategy()->cannotShowURLError(m_request));
+            return;
+        }
+
+        // Defense-in-depth: refuse to download a data: URL through a top-frame navigation that
+        // wasn't initiated by the user or the API client, mirroring the existing check in the
+        // PolicyAction::Use branch. The primary defense lives in the UI process; this guards
+        // ports / future flows that don't share that boundary.
+        if (disallowDataRequest()) {
+            protect(frameLoader())->policyChecker().cannotShowMIMEType(m_response);
+            stopLoadingForPolicyChange();
             return;
         }
 
@@ -1921,12 +1924,6 @@ void DocumentLoader::scheduleSubstituteResourceLoad(ResourceLoader& loader, Subs
     deliverSubstituteResourcesAfterDelay();
 }
 
-void DocumentLoader::scheduleCannotShowURLError(ResourceLoader& loader)
-{
-    m_pendingSubstituteResources.set(loader, nullptr);
-    deliverSubstituteResourcesAfterDelay();
-}
-
 void DocumentLoader::addResponse(const ResourceResponse& response)
 {
     if (!m_stopRecordingResponses)
@@ -2131,7 +2128,7 @@ bool DocumentLoader::maybeLoadEmpty()
     }
 
     SetForScope isInFinishedLoadingOfEmptyDocument { m_isInFinishedLoadingOfEmptyDocument, true };
-    m_isInitialAboutBlank = isDisplayingInitialEmptyDocument;
+    m_isInitialAboutBlank = isDisplayingInitialEmptyDocument ? IsInitialAboutBlank::Yes : IsInitialAboutBlank::No;
     finishedLoading();
     return true;
 }
@@ -2334,8 +2331,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         }
 
         if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)) {
-            if (auto httpNavigationWithHTTPSOnlyError = platformStrategies()->loaderStrategy()->httpNavigationWithHTTPSOnlyError(m_request); mainResourceOrError.error().domain() == httpNavigationWithHTTPSOnlyError.domain()
-                && mainResourceOrError.error().errorCode() == httpNavigationWithHTTPSOnlyError.errorCode()) {
+            if (platformStrategies()->loaderStrategy()->isHttpNavigationWithHTTPSOnlyError(mainResourceOrError.error())) {
                 DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL has HTTP scheme with HTTPSOnly enabled");
                 cancelMainResourceLoad(mainResourceOrError.error());
                 return;

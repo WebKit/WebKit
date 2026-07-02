@@ -127,6 +127,8 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include "RemoteObjectRegistry.h"
+#include "RemoteObjectRegistryMessages.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -1177,9 +1179,12 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url, CheckBackFo
 
     // Items in back/forward list have been already checked.
     // One case where we don't have sandbox extensions for file URLs in b/f list is if the list has been reinstated after a crash or a browser restart.
+    // Only consider items belonging to a page hosted by this WebProcessProxy.
     if (checkBackForwardList == CheckBackForwardList::Yes) {
         String path = url.fileSystemPath();
         for (auto& item : WebBackForwardListItem::allItems().values()) {
+            if (!m_pageMap.contains(item->pageID()))
+                continue;
             URL itemURL { item->url() };
             if (itemURL.protocolIsFile() && itemURL.fileSystemPath() == path)
                 return true;
@@ -1340,6 +1345,43 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 }
 #endif
 
+#if PLATFORM(COCOA)
+bool WebProcessProxy::handleRemoteObjectRegistryMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (!WebPageProxyIdentifier::isValidIdentifier(decoder.destinationID()))
+        return false;
+    WebPageProxyIdentifier pageID(decoder.destinationID());
+
+    auto receiveMessage = [&] (WebPageProxy& page) {
+        if (RefPtr registry = page.uiRemoteObjectRegistry()) {
+            registry->didReceiveMessage(connection, decoder);
+            return true;
+        }
+        return false;
+    };
+
+    if (RefPtr page = m_pageMap.get(pageID))
+        return receiveMessage(*page);
+
+    for (Ref remotePage : m_remotePages) {
+        if (RefPtr page = remotePage->page(); page && page->identifier() == pageID)
+            return receiveMessage(*page);
+    }
+
+    for (Ref provisionalPage : m_provisionalPages) {
+        if (RefPtr page = provisionalPage->page(); page && page->identifier() == pageID)
+            return receiveMessage(*page);
+    }
+
+    for (Ref suspendedPage : m_suspendedPages) {
+        if (RefPtr page = suspendedPage->page(); page && page->identifier() == pageID)
+            return receiveMessage(*page);
+    }
+
+    return false;
+}
+#endif
+
 bool WebProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     // If AuxiliaryProcessProxy gets .messages.in, use WantsDispatchMessages and remove this.
@@ -1347,7 +1389,12 @@ bool WebProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder&
         return true;
     if (protect(processPool())->dispatchMessage(connection, decoder))
         return true;
-    if (decoder.messageReceiverName() == Messages::WebFrameProxy::messageReceiverName()) {
+    auto messageName = decoder.messageReceiverName();
+#if PLATFORM(COCOA)
+    if (messageName == Messages::RemoteObjectRegistry::messageReceiverName())
+        return handleRemoteObjectRegistryMessage(connection, decoder);
+#endif
+    if (messageName == Messages::WebFrameProxy::messageReceiverName()) {
         if (RefPtr frame = FrameIdentifier::isValidIdentifier(decoder.destinationID()) ? WebFrameProxy::webFrame(FrameIdentifier(decoder.destinationID())) : nullptr)
             frame->didReceiveMessage(connection, decoder);
         else
@@ -2078,6 +2125,8 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
     m_backgroundResponsivenessTimer->updateState();
+
+    updateMediaStreamingActivity();
 }
 
 void WebProcessProxy::didDropLastAssertion()
@@ -2153,6 +2202,9 @@ void WebProcessProxy::updateMediaStreamingActivity()
         return remotePage ? remotePage->mediaState().contains(MediaProducerMediaState::HasStreamingActivity) : false;
     });
     bool hasMediaStreamingWebPage = hasMediaStreamingMainPage || hasMediaStreamingRemotePage;
+
+    if (isSuspended())
+        hasMediaStreamingWebPage = false;
 
     if (!!m_mediaStreamingActivity == hasMediaStreamingWebPage)
         return;

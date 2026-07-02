@@ -99,8 +99,11 @@ VideoCodec VideoCodecInitializer::SetupCodec(
   video_codec.timing_frame_thresholds = {
       .delay_ms = kDefaultTimingFramesDelayMs,
       .outlier_ratio_percent = kDefaultOutlierFrameSizePercent};
+#if WEBRTC_WEBKIT_BUILD
+  RTC_CHECK_LE(streams.size(), kMaxSimulcastStreams);
+#else
   RTC_DCHECK_LE(streams.size(), kMaxSimulcastStreams);
-
+#endif
   int max_framerate = 0;
 
   std::optional<ScalabilityMode> scalability_mode;

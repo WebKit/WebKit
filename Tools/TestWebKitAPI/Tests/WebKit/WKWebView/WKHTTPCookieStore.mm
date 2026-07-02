@@ -836,6 +836,50 @@ TEST(WKHTTPCookieStore, DISABLED_WebSocketCookies)
     Util::run(&receivedThirdRequest);
 }
 
+TEST(WKHTTPCookieStore, WebSocketCookies2)
+{
+    using namespace TestWebKitAPI;
+    bool receivedThirdRequest { false };
+    HTTPServer server(TestWebKitAPI::HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> ConnectionTask { while (true) {
+        auto request = co_await connection.awaitableReceiveHTTPRequest();
+        auto path = HTTPServer::parsePath(request);
+        request.append(0);
+        if (path == "http://sitea.example/com"_s) {
+            co_await connection.awaitableSend(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 0\r\n"
+                "Set-Cookie: Default=1\r\n"
+                "Set-Cookie: SameSite_None=1; SameSite=None\r\n"
+                "Set-Cookie: SameSite_None_Secure=1; secure; SameSite=None\r\n"
+                "Set-Cookie: SameSite_Lax=1; SameSite=Lax\r\n"
+                "Set-Cookie: SameSite_Strict=1; SameSite=Strict\r\n"
+                "\r\n"_s);
+        } else if (path == "ws://sitea.example/websocket"_s) {
+            EXPECT_TRUE(contains(request.span(), "Host: sitea.example"_span));
+            EXPECT_FALSE(contains(request.span(), "Cookie:"_span));
+            receivedThirdRequest = true;
+        } else if (path == "http://siteb.example/ninja"_s) {
+            auto html = @"<script>new WebSocket('ws://siteA.example/websocket')</script>";
+            co_await connection.awaitableSend(HTTPResponse(html).serialize());
+        } else
+            EXPECT_WK_STREQ(@"SHOULD NOT BE REACH", path);
+    } });
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [[[webView configuration] websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://siteA.example/com"]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://siteB.example/ninja"]]];
+    Util::run(&receivedThirdRequest);
+}
+
 TEST(WKHTTPCookieStore, WebSocketCookiesFromRedirect)
 {
     using namespace TestWebKitAPI;

@@ -338,6 +338,8 @@ public:
 
     bool propertyAccessesAreCacheableForAbsence()
     {
+        // FIXME: dictionaries cannot be cached for absence, so check for dictionaries here instead
+        // of at all call sites.
         return !typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence();
     }
 

@@ -180,7 +180,7 @@ private:
     BlockType m_blockType;
     CatchKind m_catchKind;
 
-    int32_t m_pendingOffset { -1 };
+    std::optional<uint32_t> m_pendingOffset;
 
     uint32_t m_index { 0 };
     uint32_t m_pc { 0 }; // where am i?
@@ -602,7 +602,7 @@ public:
         auto& target = m_controlStructuresAwaitingCoalescing[index];
         if (target.isLoop) {
             ASSERT(target.m_entryResolved);
-            IPInt::BlockMetadata md = { static_cast<int32_t>(target.m_entryTarget.pc - loc.pc), static_cast<int32_t>(target.m_entryTarget.mc - loc.mc) };
+            IPInt::BlockMetadata md = checkedDelta(target.m_entryTarget, loc);
             WRITE_TO_METADATA(metadata + loc.mc, md, IPInt::BlockMetadata);
             RECORD_NEXT_INSTRUCTION(loc.pc, target.m_entryTarget.pc);
         } else {
@@ -662,9 +662,21 @@ private:
     // all jumps that go to the top level and return
     Vector<IPIntLocation> m_jumpLocationsAwaitingEnd;
 
-    inline uint32_t NODELETE curPC() { return m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset; }
-    inline uint32_t NODELETE nextPC() { return m_parser->offset() - m_metadata->m_bytecodeOffset; }
-    inline uint32_t NODELETE curMC() { return m_metadata->m_metadata.size(); }
+    inline uint32_t NODELETE curPC() { return Checked<uint32_t>(m_parser->currentOpcodeStartingOffset()) - m_metadata->m_bytecodeOffset; }
+    inline uint32_t NODELETE nextPC() { return Checked<uint32_t>(m_parser->offset()) - m_metadata->m_bytecodeOffset; }
+    // FIXME: Should return size_t, but BlockMetadata::deltaMC is int32_t and the interpreter loads it with loadpairi.
+    inline uint32_t NODELETE curMC()
+    {
+        Checked<uint32_t> size = m_metadata->m_metadata.size();
+        return size;
+    }
+
+    static ALWAYS_INLINE IPInt::BlockMetadata checkedDelta(IPIntLocation to, IPIntLocation from)
+    {
+        Checked<int32_t> dPC = static_cast<int64_t>(to.pc) - static_cast<int64_t>(from.pc);
+        Checked<int32_t> dMC = static_cast<int64_t>(to.mc) - static_cast<int64_t>(from.mc);
+        return { dPC, dMC };
+    }
 
     CallInformation m_cachedCallInformation { };
     const RTT* m_cachedSignature { nullptr };
@@ -2117,7 +2129,7 @@ void IPIntGenerator::coalesceControlFlow(bool force)
         m_controlStructuresAwaitingCoalescing.shrink(0);
 
     for (auto& src : m_exitHandlersAwaitingCoalescing) {
-        IPInt::BlockMetadata md = { static_cast<int32_t>(here.pc - src.pc), static_cast<int32_t>(here.mc - src.mc) };
+        IPInt::BlockMetadata md = checkedDelta(here, src);
         WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
         RECORD_NEXT_INSTRUCTION(src.pc, here.pc);
     }
@@ -2130,13 +2142,13 @@ void IPIntGenerator::resolveEntryTarget(unsigned index, IPIntLocation loc)
     ASSERT(!control.m_entryResolved);
     for (auto& src : control.m_awaitingEntryTarget) {
         // write delta PC and delta MC
-        IPInt::BlockMetadata md = { static_cast<int32_t>(loc.pc - src.pc), static_cast<int32_t>(loc.mc - src.mc) };
+        IPInt::BlockMetadata md = checkedDelta(loc, src);
         WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
         RECORD_NEXT_INSTRUCTION(src.pc, loc.pc); // FIXME: coalescing sequential blocks - should update instead of adding
     }
     if (control.isLoop) {
         for (auto& src : control.m_awaitingBranchTarget) {
-            IPInt::BlockMetadata md = { static_cast<int32_t>(loc.pc - src.pc), static_cast<int32_t>(loc.mc - src.mc) };
+            IPInt::BlockMetadata md = checkedDelta(loc, src);
             WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
             RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
         }
@@ -2153,13 +2165,13 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     ASSERT(!control.m_exitResolved);
     for (auto& src : control.m_awaitingExitTarget) {
         // write delta PC and delta MC
-        IPInt::BlockMetadata md = { static_cast<int32_t>(loc.pc - src.pc), static_cast<int32_t>(loc.mc - src.mc) };
+        IPInt::BlockMetadata md = checkedDelta(loc, src);
         WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
         RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
     }
     if (!control.isLoop) {
         for (auto& src : control.m_awaitingBranchTarget) {
-            IPInt::BlockMetadata md = { static_cast<int32_t>(loc.pc - src.pc), static_cast<int32_t>(loc.mc - src.mc) };
+            IPInt::BlockMetadata md = checkedDelta(loc, src);
             WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
             RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
         }
@@ -2213,7 +2225,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
 {
     block = ControlType(WTF::move(signature), m_stackSize.value() - args.size(), BlockType::Loop);
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
-    block.m_pendingOffset = -1; // no need to update!
+    block.m_pendingOffset = std::nullopt; // no need to update!
     block.m_pc = curPC();
     RECORD_NEXT_INSTRUCTION(block.m_pc, nextPC());
 
@@ -2246,7 +2258,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     block.m_index = m_controlStructuresAwaitingCoalescing.size();
     block.m_pc = curPC();
     block.m_mc = curMC();
-    block.m_pendingOffset = m_metadata->m_metadata.size();
+    block.m_pendingOffset = curMC();
     RECORD_NEXT_INSTRUCTION(block.m_pc, nextPC());
 
     m_coalesceQueue.append(QueuedCoalesceRequest { m_controlStructuresAwaitingCoalescing.size(), true });
@@ -2277,7 +2289,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     changeStackSize(blockSignature.argumentCount());
     auto ifIndex = block.m_index;
 
-    auto mdIf = reinterpret_cast<IPInt::IfMetadata*>(m_metadata->m_metadata.mutableSpan().data() + block.m_pendingOffset);
+    auto mdIf = reinterpret_cast<IPInt::IfMetadata*>(m_metadata->m_metadata.mutableSpan().data() + *block.m_pendingOffset);
 
     // delta PC
     mdIf->elseDeltaPC = nextPC() - block.m_pc;
@@ -2289,7 +2301,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
         mdIf->elseDeltaMC = curMC() - block.m_mc;
         block = ControlType(WTF::move(blockSignature), block.stackSize(), BlockType::Else);
         block.m_index = ifIndex;
-        block.m_pendingOffset = -1;
+        block.m_pendingOffset = std::nullopt;
         return { };
     }
 
@@ -2430,8 +2442,8 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
         HandlerType::Catch,
         static_cast<uint32_t>(block.m_pc),
         static_cast<uint32_t>(block.m_pcEnd + 1), // + 1 since m_pcEnd is the PC of the catch bytecode, which should be included in the range
-        static_cast<uint32_t>(m_parser->offset() - m_metadata->m_bytecodeOffset),
-        static_cast<uint32_t>(m_metadata->m_metadata.size()),
+        nextPC(),
+        curMC(),
         m_tryDepth,
         exceptionIndex
     });
@@ -2469,8 +2481,8 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
         HandlerType::CatchAll,
         static_cast<uint32_t>(block.m_pc),
         static_cast<uint32_t>(block.m_pcEnd + 1), // + 1 since m_pcEnd is the PC of the catch bytecode, which should be included in the range
-        static_cast<uint32_t>(m_parser->offset() - m_metadata->m_bytecodeOffset),
-        static_cast<uint32_t>(m_metadata->m_metadata.size()),
+        nextPC(),
+        curMC(),
         m_tryDepth,
         0
     });
@@ -2507,8 +2519,8 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
         HandlerType::Delegate,
         static_cast<uint32_t>(data.m_pc),
         static_cast<uint32_t>(data.m_pcEnd + 1), // + 1 since m_pcEnd is the PC of the delegate bytecode, which should be included in the range
-        static_cast<uint32_t>(curPC()),
-        static_cast<uint32_t>(curMC()),
+        curPC(),
+        curMC(),
         m_tryDepth,
         targetDepth
     });
@@ -2745,7 +2757,7 @@ void IPIntGenerator::endTryTable(const ControlType& data)
         m_exitHandlersAwaitingCoalescing.append({ block.m_pc, block.m_mc });
     } else if (ControlType::isElse(block)) {
         // if it's not an if ... end, coalesce
-        if (block.m_pendingOffset != -1)
+        if (block.m_pendingOffset)
             m_exitHandlersAwaitingCoalescing.append({ block.m_pc, block.m_mc });
         m_coalesceQueue.append({ static_cast<unsigned>(block.m_index), false });
         --m_coalesceDebt;

@@ -1629,6 +1629,18 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.dismissFindNavigator()`, resolve));
     }
 
+    static findStringMatchesUsingFindInteraction(searchString) {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve(0);
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.findStringMatchesUsingFindInteraction(${JSON.stringify(searchString)}, function(matchCount) {
+                    uiController.uiScriptComplete(matchCount);
+                });`, result => resolve(parseInt(result)));
+        });
+    }
+
     static resignFirstResponder()
     {
         if (!this.isWebKit2()) {

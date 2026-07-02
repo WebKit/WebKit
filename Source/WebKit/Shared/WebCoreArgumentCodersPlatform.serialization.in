@@ -651,6 +651,8 @@ enum class WebCore::PixelFormat : uint8_t {
 #endif
 };
 
+enum class WebCore::UseLosslessCompression : bool;
+
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageBufferFormat {
     WebCore::PixelFormat pixelFormat;
     WebCore::UseLosslessCompression useLosslessCompression;
@@ -659,7 +661,7 @@ enum class WebCore::PixelFormat : uint8_t {
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
     WebCore::AlphaPremultiplication alphaFormat;
     WebCore::PixelFormat pixelFormat;
-    WebCore::DestinationColorSpace colorSpace;
+    [Validator='colorSpace->usesRGBColorModel()'] WebCore::DestinationColorSpace colorSpace;
 };
 
 #if USE(SOUP)

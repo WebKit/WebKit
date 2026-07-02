@@ -663,7 +663,7 @@ void Buffer::skippedDrawIndirectIndexedValidation(CommandEncoder& commandEncoder
         if (protectedThis->m_mustTakeSlowIndexValidationPath) {
             protectedThis->takeSlowIndirectIndexValidationPath(commandBuffer, *apiIndexBuffer.get(), indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, primitiveType);
             commandBuffer.addPostCommitHandler([protectedThis = WTF::move(protectedThis)](id<MTLCommandBuffer>) {
-                protectedThis->m_mustTakeSlowIndexValidationPath = false;
+                protectedThis->clearMustTakeSlowIndexValidationPath();
             });
         }
         return true;
@@ -682,7 +682,7 @@ void Buffer::skippedDrawIndirectValidation(CommandEncoder& commandEncoder, uint6
         if (protectedThis->m_mustTakeSlowIndexValidationPath) {
             protectedThis->takeSlowIndirectValidationPath(commandBuffer, indirectOffset, minVertexCount, minInstanceCount);
             commandBuffer.addPostCommitHandler([protectedThis = WTF::move(protectedThis)](id<MTLCommandBuffer>) {
-                protectedThis->m_mustTakeSlowIndexValidationPath = false;
+                protectedThis->clearMustTakeSlowIndexValidationPath();
             });
         }
         return true;
@@ -787,6 +787,13 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 void Buffer::removeSkippedValidationCommandEncoder(uint64_t uniqueId)
 {
     m_skippedValidationCommandEncoders.remove(uniqueId);
+}
+
+void Buffer::clearMustTakeSlowIndexValidationPath()
+{
+    if (computeSize(m_skippedValidationCommandEncoders, m_device.get()))
+        return;
+    m_mustTakeSlowIndexValidationPath = false;
 }
 
 } // namespace WebGPU

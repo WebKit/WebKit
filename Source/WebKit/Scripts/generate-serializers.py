@@ -1413,8 +1413,16 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('#include "GeneratedWebKitSecureCoding.h"')
     result.append('#include <wtf/IsIncreasing.h>')
     result.append('')
+    # *SoftLink.h headers must be included after every other header (WebKit's
+    # build/include_order style rule). Emit them last — after the bundle's own
+    # headers and the GeneratedSerializersExtra.h include below — by holding
+    # them aside while iterating the sorted header list.
+    soft_link_headers = []
     for header in headers:
         if header.webkit_platform != generating_webkit_platform_impl:
+            continue
+        if header.header[:-1].endswith('SoftLink.h'):
+            soft_link_headers.append(header)
             continue
         if header.condition is not None:
             result.append(f'#if {header.condition}')
@@ -1429,7 +1437,15 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         # can emit zero header includes — every type it references is already
         # in scope from the includes above. This avoids redundant header parsing
         # across all the GeneratedSerializers*.mm files.
-        result.append('#include "GeneratedSerializersExtra.h"')
+        result.append('#include "GeneratedSerializersExtra.h" // NOLINT')
+        result.append('')
+    if soft_link_headers:
+        for header in soft_link_headers:
+            if header.condition is not None:
+                result.append(f'#if {header.condition}')
+            result.append(f'#include {header.header}')
+            if header.condition is not None:
+                result.append('#endif')
         result.append('')
     result.append('template<uint64_t...> struct BitsInIncreasingOrder;')
     result.append('template<uint64_t onlyBit> struct BitsInIncreasingOrder<onlyBit> {')

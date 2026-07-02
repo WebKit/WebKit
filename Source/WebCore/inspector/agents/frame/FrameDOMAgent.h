@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class AXCoreObject;
 class CharacterData;
 class DOMEditor;
 class Document;
@@ -163,6 +164,12 @@ private:
     RefPtr<Node> assertEditableNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     RefPtr<Element> assertEditableElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
+    RefPtr<Node> nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId&);
+    RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNodeInternal(Node*, const String& objectGroup);
+
+    Ref<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node&);
+    void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
+
     Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth);
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth);
@@ -215,12 +222,14 @@ private:
     const Ref<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     WeakRef<InstrumentingAgents> m_instrumentingAgents;
     WeakRef<LocalFrame> m_inspectedFrame;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     WeakHashMap<Node, Inspector::Protocol::DOM::NodeId, WeakPtrImplWithEventTargetData> m_nodeToId;
     HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<Node, WeakPtrImplWithEventTargetData>> m_idToNode;
     HashSet<Inspector::Protocol::DOM::NodeId> m_childrenRequested;
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
+    RefPtr<Node> m_inspectedNode;
 
     Vector<Inspector::Protocol::DOM::NodeId> m_destroyedDetachedNodeIdentifiers;
     Vector<std::pair<Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOM::NodeId>> m_destroyedAttachedNodeIdentifiers;

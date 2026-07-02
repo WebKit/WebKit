@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/GCAwareJITStubRoutine.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Options.h>
 
@@ -61,7 +62,12 @@ public:
     }
 
     Structure* objectDoingSideEffectPutWithoutCorrectSlotStatusStructure() { return m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.get(); }
-    
+    Structure* testCustomGetterSetterStructure() { return m_testCustomGetterSetterStructureID.get(); }
+
+#if ENABLE(JIT)
+    RefPtr<PolymorphicAccessJITStubRoutine> m_testStubRoutine;
+#endif
+
 private:
     JSDollarVM(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -76,6 +82,7 @@ private:
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
     WriteBarrierStructureID m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID;
+    WriteBarrierStructureID m_testCustomGetterSetterStructureID;
 };
 
 } // namespace JSC

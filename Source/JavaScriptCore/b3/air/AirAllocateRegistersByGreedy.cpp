@@ -3309,10 +3309,13 @@ private:
             for (auto& metadata : m_aroundLoopMetadata)
                 insertSplitAroundLoopFixupCode(metadata, loopTmpToMetadataIndex, loopEntryFixups, loopExitFixups);
 
+            if (!loopEntryFixups.isEmpty() || !loopExitFixups.isEmpty())
+                m_code.proc().setUsesShuffle(true);
+
             for (auto& [block, shufflePairs] : loopEntryFixups)
-                m_insertionSets[block].insertInst(block->size() - 1, AroundLoopEntryFixup, createShuffle(block->at(block->size() - 1).origin, shufflePairs));
+                m_insertionSets[block].insertInst(block->size() - 1, AroundLoopEntryFixup, createShuffle(block->at(block->size() - 1).origin, shufflePairs.span()));
             for (auto& [block, shufflePairs] : loopExitFixups)
-                m_insertionSets[block].insertInst(0, AroundLoopExitFixup, createShuffle(block->at(0).origin, shufflePairs));
+                m_insertionSets[block].insertInst(0, AroundLoopExitFixup, createShuffle(block->at(0).origin, shufflePairs.span()));
         }
 
         for (BasicBlock* block : m_code)

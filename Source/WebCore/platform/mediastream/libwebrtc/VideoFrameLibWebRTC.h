@@ -66,7 +66,7 @@ private:
     IntSize m_size;
     uint32_t m_videoPixelFormat { 0 };
 
-    mutable ConversionCallback m_conversionCallback;
+    mutable ConversionCallback m_conversionCallback WTF_GUARDED_BY_LOCK(m_pixelBufferLock);
     mutable RetainPtr<CVPixelBufferRef> m_pixelBuffer WTF_GUARDED_BY_LOCK(m_pixelBufferLock);
     mutable Lock m_pixelBufferLock;
 };

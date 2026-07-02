@@ -58,7 +58,7 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const Media
 
     auto ranges = buffered();
     MediaTime nearest = ranges.nearest(currentTime);
-    if (abs(nearest - currentTime) > timeFudgeFactor())
+    if (abs(nearest - currentTime) > gapToleranceAtTime(currentTime))
         return false;
 
     size_t found = ranges.find(nearest);
@@ -94,12 +94,20 @@ bool MediaSourcePrivate::hasBufferedTime(const MediaTime& time) const
     if (!ranges.length())
         return false;
 
-    return abs(ranges.nearest(time) - time) <= timeFudgeFactor();
+    return abs(ranges.nearest(time) - time) <= gapToleranceAtTime(time);
 }
 
 bool MediaSourcePrivate::hasCurrentTime() const
 {
-    return hasBufferedTime(currentTime());
+    auto time = currentTime();
+    if (hasBufferedTime(time))
+        return true;
+    // Per MSE 2 §presentation-start-time: the user agent may treat a current
+    // playback position at or after time 0 and before the first buffered
+    // range as covered, provided the first range starts within a small
+    // window after presentation start. Affects readyState only;
+    // HTMLMediaElement.buffered reported to JS is unchanged.
+    return m_readyState.load() != MediaSourceReadyState::Closed && isWithinStartGapAllowance(time);
 }
 
 bool MediaSourcePrivate::isBuffered(const PlatformTimeRanges& ranges) const
@@ -107,7 +115,9 @@ bool MediaSourcePrivate::isBuffered(const PlatformTimeRanges& ranges) const
     if (m_readyState.load() == MediaSourceReadyState::Closed)
         return false;
 
-    return buffered().containWithEpsilon(ranges, timeFudgeFactor());
+    return buffered().containWithEpsilon(ranges, [&](const MediaTime& time) {
+        return gapToleranceAtTime(time);
+    });
 }
 
 MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
@@ -173,7 +183,6 @@ void MediaSourcePrivate::cancelPendingWaitForTarget()
             protectedThis->m_pendingSeekTarget.reset();
         }
         protectedThis->m_waitForTargetPromise.reset();
-        protectedThis->m_reenqueuePending = false;
     });
 }
 
@@ -376,6 +385,20 @@ void MediaSourcePrivate::updateBufferedRanges()
     });
 
     auto newBuffered = MediaSourcePrivate::computeBufferedRanges(activeRanges, ended);
+
+    // Aggregate audio-only buffered ranges across active SourceBuffers so
+    // the canplaythrough gap policy can ask "does any audio bridge this
+    // gap?" — see MediaSourcePrivate::gapToleranceAtTime.
+    PlatformTimeRanges newAudioBuffered;
+    for (RefPtr sourceBuffer : m_activeSourceBuffers) {
+        if (sourceBuffer)
+            newAudioBuffered.unionWith(sourceBuffer->audioBufferedRanges());
+    }
+    {
+        Locker locker { m_lock };
+        m_audioBuffered = WTF::move(newAudioBuffered);
+    }
+
     if (isBufferedEqual(newBuffered))
         return;
     bufferedChanged(WTF::move(newBuffered));
@@ -399,9 +422,8 @@ PlatformTimeRanges MediaSourcePrivate::computeBufferedRanges(const Vector<Platfo
     // 3. Let highest end time be the largest range end time in the active ranges.
     MediaTime highestEndTime = MediaTime::zeroTime();
     for (auto& ranges : activeRanges) {
-        unsigned length = ranges.length();
-        if (length)
-            highestEndTime = std::max(highestEndTime, ranges.end(length - 1));
+        if (auto span = ranges.span(); !span.empty())
+            highestEndTime = std::max(highestEndTime, span.back().end);
     }
 
     // Return an empty range if all ranges are empty.
@@ -599,6 +621,83 @@ bool MediaSourcePrivate::timeIsProgressing() const
 
 void MediaSourcePrivate::shutdown()
 {
+}
+
+MediaTime MediaSourcePrivate::nextStallTime(const MediaTime& currentTime) const
+{
+    auto stallAtTime = duration();
+    auto ranges = buffered();
+    size_t index = ranges.find(currentTime);
+    if (index == notFound)
+        return stallAtTime;
+
+    // Find the next gap (or end of media).
+    auto remaining = ranges.span().subspan(index);
+    for (size_t i = 0; i < remaining.size(); i++) {
+        auto rangeEnd = remaining[i].end;
+        if (i + 1 < remaining.size()) {
+            if (remaining[i + 1].start - rangeEnd > gapToleranceAtTime(rangeEnd)) {
+                stallAtTime = rangeEnd;
+                break;
+            }
+            continue;
+        }
+        // Final range.
+        if (rangeEnd > currentTime)
+            stallAtTime = rangeEnd;
+        break;
+    }
+    return stallAtTime;
+}
+
+MediaTime MediaSourcePrivate::gapToleranceAtTime(const MediaTime& time, std::optional<TrackID> excluded) const
+{
+    // Start-of-stream allowance: gap is before the first buffered range and
+    // close to presentation start time.
+    if (isWithinStartGapAllowance(time))
+        return startGapAllowance();
+
+    // Mid-stream: widen to audioCoveredGapTolerance() when an audio track
+    // bridges the gap, otherwise midStreamGapTolerance().
+    //
+    // When called with an `excluded` track the caller is on the dispatcher
+    // (TrackBuffer's IsCoveredByOtherTracks lambda runs from
+    // SourceBufferPrivate methods that assert dispatcher); walk
+    // m_activeSourceBuffers directly.
+    if (excluded) {
+        assertIsCurrent(m_dispatcher.get());
+        for (RefPtr sourceBuffer : m_activeSourceBuffers) {
+            if (sourceBuffer && sourceBuffer->isAudioBufferedAt(time, *excluded))
+                return audioCoveredGapTolerance();
+        }
+        return midStreamGapTolerance();
+    }
+
+    // Other callers read the cached audio union.
+    Locker locker { m_lock };
+    return m_audioBuffered.contain(time) ? audioCoveredGapTolerance() : midStreamGapTolerance();
+}
+
+
+
+bool MediaSourcePrivate::isWithinStartGapAllowance(const MediaTime& time) const
+{
+    // MSE 2 §presentation-start-time:
+    // "For the purposes of determining if HTMLMediaElement's buffered contains
+    // a TimeRanges that includes the current playback position, implementations
+    // MAY choose to allow a current playback position at or after presentation
+    // start time and before the first TimeRanges to play the first TimeRanges
+    // if that TimeRanges starts within a reasonably short time, like 1 second,
+    // after presentation start time. This allowance accommodates the reality
+    // that muxed streams commonly do not begin all tracks precisely at
+    // presentation start time. Implementations MUST report the actual buffered
+    // range, regardless of this allowance."
+    if (time < MediaTime::zeroTime() || time >= startGapAllowance())
+        return false;
+    auto ranges = buffered();
+    if (!ranges.length())
+        return false;
+    return ranges.start(0) <= startGapAllowance() && time < ranges.start(0);
 }
 
 } // namespace WebCore

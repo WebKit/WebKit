@@ -1,0 +1,17 @@
+
+PASS null
+PASS undefined
+PASS boolean values
+PASS number values
+PASS string values
+PASS node value: element node
+PASS node value: text node
+PASS node value: ProcessingInstruction node
+PASS node value: comment node
+PASS node value: document node
+PASS node value: DocumentType node
+PASS node value: DocumentFragment node
+PASS symbol value
+PASS array values
+PASS object value with faulty `toString`
+

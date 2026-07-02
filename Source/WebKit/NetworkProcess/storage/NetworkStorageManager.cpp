@@ -218,7 +218,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
         setStorageSiteValidationEnabledInternal(storageSiteValidationEnabled);
         m_fileSystemStorageHandleRegistry = FileSystemStorageHandleRegistry::create();
         lazyInitialize(m_storageAreaRegistry, makeUnique<StorageAreaRegistry>());
-        lazyInitialize(m_idbStorageRegistry, makeUnique<IDBStorageRegistry>());
+        lazyInitialize(m_idbStorageRegistry, makeUnique<IDBStorageRegistry>(*this));
         lazyInitialize(m_cacheStorageRegistry, CacheStorageRegistry::create());
         m_unifiedOriginStorageLevel = level;
         m_path = path;
@@ -1157,7 +1157,7 @@ void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifi
     completionHandler(handle->resolve(targetIdentifier));
 }
 
-void NetworkStorageManager::getFile(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<String, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<String, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1168,7 +1168,15 @@ void NetworkStorageManager::getFile(WebCore::FileSystemHandleIdentifier identifi
     if (!FileSystem::fileExists(handle->path()))
         return completionHandler(makeUnexpected(FileSystemStorageError::FileNotFound));
 
-    completionHandler(handle->path());
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, connection = Ref { connection }, path = crossThreadCopy(handle->path()), completionHandler = WTF::move(completionHandler)] mutable {
+        if (RefPtr process = protectedThis->m_process.get()) {
+            if (RefPtr webConnection = process->webProcessConnection(connection.get()))
+                webConnection->allowAccessToFile(path);
+        }
+        protectedThis->workQueue().dispatch([path = crossThreadCopy(WTF::move(path)), completionHandler = WTF::move(completionHandler)] mutable {
+            completionHandler(WTF::move(path));
+        });
+    });
 }
 
 void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
@@ -1683,6 +1691,23 @@ void NetworkStorageManager::registerTemporaryBlobFilePaths(IPC::Connection& conn
     });
 }
 
+void NetworkStorageManager::allowAccessToBlobFilesForProcess(WebCore::ProcessIdentifier processIdentifier, Vector<String>&& filePaths, CompletionHandler<void()>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+
+    if (filePaths.isEmpty())
+        return completionHandler();
+
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, processIdentifier, filePaths = crossThreadCopy(WTF::move(filePaths)), completionHandler = WTF::move(completionHandler)] mutable {
+        RefPtr process = protectedThis->m_process.get();
+        if (!process)
+            return protectedThis->workQueue().dispatch(WTF::move(completionHandler));
+        process->allowFilesAccessFromWebProcess(processIdentifier, filePaths, [protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)] mutable {
+            protectedThis->workQueue().dispatch(WTF::move(completionHandler));
+        });
+    });
+}
+
 void NetworkStorageManager::requestSpace(const WebCore::ClientOrigin& origin, uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -2045,8 +2070,16 @@ void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const We
 
 void NetworkStorageManager::establishTransaction(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
 {
-    if (RefPtr connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection))
-        connection->establishTransaction(transactionInfo);
+    RefPtr databaseConnection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection);
+    if (!databaseConnection)
+        return;
+
+    // FIXME: consider converting this early return to MESSAGE_CHECK.
+    CheckedPtr database = databaseConnection->database();
+    if (database && database->isVersionChangeTransactionActive(*databaseConnection))
+        return;
+
+    databaseConnection->establishTransaction(transactionInfo);
 }
 
 void NetworkStorageManager::databaseConnectionPendingClose(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)

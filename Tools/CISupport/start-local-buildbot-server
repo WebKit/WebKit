@@ -275,6 +275,7 @@ class BuildbotTestRunner(object):
             # dependencies than the ones used for running https://build.webkit.org/about
             buildbot_version = '4.3.0'
             pip_cmd = [virtualenv_pip, 'install',
+                       'boto3==1.43.30',
                        f'buildbot=={buildbot_version}',
                        f'buildbot-console-view=={buildbot_version}',
                        f'buildbot-grid-view=={buildbot_version}',
@@ -287,6 +288,8 @@ class BuildbotTestRunner(object):
                        f'requests==2.26.0',
                        f'twisted==23.10.0',
                        'zope.interface==7.0.1']
+            if sys.version_info >= (3, 13):
+                pip_cmd.append('legacy-cgi==2.6.3')
             pip_process = subprocess.Popen(pip_cmd, cwd=self._base_workdir_temp,
                                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             stdout, stderr = pip_process.communicate()

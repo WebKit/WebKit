@@ -12,4 +12,5 @@ PASS VTTCue.getCueAsHTML(), <v a b>
 PASS VTTCue.getCueAsHTML(), <v Foo&amp;Bar>
 PASS VTTCue.getCueAsHTML(), <1:00:00.500>
 PASS VTTCue.getCueAsHTML(), x\0
+PASS VTTCue.getCueAsHTML(), <lang en-US>
 

@@ -131,6 +131,8 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, Inba
         cue.setAlign(VTTCue::AlignSetting::End);
     cue.setSnapToLines(false);
 
+    cue.setPreventLineWrapping(inbandCue.preventLineWrapping());
+
     cue.didChange();
 }
 

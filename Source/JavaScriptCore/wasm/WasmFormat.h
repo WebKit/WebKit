@@ -39,6 +39,7 @@
 #include <JavaScriptCore/MathCommon.h>
 #include <JavaScriptCore/PageCount.h>
 #include <JavaScriptCore/RegisterAtOffsetList.h>
+#include <JavaScriptCore/WasmAddressType.h>
 #include <JavaScriptCore/WasmMemoryInformation.h>
 #include <JavaScriptCore/WasmName.h>
 #include <JavaScriptCore/WasmNameSection.h>
@@ -793,15 +794,16 @@ public:
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type, Type wasmType, InitializationType initType, uint64_t initialBitsOrImportNumber)
-        : m_initial(initial)
+    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type, Type wasmType, InitializationType initType, uint64_t initialBitsOrImportNumber, bool isTable64)
+        : m_wasmType(wasmType)
         , m_maximum(maximum)
+        , m_initialBitsOrImportNumber(initialBitsOrImportNumber)
+        , m_initial(initial)
+        , m_type(type)
+        , m_addressType(isTable64)
+        , m_initType(initType)
         , m_isImport(isImport)
         , m_isValid(true)
-        , m_type(type)
-        , m_wasmType(wasmType)
-        , m_initType(initType)
-        , m_initialBitsOrImportNumber(initialBitsOrImportNumber)
     {
         ASSERT(*this);
     }
@@ -814,16 +816,18 @@ public:
     Type wasmType() const { return m_wasmType; }
     InitializationType initType() const { return m_initType; }
     uint64_t initialBitsOrImportNumber() const { return m_initialBitsOrImportNumber; }
+    Wasm::AddressType addressType() const { return m_addressType; }
 
 private:
-    uint32_t m_initial;
+    Type m_wasmType;
     std::optional<uint32_t> m_maximum;
+    uint64_t m_initialBitsOrImportNumber;
+    uint32_t m_initial;
+    TableElementType m_type;
+    Wasm::AddressType m_addressType;
+    InitializationType m_initType { Default };
     bool m_isImport { false };
     bool m_isValid { false };
-    TableElementType m_type;
-    Type m_wasmType;
-    InitializationType m_initType { Default };
-    uint64_t m_initialBitsOrImportNumber;
 };
     
 struct CustomSection {

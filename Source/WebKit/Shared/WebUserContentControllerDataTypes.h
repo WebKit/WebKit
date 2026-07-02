@@ -81,7 +81,7 @@ struct WebScriptMessageHandlerData {
 };
 
 struct WebJSBufferData {
-    WebJSBufferData(const RefPtr<WebCore::SharedMemory>&, ContentWorldData&&, const String&);
+    WebJSBufferData(const Ref<WebCore::SharedMemory>&, ContentWorldData&&, const String&);
     WebJSBufferData(std::optional<WebCore::SharedMemoryHandle>&&, ContentWorldData&&, String&&);
     ~WebJSBufferData();
     std::optional<WebCore::SharedMemoryHandle> sharedMemoryHandle() const;

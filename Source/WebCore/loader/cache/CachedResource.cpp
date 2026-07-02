@@ -92,6 +92,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     , m_preloadResult(PreloadResult::PreloadNotReferenced)
     , m_status(Pending)
     , m_isLinkPreload(request.isLinkPreload())
+    , m_isLinkModulePreload(request.isLinkModulePreload())
     , m_hasUnknownEncoding(request.isLinkPreload())
     , m_ignoreForRequestCount(request.ignoreForRequestCount())
 {
@@ -116,6 +117,7 @@ CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID session
     , m_preloadResult(PreloadResult::PreloadNotReferenced)
     , m_status(Cached)
     , m_isLinkPreload(false)
+    , m_isLinkModulePreload(false)
     , m_hasUnknownEncoding(false)
     , m_ignoreForRequestCount(false)
 {

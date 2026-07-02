@@ -669,6 +669,7 @@ enum ContentsFormat {
     Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
     unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
     unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
+    undefined setCachedFindMatchBufferLimitForTesting(unsigned long maximumRunCount);
     [Conditional=VIDEO] sequence<unrestricted double> findCueMatches(DOMString text, sequence<DOMString> findOptions);
 
     DOMString autofillFieldName(Element formControlElement);
@@ -1268,6 +1269,7 @@ enum ContentsFormat {
     [Conditional=MEDIA_STREAM] DOMString mediaStreamTrackPersistentId(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] unsigned long audioCaptureSourceCount();
     [Conditional=MEDIA_STREAM] boolean supportsMultiMicrophoneCaptureWithoutEchoCancellation();
+    [Conditional=MEDIA_STREAM] undefined deleteAudioUnit();
 
     [Conditional=WEB_RTC] readonly attribute DOMString rtcNetworkInterfaceName;
 

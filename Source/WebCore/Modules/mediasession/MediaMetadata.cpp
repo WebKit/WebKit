@@ -270,14 +270,17 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
 
     String artworkImageSrc = artworks[index].src;
 
-    m_artworkLoader = ArtworkImageLoader::create(*document, artworkImageSrc, [this, index, artworkImageSrc, artworks = WTF::move(artworks)](Image* image) mutable {
+    m_artworkLoader = ArtworkImageLoader::create(*document, artworkImageSrc, [weakThis = WeakPtr { *this }, index, artworkImageSrc, artworks = WTF::move(artworks)](Image* image) mutable {
+        RefPtr strongThis = weakThis;
+        if (!strongThis)
+            return;
         if (image && image->data() && image->width() && image->height()) {
             IntSize size { int(image->width()), int(image->height()) };
             float imageScore = imageDimensionsScore(size.width(), size.height(), s_minimumSize, s_idealSize);
-            if (!index || (m_artworkImage && (imageDimensionsScore(protect(m_artworkImage)->width(), protect(m_artworkImage)->height(), s_minimumSize, s_idealSize) < imageScore))) {
-                m_artworkImageSrc = artworkImageSrc;
-                setArtworkImage(image);
-                metadataUpdated();
+            if (!index || (strongThis->m_artworkImage && (imageDimensionsScore(protect(strongThis->m_artworkImage)->width(), protect(strongThis->m_artworkImage)->height(), s_minimumSize, s_idealSize) < imageScore))) {
+                strongThis->m_artworkImageSrc = artworkImageSrc;
+                strongThis->setArtworkImage(image);
+                strongThis->metadataUpdated();
             }
             // If selection from `sizes` attribute yielded a valid image, or we have downloaded an image bigger than the ideal size we stop.
             if (artworks[index].score >= 0 || size.maxDimension() >= s_idealSize)
@@ -285,7 +288,7 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
         }
 
         if (++index < artworks.size())
-            tryNextArtworkImage(index, WTF::move(artworks));
+            strongThis->tryNextArtworkImage(index, WTF::move(artworks));
     });
     protect(m_artworkLoader)->requestImageResource();
 }

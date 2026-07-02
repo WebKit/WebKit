@@ -539,6 +539,7 @@ public:
     ExceptionOr<RefPtr<Range>> rangeOfString(const String&, RefPtr<Range>&&, const Vector<String>& findOptions);
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
     ExceptionOr<unsigned> countFindMatches(const String&, const Vector<String>& findOptions);
+    void setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount);
 #if ENABLE(VIDEO)
     ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
 #endif
@@ -1109,6 +1110,7 @@ public:
     bool NODELETE isMediaStreamSourceEnded(MediaStreamTrack&) const;
     bool NODELETE isMockRealtimeMediaSourceCenterEnabled();
     bool NODELETE shouldAudioTrackPlay(const AudioTrack&);
+    void deleteAudioUnit();
 #endif // ENABLE(MEDIA_STREAM)
 #if ENABLE(WEB_RTC)
     String rtcNetworkInterfaceName() const;

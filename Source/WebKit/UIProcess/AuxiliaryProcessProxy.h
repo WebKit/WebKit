@@ -185,6 +185,7 @@ public:
     String stateString() const;
     bool isLaunching() const { return state() == State::Launching; }
     bool wasTerminated() const;
+    bool isSuspended() const { return m_isSuspended; }
 
     ProcessID processID() const { return m_processLauncher ? m_processLauncher->processID() : 0; }
 

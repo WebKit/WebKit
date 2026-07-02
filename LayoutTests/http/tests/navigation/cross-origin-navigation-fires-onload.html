@@ -14,12 +14,15 @@ window.onload = function() {
 let onloadCount = 0;
 
 window.addEventListener('message', function (e) {
-    if (onloadCount == 2)
-        testPassed("onload fired 2 times.");
-    else
-        testFailed("onload fired " + onloadCount + " time(s).");
-    
-    finishJSTest();
+    // Wait for the async synthetic onload from the fragment nav.
+    setTimeout(() => {
+        if (onloadCount == 2)
+            testPassed("onload fired 2 times.");
+        else
+            testFailed("onload fired " + onloadCount + " time(s).");
+
+        finishJSTest();
+    }, 200);
 });
 
 function onloadFired() {

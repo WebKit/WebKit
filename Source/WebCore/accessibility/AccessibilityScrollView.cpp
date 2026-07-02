@@ -626,6 +626,12 @@ AXFrameGeometry AccessibilityScrollView::frameGeometry() const
     return { };
 }
 
+IntPoint AccessibilityScrollView::frameViewOriginScrollPosition() const
+{
+    CheckedPtr cache = axObjectCache();
+    return cache ? cache->frameViewOriginScrollPosition() : IntPoint();
+}
+
 bool AccessibilityScrollView::isARIAHidden() const
 {
     // This is necessary to implement on root scrollviews so that the base isAXHidden ancestor traversal works as expected.

@@ -25,12 +25,14 @@
 #include "config.h"
 #include "CSSCustomPropertySyntax.h"
 
+#include "CSSMarkup.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSTokenizer.h"
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -203,6 +205,76 @@ auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
         { "url"_s, Type::URL },
     }) };
     return typeMap.get(dataTypeName, Type::Unknown);
+}
+
+static ASCIILiteral typeNameForType(CSSCustomPropertySyntax::Type type)
+{
+    using Type = CSSCustomPropertySyntax::Type;
+    switch (type) {
+    case Type::Length: return "length"_s;
+    case Type::LengthPercentage: return "length-percentage"_s;
+    case Type::Percentage: return "percentage"_s;
+    case Type::Integer: return "integer"_s;
+    case Type::Number: return "number"_s;
+    case Type::Angle: return "angle"_s;
+    case Type::Time: return "time"_s;
+    case Type::Resolution: return "resolution"_s;
+    case Type::Color: return "color"_s;
+    case Type::Image: return "image"_s;
+    case Type::URL: return "url"_s;
+    case Type::CustomIdent: return "custom-ident"_s;
+    case Type::String: return "string"_s;
+    case Type::TransformFunction: return "transform-function"_s;
+    case Type::TransformList: return "transform-list"_s;
+    case Type::Ident:
+    case Type::Unknown:
+        break;
+    }
+    return { };
+}
+
+void serializeCustomPropertySyntax(StringBuilder& builder, const CSSCustomPropertySyntax& syntax)
+{
+    if (syntax.isUniversal()) {
+        builder.append('*');
+        return;
+    }
+
+    auto separator = ""_s;
+    for (auto& component : syntax.definition) {
+        builder.append(separator);
+        separator = " | "_s;
+
+        // The Ident type is a literal custom identifier rather than a named data type.
+        if (component.type == CSSCustomPropertySyntax::Type::Ident)
+            serializeIdentifier(builder, component.ident);
+        else
+            builder.append('<', typeNameForType(component.type), '>');
+
+        switch (component.multiplier) {
+        case CSSCustomPropertySyntax::Multiplier::Single:
+            break;
+        case CSSCustomPropertySyntax::Multiplier::SpaceList:
+            builder.append('+');
+            break;
+        case CSSCustomPropertySyntax::Multiplier::CommaList:
+            builder.append('#');
+            break;
+        }
+    }
+}
+
+void serializeCustomPropertySyntaxAsCSSType(StringBuilder& builder, const CSSCustomPropertySyntax& syntax)
+{
+    ASSERT(!syntax.isUniversal());
+    // A single syntax component is written bare. Anything else must be wrapped in type().
+    if (syntax.definition.size() == 1) {
+        serializeCustomPropertySyntax(builder, syntax);
+        return;
+    }
+    builder.append("type("_s);
+    serializeCustomPropertySyntax(builder, syntax);
+    builder.append(')');
 }
 
 }

@@ -62,7 +62,7 @@ FAIL PerformanceResourceTiming interface: resource must inherit property "render
 FAIL PerformanceResourceTiming interface: resource must inherit property "contentType" with the proper type assert_inherits: property "contentType" not found in prototype chain
 FAIL PerformanceResourceTiming interface: resource must inherit property "contentEncoding" with the proper type assert_inherits: property "contentEncoding" not found in prototype chain
 PASS PerformanceResourceTiming interface: resource must inherit property "toJSON()" with the proper type
-FAIL PerformanceResourceTiming interface: default toJSON operation on resource assert_true: property "id" should be present in the output of PerformanceResourceTiming.prototype.toJSON() expected true got false
+FAIL PerformanceResourceTiming interface: default toJSON operation on resource assert_true: property "responseStatus" should be present in the output of PerformanceResourceTiming.prototype.toJSON() expected true got false
 PASS Performance interface: operation clearResourceTimings()
 PASS Performance interface: operation setResourceTimingBufferSize(unsigned long)
 PASS Performance interface: attribute onresourcetimingbufferfull

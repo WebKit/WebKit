@@ -43,7 +43,7 @@ FrameState::FrameState()
     RELEASE_ASSERT(RunLoop::isMain());
 }
 
-FrameState::FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, String&& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession,  std::optional<WebCore::PolicyContainer>&& policyContainer,
+FrameState::FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, String&& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, std::optional<WebCore::PolicyContainer>&& policyContainer,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
@@ -69,6 +69,7 @@ FrameState::FrameState(String&& urlString, String&& originalURLString, String&& 
     , sessionStateObject(WTF::move(sessionStateObject))
     , wasCreatedByJSWithoutUserInteraction(wasCreatedByJSWithoutUserInteraction)
     , wasRestoredFromSession(wasRestoredFromSession)
+    , isInitialAboutBlank(isInitialAboutBlank)
     , policyContainer(WTF::move(policyContainer))
 #if PLATFORM(IOS_FAMILY)
     , exposedContentRect(exposedContentRect)
@@ -83,7 +84,7 @@ FrameState::FrameState(String&& urlString, String&& originalURLString, String&& 
 {
 }
 
-FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>> stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, const std::optional<WebCore::PolicyContainer>& policyContainer,
+FrameState::FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier> frameID, std::optional<Vector<uint8_t>> stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>& httpBody, std::optional<WebCore::BackForwardItemIdentifier> itemID, std::optional<WebCore::BackForwardFrameItemIdentifier> frameItemID, const String& title, WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank isInitialAboutBlank, const std::optional<WebCore::PolicyContainer>& policyContainer,
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
@@ -109,6 +110,7 @@ FrameState::FrameState(const String& urlString, const String& originalURLString,
     , sessionStateObject(WTF::move(sessionStateObject))
     , wasCreatedByJSWithoutUserInteraction(wasCreatedByJSWithoutUserInteraction)
     , wasRestoredFromSession(wasRestoredFromSession)
+    , isInitialAboutBlank(isInitialAboutBlank)
     , policyContainer(policyContainer)
 #if PLATFORM(IOS_FAMILY)
     , exposedContentRect(exposedContentRect)
@@ -146,6 +148,7 @@ Ref<FrameState> FrameState::copy()
         sessionStateObject.copyRef(),
         wasCreatedByJSWithoutUserInteraction,
         wasRestoredFromSession,
+        isInitialAboutBlank,
         policyContainer,
 #if PLATFORM(IOS_FAMILY)
         exposedContentRect,
@@ -184,6 +187,7 @@ void FrameState::replacePayloadFrom(Ref<FrameState>&& other)
     sessionStateObject = WTF::move(other->sessionStateObject);
     wasCreatedByJSWithoutUserInteraction = other->wasCreatedByJSWithoutUserInteraction;
     wasRestoredFromSession = other->wasRestoredFromSession;
+    isInitialAboutBlank = other->isInitialAboutBlank;
     policyContainer = WTF::move(other->policyContainer);
 #if PLATFORM(IOS_FAMILY)
     exposedContentRect = other->exposedContentRect;

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<script>
+function log(s) { document.body.appendChild(document.createTextNode(s + '\n')); }
+
+async function main() {
+    if (!navigator.gpu) {
+        log('SKIP: WebGPU not available');
+        return;
+    }
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) { log('SKIP: no adapter'); return; }
+    const device = await adapter.requestDevice();
+    if (!device) { log('SKIP: no device'); return; }
+
+    // Single explicit BindGroupLayout shared by both pipelines.
+    // minBindingSize:0 defers the size check to draw/dispatch time.
+    const bgl = device.createBindGroupLayout({
+        entries: [{
+            binding: 0,
+            visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+            buffer: { type: 'storage', minBindingSize: 0 }
+        }]
+    });
+    const pl = device.createPipelineLayout({ bindGroupLayouts: [bgl] });
+
+    // Compute shader: needs only 4 bytes.
+    const cmod = device.createShaderModule({
+        code: `
+            @group(0) @binding(0) var<storage, read_write> small : u32;
+            @compute @workgroup_size(1) fn cmain() { small = 1u; }
+        `
+    });
+
+    // Render shader: fragment needs 65536 bytes (array<u32, 16384>).
+    const rmod = device.createShaderModule({
+        code: `
+            @vertex fn vmain(@builtin(vertex_index) i:u32) -> @builtin(position) vec4f {
+                var p = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+                return vec4f(p[i], 0, 1);
+            }
+            @group(0) @binding(0) var<storage, read_write> big : array<u32, 16384>;
+            @fragment fn fmain(@builtin(position) pos: vec4f) -> @location(0) vec4f {
+                big[16383u] = 0u;
+                return vec4f(1,0,0,1);
+            }
+        `
+    });
+
+    // First ComputePipeline on this device -> uniqueId == 1 (m_computePipelineId).
+    const cp = device.createComputePipeline({ layout: pl, compute: { module: cmod, entryPoint: 'cmain' } });
+    // First RenderPipeline on this device -> uniqueId == 1 (m_renderPipelineId). ID collision.
+    const rp = device.createRenderPipeline({
+        layout: pl,
+        vertex:   { module: rmod, entryPoint: 'vmain' },
+        fragment: { module: rmod, entryPoint: 'fmain', targets: [{ format: 'rgba8unorm' }] }
+    });
+
+    // 4-byte buffer — valid for compute (u32), invalid for fragment (array<u32,16384>).
+    const tiny = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE });
+    const bg = device.createBindGroup({ layout: bgl, entries: [{ binding: 0, resource: { buffer: tiny } }] });
+
+    const rt = device.createTexture({ size: [4,4], format: 'rgba8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+
+    // Encode a compute pass (primes the pipeline cache) then a render pass (which
+    // should still validate the binding size against the render pipeline's requirements).
+    device.pushErrorScope('validation');
+
+    const enc = device.createCommandEncoder();
+
+    const cpass = enc.beginComputePass();
+    cpass.setPipeline(cp);
+    cpass.setBindGroup(0, bg);
+    cpass.dispatchWorkgroups(1);
+    cpass.end();
+
+    const rpass = enc.beginRenderPass({
+        colorAttachments: [{ view: rt.createView(), loadOp: 'clear', storeOp: 'store', clearValue: [0,0,0,0] }]
+    });
+    rpass.setPipeline(rp);
+    rpass.setBindGroup(0, bg);
+    rpass.draw(3);
+    rpass.end();
+
+    device.queue.submit([enc.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    const err = await device.popErrorScope();
+    if (err)
+        log('PASS: validation error raised for undersized buffer in render pass after compute cache priming');
+    else
+        log('FAIL: no validation error — pipeline ID collision bypassed binding size check');
+
+    // Control: a fresh BindGroup (no cache) used with the render pipeline alone must
+    // also produce a validation error on both correct and vulnerable implementations.
+    device.pushErrorScope('validation');
+    const bg2 = device.createBindGroup({ layout: bgl, entries: [{ binding: 0, resource: { buffer: tiny } }] });
+    const enc2 = device.createCommandEncoder();
+    const rpass2 = enc2.beginRenderPass({
+        colorAttachments: [{ view: rt.createView(), loadOp: 'clear', storeOp: 'store', clearValue: [0,0,0,0] }]
+    });
+    rpass2.setPipeline(rp);
+    rpass2.setBindGroup(0, bg2);
+    rpass2.draw(3);
+    rpass2.end();
+    device.queue.submit([enc2.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    const err2 = await device.popErrorScope();
+    log('CONTROL: ' + (err2 ? 'PASS: validation error raised for fresh BindGroup with undersized buffer' : 'FAIL: no validation error for fresh BindGroup'));
+}
+
+main()
+    .catch(e => log('FAIL: ' + e + '\n' + (e && e.stack)))
+    .finally(() => { if (window.testRunner) testRunner.notifyDone(); });
+</script>

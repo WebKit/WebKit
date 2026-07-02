@@ -92,8 +92,11 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDate, (JSGlobalObject* globalObje
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainDateStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Steps 2-4: y/m/d = ToIntegerWithTruncation(isoYear/isoMonth/isoDay).
-    // ToIntegerWithTruncation throws RangeError for NaN or ±Infinity.
+    // Steps 2-4: y/m/d = ? ToIntegerWithTruncation(isoYear/isoMonth/isoDay).
+    //   ToIntegerWithTruncation: NaN → 0, ±Infinity → throw RangeError.
+    //   When called with fewer than 3 args the missing arg is undefined → 0.
+    //   We skip the conversion entirely for missing args (Duration default is 0); the
+    //   downstream IsValidISODate check then rejects month=0, matching spec behavior.
     ISO8601::Duration duration { };
     auto argumentCount = callFrame->argumentCount();
 
@@ -137,9 +140,10 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDate, (JSGlobalObject* globalObje
         }
     }
 
-    // Steps 8-10: IsValidISODate + CreateISODateRecord + CreateTemporalDate.
-    auto plainDate = TemporalPlainDate::toPlainDate(globalObject, duration);
+    // Steps 8-9: IsValidISODate + CreateISODateRecord.
+    auto plainDate = TemporalPlainDate::validateAndCreateISODateRecord(globalObject, duration);
     RETURN_IF_EXCEPTION(scope, { });
+    // Step 10: Return ? CreateTemporalDate(isoDate, calendar, NewTarget).
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::tryCreateIfValid(globalObject, structure, WTF::move(plainDate), calendarId)));
 }
 

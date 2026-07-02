@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#iframe { position: absolute; left: 50px; top: 50px; width: 300px; height: 300px; border: 0; }
+</style>
+</head>
+<body>
+
+<iframe id="iframe" role="presentation" src="../resources/scrollable-iframe-content.html"></iframe>
+
+<script>
+var output = "This test verifies that an element inside a local iframe never exposes stale geometry, even after a scroll of the iframe's contents.\n\n";
+var initialX, scrolledX, delta;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var frameTarget;
+    setTimeout(async function() {
+        var iframe = document.getElementById("iframe");
+
+        await waitForElementById("frame-target");
+        await waitForFrameGeometryReady();
+        frameTarget = accessibilityController.accessibleElementById("frame-target");
+        initialX = frameTarget.x;
+
+        // Scroll the iframe's own content horizontally (the frame scrolls its own document, like a column
+        // page-turn, as in the case of Books). scrollTo updates the frame's scroll offset synchronously.
+        // We then read the accessibility frame in the same run-loop, which should still yield the correct result.
+        iframe.contentWindow.scrollTo(500, 0);
+        scrolledX = frameTarget.x;
+
+        output += expect("iframe.contentWindow.scrollX", "500");
+        output += expect("scrolledX < initialX", "true");
+        delta = initialX - scrolledX;
+        output += expect("delta > 400 && delta < 600", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

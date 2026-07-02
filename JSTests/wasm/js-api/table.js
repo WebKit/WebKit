@@ -398,25 +398,29 @@ assert.throws(() => WebAssembly.Table.prototype.grow(undefined), TypeError, `exp
     }, TypeError, "expected |this| value to be an instance of WebAssembly.Table");
 
     const t0 = new WebAssembly.Table({minimum: 5, element: "funcref"}).type();
-    assert.eq(Object.keys(t0).length, 2);
+    assert.eq(Object.keys(t0).length, 3);
     assert.eq(t0.minimum, 5);
     assert.eq(t0.element, "funcref");
+    assert.eq(t0.address, "i32");
 
     const t1 = new WebAssembly.Table({minimum: 5, maximum: 10, element: "funcref"}).type();
-    assert.eq(Object.keys(t1).length, 3);
+    assert.eq(Object.keys(t1).length, 4);
     assert.eq(t1.minimum, 5);
     assert.eq(t1.maximum, 10)
     assert.eq(t1.element, "funcref");
+    assert.eq(t1.address, "i32");
 
     const t2 = new WebAssembly.Table({minimum: 5, maximum: 10, element: "externref"}).type();
-    assert.eq(Object.keys(t2).length, 3);
+    assert.eq(Object.keys(t2).length, 4);
     assert.eq(t2.minimum, 5);
     assert.eq(t2.maximum, 10)
     assert.eq(t2.element, "externref");
+    assert.eq(t2.address, "i32");
 
     const t3 = new WebAssembly.Table(t2).type();
     assert.eq(Object.keys(t2).length, Object.keys(t3).length);
     assert.eq(t2.minimum, t3.minimum);
     assert.eq(t2.maximum, t3.maximum)
     assert.eq(t2.element, t3.element);
+    assert.eq(t2.address, "i32");
 }

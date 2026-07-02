@@ -547,7 +547,12 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     if (scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
         return;
 
-    Function<void()> updateMuted = [this, protectedThis = Ref { *this }, muted = m_private->muted()] {
+    bool muted = m_private->muted();
+    if (isAudio() && isCaptureTrack())
+        if (RefPtr manager = mediaSessionManager())
+            manager->audioCaptureSourceStateChanged(muted ? MediaSessionManagerInterface::IsCaptureStarting::No : MediaSessionManagerInterface::IsCaptureStarting::Yes);
+
+    Function<void()> updateMuted = [this, protectedThis = Ref { *this }, muted] {
         RefPtr context = scriptExecutionContext();
         if (!context || context->activeDOMObjectsAreStopped())
             return;
@@ -557,11 +562,12 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 
         m_muted = muted;
 
-        if (isAudio() && isCaptureTrack())
-            if (RefPtr manager = mediaSessionManager())
-                manager->audioCaptureSourceStateChanged(muted ? MediaSessionManagerInterface::IsCaptureStarting::No : MediaSessionManagerInterface::IsCaptureStarting::Yes);
-
         dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+        if (!muted && m_isConfigurationChangePending) {
+            m_isConfigurationChangePending = false;
+            dispatchEvent(Event::create(eventNames().configurationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        }
     };
 
     if (m_shouldFireMuteEventImmediately)
@@ -588,8 +594,13 @@ void MediaStreamTrack::trackSettingsChanged(MediaStreamTrackPrivate&)
 void MediaStreamTrack::trackConfigurationChanged(MediaStreamTrackPrivate&)
 {
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [](auto& track) {
-        if (!track.scriptExecutionContext() || track.scriptExecutionContext()->activeDOMObjectsAreStopped() || track.m_private->muted() || track.ended())
+        if (!track.scriptExecutionContext() || track.scriptExecutionContext()->activeDOMObjectsAreStopped() || track.ended())
             return;
+
+        if (track.m_private->muted()) {
+            track.m_isConfigurationChangePending = true;
+            return;
+        }
 
         track.dispatchEvent(Event::create(eventNames().configurationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
@@ -641,13 +652,13 @@ RefPtr<WebAudioSourceProvider> MediaStreamTrack::createAudioSourceProvider()
 bool MediaStreamTrack::isCapturingAudio() const
 {
     ASSERT(isCaptureTrack() && m_private->isAudio());
-    return !ended() && !muted();
+    return !ended() && !m_private->muted();
 }
 
 bool MediaStreamTrack::wantsToCaptureAudio() const
 {
     ASSERT(isCaptureTrack() && m_private->isAudio());
-    return !ended() && (!muted() || m_private->interrupted());
+    return !ended() && (!m_private->muted() || m_private->interrupted());
 }
 
 UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrack::detach()

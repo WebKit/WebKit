@@ -26,6 +26,7 @@
 import Foundation
 import struct Foundation.URL
 @_spi(WebKitAdditions_Testing) @_spi(Testing) import WebKit
+@_spi(Testing) import _WebKit_SwiftUI
 import SwiftUI
 import struct Swift.String
 import struct _Concurrency.Task
@@ -45,6 +46,8 @@ extension AppKitGesturesTests {
         }
 
         static let text = "Here's to the crazy ones."
+
+        static let topInset: CGFloat = 100
 
         let recap = Recap.shared
 
@@ -67,6 +70,7 @@ extension AppKitGesturesTests {
                     VStack(spacing: 0) {
                         WebView(page)
                             .frame(width: windowSize.width, height: windowSize.height)
+                            .webViewObscuredContentInsets(EdgeInsets(top: Self.topInset, leading: 0, bottom: 0, trailing: 0))
                         Color.clear
                             .frame(height: contentHeight - windowSize.height)
                     }
@@ -205,6 +209,44 @@ extension AppKitGesturesTests.Embedded {
         await page.waitForNextPresentationUpdate()
 
         #expect(contentOffset.value != initialContentOffset)
+    }
+
+    @Test
+    func doubleClickingSelectsWordWhenScrolledToTopWithObscuredContentInset() async throws {
+        let html = """
+            <body style="margin: 0">
+                <h2 id="div" style="display: inline-block; margin: 0; font-size: 30px;">\(Self.text)</h2>
+                <input id="search" type="search" style="display: block; margin: 0; width: 320px; height: 300px;">
+            </body>
+            """
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await page.waitForNextPresentationUpdate()
+
+        // Recap requires this test to be ran within an app host.
+        guard NSApp.isActive else {
+            return
+        }
+
+        await recap.play { composer in
+            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(newSelection == crazySelection)
     }
 }
 

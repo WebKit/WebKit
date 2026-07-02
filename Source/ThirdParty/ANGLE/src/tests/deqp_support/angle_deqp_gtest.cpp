@@ -228,7 +228,7 @@ const char *GetDefaultAPIName()
     defined(ANGLE_PLATFORM_WINDOWS)
     return "angle-vulkan";
 #elif defined(ANGLE_PLATFORM_APPLE)
-    return "angle-gl";
+    return "angle-metal";
 #else
 #    error Unknown platform.
 #endif

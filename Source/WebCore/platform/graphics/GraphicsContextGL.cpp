@@ -377,11 +377,6 @@ GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs)
 
 GraphicsContextGL::~GraphicsContextGL() = default;
 
-std::tuple<GCGLenum, GCGLenum> GraphicsContextGL::externalImageTextureBindingPoint()
-{
-    return std::make_tuple(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_BINDING_2D);
-}
-
 unsigned GraphicsContextGL::computeBytesPerGroup(GCGLenum format, GCGLenum type)
 {
     unsigned componentsPerGroup = 0;

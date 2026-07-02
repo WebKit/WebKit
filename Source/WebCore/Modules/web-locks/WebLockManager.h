@@ -83,6 +83,8 @@ private:
 
     struct LockRequest;
     HashMap<WebLockIdentifier, LockRequest> m_pendingRequests;
+
+    HashMap<WebLockIdentifier, Ref<DeferredPromise>> m_queryPromises;
 };
 
 } // namespace WebCore

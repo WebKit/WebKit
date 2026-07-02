@@ -746,18 +746,6 @@ op :get_by_id_direct,
         offset: unsigned,
     }
 
-op :try_get_by_id,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        property: unsigned,
-        valueProfile: unsigned,
-    },
-    metadata: {
-        structureID: StructureID,
-        offset: unsigned,
-    }
-
 # Alignment: 1
 op :jneq_ptr,
     args: {

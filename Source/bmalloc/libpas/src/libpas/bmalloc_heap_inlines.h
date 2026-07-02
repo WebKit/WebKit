@@ -293,7 +293,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_zeroed_inline(size_t size, p
 
     result = bmalloc_try_allocate_impl(size, 1, allocation_mode);
     if (PAS_MAR_SHOULD_LOG(allocation_mode, (void*) result.begin))
-        return PAS_MAR_TRACK_ALLOCATION((void*)result.begin, size);
+        return PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size);
     return (void*)pas_allocation_result_zero(result, size).begin;
 }
 

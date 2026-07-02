@@ -76,10 +76,25 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
         return;
     }
 
-    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, rules = WTF::move(rules), completionHandler = WTF::move(completionHandler)]() mutable {
+    Vector<std::pair<double, String>> serializedRules;
+    for (Ref ruleValue : rules.get()) {
+        RefPtr rule = ruleValue->asObject();
+        if (!rule || !rule->size()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        auto ruleID = rule->getInteger("id"_s);
+        ASSERT(ruleID);
+        serializedRules.append({ *ruleID, rule->toJSONString() });
+    }
+
+    queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, serializedRules = crossThreadCopy(serializedRules), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler({ });
+            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ });
+            });
             return;
         }
 
@@ -94,17 +109,8 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
         ASSERT(errorMessage.isEmpty());
 
         Vector<double> rulesIDs;
-        for (Ref ruleValue : rules.get()) {
-            RefPtr rule = ruleValue->asObject();
-            if (!rule || !rule->size()) {
-                ASSERT_NOT_REACHED();
-                continue;
-            }
-
-            auto ruleID = rule->getInteger("id"_s);
-            ASSERT(ruleID);
-            rulesIDs.append(*ruleID);
-        }
+        for (auto& [ruleID, ruleData] : serializedRules)
+            rulesIDs.append(ruleID);
 
         ASSERT(rulesIDs.size());
 
@@ -130,14 +136,8 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
             }
         }
 
-        for (Ref ruleValue : rules.get()) {
-            RefPtr rule = ruleValue->asObject();
-            if (!rule || !rule->size()) {
-                ASSERT_NOT_REACHED();
-                continue;
-            }
-
-            errorMessage = protectedThis->insertRule(*rule, *(protectedThis->database()));
+        for (auto& [ruleID, ruleData] : serializedRules) {
+            errorMessage = protectedThis->insertRule(ruleID, ruleData, *(protectedThis->database()));
             if (!errorMessage.isEmpty())
                 break;
         }
@@ -158,7 +158,9 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::deleteRules(Vector<double> ru
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, ruleIDs = crossThreadCopy(ruleIDs), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler({ });
+            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ });
+            });
             return;
         }
 
@@ -192,7 +194,9 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRuleIDs(Vector<do
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, ruleIDs = crossThreadCopy(ruleIDs), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler({ }, nullString());
+            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ }, nullString());
+            });
             return;
         }
 
@@ -259,15 +263,11 @@ Ref<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getKeysAndValuesF
     return results;
 }
 
-String WebExtensionDeclarativeNetRequestSQLiteStore::insertRule(const JSON::Object& rule, Ref<WebExtensionSQLiteDatabase> database)
+String WebExtensionDeclarativeNetRequestSQLiteStore::insertRule(double ruleID, const String& ruleData, Ref<WebExtensionSQLiteDatabase> database)
 {
     assertIsCurrent(queue());
 
-    auto ruleData = rule.toJSONString();
-    auto ruleID = rule.getInteger("id"_s);
-    ASSERT(ruleID);
-
-    DatabaseResult result = SQLiteDatabaseExecute(database, makeString("INSERT INTO "_s, m_tableName, " (id, rule) VALUES (?, ?)"_s), *ruleID, ruleData);
+    DatabaseResult result = SQLiteDatabaseExecute(database, makeString("INSERT INTO "_s, m_tableName, " (id, rule) VALUES (?, ?)"_s), ruleID, ruleData);
     if (result != SQLITE_DONE) {
         RELEASE_LOG_ERROR(Extensions, "Failed to insert %s rule for extension %s", toString(m_storageType).utf8().data(), uniqueIdentifier().utf8().data());
         return makeString("Failed to add "_s, toString(m_storageType), " rule."_s);

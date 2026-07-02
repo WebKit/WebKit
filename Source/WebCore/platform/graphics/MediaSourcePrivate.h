@@ -127,8 +127,33 @@ public:
     void clearReenqueuePending() { m_reenqueuePending = false; }
     void cancelPendingWaitForTarget();
 
-    void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
-    MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
+    // Single source of truth for canplaythrough / gap-handling policy across
+    // the MSE pipeline. All values are durations.
+    //   - startGapAllowance: per MSE 2 §presentation-start-time, allow up to
+    //     1s gap from time 0 to the first buffered range to count as
+    //     "buffered" for HAVE_FUTURE_DATA / canplay; HTMLMediaElement.buffered
+    //     reported to JS is unaffected.
+    //   - midStreamGapTolerance: default tolerance for gaps mid-stream;
+    //     gaps below this are skipped.
+    //   - audioCoveredGapTolerance: widened tolerance applied when an audio
+    //     track bridges a gap (typically a video-only gap with audio
+    //     continuous through it).
+    static constexpr MediaTime startGapAllowance() { return { 1, 1 }; }
+    static constexpr MediaTime midStreamGapTolerance() { return { 125, 1000 }; }
+    static constexpr MediaTime audioCoveredGapTolerance() { return { 250, 1000 }; }
+
+    // Returns the gap tolerance that should apply at `time`:
+    //   - startGapAllowance if `time` is in the start-of-stream window;
+    //   - audioCoveredGapTolerance if some active audio track other than
+    //     `excluded` has `time` inside its buffered range;
+    //   - midStreamGapTolerance otherwise.
+    //
+    // When `excluded` is unset the implementation reads a lock-protected
+    // audio-buffered cache and may be called from any thread. When
+    // `excluded` is set the caller MUST be on the dispatcher (used by
+    // TrackBuffer's IsCoveredByOtherTracks callback).
+    MediaTime gapToleranceAtTime(const MediaTime&, std::optional<TrackID> excluded = std::nullopt) const;
+    bool isWithinStartGapAllowance(const MediaTime&) const;
 
     MediaTime duration() const;
     PlatformTimeRanges buffered() const;
@@ -139,6 +164,7 @@ public:
     bool isBuffered(const PlatformTimeRanges&) const;
     PlatformTimeRanges seekable() const;
 
+    MediaTime nextStallTime(const MediaTime& currentTime) const;
     bool hasBufferedData() const;
     bool hasCurrentTime() const;
     bool hasFutureTime() const;
@@ -181,13 +207,13 @@ private:
 
     MediaTime m_duration WTF_GUARDED_BY_LOCK(m_lock) { MediaTime::invalidTime() };
     PlatformTimeRanges m_buffered WTF_GUARDED_BY_LOCK(m_lock);
+    PlatformTimeRanges m_audioBuffered WTF_GUARDED_BY_LOCK(m_lock);
     std::optional<SeekTarget> m_pendingSeekTarget WTF_GUARDED_BY_LOCK(m_lock);
     std::optional<MediaTimePromise::AutoRejectProducer> m_waitForTargetPromise WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
     PlatformTimeRanges m_liveSeekable WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<bool> m_streaming { false };
     std::atomic<bool> m_streamingAllowed { false };
-    MediaTime m_timeFudgeFactor;
     HashMap<SourceBufferPrivate*, TracksType> m_tracksTypes WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     std::atomic<TracksType> m_tracksCombinedTypes;
     const ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;

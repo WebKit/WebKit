@@ -29,6 +29,7 @@
 
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
 #include "CodeBlock.h"
+#include "GCAwareJITStubRoutine.h"
 #include "ObjectPropertyCondition.h"
 #include "PackedCellPtr.h"
 #include "Watchpoint.h"
@@ -86,6 +87,7 @@ class AdaptiveValuePropertyInlineCacheClearingWatchpoint final : public Adaptive
     WTF_MAKE_NONCOPYABLE(AdaptiveValuePropertyInlineCacheClearingWatchpoint);
     WTF_MAKE_TZONE_ALLOCATED(AdaptiveValuePropertyInlineCacheClearingWatchpoint);
 
+    bool isValid() const final { return !m_owner->ownerIsDead(); }
     void handleFire(VM&, const FireDetail&) final;
 
 public:

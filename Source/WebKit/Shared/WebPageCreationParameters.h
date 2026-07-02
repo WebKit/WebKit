@@ -332,6 +332,9 @@ struct WebPageCreationParameters {
 
 #if PLATFORM(MAC)
     double overflowHeightForTopScrollEdgeEffect { 0 };
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    bool fullScreenTitlebarOverlayIsDisplayed { false };
+#endif
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
     WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
 #endif

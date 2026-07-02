@@ -1,0 +1,4 @@
+
+PASS promise_test with asynchronous cleanup
+PASS synchronously-defined promise_test
+

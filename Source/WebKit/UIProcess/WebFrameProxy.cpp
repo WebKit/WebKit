@@ -38,6 +38,7 @@
 #include "FrameTreeNodeData.h"
 #include "JSHandleInfo.h"
 #include "LoadedWebArchive.h"
+#include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
 #include "ProvisionalFrameCreationParameters.h"
@@ -639,7 +640,58 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebFrame::GetFrameInfo(), WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::WebFrame::GetFrameInfo(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](auto&& frameInfo) mutable {
+        if (!frameInfo)
+            return completionHandler({ });
+
+        if (frameInfo->isMainFrame != isMainFrame()) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: isMainFrame mismatch");
+            frameInfo->isMainFrame = isMainFrame();
+        }
+        if (frameInfo->frameID != frameID()) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: frameID mismatch");
+            frameInfo->frameID = frameID();
+        }
+        if (frameInfo->request.url() != url()) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: URL mismatch");
+            frameInfo->request = ResourceRequest { URL { url() } };
+        }
+        // For URLs whose origin is inherited from the initiator (e.g. about:blank,
+        // about:srcdoc, data:, blob:), the origin cannot be derived from the URL alone
+        // and only the WebProcess knows the correct value. SecurityOriginData::fromURL()
+        // returns an opaque origin in those cases, so we skip validation and trust the
+        // value provided by the WebProcess.
+        auto securityOrigin = SecurityOriginData::fromURL(url());
+        if (!securityOrigin.isOpaque() && frameInfo->securityOrigin != securityOrigin) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: security origin mismatch");
+            frameInfo->securityOrigin = WTF::move(securityOrigin);
+        }
+        auto topOrigin = SecurityOriginData::fromURL(rootFrame()->url());
+        if (!topOrigin.isOpaque() && frameInfo->topOrigin != topOrigin) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: topOrigin mismatch");
+            frameInfo->topOrigin = WTF::move(topOrigin);
+        }
+        if (frameInfo->certificateInfo != certificateInfo()) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: certificateInfo mismatch");
+            frameInfo->certificateInfo = certificateInfo();
+        }
+        if (frameInfo->processID != process().processID()) {
+            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: process ID mismatch");
+            frameInfo->processID = process().processID();
+        }
+        if (m_page) {
+            if (frameInfo->webPageProxyID != m_page->identifier()) {
+                RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: webPageProxyID mismatch");
+                frameInfo->webPageProxyID = m_page->identifier();
+            }
+        } else {
+            if (frameInfo->webPageProxyID) {
+                RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: had unexpected webPageProxyID");
+                frameInfo->webPageProxyID = std::nullopt;
+            }
+        }
+        completionHandler(WTF::move(*frameInfo));
+    });
 }
 
 void WebFrameProxy::getFrameTree(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler)

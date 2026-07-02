@@ -732,10 +732,6 @@ public:
     // WebGL-specific.
     static constexpr GCGLenum MAX_CLIENT_WAIT_TIMEOUT_WEBGL = 0x9247;
 
-    // Necessary desktop OpenGL constants.
-    static constexpr GCGLenum TEXTURE_RECTANGLE_ARB = 0x84F5;
-    static constexpr GCGLenum TEXTURE_BINDING_RECTANGLE_ARB = 0x84F6;
-
     // EXT_sRGB formats
     static constexpr GCGLenum SRGB_EXT = 0x8C40;
     static constexpr GCGLenum SRGB_ALPHA_EXT = 0x8C42;
@@ -1670,8 +1666,6 @@ public:
     virtual GCGLint uniformBufferOffsetAlignment() = 0;
     virtual GCGLint max3DTextureSize() = 0;
     virtual GCGLint maxArrayTextureLayers() = 0;
-
-    virtual std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint();
 
     virtual void reshape(int width, int height) = 0;
 

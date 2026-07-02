@@ -1,0 +1,4 @@
+
+PASS Interface does not have LegacyNamespace.
+PASS Interface has LegacyNamespace
+

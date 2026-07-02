@@ -1402,7 +1402,7 @@ OptionSet<DragSourceAction> EventHandler::updateDragSourceActionsAllowed() const
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, OptionSet<HitTestRequest::Type> hitType) const
+HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& pointInContentsCoordinateSpace, OptionSet<HitTestRequest::Type> hitType) const
 {
     Ref frame = m_frame.get();
 
@@ -1411,7 +1411,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
     if (!frame->isRootFrame() && !hitType.contains(HitTestRequest::Type::SkipTransformToRootFrameCoordinates)) {
         Ref rootFrame = frame->rootFrame();
         if (RefPtr frameView = frame->view(), rootView = rootFrame->view(); frameView && rootView) {
-            IntPoint rootFramePoint = rootView->rootViewToContents(frameView->contentsToRootView(roundedIntPoint(point)));
+            IntPoint rootFramePoint = rootView->rootViewToContents(frameView->contentsToRootView(roundedIntPoint(pointInContentsCoordinateSpace)));
             return rootFrame->eventHandler().hitTestResultAtPoint(rootFramePoint, hitType);
         }
     }
@@ -1420,7 +1420,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
     if (RefPtr frameView = frame->view())
         frameView->updateLayoutAndStyleIfNeededRecursive();
 
-    auto result = HitTestResult { point };
+    auto result = HitTestResult { pointInContentsCoordinateSpace };
     RefPtr document = frame->document();
     if (!document)
         return result;

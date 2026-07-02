@@ -158,7 +158,7 @@ void RenderReplaced::layout()
 
     LayoutRect oldContentRect = replacedContentRect();
     
-    setHeight(minimumReplacedHeight());
+    setBorderBoxHeight(minimumReplacedHeight());
 
     updateLogicalWidth();
     updateLogicalHeight();
@@ -655,7 +655,7 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth() const
         // the available width is constrained by those values.
         auto& logicalLeft = style().logicalLeft();
         auto& logicalRight = style().logicalRight();
-        auto containerWidth = containingBlock()->clientLogicalWidth();
+        auto containerWidth = containingBlock()->paddingBoxLogicalWidth();
 
         if (!logicalLeft.isAuto() && !logicalRight.isAuto()) {
             auto left = Style::evaluate<LayoutUnit>(logicalLeft, containerWidth, style().usedZoomForLength());

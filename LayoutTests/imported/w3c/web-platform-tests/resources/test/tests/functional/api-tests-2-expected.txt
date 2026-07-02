@@ -1,0 +1,8 @@
+Sample HTML5 API Tests
+
+There should be two results
+
+
+PASS Test defined before onload
+PASS Test defined after onload
+

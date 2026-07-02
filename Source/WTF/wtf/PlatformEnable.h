@@ -240,10 +240,6 @@
 #define ENABLE_FILE_REPLACEMENT 0
 #endif
 
-#if !defined(ENABLE_FTPDIR)
-#define ENABLE_FTPDIR 1
-#endif
-
 #if !defined(ENABLE_FULL_KEYBOARD_ACCESS)
 #define ENABLE_FULL_KEYBOARD_ACCESS 0
 #endif

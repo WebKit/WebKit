@@ -517,46 +517,6 @@ void JIT::emitSlow_op_del_by_val(const JSInstruction*, Vector<SlowCaseEntry>::it
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
-void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpTryGetById>();
-    VirtualRegister resultVReg = bytecode.m_dst;
-    VirtualRegister baseVReg = bytecode.m_base;
-    const Identifier* ident = &(m_unlinkedCodeBlock->identifier(bytecode.m_property));
-
-    using BaselineJITRegisters::GetById::baseJSR;
-    using BaselineJITRegisters::GetById::resultJSR;
-    using BaselineJITRegisters::GetById::propertyCacheGPR;
-
-    emitGetVirtualRegister(baseVReg, baseJSR);
-
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
-
-    emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
-
-    JITGetByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::TryGetById, CacheType::GetByIdPrototype);
-
-    gen.generateDataICFastPath(*this);
-    addSlowCase();
-    m_getByIds.append(gen);
-
-    setFastPathResumePoint();
-    emitValueProfilingSite(bytecode, resultJSR);
-    emitPutVirtualRegister(resultVReg, resultJSR);
-}
-
-void JIT::emitSlow_op_try_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
-{
-    ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
-    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-    linkAllSlowCases(iter);
-    gen.reportBaselineDataICSlowPathBegin(label());
-    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
-}
-
 void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByIdDirect>();

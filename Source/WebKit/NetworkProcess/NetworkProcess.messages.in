@@ -250,6 +250,8 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     SetCORSDisablingPatternsForPage(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
 
+    RecordMessagePortTransferDestinationsForSiteIsolation(Vector<WebCore::MessagePortIdentifier> ports, WebCore::ProcessIdentifier destination) -> ()
+
     AllowFileAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, String url) -> ()
     AllowFilesAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, Vector<String> urls) -> () ReplyCanDispatchOutOfOrder
 

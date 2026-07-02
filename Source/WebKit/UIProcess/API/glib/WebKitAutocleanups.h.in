@@ -72,11 +72,14 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebsiteDataManager, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebsitePolicies, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWindowProperties, g_object_unref)
 
+#if ENABLE(POINTER_LOCK)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPointerLockPermissionRequest, g_object_unref)
+#endif
+
 #if PLATFORM(GTK)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitColorChooserRequest, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitMediaKeySystemPermissionRequest, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitOptionMenu, g_object_unref)
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPointerLockPermissionRequest, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPrintCustomWidget, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPrintOperation, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitWebInspector, g_object_unref)

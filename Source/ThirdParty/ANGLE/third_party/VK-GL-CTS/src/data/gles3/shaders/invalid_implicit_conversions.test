@@ -1,0 +1,7687 @@
+# WARNING: This file is auto-generated. Do NOT modify it manually, but rather
+# modify the generating script file. Otherwise changes will be lost!
+
+group invalid_implicit_conversions "Invalid Implicit Conversions"
+
+    case add_float_int_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                int b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                float a;
+                int b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_float_ivec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec2 b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                float a;
+                ivec2 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_float_ivec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec3 b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                float a;
+                ivec3 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_float_ivec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec4 b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                float a;
+                ivec4 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_int_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                int b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec2 a;
+                int b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_vec2_ivec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec2 b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec2 a;
+                ivec2 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_ivec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec3 b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec2 a;
+                ivec3 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_ivec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec4 b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec2 a;
+                ivec4 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_int_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                int b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec3 a;
+                int b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_vec3_ivec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec2 b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec3 a;
+                ivec2 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_ivec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec3 b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec3 a;
+                ivec3 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_ivec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec4 b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec3 a;
+                ivec4 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_int_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                int b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec4 a;
+                int b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_vec4_ivec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec2 b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec4 a;
+                ivec2 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_ivec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec3 b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec4 a;
+                ivec3 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_ivec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec4 b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec4 a;
+                ivec4 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_float_uint_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uint b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                float a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_float_uvec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec2 b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                float a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_float_uvec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec3 b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                float a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_float_uvec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec4 b;
+                float c = a + b;
+            }
+        ""
+    end
+    case add_float_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                float a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uint_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uint b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec2 a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uvec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec2 b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec2 a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uvec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec3 b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec2 a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uvec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec4 b;
+                vec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec2 a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uint_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uint b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec3 a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uvec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec2 b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec3 a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uvec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec3 b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec3 a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uvec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec4 b;
+                vec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec3 a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uint_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uint b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec4 a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uvec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec2 b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec4 a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uvec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec3 b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec4 a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uvec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec4 b;
+                vec4 c = a + b;
+            }
+        ""
+    end
+    case add_vec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec4 a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_int_uint_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uint b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_int_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                int a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_int_uvec2_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec2 b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_int_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                int a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_int_uvec3_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec3 b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_int_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                int a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_int_uvec4_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec4 b;
+                int c = a + b;
+            }
+        ""
+    end
+    case add_int_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                int a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uint_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uint b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec2 a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uvec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec2 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec2 a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uvec3_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec3 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec2 a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uvec4_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec4 b;
+                ivec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec2 a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uint_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uint b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec3 a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uvec2_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec2 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec3 a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uvec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec3 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec3 a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uvec4_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec4 b;
+                ivec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec3 a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uint_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uint b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec4 a;
+                uint b;
+                uint c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uvec2_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec2 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec4 a;
+                uvec2 b;
+                uvec2 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uvec3_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec3 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec4 a;
+                uvec3 b;
+                uvec3 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uvec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec4 b;
+                ivec4 c = a + b;
+            }
+        ""
+    end
+    case add_ivec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec4 a;
+                uvec4 b;
+                uvec4 c = a + b;
+            }
+        ""
+    end
+    case mul_float_int_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                int b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                float a;
+                int b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_float_ivec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec2 b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                float a;
+                ivec2 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_float_ivec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec3 b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                float a;
+                ivec3 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_float_ivec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec4 b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                float a;
+                ivec4 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_int_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                int b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec2 a;
+                int b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_ivec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec2 b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec2 a;
+                ivec2 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_ivec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec3 b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec2 a;
+                ivec3 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_ivec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec4 b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec2 a;
+                ivec4 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_int_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                int b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec3 a;
+                int b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_ivec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec2 b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec3 a;
+                ivec2 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_ivec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec3 b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec3 a;
+                ivec3 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_ivec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec4 b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec3 a;
+                ivec4 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_int_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                int b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec4 a;
+                int b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_ivec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec2 b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec4 a;
+                ivec2 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_ivec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec3 b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec4 a;
+                ivec3 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_ivec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec4 b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec4 a;
+                ivec4 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_float_uint_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uint b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                float a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_float_uvec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec2 b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                float a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_float_uvec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec3 b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                float a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_float_uvec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec4 b;
+                float c = a * b;
+            }
+        ""
+    end
+    case mul_float_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                float a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uint_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uint b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec2 a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uvec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec2 b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec2 a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uvec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec3 b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec2 a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uvec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec4 b;
+                vec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec2 a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uint_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uint b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec3 a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uvec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec2 b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec3 a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uvec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec3 b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec3 a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uvec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec4 b;
+                vec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec3 a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uint_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uint b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec4 a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uvec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec2 b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec4 a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uvec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec3 b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec4 a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uvec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec4 b;
+                vec4 c = a * b;
+            }
+        ""
+    end
+    case mul_vec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec4 a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_int_uint_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uint b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_int_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                int a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_int_uvec2_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec2 b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_int_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                int a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_int_uvec3_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec3 b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_int_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                int a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_int_uvec4_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec4 b;
+                int c = a * b;
+            }
+        ""
+    end
+    case mul_int_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                int a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uint_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uint b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec2 a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uvec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec2 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec2 a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uvec3_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec3 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec2 a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uvec4_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec4 b;
+                ivec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec2 a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uint_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uint b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec3 a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uvec2_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec2 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec3 a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uvec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec3 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec3 a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uvec4_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec4 b;
+                ivec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec3 a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uint_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uint b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec4 a;
+                uint b;
+                uint c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uvec2_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec2 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec4 a;
+                uvec2 b;
+                uvec2 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uvec3_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec3 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec4 a;
+                uvec3 b;
+                uvec3 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uvec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec4 b;
+                ivec4 c = a * b;
+            }
+        ""
+    end
+    case mul_ivec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec4 a;
+                uvec4 b;
+                uvec4 c = a * b;
+            }
+        ""
+    end
+    case sub_float_int_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                int b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                float a;
+                int b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_float_ivec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec2 b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                float a;
+                ivec2 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_float_ivec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec3 b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                float a;
+                ivec3 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_float_ivec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec4 b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                float a;
+                ivec4 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_int_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                int b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec2 a;
+                int b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_ivec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec2 b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec2 a;
+                ivec2 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_ivec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec3 b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec2 a;
+                ivec3 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_ivec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec4 b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec2 a;
+                ivec4 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_int_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                int b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec3 a;
+                int b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_ivec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec2 b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec3 a;
+                ivec2 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_ivec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec3 b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec3 a;
+                ivec3 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_ivec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec4 b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec3 a;
+                ivec4 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_int_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                int b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec4 a;
+                int b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_ivec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec2 b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec4 a;
+                ivec2 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_ivec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec3 b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec4 a;
+                ivec3 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_ivec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec4 b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec4 a;
+                ivec4 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_float_uint_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uint b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                float a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_float_uvec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec2 b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                float a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_float_uvec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec3 b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                float a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_float_uvec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec4 b;
+                float c = a - b;
+            }
+        ""
+    end
+    case sub_float_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                float a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uint_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uint b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec2 a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uvec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec2 b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec2 a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uvec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec3 b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec2 a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uvec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec4 b;
+                vec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec2 a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uint_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uint b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec3 a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uvec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec2 b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec3 a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uvec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec3 b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec3 a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uvec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec4 b;
+                vec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec3 a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uint_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uint b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec4 a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uvec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec2 b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec4 a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uvec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec3 b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec4 a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uvec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec4 b;
+                vec4 c = a - b;
+            }
+        ""
+    end
+    case sub_vec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec4 a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_int_uint_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uint b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_int_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                int a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_int_uvec2_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec2 b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_int_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                int a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_int_uvec3_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec3 b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_int_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                int a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_int_uvec4_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec4 b;
+                int c = a - b;
+            }
+        ""
+    end
+    case sub_int_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                int a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uint_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uint b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec2 a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uvec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec2 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec2 a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uvec3_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec3 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec2 a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uvec4_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec4 b;
+                ivec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec2 a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uint_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uint b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec3 a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uvec2_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec2 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec3 a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uvec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec3 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec3 a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uvec4_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec4 b;
+                ivec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec3 a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uint_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uint b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec4 a;
+                uint b;
+                uint c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uvec2_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec2 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec4 a;
+                uvec2 b;
+                uvec2 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uvec3_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec3 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec4 a;
+                uvec3 b;
+                uvec3 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uvec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec4 b;
+                ivec4 c = a - b;
+            }
+        ""
+    end
+    case sub_ivec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec4 a;
+                uvec4 b;
+                uvec4 c = a - b;
+            }
+        ""
+    end
+    case div_float_int_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                int b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                float a;
+                int b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_float_ivec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec2 b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                float a;
+                ivec2 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_float_ivec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec3 b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                float a;
+                ivec3 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_float_ivec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                ivec4 b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                float a;
+                ivec4 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_int_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                int b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec2 a;
+                int b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_vec2_ivec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec2 b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec2 a;
+                ivec2 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_ivec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec3 b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec2 a;
+                ivec3 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_ivec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                ivec4 b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec2 a;
+                ivec4 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_int_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                int b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec3 a;
+                int b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_vec3_ivec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec2 b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec3 a;
+                ivec2 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_ivec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec3 b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec3 a;
+                ivec3 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_ivec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                ivec4 b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec3 a;
+                ivec4 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_int_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                int b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_int_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                vec4 a;
+                int b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_vec4_ivec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec2 b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_ivec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                vec4 a;
+                ivec2 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_ivec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec3 b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_ivec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                vec4 a;
+                ivec3 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_ivec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                ivec4 b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_ivec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                vec4 a;
+                ivec4 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_float_uint_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uint b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                float a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_float_uvec2_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec2 b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                float a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_float_uvec3_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec3 b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                float a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_float_uvec4_float
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                float c;
+                float a;
+                uvec4 b;
+                float c = a / b;
+            }
+        ""
+    end
+    case div_float_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                float a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uint_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uint b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec2 a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uvec2_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec2 b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec2 a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uvec3_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec3 b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec2 a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uvec4_vec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec2 c;
+                vec2 a;
+                uvec4 b;
+                vec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec2 a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uint_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uint b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec3 a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uvec2_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec2 b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec3 a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uvec3_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec3 b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec3 a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uvec4_vec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec3 c;
+                vec3 a;
+                uvec4 b;
+                vec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec3 a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uint_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uint b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                vec4 a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uvec2_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec2 b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                vec4 a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uvec3_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec3 b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                vec4 a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uvec4_vec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                vec4 c;
+                vec4 a;
+                uvec4 b;
+                vec4 c = a / b;
+            }
+        ""
+    end
+    case div_vec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                vec4 a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_int_uint_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uint b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_int_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                int a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_int_uvec2_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec2 b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_int_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                int a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_int_uvec3_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec3 b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_int_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                int a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_int_uvec4_int
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                int c;
+                int a;
+                uvec4 b;
+                int c = a / b;
+            }
+        ""
+    end
+    case div_int_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                int a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uint_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uint b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec2 a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uvec2_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec2 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec2 a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uvec3_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec3 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec2 a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uvec4_ivec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec2 c;
+                ivec2 a;
+                uvec4 b;
+                ivec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec2_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec2 a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uint_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uint b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec3 a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uvec2_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec2 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec3 a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uvec3_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec3 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec3 a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uvec4_ivec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec3 c;
+                ivec3 a;
+                uvec4 b;
+                ivec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec3_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec3 a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uint_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uint b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uint_uint
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uint c;
+                ivec4 a;
+                uint b;
+                uint c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uvec2_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec2 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uvec2_uvec2
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec2 c;
+                ivec4 a;
+                uvec2 b;
+                uvec2 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uvec3_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec3 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uvec3_uvec3
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec3 c;
+                ivec4 a;
+                uvec3 b;
+                uvec3 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uvec4_ivec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ivec4 c;
+                ivec4 a;
+                uvec4 b;
+                ivec4 c = a / b;
+            }
+        ""
+    end
+    case div_ivec4_uvec4_uvec4
+        expect compile_fail
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            precision mediump int;
+
+             ${DECLARATIONS}
+
+            void main()
+            {
+                uvec4 c;
+                ivec4 a;
+                uvec4 b;
+                uvec4 c = a / b;
+            }
+        ""
+    end
+
+end # invalid_implicit_conversions

@@ -25,10 +25,9 @@
 
 #if ENABLE(WEBXR) && USE(COMPOSITORXR)
 
+#import <CompositorServices/CompositorServices.h>
 #import <UIKit/UIKit.h>
 #import <simd/simd.h>
-
-// #import <pal/cocoa/CompositorServicesSoftLink.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

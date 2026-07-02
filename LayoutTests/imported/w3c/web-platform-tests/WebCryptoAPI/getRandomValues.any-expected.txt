@@ -3,39 +3,39 @@ PASS Float16 arrays
 PASS Float arrays
 PASS DataView
 PASS Integer array: Int8Array
-PASS Large length: Int8Array
+FAIL Large length: Int8Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Int8Array
 PASS Subclass of Int8Array
 PASS Integer array: Int16Array
-PASS Large length: Int16Array
+FAIL Large length: Int16Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Int16Array
 PASS Subclass of Int16Array
 PASS Integer array: Int32Array
-PASS Large length: Int32Array
+FAIL Large length: Int32Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Int32Array
 PASS Subclass of Int32Array
 PASS Integer array: BigInt64Array
-PASS Large length: BigInt64Array
+FAIL Large length: BigInt64Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: BigInt64Array
 PASS Subclass of BigInt64Array
 PASS Integer array: Uint8Array
-PASS Large length: Uint8Array
+FAIL Large length: Uint8Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Uint8Array
 PASS Subclass of Uint8Array
 PASS Integer array: Uint8ClampedArray
-PASS Large length: Uint8ClampedArray
+FAIL Large length: Uint8ClampedArray Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Uint8ClampedArray
 PASS Subclass of Uint8ClampedArray
 PASS Integer array: Uint16Array
-PASS Large length: Uint16Array
+FAIL Large length: Uint16Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Uint16Array
 PASS Subclass of Uint16Array
 PASS Integer array: Uint32Array
-PASS Large length: Uint32Array
+FAIL Large length: Uint32Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: Uint32Array
 PASS Subclass of Uint32Array
 PASS Integer array: BigUint64Array
-PASS Large length: BigUint64Array
+FAIL Large length: BigUint64Array Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Null arrays: BigUint64Array
 PASS Subclass of BigUint64Array
 

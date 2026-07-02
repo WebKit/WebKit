@@ -57,14 +57,14 @@ void RenderMeter::updateLogicalWidth()
 {
     RenderBox::updateLogicalWidth();
 
-    auto frameSize = theme().meterSizeForBounds(*this, snappedIntRect(frameRect()));
+    auto frameSize = theme().meterSizeForBounds(*this, snappedIntRect(borderBoxRectInContainer()));
     setLogicalWidth(LayoutUnit(isHorizontalWritingMode() ? frameSize.width() : frameSize.height()));
 }
 
 RenderBox::LogicalExtentComputedValues RenderMeter::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     auto computedValues = RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
-    LayoutRect frame = frameRect();
+    LayoutRect frame = borderBoxRectInContainer();
     if (isHorizontalWritingMode())
         frame.setHeight(computedValues.extent);
     else

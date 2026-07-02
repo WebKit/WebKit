@@ -1,0 +1,3 @@
+PASS: found match with the find-match cache enabled
+PASS: found match via uncached fallback when the shadow scope is oversized
+

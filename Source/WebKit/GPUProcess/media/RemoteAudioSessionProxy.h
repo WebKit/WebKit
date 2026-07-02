@@ -99,6 +99,7 @@ private:
     void setPreferredBufferSize(uint64_t);
     using SetActiveCompletion = CompletionHandler<void(bool)>;
     void tryToSetActive(bool, SetActiveCompletion&&);
+    void tryToSetActiveSync(bool, SetActiveCompletion&&);
     void setIsPlayingToBluetoothOverride(std::optional<bool>&& value);
     void triggerBeginInterruptionForTesting();
     void triggerEndInterruptionForTesting();

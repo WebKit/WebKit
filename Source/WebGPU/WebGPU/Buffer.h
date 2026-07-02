@@ -129,7 +129,7 @@ public:
     void indirectBufferInvalidated(CommandEncoder&);
     void removeSkippedValidationCommandEncoder(uint64_t);
     bool mustTakeSlowIndexValidationPath() const { return m_mustTakeSlowIndexValidationPath; }
-    void clearMustTakeSlowIndexValidationPath() { m_mustTakeSlowIndexValidationPath = false; }
+    void clearMustTakeSlowIndexValidationPath();
     void takeSlowIndexValidationPath(CommandBuffer&, uint32_t firstIndex, uint32_t indexCount, MTLIndexType, uint32_t primitiveOffset, uint32_t vertexCount);
     bool needsIndexValidation(uint32_t, uint16_t);
 

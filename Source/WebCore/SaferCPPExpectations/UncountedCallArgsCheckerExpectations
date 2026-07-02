@@ -173,7 +173,7 @@ html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
 html/CustomPaintCanvas.cpp
 html/HTMLCanvasElement.cpp
-html/HTMLFormElement.cpp
+[ macOS ] html/HTMLFormElement.cpp
 html/HTMLInputElement.cpp
 html/HTMLLinkElement.cpp
 html/HTMLMaybeFormAssociatedCustomElement.cpp

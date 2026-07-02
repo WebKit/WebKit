@@ -105,6 +105,8 @@ public:
     bool NODELETE intersectsCircle(const FloatPoint& center, float radius) const;
     bool NODELETE intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
 
+    WEBCORE_EXPORT bool intersectsQuad(const FloatQuad&) const;
+
     // The center of the quad. If the quad is the result of a affine-transformed rectangle this is the same as the original center transformed.
     FloatPoint center() const
     {

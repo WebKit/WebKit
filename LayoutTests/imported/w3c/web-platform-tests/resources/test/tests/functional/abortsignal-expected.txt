@@ -1,0 +1,4 @@
+
+PASS t.signal existence
+PASS t.signal.aborted
+

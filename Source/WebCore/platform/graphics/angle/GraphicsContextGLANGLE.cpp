@@ -207,7 +207,7 @@ bool GraphicsContextGLANGLE::initialize()
         GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
 
     // Create the texture that will be used for the framebuffer.
-    GLenum textureTarget = drawingBufferTextureTarget();
+    GLenum textureTarget = GL_TEXTURE_2D;
 
     GL_GenTextures(1, &m_texture);
     GL_BindTexture(textureTarget, m_texture);
@@ -319,30 +319,6 @@ bool GraphicsContextGLANGLE::platformInitializeExtensions()
 bool GraphicsContextGLANGLE::platformInitialize()
 {
     return true;
-}
-
-GCGLenum GraphicsContextGLANGLE::drawingBufferTextureTarget()
-{
-    auto [textureTarget, _] = externalImageTextureBindingPoint();
-    UNUSED_VARIABLE(_);
-    return textureTarget;
-}
-
-std::tuple<GCGLenum, GCGLenum> GraphicsContextGLANGLE::drawingBufferTextureBindingPoint()
-{
-    return externalImageTextureBindingPoint();
-}
-
-GCGLint GraphicsContextGLANGLE::EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget)
-{
-    switch (drawingTarget) {
-    case TEXTURE_2D:
-        return EGL_TEXTURE_2D;
-    case TEXTURE_RECTANGLE_ARB:
-        return EGL_TEXTURE_RECTANGLE_ANGLE;
-    }
-    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
-    return 0;
 }
 
 bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavior releaseBehavior)
@@ -491,10 +467,10 @@ bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
         GL_BindTexture(GL_TEXTURE_2D, texture2DBinding);
         // Attach m_texture to m_preserveDrawingBufferFBO for later blitting.
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_preserveDrawingBufferFBO);
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     } else
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
 
     attachDepthAndStencilBufferIfNeeded(m_internalDepthStencilFormat, width, height);
 
@@ -1678,7 +1654,19 @@ void GraphicsContextGLANGLE::pixelStorei(GCGLenum pname, GCGLint param)
 {
     if (!makeContextCurrent())
         return;
-
+    switch (pname) {
+    case UNPACK_ALIGNMENT:
+    case UNPACK_ROW_LENGTH:
+    case UNPACK_IMAGE_HEIGHT:
+    case UNPACK_SKIP_PIXELS:
+    case UNPACK_SKIP_ROWS:
+    case UNPACK_SKIP_IMAGES:
+        break;
+    default:
+        // Should be never set, rather passed to the commands that need these.
+        addError(GCGLErrorCode::InvalidOperation);
+        return;
+    }
     GL_PixelStorei(pname, param);
 }
 

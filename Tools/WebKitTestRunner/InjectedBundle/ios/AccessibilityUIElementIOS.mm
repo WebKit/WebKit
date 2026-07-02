@@ -158,6 +158,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
 - (NSAttributedString *)_attributedStringForTextMarkerRangeForTesting:(NSArray *)markers;
 - (NSArray *)_associatedActionElements;
+- (NSNumber *)lineNumberForIndex:(NSUInteger)index;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -832,7 +833,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementIOS::ariaDropEffects() const
 // parameterized attributes
 int AccessibilityUIElementIOS::lineForIndex(int index)
 {
-    return -1;
+    NSNumber *lineNumber = [m_element lineNumberForIndex:index];
+    if (![lineNumber isKindOfClass:[NSNumber class]])
+        return -1;
+    return [lineNumber intValue];
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElementIOS::rangeForLine(int line)

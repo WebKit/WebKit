@@ -22,6 +22,7 @@
 
 #if USE(LIBWEBRTC)
 
+#if !PLATFORM(COCOA)
 [Nested] enum class WebKit::RTCPacketOptions::DifferentiatedServicesCodePoint : int8_t {
     NoChange,
     CS0,
@@ -46,14 +47,17 @@
     CS6,
     CS7
 };
+#endif
 
 [Nested] struct WebKit::RTCPacketOptions::SerializableData {
-    WebKit::RTCPacketOptions::DifferentiatedServicesCodePoint dscp;
     int32_t packetId;
+#if !PLATFORM(COCOA)
+    WebKit::RTCPacketOptions::DifferentiatedServicesCodePoint dscp;
     int rtpSendtimeExtensionId;
     int64_t srtpAuthTagLength;
     std::span<const char> srtpAuthKey;
     int64_t srtpPacketIndex;
+#endif
 };
 
 struct WebKit::RTCPacketOptions {

@@ -295,8 +295,7 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
     if (pos == notFound)
         return;
 
-    bool ignoreError;
-    m_currentTime = std::min(m_duration, buffered.end(pos, ignoreError));
+    m_currentTime = std::min(m_duration, buffered.end(pos));
     if (auto player = m_player.get())
         player->timeChanged();
 }

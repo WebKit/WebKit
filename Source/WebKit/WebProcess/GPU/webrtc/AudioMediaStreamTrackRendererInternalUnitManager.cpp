@@ -76,6 +76,7 @@ private:
 
     void retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&&) final;
     void setLastDeviceUsed(const String&) final;
+    void deleteUnitForTesting() final;
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
     void storageChanged(WebCore::SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
@@ -229,6 +230,11 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescri
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setLastDeviceUsed(const String& deviceID)
 {
     WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetLastDeviceUsed { deviceID }, 0);
+}
+
+void AudioMediaStreamTrackRendererInternalUnitManagerProxy::deleteUnitForTesting()
+{
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::DeleteUnit { identifier() }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stopThread()

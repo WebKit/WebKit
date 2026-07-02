@@ -5,7 +5,7 @@ RUN(internals.setMockVideoPresentationModeEnabled(true))
 RUN(video.volume = 0.1)
 RUN(video.src = findMediaFile("video", "../content/test"))
 EVENT(canplaythrough)
-RUN(video.play())
+RUN(video.play().catch(() => { }))
 EVENT(playing)
 EXPECTED (video.paused == 'false') OK
 EVENT(webkitpresentationmodechanged)

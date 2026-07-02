@@ -7,8 +7,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.x86_64.r
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalFeatureDefines.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatformHave.h
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AppKitGesturesExtras.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/TestWebKitAPILibraryAdditions.swift.in
-$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKDeferringGestureRecognizerExtras.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+SystemTextExtraction.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+WKBannerViewOverlay.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebViewRepresentable+Extras.swift.in
@@ -153,6 +153,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSessionCreationParameters.serialization.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketChannel.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkTransportChannel.messages.in
+$(PROJECT_DIR)/NetworkProcess/PreconnectRequest.serialization.in
 $(PROJECT_DIR)/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.serialization.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in

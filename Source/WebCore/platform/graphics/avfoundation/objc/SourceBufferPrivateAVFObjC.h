@@ -139,7 +139,6 @@ private:
     void flush(TrackID) final;
     void enqueueSample(Ref<MediaSample>&&, TrackID) final;
     bool isReadyForMoreSamples(TrackID) final;
-    MediaTime timeFudgeFactor() const final;
     void notifyClientWhenReadyForMoreSamples(TrackID) final;
     bool canSetMinimumUpcomingPresentationTime(TrackID) const override;
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&) override;

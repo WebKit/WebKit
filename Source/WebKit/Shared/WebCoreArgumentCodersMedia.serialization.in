@@ -404,6 +404,7 @@ header: <WebCore/InbandGenericCue.h>
     WebCore::GenericCueData::Alignment m_positionAlign;
     WebCore::GenericCueData::Alignment m_align;
     WebCore::GenericCueData::Status m_status;
+    bool m_preventLineWrapping;
 };
 #endif
 

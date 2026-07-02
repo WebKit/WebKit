@@ -404,6 +404,8 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
     linkRequest.setInitiatorType("link"_s);
     linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();
+    if (params.relAttribute.isLinkModulePreload)
+        linkRequest.setIsLinkModulePreload();
 
     RefPtr<CachedResource> cachedLinkResource;
     if (auto result = protect(document.cachedResourceLoader())->preload(type.value(), WTF::move(linkRequest)))

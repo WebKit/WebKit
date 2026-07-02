@@ -1,0 +1,8 @@
+Private account area
+
+alice@example.test
+
+Refresh embedded frame
+
+PASS NavigateEvent.sourceElement must be null for cross-origin same-document initiators (parent DOM read)
+

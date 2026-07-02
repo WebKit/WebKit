@@ -110,6 +110,7 @@ public:
 
     void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
+    WEBCORE_EXPORT bool isVersionChangeTransactionActive(const UniqueIDBDatabaseConnection&) const;
     void didFireVersionChangeEvent(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
     WEBCORE_EXPORT void openDBRequestCancelled(const IDBResourceIdentifier& requestIdentifier);
 

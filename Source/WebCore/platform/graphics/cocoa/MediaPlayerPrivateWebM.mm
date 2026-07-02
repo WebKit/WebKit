@@ -1276,7 +1276,7 @@ void MediaPlayerPrivateWebM::reenqueueMediaForTime(TrackBuffer& trackBuffer, Tra
     if (needsFlush == NeedsFlush::Yes)
         m_renderer->flushTrack(*trackIdentifier);
 
-    if (trackBuffer.reenqueueMediaForTime(time, timeFudgeFactor(), m_loadFinished))
+    if (trackBuffer.reenqueueMediaForTime(time, m_loadFinished))
         provideMediaData(trackBuffer, trackId);
 }
 
@@ -1643,7 +1643,10 @@ void MediaPlayerPrivateWebM::addTrackBuffer(TrackID trackId, RefPtr<MediaDescrip
     setHasAudio(m_hasAudio || description->isAudio());
     setHasVideo(m_hasVideo || description->isVideo());
 
-    auto trackBuffer = TrackBuffer::create(WTF::move(description), discontinuityTolerance);
+    auto trackBuffer = TrackBuffer::create(WTF::move(description),
+        [](const MediaTime& fromTime, const MediaTime& toTime) {
+            return (toTime - fromTime) <= discontinuityTolerance;
+        });
     trackBuffer->setLogger(protect(logger()), logIdentifier());
     m_trackBufferMap.try_emplace(trackId, WTF::move(trackBuffer));
     m_requestReadyForMoreSamplesSetMap[trackId] = false;
@@ -1963,7 +1966,7 @@ void MediaPlayerPrivateWebM::monitorReadyState()
     auto currentTime = this->currentTime();
     MediaTime aheadTime = std::min(durationOnRunningQueue(), currentTime + MediaTime::createWithDouble(kHaveEnoughDataThreshold));
     PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, aheadTime) };
-    auto newState = m_buffered.containWithEpsilon(neededBufferedRange, MediaTime(2002, 24000)) ? MediaPlayer::ReadyState::HaveEnoughData : MediaPlayer::ReadyState::HaveFutureData;
+    auto newState = m_buffered.containWithEpsilon(neededBufferedRange, timeFudgeFactor()) ? MediaPlayer::ReadyState::HaveEnoughData : MediaPlayer::ReadyState::HaveFutureData;
     ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, newState] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->setReadyState(newState);

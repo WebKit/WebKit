@@ -193,6 +193,7 @@ private:
 
     void presentFindNavigator() override;
     void dismissFindNavigator() override;
+    void findStringMatchesUsingFindInteraction(JSStringRef, JSValueRef) override;
 
     JSRetainPtr<JSStringRef> frontmostViewAtPoint(int, int) final;
 

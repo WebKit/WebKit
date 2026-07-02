@@ -1,0 +1,29 @@
+
+PASS should return true for all string types
+PASS should return false for all exception types
+PASS should return false for all buffer source types
+PASS should return true for boolean
+PASS should return true for all numeric types
+PASS should return false for promises
+PASS should handle sequences according to their inner types
+PASS should handle frozen arrays according to their inner types
+PASS should handle records according to their inner types
+PASS should return true for object type
+PASS should return false for any type
+PASS should return true for dictionaries whose members are all JSON types
+PASS should return true for dictionaries which have no members
+PASS should return false for dictionaries whose members are not all JSON types
+PASS should return true for interfaces which declare a toJSON operation
+PASS should return true for interfaces which inherit from an interface which declares a toJSON operation
+PASS should return true for interfaces which mixin an interface which declare a toJSON operation
+PASS Foo includes Bar: member names are unique
+PASS should return false for interfaces which do not declare a toJSON operation
+PASS should return true for union types whose member types are JSON types
+PASS should return false for union types whose member types are not all JSON types
+PASS should consider the inner types of nullable types
+PASS should consider the inner types of annotated types.
+PASS should throw if it references a dictionary, enum or interface which wasn't added to the IdlArray
+PASS should throw for interfaces which inherit from another interface which wasn't added to the IdlArray
+PASS should return true for typedefs whose source type is a JSON type
+PASS should return false for typedefs whose source type is not a JSON type
+

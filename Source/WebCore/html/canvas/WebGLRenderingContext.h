@@ -60,7 +60,7 @@ protected:
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;
-    void initializeDefaultObjects() final;
+    void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
     void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
 };
 

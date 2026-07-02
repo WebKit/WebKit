@@ -57,19 +57,26 @@ public:
     MappedFileData(MappedFileData&&) = default;
     MappedFileData& operator=(MappedFileData&&) = default;
 
+    static MappedFileData emptyFile()
+    {
+        MappedFileData result;
+        result.m_isValid = true;
+        return result;
+    }
+
+    explicit operator bool() const { return m_isValid; }
+
 #if HAVE(MMAP)
     explicit MappedFileData(MmapSpan<uint8_t>&&);
 
     [[nodiscard]] std::span<uint8_t> leakHandle() { return m_fileData.leakSpan(); }
-    explicit operator bool() const { return !!m_fileData; }
     size_t size() const { return m_fileData.span().size(); }
     std::span<const uint8_t> span() const LIFETIME_BOUND { return m_fileData.span(); }
     std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return m_fileData.mutableSpan(); }
 #elif OS(WINDOWS)
     MappedFileData(std::span<uint8_t>, Win32Handle&&);
-
+    
     const Win32Handle& fileMapping() const LIFETIME_BOUND { return m_fileMapping; }
-    explicit operator bool() const { return !!m_fileData.data(); }
     size_t size() const { return m_fileData.size(); }
     std::span<const uint8_t> span() const LIFETIME_BOUND { return m_fileData; }
     std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return m_fileData; }
@@ -82,6 +89,7 @@ private:
     std::span<uint8_t> m_fileData;
     Win32Handle m_fileMapping;
 #endif
+    bool m_isValid { false };
 };
 
 } // namespace FileSystemImpl

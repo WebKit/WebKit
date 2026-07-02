@@ -1724,6 +1724,57 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIRuntime, PortMutateListenersDuringDispatch)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const port = browser.runtime?.connectNative('test')",
+
+        @"const initialListenerCount = 64",
+        @"let messageDispatchCount = 0",
+        @"let disconnectDispatchCount = 0",
+
+        @"port?.onMessage.addListener(() => {",
+        @"  ++messageDispatchCount",
+        @"  for (let i = 0; i < 1024; ++i)",
+        @"    port?.onMessage.addListener(() => { })",
+        @"})",
+
+        @"for (let i = 0; i < initialListenerCount; ++i)",
+        @"  port?.onMessage.addListener(() => { ++messageDispatchCount })",
+
+        @"port?.onDisconnect.addListener(() => {",
+        @"  ++disconnectDispatchCount",
+        @"  for (let i = 0; i < 1024; ++i)",
+        @"    port?.onDisconnect.addListener(() => { })",
+        @"})",
+
+        @"for (let i = 0; i < initialListenerCount; ++i)",
+        @"  port?.onDisconnect.addListener(() => { ++disconnectDispatchCount })",
+
+        @"port?.onDisconnect.addListener(() => {",
+        @"  ++disconnectDispatchCount",
+        @"  browser.test.assertEq(messageDispatchCount, initialListenerCount + 1, 'Should dispatch to the listeners registered when onMessage fired')",
+        @"  browser.test.assertEq(disconnectDispatchCount, initialListenerCount + 2, 'Should dispatch to the listeners registered when onDisconnect fired')",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"port?.postMessage('Hello')"
+    ]);
+
+    auto manager = Util::loadExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionNativeMessaging];
+
+    manager.get().internalDelegate.connectUsingMessagePort = ^(WKWebExtensionMessagePort *messagePort) {
+        messagePort.messageHandler = ^(id message, NSError *error) {
+            [messagePort sendMessage:@"Received" completionHandler:^(NSError *) { }];
+            [messagePort disconnectWithError:nil];
+        };
+    };
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIRuntime, ConnectNativeWithInvalidMessage)
 {
     auto *backgroundScript = Util::constructScript(@[

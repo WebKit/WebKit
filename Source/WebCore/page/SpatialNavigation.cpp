@@ -42,6 +42,7 @@
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "Page.h"
+#include "RenderBoxInlines.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -374,15 +375,15 @@ bool scrollInDirection(const ContainerNode& container, FocusDirection direction)
             dx = - std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), renderBox->scrollLeft());
             break;
         case FocusDirection::Right:
-            ASSERT(renderBox->scrollWidth() > (renderBox->scrollLeft() + renderBox->clientWidth()));
-            dx = std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), renderBox->scrollWidth() - (renderBox->scrollLeft() + renderBox->clientWidth()));
+            ASSERT(renderBox->scrollWidth() > (renderBox->scrollLeft() + renderBox->paddingBoxWidth()));
+            dx = std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), renderBox->scrollWidth() - (renderBox->scrollLeft() + renderBox->paddingBoxWidth()));
             break;
         case FocusDirection::Up:
             dy = - std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), renderBox->scrollTop());
             break;
         case FocusDirection::Down:
-            ASSERT(renderBox->scrollHeight() - (renderBox->scrollTop() + renderBox->clientHeight()));
-            dy = std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), renderBox->scrollHeight() - (renderBox->scrollTop() + renderBox->clientHeight()));
+            ASSERT(renderBox->scrollHeight() - (renderBox->scrollTop() + renderBox->paddingBoxHeight()));
+            dy = std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), renderBox->scrollHeight() - (renderBox->scrollTop() + renderBox->paddingBoxHeight()));
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -453,9 +454,9 @@ bool canScrollInDirection(const ContainerNode& container, FocusDirection directi
         case FocusDirection::Up:
             return renderBox->style().overflowY() != Overflow::Hidden && renderBox->scrollTop() > 0;
         case FocusDirection::Right:
-            return renderBox->style().overflowX() != Overflow::Hidden && renderBox->scrollLeft() + renderBox->clientWidth() < renderBox->scrollWidth();
+            return renderBox->style().overflowX() != Overflow::Hidden && renderBox->scrollLeft() + renderBox->paddingBoxWidth() < renderBox->scrollWidth();
         case FocusDirection::Down:
-            return renderBox->style().overflowY() != Overflow::Hidden && renderBox->scrollTop() + renderBox->clientHeight() < renderBox->scrollHeight();
+            return renderBox->style().overflowY() != Overflow::Hidden && renderBox->scrollTop() + renderBox->paddingBoxHeight() < renderBox->scrollHeight();
         default:
             ASSERT_NOT_REACHED();
             return false;

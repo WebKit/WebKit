@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#iframe { position: absolute; left: 50px; top: 50px; width: 300px; height: 300px; border: 0; }
+</style>
+</head>
+<body>
+
+<iframe id="iframe" src="../resources/scrollable-iframe-content.html"></iframe>
+
+<script>
+var output = "This test verifies that the root scroll view of a local iframe moves with the iframe's own content scroll (the behavior Books relies on), rather than staying pinned at the viewport.\n\n";
+// Emphasis on "the behavior Books relies on". If you want to change the behavior being tested here, make sure to test
+// Books (which renders its content with WebKit) still works with VoiceOver and other ATs.
+var initialX, scrolledX, delta;
+var scrollView;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        var iframe = document.getElementById("iframe");
+
+        await waitForFrameGeometryReady();
+        await waitFor(() => {
+            // Wait until the iframe's own document is loaded scrollable, so scrollTo() below
+            // actually moves it (otherwise it clamps to 0).
+            var doc = iframe.contentDocument;
+            return doc && doc.readyState === "complete" && doc.documentElement.scrollWidth > iframe.clientWidth;
+        });
+
+        await waitFor(() => {
+            var container = accessibilityController.accessibleElementById("iframe");
+            scrollView = container ? container.childAtIndex(0) : null;
+            return scrollView && scrollView.isFrameGeometryInitialized;
+        });
+
+        initialX = scrollView.x;
+        // Scroll the iframe's own content horizontally (the frame scrolls its own document, like a column
+        // page-turn, as in the case of Books). scrollTo updates the frame's scroll offset synchronously. We
+        // read the scroll view's accessibility x in the same run-loop turn, which should track the scroll.
+        iframe.contentWindow.scrollTo(500, 0);
+        scrolledX = scrollView.x;
+
+        output += expect("iframe.contentWindow.scrollX", "500");
+        output += expect("scrolledX < initialX", "true");
+        delta = initialX - scrolledX;
+        output += expect("delta > 400 && delta < 600", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+
+

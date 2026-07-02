@@ -205,7 +205,7 @@ static void providePresentingApplicationPID(RemoteAudioSessionProxy& proxy)
 }
 #endif
 
-bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
+Ref<AudioSession::SetActivePromise> RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSessionProxy& proxy, bool active)
 {
     ASSERT(m_proxies.contains(proxy));
 
@@ -213,7 +213,7 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
         if (hasOtherActiveProxyThan(proxy)) {
             // This proxy wants to de-activate, but other proxies are still
             // active. No-op, and return deactivation was sucessful.
-            return true;
+            return AudioSession::SetActivePromise::createAndResolve();
         }
 
         // This proxy wants to de-activate, and is the last remaining active
@@ -236,7 +236,7 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
     // proxy will mix with the active proxies. No-op, and return activation
     // was sucessful.
     if (categoryCanMixWithOthers(proxy.category()))
-        return true;
+        return AudioSession::SetActivePromise::createAndResolve();
 
 #if PLATFORM(IOS_FAMILY)
     // Otherwise, this proxy wants to become active, but there are other
@@ -255,7 +255,7 @@ bool RemoteAudioSessionProxyManager::tryToSetActiveForProcess(RemoteAudioSession
         otherProxy->beginInterruption();
     }
 #endif
-    return true;
+    return AudioSession::SetActivePromise::createAndResolve();
 }
 
 void RemoteAudioSessionProxyManager::updatePresentingProcesses()

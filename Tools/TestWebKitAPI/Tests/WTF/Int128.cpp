@@ -28,6 +28,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <wtf/CheckedArithmetic.h>
 
 namespace TestWebKitAPI {
 
@@ -1362,5 +1363,42 @@ TEST(WTF_Int128, VsNativeInt128)
 }
 
 #endif
+
+static_assert(sizeof(Int128) == 16);
+static_assert(sizeof(UInt128) == 16);
+static_assert(std::is_trivially_copyable_v<Int128>);
+static_assert(std::is_trivially_copyable_v<UInt128>);
+
+static_assert(alignof(std::pair<int64_t, Int128>) == alignof(Int128));
+static_assert(alignof(std::pair<Int128, Int128>) == alignof(Int128));
+static_assert(alignof(std::pair<UInt128, UInt128>) == alignof(UInt128));
+
+static_assert(std::numeric_limits<Int128>::is_specialized);
+static_assert(std::numeric_limits<Int128>::is_signed);
+static_assert(std::numeric_limits<Int128>::is_integer);
+static_assert(std::numeric_limits<Int128>::digits == 127);
+static_assert(std::numeric_limits<UInt128>::is_specialized);
+static_assert(!std::numeric_limits<UInt128>::is_signed);
+static_assert(std::numeric_limits<UInt128>::digits == 128);
+
+TEST(WTF_Int128, ActiveTypeBoundsChecks)
+{
+    EXPECT_TRUE(WTF::isInBounds<Int128>(static_cast<int64_t>(-1)));
+    EXPECT_TRUE(WTF::isInBounds<Int128>(std::numeric_limits<int64_t>::min()));
+    EXPECT_TRUE(WTF::isInBounds<Int128>(std::numeric_limits<int64_t>::max()));
+    EXPECT_FALSE(WTF::isInBounds<int64_t>(std::numeric_limits<Int128>::max()));
+
+    Checked<Int128, RecordOverflow> negative = static_cast<int64_t>(-86400);
+    EXPECT_FALSE(negative.hasOverflowed());
+    EXPECT_TRUE(negative.value() == Int128 { -86400 });
+
+    Checked<Int128, RecordOverflow> sum = std::numeric_limits<Int128>::max();
+    sum += Int128 { 1 };
+    EXPECT_TRUE(sum.hasOverflowed());
+
+    Checked<Int128, RecordOverflow> product = std::numeric_limits<Int128>::max();
+    product *= Int128 { 2 };
+    EXPECT_TRUE(product.hasOverflowed());
+}
 
 } // namespace TestWebKitAPI

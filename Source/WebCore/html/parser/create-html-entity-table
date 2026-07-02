@@ -171,7 +171,7 @@ for entry in entries:
     assert entry[OFFSET] < (1 << 14)
     assert name_length < (1 << 5)
     output_file.write('    HTMLEntityTableEntry { %s, %s, %s, %s, %s }, // &%s\n' % (
-        first_character, second_character, entry[OFFSET], name_length, name_includes_trailing_semicolon, entry[ENTITY]))
+        first_character, name_length, name_includes_trailing_semicolon, entry[OFFSET], second_character, entry[ENTITY]))
 
 output_file.write("""};
 

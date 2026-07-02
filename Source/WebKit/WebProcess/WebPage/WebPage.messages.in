@@ -677,6 +677,9 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DidEndMagnificationGesture()
 
     SetOverflowHeightForTopScrollEdgeEffect(double value)
+#if ENABLE(SCROLL_POCKET_IN_FULLSCREEN)
+    SetFullScreenTitlebarOverlayIsDisplayed(bool fullScreenTitlebarOverlayIsDisplayed)
+#endif
 #endif
 
     StartDeferringResizeEvents();

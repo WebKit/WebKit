@@ -1140,16 +1140,28 @@ class YarrGenerator final : public YarrJITInfo {
             return;
         }
 
-        if (m_charSize == CharSize::Char8 && charClass->m_latin1Table) {
-            const auto* table = m_boyerMooreData->addLatin1Table(*charClass->m_latin1Table);
-            if (matchTargets.hasFailedTarget()) {
+        if (charClass->m_latin1Table) {
+            bool pureLatin1 = charClass->m_matches32.isEmpty() && charClass->m_ranges32.isEmpty();
+            if (m_charSize == CharSize::Char8 || pureLatin1) {
+                const auto* table = m_boyerMooreData->addLatin1Table(*charClass->m_latin1Table);
+                bool needsHighGuard = m_charSize != CharSize::Char8;
+                if (matchTargets.hasFailedTarget()) {
+                    if (needsHighGuard)
+                        matchTargets.appendFailed(m_jit.branch32(MacroAssembler::AboveOrEqual, character, MacroAssembler::TrustedImm32(0x100)));
+                    MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(table));
+                    matchTargets.appendFailed(m_jit.branchTest8(MacroAssembler::Zero, tableEntry));
+                    return;
+                }
+
+                MacroAssembler::Jump isHigh;
+                if (needsHighGuard)
+                    isHigh = m_jit.branch32(MacroAssembler::AboveOrEqual, character, MacroAssembler::TrustedImm32(0x100));
                 MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(table));
-                matchTargets.appendFailed(m_jit.branchTest8(MacroAssembler::Zero, tableEntry));
+                matchTargets.appendSucceeded(m_jit.branchTest8(MacroAssembler::NonZero, tableEntry));
+                if (isHigh.isSet())
+                    isHigh.link(&m_jit);
                 return;
             }
-            MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(table));
-            matchTargets.appendSucceeded(m_jit.branchTest8(MacroAssembler::NonZero, tableEntry));
-            return;
         }
 
         Vector<char32_t, 32> unifiedMatches;
@@ -1314,9 +1326,9 @@ class YarrGenerator final : public YarrJITInfo {
         Checked<int32_t> characterOffset(-static_cast<int32_t>(negativeCharacterOffset));
 
         if (m_charSize == CharSize::Char8)
-            return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesOne, characterOffset * static_cast<int32_t>(sizeof(char)));
+            return MacroAssembler::BaseIndex(base, indexReg, MacroAssembler::TimesOne, characterOffset * static_cast<int32_t>(sizeof(char)));
 
-        return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(char16_t)));
+        return MacroAssembler::BaseIndex(base, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(char16_t)));
     }
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
@@ -4513,7 +4525,7 @@ class YarrGenerator final : public YarrJITInfo {
             }
 
             ++opIndex;
-        } while (opIndex < m_ops.size());
+        } while (opIndex < m_ops.size() && !hasExceededCodeSizeLimit());
 
         termMatchTargets.takeLast();
     }
@@ -5320,7 +5332,18 @@ class YarrGenerator final : public YarrJITInfo {
             case YarrOpCode::MatchFailed:
                 break;
             }
-        } while (opIndex);
+        } while (opIndex && !hasExceededCodeSizeLimit());
+    }
+
+    bool hasExceededCodeSizeLimit()
+    {
+        if (m_failureReason)
+            return true;
+        if (m_jit.m_assembler.buffer().codeSize() > Options::maximumRegExpJITCodeSize()) [[unlikely]] {
+            m_failureReason = JITFailureReason::GeneratedCodeSizeTooLarge;
+            return true;
+        }
+        return false;
     }
 
     // Compilation methods:
@@ -6939,9 +6962,17 @@ public:
         generate();
         if (m_disassembler)
             m_disassembler->setEndOfGenerate(m_jit.label());
+        if (m_failureReason) {
+            codeBlock.setFallBackWithFailureReason(*m_failureReason);
+            return;
+        }
         backtrack();
         if (m_disassembler)
             m_disassembler->setEndOfBacktrack(m_jit.label());
+        if (m_failureReason) {
+            codeBlock.setFallBackWithFailureReason(*m_failureReason);
+            return;
+        }
 
         ptrdiff_t codeSize = MacroAssembler::differenceBetween(startOfMainCode, m_jit.label());
         bool canInline = ([&] -> bool {
@@ -7572,6 +7603,9 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::OffsetTooLarge:
         dataLog("Can't JIT because pattern exceeds string length limits\n");
+        break;
+    case JITFailureReason::GeneratedCodeSizeTooLarge:
+        dataLog("Can't JIT because generated code size exceeds limit\n");
         break;
     }
 }

@@ -160,7 +160,7 @@ std::optional<MappedFileData> FileHandle::map(MappedFileMode mapMode, FileOpenMo
         return { };
 
     if (!size)
-        return MappedFileData { };
+        return MappedFileData::emptyFile();
 
     int pageProtection = PROT_READ;
     switch (openMode) {

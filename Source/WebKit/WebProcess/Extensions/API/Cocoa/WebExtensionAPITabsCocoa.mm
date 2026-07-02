@@ -126,6 +126,42 @@ static inline size_t clampIndex(double index)
     return static_cast<size_t>(std::max(0.0, std::min(index, static_cast<double>(JSC::maxSafeInteger()))));
 }
 
+// Parses a tab identifier or array of tab identifiers into a validated list of WebExtensionTabIdentifiers.
+static bool parseTabIdentifiers(NSObject *tabIDs, Vector<WebExtensionTabIdentifier>& identifiers, NSString *sourceKey, NSString **outExceptionString)
+{
+    if (!validateObject(tabIDs, sourceKey, [NSOrderedSet orderedSetWithObjects:NSNumber.class, @[ NSNumber.class ], nil], outExceptionString))
+        return false;
+
+    auto appendIdentifier = [&](NSNumber *tabID) -> bool {
+        auto tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
+        if (!isValid(tabIdentifier)) {
+            *outExceptionString = toErrorString(nullString(), sourceKey, makeString("'"_s, String(tabID.description), "' is not a tab identifier"_s)).createNSString().autorelease();
+            return false;
+        }
+
+        identifiers.append(tabIdentifier.value());
+        return true;
+    };
+
+    if (NSNumber *tabID = dynamic_objc_cast<NSNumber>(tabIDs))
+        return appendIdentifier(tabID);
+
+    if (NSArray *tabIDArray = dynamic_objc_cast<NSArray>(tabIDs)) {
+        identifiers.reserveInitialCapacity(tabIDArray.count);
+
+        for (NSNumber *tabID in tabIDArray) {
+            if (!appendIdentifier(tabID))
+                return false;
+        }
+    } else {
+        // This should be unreachable if validateObject passed above, but handle it anyways
+        *outExceptionString = toErrorString(nullString(), sourceKey, makeString("an internal error occurred"_s)).createNSString().autorelease();
+        return false;
+    }
+
+    return true;
+}
+
 bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtensionTabParameters& parameters, NSString *sourceKey, NSString **outExceptionString)
 {
     if (!parseTabUpdateOptions(options, parameters, sourceKey, outExceptionString))
@@ -688,36 +724,72 @@ void WebExtensionAPITabs::update(WebPageProxyIdentifier webPageProxyIdentifier, 
     }, extensionContext().identifier());
 }
 
+void WebExtensionAPITabs::move(NSObject *tabIDs, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/move
+
+    Vector<WebExtensionTabIdentifier> identifiers;
+    if (!parseTabIdentifiers(tabIDs, identifiers, @"tabIDs", outExceptionString))
+        return;
+
+    if (identifiers.isEmpty()) {
+        *outExceptionString = toErrorString(nullString(), @"tabIDs", "no tabs were specified"_s).createNSString().autorelease();
+        return;
+    }
+
+    static NSDictionary<NSString *, id> *types = @{
+        windowIdKey: NSNumber.class,
+        indexKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(properties, @"properties", @[ indexKey ], types, outExceptionString))
+        return;
+
+    std::optional<WebExtensionWindowIdentifier> windowIdentifier;
+    if (NSNumber *windowId = objectForKey<NSNumber>(properties, windowIdKey)) {
+        windowIdentifier = toWebExtensionWindowIdentifier(windowId.doubleValue);
+
+        if (!windowIdentifier || !isValid(windowIdentifier.value())) {
+            *outExceptionString = toErrorString(nullString(), windowIdKey, makeString("'"_s, String(windowId.description), "' is not a window identifier"_s)).createNSString().autorelease();
+            return;
+        }
+    }
+
+    double index = objectForKey<NSNumber>(properties, indexKey).doubleValue;
+
+    double integral;
+    if (std::modf(index, &integral) != 0.0) {
+        *outExceptionString = toErrorString(nullString(), indexKey, "it must be an integer"_s).createNSString().autorelease();
+        return;
+    }
+
+    if (index < -1) {
+        *outExceptionString = toErrorString(nullString(), indexKey, "it must be -1 or greater"_s).createNSString().autorelease();
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsMove(WTF::move(identifiers), windowIdentifier, index), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<Vector<WebExtensionTabParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        auto& movedTabs = result.value();
+
+        if (movedTabs.size() == 1)
+            callback->call(toJSValueRef(callback->globalContext(), toWebAPI(movedTabs[0])));
+        else
+            callback->call(toJSValueRef(callback->globalContext(), toWebAPI(movedTabs)));
+    }, extensionContext().identifier());
+}
+
 void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/tabs/remove
 
-    if (!validateObject(tabIDs, @"tabIDs", [NSOrderedSet orderedSetWithObjects:NSNumber.class, @[ NSNumber.class ], nil], outExceptionString))
-        return;
-
     Vector<WebExtensionTabIdentifier> identifiers;
-
-    if (NSNumber *tabID = dynamic_objc_cast<NSNumber>(tabIDs)) {
-        auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
-        if (!isValid(tabIdentifer)) {
-            *outExceptionString = toErrorString(nullString(), @"tabIDs", makeString("'"_s, String([tabID description]), "' is not a tab identifier"_s)).createNSString().autorelease();
-            return;
-        }
-
-        identifiers.append(tabIdentifer.value());
-    } else if (NSArray *tabIDArray = dynamic_objc_cast<NSArray>(tabIDs)) {
-        identifiers.reserveInitialCapacity(tabIDArray.count);
-
-        for (NSNumber *tabID in tabIDArray) {
-            auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
-            if (!isValid(tabIdentifer)) {
-                *outExceptionString = toErrorString(nullString(), @"tabIDs", makeString("'"_s, String([tabID description]), "' is not a tab identifier"_s)).createNSString().autorelease();
-                return;
-            }
-
-            identifiers.append(tabIdentifer.value());
-        }
-    }
+    if (!parseTabIdentifiers(tabIDs, identifiers, @"tabIDs", outExceptionString))
+        return;
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsRemove(WTF::move(identifiers)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {

@@ -1,0 +1,13 @@
+
+PASS toString for long x
+PASS toString for long? x
+PASS toString for Promise<long> x
+PASS toString for Promise<long?> x
+PASS toString for sequence<long> x
+PASS toString for (long or DOMString) x
+PASS toString for long x, boolean y
+PASS toString for long x, optional boolean y
+PASS toString for long... args
+PASS toString for sequence<long>... args
+PASS toString for (long or DOMString)... args
+

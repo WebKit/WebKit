@@ -29,12 +29,6 @@
 namespace WebCore {
 
 inline LayoutUnit RenderBox::marginBoxLogicalHeight(WritingMode writingMode) const { return writingMode.isHorizontal() ? m_marginBox.top() + borderBoxHeight() + m_marginBox.bottom() : m_marginBox.right() + borderBoxWidth() + m_marginBox.left(); }
-inline LayoutRect RenderBox::clientBoxRect() const { return LayoutRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
-inline LayoutUnit RenderBox::clientLeft() const { return borderLeft(); }
-inline LayoutUnit RenderBox::clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }
-inline LayoutUnit RenderBox::clientLogicalHeight() const { return writingMode().isHorizontal() ? clientHeight() : clientWidth(); }
-inline LayoutUnit RenderBox::clientLogicalWidth() const { return writingMode().isHorizontal() ? clientWidth() : clientHeight(); }
-inline LayoutUnit RenderBox::clientTop() const { return borderTop(); }
 inline LayoutRect RenderBox::computedCSSContentBoxRect() const { return LayoutRect(borderLeft() + computedCSSPaddingLeft(), borderTop() + computedCSSPaddingTop(), paddingBoxWidth() - computedCSSPaddingLeft() - computedCSSPaddingRight()  - (style().scrollbarGutter().isStableBothEdges() ? verticalScrollbarWidth() : 0), paddingBoxHeight() - computedCSSPaddingTop() - computedCSSPaddingBottom() - (style().scrollbarGutter().isStableBothEdges() ? horizontalScrollbarHeight() : 0)); }
 inline LayoutUnit RenderBox::contentBoxHeight() const { return std::max(0_lu, paddingBoxHeight() - paddingTop() - paddingBottom() - (style().scrollbarGutter().isStableBothEdges() ? horizontalScrollbarHeight() : 0)); }
 inline LayoutUnit RenderBox::contentBoxLogicalHeight() const { return writingMode().isHorizontal() ? contentBoxHeight() : contentBoxWidth(); }
@@ -68,10 +62,13 @@ inline LayoutUnit RenderBox::logicalLeftVisualOverflow() const { return writingM
 inline LayoutUnit RenderBox::logicalRight() const { return logicalLeft() + logicalWidth(); }
 inline LayoutUnit RenderBox::logicalRightLayoutOverflow() const { return writingMode().isHorizontal() ? layoutOverflowRect().maxX() : layoutOverflowRect().maxY(); }
 inline LayoutUnit RenderBox::logicalRightVisualOverflow() const { return writingMode().isHorizontal() ? visualOverflowRect().maxX() : visualOverflowRect().maxY(); }
-inline LayoutSize RenderBox::logicalSize() const { return writingMode().isHorizontal() ? m_frameRect.size() : m_frameRect.size().transposedSize(); }
+inline LayoutSize RenderBox::logicalSize() const { return writingMode().isHorizontal() ? m_borderBoxRectInContainer.size() : m_borderBoxRectInContainer.size().transposedSize(); }
 inline LayoutUnit RenderBox::logicalTop() const { return writingMode().isHorizontal() ? y() : x(); }
 inline LayoutUnit RenderBox::logicalWidth() const { return writingMode().isHorizontal() ? borderBoxWidth() : borderBoxHeight(); }
 inline LayoutUnit RenderBox::paddingBoxHeight() const { return std::max(0_lu, borderBoxHeight() - borderTop() - borderBottom() - horizontalScrollbarHeight()); }
+inline LayoutUnit RenderBox::paddingBoxLogicalBottom() const { return borderBefore() + paddingBoxLogicalHeight(); }
+inline LayoutUnit RenderBox::paddingBoxLogicalHeight() const { return writingMode().isHorizontal() ? paddingBoxHeight() : paddingBoxWidth(); }
+inline LayoutUnit RenderBox::paddingBoxLogicalWidth() const { return writingMode().isHorizontal() ? paddingBoxWidth() : paddingBoxHeight(); }
 inline LayoutUnit RenderBox::paddingBoxWidth() const { return std::max(0_lu, borderBoxWidth() - borderLeft() - borderRight() - verticalScrollbarWidth()); }
 inline int RenderBox::scrollbarLogicalHeight() const { return writingMode().isHorizontal() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
 inline int RenderBox::scrollbarLogicalWidth() const { return writingMode().isHorizontal() ? verticalScrollbarWidth() : horizontalScrollbarHeight(); }
@@ -165,7 +162,7 @@ inline LayoutRect RenderBox::contentBoxRect() const
 
 inline LayoutRect RenderBox::flippedContentBoxRect() const
 {
-    auto rect = flippedClientBoxRect();
+    auto rect = flippedPaddingBoxRect();
     auto padding = this->padding();
     if (!padding.isZero()) {
         if (writingMode().isBlockFlipped())
@@ -198,7 +195,7 @@ inline const LayoutRect RenderBox::scrollableContentAreaOverflowRect() const
 inline const LayoutRect RenderBox::scrollablePaddingAreaOverflowRect() const
 {
     if (!m_overflow)
-        return flippedClientBoxRect();
+        return flippedPaddingBoxRect();
 
     auto overflowRect = m_overflow->contentArea();
     flipForWritingMode(overflowRect);
@@ -210,9 +207,9 @@ inline const LayoutRect RenderBox::scrollablePaddingAreaOverflowRect() const
 inline void RenderBox::setLogicalHeight(LayoutUnit size)
 {
     if (writingMode().isHorizontal())
-        setHeight(size);
+        setBorderBoxHeight(size);
     else
-        setWidth(size);
+        setBorderBoxWidth(size);
 }
 
 inline void RenderBox::setLogicalLeft(LayoutUnit left)
@@ -234,9 +231,9 @@ inline void RenderBox::setLogicalTop(LayoutUnit top)
 inline void RenderBox::setLogicalWidth(LayoutUnit size)
 {
     if (writingMode().isHorizontal())
-        setWidth(size);
+        setBorderBoxWidth(size);
     else
-        setHeight(size);
+        setBorderBoxHeight(size);
 }
 
 inline bool RenderBox::hasStretchedLogicalHeight(StretchingMode mode) const
@@ -263,6 +260,22 @@ inline bool RenderBox::hasStretchedLogicalWidth(StretchingMode mode) const
     return containingBlock->willStretchItem(*this, containingAxis, mode);
 }
 
+inline bool RenderBox::tryLayoutDoingOutOfFlowMovementOnly()
+{
+    LayoutUnit oldWidth = borderBoxWidth();
+    updateLogicalWidth();
+    // If we shrink to fit our width may have changed, so we still need full layout.
+    if (oldWidth != borderBoxWidth())
+        return false;
+    updateLogicalHeight();
+    return true;
+}
+
+inline void RenderBox::markShapeOutsideDependentsForLayout()
+{
+    if (isFloating())
+        removeFloatingOrOutOfFlowChildFromBlockLists();
+}
 
 inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit logicalWidth, double aspectRatio, BoxSizing boxSizing)
 {

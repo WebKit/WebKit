@@ -1540,6 +1540,10 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
         return ObjectPropertyConditionSet::invalid();
 
     auto isAbsenceCacheable = [&](Structure* structure) {
+        // Absences cannot be cached on any dictionaries, including CachedDictionaryKind, because
+        // new properties can be added without structure transitions.
+        if (structure->isDictionary())
+            return false;
         if (structure->typeInfo().overridesGetOwnPropertySlot())
             return false;
         if (!structure->propertyAccessesAreCacheable())

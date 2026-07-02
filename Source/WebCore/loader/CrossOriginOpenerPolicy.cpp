@@ -142,9 +142,9 @@ static bool coopValuesRequireBrowsingContextGroupSwitchForPopup(CrossOriginOpene
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#check-browsing-context-group-switch-coop-value
-bool coopValuesRequireBrowsingContextGroupSwitch(bool isInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin)
+bool coopValuesRequireBrowsingContextGroupSwitch(IsInitialAboutBlank isInitialAboutBlank, CrossOriginOpenerPolicyValue activeDocumentCOOPValue, const SecurityOrigin& activeDocumentNavigationOrigin, CrossOriginOpenerPolicyValue responseCOOPValue, const SecurityOrigin& responseOrigin)
 {
-    if (isInitialAboutBlank)
+    if (isInitialAboutBlank == IsInitialAboutBlank::Yes)
         return coopValuesRequireBrowsingContextGroupSwitchForPopup(activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, responseOrigin);
 
     if (matchingCOOP(activeDocumentCOOPValue, activeDocumentNavigationOrigin, responseCOOPValue, responseOrigin))
@@ -154,7 +154,7 @@ bool coopValuesRequireBrowsingContextGroupSwitch(bool isInitialAboutBlank, Cross
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#check-bcg-switch-navigation-report-only
-static bool checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch(bool isInitialAboutBlank, const CrossOriginOpenerPolicy& activeDocumentCOOP, const SecurityOrigin& activeDocumentNavigationOrigin, const CrossOriginOpenerPolicy& responseCOOP, const SecurityOrigin& responseOrigin)
+static bool checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch(IsInitialAboutBlank isInitialAboutBlank, const CrossOriginOpenerPolicy& activeDocumentCOOP, const SecurityOrigin& activeDocumentNavigationOrigin, const CrossOriginOpenerPolicy& responseCOOP, const SecurityOrigin& responseOrigin)
 {
     if (!coopValuesRequireBrowsingContextGroupSwitch(isInitialAboutBlank, activeDocumentCOOP.reportOnlyValue, activeDocumentNavigationOrigin, responseCOOP.reportOnlyValue, responseOrigin))
         return false;
@@ -193,13 +193,13 @@ static CrossOriginOpenerPolicyEnforcementResult enforceResponseCrossOriginOpener
         currentCoopEnforcementResult.needsBrowsingContextGroupSwitchDueToReportOnly
     };
 
-    if (coopValuesRequireBrowsingContextGroupSwitch(isDisplayingInitialEmptyDocument, currentCoopEnforcementResult.crossOriginOpenerPolicy.value, currentCoopEnforcementResult.currentOrigin, responseCOOP.value, responseOrigin)) {
+    if (coopValuesRequireBrowsingContextGroupSwitch(isDisplayingInitialEmptyDocument ? IsInitialAboutBlank::Yes : IsInitialAboutBlank::No, currentCoopEnforcementResult.crossOriginOpenerPolicy.value, currentCoopEnforcementResult.currentOrigin, responseCOOP.value, responseOrigin)) {
         newCOOPEnforcementResult.needsBrowsingContextGroupSwitch = true;
         sendViolationReportWhenNavigatingToCOOPResponse(reportingClient, responseCOOP, COOPDisposition::Enforce, responseURL, currentCoopEnforcementResult.url, responseOrigin, currentCoopEnforcementResult.currentOrigin, referrer);
         sendViolationReportWhenNavigatingAwayFromCOOPResponse(reportingClient, currentCoopEnforcementResult.crossOriginOpenerPolicy, COOPDisposition::Enforce, currentCoopEnforcementResult.url, responseURL, currentCoopEnforcementResult.currentOrigin, responseOrigin, currentCoopEnforcementResult.isCurrentContextNavigationSource);
     }
 
-    if (checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch(isDisplayingInitialEmptyDocument, currentCoopEnforcementResult.crossOriginOpenerPolicy, currentCoopEnforcementResult.currentOrigin, responseCOOP, responseOrigin)) {
+    if (checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch(isDisplayingInitialEmptyDocument ? IsInitialAboutBlank::Yes : IsInitialAboutBlank::No, currentCoopEnforcementResult.crossOriginOpenerPolicy, currentCoopEnforcementResult.currentOrigin, responseCOOP, responseOrigin)) {
         newCOOPEnforcementResult.needsBrowsingContextGroupSwitchDueToReportOnly = true;
         sendViolationReportWhenNavigatingToCOOPResponse(reportingClient, responseCOOP, COOPDisposition::Reporting, responseURL, currentCoopEnforcementResult.url, responseOrigin, currentCoopEnforcementResult.currentOrigin, referrer);
         sendViolationReportWhenNavigatingAwayFromCOOPResponse(reportingClient, currentCoopEnforcementResult.crossOriginOpenerPolicy, COOPDisposition::Reporting, currentCoopEnforcementResult.url, responseURL, currentCoopEnforcementResult.currentOrigin, responseOrigin, currentCoopEnforcementResult.isCurrentContextNavigationSource);

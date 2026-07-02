@@ -40,7 +40,7 @@ struct GenericCueData {
     enum class Status : uint8_t { Uninitialized, Partial, Complete };
 
     GenericCueData() = default;
-    GenericCueData(Markable<InbandGenericCueIdentifier> uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status)
+    GenericCueData(Markable<InbandGenericCueIdentifier> uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status, bool preventLineWrapping)
         : m_uniqueId(uniqueId)
         , m_startTime(startTime)
         , m_endTime(endTime)
@@ -58,6 +58,7 @@ struct GenericCueData {
         , m_positionAlign(positionAlign)
         , m_align(align)
         , m_status(status)
+        , m_preventLineWrapping(preventLineWrapping)
     {
         ASSERT(isValid());
     }
@@ -82,6 +83,7 @@ struct GenericCueData {
     Alignment m_positionAlign { Alignment::None };
     Alignment m_align { Alignment::None };
     Status m_status { Status::Uninitialized };
+    bool m_preventLineWrapping { true };
 };
 
 class InbandGenericCue : public RefCounted<InbandGenericCue> {
@@ -123,6 +125,9 @@ public:
 
     double baseFontSize() const { return m_cueData.m_baseFontSize; }
     void setBaseFontSize(double baseFontSize) { m_cueData.m_baseFontSize = baseFontSize; }
+
+    bool preventLineWrapping() const { return m_cueData.m_preventLineWrapping; }
+    void setPreventLineWrapping(bool preventWrapping) { m_cueData.m_preventLineWrapping = preventWrapping; }
 
     double relativeFontSize() const { return m_cueData.m_relativeFontSize; }
     void setRelativeFontSize(double relativeFontSize) { m_cueData.m_relativeFontSize = relativeFontSize; }

@@ -125,9 +125,9 @@ struct CommonCustomBase {
     }
 };
 
-// Definition of CCall instruction. CCall is used for hot path C function calls. It's lowered to a
-// Patch with an Air CCallSpecial along with code to marshal instructions. The lowering happens
-// before register allocation, so that the register allocator sees the clobbers.
+// Definition of the CCall marshalling logic. The CCall opcode is no longer emitted: hot C calls are
+// marshalled inline by B3LowerToAir, and CCallCustom remains as the base that ColdCCall reuses. The
+// inline lowering happens before register allocation, so that the register allocator sees the clobbers.
 struct CCallCustom : public CommonCustomBase<CCallCustom> {
     template<typename Functor>
     static void forEachArg(Inst& inst, const Functor& functor)

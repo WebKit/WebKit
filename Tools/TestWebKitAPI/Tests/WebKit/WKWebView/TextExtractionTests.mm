@@ -54,6 +54,7 @@
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKTextExtraction.h>
+#import <WebKit/_WKTextRun.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/cocoa/ScreenTimeSoftLink.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
@@ -437,6 +438,46 @@ TEST(TextExtractionTests, InteractionResultSummary)
     }
 }
 
+TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifier)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    auto makeDebugTextConfiguration = [] {
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration;
+    };
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+    RetainPtr staleIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Test");
+    EXPECT_NOT_NULL(staleIdentifier);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+    RetainPtr currentIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Test");
+    EXPECT_NOT_NULL(currentIdentifier);
+    EXPECT_FALSE([staleIdentifier isEqualToString:currentIdentifier]);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:staleIdentifier];
+
+    NSError *error = nil;
+    RetainPtr description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+    EXPECT_NULL(error);
+    EXPECT_NOT_NULL(description);
+    EXPECT_TRUE([description containsString:@"Click Me"]);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    RetainPtr summary = [result summary];
+    EXPECT_TRUE([summary containsString:@"Click Me"]);
+    EXPECT_TRUE([summary containsString:@"stale"]);
+    EXPECT_TRUE([summary containsString:@"re-resolved"]);
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+}
+
 TEST(TextExtractionTests, TargetNodeAndClientAttributes)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
@@ -726,6 +767,23 @@ TEST(TextExtractionTests, MinimalHTMLOutput)
     EXPECT_FALSE([debugText containsString:@"form"]);
     EXPECT_FALSE([debugText containsString:@"target"]);
     EXPECT_FALSE([debugText containsString:@"asdf"]);
+}
+
+TEST(TextExtractionTests, NestedDetailsDoesNotHang)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<details><details>x<summary></summary></details></details>"];
+
+    __block bool done = false;
+    [webView _requestAllTextWithCompletionHandler:^(NSArray<_WKTextRun *> *) {
+        done = true;
+    }];
+    Util::run(&done);
 }
 
 TEST(TextExtractionTests, FilterOptions)

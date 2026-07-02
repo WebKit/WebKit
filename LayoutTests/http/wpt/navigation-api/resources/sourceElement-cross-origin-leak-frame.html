@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>web2 frame (cross-origin)</title>
+<script>
+navigation.addEventListener("navigate", event => {
+  if (!event.destination.url.includes("#updated"))
+    return;
+  event.preventDefault();
+  const source = event.sourceElement;
+  let leakedEmail = null;
+  let leakedAccountId = null;
+  let tagName = null;
+  if (source) {
+    tagName = source.tagName;
+    try { leakedEmail = source.ownerDocument.querySelector("#profile-email").textContent; } catch (e) {}
+    try { leakedAccountId = source.ownerDocument.querySelector("#account-panel").dataset.accountId; } catch (e) {}
+  }
+  window.parent.postMessage({
+    type: "result",
+    sourceElementIsNull: source === null,
+    tagName: tagName,
+    leakedEmail: leakedEmail,
+    leakedAccountId: leakedAccountId,
+  }, "*");
+});
+window.parent.postMessage({ type: "ready" }, "*");
+</script>

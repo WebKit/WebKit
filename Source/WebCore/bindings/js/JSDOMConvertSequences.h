@@ -353,8 +353,12 @@ template<> struct Converter<IDLFrozenArray<IDLUnrestrictedFloat>> : Detail::Nume
 template<> struct Converter<IDLFrozenArray<IDLDouble>> : Detail::NumericSequenceConverter<IDLFrozenArray<IDLDouble>> { };
 template<> struct Converter<IDLFrozenArray<IDLUnrestrictedDouble>> : Detail::NumericSequenceConverter<IDLFrozenArray<IDLUnrestrictedDouble>> { };
 
-template<typename T, size_t N> struct Converter<IDLSequence<T, N>> : Detail::SequenceConverter<IDLSequence<T, N>> { };
-template<typename T, size_t N> struct Converter<IDLFrozenArray<T, N>> : Detail::SequenceConverter<IDLFrozenArray<T, N>> { };
+template<typename T, size_t N> struct Converter<IDLSequence<T, N>> : Detail::SequenceConverter<IDLSequence<T, N>> {
+    static_assert(!std::is_same_v<T, IDLAny>, "sequence<any> is insecure as input; use a concrete type");
+};
+template<typename T, size_t N> struct Converter<IDLFrozenArray<T, N>> : Detail::SequenceConverter<IDLFrozenArray<T, N>> {
+    static_assert(!std::is_same_v<T, IDLAny>, "FrozenArray<any> is insecure as input; use a concrete type");
+};
 
 template<typename T, size_t N> struct JSConverter<IDLSequence<T, N>> {
     static constexpr bool needsState = true;

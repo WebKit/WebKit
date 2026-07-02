@@ -166,6 +166,8 @@ void IPIntPlan::didCompleteCompilation()
 void IPIntPlan::completeInStreaming()
 {
     Locker locker { m_lock };
+    if (failIfMixedExceptionHandlingProposals())
+        return;
     complete();
 }
 

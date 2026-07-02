@@ -808,25 +808,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::resetStallForTime(const MediaTime& ti
         return;
     }
 
-    auto ranges = protect(m_mediaSourcePrivate)->buffered();
     if (!protect(m_mediaSourcePrivate)->hasFutureTime(time) && shouldBePlaying()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Not having data to play at time: ", time, " stalling");
         stall();
     }
 
-    auto stallAtTime = duration();
-    size_t index = ranges.find(time);
-    if (index != notFound) {
-        // Find the next gap (or end of media)
-        for (; index < ranges.length(); index++) {
-            if ((index < ranges.length() - 1 && ranges.start(index + 1) - ranges.end(index) > m_mediaSourcePrivate->timeFudgeFactor())
-                || (index == ranges.length() - 1 && ranges.end(index) > time)) {
-                stallAtTime = ranges.end(index);
-                break;
-            }
-        }
-    }
-
+    auto stallAtTime = protect(m_mediaSourcePrivate)->nextStallTime(time);
     ALWAYS_LOG(LOGIDENTIFIER, "will stall playback at time: ", stallAtTime);
     m_renderer->notifyTimeReachedAndStall(stallAtTime)->whenSettled(RunLoop::mainSingleton(), WTF::move(onStallReached))->track(m_stallRequest);
 }

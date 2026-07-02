@@ -452,13 +452,25 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
 
     auto& [node, marker] = *nodeAndMarker;
 
+    auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+
     auto rangeToReplace = makeSimpleRange(node, marker);
 
-    auto replaceMarkerWithType = [&](const String& replacementText, DocumentMarker::WritingToolsTextSuggestionData::State newState) {
-        auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+    auto expectedCurrentText = data.state == DocumentMarker::WritingToolsTextSuggestionData::State::Accepted
+        ? textSuggestion.replacement
+        : data.originalText;
 
-        auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
-        document->markers().removeMarkers(node, offsetRange, { DocumentMarkerType::WritingToolsTextSuggestion });
+    auto validatedRange = validatedRangeForSuggestionMarker(sessionRange, node, marker, expectedCurrentText);
+
+    auto removeSuggestionMarker = [&] {
+        document->markers().filterMarkers(sessionRange, [&](const DocumentMarker& candidate) {
+            auto candidateData = std::get<DocumentMarker::WritingToolsTextSuggestionData>(candidate.data());
+            return candidateData.suggestionID == textSuggestion.identifier ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
+        }, { DocumentMarkerType::WritingToolsTextSuggestion });
+    };
+
+    auto replaceMarkerWithType = [&](const String& replacementText, DocumentMarker::WritingToolsTextSuggestionData::State newState) {
+        removeSuggestionMarker();
 
         auto resolvedCharacterRange = characterRange(sessionRange, rangeToReplace);
 
@@ -501,10 +513,11 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
         // When a given suggestion is "reverted" / rejected, remove the marker and replace the suggested text
         // with the original text.
 
-        auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+        if (!validatedRange)
+            return;
+        rangeToReplace = *validatedRange;
 
-        auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
-        document->markers().removeMarkers(node, offsetRange, { DocumentMarkerType::WritingToolsTextSuggestion });
+        removeSuggestionMarker();
 
         replaceContentsOfRangeInSession(*state, rangeToReplace, data.originalText);
 
@@ -516,7 +529,10 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
             // In the proofreading review case, return to the default state which has the original text.
             // Need to replace the marker as well, so that further updates can continue to be applied.
 
-            auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+            if (!validatedRange)
+                return;
+            rangeToReplace = *validatedRange;
+
             replaceMarkerWithType(data.originalText, DocumentMarker::WritingToolsTextSuggestionData::State::Rejected);
         }
         return;
@@ -527,6 +543,10 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
             // In the proofreading review case, when a given suggestion is accepted, remove the marker
             // and replace the original text with the replacement text. Need to replace the marker
             // as well, so that further updates can continue to be applied.
+
+            if (!validatedRange)
+                return;
+            rangeToReplace = *validatedRange;
 
             replaceMarkerWithType(textSuggestion.replacement, DocumentMarker::WritingToolsTextSuggestionData::State::Accepted);
         }
@@ -1300,6 +1320,42 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
         return { { *targetNode, *targetMarker } };
 
     return std::nullopt;
+}
+
+std::optional<SimpleRange> WritingToolsController::validatedRangeForSuggestionMarker(const SimpleRange& sessionRange, Node& node, const DocumentMarker& marker, const String& expectedCurrentText) const
+{
+    auto rangeToReplace = makeSimpleRange(node, marker);
+    auto currentText = plainText(rangeToReplace);
+    if (currentText == expectedCurrentText)
+        return rangeToReplace;
+
+    if (expectedCurrentText.isEmpty())
+        return std::nullopt;
+
+    auto sessionPlainText = plainText(sessionRange);
+    auto staleOffset = characterRange(sessionRange, rangeToReplace).location;
+
+    size_t bestMatch = notFound;
+    uint64_t bestDistance = std::numeric_limits<uint64_t>::max();
+    unsigned searchStart = 0;
+    while (true) {
+        auto matchIndex = sessionPlainText.find(expectedCurrentText, searchStart);
+        if (matchIndex == notFound)
+            break;
+        uint64_t distance = matchIndex > staleOffset ? matchIndex - staleOffset : staleOffset - matchIndex;
+        if (distance < bestDistance) {
+            bestDistance = distance;
+            bestMatch = matchIndex;
+        }
+        searchStart = static_cast<unsigned>(matchIndex + 1);
+    }
+
+    if (bestMatch == notFound) {
+        RELEASE_LOG(WritingTools, "WritingToolsController::validatedRangeForSuggestionMarker bailing - expected text of length %u not found in session range", expectedCurrentText.length());
+        return std::nullopt;
+    }
+
+    return resolveCharacterRange(sessionRange, { bestMatch, expectedCurrentText.length() });
 }
 
 std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTextSuggestionMarkerContainingRange(const SimpleRange& range) const

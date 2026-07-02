@@ -157,7 +157,6 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
         redirectResponse,
         navigationAction.isRequestFromClientOrUserInput(),
-        navigationAction.treatAsSameOriginNavigation(),
         navigationAction.hasOpenedFrames(),
         navigationAction.openedByDOMWithOpener(),
         hasOpener,

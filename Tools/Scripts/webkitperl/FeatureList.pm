@@ -79,7 +79,6 @@ my (
     $encryptedMediaSupport,
     $fatalWarnings,
     $ftlJITSupport,
-    $ftpDirSupport,
     $fullscreenAPISupport,
     $gamepadSupport,
     $geolocationSupport,
@@ -236,9 +235,6 @@ my @features = (
 
     { option => "ftl-jit", desc => "Toggle FTL JIT support",
       define => "ENABLE_FTL_JIT", value => \$ftlJITSupport },
-
-    { option => "ftpdir", desc => "Toggle FTP Directory support",
-      define => "ENABLE_FTPDIR", value => \$ftpDirSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
       define => "ENABLE_FULLSCREEN_API", value => \$fullscreenAPISupport },

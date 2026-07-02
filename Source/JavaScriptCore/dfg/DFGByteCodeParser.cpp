@@ -2579,6 +2579,14 @@ void ByteCodeParser::handleMinMax(Operand resultOperand, NodeType op, int regist
         set(resultOperand, resultNode);
 }
 
+static bool calleeMayBeCrossRealm(CallVariant variant, JSGlobalObject* globalObject)
+{
+    JSFunction* function = variant.function();
+    if (!function)
+        return true;
+    return function->realmMayBeNull() != globalObject;
+}
+
 template<typename ChecksFunctor>
 auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind kind, CodeSpecializationKind specializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks) -> CallOptimizationResult
 {
@@ -2723,10 +2731,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         case ArrayKeysIntrinsic:
         case ArrayValuesIntrinsic: {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-            auto* function = variant.function();
-            if (!function)
-                return CallOptimizationResult::DidNothing;
-            if (function->realmMayBeNull() != globalObject)
+            if (calleeMayBeCrossRealm(variant, globalObject))
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -2818,6 +2823,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             case Array::Int32:
             case Array::Contiguous: {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+                if (calleeMayBeCrossRealm(variant, globalObject))
+                    return CallOptimizationResult::DidNothing;
                 // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
                 // https://bugs.webkit.org/show_bug.cgi?id=173171
                 if (globalObject->arraySpeciesWatchpointSet().state() == IsWatched
@@ -2891,6 +2898,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (!arrayMode.isJSArray())
                 return CallOptimizationResult::DidNothing;
 
+            if (calleeMayBeCrossRealm(variant, m_graph.globalObjectFor(currentNodeOrigin().semantic)))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
 
             for (int i = 0; i < argumentCountIncludingThis; ++i)
@@ -2921,6 +2931,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             case Array::Int32:
             case Array::Contiguous: {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+                if (calleeMayBeCrossRealm(variant, globalObject))
+                    return CallOptimizationResult::DidNothing;
                 if (globalObject->arraySpeciesWatchpointSet().state() != IsWatched
                     || !globalObject->havingABadTimeWatchpointSet().isStillValid()
                     || globalObject->arrayPrototypeChainIsSaneWatchpointSet().state() != IsWatched
@@ -3893,6 +3905,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 return CallOptimizationResult::DidNothing;
 
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+            if (calleeMayBeCrossRealm(variant, globalObject))
+                return CallOptimizationResult::DidNothing;
+
             Structure* iteratorResultStructure = globalObject->iteratorResultObjectStructureConcurrently();
             if (!iteratorResultStructure)
                 return CallOptimizationResult::DidNothing;
@@ -3964,6 +3979,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;
 
+            if (calleeMayBeCrossRealm(variant, m_graph.globalObjectFor(currentNodeOrigin().semantic)))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
             setResult(addToGraph(ObjectKeys, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return CallOptimizationResult::Inlined;
@@ -3973,6 +3991,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;
 
+            if (calleeMayBeCrossRealm(variant, m_graph.globalObjectFor(currentNodeOrigin().semantic)))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
             setResult(addToGraph(ObjectGetOwnPropertyNames, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return CallOptimizationResult::Inlined;
@@ -3980,6 +4001,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
         case ObjectGetOwnPropertySymbolsIntrinsic: {
             if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            if (calleeMayBeCrossRealm(variant, m_graph.globalObjectFor(currentNodeOrigin().semantic)))
                 return CallOptimizationResult::DidNothing;
 
             insertChecks();
@@ -4316,6 +4340,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
 
+            if (calleeMayBeCrossRealm(variant, m_graph.globalObjectFor(currentNodeOrigin().semantic)))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
 
             IterationKind kind = IterationKind::Values;
@@ -4378,12 +4405,14 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
 
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            if (calleeMayBeCrossRealm(variant, globalObject))
+                return CallOptimizationResult::DidNothing;
+
             insertChecks();
 
             Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             addToGraph(Check, Edge(base, StringUse));
-
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
             Node* iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->stringIteratorStructure())));
             addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSStringIterator::Field::Index)), iterator, jsConstant(jsNumber(0)));
             addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSStringIterator::Field::IteratedString)), iterator, base);
@@ -4400,6 +4429,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 return CallOptimizationResult::DidNothing;
 
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            if (calleeMayBeCrossRealm(variant, globalObject))
+                return CallOptimizationResult::DidNothing;
+
             // The structure is created lazily, but profiling already ran next(), so it exists by
             // the time this call site is hot. Bail if it does not exist for some reason.
             Structure* iteratorResultStructure = globalObject->iteratorResultObjectStructureConcurrently();
@@ -4491,6 +4523,9 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                 return CallOptimizationResult::DidNothing;
 
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            if (calleeMayBeCrossRealm(variant, globalObject))
+                return CallOptimizationResult::DidNothing;
+
             Structure* iteratorResultStructure = globalObject->iteratorResultObjectStructureConcurrently();
             if (!iteratorResultStructure)
                 return CallOptimizationResult::DidNothing;
@@ -5141,6 +5176,19 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             insertChecks();
             Node* thisString = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
             Node* resultNode = addToGraph(ToUpperCase, thisString);
+            setResult(resultNode);
+            return CallOptimizationResult::Inlined;
+        }
+
+        case StringPrototypeTrimIntrinsic:
+        case StringPrototypeTrimStartIntrinsic:
+        case StringPrototypeTrimEndIntrinsic: {
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            Node* thisString = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* resultNode = addToGraph(StringTrim, OpInfo(intrinsic), thisString);
             setResult(resultNode);
             return CallOptimizationResult::Inlined;
         }
@@ -6992,8 +7040,6 @@ void ByteCodeParser::handleGetById(
     NodeType getById;
     if (type == AccessType::GetById)
         getById = getByStatus.makesCalls() ? GetByIdFlush : GetById;
-    else if (type == AccessType::TryGetById)
-        getById = TryGetById;
     else
         getById = getByStatus.makesCalls() ? GetByIdDirectFlush : GetByIdDirect;
     auto* data = m_graph.m_getByIdData.add(GetByIdData { identifier, getByStatus.preferredCacheType() });
@@ -7821,9 +7867,7 @@ void ByteCodeParser::parseGetById(const JSInstruction* currentInstruction, unsig
     Node* base = get(bytecode.m_base);
     
     AccessType type = AccessType::GetById;
-    if constexpr (Op::opcodeID == op_try_get_by_id)
-        type = AccessType::TryGetById;
-    else if constexpr (Op::opcodeID == op_get_by_id_direct)
+    if constexpr (Op::opcodeID == op_get_by_id_direct)
         type = AccessType::GetByIdDirect;
     
     GetByStatus getByStatus = GetByStatus::computeFor(
@@ -8564,9 +8608,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 SpeculatedType prediction = getPrediction();
                 auto* hasInstanceImpl = m_vm->propertyNames->hasInstanceSymbol.impl();
                 unsigned identifierNumber = m_graph.identifiers().ensure(hasInstanceImpl);
-                AccessType type = AccessType::GetById;
 
-                handleGetById(bytecode.m_hasInstanceOrPrototype, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(hasInstanceImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+                handleGetById(bytecode.m_hasInstanceOrPrototype, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(hasInstanceImpl), identifierNumber, getByStatus, AccessType::GetById, nextCheckpoint());
                 itermediateIndex = progressToNextCheckpoint();
 
                 // 2. Get Prototype
@@ -8637,9 +8680,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 SpeculatedType prediction = getPrediction();
                 auto* prototypeImpl = m_vm->propertyNames->prototype.impl();
                 unsigned identifierNumber = m_graph.identifiers().ensure(prototypeImpl);
-                AccessType type = AccessType::GetById;
 
-                handleGetById(bytecode.m_hasInstanceOrPrototype, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(prototypeImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+                handleGetById(bytecode.m_hasInstanceOrPrototype, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(prototypeImpl), identifierNumber, getByStatus, AccessType::GetById, nextCheckpoint());
                 progressToNextCheckpoint();
 
                 // 3. Do value instanceof prototype.
@@ -9237,14 +9279,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto identifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid);
             parseGetById<OpGetByIdDirect>(currentInstruction, identifierNumber, identifier);
             NEXT_OPCODE(op_get_by_id_direct);
-        }
-        case op_try_get_by_id: {
-            auto bytecode = currentInstruction->as<OpTryGetById>();
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
-            UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-            auto identifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid);
-            parseGetById<OpTryGetById>(currentInstruction, identifierNumber, identifier);
-            NEXT_OPCODE(op_try_get_by_id);
         }
         case op_get_by_id: {
             auto bytecode = currentInstruction->as<OpGetById>();
@@ -12144,15 +12178,12 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             auto* nextImpl = m_vm->propertyNames->next.impl();
             unsigned identifierNumber = m_graph.identifiers().ensure(nextImpl);
 
-            AccessType type = AccessType::GetById;
-
             GetByStatus getByStatus = GetByStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
                 m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin());
 
-
-            handleGetById(bytecode.m_next, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(nextImpl), identifierNumber, getByStatus, type, osrExitIndex);
+            handleGetById(bytecode.m_next, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(nextImpl), identifierNumber, getByStatus, AccessType::GetById, osrExitIndex);
 
             // Do our set locals. We don't want to run our get_by_id again so we move to the next bytecode.
             m_currentIndex = osrExitIndex;
@@ -12793,14 +12824,12 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             auto* doneImpl = m_vm->propertyNames->done.impl();
             unsigned identifierNumber = m_graph.identifiers().ensure(doneImpl);
 
-            AccessType type = AccessType::GetById;
-
             GetByStatus getByStatus = GetByStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
                 m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin());
 
-            handleGetById(bytecode.m_done, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(doneImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+            handleGetById(bytecode.m_done, prediction, base, CacheableIdentifier::createFromImmortalIdentifier(doneImpl), identifierNumber, getByStatus, AccessType::GetById, nextCheckpoint());
             // Set a value for m_value so we don't exit on it differing from what we expected.
             set(bytecode.m_value, jsConstant(m_graph.bottomValueMatchingSpeculation(valuePredicition)));
             progressToNextCheckpoint();
@@ -12820,14 +12849,12 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             auto* valueImpl = m_vm->propertyNames->value.impl();
             unsigned identifierNumber = m_graph.identifiers().ensure(valueImpl);
 
-            AccessType type = AccessType::GetById;
-
             GetByStatus getByStatus = GetByStatus::computeFor(
                 m_inlineStackTop->m_profiledBlock,
                 m_inlineStackTop->m_baselineMap, m_icContextStack,
                 currentCodeOrigin());
 
-            handleGetById(bytecode.m_value, valuePredicition, base, CacheableIdentifier::createFromImmortalIdentifier(valueImpl), identifierNumber, getByStatus, type, osrExitIndex);
+            handleGetById(bytecode.m_value, valuePredicition, base, CacheableIdentifier::createFromImmortalIdentifier(valueImpl), identifierNumber, getByStatus, AccessType::GetById, osrExitIndex);
 
             // We're done, exit forwards.
             m_currentIndex = osrExitIndex;

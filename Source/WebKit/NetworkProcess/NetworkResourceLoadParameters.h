@@ -76,7 +76,7 @@ struct NetworkResourceLoadParameters {
     bool hadMainFrameMainResourcePrivateRelayed { false };
     bool allowPrivacyProxy { true };
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections { };
-    std::optional<bool> mayBlockNetworkRequest { false };
+    bool mayBlockNetworkRequest { false };
 
     uint64_t requiredCookiesVersion { 0 };
 
@@ -90,7 +90,6 @@ struct NetworkResourceLoadParameters {
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy { };
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy { };
     WebCore::HTTPHeaderMap originalRequestHeaders { };
-    bool shouldRestrictHTTPResponseAccess { false };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
     bool shouldEnableCrossOriginResourcePolicy { false };
     Vector<Ref<WebCore::SecurityOrigin>> frameAncestorOrigins { };

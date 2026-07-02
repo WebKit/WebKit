@@ -3220,7 +3220,7 @@ FloatRect AccessibilityRenderObject::localRect() const
 {
     CheckedPtr renderer = this->renderer();
     if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer.get()))
-        return box ? convertFrameToSpace(box->frameRect(), AccessibilityConversionSpace::Page) : FloatRect();
+        return box ? convertFrameToSpace(box->borderBoxRectInContainer(), AccessibilityConversionSpace::Page) : FloatRect();
 
     CheckedPtr renderText = dynamicDowncast<RenderText>(renderer.get());
     return renderText ? renderText->linesBoundingBox() : FloatRect();

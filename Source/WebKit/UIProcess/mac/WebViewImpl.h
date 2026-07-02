@@ -362,7 +362,7 @@ public:
     void windowDidChangeOcclusionState();
     void windowWillClose();
     void NODELETE windowWillEnterOrExitFullScreen();
-    void windowDidEnterOrExitFullScreen();
+    void windowDidEnterOrExitFullScreen(bool windowIsInFullScreen);
     void screenDidChangeColorSpace();
     bool shouldDelayWindowOrderingForEvent(NSEvent *);
     bool windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint);
@@ -1071,6 +1071,7 @@ private:
 
     const UniqueRef<PAL::HysteresisActivity> m_contentRelativeViewsHysteresis;
     std::unique_ptr<PAL::HysteresisActivity> m_pageScrollingHysteresis;
+    bool m_contentRelativeViewsNeedToBeRepositioned { false };
 
     RetainPtr<NSColorSpace> m_colorSpace;
 

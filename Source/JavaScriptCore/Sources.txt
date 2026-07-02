@@ -91,7 +91,6 @@ b3/air/AirKind.cpp
 b3/air/AirLogRegisterPressure.cpp
 b3/air/AirLowerAfterRegAlloc.cpp
 b3/air/AirLowerEntrySwitch.cpp
-b3/air/AirLowerMacros.cpp
 b3/air/AirLowerStackArgs.cpp
 b3/air/AirOptimizeBlockOrder.cpp
 b3/air/AirOptimizePairedLoadStore.cpp

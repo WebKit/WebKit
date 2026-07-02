@@ -36,6 +36,7 @@ class DataCue;
 
 class InbandDataTextTrack final : public InbandTextTrack {
     WTF_MAKE_TZONE_ALLOCATED(InbandDataTextTrack);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InbandDataTextTrack);
 public:
     static Ref<InbandDataTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandDataTextTrack();

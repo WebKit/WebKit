@@ -25,6 +25,7 @@
 
 #include "CSSColorValue.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyInitialValues.h"
 #include "CSSPropertyNames.h"
@@ -305,7 +306,7 @@ StringBuilder StyleProperties::asTextInternal(const CSS::SerializationContext& c
             result.append(' ');
 
         if (propertyID == CSSPropertyCustom)
-            result.append(downcast<CSSCustomPropertyValue>(*property.value()).name());
+            serializeIdentifier(result, downcast<CSSCustomPropertyValue>(*property.value()).name());
         else
             result.append(nameLiteral(propertyID));
 

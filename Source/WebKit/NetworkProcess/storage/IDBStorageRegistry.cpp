@@ -28,6 +28,7 @@
 
 #include "IDBStorageConnectionToClient.h"
 #include "Logging.h"
+#include "NetworkStorageManager.h"
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -36,7 +37,10 @@
 
 namespace WebKit {
 
-IDBStorageRegistry::IDBStorageRegistry() = default;
+IDBStorageRegistry::IDBStorageRegistry(NetworkStorageManager& manager)
+    : m_manager(manager)
+{
+}
 
 IDBStorageRegistry::~IDBStorageRegistry() = default;
 

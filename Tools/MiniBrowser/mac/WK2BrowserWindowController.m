@@ -1024,6 +1024,11 @@ static BOOL isJavaScriptURL(NSURL *url)
                 completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
         }];
         return;
+    } else if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+        if ([[NSApplication sharedApplication] browserAppDelegate].settingsController.acceptAllTLSCertificates) {
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+            return;
+        }
     }
     completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
 }

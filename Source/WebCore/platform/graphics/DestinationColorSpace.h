@@ -73,6 +73,7 @@ public:
 
     WEBCORE_EXPORT bool supportsOutput() const;
 
+    WEBCORE_EXPORT bool usesRGBColorModel() const;
     WEBCORE_EXPORT bool usesExtendedRange() const;
     bool usesITUR_2100TF() const;
 

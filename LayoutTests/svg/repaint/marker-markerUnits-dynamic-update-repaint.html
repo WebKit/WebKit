@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>SVGMarkerElement: dynamic 'markerUnits' attribute change repaints the referencing element</title>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<!-- Changing a marker's 'markerUnits' attribute must invalidate/repaint the referencing element.
+     Without the fix, setAttribute('markerUnits', ...) stores the base value but schedules no
+     repaint, so the recorded repaint-rect list is empty. -->
+<svg width="300" height="300">
+    <defs>
+        <marker id="marker" markerUnits="strokeWidth" refX="0" refY="0" markerWidth="200" markerHeight="200" style="overflow:visible">
+            <rect x="-10" y="-10" width="20" height="20" fill="green"/>
+        </marker>
+    </defs>
+    <path d="M150,150 L250,150" fill="none" stroke="none" stroke-width="5" marker-start="url(#marker)"/>
+</svg>
+<script>
+function repaintTest()
+{
+    document.getElementById("marker").setAttribute("markerUnits", "userSpaceOnUse");
+}
+runRepaintTest();
+</script>
+</body>
+</html>

@@ -2635,6 +2635,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
+    case StringTrim:
+        def(PureValue(node, static_cast<uint64_t>(node->intrinsic())));
+        return;
+
     case NumberToStringWithValidRadixConstant:
         def(PureValue(node, node->validRadixConstant()));
         return;

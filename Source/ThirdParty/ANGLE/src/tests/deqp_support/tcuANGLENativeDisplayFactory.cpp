@@ -503,9 +503,12 @@ eglu::NativeDisplay *ANGLENativeDisplayFactory::createDisplay(
     DE_UNREF(attribList);
     if (mPlatformType == EGL_PLATFORM_ANGLE_ANGLE)
     {
+        // Support static linking with -DANGLE_EGL_LIBRARY_NAME \"\"
+        const char *eglLibraryName =
+            (ANGLE_EGL_LIBRARY_NAME[0] == '\0') ? nullptr : ANGLE_EGL_LIBRARY_FULL_NAME;
         return new ANGLENativeDisplay(bitCast<EGLNativeDisplayType>(mNativeDisplay),
                                       mPlatformAttributes, mPlatformType,
-                                      ANGLE_EGL_LIBRARY_FULL_NAME);
+                                      eglLibraryName);
     }
 #if (DE_OS == DE_OS_ANDROID)
     else if (mPlatformType == EGL_PLATFORM_ANDROID_KHR)

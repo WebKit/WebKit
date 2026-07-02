@@ -5473,6 +5473,64 @@ TEST_P(TransformFeedbackTest, InstancedOverflowIncompletePrimitive)
     EXPECT_EQ(6u, primitivesWritten);
 }
 
+// Test that UseProgram generates INVALID_OPERATION when transform feedback is active and not paused.
+TEST_P(TransformFeedbackTest, UseProgramWhileActiveAndNotPaused)
+{
+    std::vector<std::string> tfVaryings = {"gl_Position"};
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ANGLE_GL_PROGRAM(otherProgram, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glUseProgram(mProgram);
+    glBeginTransformFeedback(GL_POINTS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(otherProgram);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    GLint currentProgram = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+    EXPECT_EQ(static_cast<GLuint>(currentProgram), mProgram);
+    glEndTransformFeedback();
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that LinkProgram generates INVALID_OPERATION when the program is used by an active
+// transform feedback object, even if it is paused.
+TEST_P(TransformFeedbackTest, LinkProgramWhileActiveAndPaused)
+{
+    std::vector<std::string> tfVaryings = {"gl_Position"};
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glUseProgram(mProgram);
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+    glLinkProgram(mProgram);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glEndTransformFeedback();
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that BindBufferBase, BindBufferRange with TRANSFORM_FEEDBACK_BUFFER generates INVALID_OPERATION when
+// transform feedback is active.
+TEST_P(TransformFeedbackTest, BindBufferBaseWhileActive)
+{
+    std::vector<std::string> tfVaryings = {"gl_Position"};
+    compileDefaultProgram(tfVaryings, GL_INTERLEAVED_ATTRIBS);
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+    glUseProgram(mProgram);
+    glBeginTransformFeedback(GL_POINTS);
+    ASSERT_GL_NO_ERROR();
+    GLBuffer otherBuffer;
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, otherBuffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 1024, nullptr, GL_STATIC_DRAW);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, otherBuffer);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glBindBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, otherBuffer, 0, 512);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glEndTransformFeedback();
+    EXPECT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND_ES32_AND(
     TransformFeedbackTest,

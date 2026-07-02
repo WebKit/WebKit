@@ -208,6 +208,16 @@ bool DestinationColorSpace::supportsOutput() const
 #endif
 }
 
+bool DestinationColorSpace::usesRGBColorModel() const
+{
+#if USE(CG)
+    // Avoid refing color space here as this is performance-sensitive.
+    SUPPRESS_UNRETAINED_ARG return CGColorSpaceGetModel(platformColorSpace()) == kCGColorSpaceModelRGB;
+#else
+    return true;
+#endif
+}
+
 bool DestinationColorSpace::usesExtendedRange() const
 {
 #if USE(CG)

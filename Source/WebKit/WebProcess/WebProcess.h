@@ -494,7 +494,6 @@ public:
     bool requiresScriptTrackingPrivacyProtections(const URL&, const WebCore::SecurityOrigin& topOrigin) const;
     bool shouldAllowScriptAccess(const URL&, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory) const;
     bool requiresConsistentPrivacyQuirkForDomain(const URL&) const;
-    bool shouldBlockRequest(const URL&, const WebCore::SecurityOrigin& topOrigin);
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled.value(); }
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }

@@ -27,4 +27,5 @@ PASS baz namespace: has no length property
 PASS baz namespace: has no name property
 PASS baz namespace: operation LongStory(any, DOMString...)
 PASS baz namespace: operation ShortStory(DOMString...)
+PASS Absent namespace: existence and properties of namespace object
 

@@ -6,6 +6,7 @@ body { margin: 0 }
     height: 180px;
     position: relative;
     outline: 1px solid black;
+    container-type: size;
 }
 
 /* The following CSS comes from 7.4. Applying CSS properties to WebVTT Node Objects. */

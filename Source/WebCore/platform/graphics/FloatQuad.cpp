@@ -33,7 +33,9 @@
 #include "FloatQuad.h"
 
 #include "GeometryUtilities.h"
+
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <wtf/MathExtras.h>
@@ -224,6 +226,33 @@ bool FloatQuad::intersectsEllipse(const FloatPoint& center, const FloatSize& rad
     FloatPoint originPoint;
     return transformedQuad.intersectsCircle(originPoint, radii.height() * radii.width());
 
+}
+
+// Returns positive if point is to the right of edgeStart→edgeEnd, negative if to the left, zero if on the line.
+static inline float sideOf(FloatPoint edgeStart, FloatPoint edgeEnd, FloatPoint point)
+{
+    FloatSize edge = edgeEnd - edgeStart;
+    FloatSize toPoint = point - edgeStart;
+    return toPoint.height() * edge.width() - edge.height() * toPoint.width();
+}
+
+bool FloatQuad::intersectsQuad(const FloatQuad& other) const
+{
+    const std::array<FloatPoint, 4> thisVertices = { m_p1, m_p2, m_p3, m_p4 };
+    const std::array<FloatPoint, 4> otherVertices = { other.m_p1, other.m_p2, other.m_p3, other.m_p4 };
+
+    for (int edgeA = 0; edgeA < 4; ++edgeA) {
+        FloatPoint aStart = thisVertices[edgeA], aEnd = thisVertices[(edgeA + 1) % 4];
+        for (int edgeB = 0; edgeB < 4; ++edgeB) {
+            FloatPoint bStart = otherVertices[edgeB], bEnd = otherVertices[(edgeB + 1) % 4];
+            // Edges cross if each one's endpoints land on opposite sides of the other edge
+            if ((sideOf(bStart, bEnd, aStart) > 0) != (sideOf(bStart, bEnd, aEnd) > 0)
+                && (sideOf(aStart, aEnd, bStart) > 0) != (sideOf(aStart, aEnd, bEnd) > 0))
+                return true;
+        }
+    }
+    // Check if quad is entirely inside the other
+    return containsPoint(other.m_p1) || other.containsPoint(m_p1);
 }
 
 bool FloatQuad::isCounterclockwise() const

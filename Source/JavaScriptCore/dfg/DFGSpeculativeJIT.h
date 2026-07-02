@@ -1777,6 +1777,7 @@ public:
     void compileStringSubstr(Node*);
     void compileToUpperCase(Node*);
     void compileToLowerCase(Node*);
+    void compileStringTrim(Node*);
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
 

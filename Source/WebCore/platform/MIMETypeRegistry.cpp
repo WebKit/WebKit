@@ -234,9 +234,6 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMI
 #endif
             "application/json"_s,
             "image/svg+xml"_s,
-#if ENABLE(FTPDIR)
-            "application/x-ftp-directory"_s,
-#endif
             "multipart/x-mixed-replace"_s,
         // Note: Adding a new type here will probably render it as HTML.
         // This can result in cross-site scripting vulnerabilities.

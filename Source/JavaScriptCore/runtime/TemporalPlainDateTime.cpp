@@ -85,20 +85,6 @@ TemporalPlainDateTime* TemporalPlainDateTime::tryCreateIfValid(JSGlobalObject* g
     return TemporalPlainDateTime::create(vm, structure, WTF::move(plainDate), WTF::move(plainTime));
 }
 
-TemporalPlainDateTime* TemporalPlainDateTime::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::Duration&& duration)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto plainDate = TemporalPlainDate::toPlainDate(globalObject, duration);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto plainTime = TemporalPlainTime::validateAndCreateTimeRecord(globalObject, duration);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(plainDate), WTF::move(plainTime)));
-}
-
 static TemporalPlainDateTime* fromImpl(JSGlobalObject*, JSValue, JSObject*);
 
 // Implements ToTemporalDateTime core (steps 2-3); step 1 options handled by caller.

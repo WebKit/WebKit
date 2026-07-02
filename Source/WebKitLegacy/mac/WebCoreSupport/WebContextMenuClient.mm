@@ -134,7 +134,7 @@ bool WebContextMenuClient::clientFloatRectForNode(WebCore::Node& node, WebCore::
         return false;
     auto& renderBox = downcast<WebCore::RenderBox>(*renderer);
 
-    WebCore::LayoutRect layoutRect = renderBox.clientBoxRect();
+    WebCore::LayoutRect layoutRect = WebCore::LayoutRect(renderBox.borderLeft(), renderBox.borderTop(), renderBox.paddingBoxWidth(), renderBox.paddingBoxHeight());
     WebCore::FloatQuad floatQuad = renderBox.localToAbsoluteQuad(WebCore::FloatQuad(layoutRect));
     rect = floatQuad.boundingBox();
 

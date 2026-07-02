@@ -101,6 +101,11 @@
 #include "WebParentalControlsURLFilter.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "PathsBlockedForSandboxExtensions.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 #define LOADER_RELEASE_LOG_WITH_THIS(thisPtr, fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, WTF::getPtr(thisPtr), thisPtr->webPageProxyID().toUInt64(), thisPtr->pageID().toUInt64(), thisPtr->frameID().toUInt64(), thisPtr->coreIdentifier().toUInt64(), thisPtr->isMainResource(), static_cast<unsigned>(thisPtr->m_parameters.options.destination), thisPtr->isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, webPageProxyID().toUInt64(), pageID().toUInt64(), frameID().toUInt64(), coreIdentifier().toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG_DEBUG(fmt, ...) RELEASE_LOG_DEBUG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, webPageProxyID().toUInt64(), pageID().toUInt64(), frameID().toUInt64(), coreIdentifier().toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
@@ -156,23 +161,21 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     if (CheckedPtr session = connection.networkProcess().networkSession(sessionID()))
         m_cache = session->cache();
 
-    if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
-        NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = NetworkLoadChecker::create(Ref { connection.networkProcess() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
-            sessionID(), webPageProxyID(), HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
-            URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
-            m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
-            shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+    NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
+    m_networkLoadChecker = NetworkLoadChecker::create(Ref { connection.networkProcess() }.get(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options },
+        sessionID(), webPageProxyID(), HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() },
+        URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(),
+        m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections,
+        shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
 
-        RefPtr networkLoadChecker = m_networkLoadChecker;
-        if (m_parameters.cspResponseHeaders)
-            networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
-        networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
-        networkLoadChecker->setCrossOriginEmbedderPolicy(m_parameters.crossOriginEmbedderPolicy);
+    RefPtr networkLoadChecker = m_networkLoadChecker;
+    if (m_parameters.cspResponseHeaders)
+        networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
+    networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
+    networkLoadChecker->setCrossOriginEmbedderPolicy(m_parameters.crossOriginEmbedderPolicy);
 #if ENABLE(CONTENT_EXTENSIONS)
-        networkLoadChecker->setContentExtensionController(URL { m_parameters.mainDocumentURL }, URL { m_parameters.frameURL }, m_parameters.userContentControllerIdentifier);
+    networkLoadChecker->setContentExtensionController(URL { m_parameters.mainDocumentURL }, URL { m_parameters.frameURL }, m_parameters.userContentControllerIdentifier);
 #endif
-    }
     if (synchronousReply)
         m_synchronousLoadData = makeUnique<SynchronousLoadData>(WTF::move(synchronousReply));
 }
@@ -391,28 +394,41 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
 }
 
 #if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
-bool NetworkResourceLoader::isLocalFileLoadAllowedWithoutSandboxExtension(const URL& url)
+bool NetworkResourceLoader::isLocalFileLoadAllowed(const URL& url)
 {
-    // Some applications are relying on using the fetch JS API to load local files they have created in their temp directory.
+#if PLATFORM(IOS_FAMILY)
+    // Some 3rd party apps are relying on using the fetch JS API or -[WKWebView loadHTMLString:baseURL:] to load local files in their temp directory.
     // In this case, the WebContent process will not provide the Networking process with a sandbox extension to that file, since it does not have access.
     // This is because the load is not initiated from the UI process which would provide an extension, but from JS in the WebContent process.
     // To continue supporting this undocumented feature, we should allow local file loads from that location.
 
+    // FIXME: rdar://177160334
+    // The method -[WKWebView loadHTMLString:baseURL:] can be used to load local files by referring to links relative to the base URL in the HTML string.
+    // When the app is using -[WKWebView loadHTMLString:baseURL:] to load files in the temp directory, we should create a sandbox extension for the base URL.
+    // This can be done in WebPageProxy::loadDataWithNavigationShared. However, this is a larger change, so for now we rely on this exemption.
+
     String directory = connectionToWebProcess().networkProcess().containerTemporaryDirectory();
-    return !directory.isEmpty() && FileSystem::isAncestor(directory, FileSystem::realPath(url.fileSystemPath()));
+    if (!WTF::IOSApplication::isMobileSafari() && !directory.isEmpty() && FileSystem::isAncestor(directory, FileSystem::realPath(url.fileSystemPath()))) {
+        RELEASE_LOG(Network, "shouldAllowLocalFileLoad: allowing loads from the temp directory");
+        return true;
+    }
+#endif // PLATFORM(IOS_FAMILY)
+
+    return !pathIsBlockedForSandboxExtensions(url.fileSystemPath());
 }
 #endif // ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
 
 void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoad load)
 {
-    if (load == FirstLoad::Yes) {
 #if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
-        if (request.url().protocolIsFile() && !m_parameters.resourceSandboxExtension.has_value() && !isLocalFileLoadAllowedWithoutSandboxExtension(request.url())) {
+        if (request.url().protocolIsFile() && !isLocalFileLoadAllowed(request.url())) {
             LOADER_RELEASE_LOG("startNetworkLoad: stop local file load because a sandbox extension is not provided");
             didFailLoading(internalError(request.url()));
             return;
         }
 #endif // ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
+
+    if (load == FirstLoad::Yes) {
         consumeSandboxExtensions();
 
         if (isSynchronous() || m_parameters.maximumBufferingTime > 0_s)
@@ -1507,9 +1523,6 @@ static bool shouldSanitizeResponse(const NetworkProcess& process, std::optional<
 
 ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceResponse&& response, ResourceResponse::SanitizationType type)
 {
-    if (!m_parameters.shouldRestrictHTTPResponseAccess)
-        return WTF::move(response);
-
     if (shouldSanitizeResponse(Ref { m_connection->networkProcess() }.get(), pageID(), parameters().options, originalRequest().url()))
         response.sanitizeHTTPHeaderFields(type);
 
@@ -1543,6 +1556,12 @@ static bool NODELETE shouldTryToMatchRegistrationOnRedirection(const FetchOption
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     LOADER_RELEASE_LOG("continueWillSendRequest: (isAllowedToAskUserForCredentials=%d)", isAllowedToAskUserForCredentials);
+
+    // If there is a match in the network cache, we need to reuse the original cache policy and partition.
+    // This must happen before any branch below that may store a redirect in the disk cache, otherwise a
+    // compromised WebContent process could poison the cache for an arbitrary partition.
+    newRequest.setCachePolicy(originalRequest().cachePolicy());
+    newRequest.setShouldBlockThirdPartyStorage(originalRequest().shouldBlockThirdPartyStorage());
 
     if (m_redirectionForCurrentNavigation) {
         LOADER_RELEASE_LOG("continueWillSendRequest: using stored redirect response");
@@ -1604,10 +1623,6 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     }
 
     m_isAllowedToAskUserForCredentials = isAllowedToAskUserForCredentials;
-
-    // If there is a match in the network cache, we need to reuse the original cache policy and partition.
-    newRequest.setCachePolicy(originalRequest().cachePolicy());
-    newRequest.setShouldBlockThirdPartyStorage(originalRequest().shouldBlockThirdPartyStorage());
 
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {
         m_isWaitingContinueWillSendRequestForCachedRedirect = false;

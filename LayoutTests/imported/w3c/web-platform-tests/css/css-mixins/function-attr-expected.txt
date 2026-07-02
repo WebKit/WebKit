@@ -7,7 +7,7 @@ PASS Return attr(type(<length>)) from untyped function
 PASS Return attr(type(<length>)) from typed function
 PASS Return attr(type(*)) from typed function
 PASS Return attr(type(*)) from untyped function
-FAIL attr() in default parameter value assert_equals: expected "42px" but got "784px"
+PASS attr() in default parameter value
 PASS attr() in local variable
 PASS Returned url() is attr-tainted
 PASS Returned url() is attr-tainted, typed attr()

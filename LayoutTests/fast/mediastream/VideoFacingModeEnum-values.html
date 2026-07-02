@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VideoFacingModeEnum: returned values are in the spec enum domain</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// MediaCapture-Main §"VideoFacingModeEnum":
+//   https://w3c.github.io/mediacapture-main/#dom-videofacingmodeenum
+//
+//   enum VideoFacingModeEnum {
+//     "user",
+//     "environment",
+//     "left",
+//     "right"
+//   };
+//
+// Exhaustive enum-completeness testing would require multi-facing-mode
+// hardware (or mock-device infrastructure that honors the facingMode
+// option through to getSettings — WebKit's addMockCameraDevice
+// currently does not). What we can verify is the narrower
+// spec-conformance claim: any value WebKit returns through
+// getSettings().facingMode or getCapabilities().facingMode entries must
+// be one of the four enum values. A value outside this set would be a
+// spec violation regardless of which subset WebKit's mocks expose.
+//
+// TODO: when mock cameras honor the facingMode constructor arg through
+// to getSettings(), extend this test to verify all four values
+// round-trip through the IDL binding.
+
+const VALID = ["user", "environment", "left", "right"];
+
+if (window.testRunner)
+    testRunner.setCameraPermission(true);
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    const settings = track.getSettings();
+    if ("facingMode" in settings) {
+        assert_in_array(settings.facingMode, VALID,
+            "getSettings().facingMode is a value from VideoFacingModeEnum");
+    }
+
+    const caps = track.getCapabilities();
+    if ("facingMode" in caps) {
+        assert_true(Array.isArray(caps.facingMode),
+            "capabilities.facingMode is a sequence");
+        for (const entry of caps.facingMode) {
+            assert_in_array(entry, VALID,
+                `capability entry "${entry}" is a value from VideoFacingModeEnum`);
+        }
+    }
+}, "VideoFacingModeEnum: returned settings/capabilities values are in the spec enum domain");
+</script>
+</head>
+<body></body>
+</html>

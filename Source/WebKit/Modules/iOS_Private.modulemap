@@ -2910,11 +2910,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module _WKJSBuffer {
-    header "_WKJSBuffer.h"
-    export *
-  }
-
   explicit module _WKSystemPreferences {
     header "_WKSystemPreferences.h"
     export *

@@ -126,8 +126,9 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
             // 4-d-vi-1. Let jOctet be the value at index j within Octets.
             // 4-d-vi-2. Let S be a String containing three code units "%XY" where XY are two uppercase hexadecimal digits encoding the value of jOctet.
             // 4-d-vi-3. Let R be a new String value computed by concatenating the previous value of R and S.
-            builder.append('%');
-            builder.append(hex(utf8OctetsBuffer[index], 2));
+            auto octet = utf8OctetsBuffer[index];
+            std::array<Latin1Character, 3> escaped { '%', static_cast<Latin1Character>(upperNibbleToASCIIHexDigit(octet)), static_cast<Latin1Character>(lowerNibbleToASCIIHexDigit(octet)) };
+            builder.append(std::span<const Latin1Character> { escaped });
         }
     }
 

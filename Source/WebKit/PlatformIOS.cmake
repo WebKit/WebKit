@@ -977,7 +977,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKImmersiveEnvironment.h
     UIProcess/API/Cocoa/WKImmersiveEnvironmentDelegate.h
     UIProcess/API/Cocoa/WKJSHandle.h
-    UIProcess/API/Cocoa/WKJSScriptingBuffer.h
     UIProcess/API/Cocoa/WKJSSerializedNode.h
     UIProcess/API/Cocoa/WKWebExtension.h
     UIProcess/API/Cocoa/WKWebExtensionAction.h

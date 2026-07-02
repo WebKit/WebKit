@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 
 #include <stdio.h>
+#include <unistd.h>
 
 static int original_argc;
 static char *_Nullable *_Nullable original_argv = nullptr;
@@ -28,6 +29,7 @@ int main(int argc, char *_Nullable *_Nullable argv);
 
 - (void)runMain
 {
+    chdir([NSTemporaryDirectory() fileSystemRepresentation]);
     exit(main(original_argc, original_argv));
 }
 

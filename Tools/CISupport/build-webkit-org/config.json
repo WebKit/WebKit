@@ -31,6 +31,7 @@
 
                   { "name": "bot2000", "platform": "mac-tahoe" },
                   { "name": "bot2001", "platform": "mac-tahoe" },
+                  { "name": "bot105", "platform": "mac-tahoe" },
                   { "name": "bot132", "platform": "mac-tahoe" },
                   { "name": "bot165", "platform": "mac-tahoe" },
                   { "name": "bot178", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
@@ -61,7 +62,6 @@
                   { "name": "bot1025", "platform": "mac-sequoia" },
                   { "name": "bot1026", "platform": "mac-sequoia" },
 
-                  { "name": "bot105", "platform": "mac-sequoia" },
                   { "name": "bot111", "platform": "mac-sequoia" },
                   { "name": "bot113", "platform": "mac-sequoia" },
                   { "name": "bot114", "platform": "mac-sequoia" },
@@ -412,8 +412,8 @@
                     "platform": "mac-sequoia", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot603"]
                   },
-                  { "name": "Apple-Sequoia-AppleSilicon-O3-Debug-JSC-BuildAndTest", "factory": "BuildO3AndJSCTestsFactory",
-                    "platform": "mac-sequoia", "configuration": "debug", "architectures": ["arm64"],
+                  { "name": "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest", "factory": "BuildO3AndJSCTestsFactory",
+                    "platform": "mac-tahoe", "configuration": "debug", "architectures": ["arm64"],
                     "workernames": ["bot105"]
                   },
                   {
@@ -517,7 +517,7 @@
                     "workernames": ["bot672"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildAndGenerateJSCBundleFactory",
+                    "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver", "gtk-linux-64-release-tests-mvt"],
                     "workernames": ["gtk-linux-bot-2"]
@@ -572,7 +572,7 @@
                     "workernames": ["gtk-linux-bot-21"]
                   },
                   {
-                    "name": "GTK-Linux-64bit-Release-Packaging-Nightly", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                    "name": "GTK-Linux-64bit-Release-Packaging-Nightly", "factory": "BuildAndGenerateMiniBrowserJSCBundleFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-bubblewrap-sandbox"],
                     "workernames": ["gtk-linux-bot-17"]
@@ -780,7 +780,7 @@
                     "builderNames": ["WPE-Linux-ARM64-bit-Release-v252-BuildAndTest"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-tahoe", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "Apple-Tahoe-Safer-CPP-Checks"]
+                  "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "Apple-Tahoe-Safer-CPP-Checks", "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
                   },
                   { "type": "Triggerable", "name": "tahoe-release-tests-wk2",
                   "builderNames": ["Apple-Tahoe-Release-WK2-Tests"]
@@ -810,7 +810,7 @@
                   "builderNames": ["Apple-Tahoe-Debug-WK2-Site-Isolation-Tree-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sequoia", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build", "Apple-Sequoia-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
+                  "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build"]
                   },
                   { "type": "Triggerable", "name": "sequoia-release-tests-wk2-site-isolation-tree",
                   "builderNames": ["Apple-Sequoia-Release-WK2-Site-Isolation-Tree-Tests"]

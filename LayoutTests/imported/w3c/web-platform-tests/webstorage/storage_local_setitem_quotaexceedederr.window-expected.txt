@@ -1,3 +1,3 @@
 
-PASS Throws QuotaExceededError when the quota has been exceeded
+FAIL Throws QuotaExceededError when the quota has been exceeded Test bug: unrecognized DOMException code name or name "QUOTA_EXCEEDED_ERR" passed to assert_throws_dom()
 

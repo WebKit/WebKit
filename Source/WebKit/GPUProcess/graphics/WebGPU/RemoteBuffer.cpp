@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Logging.h"
 #include "RemoteBufferMessages.h"
 #include "RemoteBufferProxy.h"
 #include "StreamServerConnection.h"
@@ -36,6 +37,9 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMalloc.h>
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, m_streamConnection, completion)
 
 namespace WebKit {
 
@@ -87,6 +91,7 @@ void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore:
 
 void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
+    MESSAGE_CHECK_COMPLETION(m_isMapped, callback(std::nullopt));
     protect(m_backing)->getMappedRange(offset, size, [protectedThis = protect(*this), &callback] (auto mappedRange) {
         protectedThis->m_isMapped = true;
         callback(mappedRange);

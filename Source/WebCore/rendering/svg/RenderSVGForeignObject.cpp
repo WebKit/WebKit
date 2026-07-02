@@ -80,7 +80,7 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint& pain
 
 void RenderSVGForeignObject::updateLogicalWidth()
 {
-    setWidth(enclosingLayoutRect(m_viewport).width());
+    setBorderBoxWidth(enclosingLayoutRect(m_viewport).width());
 }
 
 RenderBox::LogicalExtentComputedValues RenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const

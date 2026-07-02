@@ -37,7 +37,6 @@
 #include "UserGestureIndicator.h"
 #include "WebXRSystem.h"
 #include "XRSessionMode.h"
-#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 
@@ -48,15 +47,12 @@ WebXRTest::WebXRTest(WeakPtr<WebXRSystem, WeakPtrImplWithEventTargetData>&& syst
 
 WebXRTest::~WebXRTest() = default;
 
-static PlatformXR::Device::FeatureList parseFeatures(const Vector<JSC::JSValue>& featureList, ScriptExecutionContext& context)
+static PlatformXR::Device::FeatureList parseFeatures(const Vector<String>& featureList)
 {
     PlatformXR::Device::FeatureList features;
-    if (auto* globalObject = context.globalObject()) {
-        for (auto& feature : featureList) {
-            auto featureString = feature.toWTFString(globalObject);
-            if (auto sessionFeature = PlatformXR::parseSessionFeatureDescriptor(featureString))
-                features.append(*sessionFeature);
-        }
+    for (auto& feature : featureList) {
+        if (auto sessionFeature = PlatformXR::parseSessionFeatureDescriptor(feature))
+            features.append(*sessionFeature);
     }
     return features;
 }
@@ -64,14 +60,14 @@ static PlatformXR::Device::FeatureList parseFeatures(const Vector<JSC::JSValue>&
 void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const FakeXRDeviceInit& init, WebFakeXRDevicePromise&& promise)
 {
     // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulatedeviceconnection
-    context.postTask([this, protectedThis = protect(*this), init, promise = WTF::move(promise)] (ScriptExecutionContext& context) mutable {
+    context.postTask([this, protectedThis = protect(*this), init, promise = WTF::move(promise)](auto&) mutable {
         auto device = WebFakeXRDevice::create();
         auto& simulatedDevice = device->simulatedXRDevice();
 
         device->setViews(init.views);
 
-        auto supportedFeatures = parseFeatures(init.supportedFeatures, context);
-        auto enabledFeatures = parseFeatures(init.enabledFeatures, context);
+        auto supportedFeatures = parseFeatures(init.supportedFeatures);
+        auto enabledFeatures = parseFeatures(init.enabledFeatures);
 
         if (init.boundsCoordinates) {
             if (init.boundsCoordinates->size() < 3) {

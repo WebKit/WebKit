@@ -1,5 +1,5 @@
 
-PASS Testing that cache.add checks against quota
-PASS Testing that cache.addAll checks against quota
+FAIL Testing that cache.add checks against quota Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
+FAIL Testing that cache.addAll checks against quota Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS Testing that caches.delete will reduce usage
 

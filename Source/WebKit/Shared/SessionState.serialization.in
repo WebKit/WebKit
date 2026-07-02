@@ -64,6 +64,7 @@ header: "SessionState.h"
     RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
     bool wasCreatedByJSWithoutUserInteraction;
     bool wasRestoredFromSession;
+    WebCore::IsInitialAboutBlank isInitialAboutBlank;
     std::optional<WebCore::PolicyContainer> policyContainer;
 
 #if PLATFORM(IOS_FAMILY)

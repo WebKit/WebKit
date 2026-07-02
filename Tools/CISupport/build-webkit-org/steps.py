@@ -1072,7 +1072,7 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin, ShellMixin):
         "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d api test%s failed or timed out"
-    test_summary_re = re.compile(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful')
+    test_summary_re = re.compile(r'Ran (?P<ran>\d+) tests of (?P<total>\d+) with (?P<passed>\d+) successful(?: \((?P<expected>\d+) expected failures?\))?')
     cancelled_due_to_huge_logs = False
     line_count = 0
 
@@ -1145,7 +1145,8 @@ class RunAPITests(TestWithFailureCount, CustomFlagsMixin, ShellMixin):
 
         match = self.test_summary_re.match(line)
         if match:
-            self.failedTestCount = int(match.group('ran')) - int(match.group('passed'))
+            expected = int(match.group('expected')) if match.group('expected') else 0
+            self.failedTestCount = int(match.group('ran')) - int(match.group('passed')) - expected
 
     def handleExcessiveLogging(self):
         build_url = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'

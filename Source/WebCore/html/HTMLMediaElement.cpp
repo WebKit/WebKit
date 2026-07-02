@@ -1584,11 +1584,11 @@ void HTMLMediaElement::load()
     if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture && protect(document())->quirks().requiresUserGestureToLoadInPictureInPicture() && !protect(document())->processingUserGestureForMedia())
         return;
 
-    prepareForLoad();
+    prepareForLoad(IsExplicitLoad::Yes);
     queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, m_resourceSelectionTaskCancellationGroup, [](auto& element) { element.prepareToPlay(); });
 }
 
-void HTMLMediaElement::prepareForLoad()
+void HTMLMediaElement::prepareForLoad(IsExplicitLoad isExplicitLoad)
 {
     // https://html.spec.whatwg.org/multipage/embedded-content.html#media-element-load-algorithm
     // The Media Element Load Algorithm
@@ -1681,6 +1681,17 @@ void HTMLMediaElement::prepareForLoad()
 
         updateMediaController();
         updateActiveTextTrackCues(MediaTime::zeroTime());
+    }
+
+    // When play() is called before any src is assigned, completePlayInternal()
+    // skips selectMediaResource() to avoid a race where an async "no src" task
+    // gets cancelled and leaves m_networkState = NETWORK_NO_SOURCE, causing a
+    // subsequent attribute-driven prepareForLoad() to spuriously call setPaused(true).
+    // That keeps m_networkState = NETWORK_EMPTY, so the block above doesn't fire.
+    // An explicit load() call must still apply spec step 6.6 in this case.
+    if (isExplicitLoad == IsExplicitLoad::Yes && !paused()) {
+        setPaused(true);
+        setPlaying(false);
     }
 
     // 7 - Set the playbackRate attribute to the value of the defaultPlaybackRate attribute.
@@ -1786,7 +1797,6 @@ void HTMLMediaElement::selectMediaResource()
         } else if (element.hasAttributeWithoutSynchronization(srcAttr)) {
             //    Otherwise, if the media element has no assigned media provider object but has a src attribute, then let mode be attribute.
             mode = Attribute;
-            ASSERT(element.m_player);
             if (!element.m_player) {
                 HTMLMEDIAELEMENT_RELEASE_LOG_WITH_THIS(&element, SelectMediaResourceHasSrcAttrPlayerNotCreated);
                 return;
@@ -4544,7 +4554,21 @@ void HTMLMediaElement::play()
 void HTMLMediaElement::completePlayInternal()
 {
     // 4.8.10.9. Playing the media resource
-    if (!m_player || m_networkState == NETWORK_EMPTY)
+    // The NETWORK_EMPTY + no-src case is handled synchronously in playInternal().
+    // Call selectMediaResource() here when:
+    //   - !m_player && src: player not created yet (first play with a src)
+    //   - m_player && NETWORK_EMPTY && HAVE_NOTHING && src: player was created but
+    //     loading was suppressed (e.g., iOS autoplay policy); readyState == HAVE_NOTHING
+    //     confirms nothing has loaded. Exclude the case where readyState > HAVE_NOTHING
+    //     because the resource selection is already underway; restarting it would cause
+    //     spurious state resets (MediaBufferingPolicy regression on Release builds).
+    auto needsResourceSelection = [&] {
+        if (!m_player)
+            return hasAttributeWithoutSynchronization(srcAttr) || m_mediaProvider;
+        return m_networkState == NETWORK_EMPTY && m_readyState == HAVE_NOTHING
+            && (hasAttributeWithoutSynchronization(srcAttr) || m_mediaProvider);
+    }();
+    if (needsResourceSelection)
         selectMediaResource();
 
     if (endedPlayback())
@@ -4553,37 +4577,17 @@ void HTMLMediaElement::completePlayInternal()
     if (RefPtr mediaController = m_mediaController)
         mediaController->bringElementUpToSpeed(*this);
 
-    if (m_paused) {
-        setPaused(false);
-        setShowPosterFlag(false);
-        invalidateOfficialPlaybackPosition();
+    // The readyState-dependent task (waitingEvent / scheduleNotifyAboutPlaying /
+    // scheduleResolvePendingPlayPromises) is queued from playInternal() and
+    // canBeginPlaybackCompletion based on readyState captured at play() call
+    // time, NOT recomputed here. Recomputing post-async-admission would miss
+    // transitions during the admission window (e.g. media-source unbalanced
+    // buffers can briefly drop readyState to HAVE_CURRENT_DATA).
 
-        // This avoids the first timeUpdated event after playback starts, when currentTime is still
-        // the same as it was when the video was paused (and the time hasn't changed yet).
-        m_lastTimeUpdateEventMovieTime = currentMediaTime();
-        m_playbackStartedTime = m_lastTimeUpdateEventMovieTime.toDouble();
-
-        scheduleEvent(eventNames().playEvent);
-
-        // If the media element's readyState attribute has the value HAVE_NOTHING, HAVE_METADATA, or HAVE_CURRENT_DATA,
-        // queue a media element task given the media element to fire an event named waiting at the element.
-        // Otherwise, the media element's readyState attribute has the value HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA:
-        // notify about playing for the element.
-        if (m_readyState <= HAVE_CURRENT_DATA)
-            scheduleEvent(eventNames().waitingEvent);
-        else
-            scheduleNotifyAboutPlaying();
-    } else if (m_readyState >= HAVE_FUTURE_DATA)
-        scheduleResolvePendingPlayPromises();
-
-    if (processingUserGestureForMedia()) {
-        if (m_autoplayEventPlaybackState == AutoplayEventPlaybackState::PreventedAutoplay) {
-            handleAutoplayEvent(AutoplayEvent::DidPlayMediaWithUserGesture);
-            setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
-        } else
-            setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithUserGesture);
-    } else
-        setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithoutUserGesture);
+    // m_autoplayEventPlaybackState is set synchronously in playInternal() —
+    // see comment there. Calling processingUserGestureForMedia() here would
+    // see false because the user gesture has expired across the async
+    // session-admission IPC.
 
     m_autoplaying = false;
     updatePlayState();
@@ -4609,16 +4613,112 @@ void HTMLMediaElement::playInternal()
     Ref mediaSession = this->mediaSession();
     mediaSession->setActive(true);
 
-    CompletionHandler<void (bool)> canBeginPlaybackCompletion = [weakThis = WeakPtr { *this }, logSiteIdentifier = WTF::move(logSiteIdentifier)](bool canBegin) {
+    // Spec step: if networkState is NETWORK_EMPTY, invoke resource selection synchronously.
+    // Restrict to the no-source case (no src attribute and no srcObject): when a src is
+    // already assigned, the attribute-triggered load has either started or will start on
+    // its own. Calling selectMediaResource() only for the truly-empty case ensures the
+    // no-src reset task is enqueued before any networking-source tasks that could trigger
+    // prepareForLoad() and call setPaused(true) unexpectedly.
+    if (m_networkState == NETWORK_EMPTY && !hasAttributeWithoutSynchronization(srcAttr) && !m_mediaProvider)
+        selectMediaResource();
+
+    // Per HTML spec: when play() is called and paused is true, set paused = false
+    // and queue the play event synchronously, BEFORE any user-agent-specific
+    // session admission. With async session activation, doing this in the
+    // completion handler would leave video.paused observably true to JS
+    // immediately after play() returns.
+    bool didTransitionFromPaused = m_paused;
+    if (didTransitionFromPaused) {
+        setPaused(false);
+        setShowPosterFlag(false);
+        invalidateOfficialPlaybackPosition();
+
+        // This avoids the first timeUpdated event after playback starts, when currentTime is still
+        // the same as it was when the video was paused (and the time hasn't changed yet).
+        m_lastTimeUpdateEventMovieTime = currentMediaTime();
+        m_playbackStartedTime = m_lastTimeUpdateEventMovieTime.toDouble();
+
+        scheduleEvent(eventNames().playEvent);
+    }
+
+    // Capture user gesture state synchronously and set m_autoplayEventPlaybackState here
+    // (rather than in completePlayInternal). With async session admission,
+    // completePlayInternal runs after an IPC round-trip, by which time the user
+    // gesture token has expired across the async boundary — processingUserGestureForMedia()
+    // would return false, mis-tracking a user-gesture play as StartedWithoutUserGesture.
+    if (processingUserGestureForMedia()) {
+        if (m_autoplayEventPlaybackState == AutoplayEventPlaybackState::PreventedAutoplay) {
+            handleAutoplayEvent(AutoplayEvent::DidPlayMediaWithUserGesture);
+            setAutoplayEventPlaybackState(AutoplayEventPlaybackState::None);
+        } else
+            setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithUserGesture);
+    } else
+        setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithoutUserGesture);
+
+    // Capture the readyState-dependent decision at sync play() call time.
+    // The waitingEvent must be queued synchronously per spec; the
+    // notifyAboutPlaying / resolvePendingPlayPromises tasks are deferred to
+    // the admission completion handler so they interleave correctly with
+    // other tasks queued during the async session-admission window.
+    bool shouldNotifyAboutPlaying = didTransitionFromPaused && m_readyState > HAVE_CURRENT_DATA;
+    bool shouldResolvePromises = !didTransitionFromPaused && m_readyState >= HAVE_FUTURE_DATA;
+    if (didTransitionFromPaused && m_readyState <= HAVE_CURRENT_DATA)
+        scheduleEvent(eventNames().waitingEvent);
+
+    // Set m_canBeginPlaybackInFlight to suppress pauseInternal()'s
+    // scheduleRejectPendingPlayPromises while admission is in flight. This
+    // keeps m_pendingPlayPromises in the element so that setReadyState's
+    // natural scheduleNotifyAboutPlaying transition (line ~3373) can pick
+    // them up if readyState transitions to HAVE_FUTURE_DATA during the
+    // admission window. Pre-branch behavior relied on this natural
+    // mechanism — capturing promises into the lambda would hide them from
+    // setReadyState. The flag is cleared in the admission callback before
+    // any other handling runs.
+    m_canBeginPlaybackInFlight = true;
+
+    CompletionHandler<void (bool)> canBeginPlaybackCompletion = [weakThis = WeakPtr { *this }, didTransitionFromPaused, shouldNotifyAboutPlaying, shouldResolvePromises, logSiteIdentifier = WTF::move(logSiteIdentifier)](bool canBegin) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
+        protectedThis->m_canBeginPlaybackInFlight = false;
+
         if (!canBegin) {
             ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "returning because of interruption");
+            if (didTransitionFromPaused) {
+                // Revert the synchronous transition since playback was not permitted.
+                // pauseInternal() fires the pause event (balancing the play event we
+                // already scheduled). With m_canBeginPlaybackInFlight cleared above,
+                // pauseInternal will reject pending play promises if !m_paused.
+                protectedThis->pauseInternal();
+            }
+            // If pauseInternal didn't reject (e.g., m_paused was already true
+            // because pause() was called during the admission window),
+            // explicitly reject here.
+            if (!protectedThis->m_pendingPlayPromises.isEmpty())
+                protectedThis->rejectPendingPlayPromises(WTF::move(protectedThis->m_pendingPlayPromises), DOMException::create(ExceptionCode::AbortError));
             return;
         }
 
+        // Schedule the readyState-dependent task based on the booleans
+        // captured at playInternal() sync time. We deliberately do NOT gate
+        // on `m_pendingPlayPromises` being non-empty:
+        //   - For interruption resumption (no JS play() promise), pending
+        //     promises is empty but we still need the playing event.
+        //   - The double-fire concern (setReadyState's natural transition
+        //     already moved promises into a T_notify task) does not apply
+        //     here: shouldNotifyAboutPlaying captured=true means readyState
+        //     was already > HAVE_CURRENT_DATA at sync time, so
+        //     setReadyState's upward-transition scheduleNotifyAboutPlaying
+        //     (HTMLMediaElement.cpp:3373) cannot fire. When
+        //     shouldNotifyAboutPlaying captured=false (readyState was low
+        //     at sync), this branch doesn't schedule and setReadyState's
+        //     natural transition handles the late notify when readyState
+        //     eventually transitions up.
+        if (shouldNotifyAboutPlaying)
+            protectedThis->scheduleNotifyAboutPlaying();
+        else if (shouldResolvePromises)
+            protectedThis->scheduleResolvePendingPlayPromises();
         protectedThis->completePlayInternal();
     };
 
@@ -4687,7 +4787,14 @@ void HTMLMediaElement::pauseInternal()
         setPaused(true);
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
-        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::AbortError));
+        // Suppress promise rejection while an in-flight play() admission is
+        // pending. The admission completion handler resolves promises via
+        // scheduleNotifyAboutPlaying on success, or rejects them on denial.
+        // Without this guard, a pause from an onplay handler (or from the
+        // ended-path's setPaused-then-clientWillPausePlayback) would
+        // spuriously reject the play() promise that has not yet been admitted.
+        if (!m_canBeginPlaybackInFlight)
+            scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::AbortError));
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             purgeBufferedDataIfPossible();
     }
@@ -5487,7 +5594,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     // track if it is less suitable, and we do want to disable it if another track is more suitable.
     int alreadyVisibleTrackScore = 0;
     if (group.visibleTrack && captionPreferences) {
-        alreadyVisibleTrackScore = captionPreferences->textTrackSelectionScore(*group.visibleTrack, protect(*this));
+        alreadyVisibleTrackScore = captionPreferences->textTrackSelectionScore(protect(*group.visibleTrack), protect(*this));
         currentlyEnabledTracks.append(protect(*group.visibleTrack));
     }
 
@@ -6380,10 +6487,9 @@ Ref<TimeRanges> HTMLMediaElement::buffered() const
 double HTMLMediaElement::maxBufferedTime() const
 {
     auto bufferedRanges = buffered();
-    unsigned numRanges = bufferedRanges->length();
-    if (!numRanges)
-        return 0;
-    return bufferedRanges.get().ranges().end(numRanges - 1).toDouble();
+    if (auto span = bufferedRanges.get().ranges().span(); !span.empty())
+        return span.back().end.toDouble();
+    return 0;
 }
 
 Ref<TimeRanges> HTMLMediaElement::played()

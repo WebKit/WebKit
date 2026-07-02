@@ -81,8 +81,6 @@ public:
     ~GraphicsContextGLCocoa();
     IOSurface* NODELETE displayBufferSurface();
 
-    std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
-
     enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
     // Returns a handle which, if non-null, must be released via the
     // detach call below.

@@ -335,3 +335,19 @@ webkit.org/b/317783 [ ios ] TestWebKitAPI.SiteIsolation.FindStringSelectionSameO
 webkit.org/b/317891 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPinProtocol2 [ Skip ]
 
 webkit.org/b/318155 [ ios ] TestWebKitAPI.PasteHTML.DoesNotTransformColorsOfLightContent [ Skip ]
+
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.NoPanelHidSuccess [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.MultipleAccounts [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.PanelHidCtapNoCredentialsFoundCancelNoCrash [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.PanelTwice [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPinInvalidErrorAndRetry [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.NullPanelHidSuccess [ Skip ]
+webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionInternalUVPinFallback [ Skip ]
+
+# webkit.org/b/318265 [DEBUG] 3x TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.* (api-test) are constant timeouts
+webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.BlockedLoadTest [ Timeout ]
+webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.UpdateEnabledRulesets [ Timeout ]
+webkit.org/b/318265 [ mac debug ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.UpdateEnabledRulesetsPerformsCompilation [ Timeout ]
+
+webkit.org/b/318460 TestWebKitAPI.WebKit.BlockedUploadDirectory [ Failure ]
+

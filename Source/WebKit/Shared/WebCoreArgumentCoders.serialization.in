@@ -1066,8 +1066,6 @@ struct WebCore::ClientOrigin {
 
 enum class WebCore::AdjustViewSize : bool;
 
-enum class WebCore::UseLosslessCompression : bool;
-
 [RefCounted] class WebCore::TextIndicator {
     WebCore::TextIndicatorData data();
 };
@@ -2267,7 +2265,7 @@ enum class WebCore::StorageAccessWasGranted : uint8_t {
 
 enum class WebCore::StorageAccessPromptWasShown : bool
 
-enum class WebCore::HasOrShouldIgnoreUserGesture : bool
+enum class WebCore::HasUserGestureOrNoUserGestureRequired : bool
 
 enum class WebCore::StorageAccessScope : bool
 
@@ -2832,6 +2830,7 @@ header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::InteractionDescription {
     String description;
     Vector<String> stringsToValidate;
+    bool didFindTargetNode;
 };
 
 header: <WebCore/TextExtractionTypes.h>
@@ -3819,6 +3818,7 @@ enum class WebCore::ShouldRestoreFromBackForwardCache : uint8_t {
 enum class WebCore::RestoredFromBackForwardCache : bool
 
 enum class WebCore::WillInternallyHandleFailure : bool
+enum class WebCore::IsInitialAboutBlank : bool
 enum class WebCore::ShouldSample : bool
 enum class WebCore::FromDownloadAttribute : bool
 enum class WebCore::RequiresScriptTrackingPrivacy : bool

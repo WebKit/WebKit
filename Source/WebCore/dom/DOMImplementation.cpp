@@ -31,7 +31,6 @@
 #include "DocumentPage.h"
 #include "DocumentType.h"
 #include "Element.h"
-#include "FTPDirectoryDocument.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
@@ -194,11 +193,6 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
 #if ENABLE(MODEL_ELEMENT)
     if (MIMETypeRegistry::isUSDMIMEType(contentType) && DeprecatedGlobalSettings::modelDocumentEnabled())
         return ModelDocument::create(frame, settings, url);
-#endif
-
-#if ENABLE(FTPDIR)
-    if (equalLettersIgnoringASCIICase(contentType, "application/x-ftp-directory"_s))
-        return FTPDirectoryDocument::create(frame, settings, url);
 #endif
 
     // The following is the relatively costly lookup that requires initializing the plug-in database.

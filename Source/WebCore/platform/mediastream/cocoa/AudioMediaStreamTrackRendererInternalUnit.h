@@ -59,6 +59,7 @@ public:
     virtual void close() { };
     virtual void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) = 0;
     virtual void setLastDeviceUsed(const String&) { }
+    virtual void deleteUnitForTesting() { }
 };
 
 }

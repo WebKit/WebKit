@@ -364,9 +364,9 @@ void Styleable::cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimati
 
 static bool keyframesRuleExistsForAnimation(Element& element, const Style::ScopedName& animationName)
 {
-    return Style::Scope::resolveTreeScopedReference(element, animationName, [](const Style::Scope& scope, const AtomString& name) -> bool {
+    return Style::resolveTreeScopedReference(element, animationName, [](const Style::Scope& scope, const Style::ScopedName& scopedName) -> bool {
         if (RefPtr resolver = scope.resolverIfExists())
-            return resolver->isAnimationNameValid(name);
+            return resolver->isAnimationNameValid(scopedName.name);
         return false;
     });
 }

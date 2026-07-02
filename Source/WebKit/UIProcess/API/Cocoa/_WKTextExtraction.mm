@@ -94,6 +94,16 @@
     _targetNode = adoptNS([targetNode copy]);
 }
 
+- (WKJSHandle *)targetNodeHandle
+{
+    return _targetNode.get();
+}
+
+- (void)setTargetNodeHandle:(WKJSHandle *)targetNode
+{
+    _targetNode = adoptNS([targetNode copy]);
+}
+
 - (NSArray<_WKJSHandle *> *)nodesToSkip
 {
     return _nodesToSkip.get();
@@ -229,6 +239,13 @@
     [webView _requestJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:completionHandler];
 }
 
+- (void)requestHandleForNodeIdentifier:(nullable NSString *)nodeIdentifier searchText:(nullable NSString *)searchText completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler
+{
+    [self requestJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:[completionHandler = makeBlockPtr(completionHandler)] (_WKJSHandle *handle) {
+        completionHandler(handle);
+    }];
+}
+
 - (void)requestContainerJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText completionHandler:(void (^)(_WKJSHandle *))completionHandler
 {
     RetainPtr webView = _webView;
@@ -238,6 +255,13 @@
     [webView _requestContainerJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:completionHandler];
 }
 
+- (void)requestContainerHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText completionHandler:(void (^)(WKJSHandle *))completionHandler
+{
+    [self requestContainerJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:[completionHandler = makeBlockPtr(completionHandler)] (_WKJSHandle *handle) {
+        completionHandler(handle);
+    }];
+}
+
 - (void)requestContainerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(NSString *)nodeIdentifier completionHandler:(void (^)(_WKJSHandle *))completionHandler
 {
     RetainPtr webView = _webView;
@@ -245,6 +269,13 @@
         return completionHandler(nil);
 
     [webView _requestContainerJSHandleForSearchTexts:searchTexts nodeIdentifier:nodeIdentifier completionHandler:completionHandler];
+}
+
+- (void)requestContainerHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(nullable NSString *)nodeIdentifier completionHandler:(void (^)(WKJSHandle * _Nullable))completionHandler
+{
+    [self requestContainerJSHandleForSearchTexts:searchTexts nodeIdentifier:nodeIdentifier completionHandler:[completionHandler = makeBlockPtr(completionHandler)] (_WKJSHandle *handle) {
+        completionHandler(handle);
+    }];
 }
 
 @end

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests that constructing a TransformStream does not crash when Array.prototype[Symbol.iterator] has been poisoned to return wrong-type objects.<br>
+WebKit should not crash, and you should see PASS below.</p>
+<div id="result"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// createInternalTransformStreamFromTransformer returns a 3-element array
+// that the C++ side iterates with convert<IDLSequence<IDLObject>>. By
+// poisoning Array.prototype[Symbol.iterator] we can substitute arbitrary
+// JS objects for the readable/writable entries. Without a runtime check,
+// the C++ side then treats those objects as JSReadableStream/JSWritableStream
+// and dereferences attacker-controlled memory.
+
+function check(label, fn) {
+    let message;
+    try {
+        fn();
+        message = "FAIL: " + label + " did not throw";
+    } catch (e) {
+        if (e instanceof TypeError)
+            message = "PASS: " + label + " threw TypeError";
+        else
+            message = "FAIL: " + label + " threw " + e;
+    }
+    const div = document.createElement("div");
+    div.textContent = message;
+    document.getElementById("result").appendChild(div);
+}
+
+const originalIterator = Array.prototype[Symbol.iterator];
+
+// Variant 1: substitute plain objects for the readable/writable slots.
+Array.prototype[Symbol.iterator] = function() {
+    const arr = this;
+    let i = 0;
+    return {
+        next() {
+            if (i >= arr.length)
+                return { done: true };
+            let val = arr[i];
+            if (arr.length === 3 && i >= 1)
+                val = { fake: true };
+            i++;
+            return { value: val, done: false };
+        }
+    };
+};
+check("plain-object substitution", () => new TransformStream());
+
+// Variant 2: substitute an object that holds a heap pointer (would survive
+// the initial dereference and trigger the write-increment / vtable hijack).
+let buf = new ArrayBuffer(65536);
+Array.prototype[Symbol.iterator] = function() {
+    const arr = this;
+    let i = 0;
+    return {
+        next() {
+            if (i >= arr.length)
+                return { done: true };
+            let val = arr[i];
+            if (arr.length === 3 && i >= 1)
+                val = { pad: 0, ptr: buf };
+            i++;
+            return { value: val, done: false };
+        }
+    };
+};
+check("object-reference substitution", () => new TransformStream());
+
+// Variant 3: truncated iterator returning fewer than 3 entries.
+Array.prototype[Symbol.iterator] = function() {
+    return { next() { return { done: true }; } };
+};
+check("truncated iterator", () => new TransformStream());
+
+Array.prototype[Symbol.iterator] = originalIterator;
+
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</body>
+</html>

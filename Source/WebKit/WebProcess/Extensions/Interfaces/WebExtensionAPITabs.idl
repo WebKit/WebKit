@@ -39,6 +39,7 @@
 
     [RaisesException] void duplicate(double tabID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);
     [RaisesException, NeedsPageIdentifier] void update([Optional] double tabID, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
+    [RaisesException] void move([NSObject] any tabIDs, [NSDictionary] any properties, [Optional, CallbackHandler] function callback);
     [RaisesException] void remove([NSObject] any tabIDs, [Optional, CallbackHandler] function callback);
 
     [RaisesException, NeedsPageIdentifier] void reload([Optional] double tabID, [Optional, NSDictionary] any properties, [Optional, CallbackHandler] function callback);

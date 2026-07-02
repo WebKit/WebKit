@@ -440,8 +440,8 @@ void RenderFrameSet::layout()
     }
 
     if (!parent()->isRenderFrameSet() && !protect(document())->printing()) {
-        setWidth(view().viewWidth());
-        setHeight(view().viewHeight());
+        setBorderBoxWidth(view().viewWidth());
+        setBorderBoxHeight(view().viewHeight());
     }
 
     unsigned cols = frameSetElement().totalCols();
@@ -480,8 +480,8 @@ static void resetFrameRendererAndDescendants(RenderBox* frameSetChild, RenderFra
         return;
 
     for (auto* descendant = frameSetChild; descendant; descendant = downcast<RenderBox>(RenderObjectTraversal::next(*descendant, &parentFrameSet))) {
-        descendant->setWidth(0);
-        descendant->setHeight(0);
+        descendant->setBorderBoxWidth(0);
+        descendant->setBorderBoxHeight(0);
         descendant->clearNeedsLayout();
     }
 }
@@ -505,8 +505,8 @@ void RenderFrameSet::positionFrames()
             int width = m_cols.m_sizes[c];
 
             // has to be resized and itself resize its contents
-            child->setWidth(width);
-            child->setHeight(height);
+            child->setBorderBoxWidth(width);
+            child->setBorderBoxHeight(height);
 #if PLATFORM(IOS_FAMILY)
             // FIXME: Is this iOS-specific?
             child->setNeedsLayout(MarkingBehavior::MarkOnlyThis);

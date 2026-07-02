@@ -50,6 +50,10 @@
 #import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+#import <GameController/GameController.h>
+#endif
+
 SOFT_LINK_PRIVATE_FRAMEWORK(TextInput)
 SOFT_LINK_CLASS(TextInput, TIPreferencesController);
 
@@ -68,8 +72,14 @@ static unsigned globalKeyboardUpdateForChangedSelectionCount = 0;
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
 
+@interface GCMouse ()
+- (instancetype)initWithName:(NSString *)name additionalButtons:(uint32_t)additionalButtons;
+@end
+
 @interface WKMouseDeviceObserver
 + (WKMouseDeviceObserver *)sharedInstance;
+- (void)start;
+- (void)stop;
 - (void)_setHasMouseDeviceForTesting:(BOOL)hasMouseDevice;
 @end
 
@@ -137,6 +147,40 @@ static BOOL overrideEnhancedWindowingEnabled()
 #endif
 
 namespace WTR {
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+
+FakeMouseDevice::FakeMouseDevice()
+{
+    RetainPtr<WKMouseDeviceObserver> observer = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [observer start];
+    m_fakeMouse = adoptNS([[GCMouse alloc] initWithName:@"TestMouse" additionalButtons:0]);
+    m_currentSwizzler = makeUnique<ClassMethodSwizzler>(GCMouse.class,
+        @selector(current),
+        imp_implementationWithBlock(^GCMouse *() {
+            return m_fakeMouse.get();
+        })
+    );
+    m_miceSwizzler = makeUnique<ClassMethodSwizzler>(GCMouse.class,
+        @selector(mice),
+        imp_implementationWithBlock(^NSArray<GCMouse *> *() {
+            return @[ m_fakeMouse.get() ];
+        })
+    );
+    [observer _setHasMouseDeviceForTesting:YES];
+}
+
+FakeMouseDevice::~FakeMouseDevice()
+{
+    RetainPtr<WKMouseDeviceObserver> observer = [NSClassFromString(@"WKMouseDeviceObserver") sharedInstance];
+    [observer _setHasMouseDeviceForTesting:NO];
+    m_currentSwizzler = nullptr;
+    m_miceSwizzler = nullptr;
+    m_fakeMouse = nil;
+    [observer stop];
+}
+
+#endif
 
 static bool isDoneWaitingForKeyboardToStartDismissing = true;
 static bool isDoneWaitingForKeyboardToDismiss = true;
@@ -475,6 +519,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     if (shouldRestoreFirstResponder)
         [mainWebView()->platformView() becomeFirstResponder];
 
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    m_fakeMouseDevice = nullptr;
+#endif
+
     return true;
 }
 
@@ -640,7 +688,11 @@ void TestController::unlockScreenOrientation()
 void TestController::setHasMouseDeviceForTesting(bool hasMouseDevice)
 {
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
-    [[NSClassFromString(@"WKMouseDeviceObserver") sharedInstance] _setHasMouseDeviceForTesting:hasMouseDevice];
+    if (hasMouseDevice) {
+        if (!m_fakeMouseDevice)
+            m_fakeMouseDevice = makeUnique<FakeMouseDevice>();
+    } else
+        m_fakeMouseDevice = nullptr;
 #else
     UNUSED_PARAM(hasMouseDevice);
 #endif

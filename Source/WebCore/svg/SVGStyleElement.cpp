@@ -26,6 +26,7 @@
 #include "CSSStyleSheet.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
+#include "MediaQueryParser.h"
 #include "NodeName.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
@@ -79,9 +80,18 @@ void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     case AttributeNames::typeAttr:
         m_styleSheetOwner.setContentType(newValue);
+        m_styleSheetOwner.childrenChanged(*this);
+        if (CheckedPtr scope = m_styleSheetOwner.styleScope())
+            scope->didChangeStyleSheetContents();
         break;
     case AttributeNames::mediaAttr:
         m_styleSheetOwner.setMedia(newValue);
+        if (RefPtr sheet = this->sheet()) {
+            sheet->setMediaQueries(MQ::MediaQueryParser::parse(newValue, protect(document())->cssParserContext()));
+            if (CheckedPtr scope = m_styleSheetOwner.styleScope())
+                scope->didChangeStyleSheetContents();
+        } else
+            m_styleSheetOwner.childrenChanged(*this);
         break;
     default:
         break;

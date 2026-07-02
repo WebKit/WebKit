@@ -36,6 +36,7 @@
 #include "RemoteAudioSessionProxyMessages.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/AVAudioSessionCaptureDeviceManager.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, protect(connection()).ptr())
@@ -106,27 +107,32 @@ void RemoteAudioSessionProxy::setPreferredBufferSize(uint64_t size)
 
 void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& completion)
 {
-    Ref manager = audioSessionManager();
-    auto success = manager->tryToSetActiveForProcess(*this, active);
-    bool hasActiveChanged = success && m_active != active;
-    if (success) {
-        m_active = active;
-        if (m_active)
-            m_isInterrupted = false;
-
+    Ref manager = Ref { audioSessionManager() };
+    manager->tryToSetActiveForProcess(*this, active)->whenSettled(
+        RunLoop::mainSingleton(),
+        [this, protectedThis = Ref { *this }, manager = WTF::move(manager), active, completion = WTF::move(completion)](auto&& result) mutable {
+            bool success = result.has_value();
+            bool hasActiveChanged = success && m_active != active;
+            if (success) {
+                m_active = active;
+                if (m_active)
+                    m_isInterrupted = false;
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
-        if (m_active)
-            AVAudioSessionCaptureDeviceManager::singleton().setPreferredSpeakerID(m_speakerID);
+                if (m_active)
+                    AVAudioSessionCaptureDeviceManager::singleton().setPreferredSpeakerID(m_speakerID);
 #endif
-    }
+            }
+            completion(success);
+            if (hasActiveChanged && m_gpuConnection.get())
+                configurationChanged();
+            manager->updatePresentingProcesses();
+            manager->updateSpatialExperience();
+        });
+}
 
-    completion(success);
-
-    if (hasActiveChanged)
-        configurationChanged();
-
-    manager->updatePresentingProcesses();
-    manager->updateSpatialExperience();
+void RemoteAudioSessionProxy::tryToSetActiveSync(bool active, SetActiveCompletion&& completion)
+{
+    tryToSetActive(active, WTF::move(completion));
 }
 
 void RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride(std::optional<bool>&& value)

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    window.onerror = () => {
+        assert_not_reached("error should not fire");
+    };
+    window.addEventListener("unhandledrejection", e => {
+        assert_not_reached("there should no unhandled rejected promise");
+    });
+
+    for (let i = 0; i < 3; ++i) {
+        const response = new Response(new Blob([new Uint8Array([1, 2, 3])]));
+        const reader = response.body.getReader({ mode: "byob" });
+        await reader.read(new Uint32Array(1)).then(() => assert_not_reached("should fail"), () => { });
+    }
+}, "Read too much in a blob");
+</script>
+</body>
+</html>

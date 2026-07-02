@@ -40,7 +40,7 @@ public:
     explicit NavigatorPermissions(Navigator&);
 
     static Permissions& permissions(Navigator&);
-    Permissions& NODELETE permissions();
+    Permissions& permissions();
 
 private:
     static NavigatorPermissions& from(Navigator&);

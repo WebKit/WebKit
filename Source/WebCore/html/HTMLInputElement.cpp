@@ -850,7 +850,8 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
     case AttributeNames::resultsAttr:
-        m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
+        if (document().settings().searchInputResultsAttributeEnabled())
+            m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
         break;
     case AttributeNames::autosaveAttr:
         invalidateStyleForSubtree();
@@ -1093,8 +1094,6 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
         if (CheckedPtr cache = renderer->document().existingAXObjectCache())
             cache->checkedStateChanged(*this);
     }
-
-    invalidateStyle();
 }
 
 void HTMLInputElement::setIndeterminate(bool newValue)

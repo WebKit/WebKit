@@ -56,6 +56,9 @@ protected:
 private:
     bool isSVGGeometryElement() const override { return true; }
 
+    float calculateTotalLength() const;
+    ExceptionOr<Ref<SVGPoint>> calculatePointAtLength(float distance) const;
+
     const Ref<SVGAnimatedNumber> m_pathLength { SVGAnimatedNumber::create(this) };
 };
 

@@ -250,35 +250,15 @@ PASS #228 Test that WebAssembly compilation succeeds (memory64-imports.wast:151)
 PASS #229 Test that WebAssembly instantiation fails (memory64-imports.wast:151)
 PASS #230 Test that a WebAssembly module is unlinkable
 PASS #231 Test that WebAssembly compilation succeeds (memory64-imports.wast:155)
-FAIL #232 Test that WebAssembly instantiation fails (memory64-imports.wast:155) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:427:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #233 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:427:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+PASS #232 Test that WebAssembly instantiation fails (memory64-imports.wast:155)
+PASS #233 Test that a WebAssembly module is unlinkable
 PASS #234 Test that WebAssembly compilation succeeds (memory64-imports.wast:159)
-FAIL #235 Test that WebAssembly instantiation fails (memory64-imports.wast:159) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:433:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #236 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:433:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+PASS #235 Test that WebAssembly instantiation fails (memory64-imports.wast:159)
+PASS #236 Test that a WebAssembly module is unlinkable
 PASS #237 Test that WebAssembly compilation succeeds (memory64-imports.wast:163)
-FAIL #238 Test that WebAssembly instantiation fails (memory64-imports.wast:163) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:439:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #239 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:439:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+PASS #238 Test that WebAssembly instantiation fails (memory64-imports.wast:163)
+PASS #239 Test that a WebAssembly module is unlinkable
 PASS #240 Test that WebAssembly compilation succeeds (memory64-imports.wast:167)
-FAIL #241 Test that WebAssembly instantiation fails (memory64-imports.wast:167) assert_true: instance@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:201:24
-assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:405:11
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:445:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
-FAIL #242 Test that a WebAssembly module is unlinkable assert_true: expected link error, observed [object WebAssembly.Instance] assert_unlinkable@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:404:24
-memory64_imports_wast_js@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:445:18
-global code@http://web-platform.test:8800/wasm/core/js/memory64/memory64-imports.wast.js:447:3 expected true got false
+PASS #241 Test that WebAssembly instantiation fails (memory64-imports.wast:167)
+PASS #242 Test that a WebAssembly module is unlinkable
 

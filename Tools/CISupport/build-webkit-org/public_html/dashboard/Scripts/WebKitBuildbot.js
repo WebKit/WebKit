@@ -35,6 +35,7 @@ WebKitBuildbot = function()
         "Apple-Tahoe-Release-WK2-Perf": {platform: Dashboard.Platform.macOSTahoe, debug: false, performance: true, heading: "Performance"},
         "Apple-Tahoe JSC": {platform: Dashboard.Platform.macOSTahoe, heading: "JavaScript", combinedQueues: {
             "Apple-Tahoe-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
+            "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest": {heading: "O3 Debug arm64 JSC (BuildAndTest)"},
             "Apple-Tahoe-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
         }},
         "Apple-Tahoe-World-Leaks": {platform: Dashboard.Platform.macOSTahoe, heading: "World Leaks", combinedQueues: {
@@ -49,7 +50,6 @@ WebKitBuildbot = function()
         "Apple-Sequoia JSC": {platform: Dashboard.Platform.macOSSequoia, heading: "JavaScript", combinedQueues: {
             "Apple-Sequoia-Debug-Test262-Tests": {heading: "Debug Test262 (Tests)"},
             "Apple-Sequoia-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
-            "Apple-Sequoia-AppleSilicon-O3-Debug-JSC-BuildAndTest": {heading: "O3 Debug arm64 JSC (BuildAndTest)"},
             "Apple-Sequoia-AppleSilicon-Release-JSC-Tests": {heading: "Release arm64 JSC (Tests)"},
             "Apple-Sequoia-Intel-Release-JSC-Tests": {heading: "Release x86_64 JSC (Tests)"},
         }},

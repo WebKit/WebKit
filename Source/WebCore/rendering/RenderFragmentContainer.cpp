@@ -425,7 +425,7 @@ LayoutRect RenderFragmentContainer::computedVisualOverflowRectForBox(const Rende
 LayoutRect RenderFragmentContainer::computedLayoutOverflowRectForBox(const RenderBox& box) const
 {
     ASSERT(m_fragmentedFlow->objectShouldFragmentInFlowFragment(&box, this));
-    auto clientBox = box.clientBoxRect();
+    auto clientBox = LayoutRect(box.borderLeft(), box.borderTop(), box.paddingBoxWidth(), box.paddingBoxHeight());
     if (clientBox.isEmpty())
         return { };
 

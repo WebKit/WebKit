@@ -79,6 +79,8 @@
 #include "StyleExtractor.h"
 #include "StyleKeyword+Mappings.h"
 #include "StylePropertiesInlines.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGStyleElement.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -259,7 +261,7 @@ void ReplacementFragment::removeContentsWithSideEffects()
     while (it != end) {
         Ref element = *it;
         if (isScriptElement(element) || (is<HTMLStyleElement>(element) && element->getAttribute(classAttr) != WebKitMSOListQuirksStyle)
-            || isAnyOf<HTMLBaseElement, HTMLLinkElement, HTMLMetaElement, HTMLTitleElement>(element)) {
+            || isAnyOf<HTMLBaseElement, HTMLLinkElement, HTMLMetaElement, HTMLTitleElement, SVGStyleElement>(element)) {
             elementsToRemove.append(WTF::move(element));
             it.traverseNextSkippingChildren();
             continue;
@@ -1345,9 +1347,8 @@ void ReplaceSelectionCommand::doApply()
     InsertedNodes insertedNodes;
     RefPtr refNode = fragment.firstChild();
     RefPtr node = refNode->nextSibling();
-    
-    if (refNode)
-        fragment.removeNode(*refNode);
+
+    fragment.removeNode(*refNode);
 
     RefPtr blockStart { enclosingBlock(protect(insertionPos.deprecatedNode())) };
 

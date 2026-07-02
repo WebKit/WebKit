@@ -1,16 +1,28 @@
 
 
-PASS audio metadata: timestamp
 PASS audio metadata: synchronizationSource
 PASS audio metadata: payloadType
 PASS audio metadata: contributingSources
+PASS audio metadata: rtpTimestamp
+FAIL audio metadata: receiveTime assert_equals: expected "number" but got "undefined"
+FAIL audio metadata: captureTime assert_equals: expected "number" but got "undefined"
+FAIL audio metadata: senderCaptureTimeOffset assert_equals: expected "number" but got "undefined"
+PASS audio metadata: mimeType
+PASS video metadata: synchronizationSource
+PASS video metadata: payloadType
+PASS video metadata: contributingSources
+PASS video metadata: rtpTimestamp
+FAIL video metadata: receiveTime assert_equals: expected "number" but got "undefined"
+FAIL video metadata: captureTime assert_equals: expected "number" but got "undefined"
+FAIL video metadata: senderCaptureTimeOffset assert_equals: expected "number" but got "undefined"
+PASS video metadata: mimeType
 PASS audio metadata: sequenceNumber
-PASS video metadata: timestamp
-PASS video metadata: ssrc
-PASS video metadata: csrcs
+FAIL audio metadata: audioLevel assert_equals: expected "number" but got "undefined"
+FAIL video metadata: frameId assert_equals: frameId matches (for sender and receiver) expected (undefined) undefined but got (number) 1
+PASS video metadata: dependencies
 PASS video metadata: width and height
 PASS video metadata: spatial and temporal index
-PASS video metadata: dependencies
-PASS video metadata: frameId
-PASS video metadata: type
+PASS video frame: type
+PASS audio frame: timestamp (renamed to metadata.rtpTimestamp
+PASS video frame: timestamp (renamed to metadata.rtpTimestamp
 

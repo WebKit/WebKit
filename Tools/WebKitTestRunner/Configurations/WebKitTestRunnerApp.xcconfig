@@ -30,7 +30,13 @@ PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier);
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lPAL -lWebCoreTestSupport -framework CoreGraphics -framework Foundation -framework GraphicsServices -framework ImageIO -framework IOKit -framework JavaScriptCore -framework QuartzCore -framework UIKit -framework UniformTypeIdentifiers -framework WebKit;
+WK_GAMECONTROLLER_LDFLAGS = $(WK_GAMECONTROLLER_LDFLAGS_$(WK_PLATFORM_NAME))
+WK_GAMECONTROLLER_LDFLAGS_iphoneos = -framework GameController
+WK_GAMECONTROLLER_LDFLAGS_iphonesimulator = -framework GameController
+WK_GAMECONTROLLER_LDFLAGS_xros = -framework GameController
+WK_GAMECONTROLLER_LDFLAGS_xrsimulator = -framework GameController
+
+OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lPAL -lWebCoreTestSupport -framework CoreGraphics -framework Foundation -framework GraphicsServices -framework ImageIO -framework IOKit -framework JavaScriptCore -framework QuartzCore -framework UIKit -framework UniformTypeIdentifiers -framework WebKit $(WK_GAMECONTROLLER_LDFLAGS);
 OTHER_LDFLAGS[sdk=watch*] = $(OTHER_LDFLAGS) -framework PepperUICore
 
 STRIP_STYLE = debugging;

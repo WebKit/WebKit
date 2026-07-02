@@ -33,6 +33,7 @@
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSchemeRegistry.h"
+#include "NetworkSession.h"
 #include "WebPageMessages.h"
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/ContentSecurityPolicy.h>
@@ -366,8 +367,7 @@ bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& req
     if (!networkResourceLoader)
         return false;
 
-    auto mayBlock = networkResourceLoader->parameters().mayBlockNetworkRequest;
-    if (!mayBlock)
+    if (!networkResourceLoader->parameters().mayBlockNetworkRequest)
         return false;
 
     if (RefPtr topOrigin = networkResourceLoader->parameters().topOrigin) {
@@ -375,16 +375,9 @@ bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& req
             return false;
     }
 
-    if (*mayBlock && networkResourceLoader->parameters().options.destination != FetchOptionsDestination::Script) {
-        LOAD_CHECKER_RELEASE_LOG("shouldBlockForTrackingPolicy - Blocked non-script load by tracking protections");
+    if (NetworkSession::isRequestBlockable(request)) {
+        LOAD_CHECKER_RELEASE_LOG("shouldBlockForTrackingPolicy - Blocked by tracking protections");
         return true;
-    }
-
-    if (CheckedPtr networkSession = m_networkProcess->networkSession(m_sessionID)) {
-        if (networkSession->shouldBlockRequestForTrackingPolicyAndUpdatePolicy(request, *m_webPageProxyID, *mayBlock)) {
-            LOAD_CHECKER_RELEASE_LOG("shouldBlockForTrackingPolicy - Blocked by tracking protections");
-            return true;
-        }
     }
 
     return false;

@@ -26,8 +26,12 @@
 #include "config.h"
 #include "FrameDOMAgent.h"
 
+#include "AXObjectCacheInlines.h"
+#include "AccessibilityNodeObject.h"
+#include "AccessibilityObjectInlines.h"
 #include "Attr.h"
 #include "CharacterData.h"
+#include "CommandLineAPIHost.h"
 #include "ContainerNode.h"
 #include "DOMEditor.h"
 #include "DOMPatchSupport.h"
@@ -51,7 +55,10 @@
 #include "InspectorHistory.h"
 #include "InspectorNodeFinder.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMBindingSecurity.h"
+#include "JSDOMWindowCustom.h"
 #include "JSEventListener.h"
+#include "JSNode.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
@@ -62,8 +69,11 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
+#include "WebInjectedScriptManager.h"
 #include "markup.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TopExceptionScope.h>
@@ -151,6 +161,7 @@ FrameDOMAgent::FrameDOMAgent(FrameAgentContext& context)
     , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(Ref { context.backendDispatcher }, this))
     , m_instrumentingAgents(context.instrumentingAgents)
     , m_inspectedFrame(context.inspectedFrame)
+    , m_injectedScriptManager(context.injectedScriptManager)
     , m_destroyedNodesTimer(*this, &FrameDOMAgent::destroyedNodesTimerFired)
 {
 }
@@ -173,6 +184,8 @@ void FrameDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_domEditor.reset();
     m_history.reset();
+
+    m_inspectedNode = nullptr;
 
     Ref { m_instrumentingAgents.get() }->setPersistentFrameDOMAgent(nullptr);
     m_documentRequested = false;
@@ -510,6 +523,12 @@ void FrameDOMAgent::setDocument(Document* document)
 {
     if (document == m_document.get())
         return;
+
+    // Mirror InspectorDOMAgent::didCommitLoad: drop the inspected node if it
+    // belonged to the document being navigated away from, so $0 and the
+    // Properties sidebar don't point at a stale node across a frame load.
+    if (m_inspectedNode && &m_inspectedNode->document() == m_document.get())
+        m_inspectedNode = nullptr;
 
     reset();
     m_document = document;
@@ -1445,6 +1464,448 @@ Inspector::CommandResult<void> FrameDOMAgent::markUndoableState()
     m_history->markUndoableState();
 
     return { };
+}
+
+// MARK: - JS Bridge
+
+namespace {
+
+class InspectableFrameNode final : public CommandLineAPIHost::InspectableObject {
+public:
+    explicit InspectableFrameNode(Node* node)
+        : m_node(node)
+    {
+    }
+
+    JSC::JSValue get(JSC::JSGlobalObject& state) final
+    {
+        return InspectorDOMAgent::nodeAsScriptValue(state, m_node.get());
+    }
+
+private:
+    RefPtr<Node> m_node;
+};
+
+} // namespace
+
+RefPtr<Inspector::Protocol::Runtime::RemoteObject> FrameDOMAgent::resolveNodeInternal(Node* node, const String& objectGroup)
+{
+    if (!node)
+        return nullptr;
+
+    RefPtr document = &node->document();
+    if (RefPtr templateHost = document->templateDocumentHost())
+        document = WTF::move(templateHost);
+    RefPtr frame = document->frame();
+    if (!frame)
+        return nullptr;
+
+    auto& globalObject = mainWorldGlobalObject(*frame);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
+    if (injectedScript.hasNoValue())
+        return nullptr;
+
+    return injectedScript.wrapObject(InspectorDOMAgent::nodeAsScriptValue(globalObject, node), objectGroup);
+}
+
+RefPtr<Node> FrameDOMAgent::nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId& objectId)
+{
+    auto injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue())
+        return nullptr;
+
+    return InspectorDOMAgent::scriptValueAsNode(injectedScript.findObjectById(objectId));
+}
+
+Inspector::CommandResult<Ref<Inspector::Protocol::Runtime::RemoteObject>> FrameDOMAgent::resolveNode(int nodeId, const String& objectGroup)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    auto object = resolveNodeInternal(node.get(), objectGroup);
+    if (!object)
+        return makeUnexpected("Missing injected script for given nodeId"_s);
+
+    return object.releaseNonNull();
+}
+
+Inspector::CommandResult<int> FrameDOMAgent::requestNode(const String& objectId)
+{
+    RefPtr node = nodeForObjectId(objectId);
+    if (!node)
+        return makeUnexpected("Missing node for given objectId"_s);
+
+    Inspector::Protocol::ErrorString errorString;
+    auto nodeId = pushNodePathToFrontend(errorString, node.get());
+    if (!nodeId)
+        return makeUnexpected(errorString);
+
+    return nodeId;
+}
+
+Inspector::CommandResult<void> FrameDOMAgent::setInspectedNode(int nodeId)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    if (node->isInUserAgentShadowTree() && !m_allowEditingUserAgentShadowTrees)
+        return makeUnexpected("Node for given nodeId is in a shadow tree"_s);
+
+    m_inspectedNode = node;
+
+    if (RefPtr commandLineAPIHost = downcast<WebInjectedScriptManager>(m_injectedScriptManager.get()).commandLineAPIHost())
+        commandLineAPIHost->addInspectedObject(makeUnique<InspectableFrameNode>(node.get()));
+
+    return { };
+}
+
+// MARK: - Accessibility
+
+void FrameDOMAgent::processAccessibilityChildren(AXCoreObject& axObject, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>& childNodeIds)
+{
+    const auto& children = axObject.unignoredChildren();
+    if (!children.size())
+        return;
+
+    for (const auto& childObject : children) {
+        if (RefPtr childNode = childObject->node())
+            childNodeIds.addItem(pushNodePathToFrontend(childNode.get()));
+        else
+            processAccessibilityChildren(childObject.get(), childNodeIds);
+    }
+}
+
+Ref<Inspector::Protocol::DOM::AccessibilityProperties> FrameDOMAgent::buildObjectForAccessibilityProperties(Node& node)
+{
+    AXObjectCache::enableAccessibility();
+
+    RefPtr<Node> activeDescendantNode;
+    bool busy = false;
+    auto checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::False;
+    auto switchState = Inspector::Protocol::DOM::AccessibilityProperties::SwitchState::Off;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> childNodeIds;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> controlledNodeIds;
+    auto currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
+    bool exists = false;
+    bool expanded = false;
+    bool disabled = false;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> flowedNodeIds;
+    bool focused = false;
+    bool ignored = true;
+    bool ignoredByDefault = false;
+    auto invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False;
+    bool hidden = false;
+    String label;
+    bool liveRegionAtomic = false;
+    RefPtr<JSON::ArrayOf<String>> liveRegionRelevant;
+    auto liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Off;
+    RefPtr<Node> mouseEventNode;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> ownedNodeIds;
+    RefPtr<Node> parentNode;
+    bool pressed = false;
+    bool readonly = false;
+    bool required = false;
+    String role;
+    bool selected = false;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>> selectedChildNodeIds;
+    bool isSwitch = false;
+    bool supportsChecked = false;
+    bool supportsExpanded = false;
+    bool supportsLiveRegion = false;
+    bool supportsPressed = false;
+    bool supportsRequired = false;
+    bool supportsFocused = false;
+    bool isPopupButton = false;
+    int headingLevel = 0;
+    unsigned hierarchicalLevel = 0;
+    unsigned level = 0;
+
+    if (CheckedPtr axObjectCache = protect(node.document())->axObjectCache()) {
+        if (RefPtr axObject = axObjectCache->getOrCreate(node)) {
+
+            if (RefPtr activeDescendant = axObject->activeDescendant())
+                activeDescendantNode = activeDescendant->node();
+
+            RefPtr current = axObject;
+            while (!busy && current) {
+                busy = current->isBusy();
+                current = current->parentObject();
+            }
+
+            isSwitch = axObject->isSwitch();
+            supportsChecked = axObject->supportsChecked();
+            if (supportsChecked) {
+                AccessibilityButtonState checkValue = axObject->checkboxOrRadioValue();
+                if (checkValue == AccessibilityButtonState::On) {
+                    if (isSwitch)
+                        switchState = Inspector::Protocol::DOM::AccessibilityProperties::SwitchState::On;
+                    else
+                        checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
+                } else if (checkValue == AccessibilityButtonState::Mixed && !isSwitch)
+                    checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::Mixed;
+                else if (axObject->isChecked()) {
+                    if (isSwitch)
+                        switchState = Inspector::Protocol::DOM::AccessibilityProperties::SwitchState::On;
+                    else
+                        checked = Inspector::Protocol::DOM::AccessibilityProperties::Checked::True;
+                }
+            }
+
+            if (!axObject->children().isEmpty()) {
+                childNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
+                processAccessibilityChildren(*axObject, *childNodeIds);
+            }
+
+            auto controlledElements = axObject->elementsFromAttribute(HTMLNames::aria_controlsAttr);
+            if (controlledElements.size()) {
+                controlledNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
+                for (auto& controlledElement : controlledElements) {
+                    if (auto controlledElementId = pushNodePathToFrontend(controlledElement.ptr()))
+                        controlledNodeIds->addItem(controlledElementId);
+                }
+            }
+
+            switch (axObject->currentState()) {
+            case AccessibilityCurrentState::False:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::False;
+                break;
+            case AccessibilityCurrentState::Page:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Page;
+                break;
+            case AccessibilityCurrentState::Step:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Step;
+                break;
+            case AccessibilityCurrentState::Location:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Location;
+                break;
+            case AccessibilityCurrentState::Date:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Date;
+                break;
+            case AccessibilityCurrentState::Time:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::Time;
+                break;
+            case AccessibilityCurrentState::True:
+                currentState = Inspector::Protocol::DOM::AccessibilityProperties::Current::True;
+                break;
+            }
+
+            disabled = !axObject->isEnabled();
+            exists = true;
+
+            supportsExpanded = axObject->supportsExpanded();
+            if (supportsExpanded)
+                expanded = axObject->isExpanded();
+
+            auto flowedElements = axObject->elementsFromAttribute(HTMLNames::aria_flowtoAttr);
+            if (flowedElements.size()) {
+                flowedNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
+                for (auto& flowedElement : flowedElements) {
+                    if (auto flowedElementId = pushNodePathToFrontend(flowedElement.ptr()))
+                        flowedNodeIds->addItem(flowedElementId);
+                }
+            }
+
+            if (is<Element>(node)) {
+                supportsFocused = axObject->canSetFocusAttribute();
+                if (supportsFocused)
+                    focused = axObject->isFocused();
+            }
+
+            ignored = axObject->isIgnored();
+            ignoredByDefault = axObject->isIgnoredByDefault();
+
+            String invalidValue = axObject->invalidStatus();
+            if (invalidValue == "false"_s)
+                invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False;
+            else if (invalidValue == "grammar"_s)
+                invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::Grammar;
+            else if (invalidValue == "spelling"_s)
+                invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::Spelling;
+            else
+                invalid = Inspector::Protocol::DOM::AccessibilityProperties::Invalid::True;
+
+            if (axObject->isHidden())
+                hidden = true;
+
+            label = axObject->computedLabel();
+
+            if (axObject->supportsLiveRegion()) {
+                supportsLiveRegion = true;
+                liveRegionAtomic = axObject->liveRegionAtomic();
+
+                auto ariaRelevantAttrValue = axObject->liveRegionRelevant();
+                if (!ariaRelevantAttrValue.isEmpty()) {
+                    String ariaRelevantAdditions = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Additions);
+                    String ariaRelevantRemovals = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Removals);
+                    String ariaRelevantText = Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::DOM::LiveRegionRelevant::Text);
+                    liveRegionRelevant = JSON::ArrayOf<String>::create();
+                    SpaceSplitString values(AtomString { ariaRelevantAttrValue }, SpaceSplitString::ShouldFoldCase::Yes);
+                    if (values.contains("all"_s)) {
+                        liveRegionRelevant->addItem(ariaRelevantAdditions);
+                        liveRegionRelevant->addItem(ariaRelevantRemovals);
+                        liveRegionRelevant->addItem(ariaRelevantText);
+                    } else {
+                        if (values.contains(AtomString { ariaRelevantAdditions }))
+                            liveRegionRelevant->addItem(ariaRelevantAdditions);
+                        if (values.contains(AtomString { ariaRelevantRemovals }))
+                            liveRegionRelevant->addItem(ariaRelevantRemovals);
+                        if (values.contains(AtomString { ariaRelevantText }))
+                            liveRegionRelevant->addItem(ariaRelevantText);
+                    }
+                }
+
+                String ariaLive = axObject->liveRegionStatus();
+                if (ariaLive == "assertive"_s)
+                    liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
+                else if (ariaLive == "polite"_s)
+                    liveRegionStatus = Inspector::Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Polite;
+            }
+
+            if (RefPtr clickableObject = axObject->clickableSelfOrAncestor(ClickHandlerFilter::IncludeBody))
+                mouseEventNode = clickableObject->node();
+
+            if (axObject->supportsARIAOwns()) {
+                auto ownedElements = axObject->elementsFromAttribute(HTMLNames::aria_ownsAttr);
+                if (ownedElements.size()) {
+                    ownedNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
+                    for (auto& ownedElement : ownedElements) {
+                        if (auto ownedElementId = pushNodePathToFrontend(ownedElement.ptr()))
+                            ownedNodeIds->addItem(ownedElementId);
+                    }
+                }
+            }
+
+            if (RefPtr parentObject = axObject->parentObjectUnignored())
+                parentNode = parentObject->node();
+
+            supportsPressed = axObject->pressedIsPresent();
+            if (supportsPressed)
+                pressed = axObject->isPressed();
+
+            if (axObject->isTextControl())
+                readonly = !axObject->canSetValueAttribute();
+
+            supportsRequired = axObject->supportsRequiredAttribute();
+            if (supportsRequired)
+                required = axObject->isRequired();
+
+            role = axObject->computedRoleString();
+            selected = axObject->isSelected();
+
+            auto selectedChildren = axObject->selectedChildren();
+            if (selectedChildren.size()) {
+                selectedChildNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
+                for (auto& selectedChildObject : selectedChildren) {
+                    if (RefPtr selectedChildNode = selectedChildObject->node()) {
+                        if (auto selectedChildNodeId = pushNodePathToFrontend(selectedChildNode.get()))
+                            selectedChildNodeIds->addItem(selectedChildNodeId);
+                    }
+                }
+            }
+
+            headingLevel = axObject->headingLevel();
+            hierarchicalLevel = axObject->hierarchicalLevel();
+
+            level = hierarchicalLevel ? hierarchicalLevel : headingLevel;
+            isPopupButton = axObject->isPopUpButton() || axObject->selfOrAncestorLinkHasPopup();
+        }
+    }
+
+    auto value = Inspector::Protocol::DOM::AccessibilityProperties::create()
+        .setExists(exists)
+        .setLabel(label)
+        .setRole(role)
+        .setNodeId(pushNodePathToFrontend(&node))
+        .release();
+
+    if (exists) {
+        if (activeDescendantNode) {
+            if (auto activeDescendantNodeId = pushNodePathToFrontend(activeDescendantNode.get()))
+                value->setActiveDescendantNodeId(activeDescendantNodeId);
+        }
+        if (busy)
+            value->setBusy(busy);
+
+        if (isSwitch)
+            value->setSwitchState(switchState);
+        else if (supportsChecked)
+            value->setChecked(checked);
+
+        if (childNodeIds)
+            value->setChildNodeIds(childNodeIds.releaseNonNull());
+        if (controlledNodeIds)
+            value->setControlledNodeIds(controlledNodeIds.releaseNonNull());
+        if (currentState != Inspector::Protocol::DOM::AccessibilityProperties::Current::False)
+            value->setCurrent(currentState);
+        if (disabled)
+            value->setDisabled(disabled);
+        if (supportsExpanded)
+            value->setExpanded(expanded);
+        if (flowedNodeIds)
+            value->setFlowedNodeIds(flowedNodeIds.releaseNonNull());
+        if (supportsFocused)
+            value->setFocused(focused);
+        if (ignored)
+            value->setIgnored(ignored);
+        if (ignoredByDefault)
+            value->setIgnoredByDefault(ignoredByDefault);
+        if (invalid != Inspector::Protocol::DOM::AccessibilityProperties::Invalid::False)
+            value->setInvalid(invalid);
+        if (hidden)
+            value->setHidden(hidden);
+        if (supportsLiveRegion) {
+            value->setLiveRegionAtomic(liveRegionAtomic);
+            if (liveRegionRelevant && liveRegionRelevant->length())
+                value->setLiveRegionRelevant(liveRegionRelevant.releaseNonNull());
+            value->setLiveRegionStatus(liveRegionStatus);
+        }
+        if (mouseEventNode) {
+            if (auto mouseEventNodeId = pushNodePathToFrontend(mouseEventNode))
+                value->setMouseEventNodeId(mouseEventNodeId);
+        }
+        if (ownedNodeIds)
+            value->setOwnedNodeIds(ownedNodeIds.releaseNonNull());
+        if (parentNode) {
+            if (auto parentNodeId = pushNodePathToFrontend(parentNode.get()))
+                value->setParentNodeId(parentNodeId);
+        }
+        if (supportsPressed)
+            value->setPressed(pressed);
+        if (readonly)
+            value->setReadonly(readonly);
+        if (supportsRequired)
+            value->setRequired(required);
+        if (selected)
+            value->setSelected(selected);
+        if (selectedChildNodeIds)
+            value->setSelectedChildNodeIds(selectedChildNodeIds.releaseNonNull());
+
+        if (headingLevel)
+            value->setHeadingLevel(level);
+        else if (level)
+            value->setHierarchyLevel(level);
+        if (isPopupButton)
+            value->setIsPopUpButton(isPopupButton);
+    }
+
+    return value;
+}
+
+Inspector::CommandResult<Ref<Inspector::Protocol::DOM::AccessibilityProperties>> FrameDOMAgent::getAccessibilityPropertiesForNode(int nodeId)
+{
+    Inspector::Protocol::ErrorString errorString;
+
+    RefPtr node = assertNode(errorString, nodeId);
+    if (!node)
+        return makeUnexpected(errorString);
+
+    return buildObjectForAccessibilityProperties(*node);
 }
 
 } // namespace WebCore

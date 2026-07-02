@@ -48,7 +48,7 @@ PASS PerformanceNavigationTiming interface: performance.getEntriesByType("naviga
 FAIL PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "criticalCHRestart" with the proper type assert_inherits: property "criticalCHRestart" not found in prototype chain
 FAIL PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "notRestoredReasons" with the proper type assert_inherits: property "notRestoredReasons" not found in prototype chain
 PASS PerformanceNavigationTiming interface: performance.getEntriesByType("navigation")[0] must inherit property "toJSON()" with the proper type
-FAIL PerformanceNavigationTiming interface: default toJSON operation on performance.getEntriesByType("navigation")[0] Type RenderBlockingStatusType not found
+FAIL PerformanceNavigationTiming interface: default toJSON operation on performance.getEntriesByType("navigation")[0] assert_true: property "criticalCHRestart" should be present in the output of PerformanceNavigationTiming.prototype.toJSON() expected true got false
 PASS PerformanceTiming interface: existence and properties of interface object
 PASS PerformanceTiming interface object length
 PASS PerformanceTiming interface object name

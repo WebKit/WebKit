@@ -189,9 +189,8 @@ def generate_process_sync_client_impl(prefix, synched_datas):
             result.append('#if %s' % data.conditional)
         result.append('void %sSyncClient::broadcast%sToOtherProcesses(const %s& data)' % (prefix, data.name, data.fully_qualified_type))
         result.append('{')
-        result.append('    %sSyncDataVariant dataVariant;' % (prefix))
-        result.append('    dataVariant.emplace<std::to_underlying(%sSyncDataType::%s)>(data);' % (prefix, data.name))
-        result.append('    broadcast%sSyncDataToOtherProcesses({ %sSyncDataType::%s, WTF::move(dataVariant) });' % (prefix, prefix, data.name))
+        result.append('    broadcast%sSyncDataToOtherProcesses({ %sSyncDataVariant { WTF::InPlaceIndex<std::to_underlying(%sSyncDataType::%s)>, data } });' % (prefix, prefix, prefix, data.name))
+
         result.append('}')
         if data.conditional is not None:
             result.append('#endif')
@@ -202,7 +201,6 @@ def generate_process_sync_client_impl(prefix, synched_datas):
 
 _process_sync_data_header_suffix = """
 struct {prefix}SyncSerializationData {{
-    {prefix}SyncDataType type;
     {prefix}SyncDataVariant value;
 }};
 
@@ -302,7 +300,7 @@ def generate_synched_data_header(prefix, variant_sorted_synched_datas, sync_data
         if data.conditional is not None:
             result.append('#if %s' % data.conditional)
         name = data.name[0].lower() + data.name[1:]
-        result.append('    %s %s = { };' % (data.fully_qualified_type, name))
+        result.append('    %s %s { };' % (data.fully_qualified_type, name))
         if data.conditional is not None:
             result.append('#endif')
 
@@ -347,7 +345,7 @@ namespace WebCore {{
 
 void data_type_name::update(const {prefix}SyncSerializationData& data)
 {{
-    switch (data.type) {{"""
+    switch (static_cast<{prefix}SyncDataType>(data.value.index())) {{"""
 
 _synched_data_impl_midfix = """    default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -454,7 +452,6 @@ header: <WebCore/{prefix}SyncData.h>
 
 _process_sync_data_serialization_in_suffix = """
 [CustomHeader] struct WebCore::{prefix}SyncSerializationData {{
-    WebCore::{prefix}SyncDataType type;
     WebCore::{prefix}SyncDataVariant value;
 }};
 """
@@ -476,17 +473,6 @@ def generate_process_sync_data_serialiation_in(prefix, variant_sorted_synched_da
 
     result.append('};')
     result.append('')
-
-    result.append("enum class WebCore::%sSyncDataType : uint8_t {" % prefix)
-    for data in variant_sorted_synched_datas:
-        if data.conditional is not None:
-            result.append('#if %s' % data.conditional)
-        result.append('    %s,' % data.name)
-        if data.conditional is not None:
-            result.append('#endif')
-
-    result.append("};")
-    result.append(" ")
 
     for data in variant_sorted_synched_datas:
         if data.conditional is not None:

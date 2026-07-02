@@ -910,6 +910,23 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (willConstructCustomElement) [[unlikely]] {
         customElementReactionStack.reset();
         markupInsertionCountIncrementer.reset();
+        // Draining the reaction stack runs the custom element constructor, which may
+        // have re-parented newElement, adopted it into another document, or detached
+        // the current parser node. parserAppendChild requires its argument to have no
+        // parent and to share our document.
+        // FIXME: We are misusing the upgrade-an-element machinery here to emulate
+        // synchronous custom element construction. Per HTML's "create an element for
+        // a token" with willExecuteScript=true we should run the constructor inside
+        // Document::createElement (via constructElementWithFallback), which post-
+        // validates parent/children/attributes/document and falls back to
+        // HTMLUnknownElement on violation, like HTMLDocumentParser does in
+        // runScriptsForPausedTreeBuilder. Switching to that would also fix the
+        // spec-incorrect attribute-ordering above (we currently set attributes before
+        // the constructor runs).
+        if (!m_currentNode || newElement->parentNode() || &newElement->document() != &m_currentNode->document()) {
+            stopParsing();
+            return;
+        }
     }
 
     newElement->beginParsingChildren();

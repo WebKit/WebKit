@@ -290,6 +290,20 @@ void Debugger::willCallNativeExecutable(CallFrame* callFrame)
     });
 }
 
+void Debugger::didCreateInternalFunction(InternalFunction& internalFunction)
+{
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.didCreateInternalFunction(internalFunction);
+    });
+}
+
+void Debugger::willCallInternalFunction(InternalFunction& internalFunction)
+{
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.willCallInternalFunction(internalFunction);
+    });
+}
+
 void Debugger::setClient(Client* client)
 {
     ASSERT(!!m_client != !!client);

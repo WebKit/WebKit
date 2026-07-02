@@ -57,14 +57,13 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     if (reason) [[unlikely]]
         *reason = "TextTrack is an opaque root"_s;
 
-    return containsWebCoreOpaqueRoot(visitor, textTrackCue.track());
+    SUPPRESS_UNCHECKED_ARG return containsWebCoreOpaqueRoot(visitor, textTrackCue.track());
 }
 
 template<typename Visitor>
 void JSTextTrackCue::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    if (auto* textTrack = wrapped().track())
-        addWebCoreOpaqueRoot(visitor, *textTrack);
+    wrapped().visitAdditionalChildrenInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSTextTrackCue);

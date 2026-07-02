@@ -29,5 +29,5 @@ PASS LargestContentfulPaint interface: lcp must inherit property "id" with the p
 PASS LargestContentfulPaint interface: lcp must inherit property "url" with the proper type
 PASS LargestContentfulPaint interface: lcp must inherit property "element" with the proper type
 PASS LargestContentfulPaint interface: lcp must inherit property "toJSON()" with the proper type
-FAIL LargestContentfulPaint interface: default toJSON operation on lcp assert_true: property "navigationId" should be present in the output of LargestContentfulPaint.prototype.toJSON() expected true got false
+PASS LargestContentfulPaint interface: default toJSON operation on lcp
 

@@ -148,7 +148,7 @@ ExceptionOr<void> ReadableByteStreamController::closeForBindings(JSDOMGlobalObje
     if (protect(stream())->state() != ReadableStream::State::Readable)
         return Exception { ExceptionCode::TypeError, "controller's stream is not readable"_s };
 
-    close(globalObject);
+    close(globalObject, ShouldThrowOnError::Yes);
     return { };
 }
 
@@ -248,7 +248,12 @@ void ReadableByteStreamController::didStart(JSDOMGlobalObject& globalObject)
 // Part of https://streams.spec.whatwg.org/#readablestream-close
 void ReadableByteStreamController::closeAndRespondToPendingPullIntos(JSDOMGlobalObject& globalObject)
 {
-    close(globalObject);
+    auto& vm = globalObject.vm();
+    JSC::JSLockHolder lock(vm);
+
+    if (!close(globalObject, ShouldThrowOnError::No))
+        return;
+
     while (!m_pendingPullIntos.isEmpty())
         respond(globalObject, 0);
 }

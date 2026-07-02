@@ -8,17 +8,7 @@ video {
     outline: 1px solid black;
 }
 
-/* Reset all css properties that can possibly be set on ::cue (8.2.1. The ::cue pseudo-element) to override any system styles. */
 ::cue {
     color: green;
-    opacity: 1;
-    visibility: visibile;
-    text-decoration: none;
-    text-shadow: none;
-    background: rgba(0,0,0,0.8);
-    outline: none;
     font: 9px Ahem, sans-serif; /* Use Ahem because it improves test reliability. */
-    white-space: pre-line;
-    text-combine-upright: none;
-    ruby-position: alternate;
 }

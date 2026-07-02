@@ -172,6 +172,12 @@ bool defaultMutationEventsEnabled()
     return WTF::CocoaApplication::isAppleApplication() || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MutationEventsDisabledByDefault);
 }
 
+bool defaultSearchInputResultsAttributeEnabled()
+{
+    static bool result = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DisableNonStandardSearchInputResultsAttribute);
+    return result;
+}
+
 bool defaultAttachmentElementEnabled()
 {
 #if PLATFORM(IOS_FAMILY)

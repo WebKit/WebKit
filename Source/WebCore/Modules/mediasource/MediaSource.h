@@ -136,7 +136,6 @@ public:
 
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
-    static const MediaTime& NODELETE currentTimeFudgeFactor();
     static bool contentTypeShouldGenerateTimestamps(const ContentType&);
 
 #if !RELEASE_LOG_DISABLED

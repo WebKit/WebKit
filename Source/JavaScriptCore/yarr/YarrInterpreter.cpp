@@ -548,6 +548,9 @@ public:
         if (characterClass->m_table && ch < CharacterClass::tableSize)
             return static_cast<bool>(characterClass->m_table[ch]);
 
+        if (characterClass->m_latin1Table && isLatin1(ch))
+            return static_cast<bool>(characterClass->m_latin1Table->data[ch]);
+
         const size_t thresholdForBinarySearch = 6;
 
         if (!isLatin1(ch)) {

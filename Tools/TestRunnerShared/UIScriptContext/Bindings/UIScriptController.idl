@@ -409,6 +409,8 @@ interface UIScriptController {
 
     undefined findString(DOMString string, unsigned long options, unsigned long maxCount);
 
+    undefined findStringMatchesUsingFindInteraction(DOMString string, object callback);
+
     undefined presentFindNavigator();
     undefined dismissFindNavigator();
 

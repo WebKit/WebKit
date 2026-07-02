@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a cross-origin parent cannot use iframe.onload timing to infer an iframe's post-redirect URL.");
+jsTestIsAsync = true;
+
+const REDIRECT_TARGET = "http://localhost:8000/navigation/resources/success.html";
+const ENTRY           = "http://localhost:8000/resources/redirect.py?code=302&url=" + encodeURIComponent(REDIRECT_TARGET);
+// Same file as REDIRECT_TARGET but a different URL, so probing with it triggers a
+// cross-document navigation (the URL minus fragment differs).
+const SIBLING         = REDIRECT_TARGET + "?sibling";
+
+const iframe = document.createElement("iframe");
+document.body.appendChild(iframe);
+
+function loadEntry() {
+    return new Promise(resolve => {
+        // clear subsequent iframe onloads
+        iframe.onload = () => { iframe.onload = null; resolve(); };
+        // add some randomness to the URL each time loadEntry 
+        // is called to force a fresh navigation
+        iframe.src = ENTRY + "&_=" + Math.random();
+    });
+}
+
+// Oracle which tells the attacker if the guess URL is correct. 
+// If the guess matches the iframe's URL, then the navigation is
+// treated as same-document and an attacker can observe that no onload 
+// event fires (the 500ms timer wins and promise resolves to true).
+// If the guess is wrong, the navigation is cross-document which will fire
+// and onload event (promise resolves to false).
+function probe(guess) {
+    return new Promise(resolve => {
+        iframe.onload = null;
+        for (let i = 0; i < 5; ++i)
+            iframe.src = guess + "#" + Math.random();
+        const timer = setTimeout(() => { iframe.onload = null; resolve(true); }, 500);
+        iframe.onload = () => {
+            clearTimeout(timer);
+            iframe.onload = null;
+            resolve(false);
+        };
+    });
+}
+
+(async function() {
+    // Sanity: probing with an unrelated URL is a cross-document navigation; load fires asynchronously
+    // after the writes finish, so the handler-last pattern still catches it.
+    await loadEntry();
+    const oracleClaimsSiblingMatches = await probe(SIBLING);
+    if (!oracleClaimsSiblingMatches)
+        testPassed("Probing with a different URL fired iframe.onload (cross-document navigation).");
+    else
+        testFailed("Sanity check failed: cross-document navigation did not fire iframe.onload.");
+
+    // The leak: probing with the iframe's current post-redirect URL should also let the parent observe load.
+    // Without the fix, WebKit fires the load synchronously during the same-document fragment writes,
+    // before the handler is installed, so the handler is never called and the 500ms timer wins. That
+    // asymmetry is the cross-origin URL inference primitive.
+    await loadEntry();
+    const oracleClaimsRedirectTargetMatches = await probe(REDIRECT_TARGET);
+    if (!oracleClaimsRedirectTargetMatches)
+        testPassed("Probing with the iframe's post-redirect URL was observably indistinguishable from probing with any other URL (no oracle).");
+    else
+        testFailed("Probing with the iframe's post-redirect URL did NOT fire iframe.onload within 500ms -- a cross-origin parent can use this asymmetry to learn the iframe's post-redirect URL.");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

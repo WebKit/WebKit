@@ -481,7 +481,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'test262-test'
         ],
-        'Apple-Sequoia-AppleSilicon-O3-Debug-JSC-BuildAndTest': [
+        'Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -837,7 +837,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'jhbuild',
             'compile-webkit',
-            'generate-jsc-bundle',
             'trigger'
         ],
         'GTK-Linux-64-bit-Release-Clang-Build': [
@@ -1000,19 +999,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'jhbuild',
             'compile-webkit',
-            'generate-minibrowser-bundle'
-        ],
-        'GTK-Linux-64bit-Release-Packaging-Nightly': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'kill-old-processes',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'jhbuild',
-            'compile-webkit',
+            'generate-jsc-bundle',
             'generate-minibrowser-bundle'
         ],
         'GTK-Linux-64-bit-Release-GTK3-Build': [

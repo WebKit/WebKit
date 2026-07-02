@@ -248,3 +248,27 @@ nonisolated(nonsending) public func withSwizzledObjectiveCClassMethod<Result, Fa
 
     return try await body()
 }
+
+/// Creates a tuple of a statically known type from some arbitrary sequence at runtime.
+///
+/// It is invalid to create a tuple from a sequence with a differing number of elements, or if the type of the elements do not match those of the tuple.
+///
+/// - Parameters:
+///   - type: The type of the tuple.
+///   - sequence: The sequence to create the tuple from.
+/// - Returns: A tuple whose elements are equal to those of the sequence and whose type is equal to `type`.
+public func createTuple<S, each T>(of type: (repeat each T).Type, from sequence: S) -> (repeat each T) where S: Sequence {
+    var iterator = sequence.makeIterator()
+
+    func extract<Element>(_: Element.Type, iterator: inout S.Iterator) -> Element {
+        guard let element = iterator.next() else {
+            preconditionFailure("The sequence has fewer elements than the type of the tuple.")
+        }
+        guard let typed = element as? Element else {
+            preconditionFailure("Invalid type (expected: \(Element.self))")
+        }
+        return typed
+    }
+
+    return (repeat extract((each T).self, iterator: &iterator))
+}

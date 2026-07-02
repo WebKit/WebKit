@@ -124,6 +124,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (id)lineEndMarkerForMarker:(id)marker;
 - (NSArray *)misspellingTextMarkerRange:(NSArray *)startTextMarkerRange forward:(BOOL)forward;
 - (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
+- (NSNumber *)lineNumberForIndex:(NSUInteger)index;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -994,7 +995,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() cons
 
 int AccessibilityUIElement::lineForIndex(int index)
 {
-    return -1;
+    NSNumber *lineNumber = [m_element lineNumberForIndex:index];
+    if (![lineNumber isKindOfClass:[NSNumber class]])
+        return -1;
+    return [lineNumber intValue];
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)

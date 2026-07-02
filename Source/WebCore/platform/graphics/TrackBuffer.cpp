@@ -55,21 +55,23 @@ static inline MediaTime roundTowardsTimeScaleWithRoundingMargin(const MediaTime&
     }
 };
 
-UniqueRef<TrackBuffer> TrackBuffer::create(RefPtr<MediaDescription>&& description)
+UniqueRef<TrackBuffer> TrackBuffer::create(RefPtr<MediaDescription>&& description, IsAcceptableEnqueueGapFn&& isAcceptableEnqueueGap)
 {
-    return create(WTF::move(description), MediaTime::zeroTime());
+    return makeUniqueRef<TrackBuffer>(WTF::move(description), WTF::move(isAcceptableEnqueueGap));
 }
 
-UniqueRef<TrackBuffer> TrackBuffer::create(RefPtr<MediaDescription>&& description, const MediaTime& discontinuityTolerance)
-{
-    return makeUniqueRef<TrackBuffer>(WTF::move(description), discontinuityTolerance);
-}
-
-TrackBuffer::TrackBuffer(RefPtr<MediaDescription>&& description, const MediaTime& discontinuityTolerance)
+TrackBuffer::TrackBuffer(RefPtr<MediaDescription>&& description, IsAcceptableEnqueueGapFn&& isAcceptableEnqueueGap)
     : m_description(WTF::move(description))
-    , m_enqueueDiscontinuityBoundary(discontinuityTolerance)
-    , m_discontinuityTolerance(discontinuityTolerance)
+    , m_enqueueDiscontinuityBoundary(PlatformTimeRanges::timeFudgeFactor())
+    , m_isAcceptableEnqueueGap(WTF::move(isAcceptableEnqueueGap))
 {
+}
+
+bool TrackBuffer::isAcceptableEnqueueGap(const MediaTime& fromTime, const MediaTime& toTime) const
+{
+    if (toTime - fromTime <= PlatformTimeRanges::timeFudgeFactor())
+        return true;
+    return m_isAcceptableEnqueueGap && m_isAcceptableEnqueueGap(fromTime, toTime);
 }
 
 MediaTime TrackBuffer::maximumBufferedTime() const
@@ -202,7 +204,8 @@ RefPtr<MediaSample> TrackBuffer::nextSample()
 
     Ref sample = decodeQueue().begin()->second;
 
-    if (sample->decodeTime() > enqueueDiscontinuityBoundary()) {
+    if (sample->decodeTime() > enqueueDiscontinuityBoundary()
+        && (!m_isAcceptableEnqueueGap || !m_isAcceptableEnqueueGap(m_lastEnqueueDecodeEnd, sample->decodeTime()))) {
         WARNING_LOG(LOGIDENTIFIER, "bailing early because of unbuffered gap, new sample DTS: ", sample->decodeTime(), " >= the current discontinuity boundary: ", enqueueDiscontinuityBoundary());
         return { };
     }
@@ -216,7 +219,8 @@ RefPtr<MediaSample> TrackBuffer::nextSample()
 
     setLastEnqueuedDecodeKey({ sample->decodeTime(), sample->presentationTime() });
     auto decodeEnd = std::max(sample->decodeTime() + sample->duration(), samplePresentationEnd);
-    setEnqueueDiscontinuityBoundary(decodeEnd + m_discontinuityTolerance);
+    m_lastEnqueueDecodeEnd = decodeEnd;
+    setEnqueueDiscontinuityBoundary(decodeEnd + PlatformTimeRanges::timeFudgeFactor());
 
     m_minimumEnqueuedPresentationTime = MediaTime::invalidTime();
     if (m_hasOutOfOrderFrames)
@@ -263,10 +267,11 @@ void TrackBuffer::updateMinimumUpcomingPresentationTime()
         m_minimumEnqueuedPresentationTime = MediaTime::invalidTime();
 }
 
-bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& timeFudgeFactor, bool isEnded)
+bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, bool isEnded)
 {
     clearDecodeQueue();
-    m_enqueueDiscontinuityBoundary = time + m_discontinuityTolerance;
+    m_lastEnqueueDecodeEnd = time;
+    m_enqueueDiscontinuityBoundary = time + PlatformTimeRanges::timeFudgeFactor();
 
     m_needsReenqueueing = false;
 
@@ -276,10 +281,11 @@ bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& 
     // Find the sample which contains the current presentation time.
     auto currentSamplePTSIterator = m_samples.presentationOrder().findSampleContainingPresentationTime(time);
 
-    // Find the next sample, so long as its presentation start time is within the timeFudgeFactor.
+    // Find the next sample, so long as its presentation start time is within
+    // the gap-skipping policy from the seek target.
     if (currentSamplePTSIterator == m_samples.presentationOrder().end()) {
         auto nextSampleIterator = m_samples.presentationOrder().findSampleStartingOnOrAfterPresentationTime(time);
-        if ((nextSampleIterator->first - time) <= timeFudgeFactor)
+        if (nextSampleIterator != m_samples.presentationOrder().end() && isAcceptableEnqueueGap(time, nextSampleIterator->first))
             currentSamplePTSIterator = nextSampleIterator;
     }
 
@@ -431,9 +437,9 @@ PlatformTimeRanges TrackBuffer::removeSamples(const DecodeOrderSampleMap::MapTyp
     //     allowed by contiguousFrameTolerance).
     PlatformTimeRanges clippedErasedRanges;
     PlatformTimeRanges additionalErasedRanges;
-    for (unsigned i = 0; i < erasedRanges.length(); ++i) {
-        auto erasedStart = erasedRanges.start(i);
-        auto erasedEnd = erasedRanges.end(i);
+    for (auto& range : erasedRanges.span()) {
+        auto erasedStart = range.start;
+        auto erasedEnd = range.end;
 
         auto startIterator = m_samples.presentationOrder().reverseFindSampleBeforePresentationTime(erasedStart);
         if (startIterator == m_samples.presentationOrder().rend())

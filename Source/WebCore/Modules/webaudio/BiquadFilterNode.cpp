@@ -28,6 +28,8 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "BiquadFilterNode.h"
+
+#include "BaseAudioContext.h"
 #include "ExceptionOr.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -70,6 +72,11 @@ BiquadFilterType BiquadFilterNode::type() const
 
 void BiquadFilterNode::setType(BiquadFilterType type)
 {
+    ASSERT(isMainThread());
+
+    // Synchronize with any graph changes or changes to channel configuration since
+    // BiquadProcessor::setType() may iterate the processor's kernels via reset().
+    Locker contextLocker { context().graphLock() };
     protect(biquadProcessor())->setType(type);
 }
 

@@ -1936,6 +1936,9 @@ private:
         case ToLowerCase:
             compileToLowerCase();
             break;
+        case StringTrim:
+            compileStringTrim();
+            break;
         case NumberToStringWithRadix:
             compileNumberToStringWithRadix();
             break;
@@ -6746,7 +6749,7 @@ IGNORE_CLANG_WARNINGS_END
 
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult = m_out.anchor(
-                vmCall(Int64, operationGetByValObjectInt, weakPointer(globalObject), base, index));
+                vmCall(Int64, operationGetByValArrayStorageInt, weakPointer(globalObject), base, index));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -20566,7 +20569,10 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock is16Bit = m_out.newBlock();
         LBasicBlock bitsContinuation = m_out.newBlock();
         LBasicBlock bigCharacter = m_out.newBlock();
-        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock multiCharCase = m_out.newBlock();
+        LBasicBlock notLengthTwoCase = m_out.newBlock();
+        LBasicBlock substringRopeAllocCase = m_out.newBlock();
+        LBasicBlock substringRopeSlowAlloc = m_out.newBlock();
         LBasicBlock ropeSlowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
@@ -20590,14 +20596,14 @@ IGNORE_CLANG_WARNINGS_END
         LValue span = m_out.sub(to, from);
         m_out.branch(m_out.lessThanOrEqual(span, m_out.int32Zero), unsure(emptyCase), unsure(notEmptyCase));
 
-        Vector<ValueFromBlock, 5> results;
+        Vector<ValueFromBlock, 8> results;
 
         m_out.appendTo(emptyCase, notEmptyCase);
         results.append(m_out.anchor(weakPointer(jsEmptyString(vm()))));
         m_out.jump(continuation);
 
         m_out.appendTo(notEmptyCase, oneCharCase);
-        m_out.branch(m_out.equal(span, m_out.int32One), unsure(oneCharCase), unsure(slowCase));
+        m_out.branch(m_out.equal(span, m_out.int32One), unsure(oneCharCase), unsure(multiCharCase));
 
         m_out.appendTo(oneCharCase, is8Bit);
         LValue storage = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
@@ -20624,14 +20630,32 @@ IGNORE_CLANG_WARNINGS_END
             m_vmValue, char16BitValue)));
         m_out.jump(continuation);
 
-        m_out.appendTo(bitsContinuation, slowCase);
+        m_out.appendTo(bitsContinuation, multiCharCase);
         LValue character = m_out.phi(Int32, char8Bit, char16Bit);
         LValue smallStrings = m_out.constIntPtr(vm().smallStrings.singleCharacterStrings());
         results.append(m_out.anchor(m_out.loadPtr(m_out.baseIndex(
             m_heaps.singleCharacterStrings, smallStrings, m_out.zeroExtPtr(character)))));
         m_out.jump(continuation);
 
-        m_out.appendTo(slowCase, ropeSlowCase);
+        m_out.appendTo(multiCharCase, notLengthTwoCase);
+        results.append(m_out.anchor(string));
+        m_out.branch(m_out.equal(span, length), unsure(continuation), unsure(notLengthTwoCase));
+
+        m_out.appendTo(notLengthTwoCase, substringRopeAllocCase);
+        m_out.branch(m_out.equal(span, m_out.constInt32(2)), rarely(substringRopeSlowAlloc), usually(substringRopeAllocCase));
+
+        m_out.appendTo(substringRopeAllocCase, substringRopeSlowAlloc);
+        Allocator allocator = allocatorForConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
+        LValue rope = allocateCell(m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), substringRopeSlowAlloc);
+        LValue baseIs8BitFlag = m_out.bitAnd(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit()));
+        m_out.storePtr(m_out.bitOr(m_out.constIntPtr(JSString::isRopeInPointer | JSRopeString::isSubstringInPointer), m_out.zeroExtPtr(baseIs8BitFlag)), rope, m_heaps.JSRopeString_fiber0);
+        m_out.storePtr(m_out.bitOr(m_out.zeroExtPtr(span), m_out.shl(string, m_out.constInt32(32))), rope, m_heaps.JSRopeString_fiber1);
+        m_out.storePtr(m_out.bitOr(m_out.lShr(string, m_out.constInt32(32)), m_out.shl(m_out.zeroExtPtr(from), m_out.constInt32(16))), rope, m_heaps.JSRopeString_fiber2);
+        mutatorFence();
+        results.append(m_out.anchor(rope));
+        m_out.jump(continuation);
+
+        m_out.appendTo(substringRopeSlowAlloc, ropeSlowCase);
         results.append(m_out.anchor(vmCall(pointerType(), operationStringSubstr, weakPointer(globalObject), string, from, span)));
         m_out.jump(continuation);
 
@@ -20872,6 +20896,26 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+    }
+
+    void compileStringTrim()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue string = lowString(m_node->child1());
+        switch (m_node->intrinsic()) {
+        case StringPrototypeTrimIntrinsic:
+            setJSValue(vmCall(pointerType(), operationStringTrim, weakPointer(globalObject), string));
+            break;
+        case StringPrototypeTrimStartIntrinsic:
+            setJSValue(vmCall(pointerType(), operationStringTrimStart, weakPointer(globalObject), string));
+            break;
+        case StringPrototypeTrimEndIntrinsic:
+            setJSValue(vmCall(pointerType(), operationStringTrimEnd, weakPointer(globalObject), string));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     void compileNumberToStringWithRadix()

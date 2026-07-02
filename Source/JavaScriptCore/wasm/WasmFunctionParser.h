@@ -2982,6 +2982,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             auto opName = op == ExtGCOpType::BrOnCast ? "br_on_cast"_s : "br_on_cast_fail"_s;
             uint8_t flags;
             WASM_VALIDATOR_FAIL_IF(!parseUInt8(flags), "can't get flags byte for "_s, opName);
+            WASM_VALIDATOR_FAIL_IF(flags & 0xFC, "reserved bits set in flags byte for "_s, opName);
             bool hasNull1 = flags & 0x1;
             bool hasNull2 = flags & 0x2;
 
@@ -4502,6 +4503,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             auto opName = op == ExtGCOpType::BrOnCast ? "br_on_cast"_s : "br_on_cast_fail"_s;
             uint8_t flags;
             WASM_VALIDATOR_FAIL_IF(!parseUInt8(flags), "can't get flags byte for "_s, opName);
+            WASM_VALIDATOR_FAIL_IF(flags & 0xFC, "reserved bits set in flags byte for "_s, opName);
             bool hasNull1 = flags & 0x1;
             bool hasNull2 = flags & 0x2;
 

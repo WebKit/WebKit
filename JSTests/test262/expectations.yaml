@@ -43,9 +43,6 @@ test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-of
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array and makePassthrough.)'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array and makePassthrough.)'
-test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/throw-type-error-before-custom-proto-access.js:
-  default: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array and makePassthrough.)'
-  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error (Testing with Float64Array and makePassthrough.)'
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
   default: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'
   strict mode: 'SyntaxError: Uint8Array.prototype.setFromBase64 requires a valid base64 string'

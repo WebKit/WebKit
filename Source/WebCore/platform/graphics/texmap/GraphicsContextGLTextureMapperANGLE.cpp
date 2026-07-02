@@ -346,7 +346,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
 #endif
 
-    GLenum textureTarget = drawingBufferTextureTarget();
+    GLenum textureTarget = GL_TEXTURE_2D;
 #if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
     GL_BindTexture(textureTarget, m_texture);
     m_textureID = setupCurrentTexture();
@@ -380,11 +380,11 @@ void GraphicsContextGLTextureMapperANGLE::swapCompositorTexture()
         GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_preserveDrawingBufferTexture, 0);
         // Attach m_texture to m_preserveDrawingBufferFBO for later blitting.
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_preserveDrawingBufferFBO);
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     } else {
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
     }
 
     GL_Flush();
@@ -400,9 +400,9 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
     const int width = size.width();
     const int height = size.height();
     GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
-    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
-    GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
-    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    GLenum textureTarget = GL_TEXTURE_2D;
+    GLuint internalColorFormat = colorFormat;
+    ScopedRestoreTextureBinding restoreBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
 
     GL_BindTexture(textureTarget, m_compositorTexture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);

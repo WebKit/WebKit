@@ -3421,7 +3421,8 @@ private:
         }
 
         case ToUpperCase:
-        case ToLowerCase: {
+        case ToLowerCase:
+        case StringTrim: {
             // We currently only support StringUse since that will ensure that
             // ToLowerCase is a pure operation. If we decide to update this with
             // more types in the future, we need to ensure that the clobberize rules

@@ -121,6 +121,24 @@ class Manager(object):
                         continue
         return result
 
+    @staticmethod
+    def _expected_results_for_upload(expectation):
+        """Return the results-database `expected` string for an API-test expectation.
+
+        None means "expected to pass" (uploaded as a default pass); otherwise a
+        space-separated list of expected result states, so gardened and flaky tests
+        are not reported as unexpected failures on results.webkit.org.
+        """
+        if expectation is None or expectation.expected == PASS:
+            return None
+        status_to_upload_text = {
+            PASS: Upload.Expectations.PASS,
+            FAIL: Upload.Expectations.FAIL,
+            CRASH: Upload.Expectations.CRASH,
+            TIMEOUT: Upload.Expectations.TIMEOUT,
+        }
+        return ' '.join(text for status, text in status_to_upload_text.items() if status in expectation.expected) or None
+
     def _collect_tests(self, args):
         available_tests = []
         specified_binaries = self._binaries_for_arguments(args)
@@ -387,7 +405,10 @@ class Manager(object):
                     else:
                         unexpected_failures[test] = test_result
 
-        _log.info(f'Ran {len(runner.results) - disabled} tests of {original_test_count} with {len(successful)} successful')
+        summary = f'Ran {len(runner.results) - disabled} tests of {original_test_count} with {len(successful)} successful'
+        if expected_failures:
+            summary += f' ({len(expected_failures)} expected failures)'
+        _log.info(summary)
 
         result_dictionary = {
             'Skipped': [],
@@ -473,6 +494,15 @@ class Manager(object):
                 runner.STATUS_CRASHED: Upload.Expectations.CRASH,
                 runner.STATUS_TIMEOUT: Upload.Expectations.TIMEOUT,
             }
+            upload_results = {}
+            for test, result in iteritems(runner.results):
+                if result[0] not in status_to_test_result:
+                    continue
+                upload_results[test] = Upload.create_test_result(
+                    expected=self._expected_results_for_upload(self._expectations.get_expectation(test, current_config)),
+                    actual=status_to_test_result[result[0]],
+                    time=int(result[2] * 1000),
+                )
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
                 configuration=configuration_for_upload,
@@ -482,12 +512,8 @@ class Manager(object):
                     start_time=start_time,
                     end_time=end_time,
                     tests_skipped=len(result_dictionary['Skipped']),
-                ), results={
-                    test: Upload.create_test_result(
-                        actual=status_to_test_result[result[0]],
-                        time=int(result[2] * 1000),
-                    ) for test, result in iteritems(runner.results) if result[0] in status_to_test_result
-                },
+                ),
+                results=upload_results,
             )
             for url in self._options.report_urls:
                 self._stream.write_update(f'Uploading to {url} ...')

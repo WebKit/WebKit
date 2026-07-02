@@ -150,13 +150,16 @@ bool XSLStyleSheet::parseString(const String& string)
     if (!ctxt)
         return false;
 
-    if (m_parentStyleSheet && m_parentStyleSheet->m_stylesheetDoc) {
+    if (m_parentStyleSheet && m_parentStyleSheet->m_stylesheetDoc && !m_parentStyleSheet->m_stylesheetDocTaken) {
         // The XSL transform may leave the newly-transformed document
         // with references to the symbol dictionaries of the style sheet
         // and any of its children. XML document disposal can corrupt memory
         // if a document uses more than one symbol dictionary, so we
         // ensure that all child stylesheets use the same dictionaries as their
         // parents.
+        // Only share the parent's dict if the parent still owns the document.
+        // Once m_stylesheetDocTaken is set, libxslt owns the doc and may free
+        // it at any time (e.g. on compilation failure), making the pointer unsafe.
         SUPPRESS_FORWARD_DECL_ARG xmlDictFree(ctxt->dict);
         ctxt->dict = m_parentStyleSheet->m_stylesheetDoc->dict;
         SUPPRESS_FORWARD_DECL_ARG xmlDictReference(ctxt->dict);

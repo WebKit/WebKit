@@ -339,8 +339,8 @@ void RenderListMarker::layout()
     if (isImage()) {
         updateInlineMarginsAndContent();
         RefPtr image = m_image;
-        setWidth(image->imageSize(this, style().usedZoom()).width());
-        setHeight(image->imageSize(this, style().usedZoom()).height());
+        setBorderBoxWidth(image->imageSize(this, style().usedZoom()).width());
+        setBorderBoxHeight(image->imageSize(this, style().usedZoom()).height());
         m_layoutBounds = { borderBoxHeight(), 0 };
     } else {
         setLogicalWidth(minContentLogicalWidthContribution());

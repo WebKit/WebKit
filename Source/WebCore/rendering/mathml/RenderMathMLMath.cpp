@@ -58,10 +58,10 @@ void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
     if (!style().writingMode().deprecatedIsLeftToRightDirection())
         centerBlockOffset = -centerBlockOffset;
     for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        auto repaintRect = child->checkForRepaintDuringLayout() ? std::make_optional(child->frameRect()) : std::nullopt;
+        auto repaintRect = child->checkForRepaintDuringLayout() ? std::make_optional(child->borderBoxRectInContainer()) : std::nullopt;
         child->move(centerBlockOffset, { });
         if (repaintRect) {
-            repaintRect->uniteEvenIfEmpty(child->frameRect());
+            repaintRect->uniteEvenIfEmpty(child->borderBoxRectInContainer());
             repaintRectangle(*repaintRect);
         }
     }

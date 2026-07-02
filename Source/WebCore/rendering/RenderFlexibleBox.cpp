@@ -115,7 +115,7 @@ struct RenderFlexibleBox::LineState {
         : crossAxisOffset(crossAxisOffset)
         , crossAxisExtent(crossAxisExtent)
         , baselineAlignmentState(baselineAlignmentState)
-        , flexLayoutItems(flexLayoutItems)
+        , flexLayoutItems(WTF::move(flexLayoutItems))
     {
     }
     
@@ -474,8 +474,8 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
         // It doesn't get included in the normal layout process but is instead skipped.
         layoutExcludedChildren(relayoutChildren);
 
-        FlexItemFrameRects oldFlexItemRects;
-        appendFlexItemFrameRects(oldFlexItemRects);
+        FlexItemBorderBoxRects oldFlexItemRects;
+        appendFlexItemBorderBoxRects(oldFlexItemRects);
 
         performFlexLayout(relayoutChildren);
 
@@ -510,15 +510,15 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
     m_inLayout = oldInLayout;
 }
 
-void RenderFlexibleBox::appendFlexItemFrameRects(FlexItemFrameRects& flexItemFrameRects)
+void RenderFlexibleBox::appendFlexItemBorderBoxRects(FlexItemBorderBoxRects& flexItemBorderBoxRects)
 {
     for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
         if (!flexItem->isOutOfFlowPositioned())
-            flexItemFrameRects.append(flexItem->frameRect());
+            flexItemBorderBoxRects.append(flexItem->borderBoxRectInContainer());
     }
 }
 
-void RenderFlexibleBox::repaintFlexItemsDuringLayoutIfMoved(const FlexItemFrameRects& oldFlexItemRects)
+void RenderFlexibleBox::repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorderBoxRects& oldFlexItemRects)
 {
     size_t index = 0;
     for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {

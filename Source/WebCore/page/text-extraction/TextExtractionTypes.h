@@ -77,6 +77,7 @@ struct ExtractedText {
 struct InteractionDescription {
     String description;
     Vector<String> stringsToValidate;
+    bool didFindTargetNode { true };
 };
 
 enum class EventListenerCategory : uint8_t {

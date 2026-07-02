@@ -662,6 +662,7 @@ static constexpr CGFloat kWindowTranslationDuration = 0.6;
 
 @property (nonatomic, readonly) CATransform3D transform3D;
 @property (nonatomic, readonly) Class windowClass;
+@property (nonatomic, readonly) CGRect windowFrame;
 @property (nonatomic, readonly) CGSize sceneSize;
 @property (nonatomic, readonly) CGSize sceneMinimumSize;
 @property (nonatomic, readonly) CGSize sceneMaximumSize;
@@ -687,6 +688,7 @@ static constexpr CGFloat kWindowTranslationDuration = 0.6;
 
     _transform3D = window.transform3D;
     _windowClass = object_getClass(window);
+    _windowFrame = window.frame;
 
     UIWindowScene *windowScene = window.windowScene;
     _preferredSurroundingsEffect = [WKSurroundingsEffectManager shared].currentEffect;
@@ -2185,7 +2187,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     const BOOL shouldAnimateResizeScene = [self _shouldAnimateResizeScene];
 
-    CGSize targetSceneSize = [inWindow bounds].size;
+    CGSize targetSceneSize = (!enter && !CGRectIsEmpty([originalState windowFrame])) ? [originalState windowFrame].size : [inWindow bounds].size;
+
+    if (!enter && !CGRectIsEmpty([originalState windowFrame]))
+        inWindow.frame = [originalState windowFrame];
 
     if (shouldAnimateResizeScene && enter)
         [self _updateFullscreenWindowOrigin];
@@ -2208,7 +2213,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         allowSceneGeometryUpdates = page->preferences().updateSceneGeometryEnabled() && shouldAnimateResizeScene;
 #endif
 
-    auto resizeCompletionBlock = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), originalState = retainPtr(originalState), enter, completionHandler = WTF::move(completionHandler)] mutable {
+    auto resizeCompletionBlock = makeBlockPtr([controller = retainPtr(controller), inWindow = retainPtr(inWindow), outWindow = retainPtr(outWindow), originalState = retainPtr(originalState), enter, completionHandler = WTF::move(completionHandler)] mutable {
         Class inWindowClass = enter ? [UIWindow class] : [originalState windowClass];
         object_setClass(inWindow.get(), inWindowClass);
 
@@ -2222,6 +2227,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if ([controller _sceneAspectRatioLockingEnabled])
                 scene.mrui_placement.preferredResizingBehavior = MRUISceneResizingBehaviorUniform;
             scene.delegate = adoptNS([[WKFullscreenWindowSceneDelegate alloc] initWithController:controller.get() originalDelegate:scene.delegate]).get();
+
+            [outWindow setFrame:scene.effectiveGeometry.coordinateSpace.bounds];
         } else {
             scene.sizeRestrictions.minimumSize = [originalState sceneMinimumSize];
             scene.mrui_placement.preferredResizingBehavior = [originalState sceneResizingBehavior];

@@ -6369,6 +6369,11 @@ sub GenerateOperationTrampolineDefinition
 
     my @callFunctionTemplateArguments = ();
     push(@callFunctionTemplateArguments, $functionBodyName);
+    if ($operation->extendedAttributes->{ReturnsPromisePair}) {
+        my $dictClassName = GetDictionaryClassName($operation->type, $interface);
+        push(@callFunctionTemplateArguments, $dictClassName);
+        AddToImplIncludes("JSDOMPromise.h", $operation->extendedAttributes->{Conditional});
+    }
     push(@callFunctionTemplateArguments, "CastedThisErrorBehavior::Assert") if ($operation->extendedAttributes->{PrivateIdentifier} and not $operation->extendedAttributes->{PublicIdentifier});
 
     push(@$outputArray, "JSC_DEFINE_HOST_FUNCTION(${functionName}, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))\n");

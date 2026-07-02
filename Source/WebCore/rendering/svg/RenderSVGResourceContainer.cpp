@@ -71,6 +71,10 @@ void RenderSVGResourceContainer::styleDidChange(Style::Difference diff, const St
 
 void RenderSVGResourceContainer::idChanged()
 {
+    // Clients resolved this resource under the old id and may now resolve elsewhere or to nothing.
+    // Notify them to drop any cached resolution and repaint.
+    repaintAllClients();
+
     // Remove old id, that is guaranteed to be present in cache.
     m_id = element().getIdAttribute();
 

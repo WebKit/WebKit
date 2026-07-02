@@ -1033,7 +1033,7 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
     setLocation(boundingRect.location());
     setBorderBoxSize(boundingRect.size());
     m_objectBoundingBox = boundingRect;
-    ASSERT(m_objectBoundingBox == frameRect());
+    ASSERT(m_objectBoundingBox == borderBoxRectInContainer());
 }
 
 void RenderSVGText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)

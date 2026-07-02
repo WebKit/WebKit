@@ -845,6 +845,29 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             if (shouldBreak)
                 break;
 
+            let privateMethods = InjectedScriptHost.getOwnPrivatePropertyMethods(o, isOwnProperty);
+            for (let i = 0; i < privateMethods.length; ++i) {
+                let privateMethod = privateMethods[i];
+                let descriptor = @createObjectWithoutPrototype();
+                descriptor.name = privateMethod.name;
+                if (@Object.@hasOwn(privateMethod, "value"))
+                    descriptor.value = privateMethod.value;
+                if (@Object.@hasOwn(privateMethod, "get"))
+                    descriptor.get = privateMethod.get;
+                if (@Object.@hasOwn(privateMethod, "set"))
+                    descriptor.set = privateMethod.set;
+                if (isOwnProperty)
+                    descriptor.isOwn = true;
+                descriptor.isPrivate = true;
+                let result = processDescriptor(descriptor, isOwnProperty);
+                shouldBreak = result === InjectedScript.PropertyFetchAction.Stop;
+                if (shouldBreak)
+                    break;
+            }
+
+            if (shouldBreak)
+                break;
+
             // FIXME: <https://webkit.org/b/201861> Web Inspector: show autocomplete entries for non-index properties on arrays
             if (isArrayLike && isOwnProperty) {
                 for (let i = 0; i < o.length; ++i) {

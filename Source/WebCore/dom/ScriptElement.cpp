@@ -36,6 +36,7 @@
 #include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentPrefetcher.h"
+#include "DocumentResourceLoader.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventLoop.h"
@@ -53,6 +54,7 @@
 #include "LoadableScriptError.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
+#include "MemoryCache.h"
 #include "ModuleFetchParameters.h"
 #include "PendingScript.h"
 #include "SVGElementTypeHelpers.h"
@@ -403,6 +405,17 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     return false;
 }
 
+ParserInserted ScriptElement::effectiveParserInsertedForModule(Document& document, const URL& moduleURL) const
+{
+    // A parser-inserted module script that reuses a <link rel=modulepreload> is not a new parser-inserted load.
+    if (m_parserInserted == ParserInserted::No)
+        return ParserInserted::No;
+
+    RefPtr resource = protect(document.cachedResourceLoader())->cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(moduleURL));
+    bool reusesModulePreload = (resource && resource->isLinkModulePreload());
+    return reusesModulePreload ? ParserInserted::No : ParserInserted::Yes;
+}
+
 bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosition& scriptStartPosition)
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
@@ -436,7 +449,8 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
         Ref script = LoadableModuleScript::create(LoadableModuleScript::IsInline::No, nonce, integrity, referrerPolicy(), fetchPriority(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
 
-        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, String(integrity), String(), m_parserInserted))
+        auto effectiveParserInserted = effectiveParserInsertedForModule(document, moduleScriptRootURL);
+        if (!protect(document->contentSecurityPolicy())->allowScriptForStrictDynamic(moduleScriptRootURL, URL(), m_startPosition.m_line, nonce, String(integrity), String(), effectiveParserInserted))
             return false;
 
         m_loadableScript = script.copyRef();

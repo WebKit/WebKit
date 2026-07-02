@@ -1,0 +1,96 @@
+Reference Renderer Design Notes
+-------------------------------
+
+Requirements:
+ - must support arbitrary VA arrays
+ - must support primitive setup reference
+ - must support lines, points
+ - must support instancing
+ - must support vertex shading -> custom position transformations
+ - flat, noperspective shading
+ - multiple render targets
+ - faster shading? move packet loop inside shader
+   (helper class can make shader implementation easier)
+ - can be extended for tessellation and geometry shading
+
+Integrate with:
+ - sglr
+ - random shader generator
+
+Uniforms:
+ - shader objects can contain parameters, renderer doesn't care about them
+ - can contain simple data or references to resources (textures for example)
+
+Pipeline:
+
+Vertex cache:
+ - based on indices setup transformed vertex buffer
+ - in:
+   + index list
+   + VS generic output count
+ - out:
+   + VS execution queue
+   + index remap information?
+ - trivial implementation:
+   + run VS for all vertices at once
+
+VertexShader:
+ - provides position & point size
+ - transforms other vertices
+ - in:
+   + VertexAttrib array
+   + packet list:
+     + VertexID, InstanceID (pack into some accessor?)
+   + uniform ptr
+ - out:
+   + position
+   + point size
+   + array of generic transformed attributes (float/int/uint)
+
+Tessellation:
+ - \todo [pyry] Define
+ - replaces primitive assembly?
+
+Primitive assembly:
+ - sets up primitives
+ - gl3: triangles, points, lines (adjecency?)
+ - in:
+   + full primitive type
+   + index list
+   + position & point size from VS
+ - out:
+   + primitive list for rasterization / geometry shading
+     + positions
+	 + provoking vertex for flatshading
+
+GeometryShader:
+ - in:
+   + primitive list
+ - out:
+   + changed primitive list
+
+Coordinate transform:
+ - in:
+   + primitive list
+ - out:
+   + coordinates after viewport transform
+   + z-clipping bits
+
+Rasterizer:
+ - pretty much as it is currently
+
+FragmentShader:
+ - in:
+   + packet list:
+     + base coordinates
+	 + barycentrics, both perspective and non-perspective
+	 + generic attribute accessor (2 or 3 vertices)
+	 + provoking vertex index
+   + uniform ptr
+ - out:
+   + shaded packet list:
+     + colors per render target
+	 + modified live mask - for discard
+ - utils:
+   + compute derivatives from data in SoA form
+   + compute lod for texturing

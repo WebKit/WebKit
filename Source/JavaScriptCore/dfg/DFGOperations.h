@@ -117,6 +117,7 @@ JSC_DECLARE_JIT_OPERATION(operationArithTrunc, EncodedJSValue, (JSGlobalObject*,
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationArithMinMultipleDouble, double, (const double* buffer, unsigned elementCount));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationArithMaxMultipleDouble, double, (const double* buffer, unsigned elementCount));
 JSC_DECLARE_JIT_OPERATION(operationGetByValObjectInt, EncodedJSValue, (JSGlobalObject*, JSObject*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationGetByValArrayStorageInt, EncodedJSValue, (JSGlobalObject*, JSObject*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByValStringInt, EncodedJSValue, (JSGlobalObject*, JSString*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationGetByValObjectString, EncodedJSValue, (JSGlobalObject*, JSCell*, JSCell* string));
 JSC_DECLARE_JIT_OPERATION(operationGetByValObjectSymbol, EncodedJSValue, (JSGlobalObject*, JSCell*, JSCell* symbol));
@@ -311,6 +312,9 @@ JSC_DECLARE_JIT_OPERATION(operationStringSubstring, JSString*, (JSGlobalObject*,
 JSC_DECLARE_JIT_OPERATION(operationStringSubstringWithEnd, JSString*, (JSGlobalObject*, JSString*, int32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationToUpperCase, JSString*, (JSGlobalObject*, JSString*, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationToLowerCase, JSString*, (JSGlobalObject*, JSString*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationStringTrim, JSString*, (JSGlobalObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationStringTrimStart, JSString*, (JSGlobalObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationStringTrimEnd, JSString*, (JSGlobalObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGlobalObject*, JSString*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObject*, JSString*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationStringIndexOfWithOneChar, UCPUStrictInt32, (JSGlobalObject*, JSString*, int32_t));

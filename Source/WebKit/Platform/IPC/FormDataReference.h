@@ -27,6 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include "Logging.h"
 #include "SandboxExtension.h"
 #include <WebCore/FormData.h>
 
@@ -50,26 +51,5 @@ public:
 private:
     RefPtr<WebCore::FormData> m_data;
 };
-
-inline FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<WebKit::SandboxExtensionHandle>&& sandboxExtensionHandles)
-    : m_data(WTF::move(data))
-{
-    WebKit::SandboxExtension::consumePermanently(WTF::move(sandboxExtensionHandles));
-}
-
-inline Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensionHandles() const
-{
-    if (!m_data)
-        return { };
-
-    return WTF::compactMap(m_data->elements(), [](auto& element) -> std::optional<WebKit::SandboxExtensionHandle> {
-        if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
-            const String& path = fileData->filename;
-            if (auto handle = WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly))
-                return { WTF::move(*handle) };
-        }
-        return std::nullopt;
-    });
-}
 
 } // namespace IPC

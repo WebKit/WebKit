@@ -346,14 +346,9 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
 
     // This is necessary since Callees are released under `Heap::stopThePeriphery()`, but that only stops JS compiler
     // threads and not wasm ones. So a weakly held BBQCallee and its OMGOSREntryCallee could die between the time we
-    // collect the callsites and when we actually repatch its callsites. Since BBQCallee owns OMGOSREntryCallee,
-    // keeping BBQCallee alive is enough to ensure that both are alive for the required duration.
-    //
-    // There is however an edge case here - it can happen that a BBQCallee has been freed but its OMGOSREntryCallee
-    // has been added to the pending-destruction set and not yet free'd. This means that m_osrEntryCallees will still
-    // hold a weak ref to it. In this scenario, BBQCallee won't be kept alive since it does not exist so we manually
-    // have to keep the OMGOSREntryCallee alive separately. This should only be done in this scenario else we will
-    // end up with multiple owners for OMGOSREntryCallee.
+    // collect the callsites and when we actually repatch its callsites. Additionally, after a re-tier (where a fresh
+    // BBQCallee replaces a retired one), m_osrEntryCallees may hold a stale weak ref to an OMGOSREntryCallee not
+    // owned by the current BBQCallee, so we always keep it alive unconditionally.
 
     // FIXME: These inline capacities were picked semi-randomly. We should figure out if there's a better number.
     Vector<Ref<BBQCallee>, 4> keepAliveBBQCallees;
@@ -382,8 +377,6 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         if (!tuple)
             return;
 
-        bool bbqCalleeKeptAlive = false;
-        UNUSED_VARIABLE(bbqCalleeKeptAlive);
 #if ENABLE(WEBASSEMBLY_BBQJIT)
         // This callee could be weak but we still need to update it since it could call our BBQ callee
         // that we're going to want to destroy.
@@ -396,25 +389,15 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
             collectCallsites(bbqCallee.get());
             ASSERT(!bbqCallee->osrEntryCallee() || m_osrEntryCallees.find(callerIndex) != m_osrEntryCallees.end());
             keepAliveBBQCallees.append(bbqCallee.releaseNonNull());
-            bbqCalleeKeptAlive = true;
         }
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         collectCallsites(tuple->m_omgCallee.get());
         if (auto iter = m_osrEntryCallees.find(callerIndex); iter != m_osrEntryCallees.end()) {
             if (RefPtr callee = iter->value.get()) {
+                // Since there is a OMGOSREntryCallee, we need to collect all the callsites there and also keep it alive until we patch it.
                 collectCallsites(callee.get());
-                // If we track the OMGOSREntryCallee as a callsite there are 2 possibilities -
-                // 1. The BBQCallee is already being tracked - in this case we don't have to
-                //    track the OMGOSREntryCallee since the BBQCallee owns it and keeping the
-                //    BBQCallee alive is good enough to keep the OMGOSREntryCallee alive. Also,
-                //    OMGOSREntryCallee is only supposed to be owned by BBQCallee
-                // 2. The BBQCallee is not tracked - This happens if the BBQCallee is already
-                //    released but the OMGOSREntryCallee is still alive. In this case there is
-                //    no other strong reference to OMGOSREntryCallee so we have to keep it
-                //    alive here.
-                if (!bbqCalleeKeptAlive)
-                    keepAliveOSREntryCallees.append(callee.releaseNonNull());
+                keepAliveOSREntryCallees.append(callee.releaseNonNull());
             } else
                 m_osrEntryCallees.remove(iter);
         }

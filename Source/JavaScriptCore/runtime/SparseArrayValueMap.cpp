@@ -61,32 +61,36 @@ Structure* SparseArrayValueMap::createStructure(VM& vm, JSGlobalObject* globalOb
 
 SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigned i)
 {
-    AddResult result;
+    AddResult addResult;
     size_t increasedCapacity = 0;
     {
         Locker locker { cellLock() };
-        result = m_map.add(i, SparseArrayEntry());
-        size_t capacity = m_map.capacity();
+        addResult = m_set.ensure<SparseArrayEntryTranslator>(i, [&] {
+            return SparseArrayEntry(i);
+        });
+        size_t capacity = m_set.capacity();
         if (capacity > m_reportedCapacity) {
             increasedCapacity = capacity - m_reportedCapacity;
             m_reportedCapacity = capacity;
         }
     }
     if (increasedCapacity)
-        Heap::heap(array)->reportExtraMemoryAllocated(array, increasedCapacity * sizeof(Map::KeyValuePairType));
-    return result;
+        Heap::heap(array)->reportExtraMemoryAllocated(array, increasedCapacity * sizeof(SparseArrayEntry));
+    return addResult;
 }
 
 void SparseArrayValueMap::remove(iterator it)
 {
     Locker locker { cellLock() };
-    m_map.remove(it);
+    m_set.remove(it);
 }
 
 void SparseArrayValueMap::remove(unsigned i)
 {
     Locker locker { cellLock() };
-    m_map.remove(i);
+    auto it = m_set.find<SparseArrayEntryTranslator>(i);
+    if (it != m_set.end())
+        m_set.remove(it);
 }
 
 bool SparseArrayValueMap::putEntry(JSGlobalObject* globalObject, JSObject* array, unsigned i, JSValue value, bool shouldThrow)
@@ -94,18 +98,18 @@ bool SparseArrayValueMap::putEntry(JSGlobalObject* globalObject, JSObject* array
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(value);
-    
+
     AddResult result = add(array, i);
-    SparseArrayEntry& entry = result.iterator->value;
+    SparseArrayEntry& entry = *result.iterator;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
     if (result.isNewEntry && !array->isStructureExtensible()) {
-        remove(result.iterator);
+        remove(static_cast<const_iterator>(result.iterator));
         return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
     }
-    
+
     RELEASE_AND_RETURN(scope, entry.put(globalObject, array, this, value, shouldThrow));
 }
 
@@ -118,13 +122,13 @@ bool SparseArrayValueMap::putDirect(JSGlobalObject* globalObject, JSObject* arra
     bool shouldThrow = (mode == PutDirectIndexShouldThrow);
 
     AddResult result = add(array, i);
-    SparseArrayEntry& entry = result.iterator->value;
+    SparseArrayEntry& entry = *result.iterator;
 
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
     if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible()) {
-        remove(result.iterator);
+        remove(static_cast<const_iterator>(result.iterator));
         return typeError(globalObject, scope, shouldThrow, NonExtensibleObjectPropertyDefineError);
     }
 
@@ -138,15 +142,34 @@ bool SparseArrayValueMap::putDirect(JSGlobalObject* globalObject, JSObject* arra
 JSValue SparseArrayValueMap::getConcurrently(unsigned i)
 {
     Locker locker { cellLock() };
-    auto iterator = m_map.find(i);
-    if (iterator == m_map.end())
+    auto iterator = m_set.find<SparseArrayEntryTranslator>(i);
+    if (iterator == m_set.end())
         return JSValue();
-    return iterator->value.getConcurrently();
+    return iterator->getConcurrently();
+}
+
+void SparseArrayEntry::forceSet(SparseArrayValueMap* map, unsigned attributes)
+{
+    // FIXME: We can expand this for non x86 environments. Currently, loading ReadOnly | DontDelete property
+    // from compiler thread is only supported in X86 architecture because of its TSO nature.
+    // https://bugs.webkit.org/show_bug.cgi?id=134641
+    if (isX86())
+        WTF::storeStoreFence();
+
+    if (attributes & PropertyAttribute::Accessor)
+        map->setHasAnyKindOfGetterSetterProperties();
+    m_attributes = attributes;
+}
+
+void SparseArrayEntry::forceSet(VM& vm, SparseArrayValueMap* map, JSValue value, unsigned attributes)
+{
+    m_value.set(vm, map, value);
+    forceSet(map, attributes);
 }
 
 void SparseArrayEntry::get(JSObject* thisObject, PropertySlot& slot) const
 {
-    JSValue value = Base::get();
+    JSValue value = m_value.get();
     ASSERT(value);
 
     if (!value.isGetterSetter()) [[likely]] {
@@ -159,7 +182,7 @@ void SparseArrayEntry::get(JSObject* thisObject, PropertySlot& slot) const
 
 void SparseArrayEntry::get(PropertyDescriptor& descriptor) const
 {
-    descriptor.setDescriptor(Base::get(), m_attributes);
+    descriptor.setDescriptor(m_value.get(), m_attributes);
 }
 
 JSValue SparseArrayEntry::getConcurrently() const
@@ -180,7 +203,7 @@ JSValue SparseArrayEntry::getConcurrently() const
     if (!(attributes & PropertyAttribute::DontDelete))
         return JSValue();
 
-    return attributesDependency.consume(this)->Base::get();
+    return attributesDependency.consume(this)->m_value.get();
 }
 
 bool SparseArrayEntry::put(JSGlobalObject* globalObject, JSValue thisValue, SparseArrayValueMap* map, JSValue value, bool shouldThrow)
@@ -192,22 +215,22 @@ bool SparseArrayEntry::put(JSGlobalObject* globalObject, JSValue thisValue, Spar
         if (m_attributes & PropertyAttribute::ReadOnly)
             return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
-        set(vm, map, value);
+        m_value.set(vm, map, value);
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, uncheckedDowncast<GetterSetter>(Base::get())->callSetter(globalObject, thisValue, value, shouldThrow));
+    RELEASE_AND_RETURN(scope, uncheckedDowncast<GetterSetter>(m_value.get())->callSetter(globalObject, thisValue, value, shouldThrow));
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const
 {
     ASSERT(!m_attributes);
-    return Base::get();
+    return m_value.get();
 }
 
 JSValue SparseArrayEntry::get() const
 {
-    return Base::get();
+    return m_value.get();
 }
 
 template<typename Visitor>
@@ -218,10 +241,10 @@ void SparseArrayValueMap::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(cell, visitor);
     {
         Locker locker { thisObject->cellLock() };
-        for (auto& entry : thisObject->m_map)
-            visitor.append(entry.value.asValue());
+        for (auto& entry : thisObject->m_set)
+            visitor.append(entry.asValue());
     }
-    visitor.reportExtraMemoryVisited(thisObject->m_reportedCapacity * sizeof(Map::KeyValuePairType));
+    visitor.reportExtraMemoryVisited(thisObject->m_reportedCapacity * sizeof(SparseArrayEntry));
 }
 
 DEFINE_VISIT_CHILDREN(SparseArrayValueMap);

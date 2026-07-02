@@ -28,24 +28,22 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKContentWorldPrivate.h>
-#import <WebKit/WKJSScriptingBuffer.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
-#import <WebKit/_WKJSBuffer.h>
 
 TEST(JSBuffer, Data)
 {
     static const char constantString[] = "Hello world!";
 
-    RetainPtr oddLength = adoptNS([[WKJSScriptingBuffer alloc] initWithData:[NSData dataWithBytes:"abc" length:3]]);
-    RetainPtr evenLength = adoptNS([[_WKJSBuffer alloc] initWithData:[NSData dataWithBytes:"abcd" length:4]]);
-    RetainPtr invalidSurrogatePair = adoptNS([[_WKJSBuffer alloc] initWithData:[NSData dataWithBytes:"\x3d\xd8\x27\x00\xff\xff\x00\x00" length:8]]);
-    RetainPtr readOnlyBuffer = adoptNS([[_WKJSBuffer alloc] initWithData:[NSData dataWithBytesNoCopy:(void *)constantString length:sizeof(constantString)-1 freeWhenDone:NO]]);
+    RetainPtr oddLength = [NSData dataWithBytes:"abc" length:3];
+    RetainPtr evenLength = [NSData dataWithBytes:"abcd" length:4];
+    RetainPtr invalidSurrogatePair = [NSData dataWithBytes:"\x3d\xd8\x27\x00\xff\xff\x00\x00" length:8];
+    RetainPtr readOnlyBuffer = [NSData dataWithBytesNoCopy:(void *)constantString length:sizeof(constantString)-1 freeWhenDone:NO];
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
     [configuration.get().userContentController addBuffer:oddLength.get() name:@"oddLength" contentWorld:WKContentWorld.pageWorld];
-    [configuration.get().userContentController _addBuffer:evenLength.get() contentWorld:WKContentWorld.pageWorld name:@"evenLength"];
-    [configuration.get().userContentController _addBuffer:invalidSurrogatePair.get() contentWorld:WKContentWorld.pageWorld name:@"invalidSurrogatePair"];
-    [configuration.get().userContentController _addBuffer:readOnlyBuffer.get() contentWorld:WKContentWorld.pageWorld name:@"readOnlyBuffer"];
+    [configuration.get().userContentController addBuffer:evenLength.get() name:@"evenLength" contentWorld:WKContentWorld.pageWorld];
+    [configuration.get().userContentController addBuffer:invalidSurrogatePair.get() name:@"invalidSurrogatePair" contentWorld:WKContentWorld.pageWorld];
+    [configuration.get().userContentController addBuffer:readOnlyBuffer.get() name:@"readOnlyBuffer" contentWorld:WKContentWorld.pageWorld];
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
@@ -79,7 +77,7 @@ TEST(JSBuffer, IDLExposed)
 TEST(JSBuffer, EvaluateScript)
 {
     const uint8_t script[] = "didPass = true; 'PAS' + 'S'";
-    RetainPtr sourceBuffer = adoptNS([[WKJSScriptingBuffer alloc] initWithData:[NSData dataWithBytes:script length:std::size(script) - 1]]);
+    RetainPtr sourceBuffer = [NSData dataWithBytes:script length:std::size(script) - 1];
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
 
     RetainPtr contentWorldConfiguration = adoptNS([_WKContentWorldConfiguration new]);

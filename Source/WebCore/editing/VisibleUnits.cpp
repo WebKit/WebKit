@@ -113,7 +113,7 @@ static Position nextLineCandidatePosition(Node* node, const VisiblePosition& vis
     RefPtr highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
     RefPtr nextNode = nextLeafWithSameEditability(node, editableType);
     while (nextNode && (!nextNode->renderer() || inSameLine(firstPositionInOrBeforeNode(nextNode.get()), visiblePosition)))
-        nextNode = nextLeafWithSameEditability(nextNode.get(), ContentIsEditable);
+        nextNode = nextLeafWithSameEditability(nextNode.get(), editableType);
 
     while (nextNode && !nextNode->isShadowRoot()) {
         if (highestEditableRoot(firstPositionInOrBeforeNode(nextNode.get()), editableType) != highestRoot)

@@ -52,16 +52,6 @@ Inspector::CommandResult<void> FrameDOMAgent::removeBreakpointForEventListener(i
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::DOM::AccessibilityProperties>> FrameDOMAgent::getAccessibilityPropertiesForNode(int)
-{
-    return makeUnexpected("Not yet implemented for frame targets"_s);
-}
-
-Inspector::CommandResult<int> FrameDOMAgent::requestNode(const String&)
-{
-    return makeUnexpected("Not yet implemented for frame targets"_s);
-}
-
 #if PLATFORM(IOS_FAMILY)
 Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
 {
@@ -146,17 +136,7 @@ Inspector::CommandResult<void> FrameDOMAgent::hideFlexOverlay(std::optional<int>
     return makeUnexpected("Not supported for frame targets"_s);
 }
 
-Inspector::CommandResult<Ref<Inspector::Protocol::Runtime::RemoteObject>> FrameDOMAgent::resolveNode(int, const String&)
-{
-    return makeUnexpected("Not yet implemented for frame targets"_s);
-}
-
 Inspector::CommandResult<void> FrameDOMAgent::focus(int)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::setInspectedNode(int)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }

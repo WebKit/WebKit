@@ -110,6 +110,10 @@ struct WebViewRepresentable {
             webView.obscuredContentInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
             webView._automaticallyAdjustsContentInsets = true
         }
+
+        if let obscuredContentInsets = environment.webViewObscuredContentInsetsContext {
+            webView.obscuredContentInsets = NSEdgeInsets(obscuredContentInsets, layoutDirection: environment.layoutDirection)
+        }
         #endif
 
         if EquatableScrollBounceBehavior(environment.verticalScrollBounceBehavior) == .always

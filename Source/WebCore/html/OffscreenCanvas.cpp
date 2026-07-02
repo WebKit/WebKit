@@ -183,6 +183,13 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
     if (m_detached)
         return Exception { ExceptionCode::InvalidStateError };
 
+    // Dictionary conversion may run script, which may have detached this canvas.
+    auto shouldThrowForDetachedCanvas = [&]() -> ExceptionOr<void> {
+        if (m_detached) [[unlikely]]
+            return Exception { ExceptionCode::InvalidStateError };
+        return { };
+    };
+
     if (contextType == RenderingContextType::_2d) {
         if (!m_context) {
             auto scope = DECLARE_THROW_SCOPE(state.vm());
@@ -191,7 +198,10 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             if (settings.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
 
-            m_context = OffscreenCanvasRenderingContext2D::create(*this, settings.releaseReturnValue());
+            if (auto result = shouldThrowForDetachedCanvas(); result.hasException())
+                return result.releaseException();
+            if (!m_context)
+                m_context = OffscreenCanvasRenderingContext2D::create(*this, settings.releaseReturnValue());
         }
         if (RefPtr context = dynamicDowncast<OffscreenCanvasRenderingContext2D>(m_context.get()))
             return { { context.releaseNonNull() } };
@@ -205,8 +215,12 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             if (settings.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
 
-            m_context = ImageBitmapRenderingContext::create(*this, settings.releaseReturnValue());
-            downcast<ImageBitmapRenderingContext>(m_context.get())->transferFromImageBitmap(nullptr);
+            if (auto result = shouldThrowForDetachedCanvas(); result.hasException())
+                return result.releaseException();
+            if (!m_context) {
+                m_context = ImageBitmapRenderingContext::create(*this, settings.releaseReturnValue());
+                downcast<ImageBitmapRenderingContext>(m_context.get())->transferFromImageBitmap(nullptr);
+            }
         }
         if (RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(m_context.get()))
             return { { context.releaseNonNull() } };
@@ -243,10 +257,12 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
             if (attributes.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
 
+            if (auto result = shouldThrowForDetachedCanvas(); result.hasException())
+                return result.releaseException();
             RefPtr scriptExecutionContext = this->scriptExecutionContext();
             if (scriptExecutionContext) {
                 auto& settings = scriptExecutionContext->settingsValues();
-                if (settings.webGLEnabled && (!is<WorkerGlobalScope>(scriptExecutionContext) || settings.allowWebGLInWorkers))
+                if (!m_context && settings.webGLEnabled && (!is<WorkerGlobalScope>(scriptExecutionContext) || settings.allowWebGLInWorkers))
                     m_context = WebGLRenderingContextBase::create(*this, attributes.releaseReturnValue(), webGLVersion);
             }
         }

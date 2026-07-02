@@ -1,0 +1,136 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.JSBridge");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let containerNode = null;
+    let headingNode = null;
+
+    function bid(node) { return node.backendNodeId; }
+
+    async function findChildElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children.find(predicate);
+    }
+
+    async function evaluateInFrame(expression) {
+        let response = await frameTarget.RuntimeAgent.evaluate.invoke({
+            expression,
+            objectGroup: "test",
+            includeCommandLineAPI: true,
+            contextId: frameTarget.executionContext.id,
+        });
+        return response;
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and walk to #container / #heading.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+            InspectorTest.expectNotNull(frameTarget.executionContext, "Frame target should have an execution context.");
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            let htmlNode = await findChildElement(frameDoc, (n) => n.nodeName() === "HTML");
+            let bodyNode = await findChildElement(htmlNode, (n) => n.nodeName() === "BODY");
+            containerNode = await findChildElement(bodyNode, (n) => n.getAttribute && n.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(containerNode, "Should find #container.");
+            await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+            let headingId = await containerNode.querySelector("#heading");
+            headingNode = WI.domManager.nodeForIdInFrameTarget(headingId, frameTarget);
+            InspectorTest.expectNotNull(headingNode, "Should find #heading.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ResolveNode.Backend",
+        description: "frameTarget.DOMAgent.resolveNode should return a RemoteObject for a frame-target node.",
+        async test() {
+            let {object} = await frameTarget.DOMAgent.resolveNode(bid(headingNode), "test");
+            InspectorTest.expectNotNull(object, "Should return a RemoteObject payload.");
+            InspectorTest.expectEqual(object.type, "object", "RemoteObject type should be 'object'.");
+            InspectorTest.expectEqual(object.subtype, "node", "RemoteObject subtype should be 'node'.");
+            InspectorTest.expectNotNull(object.objectId, "RemoteObject should have an objectId scoped to the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ResolveNode.Frontend",
+        description: "WI.RemoteObject.resolveNode should route through the frame's DOMAgent and resolve.",
+        async test() {
+            let remoteObject = await WI.RemoteObject.resolveNode(headingNode, "test");
+            InspectorTest.expectNotNull(remoteObject, "Should resolve.");
+            InspectorTest.expectThat(remoteObject.isNode(), "Resolved RemoteObject should report as a node.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ResolveNode.InvalidNodeId",
+        description: "resolveNode with an unknown nodeId should reject.",
+        async test() {
+            await InspectorTest.expectException(() => frameTarget.DOMAgent.resolveNode(9999999, "test"));
+        }
+    });
+
+    suite.addTestCase({
+        name: "RequestNode.Backend",
+        description: "frameTarget.DOMAgent.requestNode given a frame-target objectId should return the matching nodeId.",
+        async test() {
+            // First resolve to get a real objectId scoped to the frame.
+            let {object} = await frameTarget.DOMAgent.resolveNode(bid(headingNode), "test");
+            let {nodeId} = await frameTarget.DOMAgent.requestNode(object.objectId);
+            InspectorTest.expectEqual(nodeId, bid(headingNode), "requestNode should return the same nodeId we resolved.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetInspectedNode.Dollar0InFrameContext",
+        description: "After setInspectedNode on a frame node, $0 in the frame's runtime context should equal that node.",
+        async test() {
+            await frameTarget.DOMAgent.setInspectedNode(bid(headingNode));
+
+            let response = await evaluateInFrame("$0");
+            InspectorTest.expectNotNull(response.result, "$0 should evaluate without error.");
+            InspectorTest.expectEqual(response.result.subtype, "node", "$0 should resolve as a node.");
+
+            // Use requestNode to verify the objectId maps back to our heading.
+            let {nodeId} = await frameTarget.DOMAgent.requestNode(response.result.objectId);
+            InspectorTest.expectEqual(nodeId, bid(headingNode), "$0 in the frame's context should be the inspected heading node.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SetInspectedNode.InvalidNodeId",
+        description: "setInspectedNode with an unknown nodeId should reject.",
+        async test() {
+            await InspectorTest.expectException(() => frameTarget.DOMAgent.setInspectedNode(9999999));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests FrameDOMAgent's JS bridge: resolveNode (DOM node -> RemoteObject), requestNode (RemoteObject -> DOM node), and setInspectedNode (binds the frame's $0 command-line variable).</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

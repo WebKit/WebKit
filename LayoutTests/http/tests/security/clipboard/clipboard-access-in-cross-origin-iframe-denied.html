@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncClipboardAPIEnabled=true JavaScriptCanAccessClipboard=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="/resources/js-test-pre.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<style>
+button, iframe {
+    display: block;
+    width: 400px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<button id="run">Click to postMessage clipboard request to cross-origin iframe</button>
+<iframe id="frame" src="http://localhost:8080/security/clipboard/resources/clipboard-access-from-iframe.html"></iframe>
+<script>
+description("Verifies that a cross-origin iframe cannot read or write the clipboard by consuming transient user activation from the top-level page via postMessage. navigator.clipboard.readText(), navigator.clipboard.read(), navigator.clipboard.writeText(), and navigator.clipboard.write() in the iframe should all be rejected with NotAllowedError because transient activation does not propagate to cross-origin iframes.");
+jsTestIsAsync = true;
+
+const frame = document.getElementById("frame");
+const runButton = document.getElementById("run");
+
+let pendingMethod = null;
+let pendingResolve = null;
+
+runButton.addEventListener("click", () => {
+    frame.contentWindow.postMessage({ method: pendingMethod }, "*");
+});
+
+async function testMethod(method) {
+    pendingMethod = method;
+    const result = await new Promise(resolve => {
+        pendingResolve = resolve;
+        UIHelper.activateElement(runButton);
+    });
+    window.iframeStatus = result.status;
+    window.iframeErrorName = result.errorName;
+    debug(`Result for navigator.clipboard.${method}():`);
+    shouldBeEqualToString("iframeStatus", "rejected");
+    shouldBeEqualToString("iframeErrorName", "NotAllowedError");
+}
+
+window.addEventListener("message", async event => {
+    if (!event.data)
+        return;
+
+    if (event.data.type === "iframe-loaded") {
+        if (!window.testRunner)
+            return;
+        await testMethod("readText");
+        await testMethod("read");
+        await testMethod("writeText");
+        await testMethod("write");
+        runButton.remove();
+        frame.remove();
+        finishJSTest();
+        return;
+    }
+
+    if (event.data.type === "iframe-result" && pendingResolve) {
+        const resolve = pendingResolve;
+        pendingResolve = null;
+        resolve(event.data);
+    }
+});
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

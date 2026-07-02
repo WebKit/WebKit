@@ -103,9 +103,6 @@ protected:
     VTTCueBox(Document&, VTTCue&);
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-
-private:
-    WeakPtr<VTTCue> m_cue;
 };
 
 // ----------------------------
@@ -222,6 +219,8 @@ public:
     const LineAndPositionSetting& width() const LIFETIME_BOUND { return m_width; }
     const LineAndPositionSetting& height() const LIFETIME_BOUND { return m_height; }
 
+    virtual bool preventLineWrapping() const { return false; }
+
 protected:
     VTTCue(Document&, const MediaTime& start, const MediaTime& end, String&& content);
 
@@ -236,8 +235,6 @@ private:
     VTTCue(Document&, Ref<WebVTTCueData>&&);
 
     void createWebVTTNodeTree();
-
-    void parseSettings(const String&);
 
     void determineTextDirection();
     void calculateDisplayParameters();

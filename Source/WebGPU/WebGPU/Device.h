@@ -335,8 +335,7 @@ private:
     mutable HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_bindGroupCompatibilityCache;
     uint64_t m_commandEncoderId { 0 };
     uint64_t m_pipelineLayoutId { 0 };
-    uint64_t m_renderPipelineId { 0 };
-    uint64_t m_computePipelineId { 0 };
+    uint64_t m_pipelineId { 0 };
     uint32_t m_bindGroupLayoutId { 0 };
     uint32_t m_bindGroupId { 0 };
     uint32_t m_appleGPUFamily { 0 };

@@ -101,8 +101,10 @@
 #if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitPlugin.h>
 #endif
-#if PLATFORM(GTK)
+#if ENABLE(POINTER_LOCK)
 #include <@API_INCLUDE_PREFIX@/WebKitPointerLockPermissionRequest.h>
+#endif
+#if PLATFORM(GTK)
 #if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitPrintCustomWidget.h>
 #endif

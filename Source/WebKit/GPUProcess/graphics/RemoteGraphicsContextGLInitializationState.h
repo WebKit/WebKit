@@ -39,8 +39,6 @@ struct RemoteGraphicsContextGLInitializationState {
     WebCore::GraphicsContextGLAttributes attributes;
     uint64_t knownActiveExtensions { 0 }; // EnumSet<WebCore::GCGLExtension> when EnumSet serialization works.
     uint64_t requestableExtensions { 0 }; // EnumSet<WebCore::GCGLExtension> when EnumSet serialization works.
-    GCGLenum externalImageTarget { 0 };
-    GCGLenum externalImageBindingQuery { 0 };
     GCGLint maxCombinedTextureImageUnits { 0 };
     GCGLint maxVertexAttribs { 0 };
     GCGLint maxTextureSize { 0 };

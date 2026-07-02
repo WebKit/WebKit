@@ -40,6 +40,7 @@
 #include <new>
 #include <tuple>
 #include <wtf/Assertions.h>
+#include <wtf/Box.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
@@ -689,7 +690,7 @@ private:
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
     bool m_shouldExitOnSyncMessageSendFailure { false };
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback { nullptr };
-    OutgoingMessageQueueIsGrowingLargeCallback m_outgoingMessageQueueIsGrowingLargeCallback;
+    Box<OutgoingMessageQueueIsGrowingLargeCallback> m_outgoingMessageQueueIsGrowingLargeCallback WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
     MonotonicTime m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
     const Ref<WorkQueue> m_connectionQueue;

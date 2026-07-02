@@ -345,6 +345,7 @@ public:
     // Find in Page
 
     virtual void findString(JSStringRef, unsigned long, unsigned long) { notImplemented(); }
+    virtual void findStringMatchesUsingFindInteraction(JSStringRef, JSValueRef) { notImplemented(); }
 
     virtual void presentFindNavigator() { notImplemented(); }
     virtual void dismissFindNavigator() { notImplemented(); }

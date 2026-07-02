@@ -504,7 +504,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpGetByVal)
         LINK(OpGetPrivateName)
 
-        LINK(OpTryGetById)
         LINK(OpGetByIdDirect)
         LINK(OpGetByValWithThis)
         LINK(OpToThis)
@@ -1528,15 +1527,6 @@ void CodeBlock::finalizeLLIntInlineCaches()
 
         m_metadata->forEach<OpGetLength>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get length"_s);
-        });
-
-        m_metadata->forEach<OpTryGetById>([&] (auto& metadata) {
-            StructureID oldStructureID = metadata.m_structureID;
-            if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
-                return;
-            dataLogLnIf(Options::verboseOSR(), "Clearing try_get_by_id LLInt property access.");
-            metadata.m_structureID = StructureID();
-            metadata.m_offset = 0;
         });
 
         m_metadata->forEach<OpGetByIdDirect>([&] (auto& metadata) {

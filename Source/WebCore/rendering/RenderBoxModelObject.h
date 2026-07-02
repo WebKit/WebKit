@@ -40,18 +40,6 @@ enum class BleedAvoidance : uint8_t {
     BackgroundOverBorder
 };
 
-enum class ContentChangeType : uint8_t {
-    Image,
-    HDRImage,
-    MaskImage,
-    BackgroundImage,
-    Canvas,
-    CanvasPixels,
-    Video,
-    FullScreen,
-    Model
-};
-
 class BorderEdge;
 class BorderShape;
 class GraphicsContext;
@@ -78,7 +66,6 @@ using BorderEdges = RectEdges<BorderEdge>;
 
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
-
 class RenderBoxModelObject : public RenderLayerModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderBoxModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
@@ -94,7 +81,7 @@ public:
 
     LayoutSize offsetForInFlowPosition() const;
 
-    // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
+    // IE extensions. Used to calculate offsetWidth/Height. Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
     virtual LayoutUnit offsetLeft() const;
     virtual LayoutUnit offsetTop() const;
@@ -199,30 +186,10 @@ public:
 
     void setSelectionState(HighlightState) override;
 
-    bool canHaveBoxInfoInFragment() const { return !isFloating() && !isBlockLevelReplacedOrAtomicInline() && !isInline() && !isRenderTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
-
-    void contentChanged(ContentChangeType, const std::optional<FloatRect>& = std::nullopt);
-    bool hasAcceleratedCompositing() const;
-
     bool hasRunningAcceleratedAnimations() const;
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
-protected:
-    RenderBoxModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-    RenderBoxModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
-
-    void willBeDestroyed() override;
-
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
-
-    LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
-
-    bool hasVisibleBoxDecorationStyle() const;
-    bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
-    bool borderObscuresBackground() const;
-
-public:
     bool NODELETE fixedBackgroundPaintsInLocalCoordinates() const;
     InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&) const;
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
@@ -245,6 +212,19 @@ public:
 
 
 protected:
+    RenderBoxModelObject(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderBoxModelObject(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+
+    void willBeDestroyed() override;
+
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
+
+    LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
+
+    bool hasVisibleBoxDecorationStyle() const;
+    bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
+    bool borderObscuresBackground() const;
+
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&) const;
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&, const Style::ZoomFactor&) const;
 

@@ -740,7 +740,8 @@ EOF
                 image_checksum = IMAGE_CHECKSUM_ERROR
             end
 
-            return "<p>" + image_checksum + "</p><img class='image' src='" + @image_url + "' />"
+            return "<p>" + image_checksum + "</p><img class='image' src='" + CGI.escapeHTML(@image_url) + "' />"
+
         end
 
         def to_html

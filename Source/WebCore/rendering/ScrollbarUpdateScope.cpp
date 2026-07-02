@@ -51,9 +51,9 @@ ScrollbarUpdateScope::~ScrollbarUpdateScope()
 
     // Set up the range.
     if (RefPtr hBar = m_renderLayerScrollableArea->m_hBar)
-        hBar->setProportion(roundToInt(box->clientWidth()), m_renderLayerScrollableArea->m_scrollWidth);
+        hBar->setProportion(roundToInt(box->paddingBoxWidth()), m_renderLayerScrollableArea->m_scrollWidth);
     if (RefPtr vBar = m_renderLayerScrollableArea->m_vBar)
-        vBar->setProportion(roundToInt(box->clientHeight()), m_renderLayerScrollableArea->m_scrollHeight);
+        vBar->setProportion(roundToInt(box->paddingBoxHeight()), m_renderLayerScrollableArea->m_scrollHeight);
 
     m_renderLayerScrollableArea->updateScrollbarSteps();
 

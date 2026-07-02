@@ -28,13 +28,13 @@
 
 #include <optional>
 #include <wtf/Markable.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WEBCORE_EXPORT BlobDataFileReference : public RefCounted<BlobDataFileReference> {
+class WEBCORE_EXPORT BlobDataFileReference : public ThreadSafeRefCounted<BlobDataFileReference, WTF::DestructionThread::Main> {
 public:
     static Ref<BlobDataFileReference> create(const String& path, const String& replacementPath = { })
     {

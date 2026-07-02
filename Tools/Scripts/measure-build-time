@@ -224,23 +224,23 @@ class IncrementalBuild6(PatchIncrementalBuild):
     description = 'Apply a small patch that changes a Swift-C++ class\'s public initializer and rebuild.'
     patch = '''\
 diff --git a/Source/WebKit/UIProcess/WebBackForwardList.cpp b/Source/WebKit/UIProcess/WebBackForwardList.cpp
-index 5fbcb767a0f5..b251202181fd 100644
+index 73419fbf4994..12e9c6ebda40 100644
 --- a/Source/WebKit/UIProcess/WebBackForwardList.cpp
 +++ b/Source/WebKit/UIProcess/WebBackForwardList.cpp
-@@ -968,7 +968,7 @@ void WebBackForwardList::didReceiveProvisionalMessage(IPC::Connection& connectio
+@@ -990,7 +990,7 @@ void WebBackForwardList::didReceiveProvisionalMessage(IPC::Connection& connectio
  #else // ENABLE(BACK_FORWARD_LIST_SWIFT)
  
  WebBackForwardListWrapper::WebBackForwardListWrapper(WebPageProxy& webPageProxy)
 -    : m_impl(WTF::makeUniqueWithoutFastMallocCheck<WebBackForwardList>(WebBackForwardList::init(webPageProxy)))
 +    : m_impl(WTF::makeUniqueWithoutFastMallocCheck<WebBackForwardList>(WebBackForwardList::init(webPageProxy, true)))
+     , m_messageForwarder(m_impl->getMessageReceiver())
  {
  }
- 
 diff --git a/Source/WebKit/UIProcess/WebBackForwardList.swift b/Source/WebKit/UIProcess/WebBackForwardList.swift
-index 3e1247fdf3d3..8b243cd79c1e 100644
+index 7556b716bef9..24e1cf8098e1 100644
 --- a/Source/WebKit/UIProcess/WebBackForwardList.swift
 +++ b/Source/WebKit/UIProcess/WebBackForwardList.swift
-@@ -137,7 +137,8 @@ final class WebBackForwardList {
+@@ -141,7 +141,8 @@ final class WebBackForwardList {
  
      // @used ensures these are retained even under -O -wmo: rdar://179098545
      @used

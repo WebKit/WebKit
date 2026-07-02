@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,8 +70,8 @@ public:
 
     static const QualifiedName& langAttributeName()
     {
-        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "lang"_s, nullAtom());
-        return voiceAttr;
+        static NeverDestroyed<QualifiedName> langAttr(nullAtom(), "lang"_s, nullAtom());
+        return langAttr;
     }
 
 protected:

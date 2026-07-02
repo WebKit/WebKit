@@ -62,6 +62,7 @@ public:
 
     void duplicate(double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void update(WebPageProxyIdentifier, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void move(NSObject *tabIDs, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void reload(WebPageProxyIdentifier, double tabID, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

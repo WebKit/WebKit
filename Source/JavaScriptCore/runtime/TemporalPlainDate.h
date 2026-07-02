@@ -47,12 +47,11 @@ public:
     static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&);
     static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, String&& calendarId);
     static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, CalendarID);
-    static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::Duration&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    static ISO8601::PlainDate toPlainDate(JSGlobalObject*, const ISO8601::Duration&);
+    static ISO8601::PlainDate validateAndCreateISODateRecord(JSGlobalObject*, const ISO8601::Duration&);
     static std::tuple<int32_t, unsigned, unsigned, std::optional<ParsedMonthCode>, TemporalOverflow, TemporalAnyProperties>
     mergeDateFields(JSGlobalObject*, JSObject*, JSValue, int32_t, uint32_t, uint32_t);
     static std::optional<int32_t> toDay(JSGlobalObject*, JSObject*);
@@ -79,7 +78,6 @@ public:
     uint8_t weekOfYear() const { return ISO8601::weekOfYear(m_plainDate); }
     int32_t yearOfWeek() const { return ISO8601::yearOfWeek(m_plainDate); }
 
-    String toString(JSGlobalObject*, JSValue options) const;
     String toString() const;
 
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainDate*, JSValue options);
@@ -90,12 +88,8 @@ private:
     TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&, String&&);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    template<typename CharacterType>
-    static std::optional<ISO8601::PlainDate> parse(StringParsingBuffer<CharacterType>&);
-    static ISO8601::PlainDate fromObject(JSGlobalObject*, JSObject*);
-
-    ISO8601::Duration differenceTemporalPlainDate(JSGlobalObject*, DifferenceOperation,
-        TemporalPlainDate*, TemporalUnit, TemporalUnit, RoundingMode, double);
+    template<DifferenceOperation>
+    ISO8601::Duration differenceTemporalPlainDate(JSGlobalObject*, TemporalPlainDate*, JSValue optionsValue);
 
     ISO8601::PlainDate m_plainDate;
     CalendarID m_calendarID { 0 };

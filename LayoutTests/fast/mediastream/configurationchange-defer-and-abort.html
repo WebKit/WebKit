@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>configurationchange: waits for unmuted/live state and aborts on ended track</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id="video" playsInline autoplay></video>
+<script>
+// MediaCapture Extensions §"configurationchange":
+//   https://w3c.github.io/mediacapture-extensions/#change-track-configuration
+//
+// Spec algorithm for queuing a configurationchange task:
+//   - Waits for muted to become false (i.e. the task isn't queued while
+//     the track is muted; it's deferred until the track is live again),
+//     OR for readyState to become "ended" (in which case it's abandoned).
+//   - Aborts (no task queued) if the track's readyState is already "ended"
+//     when the trigger fires, or if the new capabilities/settings already
+//     match the current source state.
+
+if (window.testRunner) {
+    testRunner.setMicrophonePermission(true);
+    testRunner.setCameraPermission(true);
+}
+
+function waitFor(eventTarget, eventName, timeoutMs = 3000, label = eventName) {
+    return new Promise((resolve, reject) => {
+        eventTarget.addEventListener(eventName, resolve, { once: true });
+        setTimeout(() => {
+            reject(new Error(`timeout waiting for ${label}`));
+        }, timeoutMs);
+    });
+}
+
+// Spec step 1: configurationchange firing waits for muted to become
+// false (or readyState to become "ended") before queueing the task.
+//
+// Scenario: get a video track, verify initial backgroundBlur=false,
+// mute the track (interrupt), trigger a backgroundBlur change while
+// muted, then unmute. After the unmute, configurationchange must fire
+// (the deferred task wakes up) and backgroundBlur must reflect the
+// new state.
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    document.getElementById("video").srcObject = stream;
+    await document.getElementById("video").play();
+
+    assert_false(track.getSettings().backgroundBlur,
+        "initial backgroundBlur is false");
+
+    // Mute the track first.
+    const muted = waitFor(track, "mute", 5000);
+    testRunner.setMockCaptureDevicesInterrupted(true, false);
+    await muted;
+    assert_true(track.muted, "track is muted after interrupt");
+
+    // Trigger a config change while muted (this is the spec-mandated
+    // "deferred" scenario). The configurationchange event must NOT
+    // fire while muted; the task is queued only once muted is false.
+    let firedWhileMuted = false;
+    track.onconfigurationchange = () => {
+        if (track.muted)
+            firedWhileMuted = true;
+    };
+    testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+
+    await new Promise(r => test.step_timeout(r, 200));
+    assert_false(firedWhileMuted,
+        "configurationchange did not fire while track was muted");
+
+    // Now unmute. Per spec step 1 (wait for muted=false), the deferred
+    // task wakes up and fires configurationchange. Per spec step 3
+    // (abort if settings/caps already match source), the task only
+    // fires if the source-side state genuinely changed — which it did
+    // here (backgroundBlur went false -> true).
+    const unmute = waitFor(track, "unmute", 5000);
+    const config = waitFor(track, "configurationchange", 5000,
+        "configurationchange after deferred unmute");
+    testRunner.setMockCaptureDevicesInterrupted(false, false);
+    await unmute;
+    await config;
+
+    assert_false(track.muted,
+        "track is unmuted by the time configurationchange fires");
+    assert_true(track.getSettings().backgroundBlur,
+        "backgroundBlur change applied after deferred configurationchange");
+}, "configurationchange task is deferred until track is no longer muted");
+
+// Spec step 2.1: configurationchange task aborts if readyState is
+// "ended" before the trigger fires (no event queued).
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getVideoTracks()[0];
+
+    document.getElementById("video").srcObject = stream;
+    await document.getElementById("video").play();
+
+    // Stop the track BEFORE triggering a config change.
+    track.stop();
+    assert_equals(track.readyState, "ended");
+
+    // Trigger a config change. Since the track is already "ended", no
+    // task should be queued and no event should fire.
+    let fired = false;
+    track.onconfigurationchange = () => { fired = true; };
+    testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+
+    await new Promise(r => test.step_timeout(r, 500));
+    assert_false(fired,
+        "configurationchange does not fire on a track whose readyState " +
+        "is already 'ended' when the source-side change is signalled");
+}, "configurationchange task aborts if track readyState is 'ended'");
+</script>
+</body>
+</html>

@@ -43,6 +43,7 @@ namespace WebCore {
 
 static bool NODELETE isCSPDirectiveName(StringView name)
 {
+    // Called with a source-expression token, not a parsed directive name, so it is not lowercased.
     return equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::baseURI)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::connectSrc)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::defaultSrc)
@@ -120,9 +121,9 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
     bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws"_s) || url.protocolIs("wss"_s) || url.protocolIs(m_policy->selfProtocol());
     // Also not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
-    if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::imgSrc))
+    if (m_directiveName == ContentSecurityPolicyDirectiveNames::imgSrc)
         isAllowed |= url.protocolIsData();
-    else if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::mediaSrc))
+    else if (m_directiveName == ContentSecurityPolicyDirectiveNames::mediaSrc)
         isAllowed |= url.protocolIsData() || url.protocolIsBlob();
     return isAllowed;
 }

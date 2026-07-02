@@ -93,7 +93,7 @@ public:
     void error(JSDOMGlobalObject&, JSC::JSValue);
 
     enum class ShouldThrowOnError : bool { No, Yes };
-    bool close(JSDOMGlobalObject&, ShouldThrowOnError = ShouldThrowOnError::Yes);
+    bool close(JSDOMGlobalObject&, ShouldThrowOnError);
     void closeAndRespondToPendingPullIntos(JSDOMGlobalObject&);
     size_t pullFromBytes(JSDOMGlobalObject&, JSC::ArrayBuffer&, size_t offset);
     ExceptionOr<void> enqueue(JSDOMGlobalObject&, JSC::ArrayBufferView&);

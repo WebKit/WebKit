@@ -226,21 +226,31 @@ void Builder::applyCustomProperty(const AtomString& name)
 
     auto iterator = m_cascade.customProperties().find(name);
     if (iterator == m_cascade.customProperties().end()) {
-        // The property is not in this cascade, but a custom function body inherits the calling
-        // context's custom properties, which are resolved lazily. Resolve it there and copy in the
-        // computed value so var() references can find it.
-        if (auto* callingContextBuilder = m_state->callingContextBuilder()) {
-            callingContextBuilder->applyCustomProperty(name);
-            if (RefPtr value = callingContextBuilder->state().style().customPropertyValue(name)) {
-                bool isInherited = isInheritedCustomProperty(m_state->registeredProperty(name));
-                m_state->style().setCustomPropertyValue(value.releaseNonNull(), isInherited);
-            }
-            m_state->m_appliedCustomProperties.add(name);
-        }
+        // A property missing from this cascade is resolved against the function evaluation context, if any.
+        if (m_state->callingContextBuilder())
+            applyCustomPropertyFromCallingContext(name);
         return;
     }
 
     applyCustomPropertyImpl(name, iterator->value);
+}
+
+// A custom property absent from a function's cascade is either a parameter (locally registered: it
+// shadows inheritance and resolves to its registered value) or one inherited from the calling context
+// (resolved lazily). https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
+void Builder::applyCustomPropertyFromCallingContext(const AtomString& name)
+{
+    auto* callingContextBuilder = m_state->callingContextBuilder();
+    ASSERT(callingContextBuilder);
+
+    if (m_state->registeredProperty(name))
+        applyCustomProperty(name, CSSWideKeyword::Initial);
+    else {
+        callingContextBuilder->applyCustomProperty(name);
+        if (RefPtr value = callingContextBuilder->state().style().customPropertyValue(name))
+            m_state->style().setCustomPropertyValue(value.releaseNonNull(), isInheritedCustomProperty(m_state->registeredProperty(name)));
+    }
+    m_state->m_appliedCustomProperties.add(name);
 }
 
 void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCascade::Property& property)
@@ -263,6 +273,11 @@ void Builder::applyCustomPropertyImpl(const AtomString& name, const PropertyCasc
         // The property is a registered custom property with universal syntax:
         // The computed value is the guaranteed-invalid value.
         if (!registered || registered->syntax.isUniversal())
+            return CustomProperty::createForGuaranteedInvalid(name);
+        // For a custom function's hypothetical element, an invalid value resolves to the guaranteed-invalid
+        // value (the parameter overrides inheritance), not unset.
+        // https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
+        if (m_state->callingContextBuilder())
             return CustomProperty::createForGuaranteedInvalid(name);
         // Otherwise:
         // ...as if the property’s value had been specified as the unset keyword.
@@ -692,7 +707,7 @@ std::optional<Builder::CustomPropertyOrKeyword> Builder::resolveCustomPropertyVa
 
     auto resolvedData = switchOn(value.value(),
         [&](const Ref<CSSSubstitutionValue>& substitutionValue) -> RefPtr<CSSVariableData> {
-            SubstitutionResolver substitutionResolver(*this);
+            SubstitutionResolver substitutionResolver(*this, registered);
             return substitutionResolver.substitute(substitutionValue.get());
         },
         [&](const Ref<CSSVariableData>& data) -> RefPtr<CSSVariableData> {

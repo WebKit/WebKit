@@ -758,6 +758,63 @@ extension AppKitGesturesTests.Basic {
         #expect(page.url == initialURL)
     }
 
+    @Test
+    func clickingOnSelectControlsKeepsMenuOpen() async throws {
+        let html = """
+            <select name="pets" id="select">
+                <option value="">--Please choose an option--</option>
+                <option value="dog">Dog</option>
+                <option value="cat">Cat</option>
+                <option value="goose">Goose</option>
+            </select>
+            """
+
+        try await page.load(html: html).wait()
+
+        // This is a proxy for "keeping the menu open" since if there are two mousedown events,
+        // then it toggles the menu back to being closed.
+
+        try await page.callJavaScript {
+            """
+            window.mousedownCount = 0;
+            window.clickCount = 0;
+
+            document.addEventListener("mousedown", event => {
+                window.mousedownCount++;
+                event.preventDefault();
+            }, { capture: true });
+
+            document.addEventListener("click", () => {
+                window.clickCount++;
+            }, { capture: true });
+            """
+        }
+
+        let bounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "select"))
+        let convertedBounds = screenBounds(ofRectInViewportCoordinates: bounds)
+
+        await page.waitForNextPresentationUpdate()
+
+        guard NSApp.isActive else {
+            return
+        }
+
+        await recap.play { composer in
+            composer._wk_click(at: convertedBounds.center, for: .seconds(0.1))
+        }
+
+        // Hard-coded delay to give the test a chance for multiple events to happen, in the failure case.
+        try await Task.sleep(for: .seconds(0.5))
+
+        let (mouseDownCount, clickCount) = try await page.callJavaScript(returning: (Int, Int).self) {
+            """
+            return [window.mousedownCount, window.clickCount];
+            """
+        }
+        #expect(mouseDownCount == 1)
+        #expect(clickCount == 1)
+    }
+
     // MARK: - Drag Press Disambiguation Tests
 
     @Test(arguments: [true, false])

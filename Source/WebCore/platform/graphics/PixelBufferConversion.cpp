@@ -113,6 +113,12 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
     auto sourceVImageBuffer = makeVImageBuffer(source, destinationSize);
     auto destinationVImageBuffer = makeVImageBuffer(destination, destinationSize);
 
+    auto zeroFillDestination = [&] {
+        size_t rowFillBytes = static_cast<size_t>(destinationSize.width()) * 4;
+        for (int y = 0; y < destinationSize.height(); ++y)
+            zeroSpan(destination.rows.subspan(static_cast<size_t>(y) * destination.bytesPerRow, rowFillBytes));
+    };
+
     if (source.format.colorSpace != destination.format.colorSpace) {
         // FIXME: Consider using vImageConvert_AnyToAny for all conversions, not just ones that need a color space conversion,
         // after judiciously performance testing them against each other.
@@ -122,11 +128,20 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
 
         vImage_Error converterCreateError = kvImageNoError;
         auto converter = adoptCF(vImageConverter_CreateWithCGImageFormat(&sourceCGImageFormat, &destinationCGImageFormat, nullptr, kvImageNoFlags, &converterCreateError));
-        if (converterCreateError != kvImageNoError)
+        if (converterCreateError != kvImageNoError) {
+            RELEASE_LOG_ERROR(Images, "%s: vImageConverter_CreateWithCGImageFormat() failed with error: %zd", __FUNCTION__, converterCreateError);
+            // The destination may be uninitialized; ensure no stale heap is exposed to callers.
+            zeroFillDestination();
             return;
+        }
 
         vImage_Error converterConvertError = vImageConvert_AnyToAny(converter.get(), &sourceVImageBuffer, &destinationVImageBuffer, nullptr, kvImageNoFlags);
-        ASSERT_WITH_MESSAGE_UNUSED(converterConvertError, converterConvertError == kvImageNoError, "vImageConvert_AnyToAny failed conversion with error: %zd", converterConvertError);
+        if (converterConvertError != kvImageNoError) {
+            RELEASE_LOG_ERROR(Images, "%s: vImageConvert_AnyToAny() failed with error: %zd", __FUNCTION__, converterConvertError);
+            // The destination may be uninitialized; ensure no stale heap is exposed to callers.
+            zeroFillDestination();
+        }
+
         return;
     }
 
@@ -343,8 +358,9 @@ static void writeFloat16(Float16 f16, const std::span<uint8_t>& spanFloat16, siz
 
 static void convertImagePixelsFromFloat16ToFloat16(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
-    if (source.format.colorSpace != destination.format.colorSpace)
-        return;
+    // FIXME: Float16-to-Float16 color-space conversion is unimplemented; fall through and copy
+    // verbatim. Do not early-return on a color-space mismatch: the destination is allocated
+    // uninitialized, so skipping the write would leak heap bytes through getPixelBuffer().
 
     auto sourceBytes = source.rows.size_bytes();
     auto sourcePixelComponents = sourceBytes / 2;

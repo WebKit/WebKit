@@ -1,0 +1,8 @@
+Setup function in a service worker
+
+This test assumes that the browser supports ServiceWorkers.
+
+
+FAIL Browser supports ServiceWorker assert_true: navigator.serviceWorker exists expected true got false
+FAIL Register ServiceWorker undefined is not an object (evaluating 'navigator.serviceWorker.register')
+

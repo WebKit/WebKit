@@ -32,6 +32,7 @@
 #include <WebCore/JSDOMConvertBase.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMGuardedObject.h>
+#include <WebCore/JSDOMPromise.h>
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/ScriptExecutionContext.h>
 
@@ -373,6 +374,7 @@ void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<con
 void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&&, Uint8Array*);
 void fulfillPromiseWithUint8ArrayFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::TopExceptionScope&);
+WEBCORE_EXPORT void rejectPromisesWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::JSPromise&, JSC::TopExceptionScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
@@ -422,25 +424,41 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
 
 using PromisePairFunction = JSC::EncodedJSValue(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-template<typename PromisePairFunctor>
+template<typename DictionaryType, typename PromisePairFunctor>
 inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromisePairFunctor functor)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto& globalObject = downcast<JSDOMGlobalObject>(lexicalGlobalObject);
-    auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
-    ASSERT(promise);
+    auto* promise1 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise1);
     auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise2);
 
-    auto result = functor(globalObject, callFrame, DeferredPromise::create(globalObject, *promise, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
+    auto result = functor(globalObject, callFrame, DeferredPromise::create(globalObject, *promise1, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
 
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise2, catchScope);
+    // The functor may have thrown — e.g. the generated missing-argument check
+    // returns throwVMError(...), which encodes a JSC::Exception* cell rather
+    // than an empty JSValue sentinel. Detect that before
+    // rejectPromisesWithExceptionIfAny clears the exception, so we never
+    // expose the raw Exception cell to JavaScript below.
+    bool functorThrew = !!catchScope.exception();
+
+    rejectPromisesWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise1, *promise2, catchScope);
+
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
     // https://bugs.webkit.org/show_bug.cgi?id=203402
     RETURN_IF_EXCEPTION(catchScope, JSC::encodedJSValue());
+
+    // When the functor threw or returned an empty JSValue sentinel (e.g. IDL
+    // argument conversion failure), rebuild a valid result dictionary from the
+    // (now rejected) promises via convertDictionaryToJS rather than returning
+    // the functor's return value.
+    if (functorThrew || !JSC::JSValue::decode(result)) [[unlikely]] {
+        result = JSC::JSValue::encode(convertDictionaryToJS(lexicalGlobalObject, globalObject, DictionaryType { DOMPromise::create(globalObject, *promise1), DOMPromise::create(globalObject, *promise2) }));
+        RETURN_IF_EXCEPTION(catchScope, JSC::encodedJSValue());
+    }
 
     return result;
 }

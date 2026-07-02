@@ -534,13 +534,7 @@ void CurlHandle::enableAcceptEncoding()
 
 void CurlHandle::enableAllowedProtocols()
 {
-#if ENABLE(FTPDIR)
-    auto allowedProtocols = "file,ftp,ftps,http,https";
-#else
-    auto allowedProtocols = "file,http,https";
-#endif
-
-    curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS_STR, allowedProtocols);
+    curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS_STR, "file,http,https");
 }
 
 void CurlHandle::enableAltSvc()

@@ -94,8 +94,9 @@ String TemporalPlainDate::toString() const
     return makeString(base, "[u-ca="_s, TemporalCore::calendarIDToString(m_calendarID), ']');
 }
 
-
-ISO8601::PlainDate TemporalPlainDate::toPlainDate(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
+// IsValidISODate + CreateISODateRecord
+// https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
+ISO8601::PlainDate TemporalPlainDate::validateAndCreateISODateRecord(JSGlobalObject* globalObject, const ISO8601::Duration& duration)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -110,12 +111,14 @@ ISO8601::PlainDate TemporalPlainDate::toPlainDate(JSGlobalObject* globalObject, 
     }
     int32_t year = static_cast<int32_t>(yearDouble);
 
+    // IsValidISODate Step 1: If month < 1 or month > 12, return false.
     if (!(monthDouble >= 1 && monthDouble <= 12)) [[unlikely]] {
         throwRangeError(globalObject, scope, "month is out of range"_s);
         return { };
     }
     uint32_t month = static_cast<uint32_t>(monthDouble);
 
+    // IsValidISODate Steps 2-3: reject day outside [1, ISODaysInMonth(year, month)].
     double daysInMonth = ISO8601::daysInMonth(year, month);
     if (!(dayDouble >= 1 && dayDouble <= daysInMonth)) [[unlikely]] {
         throwRangeError(globalObject, scope, "day is out of range"_s);
@@ -123,87 +126,41 @@ ISO8601::PlainDate TemporalPlainDate::toPlainDate(JSGlobalObject* globalObject, 
     }
     uint32_t day = static_cast<uint32_t>(dayDouble);
 
+    // CreateISODateRecord ( year, month, day ): Return ISO Date Record { [[Year]], [[Month]], [[Day]] }.
     return ISO8601::PlainDate(year, month, day);
 }
 
-// CreateTemporalDate ( years, months, days )
+static bool isValidPlainDateOrThrow(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate)
+{
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+    if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        return false;
+    }
+    return true;
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporaldate
 TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+    if (!isValidPlainDateOrThrow(globalObject, plainDate))
         return { };
-    }
-
-    return TemporalPlainDate::create(vm, structure, WTF::move(plainDate));
+    // Steps 2-6: OrdinaryCreateFromConstructor + [[ISODate]] + [[Calendar]].
+    return TemporalPlainDate::create(globalObject->vm(), structure, WTF::move(plainDate));
 }
 
 TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate, String&& calendarId)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+    if (!isValidPlainDateOrThrow(globalObject, plainDate))
         return { };
-    }
-
-    return TemporalPlainDate::create(vm, structure, WTF::move(plainDate), WTF::move(calendarId));
+    return TemporalPlainDate::create(globalObject->vm(), structure, WTF::move(plainDate), WTF::move(calendarId));
 }
 
 TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::PlainDate&& plainDate, CalendarID calendarID)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!ISO8601::isDateTimeWithinLimits(plainDate.year(), plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+    if (!isValidPlainDateOrThrow(globalObject, plainDate))
         return { };
-    }
-
-    return TemporalPlainDate::create(vm, structure, WTF::move(plainDate), calendarID);
-}
-
-TemporalPlainDate* TemporalPlainDate::tryCreateIfValid(JSGlobalObject* globalObject, Structure* structure, ISO8601::Duration&& duration)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto plainDate = toPlainDate(globalObject, duration);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, TemporalPlainDate::tryCreateIfValid(globalObject, structure,  WTF::move(plainDate)));
-}
-
-String TemporalPlainDate::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (!options)
-        return toString();
-
-    String calOpt = temporalShowCalendarName(globalObject, options);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto base = ISO8601::temporalDateToString(m_plainDate);
-    auto calId = calendarIDAsString();
-    if (calOpt == "never"_s)
-        return base;
-    if (calOpt == "always"_s)
-        return makeString(base, "[u-ca="_s, calId, ']');
-    if (calOpt == "critical"_s)
-        return makeString(base, "[!u-ca="_s, calId, ']');
-    // "auto": show calendar annotation only for non-ISO calendars.
-    if (calendarID() != iso8601CalendarID())
-        return makeString(base, "[u-ca="_s, calId, ']');
-    return base;
+    return TemporalPlainDate::create(globalObject->vm(), structure, WTF::move(plainDate), calendarID);
 }
 
 static TemporalPlainDate* fromImpl(JSGlobalObject*, JSValue, Variant<JSObject*, TemporalOverflow>);
@@ -501,7 +458,7 @@ TemporalPlainDate::mergeDateFields(JSGlobalObject* globalObject, JSObject* tempo
     TemporalOverflow overflow = toTemporalOverflow(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Duplicate code from TemporalPlainDate::toPlainDate so we can convert from
+    // Duplicate code from TemporalPlainDate::validateAndCreateISODateRecord so we can convert from
     // double to int32_t / unsigned here
     if (year && !ISO8601::isYearWithinLimits(*year)) [[unlikely]] {
         throwRangeError(globalObject, scope, "year is out of range"_s);
@@ -696,26 +653,40 @@ static Int128 getUTCEpochNanoseconds(ISO8601::PlainDate isoDate)
     return TemporalCore::getUTCEpochNanoseconds(isoDate, ISO8601::PlainTime());
 }
 
-ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject* globalObject, DifferenceOperation op, TemporalPlainDate* other, TemporalUnit smallestUnit, TemporalUnit largestUnit, RoundingMode roundingMode, double increment)
+// https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplaindate
+// Step 1 (ToTemporalDate) done by the prototype host fn via TemporalPlainDate::from().
+// Uses spec's flip-mode + negate-at-end pattern for Since (unlike PlainTime's operand-swap).
+template<DifferenceOperation op>
+ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Step 1: CalendarEquals — calendars must match.
+    // Step 2: If CalendarEquals is false, throw RangeError.
     if (m_calendarID != other->m_calendarID) [[unlikely]] {
         throwRangeError(globalObject, scope, "cannot compute difference between dates with different calendars"_s);
         return { };
     }
 
-    // Step 2: if dates equal, return zero duration.
+    // Step 3: settings = ? GetDifferenceSettings(operation, options, ~date~, «», ~day~, ~day~).
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day, op);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Step 4: If CompareISODate = 0, return zero duration.
     if (!TemporalCore::isoDateCompare(plainDate(), other->plainDate()))
         return ISO8601::Duration();
+
+    // Step 5: dateDifference = CalendarDateUntil(calendar, this, other, largestUnit).
     ISO8601::Duration dateDiff;
     if (!TemporalCore::calendarIsISO(m_calendarID))
         dateDiff = calendarDateUntil(m_calendarID, plainDate(), other->plainDate(), largestUnit);
     else
         dateDiff = TemporalCore::calendarDateUntil(plainDate(), other->plainDate(), largestUnit);
+
+    // Step 6: duration = CombineDateAndTimeDuration(dateDifference, 0).
     ISO8601::InternalDuration duration = ISO8601::InternalDuration::combineDateAndTimeDuration(dateDiff, 0);
+
+    // Step 7: If smallestUnit ≠ ~day~ or increment ≠ 1, RoundRelativeDuration.
     if (smallestUnit != TemporalUnit::Day || increment != 1) {
         auto isoDate = plainDate();
         Int128 originEpochNs = getUTCEpochNanoseconds(isoDate);
@@ -729,45 +700,36 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
             return { };
         }
     }
+
+    // Step 8: result = ! TemporalDurationFromInternal(duration, ~day~).
     auto durResult = TemporalCore::temporalDurationFromInternal(duration, TemporalUnit::Day);
     if (!durResult) [[unlikely]] {
         throwTemporalError(globalObject, scope, durResult.error());
         return { };
     }
     ISO8601::Duration result = *durResult;
-    if (op == DifferenceOperation::Since)
+
+    // Step 9: If since, negate result. Step 10: Return result.
+    if constexpr (op == DifferenceOperation::Since)
         result = -result;
     return result;
 }
 
+template ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate<DifferenceOperation::Until>(JSGlobalObject*, TemporalPlainDate*, JSValue);
+template ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate<DifferenceOperation::Since>(JSGlobalObject*, TemporalPlainDate*, JSValue);
+
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.until
+// Step 3: Return ? DifferenceTemporalPlainDate(~until~, this, other, options).
 ISO8601::Duration TemporalPlainDate::until(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // Steps 3-4: GetDifferenceSettings.
-    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    // Steps 5-9: DifferenceTemporalPlainDate.
-    RELEASE_AND_RETURN(scope, differenceTemporalPlainDate(globalObject,
-        DifferenceOperation::Until, other, smallestUnit, largestUnit, roundingMode, increment));
+    return differenceTemporalPlainDate<DifferenceOperation::Until>(globalObject, other, optionsValue);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.since
+// Step 3: Return ? DifferenceTemporalPlainDate(~since~, this, other, options).
 ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // Steps 3-4: GetDifferenceSettings(~since~, ...).
-    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day, DifferenceOperation::Since);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    // Steps 5-9: DifferenceTemporalPlainDate.
-    RELEASE_AND_RETURN(scope, differenceTemporalPlainDate(globalObject,
-        DifferenceOperation::Since, other, smallestUnit, largestUnit, roundingMode, increment));
+    return differenceTemporalPlainDate<DifferenceOperation::Since>(globalObject, other, optionsValue);
 }
 
 } // namespace JSC

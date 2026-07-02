@@ -38,6 +38,8 @@
 #include "JSTypedArrays.h"
 #include "MathCommon.h"
 #include "StructureCreateInlines.h"
+#include <cstddef>
+#include <optional>
 #include <wtf/Assertions.h>
 #include <wtf/text/ASCIILiteral.h>
 
@@ -163,8 +165,8 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
     if (JSArrayBuffer* jsBuffer = dynamicDowncast<JSArrayBuffer>(firstValue))
         RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewWithArrayBuffer<ViewClass>(globalObject, structure, jsBuffer, offset, lengthOpt));
 
-    ASSERT(!offset && !lengthOpt);
-    
+    ASSERT(!offset);
+
     // For everything but DataView, we allow construction with any of:
     // - Another array. This creates a copy of the of that array.
     // - A primitive. This creates a new typed array of that length and zero-initializes it.
@@ -250,10 +252,29 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
         return result;
     }
 
-    size_t length = firstValue.toIndex(globalObject, "length"_s);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    ASSERT(!offset && lengthOpt.has_value());
+    ASSERT(!firstValue.isObject());
 
+    size_t length = lengthOpt.value();
     RELEASE_AND_RETURN(scope, ViewClass::create(globalObject, structure, length));
+}
+
+template<typename ViewClass>
+inline JSObject* operationConstructGenericTypedArrayViewWithOneArgumentImpl(JSGlobalObject* globalObject, Structure* structure, JSValue firstValue)
+{
+    static_assert(ViewClass::TypedArrayStorageType != TypeDataView);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    std::optional<size_t> length;
+    if (!firstValue.isObject()) {
+        // the step 9 of https://tc39.es/ecma262/2026/#sec-typedarray
+        length = firstValue.toIndex(globalObject, "length"_s);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    RELEASE_AND_RETURN(scope, constructGenericTypedArrayViewWithArguments<ViewClass>(globalObject, structure, firstValue, 0,  length));
 }
 
 // This is equivalent to https://tc39.es/ecma262/#sec-typedarray
@@ -306,6 +327,12 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
             }
         }
     } else {
+        if (!firstValue.isObject()) {
+            // the step 9 of https://tc39.es/ecma262/2026/#sec-typedarray
+            length = firstValue.toIndex(globalObject, "length"_s);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
         structure = JSC_GET_DERIVED_STRUCTURE(vm, typedArrayStructureWithTypedArrayType<ViewClass::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
         RETURN_IF_EXCEPTION(scope, { });
     }

@@ -1,5 +1,5 @@
 
-PASS Increasing quota
+FAIL Increasing quota Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 PASS After network process restart, verify quota is computed according space being used
-PASS After network process restart, verify quota is computed according space being used and does not increase
+FAIL After network process restart, verify quota is computed according space being used and does not increase Test bug: unrecognized DOMException code name or name "QuotaExceededError" passed to assert_throws_dom()
 

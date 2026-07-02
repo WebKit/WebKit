@@ -1,0 +1,5 @@
+
+PASS Log insertion before load
+PASS Log insertion before load (again)
+FAIL Log insertion after load null is not an object (evaluating 'log.parentNode')
+

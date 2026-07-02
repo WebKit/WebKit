@@ -186,7 +186,7 @@ private:
     enum class SizeDefiniteness : uint8_t { Definite, Indefinite, Unknown };
     
     static constexpr unsigned s_flexLayoutItemsInitialCapacity = 4;
-    using FlexItemFrameRects = Vector<LayoutRect, s_flexLayoutItemsInitialCapacity>;
+    using FlexItemBorderBoxRects = Vector<LayoutRect, s_flexLayoutItemsInitialCapacity>;
     using FlexLayoutItems = Vector<FlexLayoutItem, s_flexLayoutItemsInitialCapacity>;
 
     struct LineState;
@@ -327,8 +327,8 @@ private:
     void flipForRightToLeftColumn(const FlexLineStates& linesState);
     void flipForWrapReverse(const FlexLineStates&, LayoutUnit crossAxisStartEdge);
     
-    void appendFlexItemFrameRects(FlexItemFrameRects&);
-    void repaintFlexItemsDuringLayoutIfMoved(const FlexItemFrameRects&);
+    void appendFlexItemBorderBoxRects(FlexItemBorderBoxRects&);
+    void repaintFlexItemsDuringLayoutIfMoved(const FlexItemBorderBoxRects&);
 
     bool flexItemHasPercentHeightDescendants(const RenderBox&) const;
     void dirtyPercentHeightDescendantsWithinFlexItem(RenderBox&);

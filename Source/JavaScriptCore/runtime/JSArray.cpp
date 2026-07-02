@@ -494,7 +494,7 @@ bool JSArray::setLengthWithArrayStorage(JSGlobalObject* globalObject, unsigned n
             keys.reserveInitialCapacity(std::min(map->size(), static_cast<size_t>(length - newLength)));
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                unsigned index = static_cast<unsigned>(it->key);
+                unsigned index = it->index();
                 if (index < length && index >= newLength)
                     keys.append(index);
             }
@@ -509,7 +509,7 @@ bool JSArray::setLengthWithArrayStorage(JSGlobalObject* globalObject, unsigned n
                     unsigned index = keys[--i];
                     SparseArrayValueMap::iterator it = map->find(index);
                     ASSERT(it != map->notFound());
-                    if (it->value.attributes() & PropertyAttribute::DontDelete) {
+                    if (it->attributes() & PropertyAttribute::DontDelete) {
                         storage->setLength(index + 1);
                         return typeError(globalObject, scope, throwException, UnableToDeletePropertyError);
                     }

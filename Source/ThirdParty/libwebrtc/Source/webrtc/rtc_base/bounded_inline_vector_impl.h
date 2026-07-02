@@ -109,10 +109,10 @@ static constexpr int kSmallSize = 64;
 // Storage implementation for nontrivial element types.
 template <typename T,
           int fixed_capacity,
-          bool is_trivial = std::is_trivial<T>::value,
+          bool is_trivial = std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T>,
           bool is_small = (sizeof(T) * fixed_capacity <= kSmallSize)>
 struct Storage {
-  static_assert(!std::is_trivial<T>::value, "");
+  static_assert(!std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T>, "");
 
   template <
       typename... Ts,
@@ -158,7 +158,7 @@ struct Storage {
 // enough that we can cheaply copy everything.
 template <typename T, int fixed_capacity>
 struct Storage<T, fixed_capacity, /*is_trivial=*/true, /*is_small=*/true> {
-  static_assert(std::is_trivial<T>::value, "");
+  static_assert(std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T>, "");
   static_assert(sizeof(T) * fixed_capacity <= kSmallSize, "");
 
   template <
@@ -180,7 +180,7 @@ struct Storage<T, fixed_capacity, /*is_trivial=*/true, /*is_small=*/true> {
 // enough that we want to avoid copying uninitialized elements.
 template <typename T, int fixed_capacity>
 struct Storage<T, fixed_capacity, /*is_trivial=*/true, /*is_small=*/false> {
-  static_assert(std::is_trivial<T>::value, "");
+  static_assert(std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T>, "");
   static_assert(sizeof(T) * fixed_capacity > kSmallSize, "");
 
   template <

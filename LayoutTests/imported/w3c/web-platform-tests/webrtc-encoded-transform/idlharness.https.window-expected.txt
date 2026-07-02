@@ -1,6 +1,8 @@
 
 PASS idl_test setup
-PASS idl_test validation
+FAIL idl_test validation Validation error at line 20 in streams:
+  async iterable<any>
+  ^ `async iterable` is now changed to `async_iterable`.
 PASS Partial interface RTCRtpSender: original interface defined
 PASS Partial interface RTCRtpSender: member names are unique
 PASS Partial interface RTCRtpReceiver: original interface defined
@@ -8,18 +10,47 @@ PASS Partial interface RTCRtpReceiver: member names are unique
 PASS Partial interface DedicatedWorkerGlobalScope: original interface defined
 PASS Partial interface DedicatedWorkerGlobalScope: member names are unique
 PASS Partial interface RTCRtpSender[2]: member names are unique
-PASS SFrameTransform includes GenericTransformStream: member names are unique
+PASS RTCSFrameSenderTransform includes SFrameEncrypterManager: member names are unique
+PASS RTCSFrameReceiverTransform includes SFrameDecrypterManager: member names are unique
+PASS SFrameEncrypterStream includes GenericTransformStream: member names are unique
+PASS SFrameEncrypterStream includes SFrameEncrypterManager: member names are unique
+PASS SFrameDecrypterStream includes GenericTransformStream: member names are unique
+PASS SFrameDecrypterStream includes SFrameDecrypterManager: member names are unique
 PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique
 PASS DedicatedWorkerGlobalScope includes MessageEventTarget: member names are unique
-PASS SFrameTransform interface: existence and properties of interface object
-PASS SFrameTransform interface object length
-PASS SFrameTransform interface object name
-PASS SFrameTransform interface: existence and properties of interface prototype object
-PASS SFrameTransform interface: existence and properties of interface prototype object's "constructor" property
-PASS SFrameTransform interface: existence and properties of interface prototype object's @@unscopables property
-PASS SFrameTransform interface: operation setEncryptionKey(CryptoKey, optional CryptoKeyID)
-PASS SFrameTransform interface: attribute onerror
+FAIL RTCSFrameSenderTransform interface: existence and properties of interface object assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameSenderTransform interface object length assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameSenderTransform interface object name assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameSenderTransform interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameSenderTransform interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameSenderTransform interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameSenderTransform interface: operation setEncryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
+FAIL RTCSFrameReceiverTransform interface: existence and properties of interface object assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface object length assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface object name assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface: operation addDecryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface: operation removeDecryptionKey(CryptoKeyID) assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL RTCSFrameReceiverTransform interface: attribute onerror assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
+FAIL SFrameEncrypterStream interface: existence and properties of interface object assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameEncrypterStream interface object length assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameEncrypterStream interface object name assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameEncrypterStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameEncrypterStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameEncrypterStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameEncrypterStream interface: operation setEncryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
+FAIL SFrameDecrypterStream interface: existence and properties of interface object assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface object length assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface object name assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface: operation addDecryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface: operation removeDecryptionKey(CryptoKeyID) assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+FAIL SFrameDecrypterStream interface: attribute onerror assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
 PASS SFrameTransformErrorEvent interface: existence and properties of interface object
 PASS SFrameTransformErrorEvent interface object length
 PASS SFrameTransformErrorEvent interface object name
@@ -38,6 +69,11 @@ PASS RTCEncodedVideoFrame interface: existence and properties of interface proto
 PASS RTCEncodedVideoFrame interface: attribute type
 PASS RTCEncodedVideoFrame interface: attribute data
 PASS RTCEncodedVideoFrame interface: operation getMetadata()
+PASS RTCEncodedVideoFrame must be primary interface of idlTestObjects.videoFrame
+PASS Stringification of idlTestObjects.videoFrame
+FAIL RTCEncodedVideoFrame interface: idlTestObjects.videoFrame must inherit property "type" with the proper type Right hand side of instanceof is not an object
+PASS RTCEncodedVideoFrame interface: idlTestObjects.videoFrame must inherit property "data" with the proper type
+PASS RTCEncodedVideoFrame interface: idlTestObjects.videoFrame must inherit property "getMetadata()" with the proper type
 PASS RTCEncodedAudioFrame interface: existence and properties of interface object
 PASS RTCEncodedAudioFrame interface object length
 PASS RTCEncodedAudioFrame interface object name
@@ -46,14 +82,18 @@ PASS RTCEncodedAudioFrame interface: existence and properties of interface proto
 PASS RTCEncodedAudioFrame interface: existence and properties of interface prototype object's @@unscopables property
 PASS RTCEncodedAudioFrame interface: attribute data
 PASS RTCEncodedAudioFrame interface: operation getMetadata()
-PASS RTCTransformEvent interface: existence and properties of interface object
-PASS RTCRtpScriptTransformer interface: existence and properties of interface object
+PASS RTCEncodedAudioFrame must be primary interface of idlTestObjects.audioFrame
+PASS Stringification of idlTestObjects.audioFrame
+PASS RTCEncodedAudioFrame interface: idlTestObjects.audioFrame must inherit property "data" with the proper type
+PASS RTCEncodedAudioFrame interface: idlTestObjects.audioFrame must inherit property "getMetadata()" with the proper type
 PASS RTCRtpScriptTransform interface: existence and properties of interface object
 PASS RTCRtpScriptTransform interface object length
 PASS RTCRtpScriptTransform interface object name
 PASS RTCRtpScriptTransform interface: existence and properties of interface prototype object
 PASS RTCRtpScriptTransform interface: existence and properties of interface prototype object's "constructor" property
 PASS RTCRtpScriptTransform interface: existence and properties of interface prototype object's @@unscopables property
+PASS RTCRtpScriptTransformer interface: existence and properties of interface object
+PASS RTCTransformEvent interface: existence and properties of interface object
 PASS KeyFrameRequestEvent interface: existence and properties of interface object
 PASS RTCRtpSender interface: attribute transform
 PASS RTCRtpSender interface: new RTCPeerConnection().addTransceiver('audio').sender must inherit property "transform" with the proper type

@@ -927,11 +927,19 @@ Inspector::Protocol::CSS::StyleSheetOrigin FrameCSSAgent::detectOrigin(CSSStyleS
     if (m_creatingViaInspectorStyleSheet)
         return Inspector::Protocol::CSS::StyleSheetOrigin::Inspector;
 
-    if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
-        return Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent;
+    if (pageStyleSheet) {
+        // Constructable stylesheets (`new CSSStyleSheet()`, used via `adoptedStyleSheets`)
+        // have no owner node and no href, so guard against them before applying the
+        // ownerNode/href heuristic for user-agent stylesheets.
+        if (pageStyleSheet->wasConstructedByJS())
+            return Inspector::Protocol::CSS::StyleSheetOrigin::Author;
 
-    if (pageStyleSheet && pageStyleSheet->contents().isUserStyleSheet())
-        return Inspector::Protocol::CSS::StyleSheetOrigin::User;
+        if (!pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
+            return Inspector::Protocol::CSS::StyleSheetOrigin::UserAgent;
+
+        if (pageStyleSheet->contents().isUserStyleSheet())
+            return Inspector::Protocol::CSS::StyleSheetOrigin::User;
+    }
 
     if (!ownerDocument)
         return Inspector::Protocol::CSS::StyleSheetOrigin::Author;

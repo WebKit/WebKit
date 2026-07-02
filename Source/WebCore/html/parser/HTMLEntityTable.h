@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010-2014 Google, Inc. All rights reserved.
- * Copyright (C) 2023 Apple, Inc. All rights reserved.
+ * Copyright (C) 2023-2026 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,12 @@ struct HTMLEntityTableEntry {
     unsigned nameLength() const { return nameLengthExcludingSemicolon + nameIncludesTrailingSemicolon; }
 
     unsigned firstCharacter : 21; // All Unicode characters fit in 21 bits.
-    unsigned optionalSecondCharacter : 16; // Two-character sequences are all BMP characters.
-    unsigned nameCharactersOffset : 14;
     unsigned nameLengthExcludingSemicolon : 5;
     unsigned nameIncludesTrailingSemicolon : 1;
+    unsigned nameCharactersOffset : 14;
+    unsigned optionalSecondCharacter : 16; // Two-character sequences are all BMP characters.
 };
+static_assert(sizeof(HTMLEntityTableEntry) == 8);
 
 class HTMLEntityTable {
 public:

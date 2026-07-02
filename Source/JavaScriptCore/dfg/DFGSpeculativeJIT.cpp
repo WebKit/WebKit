@@ -2013,6 +2013,35 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     cellResult(lengthGPR, node);
 }
 
+void SpeculativeJIT::compileStringTrim(Node* node)
+{
+    ASSERT(node->op() == StringTrim);
+
+    SpeculateCellOperand string(this, node->child1());
+    GPRReg stringGPR = string.gpr();
+
+    speculateString(node->child1(), stringGPR);
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    switch (node->intrinsic()) {
+    case StringPrototypeTrimIntrinsic:
+        callOperation(operationStringTrim, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR);
+        break;
+    case StringPrototypeTrimStartIntrinsic:
+        callOperation(operationStringTrimStart, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR);
+        break;
+    case StringPrototypeTrimEndIntrinsic:
+        callOperation(operationStringTrimEnd, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileStringCodePointAt(Node* node)
 {
     // And CheckArray also ensures that this String is not a rope.

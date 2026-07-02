@@ -30,8 +30,10 @@
 #include "JSCInlines.h"
 #include "PlainDateTimeCore.h"
 #include "TemporalCalendar.h"
+#include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainDateTimePrototype.h"
+#include "TemporalPlainTime.h"
 
 namespace JSC {
 
@@ -129,8 +131,16 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainDateTime, (JSGlobalObject* global
         }
     }
 
-    // Steps 14-19: IsValidISODate + IsValidTime + CreateTemporalDateTime.
-    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(duration));
+    // Steps 14-15: IsValidISODate + CreateISODateRecord.
+    auto plainDate = TemporalPlainDate::validateAndCreateISODateRecord(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Steps 16-17: IsValidTime + CreateTimeRecord.
+    auto plainTime = TemporalPlainTime::validateAndCreateTimeRecord(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Steps 18-19: CombineISODateAndTimeRecord + ? CreateTemporalDateTime.
+    auto* result = TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTF::move(plainDate), WTF::move(plainTime));
     RETURN_IF_EXCEPTION(scope, { });
     if (result && calId != iso8601CalendarID())
         result->setCalendarID(calId);

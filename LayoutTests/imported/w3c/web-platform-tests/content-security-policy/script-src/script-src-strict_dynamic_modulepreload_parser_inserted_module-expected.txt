@@ -1,0 +1,7 @@
+A modulepreloaded parser-inserted external module script is allowed with `strict-dynamic` in the script-src directive.
+
+
+PASS Parser-inserted external module script that is also `modulepreload`ed is allowed with `strict-dynamic`.
+PASS Parser-inserted external module script with only a `<link rel=preload as=script>` is not allowed with `strict-dynamic`.
+PASS A `modulepreload` for a different URL does not allow a parser-inserted external module script with `strict-dynamic`.
+

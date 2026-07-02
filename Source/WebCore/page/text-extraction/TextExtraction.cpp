@@ -2904,7 +2904,13 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
     if ((action == Action::SelectText || action == Action::HighlightText) && interaction.scrollToVisible)
         description.append(makeString(appendedReplaceTextDescription ? " and"_s : ","_s, " scrolling the targeted range into view"_s));
 
-    return { description.toString(), WTF::move(stringsToValidate) };
+    bool didFindTargetNode = true;
+    if (interaction.nodeIdentifier) {
+        RefPtr node = Node::fromIdentifier(*interaction.nodeIdentifier);
+        didFindTargetNode = node && node->isConnected();
+    }
+
+    return { description.toString(), WTF::move(stringsToValidate), didFindTargetNode };
 }
 
 RefPtr<Element> elementForExtractedText(const LocalFrame& frame, ExtractedText&& extractedText)

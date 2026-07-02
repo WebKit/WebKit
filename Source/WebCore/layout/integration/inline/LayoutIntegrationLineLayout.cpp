@@ -634,7 +634,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             floatingObject.setMarginOffset({ borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
             floatingObject.setIsPlaced(true);
 
-            auto oldRect = renderer->frameRect();
+            auto oldRect = renderer->borderBoxRectInContainer();
             renderer->setLocation(borderBoxVisualRect.location());
 
             if (renderer->checkForRepaintDuringLayout()) {

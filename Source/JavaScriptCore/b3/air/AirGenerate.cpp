@@ -40,7 +40,6 @@
 #include "AirLogRegisterPressure.h"
 #include "AirLowerAfterRegAlloc.h"
 #include "AirLowerEntrySwitch.h"
-#include "AirLowerMacros.h"
 #include "AirLowerStackArgs.h"
 #include "AirOpcodeUtils.h"
 #include "AirOptimizeBlockOrder.h"
@@ -77,8 +76,6 @@ void prepareForGeneration(Code& code)
         validate(code);
 
     if (!code.optLevel()) {
-        lowerMacros(code);
-
         // FIXME: The name of this phase doesn't make much sense in O0 since we do this before
         // register allocation.
         lowerAfterRegAlloc(code);
@@ -105,8 +102,6 @@ void prepareForGeneration(Code& code)
     }
 
     simplifyCFG(code);
-
-    lowerMacros(code);
 
     // This is where we run our optimizations and transformations.
     // FIXME: Add Air optimizations.

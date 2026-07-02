@@ -1,0 +1,4 @@
+
+PASS Test with a 'cleanup' function
+PASS test defined when no tests are queued, but one test is executing
+

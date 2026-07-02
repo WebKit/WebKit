@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ findInteractionEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>hello world</p>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Searching with the find interaction for a string that folds to an all-ignorable collation key (a lone soft hyphen, U+00AD) must not crash the Web Content process. rdar://170649898");
+
+    // A soft hyphen folds to an empty collation key, so the searcher reports a
+    // zero-length match at the start of the document. The found text range that
+    // produces equals the empty value of the range map kept in the Web Content
+    // process; reporting it must not trip that map's key-validation assertion.
+    matchCount = await UIHelper.findStringMatchesUsingFindInteraction("\u00AD");
+    shouldBeZero("matchCount");
+
+    finishJSTest();
+});
+</script>
+</html>

@@ -28,6 +28,7 @@
 #include "CSSParserTokenRange.h"
 #include "StyleCustomProperty.h"
 #include "StyleRuleFunction.h"
+#include "StyleScopeOrdinal.h"
 
 namespace WebCore {
 
@@ -36,6 +37,7 @@ class CSSValue;
 class CSSVariableData;
 class CSSSubstitutionValue;
 struct CSSParserContext;
+struct CSSRegisteredCustomProperty;
 enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
 
@@ -51,7 +53,9 @@ class LocalPropertyRegistry;
 // https://drafts.csswg.org/css-values-5/#arbitrary-substitution
 class SubstitutionResolver {
 public:
-    explicit SubstitutionResolver(Builder&);
+    // The registration is that of the custom property whose value is being resolved, if any. It is
+    // used to validate first-valid() candidates against the target syntax.
+    explicit SubstitutionResolver(Builder&, const CSSRegisteredCustomProperty* = nullptr);
 
     RefPtr<CSSValue> substituteAndParse(const CSSSubstitutionValue&, CSSPropertyID);
     RefPtr<CSSValue> substituteAndParseShorthand(const CSSShorthandSubstitutionValue&, CSSPropertyID);
@@ -61,8 +65,9 @@ private:
     std::optional<Vector<CSSParserToken>> substituteTokenRange(CSSParserTokenRange, const CSSParserContext&);
 
     bool substituteVariableFunction(CSSParserTokenRange, CSSValueID, Vector<CSSParserToken>&, const CSSParserContext&);
+    bool substituteFirstValid(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteDashedFunction(StringView functionName, CSSParserTokenRange, Vector<CSSParserToken>&);
-    RefPtr<MutableStyleProperties> resolveAndRegisterDashedFunctionArguments(const Vector<StyleRuleFunction::Parameter>&, const Vector<Vector<CSSParserToken>>&, LocalPropertyRegistry&);
+    RefPtr<MutableStyleProperties> resolveAndRegisterDashedFunctionArguments(const Vector<StyleRuleFunction::Parameter>&, const Vector<Vector<CSSParserToken>>&, LocalPropertyRegistry&, ScopeOrdinal definitionScope);
     bool substituteAttrFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
     bool substituteInternalAutoBaseFunction(CSSParserTokenRange, Vector<CSSParserToken>&, const CSSParserContext&);
 
@@ -72,9 +77,6 @@ private:
     };
     std::optional<AttrArgumentGrammarSubstitution> substituteAttrArgumentGrammar(CSSParserTokenRange, const CSSParserContext&);
 
-    enum class FallbackResult : uint8_t { None, Valid, Invalid };
-    std::pair<FallbackResult, Vector<CSSParserToken>> substituteVariableFallback(const AtomString& variableName, CSSParserTokenRange, CSSValueID functionId, const CSSParserContext&);
-
     RefPtr<const CustomProperty> propertyValueForVariableName(const AtomString&, CSSValueID);
     RefPtr<CSSVariableData> trySimpleSubstitution(const CSSSubstitutionValue&);
     bool isBaseAppearance();
@@ -83,6 +85,7 @@ private:
     void propagateAttrTaint(IsAttrTainted, std::span<const CSSParserToken>);
 
     Builder& m_styleBuilder;
+    const CSSRegisteredCustomProperty* m_registration { nullptr };
     RefPtr<const CSSSubstitutionValue> m_substitutionValue;
     Vector<String> m_intermediateTokenStrings;
     Vector<RefPtr<const CustomProperty>> m_intermediateCustomProperties;

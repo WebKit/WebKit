@@ -23,9 +23,11 @@
 #include "config.h"
 #include "InternalFunction.h"
 
+#include "Debugger.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ProxyObject.h"
+#include "VMInlines.h"
 
 namespace JSC {
 
@@ -63,6 +65,10 @@ void InternalFunction::finishCreation(VM& vm, unsigned length, const String& nam
         putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         putDirectWithoutTransition(vm, vm.propertyNames->name, nameString, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     }
+
+    vm.forEachDebugger([&] (Debugger& debugger) {
+        debugger.didCreateInternalFunction(*this);
+    });
 }
 
 template<typename Visitor>

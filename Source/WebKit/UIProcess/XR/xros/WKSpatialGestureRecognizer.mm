@@ -30,6 +30,7 @@
 
 #import <Spatial/SPPose3D.h>
 #import <UIKit/UIGestureRecognizerSubclass.h>
+#import <WebCore/TransformationMatrix.h>
 #import <pal/spi/cocoa/CompositorServicesSPI.h>
 
 #import <pal/cocoa/ARKitSoftLink.h>

@@ -133,7 +133,8 @@ enum class StoreDecision {
     NoDueToNoStoreRequest,
     NoDueToUnlikelyToReuse,
     NoDueToStreamingMedia,
-    NoDueToRequestContainingFragments
+    NoDueToRequestContainingFragments,
+    NoDueToHTTPStatusCode
 };
 
 enum class UseDecision {

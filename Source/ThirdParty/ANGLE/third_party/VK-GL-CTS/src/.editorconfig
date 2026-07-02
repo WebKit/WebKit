@@ -1,0 +1,14 @@
+root = true
+
+[*.{c,h,cpp,hpp,txt,md,inl,py,mk,java,sh,xml}]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[{CMakeLists.txt,*.cmake}]
+indent_style = tab
+end_of_line = lf
+insert_final_newline = true

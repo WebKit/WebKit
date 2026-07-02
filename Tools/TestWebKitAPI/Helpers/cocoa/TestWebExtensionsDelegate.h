@@ -52,6 +52,7 @@
 #endif
 
 @property (nonatomic, copy) void (^openNewTab)(WKWebExtensionTabConfiguration *, WKWebExtensionContext *, void (^)(id<WKWebExtensionTab>, NSError *));
+@property (nonatomic, copy) void (^moveTabs)(NSArray<id <WKWebExtensionTab>> *, NSUInteger index, id <WKWebExtensionWindow> window, WKWebExtensionContext *, void (^)(NSError *));
 @property (nonatomic, copy) void (^openOptionsPage)(WKWebExtensionContext *, void (^)(NSError *));
 
 @property (nonatomic, copy) void (^promptForPermissions)(id <WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<WKWebExtensionPermission> *, NSDate *));

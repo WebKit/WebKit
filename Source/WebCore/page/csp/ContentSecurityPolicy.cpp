@@ -911,7 +911,7 @@ std::optional<CodePosition> ContentSecurityPolicy::getCurrentCodePosition()
 void ContentSecurityPolicy::reportViolation(const ContentSecurityPolicyDirective& violatedDirective, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state, StringView sourceContent) const
 {
     // FIXME: Extract source file, and position from JSC::ExecState.
-    return reportViolation(violatedDirective.nameForReporting().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, String(), sourceContent.left(40), { }, state);
+    return reportViolation(violatedDirective.nameForReporting(), violatedDirective.directiveList(), blockedURL, consoleMessage, String(), sourceContent.left(40), { }, state);
 }
 
 void ContentSecurityPolicy::reportViolation(const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURL, const String& consoleMessage, JSC::JSGlobalObject* state) const
@@ -922,7 +922,7 @@ void ContentSecurityPolicy::reportViolation(const String& violatedDirective, con
 
 void ContentSecurityPolicy::reportViolation(const ContentSecurityPolicyDirective& violatedDirective, const String& blockedURL, const String& consoleMessage, const String& sourceURL, StringView sourceContent, std::optional<TextPosition>&& sourcePosition, const URL& preRedirectURL, JSC::JSGlobalObject* state, Element* element) const
 {
-    return reportViolation(violatedDirective.nameForReporting().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourceContent.left(40), WTF::move(sourcePosition), state, preRedirectURL, element);
+    return reportViolation(violatedDirective.nameForReporting(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourceContent.left(40), WTF::move(sourcePosition), state, preRedirectURL, element);
 }
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURLString, const String& consoleMessage, const String& sourceURL, StringView sourceContent, std::optional<TextPosition>&& maybeSourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL, Element* element) const

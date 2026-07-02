@@ -39,6 +39,7 @@ namespace WebCore {
 BlobData::BlobData(const String& contentType)
     : m_contentType(contentType)
 {
+    ASSERT(isMainThread());
 }
 
 const long long BlobDataItem::toEndOfFile = -1;

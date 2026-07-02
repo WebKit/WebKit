@@ -47,6 +47,8 @@ namespace JSC {
 
 std::optional<CalendarID> isBuiltinCalendar(StringView string)
 {
+    // FIXME: bare "islamic" is accepted via ICU's keyword set but V8/temporal_rs reject it;
+    // canonicalize to "islamic-civil" (CLDR alias) or filter out.
     const auto& calendars = intlAvailableCalendars();
     for (unsigned index = 0; index < calendars.size(); ++index) {
         if (WTF::equalIgnoringASCIICase(calendars[index], string))
@@ -487,7 +489,7 @@ ISO8601::PlainDate isoDateFromFields(JSGlobalObject* globalObject, TemporalDateF
         day = std::min<uint32_t>(day, ISO8601::daysInMonth(year, month));
     }
 
-    auto plainDate = TemporalPlainDate::toPlainDate(globalObject, ISO8601::Duration(year, month, 0LL, day, 0LL, 0LL, 0LL, 0LL, Int128(0), Int128(0)));
+    auto plainDate = TemporalPlainDate::validateAndCreateISODateRecord(globalObject, ISO8601::Duration(year, month, 0LL, day, 0LL, 0LL, 0LL, 0LL, Int128(0), Int128(0)));
     RETURN_IF_EXCEPTION(scope, { });
 
     bool valid = true;
@@ -506,18 +508,6 @@ ISO8601::PlainDate isoDateFromFields(JSGlobalObject* globalObject, TemporalDateF
     }
 
     return plainDate;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-adddurationtodate
-// AddDurationToDate ( operation, temporalDate, temporalDurationLike, options )
-ISO8601::PlainDate addDurationToDate(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto dateDuration = TemporalDuration::toDateDurationRecordWithoutTime(globalObject, duration);
-    RETURN_IF_EXCEPTION(scope, { });
-    RELEASE_AND_RETURN(scope, isoDateAdd(globalObject, plainDate, dateDuration, overflow));
 }
 
 ISO8601::PlainDate isoDateAdd(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)

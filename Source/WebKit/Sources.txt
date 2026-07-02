@@ -215,6 +215,7 @@ NetworkProcess/webtransport/NetworkTransportSession.cpp
 NetworkProcess/webtransport/NetworkTransportStream.cpp
 
 Platform/IPC/DaemonCoders.cpp
+Platform/IPC/FormDataReference.cpp
 
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
@@ -433,6 +434,7 @@ UIProcess/RemotePageVideoPresentationManagerProxy.cpp
 UIProcess/RemotePageWebAuthenticatorCoordinatorProxy.cpp
 UIProcess/RemotePageWebDeviceOrientationUpdateProviderProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
+UIProcess/SessionHistoryTraversalQueue.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
 UIProcess/SpeechRecognitionServer.cpp
@@ -504,7 +506,6 @@ UIProcess/API/APIHTTPCookieStore.cpp
 UIProcess/API/APIHitTestResult.cpp
 UIProcess/API/APIInspectorConfiguration.cpp
 UIProcess/API/APIInspectorExtension.cpp
-UIProcess/API/APIJSBuffer.cpp
 UIProcess/API/APIJSHandle.cpp
 UIProcess/API/APINavigation.cpp
 UIProcess/API/APINavigationData.cpp

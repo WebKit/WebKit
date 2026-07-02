@@ -445,10 +445,15 @@ private:
         RefPtr branch2 = m_state->branch2();
 
         m_state->setReading(false);
+
+        bool shouldStopSteps = false;
         if (!m_state->canceled1() && branch1)
-            branch1->controller()->close(*globalObject);
+            shouldStopSteps = !branch1->controller()->close(*globalObject, ReadableByteStreamController::ShouldThrowOnError::No);
         if (!m_state->canceled2() && branch2)
-            branch2->controller()->close(*globalObject);
+            shouldStopSteps |= !branch2->controller()->close(*globalObject, ReadableByteStreamController::ShouldThrowOnError::No);
+
+        if (shouldStopSteps)
+            return;
 
         if (branch1 && branch1->controller()->hasPendingPullIntos())
             branch1->controller()->respond(*globalObject, 0);

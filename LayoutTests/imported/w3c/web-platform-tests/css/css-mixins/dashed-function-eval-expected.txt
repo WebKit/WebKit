@@ -19,19 +19,19 @@ PASS Parameter with complex type (px)
 PASS Passing argument to inner function
 PASS var() in argument resolved before call
 PASS var() in argument resolved before call, typed
-FAIL Argument captures IACVT due to invalid var() assert_equals: expected "PASS" but got ""
-FAIL Argument captures IACVT due to invalid var(), typed assert_equals: expected "PASS" but got ""
+PASS Argument captures IACVT due to invalid var()
+PASS Argument captures IACVT due to invalid var(), typed
 PASS Argument captures IACVT due to type mismatch
 PASS Single parameter with default value
 PASS Multiple parameters with defaults
 PASS Multiple parameters with defaults, typed
-FAIL Default referencing another parameter assert_equals: expected "5px 5px" but got "5px var(--x)"
-FAIL Default referencing another parameter, local interference assert_equals: expected "17px 5px" but got "17px var(--x)"
-FAIL Default referencing another defaulted parameter assert_equals: expected "5px 5px" but got "5px var(--x)"
+PASS Default referencing another parameter
+PASS Default referencing another parameter, local interference
+PASS Default referencing another defaulted parameter
 FAIL Typed default with reference assert_equals: expected "5px 6px" but got ""
-FAIL IACVT arguments are defaulted assert_equals: expected "1 2 3" but got ""
-FAIL IACVT arguments are defaulted, typed assert_equals: expected "1 2 3" but got ""
-FAIL Arguments are defaulted on type mismatch assert_equals: expected "1 2 3" but got ""
+PASS IACVT arguments are defaulted
+PASS IACVT arguments are defaulted, typed
+PASS Arguments are defaulted on type mismatch
 PASS Unused local
 PASS Local does not affect outer scope
 PASS Substituting local in result
@@ -55,20 +55,20 @@ PASS Inner function call should see resolved outer locals
 PASS Inner function call should see resolved outer locals (reverse)
 PASS Parameter shadows custom property
 PASS Local shadows parameter
-FAIL IACVT argument shadows outer scope assert_equals: expected "PASS" but got ""
-FAIL IACVT argument shadows outer scope, typed assert_equals: expected "PASS" but got ""
-FAIL IACVT argument shadows outer scope, type mismatch assert_equals: expected "PASS" but got "FAIL"
+PASS IACVT argument shadows outer scope
+PASS IACVT argument shadows outer scope, typed
+PASS IACVT argument shadows outer scope, type mismatch
 PASS Missing only argument
 PASS Missing one argument of several
-FAIL Passing list as only argument assert_equals: expected "1px,2px" but got "{1px,2px}"
-FAIL Passing list as first argument assert_equals: expected "1px, 2px | 3px" but got "{1px, 2px} | 3px"
-FAIL Passing list as second argument assert_equals: expected "1px | 2px, 3px" but got "1px | {2px, 3px}"
-FAIL Passing comma as argument assert_equals: expected "," but got "{,}"
-FAIL Passing {} as argument assert_equals: expected "{}" but got "{{}}"
-FAIL Passing non-whole-value {} as argument assert_equals: expected "foo{}" but got "{foo{}}"
+PASS Passing list as only argument
+PASS Passing list as first argument
+PASS Passing list as second argument
+PASS Passing comma as argument
+PASS Passing {} as argument
+PASS Passing non-whole-value {} as argument
 PASS Local variable with initial keyword
 PASS Local variable with initial keyword, defaulted
-FAIL Local variable with initial keyword, no value via IACVT-capture assert_equals: expected "PASS" but got ""
+PASS Local variable with initial keyword, no value via IACVT-capture
 PASS Default with initial keyword
 FAIL initial appearing via fallback assert_equals: expected "PASS" but got ""
 PASS Local variable with inherit keyword
