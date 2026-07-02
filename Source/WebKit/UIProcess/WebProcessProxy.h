@@ -660,7 +660,6 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
     bool shouldSendPendingMessage(const IPC::Encoder&) final;
-
 #if PLATFORM(COCOA)
     bool handleRemoteObjectRegistryMessage(IPC::Connection&, IPC::Decoder&);
 

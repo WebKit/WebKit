@@ -48,6 +48,8 @@
 #include "ProcessTerminationReason.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
+#include "RemoteObjectRegistry.h"
+#include "RemoteObjectRegistryMessages.h"
 #include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
 #include "ServiceWorkerNotificationHandler.h"
