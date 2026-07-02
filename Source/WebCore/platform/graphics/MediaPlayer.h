@@ -122,6 +122,8 @@ struct MediaEngineSupportParameters {
     std::optional<Vector<FourCC>> allowedMediaVideoCodecIDs;
     std::optional<Vector<FourCC>> allowedMediaAudioCodecIDs;
     std::optional<Vector<FourCC>> allowedMediaCaptionFormatTypes;
+
+    [[nodiscard]] WEBCORE_EXPORT MediaEngineSupportParameters isolatedCopy() &&;
 };
 
 struct SeekTarget {
