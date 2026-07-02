@@ -4267,6 +4267,9 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
     if (!hasRunningProcess())
         return;
 
+    for (auto& fileName : dragData.fileNames())
+        protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileName));
+
 #if PLATFORM(GTK)
     URL url { dragData.asURL() };
     if (url.protocolIsFile())
@@ -9429,6 +9432,13 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     MESSAGE_CHECK_URL(process, originalRequest.url());
 
+    if (RefPtr body = request.httpBody()) {
+        for (auto& element : body->elements()) {
+            if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data))
+                MESSAGE_CHECK_COMPLETION(process, process->hasGrantedSandboxExtensionForFile(URL::fileURLWithFileSystemPath(fileData->filename)), completionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+        }
+    }
+
     navigationID = navigation->navigationID();
 
     // Make sure the provisional page always has the latest navigationID.
@@ -12473,6 +12483,8 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
         if (!protectedThis)
             return;
         if (RefPtr process = openPanelResultListener->process()) {
+            for (auto& fileURL : fileURLs)
+                process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileURL));
 #if ENABLE(SANDBOX_EXTENSIONS)
             auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon"_s, fileURLs);
             process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), protectedThis->webPageIDInProcess(*process));
@@ -12518,6 +12530,8 @@ bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(const Vector<S
             Vector<String> sandboxExtensionFiles;
             for (size_t i = 0, size = fileURLs.size(); i < size; ++i)
                 sandboxExtensionFiles.append(!transcodedURLs[i].isNull() ? transcodedURLs[i] : fileURLs[i]);
+            for (auto& file : sandboxExtensionFiles)
+                protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(file));
             auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, sandboxExtensionFiles);
             send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)));
 #endif
@@ -12551,6 +12565,8 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, co
             return;
         if (RefPtr process = openPanelResultListener->process()) {
             if (!protectedThis->didChooseFilesForOpenPanelWithImageTranscoding(fileURLs, allowedMIMETypes)) {
+                for (auto& fileURL : fileURLs)
+                    process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileURL));
 #if ENABLE(SANDBOX_EXTENSIONS)
                 auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
                 process->send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)), protectedThis->webPageIDInProcess(*process));

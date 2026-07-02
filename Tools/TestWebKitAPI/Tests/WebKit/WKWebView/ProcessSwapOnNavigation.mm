@@ -5342,6 +5342,79 @@ TEST(ProcessSwap, SwapOnFormSubmission)
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
 }
 
+#if PLATFORM(MAC)
+
+static constexpr auto crossSiteFormSubmissionWithFileUploadBytes = R"PSONRESOURCE(
+<body>
+<form id="uploadForm" action="pson://www.apple.com/upload.html" method="post" enctype="multipart/form-data">
+<input id="fileInput" style="width: 100vw; height: 100vh;" type="file" name="file">
+</form>
+</body>
+)PSONRESOURCE"_s;
+
+static bool fileUploadPSONFileSelected;
+
+@interface FileUploadPSONUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation FileUploadPSONUIDelegate
+
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> *))completionHandler
+{
+    NSString *tempFile = [NSTemporaryDirectory() stringByAppendingPathComponent:@"pson-test-upload.txt"];
+    [@"test file content" writeToFile:tempFile atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    completionHandler(@[ [NSURL fileURLWithPath:tempFile] ]);
+    fileUploadPSONFileSelected = true;
+}
+
+@end
+
+// Verify that cross-site form submission with a file upload succeeds with PSON.
+// This ensures that file paths selected via the open panel are properly tracked
+// in m_previouslyApprovedFilePaths and pass the EncodedFileData validation in
+// decidePolicyForNavigationAction.
+TEST(ProcessSwap, SwapOnFormSubmissionWithFileUpload)
+{
+    RetainPtr processPoolConfiguration = psonProcessPoolConfiguration();
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:crossSiteFormSubmissionWithFileUploadBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    RetainPtr uiDelegate = adoptNS([[FileUploadPSONUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    // Click the file input to trigger the open panel.
+    fileUploadPSONFileSelected = false;
+    [webView clickOnElementID:@"fileInput"];
+    TestWebKitAPI::Util::run(&fileUploadPSONFileSelected);
+
+    // Submit the form to a cross-origin URL, triggering PSON.
+    [webView evaluateJavaScript:@"document.getElementById('uploadForm').submit()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Verify PSON occurred and navigation succeeded.
+    EXPECT_NE(webkitPID, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/upload.html", [[webView URL] absoluteString]);
+
+    // Clean up temp file.
+    [[NSFileManager defaultManager] removeItemAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pson-test-upload.txt"] error:nil];
+}
+
+#endif // PLATFORM(MAC)
+
 TEST(ProcessSwap, ClosePageAfterCrossSiteProvisionalLoad)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
