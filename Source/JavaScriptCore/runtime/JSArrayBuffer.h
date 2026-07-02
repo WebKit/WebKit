@@ -27,8 +27,13 @@
 
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/WriteBarrier.h>
 
 namespace JSC {
+
+#if ENABLE(WEBASSEMBLY)
+class JSWebAssemblyMemory;
+#endif // ENABLE(WEBASSEMBLY)
 
 class JSArrayBuffer final : public JSNonFinalObject {
 public:
@@ -51,8 +56,16 @@ public:
     JS_EXPORT_PRIVATE bool isShared() const;
     ArrayBufferSharingMode sharingMode() const;
     bool isResizableOrGrowableShared() const { return m_impl->isResizableOrGrowableShared(); }
-    
+
+#if ENABLE(WEBASSEMBLY)
+    JSWebAssemblyMemory* associatedWasmMemoryWrapper() const;
+    void setAssociatedWasmMemoryWrapper(VM&, JSWebAssemblyMemory*);
+    void clearAssociatedWasmMemoryWrapper();
+#endif // ENABLE(WEBASSEMBLY)
+
     DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
     
     // This is the default DOM unwrapping. It calls toUnsharedArrayBuffer().
     static ArrayBuffer* toWrapped(VM&, JSValue);
@@ -65,6 +78,11 @@ private:
     static size_t estimatedSize(JSCell*, VM&);
 
     ArrayBuffer* m_impl;
+    // For resizable non-shared Wasm buffers, this points back to the owning JSWebAssemblyMemory so
+    // that ArrayBuffer.prototype.resize can delegate to Wasm::Memory::grow.
+#if ENABLE(WEBASSEMBLY)
+    WriteBarrier<JSWebAssemblyMemory> m_associatedWasmMemoryWrapper;
+#endif // ENABLE(WEBASSEMBLY)
 };
 
 inline ArrayBuffer* toPossiblySharedArrayBuffer(VM&, JSValue value)

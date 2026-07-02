@@ -32,6 +32,11 @@
 #include "JSCInlines.h"
 #include <wtf/text/MakeString.h>
 
+#if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyMemory.h"
+#include "WasmMemory.h"
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -292,6 +297,29 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
     if (!std::isfinite(newLength) || newLength < 0)
         return throwVMRangeError(globalObject, scope, "new length is out of range"_s);
     size_t newByteLength = static_cast<size_t>(newLength);
+
+#if ENABLE(WEBASSEMBLY)
+    // Wasm JS API redefines the abstract operation HostResizeArrayBuffer as follows:
+    // https://webassembly.github.io/threads/js-api/index.html#abstract-operation-hostresizearraybuffer
+    //
+    // Further, WebAssembly-originated resizable ArrayBuffers must defer resizing to the backing
+    // WebAssembly memory for correct handling of refreshing bounds-checking memories.
+    if (auto* jsMemory = thisObject->associatedWasmMemoryWrapper()) {
+        size_t oldByteLength = thisObject->impl()->byteLength();
+        if (newByteLength < oldByteLength)
+            return throwVMRangeError(globalObject, scope, "Cannot shrink WebAssembly memory"_s);
+        if (newByteLength % PageCount::pageSize)
+            return throwVMRangeError(globalObject, scope, makeString("WebAssembly memory cannot be resized to new byte length "_s, newByteLength, " because it is not a multiple of "_s, PageCount::pageSize));
+        size_t delta = newByteLength - oldByteLength;
+        if (delta) {
+            auto result = jsMemory->memory().grow(vm, PageCount::fromBytes(delta));
+            if (!result)
+                return throwVMRangeError(globalObject, scope, makeString("ArrayBuffer resize failed with new byte length "_s, newByteLength));
+        }
+        return JSValue::encode(jsUndefined());
+    }
+#endif
+
     if (!thisObject->impl()->resize(vm, newByteLength))
         return throwVMRangeError(globalObject, scope, makeString("ArrayBuffer resize failed with new byte length "_s, newByteLength));
 

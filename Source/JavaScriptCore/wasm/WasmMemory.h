@@ -37,10 +37,9 @@
 #include <wtf/CagedPtr.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -53,7 +52,7 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
-class Memory final : public RefCountedAndCanMakeWeakPtr<Memory> {
+class Memory final : public RefCounted<Memory> {
     WTF_MAKE_NONCOPYABLE(Memory);
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Memory, JS_EXPORT_PRIVATE);
     friend LLIntOffsetsExtractor;
@@ -93,8 +92,6 @@ public:
     bool init(uint64_t, const uint8_t*, uint32_t);
 
     void registerInstance(JSWebAssemblyInstance&);
-
-    void checkLifetime() { ASSERT(!refCountDebugger().deletionHasBegun()); }
 
     static constexpr ptrdiff_t offsetOfHandle() { return OBJECT_OFFSETOF(Memory, m_handle); }
 

@@ -210,7 +210,7 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     switch (sharingMode) {
     case MemorySharingMode::Default: {
         if (!initialBytes)
-            return adoptRef(new Memory(initial, maximum, MemorySharingMode::Default, WTF::move(growSuccessCallback)));
+            return adoptRef(*new Memory(initial, maximum, MemorySharingMode::Default, WTF::move(growSuccessCallback)));
 
         void* slowMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, initialBytes);
         if (!slowMemory) {
@@ -258,6 +258,7 @@ Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
     PageCount oldPageCount;
     PageCount newPageCount;
     Expected<int64_t, GrowFailReason> result;
+
     {
         std::optional<Locker<Lock>> locker;
         // m_shared may not be exist, if this is zero byte memory with zero byte maximum size.
