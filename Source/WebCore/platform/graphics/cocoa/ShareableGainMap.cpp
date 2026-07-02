@@ -109,6 +109,8 @@ PlatformImagePtr ShareableGainMap::applyGainMapToBaseImage(PlatformImagePtr base
     unsigned inputPixelFormatType = CVPixelBufferGetPixelFormatType(baseImagePixelBuffer);
     RetainPtr inputColorSpace = CGImageGetColorSpace(basePlatformImage);
 
+    static constexpr OSType defaultTargetPixelFormat = kCVPixelFormatType_64RGBAHalf;
+
     // MARK: - Get the target CVPixelBuffer attributes.
     RetainPtr inputAttributes = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     setDictionaryValue(inputAttributes, kCVPixelBufferWidthKey, width);
@@ -117,7 +119,7 @@ PlatformImagePtr ShareableGainMap::applyGainMapToBaseImage(PlatformImagePtr base
     CFDictionarySetValue(inputAttributes, kCVImageBufferCGColorSpaceKey, inputColorSpace);
 
     RetainPtr attributesOptions = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    setDictionaryValue(attributesOptions, kCGTargetPixelFormat, static_cast<unsigned>(kCVPixelFormatType_64RGBAHalf));
+    setDictionaryValue(attributesOptions, kCGTargetPixelFormat, static_cast<unsigned>(defaultTargetPixelFormat));
     setDictionaryValue(attributesOptions, kCGTargetHeadroom, targetHeadroom);
     CFDictionarySetValue(attributesOptions, kCGFlexRangeAlternateColorSpace, targetColorSpace);
     CFDictionarySetValue(attributesOptions, kCGTargetColorSpace, kCGColorSpaceDisplayP3_PQ);
@@ -136,9 +138,11 @@ PlatformImagePtr ShareableGainMap::applyGainMapToBaseImage(PlatformImagePtr base
     CFDictionarySetValue(targetAttributes, kCVPixelBufferIOSurfacePropertiesKey, surfaceProperties);
     CFDictionarySetValue(targetAttributes, kCVPixelBufferMetalCompatibilityKey, kCFBooleanTrue);
 
-    RetainPtr pixelFormatNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(targetAttributes, kCVPixelBufferPixelFormatTypeKey));
-    OSType targtePixelFormat;
-    CFNumberGetValue(pixelFormatNumber, kCFNumberSInt32Type, &targtePixelFormat);
+    OSType targtePixelFormat = defaultTargetPixelFormat;
+    if (RetainPtr pixelFormatNumber = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(targetAttributes, kCVPixelBufferPixelFormatTypeKey))) {
+        if (!CFNumberGetValue(pixelFormatNumber, kCFNumberSInt32Type, &targtePixelFormat))
+            targtePixelFormat = defaultTargetPixelFormat;
+    }
 
     // MARK: - Create the target CVPixelBuffer.
     RetainPtr targetImagePixelBuffer = createScratchCVPixelBuffer(width, height, targtePixelFormat, targetAttributes, targetColorSpace, targetHeadroom);
