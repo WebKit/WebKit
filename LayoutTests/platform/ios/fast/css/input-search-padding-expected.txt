@@ -5,7 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTextControl {INPUT} at (0,0) size 537x89 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
         RenderFlexibleBox {DIV} at (21,9) size 495x49
-          RenderBlock {DIV} at (0,24) size 0x0
           RenderBlock {DIV} at (0,0) size 495x49
           RenderBlock {DIV} at (494,24) size 0x0
       RenderBR {BR} at (536,33) size 1x19
