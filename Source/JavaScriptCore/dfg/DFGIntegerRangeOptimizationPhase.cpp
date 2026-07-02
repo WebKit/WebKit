@@ -54,12 +54,12 @@ int64_t NODELETE clampedSumImpl(int left, Args... args)
 }
 
 template<typename... Args>
-int clampedSum(Args... args)
+int NODELETE clampedSum(Args... args)
 {
     int64_t result = clampedSumImpl(args...);
-    return static_cast<int>(std::min(
+    return static_cast<int>(WTF::min(
         static_cast<int64_t>(std::numeric_limits<int>::max()),
-        std::max(
+        WTF::max(
             static_cast<int64_t>(std::numeric_limits<int>::min()),
             result)));
 }
@@ -221,7 +221,7 @@ public:
             && m_right == other.m_right;
     }
 
-    bool isEquivalentTo(const Relationship& other) const
+    bool NODELETE isEquivalentTo(const Relationship& other) const
     {
         if (m_left != other.m_left || m_kind != other.m_kind)
             return false;
@@ -446,7 +446,7 @@ public:
     // In some cases, it will do something conservative. It's always safe for this to return
     // *this, or to return other. It'll do that sometimes, mainly to accelerate convergence for
     // things that we don't think are important enough to slow down the analysis.
-    Relationship filter(const Relationship& other) const
+    Relationship NODELETE filter(const Relationship& other) const
     {
         // We are only interested in merging relationships over the same nodes.
         ASSERT(sameNodesAs(other));
@@ -520,7 +520,7 @@ public:
         if (m_kind == LessThan) {
             if (other.m_kind == LessThan) {
                 return Relationship(
-                    m_left, m_right, LessThan, std::min(m_offset, other.m_offset));
+                    m_left, m_right, LessThan, WTF::min(m_offset, other.m_offset));
             }
             
             ASSERT(other.m_kind == GreaterThan);
@@ -543,7 +543,7 @@ public:
     // return this or it may return something else, but whatever it returns, it will have the same nodes as
     // this. This is not automatically done by filter() because it currently only makes sense to call this
     // during a very particular part of setOneSide().
-    Relationship filterConstant(const Relationship& other) const
+    Relationship NODELETE filterConstant(const Relationship& other) const
     {
         ASSERT(m_left == other.m_left);
         ASSERT(m_right->isInt32Constant());
@@ -587,7 +587,7 @@ public:
         return Relationship();
     }
     
-    int minValueOfLeft() const
+    int NODELETE minValueOfLeft() const
     {
         if (m_left->isInt32Constant())
             return m_left->asInt32();
@@ -605,7 +605,7 @@ public:
         return clampedSum(minRightValue, m_offset);
     }
     
-    int maxValueOfLeft() const
+    int NODELETE maxValueOfLeft() const
     {
         if (m_left->isInt32Constant())
             return m_left->asInt32();
@@ -658,7 +658,7 @@ public:
     }
     
 private:
-    Relationship mergeImpl(const Relationship& other) const
+    Relationship NODELETE mergeImpl(const Relationship& other) const
     {
         ASSERT(sameNodesAs(other));
         ASSERT(m_kind != GreaterThan);
@@ -719,12 +719,12 @@ private:
                 // -1, 0, or 1.
                 
                 // First figure out what offset we'd like to use.
-                int bestOffset = std::max(m_offset, other.m_offset);
+                int bestOffset = WTF::max(m_offset, other.m_offset);
                 
                 // We have something like @a < @b + 2. We can't represent this under the
                 // -1,0,1 rule.
                 if (isGeneralOffset(bestOffset))
-                    return Relationship(m_left, m_right, LessThan, std::max(bestOffset, -1));
+                    return Relationship(m_left, m_right, LessThan, WTF::max(bestOffset, -1));
                 
                 return Relationship();
             }
@@ -748,11 +748,11 @@ private:
             if (sumOverflows<int32_t>(other.m_offset, 1))
                 return Relationship();
 
-            int bestOffset = std::max(m_offset, other.m_offset + 1);
+            int bestOffset = WTF::max(m_offset, other.m_offset + 1);
             
             // We have something like @a < @b + 2. We can't do it.
             if (isGeneralOffset(bestOffset))
-                return Relationship(m_left, m_right, LessThan, std::max(bestOffset, -1));
+                return Relationship(m_left, m_right, LessThan, WTF::max(bestOffset, -1));
 
             return Relationship();
         }
@@ -774,7 +774,7 @@ private:
         Relationship lessThan;
         Relationship greaterThan;
         
-        int lessThanEqOffset = std::max(m_offset, other.m_offset);
+        int lessThanEqOffset = WTF::max(m_offset, other.m_offset);
         if (lessThanEqOffset >= -2 && lessThanEqOffset <= 0) {
             lessThan = Relationship(
                 m_left, other.m_right, LessThan, lessThanEqOffset + 1);
@@ -782,7 +782,7 @@ private:
             ASSERT(isGeneralOffset(lessThan.offset()));
         }
         
-        int greaterThanEqOffset = std::min(m_offset, other.m_offset);
+        int greaterThanEqOffset = WTF::min(m_offset, other.m_offset);
         if (greaterThanEqOffset >= 0 && greaterThanEqOffset <= 2) {
             greaterThan = Relationship(
                 m_left, other.m_right, GreaterThan, greaterThanEqOffset - 1);
@@ -1019,7 +1019,7 @@ public:
     {
     }
 
-    std::optional<std::tuple<int32_t, int32_t>> rangeFor(Node* node)
+    std::optional<std::tuple<int32_t, int32_t>> NODELETE rangeFor(Node* node)
     {
         if (node->isInt32Constant()) {
             int32_t value = node->asInt32();
@@ -1033,8 +1033,8 @@ public:
         int32_t minValue = std::numeric_limits<int32_t>::min();
         int32_t maxValue = std::numeric_limits<int32_t>::max();
         for (Relationship relationship : iter->value) {
-            minValue = std::max(minValue, relationship.minValueOfLeft());
-            maxValue = std::min(maxValue, relationship.maxValueOfLeft());
+            minValue = WTF::max(minValue, relationship.minValueOfLeft());
+            maxValue = WTF::min(maxValue, relationship.maxValueOfLeft());
         }
         return std::tuple { minValue, maxValue };
     }

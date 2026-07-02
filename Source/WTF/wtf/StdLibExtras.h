@@ -149,6 +149,10 @@ static constexpr size_t KB = 1024;
 static constexpr size_t MB = 1024 * 1024;
 static constexpr size_t GB = 1024 * 1024 * 1024;
 
+// std::min and std::max are not annotated NODELETE, but they run no destructors, so the suppression is safe.
+template<typename T> constexpr const T& NODELETE min(const T& a, const T& b) { SUPPRESS_NODELETE return std::min(a, b); }
+template<typename T> constexpr const T& NODELETE max(const T& a, const T& b) { SUPPRESS_NODELETE return std::max(a, b); }
+
 inline bool isPointerAligned(void* p)
 {
     return !((intptr_t)(p) & (sizeof(char*) - 1));
