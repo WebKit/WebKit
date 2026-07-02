@@ -735,8 +735,10 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
     Ref keyframes = StyleRuleKeyframes::create(AtomString(makeString("-ua-view-transition-group-anim-"_s, name)));
     keyframes->wrapperAppendKeyframe(WTF::move(keyframe));
 
-    // We can add this to the normal namespace, since we recreate the resolver when the view-transition ends.
-    resolver->addKeyframeStyle(WTF::move(keyframes));
+    // Register through the document scope so the keyframes are re-established if the resolver
+    // is recreated (e.g. by a stylesheet mutation) during the transition. The keyframes are
+    // discarded when the transition ends and the view transition styles are cleared.
+    document()->styleScope().addViewTransitionKeyframes(WTF::move(keyframes));
 }
 
 // https://drafts.csswg.org/css-view-transitions/#setup-transition-pseudo-elements

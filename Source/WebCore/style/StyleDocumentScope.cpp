@@ -30,6 +30,7 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSFontSelector.h"
+#include "CSSKeyframesRule.h"
 #include "CSSStyleSheet.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
@@ -82,6 +83,9 @@ void DocumentScope::createDocumentResolver()
 
     m_resolver->ruleSets().setDynamicViewTransitionsStyle(m_dynamicViewTransitionsStyle.get());
 
+    for (auto& keyframes : m_viewTransitionKeyframes)
+        m_resolver->addKeyframeStyle(keyframes.copyRef());
+
     protect(m_document->fontSelector())->buildStarted();
 
     m_resolver->ruleSets().initializeUserStyle();
@@ -95,6 +99,17 @@ void DocumentScope::clearViewTransitionStyles()
 {
     clearResolver();
     m_dynamicViewTransitionsStyle = nullptr;
+    m_viewTransitionKeyframes.clear();
+}
+
+void DocumentScope::addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&& rule)
+{
+    // Add to the existing resolver, if any, and retain the keyframes so they can be
+    // re-established when the resolver is recreated (e.g. by a stylesheet mutation)
+    // during the transition.
+    if (RefPtr resolver = resolverIfExists())
+        resolver->addKeyframeStyle(rule.copyRef());
+    m_viewTransitionKeyframes.append(WTF::move(rule));
 }
 
 void DocumentScope::releaseMemory()
