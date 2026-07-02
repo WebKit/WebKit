@@ -4268,7 +4268,11 @@ void WebPageProxy::performDragOperation(DragData& dragData, const String& dragSt
         return;
 
     for (auto& fileName : dragData.fileNames())
+<<<<<<< HEAD
         protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileName));
+=======
+        protectedLegacyMainFrameProcess()->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileName));
+>>>>>>> 3dad3d258fe6 (Validate EncodedFileData filenames in decidePolicyForNavigationAction)
 
 #if PLATFORM(GTK)
     URL url { dragData.asURL() };
@@ -9435,7 +9439,11 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (RefPtr body = request.httpBody()) {
         for (auto& element : body->elements()) {
             if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data))
+<<<<<<< HEAD
                 MESSAGE_CHECK_COMPLETION(process, process->hasGrantedSandboxExtensionForFile(URL::fileURLWithFileSystemPath(fileData->filename)), completionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+=======
+                MESSAGE_CHECK_COMPLETION(process, process->hasGrantedSandboxExtensionForFile(fileData->filename), completionHandler(PolicyDecision { isNavigatingToAppBoundDomain() }));
+>>>>>>> 3dad3d258fe6 (Validate EncodedFileData filenames in decidePolicyForNavigationAction)
         }
     }
 
@@ -12531,7 +12539,11 @@ bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(const Vector<S
             for (size_t i = 0, size = fileURLs.size(); i < size; ++i)
                 sandboxExtensionFiles.append(!transcodedURLs[i].isNull() ? transcodedURLs[i] : fileURLs[i]);
             for (auto& file : sandboxExtensionFiles)
+<<<<<<< HEAD
                 protect(legacyMainFrameProcess())->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(file));
+=======
+                protectedLegacyMainFrameProcess()->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(file));
+>>>>>>> 3dad3d258fe6 (Validate EncodedFileData filenames in decidePolicyForNavigationAction)
             auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, sandboxExtensionFiles);
             send(Messages::WebPage::ExtendSandboxForFilesFromOpenPanel(WTF::move(sandboxExtensionHandles)));
 #endif

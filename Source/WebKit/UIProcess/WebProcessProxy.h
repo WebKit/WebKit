@@ -329,9 +329,13 @@ public:
     void addPreviouslyApprovedFileURL(const URL&);
     void addPreviouslyApprovedFileURLsFromFrameStateTree(const FrameState&);
     bool wasPreviouslyApprovedFileURL(const URL&) const;
+<<<<<<< HEAD
     bool hasGrantedSandboxExtensionForFile(const URL&) const;
 
     bool isAssociatedWithPage(WebPageProxyIdentifier) const;
+=======
+    bool hasGrantedSandboxExtensionForFile(const String& filePath) const;
+>>>>>>> 3dad3d258fe6 (Validate EncodedFileData filenames in decidePolicyForNavigationAction)
 
     void updateTextCheckerState();
 

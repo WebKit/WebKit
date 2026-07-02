@@ -1632,11 +1632,34 @@ bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
     return m_previouslyApprovedFilePaths.contains(fileSystemPath);
 }
 
+<<<<<<< HEAD
 bool WebProcessProxy::hasGrantedSandboxExtensionForFile(const URL& url) const
 {
     return m_mayHaveUniversalFileReadSandboxExtension
         || hasAssumedReadAccessToURL(url)
         || wasPreviouslyApprovedFileURL(url);
+=======
+bool WebProcessProxy::hasGrantedSandboxExtensionForFile(const String& filePath) const
+{
+    if (m_mayHaveUniversalFileReadSandboxExtension)
+        return true;
+
+    auto startsWithPath = [&filePath](const String& accessPath) {
+        return filePath.startsWith(accessPath);
+    };
+
+    auto& platformPaths = platformPathsWithAssumedReadAccess();
+    if (std::ranges::find_if(platformPaths, startsWithPath) != platformPaths.end())
+        return true;
+
+    if (std::ranges::find_if(m_localPathsWithAssumedReadAccess, startsWithPath) != m_localPathsWithAssumedReadAccess.end())
+        return true;
+
+    if (m_previouslyApprovedFilePaths.contains(filePath))
+        return true;
+
+    return false;
+>>>>>>> 3dad3d258fe6 (Validate EncodedFileData filenames in decidePolicyForNavigationAction)
 }
 
 void WebProcessProxy::recordUserGestureAuthorizationToken(FrameIdentifier frameID, PageIdentifier pageID, WTF::UUID authorizationToken)
