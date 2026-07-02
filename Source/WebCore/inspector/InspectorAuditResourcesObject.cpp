@@ -81,18 +81,16 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
         resource.mimeType = cachedResource->mimeType();
 
         bool exists = false;
-        for (const auto& entry : m_resources) {
-            if (entry.value == cachedResource) {
-                resource.id = entry.key;
-                exists = true;
-                break;
-            }
+        if (auto identifier = m_resourceIdentifiers.get(cachedResource); !identifier.isNull()) {
+            resource.id = identifier;
+            exists = true;
         }
         if (!exists) {
             cachedResource->addClient(clientForResource(*cachedResource));
 
             resource.id = String::number(m_resources.size() + 1);
             m_resources.add(resource.id, cachedResource);
+            m_resourceIdentifiers.add(cachedResource, resource.id);
         }
 
         resources.append(WTF::move(resource));

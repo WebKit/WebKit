@@ -164,6 +164,7 @@ private:
     InspectorAuditCachedStyleSheetClient m_cachedStyleSheetClient;
 
     MemoryCompactRobinHoodHashMap<String, CachedResource*> m_resources;
+    HashMap<CachedResource*, String> m_resourceIdentifiers;
 };
 
 } // namespace WebCore
