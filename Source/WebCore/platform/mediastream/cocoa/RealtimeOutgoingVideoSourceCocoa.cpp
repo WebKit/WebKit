@@ -67,8 +67,6 @@ RealtimeOutgoingVideoSourceCocoa::~RealtimeOutgoingVideoSourceCocoa() = default;
 
 void RealtimeOutgoingVideoSourceCocoa::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
-    ASSERT(!m_isApplyingRotation);
-
 #if !RELEASE_LOG_DISABLED
     if (!(++m_numberOfFrames % 60))
         ALWAYS_LOG(LOGIDENTIFIER, "frame ", m_numberOfFrames);
