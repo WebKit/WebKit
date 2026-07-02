@@ -28,7 +28,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ExceptionScope.h"
 #include "JSCInlines.h"
+#include "JSString.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "ObjectConstructor.h"
@@ -139,6 +141,7 @@ void JSWebAssemblyTable::clear(uint32_t index)
 JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     Wasm::TableElementType element = m_table->type();
     JSString* elementString = nullptr;
@@ -160,16 +163,32 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     }
 
     JSObject* result;
+    auto numberOrBigInt = [&](uint32_t value) {
+        return m_table->addressType().is64Bit()
+            ? JSBigInt::createFrom(globalObject, value)
+            : jsNumber(value);
+    };
+
     auto maximum = m_table->maximum();
     if (maximum) {
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(*maximum));
+        auto maxValue = numberOrBigInt(*maximum);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), maxValue);
     } else
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
-    uint32_t minimum = m_table->length();
-    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(minimum));
+    uint64_t minimum = m_table->length();
+    auto minValue = numberOrBigInt(minimum);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), minValue);
     result->putDirect(vm, Identifier::fromString(vm, "element"_s), elementString);
+
+    JSString* address = m_table->addressType().is64Bit()
+        ? jsNontrivialString(vm, "i64"_s)
+        : jsNontrivialString(vm, "i32"_s);
+    result->putDirect(vm, Identifier::fromString(vm, "address"_s), address);
+
     return result;
 }
 

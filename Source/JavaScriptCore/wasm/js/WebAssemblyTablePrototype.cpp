@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AuxiliaryBarrierInlines.h"
+#include "ExceptionScope.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObjectInlines.h"
 #include "JSObjectInlines.h"
@@ -36,6 +37,7 @@
 #include "JSWebAssemblyTable.h"
 #include "StructureCreateInlines.h"
 #include "WasmTypeDefinition.h"
+#include <limits>
 
 namespace JSC {
 static JSC_DECLARE_CUSTOM_GETTER(webAssemblyTableProtoGetterLength);
@@ -91,7 +93,12 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    uint32_t delta = toNonWrappingUint32(globalObject, callFrame->argument(0));
+    uint64_t delta64 = addressValueToUint64(globalObject, callFrame->argument(0), table->table()->addressType());
+    if (delta64 > std::numeric_limits<uint32_t>::max())
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow requires first argument to be greater than 0 and less than 2^32"_s);
+
+    uint32_t delta = delta64;
+
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSValue defaultValue = jsNull();
@@ -109,6 +116,9 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     if (!didGrow)
         return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow could not grow the table"_s);
 
+    if (table->table()->addressType().is64Bit())
+        RELEASE_AND_RETURN(throwScope, JSValue::encode(JSBigInt::createFrom(globalObject, oldLength)));
+
     return JSValue::encode(jsNumber(oldLength));
 }
 
@@ -120,7 +130,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGet, (JSGlobalObject* globalOb
     JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(0));
+    uint64_t index = addressValueToUint64(globalObject, callFrame->argument(0), table->table()->addressType());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (index >= table->length())
         return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s);
@@ -136,7 +146,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
     JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    uint32_t index = toNonWrappingUint32(globalObject, callFrame->argument(0));
+    uint64_t index = addressValueToUint64(globalObject, callFrame->argument(0), table->table()->addressType());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (index >= table->length())
@@ -162,6 +172,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncType, (JSGlobalObject* globalO
     JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     JSObject* typeDescriptor = table->type(globalObject);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!typeDescriptor)
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"_s);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(typeDescriptor));

@@ -82,31 +82,32 @@ void Table::operator delete(Table* table, std::destroying_delete_t)
     });
 }
 
-Table::Table(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType, TableElementType type)
+Table::Table(uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType addressType, TableElementType type)
     : m_maximum(maximum)
     , m_type(type)
     , m_wasmType(wasmType)
     , m_wasmTypeRTT(TypeInformation::tryGetRTT(wasmType.index))
     , m_isFixedSized(maximum && maximum.value() == initial)
+    , m_addressType(addressType)
     , m_owner(nullptr)
 {
     setLength(initial);
     ASSERT(!m_maximum || *m_maximum >= m_length);
 }
 
-RefPtr<Table> Table::tryCreate(VM& vm, uint32_t initial, std::optional<uint32_t> maximum, TableElementType type, Type wasmType)
+RefPtr<Table> Table::tryCreate(VM& vm, uint32_t initial, std::optional<uint64_t> maximum, TableElementType type, Type wasmType, Wasm::AddressType addressType)
 {
     if (!isValidLength(initial))
         return nullptr;
     switch (type) {
     case TableElementType::Externref:
-        return adoptRef(new ExternOrAnyRefTable(initial, maximum, wasmType));
+        return adoptRef(new ExternOrAnyRefTable(initial, maximum, wasmType, addressType));
     case TableElementType::Funcref: {
         if (maximum && maximum.value() == initial) {
             // If the table is fixed-sized, we should put table slots inline to avoid one-level indirection.
-            return FuncRefTable::createFixedSized(vm, initial, wasmType);
+            return FuncRefTable::createFixedSized(vm, initial, wasmType, addressType);
         }
-        return adoptRef(new FuncRefTable(vm, initial, maximum, wasmType));
+        return adoptRef(new FuncRefTable(vm, initial, maximum, wasmType, addressType));
     }
     }
 
@@ -253,8 +254,8 @@ FuncRefTable* Table::asFuncrefTable()
     return m_type == TableElementType::Funcref ? static_cast<FuncRefTable*>(this) : nullptr;
 }
 
-ExternOrAnyRefTable::ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
-    : Table(initial, maximum, wasmType, TableElementType::Externref)
+ExternOrAnyRefTable::ExternOrAnyRefTable(uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType addressType)
+    : Table(initial, maximum, wasmType, addressType, TableElementType::Externref)
 {
     RELEASE_ASSERT(isRefType(wasmType));
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
@@ -275,8 +276,8 @@ void ExternOrAnyRefTable::set(uint32_t index, JSValue value)
     m_jsValues.get()[index].set(m_owner->vm(), m_owner, value);
 }
 
-FuncRefTable::FuncRefTable(VM& vm, uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
-    : Table(initial, maximum, wasmType, TableElementType::Funcref)
+FuncRefTable::FuncRefTable(VM& vm, uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, Wasm::AddressType addressType)
+    : Table(initial, maximum, wasmType, addressType, TableElementType::Funcref)
     , m_instances(vm)
 {
     ASSERT(isSubtype(wasmType, funcrefType()));
@@ -306,9 +307,9 @@ FuncRefTable::~FuncRefTable()
     }
 }
 
-Ref<FuncRefTable> FuncRefTable::createFixedSized(VM& vm, uint32_t size, Type wasmType)
+Ref<FuncRefTable> FuncRefTable::createFixedSized(VM& vm, uint32_t size, Type wasmType, Wasm::AddressType addressType)
 {
-    return adoptRef(*new (NotNull, fastMalloc(allocationSize(allocatedLength(size)))) FuncRefTable(vm, size, size, wasmType));
+    return adoptRef(*new (NotNull, fastMalloc(allocationSize(allocatedLength(size)))) FuncRefTable(vm, size, size, wasmType, addressType));
 }
 
 void FuncRefTable::setFunction(uint32_t index, WebAssemblyFunctionBase* function)
