@@ -80,7 +80,7 @@ async function main() {
         webPageID: pageID,
         webPageProxyID: IPC.webPageProxyID,
         scope: 1,
-        hasOrShouldIgnoreUserGesture: 1,
+        hasUserGestureOrNoUserGestureRequired: 1,
     }, (r) => { rsaReply = r; });
     for (let i = 0; i < 40 && !rsaReply; i++) await sleep(100);
 
