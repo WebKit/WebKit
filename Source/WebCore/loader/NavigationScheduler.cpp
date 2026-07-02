@@ -103,7 +103,7 @@ public:
     virtual bool isSameDocumentNavigation(Frame&) const { return false; }
 
     enum class ShouldCancel : uint8_t { No, Yes };
-    virtual ShouldCancel adjustForNewBackForwardEntry() { return ShouldCancel::No; }
+    virtual ShouldCancel NODELETE adjustForNewBackForwardEntry() { return ShouldCancel::No; }
 
     enum class AccumulateResult : uint8_t { NotHandled, Accumulated, CancelPending };
     virtual AccumulateResult accumulateHistorySteps(Frame& /*frame*/, int /*additionalSteps*/) { return AccumulateResult::NotHandled; }
@@ -363,7 +363,7 @@ public:
         return currentItem && historyItem->shouldDoSameDocumentNavigationTo(*currentItem);
     }
 
-    ShouldCancel adjustForNewBackForwardEntry() final
+    ShouldCancel NODELETE adjustForNewBackForwardEntry() final
     {
         if (m_steps > 0)
             return ShouldCancel::Yes;

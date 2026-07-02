@@ -150,7 +150,7 @@ public:
 
     bool isTrustedForBindings() const { return m_isTrusted || m_isTrustedForBindingsOnly; }
 
-    template<typename Visitor> void visitInGCThread(Visitor&);
+    template<typename Visitor> void NODELETE visitInGCThread(Visitor&);
 
 protected:
     explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);

@@ -59,7 +59,7 @@ public:
     void destroy();
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
@@ -70,7 +70,7 @@ private:
     static Ref<CloseWatcher> establish(Document&);
 
     void stop() final { destroy(); }
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::CloseWatcher; }
     void refEventTarget() final { ref(); }

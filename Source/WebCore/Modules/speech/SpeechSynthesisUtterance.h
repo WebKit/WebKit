@@ -97,7 +97,7 @@ private:
 
     // EventTarget
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
-    EventTargetInterfaceType eventTargetInterface() const final;
+    EventTargetInterfaceType NODELETE eventTargetInterface() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

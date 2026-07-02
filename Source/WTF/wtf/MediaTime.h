@@ -59,14 +59,14 @@ public:
     MediaTime(const MediaTime&) = default;
 
     static MediaTime NODELETE createWithFloat(float floatTime);
-    static MediaTime createWithFloat(float floatTime, uint32_t timeScale);
+    static MediaTime NODELETE createWithFloat(float floatTime, uint32_t timeScale);
     static MediaTime NODELETE createWithDouble(double doubleTime);
     static MediaTime createWithDouble(double doubleTime, uint32_t timeScale);
     static MediaTime createWithSeconds(Seconds seconds) { return createWithDouble(seconds.value()); }
 
     float NODELETE toFloat() const;
     double NODELETE toDouble() const;
-    int64_t NODELETE toMicroseconds() const;
+    int64_t toMicroseconds() const;
 
     MediaTime& NODELETE operator=(const MediaTime&) = default;
     MediaTime& operator+=(const MediaTime& rhs) { return *this = *this + rhs; }

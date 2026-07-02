@@ -812,7 +812,7 @@ void VideoPresentationInterfaceMac::documentVisibilityChanged(bool isDocumentVis
 }
 
 #if !LOG_DISABLED
-static const char* boolString(bool val)
+static const char* NODELETE boolString(bool val)
 {
     return val ? "true" : "false";
 }

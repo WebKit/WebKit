@@ -53,9 +53,9 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
     String typeMismatchText() const final;
-    bool supportsSelectionAPI() const final;
+    bool NODELETE supportsSelectionAPI() const final;
     ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
     void attributeChanged(const QualifiedName&) final;
 };

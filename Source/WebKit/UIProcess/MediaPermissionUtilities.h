@@ -63,22 +63,22 @@ enum class MediaPermissionReason {
 };
 
 #if PLATFORM(COCOA)
-bool checkSandboxRequirementForType(MediaPermissionType);
-bool checkUsageDescriptionStringForType(MediaPermissionType);
-bool checkUsageDescriptionStringForSpeechRecognition();
+bool NODELETE checkSandboxRequirementForType(MediaPermissionType);
+bool NODELETE checkUsageDescriptionStringForType(MediaPermissionType);
+bool NODELETE checkUsageDescriptionStringForSpeechRecognition();
 
-RetainPtr<NSString> applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData&);
-RetainPtr<NSString> applicationVisibleName();
-void alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
+RetainPtr<NSString> NODELETE applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData&);
+RetainPtr<NSString> NODELETE applicationVisibleName();
+void NODELETE alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
 
-void requestAVCaptureAccessForType(MediaPermissionType, CompletionHandler<void(bool authorized)>&&);
-MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType);
+void NODELETE requestAVCaptureAccessForType(MediaPermissionType, CompletionHandler<void(bool authorized)>&&);
+MediaPermissionResult NODELETE checkAVCaptureAccessForType(MediaPermissionType);
 #endif
 
 #if HAVE(SPEECHRECOGNIZER)
-void requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&&);
-MediaPermissionResult checkSpeechRecognitionServiceAccess();
-bool checkSpeechRecognitionServiceAvailability(const String& localeIdentifier);
+void NODELETE requestSpeechRecognitionAccess(CompletionHandler<void(bool authorized)>&&);
+MediaPermissionResult NODELETE checkSpeechRecognitionServiceAccess();
+bool NODELETE checkSpeechRecognitionServiceAvailability(const String& localeIdentifier);
 #endif
 
 } // namespace WebKit

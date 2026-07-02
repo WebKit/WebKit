@@ -202,7 +202,7 @@ public:
     void NODELETE playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
-    MediaSession* mediaSession() const;
+    MediaSession* NODELETE mediaSession() const;
 
     bool hasNowPlayingInfo() const;
 
@@ -221,7 +221,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     bool requiresPlaybackTargetRouteMonitoring() const override;
 #endif
-    void ensureIsObservingMediaSession();
+    void NODELETE ensureIsObservingMediaSession();
 
     bool updateIsMainContent() const;
     void mainContentCheckTimerFired();

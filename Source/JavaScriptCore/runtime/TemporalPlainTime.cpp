@@ -454,7 +454,7 @@ std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> TemporalPlainT
 }
 
 // RegulateTime constrain branch (Step 1): clamp each field into its valid range.
-static ISO8601::PlainTime constrainTime(ISO8601::Duration&& duration)
+static ISO8601::PlainTime NODELETE constrainTime(ISO8601::Duration&& duration)
 {
     return ISO8601::PlainTime(
         clampTo<unsigned>(duration.hours(), 0, 23),

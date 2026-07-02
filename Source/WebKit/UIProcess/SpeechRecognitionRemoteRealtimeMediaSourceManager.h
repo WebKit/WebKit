@@ -57,7 +57,7 @@ class SpeechRecognitionRemoteRealtimeMediaSourceManager final : public IPC::Mess
 public:
     explicit SpeechRecognitionRemoteRealtimeMediaSourceManager(const WebProcessProxy&);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     void addSource(SpeechRecognitionRemoteRealtimeMediaSource&, const WebCore::CaptureDevice&);
@@ -78,8 +78,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // IPC::MessageSender.
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     WeakRef<const WebProcessProxy> m_process;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;

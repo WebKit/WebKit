@@ -198,7 +198,7 @@ public:
 
     PrewarmInformation collectPrewarmInformation() const;
     void prewarm(PrewarmInformation&&);
-    static void prewarmGlobally();
+    static void NODELETE prewarmGlobally();
 
     FontCascadeCache& fontCascadeCache() LIFETIME_BOUND { return m_fontCascadeCache; }
     SystemFallbackFontCache& systemFallbackFontCache() LIFETIME_BOUND { return m_systemFallbackFontCache; }

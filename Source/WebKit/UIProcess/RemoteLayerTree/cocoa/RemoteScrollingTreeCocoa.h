@@ -38,9 +38,9 @@ OBJC_CLASS CALayer;
 namespace WebKit {
 
 using OptionalEventRegionConstRef = std::optional<std::reference_wrapper<const WebCore::EventRegion>>;
-OptionalEventRegionConstRef eventRegionForLayer(CALayer*);
+OptionalEventRegionConstRef NODELETE eventRegionForLayer(CALayer*);
 bool layerEventRegionContainsPoint(CALayer*, CGPoint);
-OptionalEventRegionConstRef eventRegionForPoint(CALayer*, WebCore::FloatPoint& location);
+OptionalEventRegionConstRef NODELETE eventRegionForPoint(CALayer*, WebCore::FloatPoint& location);
 
 }
 

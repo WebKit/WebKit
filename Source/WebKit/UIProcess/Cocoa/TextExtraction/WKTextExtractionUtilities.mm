@@ -88,7 +88,7 @@ static WKTextExtractionEventListenerTypes NODELETE eventListenerTypes(OptionSet<
     return result;
 }
 
-static RetainPtr<WKTextExtractionEditable> createWKEditable(const TextExtraction::Editable& editable)
+static RetainPtr<WKTextExtractionEditable> NODELETE createWKEditable(const TextExtraction::Editable& editable)
 {
     return adoptNS([[WKTextExtractionEditable alloc]
         initWithLabel:editable.label.createNSString().get()
@@ -97,7 +97,7 @@ static RetainPtr<WKTextExtractionEditable> createWKEditable(const TextExtraction
         isFocused:static_cast<BOOL>(editable.isFocused)]);
 }
 
-inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextExtraction::Item& item, const RootViewToWebViewConverter& converter, NSArray<WKTextExtractionItem *> *children)
+inline static RetainPtr<WKTextExtractionItem> NODELETE createItemWithChildren(const TextExtraction::Item& item, const RootViewToWebViewConverter& converter, NSArray<WKTextExtractionItem *> *children)
 {
     auto rectInWebView = converter(item.rectInRootView);
     auto eventListeners = eventListenerTypes(item.eventListeners);
@@ -256,7 +256,7 @@ inline static RetainPtr<WKTextExtractionItem> createItemWithChildren(const TextE
     );
 }
 
-static RetainPtr<WKTextExtractionItem> createItemRecursive(const TextExtraction::Item& item, const RootViewToWebViewConverter& converter)
+static RetainPtr<WKTextExtractionItem> NODELETE createItemRecursive(const TextExtraction::Item& item, const RootViewToWebViewConverter& converter)
 {
     return createItemWithChildren(item, converter, createNSArray(item.children, [&](auto& child) {
         return createItemRecursive(child, converter);

@@ -1199,7 +1199,7 @@ inline ScrollAlignment NODELETE toScrollAlignmentForBlockDirection(std::optional
     }
 }
 
-static HTMLSelectElement* owningSelectElement(const Element& element)
+static HTMLSelectElement* NODELETE owningSelectElement(const Element& element)
 {
     if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(element))
         return optionElement->ownerSelectElement();

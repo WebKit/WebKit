@@ -45,7 +45,7 @@ public:
     bool operator==(const MarqueeData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const MarqueeData&) const;
+    void NODELETE dumpDifferences(TextStream&, const MarqueeData&) const;
 #endif
 
     WebkitMarqueeIncrement marqueeIncrement;

@@ -83,23 +83,23 @@ static constexpr auto processTargetNameGPU = "GPU"_s;
 #endif
 static constexpr auto processTargetNameNetworking = "Networking"_s;
 
-static std::optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
-static std::optional<IPC::MessageName> messageNameFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
-static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject*, IPC::MessageName, IPC::Decoder&);
-static bool encodeArgument(IPC::Encoder&, JSContextRef, JSValueRef, JSValueRef* exception);
+static std::optional<uint64_t> NODELETE destinationIDFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
+static std::optional<IPC::MessageName> NODELETE messageNameFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
+static JSC::JSObject* NODELETE jsResultFromReplyDecoder(JSC::JSGlobalObject*, IPC::MessageName, IPC::Decoder&);
+static bool NODELETE encodeArgument(IPC::Encoder&, JSContextRef, JSValueRef, JSValueRef* exception);
 
 class JSIPCSemaphore : public RefCounted<JSIPCSemaphore> {
 public:
-    static Ref<JSIPCSemaphore> create(IPC::Semaphore&& semaphore = { })
+    static Ref<JSIPCSemaphore> NODELETE create(IPC::Semaphore&& semaphore = { })
     {
         return adoptRef(*new JSIPCSemaphore(WTF::move(semaphore)));
     }
 
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSIPCSemaphore* toWrapped(JSContextRef, JSValueRef);
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSIPCSemaphore* NODELETE toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) const { encoder << m_semaphore; }
-    IPC::Semaphore exchange(IPC::Semaphore&& semaphore = { })
+    void NODELETE encode(IPC::Encoder& encoder) const { encoder << m_semaphore; }
+    IPC::Semaphore NODELETE exchange(IPC::Semaphore&& semaphore = { })
     {
         return std::exchange(m_semaphore, WTF::move(semaphore));
     }
@@ -109,42 +109,42 @@ private:
         : m_semaphore(WTF::move(semaphore))
     { }
 
-    static JSClassRef wrapperClass();
-    static JSIPCSemaphore* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
+    static JSClassRef NODELETE wrapperClass();
+    static JSIPCSemaphore* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
 
-    static const JSStaticFunction* staticFunctions();
+    static const JSStaticFunction* NODELETE staticFunctions();
 
-    static JSValueRef signal(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef waitFor(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE signal(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE waitFor(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     IPC::Semaphore m_semaphore;
 };
 
 class JSIPCConnectionHandle : public RefCounted<JSIPCConnectionHandle> {
 public:
-    static Ref<JSIPCConnectionHandle> create(IPC::Connection::Handle&& handle)
+    static Ref<JSIPCConnectionHandle> NODELETE create(IPC::Connection::Handle&& handle)
     {
         return adoptRef(*new JSIPCConnectionHandle(WTF::move(handle)));
     }
 
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSIPCConnectionHandle* toWrapped(JSContextRef, JSValueRef);
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSIPCConnectionHandle* NODELETE toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) { encoder << WTF::move(m_handle); }
+    void NODELETE encode(IPC::Encoder& encoder) { encoder << WTF::move(m_handle); }
 
 private:
     JSIPCConnectionHandle(IPC::Connection::Handle&& handle)
         : m_handle(WTF::move(handle))
     { }
 
-    static JSClassRef wrapperClass();
-    static JSIPCConnectionHandle* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
+    static JSClassRef NODELETE wrapperClass();
+    static JSIPCConnectionHandle* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
 
-    static const JSStaticFunction* staticFunctions();
+    static const JSStaticFunction* NODELETE staticFunctions();
 
     IPC::Connection::Handle m_handle;
 };
@@ -153,23 +153,23 @@ class JSIPCConnection : public RefCounted<JSIPCConnection>, private IPC::Connect
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(JSIPCConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JSIPCConnection);
 public:
-    static Ref<JSIPCConnection> create(IPC::Connection::Identifier&& testedConnectionIdentifier)
+    static Ref<JSIPCConnection> NODELETE create(IPC::Connection::Identifier&& testedConnectionIdentifier)
     {
         return adoptRef(*new JSIPCConnection(IPC::Connection::createServerConnection(WTF::move(testedConnectionIdentifier))));
     }
 
-    static Ref<JSIPCConnection> create(Ref<IPC::Connection> connection)
+    static Ref<JSIPCConnection> NODELETE create(Ref<IPC::Connection> connection)
     {
         return adoptRef(*new JSIPCConnection(WTF::move(connection)));
     }
 
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
+    void NODELETE deref() const final { RefCounted::deref(); }
 
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSIPCConnection* toWrapped(JSContextRef, JSValueRef);
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSIPCConnection* NODELETE toWrapped(JSContextRef, JSValueRef);
 
-    IPC::Connection& connection() const { return m_testedConnection; }
+    IPC::Connection& NODELETE connection() const { return m_testedConnection; }
 private:
     JSIPCConnection(Ref<IPC::Connection> connection)
         : m_testedConnection { WTF::move(connection) }
@@ -177,40 +177,40 @@ private:
     }
 
     // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
-    void didClose(IPC::Connection&) final;
+    void NODELETE didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void NODELETE didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void NODELETE didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&) final;
 
-    static JSClassRef wrapperClass();
-    static JSIPCConnection* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
+    static JSClassRef NODELETE wrapperClass();
+    static JSIPCConnection* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
 
 
-    static const JSStaticFunction* staticFunctions();
-    static JSValueRef open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef invalidate(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendWithAsyncReply(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef waitForAsyncReplyAndDispatchImmediately(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static const JSStaticFunction* NODELETE staticFunctions();
+    static JSValueRef NODELETE open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE invalidate(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendWithAsyncReply(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE waitForAsyncReplyAndDispatchImmediately(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     const Ref<IPC::Connection> m_testedConnection;
 };
 
 class JSIPCStreamClientConnection : public RefCountedAndCanMakeWeakPtr<JSIPCStreamClientConnection> {
 public:
-    static Ref<JSIPCStreamClientConnection> create(JSIPC& jsIPC, RefPtr<IPC::StreamClientConnection> connection)
+    static Ref<JSIPCStreamClientConnection> NODELETE create(JSIPC& jsIPC, RefPtr<IPC::StreamClientConnection> connection)
     {
         return adoptRef(*new JSIPCStreamClientConnection(jsIPC, WTF::move(connection)));
     }
 
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSIPCStreamClientConnection* toWrapped(JSContextRef, JSValueRef);
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSIPCStreamClientConnection* NODELETE toWrapped(JSContextRef, JSValueRef);
 
-    IPC::StreamClientConnection& connection() { return *m_streamConnection; }
+    IPC::StreamClientConnection& NODELETE connection() { return *m_streamConnection; }
 
 private:
     friend class JSIPCStreamConnectionBuffer;
@@ -222,26 +222,26 @@ private:
     {
     }
 
-    void setSemaphores(JSIPCSemaphore& jsWakeUpSemaphore, JSIPCSemaphore& jsClientWaitSemaphore) { m_streamConnection->setSemaphores(jsWakeUpSemaphore.exchange(), jsClientWaitSemaphore.exchange()); }
+    void NODELETE setSemaphores(JSIPCSemaphore& jsWakeUpSemaphore, JSIPCSemaphore& jsClientWaitSemaphore) { m_streamConnection->setSemaphores(jsWakeUpSemaphore.exchange(), jsClientWaitSemaphore.exchange()); }
 
-    static JSClassRef wrapperClass();
-    static JSIPCStreamClientConnection* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
+    static JSClassRef NODELETE wrapperClass();
+    static JSIPCStreamClientConnection* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
 
-    bool prepareToSendOutOfStreamMessage(uint64_t destinationID, IPC::Timeout);
+    bool NODELETE prepareToSendOutOfStreamMessage(uint64_t destinationID, IPC::Timeout);
 
-    static const JSStaticFunction* staticFunctions();
-    static JSValueRef open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef invalidate(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef streamBuffer(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef setSemaphores(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendWithAsyncReply(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendIPCStreamTesterSyncCrashOnZero(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef waitForAsyncReplyAndDispatchImmediately(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static const JSStaticFunction* NODELETE staticFunctions();
+    static JSValueRef NODELETE open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE invalidate(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE streamBuffer(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE setSemaphores(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendWithAsyncReply(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendIPCStreamTesterSyncCrashOnZero(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE waitForAsyncReplyAndDispatchImmediately(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WeakPtr<JSIPC> m_jsIPC;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
@@ -257,14 +257,14 @@ private:
             : m_connection(connection)
         { }
 
-        void ref() const { m_connection->ref(); }
-        void deref() const { m_connection->deref(); }
+        void NODELETE ref() const { m_connection->ref(); }
+        void NODELETE deref() const { m_connection->deref(); }
 
         // IPC::MessageReceiver overrides.
-        void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
-        void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); }
-        void didClose(IPC::Connection&) final { }
-        void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final { ASSERT_NOT_REACHED(); }
+        void NODELETE didReceiveMessage(IPC::Connection&, IPC::Decoder&) final { ASSERT_NOT_REACHED(); }
+        void NODELETE didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final { ASSERT_NOT_REACHED(); }
+        void NODELETE didClose(IPC::Connection&) final { }
+        void NODELETE didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final { ASSERT_NOT_REACHED(); }
 
     private:
         WeakRef<JSIPCStreamClientConnection> m_connection;
@@ -274,38 +274,38 @@ private:
 
 class JSIPCStreamServerConnectionHandle : public RefCounted<JSIPCStreamServerConnectionHandle> {
 public:
-    static Ref<JSIPCStreamServerConnectionHandle> create(IPC::StreamServerConnection::Handle&& handle)
+    static Ref<JSIPCStreamServerConnectionHandle> NODELETE create(IPC::StreamServerConnection::Handle&& handle)
     {
         return adoptRef(*new JSIPCStreamServerConnectionHandle(WTF::move(handle)));
     }
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSIPCStreamServerConnectionHandle* toWrapped(JSContextRef, JSValueRef);
-    void encode(IPC::Encoder& encoder) { encoder << WTF::move(m_handle); }
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSIPCStreamServerConnectionHandle* NODELETE toWrapped(JSContextRef, JSValueRef);
+    void NODELETE encode(IPC::Encoder& encoder) { encoder << WTF::move(m_handle); }
 private:
     JSIPCStreamServerConnectionHandle(IPC::StreamServerConnection::Handle&& handle)
         : m_handle { WTF::move(handle) }
     {
     }
-    static JSClassRef wrapperClass();
-    static JSIPCStreamServerConnectionHandle* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
-    static const JSStaticFunction* staticFunctions();
+    static JSClassRef NODELETE wrapperClass();
+    static JSIPCStreamServerConnectionHandle* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
+    static const JSStaticFunction* NODELETE staticFunctions();
 
     IPC::StreamServerConnection::Handle m_handle;
 };
 
 class JSIPCStreamConnectionBuffer : public RefCounted<JSIPCStreamConnectionBuffer> {
 public:
-    static Ref<JSIPCStreamConnectionBuffer> create(JSIPCStreamClientConnection& streamConnection)
+    static Ref<JSIPCStreamConnectionBuffer> NODELETE create(JSIPCStreamClientConnection& streamConnection)
     {
         return adoptRef(*new JSIPCStreamConnectionBuffer(streamConnection));
     }
 
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSIPCStreamConnectionBuffer* toWrapped(JSContextRef, JSValueRef);
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSIPCStreamConnectionBuffer* NODELETE toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) const { encoder << m_streamConnection->connection().bufferForTesting().createHandle(); }
+    void NODELETE encode(IPC::Encoder& encoder) const { encoder << m_streamConnection->connection().bufferForTesting().createHandle(); }
 
 private:
     JSIPCStreamConnectionBuffer(JSIPCStreamClientConnection& streamConnection)
@@ -313,18 +313,18 @@ private:
     {
     }
 
-    static JSClassRef wrapperClass();
-    static JSIPCStreamConnectionBuffer* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
+    static JSClassRef NODELETE wrapperClass();
+    static JSIPCStreamConnectionBuffer* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
 
-    static const JSStaticFunction* staticFunctions();
+    static const JSStaticFunction* NODELETE staticFunctions();
 
-    static JSValueRef readHeaderBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef readDataBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE readHeaderBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE readDataBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef readBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception, std::span<uint8_t>);
-    static JSValueRef writeHeaderBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef writeDataBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE writeHeaderBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE writeDataBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef writeBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception, std::span<uint8_t>);
 
     WeakPtr<JSIPCStreamClientConnection> m_streamConnection;
@@ -332,21 +332,21 @@ private:
 
 class JSSharedMemory : public RefCounted<JSSharedMemory> {
 public:
-    static Ref<JSSharedMemory> create(size_t size)
+    static Ref<JSSharedMemory> NODELETE create(size_t size)
     {
         return adoptRef(*new JSSharedMemory(size));
     }
 
-    static Ref<JSSharedMemory> create(Ref<SharedMemory>&& sharedMemory)
+    static Ref<JSSharedMemory> NODELETE create(Ref<SharedMemory>&& sharedMemory)
     {
         return adoptRef(*new JSSharedMemory(WTF::move(sharedMemory)));
     }
 
-    size_t size() const { return m_sharedMemory->size(); }
-    std::optional<SharedMemory::Handle> createHandle(SharedMemory::Protection);
+    size_t NODELETE size() const { return m_sharedMemory->size(); }
+    std::optional<SharedMemory::Handle> NODELETE createHandle(SharedMemory::Protection);
 
-    JSObjectRef createJSWrapper(JSContextRef);
-    static JSSharedMemory* toWrapped(JSContextRef, JSValueRef);
+    JSObjectRef NODELETE createJSWrapper(JSContextRef);
+    static JSSharedMemory* NODELETE toWrapped(JSContextRef, JSValueRef);
 
 private:
     JSSharedMemory(size_t size)
@@ -358,15 +358,15 @@ private:
     {
     }
 
-    static JSClassRef wrapperClass();
-    static JSSharedMemory* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
+    static JSClassRef NODELETE wrapperClass();
+    static JSSharedMemory* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
 
-    static const JSStaticFunction* staticFunctions();
+    static const JSStaticFunction* NODELETE staticFunctions();
 
-    static JSValueRef readBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef writeBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE readBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE writeBytes(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     const Ref<SharedMemory> m_sharedMemory;
 };
@@ -376,20 +376,20 @@ class JSMessageListener final : public IPC::MessageObserver, public RefCounted<J
 public:
     enum class Type { Incoming, Outgoing };
 
-    static Ref<JSMessageListener> create(JSIPC& jsIPC, Type type, JSC::JSGlobalObject* globalObject, JSObjectRef callback)
+    static Ref<JSMessageListener> NODELETE create(JSIPC& jsIPC, Type type, JSC::JSGlobalObject* globalObject, JSObjectRef callback)
     {
         return adoptRef(*new JSMessageListener(jsIPC, type, globalObject, callback));
     }
 
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
+    void NODELETE deref() const final { RefCounted::deref(); }
 
 private:
     JSMessageListener(JSIPC&, Type, JSC::JSGlobalObject*, JSObjectRef callback);
 
     void willSendMessage(const IPC::Encoder&, OptionSet<IPC::SendOption>) override;
-    void didReceiveMessage(const IPC::Decoder&) override;
-    JSC::JSObject* jsDescriptionFromDecoder(JSC::JSGlobalObject*, IPC::Decoder&);
+    void NODELETE didReceiveMessage(const IPC::Decoder&) override;
+    JSC::JSObject* NODELETE jsDescriptionFromDecoder(JSC::JSGlobalObject*, IPC::Decoder&);
 
     WeakPtr<JSIPC> m_jsIPC;
     Type m_type;
@@ -399,14 +399,14 @@ private:
 
 class JSIPC : public RefCountedAndCanMakeWeakPtr<JSIPC> {
 public:
-    static Ref<JSIPC> create(WebPage& webPage, WebFrame& webFrame)
+    static Ref<JSIPC> NODELETE create(WebPage& webPage, WebFrame& webFrame)
     {
         return adoptRef(*new JSIPC(webPage, webFrame));
     }
-    static JSIPC* toWrapped(JSContextRef, JSValueRef);
-    static JSClassRef wrapperClass();
+    static JSIPC* NODELETE toWrapped(JSContextRef, JSValueRef);
+    static JSClassRef NODELETE wrapperClass();
 
-    WebFrame* webFrame() { return m_webFrame.get(); }
+    WebFrame* NODELETE webFrame() { return m_webFrame.get(); }
 
 private:
     JSIPC(WebPage& webPage, WebFrame& webFrame)
@@ -419,43 +419,43 @@ private:
 #endif
     { }
 
-    static JSIPC* unwrap(JSObjectRef);
-    static void initialize(JSContextRef, JSObjectRef);
-    static void finalize(JSObjectRef);
-    static const JSStaticFunction* staticFunctions();
-    static const JSStaticValue* staticValues();
+    static JSIPC* NODELETE unwrap(JSObjectRef);
+    static void NODELETE initialize(JSContextRef, JSObjectRef);
+    static void NODELETE finalize(JSObjectRef);
+    static const JSStaticFunction* NODELETE staticFunctions();
+    static const JSStaticValue* NODELETE staticValues();
 
-    static JSValueRef connectionForProcessTarget(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE connectionForProcessTarget(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    static void addMessageListener(JSMessageListener::Type, JSContextRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef addIncomingMessageListener(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef addOutgoingMessageListener(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static void NODELETE addMessageListener(JSMessageListener::Type, JSContextRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE addIncomingMessageListener(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE addOutgoingMessageListener(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE waitForMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    static JSValueRef createConnectionPair(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE createConnectionPair(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    static JSValueRef createStreamClientConnection(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef createSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef createSharedMemory(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef addTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef removeTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE createStreamClientConnection(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE createSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE createSharedMemory(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE addTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef NODELETE removeTesterReceiver(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    static JSValueRef vmPageSize(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef visitedLinkStoreID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef webPageProxyID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef sessionID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef pageID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef frameID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, NOESCAPE const WTF::Function<uint64_t(JSIPC&)>&);
+    static JSValueRef NODELETE vmPageSize(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE visitedLinkStoreID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE webPageProxyID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE sessionID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE pageID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE frameID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, NOESCAPE const WTF::Function<uint64_t(JSIPC&)>&);
 
-    static JSValueRef messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef serializedTypeInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef serializedEnumInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef objectIdentifiers(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef processTargets(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE serializedTypeInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE serializedEnumInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE objectIdentifiers(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef NODELETE processTargets(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
 
     RefPtr<JSIPCConnection> processTargetFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef* exception);
 
@@ -472,24 +472,24 @@ private:
     RefPtr<JSIPCConnection> m_gpuConnection;
 };
 
-static JSValueRef createError(JSContextRef context, const String& message)
+static JSValueRef NODELETE createError(JSContextRef context, const String& message)
 {
     JSC::JSLockHolder lock(toJS(context)->vm());
     return toRef(JSC::createError(toJS(context), message));
 }
 
-static JSValueRef createTypeError(JSContextRef context, const String& message)
+static JSValueRef NODELETE createTypeError(JSContextRef context, const String& message)
 {
     JSC::JSLockHolder lock(toJS(context)->vm());
     return toRef(JSC::createTypeError(toJS(context), message));
 }
 
-static JSValueRef createErrorFromIPCError(JSContextRef context, IPC::Error error)
+static JSValueRef NODELETE createErrorFromIPCError(JSContextRef context, IPC::Error error)
 {
     return createError(context, makeString("IPC error:"_s, IPC::errorAsString(error)));
 }
 
-static std::optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
+static std::optional<uint64_t> NODELETE convertToUint64(JSC::JSValue jsValue)
 {
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
@@ -502,7 +502,7 @@ static std::optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
     return std::nullopt;
 }
 
-static std::optional<double> convertToDouble(JSC::JSValue jsValue)
+static std::optional<double> NODELETE convertToDouble(JSC::JSValue jsValue)
 {
     if (jsValue.isNumber())
         return jsValue.asNumber();
@@ -521,7 +521,7 @@ struct SyncIPCMessageInfo {
 
 }
 
-static std::optional<SyncIPCMessageInfo> extractSyncIPCMessageInfo(JSContextRef context, std::span<const JSValueRef> arguments, JSValueRef* exception)
+static std::optional<SyncIPCMessageInfo> NODELETE extractSyncIPCMessageInfo(JSContextRef context, std::span<const JSValueRef> arguments, JSValueRef* exception)
 {
     ASSERT(arguments.size() >= 2);
     auto* globalObject = toJS(context);
@@ -546,7 +546,7 @@ static std::optional<SyncIPCMessageInfo> extractSyncIPCMessageInfo(JSContextRef 
     return { { *destinationID, *messageName, { timeoutDuration } } };
 }
 
-static JSValueRef jsSend(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, JSContextRef context, const JSValueRef messageArguments, JSValueRef* exception)
+static JSValueRef NODELETE jsSend(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, JSContextRef context, const JSValueRef messageArguments, JSValueRef* exception)
 {
     auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
     if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
@@ -555,7 +555,7 @@ static JSValueRef jsSend(IPC::Connection& connection, uint64_t destinationID, IP
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, JSContextRef context, const JSObjectRef callback, const JSValueRef messageArguments, JSValueRef* exception)
+static JSValueRef NODELETE jsSendWithAsyncReply(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, JSContextRef context, const JSObjectRef callback, const JSValueRef messageArguments, JSValueRef* exception)
 {
     auto encoder = makeUniqueRef<IPC::Encoder>(messageName, destinationID);
     if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
@@ -594,7 +594,7 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
     return JSValueMakeNumber(context, asyncReplyID.toUInt64());
 }
 
-static JSValueRef jsSendSync(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, const JSValueRef messageArguments, JSValueRef* exception)
+static JSValueRef NODELETE jsSendSync(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, const JSValueRef messageArguments, JSValueRef* exception)
 {
     auto [encoder, syncRequestID] = connection.createSyncMessageEncoder(messageName, destinationID);
     if (messageArguments && !encodeArgument(encoder.get(), context, messageArguments, exception))
@@ -615,7 +615,7 @@ static JSValueRef jsSendSync(IPC::Connection& connection, uint64_t destinationID
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef jsWaitForMessage(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, JSValueRef* exception)
+static JSValueRef NODELETE jsWaitForMessage(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, JSValueRef* exception)
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
@@ -633,7 +633,7 @@ static JSValueRef jsWaitForMessage(IPC::Connection& connection, uint64_t destina
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef jsWaitForAsyncReplyAndDispatchImmediately(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, JSValueRef* exception)
+static JSValueRef NODELETE jsWaitForAsyncReplyAndDispatchImmediately(IPC::Connection& connection, uint64_t destinationID, IPC::MessageName messageName, IPC::Timeout timeout, JSContextRef context, JSValueRef* exception)
 {
     auto handler = connection.takeAsyncReplyHandler(IPC::Connection::AsyncReplyID { destinationID });
     if (!handler) {
@@ -1145,7 +1145,7 @@ struct IPCStreamMessageInfo {
     IPC::MessageName messageName;
 };
 
-static std::optional<IPCStreamMessageInfo> extractIPCStreamMessageInfo(JSContextRef context, std::span<const JSValueRef> arguments, JSValueRef* exception)
+static std::optional<IPCStreamMessageInfo> NODELETE extractIPCStreamMessageInfo(JSContextRef context, std::span<const JSValueRef> arguments, JSValueRef* exception)
 {
     if (arguments.size() < 2) {
         *exception = createTypeError(context, "Must specify destination ID, message ID as the first two arguments"_s);
@@ -1624,7 +1624,7 @@ JSValueRef JSSharedMemory::readBytes(JSContextRef context, JSObjectRef, JSObject
     return toRef(jsArrayBuffer);
 }
 
-static std::span<const uint8_t> arrayBufferSpanFromValueRef(JSContextRef context, JSTypedArrayType type, JSValueRef valueRef, JSValueRef* exception)
+static std::span<const uint8_t> NODELETE arrayBufferSpanFromValueRef(JSContextRef context, JSTypedArrayType type, JSValueRef valueRef, JSValueRef* exception)
 {
     auto objectRef = JSValueToObject(context, valueRef, exception);
     if (!objectRef)
@@ -1962,7 +1962,7 @@ const JSStaticValue* JSIPC::staticValues()
     return values;
 }
 
-RefPtr<JSIPCConnection> JSIPC::processTargetFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
+RefPtr<JSIPCConnection> NODELETE JSIPC::processTargetFromArgument(JSC::JSGlobalObject* globalObject, JSValueRef valueRef, JSValueRef* exception)
 {
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
     auto name = toJS(globalObject, valueRef).toWTFString(globalObject);
@@ -2061,7 +2061,7 @@ static std::optional<IPC::MessageName> messageNameFromArgument(JSC::JSGlobalObje
 
 }
 
-static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValueRef valueRef, JSTypedArrayType type, JSValueRef* exception)
+static bool NODELETE encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValueRef valueRef, JSTypedArrayType type, JSValueRef* exception)
 {
     ASSERT(type != kJSTypedArrayTypeNone);
 
@@ -2073,7 +2073,7 @@ static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValu
     return true;
 }
 
-template<typename PointType> bool encodePointType(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
+template<typename PointType> bool NODELETE encodePointType(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
 {
     auto& vm = globalObject->vm();
     auto jsX = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "x"_s));
@@ -2086,7 +2086,7 @@ template<typename PointType> bool encodePointType(IPC::Encoder& encoder, JSC::JS
     return true;
 }
 
-template<typename RectType> bool encodeRectType(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
+template<typename RectType> bool NODELETE encodeRectType(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
 {
     auto& vm = globalObject->vm();
     auto jsX = jsObject->get(globalObject, JSC::Identifier::fromString(vm, "x"_s));
@@ -2105,7 +2105,7 @@ template<typename RectType> bool encodeRectType(IPC::Encoder& encoder, JSC::JSGl
     return true;
 }
 
-template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JSC::JSValue jsValue)
+template<typename IntegralType> bool NODELETE encodeNumericType(IPC::Encoder& encoder, JSC::JSValue jsValue)
 {
     if (jsValue.isBigInt()) {
         // FIXME: Support negative BigInt.
@@ -2122,7 +2122,7 @@ template<typename IntegralType> bool encodeNumericType(IPC::Encoder& encoder, JS
 
 #if ENABLE(GPU_PROCESS)
 template <typename T>
-std::optional<T> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::TopExceptionScope& scope)
+std::optional<T> NODELETE getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, ASCIILiteral propertyName, JSC::TopExceptionScope& scope)
 {
     auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
     if (scope.exception())
@@ -2135,7 +2135,7 @@ std::optional<T> getObjectIdentifierFromProperty(JSC::JSGlobalObject* globalObje
 
 #endif
 
-static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
+static bool NODELETE encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
 {
     auto jsSharedMemoryValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "value"_s));
     if (scope.exception())
@@ -2164,7 +2164,7 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     return true;
 }
 
-static bool encodeFrameInfoData(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
+static bool NODELETE encodeFrameInfoData(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSObject* jsObject, JSC::TopExceptionScope& scope)
 {
     auto jsIPCValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "value"_s));
     if (scope.exception())
@@ -2179,7 +2179,7 @@ static bool encodeFrameInfoData(IPC::Encoder& encoder, JSC::JSGlobalObject* glob
     return true;
 }
 
-static bool encodeStreamConnectionBuffer(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
+static bool NODELETE encodeStreamConnectionBuffer(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
 {
     RefPtr jsIPCStreamConnectionBuffer = JSIPCStreamConnectionBuffer::toWrapped(toRef(globalObject), toRef(globalObject, jsValue));
     if (!jsIPCStreamConnectionBuffer)
@@ -2189,7 +2189,7 @@ static bool encodeStreamConnectionBuffer(IPC::Encoder& encoder, JSC::JSGlobalObj
     return true;
 }
 
-static bool encodeStreamServerConnectionHandle(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
+static bool NODELETE encodeStreamServerConnectionHandle(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
 {
     RefPtr JSIPCStreamServerConnectionHandle = JSIPCStreamServerConnectionHandle::toWrapped(toRef(globalObject), toRef(globalObject, jsValue));
     if (!JSIPCStreamServerConnectionHandle)
@@ -2199,7 +2199,7 @@ static bool encodeStreamServerConnectionHandle(IPC::Encoder& encoder, JSC::JSGlo
     return true;
 }
 
-static bool encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
+static bool NODELETE encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
 {
     RefPtr jsIPCSemaphore = JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(globalObject, jsValue));
     if (!jsIPCSemaphore)
@@ -2209,7 +2209,7 @@ static bool encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalOb
     return true;
 }
 
-static bool encodeConnectionHandle(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
+static bool NODELETE encodeConnectionHandle(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::TopExceptionScope& scope)
 {
     RefPtr JSIPCConnectionHandle = JSIPCConnectionHandle::toWrapped(toRef(globalObject), toRef(globalObject, jsValue));
     if (!JSIPCConnectionHandle)
@@ -2225,7 +2225,7 @@ struct VectorEncodeHelper {
     JSValueRef* exception;
     bool& success;
 
-    void encode(IPC::Encoder& encoder) const
+    void NODELETE encode(IPC::Encoder& encoder) const
     {
         if (!success)
             return;
@@ -2238,7 +2238,7 @@ struct VectorEncodeHelper {
 namespace IPC {
 
 template<> struct ArgumentCoder<WebKit::IPCTestingAPI::VectorEncodeHelper> {
-    static void encode(Encoder& encoder, const WebKit::IPCTestingAPI::VectorEncodeHelper& helper)
+    static void NODELETE encode(Encoder& encoder, const WebKit::IPCTestingAPI::VectorEncodeHelper& helper)
     {
         helper.encode(encoder);
     }
@@ -2249,7 +2249,7 @@ template<> struct ArgumentCoder<WebKit::IPCTestingAPI::VectorEncodeHelper> {
 namespace WebKit::IPCTestingAPI {
 
 enum class ArrayMode { Tuple, Vector };
-static bool encodeArrayArgument(IPC::Encoder& encoder, ArrayMode arrayMode, JSContextRef context, JSValueRef valueRef, JSValueRef* exception)
+static bool NODELETE encodeArrayArgument(IPC::Encoder& encoder, ArrayMode arrayMode, JSContextRef context, JSValueRef valueRef, JSValueRef* exception)
 {
     auto objectRef = JSValueToObject(context, valueRef, exception);
     ASSERT(objectRef);
@@ -2956,7 +2956,7 @@ JSValueRef JSIPC::retrieveID(JSContextRef context, JSObjectRef thisObject, JSVal
     return toRef(vm, jsValue);
 }
 
-static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* globalObject, std::optional<Vector<IPC::ArgumentDescription>>&& argumentDescriptions)
+static JSC::JSValue NODELETE createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* globalObject, std::optional<Vector<IPC::ArgumentDescription>>&& argumentDescriptions)
 {
     if (!argumentDescriptions)
         return JSC::jsNull();
@@ -3200,7 +3200,7 @@ void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& worl
 namespace IPC {
 
 template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, IPC::Semaphore&& value)
+JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, IPC::Semaphore&& value)
 {
     auto& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -3214,7 +3214,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, I
     return object;
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::SharedMemory::Handle&& value)
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::SharedMemory::Handle&& value)
 {
     using SharedMemory = WebCore::SharedMemory;
     using Protection = WebCore::SharedMemory::Protection;

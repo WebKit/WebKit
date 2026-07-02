@@ -57,7 +57,7 @@ public:
     WebCookieManager(NetworkProcess&);
     ~WebCookieManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     static ASCIILiteral supplementName();
@@ -94,7 +94,7 @@ private:
 #endif
 
     void startObservingCookieChanges(PAL::SessionID);
-    void stopObservingCookieChanges(PAL::SessionID);
+    void NODELETE stopObservingCookieChanges(PAL::SessionID);
 
     WeakRef<NetworkProcess> m_process;
 };

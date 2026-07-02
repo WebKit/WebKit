@@ -39,7 +39,7 @@ class StyleRuleKeyframe;
 
 class StyleRuleKeyframes final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframes> NODELETE create(const AtomString& name);
+    static Ref<StyleRuleKeyframes> create(const AtomString& name);
     ~StyleRuleKeyframes();
     
     const Vector<Ref<StyleRuleKeyframe>>& NODELETE keyframes() const;
@@ -73,7 +73,7 @@ public:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Keyframes; }
     String cssText() const final;
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
 
     const AtomString& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
     void setName(const AtomString&);

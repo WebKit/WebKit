@@ -101,7 +101,7 @@ enum class GridAvoidanceReason : uint8_t {
 };
 
 #if ASSERT_ENABLED
-static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
+static bool NODELETE avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
@@ -115,7 +115,7 @@ static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoi
     }
 }
 
-static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
+static bool NODELETE avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidanceReason)
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemHasAutomaticRowStartPlacement:
@@ -587,7 +587,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
 #ifndef NDEBUG
 namespace GridCoverageInternal {
-static void printTextForSubtree(const RenderElement& renderer, size_t& charactersLeft, TextStream& stream)
+static void NODELETE printTextForSubtree(const RenderElement& renderer, size_t& charactersLeft, TextStream& stream)
 {
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (is<RenderText>(child)) {
@@ -603,7 +603,7 @@ static void printTextForSubtree(const RenderElement& renderer, size_t& character
 }
 } // namespace GridCoverageInternal
 
-static Vector<const RenderGrid*> collectGridsForCurrentPage()
+static Vector<const RenderGrid*> NODELETE collectGridsForCurrentPage()
 {
     Vector<const RenderGrid*> grids;
     for (auto document : Document::allDocuments()) {
@@ -617,7 +617,7 @@ static Vector<const RenderGrid*> collectGridsForCurrentPage()
     return grids;
 }
 
-static void printReason(GridAvoidanceReason reason, TextStream& stream)
+static void NODELETE printReason(GridAvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
     case GridAvoidanceReason::GridFormattingContextIntegrationDisabled:
@@ -773,7 +773,7 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     }
 }
 
-static void printReasons(EnumSet<GridAvoidanceReason> reasons, TextStream& stream)
+static void NODELETE printReasons(EnumSet<GridAvoidanceReason> reasons, TextStream& stream)
 {
     stream << " ";
     for (auto reason : reasons) {
@@ -782,7 +782,7 @@ static void printReasons(EnumSet<GridAvoidanceReason> reasons, TextStream& strea
     }
 }
 
-static void printLegacyGridReasons()
+static void NODELETE printLegacyGridReasons()
 {
     auto grids = collectGridsForCurrentPage();
     if (!grids.size()) {

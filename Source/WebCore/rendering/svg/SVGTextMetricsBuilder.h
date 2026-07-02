@@ -39,7 +39,7 @@ public:
     void buildMetricsAndLayoutAttributes(RenderSVGText&, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap);
 
 private:
-    template<typename Iterator> bool advance(Iterator&);
+    template<typename Iterator> bool NODELETE advance(Iterator&);
     void advanceIterator(WidthIterator&);
     void advanceIterator(ComplexTextController&);
     bool NODELETE currentCharacterStartsSurrogatePair() const;

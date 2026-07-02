@@ -199,13 +199,13 @@ private:
             m_completionHandler(false);
     }
 
-    void positionChanged(const String&, GeolocationPositionData&&) final { }
+    void NODELETE positionChanged(const String&, GeolocationPositionData&&) final { }
     void errorOccurred(const String&, const String&) final
     {
         if (m_completionHandler)
             m_completionHandler(false);
     }
-    void resetGeolocation(const String&) final { }
+    void NODELETE resetGeolocation(const String&) final { }
 
     std::unique_ptr<CoreLocationGeolocationProvider> m_provider;
     CompletionHandler<void(bool)> m_completionHandler;

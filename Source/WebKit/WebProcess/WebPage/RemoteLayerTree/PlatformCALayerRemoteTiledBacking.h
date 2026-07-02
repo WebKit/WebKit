@@ -47,10 +47,10 @@ private:
 
     void setBounds(const WebCore::FloatRect&) override;
     
-    bool isOpaque() const override;
+    bool NODELETE isOpaque() const override;
     void setOpaque(bool) override;
     
-    bool acceleratesDrawing() const override;
+    bool NODELETE acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
@@ -58,10 +58,10 @@ private:
     void setTonemappingEnabled(bool) override;
 #endif
 
-    WebCore::ContentsFormat contentsFormat() const override;
+    WebCore::ContentsFormat NODELETE contentsFormat() const override;
     void setContentsFormat(WebCore::ContentsFormat) override;
 
-    float contentsScale() const override;
+    float NODELETE contentsScale() const override;
     void setContentsScale(float) override;
     
     void setBorderWidth(float) override;

@@ -108,7 +108,7 @@ private:
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
     void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) final;
     void sessionIdChanged(const String&) final;
-    PlatformDisplayID displayID() final;
+    PlatformDisplayID NODELETE displayID() final;
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::MediaKeySession; }

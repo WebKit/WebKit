@@ -183,7 +183,7 @@ public:
         return Relationship(m_right, m_left, flipped(m_kind), -m_offset);
     }
     
-    Relationship NODELETE inverse() const
+    Relationship inverse() const
     {
         if (!*this)
             return *this;
@@ -283,7 +283,7 @@ public:
         RELEASE_ASSERT(right != m_left);
         m_right = right;
     }
-    bool NODELETE addToOffset(int offset)
+    bool addToOffset(int offset)
     {
         if (sumOverflows<int>(m_offset, offset))
             return false;

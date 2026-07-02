@@ -43,7 +43,7 @@ public:
     bool operator==(const FilterData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const FilterData&) const;
+    void NODELETE dumpDifferences(TextStream&, const FilterData&) const;
 #endif
 
     Filter filter;

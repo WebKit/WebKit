@@ -57,13 +57,13 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     static ModuleGraphLoadingState* create(VM&, JSPromise*, RefPtr<ScriptFetcher>);
 
-    JSPromise* promise() const;
-    unsigned pendingModulesCount() const;
-    bool isLoading() const;
-    ScriptFetcher* scriptFetcher() const;
+    JSPromise* NODELETE promise() const;
+    unsigned NODELETE pendingModulesCount() const;
+    bool NODELETE isLoading() const;
+    ScriptFetcher* NODELETE scriptFetcher() const;
 
-    void setPendingModulesCount(unsigned);
-    void setIsLoading(bool);
+    void NODELETE setPendingModulesCount(unsigned);
+    void NODELETE setIsLoading(bool);
 
     void appendVisited(VM&, CyclicModuleRecord*);
     bool containsVisited(CyclicModuleRecord*) const;

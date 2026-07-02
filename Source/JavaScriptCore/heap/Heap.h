@@ -361,15 +361,15 @@ public:
 
     SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
 
-    JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
-    JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
+    JS_EXPORT_PRIVATE GCActivityCallback* NODELETE fullActivityCallback();
+    JS_EXPORT_PRIVATE GCActivityCallback* NODELETE edenActivityCallback();
 
     JS_EXPORT_PRIVATE void setFullActivityCallback(RefPtr<GCActivityCallback>&&);
     JS_EXPORT_PRIVATE void setEdenActivityCallback(RefPtr<GCActivityCallback>&&);
-    JS_EXPORT_PRIVATE void disableStopIfNecessaryTimer();
+    JS_EXPORT_PRIVATE void NODELETE disableStopIfNecessaryTimer();
 
-    JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
-    JS_EXPORT_PRIVATE void scheduleOpportunisticFullCollection();
+    JS_EXPORT_PRIVATE void NODELETE setGarbageCollectionTimerEnabled(bool);
+    JS_EXPORT_PRIVATE void NODELETE scheduleOpportunisticFullCollection();
 
     IncrementalSweeper& sweeper() { return m_sweeper.get(); }
 
@@ -384,7 +384,7 @@ public:
 
     // We're always busy on the collection threads. On the main thread, this returns true if we're
     // helping heap.
-    JS_EXPORT_PRIVATE bool currentThreadIsDoingGCWork();
+    JS_EXPORT_PRIVATE bool NODELETE currentThreadIsDoingGCWork();
     
     typedef void (*CFinalizer)(JSCell*);
     JS_EXPORT_PRIVATE void addFinalizer(JSCell*, CFinalizer);
@@ -447,7 +447,7 @@ public:
 
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
-    JS_EXPORT_PRIVATE void reportExternalMemoryVisited(size_t);
+    JS_EXPORT_PRIVATE void NODELETE reportExternalMemoryVisited(size_t);
     size_t externalMemorySize() { return m_externalMemorySize; }
 #endif
 
@@ -523,8 +523,8 @@ public:
     size_t blockBytesAllocated() const { return m_blockBytesAllocated; }
 #endif
 
-    void didAllocateBlock(size_t capacity);
-    void didFreeBlock(size_t capacity);
+    void NODELETE didAllocateBlock(size_t capacity);
+    void NODELETE didFreeBlock(size_t capacity);
     
     bool mutatorShouldBeFenced() const { return m_mutatorShouldBeFenced; }
     const bool* addressOfMutatorShouldBeFenced() const LIFETIME_BOUND { return &m_mutatorShouldBeFenced; }
@@ -624,7 +624,7 @@ public:
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
-    void setKeepVerifierSlotVisitor();
+    void NODELETE setKeepVerifierSlotVisitor();
     void clearVerifierSlotVisitor();
 
     void appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(const JSString* owner, String&& string)
@@ -703,7 +703,7 @@ private:
     bool shouldCollectInCollectorThread(const AbstractLocker&);
     void collectInCollectorThread();
     
-    void checkConn(GCConductor);
+    void NODELETE checkConn(GCConductor);
 
     enum class RunCurrentPhaseResult {
         Finished,
@@ -749,8 +749,8 @@ private:
     void setNeedFinalize();
     void waitWhileNeedFinalize();
     
-    void setMutatorWaiting();
-    void clearMutatorWaiting();
+    void NODELETE setMutatorWaiting();
+    void NODELETE clearMutatorWaiting();
     void notifyThreadStopping(const AbstractLocker&);
     
     typedef uint64_t Ticket;
@@ -759,7 +759,7 @@ private:
     
     bool suspendCompilerThreads();
     void willStartCollection();
-    void prepareForMarking();
+    void NODELETE prepareForMarking();
     
     void gatherStackRoots(ConservativeRoots&);
     void gatherVMRoots(ConservativeRoots&);
@@ -783,7 +783,7 @@ private:
     void harvestWeakReferences();
 
     template<typename CellType, typename CellSet>
-    void finalizeMarkedUnconditionalFinalizers(CellSet&, CollectionScope);
+    void NODELETE finalizeMarkedUnconditionalFinalizers(CellSet&, CollectionScope);
 
     void finalizeUnconditionalFinalizers();
 
@@ -801,7 +801,7 @@ private:
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();
 
-    bool shouldDoFullCollection();
+    bool NODELETE shouldDoFullCollection();
 
     inline void incrementDeferralDepth();
     inline void decrementDeferralDepth();
@@ -814,7 +814,7 @@ private:
     void forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>&);
     void forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& codeBlockSetLocker, const ScopedLambda<void(CodeBlock*)>&);
     
-    void setMutatorShouldBeFenced(bool value);
+    void NODELETE setMutatorShouldBeFenced(bool value);
     
     void addCoreConstraints();
 
@@ -823,13 +823,13 @@ private:
         Direct
     };
 
-    bool overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType = MemoryThresholdCallType::Cached);
+    bool NODELETE overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType = MemoryThresholdCallType::Cached);
     
     template<typename Visitor>
-    void iterateExecutingAndCompilingCodeBlocks(Visitor&, NOESCAPE const Function<void(CodeBlock*)>&);
+    void NODELETE iterateExecutingAndCompilingCodeBlocks(Visitor&, NOESCAPE const Function<void(CodeBlock*)>&);
     
     template<typename Func, typename Visitor>
-    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
+    void NODELETE iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
     
     void assertMarkStacksEmpty();
 
@@ -837,8 +837,8 @@ private:
 
     void dumpHeapStatisticsAtVMDestruction();
 
-    static bool useGenerationalGC();
-    bool shouldSweepSynchronously();
+    static bool NODELETE useGenerationalGC();
+    bool NODELETE shouldSweepSynchronously();
 
     void verifyGC();
     void verifierMark();
@@ -930,8 +930,8 @@ private:
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
 
 #if ASSERT_ENABLED
-    friend void setTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
-    friend void clearTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
+    friend void NODELETE setTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
+    friend void NODELETE clearTopGCOwnedDataScopeIfNeeded(const JSCell*, const void*);
     const void* m_topGCOwnedDataScope { nullptr };
 #endif
     // Use a SegmentedVector rather than a Vector because we don't want to have to copy in order to grow the buffer.

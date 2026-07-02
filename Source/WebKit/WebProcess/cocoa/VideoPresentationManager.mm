@@ -70,7 +70,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static FloatRect inlineVideoFrame(HTMLVideoElement& element)
+static FloatRect NODELETE inlineVideoFrame(HTMLVideoElement& element)
 {
     Ref document = element.document();
     if (!document->hasLivingRenderTree() || document->activeDOMObjectsAreStopped())
@@ -164,7 +164,7 @@ void VideoPresentationInterfaceContext::setPlayerIdentifier(std::optional<MediaP
 
 #pragma mark - VideoPresentationManager
 
-Ref<VideoPresentationManager> VideoPresentationManager::create(WebPage& page, PlaybackSessionManager& playbackSessionManager)
+Ref<VideoPresentationManager> NODELETE VideoPresentationManager::create(WebPage& page, PlaybackSessionManager& playbackSessionManager)
 {
     return adoptRef(*new VideoPresentationManager(page, playbackSessionManager));
 }
@@ -220,7 +220,7 @@ VideoPresentationManager::ModelInterfaceTuple VideoPresentationManager::createMo
     return std::make_tuple(WTF::move(model), WTF::move(interface));
 }
 
-const VideoPresentationManager::ModelInterfaceTuple& VideoPresentationManager::ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier contextId, bool createlayerHostingContext)
+const VideoPresentationManager::ModelInterfaceTuple& NODELETE VideoPresentationManager::ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier contextId, bool createlayerHostingContext)
 {
     auto addResult = m_contextMap.ensure(contextId, [&] {
         return createModelAndInterface(contextId, createlayerHostingContext);
@@ -228,12 +228,12 @@ const VideoPresentationManager::ModelInterfaceTuple& VideoPresentationManager::e
     return addResult.iterator->value;
 }
 
-Ref<WebCore::VideoPresentationModelVideoElement> VideoPresentationManager::ensureModel(WebCore::MediaPlayerClientIdentifier contextId)
+Ref<WebCore::VideoPresentationModelVideoElement> NODELETE VideoPresentationManager::ensureModel(WebCore::MediaPlayerClientIdentifier contextId)
 {
     return std::get<0>(ensureModelAndInterface(contextId));
 }
 
-Ref<VideoPresentationInterfaceContext> VideoPresentationManager::ensureInterface(WebCore::MediaPlayerClientIdentifier contextId)
+Ref<VideoPresentationInterfaceContext> NODELETE VideoPresentationManager::ensureInterface(WebCore::MediaPlayerClientIdentifier contextId)
 {
     return std::get<1>(ensureModelAndInterface(contextId));
 }

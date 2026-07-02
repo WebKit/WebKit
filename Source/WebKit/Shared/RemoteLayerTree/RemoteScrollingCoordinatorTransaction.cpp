@@ -68,7 +68,7 @@ RemoteScrollingCoordinatorTransaction::~RemoteScrollingCoordinatorTransaction() 
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
-static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize))
         ts.dumpProperty("scrollable-area-size"_s, node.scrollableAreaSize());
@@ -130,11 +130,11 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
     }
 }
 
-static void dump(TextStream& ts, const ScrollingStateFrameHostingNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateFrameHostingNode& node, bool changedPropertiesOnly)
 {
 }
 
-static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, bool changedPropertiesOnly)
 {
     dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
     
@@ -191,39 +191,39 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
         ts.dumpProperty("footer-layer"_s, node.footerLayer().layerID());
 }
     
-static void dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
 {
     dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
 }
 
-static void dump(TextStream& ts, const ScrollingStateOverflowScrollProxyNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateOverflowScrollProxyNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::OverflowScrollingNode))
         ts.dumpProperty("overflow-scrolling-node"_s, node.overflowScrollingNode());
 }
 
-static void dump(TextStream& ts, const ScrollingStateFixedNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateFixedNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
         ts << node.viewportConstraints();
 }
 
-static void dump(TextStream& ts, const ScrollingStateStickyNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateStickyNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
         ts << node.viewportConstraints();
 }
 
-static void dump(TextStream& ts, const ScrollingStatePluginHostingNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStatePluginHostingNode& node, bool changedPropertiesOnly)
 {
 }
 
-static void dump(TextStream& ts, const ScrollingStatePluginScrollingNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStatePluginScrollingNode& node, bool changedPropertiesOnly)
 {
     dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
 }
 
-static void dump(TextStream& ts, const ScrollingStatePositionedNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStatePositionedNode& node, bool changedPropertiesOnly)
 {
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::RelatedOverflowScrollingNodes))
         ts << node.relatedOverflowScrollingNodes();
@@ -232,7 +232,7 @@ static void dump(TextStream& ts, const ScrollingStatePositionedNode& node, bool 
         ts << node.layoutConstraints();
 }
 
-static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateNode& node, bool changedPropertiesOnly)
 {
     ts.dumpProperty("type"_s, node.nodeType());
 
@@ -271,7 +271,7 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
     }
 }
 
-static void recursiveDumpNodes(TextStream& ts, const ScrollingStateNode& node, bool changedPropertiesOnly)
+static void NODELETE recursiveDumpNodes(TextStream& ts, const ScrollingStateNode& node, bool changedPropertiesOnly)
 {
     TextStream::GroupScope group(ts);
     ts << "node "_s << node.scrollingNodeID();
@@ -286,7 +286,7 @@ static void recursiveDumpNodes(TextStream& ts, const ScrollingStateNode& node, b
     }
 }
 
-static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool changedPropertiesOnly)
+static void NODELETE dump(TextStream& ts, const ScrollingStateTree& stateTree, bool changedPropertiesOnly)
 {
     ts.dumpProperty("has changed properties"_s, stateTree.hasChangedProperties());
     ts.dumpProperty("has new root node"_s, stateTree.hasNewRootStateNode());

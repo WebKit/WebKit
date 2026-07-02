@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static void zeroRadiiForOpenEdges(LayoutRoundedRectRadii& radii, RectEdges<bool> closedEdges)
+static void NODELETE zeroRadiiForOpenEdges(LayoutRoundedRectRadii& radii, RectEdges<bool> closedEdges)
 {
     if (!closedEdges.top()) {
         radii.setTopLeft({ });
@@ -63,7 +63,7 @@ static void zeroRadiiForOpenEdges(LayoutRoundedRectRadii& radii, RectEdges<bool>
     }
 }
 
-static RectEdges<LayoutUnit> applyClosedEdges(const RectEdges<LayoutUnit>& widths, RectEdges<bool> closedEdges)
+static RectEdges<LayoutUnit> NODELETE applyClosedEdges(const RectEdges<LayoutUnit>& widths, RectEdges<bool> closedEdges)
 {
     return {
         LayoutUnit(closedEdges.top() ? widths.top() : 0_lu),
@@ -73,7 +73,7 @@ static RectEdges<LayoutUnit> applyClosedEdges(const RectEdges<LayoutUnit>& width
     };
 }
 
-static RectCorners<float> cornerCurvaturesFromStyle(const Style::ComputedStyle& style)
+static RectCorners<float> NODELETE cornerCurvaturesFromStyle(const Style::ComputedStyle& style)
 {
     auto& border = style.border();
     return {

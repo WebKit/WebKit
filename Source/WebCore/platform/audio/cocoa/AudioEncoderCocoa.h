@@ -46,10 +46,10 @@ public:
 private:
     AudioEncoderCocoa(Ref<InternalAudioEncoderCocoa>&&);
 
-    Ref<EncodePromise> encode(RawFrame&&) final;
-    Ref<GenericPromise> flush() final;
-    void reset() final;
-    void close() final;
+    Ref<EncodePromise> NODELETE encode(RawFrame&&) final;
+    Ref<GenericPromise> NODELETE flush() final;
+    void NODELETE reset() final;
+    void NODELETE close() final;
 
     const Ref<InternalAudioEncoderCocoa> m_internalEncoder;
 };

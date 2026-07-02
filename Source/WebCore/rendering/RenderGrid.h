@@ -133,7 +133,7 @@ public:
     bool isSubgridOf(Style::GridTrackSizingDirection, const RenderGrid& ancestor) const;
 
     bool NODELETE isMasonry() const;
-    bool isMasonry(Style::GridTrackSizingDirection) const;
+    bool NODELETE isMasonry(Style::GridTrackSizingDirection) const;
     bool isMasonry(LogicalBoxAxis axis) const { return isMasonry(Style::gridTrackSizingDirection(axis)); }
     bool areMasonryRows() const { return isMasonry(Style::GridTrackSizingDirection::Rows); }
     bool areMasonryColumns() const { return isMasonry(Style::GridTrackSizingDirection::Columns); }
@@ -245,7 +245,7 @@ private:
 
     void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;
-    LayoutOptionalOutsets allowedLayoutOverflow() const override;
+    LayoutOptionalOutsets NODELETE allowedLayoutOverflow() const override;
     LayoutRect contentOverflowRect() const;
 
     void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, RenderGridLayoutState&);

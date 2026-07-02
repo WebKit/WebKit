@@ -51,8 +51,8 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
-    WallTime valueAsDate() const final;
+    DateComponentsType NODELETE dateType() const final;
+    WallTime NODELETE valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(WallTime) const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;

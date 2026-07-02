@@ -70,7 +70,7 @@ InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
     allExtensions().remove(m_coreExtension);
 }
 
-RefPtr<WebFrame> InjectedBundleDOMWindowExtension::frame() const
+RefPtr<WebFrame> NODELETE InjectedBundleDOMWindowExtension::frame() const
 {
     auto* frame = m_coreExtension->frame();
     return frame ? WebFrame::fromCoreFrame(*frame) : nullptr;

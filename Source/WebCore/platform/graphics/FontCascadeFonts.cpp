@@ -49,13 +49,13 @@ public:
         }
     }
 
-    GlyphData NODELETE glyphDataForCharacter(char32_t c) const
+    GlyphData glyphDataForCharacter(char32_t c) const
     {
         unsigned index = GlyphPage::indexForCodePoint(c);
         return { m_glyphs[index], m_fonts[index].get() };
     }
 
-    void NODELETE setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
+    void setGlyphDataForCharacter(char32_t c, GlyphData glyphData)
     {
         setGlyphDataForIndex(GlyphPage::indexForCodePoint(c), glyphData);
     }

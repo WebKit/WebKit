@@ -107,7 +107,7 @@ public:
     void setStorageDirectory(const String&) final;
     RefPtr<CDMInstanceSession> createSession() final;
     void setClient(WeakPtr<CDMInstanceClient>&&) final;
-    void clearClient() final;
+    void NODELETE clearClient() final;
 
     const String& keySystem() const final;
 
@@ -198,10 +198,10 @@ public:
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
-    void storeRecordOfKeyUsage(const String&) final;
+    void NODELETE storeRecordOfKeyUsage(const String&) final;
     void displayChanged(PlatformDisplayID) final;
     void setClient(WeakPtr<CDMInstanceSessionClient>&&) final;
-    void clearClient() final;
+    void NODELETE clearClient() final;
 
     // AVContentKeySessionDelegateClient
     void didProvideRequest(AVContentKeyRequest*) final;
@@ -247,7 +247,7 @@ private:
     void updateKeyStatuses();
     void nextRequest();
 
-    AVContentKeyRequest* NODELETE lastKeyRequest() const;
+    AVContentKeyRequest* lastKeyRequest() const;
     Vector<RetainPtr<AVContentKey>> contentKeys() const;
     Vector<RetainPtr<AVContentKeyRequest>> contentKeyRequests() const;
 
@@ -270,7 +270,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     uint64_t contentKeyGroupDataSourceLogIdentifier() const final;
     const Logger& contentKeyGroupDataSourceLogger() const final;
-    WTFLogChannel& contentKeyGroupDataSourceLogChannel() const final;
+    WTFLogChannel& NODELETE contentKeyGroupDataSourceLogChannel() const final;
 #endif // !RELEASE_LOG_DISABLED
 
     const Ref<CDMInstanceFairPlayStreamingAVFObjC> m_instance;

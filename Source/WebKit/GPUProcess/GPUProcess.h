@@ -127,7 +127,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& videoMediaStreamTrackRendererQueue();
-    void ensureAVCaptureServerConnection();
+    void NODELETE ensureAVCaptureServerConnection();
 #endif
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
@@ -174,8 +174,8 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
-    void registerFonts(Vector<SandboxExtension::Handle>&&);
+    void NODELETE postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
+    void NODELETE registerFonts(Vector<SandboxExtension::Handle>&&);
 #endif
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
@@ -186,10 +186,10 @@ private:
     void lowMemoryHandler(Critical, Synchronous);
 
     // AuxiliaryProcess
-    void initializeProcess(const AuxiliaryProcessInitializationParameters&) override;
-    void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
-    void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
-    bool shouldTerminate() override;
+    void NODELETE initializeProcess(const AuxiliaryProcessInitializationParameters&) override;
+    void NODELETE initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
+    void NODELETE initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    bool NODELETE shouldTerminate() override;
 
     void tryExitIfUnused();
     bool canExitUnderMemoryPressure() const;
@@ -199,7 +199,7 @@ private:
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&, CompletionHandler<void()>&&);
-    void platformInitializeGPUProcess(GPUProcessCreationParameters&);
+    void NODELETE platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
@@ -211,7 +211,7 @@ private:
     void userPreferredLanguagesChanged(Vector<String>&&);
 
 #if ENABLE(MEDIA_STREAM)
-    void setMockCaptureDevicesEnabled(bool);
+    void NODELETE setMockCaptureDevicesEnabled(bool);
     void enableMicrophoneMuteStatusAPI();
     void setOrientationForMediaCapture(WebCore::IntDegrees);
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
@@ -222,8 +222,8 @@ private:
     void removeMockMediaDevice(const String&);
     void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
-    void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
-    void triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay);
+    void NODELETE setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
+    void NODELETE triggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay);
     void setShouldListenToVoiceActivity(bool);
 #endif
 #if HAVE(SCREEN_CAPTURE_KIT)
@@ -232,7 +232,7 @@ private:
 #endif
 #if PLATFORM(MAC)
     void NODELETE setScreenProperties(const WebCore::ScreenProperties&);
-    void updateProcessName();
+    void NODELETE updateProcessName();
 #endif
 #if PLATFORM(COCOA)
     void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, WebCore::FloatSize, WebCore::FrameIdentifier, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
@@ -241,19 +241,19 @@ private:
     void releaseSnapshot(RemoteSnapshotIdentifier);
 
 #if USE(OS_STATE)
-    RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
+    RetainPtr<NSDictionary> NODELETE additionalStateForDiagnosticReport() const final;
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
+    void NODELETE dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
 #endif
 
 #if PLATFORM(MAC)
-    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
+    void NODELETE openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
 #endif
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
-    void enablePowerLogging(SandboxExtension::Handle&&);
+    void NODELETE enablePowerLogging(SandboxExtension::Handle&&);
 #endif
 #if ENABLE(WEBXR)
     void webXRPromptAccepted(std::optional<WebCore::ProcessIdentity>, CompletionHandler<void(bool)>&&);

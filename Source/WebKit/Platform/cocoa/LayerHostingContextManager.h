@@ -47,12 +47,12 @@ public:
 
     using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
 
-    void requestHostingContext(LayerHostingContextCallback&&);
-    std::optional<WebCore::HostingContext> createHostingContextIfNeeded(const PlatformLayerContainer&, bool canShowWhileLocked);
-    void setVideoLayerSize(const WebCore::FloatSize&);
-    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&, NOESCAPE CompletionHandler<void()>&& postCommitAction);
+    void NODELETE requestHostingContext(LayerHostingContextCallback&&);
+    std::optional<WebCore::HostingContext> NODELETE createHostingContextIfNeeded(const PlatformLayerContainer&, bool canShowWhileLocked);
+    void NODELETE setVideoLayerSize(const WebCore::FloatSize&);
+    void NODELETE setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&, NOESCAPE CompletionHandler<void()>&& postCommitAction);
     WebCore::FloatSize videoLayerSize() const { return m_videoLayerSize; }
-    void setVideoLayerSizeIfPossible();
+    void NODELETE setVideoLayerSizeIfPossible();
     void NODELETE setInitialVideoLayerSize(const WebCore::FloatSize&);
 
 private:

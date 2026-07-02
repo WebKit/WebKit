@@ -228,7 +228,7 @@ public:
     static RefPtr<AccessCase> fromPropertyInlineCache(VM&, JSCell* owner, CacheableIdentifier, PropertyInlineCache&);
 
     AccessType type() const { return m_type; }
-    void convertToNonStringPrimitiveKeyAccessType(AccessType);
+    void NODELETE convertToNonStringPrimitiveKeyAccessType(AccessType);
     PropertyOffset offset() const { return m_offset; }
 
     Structure* structure() const
@@ -326,7 +326,7 @@ public:
     CacheableIdentifier identifier() const { return m_identifier; }
 
 #if ASSERT_ENABLED
-    void checkConsistency(PropertyInlineCache&);
+    void NODELETE checkConsistency(PropertyInlineCache&);
 #else
     ALWAYS_INLINE void checkConsistency(PropertyInlineCache&) { }
 #endif
@@ -386,11 +386,11 @@ private:
     friend class InstanceOfAccessCase;
 
     template<typename Functor>
-    void forEachDependentCell(VM&, const Functor&) const;
+    void NODELETE forEachDependentCell(VM&, const Functor&) const;
 
     DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(const);
     bool visitWeak(VM&) const;
-    template<typename Visitor> void propagateTransitions(Visitor&) const;
+    template<typename Visitor> void NODELETE propagateTransitions(Visitor&) const;
 
     AccessType m_type;
 protected:

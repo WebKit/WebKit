@@ -49,14 +49,14 @@ public:
     ~MediaStreamAudioSource();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
-    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceCapabilities& NODELETE capabilities() final;
     const RealtimeMediaSourceSettings& NODELETE settings() final;
 
     const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
 
-    void consumeAudio(AudioBus&, size_t numberOfFrames);
-    void setNumberOfChannels(unsigned);
+    void NODELETE consumeAudio(AudioBus&, size_t numberOfFrames);
+    void NODELETE setNumberOfChannels(unsigned);
 
 private:
     explicit MediaStreamAudioSource(float sampleRate);

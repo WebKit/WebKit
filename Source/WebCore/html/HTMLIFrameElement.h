@@ -69,7 +69,7 @@ public:
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
@@ -82,7 +82,7 @@ private:
 
     ReferrerPolicy referrerPolicyFromAttribute() const;
     bool shouldLoadFrameLazily() final;
-    bool isLazyLoadObserverActive() const final;
+    bool NODELETE isLazyLoadObserverActive() const final;
 
     const std::unique_ptr<DOMTokenList> m_sandbox;
     std::unique_ptr<LazyLoadFrameObserver> m_lazyLoadFrameObserver;

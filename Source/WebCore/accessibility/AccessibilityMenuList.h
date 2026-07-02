@@ -47,7 +47,7 @@ private:
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::PopUpButton; }
 
     bool canSetFocusAttribute() const final;
-    void addChildren() final;
+    void NODELETE addChildren() final;
     void updateChildrenIfNecessary() final;
     // This class' children are initialized once in the constructor with m_popup.
     void clearChildren() final { };

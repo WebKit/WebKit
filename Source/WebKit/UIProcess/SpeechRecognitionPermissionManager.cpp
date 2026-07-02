@@ -37,7 +37,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionPermissionManager);
 
-static SpeechRecognitionPermissionManager::CheckResult computeMicrophoneAccess()
+static SpeechRecognitionPermissionManager::CheckResult NODELETE computeMicrophoneAccess()
 {
 #if HAVE(AVCAPTUREDEVICE)
     auto result = checkAVCaptureAccessForType(MediaPermissionType::Audio);
@@ -53,7 +53,7 @@ static SpeechRecognitionPermissionManager::CheckResult computeMicrophoneAccess()
 #endif
 }
 
-static SpeechRecognitionPermissionManager::CheckResult computeSpeechRecognitionServiceAccess()
+static SpeechRecognitionPermissionManager::CheckResult NODELETE computeSpeechRecognitionServiceAccess()
 {
 #if HAVE(SPEECHRECOGNIZER)
     auto result = checkSpeechRecognitionServiceAccess();

@@ -52,22 +52,22 @@ private:
     SubFrameSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&, std::optional<WebCore::FrameIdentifier>);
 
     // SOAuthorizationSession
-    void fallBackToWebPathInternal() final;
-    void abortInternal() final;
-    void userCancel() final;
-    void completeInternal(const WebCore::ResourceResponse&, NSData *) final;
+    void NODELETE fallBackToWebPathInternal() final;
+    void NODELETE abortInternal() final;
+    void NODELETE userCancel() final;
+    void NODELETE completeInternal(const WebCore::ResourceResponse&, NSData *) final;
 
     // NavigationSOAuthorizationSession
-    void beforeStart() final;
+    void NODELETE beforeStart() final;
 
     // FrameLoadStateObserver
-    void didFinishLoad(IsMainFrame, const URL&) final;
+    void NODELETE didFinishLoad(IsMainFrame, const URL&) final;
 
     void appendRequestToLoad(URL&&, Supplement&&);
-    void loadRequestToFrame();
+    void NODELETE loadRequestToFrame();
 
     bool shouldInterruptLoadForXFrameOptions(Vector<Ref<WebCore::SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL&);
-    bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) final;
+    bool NODELETE shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) final;
 
     Markable<WebCore::FrameIdentifier> m_frameID;
     Deque<std::pair<URL, Supplement>> m_requestsToLoad;

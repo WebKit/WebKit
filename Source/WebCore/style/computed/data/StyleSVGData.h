@@ -59,14 +59,14 @@ public:
     bool operator==(const SVGData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGData&) const;
 #endif
 
     struct InheritedFlags {
         bool operator==(const InheritedFlags&) const = default;
 
 #if !LOG_DISABLED
-        void dumpDifferences(TextStream&, const InheritedFlags&) const;
+        void NODELETE dumpDifferences(TextStream&, const InheritedFlags&) const;
 #endif
 
         PREFERRED_TYPE(ShapeRendering) unsigned shapeRendering : 2;
@@ -82,7 +82,7 @@ public:
         bool operator==(const NonInheritedFlags&) const = default;
 
 #if !LOG_DISABLED
-        void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
+        void NODELETE dumpDifferences(TextStream&, const NonInheritedFlags&) const;
 #endif
 
         PREFERRED_TYPE(AlignmentBaseline) unsigned alignmentBaseline : 4;

@@ -80,16 +80,16 @@ public:
     void NODELETE invalidateChain();
     bool isValid() const { return !!m_scope; }
 
-    bool isCatchScope() const;
-    bool isFunctionNameScope() const;
+    bool NODELETE isCatchScope() const;
+    bool NODELETE isFunctionNameScope() const;
     bool NODELETE isWithScope() const;
     bool NODELETE isGlobalScope() const;
-    bool isClosureScope() const;
+    bool NODELETE isClosureScope() const;
     bool NODELETE isGlobalLexicalEnvironment() const;
-    bool isNestedLexicalScope() const;
+    bool NODELETE isNestedLexicalScope() const;
 
-    String name() const;
-    DebuggerLocation location() const;
+    String NODELETE name() const;
+    DebuggerLocation NODELETE location() const;
 
     JSValue caughtValue(JSGlobalObject*) const;
 

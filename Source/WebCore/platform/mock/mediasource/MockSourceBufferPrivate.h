@@ -51,8 +51,8 @@ private:
 
     // SourceBufferPrivate overrides
     Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
-    void resetParserStateInternal() final;
-    bool canSetMinimumUpcomingPresentationTime(TrackID) const final;
+    void NODELETE resetParserStateInternal() final;
+    bool NODELETE canSetMinimumUpcomingPresentationTime(TrackID) const final;
     bool canSwitchToType(const ContentType&) final;
 
     void flush(TrackID) final { m_enqueuedSamples.clear(); }
@@ -60,7 +60,7 @@ private:
     bool isReadyForMoreSamples(TrackID) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
 
     Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID) final;
-    void setMaximumQueueDepthForTrackID(TrackID, uint64_t) final;
+    void NODELETE setMaximumQueueDepthForTrackID(TrackID, uint64_t) final;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);
@@ -69,7 +69,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MockSourceBufferPrivate"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
     uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }

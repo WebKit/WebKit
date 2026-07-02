@@ -40,7 +40,7 @@ public:
 
 private:
     CryptoAlgorithmAESKW() = default;
-    CryptoAlgorithmIdentifier identifier() const final;
+    CryptoAlgorithmIdentifier NODELETE identifier() const final;
 
     void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext&) final;
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;

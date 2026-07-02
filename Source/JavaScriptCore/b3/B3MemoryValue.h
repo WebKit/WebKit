@@ -107,7 +107,7 @@ private:
     friend class Value;
 
     inline bool isLegalOffsetImpl(int32_t offset) const;
-    bool isLegalOffsetImpl(int64_t offset) const;
+    bool NODELETE isLegalOffsetImpl(int64_t offset) const;
 
     enum MemoryValueLoad { MemoryValueLoadTag };
     enum MemoryValueLoadImplied { MemoryValueLoadImpliedTag };

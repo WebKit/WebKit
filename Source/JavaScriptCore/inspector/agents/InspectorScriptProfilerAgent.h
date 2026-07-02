@@ -54,7 +54,7 @@ public:
     Protocol::ErrorStringOr<void> stopTracking() final;
 
     // JSC::Debugger::ProfilingClient
-    bool isAlreadyProfiling() const final;
+    bool NODELETE isAlreadyProfiling() const final;
     Seconds willEvaluateScript() final;
     void didEvaluateScript(Seconds, JSC::ProfilingReason) final;
 

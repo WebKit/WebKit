@@ -445,14 +445,14 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    unsigned NODELETE advanceCallSiteIndex()
+    unsigned advanceCallSiteIndex()
     {
         if (m_inlineParent)
             return m_inlineRoot->advanceCallSiteIndex();
         return ++m_callSiteIndex;
     }
 
-    unsigned NODELETE callSiteIndex() const
+    unsigned callSiteIndex() const
     {
         if (m_inlineParent)
             return m_inlineRoot->callSiteIndex();
@@ -709,7 +709,7 @@ public:
         return { };
     }
 
-    [[nodiscard]] PartialResult addDrop(ExpressionType);
+    [[nodiscard]] PartialResult NODELETE addDrop(ExpressionType);
     [[nodiscard]] PartialResult addInlinedArguments(const RTT&);
     [[nodiscard]] PartialResult addArguments(const RTT&);
     [[nodiscard]] PartialResult addLocal(Type, uint32_t);
@@ -827,7 +827,7 @@ public:
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType&);
     [[nodiscard]] PartialResult addThrowRef(TypedExpression exception, std::span<const TypedExpression>);
 
-    [[nodiscard]] PartialResult addInlinedReturn(const auto& returnValues);
+    [[nodiscard]] PartialResult NODELETE addInlinedReturn(const auto& returnValues);
 
     [[nodiscard]] PartialResult addReturn(const ControlData&, std::span<const TypedExpression> returnValues);
     [[nodiscard]] PartialResult addBranch(ControlData&, ExpressionType condition, std::span<const TypedExpression> returnValues);
@@ -866,9 +866,9 @@ public:
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void NODELETE setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
-    ALWAYS_INLINE void willParseOpcode() { }
-    ALWAYS_INLINE void willParseExtendedOpcode() { }
-    ALWAYS_INLINE void didParseOpcode() { }
+    ALWAYS_INLINE void NODELETE willParseOpcode() { }
+    ALWAYS_INLINE void NODELETE willParseExtendedOpcode() { }
+    ALWAYS_INLINE void NODELETE didParseOpcode() { }
     void NODELETE didFinishParsingLocals() { }
     void didPopValueFromStack(ExpressionType expr, ASCIILiteral message)
     {
@@ -1089,9 +1089,9 @@ private:
     Expected<Vector<ValueResults>, ErrorType> tryInliningPolymorphicCalls(unsigned callProfileIndex, Value* calleeInstance, Value* calleeCallee, const RTT& signature, const ArgumentList&, CallType, bool isTailCallRootCaller, BasicBlock* continuation);
 
     template<typename... Args>
-    void traceValue(Type, Value*, Args&&... info);
+    void NODELETE traceValue(Type, Value*, Args&&... info);
     template<typename... Args>
-    void traceCF(Args&&... info);
+    void NODELETE traceCF(Args&&... info);
 
     FunctionParser<OMGIRGenerator>* m_parser { nullptr };
     AbstractHeapRepository& m_heaps;
@@ -2596,7 +2596,7 @@ inline Value* OMGIRGenerator::emitCheckAndPreparePointer(Value* pointer, uint64_
     return m_currentBlock->appendNew<Value>(m_proc, Add, origin(), pointer, basePointer);
 }
 
-inline uint32_t sizeOfLoadOp(LoadOpType op)
+inline uint32_t NODELETE sizeOfLoadOp(LoadOpType op)
 {
     switch (op) {
     case LoadOpType::I32Load8S:
@@ -2767,7 +2767,7 @@ auto OMGIRGenerator::load(LoadOpType op, ExpressionType pointerVar, ExpressionTy
     return { };
 }
 
-inline uint32_t sizeOfStoreOp(StoreOpType op)
+inline uint32_t NODELETE sizeOfStoreOp(StoreOpType op)
 {
     switch (op) {
     case StoreOpType::I32Store8:
@@ -2851,12 +2851,12 @@ auto OMGIRGenerator::store(StoreOpType op, ExpressionType pointerVar, Expression
     return { };
 }
 
-inline Width accessWidth(ExtAtomicOpType op)
+inline Width NODELETE accessWidth(ExtAtomicOpType op)
 {
     return widthForBytes(1 << memoryLog2Alignment(op));
 }
 
-inline uint32_t sizeOfAtomicOpMemoryAccess(ExtAtomicOpType op)
+inline uint32_t NODELETE sizeOfAtomicOpMemoryAccess(ExtAtomicOpType op)
 {
     return bytesForWidth(accessWidth(op));
 }

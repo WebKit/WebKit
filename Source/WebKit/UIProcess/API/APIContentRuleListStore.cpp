@@ -60,7 +60,7 @@ namespace API {
 using namespace WebKit::NetworkCache;
 using namespace FileSystem;
 
-static HashMap<WTF::String, std::pair<Ref<WorkQueue>, unsigned>>& workQueueMap()
+static HashMap<WTF::String, std::pair<Ref<WorkQueue>, unsigned>>& NODELETE workQueueMap()
 {
     static MainRunLoopNeverDestroyed<HashMap<WTF::String, std::pair<Ref<WorkQueue>, unsigned>>> map;
     return map.get();

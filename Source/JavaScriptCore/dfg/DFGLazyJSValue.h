@@ -110,7 +110,7 @@ public:
         return u.stringImpl;
     }
 
-    TriState strictEqual(const LazyJSValue& other) const;
+    TriState NODELETE strictEqual(const LazyJSValue& other) const;
     
     uintptr_t NODELETE switchLookupValue(SwitchKind) const;
 

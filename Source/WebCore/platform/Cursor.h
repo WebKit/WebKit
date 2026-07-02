@@ -163,7 +163,7 @@ public:
     float imageScaleFactor() const { return m_imageScaleFactor; }
 #endif
 
-    WEBCORE_EXPORT PlatformCursor platformCursor() const;
+    WEBCORE_EXPORT PlatformCursor NODELETE platformCursor() const;
 
     WEBCORE_EXPORT void setAsPlatformCursor() const;
 

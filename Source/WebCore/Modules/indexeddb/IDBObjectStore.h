@@ -119,7 +119,7 @@ public:
     void NODELETE ref() const final;
     void deref() const final;
 
-    template<typename Visitor> void visitReferencedIndexesInGCThread(Visitor&) const;
+    template<typename Visitor> void NODELETE visitReferencedIndexesInGCThread(Visitor&) const;
     void renameReferencedIndex(IDBIndex&, const String& newName);
 
 private:

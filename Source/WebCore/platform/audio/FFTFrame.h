@@ -73,7 +73,7 @@ public:
     static int NODELETE minFFTSize();
     static int NODELETE maxFFTSize();
 
-    void print(); // for debugging
+    void NODELETE print(); // for debugging
 
     // CROSS-PLATFORM
     // The remaining public methods have cross-platform implementations:

@@ -119,8 +119,8 @@ private:
     void stopAnimation() final;
     void resetAnimation() final;
     bool isAnimated() const final;
-    bool isAnimating() const final;
-    bool hasEverAnimated() const final;
+    bool NODELETE isAnimating() const final;
+    bool NODELETE hasEverAnimated() const final;
 
     // Decoding
     DecodingDestination preferredDecodingDestination(GraphicsContext&, ImagePaintingOptions) const final;

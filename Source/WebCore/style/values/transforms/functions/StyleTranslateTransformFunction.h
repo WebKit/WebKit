@@ -62,7 +62,7 @@ public:
     bool isIdentity() const override { return m_x.isKnownZero() && m_y.isKnownZero() && m_z.isZero(); }
     bool isRepresentableIn2D() const override { return m_z.isZero(); }
 
-    TransformFunctionSizeDependencies computeSizeDependencies() const override;
+    TransformFunctionSizeDependencies NODELETE computeSizeDependencies() const override;
 
     bool operator==(const TranslateTransformFunction& other) const { return operator==(static_cast<const TransformFunctionBase&>(other)); }
     bool operator==(const TransformFunctionBase&) const override;

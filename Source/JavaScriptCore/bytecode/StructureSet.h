@@ -54,7 +54,7 @@ public:
         return onlyEntry();
     }
 
-    template<typename Visitor> void markIfCheap(Visitor&) const;
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&) const;
     bool isStillAlive(VM&) const;
     
     void dumpInContext(PrintStream&, DumpContext*) const;

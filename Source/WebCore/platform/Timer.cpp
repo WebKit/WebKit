@@ -60,7 +60,7 @@ class TimerHeapReference;
 //
 // When a timer's "next fire time" changes, we need to move it around in the priority queue.
 #if ASSERT_ENABLED
-static ThreadTimerHeap& threadGlobalTimerHeap()
+static ThreadTimerHeap& NODELETE threadGlobalTimerHeap()
 {
     return threadGlobalDataSingleton().threadTimers().timerHeap();
 }
@@ -196,7 +196,7 @@ public:
     bool NODELETE operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
 
 #if ASSERT_ENABLED
-    bool hasSameContainerAs(TimerHeapIterator other) const
+    bool NODELETE hasSameContainerAs(TimerHeapIterator other) const
     {
         if (std::to_address(m_container.begin()) != std::to_address(other.m_container.begin()))
             return false;
@@ -460,7 +460,7 @@ void TimerBase::heapDeleteNullMin(ThreadTimerHeap& heap)
     heap.removeLast();
 }
 
-static inline bool NODELETE parentHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned currentIndex)
+static inline bool parentHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned currentIndex)
 {
     if (!currentIndex)
         return true;
@@ -468,7 +468,7 @@ static inline bool NODELETE parentHeapPropertyHolds(const TimerBase* current, co
     return TimerHeapLessThanFunction::compare(*current, heap[parentIndex]);
 }
 
-static inline bool NODELETE childHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned childIndex)
+static inline bool childHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned childIndex)
 {
     if (childIndex >= heap.size())
         return true;

@@ -42,7 +42,7 @@ public:
     
     JSC::JSArrayBuffer* toJS(JSC::JSGlobalObject*, JSC::JSGlobalObject*, JSC::ArrayBuffer&) override;
     void registerWrapper(JSC::JSGlobalObject*, JSC::ArrayBuffer&, JSC::JSArrayBuffer&) override;
-    bool isAtomicsWaitAllowedOnCurrentThread() override;
+    bool NODELETE isAtomicsWaitAllowedOnCurrentThread() override;
 
     JSC::WeakHandleOwner* wrapperOwner() LIFETIME_BOUND { return &m_owner; }
 

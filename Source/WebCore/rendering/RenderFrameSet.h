@@ -67,8 +67,8 @@ public:
 
     bool userResize(MouseEvent&);
 
-    bool NODELETE canResizeRow(const IntPoint&) const;
-    bool NODELETE canResizeColumn(const IntPoint&) const;
+    bool canResizeRow(const IntPoint&) const;
+    bool canResizeColumn(const IntPoint&) const;
 
     void notifyFrameEdgeInfoChanged();
 
@@ -97,20 +97,20 @@ private:
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool canHaveChildren() const override { return true; }
-    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+    bool NODELETE isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
     CursorDirective getCursor(const LayoutPoint&, Cursor&) const override;
 
     void setIsResizing(bool);
 
     void layOutAxis(GridAxis&, std::span<const HTMLDimensionsListValue>, int availableSpace);
     void computeEdgeInfo();
-    void NODELETE fillFromEdgeInfo(const FrameEdgeInfo&, int r, int c);
+    void fillFromEdgeInfo(const FrameEdgeInfo&, int r, int c);
     void positionFrames();
 
-    int NODELETE splitPosition(const GridAxis&, int split) const;
-    int NODELETE hitTestSplit(const GridAxis&, int position) const;
+    int splitPosition(const GridAxis&, int split) const;
+    int hitTestSplit(const GridAxis&, int position) const;
 
-    void NODELETE startResizing(GridAxis&, int position);
+    void startResizing(GridAxis&, int position);
     void continueResizing(GridAxis&, int position);
 
     void paintRowBorder(const PaintInfo&, const IntRect&);

@@ -100,7 +100,7 @@ bool NODELETE defaultVideoFullscreenRequiresElementFullscreen();
 #endif
 
 #if PLATFORM(MAC)
-bool defaultScrollAnimatorEnabled();
+bool NODELETE defaultScrollAnimatorEnabled();
 bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 bool defaultAppleMailPaginationQuirkEnabled();
@@ -131,9 +131,9 @@ bool defaultMediaSessionCoordinatorEnabled();
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-bool defaultTextRecognitionInVideosEnabled();
-bool defaultVisualTranslationEnabled();
-bool defaultRemoveBackgroundEnabled();
+bool NODELETE defaultTextRecognitionInVideosEnabled();
+bool NODELETE defaultVisualTranslationEnabled();
+bool NODELETE defaultRemoveBackgroundEnabled();
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -151,7 +151,7 @@ bool defaultBidiContentAwarePasteEnabled();
 #endif
 
 #if PLATFORM(COCOA)
-bool defaultExtendedProofreadingEnabled();
+bool NODELETE defaultExtendedProofreadingEnabled();
 #endif
 
 bool defaultRunningBoardThrottlingEnabled();
@@ -165,7 +165,7 @@ bool defaultPopoverAttributeEnabled();
 bool defaultUseGPUProcessForDOMRenderingEnabled();
 
 #if USE(LIBWEBRTC)
-bool defaultPeerConnectionEnabledAvailable();
+bool NODELETE defaultPeerConnectionEnabledAvailable();
 #endif
 bool NODELETE defaultWebRTCSocketsServiceClassEnabled();
 
@@ -195,7 +195,7 @@ bool defaultScreenTimeEnabled();
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-bool defaultIFrameResourceMonitoringEnabled();
+bool NODELETE defaultIFrameResourceMonitoringEnabled();
 #endif
 
 #if HAVE(SPATIAL_AUDIO_EXPERIENCE)
@@ -216,7 +216,7 @@ bool defaultFontFaceSetConstructorEnabled();
 bool defaultHostedBlurMaterialInMediaControlsEnabled();
 #endif
 
-bool defaultIOSurfaceLosslessCompressionEnabled();
+bool NODELETE defaultIOSurfaceLosslessCompressionEnabled();
 
 #if ENABLE(UNIFIED_PDF)
 bool defaultUnifiedPDFEnabled();

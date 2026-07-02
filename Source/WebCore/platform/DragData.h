@@ -113,7 +113,7 @@ public:
     Color asColor() const;
     bool canSmartReplace() const;
     bool containsColor() const;
-    bool containsFiles() const;
+    bool NODELETE containsFiles() const;
     unsigned numberOfFiles() const;
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
     void setFileNames(Vector<String>& fileNames) { m_fileNames = WTF::move(fileNames); }
@@ -124,7 +124,7 @@ public:
 #if PLATFORM(COCOA)
     const String& pasteboardName() const LIFETIME_BOUND { return m_pasteboardName; }
     bool containsURLTypeIdentifier() const;
-    bool containsPromise() const;
+    bool NODELETE containsPromise() const;
 #endif
 
     bool NODELETE shouldMatchStyleOnDrop() const;

@@ -141,7 +141,7 @@ public:
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
-    virtual int baselinePosition(const RenderBox&) const;
+    virtual int NODELETE baselinePosition(const RenderBox&) const;
 
     // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
@@ -151,7 +151,7 @@ public:
     virtual bool controlSupportsTints(const RenderElement&) const { return false; }
 
     // Whether or not the control has been styled enough by the author to disable the native appearance.
-    virtual bool isControlStyled(const Style::ComputedStyle&) const;
+    virtual bool NODELETE isControlStyled(const Style::ComputedStyle&) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return false; }
@@ -427,7 +427,7 @@ protected:
     Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, const Style::PreferredSizePair&, float zoomFactor) const;
 
     // Allows the theme to modify the existing border.
-    virtual Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox& zoomedBox, float zoomFactor, const Element*) const;
+    virtual Style::LineWidthBox NODELETE controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox& zoomedBox, float zoomFactor, const Element*) const;
 
     // Whether or not whitespace: pre should be forced on always.
     virtual bool controlRequiresPreWhiteSpace(StyleAppearance) const { return false; }
@@ -436,7 +436,7 @@ protected:
     // setting the zoomed size on the computed style. In order to make sure this behavior remains if
     // the flag is off, we return the used zoom value, which was being used before, when the flag
     // is disabled and 1.0f when it is enabled so that we do not modify the value.
-    float usedZoomForComputedStyle(const Style::ComputedStyle&) const;
+    float NODELETE usedZoomForComputedStyle(const Style::ComputedStyle&) const;
 
 private:
     OptionSet<ControlStyle::State> extractControlStyleStatesForRendererInternal(const RenderElement&) const;
@@ -453,7 +453,7 @@ public:
     bool isSpinUpButtonPartPressed(const RenderElement&) const;
     bool isHovered(const RenderElement&) const;
     bool NODELETE isSpinUpButtonPartHovered(const RenderElement&) const;
-    bool isPresenting(const RenderElement&) const;
+    bool NODELETE isPresenting(const RenderElement&) const;
     bool isReadOnlyControl(const RenderElement&) const;
     bool NODELETE isDefault(const RenderElement&) const;
     bool hasListButton(const RenderElement&) const;

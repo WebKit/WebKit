@@ -159,7 +159,7 @@ private:
     bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
     int platformCALayerRepaintCount(PlatformCALayer*) const override;
     int platformCALayerIncrementRepaintCount(PlatformCALayer*) override;
-    bool platformCALayerContentsOpaque() const override;
+    bool NODELETE platformCALayerContentsOpaque() const override;
     bool platformCALayerDrawsContent() const override { return true; }
     float platformCALayerDeviceScaleFactor() const override;
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;

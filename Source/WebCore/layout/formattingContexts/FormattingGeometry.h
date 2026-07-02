@@ -119,10 +119,10 @@ private:
     LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, const HorizontalConstraints&) const;
 
     enum class HeightType { Min, Max, Normal };
-    template<HeightType> std::optional<LayoutUnit> computedHeightValue(const Box&, std::optional<LayoutUnit> containingBlockHeight) const;
+    template<HeightType> std::optional<LayoutUnit> NODELETE computedHeightValue(const Box&, std::optional<LayoutUnit> containingBlockHeight) const;
 
     enum class WidthType { Min, Max, Normal };
-    template<WidthType> std::optional<LayoutUnit> computedWidthValue(const Box&, LayoutUnit containingBlockWidth) const;
+    template<WidthType> std::optional<LayoutUnit> NODELETE computedWidthValue(const Box&, LayoutUnit containingBlockWidth) const;
 
     const FormattingContext& m_formattingContext;
 };

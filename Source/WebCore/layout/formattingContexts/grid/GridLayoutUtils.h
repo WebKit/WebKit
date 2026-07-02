@@ -65,7 +65,7 @@ LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit bl
 LayoutUnit blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
 LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const GridFormattingContext&);
 
-bool preferredSizeBehavesAsAuto(const Style::PreferredSize&);
+bool NODELETE preferredSizeBehavesAsAuto(const Style::PreferredSize&);
 bool NODELETE preferredSizeDependsOnContainingBlockSize(const Style::PreferredSize&);
 
 } // namespace GridLayoutUtils

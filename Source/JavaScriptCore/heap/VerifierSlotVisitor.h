@@ -81,7 +81,7 @@ public:
     void appendUnbarriered(JSCell*) final;
     void appendHiddenUnbarriered(JSCell*) final;
 
-    bool isFirstVisit() const final;
+    bool NODELETE isFirstVisit() const final;
     bool isMarked(const void*) const final;
     bool isMarked(MarkedBlock&, HeapCell*) const final;
     bool isMarked(PreciseAllocation&, HeapCell*) const final;
@@ -93,10 +93,10 @@ public:
     void reportExternalMemoryVisited(size_t) final { }
 #endif
 
-    bool mutatorIsStopped() const final;
+    bool NODELETE mutatorIsStopped() const final;
 
     void didAddOpaqueRoot(void*) final;
-    void didFindOpaqueRoot(void*) final;
+    void NODELETE didFindOpaqueRoot(void*) final;
 
     void didRace(const VisitRaceKey&) final { }
     void dump(PrintStream&) const final;
@@ -138,7 +138,7 @@ private:
         bool testAndSetMarked(unsigned atomNumber) { return m_atoms.testAndSet(atomNumber); }
 
         void addMarkerData(unsigned atomNumber, MarkerData&&);
-        const MarkerData* NODELETE markerData(unsigned atomNumber) const;
+        const MarkerData* markerData(unsigned atomNumber) const;
 
     private:
         MarkedBlock* m_block { nullptr };

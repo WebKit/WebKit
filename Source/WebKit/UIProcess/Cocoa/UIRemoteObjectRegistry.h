@@ -53,7 +53,7 @@ private:
     UIRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
 
     std::optional<MessageSender> messageSender() final;
-    std::optional<uint64_t> messageDestinationID() final;
+    std::optional<uint64_t> NODELETE messageDestinationID() final;
     RefPtr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 
     WeakPtr<WebPageProxy> m_page;

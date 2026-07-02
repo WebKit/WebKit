@@ -89,7 +89,7 @@ public:
 
     DOMHighResTimeStamp now() const;
     DOMHighResTimeStamp timeOrigin() const;
-    MonotonicTime monotonicTimeFromOriginRelative(Seconds offset) const;
+    MonotonicTime NODELETE monotonicTimeFromOriginRelative(Seconds offset) const;
     ReducedResolutionSeconds nowInReducedResolutionSeconds() const;
 
     PerformanceNavigation& navigation();
@@ -166,10 +166,10 @@ private:
     };
 
     static unsigned entryTypeIndex(PerformanceEntry::Type type) { return static_cast<unsigned>(type); }
-    PerformanceEntryBuffer& entryBufferTuple(PerformanceEntry::Type);
-    const PerformanceEntryBuffer& entryBufferTuple(PerformanceEntry::Type) const;
+    PerformanceEntryBuffer& NODELETE entryBufferTuple(PerformanceEntry::Type);
+    const PerformanceEntryBuffer& NODELETE entryBufferTuple(PerformanceEntry::Type) const;
 
-    void initializeEntryBufferMap();
+    void NODELETE initializeEntryBufferMap();
     bool addToEntryBuffer(PerformanceEntry&);
     void clearEntryBuffer(PerformanceEntry::Type, const String& name = { });
 

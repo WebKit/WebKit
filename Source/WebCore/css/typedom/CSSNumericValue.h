@@ -96,7 +96,7 @@ public:
 protected:
     ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);
     ExceptionOr<Ref<CSSNumericValue>> multiplyInternal(Vector<Ref<CSSNumericValue>>&&);
-    template<typename T> Vector<Ref<CSSNumericValue>> prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&&);
+    template<typename T> Vector<Ref<CSSNumericValue>> NODELETE prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&&);
 
     CSSNumericValue(CSSNumericType type = { })
         : m_type(WTF::move(type)) { }

@@ -43,7 +43,7 @@ public:
     }
 
     const HTMLTemplateElement* NODELETE host() const;
-    void clearHost();
+    void NODELETE clearHost();
 
 private:
     TemplateContentDocumentFragment(Document&, const HTMLTemplateElement&);

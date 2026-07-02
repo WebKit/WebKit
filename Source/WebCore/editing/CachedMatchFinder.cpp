@@ -138,7 +138,7 @@ void CachedMatchFinder::performSearch(StringView buffer, unsigned startOffset, c
     }
 }
 
-static bool matchIsWithinSingleScope(const SimpleRange& range)
+static bool NODELETE matchIsWithinSingleScope(const SimpleRange& range)
 {
     return &range.start.container->rootNode() == &range.end.container->rootNode();
 }

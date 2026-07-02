@@ -104,10 +104,10 @@ private:
 
     void updateFirstPartyInfoForSession(const URL&);
 
-    NSURLSessionTask* task() const final;
+    NSURLSessionTask* NODELETE task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
-    void setTimingAllowFailedFlag() final;
+    void NODELETE setTimingAllowFailedFlag() final;
 
     WeakPtr<SessionWrapper> m_sessionWrapper;
     RefPtr<SandboxExtension> m_sandboxExtension;

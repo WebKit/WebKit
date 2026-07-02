@@ -45,7 +45,7 @@ public:
     bool operator==(const VisitedLinkColorData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const VisitedLinkColorData&) const;
+    void NODELETE dumpDifferences(TextStream&, const VisitedLinkColorData&) const;
 #endif
 
     Color visitedLinkBackgroundColor;

@@ -95,7 +95,7 @@ WEBCORE_EXPORT void NODELETE setOverrideEnhanceTextLegibility(bool);
 bool fontNameIsSystemFont(CFStringRef);
 
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
-WEBCORE_EXPORT void setContentSizeCategory(const String&);
+WEBCORE_EXPORT void NODELETE setContentSizeCategory(const String&);
 WEBCORE_EXPORT CFStringRef contentSizeCategory();
 
 VariationDefaultsMap defaultVariationValues(CTFontRef, ShouldLocalizeAxisNames);

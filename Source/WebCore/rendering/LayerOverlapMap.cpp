@@ -48,7 +48,7 @@ struct RectList {
         boundingRect.unite(rectList.boundingRect);
     }
     
-    bool intersects(const LayoutRect& rect) const
+    bool NODELETE intersects(const LayoutRect& rect) const
     {
         if (!rects.size() || !rect.intersects(boundingRect))
             return false;
@@ -242,7 +242,7 @@ OverlapMapContainer::ClippingScope* OverlapMapContainer::ensureClippingScopeForL
     return const_cast<ClippingScope*>(currScope);
 }
 
-OverlapMapContainer::ClippingScope* NODELETE OverlapMapContainer::findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
+OverlapMapContainer::ClippingScope* OverlapMapContainer::findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
 {
     ASSERT(enclosingClippingLayers.size());
     ASSERT(enclosingClippingLayers[0].layer->isRenderViewLayer());

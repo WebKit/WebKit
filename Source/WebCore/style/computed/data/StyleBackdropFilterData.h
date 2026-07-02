@@ -43,7 +43,7 @@ public:
     bool operator==(const BackdropFilterData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const BackdropFilterData&) const;
+    void NODELETE dumpDifferences(TextStream&, const BackdropFilterData&) const;
 #endif
 
     Filter backdropFilter;

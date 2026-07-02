@@ -3922,13 +3922,13 @@ private:
         createToString<useKind>(node, edge);
     }
     
-    void convertToMakeRope(Node* node)
+    void NODELETE convertToMakeRope(Node* node)
     {
         node->setOpAndDefaultFlags(MakeRope);
         fixupMakeRope(node);
     }
     
-    void fixupMakeRope(Node* node)
+    void NODELETE fixupMakeRope(Node* node)
     {
         for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
             Edge& edge = node->children.child(i);
@@ -4452,7 +4452,7 @@ private:
         }
     }
 
-    void fixupStringValueOf(Node* node)
+    void NODELETE fixupStringValueOf(Node* node)
     {
         if (node->child1()->shouldSpeculateString()) {
             fixEdge<StringUse>(node->child1());
@@ -4983,7 +4983,7 @@ private:
         edge.setUseKind(useKind);
     }
     
-    unsigned NODELETE indexForChecks()
+    unsigned indexForChecks()
     {
         unsigned index = m_indexInBlock;
         while (!m_block->at(index)->origin.exitOK)
@@ -4991,7 +4991,7 @@ private:
         return index;
     }
     
-    NodeOrigin NODELETE originForCheck(unsigned index)
+    NodeOrigin originForCheck(unsigned index)
     {
         return m_block->at(index)->origin.withSemantic(m_currentNode->origin.semantic);
     }
@@ -5247,7 +5247,7 @@ private:
         fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
     }
 
-    void fixupNormalizeMapKey(Node* node)
+    void NODELETE fixupNormalizeMapKey(Node* node)
     {
         if (node->child1()->shouldSpeculateBoolean()) {
             fixEdge<BooleanUse>(node->child1());

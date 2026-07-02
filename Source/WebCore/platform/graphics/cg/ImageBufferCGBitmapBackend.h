@@ -39,10 +39,10 @@ class ImageBufferCGBitmapBackend final : public ImageBufferCGBackend {
 public:
     ~ImageBufferCGBitmapBackend();
 
-    static size_t NODELETE calculateMemoryCost(const Parameters&);
+    static size_t calculateMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBufferCreationContext&);
-    bool canMapBackingStore() const final;
+    bool NODELETE canMapBackingStore() const final;
     GraphicsContext& NODELETE context() final;
 
 private:

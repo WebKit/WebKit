@@ -66,7 +66,7 @@ private:
     bool isRemoteAdapterProxy() const final { return true; }
 
     WebGPUIdentifier backing() const { return m_backing; }
-    bool xrCompatible() final;
+    bool NODELETE xrCompatible() final;
     
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)

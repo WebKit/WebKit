@@ -54,7 +54,7 @@ public:
     RefPtr<WebCore::LegacyCDMSession> createSession(WebCore::LegacyCDMSessionClient&) final;
     void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier>);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:

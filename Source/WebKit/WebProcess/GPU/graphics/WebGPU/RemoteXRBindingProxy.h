@@ -76,9 +76,9 @@ private:
     WebGPUIdentifier backing() const { return m_backing; }
 
     RefPtr<WebCore::WebGPU::XRProjectionLayer> createProjectionLayer(const WebCore::WebGPU::XRProjectionLayerInit&) final;
-    RefPtr<WebCore::WebGPU::XRSubImage> getSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<WebCore::WebGPU::XREye>/* = "none"*/) final;
+    RefPtr<WebCore::WebGPU::XRSubImage> NODELETE getSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<WebCore::WebGPU::XREye>/* = "none"*/) final;
     RefPtr<WebCore::WebGPU::XRSubImage> getViewSubImage(WebCore::WebGPU::XRProjectionLayer&) final;
-    WebCore::WebGPU::TextureFormat getPreferredColorFormat() final;
+    WebCore::WebGPU::TextureFormat NODELETE getPreferredColorFormat() final;
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)

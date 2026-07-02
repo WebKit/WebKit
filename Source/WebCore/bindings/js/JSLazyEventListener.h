@@ -49,7 +49,7 @@ private:
     String code() const final { return m_code; }
 
 #if ASSERT_ENABLED
-    void checkValidityForEventTarget(EventTarget&) final;
+    void NODELETE checkValidityForEventTarget(EventTarget&) final;
 #endif
 
     JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const final;

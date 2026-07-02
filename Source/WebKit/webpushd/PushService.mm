@@ -314,7 +314,7 @@ public:
 
     virtual ~GetSubscriptionRequest() = default;
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
@@ -357,7 +357,7 @@ public:
 
     virtual ~SubscribeRequest() = default;
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
@@ -489,7 +489,7 @@ public:
 
     virtual ~UnsubscribeRequest() = default;
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:

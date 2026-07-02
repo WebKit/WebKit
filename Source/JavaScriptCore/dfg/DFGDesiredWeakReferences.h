@@ -56,7 +56,7 @@ public:
 
     void finalize();
 
-    template<typename Visitor> void visitChildren(Visitor&);
+    template<typename Visitor> void NODELETE visitChildren(Visitor&);
 
 private:
     UncheckedKeyHashSet<JSCell*> m_cells;

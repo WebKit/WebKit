@@ -44,13 +44,13 @@ public:
     {
         return adoptRef(*new PlatformRawAudioDataCocoa(WTF::move(sample)));
     }
-    AudioSampleFormat format() const final;
-    size_t sampleRate() const final;
-    size_t numberOfChannels() const final;
-    size_t numberOfFrames() const final;
-    std::optional<uint64_t> duration() const final;
-    int64_t timestamp() const final;
-    size_t memoryCost() const final;
+    AudioSampleFormat NODELETE format() const final;
+    size_t NODELETE sampleRate() const final;
+    size_t NODELETE numberOfChannels() const final;
+    size_t NODELETE numberOfFrames() const final;
+    std::optional<uint64_t> NODELETE duration() const final;
+    int64_t NODELETE timestamp() const final;
+    size_t NODELETE memoryCost() const final;
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
 
@@ -60,8 +60,8 @@ public:
 private:
     friend class PlatformRawAudioData;
     PlatformRawAudioDataCocoa(Ref<MediaSampleAVFObjC>&&);
-    const AudioStreamBasicDescription& asbd() const;
-    bool isInterleaved() const;
+    const AudioStreamBasicDescription& NODELETE asbd() const;
+    bool NODELETE isInterleaved() const;
 
     const Ref<MediaSampleAVFObjC> m_sample;
     const CAAudioStreamDescription m_description;

@@ -57,7 +57,7 @@ private:
     WorkerAnimationController(WorkerGlobalScope&);
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     void stop() final;
     void suspend(ReasonForSuspension) final;
     void resume() final;

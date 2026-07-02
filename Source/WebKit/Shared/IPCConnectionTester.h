@@ -45,26 +45,26 @@ class IPCConnectionTester final : public RefCounted<IPCConnectionTester>, privat
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IPCConnectionTester);
 public:
     ~IPCConnectionTester();
-    static Ref<IPCConnectionTester> create(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
-    void stopListeningForIPC(Ref<IPCConnectionTester>&& refFromConnection);
+    static Ref<IPCConnectionTester> NODELETE create(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
+    void NODELETE stopListeningForIPC(Ref<IPCConnectionTester>&& refFromConnection);
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void sendAsyncMessages(uint32_t messageCount);
+    void NODELETE sendAsyncMessages(uint32_t messageCount);
 private:
     IPCConnectionTester(Ref<IPC::Connection>&&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
-    void initialize();
+    void NODELETE initialize();
 
     // IPC::Connection::Client overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
-    void didClose(IPC::Connection&) final;
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
+    void NODELETE didClose(IPC::Connection&) final;
+    void NODELETE didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
 
     // Messages.
-    void asyncMessage(uint32_t value);
-    void syncMessage(uint32_t value, CompletionHandler<void(uint32_t sameValue)>&&);
+    void NODELETE asyncMessage(uint32_t value);
+    void NODELETE syncMessage(uint32_t value, CompletionHandler<void(uint32_t sameValue)>&&);
 
     const Ref<IPC::Connection> m_connection;
     const Ref<IPC::Connection> m_testedConnection;

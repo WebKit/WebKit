@@ -46,8 +46,8 @@ public:
     static std::unique_ptr<PageInspectorTargetProxy> create(ProvisionalPageProxy&, const String& targetId, Inspector::InspectorTargetType);
     PageInspectorTargetProxy(WebPageProxy&, const String& targetId, Inspector::InspectorTargetType);
 
-    void didCommitProvisionalTarget() override;
-    bool isProvisional() const override;
+    void NODELETE didCommitProvisionalTarget() override;
+    bool NODELETE isProvisional() const override;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;

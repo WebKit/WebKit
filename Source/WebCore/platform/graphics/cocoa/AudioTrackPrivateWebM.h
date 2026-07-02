@@ -41,11 +41,11 @@ public:
     static Ref<AudioTrackPrivateWebM> create(webm::TrackEntry&&);
     virtual ~AudioTrackPrivateWebM() = default;
 
-    TrackID id() const final;
+    TrackID NODELETE id() const final;
     String label() const final;
     String language() const final;
-    int trackIndex() const final;
-    std::optional<bool> defaultEnabled() const final;
+    int NODELETE trackIndex() const final;
+    std::optional<bool> NODELETE defaultEnabled() const final;
     std::optional<MediaTime> NODELETE codecDelay() const;
     void NODELETE setDiscardPadding(const MediaTime&);
     std::optional<MediaTime> discardPadding() const;

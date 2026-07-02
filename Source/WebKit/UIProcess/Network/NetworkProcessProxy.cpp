@@ -146,7 +146,7 @@ Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
     });
 }
 
-WeakPtr<NetworkProcessProxy>& NetworkProcessProxy::defaultNetworkProcess()
+WeakPtr<NetworkProcessProxy>& NODELETE NetworkProcessProxy::defaultNetworkProcess()
 {
     static NeverDestroyed<WeakPtr<NetworkProcessProxy>> networkProcess;
     return networkProcess.get();

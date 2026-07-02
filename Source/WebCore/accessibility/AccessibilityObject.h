@@ -276,7 +276,7 @@ public:
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
 
     WallTime dateTimeValue() const override { return { }; }
-    DateComponentsType dateTimeComponentsType() const final;
+    DateComponentsType NODELETE dateTimeComponentsType() const final;
     String datetimeAttributeValue() const final;
 
     bool canSetFocusAttribute() const override { return false; }
@@ -294,7 +294,7 @@ public:
     // Use isIgnored as the word of law when determining if an object is ignored.
     virtual bool computeIsIgnored() const { return true; }
     bool isIgnored() const final;
-    std::optional<bool> cachedIsIgnored() const final;
+    std::optional<bool> NODELETE cachedIsIgnored() const final;
     inline void recomputeIsIgnored();
     void recomputeIsIgnoredForDescendants(bool includeSelf = false);
     AccessibilityObjectInclusion defaultObjectInclusion() const;
@@ -440,7 +440,7 @@ public:
     TextEmissionBehavior textEmissionBehavior() const override { return TextEmissionBehavior::None; }
     AXTextRunLineID listMarkerLineID() const override { return { }; }
     String listMarkerText() const override { return { }; }
-    FontOrientation fontOrientation() const final;
+    FontOrientation NODELETE fontOrientation() const final;
 #endif
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
@@ -454,9 +454,9 @@ public:
     RetainPtr<CTFontRef> font() const final;
     Color textColor() const final;
     Color backgroundColor() const;
-    bool isSubscript() const;
-    bool isSuperscript() const;
-    bool hasTextShadow() const;
+    bool NODELETE isSubscript() const;
+    bool NODELETE isSuperscript() const;
+    bool NODELETE hasTextShadow() const;
     LineDecorationStyle lineDecorationStyle() const;
 #endif
     virtual String ariaLabeledByAttribute() const { return String(); }
@@ -810,14 +810,14 @@ public:
     void updateBackingStore() final;
 
 #if PLATFORM(COCOA)
-    bool preventKeyboardDOMEventDispatch() const final;
+    bool NODELETE preventKeyboardDOMEventDispatch() const final;
     void setPreventKeyboardDOMEventDispatch(bool) final;
-    Style::SpeakAs speakAs() const final;
+    Style::SpeakAs NODELETE speakAs() const final;
     bool hasApplePDFAnnotationAttribute() const final { return hasAttribute(HTMLNames::x_apple_pdf_annotationAttr); }
 #endif
 
 #if PLATFORM(MAC)
-    bool caretBrowsingEnabled() const final;
+    bool NODELETE caretBrowsingEnabled() const final;
     void setCaretBrowsingEnabled(bool) final;
 
     AccessibilityChildrenVector allSortedLiveRegions() const final;

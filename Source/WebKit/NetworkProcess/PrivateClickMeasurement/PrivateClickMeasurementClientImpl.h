@@ -44,9 +44,9 @@ public:
 
 private:
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
-    bool featureEnabled() const final;
-    bool debugModeEnabled() const final;
-    bool usesEphemeralDataStore() const final;
+    bool NODELETE featureEnabled() const final;
+    bool NODELETE debugModeEnabled() const final;
+    bool NODELETE usesEphemeralDataStore() const final;
     bool runningInDaemon() const final { return false; }
 
     WeakPtr<NetworkSession> m_networkSession;

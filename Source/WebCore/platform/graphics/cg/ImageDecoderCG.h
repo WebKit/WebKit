@@ -48,7 +48,7 @@ public:
     static bool supportsMediaType(MediaType type) { return type == MediaType::Image; }
     static bool canDecodeType(const String&);
 
-    size_t bytesDecodedToDetermineProperties() const final;
+    size_t NODELETE bytesDecodedToDetermineProperties() const final;
 
     EncodedDataStatus encodedDataStatus() const final;
     bool hasHDRGainMap() const final;

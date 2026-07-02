@@ -1678,8 +1678,8 @@ namespace JSC {
     public:
         BlockNode(const JSTokenLocation&, SourceElements*, VariableEnvironment&&, FunctionStack&&);
 
-        StatementNode* singleStatement() const;
-        StatementNode* lastStatement() const;
+        StatementNode* NODELETE singleStatement() const;
+        StatementNode* NODELETE lastStatement() const;
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -2004,7 +2004,7 @@ namespace JSC {
             return m_numConstants + 2;
         }
 
-        StatementNode* singleStatement() const;
+        StatementNode* NODELETE singleStatement() const;
 
         bool isEmptyBody() const { return !m_statements; }
 
@@ -2642,7 +2642,7 @@ namespace JSC {
         void bindValueWithEmittedNodes(BytecodeGenerator&, BaseAndPropertyName, RegisterID*) const;
 
     private:
-        void collectBoundIdentifiers(Vector<Identifier>&) const final;
+        void NODELETE collectBoundIdentifiers(Vector<Identifier>&) const final;
         void bindValue(BytecodeGenerator&, RegisterID*) const final;
         void toString(StringBuilder&) const final;
 

@@ -60,7 +60,7 @@ static const WebCore::Path& cachedAcceleratedEffectEllipsePath(const FloatRect& 
 
 // MARK: - Path Evaluation
 
-static FloatPoint resolvePosition(const AcceleratedEffectEllipseFunction& value, FloatSize boundingBox)
+static FloatPoint NODELETE resolvePosition(const AcceleratedEffectEllipseFunction& value, FloatSize boundingBox)
 {
     return value.position ? *value.position : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
 }

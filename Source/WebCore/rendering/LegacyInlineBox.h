@@ -40,13 +40,13 @@ class LegacyInlineBox {
 public:
     virtual ~LegacyInlineBox();
 
-    void assertNotDeleted() const;
+    void NODELETE assertNotDeleted() const;
 
     virtual void deleteLine() = 0;
 
     virtual bool isLineBreak() const { return renderer().isRenderLineBreak(); }
 
-    WEBCORE_EXPORT virtual void adjustPosition(float dx, float dy);
+    WEBCORE_EXPORT virtual void NODELETE adjustPosition(float dx, float dy);
     void adjustLogicalPosition(float deltaLogicalLeft, float deltaLogicalTop)
     {
         if (isHorizontal())
@@ -70,12 +70,12 @@ public:
     }
 
 #if ENABLE(TREE_DEBUGGING)
-    void showNodeTreeForThis() const;
-    void showLineTreeForThis() const;
+    void NODELETE showNodeTreeForThis() const;
+    void NODELETE showLineTreeForThis() const;
     
-    WEBCORE_EXPORT virtual void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const;
-    WEBCORE_EXPORT virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
-    WEBCORE_EXPORT virtual ASCIILiteral boxName() const;
+    WEBCORE_EXPORT virtual void NODELETE outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const;
+    WEBCORE_EXPORT virtual void NODELETE outputLineBox(WTF::TextStream&, bool mark, int depth) const;
+    WEBCORE_EXPORT virtual ASCIILiteral NODELETE boxName() const;
 #endif
 
     virtual bool isInlineFlowBox() const { return false; }
@@ -208,8 +208,8 @@ public:
     WEBCORE_EXPORT virtual RenderObject::HighlightState selectionState() const;
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    void setHasBadParent();
-    void invalidateParentChildList();
+    void NODELETE setHasBadParent();
+    void NODELETE invalidateParentChildList();
 #endif
 
     CheckedRef<const Style::ComputedStyle> lineStyle() const;
@@ -225,9 +225,9 @@ public:
     }
 
     FloatPoint locationIncludingFlipping() const;
-    void flipForWritingMode(FloatRect&) const;
-    FloatPoint flipForWritingMode(const FloatPoint&) const;
-    void flipForWritingMode(LayoutRect&) const;
+    void NODELETE flipForWritingMode(FloatRect&) const;
+    FloatPoint NODELETE flipForWritingMode(const FloatPoint&) const;
+    void NODELETE flipForWritingMode(LayoutRect&) const;
     LayoutPoint NODELETE flipForWritingMode(const LayoutPoint&) const;
 
     bool knownToHaveNoOverflow() const { return m_bitfields.knownToHaveNoOverflow(); }
@@ -369,6 +369,6 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showNodeTree(const WebCore::LegacyInlineBox*);
-void showLineTree(const WebCore::LegacyInlineBox*);
+void NODELETE showNodeTree(const WebCore::LegacyInlineBox*);
+void NODELETE showLineTree(const WebCore::LegacyInlineBox*);
 #endif

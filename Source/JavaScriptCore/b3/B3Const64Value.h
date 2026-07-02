@@ -66,16 +66,16 @@ public:
     Value* iToDConstant(Procedure&) const override;
     Value* iToFConstant(Procedure&) const override;
 
-    TriState equalConstant(const Value* other) const override;
-    TriState notEqualConstant(const Value* other) const override;
-    TriState lessThanConstant(const Value* other) const override;
-    TriState greaterThanConstant(const Value* other) const override;
-    TriState lessEqualConstant(const Value* other) const override;
-    TriState greaterEqualConstant(const Value* other) const override;
-    TriState aboveConstant(const Value* other) const override;
-    TriState belowConstant(const Value* other) const override;
-    TriState aboveEqualConstant(const Value* other) const override;
-    TriState belowEqualConstant(const Value* other) const override;
+    TriState NODELETE equalConstant(const Value* other) const override;
+    TriState NODELETE notEqualConstant(const Value* other) const override;
+    TriState NODELETE lessThanConstant(const Value* other) const override;
+    TriState NODELETE greaterThanConstant(const Value* other) const override;
+    TriState NODELETE lessEqualConstant(const Value* other) const override;
+    TriState NODELETE greaterEqualConstant(const Value* other) const override;
+    TriState NODELETE aboveConstant(const Value* other) const override;
+    TriState NODELETE belowConstant(const Value* other) const override;
+    TriState NODELETE aboveEqualConstant(const Value* other) const override;
+    TriState NODELETE belowEqualConstant(const Value* other) const override;
 
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 

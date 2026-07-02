@@ -187,7 +187,7 @@ public:
     GraphicsLayer* NODELETE layerForVerticalScrollbar() const final;
     GraphicsLayer* NODELETE layerForScrollCorner() const final;
 
-    bool usesCompositedScrolling() const final;
+    bool NODELETE usesCompositedScrolling() const final;
     bool usesAsyncScrolling() const final;
 
     bool NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
@@ -203,13 +203,13 @@ public:
     IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
     IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
     void setScrollOffset(const ScrollOffset&) final;
-    WEBCORE_EXPORT std::optional<ScrollingNodeID> scrollingNodeID() const final;
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> NODELETE scrollingNodeID() const final;
 
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
     IntSize overhangAmount() const final;
     IntPoint lastKnownMousePositionInView() const final;
     bool NODELETE isHandlingWheelEvent() const final;
-    bool shouldSuspendScrollAnimations() const final;
+    bool NODELETE shouldSuspendScrollAnimations() const final;
     IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
     bool isUserScrollInProgress() const final;
     bool isRubberBandInProgress() const final;
@@ -245,7 +245,7 @@ public:
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
 
-    bool scrollingMayRevealBackground() const;
+    bool NODELETE scrollingMayRevealBackground() const;
 
     void computeHasCompositedScrollableOverflow(LayoutUpToDate);
 
@@ -272,7 +272,7 @@ public:
     void scrollbarWidthChanged(ScrollbarWidth) override;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
-    bool formControlRefreshEnabled() const override;
+    bool NODELETE formControlRefreshEnabled() const override;
 #endif
 
 private:

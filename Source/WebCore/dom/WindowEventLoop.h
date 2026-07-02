@@ -72,7 +72,7 @@ private:
     WindowEventLoop(const String&);
 
     void scheduleToRun() final;
-    bool isContextThread() const final;
+    bool NODELETE isContextThread() const final;
     MicrotaskQueue& microtaskQueue() final;
 
     void startIdlePeriod(MonotonicTime);

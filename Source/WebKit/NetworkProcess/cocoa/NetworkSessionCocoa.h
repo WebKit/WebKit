@@ -189,7 +189,7 @@ private:
 #endif
 
     void donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&) final;
-    void notifyAdAttributionKitOfSessionTermination() final;
+    void NODELETE notifyAdAttributionKitOfSessionTermination() final;
 
     Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const override;
     void deleteAlternativeServicesForHostNames(const Vector<String>&) override;

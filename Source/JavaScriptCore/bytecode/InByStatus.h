@@ -108,12 +108,12 @@ public:
     void filter(const StructureSet&);
     
     DECLARE_VISIT_AGGREGATE;
-    template<typename Visitor> void markIfCheap(Visitor&);
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&);
     bool finalize(VM&);
 
     void dump(PrintStream&) const;
 
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier singleIdentifier() const;
 
 private:
 #if ENABLE(DFG_JIT)

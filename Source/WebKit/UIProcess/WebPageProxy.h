@@ -815,7 +815,7 @@ public:
     WebBackForwardListWrapper& backForwardListWrapper() { return m_backForwardList; }
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
     WebBackForwardList& backForwardList() const { return m_backForwardList->getImpl(); }
-    WebBackForwardListMessageForwarder& backForwardListMessageReceiver() const;
+    WebBackForwardListMessageForwarder& NODELETE backForwardListMessageReceiver() const;
 #else
     WebBackForwardList& backForwardList() const { return m_backForwardList; }
     WebBackForwardList& backForwardListMessageReceiver() const { return m_backForwardList; }
@@ -895,7 +895,7 @@ public:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlaybackSessionManagerProxy* playbackSessionManager() { return m_playbackSessionManager.get(); }
     VideoPresentationManagerProxy* NODELETE videoPresentationManager();
-    void setMockVideoPresentationModeEnabled(bool);
+    void NODELETE setMockVideoPresentationModeEnabled(bool);
 #endif
 
     WebScreenOrientationManagerProxy* screenOrientationManager() { return m_screenOrientationManager.get(); }
@@ -1702,7 +1702,7 @@ public:
     void setTextIndicator(RefPtr<WebCore::TextIndicator>&&, WebCore::TextIndicatorLifetime);
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&);
     void setTextIndicatorAnimationProgress(float);
-    void clearTextIndicator();
+    void NODELETE clearTextIndicator();
     void clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation);
     void teardownTextIndicatorLayer();
     void startTextIndicatorFadeOut();
@@ -2269,7 +2269,7 @@ public:
     enum class ShouldMergeVisualEditorState : uint8_t { No, Yes, Default };
     bool updateEditorState(IPC::Connection&, EditorState&& newEditorState, ShouldMergeVisualEditorState = ShouldMergeVisualEditorState::Default);
     void scheduleFullEditorStateUpdate();
-    void dispatchDidUpdateEditorState();
+    void NODELETE dispatchDidUpdateEditorState();
 
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&&);
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
@@ -2460,7 +2460,7 @@ public:
     WebCore::ResourceError errorForUnpermittedAppBoundDomainNavigation(const URL&);
 #endif
 
-    void disableServiceWorkerEntitlementInNetworkProcess();
+    void NODELETE disableServiceWorkerEntitlementInNetworkProcess();
     void clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&&);
         
 #if PLATFORM(COCOA)
@@ -2622,7 +2622,7 @@ public:
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
 
 #if PLATFORM(COCOA)
-    void setLastNavigationWasAppInitiated(WebCore::ResourceRequest&);
+    void NODELETE setLastNavigationWasAppInitiated(WebCore::ResourceRequest&);
     void lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&);
     void appPrivacyReportTestingData(CompletionHandler<void(const AppPrivacyReportTestingData&)>&&);
     void clearAppPrivacyReportTestingData(CompletionHandler<void()>&&);
@@ -2633,7 +2633,7 @@ public:
     void setCocoaView(WKWebView *);
 #endif
 
-    bool shouldAvoidSynchronouslyWaitingToPreventDeadlock() const;
+    bool NODELETE shouldAvoidSynchronouslyWaitingToPreventDeadlock() const;
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
@@ -2711,7 +2711,7 @@ public:
     void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier);
 
 #if ENABLE(NETWORK_ISSUE_REPORTING)
-    void reportNetworkIssue(const URL&);
+    void NODELETE reportNetworkIssue(const URL&);
 #endif
 
     void useRedirectionForCurrentNavigation(const WebCore::ResourceResponse&);
@@ -2822,7 +2822,7 @@ public:
     bool writingToolsTextReplacementsFinished();
     void intelligenceTextAnimationsDidComplete();
 
-    void didEndPartialIntelligenceTextAnimation(IPC::Connection&);
+    void NODELETE didEndPartialIntelligenceTextAnimation(IPC::Connection&);
     void didEndPartialIntelligenceTextAnimationImpl();
 
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
@@ -2909,7 +2909,7 @@ public:
 
     WebProcessActivityState& processActivityState() LIFETIME_BOUND { return m_mainFrameProcessActivityState; }
 
-    ProcessActivityGroupContext& activityGroupContext();
+    ProcessActivityGroupContext& NODELETE activityGroupContext();
 
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     void updateWebProcessSuspensionDelay();
@@ -3611,8 +3611,8 @@ private:
 
     // These are intentionally private
     // FIXME: These should be removed in favor of specifying which process(es) to send to.
-    template<typename Message> void send(Message&&);
-    template<typename Message, typename CH> void sendWithAsyncReply(Message&&, CH&&);
+    template<typename Message> void NODELETE send(Message&&);
+    template<typename Message, typename CH> void NODELETE sendWithAsyncReply(Message&&, CH&&);
 
     template<typename F> decltype(auto) sendToWebPage(std::optional<WebCore::FrameIdentifier>, F&&);
 

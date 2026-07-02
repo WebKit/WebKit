@@ -76,7 +76,7 @@ template<typename T> static CSS::Color makeCSSColor(T&& unresolvedColorKind)
     return CSS::Color { std::forward<T>(unresolvedColorKind) };
 }
 
-template<typename T> static std::optional<CSS::Color> makeCSSColor(std::optional<T>&& unresolvedColorKind)
+template<typename T> static std::optional<CSS::Color> NODELETE makeCSSColor(std::optional<T>&& unresolvedColorKind)
 {
     return unresolvedColorKind ? std::make_optional(makeCSSColor(std::forward<T>(*unresolvedColorKind))) : std::nullopt;
 }

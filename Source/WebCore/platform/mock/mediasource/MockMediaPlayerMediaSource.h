@@ -59,12 +59,12 @@ public:
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MockMSE; }
 
     void advanceCurrentTime();
-    MediaTime currentTime() const override;
+    MediaTime NODELETE currentTime() const override;
     bool timeIsProgressing() const override;
     void notifyActiveSourceBuffersChanged() final;
     void updateDuration(const MediaTime&);
 
-    MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::ReadyState NODELETE readyState() const override;
     void readyStateFromMediaSourceChanged() final;
     void characteristicsFromMediaSourceChanged() final;
     void setNetworkState(MediaPlayer::NetworkState);
@@ -81,25 +81,25 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override { }
 #endif
-    void cancelLoad() override;
+    void NODELETE cancelLoad() override;
     void play() override;
-    void pause() override;
-    FloatSize naturalSize() const override;
-    bool hasVideo() const override;
-    bool hasAudio() const override;
-    void setPageIsVisible(bool) final;
+    void NODELETE pause() override;
+    FloatSize NODELETE naturalSize() const override;
+    bool NODELETE hasVideo() const override;
+    bool NODELETE hasAudio() const override;
+    void NODELETE setPageIsVisible(bool) final;
     void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final;
-    bool paused() const override;
-    MediaPlayer::NetworkState networkState() const override;
+    bool NODELETE seeking() const final;
+    bool NODELETE paused() const override;
+    MediaPlayer::NetworkState NODELETE networkState() const override;
     void mediaSourceHasRetrievedAllData() final;
-    MediaTime maxTimeSeekable() const override;
+    MediaTime NODELETE maxTimeSeekable() const override;
     const PlatformTimeRanges& buffered() const override;
-    bool didLoadingProgress() const override;
-    void setPresentationSize(const IntSize&) override;
-    void paint(GraphicsContext&, const FloatRect&) override;
+    bool NODELETE didLoadingProgress() const override;
+    void NODELETE setPresentationSize(const IntSize&) override;
+    void NODELETE paint(GraphicsContext&, const FloatRect&) override;
     MediaTime duration() const override;
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
+    std::optional<VideoPlaybackQualityMetrics> NODELETE videoPlaybackQualityMetrics() override;
     DestinationColorSpace colorSpace() override;
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;

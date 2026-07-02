@@ -46,7 +46,7 @@ public:
     bool operator==(const FlexibleBoxData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const FlexibleBoxData&) const;
+    void NODELETE dumpDifferences(TextStream&, const FlexibleBoxData&) const;
 #endif
 
     FlexGrow flexGrow;

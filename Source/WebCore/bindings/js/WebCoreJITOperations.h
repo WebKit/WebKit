@@ -36,7 +36,7 @@ inline void populateDisassemblyLabels() { }
 #endif
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-WEBCORE_EXPORT void populateJITOperations();
+WEBCORE_EXPORT void NODELETE populateJITOperations();
 #else
 inline void populateJITOperations() { populateDisassemblyLabels(); }
 #endif

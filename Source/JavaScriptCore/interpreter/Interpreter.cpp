@@ -695,7 +695,7 @@ public:
     {
     }
 
-    HandlerInfo* handler() { return m_handler; }
+    HandlerInfo* NODELETE handler() { return m_handler; }
 
     IterationStatus operator()(StackVisitor& visitor) const
     {

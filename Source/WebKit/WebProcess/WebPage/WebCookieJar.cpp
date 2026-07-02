@@ -56,7 +56,7 @@ using namespace WebCore;
 
 class WebStorageSessionProvider : public WebCore::StorageSessionProvider {
     // NetworkStorageSessions are accessed only in the NetworkProcess.
-    WebCore::NetworkStorageSession* storageSession() const final { return nullptr; }
+    WebCore::NetworkStorageSession* NODELETE storageSession() const final { return nullptr; }
 };
 
 WebCookieJar::WebCookieJar()

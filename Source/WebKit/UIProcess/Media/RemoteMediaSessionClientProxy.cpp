@@ -86,7 +86,7 @@ void RemoteMediaSessionClientProxy::setShouldPlayToPlaybackTarget(bool shouldPla
         manager->send(Messages::RemoteMediaSessionManager::ClientSetShouldPlayToPlaybackTarget(sessionIdentifier(), shouldPlay));
 }
 
-RefPtr<WebCore::MediaSessionManagerInterface> RemoteMediaSessionClientProxy::sessionManager() const
+RefPtr<WebCore::MediaSessionManagerInterface> NODELETE RemoteMediaSessionClientProxy::sessionManager() const
 {
     return m_manager.get();
 }

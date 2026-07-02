@@ -96,15 +96,15 @@ public:
 
 private:
     bool NODELETE containingCoordsAreFlipped() const;
-    bool isOrthogonalToContainingBlockWithFlippedParent() const;
-    bool isParentOpposingContainingBlock() const;
+    bool NODELETE isOrthogonalToContainingBlockWithFlippedParent() const;
+    bool NODELETE isParentOpposingContainingBlock() const;
 
     void captureInsets();
     void captureGridArea();
     void captureAnchorGeometry();
     void expandToScrollableArea(LayoutRange&, const std::optional<ScrollPosition> fromScrollPosition = { }) const;
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
-    std::pair<bool, bool> containerAllowsInfiniteOverflow() const;
+    std::pair<bool, bool> NODELETE containerAllowsInfiniteOverflow() const;
 
     bool NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;

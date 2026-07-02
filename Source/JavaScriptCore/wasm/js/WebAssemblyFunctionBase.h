@@ -58,7 +58,7 @@ public:
     CalleeBits boxedCallee() const { return m_importableFunction.boxedCallee; }
     const Wasm::WasmOrJSImportableFunction& importableFunction() const LIFETIME_BOUND { return m_importableFunction; }
     const Wasm::RTT* rtt() const { return m_importableFunction.rtt; }
-    const Wasm::RTT& signature() const;
+    const Wasm::RTT& NODELETE signature() const;
     WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
 
     static constexpr ptrdiff_t offsetOfImportableFunction() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction); }

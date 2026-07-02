@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-Ref<CompletionHandlerCallChecker> CompletionHandlerCallChecker::create(id delegate, SEL delegateMethodSelector)
+Ref<CompletionHandlerCallChecker> NODELETE CompletionHandlerCallChecker::create(id delegate, SEL delegateMethodSelector)
 {
     return adoptRef(*new CompletionHandlerCallChecker(object_getClass(delegate), delegateMethodSelector));
 }
@@ -60,7 +60,7 @@ void CompletionHandlerCallChecker::didCallCompletionHandler()
     m_didCallCompletionHandler = true;
 }
 
-static bool shouldThrowExceptionForDuplicateCompletionHandlerCall()
+static bool NODELETE shouldThrowExceptionForDuplicateCompletionHandlerCall()
 {
     static bool shouldThrowException = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForDuplicateCompletionHandlerCalls);
     return shouldThrowException;

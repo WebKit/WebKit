@@ -73,7 +73,7 @@ public:
     void NODELETE moveToDataTransfer(DataTransfer&);
 
     // CachedResourceClient.
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:

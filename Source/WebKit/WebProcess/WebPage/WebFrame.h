@@ -304,7 +304,7 @@ private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
     void updateLocalFrameRect(WebCore::LocalFrame&, WebCore::IntRect);

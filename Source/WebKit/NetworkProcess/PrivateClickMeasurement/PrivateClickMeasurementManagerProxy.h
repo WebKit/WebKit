@@ -68,9 +68,9 @@ private:
     ManagerProxy(const String& machServiceName, NetworkSession&);
 
     template<MessageType messageType, typename... Args>
-    void sendMessage(Args&&...) const;
+    void NODELETE sendMessage(Args&&...) const;
     template<MessageType messageType, typename... Args, typename... ReplyArgs>
-    void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
+    void NODELETE sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 
     const Ref<Connection> m_connection;
 };

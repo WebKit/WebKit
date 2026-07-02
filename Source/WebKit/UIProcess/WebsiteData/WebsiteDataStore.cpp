@@ -266,7 +266,7 @@ bool WebsiteDataStore::defaultDataStoreExists()
     return !!globalDefaultDataStore();
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const WTF::UUID& identifier)
+RefPtr<WebsiteDataStore> NODELETE WebsiteDataStore::existingDataStoreForIdentifier(const WTF::UUID& identifier)
 {
     for (auto& dataStore : allDataStores().values()) {
         if (dataStore->configuration().identifier() == identifier)

@@ -65,7 +65,7 @@ public:
 
 private:
     void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) override;
-    bool shouldUseCredentialStorage(ResourceHandle*) override;
+    bool NODELETE shouldUseCredentialStorage(ResourceHandle*) override;
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) override;
     void didReceiveData(ResourceHandle*, const SharedBuffer&, int /*encodedDataLength*/) override;

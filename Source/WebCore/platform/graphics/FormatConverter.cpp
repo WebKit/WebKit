@@ -220,7 +220,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ARG
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
@@ -505,7 +505,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
 //
 
 template<GraphicsContextGL::DataFormat format, int alphaOp, typename SourceType, typename DstType>
-ALWAYS_INLINE void pack(std::span<const SourceType>, std::span<DstType>, unsigned)
+ALWAYS_INLINE void NODELETE pack(std::span<const SourceType>, std::span<DstType>, unsigned)
 {
     ASSERT_NOT_REACHED();
 }

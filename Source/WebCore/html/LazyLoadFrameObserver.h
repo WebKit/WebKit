@@ -49,7 +49,7 @@ public:
 
 private:
     IntersectionObserver* intersectionObserver(Document&);
-    bool isObserved(Element&) const;
+    bool NODELETE isObserved(Element&) const;
 
     WeakRef<HTMLIFrameElement, WeakPtrImplWithEventTargetData> m_element;
     AtomString m_frameURL;

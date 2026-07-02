@@ -206,7 +206,7 @@ struct Inst {
     std::optional<unsigned> shouldTryAliasingDef();
     
     // This computes a hash for comparing this to JSAir's Inst.
-    unsigned jsHash() const;
+    unsigned NODELETE jsHash() const;
 
     void dump(PrintStream&) const;
 

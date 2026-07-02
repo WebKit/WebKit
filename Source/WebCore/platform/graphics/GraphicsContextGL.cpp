@@ -214,7 +214,7 @@ static GraphicsContextGL::DataFormat NODELETE getDataFormat(GCGLenum destination
     return GraphicsContextGL::DataFormat::Invalid;
 }
 
-ALWAYS_INLINE static unsigned texelBytesForFormat(GraphicsContextGL::DataFormat format)
+ALWAYS_INLINE static unsigned NODELETE texelBytesForFormat(GraphicsContextGL::DataFormat format)
 {
     switch (format) {
     case GraphicsContextGL::DataFormat::R8:

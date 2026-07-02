@@ -54,7 +54,7 @@ public:
         vm.writeBarrier(this, value);
     }
 
-    static JSValue tryGetContext(JSValue reactionsValue);
+    static JSValue NODELETE tryGetContext(JSValue reactionsValue);
 
 protected:
     JSPromiseReaction(VM& vm, Structure* structure, JSValue promise, JSPromiseReaction* next, InternalMicrotask task = InternalMicrotask::None)

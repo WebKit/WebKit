@@ -70,7 +70,7 @@ public:
     virtual void animationTimelineDidChange();
     virtual void animationDidFinish() { };
     virtual void animationPlaybackRateDidChange();
-    virtual void animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&);
+    virtual void NODELETE animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&);
     void NODELETE animationRangeDidChange();
 
     AnimationEffectTiming timing() const { return m_timing; }

@@ -41,12 +41,12 @@ private:
     RedirectSOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, Callback&&);
 
     // SOAuthorizationSession
-    void fallBackToWebPathInternal() final;
-    void abortInternal() final;
-    void completeInternal(const WebCore::ResourceResponse&, NSData *) final;
+    void NODELETE fallBackToWebPathInternal() final;
+    void NODELETE abortInternal() final;
+    void NODELETE completeInternal(const WebCore::ResourceResponse&, NSData *) final;
 
     // NavigationSOAuthorizationSession
-    void beforeStart() final;
+    void NODELETE beforeStart() final;
 };
 
 } // namespace WebKit

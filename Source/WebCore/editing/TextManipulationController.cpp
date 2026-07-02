@@ -371,7 +371,7 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     return false;
 }
 
-static bool shouldIgnoreNodeInTextField(const Node& node)
+static bool NODELETE shouldIgnoreNodeInTextField(const Node& node)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(node.shadowHost());
     if (!input)

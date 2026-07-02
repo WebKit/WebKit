@@ -117,7 +117,7 @@ public:
     WEBCORE_EXPORT virtual void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) { }
     WEBCORE_EXPORT virtual int minimumThumbLength(WebCore::ScrollbarOrientation) { return 0; }
     WEBCORE_EXPORT virtual void scrollbarLayoutDirectionChanged(UserInterfaceLayoutDirection) { }
-    WEBCORE_EXPORT virtual void scrollbarColorChanged(std::optional<ScrollbarColor>);
+    WEBCORE_EXPORT virtual void NODELETE scrollbarColorChanged(std::optional<ScrollbarColor>);
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     virtual void scrollbarOpacityChanged() { }
 #endif

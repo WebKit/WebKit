@@ -330,7 +330,7 @@ private:
 
     // Helpers
     template<typename Op>
-    void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType snippetShiftType);
+    void NODELETE emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType snippetShiftType);
 
     void silentSpill(auto& allocator, const auto& allocations)
     {
@@ -401,49 +401,49 @@ private:
 
     template<typename Op>
         requires (!LOLJIT::isImplemented(Op::opcodeID))
-    void emitCommonSlowPathSlowCaseCall(const JSInstruction*, Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
+    void NODELETE emitCommonSlowPathSlowCaseCall(const JSInstruction*, Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
 
     template<typename Op, typename SnippetGenerator>
-    void emitBitBinaryOpFastPath(const JSInstruction* currentInstruction);
+    void NODELETE emitBitBinaryOpFastPath(const JSInstruction* currentInstruction);
 
     template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
-    void emitMathICFast(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);
+    void NODELETE emitMathICFast(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);
     template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
-    void emitMathICFast(JITBinaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);
+    void NODELETE emitMathICFast(JITBinaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);
 
     template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
-    void emitMathICSlow(JITBinaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction, Vector<SlowCaseEntry>::iterator&);
+    void NODELETE emitMathICSlow(JITBinaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction, Vector<SlowCaseEntry>::iterator&);
     template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
-    void emitMathICSlow(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction, Vector<SlowCaseEntry>::iterator&);
+    void NODELETE emitMathICSlow(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction, Vector<SlowCaseEntry>::iterator&);
 
     template<typename Op>
-    void emitCompare(const JSInstruction*, RelationalCondition);
+    void NODELETE emitCompare(const JSInstruction*, RelationalCondition);
     template <typename EmitCompareFunctor>
     void emitCompareImpl(VirtualRegister op1, JSValueRegs op1Regs, VirtualRegister op2, JSValueRegs op2Regs, RelationalCondition, const EmitCompareFunctor&);
 
     template<typename Op>
-    void emitCompareAndJump(const JSInstruction*, RelationalCondition);
+    void NODELETE emitCompareAndJump(const JSInstruction*, RelationalCondition);
 
     template<typename Op, typename SlowOperation>
-    void emitCompareSlow(const JSInstruction*, DoubleCondition, SlowOperation, Vector<SlowCaseEntry>::iterator&);
+    void NODELETE emitCompareSlow(const JSInstruction*, DoubleCondition, SlowOperation, Vector<SlowCaseEntry>::iterator&);
     template<typename SlowOperation>
     void emitCompareSlowImpl(const auto& allocations, VirtualRegister op1, JSValueRegs op1Regs, VirtualRegister op2, JSValueRegs op2Regs, JSValueRegs dstRegs, SlowOperation, Vector<SlowCaseEntry>::iterator&, const Invocable<void(FPRReg, FPRReg)> auto&);
 
     template<typename Op, typename SlowOperation>
-    void emitCompareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invertOperationResult, Vector<SlowCaseEntry>::iterator&);
+    void NODELETE emitCompareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invertOperationResult, Vector<SlowCaseEntry>::iterator&);
 
     template<typename Op>
-    void emitCompareUnsignedAndJumpImpl(const JSInstruction*, RelationalCondition);
+    void NODELETE emitCompareUnsignedAndJumpImpl(const JSInstruction*, RelationalCondition);
 
     template<typename Op>
-    void emitStrictEqJumpImpl(const JSInstruction*, RelationalCondition);
+    void NODELETE emitStrictEqJumpImpl(const JSInstruction*, RelationalCondition);
     template<typename Op>
-    void emitStrictEqJumpSlowImpl(const JSInstruction*, ResultCondition, Vector<SlowCaseEntry>::iterator&);
+    void NODELETE emitStrictEqJumpSlowImpl(const JSInstruction*, ResultCondition, Vector<SlowCaseEntry>::iterator&);
 
     template<typename Op>
-    void emitNewFuncCommon(const JSInstruction*);
+    void NODELETE emitNewFuncCommon(const JSInstruction*);
     template<typename Op>
-    void emitNewFuncExprCommon(const JSInstruction*);
+    void NODELETE emitNewFuncExprCommon(const JSInstruction*);
 
     static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
     static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);

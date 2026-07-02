@@ -61,7 +61,7 @@ public:
     bool operator==(const ScaleTransformFunction& other) const { return operator==(static_cast<const TransformFunctionBase&>(other)); }
     bool operator==(const TransformFunctionBase&) const override;
 
-    void apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
+    void NODELETE apply(TransformationMatrix&, const FloatSize& borderBoxSize) const override;
 
     Ref<const TransformFunctionBase> blend(const TransformFunctionBase* from, const BlendingContext&, bool blendToIdentity = false) const override;
 

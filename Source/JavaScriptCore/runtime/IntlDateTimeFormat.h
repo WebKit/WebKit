@@ -121,15 +121,15 @@ public:
     JSValue formatRangeToParts(JSGlobalObject*, JSValue startDate, JSValue endDate);
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
-    static bool isTemporalObject(JSValue);
-    static bool sameTemporalType(JSValue, JSValue);
+    static bool NODELETE isTemporalObject(JSValue);
+    static bool NODELETE sameTemporalType(JSValue, JSValue);
 
     JSBoundFunction* boundFormat() const LIFETIME_BOUND { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
     static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
 
-    static HourCycle NODELETE hourCycleFromPattern(const Vector<char16_t, 32>&);
+    static HourCycle hourCycleFromPattern(const Vector<char16_t, 32>&);
 
     const IntlDateTimeFormatImpl& impl() const LIFETIME_BOUND { return *m_impl; }
     void setImpl(Ref<const IntlDateTimeFormatImpl>&& impl) { m_impl = WTF::move(impl); }
@@ -137,9 +137,9 @@ public:
     enum class TimeZoneName : uint8_t { None, Short, Long, ShortOffset, LongOffset, ShortGeneric, LongGeneric };
     enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
-    DateTimeStyle dateStyle() const;
-    DateTimeStyle timeStyle() const;
-    TimeZoneName timeZoneName() const;
+    DateTimeStyle NODELETE dateStyle() const;
+    DateTimeStyle NODELETE timeStyle() const;
+    TimeZoneName NODELETE timeZoneName() const;
     const String& ensureCalendar() const;
     const String& ensureNumberingSystem() const;
 
@@ -207,7 +207,7 @@ private:
 
     static HourCycle NODELETE hourCycleFromSymbol(char16_t);
     static HourCycle parseHourCycle(const String&);
-    static void NODELETE replaceHourCycleInSkeleton(Vector<char16_t, 32>&, bool hour12);
+    static void replaceHourCycleInSkeleton(Vector<char16_t, 32>&, bool hour12);
     static void replaceHourCycleInPattern(Vector<char16_t, 32>&, HourCycle);
     static String buildSkeleton(Weekday, Era, Year, Month, Day, TriState, HourCycle, Hour, DayPeriod, Minute, Second, unsigned, TimeZoneName);
 

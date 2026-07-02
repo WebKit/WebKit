@@ -120,7 +120,7 @@ public:
     bool currentRequestIsRedirect() const { return m_lastNavigationAction && !m_lastNavigationAction->redirectResponse.isNull(); }
     bool currentRequestIsCrossSiteRedirect() const;
 
-    WebKit::WebBackForwardListItem* targetItem() const;
+    WebKit::WebBackForwardListItem* NODELETE targetItem() const;
     WebKit::WebBackForwardListFrameItem* targetFrameItem() const { return m_targetFrameItem.get(); }
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
@@ -167,7 +167,7 @@ public:
     WebKit::WebContentMode effectiveContentMode() const { return m_effectiveContentMode; }
 
 #if !LOG_DISABLED
-    WTF::String loggingString() const;
+    WTF::String NODELETE loggingString() const;
 #endif
 
     const std::unique_ptr<SubstituteData>& substituteData() const LIFETIME_BOUND { return m_substituteData; }

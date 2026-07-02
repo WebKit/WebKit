@@ -205,7 +205,7 @@ static EnumSet<FlexAvoidanceReason> canUseForFlexLayoutWithReason(const RenderFl
 }
 
 #ifndef NDEBUG
-static void printTextForSubtree(const RenderElement& renderer, size_t& charactersLeft, TextStream& stream)
+static void NODELETE printTextForSubtree(const RenderElement& renderer, size_t& charactersLeft, TextStream& stream)
 {
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (is<RenderText>(child)) {
@@ -220,7 +220,7 @@ static void printTextForSubtree(const RenderElement& renderer, size_t& character
     }
 }
 
-static Vector<const RenderFlexibleBox*> collectFlexBoxesForCurrentPage()
+static Vector<const RenderFlexibleBox*> NODELETE collectFlexBoxesForCurrentPage()
 {
     Vector<const RenderFlexibleBox*> flexBoxes;
     for (auto document : Document::allDocuments()) {
@@ -234,7 +234,7 @@ static Vector<const RenderFlexibleBox*> collectFlexBoxesForCurrentPage()
     return flexBoxes;
 }
 
-static void printReason(FlexAvoidanceReason reason, TextStream& stream)
+static void NODELETE printReason(FlexAvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
     case FlexAvoidanceReason::FeatureIsDisabled:
@@ -299,7 +299,7 @@ static void printReason(FlexAvoidanceReason reason, TextStream& stream)
     }
 }
 
-static void printReasons(EnumSet<FlexAvoidanceReason> reasons, TextStream& stream)
+static void NODELETE printReasons(EnumSet<FlexAvoidanceReason> reasons, TextStream& stream)
 {
     stream << " ";
     for (auto reason : reasons) {
@@ -308,7 +308,7 @@ static void printReasons(EnumSet<FlexAvoidanceReason> reasons, TextStream& strea
     }
 }
 
-static void printLegacyFlexReasons()
+static void NODELETE printLegacyFlexReasons()
 {
     auto flexBoxes = collectFlexBoxesForCurrentPage();
     if (!flexBoxes.size()) {

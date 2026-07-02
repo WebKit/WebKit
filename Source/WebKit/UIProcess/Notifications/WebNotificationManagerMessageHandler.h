@@ -35,7 +35,7 @@ class WebNotificationManagerMessageHandler : public NotificationManagerMessageHa
     friend class WebPageProxy;
 
 public:
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:
@@ -50,7 +50,7 @@ private:
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>) final { }
     void getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess(const IPC::Connection&) const final;
     WebPageProxy& page() const { return m_webPageProxy; }
 
     WeakRef<WebPageProxy> m_webPageProxy;

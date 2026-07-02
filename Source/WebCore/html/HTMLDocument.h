@@ -57,7 +57,7 @@ protected:
     WEBCORE_EXPORT HTMLDocument(LocalFrame*, const Settings&, const URL&, std::optional<ScriptExecutionContextIdentifier>, DocumentClasses = { }, OptionSet<ConstructionFlag> = { });
 
 private:
-    bool isFrameSet() const final;
+    bool NODELETE isFrameSet() const final;
     Ref<DocumentParser> createParser() override;
 
     TreeScopeOrderedMap m_documentNamedItem;

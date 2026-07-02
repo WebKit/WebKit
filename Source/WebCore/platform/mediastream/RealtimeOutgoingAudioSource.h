@@ -91,7 +91,7 @@ protected:
     const Logger& logger() const final { return m_audioSource->logger(); }
     uint64_t logIdentifier() const final { return m_audioSource->logIdentifier(); }
     ASCIILiteral logClassName() const final { return "RealtimeOutgoingAudioSource"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
 private:

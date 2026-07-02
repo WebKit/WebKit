@@ -127,14 +127,14 @@ public:
     Inspector::CommandResult<void> markUndoableState() override;
     Inspector::CommandResult<void> focus(int nodeId) override;
     Inspector::CommandResult<void> setInspectedNode(int nodeId) override;
-    Inspector::CommandResult<void> setAllowEditingUserAgentShadowTrees(bool) override;
+    Inspector::CommandResult<void> NODELETE setAllowEditingUserAgentShadowTrees(bool) override;
     Inspector::CommandResult<Ref<Inspector::Protocol::DOM::MediaStats>> getMediaStats(int nodeId) override;
 
     // InspectorInstrumentation hooks
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willDestroyDOMNode(Node&);
-    void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    void NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);

@@ -265,7 +265,7 @@ struct ExpressionInfo::Diff {
         }
     }
 
-    void reset()
+    void NODELETE reset()
     {
         instPC = 0;
         divot = 0;

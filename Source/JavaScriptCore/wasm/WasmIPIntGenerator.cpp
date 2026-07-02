@@ -224,7 +224,7 @@ public:
     [[nodiscard]] PartialResult addDrop(ExpressionType);
 
     template <typename ...Args>
-    [[nodiscard]] NEVER_INLINE UnexpectedResult fail(Args... args) const
+    [[nodiscard]] NEVER_INLINE UnexpectedResult NODELETE fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in WasmParser.h.
         return UnexpectedResult(makeString("WebAssembly.Module failed compiling: "_s, makeString(args)...));
@@ -313,14 +313,14 @@ public:
 
     // Atomics
 
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult NODELETE atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint64_t, uint8_t);
     [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint64_t, uint8_t);
     [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
     [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
 
     [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
     [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
-    [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t);
+    [[nodiscard]] PartialResult NODELETE atomicFence(ExtAtomicOpType, uint8_t);
 
     // Saturated truncation
 
@@ -369,26 +369,26 @@ public:
     [[nodiscard]] PartialResult addI64RemS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64DivU(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64RemU(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32Ctz(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32Popcnt(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI64Popcnt(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32Ctz(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32Popcnt(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI64Popcnt(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Nearest(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Nearest(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Trunc(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Trunc(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32TruncSF64(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32TruncSF32(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32TruncUF64(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32TruncUF32(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI64TruncSF64(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI64TruncSF32(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI64TruncUF64(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI64TruncUF32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32TruncSF64(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32TruncSF32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32TruncUF64(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32TruncUF32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI64TruncSF64(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI64TruncSF32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI64TruncUF64(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI64TruncUF32(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Ceil(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32Mul(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32Sub(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Le(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF32DemoteF64(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF32DemoteF64(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Ne(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Lt(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Min(ExpressionType, ExpressionType, ExpressionType&);
@@ -397,12 +397,12 @@ public:
     [[nodiscard]] PartialResult addF64Max(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Mul(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Div(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32Clz(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32Clz(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Copysign(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF32ReinterpretI32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF32ReinterpretI32(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Ne(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Gt(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF32Sqrt(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF32Sqrt(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Ge(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64GtS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64GtU(ExpressionType, ExpressionType, ExpressionType&);
@@ -412,18 +412,18 @@ public:
     [[nodiscard]] PartialResult addI32LeS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Ne(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Clz(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF32Neg(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF32Neg(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32And(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32LtU(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Rotr(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF64Abs(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF64Abs(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32LtS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32Eq(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Copysign(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32ConvertSI64(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Rotl(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Lt(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF64ConvertSI32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF64ConvertSI32(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Eq(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Le(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Ge(ExpressionType, ExpressionType, ExpressionType&);
@@ -436,10 +436,10 @@ public:
     [[nodiscard]] PartialResult addI32Shl(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Floor(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32Xor(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF32Abs(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF32Abs(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Mul(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Sub(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32ReinterpretF32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32ReinterpretF32(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32Add(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Sub(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32Or(ExpressionType, ExpressionType, ExpressionType&);
@@ -450,7 +450,7 @@ public:
     [[nodiscard]] PartialResult addI64GeU(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Mul(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Sub(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF64PromoteF32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF64PromoteF32(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64Add(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64GeS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64ExtendUI32(ExpressionType, ExpressionType&);
@@ -459,11 +459,11 @@ public:
     [[nodiscard]] PartialResult addF32Eq(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Eq(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Floor(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF32ConvertSI32(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF32ConvertSI32(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64And(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Or(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Ctz(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32Eqz(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32Eqz(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Eqz(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64ReinterpretF64(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF64ConvertUI32(ExpressionType, ExpressionType&);
@@ -471,7 +471,7 @@ public:
     [[nodiscard]] PartialResult addF64ConvertUI64(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64ShrS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64ShrU(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF64Sqrt(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF64Sqrt(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Shl(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addF32Gt(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32WrapI64(ExpressionType, ExpressionType&);
@@ -479,13 +479,13 @@ public:
     [[nodiscard]] PartialResult addI32Rotr(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32GtU(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64ExtendSI32(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32Extend8S(ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addI32Extend16S(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32Extend8S(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addI32Extend16S(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Extend8S(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Extend16S(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Extend32S(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI32GtS(ExpressionType, ExpressionType, ExpressionType&);
-    [[nodiscard]] PartialResult addF64Neg(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult NODELETE addF64Neg(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64LeU(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64LeS(ExpressionType, ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addI64Add(ExpressionType, ExpressionType, ExpressionType&);
@@ -512,7 +512,7 @@ public:
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType&);
     [[nodiscard]] PartialResult addThrowRef(ExpressionType, std::span<const TypedExpression>);
 
-    [[nodiscard]] PartialResult addReturn(const ControlType&, std::span<const TypedExpression>);
+    [[nodiscard]] PartialResult NODELETE addReturn(const ControlType&, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addBranch(ControlType&, ExpressionType, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addBranchNull(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, ExpressionType&);
     [[nodiscard]] PartialResult addBranchCast(ControlType&, ExpressionType, std::span<const TypedExpression>, bool, int32_t, bool);
@@ -534,8 +534,8 @@ public:
     [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
     [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
     [[nodiscard]] PartialResult addCallRef(unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
-    [[nodiscard]] PartialResult addUnreachable();
-    [[nodiscard]] PartialResult addCrash();
+    [[nodiscard]] PartialResult NODELETE addUnreachable();
+    [[nodiscard]] PartialResult NODELETE addCrash();
 
     void NODELETE setParser(FunctionParser<IPIntGenerator>* parser) { m_parser = parser; };
     size_t NODELETE getCurrentInstructionLength()

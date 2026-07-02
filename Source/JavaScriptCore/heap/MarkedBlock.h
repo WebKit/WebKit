@@ -353,7 +353,7 @@ public:
     unsigned atomNumber(const void*);
     size_t candidateAtomNumber(const void*);
         
-    JS_EXPORT_PRIVATE size_t markCount();
+    JS_EXPORT_PRIVATE size_t NODELETE markCount();
 
     JS_EXPORT_PRIVATE bool isMarked(const void*);
     bool isMarked(HeapVersion markingVersion, const void*);
@@ -381,20 +381,20 @@ public:
     bool hasAnyMarked() const;
     inline void noteMarked();
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void assertValidCell(VM&, HeapCell*) const;
+    JS_EXPORT_PRIVATE void NODELETE assertValidCell(VM&, HeapCell*) const;
 #else
     void assertValidCell(VM&, HeapCell*) const { }
 #endif
         
     WeakSet& weakSet();
 
-    JS_EXPORT_PRIVATE bool areMarksStale();
+    JS_EXPORT_PRIVATE bool NODELETE areMarksStale();
     bool areMarksStale(HeapVersion markingVersion);
     
     Dependency aboutToMark(HeapVersion markingVersion, HeapCell*);
         
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void assertMarksNotStale();
+    JS_EXPORT_PRIVATE void NODELETE assertMarksNotStale();
 #else
     void assertMarksNotStale() { }
 #endif
@@ -433,7 +433,7 @@ private:
 
     // FIXME: rdar://139998916
     NO_RETURN_DUE_TO_CRASH NEVER_INLINE void analyzeInvalidHandleAndCrash(AbstractLocker&, HeapCell*);
-    NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void dumpInfoAndCrashForInvalidHandleV2(HeapCell*, uint64_t cellFirst8Bytes, uint64_t zeroCounts, uint64_t bitfield, uint64_t subspaceHash, VM* blockVM, VM* actualVM);
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void NODELETE dumpInfoAndCrashForInvalidHandleV2(HeapCell*, uint64_t cellFirst8Bytes, uint64_t zeroCounts, uint64_t bitfield, uint64_t subspaceHash, VM* blockVM, VM* actualVM);
     inline void NODELETE setupTestForDumpInfoAndCrash();
 };
 

@@ -36,7 +36,7 @@ public:
     SVGPointList& points() { return m_points->baseVal(); }
     SVGPointList& animatedPoints() { return m_points->animVal(); }
 
-    size_t approximateMemoryCost() const override;
+    size_t NODELETE approximateMemoryCost() const override;
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPolyElement, SVGGeometryElement>;
 

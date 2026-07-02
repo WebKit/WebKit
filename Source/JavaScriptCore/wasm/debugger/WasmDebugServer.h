@@ -134,7 +134,7 @@ public:
         return *m_executionHandler;
     }
 
-    JS_EXPORT_PRIVATE ModuleManager& moduleManager() const;
+    JS_EXPORT_PRIVATE ModuleManager& NODELETE moduleManager() const;
 
     JS_EXPORT_PRIVATE void reset();
 

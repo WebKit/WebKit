@@ -65,7 +65,7 @@ public:
     // Copies the current tree state and clears the changed properties mask in the original.
     WEBCORE_EXPORT std::unique_ptr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
 
-    WEBCORE_EXPORT void NODELETE attachDeserializedNodes();
+    WEBCORE_EXPORT void attachDeserializedNodes();
 
     WEBCORE_EXPORT void setHasChangedProperties(bool = true);
     bool hasChangedProperties() const { return m_hasChangedProperties; }
@@ -131,8 +131,8 @@ private:
 } // namespace WebCore
 
 #ifndef NDEBUG
-void showScrollingStateTree(const WebCore::ScrollingStateTree&);
-void showScrollingStateTree(const WebCore::ScrollingStateNode&);
+void NODELETE showScrollingStateTree(const WebCore::ScrollingStateTree&);
+void NODELETE showScrollingStateTree(const WebCore::ScrollingStateNode&);
 #endif
 
 #endif // ENABLE(ASYNC_SCROLLING)

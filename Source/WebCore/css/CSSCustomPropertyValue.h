@@ -59,7 +59,7 @@ public:
     bool NODELETE isVariableData() const;
     bool NODELETE isCSSWideKeyword() const;
 
-    std::optional<CSSWideKeyword> tryCSSWideKeyword() const;
+    std::optional<CSSWideKeyword> NODELETE tryCSSWideKeyword() const;
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSCustomPropertyValue&) const;

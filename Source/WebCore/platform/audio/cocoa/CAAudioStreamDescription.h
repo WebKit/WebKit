@@ -46,19 +46,19 @@ public:
 
     const PlatformDescription& platformDescription() const LIFETIME_BOUND final;
 
-    PCMFormat format() const final;
+    PCMFormat NODELETE format() const final;
 
-    double sampleRate() const final;
-    bool isPCM() const final;
-    bool isInterleaved() const final;
-    bool isSignedInteger() const final;
-    bool isFloat() const final;
-    bool isNativeEndian() const final;
+    double NODELETE sampleRate() const final;
+    bool NODELETE isPCM() const final;
+    bool NODELETE isInterleaved() const final;
+    bool NODELETE isSignedInteger() const final;
+    bool NODELETE isFloat() const final;
+    bool NODELETE isNativeEndian() const final;
 
-    uint32_t numberOfInterleavedChannels() const final;
-    uint32_t numberOfChannelStreams() const final;
-    uint32_t numberOfChannels() const final;
-    uint32_t sampleWordSize() const final;
+    uint32_t NODELETE numberOfInterleavedChannels() const final;
+    uint32_t NODELETE numberOfChannelStreams() const final;
+    uint32_t NODELETE numberOfChannels() const final;
+    uint32_t NODELETE sampleWordSize() const final;
     uint32_t NODELETE bytesPerFrame() const;
     uint32_t NODELETE bytesPerPacket() const;
     uint32_t NODELETE formatFlags() const;
@@ -68,7 +68,7 @@ public:
     bool operator==(const AudioStreamDescription&) const;
 
     const AudioStreamBasicDescription& NODELETE streamDescription() const LIFETIME_BOUND;
-    AudioStreamBasicDescription& streamDescription() LIFETIME_BOUND;
+    AudioStreamBasicDescription& NODELETE streamDescription() LIFETIME_BOUND;
 
 private:
     AudioStreamBasicDescription m_streamDescription;

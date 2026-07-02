@@ -79,7 +79,7 @@ void RenderTableRow::willBeRemovedFromTree()
     section()->setNeedsCellRecalc();
 }
 
-static bool borderWidthChanged(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
+static bool NODELETE borderWidthChanged(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
 {
     return oldStyle->usedBorderLeftWidth() != newStyle->usedBorderLeftWidth()
         || oldStyle->usedBorderTopWidth() != newStyle->usedBorderTopWidth()

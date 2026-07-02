@@ -67,7 +67,7 @@ public:
     Cost() = default;
     explicit constexpr Cost(float value) : m_value(value) { }
 
-    float value() const { return m_value; }
+    float NODELETE value() const { return m_value; }
 
     Cost& operator+=(Cost other) { m_value += other.m_value; return *this; }
     Cost& operator-=(Cost other) { m_value -= other.m_value; return *this; }
@@ -653,8 +653,8 @@ public:
         return it != m_entries.end() && it->tmp == target;
     }
 
-    size_t size() const { return m_entries.size(); }
-    bool isEmpty() const { return m_entries.isEmpty(); }
+    size_t NODELETE size() const { return m_entries.size(); }
+    bool NODELETE isEmpty() const { return m_entries.isEmpty(); }
     auto begin() const { return m_entries.begin(); }
     auto end() const { return m_entries.end(); }
 
@@ -991,7 +991,7 @@ private:
         ASSERT(m_allAllowedRegisters == m_code.mutableRegs().toScalarRegisterSet());
     }
 
-    void NODELETE buildIndices()
+    void buildIndices()
     {
         Point headPosition = 0;
         Point tailPosition = 0;
@@ -1135,7 +1135,7 @@ private:
     }
 
     template<Bank bank>
-    bool isConstDef(Tmp tmp)
+    bool NODELETE isConstDef(Tmp tmp)
     {
         return m_useCounts.isConstDef<bank>(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
     }
@@ -1147,7 +1147,7 @@ private:
 
     // Returns the stack slot a Tmp should use if spilled. Otherwise, returns nullptr.
     template<Bank bank>
-    StackSlot* NODELETE spillSlot(Tmp tmp)
+    StackSlot* spillSlot(Tmp tmp)
     {
         TmpData& tmpData = m_map.get<bank>(tmp);
         if (tmpData.stage == Stage::Spilled) {
@@ -1158,7 +1158,7 @@ private:
         return nullptr;
     }
 
-    StackSlot* NODELETE spillSlot(Tmp tmp)
+    StackSlot* spillSlot(Tmp tmp)
     {
         ASSERT(tmp.isGP() || tmp.isFP());
         return tmp.isGP() ? spillSlot<GP>(tmp) : spillSlot<FP>(tmp);
@@ -1181,7 +1181,7 @@ private:
     }
 
     template<Bank bank>
-    Width NODELETE widthForConflicts(Tmp tmp)
+    Width widthForConflicts(Tmp tmp)
     {
         if constexpr (bank == GP)
             return Width64;
@@ -1691,7 +1691,7 @@ private:
             return encoded.m_value & indexMask;
         }
 
-        const TmpList& NODELETE decodeTmpList(EncodedTmpList encodedList) const
+        const TmpList& decodeTmpList(EncodedTmpList encodedList) const
         {
             if (isSingleton(encodedList)) [[likely]] {
                 m_singletonScratch[0] = decodeSingleton(encodedList);
@@ -3501,7 +3501,7 @@ private:
         dataLogLnIf(verbose(), "AroundLoop fixup: nonLoop=", nonLoopTmp, " loop=", loopTmp, " header=BB", *header);
     }
 
-    bool NODELETE mayBeCoalescable(Inst& inst)
+    bool mayBeCoalescable(Inst& inst)
     {
         switch (inst.kind.opcode) {
         case Move:

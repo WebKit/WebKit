@@ -48,7 +48,7 @@ public:
 
     static Ref<SVGMarkerElement> create(const QualifiedName&, Document&);
 
-    AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+    AffineTransform NODELETE viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
     const SVGLengthValue& refX() const LIFETIME_BOUND { return m_refX->currentValue(); }
     const SVGLengthValue& refY() const LIFETIME_BOUND { return m_refY->currentValue(); }

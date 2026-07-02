@@ -97,16 +97,16 @@ public:
 
     LineColumn computeLineAndColumn() const;
     String functionName(VM&) const;
-    SourceID sourceID() const;
+    SourceID NODELETE sourceID() const;
     JS_EXPORT_PRIVATE String sourceURL(VM&, AllowURLOverride = AllowURLOverride::Yes) const;
     String sourceURLStripped(VM&) const;
     String toString(VM&) const;
 
-    bool hasBytecodeIndex() const;
+    bool NODELETE hasBytecodeIndex() const;
     BytecodeIndex bytecodeIndex() const;
 
     template<typename Visitor>
-    void visitAggregate(Visitor&);
+    void NODELETE visitAggregate(Visitor&);
 
     bool isMarked(VM&) const;
 

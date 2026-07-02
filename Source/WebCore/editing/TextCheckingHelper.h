@@ -115,7 +115,7 @@ private:
 
 void checkTextOfParagraph(TextCheckerClient&, StringView, OptionSet<TextCheckingType>, Vector<TextCheckingResult>&, const VisibleSelection& currentSelection);
 
-bool unifiedTextCheckerEnabled(const LocalFrame*);
+bool NODELETE unifiedTextCheckerEnabled(const LocalFrame*);
 bool NODELETE platformDrivenTextCheckerEnabled();
 bool platformOrClientDrivenTextCheckerEnabled();
 

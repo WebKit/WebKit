@@ -91,7 +91,7 @@ private:
     void idChanged(WebCore::TrackID) final;
     void labelChanged(const String&) final;
     void languageChanged(const String&) final;
-    void willRemove() final;
+    void NODELETE willRemove() final;
 
     TextTrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();

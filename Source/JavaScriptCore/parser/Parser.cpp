@@ -90,7 +90,7 @@ std::atomic<unsigned> globalParseCount { 0 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleScopeData);
 
-ALWAYS_INLINE static SourceParseMode getAsyncFunctionBodyParseMode(SourceParseMode parseMode)
+ALWAYS_INLINE static SourceParseMode NODELETE getAsyncFunctionBodyParseMode(SourceParseMode parseMode)
 {
     if (isAsyncGeneratorWrapperParseMode(parseMode))
         return SourceParseMode::AsyncGeneratorBodyMode;
@@ -4520,7 +4520,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConditionalE
     return context.createConditionalExpr(location, cond, lhs, rhs);
 }
 
-ALWAYS_INLINE static bool isUnaryOpExcludingUpdateOp(JSTokenType token)
+ALWAYS_INLINE static bool NODELETE isUnaryOpExcludingUpdateOp(JSTokenType token)
 {
     if (isUpdateOp(token))
         return false;

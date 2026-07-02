@@ -171,21 +171,21 @@ private:
 
     void platformPlay() final;
     void platformPause() final;
-    bool platformPaused() const final;
+    bool NODELETE platformPaused() const final;
     void setVolumeLocked(bool) final;
     void setVolume(float) final;
     void setMuted(bool) final;
     void paint(GraphicsContext&, const FloatRect&) final;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
-    PlatformLayer* platformLayer() const final;
+    PlatformLayer* NODELETE platformLayer() const final;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
     void updateVideoFullscreenInlineImage() final;
     void setVideoFullscreenFrame(const FloatRect&) final;
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity) final;
-    void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) final;
-    void videoFullscreenStandbyChanged() final;
+    void NODELETE setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) final;
+    void NODELETE videoFullscreenStandbyChanged() final;
 #endif
     void setPlayerRate(double, std::optional<MonotonicTime>&& = std::nullopt);
 
@@ -197,14 +197,14 @@ private:
 #endif
 
     bool supportsAcceleratedRendering() const final { return true; }
-    MediaTime mediaTimeForTimeValue(const MediaTime&) const final;
+    MediaTime NODELETE mediaTimeForTimeValue(const MediaTime&) const final;
 
     void createAVPlayer() final;
     void createAVPlayerItem() final;
     void createAVPlayerLayer();
     void createAVAssetForURL(const URL&) final;
     void createAVAssetForURL(const URL&, RetainPtr<NSMutableDictionary>);
-    MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const final;
+    MediaPlayerPrivateAVFoundation::ItemStatus NODELETE playerItemStatus() const final;
     MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const final;
     long assetErrorCode() const final;
 
@@ -213,8 +213,8 @@ private:
 
     void checkPlayability();
     void setRateDouble(double) final;
-    double rate() const final;
-    double effectiveRate() const final;
+    double NODELETE rate() const final;
+    double NODELETE effectiveRate() const final;
     void setPreservesPitch(bool) final;
     void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
     void seekToTargetInternal(const SeekTarget&) final;
@@ -238,8 +238,8 @@ private:
     void createVideoLayer() final;
     void destroyVideoLayer() final;
 
-    bool hasContextRenderer() const final;
-    bool hasLayerRenderer() const final;
+    bool NODELETE hasContextRenderer() const final;
+    bool NODELETE hasLayerRenderer() const final;
 
 
     enum class ShouldAnimate : bool { No, Yes };
@@ -314,12 +314,12 @@ private:
     bool hasAudio() const final;
     bool isCurrentPlaybackTargetWireless() const final;
     String wirelessPlaybackTargetName() const final;
-    MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
+    MediaPlayer::WirelessPlaybackTargetType NODELETE wirelessPlaybackTargetType() const final;
     bool wirelessVideoPlaybackDisabled() const final;
     void setWirelessVideoPlaybackDisabled(bool) final;
     OptionSet<MediaPlaybackTargetType> supportedPlaybackTargetTypes() const final;
     static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
-    void updateDisableExternalPlayback();
+    void NODELETE updateDisableExternalPlayback();
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -332,7 +332,7 @@ private:
 
     Vector<String> preferredAudioCharacteristics() const;
 
-    void setShouldDisableSleep(bool) final;
+    void NODELETE setShouldDisableSleep(bool) final;
     void updateRotationSession();
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
@@ -378,7 +378,7 @@ private:
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics(AVPlayerLayer*) const;
 
-    void setVideoTarget(const PlatformVideoTarget&) final;
+    void NODELETE setVideoTarget(const PlatformVideoTarget&) final;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String defaultSpatialTrackingLabel() const;
@@ -390,7 +390,7 @@ private:
     void updateSpatialTrackingLabel();
 #endif
 
-    void isInFullscreenOrPictureInPictureChanged(bool) final;
+    void NODELETE isInFullscreenOrPictureInPictureChanged(bool) final;
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final { return true; }
@@ -407,7 +407,7 @@ private:
 #endif
 
     void updateLayerAttachment();
-    bool shouldAttachLayerToPlayer();
+    bool NODELETE shouldAttachLayerToPlayer();
 
 #if PLATFORM(MAC)
     void screenReservedChanged(bool) final;

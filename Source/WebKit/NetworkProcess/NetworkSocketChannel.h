@@ -92,7 +92,7 @@ private:
 
     NetworkSession* NODELETE session() const;
 
-    IPC::Connection* messageSenderConnection() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     void finishClosingIfPossible();

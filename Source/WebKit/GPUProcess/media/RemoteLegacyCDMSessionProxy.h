@@ -62,7 +62,7 @@ public:
     WebCore::LegacyCDMSession* session() const { return m_session.get(); }
 
     RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
 private:
     friend class RemoteLegacyCDMFactoryProxy;

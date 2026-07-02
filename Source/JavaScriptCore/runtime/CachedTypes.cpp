@@ -106,7 +106,7 @@ public:
         allocateNewPage();
     }
 
-    VM& vm() { return m_vm; }
+    VM& NODELETE vm() { return m_vm; }
 
     Allocation malloc(unsigned size)
     {
@@ -254,7 +254,7 @@ private:
         }
 
     private:
-        size_t capacity() const { return m_buffer.sizeInBytes(); }
+        size_t NODELETE capacity() const { return m_buffer.sizeInBytes(); }
 
         MallocSpan<uint8_t, VMMalloc> m_buffer;
         ptrdiff_t m_offset { 0 };
@@ -906,7 +906,7 @@ public:
             encode(encoder, { *source });
     }
 
-    SourceType<T>* decodeAsPtr(Decoder& decoder) const
+    SourceType<T>* NODELETE decodeAsPtr(Decoder& decoder) const
     {
         RELEASE_ASSERT(!this->isEmpty());
         return this->template buffer<T>()->decode(decoder);

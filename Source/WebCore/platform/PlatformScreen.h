@@ -102,12 +102,12 @@ public:
     WEBCORE_EXPORT static void updateSingletonProperties(ScreenProperties&&);
 
     WEBCORE_EXPORT const ScreenData* screenData(PlatformDisplayID) const LIFETIME_BOUND;
-    WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID() const;
-    WEBCORE_EXPORT const ScreenProperties& screenProperties() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const ScreenDataMap& screenDatas() const LIFETIME_BOUND;
+    WEBCORE_EXPORT PlatformDisplayID NODELETE primaryScreenDisplayID() const;
+    WEBCORE_EXPORT const ScreenProperties& NODELETE screenProperties() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const ScreenDataMap& NODELETE screenDatas() const LIFETIME_BOUND;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    WEBCORE_EXPORT OptionSet<ContentsFormat> screenContentsFormatsForTesting() const;
+    WEBCORE_EXPORT OptionSet<ContentsFormat> NODELETE screenContentsFormatsForTesting() const;
     WEBCORE_EXPORT static void updateSingletonContentsFormatsForTesting(OptionSet<ContentsFormat>);
 #endif
 

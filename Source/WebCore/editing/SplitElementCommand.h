@@ -45,7 +45,7 @@ private:
     void executeApply();
 
 #ifndef NDEBUG
-    void getNodesInCommand(NodeSet&) override;
+    void NODELETE getNodesInCommand(NodeSet&) override;
 #endif
 
     RefPtr<Element> m_element1;

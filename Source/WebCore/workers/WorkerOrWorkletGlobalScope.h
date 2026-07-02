@@ -59,8 +59,8 @@ public:
     WorkerOrWorkletScriptController* script() const { return m_script.get(); }
     void clearScript();
 
-    JSC::VM& vm() final;
-    JSC::VM* vmIfExists() const final;
+    JSC::VM& NODELETE vm() final;
+    JSC::VM* NODELETE vmIfExists() const final;
     WorkerInspectorController& inspectorController() const { return m_inspectorController; }
 
     ScriptModuleLoader& moduleLoader() LIFETIME_BOUND { return m_moduleLoader; }
@@ -68,7 +68,7 @@ public:
     // ScriptExecutionContext.
     EventLoopTaskGroup& eventLoop() final;
     bool isContextThread() const final;
-    bool isEventLoopGroupStoppedPermanently() const final;
+    bool NODELETE isEventLoopGroupStoppedPermanently() const final;
     void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
     std::optional<PAL::SessionID> sessionID() const final { return m_sessionID; }
 
@@ -87,7 +87,7 @@ public:
     virtual FetchOptions::Destination destination() const = 0;
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy; }
     std::optional<uint64_t> noiseInjectionHashSalt() const final { return m_noiseInjectionHashSalt; }
-    OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const final;
+    OptionSet<NoiseInjectionPolicy> NODELETE noiseInjectionPolicies() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return m_advancedPrivacyProtections; }
 
 protected:
@@ -96,7 +96,7 @@ protected:
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
     // ScriptExecutionContext.
-    bool isJSExecutionForbidden() const final;
+    bool NODELETE isJSExecutionForbidden() const final;
 
     void markAsClosing() { m_isClosing = true; }
 

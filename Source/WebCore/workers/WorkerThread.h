@@ -135,7 +135,7 @@ private:
     Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
     void evaluateScriptIfNecessary(String& exceptionMessage) final;
-    bool shouldWaitForWebInspectorOnStartup() const final;
+    bool NODELETE shouldWaitForWebInspectorOnStartup() const final;
 
     CheckedPtr<WorkerLoaderProxy> m_workerLoaderProxy;
     CheckedPtr<WorkerDebuggerProxy> m_workerDebuggerProxy;

@@ -62,7 +62,7 @@ public:
     void didFinishLoading(const ResourceError&);
 
     // EventTarget.
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void reportNetworkUsage(size_t bytesTransferredOverNetworkDelta);
 
@@ -70,11 +70,11 @@ private:
     SharedWorker(Document&, const SharedWorkerKey&, Ref<MessagePort>&&);
 
     // EventTarget.
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
     // ActiveDOMObject.
     void stop() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
 

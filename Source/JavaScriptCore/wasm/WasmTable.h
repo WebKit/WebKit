@@ -118,7 +118,7 @@ class ExternOrAnyRefTable final : public Table {
 public:
     friend class Table;
 
-    void clear(uint32_t);
+    void NODELETE clear(uint32_t);
     void set(uint32_t, JSValue);
     JSValue get(uint32_t index) const { return m_jsValues.get()[index].get(); }
 
@@ -159,7 +159,7 @@ public:
         return offsetOfTail() + sizeof(Function) * size;
     }
 
-    void clear(uint32_t);
+    void NODELETE clear(uint32_t);
     void set(uint32_t, JSValue);
     WebAssemblyFunctionBase* get(uint32_t index);
 

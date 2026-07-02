@@ -59,7 +59,7 @@ public:
     void deleteLegacyRootBox(bool runCleanup = false);
 
     void layoutLineBoxes();
-    void shiftLineBy(LayoutUnit shiftX, LayoutUnit shiftY);
+    void NODELETE shiftLineBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
     LegacyRootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     void addOverflowFromInlineChildren();

@@ -198,7 +198,7 @@ JSPromise* loadAndEvaluateModule(JSGlobalObject* globalObject, const String& mod
     RELEASE_AND_RETURN(scope, globalObject->moduleLoader()->loadModule(globalObject, resolved, WTF::move(parameters), WTF::move(scriptFetcher), { ModuleLoadFlag::Evaluate }));
 }
 
-static ScriptFetchParameters::Type getSourceType(const SourceCode& source)
+static ScriptFetchParameters::Type NODELETE getSourceType(const SourceCode& source)
 {
     switch (source.provider()->sourceType()) {
     case SourceProviderSourceType::JSON:

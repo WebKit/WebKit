@@ -118,7 +118,7 @@ public:
     // Result is the size in characters of what was found.
     // And <startOffset> is the number of characters back to the start of what was found.
     size_t search(size_t& startOffset);
-    bool atBreak() const;
+    bool NODELETE atBreak() const;
 
 #if !UCONFIG_NO_COLLATION
 
@@ -939,7 +939,7 @@ static bool NODELETE shouldEmitReplacementInsteadOfNode(const Node& node)
     return is<TextPlaceholderElement>(node);
 }
 
-static bool isBlockLevelReplacedElement(Node& node)
+static bool NODELETE isBlockLevelReplacedElement(Node& node)
 {
     auto* renderer = node.renderer();
     return renderer && !renderer->isInline() && is<RenderReplaced>(*renderer)
@@ -1003,7 +1003,7 @@ bool shouldEmitNewlinesBeforeAndAfterNode(Node& node, bool emitsNewlinesPerInner
         && !renderer->isBody();
 }
 
-static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false, bool emitsNewlinesPerInnerTextSpec = false)
+static bool NODELETE shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false, bool emitsNewlinesPerInnerTextSpec = false)
 {
     // FIXME: It should be better but slower to create a VisiblePosition here.
     if (!shouldEmitNewlinesBeforeAndAfterNode(node, emitsNewlinesPerInnerTextSpec))

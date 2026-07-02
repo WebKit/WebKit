@@ -146,7 +146,7 @@ public:
     // Layer name. Only used to identify layers in debug output
     const String& name() const LIFETIME_BOUND { return m_name; }
     virtual void setName(const String& name) { m_name = name; }
-    WEBCORE_EXPORT virtual String debugName() const;
+    WEBCORE_EXPORT virtual String NODELETE debugName() const;
 
     GraphicsLayer* parent() const { return m_parent; }
     void NODELETE setParent(GraphicsLayer*); // Internal use only.
@@ -451,7 +451,7 @@ public:
 
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
-    WEBCORE_EXPORT virtual void setZPosition(float);
+    WEBCORE_EXPORT virtual void NODELETE setZPosition(float);
 
     virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     
@@ -719,5 +719,5 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
+void NODELETE showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif

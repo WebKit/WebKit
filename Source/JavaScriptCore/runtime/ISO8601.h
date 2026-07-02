@@ -237,7 +237,7 @@ public:
 
     friend constexpr auto operator<=>(const ExactTime&, const ExactTime&) = default;
 
-    std::optional<ExactTime> NODELETE add(Duration) const;
+    std::optional<ExactTime> add(Duration) const;
     InternalDuration difference(JSGlobalObject*, ExactTime, unsigned, TemporalUnit, RoundingMode) const;
     ExactTime round(JSGlobalObject*, unsigned, TemporalUnit, RoundingMode) const;
 
@@ -512,7 +512,7 @@ uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
 int32_t yearOfWeek(PlainDate);
 uint8_t NODELETE daysInMonth(int32_t year, uint8_t month);
-uint8_t daysInMonth(uint8_t month);
+uint8_t NODELETE daysInMonth(uint8_t month);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
@@ -521,7 +521,7 @@ String temporalYearMonthToString(PlainYearMonth, StringView, unsigned calendarId
 String temporalMonthDayToString(PlainMonthDay, StringView, unsigned calendarId);
 String monthCode(uint32_t);
 
-bool NODELETE isValidDuration(const Duration&);
+bool isValidDuration(const Duration&);
 bool NODELETE isValidISODate(double, double, double);
 PlainDate NODELETE createISODateRecord(double, double, double);
 

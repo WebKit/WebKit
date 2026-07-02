@@ -221,7 +221,7 @@ public:
     inline bool isRowFlexDirection() const;
     inline bool isSkippedRootOrSkippedContent() const;
 
-    bool isListItemType() const;
+    bool NODELETE isListItemType() const;
 
     inline bool specifiesColumns() const;
 

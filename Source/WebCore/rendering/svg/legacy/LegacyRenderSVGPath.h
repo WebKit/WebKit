@@ -58,7 +58,7 @@ private:
     void processMarkerPositions();
     FloatRect markerRect(RepaintRectCalculation, float strokeWidth) const;
 
-    bool isRenderingDisabled() const override;
+    bool NODELETE isRenderingDisabled() const override;
 
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
     Vector<MarkerPosition> m_markerPositions;

@@ -94,7 +94,7 @@ public:
     void setRangeDeletedByUnapply(const VisiblePositionIndexRange&);
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(NodeSet&);
+    virtual void NODELETE getNodesInCommand(NodeSet&);
 #endif
 
 private:
@@ -123,14 +123,14 @@ public:
     EditCommandComposition* NODELETE composition() const;
     Ref<EditCommandComposition> ensureComposition();
 
-    virtual bool isTypingCommand() const;
+    virtual bool NODELETE isTypingCommand() const;
     virtual bool isDictationCommand() const { return false; }
-    virtual bool preservesTypingStyle() const;
-    virtual bool shouldRetainAutocorrectionIndicator() const;
-    virtual void setShouldRetainAutocorrectionIndicator(bool);
+    virtual bool NODELETE preservesTypingStyle() const;
+    virtual bool NODELETE shouldRetainAutocorrectionIndicator() const;
+    virtual void NODELETE setShouldRetainAutocorrectionIndicator(bool);
     virtual bool shouldStopCaretBlinking() const { return false; }
     virtual AtomString inputEventTypeName() const;
-    virtual bool isInputMethodComposing() const;
+    virtual bool NODELETE isInputMethodComposing() const;
     virtual String inputEventData() const { return { }; }
     virtual bool isBeforeInputEventCancelable() const { return true; }
     virtual bool shouldDispatchInputEvents() const { return true; }

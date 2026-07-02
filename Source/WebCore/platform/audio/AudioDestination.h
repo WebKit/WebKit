@@ -74,7 +74,7 @@ public:
 
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate
     virtual float sampleRate() const { return m_sampleRate; }
-    WEBCORE_EXPORT static float hardwareSampleRate();
+    WEBCORE_EXPORT static float NODELETE hardwareSampleRate();
 
     virtual unsigned framesPerBuffer() const = 0;
     virtual WTF::MediaTime outputLatency() const { return MediaTime::zeroTime(); }
@@ -85,7 +85,7 @@ public:
     // The numberOfOutputChannels parameter of AudioDestination::create() is allowed to
     // be a value: 1 <= numberOfOutputChannels <= maxChannelCount(),
     // or if maxChannelCount() equals 0, then numberOfOutputChannels must be 2.
-    static unsigned long maxChannelCount();
+    static unsigned long NODELETE maxChannelCount();
 
     void callRenderCallback(AudioBus& destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition);
 

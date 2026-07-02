@@ -53,7 +53,7 @@ WKUserContentExtensionStoreRef WKUserContentExtensionStoreCreate(WKStringRef pat
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static inline WKUserContentExtensionStoreResult toResult(const std::error_code& error)
+static inline WKUserContentExtensionStoreResult NODELETE toResult(const std::error_code& error)
 {
     if (!error)
         return kWKUserContentExtensionStoreSuccess;

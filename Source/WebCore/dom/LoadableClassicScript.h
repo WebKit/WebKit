@@ -49,8 +49,8 @@ public:
     void ref() const final { LoadableScript::ref(); }
     void deref() const final { LoadableScript::deref(); }
 
-    bool isLoaded() const final;
-    bool hasError() const final;
+    bool NODELETE isLoaded() const final;
+    bool NODELETE hasError() const final;
     std::optional<Error> takeError() final;
     bool wasCanceled() const final;
     bool isInlineModule() const final { return false; }

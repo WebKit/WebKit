@@ -33,17 +33,17 @@ class CodeBlock;
 class FunctionExecutable;
 
 JS_EXPORT_PRIVATE FunctionExecutable* NODELETE getExecutableForFunction(JSValue theFunctionValue);
-JS_EXPORT_PRIVATE CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue);
+JS_EXPORT_PRIVATE CodeBlock* NODELETE getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue);
 
-JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSValue function);
+JS_EXPORT_PRIVATE JSValue NODELETE numberOfDFGCompiles(JSValue function);
 JS_EXPORT_PRIVATE JSValue NODELETE setNeverInline(JSValue function);
 JS_EXPORT_PRIVATE JSValue NODELETE setNeverOptimize(JSValue function);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSValue function);
 
 JS_EXPORT_PRIVATE JSValue NODELETE failNextNewCodeBlock(JSGlobalObject*);
-JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSGlobalObject*, CallFrame*);
-JS_EXPORT_PRIVATE JSValue setNeverInline(JSGlobalObject*, CallFrame*);
-JS_EXPORT_PRIVATE JSValue setNeverOptimize(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue NODELETE numberOfDFGCompiles(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue NODELETE setNeverInline(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue NODELETE setNeverOptimize(JSGlobalObject*, CallFrame*);
 JS_EXPORT_PRIVATE JSValue NODELETE setCannotUseOSRExitFuzzing(JSGlobalObject*, CallFrame*);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSGlobalObject*, CallFrame*);
 

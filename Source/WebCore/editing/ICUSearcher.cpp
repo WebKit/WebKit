@@ -52,7 +52,7 @@ static UStringSearch* createSearcher()
     return searcher;
 }
 
-static UStringSearch* globalSearcher()
+static UStringSearch* NODELETE globalSearcher()
 {
     SUPPRESS_FORWARD_DECL_ARG static UStringSearch* searcher = createSearcher();
     return searcher;

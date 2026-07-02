@@ -75,7 +75,7 @@ static String removeZeroWidthCharacters(const String& string)
     });
 }
 
-static String trimAndSimplifyWhitespace(const String& string)
+static String NODELETE trimAndSimplifyWhitespace(const String& string)
 {
     return string.trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
 }
@@ -779,7 +779,7 @@ public:
         m_urlStringStack.append(WTF::move(urlString));
     }
 
-    std::optional<String> NODELETE currentURLString() const
+    std::optional<String> currentURLString() const
     {
         if (m_urlStringStack.isEmpty())
             return std::nullopt;

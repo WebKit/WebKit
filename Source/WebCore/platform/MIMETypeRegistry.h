@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT static bool isSupportedTextTrackMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is a plugin implemented by the browser.
-    static bool isApplicationPluginMIMEType(const String& mimeType);
+    static bool NODELETE isApplicationPluginMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is one of the common PDF/PS types.
     WEBCORE_EXPORT static bool isPDFMIMEType(const String& mimeType);

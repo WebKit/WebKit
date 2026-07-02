@@ -245,8 +245,8 @@ private:
     const bool m_contiguous { false };
 
 #if ASSERT_ENABLED
-    bool internallyConsistent() const;
-    static bool internallyConsistent(size_t, const DataSegmentVector&);
+    bool NODELETE internallyConsistent() const;
+    static bool NODELETE internallyConsistent(size_t, const DataSegmentVector&);
 #endif
 };
 
@@ -354,7 +354,7 @@ public:
     WEBCORE_EXPORT void append(NSData *);
 #endif
 #if USE(CF)
-    WEBCORE_EXPORT void append(CFDataRef);
+    WEBCORE_EXPORT void NODELETE append(CFDataRef);
 #endif
 
     explicit operator bool() const { return !isNull(); }

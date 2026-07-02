@@ -885,7 +885,7 @@ String WebFrame::innerText() const
     return protect(protect(localFrame->document())->documentElement())->innerText();
 }
 
-RefPtr<WebFrame> WebFrame::parentFrame() const
+RefPtr<WebFrame> NODELETE WebFrame::parentFrame() const
 {
     auto* frame = m_coreFrame.get();
     if (!frame)
@@ -1682,7 +1682,7 @@ void WebFrame::findFocusableElementContinuingFromFrame(WebCore::FocusDirection d
     }
 }
 
-static RefPtr<Node> nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
+static RefPtr<Node> NODELETE nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);
     if (!object)

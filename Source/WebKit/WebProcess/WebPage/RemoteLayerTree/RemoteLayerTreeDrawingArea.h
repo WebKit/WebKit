@@ -64,12 +64,12 @@ public:
 
     bool displayDidRefreshIsPending() const { return m_waitingForBackingStoreSwap; }
 
-    void gpuProcessConnectionWasDestroyed();
+    void NODELETE gpuProcessConnectionWasDestroyed();
 
 protected:
     RemoteLayerTreeDrawingArea(WebPage&, const WebPageCreationParameters&);
 
-    void updateRendering();
+    void NODELETE updateRendering();
 
 private:
 #if ENABLE(TILED_CA_DRAWING_AREA)
@@ -77,72 +77,72 @@ private:
 #endif
 
     // DrawingArea
-    void setNeedsDisplay() final;
+    void NODELETE setNeedsDisplay() final;
     void setNeedsDisplayInRect(const WebCore::IntRect&) final;
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) final;
-    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) final;
+    void NODELETE scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) final;
+    void NODELETE updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) final;
 
-    WebCore::GraphicsLayerFactory* graphicsLayerFactory() final;
-    void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
-    void addRootFrame(WebCore::FrameIdentifier) final;
-    void removeRootFrame(WebCore::FrameIdentifier) final;
-    void triggerRenderingUpdate() final;
-    bool scheduleRenderingUpdate() final;
-    void renderingUpdateFramesPerSecondChanged() final;
-    void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
+    WebCore::GraphicsLayerFactory* NODELETE graphicsLayerFactory() final;
+    void NODELETE setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void NODELETE addRootFrame(WebCore::FrameIdentifier) final;
+    void NODELETE removeRootFrame(WebCore::FrameIdentifier) final;
+    void NODELETE triggerRenderingUpdate() final;
+    bool NODELETE scheduleRenderingUpdate() final;
+    void NODELETE renderingUpdateFramesPerSecondChanged() final;
+    void NODELETE attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
 
-    void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
+    void NODELETE dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
     virtual void willCommitMainFrameData(MainFrameData&) { }
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
-    void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
+    void NODELETE setPreferredFramesPerSecond(WebCore::FramesPerSecond);
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const final;
+    bool NODELETE shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const final;
 
-    void updatePreferences(const WebPreferencesStore&) final;
+    void NODELETE updatePreferences(const WebPreferencesStore&) final;
 
     bool supportsAsyncScrolling() const final { return true; }
     bool usesDelegatedPageScaling() const override { return true; }
-    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
+    WebCore::DelegatedScrollingMode NODELETE delegatedScrollingMode() const override;
 
-    void setLayerTreeStateIsFrozen(bool) final;
+    void NODELETE setLayerTreeStateIsFrozen(bool) final;
     bool layerTreeStateIsFrozen() const final { return m_isRenderingSuspended; }
 
-    void updateRenderingWithForcedRepaint() final;
-    void updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&&) final;
+    void NODELETE updateRenderingWithForcedRepaint() final;
+    void NODELETE updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&&) final;
 
-    void setViewExposedRect(std::optional<WebCore::FloatRect>) final;
+    void NODELETE setViewExposedRect(std::optional<WebCore::FloatRect>) final;
     std::optional<WebCore::FloatRect> viewExposedRect() const final { return m_viewExposedRect; }
 
-    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) final;
-    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) final;
+    void NODELETE acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) final;
+    void NODELETE acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) final;
 
-    WebCore::FloatRect exposedContentRect() const final;
-    void setExposedContentRect(const WebCore::FloatRect&) final;
+    WebCore::FloatRect NODELETE exposedContentRect() const final;
+    void NODELETE setExposedContentRect(const WebCore::FloatRect&) final;
 
-    void displayDidRefresh(MonotonicTime) final;
+    void NODELETE displayDidRefresh(MonotonicTime) final;
 
-    void setDeviceScaleFactor(float, CompletionHandler<void()>&&) final;
+    void NODELETE setDeviceScaleFactor(float, CompletionHandler<void()>&&) final;
 
-    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
+    void NODELETE mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&&) final;
 
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) final;
 
-    void updateRootLayers();
+    void NODELETE updateRootLayers();
 
     void addCommitHandlers();
-    void startRenderingUpdateTimer();
-    void didCompleteRenderingUpdateDisplayFlush(bool flushSucceeded);
+    void NODELETE startRenderingUpdateTimer();
+    void NODELETE didCompleteRenderingUpdateDisplayFlush(bool flushSucceeded);
 
     TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
 
-    void tryMarkLayersVolatile(CompletionHandler<void(bool succeeded)>&&) final;
+    void NODELETE tryMarkLayersVolatile(CompletionHandler<void(bool succeeded)>&&) final;
 
-    void adoptLayersFromDrawingArea(DrawingArea&) final;
+    void NODELETE adoptLayersFromDrawingArea(DrawingArea&) final;
 
-    void scheduleRenderingUpdateTimerFired();
+    void NODELETE scheduleRenderingUpdateTimerFired();
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
@@ -172,7 +172,7 @@ private:
         RefPtr<WebCore::GraphicsLayer> viewOverlayRootLayer;
         WebCore::FrameIdentifier frameID;
     };
-    RootLayerInfo* rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
+    RootLayerInfo* NODELETE rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
 
     Vector<RootLayerInfo, 1> m_rootLayers;
 

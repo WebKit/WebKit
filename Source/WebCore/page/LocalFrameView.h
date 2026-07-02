@@ -133,7 +133,7 @@ public:
 
     WEBCORE_EXPORT bool NODELETE didFirstLayout() const;
 
-    WEBCORE_EXPORT bool needsLayout() const;
+    WEBCORE_EXPORT bool NODELETE needsLayout() const;
     WEBCORE_EXPORT void setNeedsLayoutAfterViewConfigurationChange();
 
     void setNeedsCompositingConfigurationUpdate();
@@ -167,7 +167,7 @@ public:
     void setNeedsOneShotDrawingSynchronization();
 
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
-    WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPageScale();
+    WEBCORE_EXPORT GraphicsLayer* NODELETE graphicsLayerForPageScale();
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForScrolledContents();
     WEBCORE_EXPORT GraphicsLayer* clipLayer() const;
 #if HAVE(RUBBER_BANDING)
@@ -380,9 +380,9 @@ public:
 
     WEBCORE_EXPORT static LayoutSize expandedLayoutViewportSize(const LayoutSize& baseLayoutViewportSize, const LayoutSize& documentSize, double heightExpansionFactor);
 
-    WEBCORE_EXPORT static LayoutRect computeUpdatedLayoutViewportRect(const LayoutRect& layoutViewport, const LayoutRect& documentRect, const LayoutSize& unobscuredContentSize, const LayoutRect& unobscuredContentRect, const LayoutSize& baseLayoutViewportSize, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, LayoutViewportConstraint);
+    WEBCORE_EXPORT static LayoutRect NODELETE computeUpdatedLayoutViewportRect(const LayoutRect& layoutViewport, const LayoutRect& documentRect, const LayoutSize& unobscuredContentSize, const LayoutRect& unobscuredContentRect, const LayoutSize& baseLayoutViewportSize, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, LayoutViewportConstraint);
     
-    WEBCORE_EXPORT static LayoutPoint computeLayoutViewportOrigin(const LayoutRect& visualViewport, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, const LayoutRect& layoutViewport, ScrollBehaviorForFixedElements);
+    WEBCORE_EXPORT static LayoutPoint NODELETE computeLayoutViewportOrigin(const LayoutRect& visualViewport, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, const LayoutRect& layoutViewport, ScrollBehaviorForFixedElements);
 
     // These layers are positioned differently when there are obscured content insets, a header, or a footer.
     // These value need to be computed on both the main thread and the scrolling thread.
@@ -554,7 +554,7 @@ public:
     WEBCORE_EXPORT FloatPoint clientToDocumentPoint(FloatPoint) const;
 
     // Unlike client coordinates, layout viewport coordinates are affected by page zoom.
-    WEBCORE_EXPORT FloatRect clientToLayoutViewportRect(FloatRect) const;
+    WEBCORE_EXPORT FloatRect NODELETE clientToLayoutViewportRect(FloatRect) const;
     WEBCORE_EXPORT FloatPoint NODELETE clientToLayoutViewportPoint(FloatPoint) const;
 
     bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner.get() == &scrollCorner; }
@@ -732,7 +732,7 @@ public:
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
     Style::ScrollbarGutter NODELETE scrollbarGutterStyle() const final;
-    ScrollbarWidth NODELETE scrollbarWidthStyle() const final;
+    ScrollbarWidth scrollbarWidthStyle() const final;
     std::optional<ScrollbarColor> scrollbarColorStyle() const final;
 
     // overflow:hidden scrollable areas can participate in anchoring, so they need their own set.
@@ -823,7 +823,7 @@ private:
     bool useSlowRepaints(bool considerOverlap = true) const;
     bool useSlowRepaintsIfNotOverlapped() const;
     void updateCanBlitOnScrollRecursively();
-    bool shouldLayoutAfterContentsResized() const;
+    bool NODELETE shouldLayoutAfterContentsResized() const;
     
     void cancelScheduledScrollToFocusedElement();
     void cancelScheduledTextFragmentIndicatorTimer();
@@ -868,7 +868,7 @@ private:
 
     void delegatedScrollingModeDidChange() final;
 
-    void unobscuredContentSizeChanged() final;
+    void NODELETE unobscuredContentSizeChanged() final;
     
     void scrollToTextFragmentRetryTimerFired();
     void textFragmentIndicatorTimerFired();
@@ -945,7 +945,7 @@ private:
 
     void updateScrollCorner() final;
 
-    LocalFrameView* parentFrameView() const;
+    LocalFrameView* NODELETE parentFrameView() const;
 
     void markRootOrBodyRendererDirty() const;
 
@@ -958,7 +958,7 @@ private:
     void removeFromAXObjectCache();
     void notifyWidgets(WidgetNotification);
 
-    RenderElement* viewportRenderer() const;
+    RenderElement* NODELETE viewportRenderer() const;
     
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
     void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool canDeferUpdateLayerPositions);

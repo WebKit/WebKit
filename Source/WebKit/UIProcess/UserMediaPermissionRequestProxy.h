@@ -50,7 +50,7 @@ public:
 
     enum class UserMediaDisplayCapturePromptType { Window, Screen, UserChoose };
     virtual void promptForGetDisplayMedia(UserMediaDisplayCapturePromptType);
-    virtual bool canRequestDisplayCapturePermission();
+    virtual bool NODELETE canRequestDisplayCapturePermission();
 
     void doDefaultAction();
     enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };

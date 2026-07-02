@@ -69,7 +69,7 @@ private:
     void NODELETE ref() const final { m_styleSheet->ref(); }
     void deref() const final { m_styleSheet->deref(); }
 
-    unsigned length() const final { return m_styleSheet->length(); }
+    unsigned NODELETE length() const final { return m_styleSheet->length(); }
     CSSRule* item(unsigned index) const final { return protect(m_styleSheet)->item(index); }
 
     CSSStyleSheet* NODELETE styleSheet() const final { return m_styleSheet.get(); }
@@ -79,7 +79,7 @@ private:
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSheetCSSRuleList);
 
 #if ASSERT_ENABLED
-static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
+static bool NODELETE isAcceptableCSSStyleSheetParent(Node* parentNode)
 {
     // Only these nodes can be parents of StyleSheets, and they need to call clearOwnerNode() when moved out of document.
     return !parentNode

@@ -59,7 +59,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override = 0;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     WebCoreOpaqueRoot NODELETE opaqueRoot() const final;
 
     void didMoveToNewDocument(Document&);

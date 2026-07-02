@@ -72,7 +72,7 @@ private:
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     SpeechRecognitionConnectionIdentifier m_identifier;
     HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, WeakPtr<WebCore::SpeechRecognitionConnectionClient>> m_clientMap;

@@ -72,7 +72,7 @@ private:
 
     WebGPUIdentifier backing() const { return m_backing; }
 
-    RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
+    RefPtr<WebCore::NativeImage> NODELETE getMetalTextureAsNativeImage(uint32_t, bool& isIOSurfaceSupportedFormat) final;
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)

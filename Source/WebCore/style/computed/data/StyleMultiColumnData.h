@@ -46,7 +46,7 @@ public:
     bool operator==(const MultiColumnData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const MultiColumnData&) const;
+    void NODELETE dumpDifferences(TextStream&, const MultiColumnData&) const;
 #endif
 
     ColumnWidth columnWidth { CSS::Keyword::Auto { } };

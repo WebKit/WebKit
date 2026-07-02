@@ -48,7 +48,7 @@ public:
     void addRenderer(SharedAudioDestination&, CompletionHandler<void(bool)>&&);
     void removeRenderer(SharedAudioDestination&, CompletionHandler<void(bool)>&&);
 
-    unsigned framesPerBuffer() const
+    unsigned NODELETE framesPerBuffer() const
     {
         return m_workBus->length();
     }
@@ -71,12 +71,12 @@ private:
     using AdapterKey = std::tuple<unsigned, float>;
 #endif
     using AdapterMap = HashMap<AdapterKey, ThreadSafeWeakPtr<SharedAudioDestinationAdapter>>;
-    static AdapterMap& sharedMap();
+    static AdapterMap& NODELETE sharedMap();
 
     SharedAudioDestinationAdapter(const CreationOptions&, AudioDestinationCreationFunction&&);
 
     void render(AudioBus& destinationBus, size_t framesToProcess, const AudioIOPosition& outputPosition) final;
-    void isPlayingDidChange() final { }
+    void NODELETE isPlayingDidChange() final { }
 
     void configureRenderThread(CompletionHandler<void(bool)>&&);
 

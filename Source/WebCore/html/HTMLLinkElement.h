@@ -62,7 +62,7 @@ public:
     URL href() const;
     WEBCORE_EXPORT const AtomString& NODELETE rel() const;
 
-    AtomString target() const final;
+    AtomString NODELETE target() const final;
 
     const AtomString& NODELETE type() const;
 
@@ -106,7 +106,7 @@ public:
 private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
-    bool shouldLoadLink() final;
+    bool NODELETE shouldLoadLink() final;
     void process();
     static void processCallback(Node*);
     void clearSheet();

@@ -361,7 +361,7 @@ void TextAnimationController::saveSnapshotOfTextPlaceholderForAnimation(const We
     m_placeholderTextIndicator = WebCore::TextIndicator::createWithRange(placeholderRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });
 }
 
-RefPtr<WebCore::TextIndicator> TextAnimationController::createTextIndicatorForRange(const WebCore::SimpleRange& range)
+RefPtr<WebCore::TextIndicator> NODELETE TextAnimationController::createTextIndicatorForRange(const WebCore::SimpleRange& range)
 {
     if (!m_webPage) {
         ASSERT_NOT_REACHED();

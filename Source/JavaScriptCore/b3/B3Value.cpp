@@ -663,7 +663,7 @@ namespace {
 // Effects for an opcode that don't depend on per-Value data. Effects::invalid() means
 // value-dependent (handled by effectsSlow()). The traps suffix is applied by effects()/effectsSlow(),
 // not here.
-constexpr Effects constantEffectsForOpcode(Opcode opcode)
+constexpr Effects NODELETE constantEffectsForOpcode(Opcode opcode)
 {
     Effects result = Effects::none();
     switch (opcode) {
@@ -754,7 +754,7 @@ constexpr Effects constantEffectsForOpcode(Opcode opcode)
 
 // The fast path in Value::effects() returns table entries without the traps suffix, which is only
 // sound if every trapping opcode with constant effects already subsumes it.
-constexpr bool constantEffectsTableIsTrapSafe()
+constexpr bool NODELETE constantEffectsTableIsTrapSafe()
 {
     for (unsigned i = 0; i < numberOfB3Opcodes; ++i) {
         Opcode opcode = static_cast<Opcode>(i);

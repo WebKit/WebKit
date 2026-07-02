@@ -104,7 +104,7 @@ protected:
 private:
     std::optional<Style::UnadjustedStyle> resolveCustomStyle(const Style::ResolutionContext&, const Style::ComputedStyle*) final;
 
-    bool supportsFocus() const override;
+    bool NODELETE supportsFocus() const override;
 
     bool transferredFocusToPicker() const final;
     void didSuppressBlurDueToPickerFocusTransfer() final;

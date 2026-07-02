@@ -50,17 +50,17 @@ public:
     WebAudioBufferList(const CAAudioStreamDescription&, CMSampleBufferRef);
     WEBCORE_EXPORT virtual ~WebAudioBufferList();
 
-    static std::optional<std::pair<UniqueRef<WebAudioBufferList>, RetainPtr<CMBlockBufferRef>>> createWebAudioBufferListWithBlockBuffer(const CAAudioStreamDescription&, size_t sampleCount);
+    static std::optional<std::pair<UniqueRef<WebAudioBufferList>, RetainPtr<CMBlockBufferRef>>> NODELETE createWebAudioBufferListWithBlockBuffer(const CAAudioStreamDescription&, size_t sampleCount);
 
-    void reset();
-    WEBCORE_EXPORT void setSampleCount(size_t);
+    void NODELETE reset();
+    WEBCORE_EXPORT void NODELETE setSampleCount(size_t);
 
     AudioBufferList* list() const LIFETIME_BOUND { return m_list.get(); }
     operator AudioBufferList&() const { return *m_list; }
 
     uint32_t NODELETE bufferCount() const;
     uint32_t channelCount() const { return m_channelCount; }
-    ::AudioBuffer* NODELETE buffer(uint32_t index) const;
+    ::AudioBuffer* buffer(uint32_t index) const;
 
     template <typename T = uint8_t>
     std::span<T> bufferAsSpan(uint32_t index) const
@@ -74,14 +74,14 @@ public:
 
     IteratorRange<::AudioBuffer*> NODELETE buffers() const;
 
-    WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, size_t sampleCount);
+    WEBCORE_EXPORT static bool NODELETE isSupportedDescription(const CAAudioStreamDescription&, size_t sampleCount);
 
-    WEBCORE_EXPORT void zeroFlatBuffer();
+    WEBCORE_EXPORT void NODELETE zeroFlatBuffer();
 
 private:
     Kind kind() const { return Kind::WebAudioBufferList; }
     void initializeList(std::span<uint8_t>, size_t);
-    RetainPtr<CMBlockBufferRef> setSampleCountWithBlockBuffer(size_t);
+    RetainPtr<CMBlockBufferRef> NODELETE setSampleCountWithBlockBuffer(size_t);
 
     uint32_t m_bytesPerFrame { 0 };
     uint32_t m_channelCount { 0 };

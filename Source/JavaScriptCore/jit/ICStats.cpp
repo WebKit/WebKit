@@ -73,12 +73,12 @@ public:
         return m_totalNumberOfHandlersInChain > other.m_totalNumberOfHandlersInChain;
     }
 
-    unsigned hash() const
+    unsigned NODELETE hash() const
     {
         return pairIntHash(computeHash(m_chain), WTF::IntHash<unsigned>::hash(m_totalNumberOfHandlersInChain));
     }
 
-    bool isHashTableDeletedValue() const { return m_isDeleted; }
+    bool NODELETE isHashTableDeletedValue() const { return m_isDeleted; }
 
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 

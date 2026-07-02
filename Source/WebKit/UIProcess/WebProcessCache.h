@@ -68,7 +68,7 @@ public:
     static void NODELETE setCachedProcessSuspensionDelayForTesting(Seconds);
     void NODELETE setCachedProcessLifetimeForTesting(Seconds);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:
@@ -107,7 +107,7 @@ private:
     };
 
     bool canCacheProcess(WebProcessProxy&) const;
-    void platformInitialize();
+    void NODELETE platformInitialize();
     bool addProcess(Ref<CachedProcess>&&);
     void evictAtRandomIfNeeded();
 

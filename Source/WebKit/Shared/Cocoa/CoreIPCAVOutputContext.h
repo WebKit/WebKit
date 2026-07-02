@@ -52,7 +52,7 @@ public:
     {
     }
 
-    RetainPtr<id> toID() const;
+    RetainPtr<id> NODELETE toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCAVOutputContext>;

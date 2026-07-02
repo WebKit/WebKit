@@ -45,7 +45,7 @@ public:
     bool operator==(const SurroundData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SurroundData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SurroundData&) const;
 #endif
 
     // Here instead of in BorderData to pack up against the refcount.

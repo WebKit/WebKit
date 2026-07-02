@@ -65,8 +65,8 @@ private:
     bool isCSSAnimation() const final { return true; }
 
     void syncPropertiesWithBackingAnimation() final;
-    AnimationPlayState backingAnimationPlayState() const final;
-    TimingFunction* backingAnimationTimingFunction() const final;
+    AnimationPlayState NODELETE backingAnimationPlayState() const final;
+    TimingFunction* NODELETE backingAnimationTimingFunction() const final;
     Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) final;
 
     AnimationTimeline* bindingsTimeline() const final;

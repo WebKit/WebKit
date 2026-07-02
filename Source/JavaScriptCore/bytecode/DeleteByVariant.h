@@ -63,7 +63,7 @@ public:
     bool NODELETE attemptToMerge(const DeleteByVariant& other);
 
     DECLARE_VISIT_AGGREGATE;
-    template<typename Visitor> void markIfCheap(Visitor&);
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&);
     bool finalize(VM&);
 
     void dump(PrintStream&) const;

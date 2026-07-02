@@ -99,7 +99,7 @@ private:
 
     RefPtr<WebCore::NativeImage> filteredNativeImage(WebCore::Filter&) final;
 
-    WebCore::GraphicsContext& context() const final;
+    WebCore::GraphicsContext& NODELETE context() const final;
 
     RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, const WebCore::ImageBufferAllocator&) const final;
     void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication = WebCore::AlphaPremultiplication::Premultiplied) final;
@@ -114,7 +114,7 @@ private:
     void prepareForBackingStoreChange();
 
     void NODELETE assertDispatcherIsCurrent() const;
-    template<typename T> void send(T&& message) const;
+    template<typename T> void NODELETE send(T&& message) const;
     template<typename T> auto sendSync(T&& message) const;
     RefPtr<IPC::StreamClientConnection> connection() const;
     void didBecomeUnresponsive() const;

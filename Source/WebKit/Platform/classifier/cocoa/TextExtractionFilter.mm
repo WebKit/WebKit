@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-static RefPtr<TextExtractionFilter>& singleton()
+static RefPtr<TextExtractionFilter>& NODELETE singleton()
 {
     static NeverDestroyed<RefPtr<TextExtractionFilter>> singleton;
     return singleton;

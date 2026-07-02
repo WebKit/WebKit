@@ -85,7 +85,7 @@ public:
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) override;
     void postConnectionSteps() override;
 
-    AtomString target() const override;
+    AtomString NODELETE target() const override;
 
     void setShouldBePrefetched(SpeculationRules::Eagerness, Vector<String>&& tags, std::optional<ReferrerPolicy>&&);
 
@@ -104,9 +104,9 @@ private:
     void setActive(bool active, Style::InvalidationScope) final;
     bool NODELETE isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
     bool draggable() const final;
-    bool isInteractiveContent() const final;
+    bool NODELETE isInteractiveContent() const final;
 
     AtomString effectiveTarget() const;
 

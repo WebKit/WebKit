@@ -139,9 +139,9 @@ public:
     WEBCORE_EXPORT static Position adjustPositionForStart(const Position& currentPosition, Node* startContainerNode);
 
 #if ENABLE(TREE_DEBUGGING)
-    void debugPosition() const;
-    String debugDescription() const;
-    void showTreeForThis() const;
+    void NODELETE debugPosition() const;
+    String NODELETE debugDescription() const;
+    void NODELETE showTreeForThis() const;
 #endif
 
     void setWithoutValidation(const Position&, const Position&);
@@ -189,6 +189,6 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisibleSelect
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::VisibleSelection&);
-void showTree(const WebCore::VisibleSelection*);
+void NODELETE showTree(const WebCore::VisibleSelection&);
+void NODELETE showTree(const WebCore::VisibleSelection*);
 #endif

@@ -167,7 +167,7 @@ public:
     }
 
 private:
-    CSSStyleSheet* parentStyleSheet() const final;
+    CSSStyleSheet* NODELETE parentStyleSheet() const final;
     StyledElement* parentElement() const final { return m_parentElement.get(); }
 
     [[nodiscard]] bool willMutate() final;

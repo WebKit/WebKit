@@ -102,8 +102,8 @@ private:
     LayoutUnit computeConstrainedLogicalWidth() const;
 
     template<typename SizeType> LayoutUnit computeReplacedLogicalWidthUsing(const SizeType& logicalWidth) const;
-    template<typename SizeType> LayoutUnit computeReplacedLogicalHeightUsingGeneric(const SizeType& logicalHeight) const;
-    bool replacedMinMaxLogicalHeightComputesAsNone(const auto& logicalHeight, const auto& initialLogicalHeight) const;
+    template<typename SizeType> LayoutUnit NODELETE computeReplacedLogicalHeightUsingGeneric(const SizeType& logicalHeight) const;
+    bool NODELETE replacedMinMaxLogicalHeightComputesAsNone(const auto& logicalHeight, const auto& initialLogicalHeight) const;
 
 
     ASCIILiteral renderName() const override { return "RenderReplaced"_s; }

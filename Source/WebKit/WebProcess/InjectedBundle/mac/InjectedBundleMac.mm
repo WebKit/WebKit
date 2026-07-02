@@ -54,7 +54,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if PLATFORM(MAC)
-static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
+static NSEventModifierFlags NODELETE currentModifierFlags(id self, SEL _cmd)
 {
     auto currentModifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     NSEventModifierFlags modifiers = 0;
@@ -74,7 +74,7 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
 }
 #endif
 
-static RetainPtr<NSKeyedUnarchiver> createUnarchiver(std::span<const uint8_t> span)
+static RetainPtr<NSKeyedUnarchiver> NODELETE createUnarchiver(std::span<const uint8_t> span)
 {
     RetainPtr data = toNSDataNoCopy(span, FreeWhenDone::No);
     RetainPtr unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:data.get() error:nullptr]);
@@ -82,7 +82,7 @@ static RetainPtr<NSKeyedUnarchiver> createUnarchiver(std::span<const uint8_t> sp
     return unarchiver;
 }
 
-static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const API::Data& data)
+static RetainPtr<NSKeyedUnarchiver> NODELETE createUnarchiver(const API::Data& data)
 {
     return createUnarchiver(data.span());
 }

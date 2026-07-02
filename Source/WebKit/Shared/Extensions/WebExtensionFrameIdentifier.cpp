@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-WebCore::FrameIdentifier toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier& identifier, const WebPage& page)
+WebCore::FrameIdentifier NODELETE toWebCoreFrameIdentifier(const WebExtensionFrameIdentifier& identifier, const WebPage& page)
 {
     if (isMainFrame(identifier))
         return page.mainWebFrame().frameID();

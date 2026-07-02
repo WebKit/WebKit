@@ -48,7 +48,7 @@ public:
     static void observe(HTMLVideoElement&);
     static void unobserve(HTMLVideoElement&, Document&);
 
-    bool isObserved(HTMLVideoElement&) const;
+    bool NODELETE isObserved(HTMLVideoElement&) const;
 
 private:
     IntersectionObserver* intersectionObserver(Document&);

@@ -52,7 +52,7 @@ protected:
 private:
     void flush() final;
     void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) override;
-    void setFrameSize(uint16_t width, uint16_t height) final;
+    void NODELETE setFrameSize(uint16_t width, uint16_t height) final;
     void colorSpaceOverrideChanged() final;
 
     void updateFormat(const VideoInfo&);

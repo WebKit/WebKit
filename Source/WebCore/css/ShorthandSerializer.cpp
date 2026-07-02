@@ -64,7 +64,7 @@ constexpr unsigned maxShorthandLength = 18; // FIXME: Generate this from CSSProp
 
 class ShorthandSerializer {
 public:
-    template<typename PropertiesType> explicit ShorthandSerializer(const CSS::SerializationContext&, const PropertiesType&, CSSPropertyID shorthandID);
+    template<typename PropertiesType> explicit NODELETE ShorthandSerializer(const CSS::SerializationContext&, const PropertiesType&, CSSPropertyID shorthandID);
     String serialize();
 
 private:

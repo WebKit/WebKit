@@ -197,7 +197,7 @@ public:
     CSSValueID NODELETE getCSSWritingMode() const;
 
     void recalculateStyles() final { m_displayTreeShouldChange = true; }
-    void setFontSize(int, bool important) override;
+    void NODELETE setFontSize(int, bool important) override;
     int fontSize() const { return m_fontSize; }
     bool fontSizeIsImportant() const { return m_fontSizeIsImportant; }
 
@@ -260,7 +260,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
     uint64_t logIdentifier() const final;
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
     ASCIILiteral logClassName() const final { return "VTTCue"_s; }
 #endif
 

@@ -155,8 +155,8 @@ public:
     void exitImmersivePresentation(CompletionHandler<void()>&&);
 #endif
 
-    WEBCORE_EXPORT bool supportsDragging() const;
-    bool isDraggableIgnoringAttributes() const final;
+    WEBCORE_EXPORT bool NODELETE supportsDragging() const;
+    bool NODELETE isDraggableIgnoringAttributes() const final;
 
     bool NODELETE isInteractive() const;
 
@@ -215,7 +215,7 @@ private:
     void modelDidChange();
     void createModelPlayer();
     void deleteModelPlayer();
-    void deletePendingModelPlayer();
+    void NODELETE deletePendingModelPlayer();
     void unloadModelPlayer(bool onSuspend);
     void reloadModelPlayer();
     void startLoadModelTimer();
@@ -267,7 +267,7 @@ private:
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     void didFinishEnvironmentMapLoading(ModelPlayer&, bool succeeded) final;
 #endif
-    RefPtr<GraphicsLayer> graphicsLayer() const final;
+    RefPtr<GraphicsLayer> NODELETE graphicsLayer() const final;
     bool isVisible() const final;
     void logWarning(ModelPlayer&, const String&) final;
 

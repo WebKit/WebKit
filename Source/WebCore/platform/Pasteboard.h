@@ -224,9 +224,9 @@ public:
     virtual WEBCORE_EXPORT bool hasData();
     virtual WEBCORE_EXPORT Vector<String> typesSafeForBindings(const String& origin);
     virtual WEBCORE_EXPORT Vector<String> typesForLegacyUnsafeBindings();
-    virtual WEBCORE_EXPORT String readOrigin();
+    virtual WEBCORE_EXPORT String NODELETE readOrigin();
     virtual WEBCORE_EXPORT String readString(const String& type);
-    virtual WEBCORE_EXPORT String readStringInCustomData(const String& type);
+    virtual WEBCORE_EXPORT String NODELETE readStringInCustomData(const String& type);
     virtual WEBCORE_EXPORT Vector<String> readAllStrings(const String& type);
 
     virtual WEBCORE_EXPORT void writeString(const String& type, const String& data);
@@ -293,7 +293,7 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     WEBCORE_EXPORT static String nameOfDragPasteboard();
 #endif
-    static bool shouldTreatCocoaTypeAsFile(const String&);
+    static bool NODELETE shouldTreatCocoaTypeAsFile(const String&);
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
     const PasteboardCustomData& readCustomData();
 #endif

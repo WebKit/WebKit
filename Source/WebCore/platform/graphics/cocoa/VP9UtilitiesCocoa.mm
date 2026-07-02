@@ -303,7 +303,7 @@ static bool isVP9CodecConfigurationRecordSupported(const VPCodecConfigurationRec
     return has4kScreen;
 }
 
-static bool isVP8CodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
+static bool NODELETE isVP8CodecConfigurationRecordSupported(const VPCodecConfigurationRecord& codecConfiguration)
 {
     if (!isVP8DecoderAvailable())
         return false;

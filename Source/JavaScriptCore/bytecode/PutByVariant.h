@@ -109,7 +109,7 @@ public:
         return m_newStructure;
     }
     
-    void NODELETE fixTransitionToReplaceIfNecessary();
+    void fixTransitionToReplaceIfNecessary();
 
     bool NODELETE writesStructures() const;
     bool NODELETE reallocatesStorage() const;
@@ -138,7 +138,7 @@ public:
     bool attemptToMerge(const PutByVariant& other);
     
     DECLARE_VISIT_AGGREGATE;
-    template<typename Visitor> void markIfCheap(Visitor&);
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&);
     bool finalize(VM&);
     
     void dump(PrintStream&) const;

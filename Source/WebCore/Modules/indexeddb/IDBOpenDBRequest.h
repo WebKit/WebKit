@@ -60,7 +60,7 @@ private:
 
     void cancelForStop() final;
 
-    EventTargetInterfaceType eventTargetInterface() const final;
+    EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
     void onError(const IDBResultData&);
     void onSuccess(const IDBResultData&);

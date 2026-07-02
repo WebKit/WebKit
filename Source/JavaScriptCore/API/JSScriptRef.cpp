@@ -53,7 +53,7 @@ public:
         return m_source.get().hash();
     }
 
-    StringView source() const final
+    StringView NODELETE source() const final
     {
         return m_source.get();
     }
@@ -74,7 +74,7 @@ public:
         return truncated.toString();
     }
 
-    VM& vm() const { return m_vm; }
+    VM& NODELETE vm() const { return m_vm; }
 
 private:
     OpaqueJSScript(VM& vm, const SourceOrigin& sourceOrigin, String&& filename, int startingLineNumber, const String& source)

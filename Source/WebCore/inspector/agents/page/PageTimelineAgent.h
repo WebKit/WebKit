@@ -46,7 +46,7 @@ public:
     ~PageTimelineAgent();
 
     // TimelineBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<void> setAutoCaptureEnabled(bool) override;
+    Inspector::Protocol::ErrorStringOr<void> NODELETE setAutoCaptureEnabled(bool) override;
 
     // InspectorInstrumentation
     void didInvalidateLayout(const RenderElement&);

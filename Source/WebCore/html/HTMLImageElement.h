@@ -81,7 +81,7 @@ public:
     const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
     WEBCORE_EXPORT const AtomString& currentSrc();
 
-    bool isServerMap() const;
+    bool NODELETE isServerMap() const;
 
     const AtomString& NODELETE altText() const;
 
@@ -117,7 +117,7 @@ public:
 
     bool canContainRangeEndPoint() const override { return false; }
 
-    String imageSourceURL() const override;
+    String NODELETE imageSourceURL() const override;
     
 #if ENABLE(SERVICE_CONTROLS)
     bool isImageMenuEnabled() const { return m_isImageMenuEnabled; }
@@ -125,7 +125,7 @@ public:
 #endif
 
     HTMLPictureElement* NODELETE pictureElement() const;
-    void setPictureElement(HTMLPictureElement*);
+    void NODELETE setPictureElement(HTMLPictureElement*);
 
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
@@ -197,11 +197,11 @@ private:
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     void didAttachRenderers() override;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;
-    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+    bool NODELETE isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void setBestFitURLAndDPRFromImageCandidate(const ImageCandidate&);
 
     bool canStartSelection() const override;
@@ -233,7 +233,7 @@ private:
     AttachmentAssociatedElementType attachmentAssociatedElementType() const final { return AttachmentAssociatedElementType::Image; };
 #endif
 
-    bool isInteractiveContent() const final;
+    bool NODELETE isInteractiveContent() const final;
 
     void selectImageSource(RelevantMutation);
 

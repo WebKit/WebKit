@@ -50,7 +50,7 @@ public:
 
     void inflateRectForControlRenderer(const RenderElement&, FloatRect&) final;
 
-    bool isControlStyled(const Style::ComputedStyle&) const final;
+    bool NODELETE isControlStyled(const Style::ComputedStyle&) const final;
 
     bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final;
 
@@ -85,7 +85,7 @@ public:
     Style::PaddingBox controlPadding(StyleAppearance, const Style::PaddingBox&, float zoomFactor) const final;
     Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float zoomFactor) const final;
     Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float zoomFactor) const final;
-    Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox&, float zoomFactor, const Element*) const final;
+    Style::LineWidthBox NODELETE controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox&, float zoomFactor, const Element*) const final;
     bool NODELETE controlRequiresPreWhiteSpace(StyleAppearance) const final;
 
     bool popsMenuByArrowKeys() const final { return true; }
@@ -111,7 +111,7 @@ public:
     bool NODELETE canCreateControlPartForBorderOnly(const RenderElement&) const final;
     bool NODELETE canCreateControlPartForDecorations(const RenderElement&) const final;
 
-    int baselinePosition(const RenderBox&) const final;
+    int NODELETE baselinePosition(const RenderBox&) const final;
 
     bool supportsLargeFormControls() const final;
 

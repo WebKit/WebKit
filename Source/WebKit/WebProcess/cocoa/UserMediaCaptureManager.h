@@ -66,7 +66,7 @@ public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     static ASCIILiteral supplementName();

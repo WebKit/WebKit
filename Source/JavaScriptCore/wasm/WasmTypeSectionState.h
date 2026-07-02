@@ -206,8 +206,8 @@ private:
 };
 
 struct ProjectionHash {
-    static unsigned hash(const Projection*);
-    static bool equal(const Projection*, const Projection*);
+    static unsigned NODELETE hash(const Projection*);
+    static bool NODELETE equal(const Projection*, const Projection*);
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 

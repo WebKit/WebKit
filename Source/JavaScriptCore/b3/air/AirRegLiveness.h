@@ -106,7 +106,7 @@ public:
     public:
         LocalCalcForUnifiedTmpLiveness(UnifiedTmpLiveness& liveness, BasicBlock* block);
         
-        void execute(unsigned instIndex);
+        void NODELETE execute(unsigned instIndex);
         
     private:
         Code& m_code;

@@ -119,12 +119,12 @@ public:
     // Options correspond to Script Records, Cyclic Module Records and Realm Records, in that order.
     struct ModuleReferrer : Variant<ProgramExecutable*, CyclicModuleRecord*, JSGlobalObject*> {
         using Variant<ProgramExecutable*, CyclicModuleRecord*, JSGlobalObject*>::Variant;
-        ProgramExecutable* getScript() const;
-        CyclicModuleRecord* getModule() const;
-        JSGlobalObject* getRealm() const;
-        bool isScript() const;
-        bool isModule() const;
-        bool isRealm() const;
+        ProgramExecutable* NODELETE getScript() const;
+        CyclicModuleRecord* NODELETE getModule() const;
+        JSGlobalObject* NODELETE getRealm() const;
+        bool NODELETE isScript() const;
+        bool NODELETE isModule() const;
+        bool NODELETE isRealm() const;
         JSValue toJSValue() const;
     };
 
@@ -139,7 +139,7 @@ public:
         ModuleFailure(AbstractModuleRecord*, ScriptFetchParameters::Type, Kind);
         ModuleFailure(Identifier, ScriptFetchParameters::Type, Kind);
 
-        bool isEvaluationError(const Identifier& expectedSpecifier, ScriptFetchParameters::Type expectedType) const;
+        bool NODELETE isEvaluationError(const Identifier& expectedSpecifier, ScriptFetchParameters::Type expectedType) const;
 
         operator bool() const;
 

@@ -75,7 +75,7 @@ public:
 
     virtual AnimationTimelinesController* controller() const { return nullptr; }
 
-    virtual Style::SingleAnimationRange defaultRange() const;
+    virtual Style::SingleAnimationRange NODELETE defaultRange() const;
 
     static void updateGlobalPosition(WebAnimation&);
 

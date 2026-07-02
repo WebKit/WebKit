@@ -160,7 +160,7 @@ ServiceWorkerFetchTask::~ServiceWorkerFetchTask()
     cancelPreloadIfNecessary();
 }
 
-RefPtr<IPC::Connection> ServiceWorkerFetchTask::serviceWorkerConnection()
+RefPtr<IPC::Connection> NODELETE ServiceWorkerFetchTask::serviceWorkerConnection()
 {
     auto* serviceWorkerConnection = m_serviceWorkerConnection.get();
     if (!serviceWorkerConnection)

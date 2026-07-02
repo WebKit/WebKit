@@ -51,7 +51,7 @@ public:
     IDBStorageRegistry();
     ~IDBStorageRegistry();
     WebCore::IDBServer::IDBConnectionToClient* ensureConnectionToClient(IPC::Connection&, const WebCore::IDBResourceIdentifier&, NetworkStorageManager&);
-    WebCore::IDBServer::IDBConnectionToClient* existingConnectionToClient(WebCore::IDBConnectionIdentifier);
+    WebCore::IDBServer::IDBConnectionToClient* NODELETE existingConnectionToClient(WebCore::IDBConnectionIdentifier);
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);

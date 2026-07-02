@@ -41,7 +41,7 @@ enum ThreadViolationRound {
     ThreadViolationRoundThree,
     MaximumThreadViolationRound
 };
-WEBCORE_EXPORT void setDefaultThreadViolationBehavior(ThreadViolationBehavior, ThreadViolationRound);
+WEBCORE_EXPORT void NODELETE setDefaultThreadViolationBehavior(ThreadViolationBehavior, ThreadViolationRound);
 WEBCORE_EXPORT void reportThreadViolation(const char* function, ThreadViolationRound);
 }
 

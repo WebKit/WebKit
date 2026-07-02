@@ -636,13 +636,13 @@ bool isTopTargetFrameName(StringView name)
 
 #ifndef NDEBUG
 
-static void printIndent(int indent)
+static void NODELETE printIndent(int indent)
 {
     for (int i = 0; i < indent; ++i)
         printf("    ");
 }
 
-static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targetFrame, int indent)
+static void NODELETE printFrames(const WebCore::Frame& frame, const WebCore::Frame* targetFrame, int indent)
 {
     if (&frame == targetFrame) {
         printf("--> ");

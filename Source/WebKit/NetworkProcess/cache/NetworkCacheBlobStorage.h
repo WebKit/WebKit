@@ -76,7 +76,7 @@ public:
 #endif
 
 private:
-    String blobDirectoryPathIsolatedCopy() const;
+    String NODELETE blobDirectoryPathIsolatedCopy() const;
     String blobPathForHash(const SHA1::Digest&) const;
 
     const String m_blobDirectoryPath;

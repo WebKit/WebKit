@@ -51,7 +51,7 @@ public:
 protected:
     HIDGamepadElement(const HIDElement&);
 
-    virtual double normalizedValue();
+    virtual double NODELETE normalizedValue();
     virtual bool isButton() const { return false; }
     virtual bool isAxis() const { return false; }
 };
@@ -84,7 +84,7 @@ public:
 
 private:
     HIDInputType gamepadValueChanged(IOHIDValueRef) override;
-    double normalizedValue() final;
+    double NODELETE normalizedValue() final;
 
     SharedGamepadValue m_value;
 };
@@ -102,7 +102,7 @@ public:
 
 private:
     HIDInputType gamepadValueChanged(IOHIDValueRef) final;
-    double normalizedValue() final;
+    double NODELETE normalizedValue() final;
 
     Vector<SharedGamepadValue> m_buttonValues;
 };

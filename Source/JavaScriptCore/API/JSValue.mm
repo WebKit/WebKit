@@ -838,7 +838,7 @@ public:
     id convert(JSValueRef property);
     void add(Task);
     Task take();
-    bool isWorkListEmpty() const { return !m_worklist.size(); }
+    bool NODELETE isWorkListEmpty() const { return !m_worklist.size(); }
 
 private:
     JSGlobalContextRef m_context;
@@ -1085,7 +1085,7 @@ public:
     JSValueRef convert(id object);
     void add(Task);
     Task take();
-    bool isWorkListEmpty() const { return !m_worklist.size(); }
+    bool NODELETE isWorkListEmpty() const { return !m_worklist.size(); }
 
 private:
     JSContext *m_context;

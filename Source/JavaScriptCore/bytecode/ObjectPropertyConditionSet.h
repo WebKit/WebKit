@@ -137,7 +137,7 @@ public:
     bool isStillValid() const;
     bool structuresEnsureValidity() const;
     
-    bool needImpurePropertyWatchpoint() const;
+    bool NODELETE needImpurePropertyWatchpoint() const;
 
     template<typename Functor>
     void forEachDependentCell(const Functor& functor) const

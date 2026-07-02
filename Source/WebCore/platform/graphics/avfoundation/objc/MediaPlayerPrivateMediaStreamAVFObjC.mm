@@ -194,7 +194,7 @@ class MediaPlayerFactoryMediaStreamAVFObjC final : public MediaPlayerFactory {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaStreamAVFObjC);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryMediaStreamAVFObjC);
 private:
-    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream; };
+    MediaPlayerEnums::MediaEngineIdentifier NODELETE identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream; };
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final
     {
@@ -206,7 +206,7 @@ private:
         return MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(types);
     }
 
-    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    MediaPlayer::SupportsType NODELETE supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
     {
         return MediaPlayerPrivateMediaStreamAVFObjC::supportsType(parameters);
     }

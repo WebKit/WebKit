@@ -37,7 +37,7 @@ struct ApplePayPaymentTokenContext;
 
 namespace WebKit {
 
-RetainPtr<PKPaymentTokenContext> platformPaymentTokenContext(const WebCore::ApplePayPaymentTokenContext&);
+RetainPtr<PKPaymentTokenContext> NODELETE platformPaymentTokenContext(const WebCore::ApplePayPaymentTokenContext&);
 RetainPtr<NSArray<PKPaymentTokenContext *>> platformPaymentTokenContexts(const Vector<WebCore::ApplePayPaymentTokenContext>&);
 
 } // namespace WebKit

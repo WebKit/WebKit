@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT void intersect(const Region&);
     WEBCORE_EXPORT void subtract(const Region&);
 
-    WEBCORE_EXPORT void NODELETE translate(const IntSize&);
+    WEBCORE_EXPORT void translate(const IntSize&);
 
     // Returns true if the query region is a subset of this region.
     WEBCORE_EXPORT bool contains(const Region&) const;
@@ -86,7 +86,7 @@ public:
         Shape() = default;
         WEBCORE_EXPORT Shape(const IntRect&);
 
-        IntRect NODELETE bounds() const;
+        IntRect bounds() const;
         bool isEmpty() const { return m_spans.isEmpty(); }
         bool isRect() const { return m_spans.size() <= 2 && m_segments.size() <= 2; }
         unsigned gridSize() const { return m_spans.size() * m_segments.size(); }
@@ -117,7 +117,7 @@ public:
         struct SubtractOperation;
 
         template<typename Operation>
-        static Shape shapeOperation(const Shape& shape1, const Shape& shape2);
+        static Shape NODELETE shapeOperation(const Shape& shape1, const Shape& shape2);
 
         void appendSpan(int y);
         void appendSpan(int y, std::span<const int> segments);

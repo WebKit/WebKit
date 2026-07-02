@@ -62,7 +62,7 @@ public:
     void fired();
 
     WEBCORE_EXPORT static bool& NODELETE shouldSetupPowerObserver();
-    WEBCORE_EXPORT static void restartSharedTimer();
+    WEBCORE_EXPORT static void NODELETE restartSharedTimer();
 
 private:
     MainThreadSharedTimer();

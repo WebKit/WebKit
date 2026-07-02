@@ -158,12 +158,12 @@ public:
     SplitResult split(char16_t) const;
     SplitResult splitAllowingEmptyEntries(char16_t) const;
 
-    size_t NODELETE find(char16_t, unsigned start = 0) const;
-    size_t NODELETE find(Latin1Character, unsigned start = 0) const;
+    size_t find(char16_t, unsigned start = 0) const;
+    size_t find(Latin1Character, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(char c, unsigned start = 0) const { return find(byteCast<Latin1Character>(c), start); }
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)
-    size_t NODELETE find(CodeUnitMatchFunction&&, unsigned start = 0) const;
+    size_t find(CodeUnitMatchFunction&&, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) const { return find(literal.span8(), start); }
     WTF_EXPORT_PRIVATE size_t NODELETE find(StringView, unsigned start = 0) const;
     WTF_EXPORT_PRIVATE size_t NODELETE find(AdaptiveStringSearcherTables&, StringView, unsigned start = 0) const;
@@ -206,12 +206,12 @@ public:
     float toFloat(bool& isValid) const;
     double toDouble(bool& isValid) const;
 
-    static void invalidate(const StringImpl&);
+    static void NODELETE invalidate(const StringImpl&);
 
     struct UnderlyingString;
 
 #ifndef NDEBUG
-    WTF_EXPORT_PRIVATE void show() const;
+    WTF_EXPORT_PRIVATE void NODELETE show() const;
 #endif
 
 private:
@@ -240,7 +240,7 @@ private:
     bool underlyingStringIsValid() const { return underlyingStringIsValidImpl(); }
     void setUnderlyingString(const StringImpl* stringImpl) { setUnderlyingStringImpl(stringImpl); }
     void setUnderlyingString(const StringView& stringView) { setUnderlyingStringImpl(stringView); }
-    void adoptUnderlyingString(UnderlyingString*);
+    void NODELETE adoptUnderlyingString(UnderlyingString*);
 #else
     bool underlyingStringIsValid() const { return true; }
     void setUnderlyingString(const StringImpl*) { }

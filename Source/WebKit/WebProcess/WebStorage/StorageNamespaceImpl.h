@@ -62,7 +62,7 @@ public:
 
     void destroyStorageAreaMap(StorageAreaMap&);
 
-    void setSessionIDForTesting(PAL::SessionID) override;
+    void NODELETE setSessionIDForTesting(PAL::SessionID) override;
 
 private:
     StorageNamespaceImpl(WebCore::StorageType, const std::optional<WebCore::PageIdentifier>&, const WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, std::optional<Identifier> = std::nullopt);

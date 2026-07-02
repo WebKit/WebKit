@@ -55,7 +55,7 @@ public:
 
     virtual ~DocumentTimeline();
 
-    Document* document() const;
+    Document* NODELETE document() const;
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
     ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, Variant<double, CustomAnimationOptions>&&);

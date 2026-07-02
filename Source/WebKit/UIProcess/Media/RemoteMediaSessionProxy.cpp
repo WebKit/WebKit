@@ -64,7 +64,7 @@ void RemoteMediaSessionProxy::setState(WebCore::PlatformMediaSessionState state)
     m_sessionState.state = state;
 }
 
-WeakPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionProxy::selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose)
+WeakPtr<WebCore::PlatformMediaSessionInterface> NODELETE RemoteMediaSessionProxy::selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose)
 {
     // FIXME: Another synchronous API we need to fix.
     return nullptr;

@@ -1576,13 +1576,13 @@ private:
     void layoutGridItemForMinSizeComputation(RenderBox&, bool overrideSizeHasChanged) const override;
     void maximizeTracks(Vector<UniqueRef<GridTrack>>&, std::optional<LayoutUnit>& freeSpace) override;
     double findUsedFlexFraction(Vector<unsigned>& flexibleSizedTracksIndex, Style::GridTrackSizingDirection, std::optional<LayoutUnit> freeSpace, RenderGridLayoutState&) const override;
-    bool recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
-    LayoutUnit freeSpaceForStretchAutoTracksStep() const override;
+    bool NODELETE recomputeUsedFlexFractionIfNeeded(double& flexFraction, LayoutUnit& totalGrowth) const override;
+    LayoutUnit NODELETE freeSpaceForStretchAutoTracksStep() const override;
     LayoutUnit minContentContributionForGridItem(RenderBox&, RenderGridLayoutState&) const override;
     LayoutUnit minLogicalSizeForGridItem(RenderBox&, const Style::MinimumSize& gridItemMinSize, std::optional<LayoutUnit> availableSize) const override;
-    bool isComputingSizeContainment() const override { return false; }
-    bool isComputingInlineSizeContainment() const override { return false; }
-    bool isComputingSizeOrInlineSizeContainment() const override { return false; }
+    bool NODELETE isComputingSizeContainment() const override { return false; }
+    bool NODELETE isComputingInlineSizeContainment() const override { return false; }
+    bool NODELETE isComputingSizeOrInlineSizeContainment() const override { return false; }
 };
 
 LayoutUnit IndefiniteSizeStrategy::freeSpaceForStretchAutoTracksStep() const

@@ -102,7 +102,7 @@ RetainPtr<NSString> menuItemTitleForTelephoneNumberGroup()
     return [getTUCallClassSingleton() supplementalDialTelephonyCallString];
 }
 
-static RetainPtr<PlatformDDAction> actionForMenuItem(NSMenuItem *item)
+static RetainPtr<PlatformDDAction> NODELETE actionForMenuItem(NSMenuItem *item)
 {
     RetainPtr<NSDictionary> representedObject = dynamic_objc_cast<NSDictionary>(item.representedObject);
     if (!representedObject)
@@ -164,7 +164,7 @@ struct SymbolNameWithType {
     String name;
 };
 
-static std::optional<SymbolNameWithType> symbolForTransformationItem(String symbolName)
+static std::optional<SymbolNameWithType> NODELETE symbolForTransformationItem(String symbolName)
 {
     // The images used for the items in the transformation submenu are not all localized
     // for the same scripts, so we must ensure that the images are shown only when a
@@ -186,7 +186,7 @@ static std::optional<SymbolNameWithType> symbolForTransformationItem(String symb
     }
 }
 
-static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCore::ContextMenuAction action, bool useAlternateImage)
+static std::optional<SymbolNameWithType> NODELETE symbolNameWithTypeForAction(const WebCore::ContextMenuAction action, bool useAlternateImage)
 {
     switch (action) {
     case WebCore::ContextMenuItemBaseApplicationTag:

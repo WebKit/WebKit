@@ -100,7 +100,7 @@ void WebProcessProxy::registerNotifyObservers()
     });
 }
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& NODELETE WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
     static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
         [NSBundle bundleWithIdentifier:@"com.apple.WebCore"].resourcePath.stringByStandardizingPath,
@@ -138,7 +138,7 @@ void WebProcessProxy::cacheMediaMIMETypesInternal(const Vector<String>& types)
     send(Messages::WebProcess::SetMediaMIMETypes(types), 0);
 }
 
-const Vector<String>& WebProcessProxy::mediaMIMETypes()
+const Vector<String>& NODELETE WebProcessProxy::mediaMIMETypes()
 {
     return mediaTypeCache();
 }
@@ -279,7 +279,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
 }
 
 #if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
-std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()
+std::optional<Vector<SandboxExtension::Handle>> NODELETE WebProcessProxy::fontdMachExtensionHandles()
 {
     if (std::exchange(m_sentFontdMachExtensionHandles, true))
         return std::nullopt;

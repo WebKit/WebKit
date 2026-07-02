@@ -94,7 +94,7 @@ Ref<ProcessActivityGroup> ProcessActivityGroupContext::foregroundProcessActivity
     return ProcessActivityGroup::create(*this, name, ProcessThrottlerActivityType::Foreground, timeout);
 }
 
-Vector<Ref<WebProcessProxy>> ProcessActivityGroupContext::activityTargets()
+Vector<Ref<WebProcessProxy>> NODELETE ProcessActivityGroupContext::activityTargets()
 {
     return { };
 }

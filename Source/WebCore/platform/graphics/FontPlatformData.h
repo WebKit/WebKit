@@ -117,7 +117,7 @@ struct FontPlatformDataAttributes {
 
     WEBCORE_EXPORT FontPlatformDataAttributes(float size, FontOrientation, FontWidthVariant, TextRenderingMode, bool syntheticBold, bool syntheticOblique, std::optional<FontPlatformSerializedAttributes>, CTFontDescriptorOptions, RetainPtr<CFStringRef> url, RetainPtr<CFStringRef> psName);
 
-    WEBCORE_EXPORT std::optional<FontPlatformSerializedAttributes> serializableAttributes() const;
+    WEBCORE_EXPORT std::optional<FontPlatformSerializedAttributes> NODELETE serializableAttributes() const;
 #endif
 
 #if PLATFORM(WIN) && USE(CAIRO)
@@ -445,7 +445,7 @@ public:
     RefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
     RefPtr<SharedBuffer> NODELETE platformOpenTypeTable(uint32_t table) const;
 
-    String description() const;
+    String NODELETE description() const;
 
     struct CreationData {
         const Ref<SharedBuffer> fontFaceData;
@@ -530,7 +530,7 @@ private:
 };
 
 #if USE(CORE_TEXT)
-bool isSystemFont(CTFontRef);
+bool NODELETE isSystemFont(CTFontRef);
 WEBCORE_EXPORT RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions, CFStringRef referenceURL, CFStringRef desiredPostScriptName);
 #endif
 

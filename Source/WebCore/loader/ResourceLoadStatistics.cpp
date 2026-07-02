@@ -492,7 +492,7 @@ String ResourceLoadStatistics::toString() const
 }
 
 template <typename T>
-static void mergeHashCountedSet(HashCountedSet<T>& to, const HashCountedSet<T>& from)
+static void NODELETE mergeHashCountedSet(HashCountedSet<T>& to, const HashCountedSet<T>& from)
 {
     for (auto& entry : from)
         to.add(entry.key, entry.value);

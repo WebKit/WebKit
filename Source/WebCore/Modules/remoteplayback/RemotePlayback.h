@@ -78,7 +78,7 @@ public:
 
     void NODELETE invalidate();
 
-    WebCoreOpaqueRoot opaqueRoot() const final;
+    WebCoreOpaqueRoot NODELETE opaqueRoot() const final;
     Node* NODELETE ownerNode() const;
 
 private:

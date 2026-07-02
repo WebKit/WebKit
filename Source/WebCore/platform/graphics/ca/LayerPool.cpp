@@ -53,7 +53,7 @@ LayerPool::~LayerPool()
 HashSet<CheckedPtr<LayerPool>>& LayerPool::allLayerPools()
 {
     RELEASE_ASSERT(isMainThread());
-    static NeverDestroyed<HashSet<CheckedPtr<LayerPool>>> allLayerPools;
+    static NeverDestroyed<HashSet<CheckedPtr<LayerPool>>> NODELETE allLayerPools;
     return allLayerPools.get();
 }
 

@@ -44,7 +44,7 @@ public:
     bool operator==(const TransformData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const TransformData&) const;
+    void NODELETE dumpDifferences(TextStream&, const TransformData&) const;
 #endif
 
     bool hasTransform() const { return !transform.isNone(); }

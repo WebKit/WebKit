@@ -735,7 +735,7 @@ public:
         void setHasPseudoStyles(EnumSet<PseudoElementType>);
 
 #if !LOG_DISABLED
-        void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
+        void NODELETE dumpDifferences(TextStream&, const NonInheritedFlags&) const;
 #endif
 
         PREFERRED_TYPE(Style::DisplayType) unsigned display : 5;
@@ -768,7 +768,7 @@ public:
         bool operator==(const InheritedFlags&) const = default;
 
 #if !LOG_DISABLED
-        void dumpDifferences(TextStream&, const InheritedFlags&) const;
+        void NODELETE dumpDifferences(TextStream&, const InheritedFlags&) const;
 #endif
 
         // Writing Mode = 8 bits (can be packed into 6 if needed)

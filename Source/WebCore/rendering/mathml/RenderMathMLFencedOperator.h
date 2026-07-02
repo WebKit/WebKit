@@ -48,7 +48,7 @@ private:
     LayoutUnit leadingSpace() const final;
     LayoutUnit trailingSpace() const final;
 
-    LayoutUnit minSize() const final;
+    LayoutUnit NODELETE minSize() const final;
 
     // maxsize always has the default value "infinity".
     LayoutUnit maxSize() const final { return intMaxForLayoutUnit; }

@@ -50,7 +50,7 @@ public:
     virtual bool finalize() = 0;
     virtual bool isFailed() = 0;
 
-    virtual RefPtr<JSC::JITCode> jitCode();
+    virtual RefPtr<JSC::JITCode> NODELETE jitCode();
 
 protected:
     Plan& m_plan;

@@ -92,13 +92,13 @@ public:
     virtual RegisterSet extraClobberedRegs(Inst&) = 0;
     
     // By default, this returns false.
-    virtual bool isTerminal(Inst&);
+    virtual bool NODELETE isTerminal(Inst&);
 
     // By default, this returns true.
-    virtual bool hasNonArgEffects(Inst&);
+    virtual bool NODELETE hasNonArgEffects(Inst&);
 
     // By default, this returns true.
-    virtual bool hasNonArgNonControlEffects(Inst&);
+    virtual bool NODELETE hasNonArgNonControlEffects(Inst&);
 
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;

@@ -65,7 +65,7 @@ protected:
     JS_EXPORT_PRIVATE void scheduleTimer(Seconds);
 
     GCActivityCallback(VM&, Synchronousness);
-    static double deathRate(size_t sizeBefore, size_t sizeAfter);
+    static double NODELETE deathRate(size_t sizeBefore, size_t sizeAfter);
 
     Synchronousness m_synchronousness { Synchronousness::Async };
     bool m_enabled { true };

@@ -3014,7 +3014,7 @@ static bool putIndexedDescriptor(JSGlobalObject* globalObject, SparseArrayValueM
     return true;
 }
 
-ALWAYS_INLINE static bool canDoFastPutDirectIndex(JSObject* object)
+ALWAYS_INLINE static bool NODELETE canDoFastPutDirectIndex(JSObject* object)
 {
     if (TypeInfo::isArgumentsType(object->type()))
         return true;

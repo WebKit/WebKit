@@ -81,7 +81,7 @@ public:
     void get(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
     void set(Cookie&&, URL&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
 
-    void detach() { m_cookieStore = nullptr; }
+    void NODELETE detach() { m_cookieStore = nullptr; }
 
 private:
     explicit MainThreadBridge(CookieStore&);

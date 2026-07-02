@@ -56,7 +56,7 @@ public:
 
     virtual ~WebKitNamespace();
 
-    UserMessageHandlersNamespace* messageHandlers();
+    UserMessageHandlersNamespace* NODELETE messageHandlers();
     WebKitBufferNamespace& NODELETE buffers();
     JSC::JSValue evaluateScript(JSC::JSGlobalObject&, const String& source, const String& url);
     Ref<WebKitJSHandle> createJSHandle(JSC::Strong<JSC::JSObject>);

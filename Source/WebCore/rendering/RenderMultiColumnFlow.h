@@ -94,7 +94,7 @@ public:
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
     // FIXME: Eventually as column and fragment flow threads start nesting, this will end up changing.
-    bool shouldCheckColumnBreaks() const override;
+    bool NODELETE shouldCheckColumnBreaks() const override;
 
     using SpannerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakPtr<RenderMultiColumnSpannerPlaceholder>>;
     SpannerMap& spannerMap() LIFETIME_BOUND { return m_spannerMap; }
@@ -104,8 +104,8 @@ private:
     void addFragmentToThread(RenderFragmentContainer*) override;
     void willBeRemovedFromTree() override;
     void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;
-    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
-    LayoutUnit initialLogicalWidth() const override;
+    LogicalExtentComputedValues NODELETE computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
+    LayoutUnit NODELETE initialLogicalWidth() const override;
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
     void updateSpaceShortageForSizeContainment(const RenderBlock*, LayoutUnit offset, LayoutUnit shortage) override;

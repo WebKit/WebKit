@@ -81,8 +81,8 @@ public:
     const FontCascade& NODELETE fontCascadeForFontUnits() const;
 
     FloatSize defaultViewportFactor() const;
-    FloatSize smallViewportFactor() const;
-    FloatSize largeViewportFactor() const;
+    FloatSize NODELETE smallViewportFactor() const;
+    FloatSize NODELETE largeViewportFactor() const;
     FloatSize dynamicViewportFactor() const;
 
     CSSToLengthConversionData copyForFontSize() const

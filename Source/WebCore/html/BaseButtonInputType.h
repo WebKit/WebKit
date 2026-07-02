@@ -43,13 +43,13 @@ protected:
         : BaseClickableWithKeyInputType(type, element)
     {
     }
-    bool dirAutoUsesValue() const override;
+    bool NODELETE dirAutoUsesValue() const override;
 
 private:
-    bool shouldSaveAndRestoreFormControlState() const final;
+    bool NODELETE shouldSaveAndRestoreFormControlState() const final;
     bool appendFormData(DOMFormData&) const override;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) override;
-    bool storesValueSeparateFromAttribute() final;
+    bool NODELETE storesValueSeparateFromAttribute() final;
     void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
 };
 

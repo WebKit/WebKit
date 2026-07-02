@@ -111,7 +111,7 @@ private:
     void frameNavigated(WebCore::FrameIdentifier, const URL&, const String& mimeType, WebCore::SecurityOriginData&&, std::optional<WebCore::FrameIdentifier> parentFrameID, const String& name, WebCore::ScriptExecutionContextIdentifier loaderId);
     void domContentEventFired(double timestamp);
     void loadEventFired(double timestamp);
-    void frameDetached(WebCore::FrameIdentifier);
+    void NODELETE frameDetached(WebCore::FrameIdentifier);
 
     void removeAllRegisteredReceivers();
 

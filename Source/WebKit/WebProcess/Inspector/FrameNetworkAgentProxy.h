@@ -76,7 +76,7 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     // InspectorAgentBase (via NetworkAgentInstrumentation)
-    void didCreateFrontendAndBackend() final;
+    void NODELETE didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
     // NetworkAgentInstrumentation
@@ -92,7 +92,7 @@ public:
     void didLoadResourceFromMemoryCache(WebCore::DocumentLoader*, WebCore::CachedResource&) final;
     void didReceiveThreadableLoaderResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentThreadableLoader&) final;
     void didReceiveScriptResponse(WebCore::ResourceLoaderIdentifier) final;
-    void willDestroyCachedResource(WebCore::CachedResource&) final;
+    void NODELETE willDestroyCachedResource(WebCore::CachedResource&) final;
 
     void mainFrameNavigated(WebCore::DocumentLoader&) final;
     void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) final;

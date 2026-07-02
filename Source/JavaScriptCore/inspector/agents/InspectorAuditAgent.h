@@ -50,7 +50,7 @@ public:
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend() final;
-    void willDestroyFrontendAndBackend(DisconnectReason) final;
+    void NODELETE willDestroyFrontendAndBackend(DisconnectReason) final;
 
     // AuditBackendDispatcherHandler
     Protocol::ErrorStringOr<void> setup(std::optional<Protocol::Runtime::ExecutionContextId>&&) final;

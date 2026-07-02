@@ -127,7 +127,7 @@ public:
 
         static Location NODELETE fromArgumentLocation(ArgumentLocation argLocation, TypeKind type);
 
-        static bool rangesOverlap(Location a, uint32_t aSize, Location b, uint32_t bSize);
+        static bool NODELETE rangesOverlap(Location a, uint32_t aSize, Location b, uint32_t bSize);
 
         bool NODELETE isNone() const;
 
@@ -1137,7 +1137,7 @@ public:
 
     // Globals
 
-    Value NODELETE topValue(TypeKind type, unsigned offset = 0);
+    Value topValue(TypeKind type, unsigned offset = 0);
 
     Value NODELETE exception(const ControlData& control);
 
@@ -1387,7 +1387,7 @@ public:
     Location emitMaterializeAtomicOperand(Value value);
 
     template<typename Functor>
-    void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg oldGPR, GPRReg scratchGPR, const Functor& functor);
+    void NODELETE emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg oldGPR, GPRReg scratchGPR, const Functor& functor);
 
     template<typename Functor>
     void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, Location old, Location cur, const Functor& functor);
@@ -1670,7 +1670,7 @@ public:
     [[nodiscard]] PartialResult addF64Mul(Value lhs, Value rhs, Value& result);
 
     template<typename Func>
-    void addLatePath(WasmOrigin, Func&&);
+    void NODELETE addLatePath(WasmOrigin, Func&&);
 
     void emitThrowException(ExceptionType type);
 
@@ -1687,7 +1687,7 @@ public:
     enum class ConstantDivOverflow { CanOverflow, CannotOverflow };
 
     template<typename IntType, ConstantDivOverflow = ConstantDivOverflow::CannotOverflow>
-    Value checkConstantDivision(const Value& lhs, const Value& rhs);
+    Value NODELETE checkConstantDivision(const Value& lhs, const Value& rhs);
 
     [[nodiscard]] PartialResult addI32DivS(Value lhs, Value rhs, Value& result);
 
@@ -1712,7 +1712,7 @@ public:
     enum class MinOrMax { Min, Max };
 
     template<MinOrMax IsMinOrMax, typename FloatType>
-    void emitFloatingPointMinOrMax(FPRReg left, FPRReg right, FPRReg result);
+    void NODELETE emitFloatingPointMinOrMax(FPRReg left, FPRReg right, FPRReg result);
 
     template<MinOrMax IsMinOrMax, typename FloatType>
     FloatType computeFloatingPointMinOrMax(FloatType left, FloatType right)
@@ -1989,7 +1989,7 @@ public:
 
     B3::Type NODELETE toB3Type(Type);
 
-    B3::Type toB3Type(TypeKind);
+    B3::Type NODELETE toB3Type(TypeKind);
 
     B3::ValueRep toB3Rep(Location);
 
@@ -2063,7 +2063,7 @@ public:
 
     [[nodiscard]] BranchFoldResult NODELETE tryFoldFusedBranchCompare(OpType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location);
-    [[nodiscard]] BranchFoldResult tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
+    [[nodiscard]] BranchFoldResult NODELETE tryFoldFusedBranchCompare(OpType, ExpressionType, ExpressionType);
     [[nodiscard]] Jump emitFusedBranchCompareBranch(OpType, ExpressionType, Location, ExpressionType, Location);
 
     [[nodiscard]] PartialResult addFusedBranchCompare(OpType, ControlType& target, ExpressionType, std::span<TypedExpression>);
@@ -2094,7 +2094,7 @@ public:
     void NODELETE restoreValuesAfterCall(const CallInformation&);
 
     template<size_t N>
-    void returnValuesFromCall(Vector<Value, N>& results, const RTT& functionType, const CallInformation&);
+    void NODELETE returnValuesFromCall(Vector<Value, N>& results, const RTT& functionType, const CallInformation&);
 
     template<typename Func>
     void emitCCall(Func function, std::span<const Value> arguments);
@@ -2120,7 +2120,7 @@ public:
 
     ALWAYS_INLINE void willParseExtendedOpcode();
 
-    ALWAYS_INLINE void didParseOpcode();
+    ALWAYS_INLINE void NODELETE didParseOpcode();
 
     // SIMD
 
@@ -2230,7 +2230,7 @@ private:
     template<size_t N, typename OverflowHandler>
     void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector);
 
-    ControlData& NODELETE currentControlData();
+    ControlData& currentControlData();
 
     void NODELETE setLRUKey(Location, LocalOrTempIndex key);
     void NODELETE increaseLRUKey(Location);
@@ -2242,7 +2242,7 @@ private:
 
     Location allocateWithHint(Value, Location hint);
 
-    Location NODELETE locationOfWithoutBinding(Value);
+    Location locationOfWithoutBinding(Value);
 
     Location locationOf(Value);
 
@@ -2268,7 +2268,7 @@ private:
     void clobber(FPRReg fpr) { m_fprAllocator.clobber(*this, fpr); }
     void clobber(JSC::Reg reg) { reg.isGPR() ? clobber(reg.gpr()) : clobber(reg.fpr()); }
 
-    Location NODELETE canonicalSlot(Value);
+    Location canonicalSlot(Value);
 
     Location allocateStack(Value value);
 

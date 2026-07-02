@@ -49,7 +49,7 @@ public:
 
     JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> NODELETE callerFrame();
     JSGlobalObject* globalObject(VM&);
-    JS_EXPORT_PRIVATE SourceID sourceID() const;
+    JS_EXPORT_PRIVATE SourceID NODELETE sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
     int NODELETE line() const { return m_position.m_line.zeroBasedInt(); }
@@ -71,7 +71,7 @@ public:
 
     JS_EXPORT_PRIVATE TextPosition currentPosition(VM&);
     JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(VM&, CallFrame*);
-    JS_EXPORT_PRIVATE static SourceID sourceIDForCallFrame(CallFrame*);
+    JS_EXPORT_PRIVATE static SourceID NODELETE sourceIDForCallFrame(CallFrame*);
 
     bool isTailDeleted() const { return m_shadowChickenFrame.isTailDeleted; }
 

@@ -59,7 +59,7 @@ public:
     explicit WebNotificationManager(WebProcess&);
     ~WebNotificationManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     static ASCIILiteral supplementName();

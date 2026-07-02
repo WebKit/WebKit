@@ -54,7 +54,7 @@ public:
     void init() override;
     void recomputeAriaRole() final { m_ariaRole = determineAriaRoleAttribute(); }
 
-    bool hasElementDescendant() const final;
+    bool NODELETE hasElementDescendant() const final;
 
     bool isBusy() const final;
     bool isDetached() const override { return !m_node; }
@@ -65,7 +65,7 @@ public:
     bool isDescriptionList() const final;
     bool isMultiSelectable() const override;
     bool NODELETE isNativeImage() const;
-    bool isNativeTextControl() const final;
+    bool NODELETE isNativeTextControl() const final;
     bool isSecureField() const final;
     bool isSearchField() const final;
 
@@ -84,7 +84,7 @@ public:
     bool canSetSelectedAttribute() const override;
 
     Node* NODELETE node() const final { return m_node.get(); }
-    Document* document() const override;
+    Document* NODELETE document() const override;
     LocalFrameView* documentFrameView() const override;
 
     // Start table-related methods.

@@ -100,7 +100,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "AudioSampleDataSource"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     uint64_t m_lastPushedSampleCount { 0 };

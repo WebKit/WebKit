@@ -92,7 +92,7 @@ public:
     
     // Called by code walking the renderer or layer trees.
     void pushMappingsToAncestor(const RenderLayer*, const RenderLayer* ancestorLayer, bool respectTransforms = true);
-    void NODELETE popMappingsToAncestor(const RenderLayer*);
+    void popMappingsToAncestor(const RenderLayer*);
     void pushMappingsToAncestor(const RenderElement*, const RenderLayerModelObject* ancestorRenderer);
     void popMappingsToAncestor(const RenderLayerModelObject*);
     

@@ -47,7 +47,7 @@ private:
     void insertText1AndTrimText2();
     
 #ifndef NDEBUG
-    void getNodesInCommand(NodeSet&) override;
+    void NODELETE getNodesInCommand(NodeSet&) override;
 #endif
 
     RefPtr<Text> m_text1;

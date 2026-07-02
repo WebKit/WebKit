@@ -35,7 +35,7 @@ public:
 
     JSC::JSValue subtype(JSC::JSGlobalObject*, JSC::JSValue) override;
     JSC::JSValue getInternalProperties(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue) override;
-    bool isHTMLAllCollection(JSC::VM&, JSC::JSValue) override;
+    bool NODELETE isHTMLAllCollection(JSC::VM&, JSC::JSValue) override;
 };
 
 } // namespace WebCore

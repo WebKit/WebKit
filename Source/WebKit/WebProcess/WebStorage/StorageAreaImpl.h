@@ -58,9 +58,9 @@ private:
     void removeItem(WebCore::LocalFrame& sourceFrame, const String& key) override;
     void clear(WebCore::LocalFrame& sourceFrame) override;
     bool contains(const String& key) override;
-    WebCore::StorageType storageType() const override;
+    WebCore::StorageType NODELETE storageType() const override;
     bool isWebKit2StorageAreaImpl() const final { return true; }
-    size_t memoryBytesUsedByCache() override;
+    size_t NODELETE memoryBytesUsedByCache() override;
     void prewarm() final;
 
     WeakPtr<StorageAreaMap> m_storageAreaMap;

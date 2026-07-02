@@ -54,9 +54,9 @@ public:
     IDBObjectStoreInfo createNewObjectStore(const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
     IDBObjectStoreInfo* NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier);
-    IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
-    const IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
-    const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
+    IDBObjectStoreInfo* NODELETE infoForExistingObjectStore(const String& objectStoreName);
+    const IDBObjectStoreInfo* NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
+    const IDBObjectStoreInfo* NODELETE infoForExistingObjectStore(const String& objectStoreName) const;
 
     void renameObjectStore(IDBObjectStoreIdentifier, const String& newName);
 
@@ -70,13 +70,13 @@ public:
     IDBIndexIdentifier generateNextIndexID() { return IDBIndexIdentifier { ++m_maxIndexID }; }
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseInfo>;
     IDBObjectStoreInfo* NODELETE getInfoForExistingObjectStore(const String& objectStoreName);
-    IDBObjectStoreInfo* getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
+    IDBObjectStoreInfo* NODELETE getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
 
     String m_name;
     uint64_t m_version { 0 };

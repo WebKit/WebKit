@@ -99,9 +99,9 @@ private:
 
     RefPtr<Frame> scopedChild(unsigned index, TreeScope*) const;
     RefPtr<Frame> scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
-    unsigned scopedChildCount(TreeScope*) const;
+    unsigned NODELETE scopedChildCount(TreeScope*) const;
 
-    template<typename F> RefPtr<Frame> find(const AtomString& name, F&& nameGetter, Frame& activeFrame) const;
+    template<typename F> RefPtr<Frame> NODELETE find(const AtomString& name, F&& nameGetter, Frame& activeFrame) const;
 
     WeakRef<Frame> m_thisFrame;
 
@@ -127,5 +127,5 @@ bool isTopTargetFrameName(StringView);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-WEBCORE_EXPORT void showFrameTree(const WebCore::Frame*);
+WEBCORE_EXPORT void NODELETE showFrameTree(const WebCore::Frame*);
 #endif

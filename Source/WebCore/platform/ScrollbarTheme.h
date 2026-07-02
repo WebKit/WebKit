@@ -92,7 +92,7 @@ public:
     virtual void paintTickmarks(GraphicsContext&, Scrollbar&, const IntRect&) { }
     virtual void paintOverhangAreas(ScrollView&, GraphicsContext&, const IntRect&, const IntRect&, const IntRect&) { }
 
-    virtual ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart);
+    virtual ScrollbarButtonPressAction NODELETE handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart);
     virtual bool shouldSnapBackToDragOrigin(Scrollbar&, const PlatformMouseEvent&) { return false; }
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) { return false; }
     virtual int thumbPosition(Scrollbar&) { return 0; } // The position of the thumb relative to the track.

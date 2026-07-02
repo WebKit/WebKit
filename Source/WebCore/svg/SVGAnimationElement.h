@@ -112,7 +112,7 @@ protected:
     void setCalcMode(CalcMode calcMode) { m_calcMode = calcMode; }
 
 private:
-    void animationAttributeChanged() override;
+    void NODELETE animationAttributeChanged() override;
     void setAttributeType(const AtomString&);
 
     bool isSVGAnimationElement() const final { return true; }
@@ -129,8 +129,8 @@ private:
     float calculatePercentFromKeyPoints(float percent) const;
     void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
-    float NODELETE calculatePercentForFromTo(float percent) const;
-    unsigned NODELETE calculateKeyTimesIndex(float percent) const;
+    float calculatePercentForFromTo(float percent) const;
+    unsigned calculateKeyTimesIndex(float percent) const;
 
     void setCalcMode(const AtomString&);
 

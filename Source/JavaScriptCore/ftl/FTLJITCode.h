@@ -44,13 +44,13 @@ public:
     JITCode();
     ~JITCode() override;
 
-    CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
-    void* executableAddressAtOffset(size_t offset) override;
-    void* dataAddressAtOffset(size_t offset) override;
-    unsigned offsetOf(void* pointerIntoCode) override;
-    size_t size() override;
+    CodePtr<JSEntryPtrTag> NODELETE addressForCall(ArityCheckMode) override;
+    void* NODELETE executableAddressAtOffset(size_t offset) override;
+    void* NODELETE dataAddressAtOffset(size_t offset) override;
+    unsigned NODELETE offsetOf(void* pointerIntoCode) override;
+    size_t NODELETE size() override;
     void setSize(size_t size) { m_size = size; }
-    bool contains(void*) override;
+    bool NODELETE contains(void*) override;
 
     void initializeB3Code(CodeRef<JSEntryPtrTag>);
     void initializeB3Byproducts(std::unique_ptr<OpaqueByproducts>);
@@ -59,15 +59,15 @@ public:
     
     void validateReferences(const TrackedReferences&) override;
 
-    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
+    RegisterSet NODELETE liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
 
     std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
 
     CodeRef<JSEntryPtrTag> b3Code() const { return m_b3Code; }
     
-    JITCode* ftl() override;
-    DFG::CommonData* dfgCommon() override;
-    const DFG::CommonData* dfgCommon() const override;
+    JITCode* NODELETE ftl() override;
+    DFG::CommonData* NODELETE dfgCommon() override;
+    const DFG::CommonData* NODELETE dfgCommon() const override;
     static constexpr ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
     void shrinkToFit() override;
 

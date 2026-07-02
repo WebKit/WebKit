@@ -118,9 +118,9 @@ public:
     // Swaps the current drawing buffer to display buffer.
     virtual void prepareForDisplay() { }
 
-    virtual PixelFormat pixelFormat() const;
+    virtual PixelFormat NODELETE pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;
-    virtual bool isOpaque() const;
+    virtual bool NODELETE isOpaque() const;
     virtual bool NODELETE willReadFrequently() const;
     virtual std::optional<RenderingMode> renderingModeForTesting() const { return std::nullopt; }
 

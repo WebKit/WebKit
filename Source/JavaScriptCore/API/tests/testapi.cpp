@@ -142,10 +142,10 @@ public:
 private:
 
     template<typename... Strings>
-    bool check(bool condition, Strings... message);
+    bool NODELETE check(bool condition, Strings... message);
 
     template<typename JSFunctor, typename APIFunctor>
-    void checkJSAndAPIMatch(const JSFunctor&, const APIFunctor&, const char* description);
+    void NODELETE checkJSAndAPIMatch(const JSFunctor&, const APIFunctor&, const char* description);
 
     void checkIsBigIntType(JSValueRef);
 
@@ -155,9 +155,9 @@ private:
     using ScriptResult = Expected<JSValueRef, JSValueRef>;
     ScriptResult evaluateScript(const char* script, JSObjectRef thisObject = nullptr);
     template<typename... ArgumentTypes>
-    ScriptResult callFunction(const char* functionSource, ArgumentTypes... arguments);
+    ScriptResult NODELETE callFunction(const char* functionSource, ArgumentTypes... arguments);
     template<typename... ArgumentTypes>
-    bool functionReturnsTrue(const char* functionSource, ArgumentTypes... arguments);
+    bool NODELETE functionReturnsTrue(const char* functionSource, ArgumentTypes... arguments);
 
     bool scriptResultIs(ScriptResult, JSValueRef);
 

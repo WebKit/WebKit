@@ -100,7 +100,7 @@ private:
 
     void setSizeFrameRateAndZoomForPhoto(CaptureSizeFrameRateAndZoom&&);
     Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&) final;
-    bool isPowerEfficient() const final;
+    bool NODELETE isPowerEfficient() const final;
 
     void orientationChanged(IntDegrees) override;
 

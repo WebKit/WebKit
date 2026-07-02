@@ -39,11 +39,11 @@ namespace IPC {
 
 // Function to check when asserting IPC-related failures, so that IPC testing skips the assertions
 // and exposes bugs underneath.
-bool isTestingIPC();
+bool NODELETE isTestingIPC();
 
 #if ENABLE(IPC_TESTING_API)
-void startTestingIPC();
-void stopTestingIPC();
+void NODELETE startTestingIPC();
+void NODELETE stopTestingIPC();
 #else
 inline bool isTestingIPC()
 {

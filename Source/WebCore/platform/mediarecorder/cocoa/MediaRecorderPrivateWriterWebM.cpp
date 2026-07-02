@@ -96,10 +96,10 @@ public:
         return 0;
     }
 
-    int64_t Position() const final { return m_position; }
-    bool Seekable() const final { return false; }
-    int32_t Position(int64_t) final { return -1; }
-    void ElementStartNotify(uint64_t, int64_t) final { }
+    int64_t NODELETE Position() const final { return m_position; }
+    bool NODELETE Seekable() const final { return false; }
+    int32_t NODELETE Position(int64_t) final { return -1; }
+    void NODELETE ElementStartNotify(uint64_t, int64_t) final { }
 
     std::optional<uint8_t> addAudioTrack(const AudioInfo& info)
     {

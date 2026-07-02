@@ -44,12 +44,12 @@ public:
     bool NODELETE hasNonDefaultData() const;
     bool isStatic() const final { return true; }
 
-    bool hasData() final;
+    bool NODELETE hasData() final;
     Vector<String> typesSafeForBindings(const String&) final;
     Vector<String> typesForLegacyUnsafeBindings() final;
     String readOrigin() final { return { }; }
     String readString(const String& type) final;
-    String readStringInCustomData(const String& type) final;
+    String NODELETE readStringInCustomData(const String& type) final;
 
     void writeString(const String& type, const String& data) final;
     void writeData(const String& type, Ref<SharedBuffer>&& data);

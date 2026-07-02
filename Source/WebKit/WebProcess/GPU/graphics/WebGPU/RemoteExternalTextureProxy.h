@@ -73,7 +73,7 @@ private:
     void destroy() final;
     void undestroy() final;
 #if PLATFORM(COCOA)
-    void updateExternalTexture(CVPixelBufferRef) final;
+    void NODELETE updateExternalTexture(CVPixelBufferRef) final;
 #endif
 
     WebGPUIdentifier m_backing;

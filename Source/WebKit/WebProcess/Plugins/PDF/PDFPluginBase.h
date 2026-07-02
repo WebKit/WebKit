@@ -142,7 +142,7 @@ public:
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
 
-    virtual void setView(PluginView&);
+    virtual void NODELETE setView(PluginView&);
 
     virtual void willDetachRenderer();
 
@@ -271,7 +271,7 @@ public:
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
 
-    WebCore::ScrollPosition scrollPosition() const final;
+    WebCore::ScrollPosition NODELETE scrollPosition() const final;
 
 #if PLATFORM(MAC)
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
@@ -320,7 +320,7 @@ public:
     void writeItemsToGeneralPasteboard(Vector<PasteboardItem>&&) const;
 
     uint64_t streamedBytes() const;
-    std::optional<WebCore::FrameIdentifier> rootFrameID() const final;
+    std::optional<WebCore::FrameIdentifier> NODELETE rootFrameID() const final;
 
 #if ENABLE(TWO_PHASE_CLICKS)
     virtual std::pair<URL, WebCore::FloatRect> linkURLAndBoundsAtPoint(WebCore::FloatPoint /* pointInRootView */) const { return { }; }
@@ -373,8 +373,8 @@ private:
     bool getByteRanges(CFMutableArrayRef, std::span<const CFRange>) const;
 
 #if !LOG_DISABLED
-    std::optional<uint64_t> streamedBytesForDebugLogging() const;
-    void incrementalLoaderLogWithBytes(const String&, std::optional<uint64_t>&& streamedBytes);
+    std::optional<uint64_t> NODELETE streamedBytesForDebugLogging() const;
+    void NODELETE incrementalLoaderLogWithBytes(const String&, std::optional<uint64_t>&& streamedBytes);
 #endif
 
 protected:
@@ -407,20 +407,20 @@ protected:
     WebCore::ScrollableArea* enclosingScrollableArea() const final;
     bool scrollAnimatorEnabled() const final { return true; }
 #if ENABLE(FORM_CONTROL_REFRESH)
-    bool formControlRefreshEnabled() const final;
+    bool NODELETE formControlRefreshEnabled() const final;
 #endif
     bool isScrollableOrRubberbandable() final { return true; }
     bool hasScrollableOrRubberbandableAncestor() final { return true; }
     WebCore::IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
-    bool isActive() const final;
+    bool NODELETE isActive() const final;
     bool isScrollCornerVisible() const final { return false; }
-    WebCore::ScrollPosition minimumScrollPosition() const final;
+    WebCore::ScrollPosition NODELETE minimumScrollPosition() const final;
     WebCore::ScrollPosition maximumScrollPosition() const final;
     WebCore::IntSize visibleSize() const final { return m_size; }
     WebCore::IntSize overhangAmount() const final;
     WebCore::IntPoint lastKnownMousePositionInView() const override;
 
-    float deviceScaleFactor() const override;
+    float NODELETE deviceScaleFactor() const override;
     bool useDarkAppearance() const override;
     bool shouldSuspendScrollAnimations() const final { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
@@ -430,7 +430,7 @@ protected:
     WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const final;
     WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const final;
 
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+    bool NODELETE forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool shouldPlaceVerticalScrollbarOnLeft() const final { return false; }
 
     WebCore::IntRect viewRelativeVerticalScrollbarRect() const;
@@ -460,7 +460,7 @@ protected:
 #endif
 
 #if !LOG_DISABLED
-    void incrementalLoaderLog(const String&);
+    void NODELETE incrementalLoaderLog(const String&);
 #endif
 
     virtual void teardownPasswordEntryForm() = 0;

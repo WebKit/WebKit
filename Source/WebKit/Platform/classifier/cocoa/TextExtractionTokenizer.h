@@ -43,7 +43,7 @@ class TextExtractionTokenizer : public RefCounted<TextExtractionTokenizer> {
     WTF_MAKE_NONCOPYABLE(TextExtractionTokenizer);
 public:
     static TextExtractionTokenizer& singleton();
-    static TextExtractionTokenizer* singletonIfCreated();
+    static TextExtractionTokenizer* NODELETE singletonIfCreated();
 
     void prewarm();
 

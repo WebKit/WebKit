@@ -177,7 +177,7 @@ static ALWAYS_INLINE void putWithThis(JSGlobalObject* globalObject, EncodedJSVal
     baseValue.putInline(globalObject, ident, putValue, slot);
 }
 
-static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
+static ALWAYS_INLINE EncodedJSValue NODELETE parseIntResult(double input)
 {
     return JSValue::encode(jsNumber(input));
 }

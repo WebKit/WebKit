@@ -106,7 +106,7 @@ public:
     FloatRect coverageRect() const final { return m_coverageRect; }
     std::optional<FloatRect> layoutViewportRect() const { return m_layoutViewportRect; }
 
-    void setTileSizeUpdateDelayDisabledForTesting(bool) final;
+    void NODELETE setTileSizeUpdateDelayDisabledForTesting(bool) final;
 
     unsigned blankPixelCount() const;
     WEBCORE_EXPORT static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
@@ -122,20 +122,20 @@ public:
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     ScrollingModeIndication indicatorMode() const { return m_indicatorMode; }
 
-    void willStartLiveResize() final;
-    void didEndLiveResize() final;
+    void NODELETE willStartLiveResize() final;
+    void NODELETE didEndLiveResize() final;
 
-    IntSize tileSize() const final;
+    IntSize NODELETE tileSize() const final;
     FloatRect rectForTile(TileIndex) const final;
     IntRect bounds() const final;
     IntRect boundsWithoutMargin() const final;
-    bool hasMargins() const final;
-    bool hasHorizontalMargins() const final;
-    bool hasVerticalMargins() const final;
-    int topMarginHeight() const final;
-    int bottomMarginHeight() const final;
-    int leftMarginWidth() const final;
-    int rightMarginWidth() const final;
+    bool NODELETE hasMargins() const final;
+    bool NODELETE hasHorizontalMargins() const final;
+    bool NODELETE hasVerticalMargins() const final;
+    int NODELETE topMarginHeight() const final;
+    int NODELETE bottomMarginHeight() const final;
+    int NODELETE leftMarginWidth() const final;
+    int NODELETE rightMarginWidth() const final;
     TileCoverage tileCoverage() const final { return m_tileCoverage; }
 
     FloatRect adjustTileCoverageRect(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, bool sizeChanged) final;
@@ -146,7 +146,7 @@ public:
     IntSize computeTileSize();
 
     IntRect boundsAtLastRevalidate() const { return m_boundsAtLastRevalidate; }
-    IntRect boundsAtLastRevalidateWithoutMargin() const;
+    IntRect NODELETE boundsAtLastRevalidateWithoutMargin() const;
     void willRevalidateTiles(TileGrid&, TileRevalidationType);
     void didRevalidateTiles(TileGrid&, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay);
 
@@ -197,7 +197,7 @@ private:
     IntRect tileGridExtent() const final;
     void setScrollingPerformanceTestingEnabled(bool flag) final { m_scrollingPerformanceTestingEnabled = flag; }
     double retainedTileBackingStoreMemory() const final;
-    IntRect tileCoverageRect() const final;
+    IntRect NODELETE tileCoverageRect() const final;
 #if USE(CA)
     PlatformCALayer* tiledScrollingIndicatorLayer() final;
 #endif
@@ -205,8 +205,8 @@ private:
     void setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight) final;
     void setMarginSize(int) final;
     void setZoomedOutContentsScale(float) final;
-    float zoomedOutContentsScale() const final;
-    float tilingScaleFactor() const final;
+    float NODELETE zoomedOutContentsScale() const final;
+    float NODELETE tilingScaleFactor() const final;
 
     void updateMargins();
     void clearZoomedOutTileGrid();
@@ -234,7 +234,7 @@ private:
 
     void clearObscuredInsetsAdjustments() final { m_obscuredInsetsDelta = std::nullopt; }
     void obscuredInsetsWillChange(FloatBoxExtent&& obscuredInsetsDelta) final { m_obscuredInsetsDelta = WTF::move(obscuredInsetsDelta); }
-    FloatRect adjustedTileClipRectForObscuredInsets(const FloatRect&) const;
+    FloatRect NODELETE adjustedTileClipRectForObscuredInsets(const FloatRect&) const;
 
     ThreadSafeWeakPtr<PlatformCALayer> m_tileCacheLayer;
 

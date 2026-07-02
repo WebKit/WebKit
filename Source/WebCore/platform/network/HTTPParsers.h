@@ -88,7 +88,7 @@ bool NODELETE isValidLanguageHeaderValue(const String&);
 WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
 #endif
 bool NODELETE isValidHTTPToken(const String&);
-bool isValidHTTPToken(StringView);
+bool NODELETE isValidHTTPToken(StringView);
 std::optional<WallTime> parseHTTPDate(const String&);
 StringView filenameFromHTTPContentDisposition(StringView value LIFETIME_BOUND);
 WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);

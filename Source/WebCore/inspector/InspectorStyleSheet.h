@@ -256,7 +256,7 @@ public:
 private:
     InspectorStyleSheetForInlineStyle(Inspector::IdentifierRegistry&, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);
 
-    Document* ownerDocument() const final;
+    Document* NODELETE ownerDocument() const final;
     RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const final { ASSERT_UNUSED(style, style == &inlineStyle()); return m_ruleSourceData; }
     RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSRule* rule) const final { ASSERT_UNUSED(rule, rule); return m_ruleSourceData; }
     unsigned ruleIndexByStyle(StyleDeclarationOrCSSRule, bool) const final { return 0; }

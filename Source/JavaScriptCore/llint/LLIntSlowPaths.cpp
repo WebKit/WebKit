@@ -102,7 +102,7 @@ namespace JSC { namespace LLInt {
     LLINT_SET_PC_FOR_STUBS()
 
 static inline JSValue NODELETE getNonConstantOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->uncheckedR(operand).jsValue(); }
-static inline JSValue NODELETE getOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->r(operand).jsValue(); }
+static inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { return callFrame->r(operand).jsValue(); }
 
 #define LLINT_RETURN_TWO(first, second) do {       \
         return encodeResult(first, second);        \
@@ -222,7 +222,7 @@ ALLOW_NONLITERAL_FORMAT_END
 #else // not LLINT_TRACING
 
 template<typename... Types> void NODELETE slowPathLog(const Types&...) { }
-template<typename... Types> void slowPathLogLn(const Types&...) { }
+template<typename... Types> void NODELETE slowPathLogLn(const Types&...) { }
 template<typename... Types> void NODELETE slowPathLogF(const char*, const Types&...) { }
 
 #endif // LLINT_TRACING

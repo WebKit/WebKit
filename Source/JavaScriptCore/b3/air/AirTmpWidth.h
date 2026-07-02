@@ -41,7 +41,7 @@ public:
     ~TmpWidth();
 
     template<auto bankFilter>
-    void recompute(Code&);
+    void NODELETE recompute(Code&);
     void recomputeBoth(Code&);
 
     // The width of a Tmp is the number of bits that you need to be able to track without some trivial
@@ -103,7 +103,7 @@ private:
     }
 
     template <Bank bank>
-    void ensureSize(Tmp);
+    void NODELETE ensureSize(Tmp);
 
     // These are initialized at the beginning of recompute(), which is called in the constructor for both banks.
     Vector<Widths> m_widthGP;

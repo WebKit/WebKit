@@ -68,7 +68,7 @@ public:
     const XPath::Value& value() const LIFETIME_BOUND { return m_value; }
 
     template<typename Visitor>
-    void visitAdditionalChildrenInGCThread(Visitor&);
+    void NODELETE visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     XPathResult(Document&, const XPath::Value&);

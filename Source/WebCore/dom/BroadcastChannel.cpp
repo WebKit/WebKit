@@ -79,9 +79,9 @@ public:
     void registerChannel();
     void unregisterChannel();
     void postMessage(Ref<SerializedScriptValue>&&);
-    void detach() { m_broadcastChannel = nullptr; }
+    void NODELETE detach() { m_broadcastChannel = nullptr; }
 
-    String name() const { return m_name.isolatedCopy(); }
+    String NODELETE name() const { return m_name.isolatedCopy(); }
 
 private:
     MainThreadBridge(BroadcastChannel&, const String& name);

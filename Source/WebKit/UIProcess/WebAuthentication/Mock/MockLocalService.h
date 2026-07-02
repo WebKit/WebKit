@@ -39,7 +39,7 @@ public:
 private:
     MockLocalService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
-    bool platformStartDiscovery() const final;
+    bool NODELETE platformStartDiscovery() const final;
     Ref<LocalConnection> createLocalConnection() const final;
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;

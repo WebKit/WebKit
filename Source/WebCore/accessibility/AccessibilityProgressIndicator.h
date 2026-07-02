@@ -41,7 +41,7 @@ private:
     explicit AccessibilityProgressIndicator(AXID, RenderObject&, AXObjectCache&);
     explicit AccessibilityProgressIndicator(AXID, Element&, AXObjectCache&);
 
-    AccessibilityRole determineAccessibilityRole() final;
+    AccessibilityRole NODELETE determineAccessibilityRole() final;
 
     String valueDescription() const final;
     String gaugeRegionValueDescription() const;

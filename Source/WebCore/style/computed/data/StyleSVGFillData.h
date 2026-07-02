@@ -47,7 +47,7 @@ public:
     bool operator==(const SVGFillData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGFillData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGFillData&) const;
 #endif
 
     Opacity fillOpacity;

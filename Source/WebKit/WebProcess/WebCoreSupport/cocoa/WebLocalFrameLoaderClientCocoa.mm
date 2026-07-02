@@ -57,7 +57,7 @@ void WebLocalFrameLoaderClient::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& t
         webPage->setIsolatedTree(WTF::move(tree));
 }
 
-RefPtr<AXIsolatedTree> WebLocalFrameLoaderClient::isolatedTree() const
+RefPtr<AXIsolatedTree> NODELETE WebLocalFrameLoaderClient::isolatedTree() const
 {
     RefPtr webPage = m_frame->page();
     return webPage ? webPage->isolatedTree() : nullptr;

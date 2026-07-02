@@ -99,7 +99,7 @@ public:
     bool isEmpty() const { return !size(); }
     size_t size() const { return m_entries.size(); }
 
-    Element* NODELETE closestElementInScopeWithName(ElementName);
+    Element* closestElementInScopeWithName(ElementName);
 
     Entry* find(Element&) LIFETIME_BOUND;
     bool contains(Element&);
@@ -118,7 +118,7 @@ public:
     Entry& at(size_t i) LIFETIME_BOUND { return m_entries[i]; }
 
 #if ENABLE(TREE_DEBUGGING)
-    void show();
+    void NODELETE show();
 #endif
 
 private:

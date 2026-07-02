@@ -218,7 +218,7 @@ public:
     template<typename CellType, SubspaceAccess>
     inline static GCClient::IsoSubspace* subspaceFor(VM&); // Defined in StructureInlines.h
 
-    JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);
+    JS_EXPORT_PRIVATE static bool NODELETE isValidPrototype(JSValue);
 
 protected:
     inline void finishCreation(VM& vm, const Structure* previous, DeferredStructureTransitionWatchpointFire* deferred); // Defined in StructureInlines.h
@@ -439,10 +439,10 @@ public:
     // increase in footprint because no other object refers to that global object. This method
     // returns true if all user-controlled (and hence unbounded in size) objects referenced from the
     // Structure are already marked.
-    template<typename Visitor> bool isCheapDuringGC(Visitor&);
+    template<typename Visitor> bool NODELETE isCheapDuringGC(Visitor&);
     
     // Returns true if this structure is now marked.
-    template<typename Visitor> bool markIfCheap(Visitor&);
+    template<typename Visitor> bool NODELETE markIfCheap(Visitor&);
     
     bool hasRareData() const
     {
@@ -916,7 +916,7 @@ private:
     PropertyOffset attributeChange(VM&, PropertyName, unsigned attributes);
 
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void checkConsistency();
+    JS_EXPORT_PRIVATE void NODELETE checkConsistency();
 #else
     ALWAYS_INLINE void checkConsistency() { }
 #endif

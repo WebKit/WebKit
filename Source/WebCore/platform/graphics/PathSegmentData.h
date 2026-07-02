@@ -45,11 +45,11 @@ struct PathMoveTo {
 
     bool operator==(const PathMoveTo&) const = default;
 
-    FloatPoint NODELETE calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> NODELETE tryGetEndPointWithoutContext() const;
+    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
 
-    void NODELETE extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void NODELETE extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void applyElements(const PathElementApplier&) const;
 
@@ -74,7 +74,7 @@ struct PathLineTo {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathLineTo&);
@@ -96,7 +96,7 @@ struct PathQuadCurveTo {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathQuadCurveTo&);
@@ -119,7 +119,7 @@ struct PathBezierCurveTo {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathBezierCurveTo&);
@@ -316,7 +316,7 @@ struct PathDataLine {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 private:
     std::array<float, 4> m_values { };
 };
@@ -351,7 +351,7 @@ struct PathDataQuadCurve {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataQuadCurve&);
@@ -375,7 +375,7 @@ struct PathDataBezierCurve {
 
     void applyElements(const PathElementApplier&) const;
 
-    void transform(const AffineTransform&);
+    void NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataBezierCurve&);

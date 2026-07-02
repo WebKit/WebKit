@@ -44,7 +44,7 @@ public:
     bool show(ScriptExecutionContext&, NotificationData&&, RefPtr<NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancel(NotificationData&&) final;
     void notificationObjectDestroyed(NotificationData&&) final;
-    void notificationControllerDestroyed() final;
+    void NODELETE notificationControllerDestroyed() final;
     void requestPermission(ScriptExecutionContext&, PermissionHandler&&) final;
     Permission checkPermission(ScriptExecutionContext*) final;
 

@@ -637,10 +637,10 @@ struct ParsedUnicodeEscapeValue {
     {
     }
 
-    bool isValid() const { return m_value != Incomplete && m_value != Invalid; }
-    bool isIncomplete() const { return m_value == Incomplete; }
+    bool NODELETE isValid() const { return m_value != Incomplete && m_value != Invalid; }
+    bool NODELETE isIncomplete() const { return m_value == Incomplete; }
 
-    char32_t value() const
+    char32_t NODELETE value() const
     {
         ASSERT(isValid());
         return m_value;
@@ -729,7 +729,7 @@ void Lexer<T>::shiftLineTerminator()
     m_lineStart = m_code;
 }
 
-static ALWAYS_INLINE bool isRestrKeyword(JSTokenType token)
+static ALWAYS_INLINE bool NODELETE isRestrKeyword(JSTokenType token)
 {
     return token == CONTINUE || token == BREAK || token == RETURN || token == THROW;
 }
@@ -835,30 +835,30 @@ ALWAYS_INLINE char32_t Lexer<char16_t>::currentCodePoint() const
 }
 
 template<typename CharacterType>
-static inline bool isASCIIDigitOrSeparator(CharacterType character)
+static inline bool NODELETE isASCIIDigitOrSeparator(CharacterType character)
 {
     return isASCIIDigit(character) || character == '_';
 }
 
 template<typename CharacterType>
-static inline bool isASCIIHexDigitOrSeparator(CharacterType character)
+static inline bool NODELETE isASCIIHexDigitOrSeparator(CharacterType character)
 {
     return isASCIIHexDigit(character) || character == '_';
 }
 
 template<typename CharacterType>
-static inline bool isASCIIBinaryDigitOrSeparator(CharacterType character)
+static inline bool NODELETE isASCIIBinaryDigitOrSeparator(CharacterType character)
 {
     return isASCIIBinaryDigit(character) || character == '_';
 }
 
 template<typename CharacterType>
-static inline bool isASCIIOctalDigitOrSeparator(CharacterType character)
+static inline bool NODELETE isASCIIOctalDigitOrSeparator(CharacterType character)
 {
     return isASCIIOctalDigit(character) || character == '_';
 }
 
-static inline Latin1Character singleEscape(int c)
+static inline Latin1Character NODELETE singleEscape(int c)
 {
     if (c < 128) {
         ASSERT(static_cast<size_t>(c) < std::size(singleCharacterEscapeValuesForASCII));
@@ -1238,7 +1238,7 @@ JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData
     return identType;
 }
 
-static ALWAYS_INLINE bool characterRequiresParseStringSlowCase(Latin1Character character)
+static ALWAYS_INLINE bool NODELETE characterRequiresParseStringSlowCase(Latin1Character character)
 {
     return character < 0xE;
 }

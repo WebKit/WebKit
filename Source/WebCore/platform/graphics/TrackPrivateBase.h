@@ -63,8 +63,8 @@ public:
     virtual String language() const { return emptyString(); }
 
     virtual int trackIndex() const { return 0; }
-    virtual std::optional<String> trackUID() const;
-    virtual std::optional<bool> defaultEnabled() const;
+    virtual std::optional<String> NODELETE trackUID() const;
+    virtual std::optional<bool> NODELETE defaultEnabled() const;
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
 
@@ -84,7 +84,7 @@ public:
     virtual void setLogger(const Logger&, uint64_t);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     using Task = Function<void(TrackPrivateBaseClient&)>;

@@ -62,7 +62,7 @@ public:
     WEBCORE_EXPORT static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 
 private:

@@ -77,8 +77,8 @@ public:
     void NODELETE setSourceBuffer(SourceBuffer*);
 #endif
 
-    void setTrackList(TrackListBase&);
-    void clearTrackList();
+    void NODELETE setTrackList(TrackListBase&);
+    void NODELETE clearTrackList();
     TrackListBase* NODELETE trackList() const;
     WebCoreOpaqueRoot NODELETE opaqueRoot() const;
 
@@ -88,7 +88,7 @@ public:
     virtual void setLogger(const Logger&, uint64_t);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
 protected:

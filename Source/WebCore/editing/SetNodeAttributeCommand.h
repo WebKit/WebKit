@@ -44,7 +44,7 @@ private:
     void doUnapply() override;
 
 #ifndef NDEBUG
-    void getNodesInCommand(NodeSet&) override;
+    void NODELETE getNodesInCommand(NodeSet&) override;
 #endif
 
     const Ref<Element> m_element;

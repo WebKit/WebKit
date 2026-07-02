@@ -51,9 +51,9 @@ public:
     IDBIndexInfo createNewIndex(IDBIndexIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
     bool NODELETE hasIndex(const String& name) const;
-    bool hasIndex(IDBIndexIdentifier) const;
+    bool NODELETE hasIndex(IDBIndexIdentifier) const;
     IDBIndexInfo* NODELETE infoForExistingIndex(const String& name);
-    IDBIndexInfo* infoForExistingIndex(IDBIndexIdentifier);
+    IDBIndexInfo* NODELETE infoForExistingIndex(IDBIndexIdentifier);
 
     Vector<String> indexNames() const;
     const HashMap<IDBIndexIdentifier, IDBIndexInfo>& indexMap() const LIFETIME_BOUND { return m_indexMap; }
@@ -62,8 +62,8 @@ public:
     void deleteIndex(IDBIndexIdentifier);
 
 #if !LOG_DISABLED
-    String loggingString(int indent = 0) const;
-    String condensedLoggingString() const;
+    String NODELETE loggingString(int indent = 0) const;
+    String NODELETE condensedLoggingString() const;
 #endif
 
 private:

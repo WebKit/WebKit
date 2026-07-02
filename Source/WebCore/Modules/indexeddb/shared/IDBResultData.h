@@ -114,7 +114,7 @@ public:
     // NetworkProcess-internal: set by UniqueIDBDatabaseTransaction before delegate dispatch so
     // IDBStorageConnectionToClient can route per-origin work without a side map. Never encoded
     // for IPC; stays empty on the WebProcess side.
-    WEBCORE_EXPORT const ClientOrigin* clientOrigin() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const ClientOrigin* NODELETE clientOrigin() const LIFETIME_BOUND;
     void setClientOrigin(ClientOrigin&&);
 
     WEBCORE_EXPORT IDBResultData();

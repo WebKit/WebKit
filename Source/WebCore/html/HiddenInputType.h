@@ -53,13 +53,13 @@ private:
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
-    bool accessKeyAction(bool sendMouseEvents) final;
-    bool rendererIsNeeded() final;
-    bool storesValueSeparateFromAttribute() final;
-    bool shouldRespectHeightAndWidthAttributes() final;
+    bool NODELETE accessKeyAction(bool sendMouseEvents) final;
+    bool NODELETE rendererIsNeeded() final;
+    bool NODELETE storesValueSeparateFromAttribute() final;
+    bool NODELETE shouldRespectHeightAndWidthAttributes() final;
     void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) final;
     bool appendFormData(DOMFormData&) const final;
-    bool dirAutoUsesValue() const final;
+    bool NODELETE dirAutoUsesValue() const final;
 };
 
 } // namespace WebCore

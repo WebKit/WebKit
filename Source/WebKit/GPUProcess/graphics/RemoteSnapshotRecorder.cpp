@@ -67,7 +67,7 @@ void RemoteSnapshotRecorder::stopListeningForIPC()
     m_renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteSnapshotRecorder::messageReceiverName(), m_identifier.toUInt64());
 }
 
-Ref<RemoteSnapshot> RemoteSnapshotRecorder::snapshot() const
+Ref<RemoteSnapshot> NODELETE RemoteSnapshotRecorder::snapshot() const
 {
     return m_snapshot;
 }

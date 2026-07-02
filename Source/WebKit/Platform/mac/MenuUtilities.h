@@ -35,13 +35,13 @@ namespace WebKit {
 #if PLATFORM(MAC)
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber);
-RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *webView, const WebCore::IntRect&);
-RetainPtr<NSString> menuItemTitleForTelephoneNumberGroup();
+NSMenuItem *NODELETE menuItemForTelephoneNumber(const String& telephoneNumber);
+RetainPtr<NSMenu> NODELETE menuForTelephoneNumber(const String& telephoneNumber, NSView *webView, const WebCore::IntRect&);
+RetainPtr<NSString> NODELETE menuItemTitleForTelephoneNumberGroup();
 #endif
 
 #if ENABLE(CONTEXT_MENU_IMAGES_ON_MAC)
-void addImageToMenuItem(NSMenuItem*, const WebCore::ContextMenuAction, bool);
+void NODELETE addImageToMenuItem(NSMenuItem*, const WebCore::ContextMenuAction, bool);
 #endif
 
 #endif

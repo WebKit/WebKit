@@ -197,7 +197,7 @@ typedef union YYSTYPE
 
 
 static int xpathyylex(YYSTYPE* yylval, WebCore::XPath::Parser& parser) { return parser.lex(*yylval); }
-static void xpathyyerror(WebCore::XPath::Parser&, const char*) { }
+static void NODELETE xpathyyerror(WebCore::XPath::Parser&, const char*) { }
 
 
 

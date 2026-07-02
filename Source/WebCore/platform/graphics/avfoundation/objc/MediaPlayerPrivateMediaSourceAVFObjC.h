@@ -96,14 +96,14 @@ public:
     void removeVideoTrack(VideoTrackPrivate&);
     void removeTextTrack(InbandTextTrackPrivate&);
 
-    MediaPlayer::NetworkState networkState() const override;
+    MediaPlayer::NetworkState NODELETE networkState() const override;
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
     void NODELETE setLoadingProgresssed(bool);
     void setHasAvailableVideoFrame(bool);
-    bool hasAvailableVideoFrame() const override;
+    bool NODELETE hasAvailableVideoFrame() const override;
     void durationChanged();
 
     void effectiveRateChanged();
@@ -166,7 +166,7 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     uint64_t mediaPlayerLogIdentifier() { return logIdentifier(); }
     const Logger& mediaPlayerLogger() { return logger(); }
@@ -181,9 +181,9 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
 #endif
-    void cancelLoad() override;
+    void NODELETE cancelLoad() override;
 
-    void prepareToPlay() override;
+    void NODELETE prepareToPlay() override;
     PlatformLayer* platformLayer() const override;
 
     bool supportsPictureInPicture() const override { return true; }
@@ -200,34 +200,34 @@ private:
     void setVolume(float volume) override;
     void setMuted(bool) override;
 
-    bool supportsScanning() const override;
+    bool NODELETE supportsScanning() const override;
 
-    FloatSize naturalSize() const override;
+    FloatSize NODELETE naturalSize() const override;
 
-    bool hasVideo() const override;
-    bool hasAudio() const override;
+    bool NODELETE hasVideo() const override;
+    bool NODELETE hasAudio() const override;
 
     void setPageIsVisible(bool) final;
     void setViewportVisibility(ViewportVisibility) final;
     void updateRendererVisibility();
 
     MediaTime duration() const override;
-    MediaTime startTime() const override;
-    MediaTime initialTime() const override;
+    MediaTime NODELETE startTime() const override;
+    MediaTime NODELETE initialTime() const override;
 
     void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final;
+    bool NODELETE seeking() const final;
     void setRateDouble(double) override;
-    double rate() const override;
+    double NODELETE rate() const override;
     double effectiveRate() const override;
 
     void setPreservesPitch(bool) override;
 
     MediaTime maxTimeSeekable() const override;
-    MediaTime minTimeSeekable() const override;
+    MediaTime NODELETE minTimeSeekable() const override;
     const PlatformTimeRanges& buffered() const override;
 
-    bool didLoadingProgress() const override;
+    bool NODELETE didLoadingProgress() const override;
 
     RefPtr<NativeImage> nativeImageForCurrentTime() override;
     bool updateLastVideoFrame();
@@ -239,7 +239,7 @@ private:
     Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
-    bool supportsAcceleratedRendering() const override;
+    bool NODELETE supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.
     void acceleratedRenderingStateChanged() override;
     void notifyActiveSourceBuffersChanged() override;
@@ -254,13 +254,13 @@ private:
     // in the page's origin.
     bool didPassCORSAccessCheck() const override { return true; }
 
-    MediaPlayer::MovieLoadType movieLoadType() const override;
+    MediaPlayer::MovieLoadType NODELETE movieLoadType() const override;
 
     String engineDescription() const override;
 
-    String languageOfPrimaryAudioTrack() const override;
+    String NODELETE languageOfPrimaryAudioTrack() const override;
 
-    size_t extraMemoryCost() const override;
+    size_t NODELETE extraMemoryCost() const override;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
 
@@ -284,7 +284,7 @@ private:
 
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
-    std::optional<VideoFrameMetadata> videoFrameMetadata() final;
+    std::optional<VideoFrameMetadata> NODELETE videoFrameMetadata() final;
 
     void setResourceOwner(const ProcessIdentity&) final;
 
@@ -309,7 +309,7 @@ private:
     void updateStateFromReadyState();
     void mediaSourceHasRetrievedAllData() final;
 
-    bool supportsProgressMonitoring() const final;
+    bool NODELETE supportsProgressMonitoring() const final;
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const final { return true; }

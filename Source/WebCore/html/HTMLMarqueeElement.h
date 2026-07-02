@@ -69,7 +69,7 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
 
-    RenderMarquee* renderMarquee() const;
+    RenderMarquee* NODELETE renderMarquee() const;
 };
 
 } // namespace WebCore

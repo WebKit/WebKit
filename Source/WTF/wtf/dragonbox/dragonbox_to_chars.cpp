@@ -86,7 +86,7 @@ static constexpr std::array radix_100_head_table {
     '9', '.', '9', '.', '9', '.', '9', '.', '9', '.' //
 };
 
-ALWAYS_INLINE void print_1_digit(uint32_t n, std::span<char> buffer) noexcept
+ALWAYS_INLINE void NODELETE print_1_digit(uint32_t n, std::span<char> buffer) noexcept
 {
     static_assert(!('0' & 0xf));
     buffer[0] = static_cast<char>('0' | n);

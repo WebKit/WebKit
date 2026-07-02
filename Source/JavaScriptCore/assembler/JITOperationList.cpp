@@ -177,7 +177,7 @@ FOR_EACH_WASM_BUILTIN(DECLARE_WASM_BUILTIN_ENTRY)
         LLINT_OP_EXTRAS(BUILTIN_WASM_ENTRY_VALIDATE_NAME(setName, builtinName)) \
     },
 
-static std::span<const JITOperationAnnotation> llintOperations()
+static std::span<const JITOperationAnnotation> NODELETE llintOperations()
 {
     static std::span<const JITOperationAnnotation> operations;
     static std::once_flag onceKey;

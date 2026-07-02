@@ -130,7 +130,7 @@ void RemoteProgressBasedTimelineRegistry::update(const RemoteScrollingTree& scro
         m_timelines.remove(processIdentifier);
 }
 
-RemoteProgressBasedTimeline* RemoteProgressBasedTimelineRegistry::get(const TimelineID& timelineID) const
+RemoteProgressBasedTimeline* NODELETE RemoteProgressBasedTimelineRegistry::get(const TimelineID& timelineID) const
 {
     auto it = m_timelines.find(timelineID.processIdentifier());
     if (it == m_timelines.end())

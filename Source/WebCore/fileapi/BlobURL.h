@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT static URL getOriginURL(const URL&);
     static bool isSecureBlobURL(const URL&);
 #if ASSERT_ENABLED
-    static bool isInternalURL(const URL&);
+    static bool NODELETE isInternalURL(const URL&);
 #endif
 
 private:

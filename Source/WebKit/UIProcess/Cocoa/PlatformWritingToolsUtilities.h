@@ -61,7 +61,7 @@ WTRequestedTool NODELETE convertToPlatformRequestedTool(WebCore::WritingTools::R
 
 WTTextSuggestionState NODELETE convertToPlatformTextSuggestionState(WebCore::WritingTools::TextSuggestionState);
 
-RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context&);
+RetainPtr<WTContext> NODELETE convertToPlatformContext(const WebCore::WritingTools::Context&);
 
 #pragma mark - Conversions from platform types to web types.
 
@@ -77,11 +77,11 @@ WebCore::WritingTools::SessionType NODELETE convertToWebSessionType(WTSessionTyp
 
 WebCore::WritingTools::SessionCompositionType NODELETE convertToWebCompositionSessionType(WTCompositionSessionType);
 
-std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *);
+std::optional<WebCore::WritingTools::Context> NODELETE convertToWebContext(WTContext *);
 
-std::optional<WebCore::WritingTools::Session> convertToWebSession(WTSession *);
+std::optional<WebCore::WritingTools::Session> NODELETE convertToWebSession(WTSession *);
 
-std::optional<WebCore::WritingTools::TextSuggestion> convertToWebTextSuggestion(WTTextSuggestion *);
+std::optional<WebCore::WritingTools::TextSuggestion> NODELETE convertToWebTextSuggestion(WTTextSuggestion *);
 
 } // namespace WebKit
 

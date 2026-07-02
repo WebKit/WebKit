@@ -78,8 +78,8 @@ public:
     static InlineLayoutUnit NODELETE ascent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
     static InlineLayoutUnit NODELETE descent(const FontMetrics&, FontBaseline, const InlineLevelBox&);
 
-    static InlineLayoutUnit ascent(const FontMetrics&, FontBaseline, const Box&);
-    static InlineLayoutUnit descent(const FontMetrics&, FontBaseline, const Box&);
+    static InlineLayoutUnit NODELETE ascent(const FontMetrics&, FontBaseline, const Box&);
+    static InlineLayoutUnit NODELETE descent(const FontMetrics&, FontBaseline, const Box&);
 
 private:
     bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const;

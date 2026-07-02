@@ -48,7 +48,7 @@ private:
     explicit DateInputType(HTMLInputElement&);
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
+    DateComponentsType NODELETE dateType() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;

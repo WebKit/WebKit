@@ -135,7 +135,7 @@ private:
     void sendData(Ref<WebCore::SharedBuffer>&&);
 
     RefPtr<IPC::Connection> NODELETE serviceWorkerConnection();
-    template<typename Message> bool sendToClient(Message&&);
+    template<typename Message> bool NODELETE sendToClient(Message&&);
 
     void sendNavigationPreloadUpdate();
     void processPreloadResponse();

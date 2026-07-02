@@ -428,7 +428,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
     }
 }
 
-static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxGeometry* boxGeometry, unsigned depth)
+static void NODELETE outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxGeometry* boxGeometry, unsigned depth)
 {
     unsigned printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
@@ -509,7 +509,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
     stream.nextLine();
 }
 
-static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream, const ElementBox& rootContainer, unsigned depth)
+static void NODELETE outputLayoutTree(const LayoutState* layoutState, TextStream& stream, const ElementBox& rootContainer, unsigned depth)
 {
     for (auto& child : childrenOfType<Box>(rootContainer)) {
         if (layoutState) {

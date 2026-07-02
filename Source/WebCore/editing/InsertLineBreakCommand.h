@@ -41,7 +41,7 @@ private:
 
     void doApply() override;
 
-    bool preservesTypingStyle() const override;
+    bool NODELETE preservesTypingStyle() const override;
 
     bool shouldUseBreakElement(const Position&);
 };

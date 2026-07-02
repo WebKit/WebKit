@@ -37,7 +37,7 @@ public:
     FloatPoint NODELETE currentPoint() const;
 
     void incrementPathSegmentCount() final { ++m_segmentIndex; }
-    bool continueConsuming() final;
+    bool NODELETE continueConsuming() final;
 
 private:
     // Used in UnalteredParsing/NormalizedParsing modes.

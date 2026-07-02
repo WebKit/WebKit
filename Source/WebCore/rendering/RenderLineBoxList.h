@@ -50,7 +50,7 @@ public:
     LegacyInlineFlowBox* firstLegacyLineBox() const LIFETIME_BOUND { return m_firstLineBox; }
     LegacyInlineFlowBox* lastLegacyLineBox() const LIFETIME_BOUND { return m_lastLineBox; }
 
-    void checkConsistency() const;
+    void NODELETE checkConsistency() const;
 
     void appendLineBox(std::unique_ptr<LegacyInlineFlowBox>);
 
@@ -61,7 +61,7 @@ public:
     
     void dirtyLineBoxes();
     void dirtyLineFromChangedChild(RenderBoxModelObject& parent);
-    void shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY);
+    void NODELETE shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
 private:
     // For block flows, each box represents the root inline box for a line in the paragraph.

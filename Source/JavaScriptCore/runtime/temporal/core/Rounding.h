@@ -39,17 +39,17 @@
 namespace JSC {
 namespace TemporalCore {
 
-RoundingMode JS_EXPORT_PRIVATE negateTemporalRoundingMode(RoundingMode);
+RoundingMode JS_EXPORT_PRIVATE NODELETE negateTemporalRoundingMode(RoundingMode);
 
-double JS_EXPORT_PRIVATE applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundingMode);
+double JS_EXPORT_PRIVATE NODELETE applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundingMode);
 
-std::optional<unsigned> JS_EXPORT_PRIVATE maximumRoundingIncrement(TemporalUnit);
+std::optional<unsigned> JS_EXPORT_PRIVATE NODELETE maximumRoundingIncrement(TemporalUnit);
 
 double JS_EXPORT_PRIVATE roundNumberToIncrementDouble(double x, double increment, RoundingMode);
 
-Int128 JS_EXPORT_PRIVATE roundNumberToIncrementAsIfPositive(Int128 x, Int128 increment, RoundingMode);
+Int128 JS_EXPORT_PRIVATE NODELETE roundNumberToIncrementAsIfPositive(Int128 x, Int128 increment, RoundingMode);
 
-Int128 JS_EXPORT_PRIVATE roundNumberToIncrementInt128(Int128 x, Int128 increment, RoundingMode);
+Int128 JS_EXPORT_PRIVATE NODELETE roundNumberToIncrementInt128(Int128 x, Int128 increment, RoundingMode);
 
 TemporalResult<void> JS_EXPORT_PRIVATE validateTemporalRoundingIncrement(double increment, std::optional<double> dividend, Inclusivity);
 

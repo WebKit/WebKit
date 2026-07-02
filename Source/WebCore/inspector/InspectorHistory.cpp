@@ -46,7 +46,7 @@ private:
     ExceptionOr<void> perform() final { return { }; }
     ExceptionOr<void> undo() final { return { }; }
     ExceptionOr<void> redo() final { return { }; }
-    bool isUndoableStateMark() const final { return true; }
+    bool NODELETE isUndoableStateMark() const final { return true; }
 };
 
 ExceptionOr<void> InspectorHistory::perform(std::unique_ptr<Action> action)

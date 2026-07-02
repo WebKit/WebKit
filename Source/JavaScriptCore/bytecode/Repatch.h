@@ -74,7 +74,7 @@ enum class InByKind {
     PrivateName
 };
 
-CacheableIdentifier nonStringPrimitiveKeyForSubscript(VM&, JSValue subscript);
+CacheableIdentifier NODELETE nonStringPrimitiveKeyForSubscript(VM&, JSValue subscript);
 
 void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, PropertyInlineCache&, GetByKind);
 void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, const PropertySlot&, PropertyInlineCache&, GetByKind, bool isNonStringPrimitiveKey);

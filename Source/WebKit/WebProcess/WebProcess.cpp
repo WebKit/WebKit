@@ -2017,7 +2017,7 @@ void WebProcess::unregisterStorageAreaMap(StorageAreaMap& storageAreaMap)
     m_storageAreaMaps.remove(identifier);
 }
 
-WeakPtr<StorageAreaMap> WebProcess::storageAreaMap(StorageAreaMapIdentifier identifier) const
+WeakPtr<StorageAreaMap> NODELETE WebProcess::storageAreaMap(StorageAreaMapIdentifier identifier) const
 {
     return m_storageAreaMaps.get(identifier);
 }

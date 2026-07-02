@@ -940,7 +940,7 @@ void Debugger::stepOutOfFunction()
     m_doneProcessingDebuggerEvents = true;
 }
 
-static inline JSGlobalObject* lexicalGlobalObjectForCallFrame(VM& vm, CallFrame* callFrame)
+static inline JSGlobalObject* NODELETE lexicalGlobalObjectForCallFrame(VM& vm, CallFrame* callFrame)
 {
     if (!callFrame)
         return nullptr;

@@ -61,7 +61,7 @@ const WTF::String& FormInfo::httpMethod() const
     return m_httpMethod;
 }
 
-const Vector<std::pair<WTF::String, WTF::String>>& FormInfo::formValues() const
+const Vector<std::pair<WTF::String, WTF::String>>& NODELETE FormInfo::formValues() const
 {
     return m_formValues;
 }

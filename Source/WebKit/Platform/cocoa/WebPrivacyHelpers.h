@@ -145,27 +145,27 @@ public:
 
 private:
     void didUpdateCachedListData() final { m_cachedListData.shrinkToFit(); }
-    unsigned resourceTypeValue() const final;
+    unsigned NODELETE resourceTypeValue() const final;
 };
 
 class StorageAccessPromptQuirkController : public ListDataController<StorageAccessPromptQuirkController, Vector<WebCore::OrganizationStorageAccessPromptQuirk>> {
 private:
     void updateList(CompletionHandler<void()>&&) final;
     void didUpdateCachedListData() final;
-    unsigned resourceTypeValue() const final;
+    unsigned NODELETE resourceTypeValue() const final;
 };
 
 class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, HashMap<WebCore::RegistrableDomain, String>> {
 private:
     void updateList(CompletionHandler<void()>&&) final;
-    unsigned resourceTypeValue() const final;
+    unsigned NODELETE resourceTypeValue() const final;
 };
 
 class ScriptTrackingPrivacyController : public ListDataController<ScriptTrackingPrivacyController, ScriptTrackingPrivacyRules> {
 private:
     void updateList(CompletionHandler<void()>&&) final;
     void didUpdateCachedListData() final;
-    unsigned resourceTypeValue() const final;
+    unsigned NODELETE resourceTypeValue() const final;
 #ifdef __OBJC__
     // FIXME: Remove when WebPrivacyHelpersAdditions.mm no longer depends on it.
     WPResourceType NODELETE resourceType() const;
@@ -191,7 +191,7 @@ private:
 
 class ResourceMonitorURLsController {
 public:
-    static ResourceMonitorURLsController& NODELETE singleton();
+    static ResourceMonitorURLsController& singleton();
 
     void prepare(CompletionHandler<void(WKContentRuleList *, bool)>&&);
     void getSource(CompletionHandler<void(String&&)>&&);
@@ -212,7 +212,7 @@ class ConsistentPrivacyQuirkController : public ListDataController<ConsistentPri
 private:
     void updateList(CompletionHandler<void()>&&) final;
     void didUpdateCachedListData() final;
-    unsigned resourceTypeValue() const final;
+    unsigned NODELETE resourceTypeValue() const final;
 };
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

@@ -188,7 +188,7 @@ RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const Graphic
 #endif
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-RefPtr<WebCore::WebGPU::GPU> WebWorkerClient::createGPUForWebGPU() const
+RefPtr<WebCore::WebGPU::GPU> NODELETE WebWorkerClient::createGPUForWebGPU() const
 {
     return nullptr;
 }

@@ -72,8 +72,8 @@ private:
 
     // AudioSession
     void setCategory(CategoryType, Mode, WebCore::RouteSharingPolicy) final;
-    CategoryType category() const final;
-    Mode mode() const final;
+    CategoryType NODELETE category() const final;
+    Mode NODELETE mode() const final;
 
     WebCore::RouteSharingPolicy routeSharingPolicy() const final { return m_routeSharingPolicy; }
     String routingContextUID() const final { return configuration().routingContextUID; }

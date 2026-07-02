@@ -76,7 +76,7 @@ class EmptyChromeClient : public ChromeClient {
     void focusedElementChanged(Element*, LocalFrame*, FocusOptions, BroadcastFocusedElement) final { }
     void focusedFrameChanged(Frame*) final { }
 
-    RefPtr<Page> createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final;
+    RefPtr<Page> NODELETE createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&) final;
     void show() final { }
 
     bool canRunModal() const final { return false; }
@@ -139,12 +139,12 @@ class EmptyChromeClient : public ChromeClient {
 
     void exceededDatabaseQuota(LocalFrame&, const String&, DatabaseDetails) final { }
 
-    RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
+    RefPtr<ColorChooser> NODELETE createColorChooser(ColorChooserClient&, const Color&) final;
 
-    RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) final;
+    RefPtr<DataListSuggestionPicker> NODELETE createDataListSuggestionPicker(DataListSuggestionsClient&) final;
     bool canShowDataListSuggestionLabels() const final { return false; }
 
-    RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
+    RefPtr<DateTimeChooser> NODELETE createDateTimeChooser(DateTimeChooserClient&) final;
 
     void NODELETE setTextIndicator(RefPtr<TextIndicator>&&) const final;
     void NODELETE updateTextIndicator(RefPtr<TextIndicator>&&) const final;
@@ -223,7 +223,7 @@ class EmptyChromeClient : public ChromeClient {
     void didAssociateFormControls(const Vector<Ref<Element>>&, LocalFrame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
-    RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;
+    RefPtr<Icon> NODELETE createIconForFiles(const Vector<String>& /* filenames */) final;
 };
 
 DiagnosticLoggingClient& NODELETE emptyDiagnosticLoggingClient();

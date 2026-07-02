@@ -48,7 +48,7 @@ bool SourceImage::operator==(const SourceImage& other) const
     return imageIdentifier() == other.imageIdentifier();
 }
 
-static inline NativeImage* nativeImageOf(const SourceImage::ImageVariant& imageVariant)
+static inline NativeImage* NODELETE nativeImageOf(const SourceImage::ImageVariant& imageVariant)
 {
     if (auto* nativeImage = std::get_if<Ref<NativeImage>>(&imageVariant))
         return nativeImage->ptr();
@@ -79,7 +79,7 @@ NativeImage* SourceImage::nativeImage() const
     return nativeImageOf(*m_transformedImageVariant);
 }
 
-static inline ImageBuffer* imageBufferOf(const SourceImage::ImageVariant& imageVariant)
+static inline ImageBuffer* NODELETE imageBufferOf(const SourceImage::ImageVariant& imageVariant)
 {
     if (auto* imageBuffer = std::get_if<Ref<ImageBuffer>>(&imageVariant))
         return imageBuffer->ptr();

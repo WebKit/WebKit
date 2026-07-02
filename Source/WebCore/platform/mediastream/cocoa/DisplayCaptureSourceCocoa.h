@@ -92,11 +92,11 @@ public:
         virtual IntSize intrinsicSize() const = 0;
         virtual void whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback) { callback({ }); }
 
-        virtual void setLogger(const Logger&, uint64_t);
+        virtual void NODELETE setLogger(const Logger&, uint64_t);
         const Logger* loggerPtr() const { return m_logger.get(); }
         const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
         uint64_t logIdentifier() const final { return m_logIdentifier; }
-        WTFLogChannel& logChannel() const final;
+        WTFLogChannel& NODELETE logChannel() const final;
 
         void ref() { m_observer->ref(); }
         void deref() { m_observer->deref(); }
@@ -132,7 +132,7 @@ public:
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     static CaptureSourceOrError create(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
 
-    Seconds elapsedTime();
+    Seconds NODELETE elapsedTime();
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
     virtual ~DisplayCaptureSourceCocoa();
@@ -141,30 +141,30 @@ private:
     DisplayCaptureSourceCocoa(const std::function<UniqueRef<Capturer>(CapturerObserver&)>&, const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     // RealtimeMediaSource
-    void startProducingData() final;
-    void stopProducingData() final;
-    void endProducingData() final;
-    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
+    void NODELETE startProducingData() final;
+    void NODELETE stopProducingData() final;
+    void NODELETE endProducingData() final;
+    void NODELETE settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     bool isCaptureSource() const final { return true; }
-    const RealtimeMediaSourceCapabilities& capabilities() final;
-    const RealtimeMediaSourceSettings& settings() final;
+    const RealtimeMediaSourceCapabilities& NODELETE capabilities() final;
+    const RealtimeMediaSourceSettings& NODELETE settings() final;
     CaptureDevice::DeviceType deviceType() const { return m_capturer->deviceType(); }
     void endApplyingConstraints() final { commitConfiguration(); }
-    IntSize computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize) final;
-    void setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
-    double observedFrameRate() const final;
-    void whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
+    IntSize NODELETE computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize) final;
+    void NODELETE setSizeFrameRateAndZoom(const VideoPresetConstraints&) final;
+    double NODELETE observedFrameRate() const final;
+    void NODELETE whenReady(CompletionHandler<void(CaptureSourceError&&)>&&) final;
 
     ASCIILiteral logClassName() const final { return "DisplayCaptureSourceCocoa"_s; }
-    void setLogger(const Logger&, uint64_t) final;
+    void NODELETE setLogger(const Logger&, uint64_t) final;
 
     // CapturerObserver
     void capturerIsRunningChanged(bool isRunning) final { notifyMutedChange(!isRunning); }
     void capturerFailed() final { captureFailed(); }
-    void capturerConfigurationChanged() final;
+    void NODELETE capturerConfigurationChanged() final;
 
     void commitConfiguration() { m_capturer->commitConfiguration(settings()); }
-    void emitFrame();
+    void NODELETE emitFrame();
 
     const UniqueRef<Capturer> m_capturer;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;

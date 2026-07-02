@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
     virtual bool isRootFrame() const = 0;
 #if ASSERT_ENABLED
-    WEBCORE_EXPORT static bool isRootFrameIdentifier(FrameIdentifier);
+    WEBCORE_EXPORT static bool NODELETE isRootFrameIdentifier(FrameIdentifier);
 #endif
 
     WEBCORE_EXPORT void detachFromPage();

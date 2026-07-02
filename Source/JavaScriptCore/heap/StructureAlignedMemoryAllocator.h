@@ -42,9 +42,9 @@ public:
 
     void dump(PrintStream&) const final;
 
-    void* tryAllocateMemory(size_t) final;
-    void freeMemory(void*) final;
-    void* tryReallocateMemory(void*, size_t) final;
+    void* NODELETE tryAllocateMemory(size_t) final;
+    void NODELETE freeMemory(void*) final;
+    void* NODELETE tryReallocateMemory(void*, size_t) final;
 
     void* tryAllocateAlignedMemory(size_t alignment, size_t) final;
     void freeAlignedMemory(void*) final;

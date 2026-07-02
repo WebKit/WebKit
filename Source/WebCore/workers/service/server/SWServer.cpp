@@ -1369,7 +1369,7 @@ void SWServer::updateAppInitiatedValueForWorkers(const ClientOrigin& clientOrigi
 
 #if ASSERT_ENABLED
 template<typename Clients>
-bool validateClientOrigin(const Clients& clients, ScriptExecutionContextIdentifier clientIdentifier, const ClientOrigin& clientOrigin)
+bool NODELETE validateClientOrigin(const Clients& clients, ScriptExecutionContextIdentifier clientIdentifier, const ClientOrigin& clientOrigin)
 {
     auto iterator = clients.find(clientIdentifier);
     if (iterator == clients.end())

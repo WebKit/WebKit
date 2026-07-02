@@ -182,7 +182,7 @@ public:
     SourceTaintedOrigin taintedness() const { return m_sourceProvider->sourceTaintedOrigin(); }
     URL sourceURL() const { return m_sourceProvider->sourceOrigin().url(); }
     Wasm::CalleeGroup* calleeGroup() const { return module().calleeGroupFor(memory0Mode()); }
-    Wasm::Table* table(unsigned);
+    Wasm::Table* NODELETE table(unsigned);
     void setTable(unsigned, Ref<Wasm::Table>&&);
     const Wasm::Element* elementAt(unsigned) const;
 
@@ -200,11 +200,11 @@ public:
 
     void tableCopy(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t dstTableIndex, uint32_t srcTableIndex);
 
-    void elemDrop(uint32_t elementIndex);
+    void NODELETE elemDrop(uint32_t elementIndex);
 
     bool memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex, uint8_t memoryIndex);
 
-    void dataDrop(uint32_t dataSegmentIndex);
+    void NODELETE dataDrop(uint32_t dataSegmentIndex);
 
     void updateCachedMemories()
     {
@@ -289,7 +289,7 @@ public:
     void linkGlobal(unsigned, Ref<Wasm::Global>&&);
     const BitVector& globalsToMark() LIFETIME_BOUND { return m_globalsToMark; }
     const BitVector& globalsToBinding() LIFETIME_BOUND { return m_globalsToBinding; }
-    JSValue getFunctionWrapper(unsigned) const;
+    JSValue NODELETE getFunctionWrapper(unsigned) const;
     typename FunctionWrapperMap::ValuesConstIteratorRange functionWrappers() const { return m_functionWrappers.values(); }
     void setFunctionWrapper(unsigned, JSValue);
     JSValue ensureFunctionWrapper(Wasm::FunctionSpaceIndex);
@@ -440,7 +440,7 @@ private:
     ~JSWebAssemblyInstance();
     void finishCreation(VM&);
 
-    static size_t allocationSize(const Wasm::ModuleInformation&);
+    static size_t NODELETE allocationSize(const Wasm::ModuleInformation&);
     bool evaluateConstantExpression(uint64_t, Wasm::Type, uint64_t&);
 
     VM* const m_vm;

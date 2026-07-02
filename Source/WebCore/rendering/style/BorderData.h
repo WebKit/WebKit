@@ -119,7 +119,7 @@ struct BorderData {
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const BorderData&) const;
+    void NODELETE dumpDifferences(TextStream&, const BorderData&) const;
 #endif
 
     RectEdges<BorderValue> edges;

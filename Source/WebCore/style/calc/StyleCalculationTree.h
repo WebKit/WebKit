@@ -212,17 +212,17 @@ struct Children {
     ~Children();
 
     iterator begin() LIFETIME_BOUND;
-    iterator end() LIFETIME_BOUND;
-    reverse_iterator rbegin() LIFETIME_BOUND;
-    reverse_iterator rend() LIFETIME_BOUND;
+    iterator NODELETE end() LIFETIME_BOUND;
+    reverse_iterator NODELETE rbegin() LIFETIME_BOUND;
+    reverse_iterator NODELETE rend() LIFETIME_BOUND;
 
     const_iterator begin() const LIFETIME_BOUND;
-    const_iterator end() const LIFETIME_BOUND;
-    const_reverse_iterator rbegin() const LIFETIME_BOUND;
-    const_reverse_iterator rend() const LIFETIME_BOUND;
+    const_iterator NODELETE end() const LIFETIME_BOUND;
+    const_reverse_iterator NODELETE rbegin() const LIFETIME_BOUND;
+    const_reverse_iterator NODELETE rend() const LIFETIME_BOUND;
 
-    bool isEmpty() const;
-    size_t size() const;
+    bool NODELETE isEmpty() const;
+    size_t NODELETE size() const;
 
     Child& operator[](size_t i) LIFETIME_BOUND;
     const Child& operator[](size_t i) const LIFETIME_BOUND;

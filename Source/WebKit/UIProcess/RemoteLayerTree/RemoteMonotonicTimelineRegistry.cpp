@@ -87,7 +87,7 @@ void RemoteMonotonicTimelineRegistry::update(WebCore::ProcessIdentifier processI
     removeDestroyedTimelines();
 }
 
-RemoteMonotonicTimeline* RemoteMonotonicTimelineRegistry::get(const TimelineID& timelineID) const
+RemoteMonotonicTimeline* NODELETE RemoteMonotonicTimelineRegistry::get(const TimelineID& timelineID) const
 {
     auto it = m_timelines.find(timelineID.processIdentifier());
     if (it == m_timelines.end())

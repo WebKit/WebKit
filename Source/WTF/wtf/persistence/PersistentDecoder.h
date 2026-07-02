@@ -94,7 +94,7 @@ public:
 
 private:
     [[nodiscard]] WTF_EXPORT_PRIVATE bool bufferIsLargeEnoughToContain(size_t) const;
-    template<typename Type> Decoder& decodeNumber(std::optional<Type>&);
+    template<typename Type> Decoder& NODELETE decodeNumber(std::optional<Type>&);
 
     const std::span<const uint8_t> m_buffer;
     std::span<const uint8_t>::iterator m_bufferPosition;

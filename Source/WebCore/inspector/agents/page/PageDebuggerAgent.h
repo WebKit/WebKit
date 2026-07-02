@@ -63,8 +63,8 @@ public:
     // InspectorInstrumentation
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
     void mainFrameStartedLoading();
-    void mainFrameStoppedLoading();
-    void mainFrameNavigated();
+    void NODELETE mainFrameStoppedLoading();
+    void NODELETE mainFrameNavigated();
 
 private:
     void internalEnable();
@@ -72,8 +72,8 @@ private:
 
     String sourceMapURLForScript(const JSC::Debugger::Script&);
 
-    void muteConsole();
-    void unmuteConsole();
+    void NODELETE muteConsole();
+    void NODELETE unmuteConsole();
 
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 

@@ -51,7 +51,7 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
+    DateComponentsType NODELETE dateType() const final;
     WallTime valueAsDate() const final;
     String serializeWithMilliseconds(double) const final;
     Decimal parseToNumber(StringView, const Decimal&) const final;
@@ -59,8 +59,8 @@ private:
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;
-    void handleDOMActivateEvent(Event&) final;
-    void showPicker() final;
+    void NODELETE handleDOMActivateEvent(Event&) final;
+    void NODELETE showPicker() final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;

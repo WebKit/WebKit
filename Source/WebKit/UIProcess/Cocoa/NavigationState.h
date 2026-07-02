@@ -129,7 +129,7 @@ private:
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 
-        bool shouldBypassContentModeSafeguards() const final;
+        bool NODELETE shouldBypassContentModeSafeguards() const final;
 
         void didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy&) override;
         void shouldAllowLegacyTLS(WebPageProxy&, AuthenticationChallengeProxy&, CompletionHandler<void(bool)>&&) final;
@@ -154,7 +154,7 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
         void contentRuleListNotification(WebPageProxy&, URL&&, WebCore::ContentRuleListResults&&) final;
-        void contentRuleListMatchedRule(WebPageProxy&, WebCore::ContentRuleListMatchedRule&&) final;
+        void NODELETE contentRuleListMatchedRule(WebPageProxy&, WebCore::ContentRuleListMatchedRule&&) final;
 #endif
         void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&&, Ref<WebFramePolicyListenerProxy>&&) override;
         void decidePolicyForNavigationResponse(WebPageProxy&, Ref<API::NavigationResponse>&&, Ref<WebFramePolicyListenerProxy>&&) override;
@@ -206,7 +206,7 @@ private:
     void didChangeCertificateInfo() override;
     void willChangeWebProcessIsResponsive() override;
     void didChangeWebProcessIsResponsive() override;
-    void didSwapWebProcesses() override;
+    void NODELETE didSwapWebProcesses() override;
 
 #if USE(RUNNINGBOARD)
     void releaseNetworkActivityAfterLoadCompletion() { releaseNetworkActivity(NetworkActivityReleaseReason::LoadCompleted); }

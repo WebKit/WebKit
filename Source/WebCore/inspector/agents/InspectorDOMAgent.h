@@ -97,14 +97,14 @@ public:
     static String toErrorString(ExceptionCode);
     static String toErrorString(Exception&&);
 
-    static String documentURLString(Document*);
+    static String NODELETE documentURLString(Document*);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
     static Node* NODELETE innerFirstChild(Node*);
     static Node* NODELETE innerNextSibling(Node*);
     static Node* NODELETE innerPreviousSibling(Node*);
-    static unsigned innerChildNodeCount(Node*);
+    static unsigned NODELETE innerChildNodeCount(Node*);
     static Node* NODELETE innerParentNode(Node*);
 
     static Node* scriptValueAsNode(JSC::JSValue);
@@ -178,7 +178,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> markUndoableState();
     Inspector::Protocol::ErrorStringOr<void> focus(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<void> setInspectedNode(Inspector::Protocol::DOM::NodeId);
-    Inspector::Protocol::ErrorStringOr<void> setAllowEditingUserAgentShadowTrees(bool);
+    Inspector::Protocol::ErrorStringOr<void> NODELETE setAllowEditingUserAgentShadowTrees(bool);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> getMediaStats(Inspector::Protocol::DOM::NodeId);
 
     // InspectorInstrumentation

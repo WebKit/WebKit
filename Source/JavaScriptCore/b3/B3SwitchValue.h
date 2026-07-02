@@ -53,9 +53,9 @@ public:
     CaseCollection cases() const { return cases(owner); }
 
     bool NODELETE hasFallThrough(const BasicBlock*) const;
-    bool hasFallThrough() const;
+    bool NODELETE hasFallThrough() const;
 
-    BasicBlock* NODELETE fallThrough(const BasicBlock* owner);
+    BasicBlock* fallThrough(const BasicBlock* owner);
 
     // These two functions can be called in any order.
     void setFallThrough(BasicBlock*, const FrequentedBlock&);

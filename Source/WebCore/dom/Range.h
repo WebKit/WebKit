@@ -128,7 +128,7 @@ public:
     static ExceptionOr<RefPtr<Node>> checkNodeOffsetPair(Node&, unsigned offset);
 
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
+    String NODELETE debugDescription() const;
 #endif
 
     void visitNodesInGCThread(JSC::AbstractSlotVisitor&) const;
@@ -166,7 +166,7 @@ WEBCORE_EXPORT RefPtr<Range> createLiveRange(const std::optional<SimpleRange>&);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::Range*);
+void NODELETE showTree(const WebCore::Range*);
 #endif
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Range)

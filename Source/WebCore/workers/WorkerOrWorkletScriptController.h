@@ -126,7 +126,7 @@ protected:
 
 private:
     template<typename JSGlobalScopePrototype, typename JSGlobalScope, typename GlobalScope>
-    void initScriptWithSubclass();
+    void NODELETE initScriptWithSubclass();
 
     RefPtr<JSC::VM> m_vm;
     WeakPtr<WorkerOrWorkletGlobalScope> m_globalScope;

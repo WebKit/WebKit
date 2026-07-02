@@ -87,7 +87,7 @@ private:
     int SendTo(const void *, size_t, const webrtc::SocketAddress&, const webrtc::AsyncSocketPacketOptions&) final;
     int Close() final;
     State GetState() const final { return m_state; }
-    int GetOption(webrtc::Socket::Option, int*) final;
+    int NODELETE GetOption(webrtc::Socket::Option, int*) final;
     int SetOption(webrtc::Socket::Option, int) final;
 
     const CheckedRef<LibWebRTCSocketFactory> m_factory;

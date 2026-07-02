@@ -4238,7 +4238,7 @@ void LocalFrameView::adjustTiledBackingCoverage()
 #endif
 }
 
-static bool shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
+static bool NODELETE shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
 {
     auto* page = view.frame().page();
     return page && view.isVisuallyNonEmpty() && !page->progress().isMainLoadProgressing();
@@ -6022,7 +6022,7 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptio
 #include <span>
 
 template<typename CharacterType>
-static size_t nonWhitespaceLength(std::span<const CharacterType> characters)
+static size_t NODELETE nonWhitespaceLength(std::span<const CharacterType> characters)
 {
     size_t result = characters.size();
     for (auto character : characters) {

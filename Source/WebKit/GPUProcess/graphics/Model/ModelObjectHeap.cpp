@@ -66,7 +66,7 @@ void ModelObjectHeap::clear()
     m_objects.clear();
 }
 
-WeakPtr<WebKit::Mesh> ModelObjectHeap::convertMeshFromBacking(WebModelIdentifier identifier)
+WeakPtr<WebKit::Mesh> NODELETE ModelObjectHeap::convertMeshFromBacking(WebModelIdentifier identifier)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     auto iterator = m_objects.find(identifier);

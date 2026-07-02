@@ -114,7 +114,7 @@ public:
 
     TimeZone defaultTimeZone();
     String timeZoneDisplayName(bool isDST);
-    Ref<DateInstanceData> NODELETE cachedDateInstanceData(double millisecondsFromEpoch);
+    Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
 
     void msToGregorianDateTime(double millisecondsFromEpoch, TimeType outputTimeType, GregorianDateTime&);
     double gregorianDateTimeToMS(const GregorianDateTime&, double milliseconds, TimeType);

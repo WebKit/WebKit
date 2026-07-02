@@ -139,8 +139,8 @@ public:
     bool isMuted() const final;
     double volume() const final;
     bool isPictureInPictureSupported() const final;
-    bool isPictureInPictureActive() const final;
-    bool isInWindowFullscreenActive() const final;
+    bool NODELETE isPictureInPictureActive() const final;
+    bool NODELETE isInWindowFullscreenActive() const final;
     AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
     void setSoundStageSize(AudioSessionSoundStageSize size) final { m_soundStageSize = size; }
 
@@ -151,7 +151,7 @@ private:
     static const Vector<AtomString>& observedEventNames();
     const AtomString& eventNameAll();
 
-    double playbackStartedTime() const;
+    double NODELETE playbackStartedTime() const;
     void updateMediaSelectionOptions();
     void updateMediaSelectionIndices();
     void maybeUpdateVideoMetadata();

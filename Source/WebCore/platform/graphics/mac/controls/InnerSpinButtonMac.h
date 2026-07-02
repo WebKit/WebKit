@@ -41,7 +41,7 @@ public:
     ~InnerSpinButtonMac();
 
 private:
-    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
+    IntSize NODELETE cellSize(NSControlSize, const ControlStyle&) const override;
 
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };

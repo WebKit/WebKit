@@ -59,7 +59,7 @@ public:
     ExceptionOr<String> getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&, IfMissing = IfMissing::Throw);
     const String& name() const { return m_name; }
 
-    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
+    template<typename Visitor> void NODELETE visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     TrustedTypePolicy(const String&, const TrustedTypePolicyOptions&);

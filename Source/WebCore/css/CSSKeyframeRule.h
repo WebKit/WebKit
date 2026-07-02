@@ -37,7 +37,7 @@ class StyleRuleCSSStyleProperties;
 
 class StyleRuleKeyframe final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframe> NODELETE create(Ref<StyleProperties>&&);
+    static Ref<StyleRuleKeyframe> create(Ref<StyleProperties>&&);
     static Ref<StyleRuleKeyframe> create(Vector<std::pair<CSSValueID, double>>&& keys, Ref<StyleProperties>&&);
     ~StyleRuleKeyframe();
 

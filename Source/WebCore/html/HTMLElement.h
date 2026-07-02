@@ -57,7 +57,7 @@ class HTMLElement : public StyledElement {
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
-    WEBCORE_EXPORT String title() const final;
+    WEBCORE_EXPORT String NODELETE title() const final;
 
     WEBCORE_EXPORT ExceptionOr<void> setInnerText(String&&);
     WEBCORE_EXPORT ExceptionOr<void> setOuterText(String&&);

@@ -63,16 +63,16 @@ public:
 
     virtual ~PageBanner();
 
-    void addToPage(Type, WebPage*);
-    void detachFromPage();
+    void NODELETE addToPage(Type, WebPage*);
+    void NODELETE detachFromPage();
 
-    void hide();
-    void showIfHidden();
+    void NODELETE hide();
+    void NODELETE showIfHidden();
 
-    bool mouseEvent(const WebMouseEvent&);
-    void didChangeDeviceScaleFactor(float scaleFactor);
+    bool NODELETE mouseEvent(const WebMouseEvent&);
+    void NODELETE didChangeDeviceScaleFactor(float scaleFactor);
 
-    void didAddParentLayer(WebCore::GraphicsLayer*);
+    void NODELETE didAddParentLayer(WebCore::GraphicsLayer*);
 
 private:
 #if PLATFORM(MAC)

@@ -52,7 +52,7 @@ public:
     EnhancedSecurity NODELETE enhancedSecurityState() const;
     EnhancedSecurityReason enhancedSecurityReason() const { return m_activeReason; }
 
-    bool shouldEnableForInsecureResponse(const API::Navigation&, bool hasOpenedPage);
+    bool NODELETE shouldEnableForInsecureResponse(const API::Navigation&, bool hasOpenedPage);
 
     void enableFor(EnhancedSecurityReason, const API::Navigation&);
 

@@ -322,7 +322,7 @@ public:
         use(nodeUse.node());
     }
     
-    RegisterSet usedRegisters();
+    RegisterSet NODELETE usedRegisters();
     
     bool masqueradesAsUndefinedWatchpointSetIsStillValid()
     {
@@ -358,7 +358,7 @@ public:
 
     void checkArgumentTypes();
 
-    void NODELETE clearGenerationInfo();
+    void clearGenerationInfo();
 
     // These methods are used when generating 'unexpected'
     // calls out from JIT code to C++ helper routines -
@@ -1521,7 +1521,7 @@ public:
     void compileCallCustomAccessorSetter(Node*);
     void compileNormalizeMapKey(Node*);
     template<typename MapOrSet>
-    ALWAYS_INLINE void compileMapGetImpl(Node*);
+    ALWAYS_INLINE void NODELETE compileMapGetImpl(Node*);
     void compileMapGet(Node*);
     void compileLoadMapValue(Node*);
     void compileIsEmptyStorage(Node*);
@@ -1612,7 +1612,7 @@ public:
     void compileBitwiseNot(Node*);
 
     template<typename SnippetGenerator, J_JITOperation_GJJ slowPathFunction>
-    void emitUntypedOrAnyBigIntBitOp(Node*);
+    void NODELETE emitUntypedOrAnyBigIntBitOp(Node*);
     void compileBitwiseOp(Node*);
     void compileValueBitwiseOp(Node*);
 
@@ -1699,7 +1699,7 @@ public:
         Edge valueUse);
     void loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
     void setIntTypedArrayLoadResult(Node*, JSValueRegs resultRegs, TypedArrayType, bool canSpeculate, bool shouldBox, FPRReg, Jump);
-    template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, JumpList&, size_t, FunctionExecutable*);
+    template <typename ClassType> void NODELETE compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
     void compileSetFunctionName(Node*);
     void compileNewBoundFunction(Node*);
@@ -1781,13 +1781,13 @@ public:
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
 
-    void NODELETE compileExtractFromTuple(Node*);
+    void compileExtractFromTuple(Node*);
     void compileStringIteratorNext(Node*);
     void compileEnumeratorNextUpdateIndexAndMode(Node*);
     void compileEnumeratorNextUpdatePropertyName(Node*);
     void compileEnumeratorGetByVal(Node*);
     template<typename SlowPathFunctionType>
-    void compileEnumeratorHasProperty(Node*, SlowPathFunctionType);
+    void NODELETE compileEnumeratorHasProperty(Node*, SlowPathFunctionType);
     void compileEnumeratorInByVal(Node*);
     void compileEnumeratorHasOwnProperty(Node*);
     void compileEnumeratorPutByVal(Node*);
@@ -1874,9 +1874,9 @@ public:
     void compilePerformPromiseThenOneHandler(Node*);
 
     template<typename JSClass, typename Operation>
-    void compileCreateInternalFieldObject(Node*, Operation);
+    void NODELETE compileCreateInternalFieldObject(Node*, Operation);
     template<typename JSClass, typename Operation>
-    void compileNewInternalFieldObjectImpl(Node*, Operation);
+    void NODELETE compileNewInternalFieldObjectImpl(Node*, Operation);
 
     void compileClampIntegerToByte(GPRReg srcGPR, GPRReg resultGPR);
 
@@ -2073,7 +2073,7 @@ public:
 #endif
 
     template<bool strict>
-    GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
+    GPRReg NODELETE fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
     
     void cageTypedArrayStorage(GPRReg, GPRReg);
     

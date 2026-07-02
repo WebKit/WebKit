@@ -236,7 +236,7 @@ OptionSet<WebCore::PlatformEvent::Modifier> platform(OptionSet<WebEventModifier>
     return result;
 }
 
-OptionSet<WebEventModifier> kit(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
+OptionSet<WebEventModifier> NODELETE kit(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
 {
     OptionSet<WebEventModifier> result;
     if (modifiers.contains(WebCore::PlatformEvent::Modifier::ShiftKey))

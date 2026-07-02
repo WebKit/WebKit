@@ -96,7 +96,7 @@ public:
 
     DOMTokenList& relList();
 
-    AtomString target() const final;
+    AtomString NODELETE target() const final;
     AtomString effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
     bool NODELETE wasUserSubmitted() const;
@@ -151,15 +151,15 @@ private:
     // are any invalid controls in this form.
     bool checkInvalidControlsAndCollectUnhandled(Vector<Ref<ValidatedFormListedElement>>&);
 
-    RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
+    RefPtr<HTMLElement> NODELETE elementFromPastNamesMap(const AtomString&) const;
     void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);
 #if ASSERT_ENABLED
-    void assertItemCanBeInPastNamesMap(FormAssociatedElement&) const;
+    void NODELETE assertItemCanBeInPastNamesMap(FormAssociatedElement&) const;
 #endif
     void removeFromPastNamesMap(FormAssociatedElement&);
 
-    bool matchesValidPseudoClass() const final;
-    bool matchesInvalidPseudoClass() const final;
+    bool NODELETE matchesValidPseudoClass() const final;
+    bool NODELETE matchesInvalidPseudoClass() const final;
 
     void resetListedFormControlElements();
 

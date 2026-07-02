@@ -56,7 +56,7 @@ private:
     int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
     Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) final;
     Ref<GenericPromise> flush() final;
-    void reset() final;
+    void NODELETE reset() final;
     void NODELETE close() final;
     Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 

@@ -37,7 +37,7 @@ class Node;
 class NodeFilterCondition : public RefCounted<NodeFilterCondition> {
 public:
     virtual ~NodeFilterCondition() = default;
-    virtual unsigned short acceptNode(Node&) const = 0;
+    virtual unsigned short NODELETE acceptNode(Node&) const = 0;
 };
 
 } // namespace WebCore

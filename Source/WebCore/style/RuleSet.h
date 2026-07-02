@@ -88,7 +88,7 @@ public:
 
     void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage&);
-    void NODELETE setViewTransitionRule(StyleRuleViewTransition&);
+    void setViewTransitionRule(StyleRuleViewTransition&);
     RefPtr<StyleRuleViewTransition> NODELETE viewTransitionRule() const;
 
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
@@ -146,7 +146,7 @@ public:
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
 
-    const RefPtr<const StyleRulePositionTry> NODELETE positionTryRuleForName(const AtomString&) const;
+    const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
 
     WTF::String selectorsForDebugging() const;
 
@@ -174,8 +174,8 @@ private:
     };
     CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&, size_t startIndex);
 
-    template<typename Function> void traverseRuleDatas(Function&&);
-    template<typename Function> void traverseRuleDatas(Function&&) const;
+    template<typename Function> void NODELETE traverseRuleDatas(Function&&);
+    template<typename Function> void NODELETE traverseRuleDatas(Function&&) const;
 
     struct CascadeLayer {
         CascadeLayerName resolvedName;

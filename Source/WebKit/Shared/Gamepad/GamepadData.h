@@ -59,7 +59,7 @@ private:
     WebCore::GamepadHapticEffectTypeSet m_supportedEffectTypes;
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 };
 

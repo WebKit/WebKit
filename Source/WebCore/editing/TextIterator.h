@@ -67,8 +67,8 @@ bool isRendererReplacedElement(RenderObject*, TextIteratorBehaviors = { });
 class BitStack {
 public:
     void push(bool);
-    void NODELETE pop();
-    bool NODELETE top() const;
+    void pop();
+    bool top() const;
 
 private:
     unsigned m_size { 0 };
@@ -119,7 +119,7 @@ public:
     void appendTextToStringBuilder(StringBuilder& builder) const { copyableText().appendToStringBuilder(builder); }
 
 #if ENABLE(TREE_DEBUGGING)
-    void showTreeForThis() const;
+    void NODELETE showTreeForThis() const;
 #endif
     String rendererTextForBehavior(RenderText& renderer) const { return m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) ? renderer.originalText() : renderer.text(); }
 
@@ -348,6 +348,6 @@ inline BoundaryPoint resolveCharacterLocation(const SimpleRange& scope, uint64_t
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::TextIterator&);
-void showTree(const WebCore::TextIterator*);
+void NODELETE showTree(const WebCore::TextIterator&);
+void NODELETE showTree(const WebCore::TextIterator*);
 #endif

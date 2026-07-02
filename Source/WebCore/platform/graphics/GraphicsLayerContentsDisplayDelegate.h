@@ -60,7 +60,7 @@ public:
     virtual void prepareToDelegateDisplay(PlatformCALayer&);
     // Must not detach the platform layer backing store.
     virtual void display(PlatformCALayer&) = 0;
-    virtual GraphicsLayerCompositingCoordinatesOrientation orientation() const;
+    virtual GraphicsLayerCompositingCoordinatesOrientation NODELETE orientation() const;
 #elif USE(COORDINATED_GRAPHICS)
     virtual void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) = 0;
     virtual bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) = 0;

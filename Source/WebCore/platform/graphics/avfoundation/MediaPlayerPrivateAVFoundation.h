@@ -153,7 +153,7 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateAVFoundation"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     enum class MediaRenderingMode : uint8_t {
@@ -180,7 +180,7 @@ protected:
     void play() override;
     void pause() override;
 
-    FloatSize naturalSize() const override;
+    FloatSize NODELETE naturalSize() const override;
     bool hasVideo() const override { return m_cachedHasVideo; }
     bool hasAudio() const override { return m_cachedHasAudio; }
     bool pageIsVisible() const { return m_pageIsVisible; }
@@ -190,7 +190,7 @@ protected:
     MediaTime duration() const override;
     MediaTime currentTime() const override = 0;
     void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final;
+    bool NODELETE seeking() const final;
     bool paused() const override;
     void setVolume(float) override = 0;
     bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
@@ -215,7 +215,7 @@ protected:
     void prepareForRendering() override;
 
     bool supportsPictureInPicture() const override { return true; }
-    bool supportsFullscreen() const override;
+    bool NODELETE supportsFullscreen() const override;
     bool supportsScanning() const override { return true; }
     unsigned long long fileSize() const override { return totalBytes(); }
 

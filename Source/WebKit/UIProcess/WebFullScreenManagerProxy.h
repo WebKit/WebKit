@@ -88,7 +88,7 @@ public:
 
     WebFullScreenManagerProxyClient* client() { return m_client.get(); }
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess(const IPC::Connection&) const;
 
     bool isFullScreen();
     bool NODELETE blocksReturnToFullscreenFromPictureInPicture() const;
@@ -137,7 +137,7 @@ private:
     Awaitable<bool> beganEnterFullScreen(WebCore::IntRect initialFrame, WebCore::IntRect finalFrame);
     Awaitable<void> beganExitFullScreen(WebCore::FrameIdentifier, WebCore::IntRect initialFrame, WebCore::IntRect finalFrame);
     void callCloseCompletionHandlers();
-    template<typename M> void sendToWebProcess(M&&);
+    template<typename M> void NODELETE sendToWebProcess(M&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }

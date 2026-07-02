@@ -49,14 +49,14 @@ public:
     int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
     
     bool supportsControlTints() const override { return true; }
-    bool usesOverlayScrollbars() const  override;
+    bool NODELETE usesOverlayScrollbars() const  override;
     void usesOverlayScrollbarsChanged() override;
     void updateScrollbarOverlayStyle(Scrollbar&)  override;
 
     Seconds initialAutoscrollTimerDelay() override { return 500_ms; }
     Seconds autoscrollTimerDelay() override { return 50_ms; }
 
-    ScrollbarButtonsPlacement buttonsPlacement() const override;
+    ScrollbarButtonsPlacement NODELETE buttonsPlacement() const override;
 
     void registerScrollbar(Scrollbar&) override;
     void unregisterScrollbar(Scrollbar&) override;
@@ -89,8 +89,8 @@ protected:
 
     int minimumThumbLength(Scrollbar&) override;
     
-    ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
-    bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    ScrollbarButtonPressAction NODELETE handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
+    bool NODELETE shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
     int NODELETE scrollbarPartToHIPressedState(ScrollbarPart);
 };
 

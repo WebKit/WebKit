@@ -248,9 +248,9 @@ private:
 
 #if PLATFORM(COCOA)
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    std::optional<WebBackForwardList> NODELETE backForwardListForNavigation() const;
+    std::optional<WebBackForwardList> backForwardListForNavigation() const;
 #else
-    WebBackForwardList* NODELETE backForwardListForNavigation() const;
+    WebBackForwardList* backForwardListForNavigation() const;
 #endif
 #endif
 

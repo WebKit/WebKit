@@ -79,17 +79,17 @@ public:
     }
 
     // CanMakeCheckedPtr.
-    uint32_t checkedPtrCount() const final  { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final  { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final  { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::incrementCheckedPtrCount(); }
+    uint32_t NODELETE checkedPtrCount() const final  { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::checkedPtrCount(); }
+    uint32_t NODELETE checkedPtrCountWithoutThreadCheck() const final  { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::checkedPtrCountWithoutThreadCheck(); }
+    void NODELETE incrementCheckedPtrCount() const final  { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final  { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::setDidBeginCheckedPtrDeletion(); }
+    void NODELETE setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::setDidBeginCheckedPtrDeletion(); }
 
 private:
-    void postExceptionToWorkerObject(const String&, int, int, const String&) final { };
-    void reportErrorToWorkerObject(const String&) final { };
-    void workerGlobalScopeDestroyed() final { };
-    void postMessageToWorkerObject(MessageWithMessagePorts&&) final { };
+    void NODELETE postExceptionToWorkerObject(const String&, int, int, const String&) final { };
+    void NODELETE reportErrorToWorkerObject(const String&) final { };
+    void NODELETE workerGlobalScopeDestroyed() final { };
+    void NODELETE postMessageToWorkerObject(MessageWithMessagePorts&&) final { };
 };
 
 // FIXME: Use a valid WorkerReportingProxy

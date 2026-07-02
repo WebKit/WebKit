@@ -296,7 +296,7 @@ private:
     // be able to remove them.
     enum CallFrameUpdateAction { AttemptPause, NoPause };
     void updateCallFrame(JSC::JSGlobalObject*, JSC::CallFrame*, CallFrameUpdateAction);
-    void updateCallFrameInternal(JSC::CallFrame*);
+    void NODELETE updateCallFrameInternal(JSC::CallFrame*);
     void pauseIfNeeded(JSC::JSGlobalObject*);
     void resetImmediatePauseState();
     void NODELETE resetEventualPauseState();

@@ -44,7 +44,7 @@ enum class IDBKeyPathParseError {
 void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
 
 #if !LOG_DISABLED
-String loggingString(const IDBKeyPath&);
+String NODELETE loggingString(const IDBKeyPath&);
 #endif
 
 } // namespace WebCore

@@ -59,32 +59,32 @@ public:
     explicit IncomingAudioMediaStreamTrackRendererUnit(LibWebRTCAudioModule&);
     ~IncomingAudioMediaStreamTrackRendererUnit();
 
-    void newAudioChunkPushed(uint64_t);
+    void NODELETE newAudioChunkPushed(uint64_t);
 
     void ref() { m_audioModule.get()->ref(); };
     void deref() { m_audioModule.get()->deref(); };
 
 private:
     struct Mixer;
-    void start(Mixer&);
+    void NODELETE start(Mixer&);
     void stop(Mixer&);
-    void postTask(Function<void()>&&);
-    void renderAudioChunk(uint64_t currentAudioSampleCount);
+    void NODELETE postTask(Function<void()>&&);
+    void NODELETE renderAudioChunk(uint64_t currentAudioSampleCount);
 
     // BaseAudioMediaStreamTrackRendererUnit
-    void addResetObserver(const String&, ResetObserver&) final;
-    void addSource(const String&, Ref<AudioSampleDataSource>&&) final;
-    void removeSource(const String&, AudioSampleDataSource&) final;
+    void NODELETE addResetObserver(const String&, ResetObserver&) final;
+    void NODELETE addSource(const String&, Ref<AudioSampleDataSource>&&) final;
+    void NODELETE removeSource(const String&, AudioSampleDataSource&) final;
 
-    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> addSourceToMixer(const String&, Ref<AudioSampleDataSource>&&);
-    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> removeSourceFromMixer(const String&, AudioSampleDataSource&);
+    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> NODELETE addSourceToMixer(const String&, Ref<AudioSampleDataSource>&&);
+    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> NODELETE removeSourceFromMixer(const String&, AudioSampleDataSource&);
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper.
     const Logger& NODELETE logger() const final;
     ASCIILiteral logClassName() const final { return "IncomingAudioMediaStreamTrackRendererUnit"_s; }
-    WTFLogChannel& logChannel() const final;
-    uint64_t logIdentifier() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
+    uint64_t NODELETE logIdentifier() const final;
 #endif
 
     const ThreadSafeWeakPtr<LibWebRTCAudioModule> m_audioModule;

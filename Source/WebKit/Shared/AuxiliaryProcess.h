@@ -132,8 +132,8 @@ protected:
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 
-    virtual void stopRunLoop();
-    virtual bool filterUnhandledMessage(IPC::Connection&, IPC::Decoder&);
+    virtual void NODELETE stopRunLoop();
+    virtual bool NODELETE filterUnhandledMessage(IPC::Connection&, IPC::Decoder&);
 
 #if USE(OS_STATE)
     void registerWithStateDumper(ASCIILiteral title);
@@ -168,7 +168,7 @@ protected:
 #endif
 
     void grantAccessToContainerTempDirectory(const SandboxExtension::Handle&);
-    void populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle);
+    void NODELETE populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle);
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
     void consumeAudioComponentRegistrations(const IPC::SharedBufferReference&);
@@ -190,8 +190,8 @@ private:
     virtual bool shouldOverrideQuarantine() { return true; }
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override;
+    IPC::Connection* NODELETE messageSenderConnection() const override;
+    uint64_t NODELETE messageSenderDestinationID() const override;
 
     // IPC::Connection::Client.
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
@@ -199,7 +199,7 @@ private:
     void shutDown();
 
     void platformInitialize(const AuxiliaryProcessInitializationParameters&);
-    void platformStopRunLoop();
+    void NODELETE platformStopRunLoop();
 
     // A termination counter; when the counter reaches zero, the process will be terminated.
     unsigned m_terminationCounter;

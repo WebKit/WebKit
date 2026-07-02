@@ -92,7 +92,7 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "MediaSourcePrivateAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     uint64_t nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif

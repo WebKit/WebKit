@@ -45,13 +45,13 @@ public:
 
     bool isType(API::FullscreenClient::Type target) const final { return target == API::FullscreenClient::WebKitType; };
 
-    RetainPtr<id<_WKFullscreenDelegate>> delegate();
-    void setDelegate(id<_WKFullscreenDelegate>);
+    RetainPtr<id<_WKFullscreenDelegate>> NODELETE delegate();
+    void NODELETE setDelegate(id<_WKFullscreenDelegate>);
 
-    void willEnterFullscreen(WebPageProxy*) final;
-    void didEnterFullscreen(WebPageProxy*) final;
-    void willExitFullscreen(WebPageProxy*) final;
-    void didExitFullscreen(WebPageProxy*) final;
+    void NODELETE willEnterFullscreen(WebPageProxy*) final;
+    void NODELETE didEnterFullscreen(WebPageProxy*) final;
+    void NODELETE willExitFullscreen(WebPageProxy*) final;
+    void NODELETE didExitFullscreen(WebPageProxy*) final;
 
 #if PLATFORM(IOS_FAMILY)
     void requestPresentingViewController(CompletionHandler<void(UIViewController *, NSError *)>&&) final;

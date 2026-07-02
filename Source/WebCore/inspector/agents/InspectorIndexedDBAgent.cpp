@@ -246,7 +246,7 @@ public:
         m_requestCallback->sendSuccess(WTF::move(result));
     }
 
-    BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
+    BackendDispatcher::CallbackBase& NODELETE requestCallback() override { return m_requestCallback.get(); }
 private:
     DatabaseLoader(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback>&& requestCallback)
         : ExecutableWithDatabase(context)
@@ -482,7 +482,7 @@ public:
         idbRequest->addEventListener(eventNames().successEvent, WTF::move(openCursorCallback));
     }
 
-    BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
+    BackendDispatcher::CallbackBase& NODELETE requestCallback() override { return m_requestCallback.get(); }
     DataLoader(ScriptExecutionContext* scriptExecutionContext, Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback>&& requestCallback, const InjectedScript& injectedScript, const String& objectStoreName, const String& indexName, RefPtr<IDBKeyRange> idbKeyRange, int skipCount, unsigned pageSize)
         : ExecutableWithDatabase(scriptExecutionContext)
         , m_requestCallback(WTF::move(requestCallback))
@@ -707,7 +707,7 @@ public:
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()));
     }
 
-    BackendDispatcher::CallbackBase& requestCallback() override { return m_requestCallback.get(); }
+    BackendDispatcher::CallbackBase& NODELETE requestCallback() override { return m_requestCallback.get(); }
 private:
     const String m_objectStoreName;
     const Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback> m_requestCallback;

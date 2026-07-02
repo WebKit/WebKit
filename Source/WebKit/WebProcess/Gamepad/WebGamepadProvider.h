@@ -59,7 +59,7 @@ private:
     
     void startMonitoringGamepads(WebCore::GamepadProviderClient&) final;
     void stopMonitoringGamepads(WebCore::GamepadProviderClient&) final;
-    const Vector<WeakPtr<WebCore::PlatformGamepad>>& platformGamepads() final;
+    const Vector<WeakPtr<WebCore::PlatformGamepad>>& NODELETE platformGamepads() final;
     void playEffect(unsigned gamepadIndex, const String& gamepadID, WebCore::GamepadHapticEffectType, const WebCore::GamepadEffectParameters&, CompletionHandler<void(bool)>&&) final;
     void stopEffects(unsigned gamepadIndex, const String& gamepadID, CompletionHandler<void()>&&) final;
 

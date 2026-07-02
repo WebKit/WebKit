@@ -443,7 +443,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
     return WebFrame::fromCoreFrame(*frame);
 }
 
-RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
+RefPtr<WebFrame> NODELETE InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
 {
     auto* iframeElement = dynamicDowncast<HTMLIFrameElement>(m_node.get());
     if (!iframeElement)

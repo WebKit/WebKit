@@ -324,17 +324,17 @@ bool isForbiddenHostCodePoint(char16_t character)
     return character <= 0x7F && characterClassTable[character] & ForbiddenHost;
 }
 
-template<typename CharacterType> ALWAYS_INLINE static bool isC0Control(CharacterType character) { return character <= 0x1F; }
-template<typename CharacterType> ALWAYS_INLINE static bool isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
-template<typename CharacterType> ALWAYS_INLINE static bool isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
-template<typename CharacterType> ALWAYS_INLINE static bool isInC0ControlEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
-template<typename CharacterType> ALWAYS_INLINE static bool isInFragmentEncodeSet(CharacterType character) { return character > 0x7E || character == '`' || ((characterClassTable[character] & QueryEncode) && character != '#'); }
-template<typename CharacterType> ALWAYS_INLINE static bool isInPathEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & PathEncode; }
-template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfoEncode; }
-template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
-template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
-template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
-template<typename CharacterType> ALWAYS_INLINE static bool isSpecialCharacterForFragmentDirective(CharacterType character) { return !isASCII(character) || character == ',' || character == '-'; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isC0Control(CharacterType character) { return character <= 0x1F; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isInC0ControlEncodeSet(CharacterType character) { return character > 0x7E || isC0Control(character); }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isInFragmentEncodeSet(CharacterType character) { return character > 0x7E || character == '`' || ((characterClassTable[character] & QueryEncode) && character != '#'); }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isInPathEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & PathEncode; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isInUserInfoEncodeSet(CharacterType character) { return character > 0x7E || characterClassTable[character] & UserInfoEncode; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
+template<typename CharacterType> ALWAYS_INLINE static bool NODELETE isSpecialCharacterForFragmentDirective(CharacterType character) { return !isASCII(character) || character == ',' || character == '-'; }
 
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isForbiddenHostCodePoint(CharacterType character)
@@ -350,7 +350,7 @@ ALWAYS_INLINE bool URLParser::isForbiddenDomainCodePoint(CharacterType character
     return character <= 0x7F && characterClassTable[character] & ForbiddenDomain;
 }
 
-ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, bool urlIsSpecial)
+ALWAYS_INLINE static bool NODELETE shouldPercentEncodeQueryByte(uint8_t byte, bool urlIsSpecial)
 {
     if (characterClassTable[byte] & QueryEncode)
         return true;
@@ -661,7 +661,7 @@ enum class Scheme {
     NonSpecial
 };
 
-ALWAYS_INLINE static Scheme scheme(StringView scheme)
+ALWAYS_INLINE static Scheme NODELETE scheme(StringView scheme)
 {
     auto length = scheme.length();
     if (!length)
@@ -2282,7 +2282,7 @@ Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(C
     return value.value();
 }
 
-ALWAYS_INLINE static uint64_t pow256(size_t exponent)
+ALWAYS_INLINE static uint64_t NODELETE pow256(size_t exponent)
 {
     RELEASE_ASSERT(exponent <= 4);
     static constexpr std::array<uint64_t, 5> values { 1, 256, 256 * 256, 256 * 256 * 256, 256ull * 256 * 256 * 256 };

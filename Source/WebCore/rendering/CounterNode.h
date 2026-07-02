@@ -75,7 +75,7 @@ public:
 
 private:
     CounterNode(RenderElement&, OptionSet<Type>, int value);
-    int NODELETE computeCountInParent() const;
+    int computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
     void resetThisAndDescendantsRenderers();
@@ -98,5 +98,5 @@ private:
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showCounterTree(const WebCore::CounterNode*);
+void NODELETE showCounterTree(const WebCore::CounterNode*);
 #endif

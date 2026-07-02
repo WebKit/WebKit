@@ -67,11 +67,11 @@ public:
 
 private:
     const AtomString& type() override;
-    Node& target() override { return m_target; }
-    NodeList& addedNodes() override { return m_addedNodes; }
-    NodeList& removedNodes() override { return m_removedNodes; }
+    Node& NODELETE target() override { return m_target; }
+    NodeList& NODELETE addedNodes() override { return m_addedNodes; }
+    NodeList& NODELETE removedNodes() override { return m_removedNodes; }
     Node* previousSibling() override { return m_previousSibling.get(); }
-    Node* nextSibling() override { return m_nextSibling.get(); }
+    Node* NODELETE nextSibling() override { return m_nextSibling.get(); }
 
     void visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {
@@ -100,8 +100,8 @@ public:
     }
 
 private:
-    Node& target() override { return m_target; }
-    String oldValue() override { return m_oldValue; }
+    Node& NODELETE target() override { return m_target; }
+    String NODELETE oldValue() override { return m_oldValue; }
     NodeList& addedNodes() override { return lazilyInitializeEmptyNodeList(m_addedNodes); }
     NodeList& removedNodes() override { return lazilyInitializeEmptyNodeList(m_removedNodes); }
 
@@ -134,8 +134,8 @@ public:
 
 private:
     const AtomString& type() override;
-    const AtomString& attributeName() override { return m_attributeName; }
-    const AtomString& attributeNamespace() override { return m_attributeNamespace; }
+    const AtomString& NODELETE attributeName() override { return m_attributeName; }
+    const AtomString& NODELETE attributeNamespace() override { return m_attributeNamespace; }
 
     AtomString m_attributeName;
     AtomString m_attributeNamespace;
@@ -161,7 +161,7 @@ public:
 
 private:
     const AtomString& type() override { return m_record->type(); }
-    Node& target() override { return m_record->target(); }
+    Node& NODELETE target() override { return m_record->target(); }
     NodeList& addedNodes() override { return m_record->addedNodes(); }
     NodeList& removedNodes() override { return m_record->removedNodes(); }
     Node* previousSibling() override { return m_record->previousSibling(); }
@@ -169,7 +169,7 @@ private:
     const AtomString& attributeName() override { return m_record->attributeName(); }
     const AtomString& attributeNamespace() override { return m_record->attributeNamespace(); }
 
-    String oldValue() override { return String(); }
+    String NODELETE oldValue() override { return String(); }
 
     void visitNodesInGCThread(JSC::AbstractSlotVisitor& visitor) const final
     {

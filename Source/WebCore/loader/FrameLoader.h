@@ -187,7 +187,7 @@ public:
     FrameState state() const { return m_state; }
 
     enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
-    WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies(CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes) const;
+    WEBCORE_EXPORT RefPtr<DocumentLoader> NODELETE loaderForWebsitePolicies(CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes) const;
 
     bool shouldReportResourceTimingToParentFrame() const { return m_shouldReportResourceTimingToParentFrame; };
     void setShouldReportResourceTimingToParentFrame(bool value) { m_shouldReportResourceTimingToParentFrame = value; }
@@ -301,7 +301,7 @@ public:
 
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
-    WEBCORE_EXPORT bool shouldReplaceHistoryItemInChildFrame() const;
+    WEBCORE_EXPORT bool NODELETE shouldReplaceHistoryItemInChildFrame() const;
 
     WEBCORE_EXPORT bool shouldClose();
 

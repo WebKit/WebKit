@@ -72,7 +72,7 @@ private:
     using Positions = Vector<DebuggerPausePosition>;
 
     Positions::iterator firstPositionAfter(int line, int column);
-    std::optional<JSTextPosition> breakpointLocationForLineColumn(int line, int column, Positions::iterator);
+    std::optional<JSTextPosition> NODELETE breakpointLocationForLineColumn(int line, int column, Positions::iterator);
 
     Positions m_positions;
 };

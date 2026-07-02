@@ -53,7 +53,7 @@ public:
     // The suspendIfNeeded must be called exactly once after object construction to update
     // the suspended state to match that of the ScriptExecutionContext.
     void suspendIfNeeded();
-    void assertSuspendIfNeededWasCalled() const;
+    void NODELETE assertSuspendIfNeededWasCalled() const;
 
     void didMoveToNewDocument(Document&);
 

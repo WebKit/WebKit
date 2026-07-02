@@ -50,7 +50,7 @@ private:
 
     void newCuesParsed() final;
     void newRegionsParsed() final;
-    void newStyleSheetsParsed() final;
+    void NODELETE newStyleSheetsParsed() final;
     void fileFailedToParse() final;
 
     bool shouldPurgeCuesFromUnbufferedRanges() const final { return true; }

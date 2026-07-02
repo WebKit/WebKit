@@ -124,7 +124,7 @@ class EmptyBackForwardClient final : public BackForwardClient {
     void NODELETE setChildItem(BackForwardFrameItemIdentifier, Ref<HistoryItem>&&) final { }
     void NODELETE goToItem(HistoryItem&) final { }
     Vector<Ref<HistoryItem>> NODELETE allItems(FrameIdentifier) { return { }; }
-    RefPtr<HistoryItem> itemAtIndex(int, FrameIdentifier) final { return nullptr; }
+    RefPtr<HistoryItem> NODELETE itemAtIndex(int, FrameIdentifier) final { return nullptr; }
     unsigned NODELETE backListCount() const final { return 0; }
     unsigned NODELETE forwardListCount() const final { return 0; }
     bool NODELETE containsItem(const HistoryItem&) const final { return false; }
@@ -257,7 +257,7 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
 
     void NODELETE logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
     void NODELETE logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
-    void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
+    void NODELETE logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
     void NODELETE logDiagnosticMessageWithEnhancedPrivacy(const String&, const String&, ShouldSample) final { }
     void NODELETE logDiagnosticMessageWithValueDictionary(const String&, const String&, const ValueDictionary&, ShouldSample) final { }
     void NODELETE logDiagnosticMessageWithDomain(const String&, DiagnosticLoggingDomain) final { };
@@ -270,7 +270,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyDiagnosticLoggingClient);
 class EmptyDragClient final : public DragClient {
     void NODELETE willPerformDragDestinationAction(DragDestinationAction, const DragData&) final { }
     void NODELETE willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
-    OptionSet<DragSourceAction> dragSourceActionMaskForPoint(const IntPoint&) final { return { }; }
+    OptionSet<DragSourceAction> NODELETE dragSourceActionMaskForPoint(const IntPoint&) final { return { }; }
     void startDrag(DragItem, DataTransfer&, Frame&, const std::optional<NodeIdentifier>&) final { }
 };
 
@@ -312,7 +312,7 @@ private:
     void NODELETE didWriteSelectionToPasteboard() final { }
     void NODELETE getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<SharedBuffer>>>&) final { }
     void NODELETE requestCandidatesForSelection(const VisibleSelection&) final { }
-    void NODELETE handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) final { }
+    void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) final { }
 
     void registerUndoStep(UndoStep&) final;
     void registerRedoStep(UndoStep&) final;
@@ -406,7 +406,7 @@ private:
         void NODELETE checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) final { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-        Vector<TextCheckingResult> NODELETE checkTextOfParagraph(StringView, OptionSet<TextCheckingType>, const VisibleSelection&) final { return Vector<TextCheckingResult>(); }
+        Vector<TextCheckingResult> checkTextOfParagraph(StringView, OptionSet<TextCheckingType>, const VisibleSelection&) final { return Vector<TextCheckingResult>(); }
 #endif
 
         void NODELETE getGuessesForWord(const String&, const String&, const VisibleSelection&, Vector<String>&) final { }
@@ -436,7 +436,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(WIN)
-    ResourceError blockedError(const ResourceRequest&) const final { return { }; }
+    ResourceError NODELETE blockedError(const ResourceRequest&) const final { return { }; }
 #endif
 };
 
@@ -1233,7 +1233,7 @@ private:
 
 class EmptySocketProvider final : public SocketProvider {
 public:
-    RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) final { return nullptr; }
+    RefPtr<ThreadableWebSocketChannel> NODELETE createWebSocketChannel(Document&, WebSocketChannelClient&, IsInitiatedByDedicatedWorker) final { return nullptr; }
 
     std::pair<RefPtr<WebTransportSession>, Ref<WebTransportSessionPromise>> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&, const WebTransportOptions&) { return { nullptr, WebTransportSessionPromise::createAndReject() }; }
 

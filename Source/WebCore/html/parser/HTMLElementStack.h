@@ -143,7 +143,7 @@ public:
     ContainerNode& NODELETE rootNode() const;
 
 #if ENABLE(TREE_DEBUGGING)
-    void show();
+    void NODELETE show();
 #endif
 
 private:

@@ -52,7 +52,7 @@ public:
 
 private:
     static WTF::ASCIILiteral supplementName() { return "DOMWindowTrustedTypes"_s; }
-    bool isDOMWindowTrustedTypes() const final { return true; }
+    bool NODELETE isDOMWindowTrustedTypes() const final { return true; }
 
     mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
 };

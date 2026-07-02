@@ -40,12 +40,12 @@ class DeprecatedFlexibleBoxData : public RefCounted<DeprecatedFlexibleBoxData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData, DeprecatedFlexibleBoxData);
 public:
     static Ref<DeprecatedFlexibleBoxData> create() { return adoptRef(*new DeprecatedFlexibleBoxData); }
-    Ref<DeprecatedFlexibleBoxData> NODELETE copy() const;
+    Ref<DeprecatedFlexibleBoxData> copy() const;
 
     bool NODELETE operator==(const DeprecatedFlexibleBoxData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const DeprecatedFlexibleBoxData&) const;
+    void NODELETE dumpDifferences(TextStream&, const DeprecatedFlexibleBoxData&) const;
 #endif
 
     WebkitBoxFlex boxFlex;

@@ -100,7 +100,7 @@ public:
             layer.clearContents();
     }
 
-    GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
+    GraphicsLayer::CompositingCoordinatesOrientation NODELETE orientation() const final
     {
         return GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
     }
@@ -138,7 +138,7 @@ public:
     ~WebProcessGraphicsContextGLCocoa();
 
     // GraphicsContextGLCocoa overrides.
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
+    RefPtr<GraphicsLayerContentsDisplayDelegate> NODELETE layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
 private:
     WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&&);

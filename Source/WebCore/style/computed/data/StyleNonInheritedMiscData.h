@@ -69,7 +69,7 @@ public:
     bool operator==(const NonInheritedMiscData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const NonInheritedMiscData&) const;
+    void NODELETE dumpDifferences(TextStream&, const NonInheritedMiscData&) const;
 #endif
 
     bool NODELETE hasFilters() const;

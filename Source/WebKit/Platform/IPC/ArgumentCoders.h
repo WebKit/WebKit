@@ -829,14 +829,14 @@ template<typename... Types> struct ArgumentCoder<Variant<Types...>> {
 
 template<> struct ArgumentCoder<String> {
     template<typename Encoder>
-    static void encode(Encoder&, const String&);
+    static void NODELETE encode(Encoder&, const String&);
     template<typename Decoder>
-    static std::optional<String> decode(Decoder&);
+    static std::optional<String> NODELETE decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<StringView> {
     template<typename Encoder>
-    static void encode(Encoder&, StringView);
+    static void NODELETE encode(Encoder&, StringView);
 };
 
 template<> struct ArgumentCoder<std::nullptr_t> {

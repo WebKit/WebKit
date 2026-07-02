@@ -78,15 +78,15 @@ public:
 
     void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
     void manualLoadDidReceiveData(const WebCore::SharedBuffer&);
-    void manualLoadDidFinishLoading();
+    void NODELETE manualLoadDidFinishLoading();
     void manualLoadDidFail();
 
     void setDeviceScaleFactor(float);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const;
-    WebCore::FloatSize pdfDocumentSizeForPrinting() const;
+    WebCore::FloatSize NODELETE pdfDocumentSizeForPrinting() const;
     id accessibilityHitTest(const WebCore::IntPoint&) const final;
     id accessibilityObject() const final;
-    id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
+    id NODELETE accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
 
     void layerHostingStrategyDidChange() final;
 
@@ -114,7 +114,7 @@ public:
 #endif
 #endif
 
-    bool populateEditorStateIfNeeded(EditorState&) const;
+    bool NODELETE populateEditorStateIfNeeded(EditorState&) const;
 
     void obscuredContentInsetsDidChange();
 
@@ -141,7 +141,7 @@ public:
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const;
 
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
-    bool performImmediateActionHitTestAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
+    bool NODELETE performImmediateActionHitTestAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const;
 
     WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const;
     
@@ -161,11 +161,11 @@ public:
 
     void setPDFDisplayMode(PDFPluginDisplayMode);
 
-    void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
+    void NODELETE openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
 
     void focusPluginElement();
 
-    bool pluginHandlesPageScaleFactor() const;
+    bool NODELETE pluginHandlesPageScaleFactor() const;
 
     WebCore::FloatRect absoluteBoundingRectForSmartMagnificationAtPoint(WebCore::FloatPoint) const;
 
@@ -173,7 +173,7 @@ public:
 
     bool pluginDelegatesScrollingToMainFrame() const;
 
-    bool isPresentingLockedContent() const;
+    bool NODELETE isPresentingLockedContent() const;
 
     void effectiveAppearanceDidChange();
 
@@ -186,7 +186,7 @@ private:
     void initializePlugin();
 
     void viewGeometryDidChange();
-    void viewVisibilityDidChange();
+    void NODELETE viewVisibilityDidChange();
 
     WebCore::IntRect clipRectInWindowCoordinates() const;
     
@@ -207,15 +207,15 @@ private:
     PlatformLayer* platformLayer() const final;
     WebCore::GraphicsLayer* graphicsLayer() const final;
 
-    bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
-    WebCore::ScrollPosition scrollPositionForTesting() const final;
+    bool NODELETE scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
+    WebCore::ScrollPosition NODELETE scrollPositionForTesting() const final;
     WebCore::Scrollbar* horizontalScrollbar() final;
     WebCore::Scrollbar* verticalScrollbar() final;
     bool wantsWheelEvents() final;
-    bool shouldAllowNavigationFromDrags() const final;
-    void willDetachRenderer() final;
+    bool NODELETE shouldAllowNavigationFromDrags() const final;
+    void NODELETE willDetachRenderer() final;
 
-    WebCore::ScrollableArea* scrollableArea() const final;
+    WebCore::ScrollableArea* NODELETE scrollableArea() const final;
     bool usesAsyncScrolling() const final;
     std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const final;
     void willAttachScrollingNode() final;
@@ -231,7 +231,7 @@ private:
     void show() final;
     void hide() final;
     void setParentVisible(bool) final;
-    bool transformsAffectFrameRect() final;
+    bool NODELETE transformsAffectFrameRect() final;
     void clipRectChanged() final;
 
     void releaseMemory() final;

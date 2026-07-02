@@ -103,18 +103,18 @@ private:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-    void insert(SegmentedString&&) final;
+    void NODELETE insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) final;
     void finish() final;
     void stopParsing() final;
     void detach() final;
 
-    TextPosition textPosition() const final;
-    bool shouldAssociateConsoleMessagesWithTextPosition() const final;
+    TextPosition NODELETE textPosition() const final;
+    bool NODELETE shouldAssociateConsoleMessagesWithTextPosition() const final;
 
     void notifyFinished(PendingScript&) final;
 
-    bool hasScriptsWaitingForStylesheets() const final;
+    bool NODELETE hasScriptsWaitingForStylesheets() const final;
     void executeScriptsWaitingForStylesheets() final;
 
     void end();

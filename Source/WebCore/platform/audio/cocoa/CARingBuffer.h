@@ -76,8 +76,8 @@ protected:
     WEBCORE_EXPORT CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
     WEBCORE_EXPORT void initialize();
 
-    WEBCORE_EXPORT static CheckedSize NODELETE computeCapacityBytes(size_t bytesPerFrame, size_t frameCount);
-    WEBCORE_EXPORT static CheckedSize NODELETE computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
+    WEBCORE_EXPORT static CheckedSize computeCapacityBytes(size_t bytesPerFrame, size_t frameCount);
+    WEBCORE_EXPORT static CheckedSize computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
 
     virtual void* data() LIFETIME_BOUND = 0;
     std::span<uint8_t> span() LIFETIME_BOUND { return unsafeMakeSpan(static_cast<uint8_t*>(data()), m_channelCount * m_capacityBytes); }

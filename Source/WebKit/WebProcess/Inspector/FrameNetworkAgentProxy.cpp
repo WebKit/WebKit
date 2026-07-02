@@ -108,7 +108,7 @@ CommandResult<void> FrameNetworkAgentProxy::disable()
     return { };
 }
 
-static std::optional<ScriptExecutionContextIdentifier> contextIdentifier(DocumentLoader* loader)
+static std::optional<ScriptExecutionContextIdentifier> NODELETE contextIdentifier(DocumentLoader* loader)
 {
     if (!loader || !loader->frame())
         return std::nullopt;
@@ -118,7 +118,7 @@ static std::optional<ScriptExecutionContextIdentifier> contextIdentifier(Documen
     return document->identifier();
 }
 
-static std::optional<FrameIdentifier> frameIdentifier(DocumentLoader* loader)
+static std::optional<FrameIdentifier> NODELETE frameIdentifier(DocumentLoader* loader)
 {
     if (!loader || !loader->frame())
         return std::nullopt;

@@ -63,7 +63,7 @@ protected:
 };
 
 #if !LOG_DISABLED
-extern ASCIILiteral nameForSQLTransactionState(SQLTransactionState);
+extern ASCIILiteral NODELETE nameForSQLTransactionState(SQLTransactionState);
 #endif
 
 template<typename T>

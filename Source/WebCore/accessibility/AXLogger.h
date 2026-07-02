@@ -60,24 +60,24 @@ public:
     AXLogger() = default;
     AXLogger(const String& methodName);
     ~AXLogger();
-    void log(const String&);
-    void log(const char*);
-    void log(const AXCoreObject&);
-    void log(RefPtr<AXCoreObject>);
-    void log(const Vector<Ref<AXCoreObject>>&);
-    void log(const std::pair<Ref<AccessibilityObject>, AXNotificationWithData>&);
-    void log(const std::pair<RefPtr<AXCoreObject>, AXNotification>&);
-    void log(const AccessibilitySearchCriteria&);
-    void log(AccessibilityObjectInclusion);
-    void log(AXRelation);
+    void NODELETE log(const String&);
+    void NODELETE log(const char*);
+    void NODELETE log(const AXCoreObject&);
+    void NODELETE log(RefPtr<AXCoreObject>);
+    void NODELETE log(const Vector<Ref<AXCoreObject>>&);
+    void NODELETE log(const std::pair<Ref<AccessibilityObject>, AXNotificationWithData>&);
+    void NODELETE log(const std::pair<RefPtr<AXCoreObject>, AXNotification>&);
+    void NODELETE log(const AccessibilitySearchCriteria&);
+    void NODELETE log(AccessibilityObjectInclusion);
+    void NODELETE log(AXRelation);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void log(AXIsolatedTree&);
+    void NODELETE log(AXIsolatedTree&);
 #endif
-    void log(AXObjectCache&);
+    void NODELETE log(AXObjectCache&);
     static void add(TextStream&, const RefPtr<AXCoreObject>&, bool recursive = false);
-    void log(const String&, const AXObjectCache::DeferredCollection&);
+    void NODELETE log(const String&, const AXObjectCache::DeferredCollection&);
 private:
-    bool shouldLog();
+    bool NODELETE shouldLog();
     String m_methodName;
     MonotonicTime m_startTime;
 };

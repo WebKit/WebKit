@@ -76,8 +76,8 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
-    bool canHaveChildren() const override;
+    bool NODELETE isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+    bool NODELETE canHaveChildren() const override;
     bool requiresLayer() const override { return false; }
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;

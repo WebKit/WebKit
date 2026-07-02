@@ -105,12 +105,12 @@ public:
 private:
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier>, WebCore::SWServer&);
 
-    template<typename T> void sendToParentProcess(T&&);
-    template<typename T, typename C> void sendWithAsyncReplyToParentProcess(T&&, C&&);
+    template<typename T> void NODELETE sendToParentProcess(T&&);
+    template<typename T, typename C> void NODELETE sendWithAsyncReplyToParentProcess(T&&, C&&);
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const WebCore::SecurityOriginData& sourceOrigin);
     void skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);

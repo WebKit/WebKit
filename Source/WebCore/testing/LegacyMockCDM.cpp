@@ -51,14 +51,14 @@ public:
 
     virtual ~MockCDMSession() = default;
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const String& sessionId() const override { return m_sessionId; }
+    const String& NODELETE sessionId() const override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
-    void releaseKeys() override;
+    void NODELETE releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override { return nullptr; }
+    RefPtr<ArrayBuffer> NODELETE cachedKeyForKeyID(const String&) const override { return nullptr; }
 
 protected:
     MockCDMSession(LegacyCDMSessionClient&);

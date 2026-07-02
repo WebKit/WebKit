@@ -48,8 +48,8 @@ public:
     
     virtual void beginCollection() = 0;
     
-    virtual void didStop();
-    virtual void willResume();
+    virtual void NODELETE didStop();
+    virtual void NODELETE willResume();
     
     // At the top of an iteration, the GC will may call didReachTermination.
     virtual void didReachTermination();

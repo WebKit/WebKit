@@ -157,7 +157,7 @@ public:
     inline bool shouldUsePositionedClipping() const;
 
 #if ASSERT_ENABLED
-    bool layerAccessPreventedSlow() const;
+    bool NODELETE layerAccessPreventedSlow() const;
 #endif
 
     AffineTransform computeRendererTransform() const;

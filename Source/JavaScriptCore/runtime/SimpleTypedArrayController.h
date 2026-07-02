@@ -53,7 +53,7 @@ public:
     
     JSArrayBuffer* toJS(JSGlobalObject*, JSGlobalObject*, ArrayBuffer&) final;
     void registerWrapper(JSGlobalObject*, ArrayBuffer&, JSArrayBuffer&) final;
-    bool isAtomicsWaitAllowedOnCurrentThread() final;
+    bool NODELETE isAtomicsWaitAllowedOnCurrentThread() final;
 
 private:
     class JSArrayBufferOwner final : public WeakHandleOwner {

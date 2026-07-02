@@ -285,7 +285,7 @@ public:
         String recordPath;
         WallTime lastAccessTime;
     };
-    HashMap<String, PartitionEntry>& ensurePartitionMap()
+    HashMap<String, PartitionEntry>& NODELETE ensurePartitionMap()
     {
         ASSERT(!isMainRunLoop());
         return m_partitionMap;

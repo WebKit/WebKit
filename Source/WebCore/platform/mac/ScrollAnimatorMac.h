@@ -49,14 +49,14 @@ private:
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
 
-    bool isRubberBandInProgress() const final;
+    bool NODELETE isRubberBandInProgress() const final;
 
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&) final;
 
     // ScrollingEffectsControllerClient.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
-    bool shouldRubberBandOnSide(BoxSide, FloatSize) const final;
+    bool NODELETE shouldRubberBandOnSide(BoxSide, FloatSize) const final;
     bool isScrollDeltaOpposingStretch(ScrollEventAxis, float) const final;
 };
 

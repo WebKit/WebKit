@@ -47,9 +47,9 @@ class MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, TrackID trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
 
-    MediaTime presentationTime() const override;
-    MediaTime decodeTime() const override;
-    MediaTime duration() const override;
+    MediaTime NODELETE presentationTime() const override;
+    MediaTime NODELETE decodeTime() const override;
+    MediaTime NODELETE duration() const override;
 
     TrackID trackID() const override { return m_id; }
 

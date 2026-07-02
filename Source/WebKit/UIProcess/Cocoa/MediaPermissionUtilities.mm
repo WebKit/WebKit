@@ -96,7 +96,7 @@ bool checkUsageDescriptionStringForSpeechRecognition()
     return dynamic_objc_cast<NSString>(NSBundle.mainBundle.infoDictionary[@"NSSpeechRecognitionUsageDescription"]).length > 0;
 }
 
-static RetainPtr<NSString> visibleDomain(const String& host)
+static RetainPtr<NSString> NODELETE visibleDomain(const String& host)
 {
     auto domain = WTF::URLHelpers::userVisibleURL(host.utf8());
     return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString() : domain.createNSString();
@@ -118,7 +118,7 @@ RetainPtr<NSString> applicationVisibleName()
     return appBundle.get().infoDictionary[bridge_cast(kCFBundleNameKey)];
 }
 
-static RetainPtr<NSString> alertMessageText(MediaPermissionReason reason, const WebCore::SecurityOriginData& origin)
+static RetainPtr<NSString> NODELETE alertMessageText(MediaPermissionReason reason, const WebCore::SecurityOriginData& origin)
 {
     RetainPtr visibleOrigin = applicationVisibleNameFromOrigin(origin);
     if (!visibleOrigin)
@@ -142,7 +142,7 @@ static RetainPtr<NSString> alertMessageText(MediaPermissionReason reason, const 
     }
 }
 
-static RetainPtr<NSString> allowButtonText(MediaPermissionReason reason)
+static RetainPtr<NSString> NODELETE allowButtonText(MediaPermissionReason reason)
 {
     switch (reason) {
     case MediaPermissionReason::Camera:
@@ -160,7 +160,7 @@ static RetainPtr<NSString> allowButtonText(MediaPermissionReason reason)
     }
 }
 
-static RetainPtr<NSString> doNotAllowButtonText(MediaPermissionReason reason)
+static RetainPtr<NSString> NODELETE doNotAllowButtonText(MediaPermissionReason reason)
 {
     switch (reason) {
     case MediaPermissionReason::Camera:

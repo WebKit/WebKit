@@ -68,19 +68,19 @@ private:
     RemoteXRProjectionLayerProxy& operator=(const RemoteXRProjectionLayerProxy&) = delete;
     RemoteXRProjectionLayerProxy& operator=(RemoteXRProjectionLayerProxy&&) = delete;
 
-    uint32_t colorTextureWidth() const final;
-    uint32_t colorTextureHeight() const final;
-    uint32_t colorTextureArrayLength() const final;
+    uint32_t NODELETE colorTextureWidth() const final;
+    uint32_t NODELETE colorTextureHeight() const final;
+    uint32_t NODELETE colorTextureArrayLength() const final;
 
-    bool ignoreDepthValues() const final;
-    std::optional<float> fixedFoveation() const final;
-    void setFixedFoveation(std::optional<float>) final;
-    WebCore::WebXRRigidTransform* deltaPose() const final;
-    void setDeltaPose(WebCore::WebXRRigidTransform*) final;
+    bool NODELETE ignoreDepthValues() const final;
+    std::optional<float> NODELETE fixedFoveation() const final;
+    void NODELETE setFixedFoveation(std::optional<float>) final;
+    WebCore::WebXRRigidTransform* NODELETE deltaPose() const final;
+    void NODELETE setDeltaPose(WebCore::WebXRRigidTransform*) final;
 
     // WebXRLayer
 #if PLATFORM(COCOA)
-    void startFrame(size_t frameIndex, MachSendRight&&, MachSendRight&&, MachSendRight&&, size_t reusableTextureIndex, PlatformXR::RateMapDescription&&) final;
+    void NODELETE startFrame(size_t frameIndex, MachSendRight&&, MachSendRight&&, MachSendRight&&, size_t reusableTextureIndex, PlatformXR::RateMapDescription&&) final;
     void endFrame() final;
 #else
     void startFrame(PlatformXR::FrameData&) final { RELEASE_ASSERT_NOT_REACHED(); }

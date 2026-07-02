@@ -202,7 +202,7 @@ static bool isMainThreadOrCheckDisabled()
     return false;
 }
 
-WebProcessProxy::WebProcessProxyMap& WebProcessProxy::allProcessMap()
+WebProcessProxy::WebProcessProxyMap& NODELETE WebProcessProxy::allProcessMap()
 {
     ASSERT(isMainThreadOrCheckDisabled());
     static NeverDestroyed<WebProcessProxy::WebProcessProxyMap> map;
@@ -3057,14 +3057,14 @@ void WebProcessProxy::setAppBadgeFromWorker(const SecurityOriginData& origin, st
         dataStore->workerUpdatedAppBadge(origin, badge);
 }
 
-const WeakHashSet<WebProcessProxy>* WebProcessProxy::serviceWorkerClientProcesses() const
+const WeakHashSet<WebProcessProxy>* NODELETE WebProcessProxy::serviceWorkerClientProcesses() const
 {
     if (m_serviceWorkerInformation)
         return &m_serviceWorkerInformation.value().clientProcesses;
     return nullptr;
 }
 
-const WeakHashSet<WebProcessProxy>* WebProcessProxy::sharedWorkerClientProcesses() const
+const WeakHashSet<WebProcessProxy>* NODELETE WebProcessProxy::sharedWorkerClientProcesses() const
 {
     if (m_sharedWorkerInformation)
         return &m_sharedWorkerInformation.value().clientProcesses;

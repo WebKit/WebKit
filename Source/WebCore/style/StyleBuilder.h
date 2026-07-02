@@ -88,7 +88,7 @@ private:
     const PropertyCascade* ensureRollbackCascadeForRevert() LIFETIME_BOUND;
     const PropertyCascade* ensureRollbackCascadeForRevertLayer() LIFETIME_BOUND;
     const PropertyCascade* ensureRollbackCascadeForRevertRule() LIFETIME_BOUND;
-    const PropertyCascade& parentCascadeForRollback() LIFETIME_BOUND;
+    const PropertyCascade& NODELETE parentCascadeForRollback() LIFETIME_BOUND;
 
     using RollbackCascadeKey = std::tuple<const PropertyCascade*, unsigned, unsigned, unsigned, bool>;
     RollbackCascadeKey makeRollbackCascadeKey(const PropertyCascade& parentCascade, PropertyCascade::Origin, ScopeOrdinal = ScopeOrdinal::Element, CascadeLayerPriority = 0);

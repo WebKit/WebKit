@@ -57,7 +57,7 @@ public:
 
     void setFormValue(CustomElementFormValue&& submissionValue, std::optional<CustomElementFormValue>&& state);
     ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
-    String validationMessage() const final;
+    String NODELETE validationMessage() const final;
 
     void finishParsingChildren();
 
@@ -80,7 +80,7 @@ private:
     void refFormAssociatedElement() const final { m_element->ref(); }
     void derefFormAssociatedElement() const final { m_element->deref(); }
 
-    HTMLElement* validationAnchorElement() final;
+    HTMLElement* NODELETE validationAnchorElement() final;
     void didChangeForm() final;
     void invalidateElementsCollectionCachesInAncestors();
 

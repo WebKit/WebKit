@@ -276,7 +276,7 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
     ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value);
-    unsigned validateAttributeIndex(unsigned index, const QualifiedName& qname) const;
+    unsigned NODELETE validateAttributeIndex(unsigned index, const QualifiedName& qname) const;
     WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value);
     ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedTypeOrString& value);
 
@@ -532,7 +532,7 @@ public:
     const Style::ComputedStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
     const Style::ComputedStyle* computedStyleForEditability();
 
-    bool needsStyleInvalidation() const;
+    bool NODELETE needsStyleInvalidation() const;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasStyleFlag(NodeStyleFlag::StyleAffectedByEmpty); }
@@ -587,7 +587,7 @@ public:
     inline URL getURLAttributeForBindings(const QualifiedName&) const;
     URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
-    virtual String imageSourceURL() const;
+    virtual String NODELETE imageSourceURL() const;
     virtual AtomString target() const { return nullAtom(); }
 
     static RefPtr<Element> findFocusDelegateForTarget(ContainerNode&, FocusTrigger);
@@ -801,9 +801,9 @@ public:
 
     LayoutRect absoluteEventHandlerBounds(bool& includesFixedPositionElements) override;
 
-    const Style::ComputedStyle* NODELETE existingComputedStyle() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const Style::ComputedStyle* NODELETE renderOrDisplayContentsStyle() const LIFETIME_BOUND;
-    WEBCORE_EXPORT const Style::ComputedStyle* NODELETE renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
+    const Style::ComputedStyle* existingComputedStyle() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const Style::ComputedStyle* renderOrDisplayContentsStyle() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const Style::ComputedStyle* renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const LIFETIME_BOUND;
 
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
@@ -903,7 +903,7 @@ public:
     std::optional<OptionSet<ContentRelevancy>> NODELETE contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
 
-    bool hasCustomState(const AtomString& state) const;
+    bool NODELETE hasCustomState(const AtomString& state) const;
     CustomStateSet& ensureCustomStateSet();
 
     bool hasValidTextDirectionState() const;
@@ -950,13 +950,13 @@ protected:
     void disconnectFromIntersectionObservers();
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
 
-    template<typename ShadowRoot> std::optional<ShadowRoot> serializeShadowRoot() const;
-    template<typename Attribute> Vector<Attribute> serializeAttributes() const;
+    template<typename ShadowRoot> std::optional<ShadowRoot> NODELETE serializeShadowRoot() const;
+    template<typename Attribute> Vector<Attribute> NODELETE serializeAttributes() const;
 
 private:
     Element(ClangVTableWorkaroundTag, const QualifiedName&, Document&);
 
-    LocalFrame* documentFrameWithNonNullView() const;
+    LocalFrame* NODELETE documentFrameWithNonNullView() const;
     void hideNonceSlow();
 
     bool NODELETE isUserActionElementInActiveChain() const;
@@ -1051,7 +1051,7 @@ private:
     void attachAttributeNodeIfNeeded(Attr&);
 
 #if ASSERT_ENABLED
-    WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
+    WEBCORE_EXPORT bool NODELETE fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
 
     void dirAttributeChanged(const AtomString& newValue);

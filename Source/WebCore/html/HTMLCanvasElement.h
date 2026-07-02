@@ -156,7 +156,7 @@ private:
     bool isHTMLCanvasElement() const final { return true; }
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget.
     void eventListenersDidChange() final;
@@ -167,8 +167,8 @@ private:
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
 
-    bool canContainRangeEndPoint() const final;
-    bool canStartSelection() const final;
+    bool NODELETE canContainRangeEndPoint() const final;
+    bool NODELETE canStartSelection() const final;
 
     void didUpdateSizeProperties();
 
@@ -191,7 +191,7 @@ private:
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };
 
-WebCoreOpaqueRoot root(HTMLCanvasElement*);
+WebCoreOpaqueRoot NODELETE root(HTMLCanvasElement*);
 
 } // namespace WebCore
 

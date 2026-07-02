@@ -96,9 +96,9 @@ public:
     }
     bool isNull() const { return std::holds_alternative<std::monostate>(m_value); }
 
-    std::optional<bool> asBoolean() const;
-    std::optional<int> asInteger() const;
-    std::optional<double> asDouble() const;
+    std::optional<bool> NODELETE asBoolean() const;
+    std::optional<int> NODELETE asInteger() const;
+    std::optional<double> NODELETE asDouble() const;
     const String& asString() const;
     RefPtr<Value> asValue();
     RefPtr<Object> asObject();
@@ -116,8 +116,8 @@ public:
     void dump(PrintStream&) const;
 
     // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
-    bool asDouble(double&) const;
-    bool asInteger(int&) const;
+    bool NODELETE asDouble(double&) const;
+    bool NODELETE asInteger(int&) const;
     bool asString(String&) const;
 
     size_t memoryCost() const;
@@ -156,8 +156,8 @@ protected:
     {
     }
 
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
+    template<typename Visitor> constexpr decltype(auto) NODELETE visitDerived(Visitor&&);
+    template<typename Visitor> constexpr decltype(auto) NODELETE visitDerived(Visitor&&) const;
     size_t memoryCostImpl() const;
     void writeJSONImpl(StringBuilder& output) const;
 
@@ -271,7 +271,7 @@ public:
 
     size_t length() const { return m_map.size(); }
 
-    Ref<Value> NODELETE get(size_t index) const;
+    Ref<Value> get(size_t index) const;
 
 protected:
     ~ArrayBase();

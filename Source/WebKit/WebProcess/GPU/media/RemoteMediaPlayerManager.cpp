@@ -62,7 +62,7 @@ public:
     {
     }
 
-    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return m_remoteEngineIdentifier; };
+    MediaPlayerEnums::MediaEngineIdentifier NODELETE identifier() const final { return m_remoteEngineIdentifier; };
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final
     {
@@ -81,18 +81,18 @@ public:
         return manager()->supportsTypeAndCodecs(m_remoteEngineIdentifier, parameters);
     }
 
-    HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
+    HashSet<SecurityOriginData> NODELETE originsInMediaCache(const String& path) const final
     {
         ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
         return { };
     }
 
-    void clearMediaCache(const String& path, WallTime modifiedSince) const final
+    void NODELETE clearMediaCache(const String& path, WallTime modifiedSince) const final
     {
         ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
     }
 
-    void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins) const final
+    void NODELETE clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins) const final
     {
         ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
     }

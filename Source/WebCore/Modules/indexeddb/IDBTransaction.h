@@ -152,7 +152,7 @@ public:
     void connectionClosedFromServer(const IDBError&);
     void generateIndexKeyForRecord(const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo&, const std::optional<IDBKeyPath>&, const IDBKeyData&, const IDBValue&, std::optional<int64_t> recordID);
 
-    template<typename Visitor> void visitReferencedObjectStoresInGCThread(Visitor&) const;
+    template<typename Visitor> void NODELETE visitReferencedObjectStoresInGCThread(Visitor&) const;
 
     WEBCORE_EXPORT static std::atomic<unsigned> numberOfIDBTransactions;
 
@@ -241,7 +241,7 @@ private:
     void trySchedulePendingOperationTimer();
     void addCursorRequest(IDBRequest&);
 
-    void assertCurrentThreadAccessThreadLocalData() const;
+    void NODELETE assertCurrentThreadAccessThreadLocalData() const;
 
     const Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;

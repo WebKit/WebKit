@@ -104,8 +104,8 @@ protected:
     void invalidateResolvedSelectorListRecursively();
 
 private:
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
-    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
+    template<typename Visitor> constexpr decltype(auto) NODELETE visitDerived(Visitor&&);
+    template<typename Visitor> constexpr decltype(auto) NODELETE visitDerived(Visitor&&) const;
 
     Ref<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const;
 
@@ -170,9 +170,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 class StyleRuleWithNesting final : public StyleRule {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting, StyleRuleWithNesting);
 public:
-    static Ref<StyleRuleWithNesting> NODELETE create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
     static Ref<StyleRuleWithNesting> create(StyleRule&&);
-    Ref<StyleRuleWithNesting> NODELETE copy() const;
+    Ref<StyleRuleWithNesting> copy() const;
     ~StyleRuleWithNesting();
 
     const Vector<Ref<StyleRuleBase>>& nestedRules() const LIFETIME_BOUND { return m_nestedRules; }
@@ -226,7 +226,7 @@ private:
 
 class StyleRuleFontPaletteValues final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleFontPaletteValues> NODELETE create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
+    static Ref<StyleRuleFontPaletteValues> create(const AtomString& name, Vector<AtomString>&& fontFamilies, std::optional<FontPaletteIndex> basePalette, Vector<FontPaletteValues::OverriddenColor>&&);
 
     const AtomString& name() const LIFETIME_BOUND { return m_name; }
     const Vector<AtomString>& fontFamilies() const LIFETIME_BOUND { return m_fontFamilies; }
@@ -398,7 +398,7 @@ public:
         std::optional<bool> inherits { };
         RefPtr<const CSSVariableData> initialValue { };
     };
-    static Ref<StyleRuleProperty> NODELETE create(Descriptor&&);
+    static Ref<StyleRuleProperty> create(Descriptor&&);
     Ref<StyleRuleProperty> copy() const { return adoptRef(*new StyleRuleProperty(*this)); }
 
     const Descriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
@@ -412,9 +412,9 @@ private:
 
 class StyleRuleScope final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleScope> NODELETE create(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
+    static Ref<StyleRuleScope> create(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
     ~StyleRuleScope();
-    Ref<StyleRuleScope> NODELETE copy() const;
+    Ref<StyleRuleScope> copy() const;
 
     const CSSSelectorList& scopeStart() const LIFETIME_BOUND { return m_scopeStart; }
     const CSSSelectorList& scopeEnd() const LIFETIME_BOUND { return m_scopeEnd; }
@@ -441,7 +441,7 @@ private:
 
 class StyleRuleStartingStyle final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleStartingStyle> NODELETE create(Vector<Ref<StyleRuleBase>>&&);
+    static Ref<StyleRuleStartingStyle> create(Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleStartingStyle> copy() const { return adoptRef(*new StyleRuleStartingStyle(*this)); }
 
 private:
@@ -462,7 +462,7 @@ private:
 
 class StyleRuleNamespace final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleNamespace> NODELETE create(const AtomString& prefix, const AtomString& uri);
+    static Ref<StyleRuleNamespace> create(const AtomString& prefix, const AtomString& uri);
 
     Ref<StyleRuleNamespace> copy() const { return adoptRef(*new StyleRuleNamespace(*this)); }
 

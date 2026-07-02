@@ -57,7 +57,7 @@ public:
     LegacyCDMSessionType type() const override { return CDMSessionTypeAVFoundationObjC; }
     const String& sessionId() const LIFETIME_BOUND override { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
-    void releaseKeys() override;
+    void NODELETE releaseKeys() override;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 

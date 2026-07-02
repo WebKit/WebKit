@@ -149,19 +149,19 @@ public:
     HTMLSlotElement* NODELETE findAssignedSlot(const Node&) final;
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&) final;
-    void renameSlotElement(HTMLSlotElement&, const AtomString&, const AtomString&, ShadowRoot&) final;
+    void NODELETE renameSlotElement(HTMLSlotElement&, const AtomString&, const AtomString&, ShadowRoot&) final;
     void addSlotElementByName(const AtomString&, HTMLSlotElement&, ShadowRoot&) final;
     void removeSlotElementByName(const AtomString&, HTMLSlotElement&, ContainerNode*, ShadowRoot&) final;
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current, ShadowRoot&) final;
     void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&, ShadowRoot&) final;
-    void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
+    void NODELETE slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
 
-    void hostChildElementDidChange(const Element&, ShadowRoot&) final;
-    void hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&) final;
+    void NODELETE hostChildElementDidChange(const Element&, ShadowRoot&) final;
+    void NODELETE hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&) final;
 
     void willRemoveAssignedNode(Node&, ShadowRoot&) final;
-    void didRemoveAllChildrenOfShadowHost(ShadowRoot&) final;
-    void didMutateTextNodesOfShadowHost(ShadowRoot&) final;
+    void NODELETE didRemoveAllChildrenOfShadowHost(ShadowRoot&) final;
+    void NODELETE didMutateTextNodesOfShadowHost(ShadowRoot&) final;
 
 private:
     struct Slot {

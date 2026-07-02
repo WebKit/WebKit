@@ -71,17 +71,17 @@ public:
 
 private:
     bool isWebChromeClient() const final { return true; }
-    void chromeDestroyed() final;
+    void NODELETE chromeDestroyed() final;
     
     void setWindowRect(const WebCore::FloatRect&) final;
     WebCore::FloatRect windowRect() const final;
     
-    WebCore::FloatRect pageRect() const final;
+    WebCore::FloatRect NODELETE pageRect() const final;
     
     void focus() final;
     void unfocus() final;
     
-    bool canTakeFocus(WebCore::FocusDirection) const final;
+    bool NODELETE canTakeFocus(WebCore::FocusDirection) const final;
     void takeFocus(WebCore::FocusDirection) final;
 
     void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) final;
@@ -94,18 +94,18 @@ private:
     RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String& openedMainFrameName, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final;
     
-    bool canRunModal() const final;
+    bool NODELETE canRunModal() const final;
     void runModal() final;
 
     void reportProcessCPUTime(Seconds, WebCore::ActivityStateForCPUSampling) final;
 
-    bool isPopup() const final;
+    bool NODELETE isPopup() const final;
     
     void setResizable(bool) final;
     
     void addMessageToConsole(JSC::MessageSource, JSC::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) final;
     
-    bool canRunBeforeUnloadConfirmPanel() final;
+    bool NODELETE canRunBeforeUnloadConfirmPanel() final;
     bool runBeforeUnloadConfirmPanel(String&& message, WebCore::LocalFrame&) final;
     
     void closeWindow() final;
@@ -126,7 +126,7 @@ private:
     OptionSet<WebCore::PointerCharacteristics> pointerCharacteristicsOfAllAvailablePointingDevices() const final;
 
     // HostWindow member function finals.
-    void invalidateRootView(const WebCore::IntRect&) final;
+    void NODELETE invalidateRootView(const WebCore::IntRect&) final;
     void invalidateContentsAndRootView(const WebCore::IntRect&) final;
     void invalidateContentsForSlowScroll(const WebCore::IntRect&) final;
     void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& scrollRect, const WebCore::IntRect& clipRect) final;
@@ -134,7 +134,7 @@ private:
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntPoint rootViewToScreen(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const final;
-    std::optional<WebCore::IntPoint> screenToRootViewUsingCachedPosition(const WebCore::IntPoint&, const WebCore::IntSize& viewSize) const final;
+    std::optional<WebCore::IntPoint> NODELETE screenToRootViewUsingCachedPosition(const WebCore::IntPoint&, const WebCore::IntSize& viewSize) const final;
 
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
@@ -151,18 +151,18 @@ private:
     void setHasModelElement(bool) final;
 #endif
 
-    PlatformPageClient platformPageClient() const final;
+    PlatformPageClient NODELETE platformPageClient() const final;
     void contentsSizeChanged(WebCore::LocalFrame&, const WebCore::IntSize&) const final;
-    void intrinsicContentsSizeChanged(const WebCore::IntSize&) const final;
+    void NODELETE intrinsicContentsSizeChanged(const WebCore::IntSize&) const final;
     void scrollOriginDidChange(const WebCore::LocalFrame&) const final;
 
-    void scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final; // Currently only Mac has a non empty implementation.
+    void NODELETE scrollContainingScrollViewsToRevealRect(const WebCore::IntRect&) const final; // Currently only Mac has a non empty implementation.
     void scrollMainFrameToRevealRect(const WebCore::IntRect&) const final;
 
-    WebCore::CornerRadii scrollbarAvoidanceCornerRadii() const final;
+    WebCore::CornerRadii NODELETE scrollbarAvoidanceCornerRadii() const final;
 
-    bool shouldUnavailablePluginMessageBeButton(WebCore::PluginUnavailabilityReason) const final;
-    void unavailablePluginButtonClicked(WebCore::Element&, WebCore::PluginUnavailabilityReason) const final;
+    bool NODELETE shouldUnavailablePluginMessageBeButton(WebCore::PluginUnavailabilityReason) const final;
+    void NODELETE unavailablePluginButtonClicked(WebCore::Element&, WebCore::PluginUnavailabilityReason) const final;
 
     void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, const String& toolTip, WebCore::TextDirection) final;
 
@@ -173,7 +173,7 @@ private:
     RefPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
 
     RefPtr<WebCore::DataListSuggestionPicker> createDataListSuggestionPicker(WebCore::DataListSuggestionsClient&) final;
-    bool canShowDataListSuggestionLabels() const final;
+    bool NODELETE canShowDataListSuggestionLabels() const final;
 
     RefPtr<WebCore::DateTimeChooser> createDateTimeChooser(WebCore::DateTimeChooserClient&) final;
 
@@ -243,7 +243,7 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const final;
     void attachRootGraphicsLayer(WebCore::LocalFrame&, WebCore::GraphicsLayer*) final;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
-    void setNeedsOneShotDrawingSynchronization() final;
+    void NODELETE setNeedsOneShotDrawingSynchronization() final;
     bool shouldTriggerRenderingUpdate(unsigned rescheduledRenderingUpdateCount) const final;
     void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
@@ -269,7 +269,7 @@ private:
 
     void animationDidFinishForElement(const WebCore::Element&) final;
 
-    WebCore::DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
+    WebCore::DisplayRefreshMonitorFactory* NODELETE displayRefreshMonitorFactory() const final;
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat) const final;
@@ -376,13 +376,13 @@ private:
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) final;
     void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle newStyle) final;
 
-    std::optional<WebCore::ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() final;
+    std::optional<WebCore::ScrollbarOverlayStyle> NODELETE preferredScrollbarOverlayStyle() final;
 
     WebCore::Color underlayColor() const final;
 
-    void themeColorChanged() const final;
-    void pageExtendedBackgroundColorDidChange() const final;
-    void sampledPageTopColorChanged() const final;
+    void NODELETE themeColorChanged() const final;
+    void NODELETE pageExtendedBackgroundColorDidChange() const final;
+    void NODELETE sampledPageTopColorChanged() const final;
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&) const final;
@@ -392,7 +392,7 @@ private:
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-    WebCore::HighlightVisibility appHighlightsVisiblility() const final;
+    WebCore::HighlightVisibility NODELETE appHighlightsVisiblility() const final;
 #endif
     
     void wheelEventHandlersChanged(bool) final;
@@ -433,7 +433,7 @@ private:
     void handlePDFServiceClick(WebCore::FrameIdentifier, const WebCore::IntPoint&, WebCore::HTMLAttachmentElement&);
 #endif
 
-    bool shouldDispatchFakeMouseMoveEvents() const final;
+    bool NODELETE shouldDispatchFakeMouseMoveEvents() const final;
 
     void handleAutoFillButtonClick(WebCore::HTMLInputElement&) final;
 
@@ -470,8 +470,8 @@ private:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) final;
 
-    bool userIsInteracting() const final;
-    void setUserIsInteracting(bool) final;
+    bool NODELETE userIsInteracting() const final;
+    void NODELETE setUserIsInteracting(bool) final;
 
 #if ENABLE(WEB_AUTHN)
     void showDigitalCredentialsChooser(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) final;
@@ -496,7 +496,7 @@ private:
 #endif
     }
 
-    bool needsScrollGeometryUpdates() const final;
+    bool NODELETE needsScrollGeometryUpdates() const final;
 
 #if ENABLE(TEXT_AUTOSIZING)
     void textAutosizingUsesIdempotentModeChanged() final;
@@ -529,9 +529,9 @@ private:
     void beginSystemPreview(const URL&, const WebCore::SecurityOriginData& topOrigin, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&) final;
 #endif
 
-    bool isUsingUISideCompositing() const;
+    bool NODELETE isUsingUISideCompositing() const;
 
-    bool isInStableState() const final;
+    bool NODELETE isInStableState() const final;
 
     WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const final;
 
@@ -572,7 +572,7 @@ private:
     bool shouldAllowScriptAccess(const URL&, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory) const final;
     bool requiresConsistentPrivacyQuirkForDomain(const URL&) const final;
 
-    void setIsInRedo(bool) final;
+    void NODELETE setIsInRedo(bool) final;
 
     void hasActiveNowPlayingSessionChanged(bool) final;
 
@@ -582,7 +582,7 @@ private:
 
     void callAfterPendingSyntheticClick(CompletionHandler<void(WebCore::SyntheticClickResult)>&&) final;
 
-    void didDispatchClickEvent(const WebCore::PlatformMouseEvent&, WebCore::Node&) final;
+    void NODELETE didDispatchClickEvent(const WebCore::PlatformMouseEvent&, WebCore::Node&) final;
 
     void didProgrammaticallyClearTextFormControl(const WebCore::HTMLTextFormControlElement&) final;
 
@@ -591,7 +591,7 @@ private:
     void foreachRegionInDamageHistoryForTesting(Function<void(const WebCore::Region&)>&& callback) const final;
 #endif
 
-    void setNeedsFixedContainerEdgesUpdate() final;
+    void NODELETE setNeedsFixedContainerEdgesUpdate() final;
 
     bool usePluginRendererScrollableArea(WebCore::LocalFrame&) const final;
 
@@ -614,7 +614,7 @@ public:
     explicit AXRelayProcessSuspendedNotification(WebPage&, AutomaticallySend = AutomaticallySend::Yes);
     ~AXRelayProcessSuspendedNotification();
 
-    void sendProcessSuspendMessage(bool suspended);
+    void NODELETE sendProcessSuspendMessage(bool suspended);
 private:
     WeakRef<WebPage> m_page;
     AutomaticallySend m_automaticallySend;

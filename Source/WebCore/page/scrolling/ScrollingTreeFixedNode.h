@@ -48,7 +48,7 @@ protected:
 
     const ViewportConstraints& constraints() const LIFETIME_BOUND final { return m_constraints; }
 
-    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool NODELETE commitStateBeforeChildren(const ScrollingStateNode&) override;
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     FixedPositionViewportConstraints m_constraints;

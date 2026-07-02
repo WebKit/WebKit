@@ -54,7 +54,7 @@ public:
 private:
     RemoteProgressBasedTimeline(TimelineID, const WebCore::ProgressResolutionData&);
 
-    void updateCurrentTime();
+    void NODELETE updateCurrentTime();
 
     WebCore::ProgressResolutionData m_resolutionData;
 };

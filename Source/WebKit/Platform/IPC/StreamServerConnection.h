@@ -129,10 +129,10 @@ private:
     void enqueueMessage(Connection&, UniqueRef<Decoder>&&) final;
 
     // Connection::Client
-    void didReceiveMessage(Connection&, Decoder&) final;
-    void didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
-    void didClose(Connection&) final;
-    void didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
+    void NODELETE didReceiveMessage(Connection&, Decoder&) final;
+    void NODELETE didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+    void NODELETE didClose(Connection&) final;
+    void NODELETE didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
 
     bool processSetStreamDestinationID(Decoder&, RefPtr<StreamMessageReceiver>& currentReceiver);
     bool processStreamMessage(Decoder&, StreamMessageReceiver&);

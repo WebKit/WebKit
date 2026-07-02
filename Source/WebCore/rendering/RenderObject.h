@@ -345,8 +345,8 @@ public:
     Type type() const { return m_type; }
     Layout::Box* layoutBox() { return m_layoutBox.get(); }
     const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
-    void NODELETE setLayoutBox(Layout::Box&);
-    void NODELETE clearLayoutBox();
+    void setLayoutBox(Layout::Box&);
+    void clearLayoutBox();
 
     WEBCORE_EXPORT RenderTheme& theme() const;
 
@@ -416,14 +416,14 @@ public:
     //////////////////////////////////////////
 
 #if ENABLE(TREE_DEBUGGING)
-    void showNodeTreeForThis() const;
-    void showRenderTreeForThis() const;
-    void showSubtreeForThis() const;
-    void showLineTreeForThis() const;
+    void NODELETE showNodeTreeForThis() const;
+    void NODELETE showRenderTreeForThis() const;
+    void NODELETE showSubtreeForThis() const;
+    void NODELETE showLineTreeForThis() const;
 
-    void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
-    void outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
-    void outputRegionsInformation(WTF::TextStream&) const;
+    void NODELETE outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
+    void NODELETE outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
+    void NODELETE outputRegionsInformation(WTF::TextStream&) const;
 #endif
 
     inline bool isPseudoElement() const; // Defined in RenderObjectNode.h
@@ -606,7 +606,7 @@ public:
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers
     // to inherit from RenderSVGObject -> RenderObject (some need RenderBlock inheritance for instance)
-    void NODELETE invalidateCachedBoundaries();
+    void invalidateCachedBoundaries();
     bool usesBoundaryCaching() const;
     virtual void NODELETE setNeedsBoundariesUpdate();
     virtual void setNeedsTransformUpdate() { }
@@ -867,7 +867,7 @@ public:
     inline WritingMode writingMode() const; // Defined in RenderObjectStyle.h.
     // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
 
-    virtual const Style::ComputedStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
+    virtual const Style::ComputedStyle& NODELETE outlineStyleForRepaint() const LIFETIME_BOUND;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
@@ -1485,18 +1485,18 @@ WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject::RepaintRects&)
 
 enum class ScrollbarWidth : uint8_t;
 WEBCORE_EXPORT IntRect absoluteInteractionBounds(const RenderObject&);
-WEBCORE_EXPORT ScrollbarWidth scrollbarWidth(const RenderObject&);
+WEBCORE_EXPORT ScrollbarWidth NODELETE scrollbarWidth(const RenderObject&);
 #if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
 WEBCORE_EXPORT Color tapHighlightColor(const RenderObject&);
 #endif
 
 #if ENABLE(TREE_DEBUGGING)
-void printAccessibilityTreeForLiveDocuments();
-void printAccessibilityTreeForLiveDocumentsAfterDelay();
-void printPaintOrderTreeForLiveDocuments();
-void printRenderTreeForLiveDocuments();
-void printLayerTreeForLiveDocuments();
-void printGraphicsLayerTreeForLiveDocuments();
+void NODELETE printAccessibilityTreeForLiveDocuments();
+void NODELETE printAccessibilityTreeForLiveDocumentsAfterDelay();
+void NODELETE printPaintOrderTreeForLiveDocuments();
+void NODELETE printRenderTreeForLiveDocuments();
+void NODELETE printLayerTreeForLiveDocuments();
+void NODELETE printGraphicsLayerTreeForLiveDocuments();
 #endif
 
 } // namespace WebCore
@@ -1508,7 +1508,7 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showNodeTree(const WebCore::RenderObject*);
-void showLineTree(const WebCore::RenderObject*);
-void showRenderTree(const WebCore::RenderObject*);
+void NODELETE showNodeTree(const WebCore::RenderObject*);
+void NODELETE showLineTree(const WebCore::RenderObject*);
+void NODELETE showRenderTree(const WebCore::RenderObject*);
 #endif

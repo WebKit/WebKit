@@ -107,7 +107,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
     uint64_t logIdentifier() const final;
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
     ASCIILiteral logClassName() const final { return "MediaControlTextTrackContainerElement"_s; }
     mutable RefPtr<Logger> m_logger;
     mutable uint64_t m_logIdentifier { 0 };

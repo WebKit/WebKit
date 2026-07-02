@@ -47,7 +47,7 @@ struct ClipboardImageReader : PasteboardFileReader {
 private:
     void readFilename(const String&) final { ASSERT_NOT_REACHED(); }
 
-    bool shouldReadBuffer(const String&) const final;
+    bool NODELETE shouldReadBuffer(const String&) const final;
     void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
 
     RefPtr<Document> m_document;

@@ -653,7 +653,7 @@ OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
     return modifiersForModifierFlags(event.modifierFlags);
 }
 
-OptionSet<PlatformEvent::Modifier> modifiersForModifierFlags(NSEventModifierFlags flags)
+OptionSet<PlatformEvent::Modifier> NODELETE modifiersForModifierFlags(NSEventModifierFlags flags)
 {
     OptionSet<PlatformEvent::Modifier> modifiers;
 

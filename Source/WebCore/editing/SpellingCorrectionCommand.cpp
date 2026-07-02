@@ -73,7 +73,7 @@ private:
     }
 
 #ifndef NDEBUG
-    void getNodesInCommand(NodeSet&) override
+    void NODELETE getNodesInCommand(NodeSet&) override
     {
     }
 #endif

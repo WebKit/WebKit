@@ -76,7 +76,7 @@ public:
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const;
 
-    template<typename Visitor> void visitJSFunctionImplInGCThread(Visitor&);
+    template<typename Visitor> void NODELETE visitJSFunctionImplInGCThread(Visitor&);
     void visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&) final;
     void visitJSFunctionInGCThread(JSC::SlotVisitor&) final;
     virtual String code() const { return String(); }

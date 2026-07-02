@@ -48,7 +48,7 @@ public:
     unsigned cellSize() const { return m_freeList.cellSize(); }
 
     void stopAllocating();
-    void prepareForAllocation();
+    void NODELETE prepareForAllocation();
     void resumeAllocating();
     void stopAllocatingForGood();
     
@@ -60,7 +60,7 @@ public:
 private:
     friend class BlockDirectory;
     
-    void reset();
+    void NODELETE reset();
     JS_EXPORT_PRIVATE void* allocateSlowCase(Heap&, size_t, GCDeferralContext*, AllocationFailureMode);
     void didConsumeFreeList();
     void* tryAllocateWithoutCollecting(size_t);

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-NSTextCheckingTypes nsTextCheckingTypes(OptionSet<TextCheckingType> types)
+NSTextCheckingTypes NODELETE nsTextCheckingTypes(OptionSet<TextCheckingType> types)
 {
     NSTextCheckingTypes mask = 0;
     if (types.contains(TextCheckingType::Spelling))

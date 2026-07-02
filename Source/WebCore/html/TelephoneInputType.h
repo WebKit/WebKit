@@ -50,7 +50,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
 };
 
 } // namespace WebCore

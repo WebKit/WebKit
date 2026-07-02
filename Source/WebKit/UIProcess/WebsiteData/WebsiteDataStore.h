@@ -174,7 +174,7 @@ public:
     static void NODELETE makeNextNetworkProcessLaunchFailForTesting();
     static bool NODELETE shouldMakeNextNetworkProcessLaunchFailForTesting();
 
-    bool trackingPreventionEnabled() const;
+    bool NODELETE trackingPreventionEnabled() const;
     void setTrackingPreventionEnabled(bool);
     bool NODELETE resourceLoadStatisticsDebugMode() const;
     void setResourceLoadStatisticsDebugMode(bool);
@@ -188,7 +188,7 @@ public:
     bool storageSiteValidationEnabled() const { return m_storageSiteValidationEnabled; }
     void setStorageSiteValidationEnabled(bool);
 
-    TimeBasedEvictionMode timeBasedEvictionMode() const;
+    TimeBasedEvictionMode NODELETE timeBasedEvictionMode() const;
 
     uint64_t perOriginStorageQuota() const { return m_configuration->perOriginStorageQuota(); }
     std::optional<double> originQuotaRatio() { return m_configuration->originQuotaRatio(); }
@@ -417,8 +417,8 @@ public:
         return 16 * GB;
 #endif
     }
-    static std::optional<double> defaultOriginQuotaRatio();
-    static std::optional<double> defaultTotalQuotaRatio();
+    static std::optional<double> NODELETE defaultOriginQuotaRatio();
+    static std::optional<double> NODELETE defaultTotalQuotaRatio();
     static UnifiedOriginStorageLevel NODELETE defaultUnifiedOriginStorageLevel();
 
 #if USE(GLIB)
@@ -570,7 +570,7 @@ private:
 
     void registerWithSessionIDMap();
     bool hasActivePages();
-    bool defaultTrackingPreventionEnabled() const;
+    bool NODELETE defaultTrackingPreventionEnabled() const;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     static std::optional<HashSet<WebCore::RegistrableDomain>> appBoundDomainsIfInitialized();

@@ -322,7 +322,7 @@ private:
     JS_EXPORT_PRIVATE void forEachVMImpl(const ScopedLambda<IteratorCallback>&);
     JS_EXPORT_PRIVATE Error forEachVMWithTimeoutImpl(Seconds timeout, const ScopedLambda<IteratorCallback>&);
 
-    void iterateVMs(const Invocable<IterationStatus(VM&)> auto&) WTF_REQUIRES_LOCK(m_worldLock);
+    void NODELETE iterateVMs(const Invocable<IterationStatus(VM&)> auto&) WTF_REQUIRES_LOCK(m_worldLock);
 
     DoublyLinkedList<VMThreadContext> m_vmList WTF_GUARDED_BY_LOCK(m_worldLock);
     Lock m_worldLock;

@@ -50,19 +50,19 @@ private:
     explicit ImageInputType(HTMLInputElement&);
 
     const AtomString& formControlType() const final;
-    bool isFormDataAppendable() const final;
+    bool NODELETE isFormDataAppendable() const final;
     bool appendFormData(DOMFormData&) const final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
     void handleDOMActivateEvent(Event&) final;
     void attributeChanged(const QualifiedName&) final;
     void attach() final;
-    bool shouldRespectAlignAttribute() final;
-    bool canBeSuccessfulSubmitButton() final;
-    bool shouldRespectHeightAndWidthAttributes() final;
+    bool NODELETE shouldRespectAlignAttribute() final;
+    bool NODELETE canBeSuccessfulSubmitButton() final;
+    bool NODELETE shouldRespectHeightAndWidthAttributes() final;
     unsigned height() const final;
     unsigned width() const final;
     String resultForDialogSubmit() const final;
-    bool dirAutoUsesValue() const final;
+    bool NODELETE dirAutoUsesValue() const final;
 
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::submitIfPossible().
 };

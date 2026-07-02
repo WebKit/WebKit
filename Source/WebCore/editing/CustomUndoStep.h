@@ -47,7 +47,7 @@ private:
     void unapply() final;
     void reapply() final;
     EditAction editingAction() const final { return EditAction::Unspecified; }
-    String label() const final;
+    String NODELETE label() const final;
 
     void didRemoveFromUndoManager() final;
     bool NODELETE isValid() const;

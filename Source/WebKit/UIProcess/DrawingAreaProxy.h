@@ -84,7 +84,7 @@ public:
     void stopReceivingMessages(WebProcessProxy&);
     virtual std::span<IPC::ReceiverName> messageReceiverNames() const;
 
-    virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
+    virtual WebCore::DelegatedScrollingMode NODELETE delegatedScrollingMode() const;
 
     virtual void deviceScaleFactorDidChange(CompletionHandler<void()>&&) = 0;
     virtual void colorSpaceDidChange() { }
@@ -142,8 +142,8 @@ public:
     // IPC::MessageSender
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
     bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     virtual void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }
     virtual void removeRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) { }

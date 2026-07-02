@@ -389,8 +389,8 @@ struct AbstractValue {
     }
     
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void checkConsistency() const;
-    void assertIsRegistered(Graph&) const;
+    JS_EXPORT_PRIVATE void NODELETE checkConsistency() const;
+    void NODELETE assertIsRegistered(Graph&) const;
 #else
     void checkConsistency() const { }
     void assertIsRegistered(Graph&) const { }
@@ -477,7 +477,7 @@ private:
             m_arrayModes |= to;
     }
 
-    bool validateTypeAcceptingBoxedInt52(JSValue) const;
+    bool NODELETE validateTypeAcceptingBoxedInt52(JSValue) const;
 
     void makeTop(SpeculatedType top)
     {
@@ -492,11 +492,11 @@ private:
     FiltrationResult filterSlow(SpeculatedType);
     FiltrationResult fastForwardToAndFilterSlow(Graph&, AbstractValueClobberEpoch, SpeculatedType);
     
-    void filterValueByType();
+    void NODELETE filterValueByType();
     void NODELETE filterArrayModesByType();
 
 #if USE(JSVALUE64) && !defined(NDEBUG)
-    JS_EXPORT_PRIVATE void ensureCanInitializeWithZeros();
+    JS_EXPORT_PRIVATE void NODELETE ensureCanInitializeWithZeros();
 #endif
     
     bool NODELETE shouldBeClear() const;

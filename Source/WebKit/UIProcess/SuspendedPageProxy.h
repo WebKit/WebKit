@@ -103,7 +103,7 @@ public:
 #endif
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 
 private:
@@ -122,10 +122,10 @@ private:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    void NODELETE didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-    template<typename M> void send(M&&);
-    template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
+    template<typename M> void NODELETE send(M&&);
+    template<typename M, typename C> void NODELETE sendWithAsyncReply(M&&, C&&);
 
     WeakPtr<WebPageProxy> m_page;
     const WebCore::PageIdentifier m_webPageID;

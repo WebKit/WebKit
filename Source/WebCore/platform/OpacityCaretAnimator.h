@@ -60,7 +60,7 @@ private:
     void setBlinkingSuspended(bool) final;
 
     Seconds NODELETE keyframeTimeDelta() const;
-    LayoutRect caretRepaintRectForLocalRect(LayoutRect) const final;
+    LayoutRect NODELETE caretRepaintRectForLocalRect(LayoutRect) const final;
 
     MonotonicTime m_lastTimeCaretOpacityWasToggled;
     size_t m_currentKeyframeIndex { 1 };

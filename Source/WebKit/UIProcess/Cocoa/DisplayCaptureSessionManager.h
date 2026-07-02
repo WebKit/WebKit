@@ -49,7 +49,7 @@ public:
 
     void promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType, WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt(WebPageProxy&);
-    bool canRequestDisplayCapturePermission();
+    bool NODELETE canRequestDisplayCapturePermission();
     void setIndexOfDeviceSelectedForTesting(std::optional<unsigned> index) { m_indexOfDeviceSelectedForTesting = index; }
 
     enum class PromptOverride { Default, CanPrompt, CanNotPrompt };
@@ -66,7 +66,7 @@ private:
     void showScreenPicker(const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     std::optional<WebCore::CaptureDevice> deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType, unsigned);
 
-    bool useMockCaptureDevices() const;
+    bool NODELETE useMockCaptureDevices() const;
 
     std::optional<unsigned> m_indexOfDeviceSelectedForTesting;
     PromptOverride m_systemCanPromptForTesting { PromptOverride::Default };

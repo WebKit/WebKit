@@ -44,7 +44,7 @@
 #if HAVE(IMMERSIVE_VIDEO_METADATA_SUPPORT)
 namespace WTF {
 
-static std::optional<RetainPtr<CFDictionaryRef>> makeVectorElement(const RetainPtr<CFDictionaryRef>*, CFDictionaryRef dictionary)
+static std::optional<RetainPtr<CFDictionaryRef>> NODELETE makeVectorElement(const RetainPtr<CFDictionaryRef>*, CFDictionaryRef dictionary)
 {
     return dictionary;
 }
@@ -285,7 +285,7 @@ bool formatDescriptionIsProtected(CMFormatDescriptionRef formatDescription)
 }
 
 #if HAVE(IMMERSIVE_VIDEO_METADATA_SUPPORT)
-static std::optional<HeroEye> toHeroEye(CFStringRef eye)
+static std::optional<HeroEye> NODELETE toHeroEye(CFStringRef eye)
 {
     if (!eye)
         return { };
@@ -299,7 +299,7 @@ static std::optional<HeroEye> toHeroEye(CFStringRef eye)
     return { };
 }
 
-static std::optional<ViewPackingKind> toViewPackingKind(CFStringRef kind)
+static std::optional<ViewPackingKind> NODELETE toViewPackingKind(CFStringRef kind)
 {
     if (!kind)
         return { };
@@ -313,7 +313,7 @@ static std::optional<ViewPackingKind> toViewPackingKind(CFStringRef kind)
     return { };
 }
 
-static std::optional<LensAlgorithmKind> toLensAlgorithmKind(CFStringRef kind)
+static std::optional<LensAlgorithmKind> NODELETE toLensAlgorithmKind(CFStringRef kind)
 {
     if (!kind)
         return { };
@@ -322,7 +322,7 @@ static std::optional<LensAlgorithmKind> toLensAlgorithmKind(CFStringRef kind)
     return { };
 }
 
-static std::optional<LensDomain> toLensDomain(CFStringRef domain)
+static std::optional<LensDomain> NODELETE toLensDomain(CFStringRef domain)
 {
     if (!domain)
         return { };
@@ -331,7 +331,7 @@ static std::optional<LensDomain> toLensDomain(CFStringRef domain)
     return { };
 }
 
-static std::optional<LensRole> toLensRole(CFStringRef role)
+static std::optional<LensRole> NODELETE toLensRole(CFStringRef role)
 {
     if (!role)
         return { };
@@ -344,7 +344,7 @@ static std::optional<LensRole> toLensRole(CFStringRef role)
     return { };
 }
 
-static std::optional<ExtrinsicOriginSource> toExtrinsicOriginSource(CFStringRef source)
+static std::optional<ExtrinsicOriginSource> NODELETE toExtrinsicOriginSource(CFStringRef source)
 {
     if (!source)
         return { };
@@ -353,7 +353,7 @@ static std::optional<ExtrinsicOriginSource> toExtrinsicOriginSource(CFStringRef 
     return { };
 }
 
-static Vector<CameraCalibration> toCameraCalibrationDataLensCollection(CFArrayRef array)
+static Vector<CameraCalibration> NODELETE toCameraCalibrationDataLensCollection(CFArrayRef array)
 {
     Vector<CameraCalibration> collection;
     collection.reserveInitialCapacity(CFArrayGetCount(array));
@@ -425,7 +425,7 @@ static Vector<CameraCalibration> toCameraCalibrationDataLensCollection(CFArrayRe
     return collection;
 }
 
-static std::optional<VideoProjectionMetadataKind> toVideoProjectionMetadataKind(CFStringRef kind)
+static std::optional<VideoProjectionMetadataKind> NODELETE toVideoProjectionMetadataKind(CFStringRef kind)
 {
     if (!kind)
         return { };

@@ -54,8 +54,8 @@ private:
     MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
 
     // HidConnection
-    void initialize() final;
-    void terminate() final;
+    void NODELETE initialize() final;
+    void NODELETE terminate() final;
     DataSent sendSync(const Vector<uint8_t>& data) final;
     void send(Vector<uint8_t>&& data, DataSentCallback&&) final;
     void registerDataReceivedCallbackInternal() final;

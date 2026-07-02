@@ -50,9 +50,9 @@ public:
     const FloatSize& targetOverscroll() const LIFETIME_BOUND { return m_targetOverscroll; }
 
 private:
-    void updateScrollExtents() final;
+    void NODELETE updateScrollExtents() final;
     void serviceAnimation(MonotonicTime) final;
-    bool retargetActiveAnimation(const FloatPoint&) final;
+    bool NODELETE retargetActiveAnimation(const FloatPoint&) final;
     ScrollClamping clamping() const final { return ScrollClamping::Unclamped; }
     String debugDescription() const final;
 

@@ -71,7 +71,7 @@ private:
 
     void updateFromStyle() override;
 
-    Node* nodeForHitTest() const override;
+    Node* NODELETE nodeForHitTest() const override;
 
     RefPtr<ImageBuffer> m_oldImage;
     // The overflow rect that the captured image represents, in RenderLayer coordinates

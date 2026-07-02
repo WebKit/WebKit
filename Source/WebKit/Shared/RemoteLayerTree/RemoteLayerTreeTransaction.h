@@ -116,12 +116,12 @@ public:
         LayerCreationProperties& operator=(LayerCreationProperties&&);
 
         std::optional<WebCore::LayerHostingContextIdentifier> hostIdentifier() const;
-        uint32_t hostingContextID() const;
+        uint32_t NODELETE hostingContextID() const;
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
         std::optional<WTF::MachSendRightAnnotated> sendRightAnnotated() const;
 #endif
-        bool preservesFlip() const;
-        float hostingDeviceScaleFactor() const;
+        bool NODELETE preservesFlip() const;
+        float NODELETE hostingDeviceScaleFactor() const;
 
 #if ENABLE(MODEL_PROCESS)
         RefPtr<WebCore::ModelContext> modelContext() const;
@@ -141,8 +141,8 @@ public:
     void setLayerIDsWithNewlyUnreachableBackingStore(Vector<WebCore::PlatformLayerIdentifier>);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
-    void dump() const;
+    String NODELETE description() const;
+    void NODELETE dump() const;
 #endif
     
     bool NODELETE hasAnyLayerChanges() const;

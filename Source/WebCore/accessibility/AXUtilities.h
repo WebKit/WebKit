@@ -70,7 +70,7 @@ bool hasAccNameAttribute(Element&);
 // aria-describedby, aria-description), not the HTML title attribute.
 bool hasARIAAccNameAttribute(Element&);
 
-bool isNodeFocused(Node&);
+bool NODELETE isNodeFocused(Node&);
 
 bool needsLayoutOrStyleRecalc(const Document&);
 

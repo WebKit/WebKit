@@ -73,7 +73,7 @@ public:
 
     const NetworkLoadParameters& parameters() const LIFETIME_BOUND { return m_parameters; }
     const URL& url() const LIFETIME_BOUND { return parameters().request.url(); }
-    String attributedBundleIdentifier(WebPageProxyIdentifier);
+    String NODELETE attributedBundleIdentifier(WebPageProxyIdentifier);
 
     void convertTaskToDownload(PendingDownload&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, ResponseCompletionHandler&&);
     void NODELETE setPendingDownloadID(DownloadID);

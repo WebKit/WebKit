@@ -136,7 +136,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes()
     return defaultSupportedImageTypes();
 }
 
-MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
+MemoryCompactRobinHoodHashSet<String>& NODELETE additionalSupportedImageTypes()
 {
     static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> additionalSupportedImageTypes;
     return additionalSupportedImageTypes;

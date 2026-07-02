@@ -43,7 +43,7 @@ public:
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const MaskBorderData&) const;
+    void NODELETE dumpDifferences(TextStream&, const MaskBorderData&) const;
 #endif
 
     MaskBorder maskBorder;

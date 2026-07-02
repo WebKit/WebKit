@@ -124,7 +124,7 @@ bool methodSignaturesAreCompatible(NSString *wire, NSString *local)
     return _rootDictionary.get();
 }
 
-static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
+static void NODELETE ensureObjectStream(WKRemoteObjectEncoder *encoder)
 {
     if (encoder->_objectStream)
         return;
@@ -135,7 +135,7 @@ static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
     encoder->_rootDictionary->set(objectStreamKey, WTF::move(objectStream));
 }
 
-static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
+static void NODELETE encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
 {
     ensureObjectStream(encoder);
 
@@ -148,7 +148,7 @@ static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
     objectStream->elements()[position] = WTF::move(encodedObject);
 }
 
-static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocation *invocation, NSUInteger firstArgument)
+static void NODELETE encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocation *invocation, NSUInteger firstArgument)
 {
     RetainPtr<NSMethodSignature> methodSignature = invocation.methodSignature;
     NSUInteger argumentCount = methodSignature.get().numberOfArguments;
@@ -315,7 +315,7 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
     }
 }
 
-static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)
+static void NODELETE encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)
 {
     RetainPtr<NSMethodSignature> methodSignature = invocation.methodSignature;
     [encoder encodeObject:methodSignature.get()._typeString forKey:typeStringKey];
@@ -329,12 +329,12 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
     }
 }
 
-static void encodeString(WKRemoteObjectEncoder *encoder, NSString *string)
+static void NODELETE encodeString(WKRemoteObjectEncoder *encoder, NSString *string)
 {
     Ref { *encoder->_currentDictionary }->set(stringKey, API::String::create(string));
 }
 
-static RetainPtr<id> decodeObjCObject(WKRemoteObjectDecoder *decoder, Class objectClass)
+static RetainPtr<id> NODELETE decodeObjCObject(WKRemoteObjectDecoder *decoder, Class objectClass)
 {
     // This is OK because we'll adopt below after -init.
     SUPPRESS_UNRETAINED_LOCAL id allocation = [objectClass allocWithZone:decoder.zone];
@@ -358,7 +358,7 @@ static constexpr NSString *peerCertificateKey = @"NSErrorPeerCertificateChainKey
 static constexpr NSString *peerTrustKey = @"NSURLErrorFailingURLPeerTrustErrorKey";
 static constexpr NSString *clientCertificateKey = @"NSErrorClientCertificateChainKey";
 
-static RetainPtr<NSArray<NSData *>> transformCertificatesToData(NSArray *input)
+static RetainPtr<NSArray<NSData *>> NODELETE transformCertificatesToData(NSArray *input)
 {
     auto dataArray = adoptNS([[NSMutableArray alloc] initWithCapacity:input.count]);
     for (id certificate in input) {
@@ -369,7 +369,7 @@ static RetainPtr<NSArray<NSData *>> transformCertificatesToData(NSArray *input)
     return dataArray;
 }
 
-static RetainPtr<CFDataRef> transformTrustToData(SecTrustRef trust)
+static RetainPtr<CFDataRef> NODELETE transformTrustToData(SecTrustRef trust)
 {
     if (CFGetTypeID(trust) != SecTrustGetTypeID())
         [NSException raise:NSInvalidArgumentException format:@"Error encoding invalid SecTrustRef"];
@@ -386,7 +386,7 @@ static RetainPtr<CFDataRef> transformTrustToData(SecTrustRef trust)
     return data;
 }
 
-static void encodeError(WKRemoteObjectEncoder *encoder, NSError *error)
+static void NODELETE encodeError(WKRemoteObjectEncoder *encoder, NSError *error)
 {
     RetainPtr<NSMutableDictionary> copy;
     if (error.userInfo[_WKRecoveryAttempterErrorKey]) {
@@ -414,7 +414,7 @@ static void encodeError(WKRemoteObjectEncoder *encoder, NSError *error)
         [[NSError errorWithDomain:error.domain code:error.code userInfo:copy.get()] encodeWithCoder:encoder];
 }
 
-static RetainPtr<NSArray> transformDataToCertificates(NSArray *input)
+static RetainPtr<NSArray> NODELETE transformDataToCertificates(NSArray *input)
 {
     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:input.count]);
     for (NSData *data in input) {
@@ -428,7 +428,7 @@ static RetainPtr<NSArray> transformDataToCertificates(NSArray *input)
     return array;
 }
 
-static RetainPtr<SecTrustRef> transformDataToTrust(NSData *data)
+static RetainPtr<SecTrustRef> NODELETE transformDataToTrust(NSData *data)
 {
     if (CFGetTypeID(data) != CFDataGetTypeID())
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invalid SecTrustRef data %@", NSStringFromClass([data class])];
@@ -445,7 +445,7 @@ static RetainPtr<SecTrustRef> transformDataToTrust(NSData *data)
     return trust;
 }
 
-static RetainPtr<NSError> decodeError(WKRemoteObjectDecoder *decoder)
+static RetainPtr<NSError> NODELETE decodeError(WKRemoteObjectDecoder *decoder)
 {
     RetainPtr<NSError> error = decodeObjCObject(decoder, [NSError class]);
     RetainPtr<NSMutableDictionary> copy;
@@ -463,7 +463,7 @@ static RetainPtr<NSError> decodeError(WKRemoteObjectDecoder *decoder)
     return [NSError errorWithDomain:error.get().domain code:error.get().code userInfo:copy.get()];
 }
 
-static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
+static void NODELETE encodeObject(WKRemoteObjectEncoder *encoder, id object)
 {
     ASSERT(object);
 
@@ -509,7 +509,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     [object encodeWithCoder:encoder];
 }
 
-static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encoder, id object)
+static RefPtr<API::Dictionary> NODELETE createEncodedObject(WKRemoteObjectEncoder *encoder, id object)
 {
     if (!object)
         return nil;
@@ -605,7 +605,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encode
     return YES;
 }
 
-static NSString *escapeKey(NSString *key)
+static NSString *NODELETE escapeKey(NSString *key)
 {
     if (key.length && [key characterAtIndex:0] == '$')
         return [@"$" stringByAppendingString:key];
@@ -787,7 +787,7 @@ static NSString *escapeKey(NSString *key)
 
 static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *, const API::Dictionary*, const HashSet<CFTypeRef>& allowedClasses);
 
-static RetainPtr<id> decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, const HashSet<CFTypeRef>& allowedClasses)
+static RetainPtr<id> NODELETE decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, const HashSet<CFTypeRef>& allowedClasses)
 {
     if (!decoder->_objectStream)
         return nil;
@@ -800,7 +800,7 @@ static RetainPtr<id> decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder
     return decodeObject(decoder, dictionary.get(), allowedClasses);
 }
 
-static const HashSet<CFTypeRef> alwaysAllowedClasses()
+static const HashSet<CFTypeRef> NODELETE alwaysAllowedClasses()
 {
     static NeverDestroyed<HashSet<CFTypeRef>> classes { HashSet<CFTypeRef> {
         (__bridge CFTypeRef)NSArray.class,
@@ -830,7 +830,7 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
 }
 
 template<typename CharacterType>
-[[noreturn]] static void crashWithClassName(std::span<const CharacterType> className) requires(sizeof(CharacterType) == 1)
+[[noreturn]] static void NODELETE crashWithClassName(std::span<const CharacterType> className) requires(sizeof(CharacterType) == 1)
 {
     std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
     auto valuesAsBytes  = asMutableByteSpan(std::span { values });
@@ -838,12 +838,12 @@ template<typename CharacterType>
     CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
 }
 
-[[noreturn]] static void crashWithClassName(Class objectClass)
+[[noreturn]] static void NODELETE crashWithClassName(Class objectClass)
 {
     crashWithClassName(span(NSStringFromClass(objectClass)));
 }
 
-static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
+static void NODELETE checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
 {
     auto* allowedClasses = decoder->_allowedClasses;
     if (!allowedClasses)
@@ -858,7 +858,7 @@ static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectCl
     crashWithClassName(objectClass);
 }
 
-static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
+static void NODELETE validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
 {
     ASSERT(objectClass);
 
@@ -876,7 +876,7 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
     }
 }
 
-static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<CFTypeRef>>& allowedArgumentClasses, NSUInteger firstArgument)
+static void NODELETE decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<HashSet<CFTypeRef>>& allowedArgumentClasses, NSUInteger firstArgument)
 {
     RetainPtr<NSMethodSignature> methodSignature = invocation.methodSignature;
     NSUInteger argumentCount = methodSignature.get().numberOfArguments;
@@ -1013,7 +1013,7 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
     }
 }
 
-static RetainPtr<NSInvocation> decodeInvocation(WKRemoteObjectDecoder *decoder)
+static RetainPtr<NSInvocation> NODELETE decodeInvocation(WKRemoteObjectDecoder *decoder)
 {
     SEL selector = nullptr;
     RetainPtr<NSInvocation> invocation;
@@ -1062,7 +1062,7 @@ static RetainPtr<NSInvocation> decodeInvocation(WKRemoteObjectDecoder *decoder)
     return invocation;
 }
 
-static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
+static RetainPtr<NSString> NODELETE decodeString(WKRemoteObjectDecoder *decoder)
 {
     RefPtr string = Ref { *decoder->_currentDictionary }->get<API::String>(stringKey);
     if (!string)
@@ -1071,7 +1071,7 @@ static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
     return string->stringView().createNSString();
 }
 
-static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder)
+static RetainPtr<id> NODELETE decodeObject(WKRemoteObjectDecoder *decoder)
 {
     RefPtr classNameString = Ref { *decoder->_currentDictionary }->get<API::String>(classNameKey);
     if (!classNameString)
@@ -1100,7 +1100,7 @@ static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder)
     return decodeObjCObject(decoder, objectClass);
 }
 
-static RetainPtr<id> decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* dictionary, const HashSet<CFTypeRef>& allowedClasses)
+static RetainPtr<id> NODELETE decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* dictionary, const HashSet<CFTypeRef>& allowedClasses)
 {
     if (!dictionary)
         return nil;

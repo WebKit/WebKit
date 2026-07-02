@@ -42,7 +42,7 @@ private:
     MoveSelectionCommand(Ref<DocumentFragment>&&, const Position&, bool smartInsert, bool smartDelete);
 
     void doApply() override;
-    EditAction editingAction() const override;
+    EditAction NODELETE editingAction() const override;
     bool shouldDispatchInputEvents() const final { return false; }
     
     const Ref<DocumentFragment> m_fragment;

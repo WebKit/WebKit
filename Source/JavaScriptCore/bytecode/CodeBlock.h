@@ -270,8 +270,8 @@ public:
 
     JSParserScriptMode scriptMode() const { return m_unlinkedCode->scriptMode(); }
 
-    bool hasInstalledVMTrapsBreakpoints() const;
-    bool canInstallVMTrapBreakpoints() const;
+    bool NODELETE hasInstalledVMTrapsBreakpoints() const;
+    bool NODELETE canInstallVMTrapBreakpoints() const;
     bool installVMTrapBreakpoints();
 
     ALWAYS_INLINE bool isTemporaryRegister(VirtualRegister reg)
@@ -284,7 +284,7 @@ public:
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
 
     LineColumn lineColumnForBytecodeIndex(BytecodeIndex) const;
-    ExpressionInfo::Entry expressionInfoForBytecodeIndex(BytecodeIndex) const;
+    ExpressionInfo::Entry NODELETE expressionInfoForBytecodeIndex(BytecodeIndex) const;
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
@@ -380,9 +380,9 @@ public:
     DFG::CapabilityLevel capabilityLevelState() { return static_cast<DFG::CapabilityLevel>(m_capabilityLevelState); }
 
     CodeBlock* NODELETE optimizedReplacement(JITType typeToReplace);
-    CodeBlock* optimizedReplacement(); // the typeToReplace is my JITType
+    CodeBlock* NODELETE optimizedReplacement(); // the typeToReplace is my JITType
     bool NODELETE hasOptimizedReplacement(JITType typeToReplace);
-    bool hasOptimizedReplacement(); // the typeToReplace is my JITType
+    bool NODELETE hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 
     void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization, const FireDetail* = nullptr);
@@ -440,7 +440,7 @@ public:
 
     ValueProfile* NODELETE tryGetValueProfileForBytecodeIndex(BytecodeIndex);
     ValueProfile& NODELETE valueProfileForBytecodeIndex(BytecodeIndex);
-    SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex, JSValue* specFailValue = nullptr);
+    SpeculatedType NODELETE valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex, JSValue* specFailValue = nullptr);
 
     template<typename Functor> void forEachValueProfile(const Functor&);
     template<typename Functor> void forEachArrayAllocationProfile(const Functor&);
@@ -464,7 +464,7 @@ public:
     bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
 
 #if ENABLE(DFG_JIT)
-    DFG::CodeOriginPool& codeOrigins();
+    DFG::CodeOriginPool& NODELETE codeOrigins();
     
     // Having code origins implies that there has been some inlining.
     bool hasCodeOrigins()
@@ -493,14 +493,14 @@ public:
     // Constant Pool
 #if ENABLE(DFG_JIT)
     size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers() + numberOfDFGIdentifiers(); }
-    size_t numberOfDFGIdentifiers() const;
-    const Identifier& identifier(int index) const;
+    size_t NODELETE numberOfDFGIdentifiers() const;
+    const Identifier& NODELETE identifier(int index) const;
 #else
     size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers(); }
     const Identifier& identifier(int index) const { return m_unlinkedCode->identifier(index); }
 #endif
 #if ASSERT_ENABLED
-    bool hasIdentifier(UniquedStringImpl*);
+    bool NODELETE hasIdentifier(UniquedStringImpl*);
     bool wasDestructed();
 #endif
 
@@ -541,7 +541,7 @@ public:
 
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(CodeBlock, m_globalObject); }
 
-    JSGlobalObject* NODELETE globalObjectFor(CodeOrigin);
+    JSGlobalObject* globalObjectFor(CodeOrigin);
 
     BytecodeLivenessAnalysis& livenessAnalysis()
     {
@@ -654,7 +654,7 @@ public:
 
 #if !ENABLE(C_LOOP)
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return RegisterSet::llintBaselineCalleeSaveRegisters().numberOfSetRegisters(); }
-    static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters();
+    static size_t NODELETE llintBaselineCalleeSaveSpaceAsVirtualRegisters();
     static size_t NODELETE calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList&);
 #else
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return 0; }
@@ -758,7 +758,7 @@ public:
 
     bool shouldOptimizeNowFromBaseline();
     void updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker&);
-    void updateAllLazyValueProfilePredictions(const ConcurrentJSLocker&);
+    void NODELETE updateAllLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllArrayProfilePredictions();
     void updateAllArrayAllocationProfilePredictions();
     void updateAllPredictions();
@@ -911,13 +911,13 @@ private:
     friend class ScriptExecutable;
 
     enum class QuickTierUpCheck : bool { Apply, Ignore };
-    template<QuickTierUpCheck> void optimizeAfterWarmUpImpl();
+    template<QuickTierUpCheck> void NODELETE optimizeAfterWarmUpImpl();
 
     template<typename Visitor> ALWAYS_INLINE void visitChildren(Visitor&);
 
     BytecodeLivenessAnalysis& livenessAnalysisSlow();
     
-    CodeBlock* specialOSREntryBlockOrNull();
+    CodeBlock* NODELETE specialOSREntryBlockOrNull();
     
     void noticeIncomingCall(JSCell* caller);
 
@@ -932,16 +932,16 @@ private:
         m_constantRegisters[reg.toConstantIndex()].set(*m_vm, this, value);
     }
 
-    template<typename Visitor> bool shouldVisitStrongly(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> bool NODELETE shouldVisitStrongly(const ConcurrentJSLocker&, Visitor&);
     bool shouldJettisonDueToWeakReference(VM&);
     template<typename Visitor> bool shouldJettisonDueToOldAge(const ConcurrentJSLocker&, Visitor&);
     
-    template<typename Visitor> void propagateTransitions(const ConcurrentJSLocker&, Visitor&);
-    template<typename Visitor> void determineLiveness(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> void NODELETE propagateTransitions(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> void NODELETE determineLiveness(const ConcurrentJSLocker&, Visitor&);
         
     template<typename Visitor> void stronglyVisitStrongReferences(const ConcurrentJSLocker&, Visitor&);
     template<typename Visitor> void stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor&);
-    template<typename Visitor> void visitOSRExitTargets(const ConcurrentJSLocker&, Visitor&);
+    template<typename Visitor> void NODELETE visitOSRExitTargets(const ConcurrentJSLocker&, Visitor&);
 
     unsigned numberOfNonArgumentValueProfiles() { return totalNumberOfValueProfiles() - numberOfArgumentValueProfiles(); }
     unsigned totalNumberOfValueProfiles() { return m_unlinkedCode->numberOfValueProfiles(); }

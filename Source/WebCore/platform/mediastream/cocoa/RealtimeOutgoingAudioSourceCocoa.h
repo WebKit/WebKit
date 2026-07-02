@@ -58,9 +58,9 @@ private:
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
-    bool isReachingBufferedAudioDataHighLimit() final;
-    bool isReachingBufferedAudioDataLowLimit() final;
-    bool hasBufferedEnoughData() final;
+    bool NODELETE isReachingBufferedAudioDataHighLimit() final;
+    bool NODELETE isReachingBufferedAudioDataLowLimit() final;
+    bool NODELETE hasBufferedEnoughData() final;
     void sourceUpdated() final;
 
     void updateSampleConverter(const AudioStreamDescription&);

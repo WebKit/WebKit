@@ -146,7 +146,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
         static inline OpcodeID getOpcodeID(JSC::Opcode);
 
 #if ASSERT_ENABLED
-        static bool isOpcode(Opcode);
+        static bool NODELETE isOpcode(Opcode);
 #endif
 
         JSValue executeProgram(const SourceCode&, JSGlobalObject*, JSObject* thisObj);
@@ -185,7 +185,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
-        static UncheckedKeyHashMap<Opcode, OpcodeID>& opcodeIDTable(); // Maps Opcode => OpcodeID.
+        static UncheckedKeyHashMap<Opcode, OpcodeID>& NODELETE opcodeIDTable(); // Maps Opcode => OpcodeID.
 #endif // !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };

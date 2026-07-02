@@ -435,7 +435,7 @@ static ResourceType resourceTypeForCachedResource(const CachedResource* resource
     return ResourceType::Other;
 }
 
-static ResourceType resourceTypeForLoadType(UncachedLoadType loadType)
+static ResourceType NODELETE resourceTypeForLoadType(UncachedLoadType loadType)
 {
     switch (loadType) {
     case UncachedLoadType::Ping:

@@ -81,7 +81,7 @@ void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
     callback(data->mutableSpan().subspan(offset));
 }
 
-std::span<uint8_t> RemoteBufferProxy::getBufferContents()
+std::span<uint8_t> NODELETE RemoteBufferProxy::getBufferContents()
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

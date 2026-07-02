@@ -69,7 +69,7 @@ namespace WTF {
 class TextStream;
 }
 
-void outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
+void NODELETE outputLayerPositionTreeRecursive(TextStream&, const WebCore::RenderLayer&, unsigned, const WebCore::RenderLayer*);
 
 namespace WebCore {
 
@@ -289,7 +289,7 @@ private:
             return true;
         return hasVisibleContentForPaintingForSVG();
     }
-    bool hasVisibleContentForPaintingForSVG() const; // Defined in RenderLayerSVGAdditions.cpp.
+    bool NODELETE hasVisibleContentForPaintingForSVG() const; // Defined in RenderLayerSVGAdditions.cpp.
 
     // These flags propagate in paint order (z-order tree).
     enum class Compositing {
@@ -476,10 +476,10 @@ public:
     void invalidateEnclosingSVGContainerSegmentation();
     bool shouldSkipRepaintAfterLayoutForSVG() const;
     bool hasFailedFilterForSVG() const;
-    bool shouldSkipHitTestForSVG() const;
-    void updateAncestorDependentStateForSVG();
-    bool isCompositedSVGPaintOrderChild() const;
-    bool paintsInlineInSVGContainer() const;
+    bool NODELETE shouldSkipHitTestForSVG() const;
+    void NODELETE updateAncestorDependentStateForSVG();
+    bool NODELETE isCompositedSVGPaintOrderChild() const;
+    bool NODELETE paintsInlineInSVGContainer() const;
     bool isFlattenedByEnclosingSVGReferenceFilter() const;
 
     void repaintIncludingDescendants();
@@ -924,7 +924,7 @@ public:
     bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }
     void setHasCompositedScrollingAncestor(bool hasCompositedScrollingAncestor) { m_hasCompositedScrollingAncestor = hasCompositedScrollingAncestor; }
 
-    bool usesCompositedScrolling() const;
+    bool NODELETE usesCompositedScrolling() const;
 
     // Layers with the same ScrollingScope are scrolled by some common ancestor scroller. Used for async scrolling.
     std::optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }
@@ -1039,7 +1039,7 @@ private:
     void updateAncestorDependentState();
 
     // SVG-specific methods -- defined in RenderLayerSVGAdditions.cpp.
-    bool setupClipPathIfNeededForSVG(OptionSet<PaintLayerFlag>&);
+    bool NODELETE setupClipPathIfNeededForSVG(OptionSet<PaintLayerFlag>&);
     bool paintForegroundForFragmentsForSVG(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject*);
     void paintNegativeZOrderChildrenForSVG(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
     void paintForegroundChildrenForSVG(GraphicsContext&, const LayerPaintingInfo&, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintLayerFlag>, const LayerFragments&, OptionSet<PaintBehavior>, RenderObject* subtreePaintRoot, std::optional<WTF::Range<unsigned>> svgPaintOrderItemRange);
@@ -1626,9 +1626,9 @@ WTF::TextStream& operator<<(WTF::TextStream&, RenderLayer::PaintLayerFlag);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from lldb.
-void showLayerTree(const WebCore::RenderLayer*);
-void showLayerTree(const WebCore::RenderObject*);
-void showPaintOrderTree(const WebCore::RenderLayer*);
-void showPaintOrderTree(const WebCore::RenderObject*);
-void showLayerPositionTree(const WebCore::RenderLayer* root, const WebCore::RenderLayer* mark = nullptr);
+void NODELETE showLayerTree(const WebCore::RenderLayer*);
+void NODELETE showLayerTree(const WebCore::RenderObject*);
+void NODELETE showPaintOrderTree(const WebCore::RenderLayer*);
+void NODELETE showPaintOrderTree(const WebCore::RenderObject*);
+void NODELETE showLayerPositionTree(const WebCore::RenderLayer* root, const WebCore::RenderLayer* mark = nullptr);
 #endif

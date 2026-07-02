@@ -841,7 +841,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lex(Literal
 }
 
 template <typename CharType>
-ALWAYS_INLINE static bool isValidIdentifierCharacter(CharType c)
+ALWAYS_INLINE static bool NODELETE isValidIdentifierCharacter(CharType c)
 {
     if constexpr (sizeof(CharType) == 1)
         return isASCIIAlphanumeric(c) || c == '_' || c == '$';

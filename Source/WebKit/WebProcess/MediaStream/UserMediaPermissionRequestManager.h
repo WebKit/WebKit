@@ -49,7 +49,7 @@ public:
 
     explicit UserMediaPermissionRequestManager(WebPage&);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     void startUserMediaRequest(WebCore::UserMediaRequest&);

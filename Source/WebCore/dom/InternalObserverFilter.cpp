@@ -83,7 +83,7 @@ public:
             , m_predicate(predicate)
         { }
 
-        bool hasCallback() const final { return true; }
+        bool NODELETE hasCallback() const final { return true; }
 
         const Ref<Observable> m_sourceObservable;
         const Ref<PredicateCallback> m_predicate;

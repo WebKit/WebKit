@@ -133,9 +133,9 @@ public:
     // Incrementing this number will delete all existing cache content for everyone. Do you really need to do it?
     static const unsigned version = 17;
 
-    String basePathIsolatedCopy() const;
+    String NODELETE basePathIsolatedCopy() const;
     String versionPath() const;
-    String recordsPathIsolatedCopy() const;
+    String NODELETE recordsPathIsolatedCopy() const;
 
     const Salt& salt() const LIFETIME_BOUND { return m_salt; }
 

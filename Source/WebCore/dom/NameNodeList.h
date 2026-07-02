@@ -34,7 +34,7 @@ public:
     static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomString& name);
     virtual ~NameNodeList();
 
-    bool elementMatches(Element&) const final;
+    bool NODELETE elementMatches(Element&) const final;
     bool isRootedAtTreeScope() const final { return false; }
 
 private:

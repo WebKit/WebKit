@@ -124,7 +124,7 @@ public:
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
     void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
 
-    TransactionID NODELETE nextMainFrameLayerTreeTransactionID() const;
+    TransactionID nextMainFrameLayerTreeTransactionID() const;
     TransactionID NODELETE lastCommittedMainFrameLayerTreeTransactionID() const;
 
     virtual void didRefreshDisplay();

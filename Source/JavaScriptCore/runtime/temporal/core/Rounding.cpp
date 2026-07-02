@@ -96,7 +96,7 @@ double applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundin
 // https://tc39.es/proposal-temporal/#sec-applyunsignedroundingmode
 // cmp: -1 if x is closer to r1, +1 if closer to r2, 0 if exactly at midpoint.
 // Callers handle the exact case (x = r1) before calling this.
-static Int128 applyUnsignedRoundingModeInt128(Int128 r1, Int128 r2, int cmp, UnsignedRoundingMode unsignedRoundingMode)
+static Int128 NODELETE applyUnsignedRoundingModeInt128(Int128 r1, Int128 r2, int cmp, UnsignedRoundingMode unsignedRoundingMode)
 {
     // 4. If unsignedRoundingMode is ~zero~, return r1.
     if (unsignedRoundingMode == UnsignedRoundingMode::Zero)

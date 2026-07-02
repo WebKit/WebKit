@@ -47,7 +47,7 @@ using ScrollFunction = FunctionNotation<CSSValueScroll, ScrollFunctionParameters
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<ScrollFunction> {
-    ScrollFunction NODELETE operator()(BuilderState&, const CSSValue&);
+    ScrollFunction operator()(BuilderState&, const CSSValue&);
     auto operator()(BuilderState&, const CSSScrollValue&) -> ScrollFunction;
 };
 

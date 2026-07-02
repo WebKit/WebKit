@@ -787,7 +787,7 @@ bool consumeViewTransitionDescriptor(CSSParserTokenRange& range, const CSSParser
 }
 
 // Checks whether a CSS property is allowed in @position-try.
-static bool propertyAllowedInPositionTryRule(CSSPropertyID property)
+static bool NODELETE propertyAllowedInPositionTryRule(CSSPropertyID property)
 {
     return CSSProperty::isInsetProperty(property)
         || CSSProperty::isMarginProperty(property)

@@ -50,8 +50,8 @@ private:
     {
     }
 
-    bool localFileContentSniffingEnabled() const override;
-    SchedulePairHashSet* scheduledRunLoopPairs() const override;
+    bool NODELETE localFileContentSniffingEnabled() const override;
+    SchedulePairHashSet* NODELETE scheduledRunLoopPairs() const override;
     RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
     String sourceApplicationIdentifier() const override;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;

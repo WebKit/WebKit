@@ -245,7 +245,7 @@ public:
     
     bool inActiveDocument() const { return m_inActiveDocument; }
 
-    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
+    std::optional<MediaSessionGroupIdentifier> NODELETE mediaSessionGroupIdentifier() const final;
 
     WEBCORE_EXPORT bool isActiveNowPlayingSession() const;
 
@@ -273,7 +273,7 @@ public:
 
 // ready state
     using HTMLMediaElementEnums::ReadyState;
-    ReadyState readyState() const override;
+    ReadyState NODELETE readyState() const override;
     WEBCORE_EXPORT bool NODELETE seeking() const;
     void setSeeking(bool);
 
@@ -285,11 +285,11 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setCurrentTimeForBindings(double);
     WEBCORE_EXPORT WallTime getStartDate() const;
     WEBCORE_EXPORT double duration() const override;
-    WEBCORE_EXPORT bool paused() const override;
+    WEBCORE_EXPORT bool NODELETE paused() const override;
     void setPaused(bool);
-    double defaultPlaybackRate() const override;
+    double NODELETE defaultPlaybackRate() const override;
     void setDefaultPlaybackRate(double) override;
-    WEBCORE_EXPORT double playbackRate() const override;
+    WEBCORE_EXPORT double NODELETE playbackRate() const override;
     void setPlaybackRate(double) override;
     double reportedPlaybackRate() const { return m_reportedPlaybackRate; }
     WEBCORE_EXPORT bool NODELETE preservesPitch() const;
@@ -313,7 +313,7 @@ public:
     bool NODELETE autoplay() const;
     bool isAutoplaying() const { return m_autoplaying; }
     bool wasInterruptedForInvisibleAutoplay() const { return m_wasInterruptedForInvisibleAutoplay; }
-    bool NODELETE loop() const;
+    bool loop() const;
     void setLoop(bool b);
 
     void play(DOMPromiseDeferred<void>&&);
@@ -364,9 +364,9 @@ public:
 // controls
     WEBCORE_EXPORT bool controls() const;
     WEBCORE_EXPORT void setControls(bool);
-    WEBCORE_EXPORT double volume() const override;
+    WEBCORE_EXPORT double NODELETE volume() const override;
     WEBCORE_EXPORT ExceptionOr<void> setVolume(double) override;
-    WEBCORE_EXPORT bool muted() const override;
+    WEBCORE_EXPORT bool NODELETE muted() const override;
     WEBCORE_EXPORT void setMuted(bool) override;
 
     bool volumeLocked() const { return m_volumeLocked; }
@@ -536,7 +536,7 @@ public:
 #endif
 
     bool hasClosedCaptions() const override;
-    bool closedCaptionsVisible() const override;
+    bool NODELETE closedCaptionsVisible() const override;
     void setClosedCaptionsVisible(bool) override;
 
     void sourceWasRemoved(HTMLSourceElement&);
@@ -637,17 +637,17 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "HTMLMediaElement"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     bool willLog(WTFLogLevel) const;
 
     bool isAudible() const final { return canProduceAudio(); }
-    bool isSuspended() const final;
+    bool NODELETE isSuspended() const final;
 
     WEBCORE_EXPORT void didBecomeFullscreenElement() final;
     WEBCORE_EXPORT void willExitFullscreen();
-    WEBCORE_EXPORT void didStopBeingFullscreenElement() final;
+    WEBCORE_EXPORT void NODELETE didStopBeingFullscreenElement() final;
     void willBecomeFullscreenElement(VideoFullscreenMode = VideoFullscreenModeStandard);
 
     void scheduleEvent(Ref<Event>&&);
@@ -801,7 +801,7 @@ protected:
     void mediaPlayerResourceNotSupported() final;
     void mediaPlayerRepaint() final;
     void mediaPlayerSizeChanged() final;
-    bool mediaPlayerAcceleratedCompositingEnabled() final;
+    bool NODELETE mediaPlayerAcceleratedCompositingEnabled() final;
     void mediaPlayerWillInitializeMediaEngine() final;
     void mediaPlayerDidInitializeMediaEngine() final;
     void mediaPlayerReloadAndResumePlaybackIfNeeded() final;
@@ -891,13 +891,13 @@ private:
     bool mediaPlayerIsFullscreenPermitted() const override;
     bool mediaPlayerIsVideo() const override;
     LayoutRect mediaPlayerContentBoxRect() const override;
-    float mediaPlayerContentsScale() const override;
-    bool mediaPlayerPlatformVolumeConfigurationRequired() const override;
-    bool mediaPlayerIsLooping() const override;
+    float NODELETE mediaPlayerContentsScale() const override;
+    bool NODELETE mediaPlayerPlatformVolumeConfigurationRequired() const override;
+    bool NODELETE mediaPlayerIsLooping() const override;
     CachedResourceLoader* mediaPlayerCachedResourceLoader() const override;
     Ref<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() override;
-    bool mediaPlayerShouldUsePersistentCache() const override;
-    String mediaPlayerMediaCacheDirectory() const override;
+    bool NODELETE mediaPlayerShouldUsePersistentCache() const override;
+    String NODELETE mediaPlayerMediaCacheDirectory() const override;
 
     void mediaPlayerActiveSourceBuffersChanged() override;
 
@@ -917,13 +917,13 @@ private:
     VideoFullscreenMode mediaPlayerFullscreenMode() const final { return fullscreenMode(); }
     bool mediaPlayerIsVideoFullscreenStandby() const final { return m_videoFullscreenStandby; }
     bool mediaPlayerShouldDisableSleep() const final { return shouldDisableSleep() == SleepType::Display; }
-    bool mediaPlayerShouldCheckHardwareSupport() const final;
-    const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
-    const std::optional<Vector<String>>& allowedMediaContainerTypes() const final;
-    const std::optional<Vector<String>>& allowedMediaCodecTypes() const final;
-    const std::optional<Vector<FourCC>>& allowedMediaVideoCodecIDs() const final;
-    const std::optional<Vector<FourCC>>& allowedMediaAudioCodecIDs() const final;
-    const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final;
+    bool NODELETE mediaPlayerShouldCheckHardwareSupport() const final;
+    const Vector<ContentType>& NODELETE mediaContentTypesRequiringHardwareSupport() const final;
+    const std::optional<Vector<String>>& NODELETE allowedMediaContainerTypes() const final;
+    const std::optional<Vector<String>>& NODELETE allowedMediaCodecTypes() const final;
+    const std::optional<Vector<FourCC>>& NODELETE allowedMediaVideoCodecIDs() const final;
+    const std::optional<Vector<FourCC>>& NODELETE allowedMediaAudioCodecIDs() const final;
+    const std::optional<Vector<FourCC>>& NODELETE allowedMediaCaptionFormatTypes() const final;
 
     void mediaPlayerBufferedTimeRangesChanged() final;
 
@@ -993,7 +993,7 @@ private:
     void markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode);
     CaptionUserPreferences::CaptionDisplayMode captionDisplayMode();
 
-    bool NODELETE textTracksAreReady() const;
+    bool textTracksAreReady() const;
     void configureTextTrackDisplay(TextTrackVisibilityCheckType = CheckTextTrackVisibility);
     void updateTextTrackDisplay();
 
@@ -1062,8 +1062,8 @@ private:
 
     RefPtr<MediaSessionManagerInterface> sessionManager() const final;
     PlatformMediaSession::MediaType mediaType() const override;
-    PlatformMediaSession::MediaType presentationType() const override;
-    PlatformMediaSession::DisplayType displayType() const override;
+    PlatformMediaSession::MediaType NODELETE presentationType() const override;
+    PlatformMediaSession::DisplayType NODELETE displayType() const override;
 
     void suspendPlayback() override;
     void resumeAutoplaying() override;
@@ -1071,13 +1071,13 @@ private:
     bool canReceiveRemoteControlCommands() const override { return true; }
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
     bool shouldOverrideBackgroundLoadingRestriction() const override;
-    bool canProduceAudio() const final;
+    bool NODELETE canProduceAudio() const final;
     bool computeCanProduceAudio() const;
     bool isEnded() const final { return ended(); }
     MediaTime mediaSessionDuration() const final;
-    bool hasMediaStreamSource() const final;
+    bool NODELETE hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
-    bool shouldOverridePauseDuringRouteChange() const final;
+    bool NODELETE shouldOverridePauseDuringRouteChange() const final;
     bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSessionInterface>>&, PlatformMediaSession::PlaybackControlsPurpose) final;

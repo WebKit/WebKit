@@ -41,7 +41,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     bool isValid() const final { return SVGTests::isValid(); }
-    bool rendererIsNeeded(const Style::ComputedStyle&) final;
+    bool NODELETE rendererIsNeeded(const Style::ComputedStyle&) final;
 };
 
 } // namespace WebCore

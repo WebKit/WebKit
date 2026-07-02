@@ -53,10 +53,10 @@ public:
 private:
     void showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
     void startingMonitoringPlaybackTargets() final;
-    void stopMonitoringPlaybackTargets() final;
+    void NODELETE stopMonitoringPlaybackTargets() final;
     void invalidatePlaybackTargets() final;
 
-    bool externalOutputDeviceAvailable() final;
+    bool NODELETE externalOutputDeviceAvailable() final;
     Ref<MediaPlaybackTarget> playbackTarget() final;
 
     String m_deviceName;

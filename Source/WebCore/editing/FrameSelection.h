@@ -161,7 +161,7 @@ public:
 
     WEBCORE_EXPORT virtual ~FrameSelection();
 
-    WEBCORE_EXPORT Element* rootEditableElementOrDocumentElement() const;
+    WEBCORE_EXPORT Element* NODELETE rootEditableElementOrDocumentElement() const;
      
     WEBCORE_EXPORT void moveTo(const VisiblePosition&, UserTriggered = UserTriggered::No, CursorAlignOnScroll = CursorAlignOnScroll::IfNeeded);
     WEBCORE_EXPORT void moveTo(const VisiblePosition&, const VisiblePosition&, UserTriggered = UserTriggered::No);
@@ -239,8 +239,8 @@ public:
     WEBCORE_EXPORT void updateAppearance();
 
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
-    void showTreeForThis() const;
+    String NODELETE debugDescription() const;
+    void NODELETE showTreeForThis() const;
 #endif
 
     WEBCORE_EXPORT std::optional<SimpleRange> rangeByExtendingCurrentSelection(TextGranularity) const;
@@ -437,7 +437,7 @@ inline void FrameSelection::restoreScrolling()
 #if ENABLE(TREE_DEBUGGING)
 
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::FrameSelection&);
-void showTree(const WebCore::FrameSelection*);
+void NODELETE showTree(const WebCore::FrameSelection&);
+void NODELETE showTree(const WebCore::FrameSelection*);
 
 #endif

@@ -287,7 +287,7 @@ void NODELETE clearElement(T& element)
 }
 
 template<>
-void clearElement(double& element);
+void NODELETE clearElement(double& element);
 
 template<ArrayFillMode fillMode, NeedsGCSafeOps needsGCSafeOps, typename T, typename U>
 ALWAYS_INLINE void copyArrayElements(T* buffer, unsigned offset, U* source, unsigned sourceOffset, unsigned sourceSize, IndexingType sourceType)
@@ -375,7 +375,7 @@ JS_EXPORT_PRIVATE JSArray* constructArrayPair(JSGlobalObject*, JSValue first, JS
 ALWAYS_INLINE uint64_t toLength(JSGlobalObject*, JSObject*);
 
 template<ArrayFillMode fillMode>
-JSArray* tryCloneArrayFromFast(JSGlobalObject*, JSValue arrayValue);
+JSArray* NODELETE tryCloneArrayFromFast(JSGlobalObject*, JSValue arrayValue);
 
 ALWAYS_INLINE bool isHole(double value);
 ALWAYS_INLINE bool isHole(const WriteBarrier<Unknown>& value);

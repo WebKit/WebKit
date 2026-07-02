@@ -77,7 +77,7 @@ private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&, RemoteSampleBufferDisplayLayerManager&);
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(uint64_t);
+    void NODELETE setLogIdentifier(uint64_t);
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void flush();
@@ -91,7 +91,7 @@ private:
     void setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio);
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     // WebCore::SampleBufferDisplayLayerClient

@@ -47,13 +47,13 @@ private:
     LayoutRect elementRect() const final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ScrollBar; }
-    std::optional<AccessibilityOrientation> explicitOrientation() const final;
+    std::optional<AccessibilityOrientation> NODELETE explicitOrientation() const final;
     Document* document() const final;
     bool isEnabled() const final;
 
     // Assumes float [0..1]
     bool setValue(float) final;
-    float valueForRange() const final;
+    float NODELETE valueForRange() const final;
 
     const Ref<Scrollbar> m_scrollbar;
 };

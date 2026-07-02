@@ -84,7 +84,7 @@ float RemoteLayerTreeContext::deviceScaleFactor() const
     return webPage().deviceScaleFactor();
 }
 
-std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifier() const
+std::optional<DrawingAreaIdentifier> NODELETE RemoteLayerTreeContext::drawingAreaIdentifier() const
 {
     if (!m_webPage->drawingArea())
         return std::nullopt;

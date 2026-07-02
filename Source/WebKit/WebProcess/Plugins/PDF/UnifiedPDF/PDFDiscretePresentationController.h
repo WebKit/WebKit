@@ -59,8 +59,8 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFPluginDisplayMode) const override;
-    void willChangeDisplayMode(PDFPluginDisplayMode) override;
+    bool NODELETE supportsDisplayMode(PDFPluginDisplayMode) const override;
+    void NODELETE willChangeDisplayMode(PDFPluginDisplayMode) override;
 
     void teardown() override;
 
@@ -88,7 +88,7 @@ private:
     std::optional<PDFLayoutRow> visibleRow() const override;
     std::optional<PDFLayoutRow> rowForLayer(const WebCore::GraphicsLayer&) const override;
 
-    WebCore::FloatSize NODELETE contentsOffsetForPage(PDFDocumentLayout::PageIndex) const;
+    WebCore::FloatSize contentsOffsetForPage(PDFDocumentLayout::PageIndex) const;
 
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
 
@@ -153,8 +153,8 @@ private:
 
     // GraphicsLayerClient
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    float pageScaleFactor() const override;
-    float deviceScaleFactor() const override;
+    float NODELETE pageScaleFactor() const override;
+    float NODELETE deviceScaleFactor() const override;
     std::optional<float> customContentsScale(const WebCore::GraphicsLayer&) const override;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool layerAllowsDynamicContentScaling(const WebCore::GraphicsLayer*) const override;
@@ -208,7 +208,7 @@ private:
         RefPtr<WebCore::GraphicsLayer> backgroundLayerForPageIndex(PDFDocumentLayout::PageIndex) const;
     };
 
-    const RowData* NODELETE rowDataForLayer(const WebCore::GraphicsLayer&) const;
+    const RowData* rowDataForLayer(const WebCore::GraphicsLayer&) const;
     WebCore::FloatPoint positionForRowContainerLayer(const PDFLayoutRow&) const;
     WebCore::FloatSize rowContainerSize(const PDFLayoutRow&) const;
 

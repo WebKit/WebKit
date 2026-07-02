@@ -77,7 +77,7 @@ private:
 #endif
 
 #if ASSERT_ENABLED
-    bool isUnreachableNode(EventTarget*) const;
+    bool NODELETE isUnreachableNode(EventTarget*) const;
 #endif
 
     RefPtr<Node> m_node;

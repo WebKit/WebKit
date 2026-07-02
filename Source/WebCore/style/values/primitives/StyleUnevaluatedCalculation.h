@@ -34,7 +34,7 @@ namespace Style {
 namespace Calculation {
 class Value;
 struct Child;
-Ref<Value> CLANG_POINTER_CONVERSION protect(Value&);
+Ref<Value> CLANG_POINTER_CONVERSION NODELETE protect(Value&);
 }
 
 struct ZoomFactor;

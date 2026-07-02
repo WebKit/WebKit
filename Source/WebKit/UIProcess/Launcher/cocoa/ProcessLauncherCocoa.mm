@@ -154,7 +154,7 @@ static void launchWithExtensionKit(ProcessLauncher& processLauncher, ProcessLaun
 #endif // USE(EXTENSIONKIT)
 
 #if !USE(EXTENSIONKIT) || !PLATFORM(IOS)
-static ASCIILiteral webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
+static ASCIILiteral NODELETE webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     bool useCaptivePortal = client && client->shouldEnableLockdownMode();
     bool useEnhancedSecurity = client && client->shouldEnableEnhancedSecurity();
@@ -168,7 +168,7 @@ static ASCIILiteral webContentServiceName(const ProcessLauncher::LaunchOptions& 
     return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development"_s : "com.apple.WebKit.WebContent"_s;
 }
 
-static ASCIILiteral serviceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
+static ASCIILiteral NODELETE serviceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:

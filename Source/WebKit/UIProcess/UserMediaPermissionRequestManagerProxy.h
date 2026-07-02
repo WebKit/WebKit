@@ -91,8 +91,8 @@ public:
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
 #endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 #endif
-    static bool permittedToCaptureAudio();
-    static bool permittedToCaptureVideo();
+    static bool NODELETE permittedToCaptureAudio();
+    static bool NODELETE permittedToCaptureVideo();
 
     void invalidatePendingRequests();
 
@@ -155,7 +155,7 @@ private:
     const Logger& logger() const final;
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "UserMediaPermissionRequestManagerProxy"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     void denyRequest(UserMediaPermissionRequestProxy&, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& message, WebCore::MediaConstraintType);
@@ -184,7 +184,7 @@ private:
     void processUserMediaPermissionValidRequest(Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaDeviceHashSalts&&);
     void startProcessingUserMediaPermissionRequest(Ref<UserMediaPermissionRequestProxy>&&);
 
-    static void requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&&);
+    static void NODELETE requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&&);
 
     void validateUserMediaRequestConstraints(WebCore::RealtimeMediaSourceCenter::ValidateHandler&&, WebCore::MediaDeviceHashSalts&&);
 #endif

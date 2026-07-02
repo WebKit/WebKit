@@ -58,27 +58,27 @@ namespace WebKit {
 
 #if HAVE(SAFE_BROWSING)
 
-static String malwareDetailsBase(SSBServiceLookupResult *result)
+static String NODELETE malwareDetailsBase(SSBServiceLookupResult *result)
 {
     return result.malwareDetailsBaseURLString;
 }
 
-static NSURL *learnMoreURL(SSBServiceLookupResult *result)
+static NSURL *NODELETE learnMoreURL(SSBServiceLookupResult *result)
 {
     return result.learnMoreURL;
 }
 
-static String reportAnErrorBase(SSBServiceLookupResult *result)
+static String NODELETE reportAnErrorBase(SSBServiceLookupResult *result)
 {
     return result.reportAnErrorBaseURLString;
 }
 
-static String localizedProviderDisplayName(SSBServiceLookupResult *result)
+static String NODELETE localizedProviderDisplayName(SSBServiceLookupResult *result)
 {
     return result.localizedProviderDisplayName;
 }
 
-static String localizedProviderShortName(SSBServiceLookupResult *result)
+static String NODELETE localizedProviderShortName(SSBServiceLookupResult *result)
 {
     if ([result respondsToSelector:@selector(localizedProviderShortName)])
         return result.localizedProviderShortName;
@@ -93,12 +93,12 @@ static String localizedProviderShortName(SSBServiceLookupResult *result)
     return ""_s;
 }
 
-static void replace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith)
+static void NODELETE replace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith)
 {
     [string replaceCharactersInRange:[retainPtr(string.string) rangeOfString:toReplace] withString:replaceWith];
 }
 
-static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith, NSURL *linkTarget)
+static void NODELETE addLinkAndReplace(NSMutableAttributedString *string, NSString *toReplace, NSString *replaceWith, NSURL *linkTarget)
 {
     auto stringWithLink = adoptNS([[NSMutableAttributedString alloc] initWithString:replaceWith]);
     [stringWithLink addAttributes:@{
@@ -108,17 +108,17 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
     [string replaceCharactersInRange:[retainPtr(string.string) rangeOfString:toReplace] withAttributedString:stringWithLink.get()];
 }
 
-static RetainPtr<NSURL> reportAnErrorURL(const URL& url, SSBServiceLookupResult *result)
+static RetainPtr<NSURL> NODELETE reportAnErrorURL(const URL& url, SSBServiceLookupResult *result)
 {
     return URL({ }, makeString(reportAnErrorBase(result), "&url="_s, encodeWithURLEscapeSequences(url.string()), "&hl="_s, defaultLanguage())).createNSURL();
 }
 
-static RetainPtr<NSURL> malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)
+static RetainPtr<NSURL> NODELETE malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)
 {
     return URL({ }, makeString(malwareDetailsBase(result), "&site="_s, url.host(), "&hl="_s, defaultLanguage())).createNSURL();
 }
 
-static NSString *browsingWarningTitleText(SSBServiceLookupResult *result)
+static NSString *NODELETE browsingWarningTitleText(SSBServiceLookupResult *result)
 {
     if (result.isPhishing)
         return WEB_UI_NSSTRING(@"Deceptive Website Warning", "Phishing warning title");
@@ -128,7 +128,7 @@ static NSString *browsingWarningTitleText(SSBServiceLookupResult *result)
     return WEB_UI_NSSTRING(@"Website With Harmful Software Warning", "Unwanted software warning title");
 }
 
-static NSString *browsingWarningTitleText(BrowsingWarning::Data data)
+static NSString *NODELETE browsingWarningTitleText(BrowsingWarning::Data data)
 {
     return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
         return browsingWarningTitleText(data.result.get());
@@ -137,7 +137,7 @@ static NSString *browsingWarningTitleText(BrowsingWarning::Data data)
     });
 }
 
-static NSString *browsingWarningText(SSBServiceLookupResult *result)
+static NSString *NODELETE browsingWarningText(SSBServiceLookupResult *result)
 {
     if (result.isPhishing)
         return WEB_UI_NSSTRING(@"This website may try to trick you into doing something dangerous, like installing software or disclosing personal or financial information, like passwords, phone numbers, or credit cards.", "Phishing warning");
@@ -148,7 +148,7 @@ static NSString *browsingWarningText(SSBServiceLookupResult *result)
     return WEB_UI_NSSTRING(@"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.", "Unwanted software warning");
 }
 
-static NSString *browsingWarningText(BrowsingWarning::Data data)
+static NSString *NODELETE browsingWarningText(BrowsingWarning::Data data)
 {
     return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
         return browsingWarningText(data.result.get());
@@ -157,7 +157,7 @@ static NSString *browsingWarningText(BrowsingWarning::Data data)
     });
 }
 
-static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBServiceLookupResult *result)
+static NSMutableAttributedString *NODELETE browsingDetailsText(const URL& url, SSBServiceLookupResult *result)
 {
     BROWSING_WARNING_DETAILS_TEXT_ADDITIONS;
 
@@ -198,7 +198,7 @@ static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBService
     return malwareOrUnwantedSoftwareDetails(RetainPtr { WEB_UI_NSSTRING(@"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.", "Unwanted software warning description") }.get(), @"%the-status-of-site%", false);
 }
 
-static NSMutableAttributedString *browsingDetailsText(const URL& url, BrowsingWarning::Data data)
+static NSMutableAttributedString *NODELETE browsingDetailsText(const URL& url, BrowsingWarning::Data data)
 {
     if (auto* safeBrowsingData = std::get_if<BrowsingWarning::SafeBrowsingWarningData>(&data))
         return browsingDetailsText(url, safeBrowsingData->result.get());

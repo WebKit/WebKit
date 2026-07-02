@@ -46,7 +46,7 @@ public:
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
 };
 
-static JSManagedValueHandleOwner& managedValueHandleOwner()
+static JSManagedValueHandleOwner& NODELETE managedValueHandleOwner()
 {
     static NeverDestroyed<JSManagedValueHandleOwner> jsManagedValueHandleOwner;
     return jsManagedValueHandleOwner;

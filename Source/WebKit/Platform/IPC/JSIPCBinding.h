@@ -67,9 +67,9 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, T&&)
     return JSC::JSValue();
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, String&&);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, URL&&);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::RegistrableDomain&&);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, String&&);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, URL&&);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::RegistrableDomain&&);
 
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, IPC::Semaphore&&);
 template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::SharedMemory::Handle&&);
@@ -86,19 +86,19 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, E
     return jsValueForDecodedArgumentValue(globalObject, static_cast<std::underlying_type_t<E>>(value));
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, bool);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, double);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, float);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int8_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int16_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int32_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, bool);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, double);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, float);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int8_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int16_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int32_t);
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int64_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint8_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint16_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint32_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint64_t);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, size_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, int64_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint8_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint16_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint32_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, uint64_t);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, size_t);
 
 template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, ObjectIdentifier<U>&& value)
@@ -112,9 +112,9 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, A
     return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
 }
 
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::IntRect&&);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::FloatRect&&);
-template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::ExceptionData&&);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::IntRect&&);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::FloatRect&&);
+template<> JSC::JSValue NODELETE jsValueForDecodedArgumentValue(JSC::JSGlobalObject*, WebCore::ExceptionData&&);
 
 template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, OptionSet<U>&& value)

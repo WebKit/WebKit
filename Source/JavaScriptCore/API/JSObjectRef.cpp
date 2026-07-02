@@ -548,7 +548,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 // API objects have private properties, which may get accessed during destruction. This
 // helper lets us get the ClassInfo of an API object from a function that may get called
 // during destruction.
-static const ClassInfo* classInfoPrivate(JSObject* jsObject)
+static const ClassInfo* NODELETE classInfoPrivate(JSObject* jsObject)
 {
     VM& vm = jsObject->vm();
     if (vm.currentlyDestructingCallbackObject != jsObject)

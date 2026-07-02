@@ -49,7 +49,7 @@ private:
     bool isGradientStop() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool rendererIsNeeded(const Style::ComputedStyle&) final;
+    bool NODELETE rendererIsNeeded(const Style::ComputedStyle&) final;
 
     const Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this, 0) };
 };

@@ -198,7 +198,7 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     });
 }
 
-static URL contextURLforCORPViolation(NetworkResourceLoader& loader)
+static URL NODELETE contextURLforCORPViolation(NetworkResourceLoader& loader)
 {
     auto& url = loader.isMainResource() ? loader.parameters().parentFrameURL : loader.parameters().frameURL;
     return url.isValid() ? url : aboutBlankURL();

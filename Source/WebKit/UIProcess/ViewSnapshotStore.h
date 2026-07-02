@@ -82,7 +82,7 @@ public:
     bool NODELETE hasImage() const;
 
 #if HAVE(IOSURFACE)
-    id asLayerContents();
+    id NODELETE asLayerContents();
     RetainPtr<CGImageRef> asImageForTesting();
 #endif
 
@@ -112,7 +112,7 @@ public:
 
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
 
-    WebCore::SetNonVolatileResult setVolatile(bool);
+    WebCore::SetNonVolatileResult NODELETE setVolatile(bool);
 #endif
 
 #if PLATFORM(GTK)

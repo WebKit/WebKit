@@ -1103,10 +1103,10 @@ public:
     void analyzeVariableNameEdge(JSCell* from, JSCell* to, UniquedStringImpl*) final { analyzeEdge(from, to, RootMarkReason::None); }
     void analyzeIndexEdge(JSCell* from, JSCell* to, uint32_t) final { analyzeEdge(from, to, RootMarkReason::None); }
 
-    void analyzeNode(JSCell*) final { }
-    void setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) final { }
-    void setWrappedObjectForCell(JSCell*, void*) final { }
-    void setLabelForCell(JSCell*, const String&) final { }
+    void NODELETE analyzeNode(JSCell*) final { }
+    void NODELETE setOpaqueRootReachabilityReasonForCell(JSCell*, ASCIILiteral) final { }
+    void NODELETE setWrappedObjectForCell(JSCell*, void*) final { }
+    void NODELETE setLabelForCell(JSCell*, const String&) final { }
 
 #ifndef NDEBUG
     void dump(PrintStream& out) const

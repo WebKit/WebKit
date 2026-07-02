@@ -1636,7 +1636,7 @@ public:
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
     // GL_EXT_discard_framebuffer
-    WEBCORE_EXPORT virtual void framebufferDiscard(GCGLenum, std::span<const GCGLenum>);
+    WEBCORE_EXPORT virtual void NODELETE framebufferDiscard(GCGLenum, std::span<const GCGLenum>);
 
     // ========== Internal use for WebXR on WebGL1 contexts.
     virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
@@ -1717,7 +1717,7 @@ public:
     };
     // Returns nullopt if width/height is negative or overflow happens or if format and type are invalid.
     // Also validates total bytes (imageBytes + initialSkipBytes)
-    static std::optional<PixelRectangleSizes> NODELETE computeImageSize(GCGLenum format, GCGLenum type, IntSize, GCGLsizei depth, const PixelStoreParameters&);
+    static std::optional<PixelRectangleSizes> computeImageSize(GCGLenum format, GCGLenum type, IntSize, GCGLsizei depth, const PixelStoreParameters&);
 
     // Extracts the contents of the given PixelBuffer into the passed Vector,
     // packing the pixel data according to the given format and type,

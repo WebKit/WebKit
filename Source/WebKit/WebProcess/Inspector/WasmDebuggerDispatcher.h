@@ -46,7 +46,7 @@ public:
 
     void initializeConnection(IPC::Connection&);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:

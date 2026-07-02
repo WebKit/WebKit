@@ -661,7 +661,7 @@ double PlaybackSessionModelMediaElement::bufferedTime() const
 
 auto PlaybackSessionModelMediaElement::playbackState() const -> OptionSet<PlaybackState>
 {
-    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
+    OptionSet<PlaybackSessionModel::PlaybackState> NODELETE playbackState;
     if (isPlaying())
         playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
     if (isStalled())

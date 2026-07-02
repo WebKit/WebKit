@@ -32,7 +32,7 @@
 namespace JSC { namespace DFG {
 
 bool NODELETE argumentsInvolveStackSlot(InlineCallFrame*, Operand);
-bool argumentsInvolveStackSlot(Node* candidate, Operand);
+bool NODELETE argumentsInvolveStackSlot(Node* candidate, Operand);
 
 Node* emitCodeToGetArgumentsArrayLength(
     InsertionSet&, Node* arguments, unsigned nodeIndex, NodeOrigin, bool addThis = false);

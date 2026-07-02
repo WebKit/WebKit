@@ -155,15 +155,15 @@ public:
     {
     }
 
-    IPIntLocal* localSlot(unsigned);
-    IPIntLocal* rethrowSlot(unsigned);
+    IPIntLocal* NODELETE localSlot(unsigned);
+    IPIntLocal* NODELETE rethrowSlot(unsigned);
     // Past-the-end pointer for the expression stack area (= bottom of rethrow/locals area).
-    IPIntStackEntry* stackEnd();
+    IPIntStackEntry* NODELETE stackEnd();
 
 private:
     // Returns pointer to local[0], matching assembly's CFR - IPIntLocalsBaseOffset.
     // local[i] = localBase()[-i], rethrow[i] = localBase()[-(localSizeToAlloc + i)].
-    IPIntLocal* localBase();
+    IPIntLocal* NODELETE localBase();
 
     CallFrame* m_callFrame;
     SUPPRESS_UNCOUNTED_MEMBER const Wasm::IPIntCallee* m_callee;

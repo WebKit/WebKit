@@ -184,7 +184,7 @@ void SpeculativeLoad::didComplete()
 
 #if !LOG_DISABLED
 
-static void dumpHTTPHeadersDiff(const HTTPHeaderMap& headersA, const HTTPHeaderMap& headersB)
+static void NODELETE dumpHTTPHeadersDiff(const HTTPHeaderMap& headersA, const HTTPHeaderMap& headersB)
 {
     auto aEnd = headersA.end();
     for (auto it = headersA.begin(); it != aEnd; ++it) {

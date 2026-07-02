@@ -118,7 +118,7 @@ public:
         void adjustInstPC(unsigned infoIndex, unsigned instPCDelta);
 
         template<unsigned bitCount> bool NODELETE fits(Wide);
-        template<typename T, unsigned bitCount> bool fits(T);
+        template<typename T, unsigned bitCount> bool NODELETE fits(T);
 
         Entry m_entry;
 
@@ -136,7 +136,7 @@ public:
 
         IterationStatus NODELETE decode(std::optional<InstPC> targetInstPC = std::nullopt);
 
-        void NODELETE recacheInfo(Vector<ExpressionInfo::EncodedInfo>&);
+        void recacheInfo(Vector<ExpressionInfo::EncodedInfo>&);
         EncodedInfo* currentInfo() const { return m_currentInfo; }
 
         // This is meant to be used to jump to the start of a chapter, where the encoder
@@ -187,7 +187,7 @@ public:
     size_t NODELETE byteSize() const;
 
     template<unsigned bitCount>
-    static void print(PrintStream&, FieldID, unsigned value);
+    static void NODELETE print(PrintStream&, FieldID, unsigned value);
     static void dumpEncodedInfo(EncodedInfo* start, EncodedInfo* end); // For debugging use only.
 
 private:

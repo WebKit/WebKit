@@ -46,7 +46,7 @@ public:
     bool operator==(const SVGShadowData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGShadowData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGShadowData&) const;
 #endif
 
     BoxShadows shadow;

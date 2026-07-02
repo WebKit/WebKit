@@ -97,7 +97,7 @@ public:
 };
 
 #if ASSERT_ENABLED
-WTF_EXPORT_PRIVATE void assertMallocRestrictionForCurrentThreadScope();
+WTF_EXPORT_PRIVATE void NODELETE assertMallocRestrictionForCurrentThreadScope();
 #else
 inline void assertMallocRestrictionForCurrentThreadScope() { }
 #endif

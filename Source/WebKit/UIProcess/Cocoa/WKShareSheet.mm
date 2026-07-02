@@ -57,7 +57,7 @@
 
 #import <pal/cocoa/LinkPresentationSoftLink.h>
 
-static NSString *typeIdentifierForFileURL(NSURL *url)
+static NSString *NODELETE typeIdentifierForFileURL(NSURL *url)
 {
     NSString *typeIdentifier = nil;
     [url getPromisedItemResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:nil];
@@ -73,7 +73,7 @@ static NSString *typeIdentifierForFileURL(NSURL *url)
     return UTTypeData.identifier;
 }
 
-static RetainPtr<LPLinkMetadata> placeholderMetadataWithURLAndTitle(NSURL *url, NSString *title)
+static RetainPtr<LPLinkMetadata> NODELETE placeholderMetadataWithURLAndTitle(NSURL *url, NSString *title)
 {
     RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
     [metadata setOriginalURL:url];
@@ -85,7 +85,7 @@ static RetainPtr<LPLinkMetadata> placeholderMetadataWithURLAndTitle(NSURL *url, 
 
 #if PLATFORM(MAC)
 
-static uint64_t sizeForFileURL(NSURL *url)
+static uint64_t NODELETE sizeForFileURL(NSURL *url)
 {
     NSNumber *size = 0;
     [url getResourceValue:&size forKey:NSURLFileSizeKey error:nil];
@@ -96,7 +96,7 @@ static uint64_t sizeForFileURL(NSURL *url)
     return 0;
 }
 
-static RetainPtr<NSString> nameForFileURLWithTypeIdentifier(NSURL *url, NSString *typeIdentifier)
+static RetainPtr<NSString> NODELETE nameForFileURLWithTypeIdentifier(NSURL *url, NSString *typeIdentifier)
 {
     BOOL isFolder = [typeIdentifier isEqualToString:UTTypeFolder.identifier];
 
@@ -115,7 +115,7 @@ static RetainPtr<NSString> nameForFileURLWithTypeIdentifier(NSURL *url, NSString
     return [[NSFileManager defaultManager] displayNameAtPath:retainPtr(url.path).get()];
 }
 
-static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
+static RetainPtr<LPLinkMetadata> NODELETE placeholderMetadataWithFileURL(NSURL *url)
 {
     RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
     [metadata setOriginalURL:url];
@@ -260,7 +260,7 @@ static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
     return self;
 }
 
-static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArray, const Vector<WebCore::RawFile>& files, NSURL* temporaryDirectory, bool usePlaceholderFiles, CompletionHandler<void(RetainPtr<NSMutableArray>&&)>&& completionHandler)
+static void NODELETE appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArray, const Vector<WebCore::RawFile>& files, NSURL* temporaryDirectory, bool usePlaceholderFiles, CompletionHandler<void(RetainPtr<NSMutableArray>&&)>&& completionHandler)
 {
     struct FileWriteTask {
         String fileName;

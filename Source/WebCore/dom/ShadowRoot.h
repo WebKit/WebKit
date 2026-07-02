@@ -96,7 +96,7 @@ public:
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
     Element* host() const { return m_host; }
-    inline void setHost(Element*); // Defined and only used in Element.cpp
+    inline void NODELETE setHost(Element*); // Defined and only used in Element.cpp
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
 
     Node* shadowIncludingRoot() const { return m_shadowIncludingRoot; }

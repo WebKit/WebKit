@@ -218,7 +218,7 @@ constexpr int32_t NODELETE opusConfigToBandwidth(uint8_t config)
 }
 #endif
 
-bool parseOpusTOCData(std::span<const uint8_t> frameData, OpusCookieContents& cookie)
+bool NODELETE parseOpusTOCData(std::span<const uint8_t> frameData, OpusCookieContents& cookie)
 {
 #if ENABLE(OPUS)
     if (frameData.size() < 1)

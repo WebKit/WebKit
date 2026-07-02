@@ -229,7 +229,7 @@ static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, N
 // It is useful in cases like AXObjectCache::postPlatformNotification which calls NSAccessibilityPostNotification, which in turn calls accessibilityIsIgnored, except when it is running layout tests.
 // Thus, calling exerciseIsIgnored during AXObjectCache::postPlatformNotification helps detect issues during layout tests.
 // Example of such issues is the crash described in: https://bugs.webkit.org/show_bug.cgi?id=46662.
-static void exerciseIsIgnored(AccessibilityObject& object)
+static void NODELETE exerciseIsIgnored(AccessibilityObject& object)
 {
     object.updateBackingStore();
     if (object.isAttachment()) {

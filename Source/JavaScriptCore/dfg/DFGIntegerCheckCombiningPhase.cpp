@@ -289,7 +289,7 @@ private:
         m_insertionSet.execute(block);
     }
     
-    RangeKeyAndAddend rangeKeyAndAddend(Node* node)
+    RangeKeyAndAddend NODELETE rangeKeyAndAddend(Node* node)
     {
         switch (node->op()) {
         case ArithAdd: {

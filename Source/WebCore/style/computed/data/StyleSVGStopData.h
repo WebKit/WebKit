@@ -47,7 +47,7 @@ public:
     bool operator==(const SVGStopData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGStopData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGStopData&) const;
 #endif
 
     Opacity stopOpacity;

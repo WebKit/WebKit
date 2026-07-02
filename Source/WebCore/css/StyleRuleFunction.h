@@ -41,7 +41,7 @@ public:
         RefPtr<CSSVariableData> defaultValue;
     };
 
-    static Ref<StyleRuleFunction> NODELETE create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
+    static Ref<StyleRuleFunction> create(const AtomString& name, Vector<Parameter>&&, CSSCustomPropertySyntax&& returnType, Vector<Ref<StyleRuleBase>>&&);
 
     Ref<StyleRuleFunction> copy() const { return adoptRef(*new StyleRuleFunction(*this)); }
 

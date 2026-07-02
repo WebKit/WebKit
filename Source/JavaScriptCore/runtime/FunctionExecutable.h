@@ -109,7 +109,7 @@ public:
         return codeBlockForConstruct();
     }
 
-    FunctionCodeBlock* baselineCodeBlockFor(CodeSpecializationKind);
+    FunctionCodeBlock* NODELETE baselineCodeBlockFor(CodeSpecializationKind);
         
     FunctionCodeBlock* profiledCodeBlockFor(CodeSpecializationKind kind)
     {

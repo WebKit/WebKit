@@ -60,7 +60,7 @@ private:
     void handleKeydownWithIdentifier(const String&) final;
     void displayWithActivationType(WebCore::DataListSuggestionActivationType) final;
     void close() final;
-    void detach() final;
+    void NODELETE detach() final;
 
     CheckedPtr<WebCore::DataListSuggestionsClient> m_client;
     WeakPtr<WebPage> m_page;

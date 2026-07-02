@@ -99,7 +99,7 @@ public:
     // Returns the child or parent object that crosses a local frame boundary.
     AXIsolatedObject* crossFrameParentObject() const final;
     AXIsolatedObject* crossFrameChildObject() const final;
-    bool isFrameGeometryInitialized() const final;
+    bool NODELETE isFrameGeometryInitialized() const final;
 #endif
 
     const AXTextRuns* textRuns() const;
@@ -188,24 +188,24 @@ private:
     uint64_t uint64AttributeValue(AXProperty) const;
     Style::SpeakAs speakAsAttributeValue(AXProperty) const;
     std::pair<unsigned, unsigned> indexRangePairAttributeValue(AXProperty) const;
-    template<typename T> T rectAttributeValue(AXProperty) const;
+    template<typename T> T NODELETE rectAttributeValue(AXProperty) const;
     template<typename T> Vector<T> vectorAttributeValue(AXProperty) const;
     template<typename T> std::optional<T> optionalAttributeValue(AXProperty) const;
     template<typename T> T propertyValue(AXProperty) const;
 
 #ifndef NDEBUG
     // The color of |this| without any ancestry traversal.
-    Color cachedTextColor() const;
+    Color NODELETE cachedTextColor() const;
 #if PLATFORM(COCOA)
     // The font of |this| without any ancestry traversal.
-    RetainPtr<CTFontRef> cachedFont() const;
+    RetainPtr<CTFontRef> NODELETE cachedFont() const;
 #endif // PLATFORM(COCOA)
 #endif // NDEBUG
 
     // The following method performs a lazy caching of the given property.
     // If the property is already in m_properties, returns the existing value.
     // If not, retrieves the property from the main thread and cache it for later use.
-    template<typename T> T getOrRetrievePropertyValue(AXProperty);
+    template<typename T> T NODELETE getOrRetrievePropertyValue(AXProperty);
 
     void fillChildrenVectorForProperty(AXProperty, AccessibilityChildrenVector&) const;
     void setMathscripts(AXProperty, AccessibilityObject&);
@@ -253,9 +253,9 @@ private:
     int axRowCount() const final { return intAttributeValue(AXProperty::AXRowCount); }
 
     // Table cell support.
-    bool isTableCell() const final;
+    bool NODELETE isTableCell() const final;
     bool isExposedTableCell() const final { return boolAttributeValue(AXProperty::IsExposedTableCell); }
-    AXCoreObject* parentTableIfTableCell() const final;
+    AXCoreObject* NODELETE parentTableIfTableCell() const final;
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const final { return indexRangePairAttributeValue(AXProperty::RowIndexRange); }
     // Returns the start location and column span of the cell.
@@ -273,7 +273,7 @@ private:
 
     // Table row support.
     AXCoreObject* parentTable() const final;
-    bool isTableRow() const final;
+    bool NODELETE isTableRow() const final;
     AXCoreObject* parentTableIfExposedTableRow() const final;
     bool isExposedTableRow() const final { return boolAttributeValue(AXProperty::IsExposedTableRow); }
     unsigned rowIndex() const final { return unsignedAttributeValue(AXProperty::RowIndex); }
@@ -299,8 +299,8 @@ private:
     FloatRect screenRelativeRect() const;
     IntPoint remoteFrameOffset() const final;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    IntPoint frameScreenPosition() const final;
-    AffineTransform frameScreenTransform() const final;
+    IntPoint NODELETE frameScreenPosition() const final;
+    AffineTransform NODELETE frameScreenTransform() const final;
 #endif
     std::optional<IntRect> cachedRelativeFrame() const { return optionalAttributeValue<IntRect>(AXProperty::RelativeFrame); }
 #if PLATFORM(MAC)
@@ -433,7 +433,7 @@ private:
     bool supportsCheckedState() const final { return boolAttributeValue(AXProperty::SupportsCheckedState); }
 
     String stringValue() const final;
-    std::optional<String> platformStringValue() const;
+    std::optional<String> NODELETE platformStringValue() const;
 
     // Parameterized attribute retrieval.
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const final;
@@ -477,11 +477,11 @@ private:
 #endif
     IntRect boundsForRange(const SimpleRange&) const final;
     VisiblePosition visiblePositionForPoint(const IntPoint&) const final;
-    VisiblePosition nextLineEndPosition(const VisiblePosition&) const final;
-    VisiblePosition previousLineStartPosition(const VisiblePosition&) const final;
+    VisiblePosition NODELETE nextLineEndPosition(const VisiblePosition&) const final;
+    VisiblePosition NODELETE previousLineStartPosition(const VisiblePosition&) const final;
     VisiblePosition visiblePositionForIndex(unsigned, bool lastIndexOK) const final;
     VisiblePosition visiblePositionForIndex(int) const final;
-    int indexForVisiblePosition(const VisiblePosition&) const final;
+    int NODELETE indexForVisiblePosition(const VisiblePosition&) const final;
     int lineForPosition(const VisiblePosition&) const final;
 
     // Attribute setters.
@@ -524,17 +524,17 @@ private:
     bool isAccessibilityObject() const final { return false; }
 
     // Functions that should never be called on an isolated tree object. ASSERT that these are not reached;
-    bool isAccessibilityRenderObject() const final;
-    bool isAccessibilityNodeObject() const final;
+    bool NODELETE isAccessibilityRenderObject() const final;
+    bool NODELETE isAccessibilityNodeObject() const final;
     bool isAXLocalFrame() const final { return false; }
     bool isAXRemoteFrame() const final { return false; }
-    bool isNativeTextControl() const final;
-    bool isMockObject() const final;
-    bool isNonNativeTextControl() const final;
+    bool NODELETE isNativeTextControl() const final;
+    bool NODELETE isMockObject() const final;
+    bool NODELETE isNonNativeTextControl() const final;
     bool isIndeterminate() const final { return boolAttributeValue(AXProperty::IsIndeterminate); }
     bool isLoaded() const final { return loadingProgress() >= 1; }
     bool isOnScreen() const final;
-    bool isOffScreen() const final;
+    bool NODELETE isOffScreen() const final;
     bool isPressed() const final;
     bool isNonLayerSVGObject() const { return boolAttributeValue(AXProperty::IsNonLayerSVGObject); }
     // FIXME: isVisible should be accurate for all objects, not just widgets, on COCOA.
@@ -549,35 +549,35 @@ private:
     bool hasSameStyle(AXCoreObject&) final;
     bool hasUnderline() const final { return colorAttributeValue(AXProperty::UnderlineColor) != Accessibility::defaultColor(); }
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
-    Element* element() const final;
+    Element* NODELETE element() const final;
     Node* NODELETE node() const final;
-    RenderObject* renderer() const final;
+    RenderObject* NODELETE renderer() const final;
 
     AccessibilityChildrenVector relatedObjects(AXRelation) const final;
 
-    bool supportsHasPopup() const final;
-    bool supportsChecked() const final;
-    bool isModalNode() const final;
+    bool NODELETE supportsHasPopup() const final;
+    bool NODELETE supportsChecked() const final;
+    bool NODELETE isModalNode() const final;
     bool isDescendantOfRole(AccessibilityRole) const final;
     bool inheritsPresentationalRole() const final;
-    void setAccessibleName(const AtomString&) final;
+    void NODELETE setAccessibleName(const AtomString&) final;
 
     String textContentPrefixFromListMarker() const final;
     String webAreaTitle() const final { return stringAttributeValue(AXProperty::WebAreaTitle); }
     String titleAttribute() const final { return stringAttributeValue(AXProperty::TitleAttribute); }
 
-    std::optional<String> textContent() const final;
+    std::optional<String> NODELETE textContent() const final;
     std::optional<AXStitchGroup> stitchGroup(IncludeGroupMembers = IncludeGroupMembers::Yes) const final;
     const Vector<AXStitchGroup>* stitchGroupsView() const;
 
-    String text() const final;
-    unsigned textLength() const final;
+    String NODELETE text() const final;
+    unsigned NODELETE textLength() const final;
     String revealableText() const final { return stringAttributeValue(AXProperty::RevealableText); }
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const final;
 #endif
     AXObjectCache* NODELETE axObjectCache() const;
-    Element* actionElement() const final;
+    Element* NODELETE actionElement() const final;
     Path elementPath() const final;
     bool supportsPath() const final;
 
@@ -598,7 +598,7 @@ private:
     Page* page() const final;
     Document* document() const final;
     LocalFrameView* documentFrameView() const final;
-    void detachFromParent() final;
+    void NODELETE detachFromParent() final;
 
     bool isInDescriptionListTerm() const final;
 

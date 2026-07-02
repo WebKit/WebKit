@@ -107,7 +107,7 @@ public:
 
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 
-    JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
+    JS_EXPORT_PRIVATE static size_t NODELETE estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
     JS_EXPORT_PRIVATE static String calculatedClassName(JSObject*);
@@ -116,7 +116,7 @@ public:
     // in the ECMAScript 6 specification. Use this when doing a [[GetPrototypeOf]] 
     // operation as dictated in the specification.
     JSValue getPrototype(JSGlobalObject*); // defined in JSObjectInlines.h
-    JS_EXPORT_PRIVATE static JSValue getPrototype(JSObject*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static JSValue NODELETE getPrototype(JSObject*, JSGlobalObject*);
     // This gets the prototype directly off of the structure. This does not do
     // dynamic dispatch on the getPrototype method table method. It is not valid 
     // to use this when performing a [[GetPrototypeOf]] operation in the specification.
@@ -767,7 +767,7 @@ protected:
     void reallocateAndShrinkButterfly(VM&, unsigned length);
     
     template<IndexingType indexingShape>
-    unsigned NODELETE countElements(Butterfly*);
+    unsigned countElements(Butterfly*);
         
     // This is relevant to undecided, int32, double, and contiguous.
     unsigned countElements();
@@ -792,7 +792,7 @@ private:
     ASCIILiteral putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
 
     JS_EXPORT_PRIVATE NEVER_INLINE ASCIILiteral putDirectToDictionaryWithoutExtensibility(VM&, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE void fillGetterPropertySlot(VM&, PropertySlot&, JSCell*, unsigned, PropertyOffset);
+    JS_EXPORT_PRIVATE void NODELETE fillGetterPropertySlot(VM&, PropertySlot&, JSCell*, unsigned, PropertyOffset);
     void fillCustomGetterPropertySlot(PropertySlot&, CustomGetterSetter*, unsigned, Structure*);
 
     JS_EXPORT_PRIVATE bool getOwnStaticPropertySlot(VM&, PropertyName, PropertySlot&);
@@ -851,9 +851,9 @@ public:
     }
 
     // Visits the butterfly unless there is a race. Returns the structure if there was no race.
-    template<typename Visitor> Structure* visitButterfly(Visitor&);
+    template<typename Visitor> Structure* NODELETE visitButterfly(Visitor&);
     template<typename Visitor> Structure* visitButterflyImpl(Visitor&);
-    template<typename Visitor> void markAuxiliaryAndVisitOutOfLineProperties(Visitor&, Butterfly*, Structure*, PropertyOffset maxOffset);
+    template<typename Visitor> void NODELETE markAuxiliaryAndVisitOutOfLineProperties(Visitor&, Butterfly*, Structure*, PropertyOffset maxOffset);
 
 protected:
     JSObjectWithButterfly(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)

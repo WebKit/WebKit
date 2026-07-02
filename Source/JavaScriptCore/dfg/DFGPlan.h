@@ -109,7 +109,7 @@ private:
     CompilationPath compileInThreadImpl() override;
     void finalizeInThread(Ref<JSC::JITCode>);
     
-    bool isStillValidCodeBlock();
+    bool NODELETE isStillValidCodeBlock();
     bool reallyAdd(CommonData*);
 
     // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.

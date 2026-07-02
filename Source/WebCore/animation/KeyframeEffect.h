@@ -147,7 +147,7 @@ public:
 
     void willChangeRenderer();
 
-    Document* document() const final;
+    Document* NODELETE document() const final;
     RenderElement* renderer() const final;
     const Style::ComputedStyle& currentStyle() const LIFETIME_BOUND final;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
@@ -286,8 +286,8 @@ private:
     Seconds timeToNextTick(const BasicEffectTiming&) final;
     bool ticksContinuouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
-    bool preventsAnimationReadiness() const final;
-    void animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&) final;
+    bool NODELETE preventsAnimationReadiness() const final;
+    void NODELETE animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&) final;
 
     RefPtr<const ScrollTimeline> activeScrollTimeline() const;
     void updateComputedKeyframeOffsetsIfNeeded();

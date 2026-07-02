@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const AudioStreamDescription& description, std::span<const uint8_t> magicCookie)
+RetainPtr<CMFormatDescriptionRef> NODELETE createAudioFormatDescription(const AudioStreamDescription& description, std::span<const uint8_t> magicCookie)
 {
     auto basicDescription = std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
     CMFormatDescriptionRef format = nullptr;

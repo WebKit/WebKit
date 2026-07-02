@@ -84,7 +84,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     JSString** singleCharacterStrings() { return &m_singleCharacterStrings[0]; }
 
     void initializeCommonStrings(VM&);
-    template<typename Visitor> void visitStrongReferences(Visitor&);
+    template<typename Visitor> void NODELETE visitStrongReferences(Visitor&);
 
 #define JSC_COMMON_STRINGS_ACCESSOR_DEFINITION(name) \
     JSString* name##String() const                   \

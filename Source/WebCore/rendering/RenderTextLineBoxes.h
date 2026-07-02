@@ -42,7 +42,7 @@ public:
 
     LegacyInlineTextBox* createAndAppendLineBox(RenderSVGInlineText&);
 
-    void NODELETE remove(LegacyInlineTextBox&);
+    void remove(LegacyInlineTextBox&);
 
     void removeAllFromParent(RenderSVGInlineText&);
     void deleteAll();
@@ -54,7 +54,7 @@ public:
 #endif
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    void invalidateParentChildLists();
+    void NODELETE invalidateParentChildLists();
 #endif
 
 private:

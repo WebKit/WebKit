@@ -186,7 +186,7 @@ public:
     WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&, IntSize, double);
     WEBCORE_EXPORT void removeVideoFrameObserver(VideoFrameObserver&);
 
-    virtual const IntSize size() const;
+    virtual const IntSize NODELETE size() const;
     void setSize(const IntSize&);
 
     IntSize NODELETE intrinsicSize() const;
@@ -216,7 +216,7 @@ public:
 
     int sampleSize() const { return m_sampleSize; }
     void setSampleSize(int);
-    virtual std::optional<Vector<int>> discreteSampleSizes() const;
+    virtual std::optional<Vector<int>> NODELETE discreteSampleSizes() const;
 
     bool echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(bool);
@@ -261,8 +261,8 @@ public:
     virtual bool isMockSource() const { return false; }
     virtual bool isCaptureSource() const { return false; }
     virtual CaptureDevice::DeviceType deviceType() const { return CaptureDevice::DeviceType::Unknown; }
-    WEBCORE_EXPORT virtual VideoFrameRotation videoFrameRotation() const;
-    WEBCORE_EXPORT virtual IntSize computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize);
+    WEBCORE_EXPORT virtual VideoFrameRotation NODELETE videoFrameRotation() const;
+    WEBCORE_EXPORT virtual IntSize NODELETE computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize);
 
     virtual void monitorOrientation(OrientationNotifier&) { }
 
@@ -278,7 +278,7 @@ public:
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "RealtimeMediaSource"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     // Testing only

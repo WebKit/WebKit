@@ -66,11 +66,11 @@ public:
     virtual ~SOAuthorizationSession();
 
     // Probably not start immediately.
-    void shouldStart();
+    void NODELETE shouldStart();
 
     // The following should only be called by SOAuthorizationDelegate methods.
     enum class UserCancel : bool { No, Yes };
-    void fallBackToWebPath(UserCancel = UserCancel::No);
+    void NODELETE fallBackToWebPath(UserCancel = UserCancel::No);
     void abort();
     // Only responses that meet all of the following requirements will be processed:
     // 1) it has the same origin as the request;
@@ -78,7 +78,7 @@ public:
     // Otherwise, it falls back to the web path.
     // Only the following HTTP headers will be processed:
     // { Set-Cookie, Location }.
-    void complete(NSHTTPURLResponse *, NSData *);
+    void NODELETE complete(NSHTTPURLResponse *, NSData *);
     void presentViewController(SOAuthorizationViewController, UICallback);
 
 protected:
@@ -92,11 +92,11 @@ protected:
 
     SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction);
 
-    void start();
-    virtual void beginAuthorizationIfReady();
+    void NODELETE start();
+    virtual void NODELETE beginAuthorizationIfReady();
     WebPageProxy* page() const { return m_page.get(); }
     State state() const { return m_state; }
-    ASCIILiteral stateString() const;
+    ASCIILiteral NODELETE stateString() const;
     ASCIILiteral NODELETE initiatingActionString() const;
     void setState(State state) { m_state = state; }
     const API::NavigationAction* navigationAction() { return m_navigationAction.get(); }
@@ -109,13 +109,13 @@ private:
     virtual void abortInternal() = 0;
     virtual void completeInternal(const WebCore::ResourceResponse&, NSData *) = 0;
 
-    void becomeCompleted();
-    void dismissViewController();
+    void NODELETE becomeCompleted();
+    void NODELETE dismissViewController();
 #if PLATFORM(MAC)
-    void dismissModalSheetIfNecessary();
+    void NODELETE dismissModalSheetIfNecessary();
 #endif
-    void continueStartAfterGetAuthorizationHints(const String&);
-    void continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
+    void NODELETE continueStartAfterGetAuthorizationHints(const String&);
+    void NODELETE continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
 
     virtual bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) { return false; }
     State m_state  { State::Idle };

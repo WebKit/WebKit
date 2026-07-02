@@ -298,7 +298,7 @@ private:
         fixJettisonedPredecessors(block, jettisonedBlock);
     }
     
-    void fixJettisonedPredecessors(BasicBlock* block, BasicBlock* jettisonedBlock)
+    void NODELETE fixJettisonedPredecessors(BasicBlock* block, BasicBlock* jettisonedBlock)
     {
         jettisonedBlock->removePredecessor(block);
     }

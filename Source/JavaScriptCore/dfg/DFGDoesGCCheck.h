@@ -81,7 +81,7 @@ struct DoesGCCheck {
     unsigned nodeIndex() { return u.nodeIndex; }
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
-    JS_EXPORT_PRIVATE void verifyCanGC(VM&);
+    JS_EXPORT_PRIVATE void NODELETE verifyCanGC(VM&);
 #endif
 
 private:

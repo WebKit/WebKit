@@ -34,7 +34,7 @@
 #include "WebImage.h"
 #include <WebCore/HTMLTextFormControlElement.h>
 
-static WebCore::AutoFillButtonType toAutoFillButtonType(WKAutoFillButtonType wkAutoFillButtonType)
+static WebCore::AutoFillButtonType NODELETE toAutoFillButtonType(WKAutoFillButtonType wkAutoFillButtonType)
 {
     switch (wkAutoFillButtonType) {
     case kWKAutoFillButtonTypeNone:
@@ -54,7 +54,7 @@ static WebCore::AutoFillButtonType toAutoFillButtonType(WKAutoFillButtonType wkA
     return WebCore::AutoFillButtonType::None;
 }
 
-static WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType autoFillButtonType)
+static WKAutoFillButtonType NODELETE toWKAutoFillButtonType(WebCore::AutoFillButtonType autoFillButtonType)
 {
     switch (autoFillButtonType) {
     case WebCore::AutoFillButtonType::None:

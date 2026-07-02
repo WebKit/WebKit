@@ -75,7 +75,7 @@ public:
     ~AudioVideoRendererAVFObjC();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
-    WEBCORE_EXPORT void setPreferences(VideoRendererPreferences) final;
+    WEBCORE_EXPORT void NODELETE setPreferences(VideoRendererPreferences) final;
     void setHasProtectedVideoContent(bool) final;
 
     // TracksRendererInterface
@@ -87,8 +87,8 @@ public:
     Ref<RequestPromise> requestMediaDataWhenReady(TrackIdentifier) final;
     void notifyTrackNeedsReenqueuing(TrackIdentifier, Function<void(TrackIdentifier, const MediaTime&)>&&) final;
 
-    bool timeIsProgressing() const final;
-    MediaTime currentTime() const final;
+    bool NODELETE timeIsProgressing() const final;
+    MediaTime NODELETE currentTime() const final;
     Ref<MediaTimePromise> notifyTimeReachedAndStall(const MediaTime&) final;
     void cancelTimeReachedAction() final;
     void performTaskAtTime(const MediaTime&, Function<void(const MediaTime&)>&&) final;
@@ -105,14 +105,14 @@ public:
     // SynchronizerInterface
     void play(std::optional<MonotonicTime>) final;
     void pause(std::optional<MonotonicTime>) final;
-    bool paused() const final;
+    bool NODELETE paused() const final;
     void setRate(double) final;
-    double effectiveRate() const final;
+    double NODELETE effectiveRate() const final;
     void stall() final;
     Ref<MediaTimePromise> prepareToSeek(const MediaTime&) final;
     Ref<GenericPromise> finishSeek(const MediaTime&) final;
     void notifyEffectiveRateChanged(Function<void(double)>&&) final;
-    bool seeking() const final;
+    bool NODELETE seeking() const final;
     void setScreenReserved(bool) final;
     SharedTimebase* sharedTimebase() final { return m_sharedTimebase.get(); }
 
@@ -127,8 +127,8 @@ public:
 #endif
 
     // VideoInterface
-    void setIsVisible(bool);
-    void setPresentationSize(const IntSize&) final;
+    void NODELETE setIsVisible(bool);
+    void NODELETE setPresentationSize(const IntSize&) final;
     void setShouldMaintainAspectRatio(bool) final;
     WEBCORE_EXPORT void renderingCanBeAcceleratedChanged(bool) final;
     void contentBoxRectChanged(const LayoutRect&) final;
@@ -146,7 +146,7 @@ public:
     RefPtr<NativeImage> currentNativeImage() const final;
     Ref<BitmapImagePromise> currentBitmapImage() const final;
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
-    PlatformLayer* platformVideoLayer() const final;
+    PlatformLayer* NODELETE platformVideoLayer() const final;
     void setVideoLayerSize(const FloatSize&) final;
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) final;
 
@@ -156,7 +156,7 @@ public:
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
     Ref<GenericPromise> setVideoTarget(const PlatformVideoTarget&) final;
-    void isInFullscreenOrPictureInPictureChanged(bool) final;
+    void NODELETE isInFullscreenOrPictureInPictureChanged(bool) final;
 
 private:
     WEBCORE_EXPORT AudioVideoRendererAVFObjC(const Logger&, uint64_t, std::unique_ptr<SharedTimebase>&&);
@@ -164,7 +164,7 @@ private:
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
     void setTimeFloor(const MediaTime&);
     void maybeCompleteSeek();
-    bool shouldBePlaying() const;
+    bool NODELETE shouldBePlaying() const;
     bool allRenderersHaveAvailableSamples() const { return m_allRenderersHaveAvailableSamples; }
     void updateAllRenderersHaveAvailableSamples();
     void setHasAvailableVideoFrame(bool);
@@ -235,7 +235,7 @@ private:
     void cancelStartupGateObserver();
     void updateSharedTimebase();
     void publishSnapshot(MediaTime currentTime, double playbackRate);
-    void periodicSharedTimerFired() final;
+    void NODELETE periodicSharedTimerFired() final;
     bool updateLastPixelBuffer();
     void maybePurgeLastPixelBuffer();
     void setNeedsPlaceholderImage(bool);
@@ -267,7 +267,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "AudioVideoRendererAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     enum SeekState {
         Seeking,

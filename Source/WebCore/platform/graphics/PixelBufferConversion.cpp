@@ -245,7 +245,7 @@ static void NODELETE convertSinglePixelPremultipliedToPremultiplied(std::span<co
 }
 
 template<PixelFormatConversion pixelFormatConversion>
-static void convertSinglePixelPremultipliedToUnpremultiplied(std::span<const uint8_t, 4> sourcePixel, std::span<uint8_t, 4> destinationPixel)
+static void NODELETE convertSinglePixelPremultipliedToUnpremultiplied(std::span<const uint8_t, 4> sourcePixel, std::span<uint8_t, 4> destinationPixel)
 {
     uint8_t alpha = sourcePixel[3];
     if (!alpha || alpha == 255) {
@@ -268,7 +268,7 @@ static void convertSinglePixelPremultipliedToUnpremultiplied(std::span<const uin
 }
 
 template<PixelFormatConversion pixelFormatConversion>
-static void convertSinglePixelUnpremultipliedToPremultiplied(std::span<const uint8_t, 4> sourcePixel, std::span<uint8_t, 4> destinationPixel)
+static void NODELETE convertSinglePixelUnpremultipliedToPremultiplied(std::span<const uint8_t, 4> sourcePixel, std::span<uint8_t, 4> destinationPixel)
 {
     uint8_t alpha = sourcePixel[3];
     if (!alpha || alpha == 255) {

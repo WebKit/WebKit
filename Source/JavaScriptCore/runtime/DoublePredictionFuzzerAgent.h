@@ -37,7 +37,7 @@ class DoublePredictionFuzzerAgent final : public FuzzerAgent {
 public:
     DoublePredictionFuzzerAgent(VM&);
 
-    SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType) final;
+    SpeculatedType NODELETE getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType) final;
 };
 
 } // namespace JSC

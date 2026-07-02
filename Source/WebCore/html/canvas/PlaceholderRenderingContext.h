@@ -72,14 +72,14 @@ public:
 
     PlaceholderRenderingContextSource& source() const { return m_source; }
 
-    RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
-    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final;
-    void didUpdateCanvasSizeProperties(bool) final;
+    RefPtr<ImageBuffer> NODELETE surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    bool NODELETE isSurfaceBufferTransparentBlack(SurfaceBuffer) const final;
+    void NODELETE didUpdateCanvasSizeProperties(bool) final;
 
 private:
     PlaceholderRenderingContext(HTMLCanvasElement&);
     void setContentsToLayer(GraphicsLayer&) final;
-    PixelFormat pixelFormat() const final;
+    PixelFormat NODELETE pixelFormat() const final;
     bool isOpaque() const final { return m_opaque; }
 
     const Ref<PlaceholderRenderingContextSource> m_source;

@@ -63,7 +63,7 @@ public:
     void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
     void didFinishLoading(LegacyCustomProtocolID);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:

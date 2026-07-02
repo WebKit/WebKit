@@ -45,7 +45,7 @@ public:
     TextDecorationPainter(GraphicsContext&, const FontCascade&, const Style::TextShadows&, const Style::AppleColorFilter&, bool isPrinting, WritingMode);
 
     struct Styles {
-        bool NODELETE operator==(const Styles&) const;
+        bool operator==(const Styles&) const;
 
         struct DecorationStyleAndColor {
             Color color;

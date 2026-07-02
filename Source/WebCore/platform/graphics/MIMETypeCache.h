@@ -53,10 +53,10 @@ protected:
     void addSupportedTypes(const Vector<String>&);
 
 private:
-    virtual bool isStaticContainerType(StringView);
-    virtual bool isUnsupportedContainerType(const String&);
+    virtual bool NODELETE isStaticContainerType(StringView);
+    virtual bool NODELETE isUnsupportedContainerType(const String&);
     virtual void initializeCache(HashSet<String>&);
-    virtual bool canDecodeExtendedType(const ContentType&);
+    virtual bool NODELETE canDecodeExtendedType(const ContentType&);
 
     bool shouldOverrideExtendedType(const ContentType&);
 

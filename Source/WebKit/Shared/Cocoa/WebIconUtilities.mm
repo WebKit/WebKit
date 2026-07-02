@@ -54,7 +54,7 @@ namespace WebKit {
 
 static const CGFloat iconSideLength = 100;
 
-static CGRect squareCropRectForSize(CGSize size)
+static CGRect NODELETE squareCropRectForSize(CGSize size)
 {
     CGFloat smallerSide = std::min(size.width, size.height);
     CGRect cropRect = CGRectMake(0, 0, smallerSide, smallerSide);
@@ -67,7 +67,7 @@ static CGRect squareCropRectForSize(CGSize size)
     return cropRect;
 }
 
-static WebCore::PlatformImagePtr squareImage(CGImageRef image)
+static WebCore::PlatformImagePtr NODELETE squareImage(CGImageRef image)
 {
     if (!image)
         return nil;
@@ -80,7 +80,7 @@ static WebCore::PlatformImagePtr squareImage(CGImageRef image)
     return adoptCF(CGImageCreateWithImageInRect(image, squareCropRect));
 }
 
-static RetainPtr<CocoaImage> thumbnailSizedImageForImage(CGImageRef image)
+static RetainPtr<CocoaImage> NODELETE thumbnailSizedImageForImage(CGImageRef image)
 {
     auto squaredImage = squareImage(image);
     if (!squaredImage)
@@ -168,7 +168,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return thumbnailSizedImageForImage(imageRef.get());
 }
 
-RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames)
+RetainPtr<CocoaImage> NODELETE iconForFiles(const Vector<String>& filenames)
 {
     if (!filenames.size())
         return nil;

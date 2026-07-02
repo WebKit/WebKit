@@ -83,13 +83,13 @@ private:
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<FileSystemStorageConnection> createFileSystemStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
-    RefPtr<IDBClient::IDBConnectionProxy> createIDBConnectionProxy() final;
+    RefPtr<IDBClient::IDBConnectionProxy> NODELETE createIDBConnectionProxy() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
+    ScriptExecutionContextIdentifier NODELETE loaderContextIdentifier() const final;
 
     // WorkerDebuggerProxy.
-    void postMessageToDebugger(const String&) final;
-    void setResourceCachingDisabledByWebInspector(bool) final;
+    void NODELETE postMessageToDebugger(const String&) final;
+    void NODELETE setResourceCachingDisabledByWebInspector(bool) final;
 
     // WorkerBadgeProxy
     void setAppBadge(std::optional<uint64_t>) final;
@@ -97,7 +97,7 @@ private:
     static void networkStateChanged(bool isOnLine);
     void notifyNetworkStateChange(bool isOnline);
 
-    ReportingClient* reportingClient() const final;
+    ReportingClient* NODELETE reportingClient() const final;
 
     const Ref<Page> m_page;
     const Ref<Document> m_document;

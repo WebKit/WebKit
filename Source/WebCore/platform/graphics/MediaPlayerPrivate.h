@@ -347,7 +347,7 @@ public:
     virtual bool playAtHostTime(const MonotonicTime&) { return false; }
     virtual bool pauseAtHostTime(const MonotonicTime&) { return false; }
 
-    virtual std::optional<VideoFrameMetadata> videoFrameMetadata();
+    virtual std::optional<VideoFrameMetadata> NODELETE videoFrameMetadata();
     virtual void startVideoFrameMetadataGathering() { }
     virtual void stopVideoFrameMetadataGathering() { }
 

@@ -132,9 +132,9 @@ public:
     void firstVideoFrameAvailable();
     void renderingModeChanged();
 #if PLATFORM(COCOA)
-    void layerHostingContextChanged(WebCore::HostingContext&&, const WebCore::FloatSize&);
-    WebCore::FloatSize videoLayerSize() const final;
-    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
+    void NODELETE layerHostingContextChanged(WebCore::HostingContext&&, const WebCore::FloatSize&);
+    WebCore::FloatSize NODELETE videoLayerSize() const final;
+    void NODELETE setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
 #endif
 
     void currentTimeChanged(MediaTimeUpdateData&&);
@@ -189,7 +189,7 @@ public:
     void getRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const;
 #endif
 
-    WebCore::FloatSize naturalSize() const final;
+    WebCore::FloatSize NODELETE naturalSize() const final;
 
 #if !RELEASE_LOG_DISABLED
     uint64_t mediaPlayerLogIdentifier() const { return logIdentifier(); }
@@ -197,7 +197,7 @@ public:
 #endif
 
     void requestHostingContext(LayerHostingContextCallback&&) override;
-    WebCore::HostingContext hostingContext() const override;
+    WebCore::HostingContext NODELETE hostingContext() const override;
     void setLayerHostingContext(WebCore::HostingContext&&);
 
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
@@ -244,7 +244,7 @@ private:
     const Logger& logger() const final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateRemote"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
@@ -275,12 +275,12 @@ private:
     void setPreservesPitch(bool) final;
     void setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm) final;
 
-    bool shouldIgnoreIntrinsicSize() final;
+    bool NODELETE shouldIgnoreIntrinsicSize() final;
 
     PlatformLayer* platformLayer() const final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    PlatformLayerContainer createVideoFullscreenLayer() final;
+    PlatformLayerContainer NODELETE createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) final;
     void updateVideoFullscreenInlineImage() final;
     void setVideoFullscreenFrame(const WebCore::FloatRect&) final;
@@ -297,51 +297,51 @@ private:
 
     void setBufferingPolicy(WebCore::MediaPlayer::BufferingPolicy) final;
 
-    bool supportsPictureInPicture() const final;
-    bool supportsFullscreen() const final;
-    bool supportsScanning() const final;
+    bool NODELETE supportsPictureInPicture() const final;
+    bool NODELETE supportsFullscreen() const final;
+    bool NODELETE supportsScanning() const final;
 
-    bool canSaveMediaData() const final;
+    bool NODELETE canSaveMediaData() const final;
 
-    bool hasVideo() const final;
-    bool hasAudio() const final;
+    bool NODELETE hasVideo() const final;
+    bool NODELETE hasAudio() const final;
 
     void setPageIsVisible(bool) final;
     void setViewportVisibility(ViewportVisibility) final;
 
-    MediaTime getStartDate() const final;
+    MediaTime NODELETE getStartDate() const final;
 
     void willSeekToTarget(const MediaTime&) final;
-    MediaTime pendingSeekTime() const final;
+    MediaTime NODELETE pendingSeekTime() const final;
     void seekToTarget(const WebCore::SeekTarget&) final;
-    bool seeking() const final;
+    bool NODELETE seeking() const final;
 
-    MediaTime startTime() const final;
+    MediaTime NODELETE startTime() const final;
 
     void setRateDouble(double) final;
 
     bool paused() const final { return m_cachedState.paused; }
-    bool timeIsProgressing() const final;
+    bool NODELETE timeIsProgressing() const final;
 
 #if PLATFORM(IOS_FAMILY) || USE(GSTREAMER)
     float volume() const final { return 1; }
 #endif
 
-    bool hasClosedCaptions() const final;
+    bool NODELETE hasClosedCaptions() const final;
 
-    double maxFastForwardRate() const final;
-    double minFastReverseRate() const final;
+    double NODELETE maxFastForwardRate() const final;
+    double NODELETE minFastReverseRate() const final;
 
     WebCore::MediaPlayer::NetworkState networkState() const final { return m_cachedState.networkState; }
 
-    MediaTime maxTimeSeekable() const final;
-    MediaTime minTimeSeekable() const final;
-    const WebCore::PlatformTimeRanges& buffered() const final;
-    double seekableTimeRangesLastModifiedTime() const final;
-    double liveUpdateInterval() const final;
+    MediaTime NODELETE maxTimeSeekable() const final;
+    MediaTime NODELETE minTimeSeekable() const final;
+    const WebCore::PlatformTimeRanges& NODELETE buffered() const final;
+    double NODELETE seekableTimeRangesLastModifiedTime() const final;
+    double NODELETE liveUpdateInterval() const final;
 
-    unsigned long long totalBytes() const final;
-    bool didLoadingProgress() const final;
+    unsigned long long NODELETE totalBytes() const final;
+    bool NODELETE didLoadingProgress() const final;
     void didLoadingProgressAsync(WebCore::MediaPlayer::DidLoadingProgressCompletionHandler&&) const final;
 
     void setPresentationSize(const WebCore::IntSize&) final;
@@ -349,8 +349,8 @@ private:
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
-    RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
-    WebCore::DestinationColorSpace colorSpace() final;
+    RefPtr<WebCore::NativeImage> NODELETE nativeImageForCurrentTime() final;
+    WebCore::DestinationColorSpace NODELETE colorSpace() final;
     Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
 #if PLATFORM(COCOA)
     bool shouldGetNativeImageForCanvasDrawing() const final { return false; }
@@ -358,49 +358,49 @@ private:
 
     void setPreload(WebCore::MediaPlayer::Preload) final;
 
-    bool hasAvailableVideoFrame() const final;
+    bool NODELETE hasAvailableVideoFrame() const final;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    String wirelessPlaybackTargetName() const final;
-    WebCore::MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
+    String NODELETE wirelessPlaybackTargetName() const final;
+    WebCore::MediaPlayer::WirelessPlaybackTargetType NODELETE wirelessPlaybackTargetType() const final;
 
-    bool wirelessVideoPlaybackDisabled() const final;
+    bool NODELETE wirelessVideoPlaybackDisabled() const final;
     void setWirelessVideoPlaybackDisabled(bool) final;
 
-    OptionSet<WebCore::MediaPlaybackTargetType> supportedPlaybackTargetTypes() const final;
-    bool isCurrentPlaybackTargetWireless() const final;
+    OptionSet<WebCore::MediaPlaybackTargetType> NODELETE supportedPlaybackTargetTypes() const final;
+    bool NODELETE isCurrentPlaybackTargetWireless() const final;
     void setWirelessPlaybackTarget(Ref<WebCore::MediaPlaybackTarget>&&) final;
 
     void setShouldPlayToPlaybackTarget(bool) final;
 #endif
 
-    bool supportsAcceleratedRendering() const final;
+    bool NODELETE supportsAcceleratedRendering() const final;
     void acceleratedRenderingStateChanged() final;
 
     void setShouldMaintainAspectRatio(bool) final;
 
-    bool didPassCORSAccessCheck() const final;
+    bool NODELETE didPassCORSAccessCheck() const final;
     std::optional<bool> isCrossOrigin(const WebCore::SecurityOrigin&) const final;
 
-    WebCore::MediaPlayer::MovieLoadType movieLoadType() const final;
+    WebCore::MediaPlayer::MovieLoadType NODELETE movieLoadType() const final;
 
     void prepareForRendering() final;
 
-    MediaTime mediaTimeForTimeValue(const MediaTime& timeValue) const final;
+    MediaTime NODELETE mediaTimeForTimeValue(const MediaTime& timeValue) const final;
 
-    unsigned decodedFrameCount() const final;
-    unsigned droppedFrameCount() const final;
-    unsigned audioDecodedByteCount() const final;
-    unsigned videoDecodedByteCount() const final;
+    unsigned NODELETE decodedFrameCount() const final;
+    unsigned NODELETE droppedFrameCount() const final;
+    unsigned NODELETE audioDecodedByteCount() const final;
+    unsigned NODELETE videoDecodedByteCount() const final;
 
-    String engineDescription() const final;
+    String NODELETE engineDescription() const final;
 
 #if ENABLE(WEB_AUDIO)
     WebCore::AudioSourceProvider* audioSourceProvider() final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RefPtr<WebCore::LegacyCDMSession> createSession(const String&, WebCore::LegacyCDMSessionClient&) final;
+    RefPtr<WebCore::LegacyCDMSession> NODELETE createSession(const String&, WebCore::LegacyCDMSessionClient&) final;
     void setCDM(WebCore::LegacyCDM*) final;
     void setCDMSession(WebCore::LegacyCDMSession*) final;
     void keyAdded() final;
@@ -411,7 +411,7 @@ private:
     void cdmInstanceAttached(WebCore::CDMInstance&) final;
     void cdmInstanceDetached(WebCore::CDMInstance&) final;
     void attemptToDecryptWithInstance(WebCore::CDMInstance&) final;
-    bool waitingForKey() const final;
+    bool NODELETE waitingForKey() const final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
@@ -423,9 +423,9 @@ private:
 
     void tracksChanged() final;
 
-    String languageOfPrimaryAudioTrack() const final;
+    String NODELETE languageOfPrimaryAudioTrack() const final;
 
-    size_t extraMemoryCost() const final;
+    size_t NODELETE extraMemoryCost() const final;
 
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void updateVideoPlaybackMetricsUpdateInterval(const Seconds&);
@@ -451,7 +451,7 @@ private:
     bool pauseAtHostTime(const MonotonicTime&) final;
     void updateConfiguration(RemoteMediaPlayerConfiguration&&);
 
-    std::optional<WebCore::VideoFrameMetadata> videoFrameMetadata() final;
+    std::optional<WebCore::VideoFrameMetadata> NODELETE videoFrameMetadata() final;
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
 
@@ -483,7 +483,7 @@ private:
     void soundStageSizeDidChange() final;
 
 #if PLATFORM(COCOA)
-    void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
+    void NODELETE pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protect(manager()->gpuProcessConnection())->videoFrameObjectHeapProxy(); }
 

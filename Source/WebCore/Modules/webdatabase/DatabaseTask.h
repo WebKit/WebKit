@@ -108,7 +108,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    ASCIILiteral debugTaskName() const final;
+    ASCIILiteral NODELETE debugTaskName() const final;
 #endif
 
     bool m_setVersionInNewDatabase;
@@ -123,7 +123,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    ASCIILiteral debugTaskName() const final;
+    ASCIILiteral NODELETE debugTaskName() const final;
 #endif
 };
 
@@ -138,7 +138,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    ASCIILiteral debugTaskName() const final;
+    ASCIILiteral NODELETE debugTaskName() const final;
 #endif
 
     const RefPtr<SQLTransaction> m_transaction;
@@ -153,7 +153,7 @@ private:
     void doPerformTask() final;
 
 #if !LOG_DISABLED
-    ASCIILiteral debugTaskName() const override;
+    ASCIILiteral NODELETE debugTaskName() const override;
 #endif
 
     Vector<String>& m_result;

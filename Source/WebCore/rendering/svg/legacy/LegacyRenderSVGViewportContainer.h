@@ -42,7 +42,7 @@ public:
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
     bool didTransformToRootUpdate() override { return m_didTransformToRootUpdate; }
 
-    void determineIfLayoutSizeChanged() override;
+    void NODELETE determineIfLayoutSizeChanged() override;
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
     void paint(PaintInfo&, const LayoutPoint&) override;
@@ -59,7 +59,7 @@ private:
     bool calculateLocalTransform() override;
 
     void applyViewportClip(PaintInfo&) override;
-    bool pointIsInsideViewportClip(const FloatPoint& pointInParent) override;
+    bool NODELETE pointIsInsideViewportClip(const FloatPoint& pointInParent) override;
 
     bool m_didTransformToRootUpdate : 1 { false };
     bool m_isLayoutSizeChanged : 1 { false };

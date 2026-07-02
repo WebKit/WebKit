@@ -57,7 +57,7 @@ public:
 
     void setMuted(bool muted) { m_muted = muted; }
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
-    bool NODELETE isConnected() const;
+    bool isConnected() const;
 
 #if PLATFORM(IOS_FAMILY)
     void setSceneIdentifier(const String&) final;
@@ -87,7 +87,7 @@ private:
 
     void enableInput(const String& inputDeviceId) final;
     void restartRendering() final;
-    unsigned maxChannelCount() const final;
+    unsigned NODELETE maxChannelCount() const final;
 
     RefPtr<AudioDestination> m_destination;
     String m_inputDeviceId;

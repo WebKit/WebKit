@@ -218,7 +218,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    static size_t estimatedSize(JSCell*, VM&);
+    static size_t NODELETE estimatedSize(JSCell*, VM&);
 
     static constexpr uint32_t initialCapacity = 4;
 

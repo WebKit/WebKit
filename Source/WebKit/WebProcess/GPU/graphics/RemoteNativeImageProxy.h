@@ -42,8 +42,8 @@ public:
     static Ref<RemoteNativeImageProxy> create(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&&);
     ~RemoteNativeImageProxy() override;
     const WebCore::PlatformImagePtr& platformImage() const override;
-    WebCore::IntSize size() const override;
-    bool hasAlpha() const override;
+    WebCore::IntSize NODELETE size() const override;
+    bool NODELETE hasAlpha() const override;
     WebCore::DestinationColorSpace colorSpace() const override;
 
 private:

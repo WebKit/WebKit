@@ -45,21 +45,21 @@ class TextExtractionFilter : public ThreadSafeRefCounted<TextExtractionFilter> {
     WTF_MAKE_TZONE_ALLOCATED(TextExtractionFilter);
     WTF_MAKE_NONCOPYABLE(TextExtractionFilter);
 public:
-    static TextExtractionFilter& singleton();
-    static TextExtractionFilter* singletonIfCreated();
+    static TextExtractionFilter& NODELETE singleton();
+    static TextExtractionFilter* NODELETE singletonIfCreated();
 
-    void shouldFilter(const String&, CompletionHandler<void(bool)>&&);
-    void prewarm();
-    void resetCache();
+    void NODELETE shouldFilter(const String&, CompletionHandler<void(bool)>&&);
+    void NODELETE prewarm();
+    void NODELETE resetCache();
 
 private:
     TextExtractionFilter();
 
     static constexpr auto chunkSize = 120;
 
-    void initializeModelIfNeeded();
-    bool shouldFilter(const String&);
-    Vector<RetainPtr<NSString>> segmentText(const String&);
+    void NODELETE initializeModelIfNeeded();
+    bool NODELETE shouldFilter(const String&);
+    Vector<RetainPtr<NSString>> NODELETE segmentText(const String&);
 
     const Ref<WorkQueue> m_modelQueue;
     RetainPtr<MLModel> m_model;

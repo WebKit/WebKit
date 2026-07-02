@@ -40,8 +40,8 @@ public:
     ButtonMac(ButtonPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 
 private:
-    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
-    IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
+    IntSize NODELETE cellSize(NSControlSize, const ControlStyle&) const override;
+    IntOutsets NODELETE cellOutsets(NSControlSize, const ControlStyle&) const override;
 
     NSBezelStyle bezelStyle(const FloatRect&, const ControlStyle&) const;
 

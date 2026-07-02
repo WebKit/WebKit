@@ -36,7 +36,7 @@ class HTMLOptGroupElement final : public HTMLElement {
 public:
     static Ref<HTMLOptGroupElement> create(const QualifiedName&, Document&);
 
-    bool isDisabledFormControl() const final;
+    bool NODELETE isDisabledFormControl() const final;
     bool isActuallyDisabled() const final;
     WEBCORE_EXPORT HTMLSelectElement* NODELETE ownerSelectElement() const;
     

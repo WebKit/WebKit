@@ -194,7 +194,7 @@ public:
     bool isShowingActionPopup() { return m_showingActionPopup; };
     void setShowingActionPopup(bool isOpen) { m_showingActionPopup = isOpen; };
 
-    bool markDidRemoveStaleExtensionWebsiteData();
+    bool NODELETE markDidRemoveStaleExtensionWebsiteData();
     HashSet<String> activeExtensionURLs() const;
 
 #ifdef __OBJC__

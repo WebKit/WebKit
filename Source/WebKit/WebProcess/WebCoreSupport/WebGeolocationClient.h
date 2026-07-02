@@ -53,7 +53,7 @@ private:
     void revokeAuthorizationToken(const String&) final;
     void setEnableHighAccuracy(bool) final;
 
-    std::optional<WebCore::GeolocationPositionData> lastPosition() final;
+    std::optional<WebCore::GeolocationPositionData> NODELETE lastPosition() final;
 
     void requestPermission(WebCore::Geolocation&) final;
     void cancelPermissionRequest(WebCore::Geolocation&) final;

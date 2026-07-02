@@ -62,7 +62,7 @@ struct CachedWriteBarrierOffsets {
 };
 
 struct CachedPtrOffsets {
-    static ptrdiff_t offsetOffset();
+    static ptrdiff_t NODELETE offsetOffset();
 };
 
 class VariableLengthObjectBase {
@@ -98,7 +98,7 @@ public:
     RefPtr<SourceProvider> NODELETE provider() const;
 
     template<typename Functor>
-    void addFinalizer(const Functor&);
+    void NODELETE addFinalizer(const Functor&);
 
 private:
     Decoder(VM&, Ref<CachedBytecode>, RefPtr<SourceProvider>);

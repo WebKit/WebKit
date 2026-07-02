@@ -62,7 +62,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static PasteboardDataLifetime determineDataLifetime(std::optional<WebPageProxyIdentifier> pageID)
+static PasteboardDataLifetime NODELETE determineDataLifetime(std::optional<WebPageProxyIdentifier> pageID)
 {
     if (!pageID)
         return PasteboardDataLifetime::Persistent;
@@ -73,7 +73,7 @@ static PasteboardDataLifetime determineDataLifetime(std::optional<WebPageProxyId
     return PasteboardDataLifetime::Persistent;
 }
 
-static bool shouldTranscodeHEICImagesForPage(std::optional<WebPageProxyIdentifier> pageID)
+static bool NODELETE shouldTranscodeHEICImagesForPage(std::optional<WebPageProxyIdentifier> pageID)
 {
     if (!pageID)
         return false;
@@ -87,7 +87,7 @@ static bool shouldTranscodeHEICImagesForPage(std::optional<WebPageProxyIdentifie
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-static void addAllowedAttachmentFilePaths(const IPC::Connection& connection, std::optional<WebPageProxyIdentifier> pageID, const Vector<String>& paths)
+static void NODELETE addAllowedAttachmentFilePaths(const IPC::Connection& connection, std::optional<WebPageProxyIdentifier> pageID, const Vector<String>& paths)
 {
     if (!pageID)
         return;
@@ -108,7 +108,7 @@ void WebPasteboardProxy::grantAccessToCurrentTypes(WebProcessProxy& process, con
     grantAccess(process, pasteboardName, PasteboardAccessType::Types);
 }
 
-std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName, CompletionHandler<void()>&& completionHandler)
+std::optional<IPC::AsyncReplyID> NODELETE WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, const String& pasteboardName, CompletionHandler<void()>&& completionHandler)
 {
     grantAccess(process, pasteboardName, PasteboardAccessType::TypesAndData);
     auto pasteboard = PlatformPasteboard(pasteboardName);
@@ -997,7 +997,7 @@ void WebPasteboardProxy::updateSupportedTypeIdentifiers(const Vector<String>& id
 
 #endif // PLATFORM(IOS_FAMILY)
 
-std::optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connection& connection, const String& pasteboardName, std::optional<WebPageProxyIdentifier> pageID, PasteboardAccessIntent intent) const
+std::optional<DataOwnerType> NODELETE WebPasteboardProxy::determineDataOwner(IPC::Connection& connection, const String& pasteboardName, std::optional<WebPageProxyIdentifier> pageID, PasteboardAccessIntent intent) const
 {
     MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), connection, std::nullopt);
 

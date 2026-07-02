@@ -202,7 +202,7 @@ public:
 
     // Return false if x + width or y + height overflows.
     WEBCORE_EXPORT bool NODELETE isValid() const;
-    [[nodiscard]] WEBCORE_EXPORT IntRect NODELETE toRectWithExtentsClippedToNumericLimits() const;
+    [[nodiscard]] WEBCORE_EXPORT IntRect toRectWithExtentsClippedToNumericLimits() const;
 
     friend bool operator==(const IntRect&, const IntRect&) = default;
 
@@ -257,7 +257,7 @@ inline IntRect operator-(const IntRect& r, const IntPoint& offset)
 }
 
 #if USE(CG)
-WEBCORE_EXPORT IntRect enclosingIntRect(const CGRect&);
+WEBCORE_EXPORT IntRect NODELETE enclosingIntRect(const CGRect&);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const IntRect&);

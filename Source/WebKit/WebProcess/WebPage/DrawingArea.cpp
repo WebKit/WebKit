@@ -118,7 +118,7 @@ void DrawingArea::removeMessageReceiverIfNeeded()
     WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_identifier);
 }
 
-RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(WebCore::PlatformDisplayID)
+RefPtr<WebCore::DisplayRefreshMonitor> NODELETE DrawingArea::createDisplayRefreshMonitor(WebCore::PlatformDisplayID)
 {
     return nullptr;
 }

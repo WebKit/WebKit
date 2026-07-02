@@ -82,7 +82,7 @@ public:
     static Ref<ProcessAssertion> create(ProcessID, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
     static Ref<ProcessAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
 
-    static double remainingRunTimeInSeconds(ProcessID);
+    static double NODELETE remainingRunTimeInSeconds(ProcessID);
     virtual ~ProcessAssertion();
 
     void setPrepareForInvalidationHandler(Function<void()>&& handler) { m_prepareForInvalidationHandler = WTF::move(handler); }
@@ -109,7 +109,7 @@ protected:
     void acquireAssertion(Mode, CompletionHandler<void()>&&);
 
     void acquireAsync(CompletionHandler<void()>&&);
-    void acquireSync();
+    void NODELETE acquireSync();
 
 #if USE(RUNNINGBOARD)
     void processAssertionWillBeInvalidated();

@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static WebHitTestResultData::ElementType elementTypeFromHitTestResult(const HitTestResult& hitTestResult)
+static WebHitTestResultData::ElementType NODELETE elementTypeFromHitTestResult(const HitTestResult& hitTestResult)
 {
     if (!hitTestResult.hasMediaElement())
         return WebHitTestResultData::ElementType::None;
@@ -51,7 +51,7 @@ static WebHitTestResultData::ElementType elementTypeFromHitTestResult(const HitT
     return hitTestResult.mediaIsVideo() ? WebHitTestResultData::ElementType::Video : WebHitTestResultData::ElementType::Audio;
 }
 
-static RefPtr<WebFrame> webFrameFromHitTestResult(const HitTestResult& hitTestResult)
+static RefPtr<WebFrame> NODELETE webFrameFromHitTestResult(const HitTestResult& hitTestResult)
 {
     auto* coreFrame = hitTestResult.frame();
     if (!coreFrame)

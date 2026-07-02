@@ -57,18 +57,18 @@ public:
 
     size_t bytesDecodedToDetermineProperties() const override { return 0; }
 
-    WebCore::EncodedDataStatus encodedDataStatus() const final;
+    WebCore::EncodedDataStatus NODELETE encodedDataStatus() const final;
     void setEncodedDataStatusChangeCallback(WTF::Function<void(WebCore::EncodedDataStatus)>&&) final;
-    WebCore::IntSize size() const final;
-    size_t frameCount() const final;
-    WebCore::RepetitionCount repetitionCount() const final;
-    String uti() const final;
+    WebCore::IntSize NODELETE size() const final;
+    size_t NODELETE frameCount() const final;
+    WebCore::RepetitionCount NODELETE repetitionCount() const final;
+    String NODELETE uti() const final;
     String filenameExtension() const final;
     std::optional<WebCore::IntPoint> hotSpot() const final { return std::nullopt; }
     String accessibilityDescription() const final { return String(); }
 
-    WebCore::IntSize frameSizeAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default) const final;
-    bool frameIsCompleteAtIndex(size_t) const final;
+    WebCore::IntSize NODELETE frameSizeAtIndex(size_t, WebCore::SubsamplingLevel = WebCore::SubsamplingLevel::Default) const final;
+    bool NODELETE frameIsCompleteAtIndex(size_t) const final;
 
     Seconds frameDurationAtIndex(size_t) const final;
     bool frameHasAlphaAtIndex(size_t) const final;

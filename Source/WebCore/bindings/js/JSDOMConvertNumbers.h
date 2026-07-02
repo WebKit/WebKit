@@ -266,7 +266,7 @@ template<> struct JSConverter<IDLDouble> {
     static constexpr bool needsState = false;
     static constexpr bool needsGlobalObject = false;
 
-    WEBCORE_EXPORT static JSC::JSValue convert(Type);
+    WEBCORE_EXPORT static JSC::JSValue NODELETE convert(Type);
 };
 
 template<> struct Converter<IDLUnrestrictedDouble> : DefaultConverter<IDLUnrestrictedDouble> {
@@ -296,10 +296,10 @@ template<> struct JSConverter<IDLUnrestrictedDouble> {
     static constexpr bool needsState = false;
     static constexpr bool needsGlobalObject = false;
 
-    WEBCORE_EXPORT static JSC::JSValue convert(Type);
+    WEBCORE_EXPORT static JSC::JSValue NODELETE convert(Type);
 
     // Add overload for MediaTime.
-    WEBCORE_EXPORT static JSC::JSValue convert(const MediaTime&);
+    WEBCORE_EXPORT static JSC::JSValue NODELETE convert(const MediaTime&);
 };
 
 } // namespace WebCore

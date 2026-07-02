@@ -150,7 +150,7 @@ public:
     void clear();
     bool isEmpty() const { return m_items.isEmpty(); }
 #if ASSERT_ENABLED
-    bool hasJustUpgradeReaction() const;
+    bool NODELETE hasJustUpgradeReaction() const;
 #endif
 
     static void processBackupQueue(CustomElementQueue&);

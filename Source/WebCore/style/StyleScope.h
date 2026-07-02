@@ -141,7 +141,7 @@ public:
     CheckedPtr<const Scope> NODELETE hostScope() const;
 
     static Scope& NODELETE forNode(Node&);
-    static const Scope& forNode(const Node&);
+    static const Scope& NODELETE forNode(const Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
     static const Scope* forOrdinal(const Element&, ScopeOrdinal);
 
@@ -231,8 +231,8 @@ private:
     const UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
 };
 
-RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
-RefPtr<Element> hostForScopeOrdinal(const Element&, ScopeOrdinal);
+RefPtr<HTMLSlotElement> NODELETE assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
+RefPtr<Element> NODELETE hostForScopeOrdinal(const Element&, ScopeOrdinal);
 
 inline void Scope::flushPendingUpdate()
 {

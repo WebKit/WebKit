@@ -45,7 +45,7 @@ public:
     bool operator==(const FontData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const FontData&) const;
+    void NODELETE dumpDifferences(TextStream&, const FontData&) const;
 #endif
 
     LetterSpacing letterSpacing;

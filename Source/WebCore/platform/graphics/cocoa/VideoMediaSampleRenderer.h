@@ -194,7 +194,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "VideoMediaSampleRenderer"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     const bool m_rendererIsThreadSafe { false };

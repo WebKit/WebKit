@@ -85,7 +85,7 @@ static inline bool NODELETE containsColonSlashSlash(std::span<const CharacterTyp
 }
 
 template <typename CharacterType>
-static inline void NODELETE squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
+static inline void squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
 {
     size_t size = string.size();
     size_t i = 0;
@@ -105,7 +105,7 @@ static inline void NODELETE squeezeOutNullCharacters(Vector<CharacterType, 512>&
 }
 
 template <typename CharacterType>
-static void NODELETE cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -125,7 +125,7 @@ static void NODELETE cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, s
 }
 
 template <typename CharacterType>
-static void NODELETE mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t refPos = find(path.span(), '#');
     if (!refPos || refPos == notFound)
@@ -144,7 +144,7 @@ static void NODELETE mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t
 }
 
 template <typename CharacterType>
-static void NODELETE cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+static void cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -156,7 +156,7 @@ static void NODELETE cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size
 }
 
 template <typename CharacterType>
-static inline void NODELETE cleanPath(Vector<CharacterType, 512>& path)
+static inline void cleanPath(Vector<CharacterType, 512>& path)
 {
     // FIXME: Should not do this in the query or anchor part of the URL.
     size_t firstSlash = findSlashDotDotSlash(path.span(), 0);
@@ -204,7 +204,7 @@ static inline bool NODELETE needsTrailingSlash(std::span<const CharacterType> ch
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE SharedStringHash NODELETE computeSharedStringHashInline(std::span<const CharacterType> url)
+static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(std::span<const CharacterType> url)
 {
     return AlreadyHashed::avoidDeletedValue(SuperFastHash::computeHash(url));
 }

@@ -51,7 +51,7 @@ private:
     LayoutRect elementRect() const final { return LayoutRect(); }
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::MenuListPopup; }
 
-    bool isVisible() const final;
+    bool NODELETE isVisible() const final;
     bool press() final;
     void addChildren() final;
     void handleChildrenChanged();

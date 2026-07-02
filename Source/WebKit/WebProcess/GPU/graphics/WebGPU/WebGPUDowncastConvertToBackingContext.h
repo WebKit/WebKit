@@ -48,7 +48,7 @@ public:
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Buffer&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandBuffer&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandEncoder&) final;
-    const RemoteCompositorIntegrationProxy& convertToRawBacking(const WebCore::WebGPU::CompositorIntegration&) final;
+    const RemoteCompositorIntegrationProxy& NODELETE convertToRawBacking(const WebCore::WebGPU::CompositorIntegration&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CompositorIntegration&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePassEncoder&) final;
     WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePipeline&) final;

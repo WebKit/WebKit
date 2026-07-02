@@ -91,20 +91,20 @@ public:
     void setSublayerTransform(const TransformationMatrix&) override;
 
     void setIsBackdropRoot(bool) final;
-    bool backdropRootIsOpaque() const final;
-    void setBackdropRootIsOpaque(bool) final;
+    bool NODELETE backdropRootIsOpaque() const final;
+    void NODELETE setBackdropRootIsOpaque(bool) final;
 
     bool isHidden() const override;
     void setHidden(bool) override;
 
-    bool contentsHidden() const override;
-    void setContentsHidden(bool) override;
+    bool NODELETE contentsHidden() const override;
+    void NODELETE setContentsHidden(bool) override;
 
-    bool userInteractionEnabled() const override;
-    void setUserInteractionEnabled(bool) override;
+    bool NODELETE userInteractionEnabled() const override;
+    void NODELETE setUserInteractionEnabled(bool) override;
 
     void setBackingStoreAttached(bool) override;
-    bool backingStoreAttached() const override;
+    bool NODELETE backingStoreAttached() const override;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     void setVisibleRect(const FloatRect&) override;
@@ -122,7 +122,7 @@ public:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    ContentsFormat contentsFormat() const override;
+    ContentsFormat NODELETE contentsFormat() const override;
     void setContentsFormat(ContentsFormat) override;
 
     bool hasContents() const override;
@@ -146,7 +146,7 @@ public:
     float opacity() const override;
     void setOpacity(float) override;
     void setFilters(const FilterOperations&) override;
-    WEBCORE_EXPORT static bool NODELETE filtersCanBeComposited(const FilterOperations&);
+    WEBCORE_EXPORT static bool filtersCanBeComposited(const FilterOperations&);
     void copyFiltersFrom(const PlatformCALayer&) override;
 
     void setBlendMode(BlendMode) override;
@@ -205,8 +205,8 @@ public:
 #endif
 
 #if HAVE(CORE_MATERIAL)
-    AppleVisualEffectData appleVisualEffectData() const override;
-    void setAppleVisualEffectData(AppleVisualEffectData) override;
+    AppleVisualEffectData NODELETE appleVisualEffectData() const override;
+    void NODELETE setAppleVisualEffectData(AppleVisualEffectData) override;
 #endif
 
     TiledBacking* tiledBacking() override;

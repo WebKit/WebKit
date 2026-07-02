@@ -36,7 +36,7 @@ class JavaScriptEvaluationResult::ObjCExtractor {
 public:
     Map NODELETE takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(id);
-    bool failed() const { return m_failed; }
+    bool NODELETE failed() const { return m_failed; }
 private:
     Value toValue(id);
 

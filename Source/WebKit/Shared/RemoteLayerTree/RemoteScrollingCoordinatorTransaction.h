@@ -55,8 +55,8 @@ public:
     bool clearScrollLatching() const { return m_clearScrollLatching; }
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
-    void dump() const;
+    String NODELETE description() const;
+    void NODELETE dump() const;
 #endif
 
 private:

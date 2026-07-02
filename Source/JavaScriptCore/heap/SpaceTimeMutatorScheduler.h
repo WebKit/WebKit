@@ -46,12 +46,12 @@ public:
     SpaceTimeMutatorScheduler(Heap&);
     ~SpaceTimeMutatorScheduler() final;
     
-    State state() const final;
+    State NODELETE state() const final;
     
     void beginCollection() final;
     
-    void didStop() final;
-    void willResume() final;
+    void NODELETE didStop() final;
+    void NODELETE willResume() final;
     void didExecuteConstraints() final;
     
     MonotonicTime timeToStop() final;

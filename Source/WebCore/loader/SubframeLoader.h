@@ -73,7 +73,7 @@ private:
 
     bool NODELETE shouldConvertInvalidURLsToBlank() const;
 
-    bool canCreateSubFrame() const;
+    bool NODELETE canCreateSubFrame() const;
 
     bool m_containsPlugins { false };
     WeakRef<LocalFrame> m_frame;

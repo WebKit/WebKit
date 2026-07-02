@@ -76,7 +76,7 @@ public:
     void initialize(InitializationType);
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
-    JS_EXPORT_PRIVATE static JSBigInt* tryCreateZero(VM&);
+    JS_EXPORT_PRIVATE static JSBigInt* NODELETE tryCreateZero(VM&);
     JS_EXPORT_PRIVATE static JSBigInt* tryCreateWithLength(VM&, unsigned length);
     JS_EXPORT_PRIVATE static JSBigInt* createWithLength(JSGlobalObject*, unsigned length);
 
@@ -157,36 +157,36 @@ public:
     bool NODELETE equalsToNumber(JSValue);
     JS_EXPORT_PRIVATE bool NODELETE equalsToInt32(int32_t);
     static ComparisonResult NODELETE compare(JSBigInt* x, JSBigInt* y);
-    static ComparisonResult compare(int32_t x, JSBigInt* y);
-    static ComparisonResult compare(JSBigInt* x, int32_t y);
-    static ComparisonResult compare(JSBigInt* x, int64_t y);
-    static ComparisonResult compare(JSValue x, int64_t y);
-    static ComparisonResult compare(JSBigInt* x, uint64_t y);
-    static ComparisonResult compare(JSValue x, uint64_t y);
-    static ComparisonResult compare(JSValue x, JSValue y);
+    static ComparisonResult NODELETE compare(int32_t x, JSBigInt* y);
+    static ComparisonResult NODELETE compare(JSBigInt* x, int32_t y);
+    static ComparisonResult NODELETE compare(JSBigInt* x, int64_t y);
+    static ComparisonResult NODELETE compare(JSValue x, int64_t y);
+    static ComparisonResult NODELETE compare(JSBigInt* x, uint64_t y);
+    static ComparisonResult NODELETE compare(JSValue x, uint64_t y);
+    static ComparisonResult NODELETE compare(JSValue x, JSValue y);
 
     double toNumber(JSGlobalObject*) const;
     JSObject* toObject(JSGlobalObject*) const;
     inline bool toBoolean() const { return !isZero(); }
 
     static ComparisonResult NODELETE compareToDouble(JSBigInt* x, double y);
-    static ComparisonResult compareToDouble(double x, JSBigInt* y);
+    static ComparisonResult NODELETE compareToDouble(double x, JSBigInt* y);
     template<typename BigIntImpl>
-    static ComparisonResult compareToDouble(BigIntImpl x, double y);
+    static ComparisonResult NODELETE compareToDouble(BigIntImpl x, double y);
     template <typename BigIntImpl>
     static ComparisonResult compareToDouble(double x, BigIntImpl y) { return flip(compareToDouble(y, x)); }
-    static ComparisonResult compareToDouble(int32_t x, double y);
+    static ComparisonResult NODELETE compareToDouble(int32_t x, double y);
     static ComparisonResult compareToDouble(double x, int32_t y);
-    static ComparisonResult compareToDouble(int64_t x, double y);
+    static ComparisonResult NODELETE compareToDouble(int64_t x, double y);
     static ComparisonResult compareToDouble(double x, int64_t y);
-    static ComparisonResult compareToDouble(uint64_t x, double y);
+    static ComparisonResult NODELETE compareToDouble(uint64_t x, double y);
     static ComparisonResult compareToDouble(double x, uint64_t y);
-    static ComparisonResult compareToDouble(JSValue x, double y);
+    static ComparisonResult NODELETE compareToDouble(JSValue x, double y);
     static ComparisonResult compareToDouble(double x, JSValue y);
 
 private:
     static JSBigInt* tryCreateFromImpl(JSGlobalObject*, VM&, bool sign, std::span<const Digit>);
-    static JSBigInt* createZero(VM&);
+    static JSBigInt* NODELETE createZero(VM&);
 
     ALWAYS_INLINE static ComparisonResult flip(ComparisonResult result)
     {
@@ -220,49 +220,49 @@ private:
     static JSBigInt* createWithLength(JSGlobalObject*, VM&, unsigned length);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult exponentiateImpl(JSGlobalObject*, BigIntImpl1 base, BigIntImpl2 exponent);
+    static ImplResult NODELETE exponentiateImpl(JSGlobalObject*, BigIntImpl1 base, BigIntImpl2 exponent);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
     static ImplResult multiplyImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl>
-    static ImplResult incImpl(JSGlobalObject*, BigIntImpl x);
+    static ImplResult NODELETE incImpl(JSGlobalObject*, BigIntImpl x);
 
     template <typename BigIntImpl>
-    static ImplResult decImpl(JSGlobalObject*, BigIntImpl x);
+    static ImplResult NODELETE decImpl(JSGlobalObject*, BigIntImpl x);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult addImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE addImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult subImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE subImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult divideImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE divideImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult remainderImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE remainderImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl>
-    static ImplResult unaryMinusImpl(JSGlobalObject*, BigIntImpl x);
+    static ImplResult NODELETE unaryMinusImpl(JSGlobalObject*, BigIntImpl x);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult bitwiseAndImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE bitwiseAndImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult bitwiseOrImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE bitwiseOrImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult bitwiseXorImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE bitwiseXorImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl>
-    static ImplResult bitwiseNotImpl(JSGlobalObject*, BigIntImpl x);
+    static ImplResult NODELETE bitwiseNotImpl(JSGlobalObject*, BigIntImpl x);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult leftShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE leftShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
-    static ImplResult signedRightShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
+    static ImplResult NODELETE signedRightShiftImpl(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
     template <typename BigIntImpl1, typename BigIntImpl2>
     static ComparisonResult NODELETE compareImpl(BigIntImpl1 x, BigIntImpl2 y);
@@ -440,7 +440,7 @@ public:
     }
 #endif
 
-    static JSValue toNumberHeap(JSBigInt*);
+    static JSValue NODELETE toNumberHeap(JSBigInt*);
     inline static JSValue toNumber(JSValue); // Defined in JSBigIntInlines.h
 
     static JSValue asIntN(JSGlobalObject*, uint64_t numberOfBits, JSBigInt*);
@@ -531,7 +531,7 @@ private:
     static void multiplySpecialLow(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
     static void multiplySpecialHigh(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result, size_t startPosition);
     template<size_t N>
-    static std::span<Digit, N * 2> multiplyComba(std::span<const Digit, N> x, std::span<const Digit, N> y, std::span<Digit, N * 2> result);
+    static std::span<Digit, N * 2> NODELETE multiplyComba(std::span<const Digit, N> x, std::span<const Digit, N> y, std::span<Digit, N * 2> result);
 
     static std::span<Digit> NODELETE divideSingle(std::span<Digit> q, Digit& remainder, std::span<const Digit> a, Digit b);
     static std::tuple<std::span<Digit>, std::span<Digit>> divideTextbook(std::span<Digit> q, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b);
@@ -561,7 +561,7 @@ private:
     };
 
     template<typename BitwiseOp>
-    static std::span<Digit> absoluteBitwiseOp(std::span<const Digit> x, std::span<const Digit> y, ExtraDigitsHandling, BitwiseOp&&, std::span<Digit> result);
+    static std::span<Digit> NODELETE absoluteBitwiseOp(std::span<const Digit> x, std::span<const Digit> y, ExtraDigitsHandling, BitwiseOp&&, std::span<Digit> result);
 
     static size_t andLength(std::span<const Digit> x, std::span<const Digit> y) { return std::min(x.size(), y.size()); }
     static size_t orLength(std::span<const Digit> x, std::span<const Digit> y) { return std::max(x.size(), y.size()); }
@@ -603,7 +603,7 @@ private:
     static JSValue parseInt(JSGlobalObject*, VM&, std::span<const CharType> data, unsigned startIndex, unsigned radix, ErrorParseMode, ParseIntSign = ParseIntSign::Signed, ParseIntMode = ParseIntMode::AllowEmptyString);
 
     template <typename BigIntImpl>
-    static JSBigInt* copy(JSGlobalObject*, BigIntImpl x);
+    static JSBigInt* NODELETE copy(JSGlobalObject*, BigIntImpl x);
 
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
     template <typename BigIntImpl1, typename BigIntImpl2>
@@ -623,9 +623,9 @@ private:
     static std::optional<Digit> NODELETE toShiftAmount(BigIntImpl x);
 
     template <typename BigIntImpl>
-    static ImplResult asIntNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
+    static ImplResult NODELETE asIntNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
     template <typename BigIntImpl>
-    static ImplResult asUintNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
+    static ImplResult NODELETE asUintNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
     template <typename BigIntImpl>
     static ImplResult truncateToNBits(JSGlobalObject*, int32_t, BigIntImpl);
     template <typename BigIntImpl>

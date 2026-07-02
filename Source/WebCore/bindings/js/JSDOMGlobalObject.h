@@ -127,13 +127,13 @@ public:
     using ScriptErrorCallback = Function<void(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)>;
 
     void addScriptErrorCallback(ScriptErrorCallback&&);
-    bool hasScriptErrorCallbacks() const;
+    bool NODELETE hasScriptErrorCallbacks() const;
     void invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const;
 
     void addJSHandle(JSHandleIdentifier, JSC::JSObject&);
     void refJSHandle(JSHandleIdentifier);
     bool derefJSHandle(JSHandleIdentifier);
-    JSC::JSObject* jsHandle(JSHandleIdentifier) const;
+    JSC::JSObject* NODELETE jsHandle(JSHandleIdentifier) const;
 
 protected:
     JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = nullptr);

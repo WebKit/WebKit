@@ -40,7 +40,7 @@ public:
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
 };
 
-static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
+static JSAPIWrapperObjectHandleOwner* NODELETE jsAPIWrapperObjectHandleOwner()
 {
     static NeverDestroyed<JSAPIWrapperObjectHandleOwner> jsWrapperObjectHandleOwner;
     return &jsWrapperObjectHandleOwner.get();

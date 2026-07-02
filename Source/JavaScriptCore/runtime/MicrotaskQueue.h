@@ -270,7 +270,7 @@ private:
     }
 
     template<bool useCallOnEachMicrotask>
-    std::pair<JSGlobalObject*, bool> drainImpl(JSGlobalObject*, VM&, TopExceptionScope&);
+    std::pair<JSGlobalObject*, bool> NODELETE drainImpl(JSGlobalObject*, VM&, TopExceptionScope&);
 
     MarkedMicrotaskDeque m_queue;
     MarkedMicrotaskDeque m_toKeep;

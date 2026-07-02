@@ -397,7 +397,7 @@ struct NonStringPrimitiveKeyInfo {
     AccessCase::AccessType transitionType;
 };
 
-static std::optional<NonStringPrimitiveKeyInfo> nonStringPrimitiveKeyInfoForUID(VM& vm, UniquedStringImpl* uid)
+static std::optional<NonStringPrimitiveKeyInfo> NODELETE nonStringPrimitiveKeyInfoForUID(VM& vm, UniquedStringImpl* uid)
 {
     if (uid == vm.propertyNames->undefinedKeyword.impl()) {
         return NonStringPrimitiveKeyInfo {

@@ -92,9 +92,9 @@ public:
     bool NODELETE equals(const VisiblePosition&) const;
 
 #if ENABLE(TREE_DEBUGGING)
-    void debugPosition(ASCIILiteral msg = ""_s) const;
-    String debugDescription() const;
-    void showTreeForThis() const;
+    void NODELETE debugPosition(ASCIILiteral msg = ""_s) const;
+    String NODELETE debugDescription() const;
+    void NODELETE showTreeForThis() const;
 #endif
 
 private:
@@ -131,7 +131,7 @@ struct VisiblePositionRange {
 
     bool isNull() const { return start.isNull() || end.isNull(); }
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
+    String NODELETE debugDescription() const;
 #endif
 };
 
@@ -140,8 +140,8 @@ WEBCORE_EXPORT VisiblePositionRange makeVisiblePositionRange(const std::optional
 
 Node* commonInclusiveAncestor(const VisiblePositionRange&);
 
-WEBCORE_EXPORT bool intersects(const VisiblePositionRange&, const VisiblePositionRange&);
-WEBCORE_EXPORT bool contains(const VisiblePositionRange&, const VisiblePosition&);
+WEBCORE_EXPORT bool NODELETE intersects(const VisiblePositionRange&, const VisiblePositionRange&);
+WEBCORE_EXPORT bool NODELETE contains(const VisiblePositionRange&, const VisiblePosition&);
 WEBCORE_EXPORT VisiblePositionRange intersection(const VisiblePositionRange&, const VisiblePositionRange&);
 WEBCORE_EXPORT VisiblePosition midpoint(const VisiblePositionRange&);
 
@@ -157,6 +157,6 @@ inline bool operator==(const VisiblePosition& a, const VisiblePosition& b)
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::VisiblePosition*);
-void showTree(const WebCore::VisiblePosition&);
+void NODELETE showTree(const WebCore::VisiblePosition*);
+void NODELETE showTree(const WebCore::VisiblePosition&);
 #endif

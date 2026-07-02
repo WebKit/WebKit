@@ -182,7 +182,7 @@ public:
 
     void requestHideAndExitFullscreen();
     bool NODELETE hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
-    bool mayAutomaticallyShowVideoPictureInPicture() const;
+    bool NODELETE mayAutomaticallyShowVideoPictureInPicture() const;
     void applicationDidBecomeActive();
     bool isVisible() const;
 
@@ -307,7 +307,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& NODELETE logger() const;
-    uint64_t NODELETE logIdentifier() const;
+    uint64_t logIdentifier() const;
     ASCIILiteral logClassName() const;
     WTFLogChannel& NODELETE logChannel() const;
 #endif

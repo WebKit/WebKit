@@ -78,12 +78,12 @@ public:
     void disconnectContainer() { m_container = CellContainer(); }
 
 private:
-    template<typename Visitor> void visitImpl(Visitor&);
+    template<typename Visitor> void NODELETE visitImpl(Visitor&);
 
     static FreeCell* asFreeCell(WeakImpl*);
     
     template<typename ContainerType, typename Visitor>
-    void specializedVisit(ContainerType&, Visitor&);
+    void NODELETE specializedVisit(ContainerType&, Visitor&);
 
     explicit WeakBlock(CellContainer);
     void finalize(WeakImpl*);

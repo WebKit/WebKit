@@ -98,7 +98,7 @@ public:
 
     void initialize(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
     void closeFromBackend();
-    void show();
+    void NODELETE show();
     void showConsole();
     void showResources();
 
@@ -110,11 +110,11 @@ public:
     
 #if PLATFORM(MAC)
     NSWindow *window() const { return m_window.get(); }
-    WKWebView *webView() const;
+    WKWebView *NODELETE webView() const;
 
     const WebCore::FloatRect& sheetRect() const LIFETIME_BOUND { return m_sheetRect; }
 
-    void didBecomeActive();
+    void NODELETE didBecomeActive();
 #endif
 
 #if PLATFORM(GTK)
@@ -140,17 +140,17 @@ private:
     void frontendLoaded();
     void frontendDidClose();
     void reopen();
-    void resetState();
-    void bringToFront();
+    void NODELETE resetState();
+    void NODELETE bringToFront();
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void load(const String& path, CompletionHandler<void(const String&)>&&);
-    void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    void NODELETE load(const String& path, CompletionHandler<void(const String&)>&&);
+    void NODELETE pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     void NODELETE setSheetRect(const WebCore::FloatRect&);
-    void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
-    void startWindowDrag();
-    void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
-    void showCertificate(const WebCore::CertificateInfo&);
+    void NODELETE setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void NODELETE startWindowDrag();
+    void NODELETE openURLExternally(const String& url);
+    void NODELETE revealFileExternally(const String& path);
+    void NODELETE showCertificate(const WebCore::CertificateInfo&);
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void sendMessageToBackend(const String& message);
@@ -159,19 +159,19 @@ private:
     void closeFrontendPageAndWindow();
 
     // Platform implementations.
-    WebPageProxy* platformCreateFrontendPageAndWindow();
-    void platformCloseFrontendPageAndWindow();
-    void platformResetState();
-    void platformBringToFront();
+    WebPageProxy* NODELETE platformCreateFrontendPageAndWindow();
+    void NODELETE platformCloseFrontendPageAndWindow();
+    void NODELETE platformResetState();
+    void NODELETE platformBringToFront();
     void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
-    void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    void NODELETE platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
+    void NODELETE platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
     void NODELETE platformSetSheetRect(const WebCore::FloatRect&);
-    void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
-    void platformStartWindowDrag();
-    void platformOpenURLExternally(const String& url);
-    void platformRevealFileExternally(const String& path);
-    void platformShowCertificate(const WebCore::CertificateInfo&);
+    void NODELETE platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void NODELETE platformStartWindowDrag();
+    void NODELETE platformOpenURLExternally(const String& url);
+    void NODELETE platformRevealFileExternally(const String& path);
+    void NODELETE platformShowCertificate(const WebCore::CertificateInfo&);
 
     WeakPtr<RemoteWebInspectorUIProxyClient> m_client;
     WeakPtr<WebPageProxy> m_inspectorPage;

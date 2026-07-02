@@ -121,7 +121,7 @@ private:
     PushDatabase(Ref<WorkQueue>&&, UniqueRef<WebCore::SQLiteDatabase>&&);
 
     WebCore::SQLiteStatementAutoResetScope cachedStatementOnQueue(ASCIILiteral query);
-    template<typename... Args> WebCore::SQLiteStatementAutoResetScope bindStatementOnQueue(ASCIILiteral query, Args&&...);
+    template<typename... Args> WebCore::SQLiteStatementAutoResetScope NODELETE bindStatementOnQueue(ASCIILiteral query, Args&&...);
 
     void dispatchOnWorkQueue(Function<void()>&&);
 

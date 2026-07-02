@@ -101,10 +101,10 @@ public:
     Protocol::ErrorStringOr<void> setPauseForInternalScripts(bool shouldPause) final;
     Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> evaluateOnCallFrame(const Protocol::Debugger::CallFrameId&, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture) override;
     Protocol::ErrorStringOr<void> setShouldBlackboxURL(const String& url, bool shouldBlackbox, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Array>&& sourceRanges) final;
-    Protocol::ErrorStringOr<void> setBlackboxBreakpointEvaluations(bool) final;
+    Protocol::ErrorStringOr<void> NODELETE setBlackboxBreakpointEvaluations(bool) final;
 
     // JSC::Debugger::Client
-    bool isInspectorDebuggerAgent() const final;
+    bool NODELETE isInspectorDebuggerAgent() const final;
     JSC::JSObject* debuggerScopeExtensionObject(JSC::Debugger&, JSC::JSGlobalObject*, JSC::DebuggerCallFrame&) final;
 
     // JSC::Debugger::Observer

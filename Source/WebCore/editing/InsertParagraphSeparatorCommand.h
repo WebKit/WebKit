@@ -50,7 +50,7 @@ private:
 
     bool shouldUseDefaultParagraphElement(Node*) const;
 
-    bool preservesTypingStyle() const override;
+    bool NODELETE preservesTypingStyle() const override;
 
     RefPtr<EditingStyle> m_style;
 

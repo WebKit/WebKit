@@ -51,7 +51,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     void scheduleErrorEvent();
-    void NODELETE cancelPendingErrorEvent();
+    void cancelPendingErrorEvent();
 
     const MQ::MediaQueryList& parsedMediaAttribute(Document&) const;
 

@@ -47,10 +47,10 @@ public:
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
 
-    void clearController();
+    void NODELETE clearController();
     void clearView();
 
-    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
+    template<typename Visitor> void NODELETE visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     ReadableStreamBYOBRequest(ReadableByteStreamController&, Ref<JSC::ArrayBufferView>&&);

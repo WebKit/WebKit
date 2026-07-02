@@ -76,7 +76,7 @@ public:
     unsigned column() const { return m_column; }
     WallTime timestamp() const { return m_timestamp; }
 
-    JS_EXPORT_PRIVATE JSC::JSGlobalObject* globalObject() const;
+    JS_EXPORT_PRIVATE JSC::JSGlobalObject* NODELETE globalObject() const;
 
     void incrementCount() { ++m_repeatCount; }
 

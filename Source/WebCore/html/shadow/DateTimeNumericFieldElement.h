@@ -51,7 +51,7 @@ protected:
     int NODELETE maximum() const;
 
     // DateTimeFieldElement functions:
-    bool hasValue() const final;
+    bool NODELETE hasValue() const final;
     void setEmptyValue(EventBehavior = DispatchNoEvent) final;
     void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
     void stepDown() override;
@@ -64,7 +64,7 @@ private:
     // DateTimeFieldElement functions:
     void adjustMinInlineSize(Style::ComputedStyle&) const final;
     ValueOrReference<String> value() const final;
-    String placeholderValue() const final;
+    String NODELETE placeholderValue() const final;
     void handleKeyboardEvent(KeyboardEvent&) final;
     void handleBlurEvent(Event&) final;
 

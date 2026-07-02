@@ -147,7 +147,7 @@ class PlaybackSessionInterfaceIOS;
 
 namespace WebCore {
 RetainPtr<WebAVPlayerController> createWebAVPlayerController();
-WEBCORE_EXPORT Class webAVPlayerControllerClassSingleton();
+WEBCORE_EXPORT Class NODELETE webAVPlayerControllerClassSingleton();
 }
 
 NS_ASSUME_NONNULL_END

@@ -400,22 +400,22 @@ void ProxyingPageAgent::getResourceTree(Ref<GetResourceTreeCallback>&& callback)
 }
 
 // FIXME: <https://webkit.org/b/308898> Forward emulation overrides to all WebContent processes.
-CommandResult<void> ProxyingPageAgent::reload(std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> NODELETE ProxyingPageAgent::reload(std::optional<bool>&&, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::overrideUserAgent(const String&)
+CommandResult<void> NODELETE ProxyingPageAgent::overrideUserAgent(const String&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::overrideSetting(Protocol::Page::Setting, std::optional<bool>&&)
+CommandResult<void> NODELETE ProxyingPageAgent::overrideSetting(Protocol::Page::Setting, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::overrideUserPreference(Protocol::Page::UserPreferenceName, std::optional<Protocol::Page::UserPreferenceValue>&&)
+CommandResult<void> NODELETE ProxyingPageAgent::overrideUserPreference(Protocol::Page::UserPreferenceName, std::optional<Protocol::Page::UserPreferenceValue>&&)
 {
     return { };
 }
@@ -426,12 +426,12 @@ CommandResult<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> ProxyingPageAgent::get
     return makeUnexpected("Not yet implemented under Site Isolation"_s);
 }
 
-CommandResult<void> ProxyingPageAgent::setCookie(Ref<JSON::Object>&&, std::optional<bool>&&)
+CommandResult<void> NODELETE ProxyingPageAgent::setCookie(Ref<JSON::Object>&&, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::deleteCookie(const String&, const String&)
+CommandResult<void> NODELETE ProxyingPageAgent::deleteCookie(const String&, const String&)
 {
     return { };
 }
@@ -442,7 +442,7 @@ CommandResultOf<String, bool> ProxyingPageAgent::getResourceContent(const Protoc
 }
 
 // FIXME: <https://webkit.org/b/308897> Cross-process bootstrap script injection.
-CommandResult<void> ProxyingPageAgent::setBootstrapScript(const String&)
+CommandResult<void> NODELETE ProxyingPageAgent::setBootstrapScript(const String&)
 {
     return { };
 }
@@ -460,18 +460,18 @@ CommandResult<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> ProxyingPageAgen
 
 // FIXME: <https://webkit.org/b/308899> Forward overlay state to all WebContent processes.
 #if !PLATFORM(IOS_FAMILY)
-CommandResult<void> ProxyingPageAgent::setShowRulers(bool)
+CommandResult<void> NODELETE ProxyingPageAgent::setShowRulers(bool)
 {
     return { };
 }
 #endif
 
-CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool)
+CommandResult<void> NODELETE ProxyingPageAgent::setShowPaintRects(bool)
 {
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String&)
+CommandResult<void> NODELETE ProxyingPageAgent::setEmulatedMedia(const String&)
 {
     return { };
 }

@@ -55,7 +55,7 @@ public:
 
 #if ASSERT_ENABLED
     // For testing purposes only
-    static void verifyAndOutputMismatchingLayoutTree(const LayoutState&, const RenderView&);
+    static void NODELETE verifyAndOutputMismatchingLayoutTree(const LayoutState&, const RenderView&);
 #endif
 
 private:

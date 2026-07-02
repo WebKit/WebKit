@@ -102,7 +102,7 @@ private:
     void appendRemoveBackgroundItemToControlledImageMenuIfNeeded();
 #endif
 
-    NSMenu *platformMenu() const override;
+    NSMenu *NODELETE platformMenu() const override;
     RetainPtr<NSArray> platformData() const override;
 
 #if ENABLE(VIDEO)

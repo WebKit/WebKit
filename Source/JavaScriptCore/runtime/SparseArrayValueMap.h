@@ -68,11 +68,11 @@ public:
     }
 
     void NODELETE get(JSObject*, PropertySlot&) const;
-    void get(PropertyDescriptor&) const;
+    void NODELETE get(PropertyDescriptor&) const;
     bool put(JSGlobalObject*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
     JSValue NODELETE getNonSparseMode() const;
     JSValue getConcurrently() const;
-    JSValue get() const;
+    JSValue NODELETE get() const;
 
     unsigned index() const { return m_index; }
     unsigned attributes() const { return m_attributes; }

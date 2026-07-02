@@ -50,8 +50,8 @@ public:
     Vector<const char*> namedParameterVector() const;
 
     size_t NODELETE count() const;
-    ASCIILiteral NODELETE name(size_t index) const;
-    const char* NODELETE value(size_t index) const;
+    ASCIILiteral name(size_t index) const;
+    const char* value(size_t index) const;
 
     enum class ProfileSelectionMode : uint8_t {
         UseDefaultSandboxProfilePath,

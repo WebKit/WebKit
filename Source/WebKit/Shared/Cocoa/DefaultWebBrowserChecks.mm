@@ -43,9 +43,9 @@
 
 namespace WebKit {
 
-static bool isFullWebBrowserOrRunningTest(const String&);
+static bool NODELETE isFullWebBrowserOrRunningTest(const String&);
 
-static bool treatAsNonBrowser(const String& bundleID)
+static bool NODELETE treatAsNonBrowser(const String& bundleID)
 {
     return bundleID == "inAppBrowserPrivacyTestIdentifier"_s;
 }
@@ -55,7 +55,7 @@ bool isRunningTest(const String& bundleID)
     return bundleID == "com.apple.WebKit.TestWebKitAPI"_s || bundleID == "com.apple.WebKit.WebKitTestRunner"_s || bundleID == "org.webkit.WebKitTestRunnerApp"_s;
 }
 
-std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
+std::span<const WebCore::RegistrableDomain> NODELETE appBoundDomainsForTesting(const String& bundleID)
 {
     if (bundleID == "inAppBrowserPrivacyTestIdentifier"_s) {
         static NeverDestroyed domains = std::array {
@@ -67,7 +67,7 @@ std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const Stri
 }
 
 #if ASSERT_ENABLED
-static bool isInWebKitChildProcess()
+static bool NODELETE isInWebKitChildProcess()
 {
     static bool isInSubProcess = [] {
         bool isInSubProcess = false;
@@ -108,7 +108,7 @@ bool hasRequestedCrossWebsiteTrackingPermission()
     return hasRequestedCrossWebsiteTrackingPermission;
 }
 
-static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter, const String& bundleIdentifier)
+static bool NODELETE determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter, const String& bundleIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     ASSERT(!isInWebKitChildProcess());

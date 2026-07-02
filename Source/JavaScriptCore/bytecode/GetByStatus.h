@@ -126,9 +126,9 @@ public:
         return m_state == LikelyTakesSlowPath || m_state == ObservedTakesSlowPath || m_state == MakesCalls || m_state == ObservedSlowPathAndMakesCalls || m_state == CustomAccessor || m_state == ModuleNamespace || m_state == Megamorphic;
     }
     bool observedPropertyInlineCacheSlowPath() const { return m_state == ObservedTakesSlowPath || m_state == ObservedSlowPathAndMakesCalls; }
-    bool NODELETE makesCalls() const;
+    bool makesCalls() const;
     
-    GetByStatus NODELETE slowVersion() const;
+    GetByStatus slowVersion() const;
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
@@ -141,7 +141,7 @@ public:
     ScopeOffset scopeOffset() const { return m_moduleNamespaceData->m_scopeOffset; }
     
     DECLARE_VISIT_AGGREGATE;
-    template<typename Visitor> void markIfCheap(Visitor&);
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&);
     bool finalize(VM&); // Return true if this gets to live.
 
     bool appendVariant(const GetByVariant&);
@@ -149,7 +149,7 @@ public:
 
     void dump(PrintStream&) const;
 
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier singleIdentifier() const;
 
     bool viaGlobalProxy() const
     {

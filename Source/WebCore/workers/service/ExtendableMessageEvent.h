@@ -71,7 +71,7 @@ public:
     JSValueInWrappedObject& cachedPorts() LIFETIME_BOUND { return m_cachedPorts; }
 
     String origin() const;
-    const RefPtr<SecurityOrigin> securityOrigin() const;
+    const RefPtr<SecurityOrigin> NODELETE securityOrigin() const;
     const String& lastEventId() const LIFETIME_BOUND { return m_lastEventId; }
     const std::optional<ExtendableMessageEventSource>& source() const LIFETIME_BOUND { return m_source; }
     const Vector<Ref<MessagePort>>& ports() const LIFETIME_BOUND { return m_ports; }

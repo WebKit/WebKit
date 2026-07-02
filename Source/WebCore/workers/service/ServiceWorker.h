@@ -79,8 +79,8 @@ private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);
     void updatePendingActivityForEventDispatch();
 
-    enum EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

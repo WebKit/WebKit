@@ -185,7 +185,7 @@ public:
     WEBCORE_EXPORT bool NODELETE intersects(const FloatRect&) const;
     WEBCORE_EXPORT bool NODELETE inclusivelyIntersects(const FloatRect&) const;
     WEBCORE_EXPORT bool NODELETE contains(const FloatRect&) const;
-    WEBCORE_EXPORT bool contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
+    WEBCORE_EXPORT bool NODELETE contains(const FloatPoint&, ContainsMode = InsideOrOnStroke) const;
 
     WEBCORE_EXPORT void intersect(const FloatRect&);
     bool edgeInclusiveIntersect(const FloatRect&);

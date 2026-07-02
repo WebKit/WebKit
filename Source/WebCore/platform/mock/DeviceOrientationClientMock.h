@@ -48,7 +48,7 @@ public:
 
     // DeviceOrientationClient
     WEBCORE_EXPORT void setController(DeviceOrientationController*) override;
-    WEBCORE_EXPORT void startUpdating() override;
+    WEBCORE_EXPORT void NODELETE startUpdating() override;
     WEBCORE_EXPORT void stopUpdating() override;
     DeviceOrientationData* lastOrientation() const override { return m_orientation.get(); }
     void deviceOrientationControllerDestroyed() override { }

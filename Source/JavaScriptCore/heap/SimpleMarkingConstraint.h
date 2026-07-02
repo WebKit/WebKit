@@ -56,7 +56,7 @@ public:
     JS_EXPORT_PRIVATE ~SimpleMarkingConstraint() final;
     
 private:
-    template<typename Visitor> ALWAYS_INLINE void executeImplImpl(Visitor&);
+    template<typename Visitor> ALWAYS_INLINE void NODELETE executeImplImpl(Visitor&);
     void executeImpl(AbstractSlotVisitor&) final;
     void executeImpl(SlotVisitor&) final;
 

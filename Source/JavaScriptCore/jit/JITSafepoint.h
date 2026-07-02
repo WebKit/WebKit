@@ -63,7 +63,7 @@ public:
     
     void begin(bool keepDependenciesLive);
 
-    template<typename Visitor> void checkLivenessAndVisitChildren(Visitor&);
+    template<typename Visitor> void NODELETE checkLivenessAndVisitChildren(Visitor&);
     template<typename Visitor> bool isKnownToBeLiveDuringGC(Visitor&);
     bool isKnownToBeLiveAfterGC();
     void NODELETE cancel();

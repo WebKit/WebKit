@@ -701,7 +701,7 @@ public:
     DECLARE_EXPORT_INFO;
 
 #if ASSERT_ENABLED
-    bool hasScopedWatchpointSet(WatchpointSet*);
+    bool NODELETE hasScopedWatchpointSet(WatchpointSet*);
 #endif
 
     void finalizeUnconditionally(VM&, CollectionScope);

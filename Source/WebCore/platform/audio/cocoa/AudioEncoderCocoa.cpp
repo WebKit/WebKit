@@ -69,7 +69,7 @@ public:
         std::optional<unsigned> packetlossperc { };
         std::optional<bool> useinbandfec { };
     };
-    static Expected<InternalConfig, String> checkConfiguration(const String&, const Config&);
+    static Expected<InternalConfig, String> NODELETE checkConfiguration(const String&, const Config&);
 
     static Ref<InternalAudioEncoderCocoa> create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
     {
@@ -77,19 +77,19 @@ public:
     }
     ~InternalAudioEncoderCocoa() = default;
 
-    Ref<AudioEncoder::EncodePromise> encode(AudioEncoder::RawFrame&&);
-    Ref<GenericPromise> flush();
+    Ref<AudioEncoder::EncodePromise> NODELETE encode(AudioEncoder::RawFrame&&);
+    Ref<GenericPromise> NODELETE flush();
     void reset();
-    void close();
+    void NODELETE close();
 
-    static WorkQueue& queueSingleton() { return AudioDecoderCocoa::queueSingleton(); }
+    static WorkQueue& NODELETE queueSingleton() { return AudioDecoderCocoa::queueSingleton(); }
 
 private:
     InternalAudioEncoderCocoa(const AudioEncoder::Config&, InternalConfig&&, AudioEncoder::DescriptionCallback&&, AudioEncoder::OutputCallback&&);
     Ref<AudioSampleBufferConverter> NODELETE converter() const { return *m_converter; }
-    void processEncodedOutputs();
-    AudioEncoder::ActiveConfiguration activeConfiguration(CMSampleBufferRef) const;
-    Vector<uint8_t> generateDecoderDescriptionFromSample(CMSampleBufferRef) const;
+    void NODELETE processEncodedOutputs();
+    AudioEncoder::ActiveConfiguration NODELETE activeConfiguration(CMSampleBufferRef) const;
+    Vector<uint8_t> NODELETE generateDecoderDescriptionFromSample(CMSampleBufferRef) const;
 
     AudioEncoder::DescriptionCallback m_descriptionCallback;
     AudioEncoder::OutputCallback m_outputCallback;

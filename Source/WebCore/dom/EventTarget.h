@@ -120,7 +120,7 @@ public:
 
     inline bool hasEventListeners() const; // Defined in EventTargetInlines.h
     inline bool hasEventListeners(const AtomString& eventType) const; // Defined in EventTargetInlines.h
-    bool hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
+    bool NODELETE hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
     inline bool hasCapturingEventListeners(const AtomString& eventType); // Defined in EventTargetInlines.h
     bool NODELETE hasActiveEventListeners(const AtomString& eventType) const;
 

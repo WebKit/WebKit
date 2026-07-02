@@ -53,11 +53,11 @@ public:
 
     DestinationColorSpace colorSpace() const override;
     bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> NODELETE layerContentsDisplayDelegate() override;
     bool needsPreparationForDisplay() const override { return true; }
     void prepareForDisplay() override;
-    PixelFormat pixelFormat() const override;
-    bool isOpaque() const override;
+    PixelFormat NODELETE pixelFormat() const override;
+    bool NODELETE isOpaque() const override;
     void didUpdateCanvasSizeProperties(bool) override;
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;

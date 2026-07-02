@@ -1288,7 +1288,7 @@ ShadowRoot* Node::containingShadowRoot() const
 
 #if ASSERT_ENABLED
 // https://dom.spec.whatwg.org/#concept-closed-shadow-hidden
-static bool isClosedShadowHiddenUsingSpecDefinition(const Node& A, const Node& B)
+static bool NODELETE isClosedShadowHiddenUsingSpecDefinition(const Node& A, const Node& B)
 {
     return A.isInShadowTree()
         && !A.rootNode().isShadowIncludingInclusiveAncestorOf(&B)
@@ -1469,7 +1469,7 @@ void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 }
 
 #if ASSERT_ENABLED
-static Node* traverseToShadowIncludingRoot(Node* current)
+static Node* NODELETE traverseToShadowIncludingRoot(Node* current)
 {
     while (auto* parent = current->parentOrShadowHostNode())
         current = parent;
@@ -1944,7 +1944,7 @@ String Node::debugDescription() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, ASCIILiteral attrDesc)
+static void NODELETE appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, const QualifiedName& name, ASCIILiteral attrDesc)
 {
     auto* element = dynamicDowncast<Element>(*node);
     if (!element)
@@ -2030,7 +2030,7 @@ void Node::showNodePathForThis() const
     fprintf(stderr, "\n");
 }
 
-static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, ASCIILiteral markedLabel1, const Node* markedNode2, ASCIILiteral markedLabel2)
+static void NODELETE traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, ASCIILiteral markedLabel1, const Node* markedNode2, ASCIILiteral markedLabel2)
 {
     for (const Node* node = rootNode; node; node = NodeTraversal::next(*node)) {
         if (node == markedNode1)
@@ -2063,7 +2063,7 @@ void Node::showTreeAndMark(const Node* markedNode1, ASCIILiteral markedLabel1, c
     traverseTreeAndMark(startingIndent, rootNode.get(), markedNode1, markedLabel1, markedNode2, markedLabel2);
 }
 
-static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
+static ContainerNode* NODELETE parentOrShadowHostOrFrameOwner(const Node* node)
 {
     ContainerNode* parent = node->parentOrShadowHostNode();
     if (!parent && node->document().frame())
@@ -2071,7 +2071,7 @@ static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
     return parent;
 }
 
-static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, const String& indent)
+static void NODELETE showSubTreeAcrossFrame(const Node* node, const Node* markedNode, const String& indent)
 {
     if (node == markedNode)
         SAFE_FPRINTF(stderr, "*");
@@ -2173,7 +2173,7 @@ static unsigned traverseSubtreeToUpdateTreeScope(Node& root, NOESCAPE const Move
     return count;
 }
 
-static ALWAYS_INLINE bool isDocumentEligibleForFastAdoption(Document& oldDocument, Document& newDocument)
+static ALWAYS_INLINE bool NODELETE isDocumentEligibleForFastAdoption(Document& oldDocument, Document& newDocument)
 {
     return !oldDocument.hasNodeIterators()
         && !oldDocument.hasRanges()
@@ -3003,22 +3003,22 @@ ScriptExecutionContext* Node::scriptExecutionContext() const
     return &document().contextDocument();
 }
 
-template<> ContainerNode* parent<Tree>(const Node& node)
+template<> ContainerNode* NODELETE parent<Tree>(const Node& node)
 {
     return node.parentNode();
 }
 
-template<> ContainerNode* parent<ShadowIncludingTree>(const Node& node)
+template<> ContainerNode* NODELETE parent<ShadowIncludingTree>(const Node& node)
 {
     return node.parentOrShadowHostNode();
 }
 
-template<> ContainerNode* parent<ComposedTree>(const Node& node)
+template<> ContainerNode* NODELETE parent<ComposedTree>(const Node& node)
 {
     return node.parentInComposedTree();
 }
 
-template<> ContainerNode* parent<ComposedTreeIncludingPseudoElements>(const Node& node)
+template<> ContainerNode* NODELETE parent<ComposedTreeIncludingPseudoElements>(const Node& node)
 {
     return node.parentElementInComposedTree();
 }

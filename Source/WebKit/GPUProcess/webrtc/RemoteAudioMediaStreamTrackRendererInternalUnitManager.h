@@ -78,7 +78,7 @@ private:
     void deleteUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
     void startUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, ConsumerSharedCARingBuffer::Handle&&, IPC::Semaphore&&);
     void stopUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
-    void setLastDeviceUsed(const String&);
+    void NODELETE setLastDeviceUsed(const String&);
 
     // WebCore::AudioSessionInterruptionObserver
     void beginAudioSessionInterruption() final;

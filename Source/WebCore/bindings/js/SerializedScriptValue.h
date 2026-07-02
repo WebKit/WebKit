@@ -101,7 +101,7 @@ public:
     WEBCORE_EXPORT JSValueRef deserialize(JSContextRef, JSValueRef* exception);
     WEBCORE_EXPORT static Vector<uint8_t> serializeCryptoKey(const WebCore::CryptoKey&);
 
-    WEBCORE_EXPORT bool hasBlobURLs() const;
+    WEBCORE_EXPORT bool NODELETE hasBlobURLs() const;
 
     Vector<String> blobURLs() const;
     WEBCORE_EXPORT Vector<URLKeepingBlobAlive> blobHandles() const;
@@ -109,15 +109,15 @@ public:
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral, JSC::VM&);
     WEBCORE_EXPORT static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&&);
-    WEBCORE_EXPORT const Vector<uint8_t>& wireBytes() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE wireBytes() const LIFETIME_BOUND;
 
-    WEBCORE_EXPORT size_t memoryCost() const;
+    WEBCORE_EXPORT size_t NODELETE memoryCost() const;
 
     using NonSerializedDataToken = WebCore::NonSerializedDataToken;
 
-    WEBCORE_EXPORT std::unique_ptr<Vector<JSC::ArrayBufferContents>>& sharedBufferContentsArray();
-    WEBCORE_EXPORT std::optional<NonSerializedDataToken> nonSerializedDataToken() const;
-    WEBCORE_EXPORT void setNonSerializedDataToken(std::optional<NonSerializedDataToken>);
+    WEBCORE_EXPORT std::unique_ptr<Vector<JSC::ArrayBufferContents>>& NODELETE sharedBufferContentsArray();
+    WEBCORE_EXPORT std::optional<NonSerializedDataToken> NODELETE nonSerializedDataToken() const;
+    WEBCORE_EXPORT void NODELETE setNonSerializedDataToken(std::optional<NonSerializedDataToken>);
 
     WEBCORE_EXPORT ~SerializedScriptValue();
 

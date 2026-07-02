@@ -521,7 +521,7 @@ static bool hasFlexTracks(const UnsizedTracks& unsizedTracks)
     });
 }
 
-static double flexFactorSum(const FlexTracks& flexTracks)
+static double NODELETE flexFactorSum(const FlexTracks& flexTracks)
 {
     double total = 0.0;
     for (auto& track : flexTracks)
@@ -584,7 +584,7 @@ static double NODELETE flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
     return flexTrack.baseSize.toDouble();
 }
 
-static bool NODELETE itemCrossesFlexibleTrack(const UnsizedTracks& tracks, const WTF::Range<size_t>& span)
+static bool itemCrossesFlexibleTrack(const UnsizedTracks& tracks, const WTF::Range<size_t>& span)
 {
     for (size_t trackIndex = span.begin(); trackIndex < span.end(); ++trackIndex) {
         if (tracks[trackIndex].trackSizingFunction.max.isFlex())
@@ -621,7 +621,7 @@ static void applyFlexFractionToTracks(UnsizedTracks& unsizedTracks, const FlexTr
 
 // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
 // "If...sizing the grid container under a min-content constraint, the used flex fraction is zero."
-static void expandFlexibleTracksForMinContent(UnsizedTracks&)
+static void NODELETE expandFlexibleTracksForMinContent(UnsizedTracks&)
 {
     // The used flex fraction is zero - no changes to track sizes needed.
 }

@@ -36,12 +36,12 @@ public:
     
 private:
     // WebCore::PlatformStrategies
-    WebCore::LoaderStrategy* createLoaderStrategy() override;
-    WebCore::PasteboardStrategy* createPasteboardStrategy() override;
-    WebCore::MediaStrategy* createMediaStrategy() override;
-    WebCore::BlobRegistry* createBlobRegistry() override;
+    WebCore::LoaderStrategy* NODELETE createLoaderStrategy() override;
+    WebCore::PasteboardStrategy* NODELETE createPasteboardStrategy() override;
+    WebCore::MediaStrategy* NODELETE createMediaStrategy() override;
+    WebCore::BlobRegistry* NODELETE createBlobRegistry() override;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    WebCore::PushStrategy* createPushStrategy() override;
+    WebCore::PushStrategy* NODELETE createPushStrategy() override;
 #endif
 };
 

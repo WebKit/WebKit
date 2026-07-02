@@ -39,7 +39,7 @@
 
 // This is like the isKindOfClass: method, bypassing it to get the correct answer for our purposes even for classes that override it.
 // At the time of this writing, that included WebKit's WKObject class.
-static bool safeIsKindOfClass(id object, Class testClass)
+static bool NODELETE safeIsKindOfClass(id object, Class testClass)
 {
     if (!object)
         return false;

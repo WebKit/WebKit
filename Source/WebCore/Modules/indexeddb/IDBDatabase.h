@@ -89,7 +89,7 @@ public:
 
     IDBDatabaseInfo& info() LIFETIME_BOUND { return m_info; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
-    std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier() const;
+    std::optional<ScriptExecutionContextIdentifier> NODELETE scriptExecutionContextIdentifier() const;
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);
     void didStartTransaction(IDBTransaction&);
@@ -121,7 +121,7 @@ private:
     void didCommitOrAbortTransaction(IDBTransaction&);
 
     // ActiveDOMObject.
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
     void stop() final;
 
     void maybeCloseInServer();

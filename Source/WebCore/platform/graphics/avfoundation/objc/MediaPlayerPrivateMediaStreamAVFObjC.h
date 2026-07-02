@@ -80,9 +80,9 @@ public:
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType NODELETE supportsType(const MediaEngineSupportParameters&);
 
-    MediaPlayer::NetworkState networkState() const override;
+    MediaPlayer::NetworkState NODELETE networkState() const override;
     void setNetworkState(MediaPlayer::NetworkState);
-    MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::ReadyState NODELETE readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
 
     void ensureLayers();
@@ -91,7 +91,7 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     USING_CAN_MAKE_WEAKPTR(MediaStreamTrackPrivateObserver);
 
@@ -103,7 +103,7 @@ private:
 
     // FIXME(146853): Implement necessary conformations to standard in HTMLMediaElement for MediaStream
 
-    bool didPassCORSAccessCheck() const final;
+    bool NODELETE didPassCORSAccessCheck() const final;
 
     void load(const String&) override;
 #if ENABLE(MEDIA_SOURCE)
@@ -129,14 +129,14 @@ private:
 
     FloatSize naturalSize() const override { return m_intrinsicSize; }
 
-    bool hasVideo() const override;
-    bool hasAudio() const override;
+    bool NODELETE hasVideo() const override;
+    bool NODELETE hasAudio() const override;
 
     void setPageIsVisible(bool) final;
-    void setVisibleForCanvas(bool) final;
-    void setViewportVisibility(ViewportVisibility) final;
+    void NODELETE setVisibleForCanvas(bool) final;
+    void NODELETE setViewportVisibility(ViewportVisibility) final;
 
-    MediaTime duration() const override;
+    MediaTime NODELETE duration() const override;
     MediaTime currentTime() const override;
 
     void seekToTarget(const SeekTarget&) final { };
@@ -175,11 +175,11 @@ private:
     void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
     void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit) final;
     void audioOutputDeviceChanged() final;
-    std::optional<VideoFrameMetadata> videoFrameMetadata() final;
+    std::optional<VideoFrameMetadata> NODELETE videoFrameMetadata() final;
     void setResourceOwner(const ProcessIdentity&) final { ASSERT_NOT_REACHED(); }
     void renderVideoWillBeDestroyed() final { destroyLayers(); }
     void setShouldMaintainAspectRatio(bool) final;
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    std::optional<VideoPlaybackQualityMetrics> NODELETE videoPlaybackQualityMetrics() final;
 
     MediaPlayer::ReadyState currentReadyState();
     void updateReadyState();
@@ -238,7 +238,7 @@ private:
     void setVideoFullscreenFrame(const FloatRect&) override;
 #endif
 
-    AudioSourceProvider* audioSourceProvider() final;
+    AudioSourceProvider* NODELETE audioSourceProvider() final;
 
     void applicationDidBecomeActive() final;
 
@@ -293,7 +293,7 @@ private:
 
     // SampleBufferDisplayLayerClient
     void sampleBufferDisplayLayerStatusDidFail() final;
-    void updateVideoFrameCounters(uint64_t, uint64_t) final;
+    void NODELETE updateVideoFrameCounters(uint64_t, uint64_t) final;
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const final;
 #endif

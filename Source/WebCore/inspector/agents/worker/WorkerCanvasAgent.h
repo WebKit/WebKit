@@ -45,7 +45,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestClientNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
 
 private:
-    bool matchesCurrentContext(ScriptExecutionContext*) const override;
+    bool NODELETE matchesCurrentContext(ScriptExecutionContext*) const override;
 
     const CheckedRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };

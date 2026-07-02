@@ -69,7 +69,7 @@ public:
 
     // Assuming that the mark stacks are all empty, this will give you a guess as to whether or
     // not the wavefront is advancing.
-    bool isWavefrontAdvancing(SlotVisitor&);
+    bool NODELETE isWavefrontAdvancing(SlotVisitor&);
     bool isWavefrontRetreating(SlotVisitor& visitor) { return !isWavefrontAdvancing(visitor); }
     
     // Returns true if this executed all constraints and none of them produced new work. This

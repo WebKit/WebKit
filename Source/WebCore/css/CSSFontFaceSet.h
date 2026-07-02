@@ -74,7 +74,7 @@ public:
     void purge();
     void emptyCaches();
     void clear();
-    CSSFontFace& NODELETE operator[](size_t i);
+    CSSFontFace& operator[](size_t i);
 
     CSSFontFace* lookUpByCSSConnection(StyleRuleFontFace&);
 
@@ -108,7 +108,7 @@ private:
 
     void ensureLocalFontFacesForFamilyRegistered(const AtomString&);
 
-    static AtomString familyName(const CSSValue&);
+    static AtomString NODELETE familyName(const CSSValue&);
 
     using FontSelectionKey = std::optional<FontSelectionRequest>;
     struct FontSelectionKeyHash : WTF::HasherBasedHash<FontSelectionKey> {

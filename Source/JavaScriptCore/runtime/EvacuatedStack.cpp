@@ -157,7 +157,7 @@ static const Register* NODELETE topOfFrame(const CallFrame* callFrame)
     }
 }
 
-static ALWAYS_INLINE const Register* bottomOfCallerFrame(const CallFrame* callFrame)
+static ALWAYS_INLINE const Register* NODELETE bottomOfCallerFrame(const CallFrame* callFrame)
 {
     return callFrame->registers() + CallerFrameAndPC::sizeInRegisters;
 }

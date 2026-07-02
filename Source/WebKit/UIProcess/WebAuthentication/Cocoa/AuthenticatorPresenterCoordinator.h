@@ -59,12 +59,12 @@ public:
     static Ref<AuthenticatorPresenterCoordinator> create(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
     ~AuthenticatorPresenterCoordinator();
 
-    void updatePresenter(WebAuthenticationStatus);
-    void requestPin(uint64_t retries, CompletionHandler<void(const String&)>&&);
-    void requestNewPin(uint64_t, CompletionHandler<void(const String&)>&&);
+    void NODELETE updatePresenter(WebAuthenticationStatus);
+    void NODELETE requestPin(uint64_t retries, CompletionHandler<void(const String&)>&&);
+    void NODELETE requestNewPin(uint64_t, CompletionHandler<void(const String&)>&&);
     void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&);
     void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&);
-    void dimissPresenter(WebAuthenticationResult);
+    void NODELETE dimissPresenter(WebAuthenticationResult);
 
     void setCredentialRequestHandler(CredentialRequestHandler&& handler) { m_credentialRequestHandler = WTF::move(handler); }
     void setLAContext(LAContext *);

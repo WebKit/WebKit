@@ -58,12 +58,12 @@ public:
 private:
     void forEachArg(Inst&, const ScopedLambda<Inst::EachArgCallback>&) final;
     bool isValid(Inst&) final;
-    bool admitsStack(Inst&, unsigned argIndex) final;
-    bool admitsExtendedOffsetAddr(Inst&, unsigned) final;
-    void reportUsedRegisters(Inst&, const RegisterSet&) final;
+    bool NODELETE admitsStack(Inst&, unsigned argIndex) final;
+    bool NODELETE admitsExtendedOffsetAddr(Inst&, unsigned) final;
+    void NODELETE reportUsedRegisters(Inst&, const RegisterSet&) final;
     MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
-    RegisterSet extraEarlyClobberedRegs(Inst&) final;
-    RegisterSet extraClobberedRegs(Inst&) final;
+    RegisterSet NODELETE extraEarlyClobberedRegs(Inst&) final;
+    RegisterSet NODELETE extraClobberedRegs(Inst&) final;
 
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;

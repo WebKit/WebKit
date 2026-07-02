@@ -35,12 +35,12 @@ public:
     bool operator==(const PointLightSource&) const;
 
     const FloatPoint3D& position() const LIFETIME_BOUND { return m_position; }
-    bool setX(float) override;
-    bool setY(float) override;
-    bool setZ(float) override;
+    bool NODELETE setX(float) override;
+    bool NODELETE setY(float) override;
+    bool NODELETE setZ(float) override;
 
     void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
-    ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
+    ComputedLightingData NODELETE computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 

@@ -151,7 +151,7 @@ private:
         void didReceiveMessage(Connection&, Decoder&) final;
         void didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
         void didClose(Connection&) final;
-        void didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
+        void NODELETE didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final;
     private:
         const CheckedRef<StreamClientConnection> m_owner;
         WeakPtr<Connection::Client> m_receiver;

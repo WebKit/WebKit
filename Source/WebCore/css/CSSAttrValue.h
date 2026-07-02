@@ -39,7 +39,7 @@ public:
     const AtomString& attributeName() const LIFETIME_BOUND { return m_attributeName; }
     const std::optional<CSS::String>& fallback() const LIFETIME_BOUND { return m_fallback; }
 
-    bool equals(const CSSAttrValue& other) const;
+    bool NODELETE equals(const CSSAttrValue& other) const;
     String customCSSText(const CSS::SerializationContext&) const;
 
 private:

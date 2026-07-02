@@ -94,7 +94,7 @@ protected:
 
         void NODELETE translate(float x, float y);
         void rotate(float angleInRadians);
-        void scale(const FloatSize&);
+        void NODELETE scale(const FloatSize&);
         void NODELETE concatCTM(const AffineTransform&);
         void NODELETE setCTM(const AffineTransform&);
     };
@@ -107,11 +107,11 @@ protected:
 protected:
     WEBCORE_EXPORT void updateStateForSave(GraphicsContextState::Purpose);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRestore(GraphicsContextState::Purpose);
-    [[nodiscard]] WEBCORE_EXPORT bool NODELETE updateStateForTranslate(float x, float y);
+    [[nodiscard]] WEBCORE_EXPORT bool updateStateForTranslate(float x, float y);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRotate(float angleInRadians);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForScale(const FloatSize&);
-    [[nodiscard]] WEBCORE_EXPORT bool NODELETE updateStateForConcatCTM(const AffineTransform&);
-    WEBCORE_EXPORT void NODELETE updateStateForSetCTM(const AffineTransform&);
+    [[nodiscard]] WEBCORE_EXPORT bool updateStateForConcatCTM(const AffineTransform&);
+    WEBCORE_EXPORT void updateStateForSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(CompositeOperator, BlendMode);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForEndTransparencyLayer();
@@ -150,7 +150,7 @@ private:
 
     virtual void appendStateChangeItemIfNecessary() = 0;
 
-    const AffineTransform& NODELETE ctm() const;
+    const AffineTransform& ctm() const;
 
     Vector<ContextState, 4> m_stateStack;
     DestinationColorSpace m_colorSpace;

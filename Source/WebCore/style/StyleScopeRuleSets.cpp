@@ -302,7 +302,7 @@ struct HasArgumentSiblingInfo {
     bool hasPositionalPseudo { false }; // :nth-child(), :first-child, ... (sibling-relative)
     bool hasNonLogicalPseudo { false }; // any non-logical pseudo-class (positional, stateful, etc.)
 
-    OptionSet<HasArgumentProperty> properties() const
+    OptionSet<HasArgumentProperty> NODELETE properties() const
     {
         OptionSet<HasArgumentProperty> result;
         if (hasSiblingCombinator || hasPositionalPseudo)
@@ -313,7 +313,7 @@ struct HasArgumentSiblingInfo {
     }
 };
 
-static void scanHasArgument(const CSSSelector& complexSelector, HasArgumentSiblingInfo& info)
+static void NODELETE scanHasArgument(const CSSSelector& complexSelector, HasArgumentSiblingInfo& info)
 {
     for (const CSSSelector* simpleSelector = &complexSelector; simpleSelector; simpleSelector = simpleSelector->precedingInComplexSelector()) {
         auto relation = simpleSelector->relation();
@@ -331,7 +331,7 @@ static void scanHasArgument(const CSSSelector& complexSelector, HasArgumentSibli
     }
 }
 
-static OptionSet<HasArgumentProperty> hasArgumentProperties(const CSSSelectorList& argument)
+static OptionSet<HasArgumentProperty> NODELETE hasArgumentProperties(const CSSSelectorList& argument)
 {
     HasArgumentSiblingInfo info;
     for (const auto& complexSelector : argument)

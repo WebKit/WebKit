@@ -74,7 +74,7 @@ private:
     void createThreadIfNeeded();
     [[noreturn]] void threadBody();
 
-    void platformSaveStateBeforeStarting();
+    void NODELETE platformSaveStateBeforeStarting();
     void platformCollectCPUData(JSC::VM*, ResourceUsageData&);
     void platformCollectMemoryData(JSC::VM*, ResourceUsageData&);
 

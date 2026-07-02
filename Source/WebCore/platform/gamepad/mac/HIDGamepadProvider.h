@@ -82,7 +82,7 @@ private:
     void NODELETE initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
-    unsigned NODELETE indexForNewlyConnectedDevice();
+    unsigned indexForNewlyConnectedDevice();
 
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
     HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;

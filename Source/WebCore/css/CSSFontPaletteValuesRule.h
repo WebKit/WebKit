@@ -49,7 +49,7 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontPaletteValues; }
     String cssText() const final;
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontPaletteValues> m_fontPaletteValuesRule;
 };

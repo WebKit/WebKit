@@ -97,7 +97,7 @@ public:
 
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
-    WebKit::NetworkProcessProxy* networkProcessIfExists();
+    WebKit::NetworkProcessProxy* NODELETE networkProcessIfExists();
     WebKit::NetworkProcessProxy* networkProcessLaunchingIfNecessary();
 
     template<typename Message>

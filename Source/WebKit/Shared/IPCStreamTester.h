@@ -48,8 +48,8 @@ class IPCStreamTester final : public IPC::StreamServerConnection::Client {
     WTF_MAKE_TZONE_ALLOCATED(IPCStreamTester);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IPCStreamTester);
 public:
-    static RefPtr<IPCStreamTester> create(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, bool ignoreInvalidMessageForTesting);
-    void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
+    static RefPtr<IPCStreamTester> NODELETE create(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, bool ignoreInvalidMessageForTesting);
+    void NODELETE stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
     // IPC::StreamMessageReceiver overrides.
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
@@ -57,23 +57,23 @@ public:
 private:
     IPCStreamTester(IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&, bool ignoreInvalidMessageForTesting);
     ~IPCStreamTester();
-    void initialize();
+    void NODELETE initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const LIFETIME_BOUND { return m_workQueue; }
 
     // IPC::StreamServerConnection::Client overrides.
-    void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
+    void NODELETE didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
 
     // Messages.
-    void syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&&);
-    void syncMessageNotStreamEncodableReply(uint32_t value, CompletionHandler<void(uint32_t)>&&);
-    void syncMessageNotStreamEncodableBoth(uint32_t value, CompletionHandler<void(uint32_t)>&&);
-    void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&&);
-    void syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&&);
-    void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
-    void checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);
-    void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
-    void emptyMessage();
-    void checkInvalidMessages(CompletionHandler<void(uint32_t)>&&);
+    void NODELETE syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE syncMessageNotStreamEncodableReply(uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE syncMessageNotStreamEncodableBoth(uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&&);
+    void NODELETE syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&&);
+    void NODELETE syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
+    void NODELETE checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);
+    void NODELETE asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE emptyMessage();
+    void NODELETE checkInvalidMessages(CompletionHandler<void(uint32_t)>&&);
 
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_streamConnection;

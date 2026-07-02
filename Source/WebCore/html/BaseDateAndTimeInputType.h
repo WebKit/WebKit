@@ -142,7 +142,7 @@ private:
     void didBlurFromControl() final;
     void didChangeValueFromControl() final;
     void didReceiveSpaceKeyFromControl() final;
-    bool isEditControlOwnerDisabled() const final;
+    bool NODELETE isEditControlOwnerDisabled() const final;
     bool isEditControlOwnerReadOnly() const final;
     bool didEditControlOwnerTransferFocusToPicker() final { return m_didTransferFocusToPicker; }
     void didSuppressBlurDueToPickerFocusTransfer() final { m_didTransferFocusToPicker = false; }

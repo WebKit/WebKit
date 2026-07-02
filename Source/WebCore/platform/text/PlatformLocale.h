@@ -68,7 +68,7 @@ public:
     };
 
     // Returns the default writing direction for the specified locale.
-    virtual WritingDirection defaultWritingDirection() const;
+    virtual WritingDirection NODELETE defaultWritingDirection() const;
 
     // Returns date format in Unicode TR35 LDML[1] containing day of month,
     // month, and year, e.g. "dd/mm/yyyy"

@@ -61,7 +61,7 @@ public:
 
 private:
     // PageOverlayClient
-    void willMoveToPage(PageOverlay&, Page*) override;
+    void NODELETE willMoveToPage(PageOverlay&, Page*) override;
     void NODELETE didMoveToPage(PageOverlay&, Page*) override;
     void NODELETE drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
@@ -87,7 +87,7 @@ private:
     // DataDetectorHighlightClient
     DataDetectorHighlight* activeHighlight() const final { return m_activeHighlight.get(); }
     void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep>) final;
-    float deviceScaleFactor() const final;
+    float NODELETE deviceScaleFactor() const final;
     RefPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) final;
 #endif
 

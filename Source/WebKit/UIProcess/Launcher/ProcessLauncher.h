@@ -151,7 +151,7 @@ public:
     bool isLaunching() const { return m_isLaunching; }
     ProcessID processID() const { return m_processID; }
 
-    void terminateProcess();
+    void NODELETE terminateProcess();
     void invalidate();
 
 #if USE(EXTENSIONKIT)
@@ -166,16 +166,16 @@ public:
 private:
     ProcessLauncher(Client*, LaunchOptions&&);
 
-    void launchProcess();
-    void finishLaunchingProcess(ASCIILiteral name, int retriesRemaining = 2);
-    void tryFinishLaunchingProcess(ASCIILiteral name, Function<void()>&& onFailure);
+    void NODELETE launchProcess();
+    void NODELETE finishLaunchingProcess(ASCIILiteral name, int retriesRemaining = 2);
+    void NODELETE tryFinishLaunchingProcess(ASCIILiteral name, Function<void()>&& onFailure);
     void didFinishLaunchingProcess(ProcessID, IPC::Connection::Identifier&&);
 
-    void platformInvalidate();
-    void platformDestroy();
+    void NODELETE platformInvalidate();
+    void NODELETE platformDestroy();
 
 #if PLATFORM(COCOA)
-    void terminateXPCConnection();
+    void NODELETE terminateXPCConnection();
 #endif
 
     CheckedPtr<Client> m_client;

@@ -49,17 +49,17 @@ public:
     static Ref<SOAuthorizationSession> create(Ref<API::PageConfiguration>&&, RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
     ~PopUpSOAuthorizationSession();
 
-    void close(WKWebView *);
+    void NODELETE close(WKWebView *);
 
 private:
     PopUpSOAuthorizationSession(Ref<API::PageConfiguration>&&, RetainPtr<WKSOAuthorizationDelegate>, WebPageProxy&, Ref<API::NavigationAction>&&, NewPageCallback&&, UIClientCallback&&);
 
-    void shouldStartInternal() final;
-    void fallBackToWebPathInternal() final;
-    void abortInternal() final;
-    void completeInternal(const WebCore::ResourceResponse&, NSData *) final;
+    void NODELETE shouldStartInternal() final;
+    void NODELETE fallBackToWebPathInternal() final;
+    void NODELETE abortInternal() final;
+    void NODELETE completeInternal(const WebCore::ResourceResponse&, NSData *) final;
 
-    void initSecretWebView();
+    void NODELETE initSecretWebView();
 
     Ref<API::PageConfiguration> m_configuration;
     NewPageCallback m_newPageCallback;

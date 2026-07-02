@@ -48,13 +48,13 @@ private:
     explicit TimeInputType(HTMLInputElement&);
 
     const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
+    DateComponentsType NODELETE dateType() const final;
     Decimal defaultValueForStepUp() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;
-    void handleDOMActivateEvent(Event&) final;
-    void showPicker() final;
+    void NODELETE handleDOMActivateEvent(Event&) final;
+    void NODELETE showPicker() final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;

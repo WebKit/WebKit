@@ -78,7 +78,7 @@ public:
 
     // Only called on the main thread after suspending all threads.
     template<typename Visitor>
-    void visitWeakReferences(Visitor&);
+    void NODELETE visitWeakReferences(Visitor&);
 
     template<typename Visitor>
     void iterateCodeBlocksForGC(Visitor&, VM&, NOESCAPE const Function<void(CodeBlock*)>&);
@@ -93,7 +93,7 @@ private:
     void wakeThreads(const AbstractLocker&, unsigned enqueuedTier);
     unsigned planLoad(JITPlan&);
 
-    size_t queueLength(const AbstractLocker&) const;
+    size_t NODELETE queueLength(const AbstractLocker&) const;
     size_t NODELETE totalOngoingCompilations(const AbstractLocker&) const;
 
     void waitUntilAllPlansForVMAreReady(VM&);

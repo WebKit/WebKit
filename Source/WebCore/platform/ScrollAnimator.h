@@ -143,7 +143,7 @@ private:
     // ScrollingEffectsControllerClient.
     std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
     void startAnimationCallback(ScrollingEffectsController&) final;
-    void stopAnimationCallback(ScrollingEffectsController&) final;
+    void NODELETE stopAnimationCallback(ScrollingEffectsController&) final;
 
     FloatPoint scrollOffset() const final;
     float pageScaleFactor() const final;
@@ -152,7 +152,7 @@ private:
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
 
-    void willStartAnimatedScroll() final;
+    void NODELETE willStartAnimatedScroll() final;
     void didStopAnimatedScroll() final;
 
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;

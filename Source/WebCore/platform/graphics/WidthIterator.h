@@ -71,7 +71,7 @@ public:
 private:
     GlyphData glyphDataForCharacter(char32_t, bool mirror);
     template <typename TextIterator>
-    inline void advanceInternal(TextIterator&, GlyphBuffer&);
+    inline void NODELETE advanceInternal(TextIterator&, GlyphBuffer&);
 
     enum class TransformsType { None, Forced, NotForced };
     TransformsType shouldApplyFontTransforms(const GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex) const;
@@ -83,7 +83,7 @@ private:
     void commitCurrentFontRange(AdvanceInternalState&);
     void commitIgnorable(char32_t characterToWrite, AdvanceInternalState&, const Font& primaryFont);
     void startNewFontRangeIfNeeded(AdvanceInternalState&, SmallCapsState&, const FontCascadeDescription&);
-    void NODELETE applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
+    void applyInitialAdvance(GlyphBuffer&, GlyphBufferAdvance initialAdvance, unsigned lastGlyphCount);
 
     bool NODELETE hasExtraSpacing() const;
     void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
@@ -106,7 +106,7 @@ private:
         void computeIfNeeded(Glyph, const Font&, unsigned charIndex, float glyphWidth);
     };
     AdditionalWidth calculateAdditionalWidth(GlyphBuffer&, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const;
-    void NODELETE applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
+    void applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
 
     TextDirection direction() const { return m_direction; }
     bool rtl() const { return m_direction == TextDirection::RTL; }

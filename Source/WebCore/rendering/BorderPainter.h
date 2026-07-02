@@ -64,7 +64,7 @@ private:
     void paintSides(const BorderShape&, const Sides&) const;
 
     template<typename T>
-    bool paintNinePieceImageImpl(const LayoutRect&, const Style::ComputedStyle&, const T&, CompositeOperator = CompositeOperator::SourceOver) const;
+    bool NODELETE paintNinePieceImageImpl(const LayoutRect&, const Style::ComputedStyle&, const T&, CompositeOperator = CompositeOperator::SourceOver) const;
 
     void paintTranslucentBorderSides(const BorderShape&, const Sides&, BoxSideSet edgesToDraw, bool antialias) const;
     void paintBorderSides(const BorderShape&, const Sides&, BoxSideSet edgesToDraw, bool antialias, const Color* overrideColor = nullptr) const;

@@ -224,7 +224,7 @@ NS_DIRECT_MEMBERS
 namespace WebKit {
 using namespace WebCore;
 
-static void registerUserDefaults()
+static void NODELETE registerUserDefaults()
 {
     RetainPtr registrationDictionary = adoptNS([[NSMutableDictionary alloc] init]);
     
@@ -263,7 +263,7 @@ NSMutableDictionary *WebProcessPool::ensureBundleParameters()
     return m_bundleParameters.get();
 }
 
-static AccessibilityPreferences accessibilityPreferences()
+static AccessibilityPreferences NODELETE accessibilityPreferences()
 {
     AccessibilityPreferences preferences;
 
@@ -314,7 +314,7 @@ void WebProcessPool::setMediaAccessibilityPreferences(WebProcessProxy& process)
 }
 #endif
 
-static void logProcessPoolState(const WebProcessPool& pool)
+static void NODELETE logProcessPoolState(const WebProcessPool& pool)
 {
     for (Ref process : borrow(pool.processes()).get()) {
         WTF::TextStream processDescription;
@@ -621,7 +621,7 @@ bool WebProcessPool::processSuppressionEnabled() const
     return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
 }
 
-static inline RefPtr<WebProcessPool> extractWebProcessPool(void* observer)
+static inline RefPtr<WebProcessPool> NODELETE extractWebProcessPool(void* observer)
 {
     RetainPtr strongObserver { dynamic_objc_cast<WKProcessPoolWeakObserver>(reinterpret_cast<id>(observer)) };
     if (!strongObserver)
@@ -1165,7 +1165,7 @@ static std::optional<bool>& NODELETE isLockdownModeEnabledGloballyForTesting()
     return enabledForTesting;
 }
 
-static bool isLockdownModeEnabledBySystemIgnoringCaching()
+static bool NODELETE isLockdownModeEnabledBySystemIgnoringCaching()
 {
     if (auto& enabledForTesting = isLockdownModeEnabledGloballyForTesting())
         return *enabledForTesting;
@@ -1353,7 +1353,7 @@ void WebProcessPool::displayPropertiesChanged(WebCore::PlatformDisplayID display
     screenPropertiesChanged();
 }
 
-static void displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
+static void NODELETE displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
     RunLoop::mainSingleton().dispatch([displayID, flags]() {
         for (auto& processPool : WebProcessPool::allProcessPools())
@@ -1371,7 +1371,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
         });
 }
 
-static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
+static void NODELETE webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
     RunLoop::mainSingleton().dispatch([] {
         for (auto& pool : WebProcessPool::allProcessPools())
@@ -1471,7 +1471,7 @@ void WebProcessPool::setCachedHardwareKeyboardState(HardwareKeyboardState hardwa
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static RefPtr<WebCompiledContentRuleList> createCompiledContentRuleList(WKContentRuleList* list)
+static RefPtr<WebCompiledContentRuleList> NODELETE createCompiledContentRuleList(WKContentRuleList* list)
 {
     if (!list)
         return nullptr;
@@ -1533,7 +1533,7 @@ String WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
 #endif
 
 template <typename Collection>
-static Vector<SandboxExtension::Handle> sandboxExtensionsForFonts(const Collection& fontPathURLs, std::optional<audit_token_t> auditToken)
+static Vector<SandboxExtension::Handle> NODELETE sandboxExtensionsForFonts(const Collection& fontPathURLs, std::optional<audit_token_t> auditToken)
 {
     Vector<SandboxExtension::Handle> handles;
     for (auto& fontPathURL : fontPathURLs) {
@@ -1638,14 +1638,14 @@ void WebProcessPool::registerAdditionalFonts(NSArray *fontNames)
 }
 #endif // PLATFORM(MAC)
 
-static URL fontURLFromName(ASCIILiteral fontName)
+static URL NODELETE fontURLFromName(ASCIILiteral fontName)
 {
     RetainPtr cfFontName = fontName.createCFString();
     RetainPtr font = adoptCF(CTFontCreateWithName(cfFontName.get(), 0.0, nullptr));
     return URL(adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(font.get(), kCTFontURLAttribute))).get());
 }
 
-static RetainPtr<CTFontDescriptorRef> fontDescription(ASCIILiteral fontName)
+static RetainPtr<CTFontDescriptorRef> NODELETE fontDescription(ASCIILiteral fontName)
 {
     RetainPtr nsFontName = fontName.createNSString();
     RetainPtr attributes = @{ bridge_cast(kCTFontFamilyNameAttribute): nsFontName.get(), bridge_cast(kCTFontRegistrationScopeAttribute): @(kCTFontPriorityComputer) };

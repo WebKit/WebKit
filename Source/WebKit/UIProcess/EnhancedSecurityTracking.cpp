@@ -229,7 +229,7 @@ void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation
         enableFor(reasonForEnhancedSecurity(priorState), navigation);
 }
 
-static bool isNavigationExemptFromEnhancedSecurityDueToOpener(const API::Navigation& navigation, bool hasOpenedPage)
+static bool NODELETE isNavigationExemptFromEnhancedSecurityDueToOpener(const API::Navigation& navigation, bool hasOpenedPage)
 {
     auto& lastNavigationAction = navigation.lastNavigationAction();
     if (lastNavigationAction && lastNavigationAction->hasOpener)

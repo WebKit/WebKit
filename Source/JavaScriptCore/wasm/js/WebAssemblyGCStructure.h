@@ -63,7 +63,7 @@ public:
     static constexpr ptrdiff_t offsetOfInlinedDisplay() { return OBJECT_OFFSETOF(WebAssemblyGCStructure, m_inlinedDisplay); }
 
     template<typename Visitor>
-    static void visitAdditionalChildren(JSCell*, Visitor&);
+    static void NODELETE visitAdditionalChildren(JSCell*, Visitor&);
 
 private:
     WebAssemblyGCStructure(VM&, const TypeInfo&, const ClassInfo*, Ref<const Wasm::RTT>&&);

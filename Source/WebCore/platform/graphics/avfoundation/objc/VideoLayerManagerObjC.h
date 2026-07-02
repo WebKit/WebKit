@@ -58,16 +58,16 @@ public:
 
     WEBCORE_EXPORT ~VideoLayerManagerObjC();
 
-    WEBCORE_EXPORT PlatformLayer* videoInlineLayer() const final;
+    WEBCORE_EXPORT PlatformLayer* NODELETE videoInlineLayer() const final;
 
     WEBCORE_EXPORT void setVideoLayer(PlatformLayer*, FloatSize) final;
     WEBCORE_EXPORT void setPresentationSize(FloatSize) final;
     WEBCORE_EXPORT void didDestroyVideoLayer() final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    WEBCORE_EXPORT PlatformLayer* videoFullscreenLayer() const final;
+    WEBCORE_EXPORT PlatformLayer* NODELETE videoFullscreenLayer() const final;
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler, PlatformImagePtr) final;
-    WEBCORE_EXPORT FloatRect videoFullscreenFrame() const final;
+    WEBCORE_EXPORT FloatRect NODELETE videoFullscreenFrame() const final;
     WEBCORE_EXPORT void setVideoFullscreenFrame(FloatRect) final;
     WEBCORE_EXPORT void updateVideoFullscreenInlineImage(PlatformImagePtr) final;
 #endif
@@ -81,7 +81,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "VideoLayerManagerObjC"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;

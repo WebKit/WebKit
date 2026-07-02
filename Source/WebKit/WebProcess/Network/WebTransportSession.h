@@ -105,8 +105,8 @@ private:
     void datagramOutgoingHighWaterMarkUpdated(double) final;
 
     // MessageSender
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     const Ref<IPC::Connection> m_connection;
     const ThreadSafeWeakPtr<WebCore::WebTransportSessionClient> m_client;

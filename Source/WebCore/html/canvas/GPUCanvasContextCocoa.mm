@@ -93,7 +93,7 @@ public:
     {
         m_isOpaque = opaque;
     }
-    bool hasExtendedRange() const
+    bool NODELETE hasExtendedRange() const
     {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         return m_contentsFormat == ContentsFormat::RGBA16F;

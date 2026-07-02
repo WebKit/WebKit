@@ -7422,7 +7422,7 @@ Frame* WebPage::mainFrame() const
     return m_page ? &m_page->mainFrame() : nullptr;
 }
 
-RefPtr<WebCore::LocalFrame> WebPage::localMainFrame() const
+RefPtr<WebCore::LocalFrame> NODELETE WebPage::localMainFrame() const
 {
     if (auto* page = m_page.get())
         return page->localMainFrame();
@@ -9081,7 +9081,7 @@ void WebPage::clearLoadedSubresourceDomains()
     m_internals->loadedSubresourceDomains.clear();
 }
 
-const HashSet<WebCore::RegistrableDomain>& WebPage::loadedSubresourceDomains() const
+const HashSet<WebCore::RegistrableDomain>& NODELETE WebPage::loadedSubresourceDomains() const
 {
     return m_internals->loadedSubresourceDomains;
 }

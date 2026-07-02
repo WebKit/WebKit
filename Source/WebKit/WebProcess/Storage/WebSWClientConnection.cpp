@@ -444,7 +444,7 @@ void WebSWClientConnection::notifyRecordResponseBodyEnd(RetrieveRecordResponseBo
         callback(makeUnexpected(WTF::move(error)));
 }
 
-static RefPtr<Page> pageFromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier clientIdentifier)
+static RefPtr<Page> NODELETE pageFromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier clientIdentifier)
 {
     auto* document = Document::allDocumentsMap().get(clientIdentifier);
     if (!document) {

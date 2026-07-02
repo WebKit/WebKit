@@ -429,7 +429,7 @@ public:
     [[nodiscard]] PartialResult addRefTest(ExpressionType, bool, int32_t, bool, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addRefCast(ExpressionType, bool, int32_t, ExpressionType&) CONST_EXPR_STUB
 
-    [[nodiscard]] PartialResult addAnyConvertExtern(ExpressionType reference, ExpressionType& result)
+    [[nodiscard]] PartialResult NODELETE addAnyConvertExtern(ExpressionType reference, ExpressionType& result)
     {
         if (m_mode == Mode::Evaluate) {
             if (reference.type() == ConstExprValue::Numeric)
@@ -721,9 +721,9 @@ public:
     [[nodiscard]] PartialResult addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
     void NODELETE dump(const ControlStack&, const Stack*) { }
-    ALWAYS_INLINE void willParseOpcode() { }
-    ALWAYS_INLINE void willParseExtendedOpcode() { }
-    ALWAYS_INLINE void didParseOpcode() {
+    ALWAYS_INLINE void NODELETE willParseOpcode() { }
+    ALWAYS_INLINE void NODELETE willParseExtendedOpcode() { }
+    ALWAYS_INLINE void NODELETE didParseOpcode() {
         if (m_parser->currentOpcode() == Nop)
             m_shouldError = true;
     }

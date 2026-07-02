@@ -49,13 +49,13 @@ static WTF::URL generateUserScriptUniqueURL()
 }
 
 #if PLATFORM(COCOA)
-NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void crashDueToApplicationCreatingUserScriptFromBackgroundThread()
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void NODELETE crashDueToApplicationCreatingUserScriptFromBackgroundThread()
 {
     RELEASE_ASSERT_NOT_REACHED("Terminating process due to improper usage of WebKit APIs off the main thread.");
 }
 #endif
 
-static HashCountedSet<String>& sourceStrings()
+static HashCountedSet<String>& NODELETE sourceStrings()
 {
     static NeverDestroyed<HashCountedSet<String>> set;
     return set;

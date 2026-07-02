@@ -75,7 +75,7 @@ bool SandboxExtensionImpl::invalidate()
     return !sandbox_extension_release(std::exchange(m_handle, 0));
 }
 
-std::span<const uint8_t> SandboxExtensionImpl::getSerializedFormat()
+std::span<const uint8_t> NODELETE SandboxExtensionImpl::getSerializedFormat()
 {
     ASSERT(m_token.length());
     return byteCast<uint8_t>(m_token.span());

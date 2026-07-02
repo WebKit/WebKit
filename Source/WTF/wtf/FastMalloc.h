@@ -126,7 +126,7 @@ namespace WTF {
 //     WTF_MAKE_TZONE_ALLOCATED_EXPORT, but or special classes whose object pointers need to be stored in some custom scheme e.g. in CompactPtrs.
 
 #if !defined(NDEBUG)
-WTF_EXPORT_PRIVATE void fastSetMaxSingleAllocationSize(size_t);
+WTF_EXPORT_PRIVATE void NODELETE fastSetMaxSingleAllocationSize(size_t);
 #endif
 
 WTF_EXPORT_PRIVATE bool isFastMallocEnabled();

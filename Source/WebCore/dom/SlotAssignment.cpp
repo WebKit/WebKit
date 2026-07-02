@@ -68,7 +68,7 @@ static const AtomString& NODELETE slotNameFromSlotAttribute(const Node& child)
 }
 
 #if ASSERT_ENABLED
-static HTMLSlotElement* findSlotElement(ShadowRoot& shadowRoot, const AtomString& slotName)
+static HTMLSlotElement* NODELETE findSlotElement(ShadowRoot& shadowRoot, const AtomString& slotName)
 {
     for (auto& slotElement : descendantsOfType<HTMLSlotElement>(shadowRoot)) {
         if (slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr)) == slotName)

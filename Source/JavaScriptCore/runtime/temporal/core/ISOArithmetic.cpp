@@ -186,7 +186,7 @@ int32_t NODELETE isoTimeCompare(const ISO8601::PlainTime& t1, const ISO8601::Pla
 
 // ISODateSurpasses — temporal_rs: iso_date_surpasses (src/iso.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-isodatesurpasses
-static bool isoDateSurpasses(int32_t sign, int32_t y1, int32_t m1, int32_t d1, const ISO8601::PlainDate& isoDate2)
+static bool NODELETE isoDateSurpasses(int32_t sign, int32_t y1, int32_t m1, int32_t d1, const ISO8601::PlainDate& isoDate2)
 {
     if (y1 != isoDate2.year())
         return sign * (y1 - isoDate2.year()) > 0;
@@ -333,7 +333,7 @@ ISO8601::InternalDuration diffISODateTime(const ISO8601::PlainDate& d1, const IS
 
 // RoundTime steps 1–6 (quantity only) — temporal_rs: IsoTime::round (src/iso.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-roundtime
-static std::pair<Int128, Int128> roundTime(const ISO8601::PlainTime& t, TemporalUnit unit)
+static std::pair<Int128, Int128> NODELETE roundTime(const ISO8601::PlainTime& t, TemporalUnit unit)
 {
     using ET = ISO8601::ExactTime;
     const Int128 lH = Int128(t.hour());

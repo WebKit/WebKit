@@ -35,20 +35,20 @@ public:
     explicit SVGPathSegListSource(const SVGPathSegList&);
 
 private:
-    bool hasMoreData() const final;
+    bool NODELETE hasMoreData() const final;
     bool moveToNextToken() final { return true; }
     SVGPathSegType nextCommand(SVGPathSegType) final;
 
     std::optional<SVGPathSegType> parseSVGSegmentType() final;
-    std::optional<MoveToSegment> parseMoveToSegment(FloatPoint) final;
-    std::optional<LineToSegment> parseLineToSegment(FloatPoint) final;
-    std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment(FloatPoint) final;
-    std::optional<LineToVerticalSegment> parseLineToVerticalSegment(FloatPoint) final;
-    std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint) final;
-    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment(FloatPoint) final;
-    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment(FloatPoint) final;
-    std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment(FloatPoint) final;
-    std::optional<ArcToSegment> parseArcToSegment(FloatPoint) final;
+    std::optional<MoveToSegment> NODELETE parseMoveToSegment(FloatPoint) final;
+    std::optional<LineToSegment> NODELETE parseLineToSegment(FloatPoint) final;
+    std::optional<LineToHorizontalSegment> NODELETE parseLineToHorizontalSegment(FloatPoint) final;
+    std::optional<LineToVerticalSegment> NODELETE parseLineToVerticalSegment(FloatPoint) final;
+    std::optional<CurveToCubicSegment> NODELETE parseCurveToCubicSegment(FloatPoint) final;
+    std::optional<CurveToCubicSmoothSegment> NODELETE parseCurveToCubicSmoothSegment(FloatPoint) final;
+    std::optional<CurveToQuadraticSegment> NODELETE parseCurveToQuadraticSegment(FloatPoint) final;
+    std::optional<CurveToQuadraticSmoothSegment> NODELETE parseCurveToQuadraticSmoothSegment(FloatPoint) final;
+    std::optional<ArcToSegment> NODELETE parseArcToSegment(FloatPoint) final;
 
     SingleThreadWeakRef<const SVGPathSegList> m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;

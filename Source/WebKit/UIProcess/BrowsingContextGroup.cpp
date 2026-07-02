@@ -190,7 +190,7 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
 // In addition to the obvious terminated case, sites with an empty registrable domain
 // (e.g. data:, blob:, file:) all collapse to the same key in m_processMap, so they
 // never represented a unique site-to-process binding; replacing them is benign.
-static bool canReplaceFrameProcessInProcessMap(const WebCore::Site& site, FrameProcess& existing)
+static bool NODELETE canReplaceFrameProcessInProcessMap(const WebCore::Site& site, FrameProcess& existing)
 {
     if (existing.process().state() == WebProcessProxy::State::Terminated)
         return true;
@@ -304,7 +304,7 @@ void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<
         function(remotePage);
 }
 
-RefPtr<RemotePageProxy> BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebProcessProxy& process)
+RefPtr<RemotePageProxy> NODELETE BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebProcessProxy& process)
 {
     auto it = m_remotePages.find(page);
     if (it == m_remotePages.end())

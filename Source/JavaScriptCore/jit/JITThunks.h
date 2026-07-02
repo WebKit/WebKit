@@ -211,7 +211,7 @@ public:
 
 private:
     template <typename GenerateThunk>
-    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStubImpl(ThunkGenerator key, GenerateThunk);
+    MacroAssemblerCodeRef<JITThunkPtrTag> NODELETE ctiStubImpl(ThunkGenerator key, GenerateThunk);
 
     void finalize(Handle<Unknown>, void* context) final;
     
@@ -225,16 +225,16 @@ private:
 
     struct WeakNativeExecutableHash {
         static inline unsigned NODELETE hash(const Weak<NativeExecutable>&);
-        static inline unsigned hash(const NativeExecutable*);
+        static inline unsigned NODELETE hash(const NativeExecutable*);
         static unsigned hash(const HostFunctionKey& key)
         {
             return hash(std::get<0>(key), std::get<1>(key), std::get<2>(key), std::get<3>(key), std::get<4>(key));
         }
 
         static inline bool NODELETE equal(const Weak<NativeExecutable>&, const Weak<NativeExecutable>&);
-        static inline bool equal(const Weak<NativeExecutable>&, const HostFunctionKey&);
-        static inline bool equal(const Weak<NativeExecutable>&, const NativeExecutable*);
-        static inline bool equal(const NativeExecutable&, const NativeExecutable&);
+        static inline bool NODELETE equal(const Weak<NativeExecutable>&, const HostFunctionKey&);
+        static inline bool NODELETE equal(const Weak<NativeExecutable>&, const NativeExecutable*);
+        static inline bool NODELETE equal(const NativeExecutable&, const NativeExecutable&);
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
 
     private:

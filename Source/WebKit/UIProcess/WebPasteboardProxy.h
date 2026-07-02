@@ -74,9 +74,9 @@ public:
     void deref() const final { }
 
 #if PLATFORM(COCOA)
-    void revokeAccess(WebProcessProxy&);
+    void NODELETE revokeAccess(WebProcessProxy&);
     std::optional<IPC::AsyncReplyID> grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName, CompletionHandler<void()>&&);
-    void grantAccessToCurrentTypes(WebProcessProxy&, const String& pasteboardName);
+    void NODELETE grantAccessToCurrentTypes(WebProcessProxy&, const String& pasteboardName);
 #endif
 
 #if PLATFORM(GTK)
@@ -154,13 +154,13 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    bool canAccessPasteboardTypes(IPC::Connection&, const String& pasteboardName) const;
-    bool canAccessPasteboardData(IPC::Connection&, const String& pasteboardName) const;
-    void didModifyContentsOfPasteboard(IPC::Connection&, const String& pasteboardName, int64_t previousChangeCount, int64_t newChangeCount);
+    bool NODELETE canAccessPasteboardTypes(IPC::Connection&, const String& pasteboardName) const;
+    bool NODELETE canAccessPasteboardData(IPC::Connection&, const String& pasteboardName) const;
+    void NODELETE didModifyContentsOfPasteboard(IPC::Connection&, const String& pasteboardName, int64_t previousChangeCount, int64_t newChangeCount);
 
     enum class PasteboardAccessType : uint8_t { Types, TypesAndData };
-    std::optional<PasteboardAccessType> accessType(IPC::Connection&, const String& pasteboardName) const;
-    void grantAccess(WebProcessProxy&, const String& pasteboardName, PasteboardAccessType);
+    std::optional<PasteboardAccessType> NODELETE accessType(IPC::Connection&, const String& pasteboardName) const;
+    void NODELETE grantAccess(WebProcessProxy&, const String& pasteboardName, PasteboardAccessType);
 
     std::optional<WebCore::DataOwnerType> determineDataOwner(IPC::Connection&, const String& pasteboardName, std::optional<WebPageProxyIdentifier>, PasteboardAccessIntent) const;
 #endif
@@ -178,9 +178,9 @@ private:
         int64_t changeCount { 0 };
         Vector<std::pair<WeakPtr<WebProcessProxy>, PasteboardAccessType>> processes;
 
-        void grantAccess(WebProcessProxy&, PasteboardAccessType);
-        void revokeAccess(WebProcessProxy&);
-        std::optional<PasteboardAccessType> accessType(WebProcessProxy&) const;
+        void NODELETE grantAccess(WebProcessProxy&, PasteboardAccessType);
+        void NODELETE revokeAccess(WebProcessProxy&);
+        std::optional<PasteboardAccessType> NODELETE accessType(WebProcessProxy&) const;
     };
     HashMap<String, PasteboardAccessInformation> m_pasteboardNameToAccessInformationMap;
 #endif

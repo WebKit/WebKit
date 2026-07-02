@@ -57,7 +57,7 @@ public:
     AccessibilityObject* parentObject() const final;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     AccessibilityObject* crossFrameParentObject() const final;
-    AccessibilityObject* crossFrameChildObject() const final;
+    AccessibilityObject* NODELETE crossFrameChildObject() const final;
 
     // Returns the screen position and transform for this frame.
     // Reads from the AXObjectCache's cached value, populated asynchronously via IPC.
@@ -86,7 +86,7 @@ private:
     explicit AccessibilityScrollView(AXID, ScrollView&, AXObjectCache&);
     void detachRemoteParts(AccessibilityDetachmentType) final;
 
-    ScrollView* currentScrollView() const;
+    ScrollView* NODELETE currentScrollView() const;
     ScrollableArea* getScrollableAreaIfScrollable() const final { return currentScrollView(); }
     void scrollTo(const IntPoint&) const final;
     bool computeIsIgnored() const final;
@@ -113,7 +113,7 @@ private:
     const AccessibilityScrollView* frameRootScrollView() const;
 
     Document* document() const final;
-    LocalFrameView* documentFrameView() const final;
+    LocalFrameView* NODELETE documentFrameView() const final;
     LayoutRect elementRect() const final;
     LayoutRect boundingBoxRect() const final { return elementRect(); }
     AccessibilityObject* horizontalScrollbar() const { return m_horizontalScrollbar.get(); }

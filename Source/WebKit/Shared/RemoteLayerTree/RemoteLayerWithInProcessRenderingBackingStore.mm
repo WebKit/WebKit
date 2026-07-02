@@ -167,7 +167,7 @@ std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithInProcessRenderi
     return ImageBufferBackingStoreFlusher::create(m_bufferSet.identifier(), WTF::move(flusher), WTF::move(handles));
 }
 
-std::optional<ImageBufferSetIdentifier> RemoteLayerWithInProcessRenderingBackingStore::bufferSetIdentifier() const
+std::optional<ImageBufferSetIdentifier> NODELETE RemoteLayerWithInProcessRenderingBackingStore::bufferSetIdentifier() const
 {
     return m_bufferSet.identifier();
 }

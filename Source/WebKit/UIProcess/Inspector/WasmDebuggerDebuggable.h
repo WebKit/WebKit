@@ -49,7 +49,7 @@ public:
 
     String name() const final;
     String url() const final;
-    bool hasLocalDebugger() const final;
+    bool NODELETE hasLocalDebugger() const final;
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
@@ -59,7 +59,7 @@ public:
     const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
     void setNameOverride(const String&);
 
-    std::optional<ProcessID> webContentProcessPID() const override;
+    std::optional<ProcessID> NODELETE webContentProcessPID() const override;
 
     void NODELETE detachFromProcess();
 

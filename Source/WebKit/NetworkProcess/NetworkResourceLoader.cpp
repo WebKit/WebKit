@@ -1961,7 +1961,7 @@ static String escapeIDForJSON(const std::optional<ObjectIdentifierGeneric<Identi
 }
 
 template<typename IdentifierType, typename ThreadSafety, typename RawValue>
-static String escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifierGeneric<IdentifierType, ThreadSafety, RawValue>>>& value)
+static String NODELETE escapeIDForJSON(const std::optional<ProcessQualified<ObjectIdentifierGeneric<IdentifierType, ThreadSafety, RawValue>>>& value)
 {
     return value ? String::number(value->object().toUInt64()) : "None"_str;
 }

@@ -45,7 +45,7 @@ public:
 private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
-    String nodeName() const override;
+    String NODELETE nodeName() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const override;
     SerializedNode serializeNode(CloningOperation) const override;
 

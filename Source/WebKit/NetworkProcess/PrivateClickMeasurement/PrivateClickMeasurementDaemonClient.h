@@ -34,8 +34,8 @@ namespace WebKit::PCM {
 class DaemonClient : public Client, public CanMakeWeakPtr<DaemonClient> {
     WTF_MAKE_TZONE_ALLOCATED(DaemonClient);
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
-    bool featureEnabled() const final;
-    bool debugModeEnabled() const final;
+    bool NODELETE featureEnabled() const final;
+    bool NODELETE debugModeEnabled() const final;
     bool usesEphemeralDataStore() const final { return false; }
     bool runningInDaemon() const final { return true; }
 };

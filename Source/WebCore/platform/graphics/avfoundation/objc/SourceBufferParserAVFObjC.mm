@@ -167,9 +167,9 @@ public:
     static Ref<MediaDescriptionAVFObjC> create(AVAssetTrack* track) { return adoptRef(*new MediaDescriptionAVFObjC(track)); }
     virtual ~MediaDescriptionAVFObjC() { }
 
-    bool isVideo() const final { return m_isVideo; }
-    bool isAudio() const final { return m_isAudio; }
-    bool isText() const final { return m_isText; }
+    bool NODELETE isVideo() const final { return m_isVideo; }
+    bool NODELETE isAudio() const final { return m_isAudio; }
+    bool NODELETE isText() const final { return m_isText; }
 
 private:
     MediaDescriptionAVFObjC(AVAssetTrack* track)

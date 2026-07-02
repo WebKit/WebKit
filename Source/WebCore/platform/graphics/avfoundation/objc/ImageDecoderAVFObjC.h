@@ -68,16 +68,16 @@ public:
     const String& mimeType() const LIFETIME_BOUND { return m_mimeType; }
 
     WEBCORE_EXPORT void setEncodedDataStatusChangeCallback(Function<void(EncodedDataStatus)>&&) final;
-    EncodedDataStatus encodedDataStatus() const final;
-    WEBCORE_EXPORT IntSize size() const final;
-    WEBCORE_EXPORT size_t frameCount() const final;
-    RepetitionCount repetitionCount() const final;
-    String uti() const final;
+    EncodedDataStatus NODELETE encodedDataStatus() const final;
+    WEBCORE_EXPORT IntSize NODELETE size() const final;
+    WEBCORE_EXPORT size_t NODELETE frameCount() const final;
+    RepetitionCount NODELETE repetitionCount() const final;
+    String NODELETE uti() const final;
     String filenameExtension() const final;
     std::optional<IntPoint> hotSpot() const final { return std::nullopt; }
     String accessibilityDescription() const final { return String(); }
 
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
+    IntSize NODELETE frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
     bool frameIsCompleteAtIndex(size_t) const final;
 
     Seconds frameDurationAtIndex(size_t) const final;

@@ -91,14 +91,14 @@ private:
         const WebCore::WebGPU::ImageDataLayout&,
         const WebCore::WebGPU::Extent3D& size) final;
 
-    void writeBufferNoCopy(
+    void NODELETE writeBufferNoCopy(
         const WebCore::WebGPU::Buffer&,
         WebCore::WebGPU::Size64 bufferOffset,
         std::span<uint8_t> source,
         WebCore::WebGPU::Size64 dataOffset = 0,
         std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
 
-    void writeTexture(
+    void NODELETE writeTexture(
         const WebCore::WebGPU::ImageCopyTexture& destination,
         std::span<uint8_t> source,
         const WebCore::WebGPU::ImageDataLayout&,

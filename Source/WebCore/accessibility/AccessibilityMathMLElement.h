@@ -47,7 +47,7 @@ protected:
     explicit AccessibilityMathMLElement(AXID, RenderObject&, AXObjectCache&, bool isAnonymousOperator);
 
 private:
-    AccessibilityRole determineAccessibilityRole() final;
+    AccessibilityRole NODELETE determineAccessibilityRole() final;
     void addChildren() final;
     String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
     String stringValue() const final;
@@ -55,12 +55,12 @@ private:
 
     bool isMathElement() const final { return true; }
 
-    bool isMathFraction() const final;
-    bool isMathFenced() const final;
+    bool NODELETE isMathFraction() const final;
+    bool NODELETE isMathFenced() const final;
     bool isMathSubscriptSuperscript() const final;
     bool isMathRow() const final;
-    bool isMathUnderOver() const final;
-    bool isMathRoot() const final;
+    bool NODELETE isMathUnderOver() const final;
+    bool NODELETE isMathRoot() const final;
     bool isMathSquareRoot() const final;
     bool isMathText() const final;
     bool isMathNumber() const final;

@@ -103,8 +103,8 @@ private:
     bool NODELETE isDownloadTriggeredWithDownloadAttribute() const;
 
     // MessageSender.
-    IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override;
+    IPC::Connection* NODELETE messageSenderConnection() const override;
+    uint64_t NODELETE messageSenderDestinationID() const override;
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     void blockDueToContentFilter(const WebCore::ResourceResponse&, CompletionHandler<void()>&& postBlockHandler);

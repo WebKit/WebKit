@@ -205,7 +205,7 @@ private:
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    enum EventTargetInterfaceType eventTargetInterface() const override;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const override;
 
     // URLRegistrable.
     URLRegistry& registry() const final;

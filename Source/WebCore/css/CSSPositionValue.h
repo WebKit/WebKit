@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CSSPositionValue final : public CSSValue {
 public:
-    static Ref<CSSPositionValue> NODELETE create(CSS::Position&&);
+    static Ref<CSSPositionValue> create(CSS::Position&&);
 
     const CSS::Position& position() const LIFETIME_BOUND { return m_position; }
 
@@ -48,7 +48,7 @@ private:
 
 class CSSPositionXValue final : public CSSValue {
 public:
-    static Ref<CSSPositionXValue> NODELETE create(CSS::PositionX&&);
+    static Ref<CSSPositionXValue> create(CSS::PositionX&&);
 
     const CSS::PositionX& position() const LIFETIME_BOUND { return m_position; }
 
@@ -65,7 +65,7 @@ private:
 
 class CSSPositionYValue final : public CSSValue {
 public:
-    static Ref<CSSPositionYValue> NODELETE create(CSS::PositionY&&);
+    static Ref<CSSPositionYValue> create(CSS::PositionY&&);
 
     const CSS::PositionY& position() const LIFETIME_BOUND { return m_position; }
 

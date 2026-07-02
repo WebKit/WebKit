@@ -107,7 +107,7 @@ public:
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
     const WebCore::VideoReceiverEndpoint& videoReceiverEndpoint() LIFETIME_BOUND { return m_videoReceiverEndpoint; }
 
-    void NODELETE invalidate();
+    void invalidate();
 
 private:
     friend class PlaybackSessionManagerProxy;
@@ -196,7 +196,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t identifier) { m_logIdentifier = identifier; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    const Logger* loggerPtr() const;
+    const Logger* NODELETE loggerPtr() const;
 
     ASCIILiteral logClassName() const { return "PlaybackSessionModelContext"_s; };
     WTFLogChannel& NODELETE logChannel() const;

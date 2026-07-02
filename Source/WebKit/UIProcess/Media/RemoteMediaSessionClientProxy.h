@@ -70,7 +70,7 @@ protected:
     void suspendPlayback() final;
 
     bool canReceiveRemoteControlCommands() const final { return m_state.canReceiveRemoteControlCommands; }
-    void didReceiveRemoteControlCommand(WebCore::PlatformMediaSessionRemoteControlCommandType, const WebCore::PlatformMediaSessionRemoteCommandArgument&) final;
+    void NODELETE didReceiveRemoteControlCommand(WebCore::PlatformMediaSessionRemoteControlCommandType, const WebCore::PlatformMediaSessionRemoteCommandArgument&) final;
     bool supportsSeeking() const final { return m_state.supportsSeeking; }
 
     bool canProduceAudio() const final { return m_state.canProduceAudio; }
@@ -80,7 +80,7 @@ protected:
     bool isEnded() const final { return m_state.isEnded; }
     MediaTime mediaSessionDuration() const final { return m_state.duration; }
 
-    bool shouldOverrideBackgroundPlaybackRestriction(WebCore::PlatformMediaSessionInterruptionType) const final;
+    bool NODELETE shouldOverrideBackgroundPlaybackRestriction(WebCore::PlatformMediaSessionInterruptionType) const final;
     bool shouldOverrideBackgroundLoadingRestriction() const final { return m_state.shouldOverrideBackgroundLoadingRestriction; }
 
     bool isPlayingToWirelessPlaybackTarget() const final { return m_state.isPlayingToWirelessPlaybackTarget; }

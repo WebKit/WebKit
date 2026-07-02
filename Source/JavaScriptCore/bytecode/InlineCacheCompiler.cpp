@@ -1164,7 +1164,7 @@ const ScalarRegisterSet& InlineCacheCompiler::liveRegistersToPreserveAtException
     return m_liveRegistersToPreserveAtExceptionHandlingCallSite;
 }
 
-static RegisterSet calleeSaveRegisters()
+static RegisterSet NODELETE calleeSaveRegisters()
 {
     return RegisterSet(RegisterSet::vmCalleeSaveRegisters())
         .filter(RegisterSet::calleeSaveRegisters())

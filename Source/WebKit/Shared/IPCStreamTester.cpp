@@ -152,7 +152,7 @@ struct UseCountHolder {
 };
 }
 
-static void releaseUseCountHolder(CFAllocatorRef, const void* value)
+static void NODELETE releaseUseCountHolder(CFAllocatorRef, const void* value)
 {
     delete static_cast<const UseCountHolder*>(value);
 }

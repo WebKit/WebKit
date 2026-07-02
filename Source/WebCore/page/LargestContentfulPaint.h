@@ -66,7 +66,7 @@ public:
     void setURLString(const String&);
 
     Element* element() const;
-    void setElement(Element*);
+    void NODELETE setElement(Element*);
 
     ASCIILiteral entryType() const final { return "largest-contentful-paint"_s; }
 

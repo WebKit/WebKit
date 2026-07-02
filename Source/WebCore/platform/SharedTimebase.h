@@ -84,7 +84,7 @@ public:
     MediaTime currentTime() const;
     double currentRate() const;
 
-    void resetForTimeDiscontinuity();
+    void NODELETE resetForTimeDiscontinuity();
 
 private:
     struct Impl;

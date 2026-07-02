@@ -98,7 +98,7 @@ public:
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     void suspend() final;
     void resume() final;
-    GraphicsClient* graphicsClient() final;
+    GraphicsClient* NODELETE graphicsClient() final;
 
 
     USING_CAN_MAKE_WEAKPTR(EventTarget);
@@ -198,9 +198,9 @@ private:
     void clearDecodedScriptData();
 
     URL parseURL(const String&) const final;
-    String userAgent(const URL&) const final;
+    String NODELETE userAgent(const URL&) const final;
 
-    EventTarget* errorEventTarget() final;
+    EventTarget* NODELETE errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
     SocketProvider* NODELETE socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
@@ -213,7 +213,7 @@ private:
     // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
-    void sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
+    void NODELETE sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final { return m_userAgent; }
 
     URL m_url;

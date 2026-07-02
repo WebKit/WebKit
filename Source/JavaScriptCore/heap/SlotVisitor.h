@@ -216,7 +216,7 @@ private:
     void donateAll(const AbstractLocker&);
 
     bool NODELETE hasWork(const AbstractLocker&);
-    bool didReachTermination(const AbstractLocker&);
+    bool NODELETE didReachTermination(const AbstractLocker&);
 
     template<typename Func>
     IterationStatus forEachMarkStack(const Func&);

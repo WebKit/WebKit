@@ -79,7 +79,7 @@ private:
 
     // NetworkDataTask
     void cancel() final;
-    void resume() final;
+    void NODELETE resume() final;
     void invalidateAndCancel() final;
     State state() const final { return m_state; }
     void setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
@@ -90,7 +90,7 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    template<typename Message> bool sendToServiceWorker(Message&&);
+    template<typename Message> bool NODELETE sendToServiceWorker(Message&&);
     void didFailDownload(std::optional<WebCore::ResourceError>&& = { });
     void close();
 

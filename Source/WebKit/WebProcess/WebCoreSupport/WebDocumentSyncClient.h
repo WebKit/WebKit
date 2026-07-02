@@ -40,7 +40,7 @@ public:
     ~WebDocumentSyncClient() = default;
 
 private:
-    bool siteIsolationEnabled();
+    bool NODELETE siteIsolationEnabled();
 
     void broadcastDocumentSyncDataToOtherProcesses(const WebCore::DocumentSyncSerializationData&) final;
     void broadcastAllDocumentSyncDataToOtherProcesses(WebCore::DocumentSyncData&) final;

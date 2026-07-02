@@ -569,7 +569,7 @@ public:
     static constexpr ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
     WEBCORE_EXPORT Element* NODELETE activeElement();
-    WEBCORE_EXPORT bool hasFocus() const;
+    WEBCORE_EXPORT bool NODELETE hasFocus() const;
     void whenVisible(Function<void()>&&);
 
     WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementForBindings(const AtomString& tagName);
@@ -748,7 +748,7 @@ public:
 
     inline LocalFrameView* view() const; // Defined in DocumentView.h.
     inline Page* NODELETE page() const; // Defined in DocumentPage.h.
-    WEBCORE_EXPORT RefPtr<LocalFrame> localMainFrame() const;
+    WEBCORE_EXPORT RefPtr<LocalFrame> NODELETE localMainFrame() const;
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior NODELETE editingBehavior() const;
 
@@ -822,8 +822,8 @@ public:
     void suspendActiveDOMObjects(ReasonForSuspension) final;
     void resumeActiveDOMObjects(ReasonForSuspension) final;
     void stopActiveDOMObjects() final;
-    bool isEventLoopGroupStoppedPermanently() const final;
-    GraphicsClient* graphicsClient() final;
+    bool NODELETE isEventLoopGroupStoppedPermanently() const final;
+    GraphicsClient* NODELETE graphicsClient() final;
 
     inline const SettingsValues& settingsValues() const final; // Defined in DocumentSettingsValues.h.
 
@@ -908,7 +908,7 @@ public:
     void processSpeculationRules();
     SpeculationRules& NODELETE speculationRules() const;
 
-    URL baseURLForComplete(const URL& baseURLOverride) const;
+    URL NODELETE baseURLForComplete(const URL& baseURLOverride) const;
     WEBCORE_EXPORT URL parseURL(const String&) const final;
     WEBCORE_EXPORT URL encodingParseURL(const String&) const final;
     URL encodingParseURL(const String&, const URL& baseURLOverride) const;
@@ -948,7 +948,7 @@ public:
     ScriptableDocumentParser* scriptableDocumentParser() const;
     HTMLDocumentParser* htmlDocumentParser() const;
 
-    WEBCORE_EXPORT bool printing() const;
+    WEBCORE_EXPORT bool NODELETE printing() const;
 
     bool paginatedForScreen() const { return m_paginatedForScreen; }
     void setPaginatedForScreen(bool p) { m_paginatedForScreen = p; }
@@ -987,9 +987,9 @@ public:
     void setLinkColor(const Color& c) { m_linkColor = c; }
     void setVisitedLinkColor(const Color& c) { m_visitedLinkColor = c; }
     void setActiveLinkColor(const Color& c) { m_activeLinkColor = c; }
-    void NODELETE resetLinkColor();
-    void NODELETE resetVisitedLinkColor();
-    void NODELETE resetActiveLinkColor();
+    void resetLinkColor();
+    void resetVisitedLinkColor();
+    void resetActiveLinkColor();
     VisitedLinkState* visitedLinkStateIfExists() const { return m_visitedLinkState.get(); }
     inline VisitedLinkState& visitedLinkState() const;
 
@@ -1049,7 +1049,7 @@ public:
     bool NODELETE shouldInvalidateNodeListAndCollectionCachesForAttribute(const QualifiedName& attrName) const;
 
     template <typename InvalidationFunction>
-    void invalidateNodeListAndCollectionCaches(InvalidationFunction);
+    void NODELETE invalidateNodeListAndCollectionCaches(InvalidationFunction);
 
     void attachNodeIterator(NodeIterator&);
     void detachNodeIterator(NodeIterator&);
@@ -1430,10 +1430,10 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
 
-    bool isContextThread() const final;
+    bool NODELETE isContextThread() const final;
     bool isSecureContext() const final;
-    bool NODELETE crossOriginIsolated() const final;
-    bool NODELETE originAgentCluster() const;
+    bool crossOriginIsolated() const final;
+    bool originAgentCluster() const;
     String agentClusterID() const final;
     bool isJSExecutionForbidden() const final { return false; }
 
@@ -1616,7 +1616,7 @@ public:
     bool inStyleRecalc() const { return m_inStyleRecalc; }
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
     bool isInStyleInterleavedLayout() const { return m_isInStyleInterleavedLayout; };
-    bool isInStyleInterleavedLayoutForSelfOrAncestor() const;
+    bool NODELETE isInStyleInterleavedLayoutForSelfOrAncestor() const;
     bool isResolvingTreeStyle() const { return m_isResolvingTreeStyle; }
     void NODELETE setIsResolvingTreeStyle(bool);
 
@@ -1959,14 +1959,14 @@ public:
 
     bool NODELETE hasHighlight() const;
     HighlightRegistry* highlightRegistryIfExists() const { return m_highlightRegistry.get(); }
-    HighlightRegistry& NODELETE highlightRegistry();
+    HighlightRegistry& highlightRegistry();
     void updateHighlightPositions();
 
     HighlightRegistry* fragmentHighlightRegistryIfExists() const { return m_fragmentHighlightRegistry.get(); }
-    HighlightRegistry& NODELETE fragmentHighlightRegistry();
+    HighlightRegistry& fragmentHighlightRegistry();
 
     HighlightRegistry* textExtractionHighlightRegistryIfExists() const { return m_textExtractionHighlightRegistry.get(); }
-    HighlightRegistry& NODELETE textExtractionHighlightRegistry();
+    HighlightRegistry& textExtractionHighlightRegistry();
 
 #if ENABLE(APP_HIGHLIGHTS)
     HighlightRegistry* appHighlightRegistryIfExists() { return m_appHighlightRegistry.get(); }
@@ -2014,7 +2014,7 @@ public:
     bool contains(const Node* node) const { return node && contains(*node); }
 
     WEBCORE_EXPORT JSC::VM& vm() final;
-    JSC::VM* vmIfExists() const final;
+    JSC::VM* NODELETE vmIfExists() const final;
 
     String debugDescription() const override;
 
@@ -2057,7 +2057,7 @@ public:
 
     unsigned unloadCounter() const { return m_unloadCounter; }
 
-    WEBCORE_EXPORT FrameMemoryMonitor& NODELETE frameMemoryMonitor();
+    WEBCORE_EXPORT FrameMemoryMonitor& frameMemoryMonitor();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     ResourceMonitor* NODELETE resourceMonitorIfExists();
@@ -2086,7 +2086,7 @@ public:
 
     std::optional<TextPosition> currentParserSourcePosition() const;
 
-    bool shouldUseTouchEventRegions() const;
+    bool NODELETE shouldUseTouchEventRegions() const;
 
 protected:
     enum class ConstructionFlag : uint8_t {
@@ -2168,7 +2168,7 @@ private:
     WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> determineActiveThemeColorMetaElement();
     void themeColorChanged();
 
-    void NODELETE invalidateAccessKeyCacheSlowCase();
+    void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
 
     void intersectionObserversInitialUpdateTimerFired();
@@ -2178,7 +2178,7 @@ private:
     void pendingTasksTimerFired();
     bool isCookieAverse() const;
 
-    template<CollectionType> Ref<HTMLCollection> ensureCachedCollection();
+    template<CollectionType> Ref<HTMLCollection> NODELETE ensureCachedCollection();
 
     void dispatchDisabledAdaptationsDidChangeForMainFrame();
 
@@ -2207,7 +2207,7 @@ private:
     void wheelOrTouchEventHandlersChanged(Node* = nullptr);
 
     HttpEquivPolicy httpEquivPolicy() const;
-    AXObjectCache* existingAXObjectCacheSlow() const;
+    AXObjectCache* NODELETE existingAXObjectCacheSlow() const;
 
     bool shouldMaskURLForBindingsInternal(const URL&) const;
 

@@ -53,7 +53,7 @@ public:
 
     void setParent(RefPtr<CompositeEditCommand>&&);
 
-    virtual EditAction editingAction() const;
+    virtual EditAction NODELETE editingAction() const;
 
     const VisibleSelection& startingSelection() const LIFETIME_BOUND { return m_startingSelection; }
     const VisibleSelection& endingSelection() const LIFETIME_BOUND { return m_endingSelection; }
@@ -75,7 +75,7 @@ protected:
     void setStartingSelection(const VisibleSelection&);
     WEBCORE_EXPORT void setEndingSelection(const VisibleSelection&);
 
-    bool isEditingTextAreaOrTextInput() const;
+    bool NODELETE isEditingTextAreaOrTextInput() const;
 
     void postTextStateChangeNotification(AXTextEditType, const String&);
     void postTextStateChangeNotification(AXTextEditType, const String&, const VisiblePosition&);
@@ -106,7 +106,7 @@ protected:
     explicit SimpleEditCommand(Ref<Document>&&, EditAction = EditAction::Unspecified);
 
 #ifndef NDEBUG
-    void addNodeAndDescendants(Node*, NodeSet&);
+    void NODELETE addNodeAndDescendants(Node*, NodeSet&);
 #endif
 
 private:

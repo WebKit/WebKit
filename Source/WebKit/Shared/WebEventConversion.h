@@ -77,7 +77,7 @@ WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
 WebCore::MouseEventInputSource NODELETE platform(WebEventInputSource);
 WebEventInputSource NODELETE kit(WebCore::MouseEventInputSource);
 
-WebCore::MouseButton platform(WebMouseEventButton);
+WebCore::MouseButton NODELETE platform(WebMouseEventButton);
 WebMouseEventButton NODELETE kit(WebCore::MouseButton);
 
 WebCore::PlatformEvent::Type NODELETE platform(WebEventType);

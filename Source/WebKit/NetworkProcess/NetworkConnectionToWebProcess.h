@@ -181,7 +181,7 @@ public:
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    NetworkSession* networkSession();
+    NetworkSession* NODELETE networkSession();
 
     IPC::Connection& connection() { return m_connection.get(); }
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
@@ -311,7 +311,7 @@ private:
     void preconnectTo(PreconnectRequest&&);
     void isResourceLoadFinished(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(bool)>&&);
 #if ENABLE(IPC_TESTING_API)
-    void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+    void NODELETE takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
     void removeLoadIdentifier(WebCore::ResourceLoaderIdentifier);

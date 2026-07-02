@@ -38,7 +38,7 @@ namespace WebKit {
 // Proxy interface to test IPC activities related to receiving messages.
 class IPCTesterReceiver final : public IPC::MessageReceiver, public RefCounted<IPCTesterReceiver> {
 public:
-    static Ref<IPCTesterReceiver> create();
+    static Ref<IPCTesterReceiver> NODELETE create();
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -49,7 +49,7 @@ private:
     IPCTesterReceiver() = default;
 
     // Messages
-    void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
 };
 
 }

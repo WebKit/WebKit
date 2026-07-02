@@ -53,7 +53,7 @@
 namespace WebCore {
 namespace Layout {
 
-static bool areEssentiallyEqual(LayoutUnit a, LayoutUnit b)
+static bool NODELETE areEssentiallyEqual(LayoutUnit a, LayoutUnit b)
 {
     if (a == b)
         return true;
@@ -62,12 +62,12 @@ static bool areEssentiallyEqual(LayoutUnit a, LayoutUnit b)
     return std::abs(a.rawValue() - b.rawValue()) <= epsilon;
 }
 
-static bool areEssentiallyEqual(float a, InlineLayoutUnit b)
+static bool NODELETE areEssentiallyEqual(float a, InlineLayoutUnit b)
 {
     return areEssentiallyEqual(LayoutUnit { a }, LayoutUnit { b });
 }
 
-static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)
+static bool NODELETE areEssentiallyEqual(LayoutRect a, LayoutRect b)
 {
     return areEssentiallyEqual(a.x(), b.x())
         && areEssentiallyEqual(a.y(), b.y())
@@ -75,7 +75,7 @@ static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)
         && areEssentiallyEqual(a.height(), b.height());
 }
 
-static bool checkForMatchingNonTextRuns(const InlineDisplay::Box& box, const WebCore::LegacyInlineBox& inlineBox)
+static bool NODELETE checkForMatchingNonTextRuns(const InlineDisplay::Box& box, const WebCore::LegacyInlineBox& inlineBox)
 {
     return areEssentiallyEqual(inlineBox.left(), box.left())
         && areEssentiallyEqual(inlineBox.right(), box.right())
@@ -84,7 +84,7 @@ static bool checkForMatchingNonTextRuns(const InlineDisplay::Box& box, const Web
 }
 
 
-static bool checkForMatchingTextRuns(InlineDisplay::Box& box, const WebCore::LegacyInlineTextBox& inlineTextBox)
+static bool NODELETE checkForMatchingTextRuns(InlineDisplay::Box& box, const WebCore::LegacyInlineTextBox& inlineTextBox)
 {
     if (!box.isTextOrSoftLineBreak())
         return false;
@@ -95,7 +95,7 @@ static bool checkForMatchingTextRuns(InlineDisplay::Box& box, const WebCore::Leg
         && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == box.text().start() && inlineTextBox.end() == box.text().end()));
 }
 
-static void collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
+static void NODELETE collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
 {
     auto* inlineBox = flowbox.firstLeafDescendant();
     auto* lastLeafDescendant = flowbox.lastLeafDescendant();
@@ -107,7 +107,7 @@ static void collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<Web
     }
 }
 
-static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
+static void NODELETE collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
 {
     if (auto* rootBox = root.legacyRootBox()) {
         for (auto* inlineBox = rootBox->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
@@ -119,7 +119,7 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
     }
 }
 
-static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ElementBox& inlineFormattingRoot)
+static bool NODELETE outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ElementBox& inlineFormattingRoot)
 {
     UNUSED_PARAM(layoutState);
     UNUSED_PARAM(inlineFormattingRoot);
@@ -169,7 +169,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     return mismatched;
 }
 
-static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBox& renderer, const Box& layoutBox)
+static bool NODELETE outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBox& renderer, const Box& layoutBox)
 {
     bool firstMismatchingRect = true;
     auto outputRect = [&] (ASCIILiteral prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
@@ -293,7 +293,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
     return false;
 }
 
-static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& context, const RenderBox& renderer, const Box& layoutBox)
+static bool NODELETE verifyAndOutputSubtree(TextStream& stream, const LayoutState& context, const RenderBox& renderer, const Box& layoutBox)
 {
     // Rendering code does not have the concept of table wrapper box. Skip it by verifying the first child(table box) instead. 
     if (layoutBox.isTableWrapperBox())

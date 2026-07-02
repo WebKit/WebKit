@@ -53,7 +53,7 @@ public:
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override { }
     void willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(String&&)>&&) final;
     void responseReceived(const ResourceResponse&) override;
-    void addData(const SharedBuffer&) override;
+    void NODELETE addData(const SharedBuffer&) override;
     void finishedAddingData() override;
     Ref<FragmentedSharedBuffer> replacementData() const override;
 #if ENABLE(CONTENT_FILTERING)

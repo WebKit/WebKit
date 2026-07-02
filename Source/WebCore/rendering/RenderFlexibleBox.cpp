@@ -68,7 +68,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderFlexibleBox);
 
-static bool flexContainerIsHorizontalFlow(const RenderBox& flexItem)
+static bool NODELETE flexContainerIsHorizontalFlow(const RenderBox& flexItem)
 {
     return downcast<RenderFlexibleBox>(*flexItem.parent()).isHorizontalFlow();
 }

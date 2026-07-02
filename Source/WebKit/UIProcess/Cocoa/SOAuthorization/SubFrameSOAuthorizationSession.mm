@@ -54,7 +54,7 @@ constexpr auto soAuthorizationPostDidUserCancelMessageToParent = "<script>parent
 
 } // namespace
 
-Ref<SOAuthorizationSession> SubFrameSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, std::optional<FrameIdentifier> frameID)
+Ref<SOAuthorizationSession> NODELETE SubFrameSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler, std::optional<FrameIdentifier> frameID)
 {
     return adoptRef(*new SubFrameSOAuthorizationSession(delegate, WTF::move(navigationAction), page, WTF::move(completionHandler), frameID));
 }

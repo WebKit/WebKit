@@ -174,7 +174,7 @@ bool Navigation::safeBrowsingCheckOngoing()
     return !m_ongoingSafeBrowsingChecks.isEmpty();
 }
 
-RefPtr<WebKit::BrowsingWarning> Navigation::safeBrowsingWarning()
+RefPtr<WebKit::BrowsingWarning> NODELETE Navigation::safeBrowsingWarning()
 {
     return m_safeBrowsingWarning;
 }

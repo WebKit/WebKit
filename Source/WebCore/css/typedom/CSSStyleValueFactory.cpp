@@ -195,7 +195,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValueFor
     return results;
 }
 
-static bool mayConvertCSSValueListToSingleValue(const AssociatedProperty& property)
+static bool NODELETE mayConvertCSSValueListToSingleValue(const AssociatedProperty& property)
 {
     auto propertyID = property.propertyID();
     if (!propertyID)
@@ -209,7 +209,7 @@ static bool mayConvertCSSValueListToSingleValue(const AssociatedProperty& proper
         && *propertyID != CSSPropertyGridColumnEnd;
 }
 
-static bool mayTreatAsListValuedProperty(const AssociatedProperty& property)
+static bool NODELETE mayTreatAsListValuedProperty(const AssociatedProperty& property)
 {
     auto propertyID = property.propertyID();
     if (!propertyID)

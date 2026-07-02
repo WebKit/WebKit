@@ -50,7 +50,7 @@ public:
 #endif
 };
 
-PlatformLayerContainer createVideoLayerRemote(VideoLayerRemoteParent&, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize);
+PlatformLayerContainer NODELETE createVideoLayerRemote(VideoLayerRemoteParent&, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize);
 
 } // namespace WebKit
 

@@ -40,11 +40,11 @@ public:
     float azimuth() const { return m_azimuth; }
     float elevation() const { return m_elevation; }
 
-    bool setAzimuth(float) override;
-    bool setElevation(float) override;
+    bool NODELETE setAzimuth(float) override;
+    bool NODELETE setElevation(float) override;
 
-    void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
-    ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
+    void NODELETE initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
+    ComputedLightingData NODELETE computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 

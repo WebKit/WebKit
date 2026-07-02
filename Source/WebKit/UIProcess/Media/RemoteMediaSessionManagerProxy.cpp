@@ -54,7 +54,7 @@ public:
     }
     ~RemoteMediaSessionManagerAudioHardwareListener() = default;
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void NODELETE ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     RemoteMediaSessionManagerAudioHardwareListener(WebCore::AudioHardwareListener::Client& client)

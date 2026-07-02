@@ -118,7 +118,7 @@ public:
     size_t sizeEstimate() const { return m_sizeEstimate; }
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 
 private:

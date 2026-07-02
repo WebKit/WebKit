@@ -91,7 +91,7 @@ public:
     }
     
 #if ASSERT_ENABLED
-    void assertIsRegistered(Graph&) const;
+    void NODELETE assertIsRegistered(Graph&) const;
 #else
     void assertIsRegistered(Graph&) const { }
 #endif
@@ -234,17 +234,17 @@ public:
     bool contains(RegisteredStructure) const;
     JS_EXPORT_PRIVATE bool contains(Structure* structure) const;
     
-    bool isSubsetOf(const RegisteredStructureSet& other) const;
-    bool isSubsetOf(const StructureAbstractValue& other) const;
+    bool NODELETE isSubsetOf(const RegisteredStructureSet& other) const;
+    bool NODELETE isSubsetOf(const StructureAbstractValue& other) const;
     
-    bool isSupersetOf(const RegisteredStructureSet& other) const;
+    bool NODELETE isSupersetOf(const RegisteredStructureSet& other) const;
     bool isSupersetOf(const StructureAbstractValue& other) const
     {
         return other.isSubsetOf(*this);
     }
     
-    bool overlaps(const RegisteredStructureSet& other) const;
-    bool overlaps(const StructureAbstractValue& other) const;
+    bool NODELETE overlaps(const RegisteredStructureSet& other) const;
+    bool NODELETE overlaps(const StructureAbstractValue& other) const;
 
     bool NODELETE isSubClassOf(const ClassInfo*) const;
     bool NODELETE isNotSubClassOf(const ClassInfo*) const;

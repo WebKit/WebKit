@@ -209,7 +209,7 @@ float SVGLengthValue::value(const SVGLengthContext& context) const
     return result.releaseReturnValue();
 }
 
-static float convertToPixels(float value, CSS::LengthPercentageUnit unit)
+static float NODELETE convertToPixels(float value, CSS::LengthPercentageUnit unit)
 {
     switch (unit) {
     case CSS::LengthPercentageUnit::Px:

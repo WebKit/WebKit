@@ -132,8 +132,8 @@ private:
     bool supportsFocus() const final;
 
     bool isKeyboardFocusable(const FocusEventData&) const final;
-    bool isPluginElement() const final;
-    bool canLoadScriptURL(const URL&) const final;
+    bool NODELETE isPluginElement() const final;
+    bool NODELETE canLoadScriptURL(const URL&) const final;
 
     bool canLoadPlugInContent(const String& relativeURL, const String& mimeType) const;
     bool canLoadURL(const URL&) const;

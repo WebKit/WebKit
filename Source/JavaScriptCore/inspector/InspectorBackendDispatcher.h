@@ -84,7 +84,7 @@ public:
         bool m_alreadySent { false };
     };
 
-    bool isActive() const;
+    bool NODELETE isActive() const;
 
     bool hasProtocolErrors() const { return m_protocolErrors.size() > 0; }
 
@@ -124,7 +124,7 @@ private:
     BackendDispatcher(Ref<FrontendRouter>&&, BackendDispatcher* fallback);
 
     template<typename T>
-    WTF_INTERNAL T getPropertyValue(JSON::Object*, const String& name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName);
+    WTF_INTERNAL T NODELETE getPropertyValue(JSON::Object*, const String& name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName);
 
     const Ref<FrontendRouter> m_frontendRouter;
     UncheckedKeyHashMap<String, SupplementalBackendDispatcher*> m_dispatchers;

@@ -258,7 +258,7 @@ public:
     enum class ResourceLoadPriority { ResourceLoadPriorityVeryLow, ResourceLoadPriorityLow, ResourceLoadPriorityMedium, ResourceLoadPriorityHigh, ResourceLoadPriorityVeryHigh };
     void NODELETE setOverrideResourceLoadPriority(ResourceLoadPriority);
     void NODELETE setStrictRawResourceValidationPolicyDisabled(bool);
-    void setImmediateRendererDestructionEnabled(bool);
+    void NODELETE setImmediateRendererDestructionEnabled(bool);
     std::optional<ResourceLoadPriority> getResourcePriority(const String& url);
 
     using FetchObject = Variant<Ref<FetchRequest>, Ref<FetchResponse>>;
@@ -317,7 +317,7 @@ public:
     ExceptionOr<bool> isTimerThrottled(int timeoutId);
     ExceptionOr<bool> isTimerAligned(int timeoutId);
     String requestAnimationFrameThrottlingReasons() const;
-    double requestAnimationFrameInterval() const;
+    double NODELETE requestAnimationFrameInterval() const;
     bool NODELETE scriptedAnimationsAreSuspended() const;
     bool NODELETE areTimersThrottled() const;
 
@@ -356,7 +356,7 @@ public:
     // For animations testing, we need a way to get at pseudo elements.
     ExceptionOr<RefPtr<Element>> pseudoElement(Element&, const String&);
 
-    double preferredRenderingUpdateInterval();
+    double NODELETE preferredRenderingUpdateInterval();
 
     Node& NODELETE treeScopeRootNode(Node&);
     Node* NODELETE parentTreeScope(Node&);
@@ -445,7 +445,7 @@ public:
 
     ExceptionOr<String> autofillFieldName(Element&);
 
-    void allowAutofillForCurrentWorld(JSC::JSGlobalObject&);
+    void NODELETE allowAutofillForCurrentWorld(JSC::JSGlobalObject&);
 
     ExceptionOr<void> invalidateControlTints();
 
@@ -606,7 +606,7 @@ public:
     ExceptionOr<String> synchronousScrollingReasons() const;
     ExceptionOr<Ref<DOMRectList>> nonFastScrollableRects() const;
 
-    double minimumShrinkToFitWidthWhenPreferringHorizontalScrolling() const;
+    double NODELETE minimumShrinkToFitWidthWhenPreferringHorizontalScrolling() const;
 
     ExceptionOr<void> setElementUsesDisplayListDrawing(Element&, bool usesDisplayListDrawing);
     ExceptionOr<void> setElementTracksDisplayListReplay(Element&, bool isTrackingReplay);
@@ -619,7 +619,7 @@ public:
     ExceptionOr<String> displayListForElement(Element&, unsigned short flags);
     ExceptionOr<String> replayDisplayListForElement(Element&, unsigned short flags);
 
-    void setForceUseGlyphDisplayListForTesting(bool enabled);
+    void NODELETE setForceUseGlyphDisplayListForTesting(bool enabled);
     ExceptionOr<String> cachedGlyphDisplayListsForTextNode(Node&, unsigned short flags);
     void clearGlyphDisplayListCacheForTesting();
 
@@ -717,7 +717,7 @@ public:
         RGBA16F,
 #endif
     };
-    void NODELETE setScreenContentsFormatsForTesting(const Vector<Internals::ContentsFormat>&);
+    void setScreenContentsFormatsForTesting(const Vector<Internals::ContentsFormat>&);
 
 #if ENABLE(VIDEO)
     bool NODELETE isChangingPresentationMode(HTMLVideoElement&) const;
@@ -750,8 +750,8 @@ public:
     ExceptionOr<void> startTrackingStyleRecalcs();
     ExceptionOr<unsigned> styleRecalcCount();
     unsigned NODELETE lastStyleUpdateSize() const;
-    unsigned styleInvalidationTraversalCount() const;
-    void resetStyleInvalidationTraversalCount();
+    unsigned NODELETE styleInvalidationTraversalCount() const;
+    void NODELETE resetStyleInvalidationTraversalCount();
 
     ExceptionOr<void> startTrackingLayoutUpdates();
     ExceptionOr<unsigned> layoutUpdateCount();
@@ -791,8 +791,8 @@ public:
     String toolTipFromElement(Element&) const;
 
     void forceAXObjectCacheUpdate() const;
-    void setShouldMockParentSearchResultsForTesting(bool);
-    void setShouldMockChildFrameSearchResultsForTesting(bool);
+    void NODELETE setShouldMockParentSearchResultsForTesting(bool);
+    void NODELETE setShouldMockChildFrameSearchResultsForTesting(bool);
     void forceReload(bool endToEnd);
     void reloadExpiredOnly();
 
@@ -848,7 +848,7 @@ public:
     bool hasPeerConnectionEnabledServiceClass(const RTCPeerConnection&);
 #endif
 
-    String getImageSourceURL(Element&);
+    String NODELETE getImageSourceURL(Element&);
 
     String NODELETE blobInternalURL(const Blob&);
     void isBlobInternalURLRegistered(const String&, DOMPromiseDeferred<IDLBoolean>&&);
@@ -877,7 +877,7 @@ public:
 
     double effectiveDynamicRangeLimitValue(const HTMLMediaElement&);
 #if ENABLE(FULLSCREEN_API)
-    bool isChildOfElementFullscreen(const HTMLMediaElement&) const;
+    bool NODELETE isChildOfElementFullscreen(const HTMLMediaElement&) const;
 #endif
 #endif
     ExceptionOr<double> getContextEffectiveDynamicRangeLimitValue(const HTMLCanvasElement&);
@@ -937,7 +937,7 @@ public:
     ExceptionOr<String> mediaSessionRestrictions(const String& mediaType) const;
     void setMediaElementRestrictions(HTMLMediaElement&, StringView restrictionsString);
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
-    void activeAudioRouteDidChange(bool shouldPause);
+    void NODELETE activeAudioRouteDidChange(bool shouldPause);
     bool NODELETE elementIsBlockingDisplaySleep(const HTMLMediaElement&) const;
     bool NODELETE isPlayerVisibleInViewport(const HTMLMediaElement&) const;
     bool isPlayerMuted(const HTMLMediaElement&) const;
@@ -996,7 +996,7 @@ public:
 
     ExceptionOr<String> scrollSnapOffsets(Element&);
     ExceptionOr<bool> isScrollSnapInProgress(Element&);
-    void setPlatformMomentumScrollingPredictionEnabled(bool);
+    void NODELETE setPlatformMomentumScrollingPredictionEnabled(bool);
 
     ExceptionOr<String> pathStringWithShrinkWrappedRects(const Vector<double>& rectComponents, double radius);
 
@@ -1040,7 +1040,7 @@ public:
 
     bool NODELETE hasHistoryActionActivation();
 
-    bool consumeHistoryActionUserActivation();
+    bool NODELETE consumeHistoryActionUserActivation();
 
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 
@@ -1062,7 +1062,7 @@ public:
 
     Vector<String> accessKeyModifiers() const;
 
-    void setQuickLookPassword(const String&);
+    void NODELETE setQuickLookPassword(const String&);
 
     void setAsRunningUserScripts(Document&);
 
@@ -1235,8 +1235,8 @@ public:
     RefPtr<Element> textRecognitionCandidate() const;
 #endif
 
-    bool isSystemPreviewLink(Element&) const;
-    bool isSystemPreviewImage(Element&) const;
+    bool NODELETE isSystemPreviewLink(Element&) const;
+    bool NODELETE isSystemPreviewImage(Element&) const;
 
     void postTask(Ref<VoidCallback>&&);
     ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, Ref<VoidCallback>&&);
@@ -1326,7 +1326,7 @@ public:
     };
     MediaSessionState mediaSessionState(HTMLMediaElement&);
 
-    size_t mediaElementCount() const;
+    size_t NODELETE mediaElementCount() const;
 
     void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
     String mediaElementViewportVisibility(HTMLMediaElement&);
@@ -1352,7 +1352,7 @@ public:
 
     void notifyResourceLoadObserver();
 
-    unsigned NODELETE primaryScreenDisplayID();
+    unsigned primaryScreenDisplayID();
 
     bool capsLockIsOn();
         
@@ -1568,7 +1568,7 @@ public:
 #endif
 
     enum class ContentSizeCategory { L, XXXL };
-    void setContentSizeCategory(ContentSizeCategory);
+    void NODELETE setContentSizeCategory(ContentSizeCategory);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 #if ENABLE(SERVICE_CONTROLS)

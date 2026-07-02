@@ -51,7 +51,7 @@ public:
 
     JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, OptionSet<Yarr::Flags>);
     static void destroy(JSCell*);
-    static size_t estimatedSize(JSCell*, VM&);
+    static size_t NODELETE estimatedSize(JSCell*, VM&);
     DECLARE_VISIT_CHILDREN;
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
     void dumpSimpleName(PrintStream&) const;

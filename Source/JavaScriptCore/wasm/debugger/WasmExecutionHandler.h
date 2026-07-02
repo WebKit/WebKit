@@ -106,7 +106,7 @@ public:
     }
     void setDebugServerThreadId(uint64_t threadId) { m_debugServerThreadId = threadId; }
 
-    JS_EXPORT_PRIVATE DebugState* debuggeeState() const WTF_REQUIRES_LOCK(m_lock);
+    JS_EXPORT_PRIVATE DebugState* NODELETE debuggeeState() const WTF_REQUIRES_LOCK(m_lock);
     JS_EXPORT_PRIVATE DebugState* debuggeeStateForTest() const; // FIXME: Should be used for test only
 
     VM* debuggeeVM() const // Used for test only

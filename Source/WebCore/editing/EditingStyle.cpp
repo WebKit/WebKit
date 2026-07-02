@@ -219,7 +219,7 @@ public:
     virtual ~HTMLElementEquivalent() = default;
 
     virtual bool matches(const Element& element) const { return !m_tagName || element.hasTagName(*m_tagName); }
-    virtual bool hasAttribute() const { return false; }
+    virtual bool NODELETE hasAttribute() const { return false; }
     virtual bool propertyExistsInStyle(const EditingStyle& style) const { return style.m_mutableStyle && protect(style.style())->getPropertyCSSValue(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element&, const EditingStyle&) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
@@ -344,7 +344,7 @@ public:
     HTMLAttributeEquivalent(CSSPropertyID, const QualifiedName& attrName);
 
     bool matches(const Element& element) const override { return HTMLElementEquivalent::matches(element) && element.hasAttribute(m_attrName); }
-    bool hasAttribute() const override { return true; }
+    bool NODELETE hasAttribute() const override { return true; }
     bool valueIsPresentInStyle(Element&, const EditingStyle&) const override;
     void addToStyle(Element*, EditingStyle*) const override;
     virtual RefPtr<CSSValue> attributeValueAsCSSValue(Element*) const;
@@ -1052,7 +1052,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static std::span<const HTMLElementEquivalent* const> NODELETE htmlElementEquivalents()
+static std::span<const HTMLElementEquivalent* const> htmlElementEquivalents()
 {
     static const auto equivalents = WTF::toArray<const HTMLElementEquivalent*>({
         new HTMLFontWeightEquivalent(HTMLNames::bTag),

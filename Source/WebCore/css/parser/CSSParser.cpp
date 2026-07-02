@@ -1497,7 +1497,7 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 
 #if ASSERT_ENABLED
 // Use this function for asserting that that the user-agent stylesheets don't contain rules that are inefficient or otherwise bad.
-static void validateUserAgentSheetSelector(const CSSSelectorList& selectorList)
+static void NODELETE validateUserAgentSheetSelector(const CSSSelectorList& selectorList)
 {
     auto validateRightmostCompound = [](const CSSSelector& complexSelector) {
         bool hasBucketedSelector = false;

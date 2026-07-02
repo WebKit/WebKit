@@ -72,7 +72,7 @@ private:
 class FunLast final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLast);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 public:
     FunLast() { setIsContextSizeSensitive(true); }
 };
@@ -80,7 +80,7 @@ public:
 class FunPosition final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunPosition);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 public:
     FunPosition() { setIsContextPositionSensitive(true); }
 };
@@ -88,19 +88,19 @@ public:
 class FunCount final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunCount);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 };
 
 class FunId final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunId);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::NodeSet; }
+    Value::Type NODELETE resultType() const final { return Value::Type::NodeSet; }
 };
 
 class FunLocalName final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLocalName);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 public:
     FunLocalName() { setIsContextNodeSensitive(true); } // local-name() with no arguments uses context node. 
 };
@@ -108,7 +108,7 @@ public:
 class FunNamespaceURI final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNamespaceURI);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 public:
     FunNamespaceURI() { setIsContextNodeSensitive(true); } // namespace-uri() with no arguments uses context node. 
 };
@@ -116,7 +116,7 @@ public:
 class FunName final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunName);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 public:
     FunName() { setIsContextNodeSensitive(true); } // name() with no arguments uses context node. 
 };
@@ -124,7 +124,7 @@ public:
 class FunString final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunString);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 public:
     FunString() { setIsContextNodeSensitive(true); } // string() with no arguments uses context node. 
 };
@@ -132,43 +132,43 @@ public:
 class FunConcat final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunConcat);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 };
 
 class FunStartsWith final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunStartsWith);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunContains final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunContains);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunSubstringBefore final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstringBefore);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 };
 
 class FunSubstringAfter final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstringAfter);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 };
 
 class FunSubstring final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstring);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 };
 
 class FunStringLength final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunStringLength);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 public:
     FunStringLength() { setIsContextNodeSensitive(true); } // string-length() with no arguments uses context node. 
 };
@@ -176,7 +176,7 @@ public:
 class FunNormalizeSpace final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNormalizeSpace);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 public:
     FunNormalizeSpace() { setIsContextNodeSensitive(true); } // normalize-space() with no arguments uses context node. 
 };
@@ -184,37 +184,37 @@ public:
 class FunTranslate final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunTranslate);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::String; }
+    Value::Type NODELETE resultType() const final { return Value::Type::String; }
 };
 
 class FunBoolean final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunBoolean);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunNot : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNot);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunTrue final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunTrue);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunFalse final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunFalse);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 };
 
 class FunLang final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLang);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Boolean; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Boolean; }
 public:
     FunLang() { setIsContextNodeSensitive(true); } // lang() always works on context node. 
 };
@@ -222,7 +222,7 @@ public:
 class FunNumber final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNumber);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 public:
     FunNumber() { setIsContextNodeSensitive(true); } // number() with no arguments uses context node. 
 };
@@ -230,25 +230,25 @@ public:
 class FunSum final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSum);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 };
 
 class FunFloor final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunFloor);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 };
 
 class FunCeiling final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunCeiling);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 };
 
 class FunRound final : public Function {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FunRound);
     Value evaluate() const final;
-    Value::Type resultType() const final { return Value::Type::Number; }
+    Value::Type NODELETE resultType() const final { return Value::Type::Number; }
 public:
     static double round(double);
 };

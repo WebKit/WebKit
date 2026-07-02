@@ -59,7 +59,7 @@ struct NotificationPayload {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     WEBCORE_EXPORT static bool hasDeclarativeMessageHeader(const String& message);
     WEBCORE_EXPORT static ExceptionOr<NotificationPayload> parseJSON(const String&);
-    NotificationPayload static NODELETE fromNotificationData(const NotificationData&);
+    NotificationPayload static fromNotificationData(const NotificationData&);
 
     WEBCORE_EXPORT NotificationData toNotificationData() const;
 

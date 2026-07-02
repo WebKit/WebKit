@@ -39,7 +39,7 @@ void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef userMedia
     protect(toImpl(userMediaPermissionRequestRef))->allow(toWTFString(audioDeviceUID), toWTFString(videoDeviceUID));
 }
 
-static UserMediaPermissionRequestProxy::UserMediaAccessDenialReason toWK(UserMediaPermissionRequestDenialReason reason)
+static UserMediaPermissionRequestProxy::UserMediaAccessDenialReason NODELETE toWK(UserMediaPermissionRequestDenialReason reason)
 {
     switch (reason) {
     case kWKNoConstraints:

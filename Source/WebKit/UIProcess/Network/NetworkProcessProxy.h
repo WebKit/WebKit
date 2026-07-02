@@ -380,7 +380,7 @@ private:
 
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
-    void processWillShutDown(IPC::Connection&) override;
+    void NODELETE processWillShutDown(IPC::Connection&) override;
     void terminate() final;
 
     // IPC::Connection::Client

@@ -1406,7 +1406,7 @@ void Heap::collectInCollectorThread()
     }
 }
 
-ALWAYS_INLINE int asInt(CollectorPhase phase)
+ALWAYS_INLINE int NODELETE asInt(CollectorPhase phase)
 {
     return static_cast<int>(phase);
 }

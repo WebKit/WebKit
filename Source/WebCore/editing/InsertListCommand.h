@@ -50,7 +50,7 @@ private:
     InsertListCommand(Ref<Document>&&, Type, Style::ListStyleType);
 
     void doApply() final;
-    EditAction editingAction() const final;
+    EditAction NODELETE editingAction() const final;
 
     HTMLElement* fixOrphanedListChild(Node&);
     bool selectionHasListOfType(const VisibleSelection&, const HTMLQualifiedName&);

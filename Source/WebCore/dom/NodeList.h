@@ -59,7 +59,7 @@ public:
     virtual bool isEmptyNodeList() const { return false; }
     virtual size_t memoryCost() const { return 0; }
 
-    int64_t fastIndexOf(JSC::JSGlobalObject*, JSC::JSValue searchElement, uint64_t startIndex, uint64_t length) override;
+    int64_t NODELETE fastIndexOf(JSC::JSGlobalObject*, JSC::JSValue searchElement, uint64_t startIndex, uint64_t length) override;
 };
 
 } // namespace WebCore

@@ -213,7 +213,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> moduleProgramEntryThunk()
 
 #if ENABLE(WEBASSEMBLY)
 
-ALWAYS_INLINE void* untaggedPtr(void* ptr)
+ALWAYS_INLINE void* NODELETE untaggedPtr(void* ptr)
 {
     return CodePtr<CFunctionPtrTag>::fromTaggedPtr(ptr).template untaggedPtr<>();
 }

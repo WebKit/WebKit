@@ -54,14 +54,14 @@ public:
     const WebCore::ResourceRequest& request() const LIFETIME_BOUND { return m_data.request; }
     const WebCore::SecurityOriginData& securityOrigin() const LIFETIME_BOUND { return m_data.securityOrigin; }
     Ref<FrameHandle> handle() const;
-    WebKit::WebPageProxy* page();
-    const WebKit::WebPageProxy* page() const;
+    WebKit::WebPageProxy* NODELETE page();
+    const WebKit::WebPageProxy* NODELETE page() const;
     RefPtr<FrameHandle> parentFrameHandle() const;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID() const { return m_data.documentID; }
     ProcessID processID() const { return m_data.processID; }
     bool isFocused() const { return m_data.isFocused; }
     bool errorOccurred() const { return m_data.errorOccurred; }
-    WTF::String title() const;
+    WTF::String NODELETE title() const;
 
     const WebKit::FrameInfoData& frameInfoData() const LIFETIME_BOUND { return m_data; }
 

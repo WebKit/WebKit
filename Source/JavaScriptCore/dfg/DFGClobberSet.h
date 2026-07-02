@@ -52,7 +52,7 @@ public:
     
     void add(AbstractHeap);
     void addAll(const ClobberSet&);
-    bool overlaps(AbstractHeap) const;
+    bool NODELETE overlaps(AbstractHeap) const;
     void clear();
     
     // Calls useful for debugging the ClobberSet.

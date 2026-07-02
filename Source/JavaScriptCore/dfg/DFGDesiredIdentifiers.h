@@ -46,7 +46,7 @@ public:
     DesiredIdentifiers(CodeBlock*);
     ~DesiredIdentifiers();
     
-    unsigned numberOfIdentifiers();
+    unsigned NODELETE numberOfIdentifiers();
     unsigned ensure(UniquedStringImpl*);
     
     UniquedStringImpl* at(unsigned index) const;

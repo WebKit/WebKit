@@ -52,7 +52,7 @@ private:
     void ensureCodecsSupportChecksInitialized() final;
 #endif
     std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
-    bool hasThreadSafeMediaSourceSupport() const final;
+    bool NODELETE hasThreadSafeMediaSourceSupport() const final;
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource() final;
 #endif

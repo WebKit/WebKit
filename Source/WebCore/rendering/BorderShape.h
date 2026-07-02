@@ -80,12 +80,12 @@ public:
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
     // Returns true if the given rect is entirely inside the inner/outer shape.
-    bool innerShapeContains(const LayoutRect&) const;
-    bool outerShapeContains(const LayoutRect&) const;
+    bool NODELETE innerShapeContains(const LayoutRect&) const;
+    bool NODELETE outerShapeContains(const LayoutRect&) const;
 
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.
-    bool allCornersClippedOut(const LayoutRect&) const;
+    bool NODELETE allCornersClippedOut(const LayoutRect&) const;
 
     const LayoutRoundedRectRadii& radii() const LIFETIME_BOUND { return m_borderRect.radii(); }
     void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }
@@ -131,7 +131,7 @@ private:
     static LayoutRoundedRect computeInnerEdgeRoundedRect(const LayoutRoundedRect& borderRoundedRect, const RectEdges<LayoutUnit>& borderWidths);
 
     // True if any corner uses a non-`round` shape (curvature != 1), so the shape
-    bool hasNonRoundCornerShape() const;
+    bool NODELETE hasNonRoundCornerShape() const;
 
     Path pathForOuterRoundedRect(const FloatRoundedRect& outerSnapped) const;
     Path pathForInnerRoundedRect(const FloatRoundedRect& innerSnapped) const;

@@ -106,11 +106,11 @@ private:
     bool focusOnPreviousField(const DateTimeFieldElement&) final;
     bool isFieldOwnerDisabled() const final;
     bool isFieldOwnerReadOnly() const final;
-    bool isFieldOwnerHorizontal() const final;
+    bool NODELETE isFieldOwnerHorizontal() const final;
     bool didFieldOwnerTransferFocusToPicker() final;
     void didSuppressBlurDueToPickerFocusTransfer() final;
     AtomString localeIdentifier() const final;
-    const GregorianDateTime& placeholderDate() const final;
+    const GregorianDateTime& NODELETE placeholderDate() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;
     WeakPtr<DateTimeEditElementEditControlOwner> m_editControlOwner;

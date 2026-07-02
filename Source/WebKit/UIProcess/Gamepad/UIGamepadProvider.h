@@ -64,7 +64,7 @@ public:
 
     size_t numberOfConnectedGamepads() const { return m_gamepads.size(); }
 
-    WebPageProxy* platformWebPageProxyForGamepadInput();
+    WebPageProxy* NODELETE platformWebPageProxyForGamepadInput();
 
 private:
     friend NeverDestroyed<UIGamepadProvider>;
@@ -74,9 +74,9 @@ private:
     void startMonitoringGamepads();
     void stopMonitoringGamepads();
 
-    void platformSetDefaultGamepadProvider();
-    void platformStopMonitoringInput();
-    void platformStartMonitoringInput();
+    void NODELETE platformSetDefaultGamepadProvider();
+    void NODELETE platformStopMonitoringInput();
+    void NODELETE platformStartMonitoringInput();
 
     void platformGamepadConnected(WebCore::PlatformGamepad&, WebCore::EventMakesGamepadsVisible) final;
     void platformGamepadDisconnected(WebCore::PlatformGamepad&) final;

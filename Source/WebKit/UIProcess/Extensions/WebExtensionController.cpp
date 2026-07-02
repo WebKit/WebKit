@@ -53,7 +53,7 @@ static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>
     return controllers;
 }
 
-RefPtr<WebExtensionController> WebExtensionController::get(WebExtensionControllerIdentifier identifier)
+RefPtr<WebExtensionController> NODELETE WebExtensionController::get(WebExtensionControllerIdentifier identifier)
 {
     return webExtensionControllers().get(identifier);
 }

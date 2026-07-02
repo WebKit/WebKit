@@ -74,7 +74,7 @@ public:
     Page* NODELETE page();
 
     const Document* NODELETE document() const;
-    Document* document();
+    Document* NODELETE document();
 
     void setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(ScriptExecutionContext&, Ref<DeferredPromise>&&);

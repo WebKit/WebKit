@@ -51,7 +51,7 @@ using namespace HTMLNames;
 
 #if !LOG_DISABLED
 
-static String urlForLoggingTrack(const URL& url)
+static String NODELETE urlForLoggingTrack(const URL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
     

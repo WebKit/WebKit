@@ -81,7 +81,7 @@ public:
         return adoptRef(*new StaticElementList(WTF::move(elements)));
     }
 
-    unsigned length() const override;
+    unsigned NODELETE length() const override;
     Element* item(unsigned index) const override;
     size_t memoryCost() const override { return m_elements.capacity() * sizeof(Ref<Element>); }
 

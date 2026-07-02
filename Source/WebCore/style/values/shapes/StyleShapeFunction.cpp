@@ -112,12 +112,12 @@ public:
     }
 
 private:
-    bool hasMoreData() const override
+    bool NODELETE hasMoreData() const override
     {
         return m_nextIndex < m_endIndex;
     }
 
-    bool moveToNextToken() override { return true; }
+    bool NODELETE moveToNextToken() override { return true; }
 
     SVGPathSegType nextCommand(SVGPathSegType) override
     {
@@ -126,7 +126,7 @@ private:
         return type;
     }
 
-    std::optional<SVGPathSegType> parseSVGSegmentType() override
+    std::optional<SVGPathSegType> NODELETE parseSVGSegmentType() override
     {
         // This represents the initial move to to set the "from" position.
         ASSERT(!m_nextIndex);
@@ -364,11 +364,11 @@ private:
         return { toCoordinatePair(controlPoint), std::nullopt };
     }
 
-    void incrementPathSegmentCount() override
+    void NODELETE incrementPathSegmentCount() override
     {
     }
 
-    bool continueConsuming() override
+    bool NODELETE continueConsuming() override
     {
         return true;
     }

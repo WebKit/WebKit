@@ -67,7 +67,7 @@ private:
         m_promise->reject(WTF::move(exception));
     }
 
-    JSDOMGlobalObject* globalObject() final
+    JSDOMGlobalObject* NODELETE globalObject() final
     {
         return m_promise->globalObject();
     }
@@ -107,7 +107,7 @@ private:
         m_promise->reject(WTF::move(exception));
     }
 
-    JSDOMGlobalObject* globalObject() final
+    JSDOMGlobalObject* NODELETE globalObject() final
     {
         return m_promise->globalObject();
     }

@@ -9385,7 +9385,7 @@ void SpeculativeJIT::compileArrayUnshift(Node* node)
     }
 }
 
-static IndexingType arrayModeToIndexingType(ArrayModes oneArrayMode)
+static IndexingType NODELETE arrayModeToIndexingType(ArrayModes oneArrayMode)
 {
     switch (oneArrayMode) {
     case asArrayModesIgnoringTypedArrays(ArrayWithInt32):
@@ -9407,7 +9407,7 @@ static IndexingType arrayModeToIndexingType(ArrayModes oneArrayMode)
     }
 }
 
-static TypedArrayType arrayModeToTypedArrayType(ArrayModes oneArrayMode)
+static TypedArrayType NODELETE arrayModeToTypedArrayType(ArrayModes oneArrayMode)
 {
     switch (oneArrayMode) {
     case Int8ArrayMode:

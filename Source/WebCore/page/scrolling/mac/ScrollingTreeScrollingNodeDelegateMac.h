@@ -56,7 +56,7 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 
     void willDoProgrammaticScroll(const FloatPoint&);
-    void currentScrollPositionChanged();
+    void NODELETE currentScrollPositionChanged();
 
     bool NODELETE isRubberBandInProgress() const;
     void startRubberBandSnapBack();
@@ -90,7 +90,7 @@ private:
     bool shouldRubberBandOnSide(BoxSide, FloatSize) const final;
     void didStopRubberBandAnimation() final;
     void rubberBandingStateChanged(bool) final;
-    FloatSize rubberBandTargetOffset() const final;
+    FloatSize NODELETE rubberBandTargetOffset() const final;
 #if HAVE(NSREFRESHCONTROLLER)
     bool hasRefreshController() const final;
     float refreshControllerSnappingThreshold() const final;

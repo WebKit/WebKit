@@ -128,7 +128,7 @@ private:
         return m_currentNode->predict(prediction);
     }
 
-    bool NODELETE setTuplePrediction(SpeculatedType prediction, unsigned index)
+    bool setTuplePrediction(SpeculatedType prediction, unsigned index)
     {
         ASSERT(index < m_currentNode->tupleSize());
 
@@ -141,7 +141,7 @@ private:
         return mergeSpeculation(speculation, prediction);
     }
 
-    bool NODELETE mergeTuplePrediction(SpeculatedType prediction, unsigned index)
+    bool mergeTuplePrediction(SpeculatedType prediction, unsigned index)
     {
         ASSERT(index < m_currentNode->tupleSize());
 

@@ -95,14 +95,14 @@ static inline TextPosition NODELETE uninitializedPositionValue1()
 }
 
 #if ASSERT_ENABLED
-static bool isTableBodyContextTag(TagName tagName)
+static bool NODELETE isTableBodyContextTag(TagName tagName)
 {
     return tagName == TagName::tbody
         || tagName == TagName::tfoot
         || tagName == TagName::thead;
 }
 
-static bool isTableBodyContextElement(ElementName elementName)
+static bool NODELETE isTableBodyContextElement(ElementName elementName)
 {
     return elementName == HTML::tbody
         || elementName == HTML::tfoot

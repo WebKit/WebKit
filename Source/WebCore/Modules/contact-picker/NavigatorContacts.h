@@ -42,7 +42,7 @@ public:
     ~NavigatorContacts();
 
     static Ref<ContactsManager> contacts(Navigator&);
-    Ref<ContactsManager> NODELETE contacts();
+    Ref<ContactsManager> contacts();
 
 private:
     static NavigatorContacts* from(Navigator&);

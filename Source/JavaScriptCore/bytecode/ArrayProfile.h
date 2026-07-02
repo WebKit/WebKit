@@ -246,7 +246,7 @@ public:
     void observeStructure(Structure* structure) { m_lastSeenStructureID = structure->id(); }
 
     void NODELETE computeUpdatedPrediction(CodeBlock*);
-    void computeUpdatedPrediction(CodeBlock*, Structure* lastSeenStructure);
+    void NODELETE computeUpdatedPrediction(CodeBlock*, Structure* lastSeenStructure);
     
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
     void NODELETE observeIndexedRead(JSCell*, unsigned index);

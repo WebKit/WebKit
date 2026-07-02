@@ -98,7 +98,7 @@ public:
 
 private:
     bool hasLineIfEmpty() const override { return true; }
-    bool canBeProgramaticallyScrolled() const override;
+    bool NODELETE canBeProgramaticallyScrolled() const override;
 };
 
 } // namespace WebCore

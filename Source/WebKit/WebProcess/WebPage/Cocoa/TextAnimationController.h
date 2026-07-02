@@ -71,27 +71,27 @@ class TextAnimationController final {
 public:
     explicit TextAnimationController(WebPage&);
 
-    void removeInitialTextAnimationForActiveWritingToolsSession();
-    void addInitialTextAnimationForActiveWritingToolsSession();
-    void addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
-    void addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, const String&);
+    void NODELETE removeInitialTextAnimationForActiveWritingToolsSession();
+    void NODELETE addInitialTextAnimationForActiveWritingToolsSession();
+    void NODELETE addSourceTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, bool finished, const WebCore::CharacterRange&, const String&, CompletionHandler<void(WebCore::TextAnimationRunMode)>&&);
+    void NODELETE addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<WebCore::CharacterRange>&, const String&);
 
-    void saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
+    void NODELETE saveSnapshotOfTextPlaceholderForAnimation(const WebCore::SimpleRange&);
 
-    void clearAnimationsForActiveWritingToolsSession();
+    void NODELETE clearAnimationsForActiveWritingToolsSession();
 
-    void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool visible, CompletionHandler<void()>&& = [] { });
+    void NODELETE updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool visible, CompletionHandler<void()>&& = [] { });
 
     RefPtr<WebCore::TextIndicator> createTextIndicatorForRange(const WebCore::SimpleRange&);
-    void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
+    void NODELETE createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
 
 private:
-    std::optional<WebCore::SimpleRange> contextRangeForTextAnimationID(const WTF::UUID&) const;
-    std::optional<WebCore::SimpleRange> contextRangeForActiveWritingToolsSession() const;
-    std::optional<WebCore::SimpleRange> unreplacedRangeForActiveWritingToolsSession() const;
+    std::optional<WebCore::SimpleRange> NODELETE contextRangeForTextAnimationID(const WTF::UUID&) const;
+    std::optional<WebCore::SimpleRange> NODELETE contextRangeForActiveWritingToolsSession() const;
+    std::optional<WebCore::SimpleRange> NODELETE unreplacedRangeForActiveWritingToolsSession() const;
 
-    void removeTransparentMarkersForTextAnimationID(const WTF::UUID&);
-    void removeTransparentMarkersForActiveWritingToolsSession();
+    void NODELETE removeTransparentMarkersForTextAnimationID(const WTF::UUID&);
+    void NODELETE removeTransparentMarkersForActiveWritingToolsSession();
 
     WebCore::Document* NODELETE document() const;
 

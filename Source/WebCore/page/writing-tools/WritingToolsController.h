@@ -57,31 +57,31 @@ class WritingToolsController final : public CanMakeWeakPtr<WritingToolsControlle
 public:
     explicit WritingToolsController(Page&);
 
-    void willBeginWritingToolsSession(const std::optional<WritingTools::Session>&, WeakHashSet<Node, WeakPtrImplWithEventTargetData>&&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
+    void NODELETE willBeginWritingToolsSession(const std::optional<WritingTools::Session>&, WeakHashSet<Node, WeakPtrImplWithEventTargetData>&&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
 
-    void didBeginWritingToolsSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
+    void NODELETE didBeginWritingToolsSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
 
-    void proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const CharacterRange&, const WritingTools::Context&, bool finished);
+    void NODELETE proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    void proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestion::State, const WritingTools::TextSuggestion&, const WritingTools::Context&);
+    void NODELETE proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestion::State, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
-    void willEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+    void NODELETE willEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
-    void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+    void NODELETE didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
-    void compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
+    void NODELETE compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
+    void NODELETE writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
 
-    void updateStateForSelectedSuggestionIfNeeded();
+    void NODELETE updateStateForSelectedSuggestionIfNeeded();
 
-    void respondToUnappliedEditing(EditCommandComposition*);
-    void respondToReappliedEditing(EditCommandComposition*);
+    void NODELETE respondToUnappliedEditing(EditCommandComposition*);
+    void NODELETE respondToReappliedEditing(EditCommandComposition*);
 
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove these methods after doing so.
-    std::optional<SimpleRange> activeSessionRange() const;
-    void intelligenceTextAnimationsDidComplete();
+    std::optional<SimpleRange> NODELETE activeSessionRange() const;
+    void NODELETE intelligenceTextAnimationsDidComplete();
 
 
     struct State : CanMakeCheckedPtr<State> {
@@ -178,38 +178,38 @@ private:
         bool m_editingWasSuppressed;
     };
 
-    static CharacterRange characterRange(const SimpleRange& scope, const SimpleRange&);
-    static SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange);
-    static uint64_t characterCount(const SimpleRange&);
-    static String plainText(const SimpleRange&);
+    static CharacterRange NODELETE characterRange(const SimpleRange& scope, const SimpleRange&);
+    static SimpleRange NODELETE resolveCharacterRange(const SimpleRange& scope, CharacterRange);
+    static uint64_t NODELETE characterCount(const SimpleRange&);
+    static String NODELETE plainText(const SimpleRange&);
 
     template<WritingTools::Session::Type Type>
     StateFromSessionType<Type>::Value* NODELETE currentState();
 
     template<WritingTools::Session::Type Type>
-    const StateFromSessionType<Type>::Value* currentState() const;
+    const StateFromSessionType<Type>::Value* NODELETE currentState() const;
 
-    std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
-    std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;
+    std::optional<std::tuple<Node&, DocumentMarker&>> NODELETE findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
+    std::optional<std::tuple<Node&, DocumentMarker&>> NODELETE findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;
 
     std::optional<SimpleRange> validatedRangeForSuggestionMarker(const SimpleRange& sessionRange, Node&, const DocumentMarker&, const String& expectedCurrentText) const;
 
-    void replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
-    void replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
+    void NODELETE replaceContentsOfRangeInSession(ProofreadingState&, const SimpleRange&, const String&);
+    void NODELETE replaceContentsOfRangeInSession(CompositionState&, const SimpleRange&, const AttributedString&, WritingToolsCompositionCommand::State);
 
-    void compositionSessionDidFinishReplacement();
-    void compositionSessionDidFinishReplacement(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const CharacterRange&, const String&);
+    void NODELETE compositionSessionDidFinishReplacement();
+    void NODELETE compositionSessionDidFinishReplacement(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const CharacterRange&, const String&);
 
-    void smartReplySessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
+    void NODELETE smartReplySessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    void compositionSessionDidReceiveTextWithReplacementRangeAsync(const WTF::UUID&, const WTF::UUID&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
+    void NODELETE compositionSessionDidReceiveTextWithReplacementRangeAsync(const WTF::UUID&, const WTF::UUID&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished, TextAnimationRunMode);
 
-    void showOriginalCompositionForSession();
-    void showRewrittenCompositionForSession();
-    void restartCompositionForSession();
+    void NODELETE showOriginalCompositionForSession();
+    void NODELETE showRewrittenCompositionForSession();
+    void NODELETE restartCompositionForSession();
 
     template<CompositionState::ClearStateDeferralReason Reason>
-    void removeCompositionClearStateDeferralReason();
+    void NODELETE removeCompositionClearStateDeferralReason();
 
     template<WritingTools::Session::Type Type>
     void writingToolsSessionDidReceiveAction(WritingTools::Action);
@@ -220,7 +220,7 @@ private:
     template<WritingTools::Session::Type Type>
     void didEndWritingToolsSession(bool accepted);
 
-    void commitComposition(CompositionState&, Document&);
+    void NODELETE commitComposition(CompositionState&, Document&);
 
     RefPtr<Document> NODELETE document() const;
 

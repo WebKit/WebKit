@@ -44,5 +44,5 @@ class Dictionary;
 @end
 
 namespace WebKit {
-bool methodSignaturesAreCompatible(NSString *, NSString *);
+bool NODELETE methodSignaturesAreCompatible(NSString *, NSString *);
 }

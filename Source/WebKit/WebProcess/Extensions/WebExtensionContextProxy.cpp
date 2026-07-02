@@ -61,7 +61,7 @@ bool WebExtensionContextProxy::isURLForThisExtension(const URL& url) const
     return url.isValid() && url.string().startsWith(m_baseURL.string());
 }
 
-std::optional<WebExtensionTabIdentifier> WebExtensionContextProxy::tabIdentifier(WebPage& page) const
+std::optional<WebExtensionTabIdentifier> NODELETE WebExtensionContextProxy::tabIdentifier(WebPage& page) const
 {
     if (m_popupPageMap.contains(page))
         return std::get<std::optional<WebExtensionTabIdentifier>>(m_popupPageMap.get(page));
@@ -85,7 +85,7 @@ bool WebExtensionContextProxy::inTestingMode() const
     return m_extensionControllerProxy && m_extensionControllerProxy->inTestingMode();
 }
 
-RefPtr<WebPage> WebExtensionContextProxy::backgroundPage() const
+RefPtr<WebPage> NODELETE WebExtensionContextProxy::backgroundPage() const
 {
     return m_backgroundPage.get();
 }

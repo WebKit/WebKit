@@ -357,20 +357,20 @@ public:
     WeakPtr<StorageAreaMap> NODELETE storageAreaMap(StorageAreaMapIdentifier) const;
 
 #if PLATFORM(COCOA)
-    RetainPtr<CFDataRef> sourceApplicationAuditData() const;
-    void destroyRenderingResources();
-    void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
-    std::optional<audit_token_t> auditTokenForSelf();
+    RetainPtr<CFDataRef> NODELETE sourceApplicationAuditData() const;
+    void NODELETE destroyRenderingResources();
+    void NODELETE getProcessDisplayName(CompletionHandler<void(String&&)>&&);
+    std::optional<audit_token_t> NODELETE auditTokenForSelf();
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(WPE) || PLATFORM(GTK)
-    void releaseSystemMallocMemory();
+    void NODELETE releaseSystemMallocMemory();
 #endif
 
     const String& uiProcessBundleIdentifier() const LIFETIME_BOUND { return m_uiProcessBundleIdentifier; }
 
-    void updateActivePages(const String& overrideDisplayName);
-    void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
+    void NODELETE updateActivePages(const String& overrideDisplayName);
+    void NODELETE getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
     void pageActivityStateDidChange(WebCore::PageIdentifier, OptionSet<WebCore::ActivityState> changed);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
@@ -421,18 +421,18 @@ public:
 #if PLATFORM(COCOA)
     void setMediaMIMETypes(const Vector<String>);
 #if ENABLE(REMOTE_INSPECTOR)
-    void enableRemoteWebInspector();
+    void NODELETE enableRemoteWebInspector();
 #endif
     void unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&&);
-    static id accessibilityFocusedUIElement();
+    static id NODELETE accessibilityFocusedUIElement();
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    static void setAllowAXAuthenticationForTesting(bool);
+    static void NODELETE setAllowAXAuthenticationForTesting(bool);
 #endif
     void NODELETE powerSourceDidChange(bool);
 #endif
 
 #if PLATFORM(MAC)
-    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&, SandboxExtension::Handle&&);
+    void NODELETE openDirectoryCacheInvalidated(SandboxExtension::Handle&&, SandboxExtension::Handle&&);
 #endif
 
 #if ENABLE(NOTIFY_BLOCKING)
@@ -458,11 +458,11 @@ public:
     bool unregisterServiceWorker(WebCore::ServiceWorkerIdentifier);
 
     void grantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle>&& assetServicesHandles);
-    void revokeAccessToAssetServices();
+    void NODELETE revokeAccessToAssetServices();
 #if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
     void switchFromStaticFontRegistryToUserFontRegistry(Vector<SandboxExtension::Handle>&& fontMachExtensionHandles);
 #endif
-    void disableURLSchemeCheckInDataDetectors() const;
+    void NODELETE disableURLSchemeCheckInDataDetectors() const;
 
 #if PLATFORM(MAC)
     void NODELETE updatePageScreenProperties();
@@ -482,9 +482,9 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void willWriteToPasteboardAsynchronously(const String& pasteboardName);
-    void waitForPendingPasteboardWritesToFinish(const String& pasteboardName);
-    void didWriteToPasteboardAsynchronously(const String& pasteboardName);
+    void NODELETE willWriteToPasteboardAsynchronously(const String& pasteboardName);
+    void NODELETE waitForPendingPasteboardWritesToFinish(const String& pasteboardName);
+    void NODELETE didWriteToPasteboardAsynchronously(const String& pasteboardName);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -514,7 +514,7 @@ public:
     void deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    void revokeLaunchServicesSandboxExtension();
+    void NODELETE revokeLaunchServicesSandboxExtension();
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -539,7 +539,7 @@ public:
     bool mediaPlaybackEnabled() const { return m_mediaPlaybackEnabled; }
 
 #if PLATFORM(COCOA)
-    void registerAdditionalFonts(AdditionalFonts&&);
+    void NODELETE registerAdditionalFonts(AdditionalFonts&&);
     void registerFontMap(HashMap<String, URL>&&, HashMap<String, Vector<String>>&&, Vector<SandboxExtension::Handle>&& sandboxExtensions);
 #endif
 
@@ -559,15 +559,15 @@ private:
     ~WebProcess();
 
     void initializeWebProcess(WebProcessCreationParameters&&, CompletionHandler<void(WebCore::ProcessIdentity)>&&);
-    void platformInitializeWebProcess(WebProcessCreationParameters&);
+    void NODELETE platformInitializeWebProcess(WebProcessCreationParameters&);
     void setWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
-    void platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
+    void NODELETE platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
 
     void prewarmGlobally();
     void prewarmWithDomainInformation(WebCore::PrewarmInformation&&);
 
 #if USE(OS_STATE)
-    RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
+    RetainPtr<NSDictionary> NODELETE additionalStateForDiagnosticReport() const final;
 #endif
 
     void markAllLayersVolatile(CompletionHandler<void()>&&);
@@ -580,11 +580,11 @@ private:
 
     void destroyDecodedDataForAllImages();
 
-    void platformTerminate();
+    void NODELETE platformTerminate();
 
     void NODELETE setHasSuspendedPageProxy(bool);
     void setIsInProcessCache(bool, CompletionHandler<void()>&&);
-    void markIsNoLongerPrewarmed();
+    void NODELETE markIsNoLongerPrewarmed();
 
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;
@@ -614,7 +614,7 @@ private:
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void NODELETE fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-    void setOptInCookiePartitioningEnabled(bool);
+    void NODELETE setOptInCookiePartitioningEnabled(bool);
 #endif
 
     void NODELETE platformSetCacheModel(CacheModel);
@@ -665,23 +665,23 @@ private:
 
     void logDiagnosticMessageForNetworkProcessCrash();
     bool NODELETE hasVisibleWebPage() const;
-    void updateCPULimit();
+    void NODELETE updateCPULimit();
     enum class CPUMonitorUpdateReason { LimitHasChanged, VisibilityHasChanged };
-    void updateCPUMonitorState(CPUMonitorUpdateReason);
+    void NODELETE updateCPUMonitorState(CPUMonitorUpdateReason);
 
     // AuxiliaryProcess
     void initializeProcess(const AuxiliaryProcessInitializationParameters&) override;
-    void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
-    void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    void NODELETE initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
+    void NODELETE initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     void initializeConnection(IPC::Connection*) override;
     bool shouldTerminate() override;
     void terminate() override;
 
 #if USE(APPKIT) || PLATFORM(GTK) || PLATFORM(WPE)
-    void stopRunLoop() override;
+    void NODELETE stopRunLoop() override;
 #endif
 
-    bool filterUnhandledMessage(IPC::Connection&, IPC::Decoder&) override;
+    bool NODELETE filterUnhandledMessage(IPC::Connection&, IPC::Decoder&) override;
 
 #if ENABLE(MEDIA_STREAM)
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
@@ -711,12 +711,12 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    void systemWillPowerOn();
-    void systemWillSleep();
-    void systemDidWake();
+    void NODELETE systemWillPowerOn();
+    void NODELETE systemWillSleep();
+    void NODELETE systemDidWake();
 #endif
 
-    void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
+    void NODELETE platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -724,32 +724,32 @@ private:
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
 #if PLATFORM(MAC)
-    void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
+    void NODELETE scrollerStylePreferenceChanged(bool useOverlayScrollbars);
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    void setScreenProperties(WebCore::ScreenProperties&&);
+    void NODELETE setScreenProperties(WebCore::ScreenProperties&&);
 #endif
 
 #if PLATFORM(COCOA)
     enum class IsInProcessInitialization : bool { No, Yes };
-    void updateProcessName(IsInProcessInitialization);
+    void NODELETE updateProcessName(IsInProcessInitialization);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     void backlightLevelDidChange(float backlightLevel);
 #endif
 
-    void accessibilityPreferencesDidChange(const AccessibilityPreferences&);
-    void updatePageAccessibilitySettings();
+    void NODELETE accessibilityPreferencesDidChange(const AccessibilityPreferences&);
+    void NODELETE updatePageAccessibilitySettings();
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void setMediaAccessibilityPreferences(WebCore::CaptionUserPreferences::CaptionDisplayMode, const Vector<String>&);
     void setMediaAccessibilityPreferredLanguages(const Vector<String>&);
-    void setMediaAccessibilityPreferredCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
+    void NODELETE setMediaAccessibilityPreferredCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    void colorPreferencesDidChange();
+    void NODELETE colorPreferencesDidChange();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -771,10 +771,10 @@ private:
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void handlePreferenceChange(const String& domain, const String& key, id value) final;
-    void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
+    void NODELETE handlePreferenceChange(const String& domain, const String& key, id value) final;
+    void NODELETE dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
 
-    void accessibilitySettingsDidChange() final;
+    void NODELETE accessibilitySettingsDidChange() final;
 #endif
 
     void accessibilityRelayProcessSuspended(bool);

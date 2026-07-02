@@ -100,16 +100,16 @@ public:
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
     RetainPtr<CALayer> rootLayer() const { return m_rootLayer; }
-    void setRootLayer(RetainPtr<CALayer>);
+    void NODELETE setRootLayer(RetainPtr<CALayer>);
 
 private:
     // VideoPresentationModelClient
-    void hasVideoChanged(bool) override;
-    void documentVisibilityChanged(bool) override;
-    void isChildOfElementFullscreenChanged(bool) final;
-    void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy) final;
-    void routingContextUIDChanged(const String&) final;
-    void hasBeenInteractedWith() final;
+    void NODELETE hasVideoChanged(bool) override;
+    void NODELETE documentVisibilityChanged(bool) override;
+    void NODELETE isChildOfElementFullscreenChanged(bool) final;
+    void NODELETE audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy) final;
+    void NODELETE routingContextUIDChanged(const String&) final;
+    void NODELETE hasBeenInteractedWith() final;
 
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
@@ -118,7 +118,7 @@ private:
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-    void videoDimensionsChanged(const WebCore::FloatSize&) override;
+    void NODELETE videoDimensionsChanged(const WebCore::FloatSize&) override;
     void setPlayerIdentifier(std::optional<WebCore::MediaPlayerIdentifier>) final;
 
     VideoPresentationInterfaceContext(VideoPresentationManager&, WebCore::MediaPlayerClientIdentifier);
@@ -147,30 +147,30 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void invalidate();
+    void NODELETE invalidate();
 
     bool NODELETE hasVideoPlayingInPictureInPicture() const;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void setupRemoteLayerHosting(WebCore::HTMLVideoElement&);
-    void willRemoveLayerForID(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE setupRemoteLayerHosting(WebCore::HTMLVideoElement&);
+    void NODELETE willRemoveLayerForID(WebCore::MediaPlayerClientIdentifier);
 
-    void swapFullscreenModes(WebCore::HTMLVideoElement&, WebCore::HTMLVideoElement&);
+    void NODELETE swapFullscreenModes(WebCore::HTMLVideoElement&, WebCore::HTMLVideoElement&);
 
     // Interface to WebChromeClient
-    bool canEnterVideoFullscreen(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
-    bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
+    bool NODELETE canEnterVideoFullscreen(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
+    bool NODELETE supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool NODELETE supportsVideoFullscreenStandby() const;
-    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
-    void setPlayerIdentifierForVideoElement(WebCore::HTMLVideoElement&);
-    void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
-    void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void setVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void clearVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, WebCore::ShareableBitmapHandle&&);
-    void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
-    void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
+    void NODELETE enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
+    void NODELETE setPlayerIdentifierForVideoElement(WebCore::HTMLVideoElement&);
+    void NODELETE exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
+    void NODELETE exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void NODELETE setVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void NODELETE clearVideoFullscreenMode(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void NODELETE updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, WebCore::ShareableBitmapHandle&&);
+    void NODELETE setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
+    void NODELETE setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
 
     bool videoElementInPictureInPicture() const { return !!m_videoElementInPictureInPicture; }
 
@@ -184,53 +184,53 @@ protected:
     const ModelInterfaceTuple& ensureModelAndInterface(WebCore::MediaPlayerClientIdentifier, bool createLayerHostingContext = true);
     Ref<WebCore::VideoPresentationModelVideoElement> ensureModel(WebCore::MediaPlayerClientIdentifier);
     Ref<VideoPresentationInterfaceContext> ensureInterface(WebCore::MediaPlayerClientIdentifier);
-    void removeContext(WebCore::MediaPlayerClientIdentifier);
-    void addClientForContext(WebCore::MediaPlayerClientIdentifier);
-    void removeClientForContext(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE removeContext(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE addClientForContext(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE removeClientForContext(WebCore::MediaPlayerClientIdentifier);
 
     // Interface to VideoPresentationInterfaceContext
-    void hasVideoChanged(WebCore::MediaPlayerClientIdentifier, bool hasVideo);
-    void documentVisibilityChanged(WebCore::MediaPlayerClientIdentifier, bool isDocumentVisible);
-    void isChildOfElementFullscreenChanged(WebCore::MediaPlayerClientIdentifier, bool);
-    void hasBeenInteractedWith(WebCore::MediaPlayerClientIdentifier);
-    void videoDimensionsChanged(WebCore::MediaPlayerClientIdentifier, const WebCore::FloatSize&);
+    void NODELETE hasVideoChanged(WebCore::MediaPlayerClientIdentifier, bool hasVideo);
+    void NODELETE documentVisibilityChanged(WebCore::MediaPlayerClientIdentifier, bool isDocumentVisible);
+    void NODELETE isChildOfElementFullscreenChanged(WebCore::MediaPlayerClientIdentifier, bool);
+    void NODELETE hasBeenInteractedWith(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE videoDimensionsChanged(WebCore::MediaPlayerClientIdentifier, const WebCore::FloatSize&);
     void setPlayerIdentifier(WebCore::MediaPlayerClientIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
-    void audioSessionCategoryChanged(WebCore::MediaPlayerClientIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
-    void routingContextUIDChanged(WebCore::MediaPlayerClientIdentifier, const String&);
+    void NODELETE audioSessionCategoryChanged(WebCore::MediaPlayerClientIdentifier, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
+    void NODELETE routingContextUIDChanged(WebCore::MediaPlayerClientIdentifier, const String&);
 
     // Messages from VideoPresentationManagerProxy
-    void requestFullscreenMode(WebCore::MediaPlayerClientIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia);
-    void requestUpdateInlineRect(WebCore::MediaPlayerClientIdentifier);
-    void requestVideoContentLayer(WebCore::MediaPlayerClientIdentifier);
-    void returnVideoContentLayer(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE requestFullscreenMode(WebCore::MediaPlayerClientIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia);
+    void NODELETE requestUpdateInlineRect(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE requestVideoContentLayer(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE returnVideoContentLayer(WebCore::MediaPlayerClientIdentifier);
 #if !PLATFORM(IOS_FAMILY)
-    void didSetupFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE didSetupFullscreen(WebCore::MediaPlayerClientIdentifier);
 #endif
-    void willExitFullscreen(WebCore::MediaPlayerClientIdentifier);
-    void didExitFullscreen(WebCore::MediaPlayerClientIdentifier);
-    void didEnterFullscreen(WebCore::MediaPlayerClientIdentifier, std::optional<WebCore::FloatSize>);
-    void failedToEnterFullscreen(WebCore::MediaPlayerClientIdentifier);
-    void didCleanupFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE willExitFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE didExitFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE didEnterFullscreen(WebCore::MediaPlayerClientIdentifier, std::optional<WebCore::FloatSize>);
+    void NODELETE failedToEnterFullscreen(WebCore::MediaPlayerClientIdentifier);
+    void NODELETE didCleanupFullscreen(WebCore::MediaPlayerClientIdentifier);
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void didEnterExternalPlayback(WebCore::MediaPlayerClientIdentifier);
     void didExitExternalPlayback(WebCore::MediaPlayerClientIdentifier);
 #endif
-    void setVideoLayerFrameFenced(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect bounds, WTF::MachSendRightAnnotated&&);
-    void setVideoLayerGravityEnum(WebCore::MediaPlayerClientIdentifier, unsigned gravity);
-    void setVideoFullscreenFrame(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect);
-    void fullscreenModeChanged(WebCore::MediaPlayerClientIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void fullscreenMayReturnToInline(WebCore::MediaPlayerClientIdentifier, bool isPageVisible);
-    void requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
-    void ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize existingVideoDimensions);
+    void NODELETE setVideoLayerFrameFenced(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect bounds, WTF::MachSendRightAnnotated&&);
+    void NODELETE setVideoLayerGravityEnum(WebCore::MediaPlayerClientIdentifier, unsigned gravity);
+    void NODELETE setVideoFullscreenFrame(WebCore::MediaPlayerClientIdentifier, WebCore::FloatRect);
+    void NODELETE fullscreenModeChanged(WebCore::MediaPlayerClientIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void NODELETE fullscreenMayReturnToInline(WebCore::MediaPlayerClientIdentifier, bool isPageVisible);
+    void NODELETE requestRouteSharingPolicyAndContextUID(WebCore::MediaPlayerClientIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
+    void NODELETE ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize existingVideoDimensions);
 
     void NODELETE setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void setRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier, bool);
-    void setTextTrackRepresentationBounds(WebCore::MediaPlayerClientIdentifier, const WebCore::IntRect&);
+    void NODELETE setRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier, bool);
+    void NODELETE setTextTrackRepresentationBounds(WebCore::MediaPlayerClientIdentifier, const WebCore::IntRect&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& NODELETE logger() const;
     uint64_t NODELETE logIdentifier() const;
-    ASCIILiteral logClassName() const;
+    ASCIILiteral NODELETE logClassName() const;
     WTFLogChannel& NODELETE logChannel() const;
 #endif
 

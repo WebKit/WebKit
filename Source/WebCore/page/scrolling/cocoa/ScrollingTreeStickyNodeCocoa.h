@@ -50,7 +50,7 @@ private:
 #endif
     FloatPoint layerTopLeft() const final;
     CALayer *layer() const final { return m_layer.get(); }
-    bool hasViewportClippingLayer() const final;
+    bool NODELETE hasViewportClippingLayer() const final;
     void setIsSticking(bool) WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
 
     bool m_isSticking { false };

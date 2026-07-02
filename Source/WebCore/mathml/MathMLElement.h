@@ -85,7 +85,7 @@ private:
     bool NODELETE isURLAttribute(const Attribute&) const final;
     bool NODELETE allowsHref() const;
     bool supportsFocus() const final;
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
 };
 

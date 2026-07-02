@@ -90,7 +90,7 @@ public:
     void setErrorMessage(const String& errorMessage) { m_lexErrorMessage = errorMessage; }
     String sourceURLDirective() const { return m_sourceURLDirective; }
     String sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
-    void clear();
+    void NODELETE clear();
     void clearErrorCodeAndBuffers()
     {
         m_error = 0;
@@ -147,18 +147,18 @@ private:
 
     static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
     char32_t NODELETE currentCodePoint() const;
-    ALWAYS_INLINE void shift();
-    ALWAYS_INLINE bool atEnd() const;
-    ALWAYS_INLINE T peek(int offset) const;
+    ALWAYS_INLINE void NODELETE shift();
+    ALWAYS_INLINE bool NODELETE atEnd() const;
+    ALWAYS_INLINE T NODELETE peek(int offset) const;
 
-    ParsedUnicodeEscapeValue parseUnicodeEscape();
-    void shiftLineTerminator();
+    ParsedUnicodeEscapeValue NODELETE parseUnicodeEscape();
+    void NODELETE shiftLineTerminator();
 
     ALWAYS_INLINE int offsetFromSourcePtr(const T* ptr) const { return ptr - m_codeStart; }
     ALWAYS_INLINE const T* sourcePtrFromOffset(int offset) const { return m_codeStart + offset; }
 
     String invalidCharacterMessage() const;
-    ALWAYS_INLINE const T* currentSourcePtr() const;
+    ALWAYS_INLINE const T* NODELETE currentSourcePtr() const;
 
     ALWAYS_INLINE void setCodeStart(StringView);
 
@@ -172,9 +172,9 @@ private:
 
     ALWAYS_INLINE void skipWhitespace();
 
-    template <int shiftAmount> void internalShift();
+    template <int shiftAmount> void NODELETE internalShift();
     template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
-    template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, OptionSet<LexerFlags>, bool strictMode);
+    template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType NODELETE parseIdentifier(JSTokenData*, OptionSet<LexerFlags>, bool strictMode);
     template <bool shouldBuildIdentifiers> NEVER_INLINE JSTokenType parseIdentifierSlowCase(JSTokenData*, OptionSet<LexerFlags>, bool strictMode, const T* identifierStart);
     enum StringParseResult {
         StringParsedSuccessfully,
@@ -195,15 +195,15 @@ private:
     ALWAYS_INLINE std::optional<NumberParseResult> parseDecimal();
     ALWAYS_INLINE bool parseNumberAfterDecimalPoint();
     ALWAYS_INLINE bool parseNumberAfterExponentIndicator();
-    ALWAYS_INLINE bool parseMultilineComment();
+    ALWAYS_INLINE bool NODELETE parseMultilineComment();
 
     ALWAYS_INLINE void parseCommentDirective();
     ALWAYS_INLINE String parseCommentDirectiveValue();
 
     template <unsigned length>
-    ALWAYS_INLINE bool consume(const char (&input)[length]);
+    ALWAYS_INLINE bool NODELETE consume(const char (&input)[length]);
 
-    void fillTokenInfo(JSToken*, JSTextPosition endPosition);
+    void NODELETE fillTokenInfo(JSToken*, JSTextPosition endPosition);
 
     static constexpr size_t initialReadBufferCapacity = 32;
 
@@ -349,7 +349,7 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeLatin1Identifier(std::span<const c
 }
 
 #if ASSERT_ENABLED
-bool isSafeBuiltinIdentifier(VM&, const Identifier*);
+bool NODELETE isSafeBuiltinIdentifier(VM&, const Identifier*);
 #else
 ALWAYS_INLINE bool isSafeBuiltinIdentifier(VM&, const Identifier*) { return true; }
 #endif // ASSERT_ENABLED

@@ -563,7 +563,7 @@ static int NODELETE writeFunc(void*, const char*, int)
     return 0;
 }
 
-static int NODELETE closeFunc(void* context)
+static int closeFunc(void* context)
 {
     if (context != &globalDescriptor) {
         OffsetBuffer* data = static_cast<OffsetBuffer*>(context);

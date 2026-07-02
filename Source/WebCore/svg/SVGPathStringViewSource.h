@@ -31,8 +31,8 @@ public:
     explicit SVGPathStringViewSource(StringView);
 
 private:
-    bool hasMoreData() const final;
-    bool moveToNextToken() final;
+    bool NODELETE hasMoreData() const final;
+    bool NODELETE moveToNextToken() final;
     SVGPathSegType nextCommand(SVGPathSegType previousCommand) final;
 
     std::optional<SVGPathSegType> parseSVGSegmentType() final;

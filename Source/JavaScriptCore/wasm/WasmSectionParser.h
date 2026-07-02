@@ -68,7 +68,7 @@ private:
     [[nodiscard]] PartialResult parseTableHelper(bool isImport);
     enum class LimitsType { Memory, Table };
     template <LimitsType T>
-    [[nodiscard]] PartialResult parseResizableLimits(uint64_t& initial, std::optional<uint64_t>& maximum, bool& isShared, bool& is64bit);
+    [[nodiscard]] PartialResult NODELETE parseResizableLimits(uint64_t& initial, std::optional<uint64_t>& maximum, bool& isShared, bool& is64bit);
     [[nodiscard]] PartialResult parseInitExpr(uint8_t&, bool&, uint64_t&, v128_t&, Type, Type& initExprType);
     [[nodiscard]] PartialResult parseI32InitExpr(std::optional<I32InitExpr>&, ASCIILiteral failMessage);
     [[nodiscard]] PartialResult parseI64InitExpr(std::optional<I64InitExpr>&, ASCIILiteral failMessage);

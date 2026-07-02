@@ -396,7 +396,7 @@ public:
     
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow);
-    WEBCORE_EXPORT void cancelSelectionAutoscroll();
+    WEBCORE_EXPORT void NODELETE cancelSelectionAutoscroll();
 #endif
 
 #if PLATFORM(MAC)
@@ -659,7 +659,7 @@ private:
     void clearLatchedState();
     void clearElementUnderMouse();
 
-    bool NODELETE isElementAnAncestorOfLastElementUnderMouse(Element*) const;
+    bool isElementAnAncestorOfLastElementUnderMouse(Element*) const;
 
     bool NODELETE shouldSendMouseEventsToInactiveWindows() const;
 

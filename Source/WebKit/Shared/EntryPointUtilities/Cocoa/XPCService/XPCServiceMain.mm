@@ -128,7 +128,7 @@ static void checkFrameworkVersion(xpc_object_t message)
 
 static bool s_isWebProcess = false;
 
-static void setUserDirSuffix(String&& suffix)
+static void NODELETE setUserDirSuffix(String&& suffix)
 {
 #if PLATFORM(IOS_FAMILY)
     if (_set_user_dir_suffix(suffix.utf8().data())) {

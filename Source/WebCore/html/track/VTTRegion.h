@@ -105,9 +105,9 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final;
-    const Logger& logger() const final;
-    uint64_t logIdentifier() const final;
-    WTFLogChannel& logChannel() const final;
+    const Logger& NODELETE logger() const final;
+    uint64_t NODELETE logIdentifier() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
 private:

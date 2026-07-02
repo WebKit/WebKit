@@ -70,7 +70,7 @@ public:
     double hostTime() const { return m_hostTime; }
     void setTimes(uint64_t time, double hostTime) { m_timestamp = time; m_hostTime = hostTime; }
 
-    void reset();
+    void NODELETE reset();
 
     WEBCORE_EXPORT static void zeroABL(AudioBufferList&, size_t);
     void zero();

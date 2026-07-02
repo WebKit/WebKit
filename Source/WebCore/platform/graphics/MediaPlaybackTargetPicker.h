@@ -56,7 +56,7 @@ public:
 
     virtual void showPlaybackTargetPicker(CocoaView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance);
     virtual void startingMonitoringPlaybackTargets();
-    virtual void stopMonitoringPlaybackTargets();
+    virtual void NODELETE stopMonitoringPlaybackTargets();
     virtual void invalidatePlaybackTargets();
 
     void availableDevicesDidChange() { addPendingAction(OutputDeviceAvailabilityChanged); }

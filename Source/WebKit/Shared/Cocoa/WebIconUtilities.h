@@ -32,9 +32,9 @@
 
 namespace WebKit {
 
-RetainPtr<CocoaImage> fallbackIconForFile(NSURL *file);
-RetainPtr<CocoaImage> iconForImageFile(NSURL *file);
-RetainPtr<CocoaImage> iconForVideoFile(NSURL *file);
+RetainPtr<CocoaImage> NODELETE fallbackIconForFile(NSURL *file);
+RetainPtr<CocoaImage> NODELETE iconForImageFile(NSURL *file);
+RetainPtr<CocoaImage> NODELETE iconForVideoFile(NSURL *file);
 RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames);
 
 }

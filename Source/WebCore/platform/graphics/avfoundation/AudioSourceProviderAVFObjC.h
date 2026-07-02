@@ -66,8 +66,8 @@ public:
     void setPlayerItem(AVPlayerItem *);
     void setAudioTrack(AVAssetTrack *);
     void setPlaybackRate(double);
-    void setPreservesPitch(bool);
-    void setVolume(double);
+    void NODELETE setPreservesPitch(bool);
+    void NODELETE setVolume(double);
 
     using AudioCallback = Function<void(uint64_t startFrame, uint64_t numberOfFrames, bool needFlush)>;
     WEBCORE_EXPORT void setAudioCallback(AudioCallback&&);

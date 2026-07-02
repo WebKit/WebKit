@@ -52,7 +52,7 @@ public:
     WebRTCProvider() = default;
     virtual ~WebRTCProvider() = default;
 
-    static bool webRTCAvailable();
+    static bool NODELETE webRTCAvailable();
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 
@@ -85,7 +85,7 @@ public:
     virtual bool isLibWebRTCProvider() const { return false; }
     virtual bool isWebCoreLibWebRTCProvider() const { return false; }
 
-    virtual bool isWebCoreGStreamerWebRTCProvider() const;
+    virtual bool NODELETE isWebCoreGStreamerWebRTCProvider() const;
 
 protected:
 #if ENABLE(WEB_RTC)
@@ -103,9 +103,9 @@ protected:
 #endif
 
     virtual std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&);
-    virtual bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
-    virtual bool isVPXEncoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
-    virtual bool isH264EncoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
+    virtual bool NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
+    virtual bool NODELETE isVPXEncoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
+    virtual bool NODELETE isH264EncoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
 
     bool m_supportsAV1 { false };
     bool m_supportsH265 { false };

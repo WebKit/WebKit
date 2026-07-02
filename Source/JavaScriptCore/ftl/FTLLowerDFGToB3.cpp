@@ -16042,7 +16042,7 @@ IGNORE_CLANG_WARNINGS_END
         setBoolean(m_out.phi(Int32, notCellResult, cellResult));
     }
 #else // if !USE(BIGINT32)
-    NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void compileIsBigInt()
+    NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void NODELETE compileIsBigInt()
     {
         // If we are not dealing with BigInt32, we should just emit IsCellWithType(HeapBigInt) instead.
         RELEASE_ASSERT_NOT_REACHED();
@@ -26462,7 +26462,7 @@ IGNORE_CLANG_WARNINGS_END
         callPreflight(codeOriginDescriptionOfCallSite());
     }
 
-    CodeOrigin NODELETE codeOriginDescriptionOfCallSite() const
+    CodeOrigin codeOriginDescriptionOfCallSite() const
     {
         CodeOrigin codeOrigin = m_origin.semantic;
         switch (m_node->op()) {
@@ -26979,7 +26979,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         m_doubleValues.set(node, LoweredNodeValue(value, m_highBlock));
     }
-    void NODELETE setTuple(Node* tuple, unsigned index, LValue value)
+    void setTuple(Node* tuple, unsigned index, LValue value)
     {
         ASSERT(index < tuple->tupleSize());
         m_tupleValues.at(tuple->tupleOffset() + index) = LoweredNodeValue(value, m_highBlock);
@@ -27017,7 +27017,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         setDouble(m_node, value);
     }
-    void NODELETE setTuple(unsigned index, LValue value)
+    void setTuple(unsigned index, LValue value)
     {
         setTuple(m_node, index, value);
     }

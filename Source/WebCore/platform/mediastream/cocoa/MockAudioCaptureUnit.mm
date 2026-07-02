@@ -95,7 +95,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
 
 class MockAudioCaptureInternalUnitState : public ThreadSafeRefCounted<MockAudioCaptureInternalUnitState> {
 public:
-    static Ref<MockAudioCaptureInternalUnitState> NODELETE create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
+    static Ref<MockAudioCaptureInternalUnitState> create() { return adoptRef(*new MockAudioCaptureInternalUnitState()); }
 
     bool NODELETE isProducingData() const { return m_isProducingData; }
     void NODELETE setIsProducingData(bool value) { m_isProducingData = value; }
@@ -111,19 +111,19 @@ public:
     ~MockAudioCaptureInternalUnit();
 
 private:
-    OSStatus initialize() final;
-    OSStatus uninitialize() final;
+    OSStatus NODELETE initialize() final;
+    OSStatus NODELETE uninitialize() final;
     OSStatus start() final;
     OSStatus stop() final;
     OSStatus set(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, const void*, UInt32) final;
-    OSStatus get(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, void*, UInt32*) final;
+    OSStatus NODELETE get(AudioUnitPropertyID, AudioUnitScope, AudioUnitElement, void*, UInt32*) final;
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*) final;
-    OSStatus defaultInputDevice(uint32_t*) final;
-    OSStatus defaultOutputDevice(uint32_t*) final;
+    OSStatus NODELETE defaultInputDevice(uint32_t*) final;
+    OSStatus NODELETE defaultOutputDevice(uint32_t*) final;
     void delaySamples(Seconds) final;
-    Seconds verifyCaptureInterval(bool) const final { return 1_s; }
+    Seconds NODELETE verifyCaptureInterval(bool) const final { return 1_s; }
     bool setVoiceActivityDetection(bool) final;
-    bool canRenderAudio() const final { return false; }
+    bool NODELETE canRenderAudio() const final { return false; }
 
     int NODELETE sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();

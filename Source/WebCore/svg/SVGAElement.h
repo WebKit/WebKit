@@ -71,7 +71,7 @@ private:
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool NODELETE isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 

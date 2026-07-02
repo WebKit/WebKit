@@ -79,9 +79,9 @@ private:
     void setCategory(CategoryType, Mode, RouteSharingPolicy) final;
     float sampleRate() const final;
     size_t bufferSize() const final;
-    size_t numberOfOutputChannels() const final;
+    size_t NODELETE numberOfOutputChannels() const final;
     size_t maximumNumberOfOutputChannels() const final;
-    String routingContextUID() const final;
+    String NODELETE routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
     size_t outputLatency() const final;

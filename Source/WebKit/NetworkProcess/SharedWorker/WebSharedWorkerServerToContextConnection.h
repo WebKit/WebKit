@@ -103,8 +103,8 @@ private:
     void sharedWorkerTerminated(WebCore::SharedWorkerIdentifier);
 
     // IPC::MessageSender.
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     WeakPtr<NetworkConnectionToWebProcess> m_connection;
     WeakPtr<WebSharedWorkerServer> m_server;

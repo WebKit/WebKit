@@ -49,7 +49,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    bool supportsAlpha() const final;
+    bool NODELETE supportsAlpha() const final;
     Vector<Color> suggestedColors() const final;
     Color valueAsColor() const;
     void selectColor(StringView);
@@ -68,9 +68,9 @@ private:
     void didChooseColor(const Color&) final;
     void didEndChooser() final;
     IntRect elementRectRelativeToRootView() const final;
-    std::optional<FrameIdentifier> rootFrameID() const final;
+    std::optional<FrameIdentifier> NODELETE rootFrameID() const final;
     bool isMouseFocusable() const final;
-    bool isKeyboardFocusable(const FocusEventData&) const final;
+    bool NODELETE isKeyboardFocusable(const FocusEventData&) const final;
     bool isPresentingAttachedView() const final { return m_popupIsVisible; }
     const AtomString& formControlType() const final;
     bool supportsRequired() const final { return false; }
@@ -89,7 +89,7 @@ private:
     void endColorChooser();
     void setPopupIsVisible(bool);
     void updateColorSwatch();
-    HTMLElement* shadowColorSwatch() const;
+    HTMLElement* NODELETE shadowColorSwatch() const;
 
     RefPtr<ColorChooser> m_chooser;
     bool m_popupIsVisible { false };

@@ -38,7 +38,7 @@ public:
     using HotSpot = SpaceSeparatedPoint<CSS::Number<>>;
 
     static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, std::optional<HotSpot>&&);
-    static Ref<CSSCursorImageValue> NODELETE create(Ref<CSSValue>&& imageValue, std::optional<HotSpot>&&, CSS::URL&&);
+    static Ref<CSSCursorImageValue> create(Ref<CSSValue>&& imageValue, std::optional<HotSpot>&&, CSS::URL&&);
     ~CSSCursorImageValue();
 
     const CSS::URL& originalURL() const LIFETIME_BOUND { return m_originalURL; }

@@ -111,8 +111,8 @@ public:
         bool hasBufferedData() const { return hasData(); }
 
     private:
-        bool hasData() const;
-        size_t dataLength() const;
+        bool NODELETE hasData() const;
+        size_t NODELETE dataLength() const;
         void appendData(const WebCore::SharedBuffer&);
         void decodeDataToContent();
 

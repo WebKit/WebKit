@@ -279,7 +279,7 @@ public:
     ~Workers();
     
     template<typename Func>
-    void broadcast(const Func&);
+    void NODELETE broadcast(const Func&);
     
     void report(const String&);
     String tryGetReport();
@@ -1185,7 +1185,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
 }
 
 template<typename Vector>
-static void NODELETE convertShebangToJSComment(Vector& buffer)
+static void convertShebangToJSComment(Vector& buffer)
 {
     if (buffer.size() >= 2) {
         if (buffer[0] == '#' && buffer[1] == '!')
@@ -3555,7 +3555,7 @@ static void startTimeoutTimer(Seconds duration)
 // jsc shell test timeouts (i.e. crashDueToJSCShellTimeout is present in crash stack
 // traces) from other crashes.
 NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crashDueToJSCShellTimeout();
-void NODELETE crashDueToJSCShellTimeout()
+void crashDueToJSCShellTimeout()
 {
     CRASH();
 }

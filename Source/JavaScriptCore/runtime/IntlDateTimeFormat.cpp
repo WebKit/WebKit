@@ -238,7 +238,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
 }
 
 template<typename Container>
-static inline unsigned NODELETE skipLiteralText(const Container& container, unsigned start, unsigned length)
+static inline unsigned skipLiteralText(const Container& container, unsigned start, unsigned length)
 {
     // Skip literal text. We do not recognize '' single quote specially.
     // `'ICU''s change'` is `ICU's change` literal text, but even if we split this text into two literal texts,
@@ -480,7 +480,7 @@ inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<char16_t, 32>&
 }
 
 // Returns the ICU pattern character for the given hour cycle, or 'j' (locale default) for None.
-static char16_t hourCharForCycle(IntlDateTimeFormat::HourCycle hourCycle)
+static char16_t NODELETE hourCharForCycle(IntlDateTimeFormat::HourCycle hourCycle)
 {
     switch (hourCycle) {
     case IntlDateTimeFormat::HourCycle::H11:
@@ -498,7 +498,7 @@ static char16_t hourCharForCycle(IntlDateTimeFormat::HourCycle hourCycle)
 
 // UTS#35 hour skeleton characters (h=h12, H=h23, k=h24, K=h11).
 // Used to detect and replace hour display characters when applying the user's hourCycle.
-static constexpr bool isHourChar(char16_t ch)
+static constexpr bool NODELETE isHourChar(char16_t ch)
 {
     return ch == 'h' || ch == 'H' || ch == 'k' || ch == 'K';
 }
@@ -1988,7 +1988,7 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, JSV
 // constexpr: fully evaluated at compile time, zero runtime cost.
 using TemporalFieldSet = WTF::BitSet<128>;
 
-static constexpr TemporalFieldSet makeTemporalFieldSet(std::string_view chars)
+static constexpr TemporalFieldSet NODELETE makeTemporalFieldSet(std::string_view chars)
 {
     TemporalFieldSet s;
     for (unsigned char c : chars)
@@ -1998,7 +1998,7 @@ static constexpr TemporalFieldSet makeTemporalFieldSet(std::string_view chars)
 
 // Plain Temporal types have no timezone; they use GMT for epoch math and exclude timezone
 // skeleton chars. Only Instant uses the formatter's configured timezone.
-static constexpr bool isPlain(IntlDateTimeFormat::TemporalFieldKind kind)
+static constexpr bool NODELETE isPlain(IntlDateTimeFormat::TemporalFieldKind kind)
 {
     // HandleDateTimeOthers (Kind::None) returns [[IsPlain]]: false.
     // Instant and ZonedDateTime are timezone-aware, also [[IsPlain]]: false.
@@ -2040,7 +2040,7 @@ static constexpr TemporalFieldSet dateTimeRequiredFields = [] {
 }();
 
 // allowedOptions for AdjustDateTimeStyleFormat — broader than requiredOptions, includes era.
-static const TemporalFieldSet& allowedFieldsForKind(IntlDateTimeFormat::TemporalFieldKind kind)
+static const TemporalFieldSet& NODELETE allowedFieldsForKind(IntlDateTimeFormat::TemporalFieldKind kind)
 {
     static constexpr TemporalFieldSet emptyFields;
     switch (kind) {
@@ -2060,7 +2060,7 @@ static const TemporalFieldSet& allowedFieldsForKind(IntlDateTimeFormat::Temporal
 }
 
 // requiredOptions for GetDateTimeFormat — which user-set fields satisfy the type's requirement.
-static const TemporalFieldSet& requiredFieldsForKind(IntlDateTimeFormat::TemporalFieldKind kind)
+static const TemporalFieldSet& NODELETE requiredFieldsForKind(IntlDateTimeFormat::TemporalFieldKind kind)
 {
     static constexpr TemporalFieldSet emptyFields;
     switch (kind) {

@@ -51,7 +51,7 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
     }
 }
 
-RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const
+RefPtr<SecurityOrigin> NODELETE NetworkResourceLoadParameters::parentOrigin() const
 {
     if (frameAncestorOrigins.isEmpty())
         return nullptr;

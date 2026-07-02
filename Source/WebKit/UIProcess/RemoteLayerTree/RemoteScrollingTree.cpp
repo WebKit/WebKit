@@ -332,7 +332,7 @@ void RemoteScrollingTree::updateTimelinesRegistration(WebCore::ProcessIdentifier
         m_progressBasedTimelineRegistry = nullptr;
 }
 
-RefPtr<const RemoteAnimationTimeline> RemoteScrollingTree::timeline(const TimelineID& timelineID) const
+RefPtr<const RemoteAnimationTimeline> NODELETE RemoteScrollingTree::timeline(const TimelineID& timelineID) const
 {
     if (m_progressBasedTimelineRegistry)
         return m_progressBasedTimelineRegistry->get(timelineID);

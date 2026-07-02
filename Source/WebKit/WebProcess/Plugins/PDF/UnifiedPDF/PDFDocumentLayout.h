@@ -83,12 +83,12 @@ public:
     std::pair<PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
 
     // This is not scaled by scale().
-    WebCore::FloatRect NODELETE layoutBoundsForPageAtIndex(PageIndex) const;
+    WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
     // Bounds of the pages in the row, including document margins. Not scaled.
     WebCore::FloatRect layoutBoundsForRow(PDFLayoutRow) const;
 
     // Returns 0, 90, 180, 270.
-    WebCore::IntDegrees NODELETE rotationForPageAtIndex(PageIndex) const;
+    WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
 
     WebCore::FloatPoint documentToPDFPage(WebCore::FloatPoint documentPoint, PageIndex) const;
     WebCore::FloatRect documentToPDFPage(WebCore::FloatRect documentRect, PageIndex) const;

@@ -130,7 +130,7 @@ public:
 
     // This returns true if it has marked everything it will ever marked. This can be used as an
     // optimization to then avoid calling this method again during the fixpoint.
-    template<typename Visitor> void propagateTransitions(Visitor&) const;
+    template<typename Visitor> void NODELETE propagateTransitions(Visitor&) const;
 
 protected:
     InlineCacheHandler();

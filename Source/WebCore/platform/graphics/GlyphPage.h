@@ -72,7 +72,7 @@ public:
         s_count.fetch_sub(1, std::memory_order_relaxed);
     }
 
-    WEBCORE_EXPORT static unsigned count();
+    WEBCORE_EXPORT static unsigned NODELETE count();
 
     static constexpr unsigned size = 16;
 

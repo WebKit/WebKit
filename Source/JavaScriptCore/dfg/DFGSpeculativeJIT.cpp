@@ -3427,7 +3427,7 @@ void SpeculativeJIT::compileValueRep(Node* node)
     }
 }
 
-static double clampDoubleToByte(double d)
+static double NODELETE clampDoubleToByte(double d)
 {
     if (!(d > 0))
         d = 0;

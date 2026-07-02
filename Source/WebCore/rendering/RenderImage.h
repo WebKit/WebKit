@@ -111,7 +111,7 @@ protected:
 private:
     ASCIILiteral renderName() const override { return "RenderImage"_s; }
 
-    bool canHaveChildren() const override;
+    bool NODELETE canHaveChildren() const override;
 
     bool isImage() const override { return true; }
 

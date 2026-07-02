@@ -57,7 +57,7 @@ public:
     ARC4RandomNumberGenerator() = default;
 
     template<typename IntegerType>
-    IntegerType randomNumber();
+    IntegerType NODELETE randomNumber();
     void randomValues(std::span<uint8_t>);
 
 private:

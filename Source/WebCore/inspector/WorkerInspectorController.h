@@ -74,11 +74,11 @@ public:
     // InspectorEnvironment
     bool developerExtrasEnabled() const override { return true; }
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override { return true; }
-    Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
-    Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    Inspector::InspectorFunctionCallHandler NODELETE functionCallHandler() const override;
+    Inspector::InspectorEvaluateHandler NODELETE evaluateHandler() const override;
     void frontendInitialized() final;
-    WTF::Stopwatch& executionStopwatch() const override;
-    JSC::Debugger* debugger() override;
+    WTF::Stopwatch& NODELETE executionStopwatch() const override;
+    JSC::Debugger* NODELETE debugger() override;
     JSC::VM& vm() override;
 
 private:

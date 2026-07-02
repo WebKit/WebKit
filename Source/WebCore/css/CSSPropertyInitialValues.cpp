@@ -55,7 +55,7 @@ static bool NODELETE isValueIDPair(const CSSValue& value, CSSValueID valueID)
     return value.isPair() && isValueID(value.first(), valueID) && isValueID(value.second(), valueID);
 }
 
-static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue::Raw number)
+static bool isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue::Raw number)
 {
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc&) {
@@ -68,7 +68,7 @@ static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue:
 }
 
 template<auto unit>
-static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSS::ValueLiteral<unit> literal)
+static bool isNumber(const CSSPrimitiveValue& value, CSS::ValueLiteral<unit> literal)
 {
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc&) {
@@ -81,12 +81,12 @@ static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSS::ValueLiteral<
     );
 }
 
-static bool NODELETE isNumber(const CSSPrimitiveValue* value, auto number)
+static bool isNumber(const CSSPrimitiveValue* value, auto number)
 {
     return value && isNumber(*value, number);
 }
 
-static bool NODELETE isNumber(const CSSValue& value, auto number)
+static bool isNumber(const CSSValue& value, auto number)
 {
     return isNumber(dynamicDowncast<CSSPrimitiveValue>(value), number);
 }

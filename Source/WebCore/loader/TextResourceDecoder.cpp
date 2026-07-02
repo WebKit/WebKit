@@ -319,7 +319,7 @@ bool TextResourceDecoder::hasEqualEncodingForCharset(const String& charset) cons
 }
 
 // Returns the position of the encoding string.
-static size_t NODELETE findXMLEncoding(std::span<const uint8_t> string, size_t& encodingLength)
+static size_t findXMLEncoding(std::span<const uint8_t> string, size_t& encodingLength)
 {
     size_t position = find(string, byteCast<uint8_t>("encoding"_span));
     if (position == notFound)

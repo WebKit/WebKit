@@ -52,7 +52,7 @@ private:
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButton; }
     bool isNativeSpinButton() const final { return true; }
     void clearChildren() final { };
-    void addChildren() final;
+    void NODELETE addChildren() final;
     LayoutRect elementRect() const final;
 
     const WeakPtr<SpinButtonElement, WeakPtrImplWithEventTargetData> m_spinButtonElement;

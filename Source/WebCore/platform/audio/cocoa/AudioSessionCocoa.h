@@ -53,10 +53,10 @@ public:
 protected:
     AudioSessionCocoa();
 
-    static void setEligibleForSmartRoutingInternal(bool);
+    static void NODELETE setEligibleForSmartRoutingInternal(bool);
 
     // AudioSession
-    Ref<AudioSession::SetActivePromise> tryToSetActiveInternal(bool) final;
+    Ref<AudioSession::SetActivePromise> NODELETE tryToSetActiveInternal(bool) final;
     void setCategory(CategoryType, Mode, RouteSharingPolicy) override;
 
     bool m_isEligibleForSmartRouting { false };

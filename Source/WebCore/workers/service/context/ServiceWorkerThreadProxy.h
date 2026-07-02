@@ -119,11 +119,11 @@ private:
 
     // WorkerLoaderProxy
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
+    ScriptExecutionContextIdentifier NODELETE loaderContextIdentifier() const final;
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<FileSystemStorageConnection> createFileSystemStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
-    RefPtr<IDBClient::IDBConnectionProxy> createIDBConnectionProxy() final;
+    RefPtr<IDBClient::IDBConnectionProxy> NODELETE createIDBConnectionProxy() final;
 
     // WorkerDebuggerProxy
     void postMessageToDebugger(const String&) final;

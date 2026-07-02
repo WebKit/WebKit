@@ -199,7 +199,7 @@ public:
     bool isHandlerIC() const { return m_icType == PropertyInlineCacheType::Handler; }
 
 #if ASSERT_ENABLED
-    void checkConsistency();
+    void NODELETE checkConsistency();
 #else
     ALWAYS_INLINE void checkConsistency() { }
 #endif
@@ -341,7 +341,7 @@ private:
         return false;
     }
 
-    void setCacheType(const ConcurrentJSLockerBase&, CacheType);
+    void NODELETE setCacheType(const ConcurrentJSLockerBase&, CacheType);
 
     void clearBufferedStructures()
     {

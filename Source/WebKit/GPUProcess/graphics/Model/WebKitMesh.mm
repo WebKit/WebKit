@@ -884,7 +884,7 @@ static RetainPtr<NSMutableArray> createMetalTextures(id<MTLDevice> device, const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMesh);
 
-static MTLPixelFormat pixelFormatForDynamicRange(bool standardRange)
+static MTLPixelFormat NODELETE pixelFormatForDynamicRange(bool standardRange)
 {
     return standardRange ? MTLPixelFormatBGRA8Unorm : MTLPixelFormatRGBA16Float;
 }

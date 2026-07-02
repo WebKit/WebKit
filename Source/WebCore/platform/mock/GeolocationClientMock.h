@@ -64,11 +64,11 @@ public:
     int NODELETE numberOfPendingPermissionRequests() const;
 
     // GeolocationClient
-    void geolocationDestroyed() override;
+    void NODELETE geolocationDestroyed() override;
     void startUpdating(const String& authorizationToken, bool enableHighAccuracy) override;
     void stopUpdating() override;
-    void setEnableHighAccuracy(bool) override;
-    std::optional<GeolocationPositionData> lastPosition() override;
+    void NODELETE setEnableHighAccuracy(bool) override;
+    std::optional<GeolocationPositionData> NODELETE lastPosition() override;
     void requestPermission(Geolocation&) override;
     void cancelPermissionRequest(Geolocation&) override;
 

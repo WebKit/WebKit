@@ -51,9 +51,9 @@ struct RefTracker {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RefTracker);
 public:
     // NEVER_INLINE to make skipping frames more predictable.
-    WTF_EXPORT_PRIVATE void reportLive(void*);
-    WTF_EXPORT_PRIVATE void reportDead(void*);
-    WTF_EXPORT_PRIVATE void logAllLiveReferences();
+    WTF_EXPORT_PRIVATE void NODELETE reportLive(void*);
+    WTF_EXPORT_PRIVATE void NODELETE reportDead(void*);
+    WTF_EXPORT_PRIVATE void NODELETE logAllLiveReferences();
 
     Lock lock { };
     HashMap<void*, std::unique_ptr<StackShot>> map WTF_GUARDED_BY_LOCK(lock) { };

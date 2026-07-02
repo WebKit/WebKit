@@ -442,7 +442,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
     OPERATION_RETURN(scope);
 }
 
-ALWAYS_INLINE void assertCalleeIsReferenced(CallFrame* frame, JSWebAssemblyInstance* instance)
+ALWAYS_INLINE void NODELETE assertCalleeIsReferenced(CallFrame* frame, JSWebAssemblyInstance* instance)
 {
 #if ASSERT_ENABLED
     CalleeGroup& calleeGroup = *instance->calleeGroup();

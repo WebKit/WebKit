@@ -77,7 +77,7 @@ public:
     const Logger& logger() const override;
     uint64_t logIdentifier() const override;
     ASCIILiteral logClassName() const override { return "PlatformMediaSession"_s; }
-    WTFLogChannel& logChannel() const override;
+    WTFLogChannel& NODELETE logChannel() const override;
 #endif
 
     bool canPlayConcurrently(const PlatformMediaSessionInterface&) const final;
@@ -85,7 +85,7 @@ public:
     WeakPtr<PlatformMediaSessionInterface> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSessionInterface>>&, PlaybackControlsPurpose) override;
 
     bool isActiveNowPlayingSession() const final { return m_isActiveNowPlayingSession; }
-    void setActiveNowPlayingSession(bool) final;
+    void NODELETE setActiveNowPlayingSession(bool) final;
 
 #if !RELEASE_LOG_DISABLED
     String description() const override;

@@ -56,7 +56,7 @@ public:
     void attachToElement(Element&);
     void detachFromElementWithValue(const AtomString&);
     
-    template<typename Visitor> void visitOwnerElementInGCThread(Visitor&);
+    template<typename Visitor> void NODELETE visitOwnerElementInGCThread(Visitor&);
 
     const AtomString& NODELETE namespaceURI() const LIFETIME_BOUND final { return m_name.namespaceURI(); }
     const AtomString& NODELETE localName() const LIFETIME_BOUND final { return m_name.localName(); }

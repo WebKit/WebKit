@@ -106,11 +106,11 @@ public:
 
     LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
-    bool NODELETE hasEllipsisInBlockDirectionOnLastFormattedLine() const;
+    bool hasEllipsisInBlockDirectionOnLastFormattedLine() const;
     bool contains(const RenderElement& renderer) const;
 
     bool NODELETE isPaginated() const;
-    size_t NODELETE lineCount() const;
+    size_t lineCount() const;
     bool hasContent() const { return !!m_inlineContent; }
     bool NODELETE hasContentfulInlineOrBlockLine() const;
     bool NODELETE hasContentfulInlineLine() const;
@@ -135,7 +135,7 @@ public:
     static void releaseCaches(RenderView&);
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineTree(WTF::TextStream&, size_t depth) const;
+    void NODELETE outputLineTree(WTF::TextStream&, size_t depth) const;
 #endif
 
     // This is temporary, required by partial bailout check.

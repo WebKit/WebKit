@@ -47,13 +47,13 @@ public:
     ThrowScope(const ThrowScope&) = delete;
     ThrowScope(ThrowScope&&) = default;
 
-    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, Exception*);
-    JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE Exception* NODELETE throwException(JSGlobalObject*, Exception*);
+    JS_EXPORT_PRIVATE Exception* NODELETE throwException(JSGlobalObject*, JSValue);
 
     void release() { m_isReleased = true; }
 
 private:
-    void simulateThrow();
+    void NODELETE simulateThrow();
 
     bool m_isReleased { false };
 };

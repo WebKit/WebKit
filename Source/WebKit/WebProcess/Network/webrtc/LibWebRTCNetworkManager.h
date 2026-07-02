@@ -57,12 +57,12 @@ private:
     void setICECandidateFiltering(bool doFiltering) final { m_useMDNSCandidates = doFiltering; }
     void unregisterMDNSNames() final;
     void close() final;
-    const String& interfaceNameForTesting() const final;
+    const String& NODELETE interfaceNameForTesting() const final;
 
     // webrtc::NetworkManagerBase
     void StartUpdating() final;
     void StopUpdating() final;
-    webrtc::MdnsResponderInterface* GetMdnsResponder() const final;
+    webrtc::MdnsResponderInterface* NODELETE GetMdnsResponder() const final;
 
     // webrtc::MdnsResponderInterface
     void CreateNameForAddress(const webrtc::IPAddress&, NameCreatedCallback);

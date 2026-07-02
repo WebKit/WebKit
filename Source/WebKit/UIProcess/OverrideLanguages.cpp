@@ -40,7 +40,7 @@ void setOverrideLanguages(Vector<String>&& languages)
     overrideLanguagesStorage() = WTF::move(languages);
 }
 
-const Vector<String>& overrideLanguages()
+const Vector<String>& NODELETE overrideLanguages()
 {
     return overrideLanguagesStorage();
 }

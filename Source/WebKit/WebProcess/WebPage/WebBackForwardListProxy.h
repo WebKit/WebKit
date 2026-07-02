@@ -61,7 +61,7 @@ private:
     bool isWebBackForwardListProxy() const final { return true; }
     const WebBackForwardListCounts& cacheListCountsIfNecessary() const;
 
-    void close() override;
+    void NODELETE close() override;
 
     WeakPtr<WebPage> m_page;
     mutable std::optional<WebBackForwardListCounts> m_cachedBackForwardListCounts;

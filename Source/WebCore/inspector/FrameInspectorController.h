@@ -90,13 +90,13 @@ public:
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
 
     // InspectorEnvironment
-    bool developerExtrasEnabled() const override;
+    bool NODELETE developerExtrasEnabled() const override;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
-    Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
-    Inspector::InspectorEvaluateHandler evaluateHandler() const override;
-    void frontendInitialized() override;
-    WTF::Stopwatch& executionStopwatch() const final;
-    JSC::Debugger* debugger() override;
+    Inspector::InspectorFunctionCallHandler NODELETE functionCallHandler() const override;
+    Inspector::InspectorEvaluateHandler NODELETE evaluateHandler() const override;
+    void NODELETE frontendInitialized() override;
+    WTF::Stopwatch& NODELETE executionStopwatch() const final;
+    JSC::Debugger* NODELETE debugger() override;
     JSC::VM& vm() override;
 
 private:

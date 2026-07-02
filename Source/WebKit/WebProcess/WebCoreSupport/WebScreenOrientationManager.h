@@ -41,7 +41,7 @@ public:
     explicit WebScreenOrientationManager(WebPage&);
     ~WebScreenOrientationManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     // IPC::MessageReceiver

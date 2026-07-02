@@ -285,7 +285,7 @@ public:
     bool willCreateColumns() const;
     virtual bool requiresFragmentedFlow() const;
 
-    bool containsFloats() const override;
+    bool NODELETE containsFloats() const override;
     bool NODELETE containsFloat(const RenderBox&) const;
     bool subtreeContainsFloats() const;
     bool subtreeContainsFloat(const RenderBox&) const;
@@ -349,8 +349,8 @@ public:
     inline LayoutIntegration::LineLayout* inlineLayout(); // Defined in RenderBlockFlowInlines.h
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputFloatingObjects(WTF::TextStream&, int depth) const;
-    void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const;
+    void NODELETE outputFloatingObjects(WTF::TextStream&, int depth) const;
+    void NODELETE outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const;
 #endif
 
     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
@@ -436,7 +436,7 @@ protected:
     LayoutUnit computedColumnWidth() const;
     unsigned NODELETE computedColumnCount() const;
     
-    LayoutOptionalOutsets allowedLayoutOverflow() const override;
+    LayoutOptionalOutsets NODELETE allowedLayoutOverflow() const override;
 
     virtual void computeColumnCountAndWidth();
 

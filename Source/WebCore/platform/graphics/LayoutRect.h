@@ -212,7 +212,7 @@ public:
     template<typename T> void inflate(T d) { inflateX(d); inflateY(d); }
 
     WEBCORE_EXPORT void NODELETE scale(float);
-    void scale(float xScale, float yScale);
+    void NODELETE scale(float xScale, float yScale);
 
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
     bool isInfinite() const;

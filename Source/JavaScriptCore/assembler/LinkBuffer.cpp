@@ -263,7 +263,7 @@ private:
         other.m_size = 0;
     }
 
-    size_t size()
+    size_t NODELETE size()
     {
         return m_size;
     }

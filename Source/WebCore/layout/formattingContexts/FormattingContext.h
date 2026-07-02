@@ -79,14 +79,14 @@ public:
     static const InitialContainingBlock& NODELETE initialContainingBlock(const Box&);
     static const ElementBox& containingBlock(const Box&);
 #if ASSERT_ENABLED
-    static const ElementBox& formattingContextRoot(const Box&);
+    static const ElementBox& NODELETE formattingContextRoot(const Box&);
 #endif
 
 protected:
     FormattingContext(const ElementBox& formattingContextRoot, LayoutState&);
 
 #if ASSERT_ENABLED
-    virtual void validateGeometryConstraintsAfterLayout() const;
+    virtual void NODELETE validateGeometryConstraintsAfterLayout() const;
 #endif
 
 private:

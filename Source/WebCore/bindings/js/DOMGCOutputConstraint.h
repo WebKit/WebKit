@@ -47,7 +47,7 @@ protected:
     void executeImpl(JSC::SlotVisitor&) override;
 
 private:
-    template<typename Visitor> void executeImplImpl(Visitor&);
+    template<typename Visitor> void NODELETE executeImplImpl(Visitor&);
 
     JSC::VM& m_vm;
     JSHeapData& m_heapData;

@@ -56,7 +56,7 @@ struct AcceleratedEffectPathFunction {
 
 // MARK: - WindRule Evaluation
 
-WindRule windRule(const AcceleratedEffectPathFunction&);
+WindRule NODELETE windRule(const AcceleratedEffectPathFunction&);
 
 // MARK: - Path Evaluation
 

@@ -85,7 +85,7 @@ void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vec
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
-static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedLayerProperties)
+static void NODELETE dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedLayerProperties)
 {
     if (changedLayerProperties.isEmpty())
         return;
@@ -326,19 +326,19 @@ bool RemoteLayerTreeTransaction::hasAnyLayerChanges() const
         || m_layerIDsWithNewlyUnreachableBackingStore.size();
 }
 
-HashSet<Ref<PlatformCALayerRemote>>& RemoteLayerTreeTransaction::changedLayers()
+HashSet<Ref<PlatformCALayerRemote>>& NODELETE RemoteLayerTreeTransaction::changedLayers()
 {
     ASSERT(isInWebProcess());
     return m_changedLayers.changedLayers;
 }
 
-const LayerPropertiesMap& RemoteLayerTreeTransaction::changedLayerProperties() const
+const LayerPropertiesMap& NODELETE RemoteLayerTreeTransaction::changedLayerProperties() const
 {
     ASSERT(!isInAuxiliaryProcess());
     return m_changedLayers.changedLayerProperties;
 }
 
-LayerPropertiesMap& RemoteLayerTreeTransaction::changedLayerProperties()
+LayerPropertiesMap& NODELETE RemoteLayerTreeTransaction::changedLayerProperties()
 {
     ASSERT(!isInAuxiliaryProcess());
     return m_changedLayers.changedLayerProperties;
@@ -369,7 +369,7 @@ RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties(Mar
     , videoElementData(WTF::move(videoElementData))
     , additionalData(WTF::move(additionalData)) { }
 
-std::optional<WebCore::LayerHostingContextIdentifier> RemoteLayerTreeTransaction::LayerCreationProperties::hostIdentifier() const
+std::optional<WebCore::LayerHostingContextIdentifier> NODELETE RemoteLayerTreeTransaction::LayerCreationProperties::hostIdentifier() const
 {
     if (auto* identifier = std::get_if<WebCore::LayerHostingContextIdentifier>(&additionalData))
         return *identifier;

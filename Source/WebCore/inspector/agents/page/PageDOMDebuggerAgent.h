@@ -48,7 +48,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> removeDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType);
 
     // InspectorInstrumentation
-    void mainFrameNavigated();
+    void NODELETE mainFrameNavigated();
     void frameDocumentUpdated(LocalFrame&);
     void willInsertDOMNode(Node& parent);
     void willRemoveDOMNode(Node&);

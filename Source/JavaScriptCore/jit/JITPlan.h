@@ -77,7 +77,7 @@ public:
         }
     }
 
-    JITCompilationKey key();
+    JITCompilationKey NODELETE key();
 
     void compileInThread(JITWorklistThread*);
 

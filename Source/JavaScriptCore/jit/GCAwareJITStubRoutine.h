@@ -177,7 +177,7 @@ public:
     CallLinkInfo* NODELETE callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
 
 protected:
-    template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);
+    template<typename Visitor> void NODELETE markRequiredObjectsInternalImpl(Visitor&);
     void markRequiredObjectsImpl(AbstractSlotVisitor&);
     void markRequiredObjectsImpl(SlotVisitor&);
 

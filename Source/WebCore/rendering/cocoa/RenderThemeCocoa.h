@@ -101,7 +101,7 @@ public:
     void adjustTextControlInnerContainerStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
     void adjustTextControlInnerTextStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
     void adjustTextControlInnerPlaceholderStyle(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const final;
-    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
+    bool NODELETE shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
 protected:
     virtual Color pictureFrameColor(const RenderElement&);
@@ -112,7 +112,7 @@ protected:
 
     void inflateRectForControlRenderer(const RenderElement&, FloatRect&) override;
 
-    Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox& zoomedBox, float zoomFactor, const Element*) const override;
+    Style::LineWidthBox NODELETE controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox& zoomedBox, float zoomFactor, const Element*) const override;
 
     Color platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const final;
     Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const final;
@@ -193,7 +193,7 @@ protected:
     void paintPlatformResizer(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) final;
     void paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) final;
 
-    bool supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const override;
+    bool NODELETE supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const override;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
     bool NODELETE inflateRectForControlRendererForVectorBasedControls(const RenderElement& renderer, FloatRect&) const;
@@ -213,7 +213,7 @@ protected:
 
     bool adjustColorWellStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintColorWellForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
-    bool paintColorWellDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
+    bool NODELETE paintColorWellDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool NODELETE adjustColorWellSwatchStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool NODELETE adjustColorWellSwatchOverlayStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
@@ -236,7 +236,7 @@ protected:
     bool NODELETE paintMenuListDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool adjustMenuListButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
-    bool paintMenuListButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
+    bool NODELETE paintMenuListButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool paintMenuListButtonDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool NODELETE adjustMeterStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
@@ -284,7 +284,7 @@ protected:
 
     Color buttonTextColor(OptionSet<StyleColorOptions>, bool) const;
 
-    bool mayNeedBleedAvoidance(const Style::ComputedStyle&) const final;
+    bool NODELETE mayNeedBleedAvoidance(const Style::ComputedStyle&) const final;
 #endif
 
     bool isSubmitStyleButton(const Node*) const;
