@@ -58,7 +58,11 @@ public:
     static Ref<Permissions> create(NavigatorBase&);
     ~Permissions();
 
+<<<<<<< HEAD
     NavigatorBase* NODELETE navigator();
+=======
+    NavigatorBase* navigator();
+>>>>>>> f7d3c0785bb0 (UAF in WebContent due to Cross-thread destruction race of worker DeferredPromise via Permissions::query() + worker.terminate())
     void query(JSC::Strong<JSC::JSObject>, Ref<DeferredPromise>&&);
     WEBCORE_EXPORT static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext&);
     WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(const String&);

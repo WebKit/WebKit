@@ -72,7 +72,11 @@ static std::optional<PermissionState> determineGeolocationPermissionState(Permis
     if (!window)
         return std::nullopt;
 
+<<<<<<< HEAD
     RefPtr geolocation = NavigatorGeolocation::optionalGeolocation(protect(window->navigator()));
+=======
+    RefPtr geolocation = NavigatorGeolocation::optionalGeolocation(window->protectedNavigator());
+>>>>>>> f7d3c0785bb0 (UAF in WebContent due to Cross-thread destruction race of worker DeferredPromise via Permissions::query() + worker.terminate())
 
     switch (permissionState) {
     case PermissionState::Granted:
@@ -166,11 +170,14 @@ static Expected<PermissionState, Exception> processPermissionQueryResult(std::op
     if (!permissionState)
         return makeUnexpected(Exception { ExceptionCode::NotSupportedError, "Permissions::query does not support this API"_s });
 
+<<<<<<< HEAD
 #if !ENABLE(GEOLOCATION) && !ENABLE(MEDIA_STREAM)
     UNUSED_PARAM(permissionDescriptor);
     UNUSED_PARAM(document);
 #endif
 
+=======
+>>>>>>> f7d3c0785bb0 (UAF in WebContent due to Cross-thread destruction race of worker DeferredPromise via Permissions::query() + worker.terminate())
 #if ENABLE(GEOLOCATION)
     if (permissionDescriptor.name == PermissionName::Geolocation) {
         if (auto geolocationPermissionState = determineGeolocationPermissionState(*permissionState, document))
