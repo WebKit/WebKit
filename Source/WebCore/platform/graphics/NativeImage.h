@@ -68,7 +68,7 @@ public:
     WEBCORE_EXPORT virtual ~NativeImage();
 
     WEBCORE_EXPORT virtual const PlatformImagePtr& platformImage() const;
-    WEBCORE_EXPORT const std::optional<GainMap>& gainMap() const;
+    WEBCORE_EXPORT const std::optional<GainMap>& NODELETE gainMap() const;
     WEBCORE_EXPORT virtual IntSize size() const;
     WEBCORE_EXPORT virtual bool hasAlpha() const;
     WEBCORE_EXPORT size_t sizeInBytes() const;
@@ -79,7 +79,7 @@ public:
     Headroom baseImageHeadroom() const { return m_baseImageHeadroom; }
     Headroom headroom() const { return m_headroom; }
 
-    void clearSubimages();
+    void NODELETE clearSubimages();
 
     WEBCORE_EXPORT void replacePlatformImage(PlatformImagePtr&&) const;
 

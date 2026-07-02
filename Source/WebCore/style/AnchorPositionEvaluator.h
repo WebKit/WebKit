@@ -196,10 +196,10 @@ using AnchorToAnchorPositionedMap = SingleThreadWeakHashMap<const RenderBoxModel
 class AnchorPositionEvaluator {
 public:
     using Side = Variant<CSSValueID, double>;
-    static bool propertyAllowsAnchorFunction(CSSPropertyID);
+    static bool NODELETE propertyAllowsAnchorFunction(CSSPropertyID);
     static std::optional<double> evaluate(BuilderState&, std::optional<ScopedName> elementName, Side);
 
-    static bool propertyAllowsAnchorSizeFunction(CSSPropertyID);
+    static bool NODELETE propertyAllowsAnchorSizeFunction(CSSPropertyID);
     static std::optional<double> evaluateSize(BuilderState&, std::optional<ScopedName> elementName, std::optional<AnchorSizeDimension>);
 
     static void updateAnchorPositioningStatesAfterInterleavedLayout(Document&, AnchorPositionedStates&);

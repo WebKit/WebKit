@@ -72,30 +72,30 @@ public:
     }
     virtual ~InternalAudioDecoderCocoa() = default;
 
-    String initialize(const String& codecName, const AudioDecoder::Config&);
+    String NODELETE initialize(const String& codecName, const AudioDecoder::Config&);
 
     using DecodePromise = AudioDecoder::DecodePromise;
 
-    Ref<DecodePromise> decode(Ref<SharedBuffer>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
-    Ref<GenericPromise> flush();
-    void close();
+    Ref<DecodePromise> NODELETE decode(Ref<SharedBuffer>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    Ref<GenericPromise> NODELETE flush();
+    void NODELETE close();
 
 private:
     InternalAudioDecoderCocoa(AudioDecoder::OutputCallback&&);
 
-    static WorkQueue& queueSingleton() { return AudioDecoderCocoa::queueSingleton(); }
-    Ref<AudioSampleBufferConverter> converter() const
+    static WorkQueue& NODELETE queueSingleton() { return AudioDecoderCocoa::queueSingleton(); }
+    Ref<AudioSampleBufferConverter> NODELETE converter() const
     {
         assertIsCurrent(queueSingleton());
         ASSERT(!m_isClosed);
         return *m_converter;
     }
-    void processedDecodedOutputs();
+    void NODELETE processedDecodedOutputs();
 
     AudioDecoder::OutputCallback m_outputCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RefPtr<AudioSampleBufferConverter> m_converter WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 
-    Ref<SharedBuffer> stripADTSHeader(SharedBuffer&);
+    Ref<SharedBuffer> NODELETE stripADTSHeader(SharedBuffer&);
 
     bool m_isClosed WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     Vector<uint8_t> m_codecDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());

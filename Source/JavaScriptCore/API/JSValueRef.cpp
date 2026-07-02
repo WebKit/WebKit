@@ -551,7 +551,7 @@ int32_t JSValueToInt32(JSContextRef ctx, JSValueRef value, JSValueRef* exception
     return JSC::toInt32(numeric.asNumber());
 }
 
-ALWAYS_INLINE JSRelationCondition toJSRelationCondition(JSC::JSBigInt::ComparisonResult);
+ALWAYS_INLINE JSRelationCondition NODELETE toJSRelationCondition(JSC::JSBigInt::ComparisonResult);
 JSRelationCondition toJSRelationCondition(JSC::JSBigInt::ComparisonResult result)
 {
     switch (result) {

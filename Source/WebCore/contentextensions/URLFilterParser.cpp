@@ -272,7 +272,7 @@ public:
         fail(URLFilterParser::Disjunction);
     }
 
-    NO_RETURN_DUE_TO_CRASH void resetForReparsing()
+    NO_RETURN_DUE_TO_CRASH void NODELETE resetForReparsing()
     {
         RELEASE_ASSERT_NOT_REACHED();
     }

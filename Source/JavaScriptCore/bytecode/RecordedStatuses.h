@@ -49,7 +49,7 @@ struct RecordedStatuses {
     SetPrivateBrandStatus* addSetPrivateBrandStatus(const CodeOrigin&, const SetPrivateBrandStatus&);
     
     DECLARE_VISIT_AGGREGATE;
-    template<typename Visitor> void markIfCheap(Visitor&);
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&);
     
     void finalizeWithoutDeleting(VM&);
     void finalize(VM&);

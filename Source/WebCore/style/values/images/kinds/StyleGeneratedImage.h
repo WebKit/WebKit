@@ -62,7 +62,7 @@ protected:
 
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
+    bool NODELETE hasClient(RenderElement&) const final;
 
     // Allow subclasses to react to clients being added/removed.
     virtual void didAddClient(RenderElement&) = 0;

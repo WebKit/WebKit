@@ -94,7 +94,7 @@ public:
     bool NODELETE hasEdges() const;
     CallEdgeList edges() const;
 
-    void unlinkForcefully();
+    void NODELETE unlinkForcefully();
 
     template<typename Functor>
     void forEachDependentCell(const Functor& functor) const
@@ -122,7 +122,7 @@ public:
 
 private:
     void NODELETE markRequiredObjectsImpl(AbstractSlotVisitor&);
-    void markRequiredObjectsImpl(SlotVisitor&);
+    void NODELETE markRequiredObjectsImpl(SlotVisitor&);
 
     bool visitWeakImpl(VM&);
 

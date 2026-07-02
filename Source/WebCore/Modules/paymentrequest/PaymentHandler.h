@@ -48,7 +48,7 @@ public:
     static ExceptionOr<void> canCreateSession(Document&);
     static ExceptionOr<void> validateData(Document&, JSC::JSValue, const PaymentRequest::MethodIdentifier&);
     static bool enabledForContext(ScriptExecutionContext&);
-    static bool hasActiveSession(Document&);
+    static bool NODELETE hasActiveSession(Document&);
 
     virtual ExceptionOr<void> convertData(Document&, JSC::JSValue) = 0;
     virtual ExceptionOr<void> show(Document&) = 0;

@@ -58,7 +58,7 @@ private:
     virtual RefPtr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) { return nullptr; }
     virtual std::optional<MessageSender> messageSender() = 0;
     virtual std::optional<uint64_t> messageDestinationID() = 0;
-    template<typename M> void send(M&&);
+    template<typename M> void NODELETE send(M&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

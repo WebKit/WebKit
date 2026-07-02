@@ -41,7 +41,7 @@ protected:
     void insertSiblingNodeRangeAfter(Node* startNode, Node* endNode, Node* refNode);
 
 private:
-    bool preservesTypingStyle() const override;
+    bool NODELETE preservesTypingStyle() const override;
 };
 
 // IncreaseSelectionListLevelCommand moves the selected list items one level deeper.

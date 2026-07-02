@@ -46,7 +46,7 @@ public:
     HTMLScriptRunner(Document&, HTMLScriptRunnerHost&);
     ~HTMLScriptRunner();
 
-    void detach();
+    void NODELETE detach();
 
     // Processes the passed in script and any pending scripts if possible.
     void execute(Ref<ScriptElement>&&, const TextPosition& scriptStartPosition);

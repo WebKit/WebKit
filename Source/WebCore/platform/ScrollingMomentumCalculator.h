@@ -74,7 +74,7 @@ public:
 
 private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
-    Seconds animationDuration() final;
+    Seconds NODELETE animationDuration() final;
 
     void NODELETE initializeInterpolationCoefficientsIfNecessary();
     void NODELETE initializeSnapProgressCurve();

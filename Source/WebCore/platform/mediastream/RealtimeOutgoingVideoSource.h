@@ -89,7 +89,7 @@ protected:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "RealtimeOutgoingVideoSource"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     double videoFrameScaling() const { return m_enableVideoFrameScaling ? (double)m_videoFrameScaling : 1; }
@@ -110,7 +110,7 @@ private:
     void UnregisterObserver(webrtc::ObserverInterface*) final { }
 
     // VideoTrackSourceInterface API
-    bool is_screencast() const final;
+    bool NODELETE is_screencast() const final;
     std::optional<bool> needs_denoising() const final { return std::optional<bool>(); }
     bool GetStats(Stats*) final;
     bool SupportsEncodedOutput() const final { return false; }

@@ -59,14 +59,14 @@ public:
     String itemText(unsigned listIndex) const override;
     String itemToolTip(unsigned) const override { return String(); }
     String itemAccessibilityText(unsigned) const override { return String(); }
-    bool itemIsEnabled(unsigned listIndex) const override;
+    bool NODELETE itemIsEnabled(unsigned listIndex) const override;
     PopupMenuStyle itemStyle(unsigned listIndex) const override;
     PopupMenuStyle menuStyle() const override;
-    int listSize() const override;
+    int NODELETE listSize() const override;
     void popupDidHide() override;
-    bool itemIsSeparator(unsigned listIndex) const override;
-    bool itemIsLabel(unsigned listIndex) const override;
-    bool itemIsSelected(unsigned listIndex) const override;
+    bool NODELETE itemIsSeparator(unsigned listIndex) const override;
+    bool NODELETE itemIsLabel(unsigned listIndex) const override;
+    bool NODELETE itemIsSelected(unsigned listIndex) const override;
     bool shouldPopOver() const override { return false; }
 #if !PLATFORM(COCOA)
     void setTextFromItem(unsigned listIndex) override;
@@ -88,8 +88,8 @@ private:
     void addSearchResult() final;
     void attributeChanged(const QualifiedName&) final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) final;
-    const AtomString& formControlType() const final;
-    bool needsContainer() const final;
+    const AtomString& NODELETE formControlType() const final;
+    bool NODELETE needsContainer() const final;
     void createShadowSubtree() final;
     void removeShadowSubtree() final;
     HTMLElement* NODELETE resultsButtonElement() const final;
@@ -97,7 +97,7 @@ private:
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void didSetValueByUserEdit() final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
-    float decorationWidth(float inputWidth) const final;
+    float NODELETE decorationWidth(float inputWidth) const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
 
     RefPtr<SearchFieldResultsButtonElement> m_resultsButton;

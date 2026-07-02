@@ -94,17 +94,17 @@ public:
 
     CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
 
-    WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, const DestinationColorSpace&);
+    WEBCORE_EXPORT static CheckedUint32 NODELETE calculateBytesPerRow(const IntSize&, const DestinationColorSpace&);
     WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, const DestinationColorSpace&);
 
 private:
     friend struct IPC::ArgumentCoder<ShareableBitmapConfiguration>;
 
     static std::optional<DestinationColorSpace> validateColorSpace(std::optional<DestinationColorSpace>);
-    static CheckedUint32 calculateBitsPerComponent(const DestinationColorSpace&);
-    static CheckedUint32 calculateBytesPerPixel(const DestinationColorSpace&);
+    static CheckedUint32 NODELETE calculateBitsPerComponent(const DestinationColorSpace&);
+    static CheckedUint32 NODELETE calculateBytesPerPixel(const DestinationColorSpace&);
 #if USE(CG)
-    static CGBitmapInfo calculateBitmapInfo(const DestinationColorSpace&, bool isOpaque);
+    static CGBitmapInfo NODELETE calculateBitmapInfo(const DestinationColorSpace&, bool isOpaque);
 #endif
 
     IntSize m_size;
@@ -135,7 +135,7 @@ public:
     SharedMemory::Handle& handle() LIFETIME_BOUND { return m_handle; }
 
     // Take ownership of the memory for process memory accounting purposes.
-    WEBCORE_EXPORT void takeOwnershipOfMemory(MemoryLedger) const;
+    WEBCORE_EXPORT void NODELETE takeOwnershipOfMemory(MemoryLedger) const;
     // Transfer ownership of the memory for process memory accounting purposes.
     WEBCORE_EXPORT void setOwnershipOfMemory(const ProcessIdentity&, MemoryLedger) const;
 
@@ -176,7 +176,7 @@ public:
     // Create a ReadOnly handle.
     WEBCORE_EXPORT std::optional<Handle> createReadOnlyHandle() const;
 
-    WEBCORE_EXPORT void setOwnershipOfMemory(const ProcessIdentity&);
+    WEBCORE_EXPORT void NODELETE setOwnershipOfMemory(const ProcessIdentity&);
 
     IntSize size() const { return m_configuration.size(); }
     IntRect bounds() const { return IntRect(IntPoint(), size()); }
@@ -192,7 +192,7 @@ public:
 
     // Paint the backing store into the given context.
     WEBCORE_EXPORT void paint(GraphicsContext&, const IntPoint& destination, const IntRect& source);
-    WEBCORE_EXPORT void paint(GraphicsContext&, float scaleFactor, const IntPoint& destination, const IntRect& source);
+    WEBCORE_EXPORT void NODELETE paint(GraphicsContext&, float scaleFactor, const IntPoint& destination, const IntRect& source);
 
     // This creates a bitmap image that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.

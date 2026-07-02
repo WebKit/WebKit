@@ -39,7 +39,7 @@ class FrontendRouter final : public RefCounted<FrontendRouter>, public CanMakeTh
     WTF_MAKE_TZONE_ALLOCATED(FrontendRouter);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrontendRouter);
 public:
-    JS_EXPORT_PRIVATE static Ref<FrontendRouter> NODELETE create();
+    JS_EXPORT_PRIVATE static Ref<FrontendRouter> create();
 
     bool hasFrontends() const { return !m_connections.isEmpty(); }
     JS_EXPORT_PRIVATE bool hasLocalFrontend() const;

@@ -47,7 +47,7 @@ private:
     PaymentAuthorizationViewController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *, PKPaymentAuthorizationViewController * = nil);
 
     // PaymentAuthorizationPresenter
-    WKPaymentAuthorizationDelegate *platformDelegate() final;
+    WKPaymentAuthorizationDelegate *NODELETE platformDelegate() final;
     void dismiss() final;
 #if PLATFORM(IOS_FAMILY)
     void present(UIViewController *, CompletionHandler<void(bool)>&&) final;

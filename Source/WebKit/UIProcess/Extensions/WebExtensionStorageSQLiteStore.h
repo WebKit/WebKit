@@ -64,7 +64,7 @@ protected:
     DatabaseResult createFreshDatabaseSchema() override;
     DatabaseResult resetDatabaseSchema() override;
     bool isDatabaseEmpty() override;
-    SchemaVersion currentDatabaseSchemaVersion() override;
+    SchemaVersion NODELETE currentDatabaseSchemaVersion() override;
     URL databaseURL() override;
 
 private:

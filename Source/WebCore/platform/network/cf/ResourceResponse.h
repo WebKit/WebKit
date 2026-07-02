@@ -67,7 +67,7 @@ public:
         m_initLevel = AllFields;
     }
 
-    WEBCORE_EXPORT void disableLazyInitialization();
+    WEBCORE_EXPORT void NODELETE disableLazyInitialization();
 
     unsigned memoryUsage() const
     {
@@ -81,7 +81,7 @@ public:
          */
     }
 
-    WEBCORE_EXPORT NSURLResponse *nsURLResponse() const;
+    WEBCORE_EXPORT NSURLResponse *NODELETE nsURLResponse() const;
 
 #if USE(QUICK_LOOK)
     bool isQuickLook() const { return m_isQuickLook; }
@@ -97,7 +97,7 @@ private:
     String platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo(std::span<const std::byte>) const;
 
-    static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
+    static bool NODELETE platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 

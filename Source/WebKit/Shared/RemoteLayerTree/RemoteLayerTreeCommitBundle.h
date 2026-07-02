@@ -55,7 +55,7 @@ struct PageData {
     uint64_t renderTreeSize { 0 };
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    String NODELETE description() const;
 #endif
 };
 
@@ -94,7 +94,7 @@ struct MainFrameData {
 #endif
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    String NODELETE description() const;
 #endif
 };
 
@@ -111,7 +111,7 @@ struct RemoteLayerTreeCommitBundle {
     MonotonicTime startTime;
 
 #if !defined(NDEBUG) || !LOG_DISABLED
-    String description() const;
+    String NODELETE description() const;
 #endif
 };
 

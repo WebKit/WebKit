@@ -48,8 +48,8 @@ public:
 
     void updateFromElement() override;
 
-    bool canHaveGeneratedChildren() const override;
-    bool hasControlClip() const override;
+    bool NODELETE canHaveGeneratedChildren() const override;
+    bool NODELETE hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
 
     void updateAnonymousChildStyle(Style::ComputedStyle&) const override;
@@ -71,7 +71,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderButton"_s; }
 
-    bool hasLineIfEmpty() const override;
+    bool NODELETE hasLineIfEmpty() const override;
 
     bool isFlexibleBoxImpl() const override { return true; }
 

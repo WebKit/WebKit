@@ -246,7 +246,7 @@ public:
 
     // Functions for getting/setting the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
     // values).
-    WEBCORE_EXPORT IntSize contentsSize() const final; // Always at least as big as the visibleWidth()/visibleHeight().
+    WEBCORE_EXPORT IntSize NODELETE contentsSize() const final; // Always at least as big as the visibleWidth()/visibleHeight().
     int contentsWidth() const { return contentsSize().width(); }
     int contentsHeight() const { return contentsSize().height(); }
     virtual void setContentsSize(const IntSize&);
@@ -503,18 +503,18 @@ private:
     virtual void updateCompositingLayersAfterScrolling() = 0;
 
     void platformAddChild(Widget*);
-    void platformRemoveChild(Widget*);
+    void NODELETE platformRemoveChild(Widget*);
     void platformSetScrollbarModes();
     void platformScrollbarModes(ScrollbarMode& horizontal, ScrollbarMode& vertical) const;
     void platformSetCanBlitOnScroll(bool);
     bool platformCanBlitOnScroll() const;
     
     IntRect platformVisibleContentRect(bool includeScrollbars) const;
-    IntSize platformVisibleContentSize(bool includeScrollbars) const;
+    IntSize NODELETE platformVisibleContentSize(bool includeScrollbars) const;
     IntRect platformVisibleContentRectIncludingObscuredArea(bool includeScrollbars) const;
-    IntSize platformVisibleContentSizeIncludingObscuredArea(bool includeScrollbars) const;
+    IntSize NODELETE platformVisibleContentSizeIncludingObscuredArea(bool includeScrollbars) const;
 
-    IntRect platformUnobscuredContentRect(VisibleContentRectIncludesScrollbars) const;
+    IntRect NODELETE platformUnobscuredContentRect(VisibleContentRectIncludesScrollbars) const;
     FloatRect platformExposedContentRect() const;
 
     void platformSetContentsSize();

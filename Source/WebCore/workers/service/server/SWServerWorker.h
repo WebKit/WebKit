@@ -133,7 +133,7 @@ public:
     const Site& topSite() const LIFETIME_BOUND { return m_topSite; }
     WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> NODELETE serviceWorkerPageIdentifier() const;
 
-    bool shouldPersistToDisk() const;
+    bool NODELETE shouldPersistToDisk() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
@@ -157,7 +157,7 @@ public:
 
     bool shouldContinue() const { return !!m_functionalEventCounter || m_isInspected; }
 
-    WEBCORE_EXPORT bool isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
+    WEBCORE_EXPORT bool NODELETE isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
 
     Vector<URL> importedScriptURLs() const;
     const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& scriptResourceMap() const LIFETIME_BOUND { return m_scriptResourceMap; }

@@ -321,7 +321,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 }
 
 #if ASSERT_ENABLED
-static void verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(const RenderBlock& containingBlock, bool hasDefiniteHeightByStyleOnly)
+static void NODELETE verifyDefiniteHeightConsistencyBetweenStyleAndContainingBlockChain(const RenderBlock& containingBlock, bool hasDefiniteHeightByStyleOnly)
 {
     // The fast path is more correct than the slow path for these cases.
     auto& logicalHeight = containingBlock.style().logicalHeight();

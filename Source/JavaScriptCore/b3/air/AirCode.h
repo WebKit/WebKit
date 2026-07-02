@@ -193,7 +193,7 @@ public:
     const FrequentedBlock& entrypoint(unsigned index) const { return m_entrypoints[index]; }
     bool NODELETE isEntrypoint(BasicBlock*) const;
     // Note: It is only valid to call this function after LowerEntrySwitch.
-    std::optional<unsigned> NODELETE entrypointIndex(BasicBlock*) const;
+    std::optional<unsigned> entrypointIndex(BasicBlock*) const;
 
     // Note: We allow this to be called even before we set m_entrypoints just for convenience to users of this API.
     // However, if you call this before setNumEntrypoints, setNumEntrypoints will overwrite this value.
@@ -259,12 +259,12 @@ public:
     Vector<std::unique_ptr<BasicBlock>>& blockList() LIFETIME_BOUND { return m_blocks; }
 
     // Finds the smallest index' such that at(index') != null and index' >= index.
-    JS_EXPORT_PRIVATE unsigned NODELETE findFirstBlockIndex(unsigned index) const;
+    JS_EXPORT_PRIVATE unsigned findFirstBlockIndex(unsigned index) const;
 
     // Finds the smallest index' such that at(index') != null and index' > index.
-    unsigned NODELETE findNextBlockIndex(unsigned index) const;
+    unsigned findNextBlockIndex(unsigned index) const;
 
-    BasicBlock* NODELETE findNextBlock(BasicBlock*) const;
+    BasicBlock* findNextBlock(BasicBlock*) const;
 
     class iterator {
     public:

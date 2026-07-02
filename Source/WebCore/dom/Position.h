@@ -111,7 +111,7 @@ public:
     std::pair<RenderObject*, unsigned> rendererAndOffset() const;
     std::pair<RenderText*, unsigned> resolvedTextRendererAndOffset() const;
 
-    RefPtr<Node> firstNode() const;
+    RefPtr<Node> NODELETE firstNode() const;
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
     WEBCORE_EXPORT Node* NODELETE computeNodeBeforePosition() const;
@@ -141,7 +141,7 @@ public:
     bool isNotNull() const { return m_anchorNode; }
     bool isOrphan() const { return m_anchorNode && !m_anchorNode->isConnected(); }
 
-    RefPtr<Element> anchorElementAncestor() const;
+    RefPtr<Element> NODELETE anchorElementAncestor() const;
 
     // Move up or down the DOM by one position.
     // Offsets are computed using render text for nodes that have renderers - but note that even when
@@ -189,14 +189,14 @@ public:
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
     static bool NODELETE nodeIsUserSelectNone(const Node*);
     static bool NODELETE nodeIsUserSelectAll(const Node*);
-    static RefPtr<Node> rootUserSelectAllForNode(Node*);
+    static RefPtr<Node> NODELETE rootUserSelectAllForNode(Node*);
 
-    void debugPosition(ASCIILiteral msg = ""_s) const;
+    void NODELETE debugPosition(ASCIILiteral msg = ""_s) const;
 
 #if ENABLE(TREE_DEBUGGING)
-    String debugDescription() const;
-    void showAnchorTypeAndOffset() const;
-    void showTreeForThis() const;
+    String NODELETE debugDescription() const;
+    void NODELETE showAnchorTypeAndOffset() const;
+    void NODELETE showTreeForThis() const;
 #endif
 
     // This is a tentative enhancement of operator== to account for different position types.
@@ -226,7 +226,7 @@ private:
 
 bool operator==(const Position&, const Position&);
 
-template<TreeType treeType> std::partial_ordering treeOrder(const Position&, const Position&);
+template<TreeType treeType> std::partial_ordering NODELETE treeOrder(const Position&, const Position&);
 WEBCORE_EXPORT std::partial_ordering operator<=>(const Position&, const Position&);
 
 Position makeContainerOffsetPosition(RefPtr<Node>&&, unsigned offset);
@@ -316,6 +316,6 @@ inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node anchorNode);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::Position&);
-void showTree(const WebCore::Position*);
+void NODELETE showTree(const WebCore::Position&);
+void NODELETE showTree(const WebCore::Position*);
 #endif

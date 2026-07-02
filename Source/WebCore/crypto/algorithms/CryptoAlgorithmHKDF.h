@@ -40,7 +40,7 @@ public:
 
 private:
     CryptoAlgorithmHKDF() = default;
-    CryptoAlgorithmIdentifier identifier() const final;
+    CryptoAlgorithmIdentifier NODELETE identifier() const final;
 
     void deriveBits(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, std::optional<size_t> length, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
     void importKey(CryptoKeyFormat, KeyData&&, const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;

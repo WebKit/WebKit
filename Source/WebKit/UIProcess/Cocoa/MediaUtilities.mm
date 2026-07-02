@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-_WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducerMediaStateFlags state)
+_WKMediaCaptureStateDeprecated NODELETE toWKMediaCaptureStateDeprecated(WebCore::MediaProducerMediaStateFlags state)
 {
     _WKMediaCaptureStateDeprecated mediaCaptureState = _WKMediaCaptureStateDeprecatedNone;
     if (state & WebCore::MediaProducerMediaState::HasActiveAudioCaptureDevice)
@@ -43,7 +43,7 @@ _WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaPro
     return mediaCaptureState;
 }
 
-_WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducerMutedStateFlags state)
+_WKMediaMutedState NODELETE toWKMediaMutedState(WebCore::MediaProducerMutedStateFlags state)
 {
     _WKMediaMutedState mediaMutedState = _WKMediaNoneMuted;
     if (state & WebCore::MediaProducerMutedState::AudioIsMuted)

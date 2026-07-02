@@ -127,14 +127,14 @@ public:
 
     virtual ~JSCustomElementInterface();
 
-    template<typename Visitor> void visitJSFunctionsInGCThread(Visitor&) const;
+    template<typename Visitor> void NODELETE visitJSFunctionsInGCThread(Visitor&) const;
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 
     RefPtr<Element> tryToConstructCustomElement(Document&, CustomElementRegistry&, const AtomString&, ParserConstructElementWithEmptyStack);
 
     template<typename Function>
-    void invokeCallback(Element&, JSC::JSObject* callback, NOESCAPE const Function& addArguments);
+    void NODELETE invokeCallback(Element&, JSC::JSObject* callback, NOESCAPE const Function& addArguments);
 
     QualifiedName m_name;
     JSC::Weak<JSC::JSObject> m_constructor;

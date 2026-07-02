@@ -39,7 +39,7 @@ public:
     JITFinalizer(Plan&, Ref<DFG::JITCode>&&, CodePtr<JSEntryPtrTag> withArityCheck = CodePtr<JSEntryPtrTag>(CodePtr<JSEntryPtrTag>::EmptyValue));
     ~JITFinalizer() final;
     
-    size_t codeSize() final;
+    size_t NODELETE codeSize() final;
     bool finalize() final;
     bool isFailed() final { return false; }
 

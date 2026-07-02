@@ -100,7 +100,7 @@ public:
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MessagePort; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -124,7 +124,7 @@ private:
     // ActiveDOMObject.
     void contextDestroyed() final;
     void stop() final { close(); }
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // A port starts out its life entangled, and remains entangled until it is detached or is cloned.
     bool isEntangled() const { return !m_isDetached && m_entangled; }

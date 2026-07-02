@@ -42,7 +42,7 @@ public:
 
 private:
     CryptoAlgorithmECDH() = default;
-    CryptoAlgorithmIdentifier identifier() const final;
+    CryptoAlgorithmIdentifier NODELETE identifier() const final;
 
     void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsageBitmap, KeyOrKeyPairCallback&&, ExceptionCallback&&, ScriptExecutionContext&) final;
     void deriveBits(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, std::optional<size_t> length, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;

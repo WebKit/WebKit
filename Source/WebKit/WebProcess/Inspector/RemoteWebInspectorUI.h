@@ -88,19 +88,19 @@ public:
     void moveWindowBy(float x, float y) override;
 
     bool isRemote() const final { return true; }
-    String localizedStringsURL() const override;
+    String NODELETE localizedStringsURL() const override;
     String backendCommandsURL() const final { return m_backendCommandsURL; }
-    Inspector::DebuggableType debuggableType() const override;
-    String targetPlatformName() const override;
-    String targetBuildVersion() const override;
-    String targetProductVersion() const override;
-    bool targetIsSimulator() const override;
+    Inspector::DebuggableType NODELETE debuggableType() const override;
+    String NODELETE targetPlatformName() const override;
+    String NODELETE targetBuildVersion() const override;
+    String NODELETE targetProductVersion() const override;
+    bool NODELETE targetIsSimulator() const override;
 
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance) override;
 
-    WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
+    WebCore::UserInterfaceLayoutDirection NODELETE userInterfaceLayoutDirection() const override;
 
-    bool supportsDockSide(DockSide) override;
+    bool NODELETE supportsDockSide(DockSide) override;
 
     void bringToFront() override;
     void closeWindow() override;
@@ -112,34 +112,34 @@ public:
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs) override;
     void load(const String& path, CompletionHandler<void(const String&)>&&) override;
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
-    void inspectedURLChanged(const String&) override;
+    void NODELETE inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
     void setInspectorPageDeveloperExtrasEnabled(bool) override;
 
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor) override;
-    double pageZoomFactor() const override;
+    double NODELETE pageZoomFactor() const override;
 
     void sendMessageToBackend(const String&) override;
     WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
-    WebCore::Page* frontendPage() final;
+    WebCore::Page* NODELETE frontendPage() final;
 
 #if ENABLE(INSPECTOR_TELEMETRY)
-    bool supportsDiagnosticLogging() override;
+    bool NODELETE supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }
     void logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) override;
 #endif
         
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    bool supportsWebExtensions() override;
+    bool NODELETE supportsWebExtensions() override;
     void didShowExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const WebCore::FrameIdentifier&) override;
     void didHideExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&) override;
     void didNavigateExtensionTab(const Inspector::ExtensionID&, const Inspector::ExtensionTabID&, const URL&) override;
     void inspectedPageDidNavigate(const URL&) override;
 #endif
 
-    bool canSave(WebCore::InspectorFrontendClient::SaveMode) override;
-    bool canLoad() override;
-    bool canPickColorFromScreen() override;
+    bool NODELETE canSave(WebCore::InspectorFrontendClient::SaveMode) override;
+    bool NODELETE canLoad() override;
+    bool NODELETE canPickColorFromScreen() override;
     bool isUnderTest() override { return false; }
     unsigned inspectionLevel() const override { return 1; }
     void requestSetDockSide(DockSide) override { }

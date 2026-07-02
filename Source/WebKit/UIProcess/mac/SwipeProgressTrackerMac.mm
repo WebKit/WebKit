@@ -49,7 +49,7 @@ static constexpr double minimumAnimationVelocity = 3.0;
 static constexpr Seconds minimumAnimationDuration = 100_ms;
 static constexpr Seconds maximumAnimationDuration = 400_ms;
 
-static double easeOutCubic(double t)
+static double NODELETE easeOutCubic(double t)
 {
     double p = t - 1;
     return p * p * p + 1;

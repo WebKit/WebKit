@@ -69,13 +69,13 @@ public:
 
     NetscapePlugInStreamLoader* NODELETE streamLoader() { return m_streamLoader; }
     void NODELETE setStreamLoader(NetscapePlugInStreamLoader& loader) { m_streamLoader = loader; }
-    void clearStreamLoader();
-    void addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
+    void NODELETE clearStreamLoader();
+    void NODELETE addData(std::span<const uint8_t> data) { m_accumulatedData.append(data); }
 
     void completeWithBytes(std::span<const uint8_t>, PDFIncrementalLoader&);
-    void completeWithAccumulatedData(PDFIncrementalLoader&);
-    bool completeIfPossible(PDFIncrementalLoader&);
-    void completeUnconditionally(PDFIncrementalLoader&);
+    void NODELETE completeWithAccumulatedData(PDFIncrementalLoader&);
+    bool NODELETE completeIfPossible(PDFIncrementalLoader&);
+    void NODELETE completeUnconditionally(PDFIncrementalLoader&);
 
     uint64_t NODELETE position() const { return m_position; }
     size_t NODELETE count() const { return m_count; }
@@ -154,19 +154,19 @@ void ByteRangeRequest::completeUnconditionally(PDFIncrementalLoader& loader)
 class PDFPluginStreamLoaderClient final : public ThreadSafeRefCounted<PDFPluginStreamLoaderClient>,
     public NetscapePlugInStreamLoaderClient {
 public:
-    static Ref<PDFPluginStreamLoaderClient> create(PDFIncrementalLoader& loader)
+    static Ref<PDFPluginStreamLoaderClient> NODELETE create(PDFIncrementalLoader& loader)
     {
         return adoptRef(*new PDFPluginStreamLoaderClient(loader));
     }
 
     // NetscapePlugInStreamLoaderClient.
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
-    void willSendRequest(NetscapePlugInStreamLoader&, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) final;
-    void didReceiveResponse(NetscapePlugInStreamLoader&, const ResourceResponse&) final;
-    void didReceiveData(NetscapePlugInStreamLoader&, const SharedBuffer&) final;
-    void didFail(NetscapePlugInStreamLoader&, const ResourceError&) final;
-    void didFinishLoading(NetscapePlugInStreamLoader&) final;
+    void NODELETE ref() const final { ThreadSafeRefCounted::ref(); }
+    void NODELETE deref() const final { ThreadSafeRefCounted::deref(); }
+    void NODELETE willSendRequest(NetscapePlugInStreamLoader&, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) final;
+    void NODELETE didReceiveResponse(NetscapePlugInStreamLoader&, const ResourceResponse&) final;
+    void NODELETE didReceiveData(NetscapePlugInStreamLoader&, const SharedBuffer&) final;
+    void NODELETE didFail(NetscapePlugInStreamLoader&, const ResourceError&) final;
+    void NODELETE didFinishLoading(NetscapePlugInStreamLoader&) final;
 
 private:
     PDFPluginStreamLoaderClient(PDFIncrementalLoader& loader)
@@ -286,7 +286,7 @@ struct PDFIncrementalLoader::RequestData {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFIncrementalLoader);
 
-Ref<PDFIncrementalLoader> PDFIncrementalLoader::create(PDFPluginBase& plugin)
+Ref<PDFIncrementalLoader> NODELETE PDFIncrementalLoader::create(PDFPluginBase& plugin)
 {
     return adoptRef(*new PDFIncrementalLoader(plugin));
 }
@@ -527,7 +527,7 @@ void PDFIncrementalLoader::cancelAndForgetStreamLoader(NetscapePlugInStreamLoade
     streamLoader.cancel(streamLoader.cancelledError());
 }
 
-std::optional<ByteRangeRequestIdentifier> PDFIncrementalLoader::identifierForLoader(WebCore::NetscapePlugInStreamLoader& loader)
+std::optional<ByteRangeRequestIdentifier> NODELETE PDFIncrementalLoader::identifierForLoader(WebCore::NetscapePlugInStreamLoader& loader)
 {
     return m_requestData->streamLoaderMap.get(loader);
 }
@@ -583,19 +583,19 @@ void PDFIncrementalLoader::requestDidCompleteWithAccumulatedData(ByteRangeReques
         forgetStreamLoader(*streamLoader);
 }
 
-static void dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
+static void NODELETE dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
     loader->dataProviderGetByteRanges(buffers, unsafeMakeSpan(ranges, count));
 }
 
-static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
+static size_t NODELETE dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
     return loader->dataProviderGetBytesAtPosition(unsafeMakeSpan(static_cast<uint8_t*>(buffer), count), position);
 }
 
-static void dataProviderReleaseInfoCallback(void* info)
+static void NODELETE dataProviderReleaseInfoCallback(void* info)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
     loader->deref(); // Balance the ref() in PDFIncrementalLoader::threadEntry.

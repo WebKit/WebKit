@@ -90,7 +90,7 @@ public:
 #if ENABLE(TILED_CA_DRAWING_AREA)
     static bool NODELETE supportsGPUProcessRendering(DrawingAreaType);
 #else
-    static bool supportsGPUProcessRendering();
+    static bool NODELETE supportsGPUProcessRendering();
 #endif
 
     virtual void setNeedsDisplay() = 0;
@@ -124,7 +124,7 @@ public:
 
     virtual bool supportsAsyncScrolling() const { return false; }
     virtual bool usesDelegatedPageScaling() const { return false; }
-    virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
+    virtual WebCore::DelegatedScrollingMode NODELETE delegatedScrollingMode() const;
 
     virtual void registerScrollingTree() { }
     virtual void unregisterScrollingTree() { }
@@ -202,7 +202,7 @@ public:
     void setShouldScaleViewToFitDocument(bool);
     void scaleViewToFitDocumentIfNeeded();
     
-    static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral);
+    static RetainPtr<CABasicAnimation> NODELETE transientZoomSnapAnimationForKeyPath(ASCIILiteral);
 
 protected:
     DrawingArea(DrawingAreaIdentifier, WebPage&);

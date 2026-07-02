@@ -98,7 +98,7 @@
 
 namespace WebKit {
 
-Ref<SOAuthorizationSession> PopUpSOAuthorizationSession::create(Ref<API::PageConfiguration>&& configuration, RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
+Ref<SOAuthorizationSession> NODELETE PopUpSOAuthorizationSession::create(Ref<API::PageConfiguration>&& configuration, RetainPtr<WKSOAuthorizationDelegate> delegate, WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
     return adoptRef(*new PopUpSOAuthorizationSession(WTF::move(configuration), delegate, page, WTF::move(navigationAction), WTF::move(newPageCallback), WTF::move(uiClientCallback)));
 }

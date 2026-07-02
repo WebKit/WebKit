@@ -67,14 +67,14 @@ private:
         }
 
         // RealtimeMediaSourceObserver.
-        uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
-        uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
-        void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+        uint32_t NODELETE checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+        uint32_t NODELETE checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+        void NODELETE incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
         void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
-        void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+        void NODELETE setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     private:
-        bool preventSourceFromEnding() final { return true; }
+        bool NODELETE preventSourceFromEnding() final { return true; }
 
         const Ref<RealtimeMediaSource> m_source;
     };

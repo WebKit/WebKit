@@ -263,17 +263,17 @@ public:
     virtual Value* vectorOrConstant(Procedure&, const Value* other) const;
     virtual Value* vectorXorConstant(Procedure&, const Value* other) const;
 
-    virtual TriState equalConstant(const Value* other) const;
-    virtual TriState notEqualConstant(const Value* other) const;
-    virtual TriState lessThanConstant(const Value* other) const;
-    virtual TriState greaterThanConstant(const Value* other) const;
-    virtual TriState lessEqualConstant(const Value* other) const;
-    virtual TriState greaterEqualConstant(const Value* other) const;
-    virtual TriState aboveConstant(const Value* other) const;
-    virtual TriState belowConstant(const Value* other) const;
-    virtual TriState aboveEqualConstant(const Value* other) const;
-    virtual TriState belowEqualConstant(const Value* other) const;
-    virtual TriState equalOrUnorderedConstant(const Value* other) const;
+    virtual TriState NODELETE equalConstant(const Value* other) const;
+    virtual TriState NODELETE notEqualConstant(const Value* other) const;
+    virtual TriState NODELETE lessThanConstant(const Value* other) const;
+    virtual TriState NODELETE greaterThanConstant(const Value* other) const;
+    virtual TriState NODELETE lessEqualConstant(const Value* other) const;
+    virtual TriState NODELETE greaterEqualConstant(const Value* other) const;
+    virtual TriState NODELETE aboveConstant(const Value* other) const;
+    virtual TriState NODELETE belowConstant(const Value* other) const;
+    virtual TriState NODELETE aboveEqualConstant(const Value* other) const;
+    virtual TriState NODELETE belowEqualConstant(const Value* other) const;
+    virtual TriState NODELETE equalOrUnorderedConstant(const Value* other) const;
 
     // If the value is a comparison then this returns the inverted form of that comparison, if
     // possible. It can be impossible for double comparisons, where for example LessThan and
@@ -314,7 +314,7 @@ public:
 
     // Booleans in B3 are Const32(0) or Const32(1). So this is true if the type is Int32 and the only
     // possible return values are 0 or 1. It's OK for this method to conservatively return false.
-    bool NODELETE returnsBool() const;
+    bool returnsBool() const;
 
     bool isNegativeZero() const;
 
@@ -336,12 +336,12 @@ public:
     // have a non-empty ValueKey. This happens for example with Check operations.
     ValueKey key() const;
     
-    Value* NODELETE foldIdentity() const;
+    Value* foldIdentity() const;
 
     // Makes sure that none of the children are Identity's. If a child points to Identity, this will
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains
     // of Identity's.
-    bool NODELETE performSubstitution();
+    bool performSubstitution();
     
     // Free values are those whose presence is guaranteed not to hurt code. We consider constants,
     // Identities, and Nops to be free. Constants are free because we hoist them to an optimal place.
@@ -950,7 +950,7 @@ private:
     String m_compilerConstructionSite { emptyString() };
 
 public:
-    static String generateCompilerConstructionSite();
+    static String NODELETE generateCompilerConstructionSite();
 #endif
 
 public:

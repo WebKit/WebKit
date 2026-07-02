@@ -121,7 +121,7 @@ static inline void writeUnalignedValue(uint8_t* p, V value)
 
 class Writer : public RefCountedAndCanMakeWeakPtr<Writer> {
 public:
-    static Ref<Writer> NODELETE create(DebugObject* obj)
+    static Ref<Writer> create(DebugObject* obj)
     {
         return adoptRef(*new Writer(obj));
     }
@@ -145,7 +145,7 @@ public:
             writeUnalignedValue(m_writer->template addressAt<T>(m_offset), value);
         }
 
-        Slot<T> at(int i) { return Slot<T>(m_writer, m_offset + sizeof(T) * i); }
+        Slot<T> NODELETE at(int i) { return Slot<T>(m_writer, m_offset + sizeof(T) * i); }
 
     private:
         WeakPtr<Writer> m_writer;
@@ -190,7 +190,7 @@ public:
 
     DebugObject* NODELETE debugObject() { return m_debugObject; }
 
-    uint8_t* NODELETE buffer() LIFETIME_BOUND { return &m_buffer[0]; }
+    uint8_t* buffer() LIFETIME_BOUND { return &m_buffer[0]; }
 
     void align(uintptr_t align)
     {
@@ -242,14 +242,14 @@ private:
     friend class Slot;
 
     template<typename T>
-    uint8_t* NODELETE addressAt(uintptr_t offset) LIFETIME_BOUND
+    uint8_t* addressAt(uintptr_t offset) LIFETIME_BOUND
     {
         ASSERT(offset < m_buffer.size() && offset + sizeof(T) <= m_buffer.size());
         return &m_buffer[offset];
     }
 
     template<typename T>
-    T* NODELETE rawSlotAt(uintptr_t offset) LIFETIME_BOUND
+    T* rawSlotAt(uintptr_t offset) LIFETIME_BOUND
     {
         ASSERT(offset < m_buffer.size() && offset + sizeof(T) <= m_buffer.size());
         return reinterpret_cast<T*>(&m_buffer[offset]);
@@ -278,7 +278,7 @@ public:
 
     std::span<const uint8_t> NODELETE region() { return m_codeRegion; }
 
-    static Ref<CodeDescription> NODELETE create(const CString& name, std::span<const uint8_t> region)
+    static Ref<CodeDescription> create(const CString& name, std::span<const uint8_t> region)
     {
         return adoptRef(*new CodeDescription(name, region));
     }

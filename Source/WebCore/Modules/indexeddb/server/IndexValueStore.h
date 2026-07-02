@@ -75,7 +75,7 @@ public:
         Iterator(IndexValueStore&, IDBKeyDataSet::iterator, IndexValueEntry::Iterator);
         Iterator(IndexValueStore&, CursorDuplicity, IDBKeyDataSet::reverse_iterator, IndexValueEntry::Iterator);
 
-        void NODELETE invalidate();
+        void invalidate();
         bool NODELETE isValid();
 
         const IDBKeyData& NODELETE key();
@@ -104,7 +104,7 @@ public:
     Iterator reverseFind(const IDBKeyData&, const IDBKeyData& primaryKey, CursorDuplicity);
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 
 private:

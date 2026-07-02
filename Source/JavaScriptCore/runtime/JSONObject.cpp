@@ -720,7 +720,7 @@ private:
     bool setGap(JSValue space);
     unsigned newLineAndIndentSize() const;
     void appendNewLineAndIndentUnchecked();
-    template<typename T> void recordFailure(FailureReason, T&& reason);
+    template<typename T> void NODELETE recordFailure(FailureReason, T&& reason);
     template<typename T> void NODELETE recordFailure(T&& reason)
     {
         recordFailure(FailureReason::Unknown, std::forward<T>(reason));
@@ -728,19 +728,19 @@ private:
     void recordBufferFull();
     String firstGetterSetterPropertyName(JSObject&) const;
     void recordFastPropertyEnumerationFailure(JSObject&);
-    bool haveFailure() const;
+    bool NODELETE haveFailure() const;
     bool hasRemainingCapacity(unsigned size = 1);
     bool hasRemainingCapacitySlow(unsigned size);
     bool mayHaveToJSON(JSObject&) const;
 
-    static void logOutcome(ASCIILiteral);
+    static void NODELETE logOutcome(ASCIILiteral);
     static void logOutcome(String&&);
 
     static unsigned usableBufferSize(unsigned availableBufferSize);
 
-    CharType* buffer();
-    const CharType* buffer() const;
-    std::span<CharType> bufferSpan();
+    CharType* NODELETE buffer();
+    const CharType* NODELETE buffer() const;
+    std::span<CharType> NODELETE bufferSpan();
 
     JSGlobalObject& m_globalObject;
     VM& m_vm;

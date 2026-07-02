@@ -111,7 +111,7 @@ private:
         {
         }
 
-        void NODELETE populate()
+        void populate()
         {
             ASSERT(m_active);
             size_t delta = m_converter->m_result.size() - m_baseOfOffset;
@@ -177,7 +177,7 @@ private:
         m_result.grow(m_result.size() + delta);
     }
 
-    void NODELETE overwrite32(unsigned location, uint32_t value)
+    void overwrite32(unsigned location, uint32_t value)
     {
         ASSERT(m_result.size() >= location + 4);
         m_result[location] = value >> 24;
@@ -186,7 +186,7 @@ private:
         m_result[location + 3] = value;
     }
 
-    void NODELETE overwrite16(unsigned location, uint16_t value)
+    void overwrite16(unsigned location, uint16_t value)
     {
         ASSERT(m_result.size() >= location + 2);
         m_result[location] = value >> 8;
@@ -196,7 +196,7 @@ private:
     static const size_t headerSize = 12;
     static const size_t directoryEntrySize = 16;
 
-    uint32_t NODELETE calculateChecksum(size_t startingOffset, size_t endingOffset) const;
+    uint32_t calculateChecksum(size_t startingOffset, size_t endingOffset) const;
 
     void processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGGlyphElement*, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox);
 
@@ -230,14 +230,14 @@ private:
     void addCodepoints(const HashSet<String>& codepoints, HashSet<Glyph>& glyphSet) const;
     void addGlyphNames(const HashSet<String>& glyphNames, HashSet<Glyph>& glyphSet) const;
     void addKerningPair(Vector<KerningData>&, SVGKerningPair&&) const;
-    template<typename T> size_t appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage);
+    template<typename T> size_t NODELETE appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage);
     size_t finishAppendingKERNSubtable(Vector<KerningData>, uint16_t coverage);
 
     void appendLigatureSubtable(size_t subtableRecordLocation);
     void appendArabicReplacementSubtable(size_t subtableRecordLocation, ASCIILiteral arabicForm);
     void appendScriptSubtable(unsigned featureCount);
     Vector<Glyph, 1> glyphsForCodepoint(char32_t) const;
-    Glyph NODELETE firstGlyph(const Vector<Glyph, 1>&, char32_t) const;
+    Glyph firstGlyph(const Vector<Glyph, 1>&, char32_t) const;
 
     template<typename T> T NODELETE scaleUnitsPerEm(T value) const
     {
@@ -1216,15 +1216,15 @@ private:
             unscaledLineTo(m_startingPoint);
     }
 
-    void incrementPathSegmentCount() final { }
-    bool continueConsuming() final { return true; }
+    void NODELETE incrementPathSegmentCount() final { }
+    bool NODELETE continueConsuming() final { return true; }
 
-    void lineToHorizontal(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
-    void lineToVertical(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
-    void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
-    void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
-    void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
-    void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void NODELETE lineToHorizontal(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void NODELETE lineToVertical(float, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void NODELETE curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void NODELETE curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void NODELETE curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
+    void NODELETE arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
 
     Vector<char>& m_cffData;
     FloatPoint m_startingPoint;

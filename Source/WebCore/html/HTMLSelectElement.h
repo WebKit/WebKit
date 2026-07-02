@@ -218,7 +218,7 @@ protected:
 private:
     const AtomString& formControlType() const final;
 
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool NODELETE hasCustomFocusLogic() const final { return true; }

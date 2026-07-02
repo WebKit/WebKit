@@ -144,9 +144,9 @@ private:
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final;
     bool supportsSeeking() const final { return false; }
     bool canProduceAudio() const final { return true; }
-    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
+    std::optional<MediaSessionGroupIdentifier> NODELETE mediaSessionGroupIdentifier() const final;
     bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final;
-    bool isSuspended() const final;
+    bool NODELETE isSuspended() const final;
     bool NODELETE isPlaying() const final;
     bool isAudible() const final;
     bool isNowPlayingEligible() const final;

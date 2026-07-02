@@ -56,14 +56,14 @@ public:
 
     void show(const WebCore::IntRect&, WebCore::LocalFrameView&, int selectedIndex) override;
     void hide() override;
-    void updateFromElement() override;
+    void NODELETE updateFromElement() override;
     void disconnectClient() override;
 
 private:
     WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);
 
     Vector<WebPopupItem> populateItems();
-    void setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData&);
+    void NODELETE setUpPlatformData(const WebCore::IntRect& pageCoordinates, PlatformPopupMenuData&);
 
     RefPtr<WebCore::PopupMenuClient> m_popupClient;
     WeakPtr<WebPage> m_page;

@@ -34,18 +34,18 @@ class ICUSearcher {
 public:
     explicit ICUSearcher(const String& foldedTarget, FindOptions&);
     ~ICUSearcher();
-    void setCollationStrength(UCollationStrength);
+    void NODELETE setCollationStrength(UCollationStrength);
     void setAttribute(USearchAttribute, USearchAttributeValue);
     void setPattern(std::span<const char16_t>);
     void setText(std::span<const char16_t>);
     void setOffset(size_t);
-    std::optional<size_t> next();
+    std::optional<size_t> NODELETE next();
 #if !PLATFORM(PLAYSTATION)
-    std::optional<size_t> previous();
+    std::optional<size_t> NODELETE previous();
 #endif
-    size_t matchedLength();
+    size_t NODELETE matchedLength();
 private:
-    UStringSearch* searcher();
+    UStringSearch* NODELETE searcher();
     void reset();
     void NODELETE lock();
     void NODELETE unlock();

@@ -143,7 +143,7 @@ private:
     friend struct DFG::ArrayBufferViewWatchpointAdaptor;
     void fire(VM&, const FireDetail&);
     template<typename Func>
-    void runWithDowncast(const Func&);
+    void NODELETE runWithDowncast(const Func&);
 
     Type m_type;
 };
@@ -271,7 +271,7 @@ protected:
 
 private:
     void fireAllWatchpoints(VM&, const FireDetail&);
-    void NODELETE take(WatchpointSet* other);
+    void take(WatchpointSet* other);
     
     friend class InlineWatchpointSet;
 
@@ -485,7 +485,7 @@ private:
     }
 
     JS_EXPORT_PRIVATE WatchpointSet* inflateSlow();
-    JS_EXPORT_PRIVATE void NODELETE freeFat();
+    JS_EXPORT_PRIVATE void freeFat();
     
     uintptr_t m_data;
 };

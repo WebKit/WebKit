@@ -65,7 +65,7 @@ public:
 
     UniqueRef<ScriptModuleLoader> shadowRealmLoader(JSC::JSGlobalObject* realmGlobal) const;
 
-    ScriptExecutionContext* context();
+    ScriptExecutionContext* NODELETE context();
 
     JSC::Identifier resolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, RefPtr<JSC::ScriptFetcher>, bool useImportMap);
     JSC::JSPromise* fetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, RefPtr<JSC::ScriptFetchParameters>, RefPtr<JSC::ScriptFetcher>);

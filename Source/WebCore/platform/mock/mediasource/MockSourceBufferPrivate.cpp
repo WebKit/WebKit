@@ -56,18 +56,18 @@ private:
     {
     }
 
-    MediaTime presentationTime() const override { return m_box.presentationTimestamp(); }
-    MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
-    MediaTime duration() const override { return m_box.duration(); }
-    TrackID trackID() const override { return m_id; }
-    size_t sizeInBytes() const override { return sizeof(m_box); }
-    SampleFlags flags() const override;
+    MediaTime NODELETE presentationTime() const override { return m_box.presentationTimestamp(); }
+    MediaTime NODELETE decodeTime() const override { return m_box.decodeTimestamp(); }
+    MediaTime NODELETE duration() const override { return m_box.duration(); }
+    TrackID NODELETE trackID() const override { return m_id; }
+    size_t NODELETE sizeInBytes() const override { return sizeof(m_box); }
+    SampleFlags NODELETE flags() const override;
     PlatformSample platformSample() const override;
-    Type type() const override { return Type::MockSampleBox; }
-    FloatSize presentationSize() const override { return FloatSize(); }
+    Type NODELETE type() const override { return Type::MockSampleBox; }
+    FloatSize NODELETE presentationSize() const override { return FloatSize(); }
     void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
-    void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
+    void NODELETE setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
     Ref<MediaSample> createNonDisplayingCopy() const override;
     Ref<MediaSample> createCopyWithAdjustedStartTime(const MediaTime& offset) const override;
 
@@ -119,9 +119,9 @@ public:
     static Ref<MockMediaDescription> create(const MockTrackBox& box) { return adoptRef(*new MockMediaDescription(box)); }
     virtual ~MockMediaDescription() = default;
 
-    bool isVideo() const final { return m_box.kind() == MockTrackBox::Video; }
-    bool isAudio() const final { return m_box.kind() == MockTrackBox::Audio; }
-    bool isText() const final { return m_box.kind() == MockTrackBox::Text; }
+    bool NODELETE isVideo() const final { return m_box.kind() == MockTrackBox::Video; }
+    bool NODELETE isAudio() const final { return m_box.kind() == MockTrackBox::Audio; }
+    bool NODELETE isText() const final { return m_box.kind() == MockTrackBox::Text; }
 
 private:
     MockMediaDescription(const MockTrackBox& box)

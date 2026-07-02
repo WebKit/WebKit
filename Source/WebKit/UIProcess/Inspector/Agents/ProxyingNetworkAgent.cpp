@@ -47,7 +47,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProxyingNetworkAgent);
 
-static Protocol::Page::ResourceType toProtocolResourceType(ResourceType type)
+static Protocol::Page::ResourceType NODELETE toProtocolResourceType(ResourceType type)
 {
     switch (type) {
     case ResourceType::Document:
@@ -110,7 +110,7 @@ static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const Resou
     return requestObject;
 }
 
-static Protocol::Network::Response::Source toProtocolResponseSource(ResourceResponse::Source source)
+static Protocol::Network::Response::Source NODELETE toProtocolResponseSource(ResourceResponse::Source source)
 {
     switch (source) {
     case ResourceResponse::Source::DOMCache:
@@ -282,7 +282,7 @@ CommandResult<void> ProxyingNetworkAgent::disable()
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&&)
+CommandResult<void> NODELETE ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&&)
 {
     // FIXME: Forward to all WebContent processes.
     return { };
@@ -330,13 +330,13 @@ void ProxyingNetworkAgent::getResponseBody(const Protocol::Network::RequestId& r
         *targetPageID);
 }
 
-CommandResult<void> ProxyingNetworkAgent::setResourceCachingDisabled(bool)
+CommandResult<void> NODELETE ProxyingNetworkAgent::setResourceCachingDisabled(bool)
 {
     // FIXME: Forward to all WebContent processes.
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::setClearResourceDataOnNavigate(bool)
+CommandResult<void> NODELETE ProxyingNetworkAgent::setClearResourceDataOnNavigate(bool)
 {
     // FIXME: Forward to all WebContent processes.
     return { };
@@ -359,42 +359,42 @@ CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolv
     return makeUnexpected("Not yet implemented"_s);
 }
 
-CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool)
+CommandResult<void> NODELETE ProxyingNetworkAgent::setInterceptionEnabled(bool)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::addInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> NODELETE ProxyingNetworkAgent::addInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::removeInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
+CommandResult<void> NODELETE ProxyingNetworkAgent::removeInterception(const String&, Protocol::Network::NetworkStage, std::optional<bool>&&, std::optional<bool>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage)
+CommandResult<void> NODELETE ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
+CommandResult<void> NODELETE ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
+CommandResult<void> NODELETE ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
+CommandResult<void> NODELETE ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType)
+CommandResult<void> NODELETE ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType)
 {
     return { };
 }

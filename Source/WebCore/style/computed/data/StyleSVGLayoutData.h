@@ -51,7 +51,7 @@ public:
     bool operator==(const SVGLayoutData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGLayoutData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGLayoutData&) const;
 #endif
 
     SVGCenterCoordinateComponent cx;

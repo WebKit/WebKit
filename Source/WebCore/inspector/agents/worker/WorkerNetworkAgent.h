@@ -46,9 +46,9 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
 private:
-    Inspector::Protocol::Network::LoaderId loaderIdentifier(DocumentLoader*);
-    Inspector::Protocol::Network::FrameId frameIdentifier(DocumentLoader*);
-    Vector<Ref<WebSocket>> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock());
+    Inspector::Protocol::Network::LoaderId NODELETE loaderIdentifier(DocumentLoader*);
+    Inspector::Protocol::Network::FrameId NODELETE frameIdentifier(DocumentLoader*);
+    Vector<Ref<WebSocket>> NODELETE activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock());
     void setResourceCachingDisabledInternal(bool);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     bool setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit);

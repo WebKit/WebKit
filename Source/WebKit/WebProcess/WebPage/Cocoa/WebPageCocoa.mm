@@ -673,7 +673,7 @@ void WebPage::resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier fra
 #if PLATFORM(MAC)
 // Creates an AccessibilityRemoteToken from an accessibility wrapper.
 // Returns std::nullopt if the wrapper is nil or token creation fails.
-static std::optional<WebCore::AccessibilityRemoteToken> tokenFromWrapper(id wrapper)
+static std::optional<WebCore::AccessibilityRemoteToken> NODELETE tokenFromWrapper(id wrapper)
 {
     if (!wrapper)
         return std::nullopt;
@@ -682,7 +682,7 @@ static std::optional<WebCore::AccessibilityRemoteToken> tokenFromWrapper(id wrap
     return std::nullopt;
 }
 
-static Vector<WebCore::AccessibilityRemoteToken> convertSearchResultsToRemoteTokens(WebCore::AccessibilitySearchResults&& searchResults)
+static Vector<WebCore::AccessibilityRemoteToken> NODELETE convertSearchResultsToRemoteTokens(WebCore::AccessibilitySearchResults&& searchResults)
 {
     Vector<WebCore::AccessibilityRemoteToken> results;
     for (auto& result : searchResults) {
@@ -849,7 +849,7 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 #endif
 }
 
-static bool rendererIsTransparentOrFullyClipped(const RenderObject& renderer)
+static bool NODELETE rendererIsTransparentOrFullyClipped(const RenderObject& renderer)
 {
     CheckedPtr enclosingLayer = renderer.enclosingLayer();
     if (enclosingLayer && enclosingLayer->isTransparentRespectingParentFrames())
@@ -866,7 +866,7 @@ bool WebPage::isTransparentOrFullyClipped(const Node& node) const
     return rendererIsTransparentOrFullyClipped(*renderer);
 }
 
-static bool selectionIsTransparentOrFullyClipped(const VisibleSelection& selection)
+static bool NODELETE selectionIsTransparentOrFullyClipped(const VisibleSelection& selection)
 {
     RefPtr startContainer = selection.start().containerNode();
     if (!startContainer)
@@ -890,7 +890,7 @@ static bool selectionIsTransparentOrFullyClipped(const VisibleSelection& selecti
     return startRenderer == endRenderer || rendererIsTransparentOrFullyClipped(*endRenderer);
 }
 
-static void convertContentToRootView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
+static void NODELETE convertContentToRootView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
 {
     for (auto& geometry : geometries)
         geometry.setQuad(view.contentsToRootView(geometry.quad()));
@@ -1038,7 +1038,7 @@ void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& i
 
 #endif
 
-static String& replaceSelectionPasteboardName()
+static String& NODELETE replaceSelectionPasteboardName()
 {
     static NeverDestroyed<String> string("ReplaceSelectionPasteboard"_s);
     return string;
@@ -1461,7 +1461,7 @@ void WebPage::didEndPartialIntelligenceTextAnimation()
 
 #endif
 
-static std::optional<bool> elementHasHiddenVisibility(StyledElement* styledElement)
+static std::optional<bool> NODELETE elementHasHiddenVisibility(StyledElement* styledElement)
 {
     RefPtr inlineStyle = styledElement->inlineStyle();
     if (!inlineStyle)
@@ -1568,14 +1568,14 @@ void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameI
     }
 }
 
-static inline CGFloat roundCGFloat(CGFloat f)
+static inline CGFloat NODELETE roundCGFloat(CGFloat f)
 {
     if (sizeof(CGFloat) == sizeof(float))
         return roundf(static_cast<float>(f));
     return static_cast<CGFloat>(round(f));
 }
 
-static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRef context, CGFloat pageSetupScaleFactor, CGSize paperSize)
+static void NODELETE drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRef context, CGFloat pageSetupScaleFactor, CGSize paperSize)
 {
     CGContextSaveGState(context);
 
@@ -2611,7 +2611,7 @@ IntRect WebPage::absoluteInteractionBounds(const Node& node)
     return WebCore::absoluteInteractionBounds(*renderer);
 }
 
-static IntRect elementBoundsInFrame(const LocalFrame& frame, const Element& focusedElement)
+static IntRect NODELETE elementBoundsInFrame(const LocalFrame& frame, const Element& focusedElement)
 {
     WTF::protect(frame.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
@@ -2686,7 +2686,7 @@ bool WebPage::isAssistableElement(Element& element)
     return element.isContentEditable();
 }
 
-RefPtr<HTMLAnchorElement> WebPage::containingLinkAnchorElement(Element& element)
+RefPtr<HTMLAnchorElement> NODELETE WebPage::containingLinkAnchorElement(Element& element)
 {
     // FIXME: There is code in the drag controller that supports any link, even if it's not an HTMLAnchorElement. Why is this different?
     for (Ref currentElement : lineageOfType<HTMLAnchorElement>(element)) {

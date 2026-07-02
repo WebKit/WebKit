@@ -143,7 +143,7 @@ public:
 
     static QualifiedName animatableAttributeForName(const AtomString&);
 #ifndef NDEBUG
-    bool isAnimatableAttribute(const QualifiedName&) const;
+    bool NODELETE isAnimatableAttribute(const QualifiedName&) const;
 #endif
 
     MutableStyleProperties* NODELETE animatedSMILStyleProperties() const;
@@ -230,7 +230,7 @@ private:
     bool accessKeyAction(bool sendMouseEvents) override;
 
 #ifndef NDEBUG
-    virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;
+    virtual bool NODELETE filterOutAnimatableAttribute(const QualifiedName&) const;
 #endif
 
     std::unique_ptr<SVGElementRareData> m_svgRareData;

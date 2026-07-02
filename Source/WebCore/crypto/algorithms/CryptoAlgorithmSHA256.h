@@ -37,7 +37,7 @@ public:
 
 private:
     CryptoAlgorithmSHA256() = default;
-    CryptoAlgorithmIdentifier identifier() const final;
+    CryptoAlgorithmIdentifier NODELETE identifier() const final;
     void digest(Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
 };
 

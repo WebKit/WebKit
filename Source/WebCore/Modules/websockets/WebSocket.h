@@ -116,7 +116,7 @@ private:
     void resume() final;
     void stop() final;
 
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

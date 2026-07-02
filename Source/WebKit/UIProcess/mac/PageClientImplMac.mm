@@ -129,7 +129,7 @@ void PageClientImpl::setImpl(WebViewImpl& impl)
     m_impl = impl;
 }
 
-Ref<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
+Ref<DrawingAreaProxy> NODELETE PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
     return protect(m_impl)->createDrawingAreaProxy(webProcessProxy);
 }
@@ -565,14 +565,14 @@ void PageClientImpl::computeHasVisualSearchResults(const URL& imageURL, Shareabl
 
 #endif
 
-RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
+RefPtr<WebPopupMenuProxy> NODELETE PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
     return WebPopupMenuProxyMac::create(m_view.get().get(), protect(page.popupMenuClient()));
 }
 
 #if ENABLE(CONTEXT_MENUS)
 
-Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
+Ref<WebContextMenuProxy> NODELETE PageClientImpl::createContextMenuProxy(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
 {
     return WebContextMenuProxyMac::create(m_view.get().get(), page, WTF::move(frameInfo), WTF::move(context), userData);
 }
@@ -589,22 +589,22 @@ void PageClientImpl::didDismissContextMenu()
 
 #endif // ENABLE(CONTEXT_MENUS)
 
-RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy& page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, std::optional<WebCore::FrameIdentifier> frameID)
+RefPtr<WebColorPicker> NODELETE PageClientImpl::createColorPicker(WebPageProxy& page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, std::optional<WebCore::FrameIdentifier> frameID)
 {
     return WebColorPickerMac::create(protect(page.colorPickerClient()).ptr(), initialColor, rect, supportsAlpha, WTF::move(suggestions), m_view.get().get(), frameID);
 }
 
-RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
+RefPtr<WebDataListSuggestionsDropdown> NODELETE PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
 {
     return WebDataListSuggestionsDropdownMac::create(page, m_view.get().get());
 }
 
-RefPtr<WebDateTimePicker> PageClientImpl::createDateTimePicker(WebPageProxy& page)
+RefPtr<WebDateTimePicker> NODELETE PageClientImpl::createDateTimePicker(WebPageProxy& page)
 {
     return WebDateTimePickerMac::create(page, m_view.get().get());
 }
 
-Ref<ValidationBubble> PageClientImpl::createValidationBubble(String&& message, const ValidationBubble::Settings& settings)
+Ref<ValidationBubble> NODELETE PageClientImpl::createValidationBubble(String&& message, const ValidationBubble::Settings& settings)
 {
     return ValidationBubble::create(m_view.get().get(), WTF::move(message), settings);
 }
@@ -692,12 +692,12 @@ CALayer *PageClientImpl::footerBannerLayer() const
     return m_impl->footerBannerLayer();
 }
 
-RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&)
+RefPtr<ViewSnapshot> NODELETE PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&)
 {
     return protect(m_impl)->takeViewSnapshot();
 }
 
-RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
+RefPtr<ViewSnapshot> NODELETE PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&, ForceSoftwareCapturingViewportSnapshot forceSoftwareCapturing)
 {
     return protect(m_impl)->takeViewSnapshot(forceSoftwareCapturing);
 }
@@ -1016,7 +1016,7 @@ void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData
     protect(m_impl)->didPerformImmediateActionHitTest(result, contentPreventsDefault, userData);
 }
 
-NSObject *PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
+NSObject *NODELETE PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
 {
     return protect(m_impl)->immediateActionAnimationControllerForHitTestResult(hitTestResult.get(), type, userData.get());
 }

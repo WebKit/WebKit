@@ -60,7 +60,7 @@ public:
 
     void work() final;
 
-    bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
+    bool NODELETE didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
 
     void compileFunction(FunctionCodeIndex functionIndex) final;
 

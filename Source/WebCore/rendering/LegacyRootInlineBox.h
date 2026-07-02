@@ -47,7 +47,7 @@ public:
     LegacyRootInlineBox* nextRootBox() const;
     LegacyRootInlineBox* prevRootBox() const;
 
-    void adjustPosition(float dx, float dy) final;
+    void NODELETE adjustPosition(float dx, float dy) final;
 
     LayoutUnit lineTop() const { return m_lineTop; }
     LayoutUnit lineBottom() const { return m_lineBottom; }
@@ -90,8 +90,8 @@ public:
     }
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
-    ASCIILiteral boxName() const final;
+    void NODELETE outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
+    ASCIILiteral NODELETE boxName() const final;
 #endif
 private:
     bool isRootInlineBox() const final { return true; }

@@ -1035,7 +1035,7 @@ SUPPRESS_NODELETE size_t StringImpl::reverseFind(StringView matchString, size_t 
     return reverseFindInner(span16(), matchString.span16(), start);
 }
 
-ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, std::span<const char> matchString)
+ALWAYS_INLINE static bool NODELETE equalInner(const StringImpl& string, unsigned start, std::span<const char> matchString)
 {
     ASSERT(matchString.size() <= string.length());
     ASSERT(start + matchString.size() <= string.length());
@@ -1045,7 +1045,7 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, s
     return equal(string.span16().subspan(start).data(), byteCast<Latin1Character>(matchString));
 }
 
-ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)
+ALWAYS_INLINE static bool NODELETE equalInner(const StringImpl& string, unsigned start, StringView matchString)
 {
     if (start > string.length())
         return false;

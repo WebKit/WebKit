@@ -436,7 +436,7 @@ public:
         return m_invertedStrings;
     }
 
-    static ALWAYS_INLINE int NODELETE compareUTF32Strings(const Vector<char32_t>& a, const Vector<char32_t>& b)
+    static ALWAYS_INLINE int compareUTF32Strings(const Vector<char32_t>& a, const Vector<char32_t>& b)
     {
         // Longer strings before shorter.
         if (a.size() > b.size())
@@ -1105,7 +1105,7 @@ private:
             m_anyCharacter = true;
     }
 
-    bool hasNonBMPCharacters()
+    bool NODELETE hasNonBMPCharacters()
     {
         return m_characterWidths & CharacterClassWidths::HasNonBMPChars;
     }
@@ -2776,7 +2776,7 @@ private:
             m_isModifier = false;
         }
 
-        void NODELETE pop()
+        void pop()
         {
             ASSERT(m_stackDepth > 0);
 
@@ -2806,17 +2806,17 @@ private:
             m_invert = invert;
         }
 
-        bool invert() const
+        bool NODELETE invert() const
         {
             return m_invert;
         }
 
-        void setMatchDirection(MatchDirection matchDirection)
+        void NODELETE setMatchDirection(MatchDirection matchDirection)
         {
             m_matchDirection = matchDirection;
         }
 
-        MatchDirection matchDirection() const
+        MatchDirection NODELETE matchDirection() const
         {
             return m_matchDirection;
         }
@@ -2856,7 +2856,7 @@ private:
         m_parenthesisContext.push();
     }
 
-    void NODELETE popParenthesisContext()
+    void popParenthesisContext()
     {
         m_parenthesisContext.pop();
     }
@@ -2881,17 +2881,17 @@ private:
         return m_parenthesisContext.matchDirection();
     }
 
-    bool ignoreCase() const
+    bool NODELETE ignoreCase() const
     {
         return m_flags.contains(Flags::IgnoreCase);
     }
 
-    bool multiline() const
+    bool NODELETE multiline() const
     {
         return m_flags.contains(Flags::Multiline);
     }
 
-    bool dotAll() const
+    bool NODELETE dotAll() const
     {
         return m_flags.contains(Flags::DotAll);
     }

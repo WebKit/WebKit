@@ -112,7 +112,7 @@ public:
         return m_constructor.get();
     }
     
-    template<typename Visitor> void visit(Visitor&);
+    template<typename Visitor> void NODELETE visit(Visitor&);
     
     void dump(PrintStream&) const;
 

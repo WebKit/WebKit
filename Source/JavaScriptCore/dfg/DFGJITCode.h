@@ -240,9 +240,9 @@ public:
     JITCode(bool isUnlinked);
     ~JITCode() final;
     
-    CommonData* dfgCommon() final;
-    const CommonData* dfgCommon() const final;
-    JITCode* dfg() final;
+    CommonData* NODELETE dfgCommon() final;
+    const CommonData* NODELETE dfgCommon() const final;
+    JITCode* NODELETE dfg() final;
     bool isUnlinked() const { return common.isUnlinked(); }
     
     OSREntryData* osrEntryDataForBytecodeIndex(BytecodeIndex bytecodeIndex)

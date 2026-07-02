@@ -185,7 +185,7 @@ public:
     void setFocusChanged(FocusDidChange changed) { m_focusChangedDuringOngoingNavigation = changed; }
 
     // EventTarget.
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void rejectFinishedPromise(NavigationAPIMethodTracker*);
     NavigationAPIMethodTracker* upcomingTraverseMethodTracker(const String& key) const;
@@ -262,7 +262,7 @@ private:
     explicit Navigation(LocalDOMWindow&);
 
     // EventTarget.
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

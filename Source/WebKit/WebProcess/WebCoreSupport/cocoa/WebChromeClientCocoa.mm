@@ -44,7 +44,7 @@ extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
+RefPtr<Icon> NODELETE WebChromeClient::createIconForFiles(const Vector<String>& filenames)
 {
     return Icon::create(iconForFiles(filenames).get());
 }

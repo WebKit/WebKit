@@ -36,7 +36,7 @@ namespace WebCore {
 
 class SystemFontDatabase {
 public:
-    WEBCORE_EXPORT static SystemFontDatabase& singleton();
+    WEBCORE_EXPORT static SystemFontDatabase& NODELETE singleton();
 
     enum class FontShorthand {
         // This needs to be kept in sync with CSSValue and CSSPropertyParserHelpers::lowerFontShorthand().

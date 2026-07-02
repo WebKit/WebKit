@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    String logLevelString() final
+    String NODELETE logLevelString() final
     {
         return WTF::logLevelString();
     }

@@ -33,7 +33,7 @@
 
 namespace JSC { namespace Wasm {
 
-static unsigned computeProjectionHash(const RecursionGroup* recursionGroup, ProjectionIndex projectionIndex)
+static unsigned NODELETE computeProjectionHash(const RecursionGroup* recursionGroup, ProjectionIndex projectionIndex)
 {
     unsigned accumulator = 0xbeae6d4e;
     accumulator = WTF::pairIntHash(accumulator, WTF::PtrHash<const RecursionGroup*>::hash(recursionGroup));
@@ -161,11 +161,11 @@ struct ProjectionLookupKey {
 };
 
 struct ProjectionLookupTranslator {
-    static unsigned hash(const ProjectionLookupKey& params)
+    static unsigned NODELETE hash(const ProjectionLookupKey& params)
     {
         return computeProjectionHash(params.recursionGroup, params.projectionIndex);
     }
-    static bool equal(const Projection* p, const ProjectionLookupKey& params)
+    static bool NODELETE equal(const Projection* p, const ProjectionLookupKey& params)
     {
         if (!p)
             return false;

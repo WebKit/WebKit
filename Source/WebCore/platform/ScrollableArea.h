@@ -107,11 +107,11 @@ public:
     WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>);
 
     virtual void updateSnapOffsets() { };
-    WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
+    WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* NODELETE snapOffsetsInfo() const;
     WEBCORE_EXPORT void setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo&);
     WEBCORE_EXPORT void clearSnapOffsets();
-    WEBCORE_EXPORT std::optional<unsigned> currentHorizontalSnapPointIndex() const;
-    WEBCORE_EXPORT std::optional<unsigned> currentVerticalSnapPointIndex() const;
+    WEBCORE_EXPORT std::optional<unsigned> NODELETE currentHorizontalSnapPointIndex() const;
+    WEBCORE_EXPORT std::optional<unsigned> NODELETE currentVerticalSnapPointIndex() const;
     WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
     WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
 
@@ -157,7 +157,7 @@ public:
 
     WEBCORE_EXPORT virtual Color scrollbarThumbColorStyle() const;
     WEBCORE_EXPORT virtual Color scrollbarTrackColorStyle() const;
-    WEBCORE_EXPORT virtual Style::ScrollbarGutter scrollbarGutterStyle() const;
+    WEBCORE_EXPORT virtual Style::ScrollbarGutter NODELETE scrollbarGutterStyle() const;
     virtual ScrollbarWidth scrollbarWidthStyle() const { return ScrollbarWidth::Auto; }
     virtual std::optional<ScrollbarColor> scrollbarColorStyle() const { return { }; }
 

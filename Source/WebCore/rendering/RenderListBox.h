@@ -74,7 +74,7 @@ public:
     unsigned size() const;
 
     bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) override;
-    std::optional<FrameIdentifier> rootFrameID() const final;
+    std::optional<FrameIdentifier> NODELETE rootFrameID() const final;
 
     void scrollDidEnd() final;
 
@@ -132,7 +132,7 @@ private:
     void setScrollOffset(const ScrollOffset&) final;
 
     ScrollPosition NODELETE scrollPosition() const final;
-    ScrollPosition minimumScrollPosition() const final;
+    ScrollPosition NODELETE minimumScrollPosition() const final;
     ScrollPosition maximumScrollPosition() const final;
 
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
@@ -149,8 +149,8 @@ private:
     IntSize contentsSize() const final;
     IntSize visibleSize() const final { return IntSize(borderBoxWidth(), borderBoxHeight()); }
     IntPoint lastKnownMousePositionInView() const final;
-    bool isHandlingWheelEvent() const final;
-    bool shouldSuspendScrollAnimations() const final;
+    bool NODELETE isHandlingWheelEvent() const final;
+    bool NODELETE shouldSuspendScrollAnimations() const final;
     bool NODELETE forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
 
     ScrollableArea* enclosingScrollableArea() const final;

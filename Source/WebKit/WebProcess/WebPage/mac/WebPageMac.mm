@@ -250,7 +250,7 @@ void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandid
         protect(frame->editor())->handleAcceptedCandidate(acceptedCandidate);
 }
 
-static String commandNameForSelectorName(const String& selectorName)
+static String NODELETE commandNameForSelectorName(const String& selectorName)
 {
     // Map selectors into Editor command names.
     // This is not needed for any selectors that have the same name as the Editor command.
@@ -568,7 +568,7 @@ void WebPage::setIsolatedTree(Ref<WebCore::AXIsolatedTree>&& tree)
     [m_mockAccessibilityElement setIsolatedTree:WTF::move(tree)];
 }
 
-RefPtr<AXIsolatedTree> WebPage::isolatedTree() const
+RefPtr<AXIsolatedTree> NODELETE WebPage::isolatedTree() const
 {
     return [m_mockAccessibilityElement isolatedTree];
 }
@@ -771,7 +771,7 @@ std::optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPo
     return PointerCharacteristics::Fine;
 }
 
-OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
+OptionSet<PointerCharacteristics> NODELETE WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
 {
     return PointerCharacteristics::Fine;
 }

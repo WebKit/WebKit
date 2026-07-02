@@ -49,7 +49,7 @@ inline bool isAccessibilityModeOff(AccessibilityMode mode)
         || mode == AccessibilityMode::OffWasAXThread;
 }
 
-WEBCORE_EXPORT std::optional<AccessibilityMode> resolveAccessibilityModeTransition(AccessibilityMode current, AccessibilityMode requested);
+WEBCORE_EXPORT std::optional<AccessibilityMode> NODELETE resolveAccessibilityModeTransition(AccessibilityMode current, AccessibilityMode requested);
 
 enum class TextMarkerOrigin : uint16_t;
 

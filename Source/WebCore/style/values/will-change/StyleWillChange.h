@@ -190,7 +190,7 @@ private:
             initializeCachedChecks();
         }
 
-        void initializeCachedChecks();
+        void NODELETE initializeCachedChecks();
 
         bool m_canCreateStackingContext { false };
         bool m_canTriggerCompositing { false };

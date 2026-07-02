@@ -125,9 +125,9 @@ private:
     bool performGet(JSGlobalObject*, PropertyName, PropertySlot&);
     bool performHasProperty(JSGlobalObject*, PropertyName, PropertySlot&);
     template <typename DefaultDeleteFunction>
-    bool performDelete(JSGlobalObject*, PropertyName, DefaultDeleteFunction);
+    bool NODELETE performDelete(JSGlobalObject*, PropertyName, DefaultDeleteFunction);
     template <typename PerformDefaultPutFunction>
-    bool performPut(JSGlobalObject*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction, bool shouldThrow);
+    bool NODELETE performPut(JSGlobalObject*, JSValue putValue, JSValue thisValue, PropertyName, PerformDefaultPutFunction, bool shouldThrow);
     bool performPreventExtensions(JSGlobalObject*);
     bool performIsExtensible(JSGlobalObject*);
     bool performDefineOwnProperty(JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);

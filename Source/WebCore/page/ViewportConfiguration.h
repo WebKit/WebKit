@@ -162,7 +162,7 @@ public:
 
     String description() const;
 #if !LOG_DISABLED
-    WEBCORE_EXPORT void dump() const;
+    WEBCORE_EXPORT void NODELETE dump() const;
 #endif
 
 private:

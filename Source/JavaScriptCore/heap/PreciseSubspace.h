@@ -41,9 +41,9 @@ public:
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
 private:
-    void didResizeBits(unsigned newSize) override;
-    void didRemoveBlock(unsigned blockIndex) override;
-    void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
+    void NODELETE didResizeBits(unsigned newSize) override;
+    void NODELETE didRemoveBlock(unsigned blockIndex) override;
+    void NODELETE didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
 };
 
 namespace GCClient {

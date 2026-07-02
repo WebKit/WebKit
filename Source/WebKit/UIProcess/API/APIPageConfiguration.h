@@ -444,10 +444,10 @@ public:
     void setRequiresUserActionForEditingControlsManager(bool value) { m_data.requiresUserActionForEditingControlsManager = value; }
 #endif
 
-    bool isLockdownModeExplicitlySet() const;
+    bool NODELETE isLockdownModeExplicitlySet() const;
     bool lockdownModeEnabled() const;
     
-    bool isEnhancedSecurityEnabled() const;
+    bool NODELETE isEnhancedSecurityEnabled() const;
 
     void setAllowTestOnlyIPC(bool enabled) { m_data.allowTestOnlyIPC = enabled; }
     bool allowTestOnlyIPC() const { return m_data.allowTestOnlyIPC; }
@@ -495,7 +495,7 @@ public:
 #endif // PLATFORM(VISION)
 
 private:
-    bool defaultDelaysWebProcessLaunchUntilFirstLoad() const;
+    bool NODELETE defaultDelaysWebProcessLaunchUntilFirstLoad() const;
     struct Data {
         Data();
 

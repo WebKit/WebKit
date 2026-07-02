@@ -119,7 +119,7 @@ public:
 
     bool isPersistent() const { return !m_serviceWorkerRegistrationURL.isNull(); }
 
-    WEBCORE_EXPORT static void setOverridePersistentNotificationMinimumLifetime(Seconds);
+    WEBCORE_EXPORT static void NODELETE setOverridePersistentNotificationMinimumLifetime(Seconds);
 
     WEBCORE_EXPORT static void ensureOnNotificationThread(ScriptExecutionContextIdentifier, WTF::UUID notificationIdentifier, Function<void(Notification*)>&&);
     WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);

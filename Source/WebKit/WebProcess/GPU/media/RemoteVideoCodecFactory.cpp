@@ -63,8 +63,8 @@ private:
 
     Ref<DecodePromise> decode(EncodedFrame&&) final;
     Ref<GenericPromise> flush() final;
-    void reset() final;
-    void close() final;
+    void NODELETE reset() final;
+    void NODELETE close() final;
 
     LibWebRTCCodecs::Decoder& m_internalDecoder;
     const Ref<RemoteVideoDecoderCallbacks> m_callbacks;
@@ -98,8 +98,8 @@ private:
 
     Ref<EncodePromise> encode(RawFrame&&, bool shouldGenerateKeyFrame) final;
     Ref<GenericPromise> flush() final;
-    void reset() final;
-    void close() final;
+    void NODELETE reset() final;
+    void NODELETE close() final;
     Ref<GenericPromise> setRates(uint64_t bitRate, double frameRate) final;
 
     LibWebRTCCodecs::Encoder& m_internalEncoder;

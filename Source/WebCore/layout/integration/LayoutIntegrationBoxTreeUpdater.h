@@ -75,7 +75,7 @@ private:
     RenderBlock& rootRenderer() { return m_rootRenderer; }
 
     const Layout::ElementBox& NODELETE rootLayoutBox() const;
-    Layout::ElementBox& rootLayoutBox();
+    Layout::ElementBox& NODELETE rootLayoutBox();
 
     Layout::InitialContainingBlock& NODELETE initialContainingBlock();
 
@@ -93,7 +93,7 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
-void showInlineContent(TextStream&, const InlineContent&, size_t depth, bool isDamaged = false);
+void NODELETE showInlineContent(TextStream&, const InlineContent&, size_t depth, bool isDamaged = false);
 #endif
 }
 }

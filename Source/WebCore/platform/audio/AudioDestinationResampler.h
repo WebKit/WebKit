@@ -50,7 +50,7 @@ public:
 protected:
     WEBCORE_EXPORT void setIsPlaying(bool);
     bool isPlaying() final { return m_isPlaying; }
-    WEBCORE_EXPORT unsigned framesPerBuffer() const final;
+    WEBCORE_EXPORT unsigned NODELETE framesPerBuffer() const final;
 
     // The caller is expected to call both pullRendered and render.
     // The caller fills the m_outputBus channel data pointers before calling this.

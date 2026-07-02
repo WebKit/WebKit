@@ -101,7 +101,7 @@ public:
             layer.clearContents();
     }
 
-    WebCore::GraphicsLayerCompositingCoordinatesOrientation orientation() const final
+    WebCore::GraphicsLayerCompositingCoordinatesOrientation NODELETE orientation() const final
     {
         return WebCore::GraphicsLayerCompositingCoordinatesOrientation::BottomUp;
     }
@@ -135,7 +135,7 @@ class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLPr
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyCocoa);
 public:
     // RemoteGraphicsContextGLProxy overrides.
-    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
+    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> NODELETE layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
     void forceContextLost() final;
 

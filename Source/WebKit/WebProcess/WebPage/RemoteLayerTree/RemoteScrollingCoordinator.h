@@ -76,17 +76,17 @@ private:
     bool isRemoteScrollingCoordinator() const override { return true; }
     
     // ScrollingCoordinator
-    bool coordinatesScrollingForFrameView(const WebCore::LocalFrameView&) const override;
+    bool NODELETE coordinatesScrollingForFrameView(const WebCore::LocalFrameView&) const override;
     void scheduleTreeStateCommit() override;
     void willSendScrollPositionRequest(WebCore::ScrollingNodeID, WebCore::RequestedScrollData&) override;
 
-    bool isRubberBandInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
-    bool isUserScrollInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
-    bool isScrollSnapInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
+    bool NODELETE isRubberBandInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
+    bool NODELETE isUserScrollInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
+    bool NODELETE isScrollSnapInProgress(std::optional<WebCore::ScrollingNodeID>) const final;
 
-    void setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
+    void NODELETE setScrollPinningBehavior(WebCore::ScrollPinningBehavior) override;
     
-    void startMonitoringWheelEvents(bool clearLatchingState) final;
+    void NODELETE startMonitoringWheelEvents(bool clearLatchingState) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -101,7 +101,7 @@ private:
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, WebCore::ScrollbarOrientation orientation, int minimumThumbLength);
 
-    WebCore::WheelEventHandlingResult handleWheelEventForScrolling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
+    WebCore::WheelEventHandlingResult NODELETE handleWheelEventForScrolling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
 
     WeakPtr<WebPage> m_webPage;
 

@@ -46,7 +46,7 @@ ImageBufferRemoteDisplayListBackend::ImageBufferRemoteDisplayListBackend(const P
 
 ImageBufferRemoteDisplayListBackend::~ImageBufferRemoteDisplayListBackend() = default;
 
-RefPtr<NativeImage> ImageBufferRemoteDisplayListBackend::createNativeImageReference()
+RefPtr<NativeImage> NODELETE ImageBufferRemoteDisplayListBackend::createNativeImageReference()
 {
     return nullptr;
 }

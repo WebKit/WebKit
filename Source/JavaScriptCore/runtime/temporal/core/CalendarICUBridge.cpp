@@ -96,10 +96,10 @@ public:
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CalendarCacheEntry);
 
 struct CalendarLRUCachePolicy {
-    static bool isKeyNull(const CalendarID&) { return false; }
-    static RefPtr<CalendarCacheEntry> createValueForNullKey() { return nullptr; }
+    static bool NODELETE isKeyNull(const CalendarID&) { return false; }
+    static RefPtr<CalendarCacheEntry> NODELETE createValueForNullKey() { return nullptr; }
     static RefPtr<CalendarCacheEntry> createValueForKey(const CalendarID&) { return adoptRef(*new CalendarCacheEntry); }
-    static CalendarID createKeyForStorage(const CalendarID& id) { return id; }
+    static CalendarID NODELETE createKeyForStorage(const CalendarID& id) { return id; }
 };
 
 static RefPtr<CalendarCacheEntry> calendarCacheEntry(CalendarID calendarId)
@@ -887,7 +887,7 @@ static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID cale
 }
 
 // compareSurpassesLexicographic — icu4x: compare_surpasses_lexicographic (components/calendar/src/calendar_arithmetic.rs)
-static bool compareSurpassesLexicographic(
+static bool NODELETE compareSurpassesLexicographic(
     int32_t sign, int32_t year, const String& monthCode, int32_t day,
     int32_t targetYear, const String& targetMonthCode, int32_t targetDay)
 {
@@ -903,7 +903,7 @@ static bool compareSurpassesLexicographic(
 }
 
 // compareSurpassesOrdinally — icu4x: compare_surpasses_ordinal (components/calendar/src/calendar_arithmetic.rs)
-static bool compareSurpassesOrdinally(
+static bool NODELETE compareSurpassesOrdinally(
     int32_t sign, int32_t year, int32_t ordinalMonth, int32_t day,
     int32_t targetYear, int32_t targetOrdinalMonth, int32_t targetDay)
 {

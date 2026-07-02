@@ -81,7 +81,7 @@ private:
     void NODELETE dispatchDidDispatchOnloadEvents() final;
     void NODELETE dispatchDidReceiveServerRedirectForProvisionalLoad() final;
     void NODELETE dispatchDidCancelClientRedirect() final;
-    void dispatchWillPerformClientRedirect(const URL&, double, WallTime, LockBackForwardList) final;
+    void NODELETE dispatchWillPerformClientRedirect(const URL&, double, WallTime, LockBackForwardList) final;
     void NODELETE dispatchDidChangeLocationWithinPage() final;
     void NODELETE dispatchDidPushStateWithinPage() final;
     void NODELETE dispatchDidReplaceStateWithinPage() final;
@@ -105,7 +105,7 @@ private:
     void NODELETE dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
     void NODELETE updateSandboxFlags(SandboxFlags) final;
     void NODELETE updateOpener(std::optional<FrameIdentifier>) final;
-    void setPrinting(bool, FloatSize, FloatSize, float, AdjustViewSize) final;
+    void NODELETE setPrinting(bool, FloatSize, FloatSize, float, AdjustViewSize) final;
     void NODELETE cancelPolicyCheck() final;
 
     void NODELETE dispatchUnableToImplementPolicy(const ResourceError&) final;
@@ -168,8 +168,8 @@ private:
 
     void NODELETE saveViewStateToItem(HistoryItem&) final;
     bool NODELETE canCachePage() const final;
-    RefPtr<LocalFrame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
-    RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
+    RefPtr<LocalFrame> NODELETE createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
+    RefPtr<Widget> NODELETE createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
     ObjectContentType NODELETE objectContentType(const URL&, const String&) final;
     AtomString NODELETE overrideMediaType() const final;
@@ -182,7 +182,7 @@ private:
     IntPoint NODELETE accessibilityRemoteFrameOffset() final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void NODELETE setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) final;
-    RefPtr<WebCore::AXIsolatedTree> isolatedTree() const final;
+    RefPtr<WebCore::AXIsolatedTree> NODELETE isolatedTree() const final;
 #endif
     void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 #endif
@@ -202,7 +202,7 @@ private:
 
     void NODELETE dispatchLoadEventToOwnerElementInAnotherProcess() final;
 
-    RefPtr<HistoryItem> createHistoryItemTree(bool, BackForwardItemIdentifier) const final;
+    RefPtr<HistoryItem> NODELETE createHistoryItemTree(bool, BackForwardItemIdentifier) const final;
 };
 
 } // namespace WebCore

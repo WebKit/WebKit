@@ -39,7 +39,7 @@ public:
     static void observe(Element&);
     static void unobserve(Element&, Document&);
 
-    bool isObserved(Element&) const;
+    bool NODELETE isObserved(Element&) const;
 
 private:
     IntersectionObserver* intersectionObserver(Document&);

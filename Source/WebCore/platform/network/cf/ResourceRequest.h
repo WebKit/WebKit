@@ -92,7 +92,7 @@ public:
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
     
     bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
-    WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
+    WEBCORE_EXPORT NSURLRequest *NODELETE nsURLRequest(HTTPBodyUpdatePolicy) const;
 
     WEBCORE_EXPORT static CFStringRef NODELETE isUserInitiatedKey();
     WEBCORE_EXPORT ResourceRequestPlatformData getResourceRequestPlatformData() const;

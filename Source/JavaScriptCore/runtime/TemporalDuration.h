@@ -65,7 +65,7 @@ public:
 
     ISO8601::Duration with(JSGlobalObject*, JSObject* durationLike) const;
     template<AddOrSubtract op>
-    ISO8601::Duration addDurations(JSGlobalObject*, JSValue other) const;
+    ISO8601::Duration NODELETE addDurations(JSGlobalObject*, JSValue other) const;
     ISO8601::Duration round(JSGlobalObject*, JSValue options) const;
     double total(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject*, JSValue options) const;

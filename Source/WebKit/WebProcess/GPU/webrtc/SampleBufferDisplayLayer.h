@@ -62,7 +62,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(uint64_t) final;
 #endif
-    bool didFail() const final;
+    bool NODELETE didFail() const final;
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
     void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRightAnnotated>&&) final;
     void flush() final;

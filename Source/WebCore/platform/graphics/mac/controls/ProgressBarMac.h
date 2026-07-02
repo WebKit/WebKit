@@ -44,8 +44,8 @@ public:
 private:
     Ref<const ProgressBarPart> owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart.get()); }
 
-    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
-    IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
+    IntSize NODELETE cellSize(NSControlSize, const ControlStyle&) const override;
+    IntOutsets NODELETE cellOutsets(NSControlSize, const ControlStyle&) const override;
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 

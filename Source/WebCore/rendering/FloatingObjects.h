@@ -164,7 +164,7 @@ public:
     FloatingObject* add(std::unique_ptr<FloatingObject>);
     void remove(FloatingObject*);
     void NODELETE addPlacedObject(FloatingObject*);
-    void NODELETE removePlacedObject(FloatingObject*);
+    void removePlacedObject(FloatingObject*);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
 
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
@@ -180,7 +180,7 @@ public:
     LayoutUnit findNextFloatLogicalBottomBelow(LayoutUnit logicalHeight);
     LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
 
-    void NODELETE shiftFloatsBy(LayoutUnit blockShift);
+    void shiftFloatsBy(LayoutUnit blockShift);
 
 private:
     const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }

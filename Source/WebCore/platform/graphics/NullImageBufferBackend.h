@@ -40,12 +40,12 @@ public:
     ~NullImageBufferBackend();
     static size_t calculateMemoryCost(const Parameters&) { return 0; }
 
-    NullGraphicsContext& context() override;
-    RefPtr<NativeImage> copyNativeImage() override;
-    RefPtr<NativeImage> createNativeImageReference() override;
+    NullGraphicsContext& NODELETE context() override;
+    RefPtr<NativeImage> NODELETE copyNativeImage() override;
+    RefPtr<NativeImage> NODELETE createNativeImageReference() override;
     void getPixelBuffer(const IntRect&, PixelBuffer&) override;
-    void putPixelBuffer(const PixelBufferSourceView&, const IntRect&, const IntPoint&, AlphaPremultiplication) override;
-    bool canMapBackingStore() const override;
+    void NODELETE putPixelBuffer(const PixelBufferSourceView&, const IntRect&, const IntPoint&, AlphaPremultiplication) override;
+    bool NODELETE canMapBackingStore() const override;
     String debugDescription() const override;
 
 protected:

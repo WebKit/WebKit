@@ -57,8 +57,8 @@ public:
     virtual bool NODELETE shouldMarkAsReferenced() const;
 
 #if ASSERT_ENABLED
-    void addAssociatedResource(CachedResource&);
-    void removeAssociatedResource(CachedResource&);
+    void NODELETE addAssociatedResource(CachedResource&);
+    void NODELETE removeAssociatedResource(CachedResource&);
 #endif
 
 protected:

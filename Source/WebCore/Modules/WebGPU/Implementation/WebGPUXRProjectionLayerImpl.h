@@ -66,7 +66,7 @@ private:
     uint32_t NODELETE colorTextureHeight() const final;
     uint32_t NODELETE colorTextureArrayLength() const final;
 
-    bool allColorTexturesAreBound() const final;
+    bool NODELETE allColorTexturesAreBound() const final;
 
     bool NODELETE ignoreDepthValues() const final;
     std::optional<float> NODELETE fixedFoveation() const final;

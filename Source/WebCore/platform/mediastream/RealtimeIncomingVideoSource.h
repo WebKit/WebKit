@@ -72,7 +72,7 @@ private:
     void stopProducingData()  final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
-    const RealtimeMediaSourceCapabilities& capabilities() final;
+    const RealtimeMediaSourceCapabilities& NODELETE capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
     bool isIncomingVideoSource() const final { return true; }

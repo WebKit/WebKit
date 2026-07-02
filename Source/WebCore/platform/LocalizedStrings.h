@@ -63,7 +63,7 @@ namespace WebCore {
     String defaultDetailsSummaryText();
 
 #if PLATFORM(COCOA)
-    String copyImageUnknownFileLabel();
+    String NODELETE copyImageUnknownFileLabel();
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
@@ -132,27 +132,27 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagLeftToRight();
     WEBCORE_EXPORT String contextMenuItemTagRightToLeft();
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT String contextMenuItemTagShowFonts();
-    WEBCORE_EXPORT String contextMenuItemTagStyles();
-    WEBCORE_EXPORT String contextMenuItemTagShowColors();
-    WEBCORE_EXPORT String contextMenuItemTagSpeechMenu();
-    WEBCORE_EXPORT String contextMenuItemTagStartSpeaking();
-    WEBCORE_EXPORT String contextMenuItemTagStopSpeaking();
-    WEBCORE_EXPORT String contextMenuItemTagCorrectSpellingAutomatically();
-    WEBCORE_EXPORT String contextMenuItemTagSubstitutionsMenu();
-    WEBCORE_EXPORT String contextMenuItemTagShowSubstitutions(bool show);
-    WEBCORE_EXPORT String contextMenuItemTagSmartCopyPaste();
-    WEBCORE_EXPORT String contextMenuItemTagSmartQuotes();
-    WEBCORE_EXPORT String contextMenuItemTagSmartDashes();
-    WEBCORE_EXPORT String contextMenuItemTagSmartLinks();
-    WEBCORE_EXPORT String contextMenuItemTagSmartLists();
-    WEBCORE_EXPORT String contextMenuItemTagTextReplacement();
-    WEBCORE_EXPORT String contextMenuItemTagTransformationsMenu();
-    WEBCORE_EXPORT String contextMenuItemTagMakeUpperCase();
-    WEBCORE_EXPORT String contextMenuItemTagMakeLowerCase();
-    WEBCORE_EXPORT String contextMenuItemTagCapitalize();
-    WEBCORE_EXPORT String contextMenuItemTagConvertToTraditionalChinese();
-    WEBCORE_EXPORT String contextMenuItemTagConvertToSimplifiedChinese();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagShowFonts();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagStyles();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagShowColors();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSpeechMenu();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagStartSpeaking();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagStopSpeaking();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagCorrectSpellingAutomatically();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSubstitutionsMenu();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagShowSubstitutions(bool show);
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSmartCopyPaste();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSmartQuotes();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSmartDashes();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSmartLinks();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagSmartLists();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagTextReplacement();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagTransformationsMenu();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagMakeUpperCase();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagMakeLowerCase();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagCapitalize();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagConvertToTraditionalChinese();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagConvertToSimplifiedChinese();
     String NODELETE contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagOpenVideoInNewWindow();
@@ -168,10 +168,10 @@ namespace WebCore {
     String contextMenuItemTagEnterVideoFullscreen();
     WEBCORE_EXPORT String contextMenuItemTagExitVideoFullscreen();
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    String contextMenuItemTagEnterPictureInPicture();
-    WEBCORE_EXPORT String contextMenuItemTagExitPictureInPicture();
-    String contextMenuItemTagEnterVideoViewer();
-    WEBCORE_EXPORT String contextMenuItemTagExitVideoViewer();
+    String NODELETE contextMenuItemTagEnterPictureInPicture();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagExitPictureInPicture();
+    String NODELETE contextMenuItemTagEnterVideoViewer();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagExitVideoViewer();
 #endif
     String contextMenuItemTagMediaPlay();
     WEBCORE_EXPORT String contextMenuItemTagMediaPause();
@@ -212,7 +212,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
 #endif
 
-    WEBCORE_EXPORT String pdfDocumentTypeDescription();
+    WEBCORE_EXPORT String NODELETE pdfDocumentTypeDescription();
 
 #if !PLATFORM(IOS_FAMILY)
     String searchMenuNoRecentSearchesText();
@@ -276,9 +276,9 @@ namespace WebCore {
     String AXListItemActionVerb();
 
 #if PLATFORM(COCOA)
-    String AXMeterGaugeRegionOptimumText();
-    String AXMeterGaugeRegionSuboptimalText();
-    String AXMeterGaugeRegionLessGoodText();
+    String NODELETE AXMeterGaugeRegionOptimumText();
+    String NODELETE AXMeterGaugeRegionSuboptimalText();
+    String NODELETE AXMeterGaugeRegionLessGoodText();
 #endif
 #if ENABLE(APPLE_PAY)
     String AXApplePayPlainLabel();
@@ -307,7 +307,7 @@ namespace WebCore {
     String AXAutoFillLoadingLabel();
     String autoFillStrongPasswordLabel();
 
-    String AXProcessingPage(double);
+    String NODELETE AXProcessingPage(double);
 
     String missingPluginText();
     String crashedPluginText();
@@ -351,7 +351,7 @@ namespace WebCore {
     String validationMessagePatternMismatchText();
     String validationMessagePatternMismatchText(const String& title);
     String validationMessageTooShortText(int valueLength, int minLength);
-    String validationMessageTooLongText(int valueLength, int maxLength);
+    String NODELETE validationMessageTooLongText(int valueLength, int maxLength);
     String validationMessageRangeUnderflowText(const String& minimum);
     String validationMessageRangeOverflowText(const String& maximum);
     String validationMessageStepMismatchText(const String& base, const String& step);
@@ -403,12 +403,12 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
-    WEBCORE_EXPORT String insertListTypeNone();
-    WEBCORE_EXPORT String insertListTypeBulleted();
-    WEBCORE_EXPORT String insertListTypeBulletedAccessibilityTitle();
-    WEBCORE_EXPORT String insertListTypeNumbered();
-    WEBCORE_EXPORT String insertListTypeNumberedAccessibilityTitle();
-    WEBCORE_EXPORT String exitFullScreenButtonAccessibilityTitle();
+    WEBCORE_EXPORT String NODELETE insertListTypeNone();
+    WEBCORE_EXPORT String NODELETE insertListTypeBulleted();
+    WEBCORE_EXPORT String NODELETE insertListTypeBulletedAccessibilityTitle();
+    WEBCORE_EXPORT String NODELETE insertListTypeNumbered();
+    WEBCORE_EXPORT String NODELETE insertListTypeNumberedAccessibilityTitle();
+    WEBCORE_EXPORT String NODELETE exitFullScreenButtonAccessibilityTitle();
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -434,12 +434,12 @@ namespace WebCore {
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    WEBCORE_EXPORT String contextMenuItemTagLookUpImage();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagLookUpImage();
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    WEBCORE_EXPORT String contextMenuItemTagCopySubject();
-    WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTagCopySubject();
+    WEBCORE_EXPORT String NODELETE contextMenuItemTitleRemoveBackground();
 #endif
 
     WEBCORE_EXPORT String pdfPasswordFormTitle();

@@ -766,7 +766,7 @@ static inline bool isArabicCharacter(char16_t character)
 #endif
 
 #if ASSERT_ENABLED
-static bool isUserInstalledFont(CTFontRef font)
+static bool NODELETE isUserInstalledFont(CTFontRef font)
 {
     return adoptCF(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)) == kCFBooleanTrue;
 }
@@ -1036,13 +1036,13 @@ void FontCache::platformReleaseNoncriticalMemory()
 #endif
 }
 
-HashMap<String, URL>& userInstalledFontMap()
+HashMap<String, URL>& NODELETE userInstalledFontMap()
 {
     static NeverDestroyed<HashMap<String, URL>> fontMap;
     return fontMap.get();
 }
 
-HashMap<String, Vector<String>>& userInstalledFontFamilyMap()
+HashMap<String, Vector<String>>& NODELETE userInstalledFontFamilyMap()
 {
     static NeverDestroyed<HashMap<String, Vector<String>>> fontFamilyMap;
     return fontFamilyMap.get();

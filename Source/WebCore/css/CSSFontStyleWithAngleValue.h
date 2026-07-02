@@ -35,7 +35,7 @@ class CSSFontStyleWithAngleValue final : public CSSValue {
 public:
     using ObliqueAngle = CSS::Angle<CSS::Range{-90, 90}>;
 
-    static Ref<CSSFontStyleWithAngleValue> NODELETE create(ObliqueAngle&&);
+    static Ref<CSSFontStyleWithAngleValue> create(ObliqueAngle&&);
 
     const ObliqueAngle& obliqueAngle() const LIFETIME_BOUND { return m_obliqueAngle; }
 

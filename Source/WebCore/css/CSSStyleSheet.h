@@ -71,7 +71,7 @@ public:
 
     virtual ~CSSStyleSheet();
 
-    CSSStyleSheet* parentStyleSheet() const final;
+    CSSStyleSheet* NODELETE parentStyleSheet() const final;
     Node* NODELETE ownerNode() const final;
     MediaList* media() const final;
     String NODELETE href() const final;
@@ -100,10 +100,10 @@ public:
     unsigned NODELETE length() const;
     CSSRule* item(unsigned index);
 
-    void clearOwnerNode() final;
+    void NODELETE clearOwnerNode() final;
     WEBCORE_EXPORT CSSImportRule* NODELETE ownerRule() const final;
     URL NODELETE baseURL() const final;
-    bool isLoading() const final;
+    bool NODELETE isLoading() const final;
 
     void clearOwnerRule() { m_ownerRule = nullptr; }
 
@@ -112,8 +112,8 @@ public:
     const WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData>& adoptingTreeScopes() const LIFETIME_BOUND { return m_adoptingTreeScopes; }
 
     Document* ownerDocument() const;
-    CSSStyleSheet& rootStyleSheet();
-    const CSSStyleSheet& rootStyleSheet() const;
+    CSSStyleSheet& NODELETE rootStyleSheet();
+    const CSSStyleSheet& NODELETE rootStyleSheet() const;
     Style::Scope* NODELETE styleScope();
 
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }

@@ -54,7 +54,7 @@ public:
 
     bool requiresLayer() const override { return true; }
 
-    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+    bool NODELETE isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
     void layout() override;
     void updateLogicalWidth() override;
@@ -108,7 +108,7 @@ public:
 
     RenderSelection& selection() LIFETIME_BOUND { return m_selection; }
 
-    bool printing() const;
+    bool NODELETE printing() const;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
@@ -240,11 +240,11 @@ private:
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
     const RenderElement* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
-    bool requiresFragmentedFlow() const override;
+    bool NODELETE requiresFragmentedFlow() const override;
 
     void computeColumnCountAndWidth() override;
 
-    bool shouldRepaint(const LayoutRect&) const;
+    bool NODELETE shouldRepaint(const LayoutRect&) const;
 
     // Returns true if we determine that the accumulated dirty rect makes up a significant fraction of viewRect.
     bool accumulateRepaintRect(IntRect dirtyRect, IntRect viewRect);
@@ -254,7 +254,7 @@ private:
 
     bool isScrollableOrRubberbandableBox() const override;
 
-    Node* nodeForHitTest() const override;
+    Node* NODELETE nodeForHitTest() const override;
 
     void updateInitialContainingBlockSize();
 
@@ -281,7 +281,7 @@ private:
     LegacyPrinting m_legacyPrinting;
     // End deprecated members.
 
-    bool shouldUsePrintingLayout() const;
+    bool NODELETE shouldUsePrintingLayout() const;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;

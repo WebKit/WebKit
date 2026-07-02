@@ -41,7 +41,7 @@ public:
     JITFinalizer(DFG::Plan&);
     ~JITFinalizer() final;
 
-    size_t codeSize() final;
+    size_t NODELETE codeSize() final;
     bool finalize() final;
     bool isFailed() final { return false; };
 

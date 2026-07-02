@@ -44,7 +44,7 @@ private:
     RemoteRealtimeAudioSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, WebCore::MediaDeviceHashSalts&&, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, std::optional<WebCore::PageIdentifier>);
 
     void setIsInBackground(bool) final;
-    const WebCore::AudioStreamDescription* audioStreamDescription() const final;
+    const WebCore::AudioStreamDescription* NODELETE audioStreamDescription() const final;
 
     std::optional<WebCore::CAAudioStreamDescription> m_description;
 };

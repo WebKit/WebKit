@@ -132,7 +132,7 @@ public:
     }
 
 private:
-    CaptureDeviceManager& videoCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager(); }
+    CaptureDeviceManager& NODELETE videoCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager(); }
 };
 
 #if PLATFORM(COCOA)
@@ -148,9 +148,9 @@ private:
     bool start() final;
     void stop() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
-    DisplaySurfaceType surfaceType() const final { return DisplaySurfaceType::Monitor; }
+    DisplaySurfaceType NODELETE surfaceType() const final { return DisplaySurfaceType::Monitor; }
     void commitConfiguration(const RealtimeMediaSourceSettings&) final;
-    CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
+    CaptureDevice::DeviceType NODELETE deviceType() const final { return CaptureDevice::DeviceType::Screen; }
     IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MockDisplayCapturer"_s; }
@@ -259,7 +259,7 @@ void MockDisplayCapturer::triggerMockCaptureConfigurationChange()
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
-    static MockRealtimeDisplaySourceFactory& singleton();
+    static MockRealtimeDisplaySourceFactory& NODELETE singleton();
 
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {
@@ -300,7 +300,7 @@ public:
 #endif
 
 private:
-    DisplayCaptureManager& displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
+    DisplayCaptureManager& NODELETE displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
 #if PLATFORM(COCOA)
     WeakPtr<MockDisplayCapturer> m_capturer;
 #endif
@@ -336,7 +336,7 @@ public:
 private:
     MockRealtimeAudioSourceFactory() = default;
 
-    CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
+    CaptureDeviceManager& NODELETE audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
     const Vector<CaptureDevice>& speakerDevices() const final { return MockRealtimeMediaSourceCenter::speakerDevices(); }
 };
 

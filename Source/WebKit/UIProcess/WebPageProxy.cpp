@@ -869,7 +869,7 @@ WebPageProxy* WebPageProxy::fromIdentifier(std::optional<WebPageProxyIdentifier>
     return identifier ? webPageProxyMap().get(*identifier) : nullptr;
 }
 
-static bool windowFeature(auto getter, const API::PageConfiguration& configuration)
+static bool NODELETE windowFeature(auto getter, const API::PageConfiguration& configuration)
 {
     if (!configuration.windowFeatures())
         return true;
@@ -16866,7 +16866,7 @@ void WebPageProxy::requestPointerUnlock(CompletionHandler<void(bool)>&& completi
     completionHandler(wasPointerLocked);
 }
 
-RefPtr<WebProcessProxy> WebPageProxy::webContentPointerLockProcess()
+RefPtr<WebProcessProxy> NODELETE WebPageProxy::webContentPointerLockProcess()
 {
     return m_webContentPointerLockProcess;
 }

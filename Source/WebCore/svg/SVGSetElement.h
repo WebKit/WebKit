@@ -33,7 +33,7 @@ public:
 
 private:
     SVGSetElement(const QualifiedName&, Document&);
-    void updateAnimationMode() override;
+    void NODELETE updateAnimationMode() override;
 };
 
 } // namespace WebCore

@@ -139,7 +139,7 @@ public:
     static unsigned NODELETE averageSizeInBytes();
 
 #ifndef NDEBUG
-    void showStyle();
+    void NODELETE showStyle();
 #endif
 
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;

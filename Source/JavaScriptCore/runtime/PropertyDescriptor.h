@@ -58,14 +58,14 @@ public:
     unsigned attributes() const { return m_attributes; }
     JSValue value() const { return m_value; }
     GetterSetter* slowGetterSetter(JSGlobalObject*) const; // Be aware that this will lazily allocate a GetterSetter object. It's much better to use NODELETE getter() and setter() individually if possible.
-    JS_EXPORT_PRIVATE JSValue getter() const;
-    JS_EXPORT_PRIVATE JSValue setter() const;
+    JS_EXPORT_PRIVATE JSValue NODELETE getter() const;
+    JS_EXPORT_PRIVATE JSValue NODELETE setter() const;
     JSObject* NODELETE getterObject() const;
     JSObject* NODELETE setterObject() const;
     JS_EXPORT_PRIVATE void NODELETE setUndefined();
     JS_EXPORT_PRIVATE void NODELETE setDescriptor(JSValue, unsigned attributes);
     JS_EXPORT_PRIVATE void NODELETE setAccessorDescriptor(unsigned attributes);
-    JS_EXPORT_PRIVATE void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
+    JS_EXPORT_PRIVATE void NODELETE setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
     JS_EXPORT_PRIVATE void NODELETE setWritable(bool);
     JS_EXPORT_PRIVATE void NODELETE setEnumerable(bool);
     JS_EXPORT_PRIVATE void NODELETE setConfigurable(bool);

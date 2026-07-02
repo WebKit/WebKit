@@ -56,7 +56,7 @@ public:
     uint32_t bytecodeStart; // Offset where actual bytecode starts (after locals declaration)
 
     template<typename OpcodeType>
-    bool parseAndVerifyDebugInfo(OpcodeType expectedOpcode, std::initializer_list<std::pair<uint32_t, std::initializer_list<uint32_t>>> mappings) const;
+    bool NODELETE parseAndVerifyDebugInfo(OpcodeType expectedOpcode, std::initializer_list<std::pair<uint32_t, std::initializer_list<uint32_t>>> mappings) const;
 
 
     static SourceModule create();

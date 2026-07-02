@@ -40,7 +40,7 @@ const std::array<std::pair<uint16_t, char32_t>, 18590>& big5();
 const std::array<std::pair<uint16_t, char16_t>, 17048>& eucKR();
 const std::array<char16_t, 23940>& gb18030();
 
-void checkEncodingTableInvariants();
+void NODELETE checkEncodingTableInvariants();
 
 // Functions for using sorted arrays of pairs as a map.
 // FIXME: Consider moving these functions to StdLibExtras.h for uses other than encoding tables.

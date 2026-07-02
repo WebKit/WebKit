@@ -73,7 +73,7 @@ public:
     
     void skipWaiting(Ref<DeferredPromise>&&);
 
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
     Ref<ServiceWorkerThread> thread();
 
@@ -89,7 +89,7 @@ public:
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
 
-    WEBCORE_EXPORT Page* serviceWorkerPage();
+    WEBCORE_EXPORT Page* NODELETE serviceWorkerPage();
 
     void dispatchPushEvent(PushEvent&);
     PushEvent* pushEvent() { return m_pushEvent.get(); }

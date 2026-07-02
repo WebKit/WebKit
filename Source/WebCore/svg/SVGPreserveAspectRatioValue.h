@@ -70,7 +70,7 @@ public:
 
     void NODELETE transformRect(FloatRect& destRect, FloatRect& srcRect) const;
 
-    AffineTransform getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
+    AffineTransform NODELETE getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
 
     bool parse(StringView);
     bool parse(StringParsingBuffer<Latin1Character>&, bool validate);

@@ -60,7 +60,7 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::urlElementHandle()
     return InjectedBundleNodeHandle::getOrCreate(protect(m_hitTestResult.URLElement()).get());
 }
 
-RefPtr<WebFrame> InjectedBundleHitTestResult::frame() const
+RefPtr<WebFrame> NODELETE InjectedBundleHitTestResult::frame() const
 {
     auto* node = m_hitTestResult.innerNonSharedNode();
     if (!node)

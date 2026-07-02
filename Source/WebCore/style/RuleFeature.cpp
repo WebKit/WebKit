@@ -145,7 +145,7 @@ static MatchElement::Relation computeNextRelation(MatchElement::Relation relatio
     return relation;
 };
 
-static MatchElement::HasRelation toHasRelation(MatchElement::Relation relation)
+static MatchElement::HasRelation NODELETE toHasRelation(MatchElement::Relation relation)
 {
     switch (relation) {
     case MatchElement::Relation::Parent:
@@ -181,12 +181,12 @@ MatchElement::HasRelation computeHasArgumentRelation(const CSSSelector& hasSelec
     return toHasRelation(relation);
 }
 
-static bool isSiblingCombinator(CSSSelector::Relation relation)
+static bool NODELETE isSiblingCombinator(CSSSelector::Relation relation)
 {
     return relation == CSSSelector::Relation::DirectAdjacent || relation == CSSSelector::Relation::IndirectAdjacent;
 }
 
-static bool compoundContainsHostPseudoClass(const CSSSelector& anySimpleInCompound)
+static bool NODELETE compoundContainsHostPseudoClass(const CSSSelector& anySimpleInCompound)
 {
     for (auto* simple = anySimpleInCompound.leftmostInCompound(); simple; simple = simple->followingInCompound()) {
         if (simple->match() == CSSSelector::Match::PseudoClass && simple->isHostPseudoClass())
@@ -237,7 +237,7 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
 // Returns true if a combinator inside :is()/:not() within :has() can match elements outside the
 // :has() scope. We use this to decide if a nested entry can be associated with a scope selector
 // to bound invalidation traversal.
-static bool isHasScopeBreakingCombinator(CSSSelector::Relation relation, MatchElement::HasRelation hasRelation)
+static bool NODELETE isHasScopeBreakingCombinator(CSSSelector::Relation relation, MatchElement::HasRelation hasRelation)
 {
     if (relation == CSSSelector::Relation::DescendantSpace)
         return true;

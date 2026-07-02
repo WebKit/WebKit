@@ -477,7 +477,7 @@ public:
         }
     }
     
-    bool permitsBoundsCheckLowering() const;
+    bool NODELETE permitsBoundsCheckLowering() const;
     
     bool benefitsFromOriginalArray() const
     {

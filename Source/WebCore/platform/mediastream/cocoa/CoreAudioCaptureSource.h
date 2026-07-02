@@ -93,7 +93,7 @@ private:
 #endif
 
     std::optional<Vector<int>> discreteSampleRates() const final { return { { 8000, 16000, 32000, 44100, 48000, 96000 } }; }
-    const AudioStreamDescription* audioStreamDescription() const final;
+    const AudioStreamDescription* NODELETE audioStreamDescription() const final;
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
@@ -164,7 +164,7 @@ private:
 
     // AudioCaptureFactory
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) override;
-    CaptureDeviceManager& audioCaptureDeviceManager() override;
+    CaptureDeviceManager& NODELETE audioCaptureDeviceManager() override;
     const Vector<CaptureDevice>& speakerDevices() const override;
     void enableMutedSpeechActivityEventListener(Function<void()>&&) final;
     void disableMutedSpeechActivityEventListener() final;

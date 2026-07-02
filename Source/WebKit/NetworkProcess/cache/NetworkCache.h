@@ -221,7 +221,7 @@ public:
 
     void dumpContentsToFile();
 
-    String recordsPathIsolatedCopy() const;
+    String NODELETE recordsPathIsolatedCopy() const;
 
     SpeculativeLoadManager* speculativeLoadManager() { return m_speculativeLoadManager.get(); }
 

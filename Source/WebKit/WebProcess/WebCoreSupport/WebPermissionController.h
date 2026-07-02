@@ -68,7 +68,7 @@ private:
     void removeChangeListener(WebCore::PermissionName, const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain) final;
 
     template<typename ObserverFilter>
-    void notifyObserversIfNeeded(WebCore::PermissionName, ObserverFilter&&);
+    void NODELETE notifyObserversIfNeeded(WebCore::PermissionName, ObserverFilter&&);
 
     WeakHashSet<WebCore::PermissionObserver> m_observers;
 };

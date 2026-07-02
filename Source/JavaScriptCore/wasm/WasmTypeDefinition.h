@@ -1195,7 +1195,7 @@ public:
     // External TypeIndex values for concrete types are RTT pointers (set up
     // by ModuleInformation::typeIndexFromTypeSignatureIndex / Tag::typeIndex /
     // WebAssemblyFunctionBase). This bit-casts directly, no lookup.
-    static Ref<const RTT> getCanonicalRTT(TypeIndex);
+    static Ref<const RTT> NODELETE getCanonicalRTT(TypeIndex);
 
     // The index passed to tryGetRTTRef may be an abstract type or
     // invalid, in which case nullptr is returned. The non-null result
@@ -1258,7 +1258,7 @@ private:
     Vector<Ref<const RTT>> canonicalizeRecursionGroupImpl(TypeSectionState*, const RecursionGroup*, Vector<Ref<const RTT>>&&);
     Ref<const RTT> canonicalizeSingletonImpl(TypeSectionState*, const RecursionGroup*, Ref<const RTT>&&);
     Ref<const RTT> canonicalizeStandaloneRTTImpl(Ref<const RTT>&&);
-    static RefPtr<const RTT> extractExternalRTT(Type);
+    static RefPtr<const RTT> NODELETE extractExternalRTT(Type);
 
     // Null every cycle-forming ref on `rtt` (display, payload, m_group) so
     // its refcount can cascade to 0. Used by tryCleanup's sweep and the
@@ -1270,8 +1270,8 @@ private:
     // Canonical (post-parse) Type::index values are RTT pointers and return
     // false. Centralised here so consumers don't need to know about the
     // placeholder-tag-bit encoding.
-    static bool isRefWithRecursiveReference(Type);
-    static bool isRefWithRecursiveReference(StorageType);
+    static bool NODELETE isRefWithRecursiveReference(Type);
+    static bool NODELETE isRefWithRecursiveReference(StorageType);
 
     UncheckedKeyHashSet<CanonicalRecursionGroupEntry, CanonicalRecursionGroupEntryHash> m_canonicalRecursionGroups;
     UncheckedKeyHashSet<CanonicalSingletonEntry> m_canonicalSingletonGroups;

@@ -66,7 +66,7 @@ public:
     void unregisterScheme(const String&);
     bool supportsScheme(const String&);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 #if PLATFORM(COCOA)

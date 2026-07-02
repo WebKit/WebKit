@@ -68,7 +68,7 @@ public:
     WebSharedWorkerServer* NODELETE server();
     const WebSharedWorkerServer* NODELETE server() const;
 
-    NetworkSession* session();
+    NetworkSession* NODELETE session();
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -77,7 +77,7 @@ public:
     void notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier, const WebCore::ResourceError&);
     void postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess(const IPC::Connection&) const;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void reportNetworkUsageToWorkerObject(WebCore::SharedWorkerObjectIdentifier, size_t bytesTransferredOverNetworkDelta);
@@ -87,7 +87,7 @@ private:
     WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
 
     // IPC::MessageSender.
-    IPC::Connection* messageSenderConnection() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }
 
     // IPC messages.

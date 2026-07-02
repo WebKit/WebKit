@@ -329,7 +329,7 @@ public:
 
     virtual HTMLElement* containerElement() const { return nullptr; }
     virtual HTMLElement* innerBlockElement() const { return nullptr; }
-    virtual RefPtr<TextControlInnerTextElement> innerTextElement() const;
+    virtual RefPtr<TextControlInnerTextElement> NODELETE innerTextElement() const;
     virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
     virtual HTMLElement* autoFillButtonElement() const { return nullptr; }
     virtual HTMLElement* resultsButtonElement() const { return nullptr; }

@@ -56,7 +56,7 @@ private:
     void stopMonitoringPlaybackTargets() final;
     void invalidatePlaybackTargets() final;
     bool externalOutputDeviceAvailable() final;
-    AVOutputContext *outputContext() final;
+    AVOutputContext *NODELETE outputContext() final;
 
     AVRoutePickerView *devicePicker();
     AVRouteDetector *routeDetector();

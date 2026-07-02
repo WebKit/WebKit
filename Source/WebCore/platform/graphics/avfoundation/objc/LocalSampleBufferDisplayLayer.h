@@ -61,7 +61,7 @@ public:
 
     CGRect bounds() const;
     CGRect sampleLayerBoundsForTesting() const;
-    void setVideoFrameRotationForTesting(WebCore::VideoFrameRotation);
+    void NODELETE setVideoFrameRotationForTesting(WebCore::VideoFrameRotation);
 
     PlatformLayer* NODELETE displayLayer();
 
@@ -71,7 +71,7 @@ public:
     PlatformLayer* rootLayer() final;
     void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) final;
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(uint64_t) final;
+    void NODELETE setLogIdentifier(uint64_t) final;
 #endif
     bool didFail() const final;
 

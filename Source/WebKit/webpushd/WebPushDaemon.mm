@@ -743,7 +743,7 @@ void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdenti
         rescheduleSilentPushTimer();
 }
 
-static bool connectionMatchesPendingPushMessage(const PushClientConnection& connection, const PushSubscriptionSetIdentifier& identifierForPendingPushMessage)
+static bool NODELETE connectionMatchesPendingPushMessage(const PushClientConnection& connection, const PushSubscriptionSetIdentifier& identifierForPendingPushMessage)
 {
     if (connection.hostAppCodeSigningIdentifier() != identifierForPendingPushMessage.bundleIdentifier)
         return false;

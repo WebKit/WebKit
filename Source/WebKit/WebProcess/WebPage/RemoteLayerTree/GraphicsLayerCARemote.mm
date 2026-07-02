@@ -188,7 +188,7 @@ public:
         m_layerID = layerID;
     }
 
-    bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const final { return true; }
+    bool NODELETE isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const final { return true; }
 
 private:
     const Ref<IPC::Connection> m_connection;

@@ -284,7 +284,7 @@ public:
         ASSERT(m_scrollingStateTree);
         return *m_scrollingStateTree;
     }
-    void NODELETE attachAfterDeserialization(ScrollingStateTree&);
+    void attachAfterDeserialization(ScrollingStateTree&);
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
 
@@ -309,7 +309,7 @@ public:
 
     String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
 #if ASSERT_ENABLED
-    bool parentPointersAreCorrect() const;
+    bool NODELETE parentPointersAreCorrect() const;
 #endif
 
 protected:

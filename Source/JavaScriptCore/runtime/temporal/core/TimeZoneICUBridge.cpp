@@ -52,10 +52,10 @@ public:
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TimeZoneCacheEntry);
 
 struct TimeZoneLRUCachePolicy {
-    static bool isKeyNull(const TimeZone&) { return false; }
-    static RefPtr<TimeZoneCacheEntry> createValueForNullKey() { return nullptr; }
+    static bool NODELETE isKeyNull(const TimeZone&) { return false; }
+    static RefPtr<TimeZoneCacheEntry> NODELETE createValueForNullKey() { return nullptr; }
     static RefPtr<TimeZoneCacheEntry> createValueForKey(const TimeZone&) { return adoptRef(*new TimeZoneCacheEntry); }
-    static TimeZone createKeyForStorage(const TimeZone& tz) { return tz; }
+    static TimeZone NODELETE createKeyForStorage(const TimeZone& tz) { return tz; }
 };
 
 static RefPtr<TimeZoneCacheEntry> timeZoneCacheEntry(const TimeZone& timeZone)

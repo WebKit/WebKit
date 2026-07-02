@@ -44,8 +44,8 @@ public:
 private:
     explicit VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
 
-    void initialize() final;
-    void terminate() final;
+    void NODELETE initialize() final;
+    void NODELETE terminate() final;
     DataSent sendSync(const Vector<uint8_t>& data) final;
     void send(Vector<uint8_t>&& data, DataSentCallback&&) final;
     void assembleRequest(Vector<uint8_t>&&);

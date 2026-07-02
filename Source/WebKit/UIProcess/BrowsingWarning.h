@@ -70,8 +70,8 @@ public:
 #endif
     const Data& data() const LIFETIME_BOUND { return m_data; }
 
-    static RetainPtr<NSURL> visitUnsafeWebsiteSentinel();
-    static RetainPtr<NSURL> confirmMalwareSentinel();
+    static RetainPtr<NSURL> NODELETE visitUnsafeWebsiteSentinel();
+    static RetainPtr<NSURL> NODELETE confirmMalwareSentinel();
 
 private:
 #if HAVE(SAFE_BROWSING)

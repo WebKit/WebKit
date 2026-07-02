@@ -50,7 +50,7 @@ private:
 
     void doApply() override;
     
-    bool preservesTypingStyle() const override;
+    bool NODELETE preservesTypingStyle() const override;
 
     void initializeStartEnd(Position&, Position&);
     void setStartingSelectionOnSmartDelete(const Position&, const Position&);

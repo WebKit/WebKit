@@ -52,7 +52,7 @@ private:
     void invalidateForChangedElement(Element&, MatchingHasSelectors&, ChangedElementRelation);
     void invalidateForHasSiblings(MatchingHasSelectors&, MutationPhase);
 
-    bool emptyStateMayChange() const;
+    bool NODELETE emptyStateMayChange() const;
 
     template<typename Function> void traverseRemovedElements(Function&&);
     template<typename Function> void traverseAddedElements(Function&&);

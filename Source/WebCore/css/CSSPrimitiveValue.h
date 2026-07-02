@@ -59,7 +59,7 @@ public:
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
-    static Ref<CSSPrimitiveValue> NODELETE createInteger(double);
+    static Ref<CSSPrimitiveValue> createInteger(double);
     static Ref<CSSPrimitiveValue> create(CSS::UnevaluatedCalcBase);
 
     ~CSSPrimitiveValue();

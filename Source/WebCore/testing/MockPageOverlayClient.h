@@ -50,11 +50,11 @@ public:
     virtual ~MockPageOverlayClient() = default;
 
 private:
-    void willMoveToPage(PageOverlay&, Page*) override;
+    void NODELETE willMoveToPage(PageOverlay&, Page*) override;
     void didMoveToPage(PageOverlay&, Page*) override;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    void didScrollFrame(PageOverlay&, LocalFrame&) override;
+    void NODELETE didScrollFrame(PageOverlay&, LocalFrame&) override;
 
     bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) override;
     bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;

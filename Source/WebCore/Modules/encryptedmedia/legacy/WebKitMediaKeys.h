@@ -63,7 +63,7 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
 private:
-    RefPtr<MediaPlayer> cdmMediaPlayer(const LegacyCDM*) const final;
+    RefPtr<MediaPlayer> NODELETE cdmMediaPlayer(const LegacyCDM*) const final;
 
     WebKitMediaKeys(const String& keySystem, Ref<LegacyCDM>&&);
 

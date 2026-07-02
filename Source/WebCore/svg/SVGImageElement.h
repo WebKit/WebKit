@@ -36,7 +36,7 @@ public:
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
     bool renderingTaintsOrigin() const;
-    String imageSourceURL() const final;
+    String NODELETE imageSourceURL() const final;
 
     const SVGLengthValue& x() const LIFETIME_BOUND { return m_x->currentValue(); }
     const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }
@@ -68,7 +68,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
-    bool haveLoadedRequiredResources() final;
+    bool NODELETE haveLoadedRequiredResources() final;
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool selfHasRelativeLengths() const final { return true; }

@@ -36,8 +36,8 @@ public:
     const CSS::String& string() const LIFETIME_BOUND { return m_string; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSStringValue&) const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    bool NODELETE equals(const CSSStringValue&) const;
+    IterationStatus NODELETE customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
     bool NODELETE addDerivedHash(Hasher&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

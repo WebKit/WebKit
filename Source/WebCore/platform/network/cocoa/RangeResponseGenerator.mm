@@ -259,16 +259,16 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
         completionHandler({ });
     }
-    void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final
+    void NODELETE dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
-    void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) final
+    void NODELETE accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) final
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final
+    bool NODELETE shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final
     {
         return false;
     }

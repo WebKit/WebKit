@@ -111,7 +111,7 @@ private:
     void collectStyleSheets(CSSStyleSheet*, Vector<CSSStyleSheet*>&);
     void setActiveStyleSheetsForDocument(Document&, Vector<CSSStyleSheet*>&);
     InspectorStyleSheet* createInspectorStyleSheetForDocument(Document&);
-    Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet*, Document*);
+    Inspector::Protocol::CSS::StyleSheetOrigin NODELETE detectOrigin(CSSStyleSheet*, Document*);
 
     UniqueRef<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
     Ref<Inspector::CSSBackendDispatcher> m_backendDispatcher;

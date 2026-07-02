@@ -112,7 +112,7 @@ class RTCSocketFactory final : public LibWebRTCProvider::SuspendableSocketFactor
 public:
     RTCSocketFactory(WebPageProxyIdentifier, String&& userAgent, ScriptExecutionContextIdentifier, bool isFirstParty, RegistrableDomain&&);
 
-    void disableRelay() final { m_flags.isRelayDisabled = true; }
+    void NODELETE disableRelay() final { m_flags.isRelayDisabled = true; }
     void NODELETE enableServiceClass() { m_flags.enableServiceClass = true; }
 
 private:
@@ -123,7 +123,7 @@ private:
     std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver() final;
     void suspend() final;
     void resume() final;
-    bool shouldEnableServiceClass() final { return m_flags.enableServiceClass; }
+    bool NODELETE shouldEnableServiceClass() final { return m_flags.enableServiceClass; }
 
 private:
     WebPageProxyIdentifier m_pageIdentifier;

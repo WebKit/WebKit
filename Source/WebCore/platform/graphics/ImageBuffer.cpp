@@ -173,7 +173,7 @@ public:
         return m_buffer;
     }
 
-    size_t memoryCost() const final
+    size_t NODELETE memoryCost() const final
     {
         return m_buffer->memoryCost();
     }

@@ -237,7 +237,7 @@ PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(RetainPtr<PKPay
 {
 }
 
-const std::optional<ApplePayInstallmentConfiguration>& NODELETE PaymentInstallmentConfiguration::applePayInstallmentConfiguration() const
+const std::optional<ApplePayInstallmentConfiguration>& PaymentInstallmentConfiguration::applePayInstallmentConfiguration() const
 {
     return m_configuration;
 }

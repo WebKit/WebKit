@@ -67,7 +67,7 @@ private:
     void setPreservesPitch(WebCore::MediaPlayerIdentifier, bool);
     void setVolume(WebCore::MediaPlayerIdentifier, double);
 
-    RefPtr<RemoteAudioSourceProvider> providerFor(WebCore::MediaPlayerIdentifier);
+    RefPtr<RemoteAudioSourceProvider> NODELETE providerFor(WebCore::MediaPlayerIdentifier);
 
     ThreadSafeWeakPtr<IPC::Connection> m_connection;
     const Ref<WorkQueue> m_queue;

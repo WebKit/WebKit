@@ -105,7 +105,7 @@ public:
 
     const CanvasRenderingContext2DSettings& getContextAttributes() const LIFETIME_BOUND { return m_settings; }
     using RenderingMode = WebCore::RenderingMode;
-    std::optional<RenderingMode> renderingModeForTesting() const final;
+    std::optional<RenderingMode> NODELETE renderingModeForTesting() const final;
     std::optional<RenderingMode> getEffectiveRenderingModeForTesting();
 
     double lineWidth() const { return state().lineWidth; }
@@ -396,7 +396,7 @@ protected:
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 
-    void NODELETE updateStateTransform(const AffineTransform&);
+    void updateStateTransform(const AffineTransform&);
 
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
@@ -420,18 +420,18 @@ private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
-    bool NODELETE shouldDrawShadows() const;
+    bool shouldDrawShadows() const;
 
-    bool needsPreparationForDisplay() const final;
+    bool NODELETE needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
-    void clearAccumulatedDirtyRect() final;
+    void NODELETE clearAccumulatedDirtyRect() final;
     bool NODELETE isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
-    PixelFormat pixelFormat() const final;
+    PixelFormat NODELETE pixelFormat() const final;
     DestinationColorSpace colorSpace() const final;
-    bool willReadFrequently() const final;
+    bool NODELETE willReadFrequently() const final;
 
     void realizeSavesLoop();
     void setStrokeColorImpl(Color&& color, String&& unparsedColor = { });
@@ -479,7 +479,7 @@ private:
     Path transformAreaToDevice(const FloatRect&) const;
     bool rectContainsCanvas(const FloatRect&) const;
 
-    template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
+    template<class T> IntRect NODELETE calculateCompositingBufferRect(const T&, IntSize*);
     void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
 
     FloatRect inflatedStrokeRect(const FloatRect&) const;
@@ -487,11 +487,11 @@ private:
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
-    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
+    bool NODELETE isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
 #if USE(SKIA)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 #endif
-    bool hasDeferredOperations() const final;
+    bool NODELETE hasDeferredOperations() const final;
     void flushDeferredOperations() final;
 
     // The relationship between FontCascade and CanvasRenderingContext2D::FontProxy must hold certain invariants.

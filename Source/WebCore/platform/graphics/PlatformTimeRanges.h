@@ -56,13 +56,13 @@ public:
     static const PlatformTimeRanges& emptyRanges();
     static MediaTime NODELETE timeFudgeFactor();
 
-    MediaTime NODELETE start(unsigned index) const;
+    MediaTime start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
-    MediaTime NODELETE end(unsigned index) const;
+    MediaTime end(unsigned index) const;
     MediaTime end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
-    MediaTime NODELETE maximumBufferedTime() const;
-    MediaTime NODELETE minimumBufferedTime() const;
+    MediaTime maximumBufferedTime() const;
+    MediaTime minimumBufferedTime() const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);

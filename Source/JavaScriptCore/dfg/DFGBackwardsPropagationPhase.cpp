@@ -100,7 +100,7 @@ public:
     }
 
 private:
-    bool isNotNegZero(Node* node, unsigned timeToLive = 3)
+    bool NODELETE isNotNegZero(Node* node, unsigned timeToLive = 3)
     {
         if (!timeToLive)
             return false;
@@ -146,7 +146,7 @@ private:
         }
     }
 
-    bool isNotPosZero(Node* node)
+    bool NODELETE isNotPosZero(Node* node)
     {
         if (!node->isNumberConstant())
             return false;
@@ -156,7 +156,7 @@ private:
 
     // Tests if the absolute value is strictly less than the power of two.
     template<int power>
-    bool isWithinPowerOfTwoForConstant(Node* node)
+    bool NODELETE isWithinPowerOfTwoForConstant(Node* node)
     {
         JSValue immediateValue = node->asJSValue();
         if (!immediateValue.isNumber())
@@ -233,7 +233,7 @@ private:
         return checkAndSet(flagsRef, flagsRef | newFlags);
     }
 
-    bool NODELETE mergeDefaultFlags(Node* node)
+    bool mergeDefaultFlags(Node* node)
     {
         bool changed = false;
         if (node->flags() & NodeHasVarArgs) {

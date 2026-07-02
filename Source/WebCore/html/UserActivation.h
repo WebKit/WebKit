@@ -37,7 +37,7 @@ class UserActivation final : public RefCounted<UserActivation> {
     WTF_MAKE_TZONE_ALLOCATED(UserActivation);
 
 public:
-    static Ref<UserActivation> NODELETE create(Navigator&);
+    static Ref<UserActivation> create(Navigator&);
     ~UserActivation();
 
     Navigator* NODELETE navigator();

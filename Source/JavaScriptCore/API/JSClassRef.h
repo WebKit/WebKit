@@ -105,7 +105,7 @@ struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     static Ref<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     JS_EXPORT_PRIVATE ~OpaqueJSClass();
     
-    String className();
+    String NODELETE className();
     OpaqueJSClassStaticValuesTable* staticValues(JSC::JSGlobalObject*);
     OpaqueJSClassStaticFunctionsTable* staticFunctions(JSC::JSGlobalObject*);
     JSC::JSObject* prototype(JSC::JSGlobalObject*);

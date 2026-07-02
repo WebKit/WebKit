@@ -80,7 +80,7 @@ private:
     DECLARE_DEFAULT_FINISH_CREATION;
 
     template<DifferenceOperation>
-    ISO8601::Duration sinceOrUntil(JSGlobalObject*, TemporalPlainYearMonth*, JSValue);
+    ISO8601::Duration NODELETE sinceOrUntil(JSGlobalObject*, TemporalPlainYearMonth*, JSValue);
 
     ISO8601::PlainYearMonth m_plainYearMonth;
     CalendarID m_calendarID { 0 };

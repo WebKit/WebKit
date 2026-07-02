@@ -190,7 +190,7 @@ private:
     using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
     void requestHostingContext(RemoteAudioVideoRendererIdentifier, LayerHostingContextCallback&&);
     WebCore::MediaSampleConverter& converterFor(RendererContext&, TrackIdentifier);
-    template<typename Message> void publishAndSend(RemoteAudioVideoRendererIdentifier, Message&&);
+    template<typename Message> void NODELETE publishAndSend(RemoteAudioVideoRendererIdentifier, Message&&);
 
 #if PLATFORM(COCOA)
     void setVideoLayerSize(RemoteAudioVideoRendererIdentifier, const WebCore::FloatSize&);

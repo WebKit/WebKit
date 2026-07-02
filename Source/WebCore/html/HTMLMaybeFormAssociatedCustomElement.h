@@ -53,8 +53,8 @@ public:
     bool matchesUserInvalidPseudoClass() const final;
 
     bool supportsFocus() const final;
-    bool isLabelable() const final;
-    bool isDisabledFormControl() const final;
+    bool NODELETE isLabelable() const final;
+    bool NODELETE isDisabledFormControl() const final;
 
     void setInterfaceIsFormAssociated();
     bool hasFormAssociatedInterface() const { return hasEventTargetFlag(EventTargetFlag::HasFormAssociatedCustomElementInterface); }

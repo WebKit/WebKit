@@ -35,10 +35,10 @@ OBJC_CLASS NSError;
 
 namespace WebKit::SafeBrowsingUtilities {
 
-bool canLookUp(const URL&);
+bool NODELETE canLookUp(const URL&);
 
 enum class NavigationType : bool { MainFrame, SubFrame };
-void lookUp(const URL&, NavigationType, SSBLookupResult *cachedResult, CompletionHandler<void(SSBLookupResult *, NSError *)>&&);
+void NODELETE lookUp(const URL&, NavigationType, SSBLookupResult *cachedResult, CompletionHandler<void(SSBLookupResult *, NSError *)>&&);
 
 struct NamespacedCollection {
     String listNamespace;
@@ -46,7 +46,7 @@ struct NamespacedCollection {
 };
 
 using NamespacedLists = NSDictionary<NSString *, NSArray<NSString *> *>;
-void listsForNamespace(NamespacedCollection&&, CompletionHandler<void(NamespacedLists *, NSError *)>&&);
+void NODELETE listsForNamespace(NamespacedCollection&&, CompletionHandler<void(NamespacedLists *, NSError *)>&&);
 
 } // namespace WebKit::SafeBrowsingUtilities
 

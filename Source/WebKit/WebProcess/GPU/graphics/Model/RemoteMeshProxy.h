@@ -63,7 +63,7 @@ public:
     virtual ~RemoteMeshProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
-    static bool supportsTransform(const WebCore::TransformationMatrix&);
+    static bool NODELETE supportsTransform(const WebCore::TransformationMatrix&);
 
 private:
     friend class ModelDowncastConvertToBackingContext;
@@ -101,28 +101,28 @@ private:
 #if PLATFORM(COCOA)
     std::pair<simd_float4, simd_float4> getCenterAndExtents() const final;
     void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
-    void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
+    void NODELETE paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
 #endif
-    void play(bool) final;
+    void NODELETE play(bool) final;
 
     void render(uint32_t textureIndex, Function<void(bool)>&&) final;
-    void setLabelInternal(const String&) final;
-    void setEntityTransform(const WebModel::Float4x4&) final;
+    void NODELETE setLabelInternal(const String&) final;
+    void NODELETE setEntityTransform(const WebModel::Float4x4&) final;
     void NODELETE setEntityTransformInternal(const WebModel::Float4x4&);
 #if PLATFORM(COCOA)
-    std::optional<WebModel::Float4x4> entityTransform() const final;
+    std::optional<WebModel::Float4x4> NODELETE entityTransform() const final;
 #endif
-    void setScale(float) final;
-    void setFOV(float);
-    void setViewportSize(float, float) final;
-    void setStageMode(WebCore::StageModeOperation) final;
+    void NODELETE setScale(float) final;
+    void NODELETE setFOV(float);
+    void NODELETE setViewportSize(float, float) final;
+    void NODELETE setStageMode(WebCore::StageModeOperation) final;
     void processRemovals(Vector<WebModel::TypedResourceId>&& meshRemovals, Vector<WebModel::TypedResourceId>&& materialRemovals, Vector<WebModel::TypedResourceId>&& textureRemovals, CompletionHandler<void(bool)>&&) final;
 #if ENABLE(GPU_PROCESS_MODEL)
     void computeTransform();
     void setRotation(float yaw, float pitch, float roll) final;
 #endif
-    void setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
-    void updateContentsHeadroom(float) final;
+    void NODELETE setEnvironmentMap(WebModel::UpdateTextureDescriptor&&) final;
+    void NODELETE updateContentsHeadroom(float) final;
 
     const WebModelIdentifier m_backing;
     const Ref<ModelConvertToBackingContext> m_convertToBackingContext;

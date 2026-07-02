@@ -239,13 +239,13 @@ public:
     static bool clipsCompositingDescendants(const RenderLayer&);
 
     // Whether the given layer needs an extra 'contents' layer.
-    bool needsContentsCompositingLayer(const RenderLayer&) const;
+    bool NODELETE needsContentsCompositingLayer(const RenderLayer&) const;
 
     bool fixedLayerIntersectsViewport(const RenderLayer&) const;
 
     bool NODELETE supportsFixedRootBackgroundCompositing() const;
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
-    GraphicsLayer* fixedRootBackgroundLayer() const;
+    GraphicsLayer* NODELETE fixedRootBackgroundLayer() const;
 
     void rootOrBodyStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle);
 
@@ -350,10 +350,10 @@ public:
     WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0);
     WEBCORE_EXPORT std::optional<String> platformLayerTreeAsText(Element&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
-    float deviceScaleFactor() const override;
-    float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
-    float pageScaleFactor() const override;
-    float zoomedOutPageScaleFactor() const override;
+    float NODELETE deviceScaleFactor() const override;
+    float NODELETE contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
+    float NODELETE pageScaleFactor() const override;
+    float NODELETE zoomedOutPageScaleFactor() const override;
     FloatSize enclosingFrameViewVisibleSize() const override;
     void didChangePlatformLayerForLayer(const GraphicsLayer*) override { }
 
@@ -404,7 +404,7 @@ public:
 
     bool viewHasTransparentBackground(Color* backgroundColor = nullptr) const;
 
-    bool viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
+    bool NODELETE viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
 
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
@@ -461,7 +461,7 @@ private:
     bool updateExplicitBacking(RenderLayer&, RequiresCompositingData&, BackingRequired = BackingRequired::Unknown);
     bool updateReflectionCompositingState(RenderLayer&, const RenderLayer* compositingAncestor, RequiresCompositingData&);
 
-    template<typename ApplyFunctionType> void applyToCompositedLayerIncludingDescendants(RenderLayer&, const ApplyFunctionType&);
+    template<typename ApplyFunctionType> void NODELETE applyToCompositedLayerIncludingDescendants(RenderLayer&, const ApplyFunctionType&);
 
     // Repaint this and its child layers.
     void recursiveRepaintLayer(RenderLayer&);
@@ -607,7 +607,7 @@ private:
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
 #if HAVE(RUBBER_BANDING)
-    bool requiresOverhangAreasLayer() const;
+    bool NODELETE requiresOverhangAreasLayer() const;
     bool requiresContentShadowLayer() const;
 #endif
 
@@ -620,8 +620,8 @@ private:
     bool shouldCompositeOverflowControls() const;
 
 #if !LOG_DISABLED
-    ASCIILiteral logOneReasonForCompositing(const RenderLayer&);
-    void logLayerInfo(const RenderLayer&, ASCIILiteral, int depth);
+    ASCIILiteral NODELETE logOneReasonForCompositing(const RenderLayer&);
+    void NODELETE logLayerInfo(const RenderLayer&, ASCIILiteral, int depth);
 #endif
 
     bool NODELETE documentUsesTiledBacking() const;
@@ -714,5 +714,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, CompositingReason);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showGraphicsLayerTreeForCompositor(WebCore::RenderLayerCompositor&);
+void NODELETE showGraphicsLayerTreeForCompositor(WebCore::RenderLayerCompositor&);
 #endif

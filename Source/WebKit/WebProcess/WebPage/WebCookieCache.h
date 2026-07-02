@@ -71,12 +71,12 @@ public:
     void clear();
     void clearForHost(const String&);
 
-    void setOptInCookiePartitioningEnabled(bool);
+    void NODELETE setOptInCookiePartitioningEnabled(bool);
 
 private:
     WebCookieCache() = default;
 
-    WebCore::NetworkStorageSession& inMemoryStorageSession();
+    WebCore::NetworkStorageSession& NODELETE inMemoryStorageSession();
 
     void pruneCacheIfNecessary();
     bool NODELETE cacheMayBeOutOfSync() const;

@@ -1166,7 +1166,7 @@ void zeroBytes(T& object)
 }
 
 template<typename T, std::size_t Extent>
-void NODELETE secureZeroSpan(std::span<T, Extent> destination)
+void secureZeroSpan(std::span<T, Extent> destination)
 {
     static_assert(std::is_trivially_copyable_v<T>);
 #ifdef __STDC_LIB_EXT1__
@@ -1181,7 +1181,7 @@ void NODELETE secureZeroSpan(std::span<T, Extent> destination)
 }
 
 // Like zeroBytes, but guaranteed not to be optimized away by the compiler.
-template<typename T> void NODELETE secureZeroBytes(T& object)
+template<typename T> void secureZeroBytes(T& object)
 {
     secureZeroSpan(asMutableByteSpan(object));
 }

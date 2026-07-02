@@ -56,7 +56,7 @@ public:
     JSValue loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *);
 
 private:
-    static const GlobalObjectMethodTable* globalObjectMethodTable();
+    static const GlobalObjectMethodTable* NODELETE globalObjectMethodTable();
     JSAPIGlobalObject(VM&, Structure*);
 
     static JSPromise* moduleLoaderImportModule(JSGlobalObject*, JSModuleLoader*, JSString* moduleNameValue, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);

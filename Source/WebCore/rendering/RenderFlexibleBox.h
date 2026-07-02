@@ -71,7 +71,7 @@ public:
 
     const OrderIterator& orderIterator() const LIFETIME_BOUND { return m_orderIterator; }
 
-    LayoutOptionalOutsets allowedLayoutOverflow() const override;
+    LayoutOptionalOutsets NODELETE allowedLayoutOverflow() const override;
 
     virtual bool isFlexibleBoxImpl() const { return false; };
     
@@ -115,7 +115,7 @@ public:
     ItemPosition alignmentForFlexItem(const RenderBox&) const;
     Style::FlexBasis flexBasisForFlexItem(const RenderBox&) const;
     bool hasDefiniteCrossSizeForFlexItem(const RenderBox& flexItem) const;
-    bool hasDefiniteLogicalWidthForAspectRatioCrossSize() const;
+    bool NODELETE hasDefiniteLogicalWidthForAspectRatioCrossSize() const;
     bool hasStretchedFlexItemWithAspectRatio() const;
 
     class OverridingSizesScope {
@@ -213,7 +213,7 @@ private:
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit columnInnerMainSize(LayoutUnit hypotheticalMainSize);
     LayoutUnit mainAxisAvailableSpace();
-    template<typename SizeType> std::optional<LayoutUnit> computeMainAxisExtentForFlexItem(RenderBox& flexItem, const SizeType&);
+    template<typename SizeType> std::optional<LayoutUnit> NODELETE computeMainAxisExtentForFlexItem(RenderBox& flexItem, const SizeType&);
     FlowDirection NODELETE transformedBlockFlowDirection() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
@@ -240,13 +240,13 @@ private:
     bool crossAxisIsLogicalWidth() const;
     void clearFlexItemOverridingSizes();
     LayoutUnit innerCrossSizeForFlexItem(const RenderBox& flexItem) const;
-    template<typename SizeType> LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& flexItem, const SizeType& crossSizeLength) const;
+    template<typename SizeType> LayoutUnit NODELETE computeMainSizeFromAspectRatioUsing(const RenderBox& flexItem, const SizeType& crossSizeLength) const;
     void NODELETE setFlowAwareLocationForFlexItem(RenderBox& flexItem, const LayoutPoint&);
     LayoutUnit flexBaseSizeForFlexItem(RenderBox& flexItem);
     void ensureBlockAxisContentSizeForFlexItemIfNeeded(RenderBox& flexItem);
     void NODELETE adjustAlignmentForFlexItem(RenderBox& flexItem, LayoutUnit);
     inline OverflowAlignment overflowAlignmentForFlexItem(const RenderBox& flexItem) const;
-    template<typename SizeType> bool canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
+    template<typename SizeType> bool NODELETE canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&);
     template<typename SizeType> bool flexItemCrossSizeIsDefinite(const RenderBox&, const SizeType&);
     bool needToStretchFlexItemLogicalHeight(const RenderBox& flexItem) const;

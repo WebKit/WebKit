@@ -37,7 +37,7 @@ public:
 private:
     HTMLBaseElement(const QualifiedName&, Document&);
 
-    AtomString target() const final;
+    AtomString NODELETE target() const final;
     bool NODELETE isURLAttribute(const Attribute&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;

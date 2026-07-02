@@ -78,7 +78,7 @@ public:
     void clearCache() final;
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
-    void setOptInCookiePartitioningEnabled(bool);
+    void NODELETE setOptInCookiePartitioningEnabled(bool);
 #endif
 
 private:

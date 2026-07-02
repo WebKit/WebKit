@@ -54,7 +54,7 @@ private:
     const AtomString& formControlType() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
-    bool supportsRequired() const final;
+    bool NODELETE supportsRequired() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     void handleMouseDownEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
@@ -67,11 +67,11 @@ private:
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     ValueOrReference<String> fallbackValue() const final;
     ValueOrReference<String> sanitizeValue(const String& proposedValue LIFETIME_BOUND) const final;
-    bool shouldRespectListAttribute() final;
-    HTMLElement* sliderThumbElement() const final;
-    HTMLElement* sliderTrackElement() const final;
+    bool NODELETE shouldRespectListAttribute() final;
+    HTMLElement* NODELETE sliderThumbElement() const final;
+    HTMLElement* NODELETE sliderTrackElement() const final;
 
-    SliderThumbElement& typedSliderThumbElement() const;
+    SliderThumbElement& NODELETE typedSliderThumbElement() const;
 
     void dataListMayHaveChanged() final;
     void updateTickMarkValues();

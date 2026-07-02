@@ -77,7 +77,7 @@ public:
     bool observedSlowPath() const { return m_state == ObservedTakesSlowPath; }
     bool isSimple() const { return m_state == Simple; }
     const Vector<SetPrivateBrandVariant, 1>& variants() LIFETIME_BOUND { return m_variants; }
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier singleIdentifier() const;
 
     SetPrivateBrandStatus NODELETE slowVersion() const;
 
@@ -85,7 +85,7 @@ public:
     void filter(const StructureSet&);
 
     DECLARE_VISIT_AGGREGATE;
-    template<typename Visitor> void markIfCheap(Visitor&);
+    template<typename Visitor> void NODELETE markIfCheap(Visitor&);
     bool finalize(VM&);
 
     bool appendVariant(const SetPrivateBrandVariant&);

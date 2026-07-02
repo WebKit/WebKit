@@ -46,7 +46,7 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFPluginDisplayMode) const override;
+    bool NODELETE supportsDisplayMode(PDFPluginDisplayMode) const override;
     void willChangeDisplayMode(PDFPluginDisplayMode) override { }
 
     void teardown() override;
@@ -80,10 +80,10 @@ private:
 
     // GraphicsLayerClient
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    float pageScaleFactor() const override;
-    float deviceScaleFactor() const override;
-    std::optional<float> customContentsScale(const WebCore::GraphicsLayer&) const override;
-    bool layerNeedsPlatformContext(const WebCore::GraphicsLayer&) const override;
+    float NODELETE pageScaleFactor() const override;
+    float NODELETE deviceScaleFactor() const override;
+    std::optional<float> NODELETE customContentsScale(const WebCore::GraphicsLayer&) const override;
+    bool NODELETE layerNeedsPlatformContext(const WebCore::GraphicsLayer&) const override;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     bool layerAllowsDynamicContentScaling(const WebCore::GraphicsLayer*) const override;
 #endif
@@ -96,7 +96,7 @@ private:
 
     void updatePageBackgroundLayers();
     std::optional<PDFDocumentLayout::PageIndex> NODELETE pageIndexForPageBackgroundLayer(const WebCore::GraphicsLayer&) const;
-    WebCore::GraphicsLayer* NODELETE backgroundLayerForPage(PDFDocumentLayout::PageIndex) const;
+    WebCore::GraphicsLayer* backgroundLayerForPage(PDFDocumentLayout::PageIndex) const;
 
     void didGeneratePreviewForPage(PDFDocumentLayout::PageIndex) override;
 

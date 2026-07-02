@@ -66,9 +66,9 @@ public:
     // Hence, we only need the SlotVisitor version.
     void execute(SlotVisitor&);
 
-    JS_EXPORT_PRIVATE virtual double quickWorkEstimate(SlotVisitor&);
+    JS_EXPORT_PRIVATE virtual double NODELETE quickWorkEstimate(SlotVisitor&);
     
-    double workEstimate(SlotVisitor&);
+    double NODELETE workEstimate(SlotVisitor&);
     
     void prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
     

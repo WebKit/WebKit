@@ -47,7 +47,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSURLValue&) const;
 
-    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus NODELETE customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 

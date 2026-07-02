@@ -37,7 +37,7 @@
 
 namespace AXPreferenceHelpers {
 
-static bool shouldUseDefault()
+static bool NODELETE shouldUseDefault()
 {
     RetainPtr forceDefault = [[NSUserDefaults standardUserDefaults] objectForKey:@"ForceDefaultAccessibilitySettings"];
     return forceDefault && [forceDefault boolValue];

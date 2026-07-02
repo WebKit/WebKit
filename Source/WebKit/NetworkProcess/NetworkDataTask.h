@@ -143,7 +143,7 @@ public:
     virtual void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
 
     virtual void setPriority(WebCore::ResourceLoadPriority) { }
-    String attributedBundleIdentifier(WebPageProxyIdentifier);
+    String NODELETE attributedBundleIdentifier(WebPageProxyIdentifier);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     virtual void setEmulatedConditions(const std::optional<int64_t>& /* bytesPerSecondLimit */) { }

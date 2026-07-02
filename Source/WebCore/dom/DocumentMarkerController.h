@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT void addDictationStreamingOpacityMarker(const SimpleRange&, float opacity);
     WEBCORE_EXPORT void removeAllDictationStreamingOpacityMarkers();
 
-    WEBCORE_EXPORT size_t appliedGrammarTextEffectCount() const;
+    WEBCORE_EXPORT size_t NODELETE appliedGrammarTextEffectCount() const;
 
     void copyMarkers(Node& source, OffsetRange, Node& destination);
     bool hasMarkers() const;
@@ -113,7 +113,7 @@ public:
     WEBCORE_EXPORT static std::tuple<float, float> markerYPositionAndHeightForFont(const FontCascade&);
 
 #if ENABLE(TREE_DEBUGGING)
-    void showMarkers() const;
+    void NODELETE showMarkers() const;
 #endif
 
 private:
@@ -171,5 +171,5 @@ inline bool DocumentMarkerController::hasMarkers() const
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
-void showDocumentMarkers(const WebCore::DocumentMarkerController*);
+void NODELETE showDocumentMarkers(const WebCore::DocumentMarkerController*);
 #endif

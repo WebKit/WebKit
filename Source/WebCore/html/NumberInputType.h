@@ -74,7 +74,7 @@ private:
     String convertFromVisibleValue(const String&) const final;
     ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
     String badInputText() const final;
-    bool supportsPlaceholder() const final;
+    bool NODELETE supportsPlaceholder() const final;
     void attributeChanged(const QualifiedName&) final;
 };
 

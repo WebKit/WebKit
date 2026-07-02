@@ -188,7 +188,7 @@ public:
 
     bool isSameOriginAs(const WebFrameProxy&) const;
 
-    bool isDisplayingStandaloneImageDocument() const;
+    bool NODELETE isDisplayingStandaloneImageDocument() const;
     bool isDisplayingStandaloneMediaDocument() const;
     bool isDisplayingMarkupDocument() const;
     bool isDisplayingPDFDocument() const;
@@ -248,7 +248,7 @@ public:
     void removeChildFrames();
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
-    WebProcessProxy& NODELETE provisionalLoadProcess();
+    WebProcessProxy& provisionalLoadProcess();
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess() const;
     void notifyParentOfLoadCompletion(WebProcessProxy&);
 
@@ -312,8 +312,8 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
-    template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
-    template<typename M> void send(M&&);
+    template<typename M, typename C> void NODELETE sendWithAsyncReply(M&&, C&&);
+    template<typename M> void NODELETE send(M&&);
 
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 

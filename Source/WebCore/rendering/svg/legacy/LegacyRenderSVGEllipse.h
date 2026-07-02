@@ -42,11 +42,11 @@ private:
 
     void updateShapeFromElement() override;
     bool isEmpty() const override { return hasPath() ? LegacyRenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }
-    bool isRenderingDisabled() const override;
+    bool NODELETE isRenderingDisabled() const override;
     void fillShape(GraphicsContext&) const override;
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
-    bool shapeDependentFillContains(const FloatPoint&, const WindRule) const override;
+    bool NODELETE shapeDependentFillContains(const FloatPoint&, const WindRule) const override;
     void calculateRadiiAndCenter();
 
 private:

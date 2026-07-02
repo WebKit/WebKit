@@ -64,7 +64,7 @@ void WebPasteboardProxy::removeWebProcessProxy(WebProcessProxy& webProcessProxy)
     m_webProcessProxySet.remove(webProcessProxy);
 }
 
-RefPtr<WebProcessProxy> WebPasteboardProxy::webProcessProxyForConnection(IPC::Connection& connection) const
+RefPtr<WebProcessProxy> NODELETE WebPasteboardProxy::webProcessProxyForConnection(IPC::Connection& connection) const
 {
     for (auto& webProcessProxy : m_webProcessProxySet) {
         if (webProcessProxy.hasConnection(connection))

@@ -38,7 +38,7 @@ public:
     SearchFieldCancelButtonMac(SearchFieldCancelButtonPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
 
 private:
-    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
+    IntSize NODELETE cellSize(NSControlSize, const ControlStyle&) const override;
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 

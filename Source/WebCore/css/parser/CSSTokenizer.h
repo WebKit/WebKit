@@ -75,13 +75,13 @@ private:
     CSSParserToken consumeStringTokenUntil(char16_t);
     CSSParserToken consumeURLToken();
 
-    void consumeBadUrlRemnants();
+    void NODELETE consumeBadUrlRemnants();
     void NODELETE consumeSingleWhitespaceIfNext();
     void NODELETE consumeUntilCommentEndFound();
 
     bool NODELETE consumeIfNext(char16_t);
     StringView consumeName();
-    char32_t consumeEscape();
+    char32_t NODELETE consumeEscape();
 
     bool NODELETE nextTwoCharsAreValidEscape();
     bool NODELETE nextCharsAreNumber(char16_t);

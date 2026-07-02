@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT void NODELETE ref() const final;
     WEBCORE_EXPORT void deref() const final;
 #else
-    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 #endif
 
@@ -108,7 +108,7 @@ public:
     bool NODELETE inWindowFullscreen() const;
     bool supportsRewind() const;
     bool needsChromeMediaControlsPseudoElement() const;
-    bool isMediaControlsMacInlineSizeSpecsEnabled() const;
+    bool NODELETE isMediaControlsMacInlineSizeSpecsEnabled() const;
     bool NODELETE isAVExperienceControllerFullscreenEnabled() const;
 
     void captionPreferencesChanged();

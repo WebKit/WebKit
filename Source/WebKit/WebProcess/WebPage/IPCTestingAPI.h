@@ -41,7 +41,7 @@ class WebPage;
 
 namespace IPCTestingAPI {
 
-void inject(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
+void NODELETE inject(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
 
 }
 

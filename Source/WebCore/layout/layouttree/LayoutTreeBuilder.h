@@ -70,11 +70,11 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
-String layoutTreeAsText(const InitialContainingBlock&, const LayoutState*);
-void showLayoutTree(const InitialContainingBlock&, const LayoutState*);
-void showLayoutTree(const InitialContainingBlock&);
-void showInlineTreeAndRuns(TextStream&, const LayoutState&, const ElementBox& inlineFormattingRoot, size_t depth);
-void printLayoutTreeForLiveDocuments();
+String NODELETE layoutTreeAsText(const InitialContainingBlock&, const LayoutState*);
+void NODELETE showLayoutTree(const InitialContainingBlock&, const LayoutState*);
+void NODELETE showLayoutTree(const InitialContainingBlock&);
+void NODELETE showInlineTreeAndRuns(TextStream&, const LayoutState&, const ElementBox& inlineFormattingRoot, size_t depth);
+void NODELETE printLayoutTreeForLiveDocuments();
 #endif
 
 }

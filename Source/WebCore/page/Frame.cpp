@@ -55,13 +55,13 @@ namespace WebCore {
 #if ASSERT_ENABLED
 class FrameLifetimeVerifier {
 public:
-    static FrameLifetimeVerifier& singleton()
+    static FrameLifetimeVerifier& NODELETE singleton()
     {
         static NeverDestroyed<FrameLifetimeVerifier> instance;
         return instance.get();
     }
 
-    void frameCreated(Frame& frame)
+    void NODELETE frameCreated(Frame& frame)
     {
         auto& pair = m_map.ensure(frame.frameID(), [] {
             return std::pair<WeakPtr<LocalFrame>, WeakPtr<RemoteFrame>> { };
@@ -101,7 +101,7 @@ public:
         }
     }
 
-    bool isRootFrameIdentifier(FrameIdentifier identifier)
+    bool NODELETE isRootFrameIdentifier(FrameIdentifier identifier)
     {
         auto it = m_map.find(identifier);
         if (it == m_map.end())

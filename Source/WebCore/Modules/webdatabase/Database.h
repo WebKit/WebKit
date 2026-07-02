@@ -88,12 +88,12 @@ public:
     void readTransaction(Ref<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback);
 
     // Internal engine support
-    String stringIdentifierIsolatedCopy() const;
-    String displayNameIsolatedCopy() const;
-    String expectedVersionIsolatedCopy() const;
+    String NODELETE stringIdentifierIsolatedCopy() const;
+    String NODELETE displayNameIsolatedCopy() const;
+    String NODELETE expectedVersionIsolatedCopy() const;
     unsigned long long NODELETE estimatedSize() const;
-    String fileNameIsolatedCopy() const;
-    DatabaseDetails details() const;
+    String NODELETE fileNameIsolatedCopy() const;
+    DatabaseDetails NODELETE details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
     void NODELETE disableAuthorizer();
@@ -146,7 +146,7 @@ private:
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionWrapper>&&, bool readOnly);
 
 #if !LOG_DISABLED || !ERROR_DISABLED
-    String databaseDebugName() const;
+    String NODELETE databaseDebugName() const;
 #endif
 
     Ref<Document> m_document;

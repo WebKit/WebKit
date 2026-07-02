@@ -64,8 +64,8 @@ public:
         return { DidRequest };
     }
 private:
-    static void scheduleFreeRenderingResources();
-    static void freeRenderingResources();
+    static void NODELETE scheduleFreeRenderingResources();
+    static void NODELETE freeRenderingResources();
     enum RequestState { DidRequest };
     ScopedRenderingResourcesRequest(RequestState)
         : m_requested(true)

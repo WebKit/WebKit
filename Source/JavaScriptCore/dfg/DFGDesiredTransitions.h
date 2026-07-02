@@ -46,7 +46,7 @@ public:
     friend class DesiredTransitions;
     DesiredTransition(CodeBlock* codeOriginOwner, Structure*, Structure*);
 
-    template<typename Visitor> void visitChildren(Visitor&);
+    template<typename Visitor> void NODELETE visitChildren(Visitor&);
 
 private:
     CodeBlock* m_codeOriginOwner;
@@ -62,7 +62,7 @@ public:
 
     void addLazily(CodeBlock* codeOriginOwner, Structure*, Structure*);
     void reallyAdd(VM&, CommonData*);
-    template<typename Visitor> void visitChildren(Visitor&);
+    template<typename Visitor> void NODELETE visitChildren(Visitor&);
 
 private:
     CodeBlock* m_codeBlock { nullptr };

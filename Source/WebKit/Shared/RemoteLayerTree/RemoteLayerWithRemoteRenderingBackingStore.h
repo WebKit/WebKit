@@ -51,7 +51,7 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     void prepareToDisplay() final;
-    void clearBackingStore() final;
+    void NODELETE clearBackingStore() final;
     void createContextAndPaintContents() final;
 
     void setNeedsDisplay() final;
@@ -66,8 +66,8 @@ public:
     std::optional<ImageBufferSetIdentifier> bufferSetIdentifier() const final;
 
     void ensureBackingStore(const Parameters&) final;
-    bool hasFrontBuffer() const final;
-    bool frontBufferMayBeVolatile() const final;
+    bool NODELETE hasFrontBuffer() const final;
+    bool NODELETE frontBufferMayBeVolatile() const final;
 
     void dump(WTF::TextStream&) const final;
 private:

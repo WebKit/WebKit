@@ -753,7 +753,7 @@ public:
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
     bool canDeclareGlobalFunction(const Identifier&);
-    template<BindingCreationContext> void createGlobalFunctionBinding(const Identifier&);
+    template<BindingCreationContext> void NODELETE createGlobalFunctionBinding(const Identifier&);
 
     inline bool canDeclareGlobalVar(const Identifier&);
     template<BindingCreationContext> inline void createGlobalVarBinding(const Identifier&);
@@ -1044,7 +1044,7 @@ public:
     Structure* zonedDateTimeStructure() { return m_zonedDateTimeStructure.get(this); }
 
     JS_EXPORT_PRIVATE void setInspectable(bool);
-    JS_EXPORT_PRIVATE bool inspectable() const;
+    JS_EXPORT_PRIVATE bool NODELETE inspectable() const;
 
     void NODELETE setIsITML();
 
@@ -1283,7 +1283,7 @@ public:
         updateCanFastQueueMicrotask();
     }
 
-    MicrotaskQueue& microtaskQueue() const;
+    MicrotaskQueue& NODELETE microtaskQueue() const;
     JS_EXPORT_PRIVATE void setMicrotaskQueue(Ref<MicrotaskQueue>&&);
 
 protected:
@@ -1306,7 +1306,7 @@ private:
     void setGlobalThis(VM&, JSObject* globalThis);
 
     template<ErrorType errorType>
-    void initializeErrorConstructor(LazyClassStructure::Initializer&);
+    void NODELETE initializeErrorConstructor(LazyClassStructure::Initializer&);
 
     void initializeAggregateErrorConstructor(LazyClassStructure::Initializer&);
 

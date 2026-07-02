@@ -39,7 +39,7 @@ public:
 
     bool isExposed() const;
 
-    bool hasFallbackContent() const;
+    bool NODELETE hasFallbackContent() const;
     bool useFallbackContent() const final { return m_useFallbackContent; }
     void renderFallbackContent();
 
@@ -57,7 +57,7 @@ private:
     HTMLObjectElement(const QualifiedName&, Document&);
     ~HTMLObjectElement();
 
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
@@ -72,7 +72,7 @@ private:
     void childrenChanged(const ChildChange&) final;
 
     bool NODELETE isURLAttribute(const Attribute&) const final;
-    String imageSourceURL() const final;
+    String NODELETE imageSourceURL() const final;
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 

@@ -100,7 +100,7 @@ public:
     void setDestinationFilename(const String& d) { m_destinationFilename = d; }
 
 #if PLATFORM(COCOA)
-    void publishProgress(const URL&);
+    void NODELETE publishProgress(const URL&);
     void setProgress(NSProgress *progress) { m_progress = progress; }
     NSProgress *progress() const { return m_progress.get(); }
 #endif

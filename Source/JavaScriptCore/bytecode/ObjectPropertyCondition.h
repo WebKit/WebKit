@@ -236,8 +236,8 @@ public:
     
     // Returns true if we need an impure property watchpoint to ensure validity even if
     // isStillValidAccordingToStructure() returned true.
-    bool validityRequiresImpurePropertyWatchpoint(Structure*) const;
-    bool validityRequiresImpurePropertyWatchpoint() const;
+    bool NODELETE validityRequiresImpurePropertyWatchpoint(Structure*) const;
+    bool NODELETE validityRequiresImpurePropertyWatchpoint() const;
 
     // Checks if the condition still holds setting aside the need for an impure property watchpoint.
     // Validity might still require watchpoints on the object.

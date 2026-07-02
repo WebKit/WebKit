@@ -685,7 +685,7 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event, NSEvent* corr
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-static bool frameHasPlatformWidget(const LocalFrame& frame)
+static bool NODELETE frameHasPlatformWidget(const LocalFrame& frame)
 {
     if (auto* frameView = frame.view()) {
         if (frameView->platformWidget())
@@ -814,7 +814,7 @@ static WeakPtr<ScrollableArea> NODELETE scrollableAreaForEventTarget(Element* ev
     return dynamicDowncast<ScrollView>(EventHandler::widgetForEventTarget(eventTarget));
 }
     
-static bool eventTargetIsPlatformWidget(Element* eventTarget)
+static bool NODELETE eventTargetIsPlatformWidget(Element* eventTarget)
 {
     auto* widget = EventHandler::widgetForEventTarget(eventTarget);
     return widget && widget->platformWidget();

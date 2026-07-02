@@ -34,20 +34,20 @@ namespace WebCore {
 class EmptyPlatformMediaSessionClient final : public PlatformMediaSessionClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EmptyPlatformMediaSessionClient);
 public:
-    RefPtr<MediaSessionManagerInterface> sessionManager() const final { return nullptr; }
-    PlatformMediaSessionMediaType mediaType() const final { return PlatformMediaSessionMediaType::None; }
-    PlatformMediaSessionMediaType presentationType() const final { return PlatformMediaSessionMediaType::None; }
-    void mayResumePlayback(bool) final { }
-    void suspendPlayback() final { }
-    bool canReceiveRemoteControlCommands() const final { return false; }
-    void didReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&) final { }
-    bool supportsSeeking() const final { return false; }
-    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSessionInterruptionType) const final { return false; }
-    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final { return std::nullopt; }
+    RefPtr<MediaSessionManagerInterface> NODELETE sessionManager() const final { return nullptr; }
+    PlatformMediaSessionMediaType NODELETE mediaType() const final { return PlatformMediaSessionMediaType::None; }
+    PlatformMediaSessionMediaType NODELETE presentationType() const final { return PlatformMediaSessionMediaType::None; }
+    void NODELETE mayResumePlayback(bool) final { }
+    void NODELETE suspendPlayback() final { }
+    bool NODELETE canReceiveRemoteControlCommands() const final { return false; }
+    void NODELETE didReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&) final { }
+    bool NODELETE supportsSeeking() const final { return false; }
+    bool NODELETE shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSessionInterruptionType) const final { return false; }
+    std::optional<MediaSessionGroupIdentifier> NODELETE mediaSessionGroupIdentifier() const final { return std::nullopt; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const { return emptyLogger(); }
-    virtual uint64_t logIdentifier() const { return 0; }
+    virtual uint64_t NODELETE logIdentifier() const { return 0; }
 #endif
 };
 

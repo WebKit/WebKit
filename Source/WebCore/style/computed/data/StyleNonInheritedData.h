@@ -50,7 +50,7 @@ public:
     bool operator==(const NonInheritedData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const NonInheritedData&) const;
+    void NODELETE dumpDifferences(TextStream&, const NonInheritedData&) const;
 #endif
 
     DataRef<BoxData> boxData;

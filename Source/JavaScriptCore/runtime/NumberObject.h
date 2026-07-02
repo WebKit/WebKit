@@ -28,7 +28,7 @@ class NumberObject : public JSWrapperObject {
 protected:
     NumberObject(VM&, Structure*);
 #if ASSERT_ENABLED
-    void finishCreation(VM&);
+    void NODELETE finishCreation(VM&);
 #endif
 
 public:

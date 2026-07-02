@@ -40,7 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<SOAuthorizationSession> RedirectSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
+Ref<SOAuthorizationSession> NODELETE RedirectSOAuthorizationSession::create(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, Callback&& completionHandler)
 {
     return adoptRef(*new RedirectSOAuthorizationSession(delegate, WTF::move(navigationAction), page, WTF::move(completionHandler)));
 }

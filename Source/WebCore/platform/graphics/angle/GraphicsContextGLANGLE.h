@@ -350,7 +350,7 @@ public:
     void deleteRenderbuffer(PlatformGLObject) final;
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
-    void simulateEventForTesting(SimulatedEventForTesting) override;
+    void NODELETE simulateEventForTesting(SimulatedEventForTesting) override;
     RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY);
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();

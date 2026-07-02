@@ -50,7 +50,7 @@ public:
     ~ImageBufferShareableMappedIOSurfaceBitmapBackend();
 
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
-    bool canMapBackingStore() const final;
+    bool NODELETE canMapBackingStore() const final;
 
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
     WebCore::GraphicsContext& context() final;
@@ -60,18 +60,18 @@ private:
 
     // WebCore::ImageBufferCGBackend
     unsigned bytesPerRow() const final;
-    RefPtr<WebCore::NativeImage> copyNativeImage() final;
-    RefPtr<WebCore::NativeImage> createNativeImageReference() final;
-    RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
+    RefPtr<WebCore::NativeImage> NODELETE copyNativeImage() final;
+    RefPtr<WebCore::NativeImage> NODELETE createNativeImageReference() final;
+    RefPtr<WebCore::NativeImage> NODELETE sinkIntoNativeImage() final;
     bool isInUse() const final;
     void releaseGraphicsContext() final;
     bool setVolatile() final;
     WebCore::SetNonVolatileResult setNonVolatile() final;
-    WebCore::VolatilityState volatilityState() const final;
-    void setVolatilityState(WebCore::VolatilityState) final;
-    void transferToNewContext(const WebCore::ImageBufferCreationContext&) final;
-    void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
-    void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication) final;
+    WebCore::VolatilityState NODELETE volatilityState() const final;
+    void NODELETE setVolatilityState(WebCore::VolatilityState) final;
+    void NODELETE transferToNewContext(const WebCore::ImageBufferCreationContext&) final;
+    void NODELETE getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
+    void NODELETE putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication) final;
     void flushContext() final;
 
     std::unique_ptr<WebCore::IOSurface> m_surface;

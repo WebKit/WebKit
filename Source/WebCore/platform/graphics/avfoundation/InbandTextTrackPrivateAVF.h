@@ -53,7 +53,7 @@ public:
     String label() const override { return m_label; }
     String language() const override { return m_language; }
 
-    void setMode(InbandTextTrackPrivate::Mode) final;
+    void NODELETE setMode(InbandTextTrackPrivate::Mode) final;
 
     int trackIndex() const final { return m_index; }
     void setTextTrackIndex(int index) { m_index = index; }
@@ -66,10 +66,10 @@ public:
     bool hasBeenReported() const { return m_hasBeenReported; }
     void setHasBeenReported(bool reported) { m_hasBeenReported = reported; }
 
-    virtual void processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, const MediaTime&);
-    virtual void resetCueValues();
+    virtual void NODELETE processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, const MediaTime&);
+    virtual void NODELETE resetCueValues();
 
-    void beginSeeking();
+    void NODELETE beginSeeking();
     void endSeeking() { m_seeking = false; }
     bool seeking() const { return m_seeking; }
     
@@ -83,7 +83,7 @@ public:
     MediaTime startTimeVariance() const final { return MediaTime(1, 4); }
 
     InbandTextTrackType inbandTextTrackType() const override { return InbandTextTrackType::AVFTrack; }
-    void processVTTSample(CMSampleBufferRef, const MediaTime&);
+    void NODELETE processVTTSample(CMSampleBufferRef, const MediaTime&);
 
     using ModeChangedCallback = Function<void()>;
 
@@ -96,9 +96,9 @@ protected:
     void setLanguage(const String& language) { m_language = language; }
 
     Ref<InbandGenericCue> processCueAttributes(CFAttributedStringRef);
-    void processAttributedStrings(CFArrayRef, const MediaTime&);
-    void processVTTSamples(CFArrayRef, const MediaTime&);
-    void removeCompletedCues();
+    void NODELETE processAttributedStrings(CFArrayRef, const MediaTime&);
+    void NODELETE processVTTSamples(CFArrayRef, const MediaTime&);
+    void NODELETE removeCompletedCues();
 
     Vector<uint8_t> m_sampleInputBuffer;
 
@@ -107,8 +107,8 @@ private:
     ASCIILiteral logClassName() const final { return "InbandTextTrackPrivateAVF"_s; }
 #endif
 
-    bool processVTTFileHeader(CMFormatDescriptionRef);
-    bool readVTTSampleBuffer(CMSampleBufferRef, CMFormatDescriptionRef&);
+    bool NODELETE processVTTFileHeader(CMFormatDescriptionRef);
+    bool NODELETE readVTTSampleBuffer(CMSampleBufferRef, CMFormatDescriptionRef&);
 
     MediaTime m_currentCueStartTime;
     MediaTime m_currentCueEndTime;

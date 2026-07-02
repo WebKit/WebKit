@@ -78,7 +78,7 @@ public:
     void debuggerWasDisabled() override;
 
     // InspectorInstrumentation
-    virtual void mainFrameNavigated();
+    virtual void NODELETE mainFrameNavigated();
     void willSendXMLHttpRequest(const String& url);
     void willFetch(const String& url);
     void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);

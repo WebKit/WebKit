@@ -402,7 +402,7 @@ public:
 
     WEBCORE_EXPORT void setNeedsRecalcStyleInAllFrames();
 
-    WEBCORE_EXPORT OptionSet<DisabledAdaptations> disabledAdaptations() const;
+    WEBCORE_EXPORT OptionSet<DisabledAdaptations> NODELETE disabledAdaptations() const;
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
     WEBCORE_EXPORT void reloadExecutionContextsForOrigin(const ClientOrigin&, std::optional<FrameIdentifier> triggeringFrame) const;
@@ -423,7 +423,7 @@ public:
 
     WEBCORE_EXPORT LocalFrame* NODELETE localMainFrame() const;
     WEBCORE_EXPORT bool hasAnyLocalFrame() const;
-    WEBCORE_EXPORT Document* localTopDocument() const;
+    WEBCORE_EXPORT Document* NODELETE localTopDocument() const;
 
     Frame& mainFrame() const { return m_mainFrame.get(); }
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
@@ -600,7 +600,7 @@ public:
     std::unique_ptr<WTF::SchedulePairHashSet> m_scheduledRunLoopPairs;
 #endif
 
-    WEBCORE_EXPORT const VisibleSelection& selection() const LIFETIME_BOUND;
+    WEBCORE_EXPORT const VisibleSelection& NODELETE selection() const LIFETIME_BOUND;
 
     WEBCORE_EXPORT void setDefersLoading(bool);
     bool defersLoading() const { return m_defersLoading; }
@@ -658,7 +658,7 @@ public:
     };
     static constexpr OptionSet<PreferredRenderingUpdateOption> allPreferredRenderingUpdateOptions = { PreferredRenderingUpdateOption::IncludeThrottlingReasons, PreferredRenderingUpdateOption::IncludeAnimationsFrameRate };
     WEBCORE_EXPORT std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> = allPreferredRenderingUpdateOptions) const;
-    WEBCORE_EXPORT Seconds preferredRenderingUpdateInterval() const;
+    WEBCORE_EXPORT Seconds NODELETE preferredRenderingUpdateInterval() const;
 
     const FloatBoxExtent& contentInsets() const LIFETIME_BOUND { return m_contentInsets; }
     void setContentInsets(const FloatBoxExtent& insets) { m_contentInsets = insets; }
@@ -713,7 +713,7 @@ public:
     WEBCORE_EXPORT void setVerticalScrollElasticity(ScrollElasticity);
     ScrollElasticity verticalScrollElasticity() const { return static_cast<ScrollElasticity>(m_verticalScrollElasticity); }
 
-    WEBCORE_EXPORT void setHorizontalScrollElasticity(ScrollElasticity);
+    WEBCORE_EXPORT void NODELETE setHorizontalScrollElasticity(ScrollElasticity);
     ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
 
     WEBCORE_EXPORT void accessibilitySettingsDidChange();
@@ -733,7 +733,7 @@ public:
     WEBCORE_EXPORT unsigned pageCount() const;
     WEBCORE_EXPORT unsigned pageCountAssumingLayoutIsUpToDate() const;
 
-    WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
+    WEBCORE_EXPORT DiagnosticLoggingClient& NODELETE diagnosticLoggingClient() const;
 
     WEBCORE_EXPORT void logMediaDiagnosticMessage(const RefPtr<FormData>&) const;
 
@@ -791,10 +791,10 @@ public:
     bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
     void markAsServiceWorkerPage() { m_isServiceWorkerPage = true; }
 
-    WEBCORE_EXPORT static Page* serviceWorkerPage(ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT static Page* NODELETE serviceWorkerPage(ScriptExecutionContextIdentifier);
 
     // Service worker pages have an associated ServiceWorkerGlobalScope on the main thread.
-    void setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);
+    void NODELETE setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);
     WEBCORE_EXPORT JSC::JSGlobalObject* serviceWorkerGlobalObject(DOMWrapperWorld&);
 
     // Notifications when the Page starts and stops being presented via a native window.
@@ -929,7 +929,7 @@ public:
 
     WEBCORE_EXPORT Color themeColor() const;
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
-    WEBCORE_EXPORT Color NODELETE sampledPageTopColor() const;
+    WEBCORE_EXPORT Color sampledPageTopColor() const;
 
     WEBCORE_EXPORT void updateFixedContainerEdges(EnumSet<BoxSide>);
     const FixedContainerEdges& fixedContainerEdges() const LIFETIME_BOUND { return m_fixedContainerEdgesAndElements.first; }
@@ -1280,26 +1280,26 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    WEBCORE_EXPORT void willBeginWritingToolsSession(const std::optional<WritingTools::Session>&, WeakHashSet<Node, WeakPtrImplWithEventTargetData>&&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
+    WEBCORE_EXPORT void NODELETE willBeginWritingToolsSession(const std::optional<WritingTools::Session>&, WeakHashSet<Node, WeakPtrImplWithEventTargetData>&&, CompletionHandler<void(const Vector<WritingTools::Context>&)>&&);
 
-    WEBCORE_EXPORT void didBeginWritingToolsSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
+    WEBCORE_EXPORT void NODELETE didBeginWritingToolsSession(const WritingTools::Session&, const Vector<WritingTools::Context>&);
 
-    WEBCORE_EXPORT void proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const CharacterRange&, const WritingTools::Context&, bool finished);
+    WEBCORE_EXPORT void NODELETE proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    WEBCORE_EXPORT void proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestion&, const WritingTools::Context&);
+    WEBCORE_EXPORT void NODELETE proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
-    WEBCORE_EXPORT void willEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+    WEBCORE_EXPORT void NODELETE willEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
-    WEBCORE_EXPORT void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+    WEBCORE_EXPORT void NODELETE didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
-    WEBCORE_EXPORT void compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
+    WEBCORE_EXPORT void NODELETE compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
 
-    WEBCORE_EXPORT void writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
+    WEBCORE_EXPORT void NODELETE writingToolsSessionDidReceiveAction(const WritingTools::Session&, WritingTools::Action);
 
-    WEBCORE_EXPORT void updateStateForSelectedSuggestionIfNeeded();
+    WEBCORE_EXPORT void NODELETE updateStateForSelectedSuggestionIfNeeded();
 
-    void respondToUnappliedWritingToolsEditing(EditCommandComposition*);
-    void respondToReappliedWritingToolsEditing(EditCommandComposition*);
+    void NODELETE respondToUnappliedWritingToolsEditing(EditCommandComposition*);
+    void NODELETE respondToReappliedWritingToolsEditing(EditCommandComposition*);
 
     WEBCORE_EXPORT Vector<FloatRect> proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange&) const;
     WEBCORE_EXPORT void updateTextVisibilityForActiveWritingToolsSession(const CharacterRange&, bool, const WTF::UUID&);
@@ -1307,8 +1307,8 @@ public:
     WEBCORE_EXPORT void decorateTextReplacementsForActiveWritingToolsSession(const CharacterRange&);
     WEBCORE_EXPORT void setSelectionForActiveWritingToolsSession(const CharacterRange&);
 
-    WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForActiveWritingToolsSession() const;
-    WEBCORE_EXPORT void intelligenceTextAnimationsDidComplete();
+    WEBCORE_EXPORT std::optional<SimpleRange> NODELETE contextRangeForActiveWritingToolsSession() const;
+    WEBCORE_EXPORT void NODELETE intelligenceTextAnimationsDidComplete();
 #endif
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
     TextEffectController& textEffectController() { return m_textEffectController.get(); }
@@ -1451,7 +1451,7 @@ private:
 
     void doAfterUpdateRendering();
     void renderingUpdateCompleted();
-    void NODELETE computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep>);
+    void computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep>);
     void scheduleRenderingUpdateInternal();
     void prioritizeVisibleResources();
 

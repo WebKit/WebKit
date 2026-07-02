@@ -49,17 +49,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQuery);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectorQueryCache);
 
 #if ASSERT_ENABLED
-static bool isSingleTagNameSelector(const CSSSelector& selector)
+static bool NODELETE isSingleTagNameSelector(const CSSSelector& selector)
 {
     return !selector.precedingInComplexSelector() && selector.match() == CSSSelector::Match::Tag;
 }
 
-static bool isSingleClassNameSelector(const CSSSelector& selector)
+static bool NODELETE isSingleClassNameSelector(const CSSSelector& selector)
 {
     return !selector.precedingInComplexSelector() && selector.match() == CSSSelector::Match::Class;
 }
 
-static bool isSingleAttributeExactSelector(const CSSSelector& selector)
+static bool NODELETE isSingleAttributeExactSelector(const CSSSelector& selector)
 {
     return !selector.precedingInComplexSelector() && selector.match() == CSSSelector::Match::Exact;
 }

@@ -71,7 +71,7 @@ public:
 private:
     WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
 
-    std::optional<WebCore::Exception> platformShouldRejectLockRequest() const;
+    std::optional<WebCore::Exception> NODELETE platformShouldRejectLockRequest() const;
 
 
     WeakRef<WebPageProxy> m_page;

@@ -116,7 +116,7 @@ public:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "SourceBufferPrivateAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
     const Logger& sourceBufferLogger() const final { return m_logger.get(); }
     uint64_t sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
@@ -140,7 +140,7 @@ private:
     void enqueueSample(Ref<MediaSample>&&, TrackID) final;
     bool isReadyForMoreSamples(TrackID) final;
     void notifyClientWhenReadyForMoreSamples(TrackID) final;
-    bool canSetMinimumUpcomingPresentationTime(TrackID) const override;
+    bool NODELETE canSetMinimumUpcomingPresentationTime(TrackID) const override;
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&) override;
     bool canSwitchToType(const ContentType&) final;
 

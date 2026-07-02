@@ -82,7 +82,7 @@ struct CSSCustomPropertySyntax {
     bool NODELETE containsUnknownType() const;
 
 private:
-    template<typename CharacterType> static std::optional<Component> parseComponent(std::span<const CharacterType>);
+    template<typename CharacterType> static std::optional<Component> NODELETE parseComponent(std::span<const CharacterType>);
     static Type typeForTypeName(StringView);
 };
 

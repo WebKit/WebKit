@@ -43,7 +43,7 @@ public:
     void removeButton(HTMLInputElement&);
     RefPtr<HTMLInputElement> checkedButtonForGroup(const AtomString& groupName) const;
     bool hasCheckedButton(const HTMLInputElement&) const;
-    bool isInRequiredGroup(HTMLInputElement&) const;
+    bool NODELETE isInRequiredGroup(HTMLInputElement&) const;
     Vector<Ref<HTMLInputElement>> groupMembers(const HTMLInputElement&) const;
 
 private:

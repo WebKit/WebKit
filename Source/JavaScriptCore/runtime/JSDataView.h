@@ -49,8 +49,8 @@ public:
     
     // Dummy methods, which don't actually work; these are just in place to
     // placate some template specialization we do elsewhere.
-    static JSDataView* createUninitialized(JSGlobalObject*, Structure*, size_t length);
-    static JSDataView* create(JSGlobalObject*, Structure*, size_t length);
+    static JSDataView* NODELETE createUninitialized(JSGlobalObject*, Structure*, size_t length);
+    static JSDataView* NODELETE create(JSGlobalObject*, Structure*, size_t length);
     bool NODELETE setFromTypedArray(JSGlobalObject*, size_t offset, JSArrayBufferView*, size_t objectOffset, size_t length, CopyType);
     bool NODELETE setFromArrayLike(JSGlobalObject*, size_t offset, JSObject*, size_t objectOffset, size_t length);
     bool NODELETE setIndex(JSGlobalObject*, size_t, JSValue);

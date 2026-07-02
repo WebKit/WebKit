@@ -786,7 +786,7 @@ Ref<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::ensureInt
     return ensureModelAndInterface(contextId).second;
 }
 
-const VideoPresentationManagerProxy::ModelInterfacePair* VideoPresentationManagerProxy::findModelAndInterface(PlaybackSessionContextIdentifier contextId) const
+const VideoPresentationManagerProxy::ModelInterfacePair* NODELETE VideoPresentationManagerProxy::findModelAndInterface(PlaybackSessionContextIdentifier contextId) const
 {
     auto it = m_contextMap.find(contextId);
     if (it == m_contextMap.end())
@@ -794,7 +794,7 @@ const VideoPresentationManagerProxy::ModelInterfacePair* VideoPresentationManage
     return &(it->value);
 }
 
-RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
+RefPtr<PlatformVideoPresentationInterface> NODELETE VideoPresentationManagerProxy::findInterface(PlaybackSessionContextIdentifier contextId) const
 {
     if (auto* modelAndInterface = findModelAndInterface(contextId))
         return modelAndInterface->second.ptr();

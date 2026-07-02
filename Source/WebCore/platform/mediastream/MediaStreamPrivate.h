@@ -98,13 +98,13 @@ public:
 
     void startProducingData();
     void stopProducingData();
-    bool isProducingData() const;
+    bool NODELETE isProducingData() const;
 
-    WEBCORE_EXPORT bool hasVideo() const;
-    bool hasAudio() const;
-    bool muted() const;
+    WEBCORE_EXPORT bool NODELETE hasVideo() const;
+    bool NODELETE hasAudio() const;
+    bool NODELETE muted() const;
 
-    IntSize intrinsicSize() const;
+    IntSize NODELETE intrinsicSize() const;
 
     void monitorOrientation(OrientationNotifier&);
 
@@ -124,14 +124,14 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
     void characteristicsChanged();
-    void updateActiveVideoTrack();
+    void NODELETE updateActiveVideoTrack();
 
     bool computeActiveState();
     void forEachObserver(NOESCAPE const Function<void(MediaStreamPrivateObserver&)>&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MediaStreamPrivate"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     WeakHashSet<MediaStreamPrivateObserver> m_observers;

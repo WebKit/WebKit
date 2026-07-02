@@ -44,7 +44,7 @@ public:
 
     ~GraphicsContextCG();
 
-    bool hasPlatformContext() const final;
+    bool NODELETE hasPlatformContext() const final;
 
     // Returns the platform context for any purpose, including draws. Conservative estimate.
     CGContextRef platformContext() const final { return const_cast<GraphicsContextCG*>(this)->contextForDraw(); }
@@ -85,10 +85,10 @@ public:
     void fillEllipse(const FloatRect& ellipse) final;
     void strokeEllipse(const FloatRect& ellipse) final;
 
-    bool isCALayerContext() const final;
+    bool NODELETE isCALayerContext() const final;
     bool knownToHaveFloatBasedBacking() const final;
 
-    RenderingMode renderingMode() const final;
+    RenderingMode NODELETE renderingMode() const final;
 
     void resetClip() final;
     void clip(const FloatRect&) final;
@@ -124,7 +124,7 @@ public:
 
     void drawLinesForText(const FloatPoint&, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle) final;
 
-    void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
+    void NODELETE drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) final;
 
     void beginPage(const FloatRect& pageRect) final;
     void endPage() final;
@@ -134,11 +134,11 @@ public:
     void setDestinationForRect(const String& name, const FloatRect&) final;
     void addDestinationAtPoint(const String& name, const FloatPoint&) final;
 
-    bool supportsInternalLinks() const final;
+    bool NODELETE supportsInternalLinks() const final;
 
     void didUpdateState(GraphicsContextState&) final;
 
-    virtual bool canUseShadowBlur() const;
+    virtual bool NODELETE canUseShadowBlur() const;
 
     FloatRect roundToDevicePixels(const FloatRect&) const;
 
@@ -155,7 +155,7 @@ public:
     bool NODELETE consumeHasDrawn();
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    void setMaxEDRHeadroom(std::optional<float>) final;
+    void NODELETE setMaxEDRHeadroom(std::optional<float>) final;
 #endif
 
 private:

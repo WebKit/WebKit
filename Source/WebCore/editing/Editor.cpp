@@ -220,7 +220,7 @@ public:
     static void CreateAndApply(Ref<Document>&&);
 
 private:
-    EditAction editingAction() const override;
+    EditAction NODELETE editingAction() const override;
 };
 
 ClearTextCommand::ClearTextCommand(Ref<Document>&& document)

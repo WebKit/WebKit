@@ -49,16 +49,16 @@ public:
 
     ~AudioDecoderCocoa();
 
-    static Expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> isCodecSupported(const StringView&);
+    static Expected<std::pair<FourCharCode, std::optional<AudioStreamDescription::PCMFormat>>, String> NODELETE isCodecSupported(const StringView&);
 
-    static WTF::WorkQueue& queueSingleton();
+    static WTF::WorkQueue& NODELETE queueSingleton();
 
 private:
     explicit AudioDecoderCocoa(OutputCallback&&);
-    Ref<DecodePromise> decode(EncodedData&&) final;
-    Ref<GenericPromise> flush() final;
-    void reset() final;
-    void close() final;
+    Ref<DecodePromise> NODELETE decode(EncodedData&&) final;
+    Ref<GenericPromise> NODELETE flush() final;
+    void NODELETE reset() final;
+    void NODELETE close() final;
 
     const Ref<InternalAudioDecoderCocoa> m_internalDecoder;
 };

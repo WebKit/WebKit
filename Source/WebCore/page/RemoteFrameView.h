@@ -65,7 +65,7 @@ private:
     bool NODELETE hasScrollableOrRubberbandableAncestor() final;
     bool NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
     void NODELETE invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
-    IntRect windowClipRect() const final;
+    IntRect NODELETE windowClipRect() const final;
     void paintContents(GraphicsContext&, const IntRect& damageRect, SecurityOriginPaintPolicy, RegionContext*) final;
     void NODELETE addedOrRemovedScrollbar() final;
     void NODELETE delegatedScrollingModeDidChange() final;

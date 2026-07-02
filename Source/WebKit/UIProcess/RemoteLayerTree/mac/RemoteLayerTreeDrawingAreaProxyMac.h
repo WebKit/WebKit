@@ -50,10 +50,10 @@ public:
     static Ref<RemoteLayerTreeDrawingAreaProxyMac> create(WebPageProxy&, WebProcessProxy&);
     ~RemoteLayerTreeDrawingAreaProxyMac();
 
-    void didRefreshDisplay() override;
+    void NODELETE didRefreshDisplay() override;
 
-    DisplayLink& displayLink();
-    DisplayLink* existingDisplayLink();
+    DisplayLink& NODELETE displayLink();
+    DisplayLink* NODELETE existingDisplayLink();
 
     void NODELETE updateZoomTransactionID();
     std::optional<WebCore::PlatformLayerIdentifier> pageScalingLayerID() { return m_pageScalingLayerID.asOptional(); }
@@ -64,43 +64,43 @@ public:
 private:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
 
-    WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
+    WebCore::DelegatedScrollingMode NODELETE delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
     bool isRemoteLayerTreeDrawingAreaProxyMac() const override { return true; }
 
-    void layoutBannerLayers(const RemoteLayerTreeTransaction&);
+    void NODELETE layoutBannerLayers(const RemoteLayerTreeTransaction&);
 
-    void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) override;
+    void NODELETE didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) override;
 
-    void adjustTransientZoom(double, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
-    void commitTransientZoom(double, WebCore::FloatPoint) override;
+    void NODELETE adjustTransientZoom(double, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
+    void NODELETE commitTransientZoom(double, WebCore::FloatPoint) override;
 
-    void sendCommitTransientZoom(double, WebCore::FloatPoint, std::optional<WebCore::ScrollingNodeID>);
+    void NODELETE sendCommitTransientZoom(double, WebCore::FloatPoint, std::optional<WebCore::ScrollingNodeID>);
 
-    void applyTransientZoomToLayer();
-    void removeTransientZoomFromLayer();
+    void NODELETE applyTransientZoomToLayer();
+    void NODELETE removeTransientZoomFromLayer();
 
-    void scheduleDisplayRefreshCallbacks() override;
-    void pauseDisplayRefreshCallbacks() override;
-    void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
-    void windowScreenDidChange(WebCore::PlatformDisplayID) override;
-    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
+    void NODELETE scheduleDisplayRefreshCallbacks() override;
+    void NODELETE pauseDisplayRefreshCallbacks() override;
+    void NODELETE setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
+    void NODELETE windowScreenDidChange(WebCore::PlatformDisplayID) override;
+    std::optional<WebCore::FramesPerSecond> NODELETE displayNominalFramesPerSecond() override;
 
-    void dispatchSetObscuredContentInsets() override;
+    void NODELETE dispatchSetObscuredContentInsets() override;
 
-    void colorSpaceDidChange() override;
+    void NODELETE colorSpaceDidChange() override;
 
-    void viewIsBecomingVisible() final;
-    void viewIsBecomingInvisible() final;
+    void NODELETE viewIsBecomingVisible() final;
+    void NODELETE viewIsBecomingInvisible() final;
 
-    void didChangeViewExposedRect() override;
+    void NODELETE didChangeViewExposedRect() override;
 
-    void setDisplayLinkWantsFullSpeedUpdates(bool) override;
+    void NODELETE setDisplayLinkWantsFullSpeedUpdates(bool) override;
 
     void removeObserver(std::optional<DisplayLinkObserverID>&);
 
-    WTF::MachSendRight createFence() override;
+    WTF::MachSendRight NODELETE createFence() override;
 
     std::optional<WebCore::PlatformDisplayID> m_displayID; // Would be nice to make this non-optional, and ensure we always get one on creation.
     std::optional<WebCore::FramesPerSecond> m_displayNominalFramesPerSecond;

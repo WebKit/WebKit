@@ -66,10 +66,10 @@ protected:
 
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
-    VideoFrameRotation videoFrameRotation() const final;
+    VideoFrameRotation NODELETE videoFrameRotation() const final;
     void generatePresets() override;
 
-    IntSize captureSize() const;
+    IntSize NODELETE captureSize() const;
 
     ImageBuffer* imageBufferInternal();
 
@@ -115,8 +115,8 @@ private:
     bool mockWindow() const { return mockDisplayType(CaptureDevice::DeviceType::Window); }
     bool mockDisplayType(CaptureDevice::DeviceType) const;
 
-    void startApplyingConstraints() final;
-    void endApplyingConstraints() final;
+    void NODELETE startApplyingConstraints() final;
+    void NODELETE endApplyingConstraints() final;
 
     class DrawingState {
     public:

@@ -837,7 +837,7 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, ScrollPosition { }, LayoutRect { }, HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> { });
 }
 
-Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const
+Ref<SecurityOrigin> NODELETE WebFrameProxy::securityOrigin() const
 {
     ASSERT(m_documentSecurityOrigin);
     return *m_documentSecurityOrigin;
@@ -960,7 +960,7 @@ auto WebFrameProxy::traversePrevious(CanWrap canWrap) -> TraversalResult
     return { };
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::deepLastChild()
+RefPtr<WebFrameProxy> NODELETE WebFrameProxy::deepLastChild()
 {
     auto* result = static_cast<WebFrameProxy*>(this);
     for (auto* last = lastChild(); last; last = last->lastChild())
@@ -1014,7 +1014,7 @@ WebFrameProxy* WebFrameProxy::previousSibling() const
     return (--it)->ptr();
 }
 
-RefPtr<WebFrameProxy> WebFrameProxy::childFrame(uint64_t index) const
+RefPtr<WebFrameProxy> NODELETE WebFrameProxy::childFrame(uint64_t index) const
 {
     auto* child = firstChild();
     for (uint64_t i = 0; i < index && child; i++)

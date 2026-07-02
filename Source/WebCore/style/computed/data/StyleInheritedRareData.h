@@ -101,7 +101,7 @@ public:
     bool operator==(const InheritedRareData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const InheritedRareData&) const;
+    void NODELETE dumpDifferences(TextStream&, const InheritedRareData&) const;
 #endif
 
     float usedZoom;

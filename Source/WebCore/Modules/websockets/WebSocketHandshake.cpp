@@ -163,7 +163,7 @@ String WebSocketHandshake::clientLocation() const
     return makeString(m_secure ? "wss"_s : "ws"_s, "://"_s, hostName(m_url, m_secure), resourceName(m_url));
 }
 
-static bool isStandardWebSocketHandshakeRequestHeader(HTTPHeaderName name)
+static bool NODELETE isStandardWebSocketHandshakeRequestHeader(HTTPHeaderName name)
 {
     switch (name) {
     case HTTPHeaderName::Upgrade:

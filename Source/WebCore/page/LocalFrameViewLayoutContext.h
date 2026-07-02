@@ -147,19 +147,19 @@ public:
     // Returns true if a pending compositing layer update was done.
     bool updateCompositingLayersAfterLayoutIfNeeded();
 
-    RenderLayoutState* NODELETE layoutState() const LIFETIME_BOUND PURE_FUNCTION;
+    RenderLayoutState* layoutState() const LIFETIME_BOUND PURE_FUNCTION;
     // Returns true if layoutState should be used for its cached offset and clip.
     bool isPaintOffsetCacheEnabled() const { return !m_paintOffsetCacheDisableCount && layoutState(); }
 #ifndef NDEBUG
-    void checkLayoutState();
+    void NODELETE checkLayoutState();
 #endif
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
-    LayoutSize NODELETE layoutDelta() const;
-    void NODELETE addLayoutDelta(const LayoutSize& delta);
+    LayoutSize layoutDelta() const;
+    void addLayoutDelta(const LayoutSize& delta);
 #if ASSERT_ENABLED
-    bool layoutDeltaMatches(const LayoutSize& delta);
+    bool NODELETE layoutDeltaMatches(const LayoutSize& delta);
 #endif
     using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;
 

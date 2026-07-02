@@ -456,7 +456,7 @@ public:
         }
     }
 
-    CallbackType type() const { return m_type; }
+    CallbackType NODELETE type() const { return m_type; }
 
     bool isConstructible()
     {
@@ -664,7 +664,7 @@ static bool blockSignatureContainsClass()
     return containsClass;
 }
 
-static inline bool skipNumber(const char*& position)
+static inline bool NODELETE skipNumber(const char*& position)
 {
     if (!isASCIIDigit(*position))
         return false;

@@ -74,7 +74,7 @@ void DrawingAreaProxy::stopReceivingMessages(WebProcessProxy& process)
     }
 }
 
-std::span<IPC::ReceiverName> DrawingAreaProxy::messageReceiverNames() const
+std::span<IPC::ReceiverName> NODELETE DrawingAreaProxy::messageReceiverNames() const
 {
     static std::array<IPC::ReceiverName, 1> name { Messages::DrawingAreaProxy::messageReceiverName() };
     return { name };

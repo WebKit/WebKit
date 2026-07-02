@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static WindRule windRule(const AcceleratedEffectShapeFunction& value)
+static WindRule NODELETE windRule(const AcceleratedEffectShapeFunction& value)
 {
     return value.fillRule.value_or(WindRule::NonZero);
 }
@@ -56,7 +56,7 @@ template<typename ControlPoint> static AcceleratedEffectShapeFunction::ControlPo
     return defaultValue;
 }
 
-template<typename ControlPoint> static FloatPoint evaluateControlPointOffset(const ControlPoint& value)
+template<typename ControlPoint> static FloatPoint NODELETE evaluateControlPointOffset(const ControlPoint& value)
 {
     return value.offset;
 }
@@ -102,12 +102,12 @@ public:
     }
 
 private:
-    bool hasMoreData() const override
+    bool NODELETE hasMoreData() const override
     {
         return m_nextIndex < m_endIndex;
     }
 
-    bool moveToNextToken() override { return true; }
+    bool NODELETE moveToNextToken() override { return true; }
 
     SVGPathSegType nextCommand(SVGPathSegType) override
     {
@@ -116,7 +116,7 @@ private:
         return type;
     }
 
-    std::optional<SVGPathSegType> parseSVGSegmentType() override
+    std::optional<SVGPathSegType> NODELETE parseSVGSegmentType() override
     {
         // This represents the initial move to to set the "from" position.
         ASSERT(!m_nextIndex);
@@ -347,16 +347,16 @@ private:
         return { toPosition(controlPoint), std::nullopt };
     }
 
-    static AcceleratedEffectShapeFunction::RelativeControlPoint relativeControlPoint(const FloatPoint& controlPoint)
+    static AcceleratedEffectShapeFunction::RelativeControlPoint NODELETE relativeControlPoint(const FloatPoint& controlPoint)
     {
         return { toCoordinatePair(controlPoint), std::nullopt };
     }
 
-    void incrementPathSegmentCount() override
+    void NODELETE incrementPathSegmentCount() override
     {
     }
 
-    bool continueConsuming() override
+    bool NODELETE continueConsuming() override
     {
         return true;
     }
@@ -548,7 +548,7 @@ Path path(const AcceleratedEffectShapeFunction& value, const FloatRect& bounding
 // MARK: - Blending
 
 template<typename T>
-static T blendWithPreferredValue(const T& from, const T& to, const T& preferredValue, const BlendingContext& context)
+static T NODELETE blendWithPreferredValue(const T& from, const T& to, const T& preferredValue, const BlendingContext& context)
 {
     if (context.progress <= 0)
         return from;

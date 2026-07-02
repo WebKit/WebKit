@@ -74,25 +74,25 @@ struct Nudged {
 namespace JSC {
 namespace TemporalCore {
 
-int JS_EXPORT_PRIVATE durationSign(const ISO8601::Duration&);
+int JS_EXPORT_PRIVATE NODELETE durationSign(const ISO8601::Duration&);
 
-ISO8601::Duration JS_EXPORT_PRIVATE negateDuration(const ISO8601::Duration&);
+ISO8601::Duration JS_EXPORT_PRIVATE NODELETE negateDuration(const ISO8601::Duration&);
 
-ISO8601::Duration JS_EXPORT_PRIVATE absDuration(const ISO8601::Duration&);
+ISO8601::Duration JS_EXPORT_PRIVATE NODELETE absDuration(const ISO8601::Duration&);
 
 TemporalUnit NODELETE JS_EXPORT_PRIVATE largestSubduration(const ISO8601::Duration&);
 
-int64_t JS_EXPORT_PRIVATE totalSeconds(const ISO8601::Duration&);
+int64_t JS_EXPORT_PRIVATE NODELETE totalSeconds(const ISO8601::Duration&);
 
-Int128 JS_EXPORT_PRIVATE totalSubseconds(const ISO8601::Duration&);
+Int128 JS_EXPORT_PRIVATE NODELETE totalSubseconds(const ISO8601::Duration&);
 
-std::optional<double> JS_EXPORT_PRIVATE balanceDuration(ISO8601::Duration&, TemporalUnit largestUnit);
+std::optional<double> JS_EXPORT_PRIVATE NODELETE balanceDuration(ISO8601::Duration&, TemporalUnit largestUnit);
 
 Int128 JS_EXPORT_PRIVATE timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds);
 
-std::pair<int64_t, Int128> JS_EXPORT_PRIVATE splitTimeDuration(Int128 timeDuration);
+std::pair<int64_t, Int128> JS_EXPORT_PRIVATE NODELETE splitTimeDuration(Int128 timeDuration);
 
-ISO8601::PlainTime JS_EXPORT_PRIVATE plainTimeFromSubdayNs(Int128 ns);
+ISO8601::PlainTime JS_EXPORT_PRIVATE NODELETE plainTimeFromSubdayNs(Int128 ns);
 
 double JS_EXPORT_PRIVATE totalTimeDuration(Int128, TemporalUnit);
 
@@ -110,9 +110,9 @@ TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE toDateDurationRecordWithoutT
 
 Int128 JS_EXPORT_PRIVATE getUTCEpochNanoseconds(ISO8601::PlainDate, ISO8601::PlainTime);
 
-constexpr int32_t unitIndexInTable(TemporalUnit);
+constexpr int32_t NODELETE unitIndexInTable(TemporalUnit);
 
-constexpr TemporalUnit unitInTable(int32_t);
+constexpr TemporalUnit NODELETE unitInTable(int32_t);
 
 TemporalResult<ISO8601::Duration> JS_EXPORT_PRIVATE adjustDateDurationRecord(const ISO8601::Duration& dateDuration, int64_t days, std::optional<int64_t> weeks, std::optional<int64_t> months);
 

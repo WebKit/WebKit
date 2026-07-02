@@ -41,8 +41,8 @@ public:
     ~MenuListMac();
 
 private:
-    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
-    IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
+    IntSize NODELETE cellSize(NSControlSize, const ControlStyle&) const override;
+    IntOutsets NODELETE cellOutsets(NSControlSize, const ControlStyle&) const override;
 
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 

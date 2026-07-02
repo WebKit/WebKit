@@ -182,12 +182,12 @@ using namespace HTMLNames;
 class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ClipRects);
 public:
-    static Ref<ClipRects> NODELETE create()
+    static Ref<ClipRects> create()
     {
         return adoptRef(*new ClipRects);
     }
 
-    static Ref<ClipRects> NODELETE create(const ClipRects& other)
+    static Ref<ClipRects> create(const ClipRects& other)
     {
         return adoptRef(*new ClipRects(other));
     }
@@ -274,7 +274,7 @@ public:
         return m_clipRects[getIndex(context.clipRectsType, context.respectOverflowClip())].get();
     }
 
-    void NODELETE setClipRects(ClipRectsType clipRectsType, bool respectOverflowClip, RefPtr<ClipRects>&& clipRects)
+    void setClipRects(ClipRectsType clipRectsType, bool respectOverflowClip, RefPtr<ClipRects>&& clipRects)
     {
         m_clipRects[getIndex(clipRectsType, respectOverflowClip)] = WTF::move(clipRects);
     }
@@ -1113,7 +1113,7 @@ void RenderLayer::willUpdateLayerPositions()
 }
 
 #if !LOG_DISABLED || ENABLE(TREE_DEBUGGING)
-static inline bool compositingLogEnabledRenderLayer()
+static inline bool NODELETE compositingLogEnabledRenderLayer()
 {
     return LogCompositing.state == WTFLogChannelState::On;
 }
@@ -6804,7 +6804,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
     showLayerTree(renderer->enclosingLayer());
 }
 
-static void outputPaintOrderTreeLegend(TextStream& stream)
+static void NODELETE outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
     stream << "(T)op layer, (S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, Behaves as fi(x)ed, (C)omposited, (P)rovides backing/uses (p)rovided backing/paints to (a)ncestor, (c)omposited descendant, (s)scrolling ancestor, (t)transformed ancestor\n"
@@ -6815,14 +6815,14 @@ static void outputPaintOrderTreeLegend(TextStream& stream)
     stream.nextLine();
 }
 
-static void outputIndent(TextStream& stream, unsigned depth)
+static void NODELETE outputIndent(TextStream& stream, unsigned depth)
 {
     unsigned i = 0;
     while (++i <= depth * 2)
         stream << " ";
 }
 
-static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, ASCIILiteral prefix, unsigned depth = 0)
+static void NODELETE outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, ASCIILiteral prefix, unsigned depth = 0)
 {
     stream << (layer.establishesTopLayer() ? "T"_s : "-"_s);
     stream << (layer.isCSSStackingContext() ? "S"_s : (layer.isForcedStackingContext() ? "F"_s : (layer.isOpportunisticStackingContext() ? "P"_s : "-"_s)));
@@ -6986,7 +6986,7 @@ void showPaintOrderTree(const WebCore::RenderObject* renderer)
     showPaintOrderTree(renderer->enclosingLayer());
 }
 
-static void outputLayerPositionTreeLegend(TextStream& stream)
+static void NODELETE outputLayerPositionTreeLegend(TextStream& stream)
 {
     stream.nextLine();
     stream << "Dirty flags: NeedsPosition(U)pdate, (D)escendantNeedsPositionUpdate, All(C)hildrenNeedPositionUpdate, (A)llDescendantsNeedPositionUpdate\n";

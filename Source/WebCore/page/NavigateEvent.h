@@ -101,7 +101,7 @@ public:
     AbortSignal& signal() { return m_signal; }
     DOMFormData* formData() { return m_formData.get(); }
     String downloadRequest() { return m_downloadRequest; }
-    JSC::JSValue info();
+    JSC::JSValue NODELETE info();
     JSValueInWrappedObject& infoWrapper() LIFETIME_BOUND { return m_info; }
     Element* sourceElement() { return m_sourceElement.get(); }
 

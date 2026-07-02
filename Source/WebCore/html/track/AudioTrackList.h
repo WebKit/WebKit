@@ -48,15 +48,15 @@ public:
     RefPtr<AudioTrack> getTrackById(TrackID) const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_inbandTracks.size(); }
-    AudioTrack& NODELETE item(unsigned index) const;
-    AudioTrack* NODELETE itemForBindings(unsigned index) const;
+    AudioTrack& item(unsigned index) const;
+    AudioTrack* itemForBindings(unsigned index) const;
     AudioTrack& lastItem() const { return item(length() - 1); }
     AudioTrack* firstEnabled() const;
     void append(Ref<AudioTrack>&&);
     void remove(TrackBase&, bool scheduleEvent = true) final;
 
     // EventTarget
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
 private:
     explicit AudioTrackList(ScriptExecutionContext*);

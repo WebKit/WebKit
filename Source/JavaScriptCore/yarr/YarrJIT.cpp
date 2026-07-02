@@ -145,7 +145,7 @@ public:
     bool NODELETE is8Bit() const { return m_is8Bit; }
 
 private:
-    inline void add(char16_t character)
+    inline void NODELETE add(char16_t character)
     {
         ++m_size;
         ++m_samples[character & BoyerMooreBitmap::mapMask];
@@ -901,7 +901,7 @@ class YarrGenerator final : public YarrJITInfo {
     }
 #endif
 
-    void NODELETE optimizeAlternative(PatternAlternative* alternative)
+    void optimizeAlternative(PatternAlternative* alternative)
     {
         if (!alternative->m_terms.size())
             return;
@@ -1120,7 +1120,7 @@ class YarrGenerator final : public YarrJITInfo {
         matchCharacterClassOnlyOneRange(character, scratch, failMatches, ranges[0]);
     }
 
-    void matchCharacterClassTable(MacroAssembler::RegisterID character, MacroAssembler::JumpList& failMatches, const char* table, bool tableInverted = false)
+    void NODELETE matchCharacterClassTable(MacroAssembler::RegisterID character, MacroAssembler::JumpList& failMatches, const char* table, bool tableInverted = false)
     {
         ASSERT(!m_decodeSurrogatePairs);
         MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(table));
@@ -1712,7 +1712,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.store32(MacroAssembler::TrustedImm32(subpatternId), duplicateNamedGroupAddress(duplicateNamedGroupId));
     }
 
-    void storeDuplicateNamedGroupSubpatternIdFromReg(unsigned duplicateNamedGroupId, MacroAssembler::RegisterID reg)
+    void NODELETE storeDuplicateNamedGroupSubpatternIdFromReg(unsigned duplicateNamedGroupId, MacroAssembler::RegisterID reg)
     {
         m_jit.store32(reg, duplicateNamedGroupAddress(duplicateNamedGroupId));
     }
@@ -1994,7 +1994,7 @@ class YarrGenerator final : public YarrJITInfo {
             m_pendingFallthrough = false;
         }
 
-        bool isEmpty()
+        bool NODELETE isEmpty()
         {
             return m_laterFailures.empty() && m_pendingReturns.isEmpty() && !m_pendingFallthrough;
         }
@@ -2011,7 +2011,7 @@ class YarrGenerator final : public YarrJITInfo {
         }
 
         // Called at the end of code generation to link all return addresses.
-        void linkDataLabels(LinkBuffer& linkBuffer)
+        void NODELETE linkDataLabels(LinkBuffer& linkBuffer)
         {
             ASSERT(isEmpty());
             for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
@@ -7136,7 +7136,7 @@ public:
     }
 #endif
 
-    const char* variant() final
+    const char* NODELETE variant() final
     {
         if (m_executionMode == ExecutionMode::MatchOnly) {
             if (m_charSize == CharSize::Char8)
@@ -7151,7 +7151,7 @@ public:
         return "16-bit regular expression";
     }
 
-    unsigned opCount() final
+    unsigned NODELETE opCount() final
     {
         return m_ops.size();
     }

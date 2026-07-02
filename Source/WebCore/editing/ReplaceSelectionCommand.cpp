@@ -113,7 +113,7 @@ public:
     Node* firstChild() const;
     Node* lastChild() const;
 
-    bool isEmpty() const;
+    bool NODELETE isEmpty() const;
     
     bool NODELETE hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
     bool NODELETE hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }

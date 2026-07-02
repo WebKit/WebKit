@@ -134,7 +134,7 @@ public:
 
     // NetworkLoadClient.
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final;
-    bool isSynchronous() const final;
+    bool NODELETE isSynchronous() const final;
     bool isAllowedToAskUserForCredentials() const final { return m_isAllowedToAskUserForCredentials; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
     void didReceiveInformationalResponse(WebCore::ResourceResponse&&) final;
@@ -144,10 +144,10 @@ public:
     void didFailLoading(const WebCore::ResourceError&) final;
     void didBlockAuthenticationChallenge() final;
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&) final;
-    bool shouldCaptureExtraNetworkLoadMetrics() const final;
+    bool NODELETE shouldCaptureExtraNetworkLoadMetrics() const final;
 
     // CrossOriginAccessControlCheckDisabler
-    bool crossOriginAccessControlCheckEnabled() const override;
+    bool NODELETE crossOriginAccessControlCheckEnabled() const override;
         
     void convertToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
@@ -195,14 +195,14 @@ private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&&);
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() const override;
+    IPC::Connection* NODELETE messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override { return m_parameters.identifier->toUInt64(); }
 
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
     void dataReceivedThroughContentFilter(const WebCore::SharedBuffer&) final;
     WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
-    void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
+    void NODELETE cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
     void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&&) final;
 #if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)

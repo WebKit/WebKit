@@ -137,7 +137,7 @@ public:
         return m_slowPathJump;
     }
 
-    void finalize(
+    void NODELETE finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     template<typename PropertyInlineCache>
@@ -266,7 +266,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+    void NODELETE finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
@@ -321,7 +321,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(
+    void NODELETE finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     void generateFastPath(CCallHelpers&);
@@ -369,7 +369,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(
+    void NODELETE finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     void generateFastPath(CCallHelpers&);
@@ -401,7 +401,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(
+    void NODELETE finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     void generateFastPath(CCallHelpers&);
@@ -477,7 +477,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+    void NODELETE finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     template<typename PropertyInlineCache>
     static void setUpPropertyInlineCache(PropertyInlineCache& propertyCache, CodeBlock* codeBlock,
@@ -522,7 +522,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(
+    void NODELETE finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
     
     void generateFastPath(CCallHelpers&);
@@ -579,7 +579,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+    void NODELETE finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
 
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
@@ -638,7 +638,7 @@ public:
         return m_slowPathJump.m_jump;
     }
 
-    void finalize(
+    void NODELETE finalize(
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
     
     void generateFastPath(CCallHelpers&);

@@ -48,7 +48,7 @@ public:
     ~ImageBufferIOSurfaceBackend();
     
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
-    bool canMapBackingStore() const final;
+    bool NODELETE canMapBackingStore() const final;
 
     IOSurface* surface() override;
     GraphicsContext& context() override;
@@ -73,8 +73,8 @@ protected:
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;
-    VolatilityState volatilityState() const final;
-    void setVolatilityState(VolatilityState) final;
+    VolatilityState NODELETE volatilityState() const final;
+    void NODELETE setVolatilityState(VolatilityState) final;
 
     void ensureNativeImagesHaveCopiedBackingStore() final;
 

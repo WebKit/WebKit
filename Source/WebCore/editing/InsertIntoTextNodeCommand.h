@@ -49,7 +49,7 @@ private:
     void doReapply() override;
 
 #ifndef NDEBUG
-    void getNodesInCommand(NodeSet&) override;
+    void NODELETE getNodesInCommand(NodeSet&) override;
 #endif
 
     bool shouldEnablePasswordEcho() const;

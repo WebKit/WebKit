@@ -48,14 +48,14 @@ private:
     RealtimeIncomingAudioSourceCocoa(Ref<webrtc::AudioTrackInterface>&&, String&&);
 
     // RealtimeMediaSource API
-    void startProducingData() final;
-    void stopProducingData()  final;
+    void NODELETE startProducingData() final;
+    void NODELETE stopProducingData()  final;
 
     // webrtc::AudioTrackSinkInterface API
-    void OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames) final;
+    void NODELETE OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames) final;
 
 #if !RELEASE_LOG_DISABLED
-    void logTimerFired();
+    void NODELETE logTimerFired();
 #endif
 
     static constexpr Seconds LogTimerInterval = 2_s;

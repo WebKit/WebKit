@@ -58,14 +58,14 @@ public:
         return IterationStatus::Done;
     }
 
-    bool callerIsStrict() const { return m_callerIsStrict; }
+    bool NODELETE callerIsStrict() const { return m_callerIsStrict; }
 
 private:
     mutable int m_iterations;
     mutable bool m_callerIsStrict;
 };
 
-static bool callerIsStrict(VM& vm, CallFrame* callFrame)
+static bool NODELETE callerIsStrict(VM& vm, CallFrame* callFrame)
 {
     GetCallerStrictnessFunctor iter;
     StackVisitor::visit(callFrame, vm, iter);

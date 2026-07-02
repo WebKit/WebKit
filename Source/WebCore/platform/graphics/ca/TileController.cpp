@@ -724,7 +724,7 @@ void TileController::didRevalidateTiles(TileGrid& tileGrid, TileRevalidationType
 {
     m_boundsAtLastRevalidate = bounds();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " (bounds " << bounds() << ") didRevalidateTiles - tileCoverageRect " << tileCoverageRect() << " grid extent " << tileGridExtent() << " memory use " << (retainedTileBackingStoreMemory() / (1024 * 1024)) << "MB");
+    LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " (bounds " << bounds() << ") NODELETE didRevalidateTiles - tileCoverageRect " << tileCoverageRect() << " grid extent " << tileGridExtent() << " memory use " << (retainedTileBackingStoreMemory() / (1024 * 1024)) << "MB");
 
     updateTileCoverageMap();
 

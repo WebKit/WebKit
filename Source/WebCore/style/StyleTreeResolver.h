@@ -245,7 +245,7 @@ private:
         bool chosen { false };
         bool isFirstTry { true };
 
-        const Style::ComputedStyle& NODELETE originalStyle() const;
+        const Style::ComputedStyle& originalStyle() const;
         std::unique_ptr<Style::ComputedStyle> currentOption() const;
     };
     HashMap<WeakStyleable, PositionOptions> m_positionOptions;

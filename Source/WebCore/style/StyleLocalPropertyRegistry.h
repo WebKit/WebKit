@@ -36,8 +36,8 @@ namespace Style {
 // and no invalidation or prototype style management.
 class LocalPropertyRegistry {
 public:
-    const CSSRegisteredCustomProperty* get(const AtomString&) const;
-    bool isInherited(const AtomString&) const;
+    const CSSRegisteredCustomProperty* NODELETE get(const AtomString&) const;
+    bool NODELETE isInherited(const AtomString&) const;
 
     void add(CSSRegisteredCustomProperty&&);
 

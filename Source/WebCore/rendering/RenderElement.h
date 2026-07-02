@@ -148,7 +148,7 @@ public:
     // positive (never cleared once set); never a false negative — set on every
     // createLayer and on every attach of a subtree that already has the bit.
     bool mayHaveLayerInSubtree() const { return m_mayHaveLayerInSubtree; }
-    void setMayHaveLayerInSubtreeIncludingAncestors();
+    void NODELETE setMayHaveLayerInSubtreeIncludingAncestors();
 
     virtual void dirtyLineFromChangedChild() { }
 
@@ -184,7 +184,7 @@ public:
     bool isVisibleIgnoringGeometry() const;
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
     bool isVisibleInDocumentRect(const IntRect& documentRect) const;
-    virtual bool isInsideEntirelyHiddenLayer() const;
+    virtual bool NODELETE isInsideEntirelyHiddenLayer() const;
 
     // Returns true if this renderer requires a new stacking context.
     static bool createsGroupForStyle(const Style::ComputedStyle&); // Defined in RenderElementStyleInlines.h.
@@ -260,7 +260,7 @@ public:
     WEBCORE_EXPORT void resetTextAutosizing();
 #endif
 
-    WEBCORE_EXPORT ImageOrientation imageOrientation() const;
+    WEBCORE_EXPORT ImageOrientation NODELETE imageOrientation() const;
 
     void removeFromRenderFragmentedFlow();
     virtual void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*);
@@ -424,7 +424,7 @@ private:
 
     bool shouldRepaintForStyleDifference(Style::Difference) const;
 
-    template<typename FillLayerType> void updateFillImages(const FillLayerType*, const FillLayerType*);
+    template<typename FillLayerType> void NODELETE updateFillImages(const FillLayerType*, const FillLayerType*);
     void updateImage(Style::Image*, Style::Image*);
     void updateShapeImage(const Style::ShapeOutside*, const Style::ShapeOutside*);
 
@@ -441,7 +441,7 @@ private:
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;
 
-    void NODELETE clearSubtreeLayoutRootIfNeeded() const;
+    void clearSubtreeLayoutRootIfNeeded() const;
     
     bool shouldWillChangeCreateStackingContext() const;
     void issueRepaintForOutlineAuto(float outlineSize);
@@ -451,7 +451,7 @@ private:
 
     const Style::ComputedStyle* textSegmentPseudoStyle(PseudoElementType) const LIFETIME_BOUND;
 
-    template<typename> Color selectionColor() const;
+    template<typename> Color NODELETE selectionColor() const;
 
     SingleThreadPackedWeakPtr<RenderObject> m_firstChild;
     SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
@@ -481,7 +481,7 @@ private:
     Style::ComputedStyle m_style;
 };
 
-WEBCORE_EXPORT float opacity(const RenderElement&);
+WEBCORE_EXPORT float NODELETE opacity(const RenderElement&);
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 {

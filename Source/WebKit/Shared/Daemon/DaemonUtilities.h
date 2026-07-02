@@ -35,7 +35,7 @@ class Encoder;
 
 namespace WebKit {
 
-void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t));
+void NODELETE startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t));
 OSObjectPtr<xpc_object_t> vectorToXPCData(Vector<uint8_t>&&);
 OSObjectPtr<xpc_object_t> encoderToXPCData(UniqueRef<IPC::Encoder>&&);
 

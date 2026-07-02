@@ -55,7 +55,7 @@ private:
     void internalEnable() override;
     void internalDisable() override;
 
-    bool matchesCurrentContext(ScriptExecutionContext*) const override;
+    bool NODELETE matchesCurrentContext(ScriptExecutionContext*) const override;
 
     WeakRef<Page> m_inspectedPage;
 };

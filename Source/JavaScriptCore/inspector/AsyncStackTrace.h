@@ -50,8 +50,8 @@ public:
     bool NODELETE isPending() const;
     bool NODELETE isLocked() const;
 
-    JS_EXPORT_PRIVATE const ScriptCallFrame& at(size_t) const;
-    JS_EXPORT_PRIVATE size_t size() const;
+    JS_EXPORT_PRIVATE const ScriptCallFrame& NODELETE at(size_t) const;
+    JS_EXPORT_PRIVATE size_t NODELETE size() const;
     JS_EXPORT_PRIVATE bool topCallFrameIsBoundary() const;
     bool truncated() const { return m_truncated; }
 

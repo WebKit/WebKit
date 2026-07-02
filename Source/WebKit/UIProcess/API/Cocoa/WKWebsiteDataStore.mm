@@ -243,7 +243,7 @@ private:
         return result;
     }
 
-    bool hasGetDisplayedNotifications() const
+    bool NODELETE hasGetDisplayedNotifications() const
     {
         return m_hasGetDisplayedNotificationsSelector;
     }

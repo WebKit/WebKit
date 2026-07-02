@@ -103,7 +103,7 @@ public:
     bool isDone() const { return m_readyState == ReadyState::Done; }
 
     std::optional<IDBObjectStoreIdentifier> sourceObjectStoreIdentifier() const;
-    std::optional<IDBIndexIdentifier> sourceIndexIdentifier() const;
+    std::optional<IDBIndexIdentifier> NODELETE sourceIndexIdentifier() const;
     IndexedDB::ObjectStoreRecordType NODELETE requestedObjectStoreRecordType() const;
     IndexedDB::IndexRecordType NODELETE requestedIndexRecordType() const;
 
@@ -157,7 +157,7 @@ private:
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IndexedDB::ObjectStoreRecordType, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
-    EventTargetInterfaceType eventTargetInterface() const override;
+    EventTargetInterfaceType NODELETE eventTargetInterface() const override;
 
     // ActiveDOMObject.
     bool NODELETE virtualHasPendingActivity() const final;

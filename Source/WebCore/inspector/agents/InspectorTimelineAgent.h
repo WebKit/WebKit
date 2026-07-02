@@ -168,7 +168,7 @@ protected:
         RefPtr<JSON::Array> children;
         TimelineRecordType type;
     };
-    TimelineRecordEntry* NODELETE lastRecordEntry();
+    TimelineRecordEntry* lastRecordEntry();
 
     void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);
@@ -196,7 +196,7 @@ private:
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
 
-    bool shouldNestUnder(TimelineRecordType type, TimelineRecordType previousType) const;
+    bool NODELETE shouldNestUnder(TimelineRecordType type, TimelineRecordType previousType) const;
 
     void addRecordToTimeline(Ref<JSON::Object>&&, TimelineRecordType);
 

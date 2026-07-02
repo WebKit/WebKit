@@ -264,7 +264,7 @@ private:
     private:
         template<JSONIdentifierHint>
         TokenType lex(LiteralParserToken<CharType>&);
-        ALWAYS_INLINE TokenType lexIdentifier(LiteralParserToken<CharType>&);
+        ALWAYS_INLINE TokenType NODELETE lexIdentifier(LiteralParserToken<CharType>&);
         template<JSONIdentifierHint>
         ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&, CharType terminator);
         TokenType lexStringSlow(LiteralParserToken<CharType>&, const CharType* runStart, CharType terminator);
@@ -293,8 +293,8 @@ private:
 
     JSValue parsePrimitiveValue(VM&);
 
-    static ALWAYS_INLINE bool equalIdentifier(UniquedStringImpl*, typename Lexer::LiteralParserTokenPtr);
-    static ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
+    static ALWAYS_INLINE bool NODELETE equalIdentifier(UniquedStringImpl*, typename Lexer::LiteralParserTokenPtr);
+    static ALWAYS_INLINE AtomStringImpl* NODELETE existingIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
     static ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
     static ALWAYS_INLINE JSString* makeJSString(VM&, typename Lexer::LiteralParserTokenPtr);
 

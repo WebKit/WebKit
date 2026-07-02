@@ -231,7 +231,7 @@ protected:
 private:
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
 
-    RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
+    RenderBlock* NODELETE containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
 };
 
 WEBCORE_EXPORT LayoutUnit borderLeft(const RenderBoxModelObject&);

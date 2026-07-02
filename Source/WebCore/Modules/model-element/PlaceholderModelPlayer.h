@@ -99,7 +99,7 @@ private:
     void NODELETE animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
     void NODELETE setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
-    ModelPlayerAccessibilityChildren accessibilityChildren() final;
+    ModelPlayerAccessibilityChildren NODELETE accessibilityChildren() final;
 #endif
 
     std::optional<bool> m_lastPausedStateIfSuspended;

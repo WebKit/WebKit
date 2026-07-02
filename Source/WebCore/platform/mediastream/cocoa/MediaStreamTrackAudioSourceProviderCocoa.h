@@ -88,7 +88,7 @@ private:
     void trackEnded(MediaStreamTrackPrivate&) final { }
     void trackMutedChanged(MediaStreamTrackPrivate&) final { }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
-    void trackEnabledChanged(MediaStreamTrackPrivate&) final;
+    void NODELETE trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
     // RealtimeMediaSource::AudioSampleObserver
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;

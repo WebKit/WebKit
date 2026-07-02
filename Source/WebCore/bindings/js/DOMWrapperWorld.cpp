@@ -64,7 +64,7 @@ thread_local WrapperMutationScope* WrapperMutationScope::s_active { nullptr };
 
 // Registry of live page-aligned m_wrappers backings, so free() knows the mmap length to unmap.
 static Lock backingRegistryLock;
-static HashMap<void*, size_t>& backingRegistry() WTF_REQUIRES_LOCK(backingRegistryLock)
+static HashMap<void*, size_t>& NODELETE backingRegistry() WTF_REQUIRES_LOCK(backingRegistryLock)
 {
     static NeverDestroyed<HashMap<void*, size_t>> registry;
     return registry;

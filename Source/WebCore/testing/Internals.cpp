@@ -476,27 +476,27 @@ public:
     virtual ~InspectorStubFrontend();
 
 private:
-    bool supportsDockSide(DockSide) final { return false; }
-    void attachWindow(DockSide) final { }
-    void detachWindow() final { }
+    bool NODELETE supportsDockSide(DockSide) final { return false; }
+    void NODELETE attachWindow(DockSide) final { }
+    void NODELETE detachWindow() final { }
     void closeWindow() final;
-    void reopen() final { }
-    void bringToFront() final { }
-    void setForcedAppearance(InspectorFrontendClient::Appearance) final { }
-    String localizedStringsURL() const final { return String(); }
-    DebuggableType debuggableType() const final { return DebuggableType::WebPage; }
+    void NODELETE reopen() final { }
+    void NODELETE bringToFront() final { }
+    void NODELETE setForcedAppearance(InspectorFrontendClient::Appearance) final { }
+    String NODELETE localizedStringsURL() const final { return String(); }
+    DebuggableType NODELETE debuggableType() const final { return DebuggableType::WebPage; }
     String targetPlatformName() const { return "Unknown"_s; }
     String targetBuildVersion() const { return "Unknown"_s; }
     String targetProductVersion() const { return "Unknown"_s; }
-    bool targetIsSimulator() const { return false; }
-    void inspectedURLChanged(const String&) final { }
-    void showCertificate(const CertificateInfo&) final { }
-    void setAttachedWindowHeight(unsigned) final { }
-    void setAttachedWindowWidth(unsigned) final { }
-    void setSheetRect(const FloatRect&) final { }
+    bool NODELETE targetIsSimulator() const { return false; }
+    void NODELETE inspectedURLChanged(const String&) final { }
+    void NODELETE showCertificate(const CertificateInfo&) final { }
+    void NODELETE setAttachedWindowHeight(unsigned) final { }
+    void NODELETE setAttachedWindowWidth(unsigned) final { }
+    void NODELETE setSheetRect(const FloatRect&) final { }
 
     void sendMessageToFrontend(const String& message) final;
-    ConnectionType connectionType() const final { return ConnectionType::Local; }
+    ConnectionType NODELETE connectionType() const final { return ConnectionType::Local; }
 
     RefPtr<LocalDOMWindow> m_frontendWindow;
     WeakPtr<FrameInspectorController> m_mainFrameInspectorController;

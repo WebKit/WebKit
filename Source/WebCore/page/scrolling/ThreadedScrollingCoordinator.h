@@ -44,7 +44,7 @@ protected:
 
 private:
     WEBCORE_EXPORT void scheduleTreeStateCommit() final;
-    WEBCORE_EXPORT void didScheduleRenderingUpdate() final;
+    WEBCORE_EXPORT void NODELETE didScheduleRenderingUpdate() final;
     WEBCORE_EXPORT void willStartRenderingUpdate() final;
     WEBCORE_EXPORT void didCompleteRenderingUpdate() final;
 

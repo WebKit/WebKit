@@ -78,8 +78,8 @@ WEBCORE_EXPORT JSC::JSObject* constructEmptyObject(JSC::JSGlobalObject*, JSC::JS
 WEBCORE_EXPORT JSC::JSObject* constructEmptyObject(JSC::JSGlobalObject*, JSC::Structure*);
 
 WEBCORE_EXPORT JSC::PropertyOffset structureGet(JSC::Structure*, JSC::VM&, JSC::PropertyName);
-WEBCORE_EXPORT JSC::JSValue storedPrototype(JSC::Structure*, const JSC::JSObject*);
-WEBCORE_EXPORT JSC::JSObject* storedPrototypeObject(JSC::Structure*);
+WEBCORE_EXPORT JSC::JSValue NODELETE storedPrototype(JSC::Structure*, const JSC::JSObject*);
+WEBCORE_EXPORT JSC::JSObject* NODELETE storedPrototypeObject(JSC::Structure*);
 
 WEBCORE_EXPORT JSC::JSValue arrayGetDirectIndex(JSC::JSArray*, JSC::JSGlobalObject*, unsigned);
 

@@ -42,7 +42,7 @@ public:
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
+    void NODELETE willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // ServiceWorkerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::ServiceWorker::Configuration>> getInitializationInfo();

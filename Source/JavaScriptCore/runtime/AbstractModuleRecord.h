@@ -115,7 +115,7 @@ public:
         RefPtr<ScriptFetchParameters> m_attributes;
         ModulePhase m_phase { ModulePhase::Evaluation };
 
-        ScriptFetchParameters::Type type(ScriptFetchParameters::Type fallback = ScriptFetchParameters::Type::JavaScript) const;
+        ScriptFetchParameters::Type NODELETE type(ScriptFetchParameters::Type fallback = ScriptFetchParameters::Type::JavaScript) const;
         bool operator==(const ModuleRequest&) const;
     };
 
@@ -145,8 +145,8 @@ public:
         bool hasOrder() const { return m_order >= 0; }
         void setDone() { m_order = Done; }
 
-        int64_t order() const;
-        AsyncEvaluationOrder& order(int64_t);
+        int64_t NODELETE order() const;
+        AsyncEvaluationOrder& NODELETE order(int64_t);
 
         static AsyncEvaluationOrder done() { return { Done }; }
 
@@ -157,7 +157,7 @@ public:
     };
 
     const Identifier& moduleKey() const { return m_moduleKey; }
-    ScriptFetchParameters::Type moduleType() const;
+    ScriptFetchParameters::Type NODELETE moduleType() const;
     const Vector<ModuleRequest>& requestedModules() const LIFETIME_BOUND { return m_requestedModules; }
     ModuleMap<LoadedModuleRequest>& loadedModules() LIFETIME_BOUND { return m_loadedModules; }
     const ModuleMap<LoadedModuleRequest>& loadedModules() const LIFETIME_BOUND { return m_loadedModules; }
@@ -177,7 +177,7 @@ public:
 
     void appendAsyncParentModule(VM&, AbstractModuleRecord*);
     void setTopLevelCapability(VM&, JSPromise*);
-    void setHasTLA(bool);
+    void NODELETE setHasTLA(bool);
 
     void dump();
 

@@ -3992,7 +3992,7 @@ void testVectorShlImmediate()
 // Accumulate `acc += mul(x, y)` on the chosen lane + sign mode, reading only
 // the low half of x and y (which is what UMLAL consumes on ARM64 and what
 // VectorMulLow computes). Used as the oracle for all three test patterns.
-static void accumulateExtmulLow(v128_t& acc, const v128_t& x, const v128_t& y, SIMDLane outputLane, SIMDSignMode signMode)
+static void NODELETE accumulateExtmulLow(v128_t& acc, const v128_t& x, const v128_t& y, SIMDLane outputLane, SIMDSignMode signMode)
 {
     switch (outputLane) {
     case SIMDLane::i16x8:
@@ -4040,7 +4040,7 @@ static void accumulateExtmulLow(v128_t& acc, const v128_t& x, const v128_t& y, S
 // the high half of x and y (which is what UMLAL2/SMLAL2 consume on ARM64 and
 // what VectorMulHigh computes). Mirror of accumulateExtmulLow but indexing
 // the upper 64 bits.
-static void accumulateExtmulHigh(v128_t& acc, const v128_t& x, const v128_t& y, SIMDLane outputLane, SIMDSignMode signMode)
+static void NODELETE accumulateExtmulHigh(v128_t& acc, const v128_t& x, const v128_t& y, SIMDLane outputLane, SIMDSignMode signMode)
 {
     switch (outputLane) {
     case SIMDLane::i16x8:

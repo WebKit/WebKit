@@ -38,8 +38,8 @@ public:
     FailedFinalizer(Plan&);
     ~FailedFinalizer() final;
     
-    size_t codeSize() final;
-    bool finalize() final;
+    size_t NODELETE codeSize() final;
+    bool NODELETE finalize() final;
     bool isFailed() final { return true; }
 };
 

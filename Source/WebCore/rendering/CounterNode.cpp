@@ -341,7 +341,7 @@ void CounterNode::removeChild(CounterNode& oldChild)
 
 #if ENABLE(TREE_DEBUGGING)
 
-static void showTreeAndMark(const CounterNode* node)
+static void NODELETE showTreeAndMark(const CounterNode* node)
 {
     const CounterNode* root = node;
     while (root->parent())

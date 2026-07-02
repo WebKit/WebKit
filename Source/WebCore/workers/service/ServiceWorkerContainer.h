@@ -63,7 +63,7 @@ public:
     ~ServiceWorkerContainer();
 
     // ContextDestructionObserver.
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
@@ -145,9 +145,9 @@ private:
 
     SWClientConnection& ensureSWClientConnection();
 
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ServiceWorkerContainer; }
-    void refEventTarget() final;
+    void NODELETE refEventTarget() final;
     void derefEventTarget() final;
 
     // ActiveDOMObject.

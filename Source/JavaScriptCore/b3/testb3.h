@@ -1091,7 +1091,7 @@ void testCheckSubImm();
 void testCheckSubBadImm();
 void testCheckSub();
 void testCheckSubBitAnd();
-double doubleSub(double, double);
+double NODELETE doubleSub(double, double);
 void testCheckSub64();
 void testCheckSubFold(int, int);
 void testCheckSubFoldFail(int, int);

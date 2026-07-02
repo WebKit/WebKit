@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MockCDM);
 
-static WeakHashSet<MockCDMFactory>& allMockFactories()
+static WeakHashSet<MockCDMFactory>& NODELETE allMockFactories()
 {
     static NeverDestroyed<WeakHashSet<MockCDMFactory>> factories;
     return factories;

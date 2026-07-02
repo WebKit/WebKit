@@ -38,7 +38,7 @@ private:
     SVGAnimateMotionElement(const QualifiedName&, Document&);
 
     bool hasValidAttributeType() const override;
-    bool hasValidAttributeName() const override;
+    bool NODELETE hasValidAttributeName() const override;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 

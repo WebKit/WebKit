@@ -54,7 +54,7 @@ struct TestParameter;
 // Main test interface for initiating various IPC test activities.
 class IPCTester final : public IPC::MessageReceiver, public RefCounted<IPCTester> {
 public:
-    static Ref<IPCTester> create();
+    static Ref<IPCTester> NODELETE create();
     ~IPCTester();
 
     void ref() const final { RefCounted::ref(); }
@@ -67,25 +67,25 @@ private:
     IPCTester();
 
     // Messages.
-    void startMessageTesting(IPC::Connection&, String&& driverName);
-    void stopMessageTesting(CompletionHandler<void()>&&);
-    void createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
-    void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
-    void createConnectionTester(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
-    void createConnectionTesterAndSendAsyncMessages(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&, uint32_t messageCount);
-    void releaseConnectionTester(IPCConnectionTesterIdentifier, CompletionHandler<void()>&&);
-    void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
-    void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
-    void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
-    void sendAsyncMessageToReceiverRequestingReply(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t, bool)>&&);
-    void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
-    void syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&&);
-    void syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&&);
-    void asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&&);
+    void NODELETE startMessageTesting(IPC::Connection&, String&& driverName);
+    void NODELETE stopMessageTesting(CompletionHandler<void()>&&);
+    void NODELETE createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamServerConnection::Handle&&);
+    void NODELETE releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
+    void NODELETE createConnectionTester(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
+    void NODELETE createConnectionTesterAndSendAsyncMessages(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&, uint32_t messageCount);
+    void NODELETE releaseConnectionTester(IPCConnectionTesterIdentifier, CompletionHandler<void()>&&);
+    void NODELETE sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
+    void NODELETE sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
+    void NODELETE sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
+    void NODELETE sendAsyncMessageToReceiverRequestingReply(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t, bool)>&&);
+    void NODELETE asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void NODELETE syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&&);
+    void NODELETE asyncOptionalExceptionData(IPC::Connection&, bool sendEngaged, CompletionHandler<void(std::optional<WebCore::ExceptionData>, String)>&&);
     void emptyMessage() { }
-    void emptyMessageWithReply(CompletionHandler<void(uint64_t)>&&);
-    void checkTestParameter(IPC::Connection&, TestParameter);
-    void stopIfNeeded();
+    void NODELETE emptyMessageWithReply(CompletionHandler<void(uint64_t)>&&);
+    void NODELETE checkTestParameter(IPC::Connection&, TestParameter);
+    void NODELETE stopIfNeeded();
 
     RefPtr<WorkQueue> m_testQueue;
     std::atomic<bool> m_shouldStop { false };

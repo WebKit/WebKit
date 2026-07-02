@@ -61,7 +61,7 @@ public:
     explicit RemoteCaptureSampleManager(UserMediaCaptureManager&);
     ~RemoteCaptureSampleManager();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     void stopListeningForIPC();

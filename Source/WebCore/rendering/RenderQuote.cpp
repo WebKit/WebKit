@@ -248,7 +248,7 @@ constexpr unsigned maxDistinctQuoteCharacters = 16;
 
 #if ASSERT_ENABLED
 
-static void checkNumberOfDistinctQuoteCharacters(char16_t character)
+static void NODELETE checkNumberOfDistinctQuoteCharacters(char16_t character)
 {
     ASSERT(character);
     static std::array<char16_t, maxDistinctQuoteCharacters> distinctQuoteCharacters;

@@ -514,7 +514,7 @@ bool TextUtil::isStrongDirectionalityCharacter(char32_t character)
         || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
 }
 
-template<typename CharacterType> ALWAYS_INLINE constexpr bool isNotBidiRTL(CharacterType character)
+template<typename CharacterType> ALWAYS_INLINE constexpr bool NODELETE isNotBidiRTL(CharacterType character)
 {
     return !mayBeBidiRTL(character);
 }

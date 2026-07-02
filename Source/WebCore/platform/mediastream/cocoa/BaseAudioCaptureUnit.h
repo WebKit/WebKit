@@ -101,7 +101,7 @@ public:
     uint32_t captureDeviceID() const { return m_capturingDevice ? m_capturingDevice->second : 0; }
 
 #if ASSERT_ENABLED
-    WEBCORE_EXPORT static void allowStarting();
+    WEBCORE_EXPORT static void NODELETE allowStarting();
 #endif
 
 protected:

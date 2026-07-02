@@ -73,8 +73,8 @@ public:
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
 
     FloatPoint NODELETE scaledByFilterScale(const FloatPoint&) const;
-    FloatSize scaledByFilterScale(const FloatSize&) const;
-    FloatRect scaledByFilterScale(const FloatRect&) const;
+    FloatSize NODELETE scaledByFilterScale(const FloatSize&) const;
+    FloatRect NODELETE scaledByFilterScale(const FloatRect&) const;
 
     FloatRect maxEffectRect(const FloatRect& primitiveSubregion) const;
     FloatRect clipToMaxEffectRect(const FloatRect& imageRect, const FloatRect& primitiveSubregion) const;

@@ -37,12 +37,12 @@ public:
     ~CompletionHandlerCallChecker();
 
     void NODELETE didCallCompletionHandler();
-    bool completionHandlerHasBeenCalled() const;
+    bool NODELETE completionHandlerHasBeenCalled() const;
 
 private:
     CompletionHandlerCallChecker(Class delegateClass, SEL delegateMethodSelector);
 
-    RetainPtr<Class> classImplementingDelegateMethod() const;
+    RetainPtr<Class> NODELETE classImplementingDelegateMethod() const;
 
     Class m_delegateClass;
     SEL m_delegateMethodSelector;

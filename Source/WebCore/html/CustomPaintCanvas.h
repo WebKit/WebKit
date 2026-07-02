@@ -77,7 +77,7 @@ public:
 private:
     CustomPaintCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
 
-    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE canvasBaseScriptExecutionContext() const final;
 
     std::unique_ptr<PaintRenderingContext2D> m_context;
     mutable RefPtr<Image> m_copiedImage;

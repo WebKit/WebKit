@@ -56,7 +56,7 @@ private:
     InvalidImage();
 
     bool isPending() const final { return false; }
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
+    void NODELETE load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool knownToBeOpaque(const RenderElement&) const { return false; }
 
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;

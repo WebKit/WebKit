@@ -94,7 +94,7 @@ public:
     bool NODELETE isUniformCornerRadius() const; // Including no radius.
 
     void NODELETE scale(float factor);
-    void scale(float horizontalFactor, float verticalFactor);
+    void NODELETE scale(float horizontalFactor, float verticalFactor);
     void expandEvenIfZero(float size);
     WEBCORE_EXPORT void expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth);
     void expand(float size) { expand(size, size, size, size); }

@@ -144,7 +144,7 @@ public:
 
     bool NODELETE usesScrollSnap() const;
     void stopAllTimers();
-    void scrollPositionChanged();
+    void NODELETE scrollPositionChanged();
 
     bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset);
     bool retargetAnimatedScroll(FloatPoint newDestinationOffset);
@@ -167,7 +167,7 @@ public:
     // Should be called periodically by the client. Started by startAnimationCallback(), stopped by stopAnimationCallback().
     void animationCallback(MonotonicTime);
 
-    void updateGestureInProgressState(const PlatformWheelEvent&);
+    void NODELETE updateGestureInProgressState(const PlatformWheelEvent&);
     
     void contentsSizeChanged();
 
@@ -197,7 +197,7 @@ public:
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 
-    void stopRubberBanding();
+    void NODELETE stopRubberBanding();
     void startRubberBandSnapBack();
     void rubberBandTargetOffsetDidChange();
     bool NODELETE isRubberBandInProgress() const;
@@ -210,7 +210,7 @@ public:
 #endif
 
 private:
-    void updateRubberBandAnimatingState();
+    void NODELETE updateRubberBandAnimatingState();
 
     void setIsAnimatingRubberBand(bool);
     void setIsAnimatingScrollSnap(bool);
@@ -235,7 +235,7 @@ private:
 
     bool startRubberBandAnimation(const FloatSize& initialVelocity, const FloatSize& initialOverscroll);
     bool startRubberBandAnimationWithElapsedTime(const FloatSize& initialVelocity, const FloatSize& initialOverscroll, Seconds alreadyElapsed, std::optional<FloatSize> targetOverscroll = std::nullopt);
-    void stopRubberBandAnimation();
+    void NODELETE stopRubberBandAnimation();
 
     void willStartRubberBandAnimation();
     void didStopRubberBandAnimation();

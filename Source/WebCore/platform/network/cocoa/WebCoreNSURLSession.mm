@@ -648,7 +648,7 @@ public:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
 
 private:
-    bool isWebCoreNSURLSessionDataTaskClient() const final { return true; }
+    bool NODELETE isWebCoreNSURLSessionDataTaskClient() const final { return true; }
 
     WeakObjCPtr<WebCoreNSURLSessionDataTask> m_task WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
     const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;

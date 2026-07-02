@@ -164,7 +164,7 @@ void CSSSelectorList::buildSelectorsText(StringBuilder& stringBuilder) const
 }
 
 template <typename Functor>
-static bool forEachTagSelector(Functor& functor, const CSSSelector* selector)
+static bool NODELETE forEachTagSelector(Functor& functor, const CSSSelector* selector)
 {
     ASSERT(selector);
 
@@ -183,7 +183,7 @@ static bool forEachTagSelector(Functor& functor, const CSSSelector* selector)
 }
 
 template <typename Functor>
-static bool forEachSelector(Functor& functor, const CSSSelectorList& selectorList)
+static bool NODELETE forEachSelector(Functor& functor, const CSSSelectorList& selectorList)
 {
     for (const auto& selector : selectorList) {
         if (forEachTagSelector(functor, &selector))

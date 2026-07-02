@@ -191,7 +191,7 @@ public:
 
     void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep> = WebCore::RenderingUpdateStep::LayerFlush);
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&); // Why public?
-    float deviceScaleFactor() const override;
+    float NODELETE deviceScaleFactor() const override;
 
     WebCore::FloatRect rectForSelectionInMainFrameContentsSpace(PDFSelection *) const;
 
@@ -228,10 +228,10 @@ public:
 
     void setPDFDisplayModeForTesting(const String&) final;
 
-    double minScaleFactor() const final;
-    double maxScaleFactor() const final;
+    double NODELETE minScaleFactor() const final;
+    double NODELETE maxScaleFactor() const final;
 
-    bool shouldSizeToFitContent() const final;
+    bool NODELETE shouldSizeToFitContent() const final;
 
     static WebCore::ViewportConfiguration::Parameters NODELETE viewportParameters();
 
@@ -284,8 +284,8 @@ private:
 
         - "contentScaleFactor": the scale between the plugin and document space (scaleFactor * document layout scale)
     */
-    double scaleFactor() const override;
-    double contentScaleFactor() const final;
+    double NODELETE scaleFactor() const override;
+    double NODELETE contentScaleFactor() const final;
     double nonNormalizedScaleFactor() const { return m_scaleFactor; }
 
     // Scale normalization is used to map the internal "scale factor" to the exposed scaleFactor()/setPageScaleFactor()
@@ -335,8 +335,8 @@ private:
     bool wantsWheelEvents() const override;
     bool handleMouseEvent(const WebMouseEvent&) override;
     bool handleWheelEvent(const WebWheelEvent&) override;
-    bool handleMouseEnterEvent(const WebMouseEvent&) override;
-    bool handleMouseLeaveEvent(const WebMouseEvent&) override;
+    bool NODELETE handleMouseEnterEvent(const WebMouseEvent&) override;
+    bool NODELETE handleMouseLeaveEvent(const WebMouseEvent&) override;
     bool handleContextMenuEvent(const WebMouseEvent&) override;
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
 
@@ -468,7 +468,7 @@ private:
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForSelection(PDFSelection *, WebCore::TextIndicatorPresentationTransition) override;
 
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
-    id accessibilityObject() const override;
+    id NODELETE accessibilityObject() const override;
 #if PLATFORM(MAC)
     id accessibilityHitTestIntPoint(const WebCore::IntPoint&) const;
     WebCore::IntPoint convertFromPluginToScreenForAccessibility(const WebCore::IntPoint& pointInPluginCoordinate) const;
@@ -479,8 +479,8 @@ private:
     // GraphicsLayerClient
     void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer&, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
-    float pageScaleFactor() const override;
-    bool layerNeedsPlatformContext(const WebCore::GraphicsLayer&) const override;
+    float NODELETE pageScaleFactor() const override;
+    bool NODELETE layerNeedsPlatformContext(const WebCore::GraphicsLayer&) const override;
 
     void paintPDFContent(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const std::optional<PDFLayoutRow>& = { }, AsyncPDFRenderer* = nullptr);
     void paintPDFSelection(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, std::optional<PDFLayoutRow> = { });
@@ -507,9 +507,9 @@ private:
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
 
-    WebCore::GraphicsLayer* layerForHorizontalScrollbar() const override;
-    WebCore::GraphicsLayer* layerForVerticalScrollbar() const override;
-    WebCore::GraphicsLayer* layerForScrollCorner() const override;
+    WebCore::GraphicsLayer* NODELETE layerForHorizontalScrollbar() const override;
+    WebCore::GraphicsLayer* NODELETE layerForVerticalScrollbar() const override;
+    WebCore::GraphicsLayer* NODELETE layerForScrollCorner() const override;
 
     void updateScrollingExtents();
 
@@ -560,7 +560,7 @@ private:
     void updatePageNumberIndicator(const std::optional<WebCore::IntRect>& unobscuredContentRectInRootView = { });
 #endif
 
-    void frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect&) final;
+    void NODELETE frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect&) final;
 
     bool supportsPasswordForm() const;
     void installAnnotationContainer();
@@ -609,7 +609,7 @@ private:
 
     bool shouldShowDebugIndicators() const;
 
-    float scaleForPagePreviews() const;
+    float NODELETE scaleForPagePreviews() const;
 
     void createPasswordEntryForm();
     void teardownPasswordEntryForm() override;

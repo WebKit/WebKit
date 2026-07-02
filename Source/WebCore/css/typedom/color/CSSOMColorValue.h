@@ -55,7 +55,7 @@ public:
     static CSSColorAngle toCSSColorAngle(const RectifiedCSSColorAngle&);
     static CSSColorNumber toCSSColorNumber(const RectifiedCSSColorNumber&);
 
-    RefPtr<CSSValue> toCSSValue() const final;
+    RefPtr<CSSValue> NODELETE toCSSValue() const final;
 };
 
 } // namespace WebCore

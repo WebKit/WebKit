@@ -94,7 +94,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, DifferenceResult);
 WTF::TextStream& operator<<(WTF::TextStream&, DifferenceContextSensitiveProperty);
 
 #if !LOG_DISABLED
-void dumpDifferences(WTF::TextStream&, const ComputedStyle&, const ComputedStyle&);
+void NODELETE dumpDifferences(WTF::TextStream&, const ComputedStyle&, const ComputedStyle&);
 #endif
 
 } // namespace Style

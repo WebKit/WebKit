@@ -402,8 +402,8 @@ public:
         return didTimeout;
     }
 
-    void cancel() { m_cancelled.store(true, std::memory_order_release); }
-    bool isCancelled() const { return m_cancelled.load(std::memory_order_acquire); }
+    void NODELETE cancel() { m_cancelled.store(true, std::memory_order_release); }
+    bool NODELETE isCancelled() const { return m_cancelled.load(std::memory_order_acquire); }
 
     void NODELETE markParentDispatched() { m_dispatchedParent.store(true, std::memory_order_release); }
     bool NODELETE didDispatchParent() const { return m_dispatchedParent.load(std::memory_order_acquire); }

@@ -190,7 +190,7 @@ public:
     String loggingString();
 
     WebBackForwardList& getImpl() { return *m_impl; }
-    WebBackForwardListMessageForwarder& messageReceiver() const;
+    WebBackForwardListMessageForwarder& NODELETE messageReceiver() const;
 
 private:
     explicit WebBackForwardListWrapper(WebPageProxy&);

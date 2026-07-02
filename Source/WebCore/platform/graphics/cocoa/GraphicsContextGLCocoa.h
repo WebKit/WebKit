@@ -110,7 +110,7 @@ public:
     void waitUntilWorkScheduled();
 
     // GraphicsContextGLANGLE overrides.
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> NODELETE layerContentsDisplayDelegate() override;
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) final;
 #endif

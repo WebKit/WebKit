@@ -46,7 +46,7 @@ public:
     bool operator==(const CustomPropertyData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const CustomPropertyData&) const;
+    void NODELETE dumpDifferences(TextStream&, const CustomPropertyData&) const;
 #endif
 
     const CustomProperty* get(const AtomString&) const;

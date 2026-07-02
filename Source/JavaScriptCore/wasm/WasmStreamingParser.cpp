@@ -60,7 +60,7 @@ static constexpr bool verbose = false;
         } \
     } while (0)
 
-ALWAYS_INLINE std::optional<uint8_t> parseUInt7(const uint8_t* data, size_t& offset, size_t size)
+ALWAYS_INLINE std::optional<uint8_t> NODELETE parseUInt7(const uint8_t* data, size_t& offset, size_t size)
 {
     if (offset >= size)
         return false;
@@ -80,7 +80,7 @@ template <typename ...Args>
 }
 
 #if ENABLE(WEBASSEMBLY) && ASSERT_ENABLED
-static void dumpWasmSource(const Vector<uint8_t>& source)
+static void NODELETE dumpWasmSource(const Vector<uint8_t>& source)
 {
     static int count = 0;
     const char* file = Options::dumpWasmSourceFileName();

@@ -68,7 +68,7 @@ public:
     HandleSlot allocate();
     void deallocate(HandleSlot);
 
-    template<typename Visitor> void visitStrongHandles(Visitor&);
+    template<typename Visitor> void NODELETE visitStrongHandles(Visitor&);
 
     template<bool isCellOnly>
     void writeBarrier(HandleSlot, JSValue);
@@ -83,7 +83,7 @@ private:
     JS_EXPORT_PRIVATE void grow();
     
 #if ENABLE(GC_VALIDATION) || ASSERT_ENABLED
-    JS_EXPORT_PRIVATE bool isLiveNode(Node*);
+    JS_EXPORT_PRIVATE bool NODELETE isLiveNode(Node*);
 #endif
 
     VM& m_vm;

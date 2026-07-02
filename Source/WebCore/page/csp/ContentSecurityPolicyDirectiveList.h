@@ -119,7 +119,7 @@ private:
     const ContentSecurityPolicySourceListDirective* hashReportDirectiveForScript() const LIFETIME_BOUND;
 
     template <class CSPDirectiveType>
-    void setCSPDirective(ParsedDirective&&, std::unique_ptr<CSPDirectiveType>&);
+    void NODELETE setCSPDirective(ParsedDirective&&, std::unique_ptr<CSPDirectiveType>&);
 
     ContentSecurityPolicySourceListDirective* operativeDirective(ContentSecurityPolicySourceListDirective*, const String&) const;
     ContentSecurityPolicySourceListDirective* operativeDirectiveScript(ContentSecurityPolicySourceListDirective*, const String&) const;

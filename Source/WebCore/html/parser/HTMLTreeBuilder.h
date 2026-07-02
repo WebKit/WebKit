@@ -178,7 +178,7 @@ private:
 
     void closeTheCell();
 
-    template <bool shouldClose(const HTMLStackItem&)> void processCloseWhenNestedTag(AtomHTMLToken&&);
+    template <bool shouldClose(const HTMLStackItem&)> void NODELETE processCloseWhenNestedTag(AtomHTMLToken&&);
 
     void NODELETE parseError(const AtomHTMLToken&);
 

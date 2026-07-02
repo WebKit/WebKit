@@ -126,12 +126,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerFactory);
 
 class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public ThreadSafeRefCounted<NullMediaPlayerPrivate, WTF::DestructionThread::Main> {
 public:
-    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void NODELETE ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
     static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
 
-    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::Null; }
+    constexpr MediaPlayerType NODELETE mediaPlayerType() const final { return MediaPlayerType::Null; }
 
     void load(const String&) final { }
 #if ENABLE(MEDIA_SOURCE)
@@ -159,11 +159,11 @@ public:
     void seekToTarget(const SeekTarget&) final { }
     bool seeking() const final { return false; }
 
-    void setRateDouble(double) final { }
+    void NODELETE setRateDouble(double) final { }
     void setPreservesPitch(bool) final { }
     bool paused() const final { return true; }
 
-    void setVolumeDouble(double) final { }
+    void NODELETE setVolumeDouble(double) final { }
 
     void setMuted(bool) final { }
 
@@ -178,7 +178,7 @@ public:
     double seekableTimeRangesLastModifiedTime() const final { return 0; }
     double liveUpdateInterval() const final { return 0; }
 
-    unsigned long long totalBytes() const final { return 0; }
+    unsigned long long NODELETE totalBytes() const final { return 0; }
     bool didLoadingProgress() const final { return false; }
 
     void setPresentationSize(const IntSize&) final { }
@@ -242,7 +242,7 @@ class NullMediaResourceLoader final
     , public PlatformMediaResourceLoader {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(NullMediaResourceLoader);
 public:
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void NODELETE ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
     uint32_t weakRefCount() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::weakRefCount(); }
@@ -251,7 +251,7 @@ private:
     {
         completionHandler(makeUnexpected(ResourceError { }));
     }
-    RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final { return nullptr; }
+    RefPtr<PlatformMediaResource> NODELETE requestResource(ResourceRequest&&, LoadOptions) final { return nullptr; }
 };
 
 Ref<PlatformMediaResourceLoader> MediaPlayerClient::mediaPlayerCreateResourceLoader()
@@ -269,7 +269,7 @@ public:
         return adoptRef(*new NullMediaPlayerClient);
     }
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
@@ -402,7 +402,7 @@ static MediaPlayerScope effectiveSelectedScope(const MediaPlayerEngineSelection&
     return selection.scope.value_or(hasPlatformStrategies() ? MediaPlayerScope::Playback : MediaPlayerScope::Supports);
 }
 
-static bool engineScopeMatchesSelection(MediaPlayerScope engineScope, MediaPlayerScope selectionScope)
+static bool NODELETE engineScopeMatchesSelection(MediaPlayerScope engineScope, MediaPlayerScope selectionScope)
 {
     if (selectionScope == MediaPlayerScope::Playback)
         return engineScope == MediaPlayerScope::Playback;

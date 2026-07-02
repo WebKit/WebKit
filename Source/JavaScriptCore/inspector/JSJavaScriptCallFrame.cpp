@@ -87,7 +87,7 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(JSGlobalObject* global
     return result;
 }
 
-static JSValue valueForScopeType(DebuggerScope* scope)
+static JSValue NODELETE valueForScopeType(DebuggerScope* scope)
 {
     if (scope->isCatchScope())
         return jsNumber(JSJavaScriptCallFrame::CATCH_SCOPE);

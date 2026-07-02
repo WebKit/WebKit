@@ -42,7 +42,7 @@ class MediaCapabilities : public RefCountedAndCanMakeWeakPtr<MediaCapabilities> 
 public:
     static Ref<MediaCapabilities> create(NavigatorBase& navigator) { return adoptRef(*new MediaCapabilities(navigator)); }
 
-    NavigatorBase* navigator();
+    NavigatorBase* NODELETE navigator();
 
     void decodingInfo(ScriptExecutionContext&, MediaDecodingConfiguration&&, Ref<DeferredPromise>&&);
     void encodingInfo(ScriptExecutionContext&, MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);

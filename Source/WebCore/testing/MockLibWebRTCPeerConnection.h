@@ -274,7 +274,7 @@ private:
     bool AddIceCandidate(const webrtc::IceCandidate*) override { return true; }
     void AddIceCandidate(std::unique_ptr<webrtc::IceCandidate>, std::function<void(webrtc::RTCError)> callback) override { callback({ }); }
     bool RemoveIceCandidate(const webrtc::IceCandidate*) override { return true; }
-    SignalingState signaling_state() override;
+    SignalingState NODELETE signaling_state() override;
     IceConnectionState ice_connection_state() override { return kIceConnectionNew; }
     IceGatheringState ice_gathering_state() override { return kIceGatheringNew; }
     void StopRtcEventLog() override { }

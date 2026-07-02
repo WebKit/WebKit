@@ -187,7 +187,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
 }
 
 #ifndef NDEBUG
-static unsigned assertConnectedSubrameCountIsConsistent(ContainerNode& node)
+static unsigned NODELETE assertConnectedSubrameCountIsConsistent(ContainerNode& node)
 {
     unsigned count = 0;
 

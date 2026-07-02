@@ -274,7 +274,7 @@ public:
 
     bool hasRareData() const { return m_rareData.get(); }
 
-    ExpressionInfo::Entry expressionInfoForBytecodeIndex(BytecodeIndex);
+    ExpressionInfo::Entry NODELETE expressionInfoForBytecodeIndex(BytecodeIndex);
     LineColumn lineColumnForBytecodeIndex(BytecodeIndex);
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
@@ -311,7 +311,7 @@ public:
         return m_rareData && !m_rareData->m_opProfileControlFlowBytecodeOffsets.isEmpty();
     }
 
-    void dumpExpressionInfo(); // For debugging purpose only.
+    void NODELETE dumpExpressionInfo(); // For debugging purpose only.
 
     bool wasCompiledWithDebuggingOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::Debugger); }
     bool wasCompiledWithTypeProfilerOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::TypeProfiler); }
@@ -383,7 +383,7 @@ public:
     unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
 
 #if ASSERT_ENABLED
-    bool hasIdentifier(UniquedStringImpl*);
+    bool NODELETE hasIdentifier(UniquedStringImpl*);
 #endif
 
     int32_t NODELETE thresholdForJIT(int32_t threshold);
@@ -534,7 +534,7 @@ private:
 #endif
 
 protected:
-    static size_t estimatedSize(JSCell*, VM&);
+    static size_t NODELETE estimatedSize(JSCell*, VM&);
 
 public:
     DECLARE_INFO;

@@ -38,7 +38,7 @@ public:
 
 private:
     void promptForGetDisplayMedia(UserMediaDisplayCapturePromptType) final;
-    bool canRequestDisplayCapturePermission() final;
+    bool NODELETE canRequestDisplayCapturePermission() final;
     void invalidate() final;
 
 #if ENABLE(MEDIA_STREAM)

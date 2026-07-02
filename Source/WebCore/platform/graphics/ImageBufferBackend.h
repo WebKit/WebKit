@@ -115,9 +115,9 @@ public:
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
 
-    WEBCORE_EXPORT static IntSize NODELETE calculateSafeBackendSize(const Parameters&);
-    WEBCORE_EXPORT static size_t NODELETE calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
-    WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&);
+    WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const Parameters&);
+    WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
+    WEBCORE_EXPORT static AffineTransform NODELETE calculateBaseTransform(const Parameters&);
 
     virtual GraphicsContext& context() = 0;
     virtual void flushContext() { }

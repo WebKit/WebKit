@@ -84,7 +84,7 @@ private:
     bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget.
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

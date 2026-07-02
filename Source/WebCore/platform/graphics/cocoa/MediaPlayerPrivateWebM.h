@@ -130,7 +130,7 @@ private:
     bool playAtHostTime(const MonotonicTime&) final;
     bool pauseAtHostTime(const MonotonicTime&) final;
 
-    FloatSize naturalSize() const final;
+    FloatSize NODELETE naturalSize() const final;
 
     bool performTaskAtTime(Function<void(const MediaTime&)>&&, const MediaTime&) final;
     void audioOutputDeviceChanged() final;
@@ -142,12 +142,12 @@ private:
 
     MediaTime timeFudgeFactor() const { return { 1, 10 }; }
     MediaTime currentTime() const final;
-    MediaTime duration() const final;
+    MediaTime NODELETE duration() const final;
     MediaTime startTime() const final { return MediaTime::zeroTime(); }
     MediaTime initialTime() const final { return MediaTime::zeroTime(); }
 
     void setRateDouble(double) final;
-    double rate() const final;
+    double NODELETE rate() const final;
     double effectiveRate() const final;
 
     void setVolume(float) final;
@@ -158,14 +158,14 @@ private:
 
     MediaTime maxTimeSeekable() const final { return duration(); }
     MediaTime minTimeSeekable() const final { return startTime(); }
-    const PlatformTimeRanges& buffered() const final;
+    const PlatformTimeRanges& NODELETE buffered() const final;
 
     void setBufferedRanges(PlatformTimeRanges);
     void updateBufferedFromTrackBuffers(bool);
     void updateDurationFromTrackBuffers();
 
     void setLoadingProgresssed(bool);
-    bool didLoadingProgress() const final;
+    bool NODELETE didLoadingProgress() const final;
 
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
     bool updateLastVideoFrame();
@@ -181,7 +181,7 @@ private:
     void setHasAudio(bool);
     void setHasVideo(bool);
     void setHasAvailableVideoFrame(bool);
-    bool hasAvailableVideoFrame() const final;
+    bool NODELETE hasAvailableVideoFrame() const final;
     void setDuration(MediaTime);
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
@@ -248,7 +248,7 @@ private:
 
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
-    std::optional<VideoFrameMetadata> videoFrameMetadata() final;
+    std::optional<VideoFrameMetadata> NODELETE videoFrameMetadata() final;
     void setResourceOwner(const ProcessIdentity&) final;
 
     void checkNewVideoFrameMetadata(const MediaTime& presentationTime, double displayTime);
@@ -299,7 +299,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     friend class MediaPlayerFactoryWebM;
     static bool isAvailable();
@@ -378,7 +378,7 @@ private:
 
     // Seek logic support
     void seekToTarget(const SeekTarget&) final;
-    bool seeking() const final;
+    bool NODELETE seeking() const final;
     void seekInternal();
     void cancelPendingSeek(); // Called from destructor or running queue
     void completeSeek(const MediaTime&);

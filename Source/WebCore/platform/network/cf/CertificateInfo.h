@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT static RetainPtr<SecTrustRef> secTrustFromCertificateChain(CFArrayRef);
 
 #ifndef NDEBUG
-    void dump() const;
+    void NODELETE dump() const;
 #endif
 
 private:

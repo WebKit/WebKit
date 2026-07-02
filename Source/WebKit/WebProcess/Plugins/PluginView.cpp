@@ -100,7 +100,7 @@ public:
     ~Stream();
 
     // NetscapePlugInStreamLoaderClient.
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     void start();
@@ -117,8 +117,8 @@ private:
 
     // NetscapePluginStreamLoaderClient
     void willSendRequest(NetscapePlugInStreamLoader&, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) override;
-    void didReceiveResponse(NetscapePlugInStreamLoader&, const ResourceResponse&) override;
-    void didReceiveData(NetscapePlugInStreamLoader&, const SharedBuffer&) override;
+    void NODELETE didReceiveResponse(NetscapePlugInStreamLoader&, const ResourceResponse&) override;
+    void NODELETE didReceiveData(NetscapePlugInStreamLoader&, const SharedBuffer&) override;
     void didFail(NetscapePlugInStreamLoader&, const ResourceError&) override;
     void didFinishLoading(NetscapePlugInStreamLoader&) override;
 

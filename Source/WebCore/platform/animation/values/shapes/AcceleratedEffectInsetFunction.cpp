@@ -80,7 +80,7 @@ Path path(const AcceleratedEffectInsetFunction& value, const FloatRect& bounding
 
 // MARK: - Blending
 
-static RectEdges<float> blendRectEdges(const RectEdges<float>& from, const RectEdges<float>& to, const BlendingContext& context)
+static RectEdges<float> NODELETE blendRectEdges(const RectEdges<float>& from, const RectEdges<float>& to, const BlendingContext& context)
 {
     return RectEdges<float> {
         WebCore::blendForAcceleratedEffect(from.top(), to.top(), context),
@@ -90,7 +90,7 @@ static RectEdges<float> blendRectEdges(const RectEdges<float>& from, const RectE
     };
 }
 
-static CornerRadii blendCornerRadii(const CornerRadii& from, const CornerRadii& to, const BlendingContext& context)
+static CornerRadii NODELETE blendCornerRadii(const CornerRadii& from, const CornerRadii& to, const BlendingContext& context)
 {
     return CornerRadii {
         WebCore::blendForAcceleratedEffect(from.topLeft(), to.topLeft(), context),

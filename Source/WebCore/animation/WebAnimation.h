@@ -184,12 +184,12 @@ public:
 
     virtual bool canHaveGlobalPosition() { return true; }
 
-    std::optional<Seconds> NODELETE convertAnimationTimeToTimelineTime(Seconds) const;
+    std::optional<Seconds> convertAnimationTimeToTimelineTime(Seconds) const;
 
     void progressBasedTimelineSourceDidChangeMetrics();
 
     // ContextDestructionObserver.
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void contextDestroyed() final;
 
 protected:
@@ -198,7 +198,7 @@ protected:
     void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
     virtual void animationDidFinish();
-    WebAnimationTime NODELETE zeroTime() const;
+    WebAnimationTime zeroTime() const;
 
     enum class AutoRewind : bool { No, Yes };
     ExceptionOr<void> play(AutoRewind);
@@ -237,7 +237,7 @@ private:
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebAnimation; }

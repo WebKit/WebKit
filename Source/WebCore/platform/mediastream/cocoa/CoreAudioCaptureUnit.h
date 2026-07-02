@@ -211,7 +211,7 @@ private:
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 #if !LOG_DISABLED
-    void checkTimestamps(const AudioTimeStamp&, double);
+    void NODELETE checkTimestamps(const AudioTimeStamp&, double);
 
 #endif
 

@@ -49,7 +49,7 @@ public:
     explicit SpeechRecognitionRealtimeMediaSourceManager(WebProcess&);
     ~SpeechRecognitionRealtimeMediaSourceManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:
@@ -63,8 +63,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // IPC::MessageSender.
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    IPC::Connection* NODELETE messageSenderConnection() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     IPC::Connection& NODELETE connection() const;
 

@@ -918,7 +918,7 @@ void WebsiteDataStore::getManagedDomains(CompletionHandler<void(const HashSet<We
     });
 }
 
-const HashSet<WebCore::RegistrableDomain>* WebsiteDataStore::managedDomainsIfInitialized()
+const HashSet<WebCore::RegistrableDomain>* NODELETE WebsiteDataStore::managedDomainsIfInitialized()
 {
     ASSERT(RunLoop::isMain());
     if (!hasInitializedManagedDomains)

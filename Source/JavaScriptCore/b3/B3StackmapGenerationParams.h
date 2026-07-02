@@ -86,7 +86,7 @@ public:
     // registers.
     //
     // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
-    JS_EXPORT_PRIVATE RegisterSet unavailableRegisters() const;
+    JS_EXPORT_PRIVATE RegisterSet NODELETE unavailableRegisters() const;
 
     GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
     FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }

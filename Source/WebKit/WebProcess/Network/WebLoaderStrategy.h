@@ -67,13 +67,13 @@ public:
     void browsingContextRemoved(WebCore::LocalFrame&) final;
 
     void remove(WebCore::ResourceLoader*) final;
-    void setDefersLoading(WebCore::ResourceLoader&, bool) final;
-    void crossOriginRedirectReceived(WebCore::ResourceLoader*, const URL& redirectURL) final;
+    void NODELETE setDefersLoading(WebCore::ResourceLoader&, bool) final;
+    void NODELETE crossOriginRedirectReceived(WebCore::ResourceLoader*, const URL& redirectURL) final;
     
-    void servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) final;
+    void NODELETE servePendingRequests(WebCore::ResourceLoadPriority minimumPriority) final;
 
-    void suspendPendingRequests() final;
-    void resumePendingRequests() final;
+    void NODELETE suspendPendingRequests() final;
+    void NODELETE resumePendingRequests() final;
 
     bool usePingLoad() const final { return false; }
     void startPingLoad(WebCore::LocalFrame&, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap& originalRequestHeaders, const WebCore::FetchOptions&, WebCore::ContentSecurityPolicyImposition, PingLoadCompletionHandler&&) final;
@@ -95,7 +95,7 @@ public:
 
     void scheduleLoadFromNetworkProcess(WebCore::ResourceLoader&, const WebCore::ResourceRequest&, const WebResourceLoader::TrackingParameters&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime);
 
-    bool isOnLine() const final;
+    bool NODELETE isOnLine() const final;
     void addOnlineStateChangeListener(Function<void(bool)>&&) final;
     void setOnLineState(bool);
 
@@ -113,7 +113,7 @@ private:
     bool tryLoadingUsingPDFJSHandler(WebCore::ResourceLoader&, const std::optional<WebResourceLoader::TrackingParameters>&);
 #endif
 
-    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError NODELETE cancelledError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
     bool isBlockedError(const WebCore::ResourceError&) const final;
     WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) const final;
@@ -124,7 +124,7 @@ private:
 #endif
 
     WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) const final;
-    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) const final;
+    WebCore::ResourceError NODELETE fileDoesNotExistError(const WebCore::ResourceResponse&) const final;
     WebCore::ResourceError httpsUpgradeRedirectLoopError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const final;
@@ -141,7 +141,7 @@ private:
     Vector<WebCore::NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier) final;
     WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier) final;
 
-    bool shouldPerformSecurityChecks() const final;
+    bool NODELETE shouldPerformSecurityChecks() const final;
     bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
 
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;

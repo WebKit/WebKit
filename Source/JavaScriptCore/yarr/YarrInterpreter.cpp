@@ -63,9 +63,9 @@ public:
 
     void dumpTerm(size_t idx, ByteTerm);
     void dumpDisjunction(ByteDisjunction*, unsigned nesting = 0);
-    bool unicode() const { return m_compileMode == CompileMode::Unicode; }
-    bool unicodeSets() const { return m_compileMode == CompileMode::UnicodeSets; }
-    bool eitherUnicode() const { return unicode() || unicodeSets(); }
+    bool NODELETE unicode() const { return m_compileMode == CompileMode::Unicode; }
+    bool NODELETE unicodeSets() const { return m_compileMode == CompileMode::UnicodeSets; }
+    bool NODELETE eitherUnicode() const { return unicode() || unicodeSets(); }
 
 private:
     YarrPattern* m_pattern { nullptr };
@@ -142,7 +142,7 @@ public:
         return new (allocatorPool->alloc(size)) DisjunctionContext();
     }
 
-    void NODELETE freeDisjunctionContext(DisjunctionContext* context)
+    void freeDisjunctionContext(DisjunctionContext* context)
     {
 #if ASSERT_ENABLED
         ASSERT(context->m_magicNumber == DisjunctionContext::magicNumber);
@@ -385,7 +385,7 @@ public:
             return result;
         }
 
-        char32_t prev()
+        char32_t NODELETE prev()
         {
             ASSERT(!(pos > length));
             if (pos && length)
@@ -403,7 +403,7 @@ public:
             pos = p;
         }
 
-        bool atStart()
+        bool NODELETE atStart()
         {
             return pos == 0;
         }
@@ -2488,7 +2488,7 @@ public:
         m_bodyDisjunction->terms.append(ByteTerm::DotStarEnclosure(bolAnchored, eolAnchored, m_currentFlags));
     }
 
-    unsigned NODELETE popParenthesesStack()
+    unsigned popParenthesesStack()
     {
         ASSERT(m_parenthesesStack.size());
         unsigned beginTerm = m_parenthesesStack.last().beginTerm;

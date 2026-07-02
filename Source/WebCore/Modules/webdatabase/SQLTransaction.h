@@ -117,7 +117,7 @@ private:
     void releaseOriginLockIfNeeded();
 
 #if !LOG_DISABLED
-    static ASCIILiteral debugStepName(void (SQLTransaction::*)());
+    static ASCIILiteral NODELETE debugStepName(void (SQLTransaction::*)());
 #endif
 
     const Ref<Database> m_database;

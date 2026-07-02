@@ -30,10 +30,10 @@ class WebSearchPopupMenu : public WebCore::SearchPopupMenu {
 public:
     static Ref<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
 
-    WebCore::PopupMenu* popupMenu() override;
+    WebCore::PopupMenu* NODELETE popupMenu() override;
     void saveRecentSearches(const WTF::AtomString& name, const Vector<WebCore::RecentSearch>&) override;
     void loadRecentSearches(const WTF::AtomString& name, Vector<WebCore::RecentSearch>&) override;
-    bool enabled() override;
+    bool NODELETE enabled() override;
 
 private:
     WebSearchPopupMenu(WebPage*, WebCore::PopupMenuClient*);

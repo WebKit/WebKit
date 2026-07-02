@@ -240,7 +240,7 @@ public:
     inline bool isString() const; // Defined in JSCJSValueCell.h
     inline bool isBigInt() const; // Defined in JSCJSValueCell.h
     inline bool isHeapBigInt() const; // Defined in JSCJSValueCell.h
-    JS_EXPORT_PRIVATE bool isHeapBigIntSlow() const;
+    JS_EXPORT_PRIVATE bool NODELETE isHeapBigIntSlow() const;
     bool isBigInt32() const;
     inline bool isSymbol() const; // Defined in JSCJSValueCell.h
     inline bool isPrimitive() const; // Defined in JSCJSValueCell.h

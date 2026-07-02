@@ -1466,7 +1466,7 @@ SelectionRenderingBehavior HTMLElement::selectionRenderingBehavior(const Node* n
 #ifndef NDEBUG
 
 // For use in the debugger
-void dumpInnerHTML(WebCore::HTMLElement*);
+void NODELETE dumpInnerHTML(WebCore::HTMLElement*);
 
 void dumpInnerHTML(WebCore::HTMLElement* element)
 {

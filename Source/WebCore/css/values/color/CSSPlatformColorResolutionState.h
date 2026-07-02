@@ -45,11 +45,11 @@ public:
 
     // Colors to use that usually get resolved dynamically using Document & StyleComputedStyle.
     virtual WebCore::Color currentColor() const;              // For CSSValueCurrentcolor
-    virtual WebCore::Color internalDocumentTextColor() const; // For CSSValueInternalDocumentTextColor
-    virtual WebCore::Color webkitLink() const;                // For CSSValueWebkitLink [Style::ForVisitedLink::No]
-    virtual WebCore::Color webkitLinkVisited() const;         // For CSSValueWebkitLink [Style::ForVisitedLink::Yes]
-    virtual WebCore::Color webkitActiveLink() const;          // For CSSValueWebkitActivelink
-    virtual WebCore::Color webkitFocusRingColor() const;      // For CSSValueWebkitFocusRingColor
+    virtual WebCore::Color NODELETE internalDocumentTextColor() const; // For CSSValueInternalDocumentTextColor
+    virtual WebCore::Color NODELETE webkitLink() const;                // For CSSValueWebkitLink [Style::ForVisitedLink::No]
+    virtual WebCore::Color NODELETE webkitLinkVisited() const;         // For CSSValueWebkitLink [Style::ForVisitedLink::Yes]
+    virtual WebCore::Color NODELETE webkitActiveLink() const;          // For CSSValueWebkitActivelink
+    virtual WebCore::Color NODELETE webkitFocusRingColor() const;      // For CSSValueWebkitFocusRingColor
 };
 
 struct PlatformColorResolutionState {

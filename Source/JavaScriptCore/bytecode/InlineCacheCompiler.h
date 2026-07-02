@@ -138,7 +138,7 @@ public:
 
     // This returns true if it has marked everything it will ever marked. This can be used as an
     // optimization to then avoid calling this method again during the fixpoint.
-    template<typename Visitor> void propagateTransitions(Visitor&) const;
+    template<typename Visitor> void NODELETE propagateTransitions(Visitor&) const;
 
     void dump(PrintStream& out) const;
 
@@ -296,7 +296,7 @@ private:
     void generateAccessCase(unsigned index, AccessCase&);
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> compileGetByDOMJITHandler(CodeBlock*, const DOMJIT::GetterSetter*, std::optional<bool> isSymbol);
-    template<typename Container> RefPtr<AccessCase> tryFoldToMegamorphic(CodeBlock*, const Container&);
+    template<typename Container> RefPtr<AccessCase> NODELETE tryFoldToMegamorphic(CodeBlock*, const Container&);
 
     VM& m_vm;
     JSGlobalObject* const m_globalObject;

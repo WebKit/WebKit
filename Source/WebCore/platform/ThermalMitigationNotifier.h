@@ -43,8 +43,8 @@ public:
     WEBCORE_EXPORT static Ref<ThermalMitigationNotifier> create(ThermalMitigationChangeCallback&&);
     WEBCORE_EXPORT ~ThermalMitigationNotifier();
 
-    WEBCORE_EXPORT bool thermalMitigationEnabled() const;
-    WEBCORE_EXPORT static bool isThermalMitigationEnabled();
+    WEBCORE_EXPORT bool NODELETE thermalMitigationEnabled() const;
+    WEBCORE_EXPORT static bool NODELETE isThermalMitigationEnabled();
 
 private:
     explicit ThermalMitigationNotifier(ThermalMitigationChangeCallback&&);

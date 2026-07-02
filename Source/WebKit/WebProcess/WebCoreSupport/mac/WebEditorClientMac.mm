@@ -73,7 +73,7 @@ void WebEditorClient::setInsertionPasteboard(const String&)
     notImplemented();
 }
 
-static void applyTextTransformation(WebPage& page, NSString *(*transform)(NSString *))
+static void NODELETE applyTextTransformation(WebPage& page, NSString *(*transform)(NSString *))
 {
     RefPtr frame = page.corePage()->focusController().focusedOrMainFrame();
     if (!frame)
@@ -183,7 +183,7 @@ bool WebEditorClient::substitutionsPanelIsShowing()
     return isShowing;
 }
 
-static void toggleTextCheckerState(TextCheckerState flag)
+static void NODELETE toggleTextCheckerState(TextCheckerState flag)
 {
     auto state = WebProcess::singleton().textCheckerState();
     state.set(flag, !state.contains(flag));

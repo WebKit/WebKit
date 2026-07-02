@@ -48,7 +48,7 @@ public:
     ViewUpdateDispatcher(WebProcess&);
     ~ViewUpdateDispatcher();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     void initializeConnection(IPC::Connection&);

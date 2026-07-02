@@ -78,7 +78,7 @@ public:
         return m_promise.get();
     }
 
-    const String& unmaskedSourceURL() const { return m_unmaskedSourceURL; }
+    const String& NODELETE unmaskedSourceURL() const { return m_unmaskedSourceURL; }
 
 private:
     const Ref<DOMPromise> m_promise;

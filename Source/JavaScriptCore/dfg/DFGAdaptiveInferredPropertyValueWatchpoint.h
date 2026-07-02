@@ -40,7 +40,7 @@ public:
     AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
     AdaptiveInferredPropertyValueWatchpoint() = default;
 
-    void initialize(const ObjectPropertyCondition&, CodeBlock*);
+    void NODELETE initialize(const ObjectPropertyCondition&, CodeBlock*);
 
 private:
     bool isValid() const final;

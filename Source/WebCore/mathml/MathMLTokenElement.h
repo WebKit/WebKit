@@ -50,7 +50,7 @@ private:
     void didAttachRenderers() final;
 
     bool isMathMLToken() const final { return true; }
-    bool acceptsLegacyMathVariantAttribute() final;
+    bool NODELETE acceptsLegacyMathVariantAttribute() final;
 };
 
 }

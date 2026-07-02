@@ -86,7 +86,7 @@ public:
     WEBCORE_EXPORT ResolvedEffectTiming resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
     void clearProperty(AcceleratedEffectProperty);
-    void makeForwardsFilling();
+    void NODELETE makeForwardsFilling();
 
     // Encoding and decoding support
     const AnimationEffectTiming& timing() const LIFETIME_BOUND { return m_timing; }
@@ -121,7 +121,7 @@ private:
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
     const KeyframeInterpolation::Keyframe& keyframeAtIndex(size_t) const final;
     size_t numberOfKeyframes() const final { return m_keyframes.size(); }
-    const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
+    const TimingFunction* NODELETE timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
 
     AnimationEffectTiming m_timing;
     RefPtr<AcceleratedTimeline> m_timeline;

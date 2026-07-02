@@ -76,13 +76,13 @@ public:
     int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
 
     Ref<VideoEncoder::EncodePromise> encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
-    void close() { m_isClosed = true; }
+    void NODELETE close() { m_isClosed = true; }
     void setRates(uint64_t bitRate, double frameRate);
 
 private:
     LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXVideoEncoder::Type, VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&);
     webrtc::EncodedImageCallback::Result OnEncodedImage(const webrtc::EncodedImage&, const webrtc::CodecSpecificInfo*) final;
-    void OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit) final;
+    void NODELETE OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit) final;
 
     VideoEncoder::DescriptionCallback m_descriptionCallback;
     VideoEncoder::OutputCallback m_outputCallback;

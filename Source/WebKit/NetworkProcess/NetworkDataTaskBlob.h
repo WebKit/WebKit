@@ -71,13 +71,13 @@ private:
     void invalidateAndCancel() final;
     NetworkDataTask::State state() const final { return m_state; }
     void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) final;
-    String suggestedFilename() const final;
+    String NODELETE suggestedFilename() const final;
 
     // BlobResourceHandleBase.
     bool didReceiveData(std::span<const uint8_t>) final;
     void didReceiveResponse(WebCore::ResourceResponse&&) final;
     void didFail(Error) final;
-    bool erroredOrAborted() const final;
+    bool NODELETE erroredOrAborted() const final;
     void didFinish() final;
     const WebCore::ResourceRequest& firstRequest() const final { return NetworkDataTask::firstRequest(); }
     void clearStream() final;

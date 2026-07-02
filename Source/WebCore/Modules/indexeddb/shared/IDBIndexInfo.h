@@ -50,8 +50,8 @@ public:
     void rename(const String& newName) { m_name = newName; }
 
 #if !LOG_DISABLED
-    String loggingString(int indent = 0) const;
-    String condensedLoggingString() const;
+    String NODELETE loggingString(int indent = 0) const;
+    String NODELETE condensedLoggingString() const;
 #endif
 
     void setIdentifier(IDBIndexIdentifier identifier) { m_identifier = identifier; }

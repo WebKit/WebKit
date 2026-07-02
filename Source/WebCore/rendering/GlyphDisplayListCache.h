@@ -119,9 +119,9 @@ private:
     static bool NODELETE canShareDisplayList(const DisplayList::DisplayList&);
 
     template<typename LayoutRun>
-    RefPtr<const DisplayList::DisplayList> getDisplayList(const LayoutRun&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
+    RefPtr<const DisplayList::DisplayList> NODELETE getDisplayList(const LayoutRun&, const FontCascade&, GraphicsContext&, const TextRun&, const PaintInfo&);
     template<typename LayoutRun>
-    RefPtr<const DisplayList::DisplayList> getIfExistsImpl(const LayoutRun&);
+    RefPtr<const DisplayList::DisplayList> NODELETE getIfExistsImpl(const LayoutRun&);
     void remove(const void* run);
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;

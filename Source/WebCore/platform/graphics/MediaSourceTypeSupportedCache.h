@@ -38,7 +38,7 @@ namespace WebCore {
 
 class WEBCORE_EXPORT MediaSourceTypeSupportedCache {
 public:
-    static MediaSourceTypeSupportedCache& singleton();
+    static MediaSourceTypeSupportedCache& NODELETE singleton();
 
     std::optional<bool> lookup(const String& type) const;
     void store(const String& type, bool isSupported);

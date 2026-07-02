@@ -158,7 +158,7 @@ public:
     bool hasAnyBaselineAlignmentItem() const { return !m_baselineAlignmentItemsForRows.isEmpty() || !m_baselineAlignmentItemsForColumns.isEmpty(); }
 
 #if ASSERT_ENABLED
-    bool tracksAreWiderThanMinTrackBreadth() const;
+    bool NODELETE tracksAreWiderThanMinTrackBreadth() const;
 #endif
 
 private:
@@ -187,11 +187,11 @@ private:
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, RenderGridLayoutState&);
     void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryMinMaxTrackSize&, GridTrack&);
 
-    bool NODELETE spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
+    bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
 
     using GridItemsSpanGroupRange = std::span<GridItemWithSpan>;
-    template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(GridItemsSpanGroupRange gridItemsWithSpan, RenderGridLayoutState&);
-    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItems(GridItemsSpanGroupRange gridItemsWithSpan, RenderGridLayoutState&);
+    template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void NODELETE increaseSizesToAccommodateSpanningItems(GridItemsSpanGroupRange gridItemsWithSpan, RenderGridLayoutState&);
+    template <TrackSizeComputationVariant variant> void NODELETE increaseSizesToAccommodateSpanningItems(GridItemsSpanGroupRange gridItemsWithSpan, RenderGridLayoutState&);
 
     // 12.5 Resolve Intrinsic Track Sizing : Step 3
     // https://drafts.csswg.org/css-grid-2/#algo-spanning-items
@@ -208,7 +208,7 @@ private:
     // 2. Distribute space to intrinsic tracks
     // This step behaves similar to increaseSizesToAccommodateSpanningItems() where we start at the lowest span length and distribute space to the tracks.
     // Then look at the next smallest span length, and repeat step 2 until we exhaust all grid items.
-    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsMasonry(StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&);
+    template <TrackSizeComputationVariant variant> void NODELETE increaseSizesToAccommodateSpanningItemsMasonry(StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&);
 
     // 12.5 Resolve Intrinsic Track Sizing : Step 4
     // https://drafts.csswg.org/css-grid-2/#algo-spanning-items
@@ -224,7 +224,7 @@ private:
     //
     // 2. Distribute space to intrinsic tracks
     // This step behaves similar to increaseSizesToAccommodateSpanningItems() where we consider all track items at once instead of per span length.
-    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsMasonryWithFlex(Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
+    template <TrackSizeComputationVariant variant> void NODELETE increaseSizesToAccommodateSpanningItemsMasonryWithFlex(Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
 
     void convertIndefiniteItemsToDefiniteMasonry(const StdMap<SpanLength, MasonryMinMaxTrackSize>& gridTrackSpans, StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&, Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
 
@@ -276,7 +276,7 @@ private:
     // For subgrids, it accumulates margin/border/padding into each spanned track and recurses into children.
     // For leaf items, it invokes |handleLeafItem(gridItem, gridItemSpan)|.
     template<typename LeafItemHandler>
-    void traverseSubgridTreeForIntrinsicSizing(LeafItemHandler&&);
+    void NODELETE traverseSubgridTreeForIntrinsicSizing(LeafItemHandler&&);
 
     void aggregateGridItemsForIntrinsicSizing(Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, RenderGridLayoutState&);
 
@@ -286,7 +286,7 @@ private:
     void advanceNextState();
     bool NODELETE isValidTransition() const;
 
-    bool isDirectionInMasonryDirection() const;
+    bool NODELETE isDirectionInMasonryDirection() const;
 
     // Data.
     bool wasSetup() const { return !!m_strategy; }
@@ -381,7 +381,7 @@ protected:
 
     LayoutUnit logicalHeightForGridItem(RenderBox&, RenderGridLayoutState&) const;
     bool updateOverridingContainingBlockContentSizeForGridItem(RenderBox&, Style::GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
-    bool isComputingColumnIntrinsicWidthForNonOrthogonalItem(const RenderBox&) const;
+    bool NODELETE isComputingColumnIntrinsicWidthForNonOrthogonalItem(const RenderBox&) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.
     LayoutUnit computeTrackBasedSize() const { return m_algorithm.computeTrackBasedSize(); }

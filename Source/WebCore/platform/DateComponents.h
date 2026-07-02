@@ -148,12 +148,12 @@ public:
 
 private:
     template<typename CharacterType> bool NODELETE parseYear(StringParsingBuffer<CharacterType>&);
-    template<typename CharacterType> bool parseTimeZone(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool NODELETE parseTimeZone(StringParsingBuffer<CharacterType>&);
     template<typename CharacterType> bool NODELETE parseMonth(StringParsingBuffer<CharacterType>&);
     template<typename CharacterType> bool NODELETE parseDate(StringParsingBuffer<CharacterType>&);
     template<typename CharacterType> bool NODELETE parseWeek(StringParsingBuffer<CharacterType>&);
     template<typename CharacterType> bool NODELETE parseTime(StringParsingBuffer<CharacterType>&);
-    template<typename CharacterType> bool parseDateTimeLocal(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool NODELETE parseDateTimeLocal(StringParsingBuffer<CharacterType>&);
 
     // The following setMillisecondsSinceEpochFor*() functions take
     // the number of milliseconds since 1970-01-01 00:00:00.000 UTC as

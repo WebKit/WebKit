@@ -77,7 +77,7 @@ protected:
     ExceptionScope(ExceptionScope&&) = default;
     ~ExceptionScope();
 
-    JS_EXPORT_PRIVATE CString unexpectedExceptionMessage();
+    JS_EXPORT_PRIVATE CString NODELETE unexpectedExceptionMessage();
 
     VM& m_vm;
     ExceptionScope* m_previousScope;

@@ -106,12 +106,12 @@ public:
 
     bool hasCustomProperty(const AtomString&) const;
     const Property& customProperty(const AtomString&) const LIFETIME_BOUND;
-    const Property& functionResultProperty() const LIFETIME_BOUND;
+    const Property& NODELETE functionResultProperty() const LIFETIME_BOUND;
 
     std::span<const CSSPropertyID> logicalGroupPropertyIDs() const LIFETIME_BOUND;
     const OrderedHashMap<AtomString, Property>& customProperties() const LIFETIME_BOUND { return m_customProperties; }
 
-    ValueOrReference<HashSet<AnimatableCSSProperty>> overriddenAnimatedProperties() const;
+    ValueOrReference<HashSet<AnimatableCSSProperty>> NODELETE overriddenAnimatedProperties() const;
 
     const MatchResult& matchResult() const LIFETIME_BOUND { return m_matchResult; }
 

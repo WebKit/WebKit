@@ -44,7 +44,7 @@ struct ContactsSelectOptions;
 class ContactsManager final : public RefCountedAndCanMakeWeakPtr<ContactsManager> {
     WTF_MAKE_TZONE_ALLOCATED(ContactsManager);
 public:
-    static Ref<ContactsManager> NODELETE create(Navigator&);
+    static Ref<ContactsManager> create(Navigator&);
     ~ContactsManager();
 
     LocalFrame* NODELETE frame() const;

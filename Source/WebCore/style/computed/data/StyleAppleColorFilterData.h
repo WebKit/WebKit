@@ -43,7 +43,7 @@ public:
     bool operator==(const AppleColorFilterData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const AppleColorFilterData&) const;
+    void NODELETE dumpDifferences(TextStream&, const AppleColorFilterData&) const;
 #endif
 
     AppleColorFilter appleColorFilter;

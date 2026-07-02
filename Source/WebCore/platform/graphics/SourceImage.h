@@ -51,10 +51,10 @@ public:
 
     bool operator==(const SourceImage&) const;
 
-    NativeImage* nativeImageIfExists() const;
+    NativeImage* NODELETE nativeImageIfExists() const;
     NativeImage* nativeImage() const;
 
-    ImageBuffer* imageBufferIfExists() const;
+    ImageBuffer* NODELETE imageBufferIfExists() const;
     ImageBuffer* imageBuffer() const;
 
     RenderingResourceIdentifier imageIdentifier() const;

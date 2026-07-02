@@ -87,7 +87,7 @@ public:
 
     bool NODELETE vp9DecoderEnabled() const;
 
-    ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
+    ExceptionOr<void> NODELETE setShouldManageAudioSessionCategory(bool);
 
     // CaptionUserPreferences.
     enum class TrackKind : uint8_t { Subtitles, Captions, TextDescriptions };

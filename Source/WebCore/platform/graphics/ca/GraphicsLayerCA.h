@@ -68,10 +68,10 @@ public:
     WEBCORE_EXPORT void initialize(Type) override;
 
     WEBCORE_EXPORT void setName(const String&) override;
-    WEBCORE_EXPORT String debugName() const override;
+    WEBCORE_EXPORT String NODELETE debugName() const override;
 
-    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> primaryLayerID() const override;
-    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> layerIDIgnoringStructuralLayer() const final;
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> NODELETE primaryLayerID() const override;
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> NODELETE layerIDIgnoringStructuralLayer() const final;
 
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
@@ -187,7 +187,7 @@ public:
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 #if ENABLE(MODEL_ELEMENT)
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&, ModelInteraction) override;
-    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const override;
+    WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> NODELETE contentsLayerIDForModel() const override;
 #endif
     WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
     WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
@@ -260,14 +260,14 @@ private:
     CompositingCoordinatesOrientation platformCALayerContentsOrientation() const override { return contentsOrientation(); }
     WEBCORE_EXPORT void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior>) override;
     bool platformCALayerShowDebugBorders() const override { return isShowingDebugBorder(); }
-    WEBCORE_EXPORT bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
+    WEBCORE_EXPORT bool NODELETE platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
     int platformCALayerRepaintCount(PlatformCALayer*) const override { return repaintCount(); }
     int platformCALayerIncrementRepaintCount(PlatformCALayer*) override { return incrementRepaintCount(); }
 
     bool platformCALayerContentsOpaque() const override { return contentsOpaque(); }
     bool platformCALayerDrawsContent() const override { return drawsContent(); }
     bool platformCALayerRenderingIsSuppressedIncludingDescendants() const override { return renderingIsSuppressedIncludingDescendants(); }
-    WEBCORE_EXPORT bool platformCALayerDelegatesDisplay(PlatformCALayer*) const override;
+    WEBCORE_EXPORT bool NODELETE platformCALayerDelegatesDisplay(PlatformCALayer*) const override;
     WEBCORE_EXPORT void platformCALayerLayerDisplay(PlatformCALayer*) override;
     void platformCALayerLayerDidDisplay(PlatformCALayer* layer) override { return layerDidDisplay(layer); }
     WEBCORE_EXPORT void platformCALayerSetNeedsToRevalidateTiles() override;
@@ -566,7 +566,7 @@ private:
 #endif
     };
     bool ensureStructuralLayer(StructuralLayerPurpose);
-    StructuralLayerPurpose structuralLayerPurpose() const;
+    StructuralLayerPurpose NODELETE structuralLayerPurpose() const;
 
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.

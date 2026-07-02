@@ -1937,9 +1937,9 @@ public:
         {
         }
 
-        bool didReceiveSectionData(Wasm::Section) final { return true; }
-        bool didReceiveFunctionData(Wasm::FunctionCodeIndex, const Wasm::FunctionData&) final { return true; }
-        void didFinishParsing() final { }
+        bool NODELETE didReceiveSectionData(Wasm::Section) final { return true; }
+        bool NODELETE didReceiveFunctionData(Wasm::FunctionCodeIndex, const Wasm::FunctionData&) final { return true; }
+        void NODELETE didFinishParsing() final { }
 
         WasmStreamingParser* m_parser;
     };
@@ -3734,7 +3734,7 @@ public:
     }
 
 private:
-    void sourceParsed(JSGlobalObject*, SourceProvider*, int, const WTF::String&) final
+    void NODELETE sourceParsed(JSGlobalObject*, SourceProvider*, int, const WTF::String&) final
     {
         DollarVMAssertScope assertScope;
     }

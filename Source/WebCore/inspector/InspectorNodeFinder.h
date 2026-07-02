@@ -47,7 +47,7 @@ public:
 
 private:
     bool NODELETE checkEquals(const String&, const String&);
-    bool checkContains(const String&, const String&);
+    bool NODELETE checkContains(const String&, const String&);
     bool NODELETE checkStartsWith(const String&, const String&);
     bool NODELETE checkEndsWith(const String&, const String&);
 

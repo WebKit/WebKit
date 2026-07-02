@@ -75,16 +75,16 @@ public:
     bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
     bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const override;
     Vector<String> supportedRobustnesses() const override;
-    CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
-    CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
-    bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const override;
+    CDMRequirement NODELETE distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
+    CDMRequirement NODELETE persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const override;
+    bool NODELETE distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const override;
     RefPtr<CDMInstance> createInstance() override;
-    void loadAndInitialize() override;
-    bool supportsServerCertificates() const override;
-    bool supportsSessions() const override;
+    void NODELETE loadAndInitialize() override;
+    bool NODELETE supportsServerCertificates() const override;
+    bool NODELETE supportsSessions() const override;
     bool supportsInitData(const String&, const SharedBuffer&) const override;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
-    std::optional<String> sanitizeSessionId(const String&) const override;
+    std::optional<String> NODELETE sanitizeSessionId(const String&) const override;
 
     static const String& sinfName();
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);

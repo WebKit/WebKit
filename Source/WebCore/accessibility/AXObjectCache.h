@@ -369,7 +369,7 @@ public:
     {
         return m_nodeObjectMapping.get(element);
     }
-    std::optional<AXID> getAXID(RenderObject&) const;
+    std::optional<AXID> NODELETE getAXID(RenderObject&) const;
 
     void remove(RenderObject&);
     void remove(Node&);
@@ -533,7 +533,7 @@ public:
     void deferAttributeChangeIfNeeded(Element&, const QualifiedName&, const AtomString&, const AtomString&);
 
     // True for the attributes in relationAttributes() (aria-labelledby, aria-owns, etc.).
-    static bool isRelationAttribute(const QualifiedName&);
+    static bool NODELETE isRelationAttribute(const QualifiedName&);
     // Records that an element carries a relation attribute so the next relations rebuild includes it.
     void trackRelationAttributeElement(Element&);
 
@@ -614,7 +614,7 @@ public:
 #endif
 
     void deferCanvasFocusPathBoundsUpdate(Element& canvasFallbackElement, HTMLCanvasElement&, FloatRect bounds);
-    std::optional<IntRect> cachedBoundsForID(AXID) const;
+    std::optional<IntRect> NODELETE cachedBoundsForID(AXID) const;
 
     // Text marker utilities.
     std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&, TextMarkerOrigin = static_cast<TextMarkerOrigin>(0));
@@ -699,7 +699,7 @@ public:
 
     AXComputedObjectAttributeCache* computedObjectAttributeCache() LIFETIME_BOUND { return m_computedObjectAttributeCache.get(); }
 
-    Document* document() const;
+    Document* NODELETE document() const;
     FrameIdentifier frameID() const { return m_frameID; }
 
     RefPtr<Page> NODELETE page() const;

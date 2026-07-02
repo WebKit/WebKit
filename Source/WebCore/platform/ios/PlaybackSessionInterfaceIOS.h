@@ -86,11 +86,11 @@ public:
     void modelDestroyed() override;
 
     std::optional<MediaPlayerIdentifier> NODELETE playerIdentifier() const;
-    virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
-    void NODELETE setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS>);
+    virtual void NODELETE setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
+    void setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS>);
 
-    virtual void startObservingNowPlayingMetadata();
-    virtual void stopObservingNowPlayingMetadata();
+    virtual void NODELETE startObservingNowPlayingMetadata();
+    virtual void NODELETE stopObservingNowPlayingMetadata();
 
     virtual void swapFullscreenModesWith(PlaybackSessionInterfaceIOS&) { }
 

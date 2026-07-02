@@ -54,13 +54,13 @@ public:
 
 private:
     bool shouldDeleteRange(const std::optional<WebCore::SimpleRange>&) final;
-    bool smartInsertDeleteEnabled() final;
-    bool isSelectTrailingWhitespaceEnabled() const final;
+    bool NODELETE smartInsertDeleteEnabled() final;
+    bool NODELETE isSelectTrailingWhitespaceEnabled() const final;
     bool isContinuousSpellCheckingEnabled() final;
-    void toggleContinuousSpellChecking() final;
+    void NODELETE toggleContinuousSpellChecking() final;
     bool isGrammarCheckingEnabled() final;
-    void toggleGrammarChecking() final;
-    int spellCheckerDocumentTag() final;
+    void NODELETE toggleGrammarChecking() final;
+    int NODELETE spellCheckerDocumentTag() final;
     
     bool shouldBeginEditing(const WebCore::SimpleRange&) final;
     bool shouldEndEditing(const WebCore::SimpleRange&) final;
@@ -70,7 +70,7 @@ private:
     
     bool shouldApplyStyle(const WebCore::StyleProperties&, const std::optional<WebCore::SimpleRange>&) final;
     void didApplyStyle() final;
-    bool shouldMoveRangeAfterDelete(const WebCore::SimpleRange&, const WebCore::SimpleRange&) final;
+    bool NODELETE shouldMoveRangeAfterDelete(const WebCore::SimpleRange&, const WebCore::SimpleRange&) final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::FragmentedSharedBuffer>&&) final;
@@ -98,21 +98,21 @@ private:
     void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>>& pasteboardTypesAndData) final;
     
     void registerUndoStep(WebCore::UndoStep&) final;
-    void registerRedoStep(WebCore::UndoStep&) final;
+    void NODELETE registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebCore::FrameIdentifier, const String& originIdentifier) final;
 
-    bool canCopyCut(WebCore::LocalFrame*, bool defaultValue) const final;
-    bool canPaste(WebCore::LocalFrame*, bool defaultValue) const final;
+    bool NODELETE canCopyCut(WebCore::LocalFrame*, bool defaultValue) const final;
+    bool NODELETE canPaste(WebCore::LocalFrame*, bool defaultValue) const final;
     bool canUndo() const final;
     bool canRedo() const final;
     
     void undo() final;
     void redo() final;
 
-    void handleKeyboardEvent(WebCore::KeyboardEvent&) final;
-    void handleInputMethodKeydown(WebCore::KeyboardEvent&) final;
+    void NODELETE handleKeyboardEvent(WebCore::KeyboardEvent&) final;
+    void NODELETE handleInputMethodKeydown(WebCore::KeyboardEvent&) final;
     
     void textFieldDidBeginEditing(WebCore::Element&) final;
     void textFieldDidEndEditing(WebCore::Element&) final;
@@ -120,40 +120,40 @@ private:
     bool doTextFieldCommandFromEvent(WebCore::Element&, WebCore::KeyboardEvent*) final;
     void textWillBeDeletedInTextField(WebCore::Element&) final;
     void textDidChangeInTextArea(WebCore::Element&) final;
-    void overflowScrollPositionChanged() final;
-    void subFrameScrollPositionChanged() final;
+    void NODELETE overflowScrollPositionChanged() final;
+    void NODELETE subFrameScrollPositionChanged() final;
 
 #if PLATFORM(COCOA)
-    void setInsertionPasteboard(const String& pasteboardName) final;
+    void NODELETE setInsertionPasteboard(const String& pasteboardName) final;
 #endif
 
 #if USE(APPKIT)
-    void uppercaseWord() final;
-    void lowercaseWord() final;
-    void capitalizeWord() final;
-    bool canApplyCaseTransformations(const String&) final;
-    bool canConvertToTraditionalChinese(const String&) final;
-    bool canConvertToSimplifiedChinese(const String&) final;
-    void convertToTraditionalChinese() final;
-    void convertToSimplifiedChinese() final;
+    void NODELETE uppercaseWord() final;
+    void NODELETE lowercaseWord() final;
+    void NODELETE capitalizeWord() final;
+    bool NODELETE canApplyCaseTransformations(const String&) final;
+    bool NODELETE canConvertToTraditionalChinese(const String&) final;
+    bool NODELETE canConvertToSimplifiedChinese(const String&) final;
+    void NODELETE convertToTraditionalChinese() final;
+    void NODELETE convertToSimplifiedChinese() final;
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    void showSubstitutionsPanel(bool show) final;
-    bool substitutionsPanelIsShowing() final;
-    void toggleSmartInsertDelete() final;
-    bool isAutomaticQuoteSubstitutionEnabled() final;
-    void toggleAutomaticQuoteSubstitution() final;
-    bool isAutomaticLinkDetectionEnabled() final;
-    void toggleAutomaticLinkDetection() final;
-    bool isAutomaticDashSubstitutionEnabled() final;
-    bool isSmartListsEnabled() final;
-    void toggleSmartLists() final;
-    void toggleAutomaticDashSubstitution() final;
-    bool isAutomaticTextReplacementEnabled() final;
-    void toggleAutomaticTextReplacement() final;
-    bool isAutomaticSpellingCorrectionEnabled() final;
-    void toggleAutomaticSpellingCorrection() final;
+    void NODELETE showSubstitutionsPanel(bool show) final;
+    bool NODELETE substitutionsPanelIsShowing() final;
+    void NODELETE toggleSmartInsertDelete() final;
+    bool NODELETE isAutomaticQuoteSubstitutionEnabled() final;
+    void NODELETE toggleAutomaticQuoteSubstitution() final;
+    bool NODELETE isAutomaticLinkDetectionEnabled() final;
+    void NODELETE toggleAutomaticLinkDetection() final;
+    bool NODELETE isAutomaticDashSubstitutionEnabled() final;
+    bool NODELETE isSmartListsEnabled() final;
+    void NODELETE toggleSmartLists() final;
+    void NODELETE toggleAutomaticDashSubstitution() final;
+    bool NODELETE isAutomaticTextReplacementEnabled() final;
+    void NODELETE toggleAutomaticTextReplacement() final;
+    bool NODELETE isAutomaticSpellingCorrectionEnabled() final;
+    void NODELETE toggleAutomaticSpellingCorrection() final;
 #endif
 
 #if PLATFORM(GTK)
@@ -165,7 +165,7 @@ private:
 
     TextCheckerClient* textChecker() final { return this; }
 
-    bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const final;
+    bool NODELETE shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const final;
     void ignoreWordInSpellDocument(const String&) final;
     void learnWord(const String&) final;
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) final;
@@ -177,10 +177,10 @@ private:
 
     void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail&) final;
     void updateSpellingUIWithMisspelledWord(const String&) final;
-    void showSpellingUI(bool show) final;
+    void NODELETE showSpellingUI(bool show) final;
     bool spellingUIIsShowing() final;
     void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) final;
-    void setInputMethodState(WebCore::Element*) final;
+    void NODELETE setInputMethodState(WebCore::Element*) final;
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
     void requestExtendedCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
 
@@ -189,7 +189,7 @@ private:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(MAC)
-    void didDispatchInputMethodKeydown(WebCore::KeyboardEvent&) final;
+    void NODELETE didDispatchInputMethodKeydown(WebCore::KeyboardEvent&) final;
 #endif
 
 #if PLATFORM(COCOA)
@@ -209,11 +209,11 @@ private:
     bool shouldRemoveDictationAlternativesAfterEditing() const final;
 #endif
 
-    void willChangeSelectionForAccessibility() final;
-    void didChangeSelectionForAccessibility() final;
+    void NODELETE willChangeSelectionForAccessibility() final;
+    void NODELETE didChangeSelectionForAccessibility() final;
 
     bool performTwoStepDrop(WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool isMove) final;
-    bool supportsGlobalSelection() final;
+    bool NODELETE supportsGlobalSelection() final;
 
 #if PLATFORM(IOS_FAMILY)
     bool shouldDrawVisuallyContiguousBidiSelection() const final;

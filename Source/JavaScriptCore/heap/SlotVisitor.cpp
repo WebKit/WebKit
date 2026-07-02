@@ -52,7 +52,7 @@ namespace JSC {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SlotVisitor);
 
 #if ENABLE(GC_VALIDATION)
-static void validate(JSCell* cell)
+static void NODELETE validate(JSCell* cell)
 {
     RELEASE_ASSERT(cell);
 

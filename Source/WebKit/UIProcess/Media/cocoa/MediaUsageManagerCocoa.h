@@ -46,7 +46,7 @@ private:
     void updateMediaUsage(WebCore::MediaSessionIdentifier, const WebCore::MediaUsageInfo&) final;
     void removeMediaSession(WebCore::MediaSessionIdentifier) final;
 #if !HAVE(CGS_FIX_FOR_RADAR_97530095)
-    bool isPlayingVideoInViewport() const final;
+    bool NODELETE isPlayingVideoInViewport() const final;
 #endif
 
     struct SessionMediaUsage {

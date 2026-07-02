@@ -65,7 +65,7 @@ public:
     static ScopedArgumentsTable* create(VM&);
     static ScopedArgumentsTable* tryCreate(VM&, uint32_t length);
 
-    static void destroy(JSCell*);
+    static void NODELETE destroy(JSCell*);
 
     uint32_t length() const { return m_arguments.size(); }
     ScopedArgumentsTable* trySetLength(VM&, uint32_t newLength);
@@ -79,7 +79,7 @@ public:
     }
     
     ScopedArgumentsTable* trySet(VM&, uint32_t index, ScopeOffset);
-    void NODELETE trySetWatchpointSet(uint32_t index, WatchpointSet* watchpoints);
+    void trySetWatchpointSet(uint32_t index, WatchpointSet* watchpoints);
     void clearWatchpointSet(uint32_t index) { m_watchpointSets[index] = nullptr; }
 
     DECLARE_EXPORT_INFO;

@@ -285,7 +285,7 @@ void DrawGlyphs::apply(GraphicsContext& context) const
 
 void DrawGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    // FIXME: dump more stuff.
+    // FIXME: NODELETE dump more stuff.
     ts.dumpProperty("local-anchor"_s, localAnchor());
     ts.dumpProperty("font-smoothing-mode"_s, fontSmoothingMode());
     ts.dumpProperty("length"_s, length());
@@ -378,7 +378,7 @@ void DrawSystemImage::apply(GraphicsContext& context) const
 
 void DrawSystemImage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    // FIXME: dump more stuff.
+    // FIXME: NODELETE dump more stuff.
     ts.dumpProperty("destination"_s, destinationRect());
 }
 

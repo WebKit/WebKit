@@ -69,7 +69,7 @@ using DragImage = NSImage *;
 using DragImage = CGImageRef;
 #endif
 
-static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
+static RefPtr<ShareableBitmap> NODELETE convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
 {
     auto bitmap = ShareableBitmap::create({ size, screenColorSpace(protect(protect(frame.mainFrame())->virtualView()).get()) });
     if (!bitmap)
@@ -118,7 +118,7 @@ void WebDragClient::didConcludeEditDrag()
 
 #if USE(APPKIT)
 
-static RefPtr<WebCore::CachedImage> cachedImage(Element& element)
+static RefPtr<WebCore::CachedImage> NODELETE cachedImage(Element& element)
 {
     CheckedPtr renderImage = dynamicDowncast<WebCore::RenderImage>(element.renderer());
     if (!renderImage)

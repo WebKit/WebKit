@@ -45,7 +45,7 @@
 using SpanConstChar = std::span<const char>;
 
 // These can't be inline due to rdar://162531519
-void doLog(const WTF::String& msg); // rdar://168139823
+void NODELETE doLog(const WTF::String& msg); // rdar://168139823
 void doLoadingReleaseLog(const WTF::String& msg); // rdar://168139823
 void messageCheckFailed(Ref<WebKit::WebProcessProxy>); // rdar://168139740
 
@@ -73,7 +73,7 @@ inline WebKit::FrameState* getFrameState(WebKit::WebBackForwardListFrameItem& it
     return &item.frameState();
 }
 
-void setFrameStateBackForwardItemIdentifier(WebKit::FrameState&, const WebCore::BackForwardItemIdentifier&);
+void NODELETE setFrameStateBackForwardItemIdentifier(WebKit::FrameState&, const WebCore::BackForwardItemIdentifier&);
 
 // Workarounds for rdar://171011011
 void appendToBackForwardStateItems(Vector<WebKit::BackForwardListItemState>& items, const WebKit::WebBackForwardListItem& entry);

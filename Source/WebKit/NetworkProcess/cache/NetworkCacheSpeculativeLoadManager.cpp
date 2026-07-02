@@ -52,13 +52,13 @@ using namespace WebCore;
 static const Seconds preloadedEntryLifetime { 10_s };
 
 #if !LOG_DISABLED
-static HashCountedSet<String>& allSpeculativeLoadingDiagnosticMessages()
+static HashCountedSet<String>& NODELETE allSpeculativeLoadingDiagnosticMessages()
 {
     static NeverDestroyed<HashCountedSet<String>> messages;
     return messages;
 }
 
-static void printSpeculativeLoadingDiagnosticMessageCounts()
+static void NODELETE printSpeculativeLoadingDiagnosticMessageCounts()
 {
     LOG(NetworkCacheSpeculativePreloading, "-- Speculative loading statistics --");
     for (auto& [message, count] : allSpeculativeLoadingDiagnosticMessages())

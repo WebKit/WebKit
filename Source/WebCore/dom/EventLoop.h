@@ -206,7 +206,7 @@ public:
     // https://html.spec.whatwg.org/multipage/webappapis.html#perform-a-microtask-checkpoint
     void performMicrotaskCheckpoint(JSC::VM&);
 
-    void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
+    void NODELETE runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
     EventLoopTimerHandle scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
     EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment&, HasReachedMaxNestingLevel, TaskSource, EventLoop::TaskFunction&&);

@@ -45,25 +45,25 @@ class RemoteScrollbarsController final : public WebCore::ScrollbarsController {
     WTF_MAKE_TZONE_ALLOCATED(RemoteScrollbarsController);
 public:
     RemoteScrollbarsController(WebCore::ScrollableArea&, WebCore::ScrollingCoordinator*);
-    void mouseEnteredContentArea() final;
-    void mouseExitedContentArea()  final;
-    void mouseMovedInContentArea() final;
-    void mouseEnteredScrollbar(WebCore::Scrollbar*) const final;
-    void mouseExitedScrollbar(WebCore::Scrollbar*) const final;
-    bool shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar*) final;
+    void NODELETE mouseEnteredContentArea() final;
+    void NODELETE mouseExitedContentArea()  final;
+    void NODELETE mouseMovedInContentArea() final;
+    void NODELETE mouseEnteredScrollbar(WebCore::Scrollbar*) const final;
+    void NODELETE mouseExitedScrollbar(WebCore::Scrollbar*) const final;
+    bool NODELETE shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar*) final;
 
-    void setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) final;
-    void setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
-    bool shouldDrawIntoScrollbarLayer(WebCore::Scrollbar&) const final;
-    bool shouldRegisterScrollbars() const final;
-    int minimumThumbLength(WebCore::ScrollbarOrientation) final;
-    void updateScrollbarEnabledState(WebCore::Scrollbar&) final;
-    void scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection) final;
-    void scrollbarColorChanged(std::optional<WebCore::ScrollbarColor>) final;
+    void NODELETE setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation, int) final;
+    void NODELETE setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
+    bool NODELETE shouldDrawIntoScrollbarLayer(WebCore::Scrollbar&) const final;
+    bool NODELETE shouldRegisterScrollbars() const final;
+    int NODELETE minimumThumbLength(WebCore::ScrollbarOrientation) final;
+    void NODELETE updateScrollbarEnabledState(WebCore::Scrollbar&) final;
+    void NODELETE scrollbarLayoutDirectionChanged(WebCore::UserInterfaceLayoutDirection) final;
+    void NODELETE scrollbarColorChanged(std::optional<WebCore::ScrollbarColor>) final;
 
-    void updateScrollbarStyle() final;
+    void NODELETE updateScrollbarStyle() final;
 
-    void scrollbarWidthChanged(WebCore::ScrollbarWidth) final;
+    void NODELETE scrollbarWidthChanged(WebCore::ScrollbarWidth) final;
 
     bool isRemoteScrollbarsController() const final { return true; }
 

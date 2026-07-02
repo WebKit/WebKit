@@ -207,6 +207,6 @@ private:
     PREFERRED_TYPE(bool) unsigned m_evaluationTimeZoomEnabled : 1;
 };
 
-FontStyleAxis variationStyleAxis(const FontDescription&, const FontSelectionSpecifiedCapabilities& faceCapabilities);
+FontStyleAxis NODELETE variationStyleAxis(const FontDescription&, const FontSelectionSpecifiedCapabilities& faceCapabilities);
 
 } // namespace WebCore

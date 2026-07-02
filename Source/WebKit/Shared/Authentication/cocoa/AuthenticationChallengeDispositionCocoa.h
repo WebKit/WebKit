@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
-NSURLSessionAuthChallengeDisposition fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
+AuthenticationChallengeDisposition NODELETE toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
+NSURLSessionAuthChallengeDisposition NODELETE fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
 
 } // namespace WebKit

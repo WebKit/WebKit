@@ -87,7 +87,7 @@ public:
 
     void inspectedPageDestroyed();
 
-    WEBCORE_EXPORT bool enabled() const;
+    WEBCORE_EXPORT bool NODELETE enabled() const;
     Page& NODELETE inspectedPage() const;
 
     WEBCORE_EXPORT void show();
@@ -144,13 +144,13 @@ public:
     WEBCORE_EXPORT void siteIsolationFirstEnabled();
 
     // InspectorEnvironment
-    bool developerExtrasEnabled() const override;
+    bool NODELETE developerExtrasEnabled() const override;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
-    Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
-    Inspector::InspectorEvaluateHandler evaluateHandler() const override;
+    Inspector::InspectorFunctionCallHandler NODELETE functionCallHandler() const override;
+    Inspector::InspectorEvaluateHandler NODELETE evaluateHandler() const override;
     void frontendInitialized() override;
     WEBCORE_EXPORT WTF::Stopwatch& NODELETE executionStopwatch() const final;
-    JSC::Debugger* debugger() override;
+    JSC::Debugger* NODELETE debugger() override;
     JSC::VM& vm() override;
 
 private:

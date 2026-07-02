@@ -35,7 +35,7 @@ class ResourceResponse;
 
 namespace WebKit {
 
-WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
+WebCore::ResourceError NODELETE cancelledError(const WebCore::ResourceRequest&);
 WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
 bool isBlockedError(const WebCore::ResourceError&);
 WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&);
@@ -49,7 +49,7 @@ WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceReques
 bool isBlockedByContentFilterError(const WebCore::ResourceError&);
 #endif
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
-WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
+WebCore::ResourceError NODELETE fileDoesNotExistError(const WebCore::ResourceResponse&);
 WebCore::ResourceError httpsUpgradeRedirectLoopError(const WebCore::ResourceRequest&);
 WebCore::ResourceError httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
@@ -60,7 +60,7 @@ WebCore::ResourceError downloadCancelledByUserError(const WebCore::ResourceRespo
 WebCore::ResourceError downloadDestinationError(const WebCore::ResourceResponse&, const WTF::String&);
 #endif
 
-WebCore::ResourceError decodeError(const URL&);
+WebCore::ResourceError NODELETE decodeError(const URL&);
 
 #if PLATFORM(GTK)
 WebCore::ResourceError invalidPageRangeToPrint(const URL&);

@@ -283,7 +283,7 @@ static String encodingOf(const String& string)
     return "latin1"_s;
 }
 
-static std::span<const uint8_t> dataFrom(const String& string)
+static std::span<const uint8_t> NODELETE dataFrom(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
         return asBytes(string.span<char16_t>());
@@ -2534,7 +2534,7 @@ public:
         return adoptRef(*new StateClient(client));
     }
 
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
@@ -2722,7 +2722,7 @@ private:
             return;
         m_client.didPerformRedirect(m_client.base.clientInfo, toAPI(protect(m_page).get()), toAPI(response), toAPI(request));
     }
-    void didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebCore::AuthenticationChallenge&&) const final { }
+    void NODELETE didReceiveChallenge(WebKit::ResourceLoadInfo&&, WebCore::AuthenticationChallenge&&) const final { }
     void didReceiveResponse(WebKit::ResourceLoadInfo&& info, WebCore::ResourceResponse&& response) const final
     {
         if (!m_client.didReceiveResponse)
@@ -2945,7 +2945,7 @@ void WKPageExecuteCommand(WKPageRef pageRef, WKStringRef command)
     protect(toImpl(pageRef))->executeEditCommand(protect(toImpl(command))->string());
 }
 
-static PrintInfo printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
+static PrintInfo NODELETE printInfoFromWKPrintInfo(const WKPrintInfo& printInfo)
 {
     PrintInfo result;
     result.pageSetupScaleFactor = printInfo.pageSetupScaleFactor;

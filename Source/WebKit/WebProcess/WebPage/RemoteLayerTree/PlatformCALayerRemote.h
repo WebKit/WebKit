@@ -85,7 +85,7 @@ public:
 
     void copyContentsFromLayer(PlatformCALayer*) override;
 
-    WebCore::PlatformCALayer* superlayer() const override;
+    WebCore::PlatformCALayer* NODELETE superlayer() const override;
     void removeFromSuperlayer() override;
     void setSublayers(const WebCore::PlatformCALayerList&) override;
     WebCore::PlatformCALayerList sublayersForLogging() const override { return m_children; }
@@ -109,103 +109,103 @@ public:
 
     void setMaskLayer(RefPtr<WebCore::PlatformCALayer>&&) override;
 
-    bool isOpaque() const override;
+    bool NODELETE isOpaque() const override;
     void setOpaque(bool) override;
 
-    WebCore::FloatRect bounds() const override;
+    WebCore::FloatRect NODELETE bounds() const override;
     void setBounds(const WebCore::FloatRect&) override;
 
-    WebCore::FloatPoint3D position() const override;
-    void setPosition(const WebCore::FloatPoint3D&) override;
+    WebCore::FloatPoint3D NODELETE position() const override;
+    void NODELETE setPosition(const WebCore::FloatPoint3D&) override;
 
-    WebCore::FloatPoint3D anchorPoint() const override;
-    void setAnchorPoint(const WebCore::FloatPoint3D&) override;
+    WebCore::FloatPoint3D NODELETE anchorPoint() const override;
+    void NODELETE setAnchorPoint(const WebCore::FloatPoint3D&) override;
 
-    WebCore::TransformationMatrix transform() const override;
+    WebCore::TransformationMatrix NODELETE transform() const override;
     void setTransform(const WebCore::TransformationMatrix&) override;
 
-    WebCore::TransformationMatrix sublayerTransform() const override;
+    WebCore::TransformationMatrix NODELETE sublayerTransform() const override;
     void setSublayerTransform(const WebCore::TransformationMatrix&) override;
 
-    void setIsBackdropRoot(bool) final;
-    bool backdropRootIsOpaque() const final;
-    void setBackdropRootIsOpaque(bool) final;
+    void NODELETE setIsBackdropRoot(bool) final;
+    bool NODELETE backdropRootIsOpaque() const final;
+    void NODELETE setBackdropRootIsOpaque(bool) final;
 
-    bool isHidden() const override;
-    void setHidden(bool) override;
+    bool NODELETE isHidden() const override;
+    void NODELETE setHidden(bool) override;
 
-    bool contentsHidden() const override;
-    void setContentsHidden(bool) override;
+    bool NODELETE contentsHidden() const override;
+    void NODELETE setContentsHidden(bool) override;
 
-    bool userInteractionEnabled() const override;
-    void setUserInteractionEnabled(bool) override;
+    bool NODELETE userInteractionEnabled() const override;
+    void NODELETE setUserInteractionEnabled(bool) override;
 
     void setBackingStoreAttached(bool) override;
-    bool backingStoreAttached() const override;
+    bool NODELETE backingStoreAttached() const override;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void setVisibleRect(const WebCore::FloatRect&) override;
 #endif
 
-    bool geometryFlipped() const override;
-    void setGeometryFlipped(bool) override;
+    bool NODELETE geometryFlipped() const override;
+    void NODELETE setGeometryFlipped(bool) override;
 
-    bool isDoubleSided() const override;
-    void setDoubleSided(bool) override;
+    bool NODELETE isDoubleSided() const override;
+    void NODELETE setDoubleSided(bool) override;
 
-    bool masksToBounds() const override;
-    void setMasksToBounds(bool) override;
+    bool NODELETE masksToBounds() const override;
+    void NODELETE setMasksToBounds(bool) override;
 
-    bool acceleratesDrawing() const override;
+    bool NODELETE acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    WebCore::ContentsFormat contentsFormat() const override;
+    WebCore::ContentsFormat NODELETE contentsFormat() const override;
     void setContentsFormat(WebCore::ContentsFormat) override;
 
-    bool hasContents() const override;
+    bool NODELETE hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
     void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&) override;
     void setRemoteDelegatedContents(const PlatformCALayerRemoteDelegatedContents&);
-    void setContentsRect(const WebCore::FloatRect&) override;
+    void NODELETE setContentsRect(const WebCore::FloatRect&) override;
 
-    void setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;
-    void setMagnificationFilter(WebCore::PlatformCALayer::FilterType) override;
+    void NODELETE setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;
+    void NODELETE setMagnificationFilter(WebCore::PlatformCALayer::FilterType) override;
 
-    WebCore::Color backgroundColor() const override;
+    WebCore::Color NODELETE backgroundColor() const override;
     void setBackgroundColor(const WebCore::Color&) override;
 
     void setBorderWidth(float) override;
     void setBorderColor(const WebCore::Color&) override;
 
-    float opacity() const override;
-    void setOpacity(float) override;
+    float NODELETE opacity() const override;
+    void NODELETE setOpacity(float) override;
 
     void setFilters(const WebCore::FilterOperations&) override;
-    static bool NODELETE filtersCanBeComposited(const WebCore::FilterOperations&);
+    static bool filtersCanBeComposited(const WebCore::FilterOperations&);
     void copyFiltersFrom(const WebCore::PlatformCALayer&) override;
 
-    void setBlendMode(WebCore::BlendMode) override;
+    void NODELETE setBlendMode(WebCore::BlendMode) override;
 
     void setName(const String&) override;
 
-    void setSpeed(float) override;
+    void NODELETE setSpeed(float) override;
 
-    void setTimeOffset(CFTimeInterval) override;
+    void NODELETE setTimeOffset(CFTimeInterval) override;
 
-    float contentsScale() const override;
+    float NODELETE contentsScale() const override;
     void setContentsScale(float) override;
 
-    float cornerRadius() const override;
-    void setCornerRadius(float) override;
+    float NODELETE cornerRadius() const override;
+    void NODELETE setCornerRadius(float) override;
 
     WebCore::Path shadowPath() const override;
     void setShadowPath(const WebCore::Path&) override;
 
-    void setAntialiasesEdges(bool) override;
+    void NODELETE setAntialiasesEdges(bool) override;
 
-    WebCore::MediaPlayerVideoGravity videoGravity() const override;
-    void setVideoGravity(WebCore::MediaPlayerVideoGravity) override;
+    WebCore::MediaPlayerVideoGravity NODELETE videoGravity() const override;
+    void NODELETE setVideoGravity(WebCore::MediaPlayerVideoGravity) override;
 
     // FIXME: Having both shapeRoundedRect and shapePath is redundant. We could use shapePath for everything.
     WebCore::FloatRoundedRect shapeRoundedRect() const override;
@@ -214,23 +214,23 @@ public:
     WebCore::Path shapePath() const override;
     void setShapePath(const WebCore::Path&) override;
 
-    WebCore::WindRule shapeWindRule() const override;
-    void setShapeWindRule(WebCore::WindRule) override;
+    WebCore::WindRule NODELETE shapeWindRule() const override;
+    void NODELETE setShapeWindRule(WebCore::WindRule) override;
 
-    WebCore::GraphicsLayerCustomAppearance customAppearance() const override;
+    WebCore::GraphicsLayerCustomAppearance NODELETE customAppearance() const override;
     void updateCustomAppearance(WebCore::GraphicsLayerCustomAppearance) override;
 
     void setEventRegion(const WebCore::EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
-    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const override;
-    void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) override;
+    std::optional<WebCore::ScrollingNodeID> NODELETE scrollingNodeID() const override;
+    void NODELETE setScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) override;
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     bool setNeedsDisplayIfEDRHeadroomExceeds(float) override;
     void setTonemappingEnabled(bool) override;
-    bool tonemappingEnabled() const override;
+    bool NODELETE tonemappingEnabled() const override;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -247,8 +247,8 @@ public:
 #endif
 
 #if HAVE(CORE_MATERIAL)
-    WebCore::AppleVisualEffectData appleVisualEffectData() const override;
-    void setAppleVisualEffectData(WebCore::AppleVisualEffectData) override;
+    WebCore::AppleVisualEffectData NODELETE appleVisualEffectData() const override;
+    void NODELETE setAppleVisualEffectData(WebCore::AppleVisualEffectData) override;
 #endif
 
     WebCore::TiledBacking* tiledBacking() override { return nullptr; }
@@ -259,9 +259,9 @@ public:
 
     void enumerateRectsBeingDrawn(WebCore::GraphicsContext&, void (^block)(WebCore::FloatRect)) override;
 
-    virtual uint32_t hostingContextID();
+    virtual uint32_t NODELETE hostingContextID();
 
-    unsigned backingStoreBytesPerPixel() const override;
+    unsigned NODELETE backingStoreBytesPerPixel() const override;
 
     void NODELETE setClonedLayer(const PlatformCALayer*);
 
@@ -308,7 +308,7 @@ private:
 
     bool NODELETE requiresCustomAppearanceUpdateOnBoundsChange() const;
 
-    WebCore::LayerPool* layerPool() override;
+    WebCore::LayerPool* NODELETE layerPool() override;
 
     LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;

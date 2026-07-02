@@ -37,14 +37,14 @@ template<typename> class ExceptionOr;
 namespace NameValidation {
 
 // https://dom.spec.whatwg.org/#valid-element-name
-bool NODELETE isValidElementName(StringView);
+bool isValidElementName(StringView);
 bool isValidElementName(const QualifiedName&);
 
 // https://dom.spec.whatwg.org/#valid-attribute-name
-bool NODELETE isValidAttributeName(StringView);
+bool isValidAttributeName(StringView);
 
 // https://dom.spec.whatwg.org/#valid-doctype-name
-bool NODELETE isValidDoctypeName(StringView);
+bool isValidDoctypeName(StringView);
 
 // https://www.w3.org/TR/xml/#NT-Name - used by createProcessingInstruction
 bool NODELETE isValidXMLName(StringView);

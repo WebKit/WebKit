@@ -36,7 +36,7 @@ class DateTimeSymbolicFieldElement : public DateTimeFieldElement, public TypeAhe
 protected:
     DateTimeSymbolicFieldElement(Document&, DateTimeFieldElementFieldOwner&, const Vector<String>&, int);
     size_t symbolsSize() const { return m_symbols.size(); }
-    bool hasValue() const final;
+    bool NODELETE hasValue() const final;
     void setEmptyValue(EventBehavior = DispatchNoEvent) override;
     void setValueAsInteger(int, EventBehavior = DispatchNoEvent) override;
     int valueAsInteger() const final { return m_selectedIndex; }
@@ -54,8 +54,8 @@ private:
     void handleKeyboardEvent(KeyboardEvent&) final;
 
     // TypeAheadDataSource functions:
-    int indexOfSelectedOption() const final;
-    int optionCount() const final;
+    int NODELETE indexOfSelectedOption() const final;
+    int NODELETE optionCount() const final;
     String optionAtIndex(int index) const final;
 
     const Vector<String> m_symbols;

@@ -54,7 +54,7 @@ public:
     void processDidTerminate();
 
     // WebCore::AudioSessionRoutingArbitrationClient.
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:
@@ -66,7 +66,7 @@ private:
     ASCIILiteral logClassName() const { return "LocalAudioSessionRoutingArbitrator"_s; }
     WTFLogChannel& NODELETE logChannel() const;
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    bool canLog() const final;
+    bool NODELETE canLog() const final;
 
     const CheckedRef<GPUConnectionToWebProcess> m_connectionToWebProcess;
     const uint64_t m_logIdentifier;

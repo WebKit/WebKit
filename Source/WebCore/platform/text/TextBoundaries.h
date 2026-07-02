@@ -45,7 +45,7 @@ unsigned endOfFirstWordBoundaryContext(StringView);
 unsigned startOfLastWordBoundaryContext(StringView);
 
 WEBCORE_EXPORT void findWordBoundary(StringView, int position, int* start, int* end);
-void findEndWordBoundary(StringView, int position, int* end);
+void NODELETE findEndWordBoundary(StringView, int position, int* end);
 int findNextWordFromIndex(StringView, int position, bool forward);
 
 }

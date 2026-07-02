@@ -203,14 +203,14 @@ public:
 
     double amount() const { return m_amount; }
 
-    bool affectsOpacity() const override;
+    bool NODELETE affectsOpacity() const override;
 
     RefPtr<FilterOperation> blend(const FilterOperation* from, const BlendingContext&, bool blendToPassthrough = false) override;
 
 private:
     bool operator==(const FilterOperation&) const override;
 
-    double passthroughAmount() const;
+    double NODELETE passthroughAmount() const;
 
     BasicComponentTransferFilterOperation(double amount, Type type)
         : FilterOperation(type)

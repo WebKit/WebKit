@@ -116,7 +116,7 @@ public:
     void setIsEnhancedSecurityEnabled(std::optional<bool> isEnabled) { m_isEnhancedSecurityEnabled = isEnabled; }
     bool isEnhancedSecurityExplicitlySet() const { return !!m_isEnhancedSecurityEnabled; }
 
-    bool lockdownModeEnabled() const;
+    bool NODELETE lockdownModeEnabled() const;
     void setLockdownModeEnabled(std::optional<bool> enabled) { m_lockdownModeEnabled = enabled; }
     bool isLockdownModeExplicitlySet() const { return !!m_lockdownModeEnabled; }
 

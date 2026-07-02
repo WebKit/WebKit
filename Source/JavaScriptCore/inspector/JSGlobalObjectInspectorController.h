@@ -98,12 +98,12 @@ public:
 
     bool developerExtrasEnabled() const final;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const final { return true; }
-    InspectorFunctionCallHandler functionCallHandler() const final;
-    InspectorEvaluateHandler evaluateHandler() const final;
+    InspectorFunctionCallHandler NODELETE functionCallHandler() const final;
+    InspectorEvaluateHandler NODELETE evaluateHandler() const final;
     void frontendInitialized() final;
-    WTF::Stopwatch& executionStopwatch() const final;
-    JSC::Debugger* debugger() final;
-    JSC::VM& vm() final;
+    WTF::Stopwatch& NODELETE executionStopwatch() const final;
+    JSC::Debugger* NODELETE debugger() final;
+    JSC::VM& NODELETE vm() final;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const final { return m_augmentingClient; } 

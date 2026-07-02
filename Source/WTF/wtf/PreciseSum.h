@@ -45,10 +45,10 @@ struct SmallAccumulator final {
     size_t sizeCount; // number of added values
     bool hasPosNumber; // check if added values have at least one positive number
 
-    int NODELETE carryPropagate();
-    COLD void addInfNan(int64_t ivalue);
-    inline void NODELETE add1NoCarry(double value);
-    ALWAYS_INLINE void incrementWhenValueAdded(double value);
+    int carryPropagate();
+    COLD void NODELETE addInfNan(int64_t ivalue);
+    inline void add1NoCarry(double value);
+    ALWAYS_INLINE void NODELETE incrementWhenValueAdded(double value);
 };
 
 struct LargeAccumulator final {
@@ -60,9 +60,9 @@ struct LargeAccumulator final {
 
     explicit LargeAccumulator();
 
-    void NODELETE addLchunkToSmall(int_fast16_t ix);
+    void addLchunkToSmall(int_fast16_t ix);
     COLD void largeAddValueInfNan(int_fast16_t ix, uint64_t uintv);
-    void NODELETE transferToSmall();
+    void transferToSmall();
 };
 
 class XsumInterface {

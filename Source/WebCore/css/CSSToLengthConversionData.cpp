@@ -138,7 +138,7 @@ FloatSize CSSToLengthConversionData::smallViewportFactor() const
     if (!m_renderView)
         return { };
 
-    return m_renderView->sizeForCSSSmallViewportUnits() / 100.0;
+    SUPPRESS_NODELETE { return m_renderView->sizeForCSSSmallViewportUnits() / 100.0; }
 }
 
 FloatSize CSSToLengthConversionData::largeViewportFactor() const
@@ -149,7 +149,7 @@ FloatSize CSSToLengthConversionData::largeViewportFactor() const
     if (!m_renderView)
         return { };
 
-    return m_renderView->sizeForCSSLargeViewportUnits() / 100.0;
+    SUPPRESS_NODELETE { return m_renderView->sizeForCSSLargeViewportUnits() / 100.0; }
 }
 
 FloatSize CSSToLengthConversionData::dynamicViewportFactor() const

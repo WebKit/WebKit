@@ -70,7 +70,7 @@ public:
 
     // For HTMLTreeBuilder.
     HTMLTokenizer& tokenizer() LIFETIME_BOUND;
-    TextPosition textPosition() const final;
+    TextPosition NODELETE textPosition() const final;
 
     bool NODELETE isOnStackOfOpenElements(Element&) const;
 
@@ -90,18 +90,18 @@ private:
 
     // DocumentParser
     void detach() final;
-    bool hasInsertionPoint() final;
-    bool processingData() const final;
+    bool NODELETE hasInsertionPoint() final;
+    bool NODELETE processingData() const final;
     void prepareToStopParsing() final;
     void stopParsing() final;
     bool NODELETE isWaitingForScripts() const;
-    bool isExecutingScript() const final;
-    bool hasScriptsWaitingForStylesheets() const final;
+    bool NODELETE isExecutingScript() const final;
+    bool NODELETE hasScriptsWaitingForStylesheets() const final;
     void executeScriptsWaitingForStylesheets() final;
     void suspendScheduledTasks() final;
     void resumeScheduledTasks() final;
 
-    bool shouldAssociateConsoleMessagesWithTextPosition() const final;
+    bool NODELETE shouldAssociateConsoleMessagesWithTextPosition() const final;
 
     // HTMLScriptRunnerHost
     void watchForLoad(PendingScript&) final;
@@ -134,9 +134,9 @@ private:
     bool NODELETE isParsingFragment() const;
     bool NODELETE isScheduledForResume() const;
     bool NODELETE inPumpSession() const;
-    bool shouldDelayEnd() const;
+    bool NODELETE shouldDelayEnd() const;
 
-    void didBeginYieldingParser() final;
+    void NODELETE didBeginYieldingParser() final;
     void didEndYieldingParser() final;
 
     HTMLParserOptions m_options;

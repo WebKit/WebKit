@@ -49,7 +49,7 @@ public:
 
 private:
     std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&) final;
-    bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&) final;
+    bool NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&) final;
 };
 
 } // namespace WebCore

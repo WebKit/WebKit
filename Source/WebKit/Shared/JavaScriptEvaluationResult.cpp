@@ -92,7 +92,7 @@ class JavaScriptEvaluationResult::APIExtractor {
 public:
     Map NODELETE takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(API::Object&);
-    bool failed() const { return m_failed; }
+    bool NODELETE failed() const { return m_failed; }
 private:
     Value toValue(API::Object&);
 

@@ -58,7 +58,7 @@ private:
         Separated
     };
     template<ReconstructionStyle style>
-    unsigned reconstruct(
+    unsigned NODELETE reconstruct(
         CodeBlock*, CodeOrigin, MinifiedGraph&,
         unsigned index, Operands<ValueRecovery>&, Vector<UndefinedOperandSpan>*) const;
 

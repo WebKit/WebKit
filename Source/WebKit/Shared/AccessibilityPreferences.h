@@ -110,9 +110,9 @@ WebKit::WebKitAXValueState darkenSystemColors();
 WebKit::WebKitAXValueState invertColorsEnabled();
 #endif // HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
 
-bool imageAnimationEnabled();
-bool videoAutoplayPreviewsEnabled();
-bool enhanceTextLegibilityOverall();
+bool NODELETE imageAnimationEnabled();
+bool NODELETE videoAutoplayPreviewsEnabled();
+bool NODELETE enhanceTextLegibilityOverall();
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
 bool prefersNonBlinkingCursor();

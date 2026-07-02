@@ -52,8 +52,8 @@ public:
         return IterationStatus::Done;
     }
 
-    unsigned line() const { return m_lineColumn.line; }
-    unsigned column() const { return m_lineColumn.column; }
+    unsigned NODELETE line() const { return m_lineColumn.line; }
+    unsigned NODELETE column() const { return m_lineColumn.column; }
 
 private:
     mutable LineColumn m_lineColumn;

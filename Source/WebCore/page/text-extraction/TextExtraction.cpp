@@ -128,7 +128,7 @@ static String normalizeText(const String& string, unsigned maxDescriptionLength 
 static constexpr auto minimumClassOrIdLength = 6;
 static constexpr auto maximumClassOrIdLength = 20;
 
-static bool isCandidateClassOrId(StringView text)
+static bool NODELETE isCandidateClassOrId(StringView text)
 {
     if (text.length() < minimumClassOrIdLength)
         return false;
@@ -328,7 +328,7 @@ struct TraversalContext {
         return enclosingBlockNumberMap.get(*enclosingBlocks.last());
     }
 
-    void NODELETE popEnclosingBlock()
+    void popEnclosingBlock()
     {
         enclosingBlocks.removeLast();
     }
@@ -521,7 +521,7 @@ static inline std::optional<FloatRect> visibleAssociatedLabelBounds(HTMLElement&
 }
 
 template<typename T>
-RefPtr<T> shadowHostOrSelfInclusiveParent(Node& node)
+RefPtr<T> NODELETE shadowHostOrSelfInclusiveParent(Node& node)
 {
     if (node.isInUserAgentShadowTree())
         return dynamicDowncast<T>(node.shadowHost());

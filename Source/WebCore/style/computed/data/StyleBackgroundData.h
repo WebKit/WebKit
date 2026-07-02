@@ -44,7 +44,7 @@ public:
     bool operator==(const BackgroundData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const BackgroundData&) const;
+    void NODELETE dumpDifferences(TextStream&, const BackgroundData&) const;
 #endif
 
     BackgroundLayers background;

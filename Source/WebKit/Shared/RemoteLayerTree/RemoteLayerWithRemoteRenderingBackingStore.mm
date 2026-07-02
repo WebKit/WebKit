@@ -152,7 +152,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
     }
 }
 
-std::optional<ImageBufferSetIdentifier> RemoteLayerWithRemoteRenderingBackingStore::bufferSetIdentifier() const
+std::optional<ImageBufferSetIdentifier> NODELETE RemoteLayerWithRemoteRenderingBackingStore::bufferSetIdentifier() const
 {
     if (!m_bufferSet)
         return std::nullopt;

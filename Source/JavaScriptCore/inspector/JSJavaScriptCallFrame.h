@@ -65,7 +65,7 @@ public:
 
     // Attributes.
     JSC::JSValue caller(JSC::JSGlobalObject*) const;
-    JSC::JSValue sourceID(JSC::JSGlobalObject*) const;
+    JSC::JSValue NODELETE sourceID(JSC::JSGlobalObject*) const;
     JSC::JSValue NODELETE line(JSC::JSGlobalObject*) const;
     JSC::JSValue NODELETE column(JSC::JSGlobalObject*) const;
     JSC::JSValue functionName(JSC::JSGlobalObject*) const;

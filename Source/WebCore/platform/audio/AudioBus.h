@@ -77,14 +77,14 @@ public:
 
     AudioChannel* channel(unsigned channel) LIFETIME_BOUND { return m_channels[channel].get(); }
     const AudioChannel* channel(unsigned channel) const LIFETIME_BOUND { return m_channels[channel].get(); }
-    AudioChannel* NODELETE channelByType(unsigned type) LIFETIME_BOUND;
+    AudioChannel* channelByType(unsigned type) LIFETIME_BOUND;
     const AudioChannel* channelByType(unsigned type) const LIFETIME_BOUND;
 
     // Number of sample-frames
     size_t length() const { return m_length; }
 
     // Reduce the number of frames available without changing the allocated memory size.
-    void NODELETE setLength(size_t);
+    void setLength(size_t);
 
     // Sample-rate : 0.0 if unknown or "don't care"
     float sampleRate() const { return m_sampleRate; }
@@ -94,10 +94,10 @@ public:
     void zero();
 
     // Clears the silent flag on all channels.
-    void NODELETE clearSilentFlag();
+    void clearSilentFlag();
 
     // Returns true if the silent bit is set on all channels.
-    bool NODELETE isSilent() const;
+    bool isSilent() const;
 
     // Returns true if the channel count and frame-size match.
     bool NODELETE topologyMatches(const AudioBus& sourceBus) const;

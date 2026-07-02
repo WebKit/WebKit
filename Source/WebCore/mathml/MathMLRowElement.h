@@ -41,7 +41,7 @@ protected:
     MathMLRowElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
     void childrenChanged(const ChildChange&) override;
 
-    bool acceptsLegacyMathVariantAttribute() override;
+    bool NODELETE acceptsLegacyMathVariantAttribute() override;
 
 private:
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) override;

@@ -61,7 +61,7 @@ public:
 
     void setShouldListenToVoiceActivity(Document&, bool);
     void checkDocumentForVoiceActivity(const Document*);
-    void voiceActivityDetected();
+    void NODELETE voiceActivityDetected();
 
     WEBCORE_EXPORT static ASCIILiteral supplementName();
     static UserMediaController* from(Page* page) { return downcast<UserMediaController>(Supplement<Page>::from(page, supplementName())); }

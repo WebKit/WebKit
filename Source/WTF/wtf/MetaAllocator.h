@@ -47,8 +47,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(MetaAllocatorFreeSpace, WTF_IN
 class MetaAllocatorTracker {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MetaAllocatorTracker);
 public:
-    void NODELETE notify(MetaAllocatorHandle&);
-    void NODELETE release(MetaAllocatorHandle&);
+    void notify(MetaAllocatorHandle&);
+    void release(MetaAllocatorHandle&);
 
     MetaAllocatorHandle* find(void* address)
     {
@@ -110,7 +110,7 @@ public:
 
     // This is meant only for implementing tests. Never call this in release
     // builds.
-    WTF_EXPORT_PRIVATE size_t NODELETE debugFreeSpaceSize();
+    WTF_EXPORT_PRIVATE size_t debugFreeSpaceSize();
 
     WTF_EXPORT_PRIVATE bool isInAllocatedMemory(const AbstractLocker&, void* address);
     
@@ -187,10 +187,10 @@ private:
 
     // Utilities.
     
-    size_t NODELETE roundUp(size_t sizeInBytes);
+    size_t roundUp(size_t sizeInBytes);
     
     FreeSpaceNode* NODELETE allocFreeSpaceNode();
-    WTF_EXPORT_PRIVATE void NODELETE freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&&);
+    WTF_EXPORT_PRIVATE void freeFreeSpaceNode(CheckedPtr<FreeSpaceNode>&&);
     
     size_t m_allocationGranule;
     size_t m_pageSize;

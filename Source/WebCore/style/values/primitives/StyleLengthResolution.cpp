@@ -88,7 +88,7 @@ static double NODELETE lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis
 // Raw font metrics include the usedZoomFactor. In evaluation-time zoom mode with the Unzoomed
 // range option, normalize by usedZoomFactor so that font-relative units (ex, cap, ch, ic) scale
 // consistently with em.
-static double unzoomFontMetricIfNeeded(double metric, const FontDescription& fontDescription, CSS::RangeZoomOptions rangeZoomOption)
+static double NODELETE unzoomFontMetricIfNeeded(double metric, const FontDescription& fontDescription, CSS::RangeZoomOptions rangeZoomOption)
 {
     if (fontDescription.evaluationTimeZoomEnabled() && rangeZoomOption == CSS::RangeZoomOptions::Unzoomed) {
         if (auto usedZoomFactor = fontDescription.usedZoomFactor(); usedZoomFactor > 0)

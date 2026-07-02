@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSampleConverter);
 MediaSampleConverter::MediaSampleConverter() = default;
 MediaSampleConverter::~MediaSampleConverter() = default;
 
-static bool hasSameInitSegment(const MediaSample& sampleA, const MediaSample& sampleB)
+static bool NODELETE hasSameInitSegment(const MediaSample& sampleA, const MediaSample& sampleB)
 {
 #if PLATFORM(COCOA)
     RetainPtr cmSampleA = sampleA.platformSample().cmSampleBuffer();

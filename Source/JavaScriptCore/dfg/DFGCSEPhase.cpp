@@ -131,7 +131,7 @@ public:
         return result;
     }
 
-    LazyNode get(const HeapLocation& location) const
+    LazyNode NODELETE get(const HeapLocation& location) const
     {
         LazyNode result = getImpl(location);
 #if !defined(NDEBUG)
@@ -246,7 +246,7 @@ private:
         return nullptr;
     }
 
-    LazyNode getImpl(const HeapLocation& location) const
+    LazyNode NODELETE getImpl(const HeapLocation& location) const
     {
         switch (location.heap().kind()) {
         case World:
@@ -275,7 +275,7 @@ private:
         return result.iterator->get();
     }
 
-    static LazyNode get(const Map& map, const HeapLocation& location)
+    static LazyNode NODELETE get(const Map& map, const HeapLocation& location)
     {
         auto iterator = map.find<ImpureDataTranslator>(location);
         if (iterator != map.end())
@@ -381,7 +381,7 @@ private:
             }
         }
     
-        Node* NODELETE addPure(PureValue value, Node* node)
+        Node* addPure(PureValue value, Node* node)
         {
             for (unsigned i = m_pureLength; i--;) {
                 if (m_pureMap[i].key == value)

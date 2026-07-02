@@ -47,8 +47,8 @@ public:
     bool isMonotonic() const { return !!originTime(); }
     bool isProgressBased() const { return !isMonotonic(); }
 
-    WEBCORE_EXPORT std::optional<Seconds> originTime() const;
-    WEBCORE_EXPORT std::optional<ProgressResolutionData> progressResolutionData() const;
+    WEBCORE_EXPORT std::optional<Seconds> NODELETE originTime() const;
+    WEBCORE_EXPORT std::optional<ProgressResolutionData> NODELETE progressResolutionData() const;
 
     void setProgressResolutionData(ProgressResolutionData&&);
 

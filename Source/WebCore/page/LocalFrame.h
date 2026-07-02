@@ -199,7 +199,7 @@ public:
     WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);
     WEBCORE_EXPORT void injectUserScriptImmediately(DOMWrapperWorld&, const UserScript&);
     UserContentProvider* NODELETE userContentProvider();
-    const UserContentProvider* userContentProvider() const;
+    const UserContentProvider* NODELETE userContentProvider() const;
     WEBCORE_EXPORT bool NODELETE hasUserContentProvider(const UserContentProvider&);
 
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
@@ -332,19 +332,19 @@ public:
     void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);
     bool requestSkipUserActivationCheckForStorageAccess(const RegistrableDomain&);
 
-    String customUserAgent() const final;
-    String customUserAgentAsSiteSpecificQuirks() const final;
-    String customNavigatorPlatform() const final;
-    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
+    String NODELETE customUserAgent() const final;
+    String NODELETE customUserAgentAsSiteSpecificQuirks() const final;
+    String NODELETE customNavigatorPlatform() const final;
+    OptionSet<AdvancedPrivacyProtections> NODELETE advancedPrivacyProtections() const final;
     bool allowPrivacyProxy() const final;
-    AutoplayPolicy autoplayPolicy() const final;
+    AutoplayPolicy NODELETE autoplayPolicy() const final;
 
     WEBCORE_EXPORT SandboxFlags NODELETE effectiveSandboxFlags() const;
     SandboxFlags sandboxFlagsFromSandboxAttributeNotCSP() { return m_sandboxFlags; }
     WEBCORE_EXPORT void updateSandboxFlags(SandboxFlags, NotifyUIProcess) final;
 
     WEBCORE_EXPORT ReferrerPolicy NODELETE effectiveReferrerPolicy() const;
-    WEBCORE_EXPORT void updateReferrerPolicy(ReferrerPolicy) final;
+    WEBCORE_EXPORT void NODELETE updateReferrerPolicy(ReferrerPolicy) final;
 
     ScrollbarMode scrollingMode() const { return m_scrollingMode; }
     WEBCORE_EXPORT void updateScrollingMode() final;

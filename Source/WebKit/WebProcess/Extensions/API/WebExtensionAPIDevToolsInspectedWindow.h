@@ -44,7 +44,7 @@ public:
     void eval(WebPageProxyIdentifier, NSString *expression, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void reload(WebPageProxyIdentifier, NSDictionary *options, NSString **outExceptionString);
 
-    double tabId(WebPage&);
+    double NODELETE tabId(WebPage&);
 #endif
 
 private:

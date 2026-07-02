@@ -130,7 +130,7 @@ BackendResourceDataStore::~BackendResourceDataStore()
     clear();
 }
 
-BackendResourceDataStore::ResourceData* BackendResourceDataStore::resourceDataForId(ResourceLoaderIdentifier resourceID)
+BackendResourceDataStore::ResourceData* NODELETE BackendResourceDataStore::resourceDataForId(ResourceLoaderIdentifier resourceID)
 {
     auto it = m_resourceDataMap.find(resourceID);
     if (it == m_resourceDataMap.end())
@@ -286,7 +286,7 @@ void BackendResourceDataStore::addResourceSharedBuffer(ResourceLoaderIdentifier 
     resourceData->setTextEncodingName(textEncodingName);
 }
 
-BackendResourceDataStore::ResourceData const* BackendResourceDataStore::data(ResourceLoaderIdentifier resourceID)
+BackendResourceDataStore::ResourceData const* NODELETE BackendResourceDataStore::data(ResourceLoaderIdentifier resourceID)
 {
     return resourceDataForId(resourceID);
 }

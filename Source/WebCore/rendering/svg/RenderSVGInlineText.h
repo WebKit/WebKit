@@ -68,7 +68,7 @@ private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }
 
-    String originalText() const override;
+    String NODELETE originalText() const override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
     FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }

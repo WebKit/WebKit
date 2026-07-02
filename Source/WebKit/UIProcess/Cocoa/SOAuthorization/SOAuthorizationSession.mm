@@ -79,14 +79,14 @@ static ASCIILiteral NODELETE toString(const SOAuthorizationSession::InitiatingAc
     return { };
 }
 
-static Vector<WebCore::Cookie> toCookieVector(NSArray<NSHTTPCookie *> *cookies)
+static Vector<WebCore::Cookie> NODELETE toCookieVector(NSArray<NSHTTPCookie *> *cookies)
 {
     return Vector<WebCore::Cookie>(cookies.count, [cookies](size_t i) {
         return WebCore::Cookie { cookies[i] };
     });
 }
 
-static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
+static bool NODELETE isSameOrigin(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
     auto requestOrigin = WebCore::SecurityOrigin::create(request.url());
     return requestOrigin->isSameOriginAs(WebCore::SecurityOrigin::create(response.url()).get());
@@ -147,7 +147,7 @@ ASCIILiteral SOAuthorizationSession::stateString() const
 }
 
 
-Ref<API::NavigationAction> SOAuthorizationSession::releaseNavigationAction()
+Ref<API::NavigationAction> NODELETE SOAuthorizationSession::releaseNavigationAction()
 {
     return m_navigationAction.releaseNonNull();
 }

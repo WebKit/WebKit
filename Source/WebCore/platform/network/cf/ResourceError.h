@@ -49,8 +49,8 @@ public:
 
     WEBCORE_EXPORT ResourceError(CFErrorRef error);
 
-    WEBCORE_EXPORT CFErrorRef cfError() const;
-    WEBCORE_EXPORT CFErrorRef cfError(CFErrorRef) const;
+    WEBCORE_EXPORT CFErrorRef NODELETE cfError() const;
+    WEBCORE_EXPORT CFErrorRef NODELETE cfError(CFErrorRef) const;
     WEBCORE_EXPORT operator CFErrorRef() const;
     WEBCORE_EXPORT ResourceError(NSError *);
     WEBCORE_EXPORT NSError *nsError() const;
@@ -73,7 +73,7 @@ public:
 
     WEBCORE_EXPORT ErrorRecoveryMethod errorRecoveryMethod() const;
 
-    static bool platformCompare(const ResourceError& a, const ResourceError& b);
+    static bool NODELETE platformCompare(const ResourceError& a, const ResourceError& b);
 
 
 private:

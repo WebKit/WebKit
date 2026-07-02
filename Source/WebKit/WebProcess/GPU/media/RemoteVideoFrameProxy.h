@@ -69,7 +69,7 @@ public:
 
     // WebCore::VideoFrame overrides.
     WebCore::IntSize presentationSize() const final { return m_size; }
-    uint32_t pixelFormat() const final;
+    uint32_t NODELETE pixelFormat() const final;
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;

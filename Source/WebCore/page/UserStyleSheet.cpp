@@ -49,13 +49,13 @@ static WTF::URL generateUserStyleUniqueURL()
 }
 
 #if PLATFORM(COCOA)
-NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void crashDueToApplicationCreatingUserStyleSheetFromBackgroundThread()
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void NODELETE crashDueToApplicationCreatingUserStyleSheetFromBackgroundThread()
 {
     RELEASE_ASSERT_NOT_REACHED("Terminating process due to improper usage of WebKit APIs off the main thread.");
 }
 #endif
 
-static HashCountedSet<String>& styleStrings()
+static HashCountedSet<String>& NODELETE styleStrings()
 {
     static NeverDestroyed<HashCountedSet<String>> set;
     return set;

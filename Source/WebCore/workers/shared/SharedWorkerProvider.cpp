@@ -33,7 +33,7 @@ static SharedWorkerProvider* sharedWorkerSharedProvider;
 // For WebKitLegacy.
 class DummySharedWorkerProvider final : public SharedWorkerProvider {
 public:
-    SharedWorkerObjectConnection* sharedWorkerConnection() final { return nullptr; }
+    SharedWorkerObjectConnection* NODELETE sharedWorkerConnection() final { return nullptr; }
 };
 
 SharedWorkerProvider& SharedWorkerProvider::singleton()

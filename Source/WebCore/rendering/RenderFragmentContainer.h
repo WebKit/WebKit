@@ -53,7 +53,7 @@ public:
     LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
     LayoutRect fragmentedFlowPortionOverflowRect() const;
 
-    LayoutPoint fragmentedFlowPortionLocation() const;
+    LayoutPoint NODELETE fragmentedFlowPortionLocation() const;
 
     virtual void attachFragment();
     virtual void detachFragment();
@@ -95,7 +95,7 @@ public:
     // The top of the nearest page inside the fragment. For RenderFragmentContainers, this is just the logical top of the
     // flow thread portion we contain. For sets, we have to figure out the top of the nearest column or
     // page.
-    virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
+    virtual LayoutUnit NODELETE pageLogicalTopForOffset(LayoutUnit offset) const;
 
     // Whether or not this fragment is a set.
     virtual bool isRenderFragmentContainerSet() const { return false; }

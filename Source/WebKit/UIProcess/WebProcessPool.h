@@ -136,15 +136,15 @@ class ListDataObserver;
 #endif
 
 #if PLATFORM(COCOA)
-int networkProcessLatencyQOS();
-int networkProcessThroughputQOS();
-int webProcessLatencyQOS();
-int webProcessThroughputQOS();
+int NODELETE networkProcessLatencyQOS();
+int NODELETE networkProcessThroughputQOS();
+int NODELETE webProcessLatencyQOS();
+int NODELETE webProcessThroughputQOS();
 #endif
-void addLockdownModeObserver(LockdownModeObserver&);
-void removeLockdownModeObserver(LockdownModeObserver&);
-bool lockdownModeEnabledBySystem();
-void setLockdownModeEnabledGloballyForTesting(std::optional<bool>);
+void NODELETE addLockdownModeObserver(LockdownModeObserver&);
+void NODELETE removeLockdownModeObserver(LockdownModeObserver&);
+bool NODELETE lockdownModeEnabledBySystem();
+void NODELETE setLockdownModeEnabledGloballyForTesting(std::optional<bool>);
 
 enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -256,11 +256,11 @@ public:
     void handleMemoryPressureWarning(Critical);
 
 #if PLATFORM(COCOA)
-    void screenPropertiesChanged();
+    void NODELETE screenPropertiesChanged();
 #endif
 
 #if PLATFORM(MAC)
-    void displayPropertiesChanged(WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
+    void NODELETE displayPropertiesChanged(WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
 #endif
 
 #if HAVE(DISPLAY_LINK)
@@ -345,8 +345,8 @@ public:
     WebAutomationSession* automationSession() const { return m_automationSession.get(); }
 
     // Defaults to false.
-    void setHTTPPipeliningEnabled(bool);
-    bool httpPipeliningEnabled() const;
+    void NODELETE setHTTPPipeliningEnabled(bool);
+    bool NODELETE httpPipeliningEnabled() const;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 
@@ -368,7 +368,7 @@ public:
     void NODELETE setUsesOnlyHIDGamepadProviderForTesting(bool);
 
 #if PLATFORM(COCOA)
-    static bool omitPDFSupport();
+    static bool NODELETE omitPDFSupport();
 #endif
 
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
@@ -426,9 +426,9 @@ public:
     void notifyMediaStreamingActivity(bool);
 
 #if PLATFORM(COCOA)
-    void updateProcessSuppressionState();
+    void NODELETE updateProcessSuppressionState();
 
-    NSMutableDictionary *ensureBundleParameters();
+    NSMutableDictionary *NODELETE ensureBundleParameters();
     NSMutableDictionary *bundleParameters() { return m_bundleParameters.get(); }
 #else
     void updateProcessSuppressionState() const { }
@@ -467,9 +467,9 @@ public:
     bool cookieStoragePartitioningEnabled() const { return m_cookieStoragePartitioningEnabled; }
     void NODELETE setCookieStoragePartitioningEnabled(bool);
 
-    void clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
+    void NODELETE clearPermanentCredentialsForProtectionSpace(WebCore::ProtectionSpace&&);
 
-    void lockdownModeStateChanged();
+    void NODELETE lockdownModeStateChanged();
 #endif
 
     ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
@@ -536,7 +536,7 @@ public:
     void removeRemoteWorkerProcess(WebProcessProxy&);
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+    void NODELETE notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
 #endif
 
 #if PLATFORM(PLAYSTATION)
@@ -551,7 +551,7 @@ public:
 #endif
 #endif
 
-    static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
+    static void NODELETE platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
     static Vector<String> urlSchemesWithCustomProtocolHandlers();
 
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::LockdownMode, EnhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger = WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
@@ -562,7 +562,7 @@ public:
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    void hardwareConsoleStateChanged();
+    void NODELETE hardwareConsoleStateChanged();
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
@@ -601,20 +601,20 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void registerAssetFonts(WebProcessProxy&);
+    void NODELETE registerAssetFonts(WebProcessProxy&);
     const HashMap<String, bool>& mediaSourceTypesSupported() const { return m_mediaSourceTypesSupported; }
-    void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
+    void NODELETE cacheMediaSourceTypeSupported(const String& type, bool isSupported);
 #endif
 
 #if PLATFORM(MAC)
-    void registerUserInstalledFonts(WebProcessProxy&);
-    void registerAdditionalFonts(NSArray *fontNames);
+    void NODELETE registerUserInstalledFonts(WebProcessProxy&);
+    void NODELETE registerAdditionalFonts(NSArray *fontNames);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
     void didRefreshDisplay();
 #endif
-    void suppressEDR(bool);
+    void NODELETE suppressEDR(bool);
 
 #if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
     void initializeAccessibilityIfNecessary();
@@ -632,12 +632,12 @@ public:
 
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
-    void platformInitialize(NeedsGlobalStaticInitialization);
+    void NODELETE platformInitialize(NeedsGlobalStaticInitialization);
 
     RefPtr<WebProcessProxy> NODELETE webProcessProxyFromConnection(const IPC::Connection&) const;
 
-    void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
-    void platformInvalidateContext();
+    void NODELETE platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
+    void NODELETE platformInvalidateContext();
 
     std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> processForNavigationInternal(WebPageProxy&, WebFrameProxy&, const API::Navigation&, const URL& sourceURL, WebProcessProxy::IsolatedProcessType, const WebCore::Site& mainFrameSite, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, EnhancedSecurity, const FrameInfoData&, Ref<WebsiteDataStore>&&);
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, WebProcessProxy::IsolatedProcessType, const WebCore::Site&, const WebCore::Site& mainFrameSite, const API::Navigation&, WebProcessProxy::LockdownMode, EnhancedSecurity, LoadedWebArchive, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
@@ -674,11 +674,11 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
 #if PLATFORM(COCOA)
-    void addCFNotificationObserver(CFNotificationCallback, CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenterSingleton());
-    void removeCFNotificationObserver(CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenterSingleton());
+    void NODELETE addCFNotificationObserver(CFNotificationCallback, CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenterSingleton());
+    void NODELETE removeCFNotificationObserver(CFStringRef name, CFNotificationCenterRef = CFNotificationCenterGetDarwinNotifyCenterSingleton());
 
-    void registerNotificationObservers();
-    void unregisterNotificationObservers();
+    void NODELETE registerNotificationObservers();
+    void NODELETE unregisterNotificationObservers();
 
 #if ENABLE(NOTIFY_BLOCKING)
     void setNotifyState(const String&, int, uint64_t);
@@ -688,7 +688,7 @@ private:
     void setApplicationIsActive(bool);
 
     void resolvePathsForSandboxExtensions();
-    void platformResolvePathsForSandboxExtensions();
+    void NODELETE platformResolvePathsForSandboxExtensions();
 
     void addProcessToOriginCacheSet(WebProcessProxy&, const URL&);
     void removeProcessFromOriginCacheSet(WebProcessProxy&);
@@ -706,45 +706,45 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    static void lockdownModeConfigurationUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
+    static void NODELETE lockdownModeConfigurationUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
     
 #if PLATFORM(COCOA)
-    static void accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
+    static void NODELETE accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    static void mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
+    static void NODELETE mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
 #if PLATFORM(MAC)
-    static void colorPreferencesDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
+    static void NODELETE colorPreferencesDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
-    static void powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
+    static void NODELETE powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef);
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void startObservingPreferenceChanges();
+    void NODELETE startObservingPreferenceChanges();
 #endif
 
-    static void registerDisplayConfigurationCallback();
-    static void registerHighDynamicRangeChangeCallback();
+    static void NODELETE registerDisplayConfigurationCallback();
+    static void NODELETE registerHighDynamicRangeChangeCallback();
 
 #if PLATFORM(MAC)
     // PAL::SystemSleepListener
-    void systemWillSleep() final;
-    void systemDidWake() final;
+    void NODELETE systemWillSleep() final;
+    void NODELETE systemDidWake() final;
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    void setMediaAccessibilityPreferences(WebProcessProxy&);
+    void NODELETE setMediaAccessibilityPreferences(WebProcessProxy&);
 #endif
     void clearAudibleActivity();
 
 #if PLATFORM(COCOA)
-    void screenPropertiesUpdateTimerFired();
+    void NODELETE screenPropertiesUpdateTimerFired();
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -763,8 +763,8 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     void loadOrUpdateResourceMonitorRuleList();
 
-    void platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
-    void platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
+    void NODELETE platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
+    void NODELETE platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
     String NODELETE platformResourceMonitorRuleListSourceForTesting();
 #endif
 

@@ -1644,7 +1644,7 @@ static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>& NOD
     return contexts;
 }
 
-WebExtensionContext* WebExtensionContext::get(WebExtensionContextIdentifier identifier)
+WebExtensionContext* NODELETE WebExtensionContext::get(WebExtensionContextIdentifier identifier)
 {
     return webExtensionContexts().get(identifier);
 }
@@ -1701,7 +1701,7 @@ bool WebExtensionContext::inTestingMode() const
     return m_extensionController && m_extensionController->inTestingMode();
 }
 
-const WebExtensionContext::UserContentControllerProxySet& WebExtensionContext::userContentControllers() const
+const WebExtensionContext::UserContentControllerProxySet& NODELETE WebExtensionContext::userContentControllers() const
 {
     ASSERT(isLoaded());
 
@@ -1903,7 +1903,7 @@ URL WebExtensionContext::inspectorBackgroundPageURL() const
     return { m_baseURL, extension->inspectorBackgroundPagePath() };
 }
 
-RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorExtension& inspectorExtension) const
+RefPtr<WebInspectorUIProxy> NODELETE WebExtensionContext::inspector(const API::InspectorExtension& inspectorExtension) const
 {
     ASSERT(isLoaded());
     ASSERT(protect(extension())->hasInspectorBackgroundPage());

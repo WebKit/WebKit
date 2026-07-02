@@ -45,13 +45,13 @@ public:
         No,
         Yes
     };
-    WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> convert(const MediaSample&, SetTrackInfo = SetTrackInfo::Yes);
+    WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> NODELETE convert(const MediaSample&, SetTrackInfo = SetTrackInfo::Yes);
     WEBCORE_EXPORT RefPtr<const TrackInfo> NODELETE currentTrackInfo() const;
-    WEBCORE_EXPORT void setTrackInfo(Ref<const TrackInfo>&&);
+    WEBCORE_EXPORT void NODELETE setTrackInfo(Ref<const TrackInfo>&&);
 
-    WEBCORE_EXPORT RefPtr<MediaSample> convert(MediaSamplesBlock&&);
+    WEBCORE_EXPORT RefPtr<MediaSample> NODELETE convert(MediaSamplesBlock&&);
 
-    WEBCORE_EXPORT bool hasFormatChanged(const MediaSample&);
+    WEBCORE_EXPORT bool NODELETE hasFormatChanged(const MediaSample&);
 
 private:
     RefPtr<const MediaSample> m_lastSample;

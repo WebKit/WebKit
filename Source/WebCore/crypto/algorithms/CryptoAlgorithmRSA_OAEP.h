@@ -40,7 +40,7 @@ public:
 
 private:
     CryptoAlgorithmRSA_OAEP() = default;
-    CryptoAlgorithmIdentifier identifier() const final;
+    CryptoAlgorithmIdentifier NODELETE identifier() const final;
 
     void encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
     void decrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;

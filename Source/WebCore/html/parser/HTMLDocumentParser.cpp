@@ -61,7 +61,7 @@ using namespace HTMLNames;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
 
-static bool isMainDocumentLoadingFromHTTP(const Document& document)
+static bool NODELETE isMainDocumentLoadingFromHTTP(const Document& document)
 {
     return !document.ownerElement() && document.url().protocolIsInHTTPFamily();
 }

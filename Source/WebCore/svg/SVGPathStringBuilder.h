@@ -32,8 +32,8 @@ public:
 
     WEBCORE_EXPORT String result();
 
-    void incrementPathSegmentCount() final;
-    bool continueConsuming() final;
+    void NODELETE incrementPathSegmentCount() final;
+    bool NODELETE continueConsuming() final;
 
     // Used in UnalteredParsing/NormalizedParsing modes.
     WEBCORE_EXPORT void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) final;

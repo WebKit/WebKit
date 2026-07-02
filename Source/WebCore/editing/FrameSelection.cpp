@@ -580,7 +580,7 @@ void FrameSelection::updateDataDetectorsForSelection()
 #endif
 }
 
-static bool removingNodeRemovesPosition(Node& node, const Position& position)
+static bool NODELETE removingNodeRemovesPosition(Node& node, const Position& position)
 {
     if (!position.anchorNode())
         return false;
@@ -2638,7 +2638,7 @@ static RefPtr<HTMLFormElement> scanForForm(Element* start)
     return nullptr;
 }
 
-static ValidatedFormListedElement* NODELETE findFormControlElementAncestor(Element& element)
+static ValidatedFormListedElement* findFormControlElementAncestor(Element& element)
 {
     for (auto& ancestor : lineageOfType<Element>(element)) {
         if (auto* formControlAncestor = ancestor.asValidatedFormListedElement())

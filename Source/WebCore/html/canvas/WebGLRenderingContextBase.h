@@ -488,9 +488,9 @@ public:
     const PixelStoreParameters& pixelStorePackParameters() const LIFETIME_BOUND { return m_packParameters; }
     const PixelStoreParameters& unpackPixelStoreParameters() const LIFETIME_BOUND { return m_unpackParameters; };
 
-    bool isOpaque() const final;
+    bool NODELETE isOpaque() const final;
 
-    WeakPtr<WebGLRenderingContextBase> NODELETE createRefForContextObject();
+    WeakPtr<WebGLRenderingContextBase> createRefForContextObject();
 
     bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
     void prepareForDisplay() final;
@@ -544,8 +544,8 @@ protected:
 
     // ActiveDOMObject
     void stop() override;
-    void suspend(ReasonForSuspension) override;
-    void resume() override;
+    void NODELETE suspend(ReasonForSuspension) override;
+    void NODELETE resume() override;
 
     void destroyGraphicsContextGL();
 

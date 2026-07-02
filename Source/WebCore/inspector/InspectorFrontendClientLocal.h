@@ -58,9 +58,9 @@ public:
     public:
         Settings() = default;
         virtual ~Settings() = default;
-        virtual String getProperty(const String& name);
-        virtual void setProperty(const String& name, const String& value);
-        virtual void deleteProperty(const String& name);
+        virtual String NODELETE getProperty(const String& name);
+        virtual void NODELETE setProperty(const String& name, const String& value);
+        virtual void NODELETE deleteProperty(const String& name);
     };
 
     enum class DispatchBackendTarget { Page, MainFrame };
@@ -72,13 +72,13 @@ public:
 
     WEBCORE_EXPORT void windowObjectCleared() final;
     WEBCORE_EXPORT void frontendLoaded() override;
-    WEBCORE_EXPORT void pagePaused() final;
-    WEBCORE_EXPORT void pageUnpaused() final;
+    WEBCORE_EXPORT void NODELETE pagePaused() final;
+    WEBCORE_EXPORT void NODELETE pageUnpaused() final;
 
     void startWindowDrag() override { }
     WEBCORE_EXPORT void moveWindowBy(float x, float y) final;
 
-    WEBCORE_EXPORT UserInterfaceLayoutDirection userInterfaceLayoutDirection() const final;
+    WEBCORE_EXPORT UserInterfaceLayoutDirection NODELETE userInterfaceLayoutDirection() const final;
 
     WEBCORE_EXPORT void requestSetDockSide(DockSide) final;
     WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) final;
@@ -101,7 +101,7 @@ public:
 
     WEBCORE_EXPORT void sendMessageToBackend(const String& message) override;
 
-    WEBCORE_EXPORT bool isUnderTest() final;
+    WEBCORE_EXPORT bool NODELETE isUnderTest() final;
     bool isRemote() const final { return false; }
     WEBCORE_EXPORT unsigned inspectionLevel() const final;
     String backendCommandsURL() const final { return String(); };

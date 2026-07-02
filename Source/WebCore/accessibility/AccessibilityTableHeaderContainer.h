@@ -42,7 +42,7 @@ public:
 
     void addChildren() final;
 
-    LayoutRect elementRect() const final;
+    LayoutRect NODELETE elementRect() const final;
 
 private:
     explicit AccessibilityTableHeaderContainer(AXID, AXObjectCache&);

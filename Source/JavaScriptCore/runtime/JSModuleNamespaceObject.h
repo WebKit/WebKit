@@ -74,7 +74,7 @@ private:
     JS_EXPORT_PRIVATE JSModuleNamespaceObject(VM&, Structure*, AbstractModuleRecord*, Vector<std::pair<Identifier, AbstractModuleRecord::Resolution>>&&, bool isDeferred);
     JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*);
     bool getOwnPropertySlotCommon(JSGlobalObject*, PropertyName, PropertySlot&);
-    ALWAYS_INLINE bool isSymbolLikeNamespaceKey(VM&, PropertyName);
+    ALWAYS_INLINE bool NODELETE isSymbolLikeNamespaceKey(VM&, PropertyName);
     void ensureDeferredNamespaceEvaluation(JSGlobalObject*);
 
     struct ExportEntry {

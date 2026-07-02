@@ -102,7 +102,7 @@ public:
         String id;
 
 #if USE(LIBWEBRTC)
-        static Stats convert(Type, const webrtc::RTCStats&);
+        static Stats NODELETE convert(Type, const webrtc::RTCStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static Stats convert(Type, const GstStructure*);
 #endif
@@ -115,7 +115,7 @@ public:
         String codecId;
 
 #if USE(LIBWEBRTC)
-        static RtpStreamStats convert(Type, const webrtc::RTCRtpStreamStats&);
+        static RtpStreamStats NODELETE convert(Type, const webrtc::RTCRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static RtpStreamStats convert(Type, const GstStructure*);
 #endif
@@ -127,7 +127,7 @@ public:
         std::optional<double> jitter;
 
 #if USE(LIBWEBRTC)
-        static ReceivedRtpStreamStats convert(Type, const webrtc::RTCReceivedRtpStreamStats&, std::optional<uint64_t> packetsReceived);
+        static ReceivedRtpStreamStats NODELETE convert(Type, const webrtc::RTCReceivedRtpStreamStats&, std::optional<uint64_t> packetsReceived);
 #elif USE(GSTREAMER_WEBRTC)
         static ReceivedRtpStreamStats convert(Type, const GstStructure*);
 #endif
@@ -189,7 +189,7 @@ public:
         std::optional<uint32_t> fecSsrc;
 
 #if USE(LIBWEBRTC)
-        static InboundRtpStreamStats convert(const webrtc::RTCInboundRtpStreamStats&, const HashMap<String, String>&);
+        static InboundRtpStreamStats NODELETE convert(const webrtc::RTCInboundRtpStreamStats&, const HashMap<String, String>&);
 #elif USE(GSTREAMER_WEBRTC)
         static InboundRtpStreamStats convert(const GstStructure*);
 #endif
@@ -203,7 +203,7 @@ public:
         std::optional<uint64_t> roundTripTimeMeasurements;
 
 #if USE(LIBWEBRTC)
-        static RemoteInboundRtpStreamStats convert(const webrtc::RTCRemoteInboundRtpStreamStats&);
+        static RemoteInboundRtpStreamStats NODELETE convert(const webrtc::RTCRemoteInboundRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static RemoteInboundRtpStreamStats convert(const GstStructure*);
 #endif
@@ -214,7 +214,7 @@ public:
         std::optional<uint64_t> bytesSent;
 
 #if USE(LIBWEBRTC)
-        static SentRtpStreamStats convert(Type, const webrtc::RTCSentRtpStreamStats&);
+        static SentRtpStreamStats NODELETE convert(Type, const webrtc::RTCSentRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static SentRtpStreamStats convert(Type, const GstStructure*);
 #endif
@@ -258,7 +258,7 @@ public:
         String scalabilityMode;
 
 #if USE(LIBWEBRTC)
-        static OutboundRtpStreamStats convert(const webrtc::RTCOutboundRtpStreamStats&);
+        static OutboundRtpStreamStats NODELETE convert(const webrtc::RTCOutboundRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static OutboundRtpStreamStats convert(const GstStructure*);
 #endif
@@ -273,7 +273,7 @@ public:
         std::optional<uint64_t> roundTripTimeMeasurements;
 
 #if USE(LIBWEBRTC)
-        static RemoteOutboundRtpStreamStats convert(const webrtc::RTCRemoteOutboundRtpStreamStats&);
+        static RemoteOutboundRtpStreamStats NODELETE convert(const webrtc::RTCRemoteOutboundRtpStreamStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static RemoteOutboundRtpStreamStats convert(const GstStructure*);
 #endif
@@ -290,7 +290,7 @@ public:
         std::optional<uint64_t> bytesReceived;
 
 #if USE(LIBWEBRTC)
-        static DataChannelStats convert(const webrtc::RTCDataChannelStats&);
+        static DataChannelStats NODELETE convert(const webrtc::RTCDataChannelStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static DataChannelStats convert(const GstStructure*);
 #endif
@@ -329,7 +329,7 @@ public:
         std::optional<uint64_t> bytesDiscardedOnSend;
 
 #if USE(LIBWEBRTC)
-        static IceCandidatePairStats convert(const webrtc::RTCIceCandidatePairStats&);
+        static IceCandidatePairStats NODELETE convert(const webrtc::RTCIceCandidatePairStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static IceCandidatePairStats convert(const GstStructure*);
 #endif
@@ -351,7 +351,7 @@ public:
         std::optional<RTCIceTcpCandidateType> tcpType;
 
 #if USE(LIBWEBRTC)
-        static IceCandidateStats convert(const webrtc::RTCIceCandidateStats&);
+        static IceCandidateStats NODELETE convert(const webrtc::RTCIceCandidateStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static IceCandidateStats convert(GstWebRTCStatsType, const GstStructure*);
 #endif
@@ -364,7 +364,7 @@ public:
         String issuerCertificateId;
 
 #if USE(LIBWEBRTC)
-        static CertificateStats convert(const webrtc::RTCCertificateStats&);
+        static CertificateStats NODELETE convert(const webrtc::RTCCertificateStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static CertificateStats convert(const GstStructure*);
 #endif
@@ -384,7 +384,7 @@ public:
         String sdpFmtpLine;
 
 #if USE(LIBWEBRTC)
-        static CodecStats convert(const webrtc::RTCCodecStats&);
+        static CodecStats NODELETE convert(const webrtc::RTCCodecStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static CodecStats convert(const GstStructure*);
 #endif
@@ -415,7 +415,7 @@ public:
         std::optional<uint32_t> selectedCandidatePairChanges;
 
 #if USE(LIBWEBRTC)
-        static TransportStats convert(const webrtc::RTCTransportStats&);
+        static TransportStats NODELETE convert(const webrtc::RTCTransportStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static TransportStats convert(const GstStructure*);
 #endif
@@ -430,7 +430,7 @@ public:
         std::optional<uint64_t> totalSamplesCount;
 
 #if USE(LIBWEBRTC)
-        static AudioPlayoutStats convert(const webrtc::RTCAudioPlayoutStats&);
+        static AudioPlayoutStats NODELETE convert(const webrtc::RTCAudioPlayoutStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static AudioPlayoutStats convert(const GstStructure*);
 #endif
@@ -441,7 +441,7 @@ public:
         std::optional<uint32_t> dataChannelsClosed;
 
 #if USE(LIBWEBRTC)
-        static PeerConnectionStats convert(const webrtc::RTCPeerConnectionStats&);
+        static PeerConnectionStats NODELETE convert(const webrtc::RTCPeerConnectionStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static PeerConnectionStats convert(const GstStructure*);
 #endif
@@ -452,7 +452,7 @@ public:
         String kind;
 
 #if USE(LIBWEBRTC)
-        static MediaSourceStats convert(Type, const webrtc::RTCMediaSourceStats&);
+        static MediaSourceStats NODELETE convert(Type, const webrtc::RTCMediaSourceStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static MediaSourceStats convert(Type, const GstStructure*);
 #endif
@@ -466,7 +466,7 @@ public:
         std::optional<double> echoReturnLossEnhancement;
 
 #if USE(LIBWEBRTC)
-        static AudioSourceStats convert(const webrtc::RTCAudioSourceStats&);
+        static AudioSourceStats NODELETE convert(const webrtc::RTCAudioSourceStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static AudioSourceStats convert(const GstStructure*);
 #endif
@@ -480,7 +480,7 @@ public:
         std::optional<double> framesPerSecond;
 
 #if USE(LIBWEBRTC)
-        static VideoSourceStats convert(const webrtc::RTCVideoSourceStats&);
+        static VideoSourceStats NODELETE convert(const webrtc::RTCVideoSourceStats&);
 #elif USE(GSTREAMER_WEBRTC)
         static VideoSourceStats convert(const GstStructure*);
 #endif

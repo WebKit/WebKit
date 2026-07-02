@@ -65,7 +65,7 @@ public:
         std::optional<uint64_t> duration;
     };
 
-    static bool isVPXSupported();
+    static bool NODELETE isVPXSupported();
 
     using OutputCallback = Function<void(Expected<DecodedFrame, String>&&)>;
     using CreateResult = Expected<Ref<VideoDecoder>, String>;

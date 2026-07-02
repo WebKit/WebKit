@@ -85,14 +85,14 @@ public:
 protected:
     RemoteGraphicsContextProxy(const WebCore::DestinationColorSpace&, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, DrawGlyphsMode, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
 
-    template<typename T> void send(T&& message);
+    template<typename T> void NODELETE send(T&& message);
 
 private:
     void didBecomeUnresponsive() const;
 
-    bool knownToHaveFloatBasedBacking() const final;
+    bool NODELETE knownToHaveFloatBasedBacking() const final;
 
-    WebCore::RenderingMode renderingMode() const final;
+    WebCore::RenderingMode NODELETE renderingMode() const final;
     std::optional<WebCore::RenderingMethod> renderingMethod() const final { return std::nullopt; }
 
     void save(WebCore::GraphicsContextState::Purpose) final;

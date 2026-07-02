@@ -329,11 +329,11 @@ public:
     static void NODELETE initialize();
     static void initializeUnderlyingAllocator();
 
-    bool isValid() const;
+    bool NODELETE isValid() const;
 
-    static bool underMemoryPressure();
+    static bool NODELETE underMemoryPressure();
     
-    static double memoryPressureMultiplier(size_t addedMemoryUsage);
+    static double NODELETE memoryPressureMultiplier(size_t addedMemoryUsage);
     
 #if ENABLE(META_ALLOCATOR_PROFILE)
     static void dumpProfile();
@@ -341,15 +341,15 @@ public:
     static void dumpProfile() { }
 #endif
     
-    JS_EXPORT_PRIVATE static void disableJIT();
+    JS_EXPORT_PRIVATE static void NODELETE disableJIT();
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, JITCompilationEffort);
 
     bool isValidExecutableMemory(const AbstractLocker&, void* address);
 
-    static size_t committedByteCount();
+    static size_t NODELETE committedByteCount();
 
-    Lock& getLock() const;
+    Lock& NODELETE getLock() const;
 
 #if ENABLE(MPROTECT_RX_TO_RWX)
     void startWriting(const void* start, size_t sizeInBytes);

@@ -48,7 +48,7 @@ public:
     bool operator==(const SVGNonInheritedMiscData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGNonInheritedMiscData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGNonInheritedMiscData&) const;
 #endif
 
     Opacity floodOpacity;

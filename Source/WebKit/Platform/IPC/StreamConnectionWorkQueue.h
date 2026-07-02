@@ -56,7 +56,7 @@ public:
     bool isCurrent() const final;
 
 private:
-    void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
+    void NODELETE startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
     void processStreams();
 
     ASCIILiteral m_name;

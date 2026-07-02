@@ -53,11 +53,11 @@ public:
     WEBCORE_EXPORT ~SpeechRecognizer();
 
 #if ENABLE(MEDIA_STREAM)
-    WEBCORE_EXPORT void start(Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled);
+    WEBCORE_EXPORT void NODELETE start(Ref<RealtimeMediaSource>&&, bool mockSpeechRecognitionEnabled);
 #endif
-    WEBCORE_EXPORT void abort(std::optional<SpeechRecognitionError>&& = std::nullopt);
+    WEBCORE_EXPORT void NODELETE abort(std::optional<SpeechRecognitionError>&& = std::nullopt);
     WEBCORE_EXPORT void stop();
-    WEBCORE_EXPORT void prepareForDestruction();
+    WEBCORE_EXPORT void NODELETE prepareForDestruction();
 
     WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier NODELETE clientIdentifier() const;
     SpeechRecognitionCaptureSource* source() LIFETIME_BOUND { return m_source.get(); }
@@ -73,13 +73,13 @@ private:
     };
 
 #if ENABLE(MEDIA_STREAM)
-    void startCapture(Ref<RealtimeMediaSource>&&);
+    void NODELETE startCapture(Ref<RealtimeMediaSource>&&);
 #endif
-    void stopCapture();
-    void dataCaptured(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t sampleCount);
+    void NODELETE stopCapture();
+    void NODELETE dataCaptured(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t sampleCount);
     bool startRecognition(bool mockSpeechRecognitionEnabled, SpeechRecognitionConnectionClientIdentifier, const String& localeIdentifier, bool continuous, bool interimResults, uint64_t alternatives);
-    void abortRecognition();
-    void stopRecognition();
+    void NODELETE abortRecognition();
+    void NODELETE stopRecognition();
 
     DelegateCallback m_delegateCallback;
     const Ref<SpeechRecognitionRequest> m_request;

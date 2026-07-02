@@ -78,9 +78,9 @@ WebCore::FrameIdentifier NODELETE toWebCoreFrameIdentifier(const WebExtensionFra
 
 bool matchesFrame(const WebExtensionFrameIdentifier&, const WebFrame&);
 
-WebExtensionFrameIdentifier NODELETE toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier>);
+WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(std::optional<WebCore::FrameIdentifier>);
 WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&);
-WebExtensionFrameIdentifier NODELETE toWebExtensionFrameIdentifier(const FrameInfoData&);
+WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData&);
 
 #ifdef __OBJC__
 WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *);

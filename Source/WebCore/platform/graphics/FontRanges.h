@@ -95,7 +95,7 @@ public:
 
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, ExternalResourceDownloadPolicy) const;
     WEBCORE_EXPORT const Font* fontForCharacter(char32_t) const;
-    WEBCORE_EXPORT const Font& fontForFirstRange() const;
+    WEBCORE_EXPORT const Font& NODELETE fontForFirstRange() const;
     bool isLoading() const;
     bool isGenericFontFamily() const { return m_isGenericFontFamily == IsGenericFontFamily::Yes; }
 

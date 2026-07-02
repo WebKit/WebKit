@@ -36,7 +36,7 @@
 
 namespace API {
 
-OptionSet<WebKit::ContentWorldOption> ContentWorld::defaultOptions()
+OptionSet<WebKit::ContentWorldOption> NODELETE ContentWorld::defaultOptions()
 {
     return WebKit::ContentWorldOption::Inspectable;
 }

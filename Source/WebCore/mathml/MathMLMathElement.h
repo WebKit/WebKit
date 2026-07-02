@@ -44,7 +44,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;
 
-    bool acceptsLegacyMathVariantAttribute() final;
+    bool NODELETE acceptsLegacyMathVariantAttribute() final;
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 };

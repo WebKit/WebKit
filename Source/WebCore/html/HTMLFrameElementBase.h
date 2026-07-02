@@ -62,7 +62,7 @@ private:
 
     bool canContainRangeEndPoint() const final { return false; }
 
-    bool supportsFocus() const final;
+    bool NODELETE supportsFocus() const final;
     void setFocus(bool, FocusVisibility = FocusVisibility::Invisible) final;
     
     bool NODELETE isURLAttribute(const Attribute&) const final;

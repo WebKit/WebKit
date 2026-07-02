@@ -61,8 +61,8 @@ public:
 
     bool hasIntrinsicWidth() const final;
     bool hasIntrinsicHeight() const final;
-    bool hasRelativeWidth() const final;
-    bool hasRelativeHeight() const final;
+    bool NODELETE hasRelativeWidth() const final;
+    bool NODELETE hasRelativeHeight() const final;
 
     // Start the animation from the beginning.
     void startAnimation() final;

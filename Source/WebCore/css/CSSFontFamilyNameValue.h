@@ -36,8 +36,8 @@ public:
     const CSS::FontFamilyName& fontFamilyName() const LIFETIME_BOUND { return m_fontFamilyName; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSFontFamilyNameValue&) const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    bool NODELETE equals(const CSSFontFamilyNameValue&) const;
+    IterationStatus NODELETE customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
     bool NODELETE addDerivedHash(Hasher&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

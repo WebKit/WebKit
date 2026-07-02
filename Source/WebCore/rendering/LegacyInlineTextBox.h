@@ -73,8 +73,8 @@ public:
     void removeFromGlyphDisplayListCache();
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
-    ASCIILiteral boxName() const final;
+    void NODELETE outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
+    ASCIILiteral NODELETE boxName() const final;
 #endif
 
 private:

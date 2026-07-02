@@ -243,7 +243,7 @@ bool ProxyObject::performGet(JSGlobalObject* globalObject, PropertyName property
 }
 
 // https://tc39.es/ecma262/#sec-completepropertydescriptor
-static void completePropertyDescriptor(PropertyDescriptor& desc)
+static void NODELETE completePropertyDescriptor(PropertyDescriptor& desc)
 {
     if (desc.isAccessorDescriptor()) {
         if (!desc.getter())

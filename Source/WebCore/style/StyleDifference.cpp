@@ -835,7 +835,7 @@ public:
         return false;
     }
 
-    static bool changeRequiresRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
+    static bool NODELETE changeRequiresRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
     {
         bool currentColorDiffers = a.inheritedData().color != b.inheritedData().color;
 
@@ -1001,7 +1001,7 @@ public:
     // MARK: - Logging
 
 #if !LOG_DISABLED
-    static void dumpDifferences(TextStream& ts, const Style::ComputedStyle& a, const Style::ComputedStyle& b)
+    static void NODELETE dumpDifferences(TextStream& ts, const Style::ComputedStyle& a, const Style::ComputedStyle& b)
     {
         a.nonInheritedData().dumpDifferences(ts, b.nonInheritedData());
         a.nonInheritedFlags().dumpDifferences(ts, b.nonInheritedFlags());

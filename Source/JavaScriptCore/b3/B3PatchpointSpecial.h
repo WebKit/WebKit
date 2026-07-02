@@ -57,7 +57,7 @@ private:
 
     MacroAssembler::Jump generate(Air::Inst&, CCallHelpers&, Air::GenerationContext&) final;
     
-    bool isTerminal(Air::Inst&) final;
+    bool NODELETE isTerminal(Air::Inst&) final;
 
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;

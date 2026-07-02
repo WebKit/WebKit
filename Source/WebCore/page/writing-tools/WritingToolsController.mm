@@ -127,7 +127,7 @@ static bool NODELETE isZeroToOneCompositionType(WritingTools::Session::Compositi
     }
 }
 
-static std::optional<SimpleRange> contextRangeForSession(Document& document, const std::optional<WritingTools::Session>& session)
+static std::optional<SimpleRange> NODELETE contextRangeForSession(Document& document, const std::optional<WritingTools::Session>& session)
 {
     // If the selection is a range, the range of the context should be the range of the paragraph
     // surrounding the selection range, unless such a range is empty.
@@ -168,7 +168,7 @@ static std::optional<SimpleRange> contextRangeForSession(Document& document, con
     return selection.firstRange();
 }
 
-static RetainPtr<NSAttributedString> attributedStringApplyingBodyTextColorIfNecessary(const Document& document, NSAttributedString *originalAttributedString)
+static RetainPtr<NSAttributedString> NODELETE attributedStringApplyingBodyTextColorIfNecessary(const Document& document, NSAttributedString *originalAttributedString)
 {
     RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithAttributedString:originalAttributedString]);
 
@@ -1135,7 +1135,7 @@ void WritingToolsController::updateStateForSelectedSuggestionIfNeeded()
     m_page->chrome().client().proofreadingSessionUpdateStateForSuggestionWithID(WritingTools::TextSuggestion::State::Reviewing, data.suggestionID);
 }
 
-static bool appliedCommandIsWritingToolsCommand(const Vector<Ref<WritingToolsCompositionCommand>>& commands, EditCommandComposition* composition)
+static bool NODELETE appliedCommandIsWritingToolsCommand(const Vector<Ref<WritingToolsCompositionCommand>>& commands, EditCommandComposition* composition)
 {
     return std::ranges::any_of(commands, [composition](const auto& command) {
         return command->ensureComposition().ptr() == composition;

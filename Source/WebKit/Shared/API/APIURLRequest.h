@@ -40,7 +40,7 @@ public:
 
     const WebCore::ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_request; }
 
-    static double defaultTimeoutInterval(); // May return 0 when using platform default.
+    static double NODELETE defaultTimeoutInterval(); // May return 0 when using platform default.
     static void setDefaultTimeoutInterval(double);
 
 private:

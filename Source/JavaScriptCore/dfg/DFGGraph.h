@@ -270,7 +270,7 @@ public:
     void packNodeIndices();
     void clearAbstractValues();
 
-    void NODELETE dethread();
+    void dethread();
     
     FrozenValue* freeze(JSValue); // We use weak freezing by default.
     FrozenValue* freezeStrong(JSValue); // Shorthand for freeze(value)->strengthenTo(StrongValue).
@@ -310,13 +310,13 @@ public:
 
     void dump(PrintStream&, DumpContext*);
 
-    bool NODELETE terminalsAreValid();
+    bool terminalsAreValid();
     
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
     void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
     void dump(PrintStream&, Edge);
     void dump(PrintStream&, const char* prefix, Node*, DumpContext* = nullptr, bool inIonGraph = false);
-    static int amountOfNodeWhiteSpace(Node*);
+    static int NODELETE amountOfNodeWhiteSpace(Node*);
     static void printNodeWhiteSpace(PrintStream&, Node*);
 
     // Dump the code origin of the given node as a diff from the code origin of the
@@ -766,16 +766,16 @@ public:
     // any GetLocals in the basic block.
     // FIXME: it may be appropriate, in the future, to generalize this to handle GetLocals
     // introduced anywhere in the basic block.
-    void NODELETE substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
+    void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
     
     void invalidateCFG();
     void invalidateNodeLiveness();
     
-    void NODELETE clearFlagsOnAllNodes(NodeFlags);
+    void clearFlagsOnAllNodes(NodeFlags);
     
-    void NODELETE clearReplacements();
-    void NODELETE clearEpochs();
-    void NODELETE initializeNodeOwners();
+    void clearReplacements();
+    void clearEpochs();
+    void initializeNodeOwners();
     
     BlockList blocksInPreOrder();
     BlockList blocksInPostOrder(bool isSafeToValidate = true);
@@ -1261,7 +1261,7 @@ public:
     ObjectPropertyConditionSet tryEnsureAbsence(JSGlobalObject*, const StructureSet&, CacheableIdentifier);
 
     bool canDoFastSpread(Node*, const AbstractValue&);
-    bool canDoFastSpreadWithStructureCheck(Node*);
+    bool NODELETE canDoFastSpreadWithStructureCheck(Node*);
     static constexpr IndexingType originalArrayShapesForSpread[] = {
         CopyOnWriteArrayWithContiguous, ArrayWithContiguous,
         ArrayWithInt32, CopyOnWriteArrayWithInt32,
@@ -1503,7 +1503,7 @@ public:
     UncheckedKeyHashSet<Node*> m_slowPutByVal;
 
 private:
-    template<typename Visitor> void visitChildrenImpl(Visitor&);
+    template<typename Visitor> void NODELETE visitChildrenImpl(Visitor&);
 
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
     

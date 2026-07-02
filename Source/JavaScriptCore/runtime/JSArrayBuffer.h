@@ -77,7 +77,7 @@ private:
     JSArrayBuffer(VM&, Structure*, RefPtr<ArrayBuffer>&&);
     void finishCreation(VM&, JSGlobalObject*);
 
-    static size_t estimatedSize(JSCell*, VM&);
+    static size_t NODELETE estimatedSize(JSCell*, VM&);
 
     ArrayBuffer* m_impl;
     // For resizable non-shared Wasm buffers, this points back to the owning JSWebAssemblyMemory so

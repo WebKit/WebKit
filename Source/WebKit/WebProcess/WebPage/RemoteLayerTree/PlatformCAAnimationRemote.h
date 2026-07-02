@@ -50,40 +50,40 @@ public:
 
     Ref<PlatformCAAnimation> copy() const override;
 
-    String keyPath() const override;
+    String NODELETE keyPath() const override;
 
-    CFTimeInterval beginTime() const override;
-    void setBeginTime(CFTimeInterval) override;
+    CFTimeInterval NODELETE beginTime() const override;
+    void NODELETE setBeginTime(CFTimeInterval) override;
 
-    CFTimeInterval duration() const override;
-    void setDuration(CFTimeInterval) override;
+    CFTimeInterval NODELETE duration() const override;
+    void NODELETE setDuration(CFTimeInterval) override;
 
-    float speed() const override;
-    void setSpeed(float) override;
+    float NODELETE speed() const override;
+    void NODELETE setSpeed(float) override;
 
-    CFTimeInterval timeOffset() const override;
-    void setTimeOffset(CFTimeInterval) override;
+    CFTimeInterval NODELETE timeOffset() const override;
+    void NODELETE setTimeOffset(CFTimeInterval) override;
 
-    float repeatCount() const override;
-    void setRepeatCount(float) override;
+    float NODELETE repeatCount() const override;
+    void NODELETE setRepeatCount(float) override;
 
-    bool autoreverses() const override;
-    void setAutoreverses(bool) override;
+    bool NODELETE autoreverses() const override;
+    void NODELETE setAutoreverses(bool) override;
 
-    FillModeType fillMode() const override;
-    void setFillMode(FillModeType) override;
+    FillModeType NODELETE fillMode() const override;
+    void NODELETE setFillMode(FillModeType) override;
 
     void setTimingFunction(const WebCore::TimingFunction*, bool reverse = false) override;
     void copyTimingFunctionFrom(const WebCore::PlatformCAAnimation&) override;
 
-    bool isRemovedOnCompletion() const override;
-    void setRemovedOnCompletion(bool) override;
+    bool NODELETE isRemovedOnCompletion() const override;
+    void NODELETE setRemovedOnCompletion(bool) override;
 
-    bool isAdditive() const override;
-    void setAdditive(bool) override;
+    bool NODELETE isAdditive() const override;
+    void NODELETE setAdditive(bool) override;
 
-    ValueFunctionType valueFunction() const override;
-    void setValueFunction(ValueFunctionType) override;
+    ValueFunctionType NODELETE valueFunction() const override;
+    void NODELETE setValueFunction(ValueFunctionType) override;
 
     // Basic-animation properties.
     void setFromValue(float) override;

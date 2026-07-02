@@ -62,7 +62,7 @@ private:
     void NODELETE animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) override;
     void NODELETE setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) override;
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
-    ModelPlayerAccessibilityChildren accessibilityChildren() override;
+    ModelPlayerAccessibilityChildren NODELETE accessibilityChildren() override;
 #endif
 
     WeakPtr<ModelPlayerClient> m_client;

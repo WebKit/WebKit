@@ -136,7 +136,7 @@ public:
     void toggleMediaFullscreenState() const;
     void enterFullscreenForVideo() const;
     bool mediaControlsEnabled() const;
-    bool NODELETE mediaLoopEnabled() const;
+    bool mediaLoopEnabled() const;
     bool NODELETE mediaStatsShowing() const;
     bool mediaPlaying() const;
     bool mediaSupportsFullscreen() const;
@@ -176,7 +176,7 @@ public:
 private:
     NodeSet& mutableListBasedTestResult() LIFETIME_BOUND; // See above.
 
-    template<typename RectType> HitTestProgress addNodeToListBasedTestResultCommon(Node*, const HitTestRequest&, const HitTestLocation&, const RectType&);
+    template<typename RectType> HitTestProgress NODELETE addNodeToListBasedTestResultCommon(Node*, const HitTestRequest&, const HitTestLocation&, const RectType&);
 
     RefPtr<Node> nodeForImageData() const;
 

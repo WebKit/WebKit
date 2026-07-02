@@ -61,14 +61,14 @@ public:
     static RefPtr<MediaRecorderPrivateEncoder> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateEncoder();
 
-    void appendVideoFrame(VideoFrame&);
-    void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
-    void fetchData(CompletionHandler<void(Ref<FragmentedSharedBuffer>&&, double)>&&);
+    void NODELETE appendVideoFrame(VideoFrame&);
+    void NODELETE appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
+    void NODELETE fetchData(CompletionHandler<void(Ref<FragmentedSharedBuffer>&&, double)>&&);
 
-    void pause();
-    void resume();
-    void stopRecording();
-    void close();
+    void NODELETE pause();
+    void NODELETE resume();
+    void NODELETE stopRecording();
+    void NODELETE close();
 
     String NODELETE mimeType() const;
     unsigned NODELETE audioBitRate() const;
@@ -80,54 +80,54 @@ public:
 
 private:
     MediaRecorderPrivateEncoder(bool hasAudio, bool hasVideo);
-    bool initialize(const MediaRecorderPrivateOptions&, UniqueRef<MediaRecorderPrivateWriter>&&);
+    bool NODELETE initialize(const MediaRecorderPrivateOptions&, UniqueRef<MediaRecorderPrivateWriter>&&);
 
-    static WorkQueue& queueSingleton();
+    static WorkQueue& NODELETE queueSingleton();
 
     Ref<MediaRecorderPrivateWriterListener> NODELETE listener();
 
     class Listener;
     friend class Listener;
-    void appendData(std::span<const uint8_t>);
+    void NODELETE appendData(std::span<const uint8_t>);
 
     MediaTime lastEnqueuedAudioTime() const { return MediaTime(m_lastEnqueuedAudioTimeUs.load(), 1000000); }
-    MediaTime currentTime() const;
-    MediaTime currentTime(const MediaTime&, const MonotonicTime&) const;
-    MediaTime currentEndTime() const;
+    MediaTime NODELETE currentTime() const;
+    MediaTime NODELETE currentTime(const MediaTime&, const MonotonicTime&) const;
+    MediaTime NODELETE currentEndTime() const;
 
-    void flushDataBuffer();
-    bool segmentsMustStartWithVideoKeyframe() const;
+    void NODELETE flushDataBuffer();
+    bool NODELETE segmentsMustStartWithVideoKeyframe() const;
 
-    Ref<FragmentedSharedBuffer> takeData();
+    Ref<FragmentedSharedBuffer> NODELETE takeData();
 
     MediaTime lastMuxedSampleTime() const;
 
-    void generateMIMEType();
+    void NODELETE generateMIMEType();
 
-    void audioSamplesDescriptionChanged(const AudioStreamBasicDescription&, InProcessCARingBuffer*, size_t);
-    void audioSamplesAvailable(const MediaTime&, size_t, size_t);
-    RefPtr<AudioSampleBufferConverter> audioConverter() const;
-    void enqueueCompressedAudioSampleBuffers();
+    void NODELETE audioSamplesDescriptionChanged(const AudioStreamBasicDescription&, InProcessCARingBuffer*, size_t);
+    void NODELETE audioSamplesAvailable(const MediaTime&, size_t, size_t);
+    RefPtr<AudioSampleBufferConverter> NODELETE audioConverter() const;
+    void NODELETE enqueueCompressedAudioSampleBuffers();
 
-    void appendVideoFrame(MediaTime, Ref<VideoFrame>&&);
-    Ref<GenericPromise> encodePendingVideoFrames(const MediaTime&);
-    void processVideoEncoderActiveConfiguration(const VideoEncoder::Config&, const VideoEncoderActiveConfiguration&);
-    void enqueueCompressedVideoFrame(VideoEncoder::EncodedFrame&&);
+    void NODELETE appendVideoFrame(MediaTime, Ref<VideoFrame>&&);
+    Ref<GenericPromise> NODELETE encodePendingVideoFrames(const MediaTime&);
+    void NODELETE processVideoEncoderActiveConfiguration(const VideoEncoder::Config&, const VideoEncoderActiveConfiguration&);
+    void NODELETE enqueueCompressedVideoFrame(VideoEncoder::EncodedFrame&&);
 
-    Ref<GenericPromise> flushPendingData(const MediaTime&);
-    void partiallyFlushEncodedQueues();
-    Ref<GenericPromise> waitForMatchingAudio(const MediaTime&);
+    Ref<GenericPromise> NODELETE flushPendingData(const MediaTime&);
+    void NODELETE partiallyFlushEncodedQueues();
+    Ref<GenericPromise> NODELETE waitForMatchingAudio(const MediaTime&);
     using Result = MediaRecorderPrivateWriter::Result;
-    MediaTime flushToEndSegment(const MediaTime&);
-    void flushAllEncodedQueues();
-    void interleaveAndEnqueueNextFrame();
+    MediaTime NODELETE flushToEndSegment(const MediaTime&);
+    void NODELETE flushAllEncodedQueues();
+    void NODELETE interleaveAndEnqueueNextFrame();
 
-    void maybeStartWriter();
-    bool hasMuxedDataSinceEndSegment() const;
+    void NODELETE maybeStartWriter();
+    bool NODELETE hasMuxedDataSinceEndSegment() const;
 
-    void addRingBuffer(const AudioStreamDescription&);
-    void writeDataToRingBuffer(AudioBufferList*, size_t, size_t);
-    void clearRingBuffersIfPossible();
+    void NODELETE addRingBuffer(const AudioStreamDescription&);
+    void NODELETE writeDataToRingBuffer(AudioBufferList*, size_t, size_t);
+    void NODELETE clearRingBuffersIfPossible();
 
     std::atomic<bool> m_isStopped { false };
     bool m_writerIsStarted WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };

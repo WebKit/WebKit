@@ -48,7 +48,7 @@ public:
 
     MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
 
-    bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
+    bool NODELETE isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
     // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some

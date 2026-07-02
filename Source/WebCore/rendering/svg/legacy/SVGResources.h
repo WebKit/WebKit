@@ -78,7 +78,7 @@ public:
     bool resourceDestroyed(LegacyRenderSVGResourceContainer&);
 
 #if ENABLE(TREE_DEBUGGING)
-    void dump(const RenderObject*);
+    void NODELETE dump(const RenderObject*);
 #endif
 
 private:

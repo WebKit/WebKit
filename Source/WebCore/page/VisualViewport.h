@@ -38,8 +38,8 @@ public:
     static Ref<VisualViewport> create(LocalDOMWindow& window) { return adoptRef(*new VisualViewport(window)); }
 
     // EventTarget
-    enum EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
     using EventTarget::addEventListener;
 

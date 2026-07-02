@@ -150,7 +150,7 @@ void Step::evaluate(Node& context, NodeSet& nodes) const
 }
 
 #if ASSERT_ENABLED
-static inline NodeType primaryNodeType(Step::Axis axis)
+static inline NodeType NODELETE primaryNodeType(Step::Axis axis)
 {
     switch (axis) {
         case Step::AttributeAxis:

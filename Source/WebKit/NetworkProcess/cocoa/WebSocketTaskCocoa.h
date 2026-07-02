@@ -87,7 +87,7 @@ private:
 
     void readNextMessage();
 
-    NSURLSessionTask* task() const final;
+    NSURLSessionTask* NODELETE task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
     WeakPtr<NetworkSocketChannel> m_channel;

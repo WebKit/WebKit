@@ -64,7 +64,7 @@ public:
     explicit ImageOverlayController(Page&);
 
     void selectionQuadsDidChange(LocalFrame&, const Vector<FloatQuad>&);
-    void elementUnderMouseDidChange(LocalFrame&, Element*);
+    void NODELETE elementUnderMouseDidChange(LocalFrame&, Element*);
 
 #if PLATFORM(MAC)
     // DataDetectorHighlightClient.
@@ -77,7 +77,7 @@ public:
 
 #if ENABLE(DATA_DETECTION)
     WEBCORE_EXPORT bool NODELETE hasActiveDataDetectorHighlightForTesting() const;
-    void textRecognitionResultsChanged(HTMLElement&);
+    void NODELETE textRecognitionResultsChanged(HTMLElement&);
 #endif
 
     void documentDetached(const Document&);
@@ -103,7 +103,7 @@ private:
 #if ENABLE(DATA_DETECTION)
     DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorHighlight.get(); }
     void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep>) final;
-    float deviceScaleFactor() const final;
+    float NODELETE deviceScaleFactor() const final;
     RefPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) final;
 #endif
 #endif

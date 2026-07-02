@@ -120,7 +120,7 @@ public:
 
     virtual std::optional<WebCore::PlatformLayerIdentifier> contentsLayerIdentifier() const { return std::nullopt; }
 
-    float scaleForPagePreviews() const;
+    float NODELETE scaleForPagePreviews() const;
 
     virtual void setSelectionLayerEnabled(bool) { }
 
@@ -134,7 +134,7 @@ protected:
     };
     virtual Vector<LayerCoverage> layerCoveragesForRepaintPageCoverage(RepaintRequirements, const PDFPageCoverage&) = 0;
 
-    static Ref<WebCore::GraphicsLayer> NODELETE pageBackgroundLayerForPageContainerLayer(WebCore::GraphicsLayer&);
+    static Ref<WebCore::GraphicsLayer> pageBackgroundLayerForPageContainerLayer(WebCore::GraphicsLayer&);
 
     Ref<AsyncPDFRenderer> asyncRenderer();
     RefPtr<AsyncPDFRenderer> NODELETE asyncRendererIfExists() const;

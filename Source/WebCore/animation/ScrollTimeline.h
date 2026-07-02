@@ -76,9 +76,9 @@ public:
     AnimationTimelinesController* controller() const override;
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
-    Style::SingleAnimationRange defaultRange() const override;
+    Style::SingleAnimationRange NODELETE defaultRange() const override;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> timelineScopeDeclaredElement() const { return m_timelineScopeElement; }
-    void setTimelineScopeElement(const Element&);
+    void NODELETE setTimelineScopeElement(const Element&);
     void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 
     virtual std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const;

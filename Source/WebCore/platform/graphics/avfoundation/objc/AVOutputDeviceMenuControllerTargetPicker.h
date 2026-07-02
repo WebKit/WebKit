@@ -49,7 +49,7 @@ public:
 private:
     void showPlaybackTargetPicker(NSView *, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
     void startingMonitoringPlaybackTargets() final;
-    void stopMonitoringPlaybackTargets() final;
+    void NODELETE stopMonitoringPlaybackTargets() final;
     void invalidatePlaybackTargets() final;
     bool externalOutputDeviceAvailable() final;
     AVOutputContext* outputContext() final;

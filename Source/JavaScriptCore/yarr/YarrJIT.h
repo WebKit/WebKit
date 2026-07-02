@@ -187,7 +187,7 @@ public:
         }
     }
 
-    void NODELETE setAll()
+    void setAll()
     {
         m_count = mapSize;
     }

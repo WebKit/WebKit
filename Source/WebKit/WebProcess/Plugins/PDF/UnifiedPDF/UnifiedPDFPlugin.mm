@@ -2998,7 +2998,7 @@ void UnifiedPDFPlugin::extendCurrentSelectionIfNeeded()
     setCurrentSelection(WTF::move(selection));
 }
 
-static bool shouldNotTrackSelectionForEvent(const WebCore::PlatformMouseEvent& event)
+static bool NODELETE shouldNotTrackSelectionForEvent(const WebCore::PlatformMouseEvent& event)
 {
     return event.inputSource() == WebCore::MouseEventInputSource::Automation && event.syntheticClickType() != WebCore::SyntheticClickType::NoTap;
 }

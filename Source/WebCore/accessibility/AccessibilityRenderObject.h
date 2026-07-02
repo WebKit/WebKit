@@ -73,17 +73,17 @@ public:
 
     bool isAttachment() const final;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    bool isAttachmentElement() const final;
+    bool NODELETE isAttachmentElement() const final;
 #endif
     bool isDetached() const final { return !m_renderer && AccessibilityNodeObject::isDetached(); }
     bool isOffScreen() const final;
-    bool hasBoldFont() const final;
-    bool hasItalicFont() const final;
+    bool NODELETE hasBoldFont() const final;
+    bool NODELETE hasItalicFont() const final;
     bool hasPlainText() const final;
     bool hasSameFont(AXCoreObject&) final;
     bool hasSameFontColor(AXCoreObject&) final;
     bool hasSameStyle(AXCoreObject&) final;
-    bool hasUnderline() const final;
+    bool NODELETE hasUnderline() const final;
 
     void setAccessibleName(const AtomString&) final;
 
@@ -99,7 +99,7 @@ public:
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
     AccessibilityObject* crossFrameParentObject() const final;
-    AccessibilityObject* crossFrameChildObject() const final;
+    AccessibilityObject* NODELETE crossFrameChildObject() const final;
 #endif
 
     // Should be called on the root accessibility object to kick off a hit test.
@@ -110,7 +110,7 @@ public:
     LayoutRect boundingBoxRect() const final;
 
     RenderObject* renderer() const final { return m_renderer.get(); }
-    Document* document() const final;
+    Document* NODELETE document() const final;
 
     URL url() const final;
     CharacterRange selectedTextRange() const final;
@@ -200,7 +200,7 @@ private:
     RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
-    RenderObject* renderParentObject() const;
+    RenderObject* NODELETE renderParentObject() const;
     RenderObject* markerRenderer() const;
 
     bool isSVGImage() const;

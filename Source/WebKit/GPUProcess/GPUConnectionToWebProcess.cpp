@@ -200,8 +200,8 @@ public:
 
 private:
     Logger& logger() final { return m_process.get()->logger(); }
-    void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) final { }
-    void removeMessageReceiver(IPC::ReceiverName messageReceiverName) final { }
+    void NODELETE addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) final { }
+    void NODELETE removeMessageReceiver(IPC::ReceiverName messageReceiverName) final { }
     IPC::Connection& connection() final { return m_process.get()->connection(); }
     bool willStartCapture(CaptureDevice::DeviceType type, PageIdentifier pageIdentifier) const final
     {

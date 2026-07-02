@@ -362,7 +362,7 @@ namespace JSC {
         friend class StrictModeScope;
 
         template <typename OldOpType, typename NewOpType, typename TupleType>
-        friend void rewriteOp(BytecodeGenerator&, TupleType&);
+        friend void NODELETE rewriteOp(BytecodeGenerator&, TupleType&);
 
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
@@ -682,14 +682,14 @@ namespace JSC {
 
         void hoistSloppyModeFunctionIfNecessary(FunctionMetadataNode*);
 
-        ForInContext* NODELETE findForInContext(RegisterID* property);
+        ForInContext* findForInContext(RegisterID* property);
 
     private:
         void emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
 
         enum class IsNotTypeofUndefined : uint8_t { Yes, No };
         template<IsNotTypeofUndefined isNotTypeofUndefined>
-        bool tryEmitTypeofIsUndefinedForStringComparison(RegisterID* dst, RegisterID* src1, RegisterID* src2);
+        bool NODELETE tryEmitTypeofIsUndefinedForStringComparison(RegisterID* dst, RegisterID* src1, RegisterID* src2);
     public:
 
         // This doesn't emit expression info. If using this, make sure you shouldn't be emitting text offset.
@@ -909,7 +909,7 @@ namespace JSC {
         RegisterID* emitToPropertyKey(RegisterID* dst, RegisterID* src);
         RegisterID* emitToPropertyKeyOrNumber(RegisterID* dst, RegisterID* src);
 
-        ResolveType NODELETE resolveType();
+        ResolveType resolveType();
         RegisterID* emitResolveConstantLocal(RegisterID* dst, const Variable&);
         RegisterID* emitResolveScope(RegisterID* dst, const Variable&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
@@ -933,10 +933,10 @@ namespace JSC {
         void recordHasOwnPropertyInForInLoop(ForInContext&, unsigned branchOffset, Label& genericPath);
 
         template<typename BinOp, typename JmpOp>
-        bool fuseCompareAndJump(RegisterID* cond, Label& target, bool swapOperands = false);
+        bool NODELETE fuseCompareAndJump(RegisterID* cond, Label& target, bool swapOperands = false);
 
         template<typename UnaryOp, typename JmpOp>
-        bool fuseTestAndJmp(RegisterID* cond, Label& target);
+        bool NODELETE fuseTestAndJmp(RegisterID* cond, Label& target);
 
         void emitEnter();
         void emitCheckTraps();
@@ -1018,7 +1018,7 @@ namespace JSC {
         void emitOutOfLineExceptionHandler(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData*);
 
         template<typename ConstructOp>
-        RegisterID* emitConstructImpl(RegisterID* dst, RegisterID* func, RegisterID* lazyThis, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isDefaultDerivedConstructorCall);
+        RegisterID* NODELETE emitConstructImpl(RegisterID* dst, RegisterID* func, RegisterID* lazyThis, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isDefaultDerivedConstructorCall);
 
     public:
         enum class ScopeType : uint8_t { CatchScope, CatchScopeWithSimpleParameter, LetConstScope, FunctionNameScope, ClassScope };
@@ -1026,7 +1026,7 @@ namespace JSC {
         void restoreScopeRegister();
         void restoreScopeRegister(int lexicalScopeIndex);
 
-        int NODELETE labelScopeDepthToLexicalScopeIndex(int labelScopeDepth);
+        int labelScopeDepthToLexicalScopeIndex(int labelScopeDepth);
 
         void emitThrow(RegisterID*);
         RegisterID* emitArgumentCount(RegisterID*);
@@ -1078,8 +1078,8 @@ namespace JSC {
         void pushForInScope(RegisterID* local, RegisterID* propertyName, RegisterID* propertyOffset, RegisterID* enumerator, RegisterID* mode, std::optional<Variable> base);
         void popForInScope(RegisterID* local);
 
-        LabelScope* NODELETE breakTarget(const Identifier&);
-        LabelScope* NODELETE continueTarget(const Identifier&);
+        LabelScope* breakTarget(const Identifier&);
+        LabelScope* continueTarget(const Identifier&);
 
         void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
         void endSwitch(const Vector<Ref<Label>, 8>&, ExpressionNode**, Label& defaultLabel, int32_t min, int32_t range);
@@ -1157,7 +1157,7 @@ namespace JSC {
 
     private:
         ParserError generate(unsigned&);
-        Variable NODELETE variableForLocalEntry(const Identifier&, const SymbolTableEntry&, int symbolTableConstantIndex, bool isLexicallyScoped);
+        Variable variableForLocalEntry(const Identifier&, const SymbolTableEntry&, int symbolTableConstantIndex, bool isLexicallyScoped);
 
         RegisterID* kill(RegisterID* dst)
         {
@@ -1186,7 +1186,7 @@ namespace JSC {
         // (i.e. "Object()" is identical to "new Object()").
         ExpectedFunction emitExpectedFunctionSnippet(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, Label& done);
 
-        LexicallyScopedFeatures NODELETE computeFeaturesForCallDirectEval();
+        LexicallyScopedFeatures computeFeaturesForCallDirectEval();
         
         template<typename CallOp>
         RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
@@ -1309,7 +1309,7 @@ namespace JSC {
             m_lastInstruction = prevLastInstruction;
         }
 
-        PrivateNameEntry NODELETE getPrivateTraits(const Identifier&);
+        PrivateNameEntry getPrivateTraits(const Identifier&);
 
         void pushPrivateAccessNames(const PrivateNameEnvironment*);
         void popPrivateAccessNames();
@@ -1403,7 +1403,7 @@ namespace JSC {
         std::optional<AsyncFuncParametersTryCatchInfo> m_asyncFuncParametersTryCatchInfo;
 
         template<typename EmitBytecodeFunctor>
-        void asyncFuncParametersTryCatchWrap(const EmitBytecodeFunctor&);
+        void NODELETE asyncFuncParametersTryCatchWrap(const EmitBytecodeFunctor&);
 
         Vector<TryRange> m_tryRanges;
         SegmentedVector<TryData, 8> m_tryData;

@@ -119,10 +119,10 @@ public:
     // The checks described in the File API spec.
     static bool NODELETE isValidContentType(const String&);
     // The normalization procedure described in the File API spec.
-    static String normalizedContentType(const String&);
+    static String NODELETE normalizedContentType(const String&);
 #if ASSERT_ENABLED
-    static bool isNormalizedContentType(const String&);
-    static bool isNormalizedContentType(const CString&);
+    static bool NODELETE isNormalizedContentType(const String&);
+    static bool NODELETE isNormalizedContentType(const CString&);
 #endif
 
     // URLRegistrable

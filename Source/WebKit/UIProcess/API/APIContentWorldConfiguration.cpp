@@ -41,7 +41,7 @@ ContentWorldConfiguration::ContentWorldConfiguration() = default;
 
 ContentWorldConfiguration::~ContentWorldConfiguration() = default;
 
-OptionSet<WebKit::ContentWorldOption> ContentWorldConfiguration::optionSet() const
+OptionSet<WebKit::ContentWorldOption> NODELETE ContentWorldConfiguration::optionSet() const
 {
     OptionSet<WebKit::ContentWorldOption> result;
 

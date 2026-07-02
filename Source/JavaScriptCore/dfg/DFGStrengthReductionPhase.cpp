@@ -2050,7 +2050,7 @@ private:
         node->convertToLazyJSConstant(m_graph, value);
     }
     
-    void handleCommutativity()
+    void NODELETE handleCommutativity()
     {
         // It's definitely not sound to swap the lhs and rhs when we may be performing effectful
         // calls on the lhs/rhs for valueOf.

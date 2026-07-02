@@ -81,8 +81,8 @@ private:
     };
 
     static std::optional<BoxHeader> parseBoxHeader(std::span<const uint8_t>);
-    static bool isInitSegmentStartBox(FourCC);
-    static bool isMediaSegmentStartBox(FourCC);
+    static bool NODELETE isInitSegmentStartBox(FourCC);
+    static bool NODELETE isMediaSegmentStartBox(FourCC);
 
     ForwardDataCallback m_forwardDataCallback;
     State m_state { State::WaitingForSegment };

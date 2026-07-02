@@ -68,16 +68,16 @@ private:
     bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode, Style::SelectorMatchingState* = nullptr) const;
 
     template <typename OutputType> void execute(ContainerNode& rootNode, OutputType&) const;
-    template <typename OutputType> void executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, OutputType&) const;
-    template <typename OutputType> void executeSingleTagNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
-    template <typename OutputType> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
-    template <typename OutputType> void executeSingleAttributeExactSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
-    template <typename OutputType> void executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, OutputType&) const;
-    template <typename OutputType> void executeSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
+    template <typename OutputType> void NODELETE executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, OutputType&) const;
+    template <typename OutputType> void NODELETE executeSingleTagNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void NODELETE executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void NODELETE executeSingleAttributeExactSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void NODELETE executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void NODELETE executeSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
 #if ENABLE(CSS_SELECTOR_JIT)
-    template <typename Checker, typename OutputType> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
-    template <typename Checker, typename OutputType> void executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
-    template <typename OutputType> void executeCompiledSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
+    template <typename Checker, typename OutputType> void NODELETE executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
+    template <typename Checker, typename OutputType> void NODELETE executeCompiledSelectorCheckerWithCheckingContext(const ContainerNode& rootNode, const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
+    template <typename OutputType> void NODELETE executeCompiledSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
     static bool compileSelector(const SelectorData&);
 #endif // ENABLE(CSS_SELECTOR_JIT)
 

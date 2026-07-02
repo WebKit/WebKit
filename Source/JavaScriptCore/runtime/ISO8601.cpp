@@ -915,7 +915,7 @@ static std::optional<int32_t> NODELETE parseDateYear(StringParsingBuffer<Charact
 }
 
 template<typename CharacterType>
-static std::optional<unsigned> parseDateMonth(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<unsigned> NODELETE parseDateMonth(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
@@ -933,7 +933,7 @@ static std::optional<unsigned> parseDateMonth(StringParsingBuffer<CharacterType>
 }
 
 template<typename CharacterType>
-static std::optional<unsigned> parseDateDay(StringParsingBuffer<CharacterType>& buffer, int32_t year, unsigned month)
+static std::optional<unsigned> NODELETE parseDateDay(StringParsingBuffer<CharacterType>& buffer, int32_t year, unsigned month)
 {
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
@@ -1928,7 +1928,7 @@ std::optional<ExactTime> ExactTime::add(Duration duration) const
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-roundtemporalinstant
-static Int128 roundTemporalInstant(Int128 ns, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+static Int128 NODELETE roundTemporalInstant(Int128 ns, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
 {
     auto unitLength = lengthInNanoseconds(unit);
     auto incrementNs = increment * unitLength;

@@ -42,7 +42,7 @@ public:
     explicit WebRTCNetworkBase(WebProcess&);
     ~WebRTCNetworkBase();
 
-    void ref() const;
+    void NODELETE ref() const;
     void deref() const;
 
     virtual void networkProcessCrashed() { }

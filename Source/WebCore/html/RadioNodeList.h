@@ -39,7 +39,7 @@ public:
 
     String value() const;
     void setValue(const String&);
-    bool elementMatches(Element&) const final;
+    bool NODELETE elementMatches(Element&) const final;
 
 private:
     RadioNodeList(ContainerNode&, const AtomString& name);

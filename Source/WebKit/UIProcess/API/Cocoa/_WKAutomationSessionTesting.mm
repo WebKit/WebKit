@@ -55,7 +55,7 @@ public:
     {
     }
 
-    ConnectionType connectionType() const final { return ConnectionType::Local; }
+    ConnectionType NODELETE connectionType() const final { return ConnectionType::Local; }
 
     void sendMessageToFrontend(const String& message) final
     {

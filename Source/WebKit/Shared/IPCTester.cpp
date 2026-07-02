@@ -62,7 +62,7 @@ struct SendMessageContext {
 
 extern "C" {
 
-static void defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void* context)
+static void NODELETE defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void* context)
 {
     Vector<uint8_t> data(1000);
     for (unsigned i = 0; i < 1000; ++i) {
@@ -72,7 +72,7 @@ static void defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void
     }
 }
 
-static int sendTestMessage(std::span<const uint8_t> buffer, void* context)
+static int NODELETE sendTestMessage(std::span<const uint8_t> buffer, void* context)
 {
     auto messageContext = reinterpret_cast<SendMessageContext*>(context);
     if (messageContext->shouldStop)
@@ -93,7 +93,7 @@ static int sendTestMessage(std::span<const uint8_t> buffer, void* context)
 
 namespace WebKit {
 
-static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
+static WKMessageTestDriverFunc NODELETE messageTestDriver(String&& driverName)
 {
     if (driverName.isEmpty() || driverName == "default"_s)
         driverName = String::fromUTF8(getenv("WEBKIT_MESSAGE_TEST_DEFAULT_DRIVER"));
@@ -104,7 +104,7 @@ static WKMessageTestDriverFunc messageTestDriver(String&& driverName)
     return testDriver;
 }
 
-static void runMessageTesting(IPC::Connection& connection, std::atomic<bool>& shouldStop, String&& driverName)
+static void NODELETE runMessageTesting(IPC::Connection& connection, std::atomic<bool>& shouldStop, String&& driverName)
 {
     connection.setIgnoreInvalidMessageForTesting();
     SendMessageContext context { connection, shouldStop };

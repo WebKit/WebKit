@@ -80,7 +80,7 @@ public:
     WEBCORE_EXPORT virtual bool coordinatesScrollingForFrameView(const LocalFrameView&) const;
 
     // Return whether this scrolling coordinator handles scrolling for the given overflow scroll layer.
-    WEBCORE_EXPORT virtual bool coordinatesScrollingForOverflowLayer(const RenderLayer&) const;
+    WEBCORE_EXPORT virtual bool NODELETE coordinatesScrollingForOverflowLayer(const RenderLayer&) const;
 
     // Returns the ScrollingNodeID of the innermost scrolling node that scrolls the renderer.
     WEBCORE_EXPORT virtual std::optional<ScrollingNodeID> scrollableContainerNodeID(const RenderObject&) const;

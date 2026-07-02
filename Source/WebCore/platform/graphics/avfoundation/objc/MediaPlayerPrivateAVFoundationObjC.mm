@@ -271,7 +271,7 @@ class MediaPlayerPrivateAVFoundationObjC::Factory final : public MediaPlayerFact
     WTF_MAKE_TZONE_ALLOCATED_INLINE(Factory);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Factory);
 private:
-    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundation; };
+    MediaPlayerEnums::MediaEngineIdentifier NODELETE identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundation; };
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final
     {

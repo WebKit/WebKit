@@ -67,10 +67,10 @@ private:
     explicit AudioWorkletMessagingProxy(AudioWorklet&);
 
     // WorkerLoaderProxy.
-    RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
-    RefPtr<FileSystemStorageConnection> createFileSystemStorageConnection() final;
+    RefPtr<CacheStorageConnection> NODELETE createCacheStorageConnection() final;
+    RefPtr<FileSystemStorageConnection> NODELETE createFileSystemStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
-    RefPtr<IDBClient::IDBConnectionProxy> createIDBConnectionProxy() final;
+    RefPtr<IDBClient::IDBConnectionProxy> NODELETE createIDBConnectionProxy() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
 
     bool isAudioWorkletMessagingProxy() const final { return true; }

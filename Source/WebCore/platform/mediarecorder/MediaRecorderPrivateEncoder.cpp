@@ -61,7 +61,7 @@ private:
     {
     }
 
-    void appendData(std::span<const uint8_t> data) final
+    void NODELETE appendData(std::span<const uint8_t> data) final
     {
         if (RefPtr protectedEncoder = m_encoder.get())
             protectedEncoder->appendData(data);
@@ -109,7 +109,7 @@ MediaRecorderPrivateEncoder::MediaRecorderPrivateEncoder(bool hasAudio, bool has
 
 MediaRecorderPrivateEncoder::~MediaRecorderPrivateEncoder() = default;
 
-static String codecStringForMediaVideoCodecId(FourCharCode codec)
+static String NODELETE codecStringForMediaVideoCodecId(FourCharCode codec)
 {
     switch (codec) {
     case 'vp08': return "vp8"_s;

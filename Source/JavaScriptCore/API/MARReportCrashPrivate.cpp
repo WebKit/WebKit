@@ -35,12 +35,12 @@
 
 #if BENABLE(LIBPAS)
 
-ALWAYS_INLINE pas_mar_backtrace* toInternalRepresentation(PASMARCrashReportBacktraceRef backtrace)
+ALWAYS_INLINE pas_mar_backtrace* NODELETE toInternalRepresentation(PASMARCrashReportBacktraceRef backtrace)
 {
     return reinterpret_cast<pas_mar_backtrace*>(backtrace);
 }
 
-ALWAYS_INLINE pas_mar_crash_report* toInternalRepresentation(PASMARCrashReportRef report)
+ALWAYS_INLINE pas_mar_crash_report* NODELETE toInternalRepresentation(PASMARCrashReportRef report)
 {
     return reinterpret_cast<pas_mar_crash_report*>(report);
 }

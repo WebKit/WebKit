@@ -111,7 +111,7 @@ public:
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
 
     virtual void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
-    virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
+    virtual LayoutRect NODELETE caretRepaintRectForLocalRect(LayoutRect) const;
 
 protected:
     explicit CaretAnimator(CaretAnimationClient& client)

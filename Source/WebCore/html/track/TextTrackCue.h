@@ -81,7 +81,7 @@ public:
     void didMoveToNewDocument(Document&);
 
     TextTrack* NODELETE track() const;
-    void setTrack(TextTrack*);
+    void NODELETE setTrack(TextTrack*);
 
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
@@ -146,7 +146,7 @@ public:
 protected:
     TextTrackCue(Document&, const MediaTime& start, const MediaTime& end);
 
-    Document* document() const;
+    Document* NODELETE document() const;
 
     virtual void toJSON(JSON::Object&) const;
 
@@ -158,7 +158,7 @@ private:
     void derefEventTarget() final { deref(); }
     using EventTarget::dispatchEvent;
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::TextTrackCue; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     void rebuildDisplayTree();
 

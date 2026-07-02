@@ -902,7 +902,7 @@ public:
     bool crossFrameIsAncestorOfObject(const AXCoreObject&) const;
     bool crossFrameIsDescendantOfObject(const AXCoreObject&) const;
     // TODO: this name is not consistent with the others
-    AXCoreObject* parentObjectIncludingCrossFrame() const;
+    AXCoreObject* NODELETE parentObjectIncludingCrossFrame() const;
     AXCoreObject* parentObjectUnignoredIncludingCrossFrame() const;
 
     // Finds the next or previous sibling that is not ignored. Uses the parent's
@@ -1222,7 +1222,7 @@ public:
     unsigned indexInParent() const { return m_indexInParent; }
 #if ASSERT_ENABLED
     virtual void verifyChildrenIndexInParent() const = 0;
-    void verifyChildrenIndexInParent(const AccessibilityChildrenVector&) const;
+    void NODELETE verifyChildrenIndexInParent(const AccessibilityChildrenVector&) const;
 #endif
 
     virtual void detachFromParent() = 0;

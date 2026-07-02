@@ -37,12 +37,12 @@ class NullTextTrackRepresentation : public TextTrackRepresentation {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(NullTextTrackRepresentation);
 public:
     virtual ~NullTextTrackRepresentation() = default;
-    void update() final { }
-    PlatformLayer* platformLayer() final { return nullptr; }
-    void setContentScale(float) final { }
-    void setBounds(const IntRect&) final { }
-    IntRect bounds() const final { return IntRect(); }
-    void setHidden(bool) const final { }
+    void NODELETE update() final { }
+    PlatformLayer* NODELETE platformLayer() final { return nullptr; }
+    void NODELETE setContentScale(float) final { }
+    void NODELETE setBounds(const IntRect&) final { }
+    IntRect NODELETE bounds() const final { return IntRect(); }
+    void NODELETE setHidden(bool) const final { }
 };
 
 #if !(PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)))

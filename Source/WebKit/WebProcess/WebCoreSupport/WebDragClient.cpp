@@ -48,7 +48,7 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint
 {
 }
 
-OptionSet<DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
+OptionSet<DragSourceAction> NODELETE WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
     return m_page.get()->allowedDragSourceActions();
 }

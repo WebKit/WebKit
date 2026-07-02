@@ -52,14 +52,14 @@ private:
     void whenRegistrationReady(const SecurityOriginData& topOrigin, const URL& clientURL, WhenRegistrationReadyCallback&&) final;
     void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) final;
     void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) final;
-    void registerServiceWorkerInServer(ServiceWorkerIdentifier) final;
-    void unregisterServiceWorkerInServer(ServiceWorkerIdentifier) final;
+    void NODELETE registerServiceWorkerInServer(ServiceWorkerIdentifier) final;
+    void NODELETE unregisterServiceWorkerInServer(ServiceWorkerIdentifier) final;
     void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) final;
     void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, const ServiceWorkerOrClientIdentifier& source) final;
     SWServerConnectionIdentifier serverConnectionIdentifier() const final;
-    bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
+    bool NODELETE mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
     void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationKey&&, WorkerFetchResult&&) final;
-    void scheduleJobInServer(const ServiceWorkerJobData&) final;
+    void NODELETE scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&) final;
     void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, ServiceWorkerOrClientIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) final;
     void subscribeToPushService(ServiceWorkerRegistrationIdentifier, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) final;

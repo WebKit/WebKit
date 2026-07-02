@@ -1008,7 +1008,7 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     }
 }
 
-static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
+static inline bool NODELETE fullRepaintIsScheduled(const RenderObject& renderer)
 {
     if (!renderer.view().usesCompositing() && !renderer.document().ownerElement())
         return false;
@@ -1177,7 +1177,7 @@ std::optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const 
 
 #if ENABLE(TREE_DEBUGGING)
 
-static void outputRenderTreeLegend(TextStream& stream)
+static void NODELETE outputRenderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
     stream << "(B)lock/(I)nline Box/(A)tomic inline, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous/(P)seudo, has(L)ayer, (C)omposited, Content-visibility:(H)idden/(A)uto, (S)kipped content, (M)odern/(L)egacy/Not(-)applicable layout, (+)Needs style recalc, (+)Needs layout";
@@ -1221,7 +1221,7 @@ void RenderObject::showLineTreeForThis() const
     WTFLogAlways("%s", stream.release().utf8().data());
 }
 
-static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const RenderObject* renderer)
+static const RenderFragmentedFlow* NODELETE enclosingFragmentedFlowFromRenderer(const RenderObject* renderer)
 {
     if (!renderer)
         return nullptr;
@@ -2476,7 +2476,7 @@ static bool areOnSameLine(const SelectionGeometry& a, const SelectionGeometry& b
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool usesVisuallyContiguousBidiTextSelection(const SimpleRange& range)
+static bool NODELETE usesVisuallyContiguousBidiTextSelection(const SimpleRange& range)
 {
 #if !PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(range);
@@ -2502,7 +2502,7 @@ static SelectionEndpointDirections computeSelectionEndpointDirections(const Simp
     return { start.primaryDirection(), end.primaryDirection(), false };
 }
 
-static void makeBidiSelectionVisuallyContiguousIfNeeded(const SelectionEndpointDirections directions, const SimpleRange& range, Vector<SelectionGeometry>& geometries)
+static void NODELETE makeBidiSelectionVisuallyContiguousIfNeeded(const SelectionEndpointDirections directions, const SimpleRange& range, Vector<SelectionGeometry>& geometries)
 {
 #if !PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(directions);
@@ -2615,7 +2615,7 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SelectionEndpointD
 #endif
 }
 
-static void adjustTextDirectionForCoalescedGeometries(const SelectionEndpointDirections& directions, const SimpleRange& range, Vector<SelectionGeometry>& geometries)
+static void NODELETE adjustTextDirectionForCoalescedGeometries(const SelectionEndpointDirections& directions, const SimpleRange& range, Vector<SelectionGeometry>& geometries)
 {
     if (!usesVisuallyContiguousBidiTextSelection(range))
         return;
@@ -2628,7 +2628,7 @@ static void adjustTextDirectionForCoalescedGeometries(const SelectionEndpointDir
     }
 }
 
-static bool NODELETE shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
+static bool shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
 {
     if (!currentRenderer)
         return false;

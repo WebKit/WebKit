@@ -983,7 +983,7 @@ struct WasmOrJSImportableFunctionCallLinkInfo final : public WasmOrJSImportableF
 };
 
 #if ASSERT_ENABLED
-void validateWasmValue(uint64_t wasmValue, Type expectedType);
+void NODELETE validateWasmValue(uint64_t wasmValue, Type expectedType);
 #else
 ALWAYS_INLINE void validateWasmValue(uint64_t, Type) { }
 #endif

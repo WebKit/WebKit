@@ -147,9 +147,9 @@ protected:
     static TemplateObjectMap& ensureTemplateObjectMapImpl(std::unique_ptr<TemplateObjectMap>& dest);
 
     template<typename Visitor>
-    static void runConstraint(const ConcurrentJSLocker&, Visitor&, CodeBlock*);
+    static void NODELETE runConstraint(const ConcurrentJSLocker&, Visitor&, CodeBlock*);
     template<typename Visitor>
-    static void visitCodeBlockEdge(Visitor&, CodeBlock*);
+    static void NODELETE visitCodeBlockEdge(Visitor&, CodeBlock*);
     void finalizeCodeBlockEdge(VM&, WriteBarrier<CodeBlock>&);
 
     SourceCode m_source;

@@ -185,9 +185,9 @@ namespace JSC {
         static CompilationResult compileSync(VM&, CodeBlock*, JITCompilationEffort);
 
         static unsigned NODELETE frameRegisterCountFor(UnlinkedCodeBlock*);
-        static unsigned frameRegisterCountFor(CodeBlock*);
+        static unsigned NODELETE frameRegisterCountFor(CodeBlock*);
         static int NODELETE stackPointerOffsetFor(UnlinkedCodeBlock*);
-        static int stackPointerOffsetFor(CodeBlock*);
+        static int NODELETE stackPointerOffsetFor(CodeBlock*);
 
         JS_EXPORT_PRIVATE static UncheckedKeyHashMap<CString, Seconds> compileTimeStats();
         JS_EXPORT_PRIVATE static Seconds NODELETE totalCompileTime();
@@ -275,10 +275,10 @@ namespace JSC {
         void emitJumpSlowToHot(Jump, int);
 
         template<typename Op>
-        void compileOpCall(const JSInstruction*);
+        void NODELETE compileOpCall(const JSInstruction*);
 
         template<typename Op>
-        void compileSetupFrame(const Op&);
+        void NODELETE compileSetupFrame(const Op&);
 
         template<typename Op>
         bool compileTailCall(const Op&, BaselineUnlinkedCallLinkInfo*, unsigned callLinkInfoIndex);
@@ -286,11 +286,11 @@ namespace JSC {
         void compileCallDirectEval(const Op&);
         void compileCallDirectEvalSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         template<typename Op>
-        void emitPutCallResult(const Op&);
+        void NODELETE emitPutCallResult(const Op&);
 
 #if USE(JSVALUE64)
-        template<typename Op> void compileOpStrictEq(const JSInstruction*);
-        template<typename Op> void compileOpStrictEqJump(const JSInstruction*);
+        template<typename Op> void NODELETE compileOpStrictEq(const JSInstruction*);
+        template<typename Op> void NODELETE compileOpStrictEqJump(const JSInstruction*);
 #elif USE(JSVALUE32_64)
         void compileOpEqCommon(VirtualRegister src1, VirtualRegister src2);
         void compileOpEqSlowCommon(Vector<SlowCaseEntry>::iterator&);
@@ -545,7 +545,7 @@ namespace JSC {
         void emit_op_to_property_key_or_number(const JSInstruction*);
 
         template<typename OpcodeType>
-        void generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
+        void NODELETE generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_get_property_enumerator(const JSInstruction*);
         void emit_op_enumerator_next(const JSInstruction*);
@@ -553,12 +553,12 @@ namespace JSC {
         void emitSlow_op_enumerator_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         template<typename OpcodeType, typename SlowPathFunctionType>
-        void emit_enumerator_has_propertyImpl(const OpcodeType&, SlowPathFunctionType);
+        void NODELETE emit_enumerator_has_propertyImpl(const OpcodeType&, SlowPathFunctionType);
         void emit_op_enumerator_in_by_val(const JSInstruction*);
         void emit_op_enumerator_has_own_property(const JSInstruction*);
 
         template<typename OpcodeType>
-        void generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
+        void NODELETE generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
         void emit_op_enumerator_put_by_val(const JSInstruction*);
         void emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
@@ -632,9 +632,9 @@ namespace JSC {
         void emitHasPrivateSlow(AccessType, Vector<SlowCaseEntry>::iterator&);
 
         template<typename Op>
-        void emitNewFuncCommon(const JSInstruction*);
+        void NODELETE emitNewFuncCommon(const JSInstruction*);
         template<typename Op>
-        void emitNewFuncExprCommon(const JSInstruction*);
+        void NODELETE emitNewFuncExprCommon(const JSInstruction*);
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
@@ -804,10 +804,10 @@ namespace JSC {
         };
 
         template<typename Op, typename SnippetGenerator>
-        void emitBitBinaryOpFastPath(const JSInstruction* currentInstruction);
+        void NODELETE emitBitBinaryOpFastPath(const JSInstruction* currentInstruction);
 
         template<typename Op>
-        void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);
+        void NODELETE emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);
 
         void updateTopCallFrame();
 
@@ -845,8 +845,8 @@ namespace JSC {
         void emitRestoreCalleeSaves();
 
 #if ASSERT_ENABLED
-        static MacroAssemblerCodeRef<JITThunkPtrTag> consistencyCheckGenerator(VM&);
-        void emitConsistencyCheck();
+        static MacroAssemblerCodeRef<JITThunkPtrTag> NODELETE consistencyCheckGenerator(VM&);
+        void NODELETE emitConsistencyCheck();
 #endif
 
         static bool reportCompileTimes();

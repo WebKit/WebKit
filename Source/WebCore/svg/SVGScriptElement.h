@@ -41,7 +41,7 @@ public:
     void ref() const final { SVGElement::ref(); }
     void deref() const final { SVGElement::deref(); }
 
-    bool async() const;
+    bool NODELETE async() const;
 
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
@@ -67,7 +67,7 @@ private:
     AtomString charsetAttributeValue() const final { return nullAtom(); }
     String typeAttributeValue() const final { return getAttribute(SVGNames::typeAttr).string(); }
     String languageAttributeValue() const final { return String(); }
-    bool hasAsyncAttribute() const final;
+    bool NODELETE hasAsyncAttribute() const final;
     bool hasDeferAttribute() const final { return false; }
     bool hasNoModuleAttribute() const final { return false; }
     ReferrerPolicy referrerPolicy() const final { return ReferrerPolicy::EmptyString; }

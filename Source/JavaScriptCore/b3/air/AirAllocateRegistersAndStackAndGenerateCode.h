@@ -58,15 +58,15 @@ public:
 
 private:
     void insertBlocksForFlushAfterTerminalPatchpoints();
-    void release(Tmp, Reg);
+    void NODELETE release(Tmp, Reg);
     void flush(Tmp, Reg);
     void spill(Tmp, Reg);
     void alloc(Tmp, Reg, Arg::Role);
     void freeDeadTmpsAtCurrentInst();
-    void freeDeadTmpsAtCurrentBlock();
+    void NODELETE freeDeadTmpsAtCurrentBlock();
     bool assignTmp(Tmp&, Bank, Arg::Role);
     void buildLiveRanges(UnifiedTmpLiveness&);
-    bool isDisallowedRegister(Reg);
+    bool NODELETE isDisallowedRegister(Reg);
 
     void checkConsistency();
 

@@ -54,9 +54,9 @@ public:
     };
 
 protected:
-    void reportUsedRegisters(Air::Inst&, const RegisterSet&) final;
-    RegisterSet extraEarlyClobberedRegs(Air::Inst&) final;
-    RegisterSet extraClobberedRegs(Air::Inst&) final;
+    void NODELETE reportUsedRegisters(Air::Inst&, const RegisterSet&) final;
+    RegisterSet NODELETE extraEarlyClobberedRegs(Air::Inst&) final;
+    RegisterSet NODELETE extraClobberedRegs(Air::Inst&) final;
 
     // Note that this does not override generate() or dumpImpl()/deepDumpImpl(). We have many
     // subclasses that implement that.
@@ -68,7 +68,7 @@ protected:
     bool isValidImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
         Air::Inst&);
-    bool NODELETE admitsStackImpl(
+    bool admitsStackImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
         Air::Inst&, unsigned argIndex);
 
@@ -76,7 +76,7 @@ protected:
     Vector<ValueRep> repsImpl(
         Air::GenerationContext&, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Air::Inst&);
 
-    static bool isArgValidForType(const Air::Arg&, Type);
+    static bool NODELETE isArgValidForType(const Air::Arg&, Type);
     static bool NODELETE isArgValidForRep(Air::Code&, const Air::Arg&, const ValueRep&);
     static ValueRep repForArg(Air::Code&, const Air::Arg&);
 };

@@ -39,15 +39,15 @@ public:
     float specularExponent() const { return m_specularExponent; }
     float limitingConeAngle() const { return m_limitingConeAngle; }
 
-    bool setX(float) override;
-    bool setY(float) override;
-    bool setZ(float) override;
-    bool setPointsAtX(float) override;
-    bool setPointsAtY(float) override;
-    bool setPointsAtZ(float) override;
+    bool NODELETE setX(float) override;
+    bool NODELETE setY(float) override;
+    bool NODELETE setZ(float) override;
+    bool NODELETE setPointsAtX(float) override;
+    bool NODELETE setPointsAtY(float) override;
+    bool NODELETE setPointsAtZ(float) override;
 
-    bool setSpecularExponent(float) override;
-    bool setLimitingConeAngle(float) override;
+    bool NODELETE setSpecularExponent(float) override;
+    bool NODELETE setLimitingConeAngle(float) override;
 
     void initPaintingData(const Filter&, const FilterImage& result, PaintingData&) const override;
     ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;

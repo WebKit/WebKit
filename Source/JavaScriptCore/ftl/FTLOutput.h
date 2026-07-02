@@ -94,7 +94,7 @@ public:
 
     void probeDebugPrint(const String& str, LValue value);
     LBasicBlock NODELETE appendTo(LBasicBlock, LBasicBlock nextBlock);
-    void appendTo(LBasicBlock);
+    void NODELETE appendTo(LBasicBlock);
 
     void setOrigin(DFG::Node* node) { m_origin = node; }
     B3::Origin origin() { return B3::Origin(m_origin); }

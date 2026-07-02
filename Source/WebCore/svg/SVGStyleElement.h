@@ -55,7 +55,7 @@ private:
     bool sheetLoaded() final { return m_styleSheetOwner.sheetLoaded(*this); }
     void startLoadingDynamicSheet() final { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
 
-    String title() const final;
+    String NODELETE title() const final;
 
     InlineStyleSheetOwner m_styleSheetOwner;
 };

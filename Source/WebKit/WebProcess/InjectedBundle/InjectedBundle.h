@@ -128,17 +128,17 @@ public:
     void dispatchPendingLoadRequests();
 
 #if PLATFORM(COCOA)
-    WKWebProcessBundleParameters *bundleParameters();
+    WKWebProcessBundleParameters *NODELETE bundleParameters();
 
-    void extendClassesForParameterCoder(API::Array& classes);
-    RetainPtr<NSSet> classesForCoder();
+    void NODELETE extendClassesForParameterCoder(API::Array& classes);
+    RetainPtr<NSSet> NODELETE classesForCoder();
 #endif
 
 private:
     explicit InjectedBundle(const WebProcessCreationParameters&);
 
 #if PLATFORM(COCOA)
-    bool decodeBundleParameters(API::Data*);
+    bool NODELETE decodeBundleParameters(API::Data*);
 #endif
 
     String m_path;

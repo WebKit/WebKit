@@ -1322,7 +1322,7 @@ static size_t NODELETE readULEBSize(std::span<const uint8_t> data, size_t& index
     return value;
 }
 
-static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> NODELETE getSequenceHeaderOBU(std::span<const uint8_t> data)
+static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t>>> getSequenceHeaderOBU(std::span<const uint8_t> data)
 {
     size_t index = 0;
     do {

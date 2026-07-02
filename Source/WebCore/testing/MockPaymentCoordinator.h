@@ -131,7 +131,7 @@ private:
     explicit MockPaymentCoordinator(Page&);
 
     std::optional<String> validatedPaymentNetwork(const String&) const final;
-    bool canMakePayments() final;
+    bool NODELETE canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
@@ -143,8 +143,8 @@ private:
     void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final;
 #endif
     void completePaymentSession(ApplePayPaymentAuthorizationResult&&) final;
-    void abortPaymentSession() final;
-    void cancelPaymentSession() final;
+    void NODELETE abortPaymentSession() final;
+    void NODELETE cancelPaymentSession() final;
 
     bool isMockPaymentCoordinator() const final { return true; }
 

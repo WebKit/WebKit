@@ -62,10 +62,10 @@ public:
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 
     bool canRender(const RenderElement*, float multiplier) const final;
-    bool isPending() const final;
+    bool NODELETE isPending() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
-    bool errorOccurred() const final;
+    bool NODELETE errorOccurred() const final;
     FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;
@@ -76,14 +76,14 @@ public:
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
-    bool hasImage() const final;
+    bool NODELETE hasImage() const final;
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool currentFrameIsComplete(const RenderElement*) const final;
-    float imageScaleFactor() const final;
+    float NODELETE imageScaleFactor() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool usesDataProtocol() const final;
 
-    URL url() const final;
+    URL NODELETE url() const final;
 
 private:
     CachedImage(URL&&, Ref<CSSImageValue>&&, float);

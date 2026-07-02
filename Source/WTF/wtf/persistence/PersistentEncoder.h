@@ -85,7 +85,7 @@ public:
 
 private:
 
-    template<typename Type> Encoder& encodeNumber(Type);
+    template<typename Type> Encoder& NODELETE encodeNumber(Type);
 
     std::span<uint8_t> grow(size_t);
 

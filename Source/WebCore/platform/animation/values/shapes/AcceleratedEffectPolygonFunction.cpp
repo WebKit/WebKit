@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static WindRule windRule(const AcceleratedEffectPolygonFunction& value)
+static WindRule NODELETE windRule(const AcceleratedEffectPolygonFunction& value)
 {
     return value.fillRule.value_or(WindRule::NonZero);
 }

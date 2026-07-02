@@ -129,12 +129,12 @@ public:
 
     bool isConnected() const { return !!m_inspectorPage; }
     bool isVisible() const { return m_isVisible; }
-    bool isFront();
+    bool NODELETE isFront();
 
     void connect();
 
     void show();
-    void hide();
+    void NODELETE hide();
     void close();
     void closeForCrash();
     void reopen();
@@ -156,7 +156,7 @@ public:
     void windowFullScreenDidChange();
 
     void closeFrontendPage();
-    void closeFrontendAfterInactivityTimerFired();
+    void NODELETE closeFrontendAfterInactivityTimerFired();
 
     void attachmentViewDidChange(NSView *oldView, NSView *newView);
     void attachmentWillMoveFromWindow(NSWindow *oldWindow);
@@ -178,7 +178,7 @@ public:
     void showResources();
     void showMainResourceForFrame(WebCore::FrameIdentifier);
     void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
+    void NODELETE revealFileExternally(const String& path);
 
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
     bool isAttached() const { return m_isAttached; }
@@ -193,7 +193,7 @@ public:
 
     void NODELETE setSheetRect(const WebCore::FloatRect&);
 
-    void startWindowDrag();
+    void NODELETE startWindowDrag();
 
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
@@ -250,7 +250,7 @@ private:
     void platformHide();
     bool platformIsFront();
     void NODELETE platformAttachAvailabilityChanged(bool);
-    void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void NODELETE platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformOpenURLExternally(const String&);
     void platformInspectedURLChanged(const String&);
     void platformShowCertificate(const WebCore::CertificateInfo&);
@@ -284,10 +284,10 @@ private:
     void bringToFront();
     void bringInspectedPageToFront();
     void attachAvailabilityChanged(bool);
-    void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void NODELETE setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void effectiveAppearanceDidChange(WebCore::InspectorFrontendClient::Appearance);
-    void inspectedURLChanged(const String&);
-    void showCertificate(const WebCore::CertificateInfo&);
+    void NODELETE inspectedURLChanged(const String&);
+    void NODELETE showCertificate(const WebCore::CertificateInfo&);
     void setInspectorPageDeveloperExtrasEnabled(bool);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void elementSelectionChanged(bool);
@@ -307,7 +307,7 @@ private:
 
     void open();
 
-    unsigned inspectionLevel() const;
+    unsigned NODELETE inspectionLevel() const;
 
     WebPreferences& NODELETE inspectorPagePreferences() const;
 

@@ -36,7 +36,7 @@ namespace WebKit {
 class LegacyGlobalSettings {
     WTF_MAKE_TZONE_ALLOCATED(LegacyGlobalSettings);
 public:
-    static LegacyGlobalSettings& singleton();
+    static LegacyGlobalSettings& NODELETE singleton();
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }

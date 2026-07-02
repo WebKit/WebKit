@@ -49,7 +49,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
     void handleDOMActivateEvent(Event&) final;
     String defaultValue() const final;
 };

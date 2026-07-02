@@ -49,10 +49,10 @@ protected:
     {
     }
 
-    bool supportsPlaceholder() const final;
-    bool supportsSelectionAPI() const override;
+    bool NODELETE supportsPlaceholder() const final;
+    bool NODELETE supportsSelectionAPI() const override;
 
-    bool dirAutoUsesValue() const final;
+    bool NODELETE dirAutoUsesValue() const final;
 };
 
 } // namespace WebCore

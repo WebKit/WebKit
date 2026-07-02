@@ -1756,7 +1756,7 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
 class NetworkSessionCocoa::BlobDataTaskClient final : public RefCounted<NetworkSessionCocoa::BlobDataTaskClient>, public NetworkDataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSessionCocoa::BlobDataTaskClient);
 public:
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     static Ref<BlobDataTaskClient> create(WebCore::ResourceRequest&& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
@@ -1776,13 +1776,13 @@ private:
         m_task->resume();
     }
 
-    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
-    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
-    void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final { ASSERT_NOT_REACHED(); }
-    void wasBlocked() final { ASSERT_NOT_REACHED(); }
-    void cannotShowURL() final { ASSERT_NOT_REACHED(); }
-    void wasBlockedByRestrictions() final { ASSERT_NOT_REACHED(); }
-    void wasBlockedByDisabledFTP() final { ASSERT_NOT_REACHED(); }
+    void NODELETE willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
+    void NODELETE didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
+    void NODELETE didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final { ASSERT_NOT_REACHED(); }
+    void NODELETE wasBlocked() final { ASSERT_NOT_REACHED(); }
+    void NODELETE cannotShowURL() final { ASSERT_NOT_REACHED(); }
+    void NODELETE wasBlockedByRestrictions() final { ASSERT_NOT_REACHED(); }
+    void NODELETE wasBlockedByDisabledFTP() final { ASSERT_NOT_REACHED(); }
 
     void didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
     {

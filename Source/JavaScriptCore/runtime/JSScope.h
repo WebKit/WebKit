@@ -87,7 +87,7 @@ protected:
     JSScope(VM&, Structure*, JSScope* next);
 
     template<typename ReturnPredicateFunctor, typename SkipPredicateFunctor>
-    static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&, ReturnPredicateFunctor, SkipPredicateFunctor);
+    static JSObject* NODELETE resolve(JSGlobalObject*, JSScope*, const Identifier&, ReturnPredicateFunctor, SkipPredicateFunctor);
 
 private:
     WriteBarrier<JSScope> m_next;

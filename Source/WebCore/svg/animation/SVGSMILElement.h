@@ -55,7 +55,7 @@ public:
     void removingSteps(RemovalType, ContainerNode&) override;
     
     virtual bool hasValidAttributeType() const = 0;
-    virtual bool hasValidAttributeName() const;
+    virtual bool NODELETE hasValidAttributeName() const;
     virtual void animationAttributeChanged() = 0;
 
     SMILTimeContainer* timeContainer() { return m_timeContainer; }

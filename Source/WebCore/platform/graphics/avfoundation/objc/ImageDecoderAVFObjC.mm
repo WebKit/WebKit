@@ -280,7 +280,7 @@ private:
     {
     }
 
-    bool isImageDecoderAVFObjCSample() const final { return true; }
+    bool NODELETE isImageDecoderAVFObjCSample() const final { return true; }
 
     std::optional<ByteRange> byteRangeForAttachment(CFStringRef key) const
     {

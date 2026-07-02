@@ -113,7 +113,7 @@ enum class FragmentReuseResult : uint8_t {
     ParseFailure
 };
 
-ALWAYS_INLINE static bool isCachedSubtreeValid(Node& cachedContainer)
+ALWAYS_INLINE static bool NODELETE isCachedSubtreeValid(Node& cachedContainer)
 {
     return !cachedContainer.hasDidMutateSubtreeAfterSetInnerHTML();
 }
@@ -895,7 +895,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool NODELETE parsingFailed() const { return m_parseResult != HTMLFastPathResult::Succeeded; }
 
-    void didFail(HTMLFastPathResult result)
+    void NODELETE didFail(HTMLFastPathResult result)
     {
         if (m_parseResult == HTMLFastPathResult::Succeeded)
             m_parseResult = result;

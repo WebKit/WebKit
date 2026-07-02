@@ -79,7 +79,7 @@ namespace WTF {
 
 template<> struct ValueCheck<WebCore::ImageLoader*> {
     typedef WebCore::ImageLoader* TraitType;
-    static void checkConsistency(const WebCore::ImageLoader* p)
+    static void NODELETE checkConsistency(const WebCore::ImageLoader* p)
     {
         if (!p)
             return;

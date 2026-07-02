@@ -47,7 +47,7 @@ public:
     bool operator==(const BoxData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const BoxData&) const;
+    void NODELETE dumpDifferences(TextStream&, const BoxData&) const;
 #endif
 
     PreferredSize width;

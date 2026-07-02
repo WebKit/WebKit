@@ -71,7 +71,7 @@ public:
 
 private:
     // WebKit::WebPageOverlay::Client.
-    bool isPageOverlayClientImpl() const final { return true; }
+    bool NODELETE isPageOverlayClientImpl() const final { return true; }
 
     void willMoveToPage(WebKit::WebPageOverlay& pageOverlay, WebKit::WebPage* page) override
     {

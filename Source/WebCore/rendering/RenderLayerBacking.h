@@ -130,8 +130,8 @@ public:
     bool backgroundLayerPaintsFixedRootBackground() const { return m_backgroundLayerPaintsFixedRootBackground; }
 
     bool hasSVGPaintOrderSegments() const { return !m_svgPaintOrderSegments.isEmpty(); }
-    GraphicsLayer* svgSegmentLayerAfterCompositedChild(const RenderLayer&) const;
-    std::optional<WTF::Range<unsigned>> svgSegmentRangeForGraphicsLayer(const GraphicsLayer&) const;
+    GraphicsLayer* NODELETE svgSegmentLayerAfterCompositedChild(const RenderLayer&) const;
+    std::optional<WTF::Range<unsigned>> NODELETE svgSegmentRangeForGraphicsLayer(const GraphicsLayer&) const;
 
 #if USE(SYSTEM_PREVIEW) && ENABLE(MODEL_PROCESS)
     GraphicsLayer* systemPreviewBadgeLayer() const { return m_systemPreviewBadgeLayer.get(); }
@@ -248,7 +248,7 @@ public:
 
     // GraphicsLayerClient interface
     void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
-    void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, MonotonicTime startTime) override;
+    void NODELETE notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, MonotonicTime startTime) override;
     void notifyFlushRequired(const GraphicsLayer*) override;
     void notifySubsequentFlushRequired(const GraphicsLayer*) override;
 
@@ -261,7 +261,7 @@ public:
     bool layerAllowsDynamicContentScaling(const GraphicsLayer*) const override;
 #endif
 
-    bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
+    bool NODELETE paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const override;
 
     float pageScaleFactor() const override;
     float zoomedOutPageScaleFactor() const override;
@@ -273,13 +273,13 @@ public:
 
     bool isFlushingLayers() const override;
     bool isTrackingRepaints() const override;
-    bool shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;
+    bool NODELETE shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const override;
     bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
 
-    bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
-    bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
-    bool useGiantTiles() const override;
-    bool cssUnprefixedBackdropFilterEnabled() const override;
+    bool NODELETE shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
+    bool NODELETE shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
+    bool NODELETE useGiantTiles() const override;
+    bool NODELETE cssUnprefixedBackdropFilterEnabled() const override;
     void logFilledVisibleFreshTile(unsigned) override;
     bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
@@ -296,7 +296,7 @@ public:
 #endif
 
 #ifndef NDEBUG
-    void verifyNotPainting() override;
+    void NODELETE verifyNotPainting() override;
 #endif
 
     WEBCORE_EXPORT LayoutRect contentsBox() const;

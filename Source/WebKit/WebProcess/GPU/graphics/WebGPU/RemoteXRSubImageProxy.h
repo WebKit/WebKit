@@ -72,7 +72,7 @@ private:
     WebGPUIdentifier backing() const { return m_backing; }
     RefPtr<WebCore::WebGPU::Texture> colorTexture() final;
     RefPtr<WebCore::WebGPU::Texture> depthStencilTexture() final;
-    RefPtr<WebCore::WebGPU::Texture> motionVectorTexture() final;
+    RefPtr<WebCore::WebGPU::Texture> NODELETE motionVectorTexture() final;
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)

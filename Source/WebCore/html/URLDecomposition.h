@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT String hash() const;
     void setHash(StringView);
 
-    static std::optional<uint16_t> parsePort(StringView);
+    static std::optional<uint16_t> NODELETE parsePort(StringView);
 
 protected:
     virtual ~URLDecomposition() = default;

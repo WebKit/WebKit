@@ -129,14 +129,14 @@ public:
     static AtomString fromUTF8(const char*);
 
 #ifndef NDEBUG
-    void show() const;
+    void NODELETE show() const;
 #endif
 
 private:
     explicit AtomString(const char*);
 
     enum class CaseConvertType { Upper, Lower };
-    template<CaseConvertType> AtomString convertASCIICase() const;
+    template<CaseConvertType> AtomString NODELETE convertASCIICase() const;
 
     WTF_EXPORT_PRIVATE static AtomString fromUTF8Internal(std::span<const char>);
 

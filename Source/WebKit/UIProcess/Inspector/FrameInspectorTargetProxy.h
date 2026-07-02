@@ -46,8 +46,8 @@ public:
     FrameInspectorTargetProxy(WebCore::FrameIdentifier, WebProcessProxy&, bool isProvisional);
     ~FrameInspectorTargetProxy();
 
-    void didCommitProvisionalTarget() override;
-    bool isProvisional() const override;
+    void NODELETE didCommitProvisionalTarget() override;
+    bool NODELETE isProvisional() const override;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;

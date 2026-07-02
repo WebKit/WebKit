@@ -79,7 +79,7 @@ public:
     // Graphics.
     virtual void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) = 0;
 
-    virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const DestinationColorSpace&);
+    virtual RefPtr<ImageBuffer> NODELETE snapshotCurrentFrame(const FloatSize& deviceSize, const DestinationColorSpace&);
 
     // State changes.
     virtual void NODELETE visibilityStateDidChange();
@@ -161,8 +161,8 @@ public:
 #endif
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
-    virtual void setDynamicRangeLimit(PlatformDynamicRangeLimit, float, bool);
-    virtual std::optional<double> getEffectiveDynamicRangeLimitValue() const;
+    virtual void NODELETE setDynamicRangeLimit(PlatformDynamicRangeLimit, float, bool);
+    virtual std::optional<double> NODELETE getEffectiveDynamicRangeLimitValue() const;
 #endif
 };
 

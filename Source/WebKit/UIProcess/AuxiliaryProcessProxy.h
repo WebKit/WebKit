@@ -221,7 +221,7 @@ public:
 
     bool operator==(const AuxiliaryProcessProxy& other) const { return (this == &other); }
 
-    std::optional<SandboxExtensionHandle> createMobileGestaltSandboxExtensionIfNeeded() const;
+    std::optional<SandboxExtensionHandle> NODELETE createMobileGestaltSandboxExtensionIfNeeded() const;
 
 #if USE(RUNNINGBOARD)
     void wakeUpTemporarilyForIPC();
@@ -308,11 +308,11 @@ protected:
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
-    void outgoingMessageQueueIsGrowingLarge();
+    void NODELETE outgoingMessageQueueIsGrowingLarge();
 
     void populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions&) const;
     Vector<String> platformOverrideLanguages() const;
-    void platformStartConnectionTerminationWatchdog();
+    void NODELETE platformStartConnectionTerminationWatchdog();
 
     // Connection::Client
     void requestRemoteProcessTermination() final;

@@ -61,7 +61,7 @@ public:
         return adoptRef(*new RemoteTextDetector(WTF::move(textDetector), renderingBackend, identifier));
     }
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteTextDetector();
 

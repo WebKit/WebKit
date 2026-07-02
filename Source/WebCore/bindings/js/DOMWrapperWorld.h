@@ -188,8 +188,8 @@ public:
 
 #if PLATFORM(COCOA)
 private:
-    WEBCORE_EXPORT void enter();
-    WEBCORE_EXPORT void leave();
+    WEBCORE_EXPORT void NODELETE enter();
+    WEBCORE_EXPORT void NODELETE leave();
     static thread_local WrapperMutationScope* s_active;
     SingleThreadWeakRef<DOMWrapperWorld> m_world;
     WrapperMutationScope* m_previous { nullptr };

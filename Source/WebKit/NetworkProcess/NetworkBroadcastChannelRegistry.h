@@ -55,7 +55,7 @@ public:
     void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
     void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:
     explicit NetworkBroadcastChannelRegistry(NetworkProcess&);
 

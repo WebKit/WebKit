@@ -82,7 +82,7 @@ public:
 
     bool operator==(const EventListener& other) const final;
     
-    void disconnectAnimation()
+    void NODELETE disconnectAnimation()
     {
         m_animation = nullptr;
     }

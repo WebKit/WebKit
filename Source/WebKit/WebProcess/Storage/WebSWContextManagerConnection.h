@@ -93,7 +93,7 @@ private:
     void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, const URL&, NavigateCallback&&) final;
     void skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
     void setScriptResource(WebCore::ServiceWorkerIdentifier, const URL&, const WebCore::ServiceWorkerContextData::ImportedScript&) final;
-    bool isThrottleable() const final;
+    bool NODELETE isThrottleable() const final;
     void didFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier) final;
     void setAsInspected(WebCore::ServiceWorkerIdentifier, bool) final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;

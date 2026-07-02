@@ -420,11 +420,11 @@ public:
         : m_bigInt(bigInt)
     { }
 
-    ALWAYS_INLINE bool isZero() { return m_bigInt->isZero(); }
-    ALWAYS_INLINE bool sign() { return m_bigInt->sign(); }
-    ALWAYS_INLINE unsigned length() { return m_bigInt->length(); }
-    ALWAYS_INLINE JSBigInt::Digit digit(unsigned i) { return m_bigInt->digit(i); }
-    ALWAYS_INLINE std::span<const JSBigInt::Digit> digits() { return { m_bigInt->dataStorage(), m_bigInt->length() }; }
+    ALWAYS_INLINE bool NODELETE isZero() { return m_bigInt->isZero(); }
+    ALWAYS_INLINE bool NODELETE sign() { return m_bigInt->sign(); }
+    ALWAYS_INLINE unsigned NODELETE length() { return m_bigInt->length(); }
+    ALWAYS_INLINE JSBigInt::Digit NODELETE digit(unsigned i) { return m_bigInt->digit(i); }
+    ALWAYS_INLINE std::span<const JSBigInt::Digit> NODELETE digits() { return { m_bigInt->dataStorage(), m_bigInt->length() }; }
     ALWAYS_INLINE JSBigInt* toHeapBigInt(JSGlobalObject*, VM&) { return m_bigInt; }
     ALWAYS_INLINE JSBigInt* toHeapBigInt(JSGlobalObject*) { return m_bigInt; }
 
@@ -450,10 +450,10 @@ public:
             m_digit = digit(0);
     }
 
-    ALWAYS_INLINE bool isZero() { return !m_value; }
-    ALWAYS_INLINE bool sign() { return m_value < 0; }
-    ALWAYS_INLINE unsigned length() { return isZero() ? 0 : 1; }
-    ALWAYS_INLINE JSBigInt::Digit digit(unsigned i)
+    ALWAYS_INLINE bool NODELETE isZero() { return !m_value; }
+    ALWAYS_INLINE bool NODELETE sign() { return m_value < 0; }
+    ALWAYS_INLINE unsigned NODELETE length() { return isZero() ? 0 : 1; }
+    ALWAYS_INLINE JSBigInt::Digit NODELETE digit(unsigned i)
     {
         ASSERT(length());
         ASSERT_UNUSED(i, i == 0);
@@ -462,7 +462,7 @@ public:
         return m_value;
     }
 
-    ALWAYS_INLINE std::span<const JSBigInt::Digit> digits() { return { &m_digit, length() }; }
+    ALWAYS_INLINE std::span<const JSBigInt::Digit> NODELETE digits() { return { &m_digit, length() }; }
 
     ALWAYS_INLINE JSBigInt* toHeapBigInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm)
     {
@@ -510,10 +510,10 @@ public:
 #endif
     }
 
-    ALWAYS_INLINE bool isZero() { return !m_value; }
-    ALWAYS_INLINE bool sign() { return m_sign; }
-    ALWAYS_INLINE unsigned length() { return isZero() ? 0 : numDigits; }
-    ALWAYS_INLINE JSBigInt::Digit digit(unsigned i)
+    ALWAYS_INLINE bool NODELETE isZero() { return !m_value; }
+    ALWAYS_INLINE bool NODELETE sign() { return m_sign; }
+    ALWAYS_INLINE unsigned NODELETE length() { return isZero() ? 0 : numDigits; }
+    ALWAYS_INLINE JSBigInt::Digit NODELETE digit(unsigned i)
     {
         ASSERT_UNUSED(i, i < length());
 #if CPU(REGISTER64)
@@ -528,7 +528,7 @@ public:
 #endif
     }
 
-    ALWAYS_INLINE std::span<const JSBigInt::Digit> digits() { return { m_digits, length() }; }
+    ALWAYS_INLINE std::span<const JSBigInt::Digit> NODELETE digits() { return { m_digits, length() }; }
 
 private:
     friend struct JSBigInt::ImplResult;
@@ -564,7 +564,7 @@ static ALWAYS_INLINE JSValue NODELETE tryConvertToBigInt32(JSBigInt::ImplResult 
     return tryConvertToBigInt32(implResult.payload.asHeapBigInt());
 }
 
-static ALWAYS_INLINE JSBigInt::ImplResult zeroImpl(VM& vm)
+static ALWAYS_INLINE JSBigInt::ImplResult NODELETE zeroImpl(VM& vm)
 {
 #if USE(BIGINT32)
     UNUSED_PARAM(vm);
@@ -706,7 +706,7 @@ template<size_t N>
 class CombaAccumulator {
     using Digit = JSBigInt::Digit;
 public:
-    ALWAYS_INLINE void mac(Digit a, Digit b)
+    ALWAYS_INLINE void NODELETE mac(Digit a, Digit b)
     {
         TwoDigit prod = static_cast<TwoDigit>(a) * b;
         TwoDigit sum0 = static_cast<TwoDigit>(t0) + static_cast<Digit>(prod);
@@ -716,7 +716,7 @@ public:
         t2 += static_cast<Digit>(sum1 >> JSBigInt::digitBits);
     }
 
-    ALWAYS_INLINE Digit storeAndShift()
+    ALWAYS_INLINE Digit NODELETE storeAndShift()
     {
         Digit result = t0;
         t0 = t1;
@@ -726,7 +726,7 @@ public:
     }
 
     template<size_t K, size_t I = 0>
-    ALWAYS_INLINE void computeColumn(std::span<const Digit, N> a, std::span<const Digit, N> b)
+    ALWAYS_INLINE void NODELETE computeColumn(std::span<const Digit, N> a, std::span<const Digit, N> b)
     {
         if constexpr (I < N) {
             constexpr int J = static_cast<int>(K) - static_cast<int>(I);
@@ -737,7 +737,7 @@ public:
     }
 
     template<size_t K = 0>
-    ALWAYS_INLINE void pass(std::span<Digit, N * 2> r, std::span<const Digit, N> a, std::span<const Digit, N> b)
+    ALWAYS_INLINE void NODELETE pass(std::span<Digit, N * 2> r, std::span<const Digit, N> a, std::span<const Digit, N> b)
     {
         if constexpr (K < 2 * N - 1) {
             computeColumn<K>(a, b);
@@ -1084,7 +1084,7 @@ public:
     {
     }
 
-    ALWAYS_INLINE Digit div(Digit high, Digit low, Digit& remainder)
+    ALWAYS_INLINE Digit NODELETE div(Digit high, Digit low, Digit& remainder)
     {
         ASSERT(high < m_divisor); // This means that quotient is within Digit. This is an invariant used in digitDiv too.
         Digit u1 = high;

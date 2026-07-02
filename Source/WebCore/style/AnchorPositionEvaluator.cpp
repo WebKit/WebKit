@@ -278,7 +278,7 @@ static inline void clearAnchorScrollSnapshots(RenderBox& anchored, bool clearAnc
     anchored.layoutContext().unregisterAnchorScrollAdjusterFor(anchored, clearAnchorScrollAdjustment);
 }
 
-static inline bool isFixed(const RenderBoxModelObject& box)
+static inline bool NODELETE isFixed(const RenderBoxModelObject& box)
 {
     return box.layer() && box.layer()->behavesAsFixed();
 }

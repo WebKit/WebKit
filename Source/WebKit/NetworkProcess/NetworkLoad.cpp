@@ -76,7 +76,7 @@ std::optional<WebCore::PageIdentifier> NetworkLoad::webPageID() const
     return std::nullopt;
 }
 
-Ref<NetworkProcess> NetworkLoad::networkProcess()
+Ref<NetworkProcess> NODELETE NetworkLoad::networkProcess()
 {
     return m_networkProcess;
 }

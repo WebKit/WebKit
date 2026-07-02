@@ -38,7 +38,7 @@ private:
 
     Vector<WebCore::PluginInfo> pluginInfo(WebCore::Page&, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&) final;
     Vector<WebCore::PluginInfo> webVisiblePluginInfo(WebCore::Page&, const URL&) final;
-    void refreshPlugins() final;
+    void NODELETE refreshPlugins() final;
 };
 
 }

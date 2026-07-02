@@ -91,7 +91,7 @@ public:
     Vector<Ref<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
     String displayNameForTrack(const AudioTrack&) const override;
     String displayNameForTrack(const TextTrack&) const override;
-    String captionPreviewProfileID() const override;
+    String NODELETE captionPreviewProfileID() const override;
     void setCaptionPreviewProfileID(const String&) override;
     String captionPreviewTitle() const override;
 

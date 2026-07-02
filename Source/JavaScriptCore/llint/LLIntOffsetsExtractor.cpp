@@ -120,7 +120,7 @@ const int64_t* NODELETE LLIntOffsetsExtractor::dummy()
 
 } // namespace JSC
 
-int main(int, char**)
+int NODELETE main(int, char**)
 {
     // Out of an abundance of caution, make sure that LLIntOffsetsExtractor::dummy() is live,
     // and the extractorTable is live, too.

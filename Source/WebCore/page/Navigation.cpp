@@ -194,7 +194,7 @@ bool Navigation::canGoForward() const
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#getting-the-navigation-api-entry-index
-static std::optional<size_t> NODELETE getEntryIndexOfHistoryItem(const Vector<Ref<NavigationHistoryEntry>>& entries, const HistoryItem& item)
+static std::optional<size_t> getEntryIndexOfHistoryItem(const Vector<Ref<NavigationHistoryEntry>>& entries, const HistoryItem& item)
 {
     // FIXME: We could have a more efficient solution than iterating through a list.
     for (size_t index = 0; index < entries.size(); index++) {
@@ -1100,8 +1100,8 @@ private:
     {
     }
 
-    bool isWaiting() const { return m_totalPromises > m_settledPromises; }
-    bool isSettled() const { return !m_wrapper; }
+    bool NODELETE isWaiting() const { return m_totalPromises > m_settledPromises; }
+    bool NODELETE isSettled() const { return !m_wrapper; }
     void resolve() { consumeWrapper()->resolve(); }
     void reject(JSC::JSValue result) { consumeWrapper()->reject<IDLAny>(result); }
 

@@ -74,7 +74,7 @@ private:
     RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&, GPUConnectionToWebProcess&, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, uint64_t)>&&);
 
     // CoreAudioSpeakerSamplesProducer
-    const WebCore::CAAudioStreamDescription& format() final { return *m_description; }
+    const WebCore::CAAudioStreamDescription& NODELETE format() final { return *m_description; }
     void captureUnitIsStarting() final;
     void captureUnitHasStopped() final;
     void canRenderAudioChanged() final;

@@ -45,7 +45,7 @@ private:
     bool canMapBackingStore() const final { return false; }
     unsigned bytesPerRow() const final { return 0; }
 
-    GraphicsContext& context() final;
+    GraphicsContext& NODELETE context() final;
 
     RefPtr<NativeImage> copyNativeImage() final;
     RefPtr<NativeImage> createNativeImageReference() final { return copyNativeImage(); }

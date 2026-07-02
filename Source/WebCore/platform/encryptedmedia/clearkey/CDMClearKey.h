@@ -81,16 +81,16 @@ public:
 
     Vector<String> supportedInitDataTypes() const final;
     Vector<String> supportedRobustnesses() const final;
-    bool supportsConfiguration(const CDMKeySystemConfiguration&) const final;
-    bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
-    bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const final;
-    CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
-    CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
-    bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const final;
+    bool NODELETE supportsConfiguration(const CDMKeySystemConfiguration&) const final;
+    bool NODELETE supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
+    bool NODELETE supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const final;
+    CDMRequirement NODELETE distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
+    CDMRequirement NODELETE persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const final;
+    bool NODELETE distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const final;
     RefPtr<CDMInstance> createInstance() final;
-    void loadAndInitialize() final;
-    bool supportsServerCertificates() const final;
-    bool supportsSessions() const final;
+    void NODELETE loadAndInitialize() final;
+    bool NODELETE supportsServerCertificates() const final;
+    bool NODELETE supportsSessions() const final;
     bool supportsInitData(const String&, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
     std::optional<String> sanitizeSessionId(const String&) const final;
@@ -109,7 +109,7 @@ public:
     ImplementationType implementationType() const final { return ImplementationType::ClearKey; }
     void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) final;
     void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) final;
-    void setStorageDirectory(const String&) final;
+    void NODELETE setStorageDirectory(const String&) final;
     const String& keySystem() const final;
     RefPtr<CDMInstanceSession> createSession() final;
 
@@ -126,7 +126,7 @@ public:
     void loadSession(LicenseType, const String&, const String&, LoadSessionCallback&&) final;
     void closeSession(const String&, CloseSessionCallback&&) final;
     void removeSessionData(const String&, LicenseType, RemoveSessionDataCallback&&) final;
-    void storeRecordOfKeyUsage(const String&) final;
+    void NODELETE storeRecordOfKeyUsage(const String&) final;
 private:
     CDMInstanceClearKey* NODELETE parentInstance() const;
 

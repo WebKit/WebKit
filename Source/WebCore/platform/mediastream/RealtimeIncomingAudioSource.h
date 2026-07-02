@@ -79,8 +79,8 @@ private:
     // webrtc::ObserverInterface API
     void OnChanged() final;
 
-    const RealtimeMediaSourceCapabilities& capabilities() final;
-    const RealtimeMediaSourceSettings& settings() final;
+    const RealtimeMediaSourceCapabilities& NODELETE capabilities() final;
+    const RealtimeMediaSourceSettings& NODELETE settings() final;
 
     bool isIncomingAudioSource() const final { return true; }
 

@@ -74,7 +74,7 @@ static const ASCIILiteral hostAppWebPushEntitlement = "com.apple.private.webkit.
 
 namespace WebPushD {
 
-static bool hostAppHasEntitlement(audit_token_t hostAppAuditToken, ASCIILiteral entitlement)
+static bool NODELETE hostAppHasEntitlement(audit_token_t hostAppAuditToken, ASCIILiteral entitlement)
 {
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
     // Skip entitlement check on Mac open source builds.

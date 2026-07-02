@@ -185,7 +185,7 @@ public:
     void setPresentationSize(const WebCore::IntSize&);
 
 #if PLATFORM(COCOA)
-    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&);
+    void NODELETE setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -193,7 +193,7 @@ public:
     void setShouldPlayToPlaybackTarget(bool);
     void setWirelessPlaybackTarget(MediaPlaybackTargetContextSerialized&&);
     void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
-    WebCore::MediaPlaybackTargetType playbackTargetType() const final;
+    WebCore::MediaPlaybackTargetType NODELETE playbackTargetType() const final;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -245,7 +245,7 @@ private:
 
     // MediaPlayerClient
     void mediaPlayerCharacteristicChanged() final;
-    void mediaPlayerRenderingModeChanged() final;
+    void NODELETE mediaPlayerRenderingModeChanged() final;
     void mediaPlayerNetworkStateChanged() final;
     void mediaPlayerReadyStateChanged() final;
     void mediaPlayerVolumeChanged() final;
@@ -258,9 +258,9 @@ private:
     void mediaPlayerPlaybackStateChanged() final;
     void mediaPlayerResourceNotSupported() final;
     void mediaPlayerEngineFailedToLoad() final;
-    void mediaPlayerBufferedTimeRangesChanged() final;
+    void NODELETE mediaPlayerBufferedTimeRangesChanged() final;
     void mediaPlayerSeekableTimeRangesChanged() final;
-    bool mediaPlayerRenderingCanBeAccelerated() final;
+    bool NODELETE mediaPlayerRenderingCanBeAccelerated() final;
 
     void mediaPlayerDidAddAudioTrack(WebCore::AudioTrackPrivate&) final;
     void mediaPlayerDidRemoveAudioTrack(WebCore::AudioTrackPrivate&) final;
@@ -272,7 +272,7 @@ private:
     String audioOutputDeviceIdOverride() const final { return m_configuration.audioOutputDeviceId; }
 
     // Not implemented
-    void mediaPlayerFirstVideoFrameAvailable() final;
+    void NODELETE mediaPlayerFirstVideoFrameAvailable() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const final;
@@ -288,21 +288,21 @@ private:
     String mediaPlayerMediaKeysStorageDirectory() const final;
 #endif
 
-    String mediaPlayerReferrer() const final;
-    String mediaPlayerUserAgent() const final;
-    bool mediaPlayerIsFullscreen() const final;
-    bool mediaPlayerIsFullscreenPermitted() const final;
-    bool mediaPlayerIsVideo() const final;
-    float mediaPlayerContentsScale() const final;
-    bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
-    WebCore::CachedResourceLoader* mediaPlayerCachedResourceLoader() const final;
+    String NODELETE mediaPlayerReferrer() const final;
+    String NODELETE mediaPlayerUserAgent() const final;
+    bool NODELETE mediaPlayerIsFullscreen() const final;
+    bool NODELETE mediaPlayerIsFullscreenPermitted() const final;
+    bool NODELETE mediaPlayerIsVideo() const final;
+    float NODELETE mediaPlayerContentsScale() const final;
+    bool NODELETE mediaPlayerPlatformVolumeConfigurationRequired() const final;
+    WebCore::CachedResourceLoader* NODELETE mediaPlayerCachedResourceLoader() const final;
     Ref<WebCore::PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() final;
-    bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
-    bool mediaPlayerShouldUsePersistentCache() const final;
+    bool NODELETE doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
+    bool NODELETE mediaPlayerShouldUsePersistentCache() const final;
     String mediaPlayerMediaCacheDirectory() const final;
-    WebCore::LayoutRect mediaPlayerContentBoxRect() const final;
+    WebCore::LayoutRect NODELETE mediaPlayerContentBoxRect() const final;
 
-    void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
+    void NODELETE textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 
 #if PLATFORM(COCOA)
     Vector<Ref<WebCore::PlatformTextTrack>> outOfBandTrackSources() final;
@@ -313,19 +313,19 @@ private:
     void mediaPlayerGetRawCookies(const URL&, WebCore::MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
-    String mediaPlayerSourceApplicationIdentifier() const final;
+    String NODELETE mediaPlayerSourceApplicationIdentifier() const final;
     WebCore::MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const final { return m_clientIdentifier; }
 
-    double mediaPlayerRequestedPlaybackRate() const final;
+    double NODELETE mediaPlayerRequestedPlaybackRate() const final;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    WebCore::MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const final;
-    bool mediaPlayerIsVideoFullscreenStandby() const final;
+    WebCore::MediaPlayerEnums::VideoFullscreenMode NODELETE mediaPlayerFullscreenMode() const final;
+    bool NODELETE mediaPlayerIsVideoFullscreenStandby() const final;
 #endif
     Vector<String> mediaPlayerPreferredAudioCharacteristics() const final;
 
-    bool mediaPlayerShouldDisableSleep() const final;
-    const Vector<WebCore::ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
-    bool mediaPlayerShouldCheckHardwareSupport() const final;
+    bool NODELETE mediaPlayerShouldDisableSleep() const final;
+    const Vector<WebCore::ContentType>& NODELETE mediaContentTypesRequiringHardwareSupport() const final;
+    bool NODELETE mediaPlayerShouldCheckHardwareSupport() const final;
 
     const std::optional<Vector<String>>& allowedMediaContainerTypes() const final { return m_configuration.allowedMediaContainerTypes; };
     const std::optional<Vector<String>>& allowedMediaCodecTypes() const final { return m_configuration.allowedMediaCodecTypes; };
@@ -335,7 +335,7 @@ private:
 
     bool mediaPlayerShouldDisableHDR() const final { return m_configuration.shouldDisableHDR; }
 
-    WebCore::PlatformVideoTarget mediaPlayerVideoTarget() const final;
+    WebCore::PlatformVideoTarget NODELETE mediaPlayerVideoTarget() const final;
 
     void startUpdateCachedStateMessageTimer();
     void updateCachedState(bool = false);
@@ -354,7 +354,7 @@ private:
     void startVideoFrameMetadataGathering();
     void stopVideoFrameMetadataGathering();
 #if PLATFORM(COCOA)
-    void mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
+    void NODELETE mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
 #endif
 
     void playerContentBoxRectChanged(const WebCore::LayoutRect&);
@@ -362,16 +362,16 @@ private:
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
-    WebCore::FloatSize mediaPlayerVideoLayerSize() const final;
-    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
-    void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
+    WebCore::FloatSize NODELETE mediaPlayerVideoLayerSize() const final;
+    void NODELETE nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
+    void NODELETE colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
     void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
     void setShouldDisableHDR(bool);
     using LayerHostingContextCallback = WebCore::MediaPlayer::LayerHostingContextCallback;
-    void requestHostingContext(LayerHostingContextCallback&&);
+    void NODELETE requestHostingContext(LayerHostingContextCallback&&);
     void setShouldCheckHardwareSupport(bool);
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);

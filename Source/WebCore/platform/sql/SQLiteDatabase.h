@@ -158,7 +158,7 @@ public:
     // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
     // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.
 #if ASSERT_ENABLED
-    WEBCORE_EXPORT void disableThreadingChecks();
+    WEBCORE_EXPORT void NODELETE disableThreadingChecks();
 #else
     void disableThreadingChecks() { }
 #endif

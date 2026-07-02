@@ -1068,7 +1068,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    bool isRepresentableAs(Width, Signedness) const;
+    bool NODELETE isRepresentableAs(Width, Signedness) const;
     
     static int64_t castToType(Width width, Signedness signedness, int64_t value)
     {
@@ -1292,7 +1292,7 @@ public:
     }
 
     bool NODELETE canRepresent(Type) const;
-    bool canRepresent(Value* value) const;
+    bool NODELETE canRepresent(Value* value) const;
 
     bool NODELETE isCompatibleBank(const Arg& other) const;
 

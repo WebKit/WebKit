@@ -408,7 +408,7 @@ public:
 
     using MarkupAccumulator::append;
 
-    ContainerNode* parentNode(Node& node)
+    ContainerNode* NODELETE parentNode(Node& node)
     {
         if (m_useComposedTree) [[unlikely]]
             return node.parentInComposedTree();

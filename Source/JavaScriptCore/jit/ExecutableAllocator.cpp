@@ -546,7 +546,7 @@ public:
 
     void* NODELETE memoryStart() { return g_jscConfig.startExecutableMemory; }
     void* NODELETE memoryEnd() { return g_jscConfig.endExecutableMemory; }
-    bool isValid() { return !!m_reservation; }
+    bool NODELETE isValid() { return !!m_reservation; }
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
     {
@@ -604,7 +604,7 @@ public:
 #endif
     }
 
-    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+    Lock& NODELETE getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
 #if ENABLE(LIBPAS_JIT_HEAP)
     void NODELETE shrinkBytesAllocated(size_t oldSizeInBytes, size_t newSizeInBytes)

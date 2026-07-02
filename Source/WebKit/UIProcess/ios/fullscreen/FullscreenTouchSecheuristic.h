@@ -35,7 +35,7 @@ class FullscreenTouchSecheuristic {
 public:
     WK_EXPORT double scoreOfNextTouch(CGPoint location);
     WK_EXPORT double scoreOfNextTouch(CGPoint location, const Seconds& deltaTime);
-    WK_EXPORT void reset();
+    WK_EXPORT void NODELETE reset();
 
     void setParameters(const FullscreenTouchSecheuristicParameters& parameters) { m_parameters = parameters; }
     double requiredScore() const { return m_parameters.requiredScore; }

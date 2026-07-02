@@ -171,9 +171,9 @@ public:
 
     WEBCORE_EXPORT void addChildItem(Ref<HistoryItem>&&);
     void setChildItem(Ref<HistoryItem>&&);
-    WEBCORE_EXPORT HistoryItem* NODELETE childItemWithTarget(const AtomString&);
-    WEBCORE_EXPORT HistoryItem* NODELETE childItemWithFrameID(FrameIdentifier);
-    WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& NODELETE children() const LIFETIME_BOUND;
+    WEBCORE_EXPORT HistoryItem* childItemWithTarget(const AtomString&);
+    WEBCORE_EXPORT HistoryItem* childItemWithFrameID(FrameIdentifier);
+    WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const LIFETIME_BOUND;
     void clearChildren();
 
     bool NODELETE shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
@@ -186,8 +186,8 @@ public:
 #endif
 
 #ifndef NDEBUG
-    int showTree() const;
-    int showTreeWithIndent(unsigned indentLevel) const;
+    int NODELETE showTree() const;
+    int NODELETE showTreeWithIndent(unsigned indentLevel) const;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -231,7 +231,7 @@ public:
     IsInitialAboutBlank isInitialAboutBlank() const { return m_isInitialAboutBlank; }
 
 #if !LOG_DISABLED
-    String logString() const;
+    String NODELETE logString() const;
 #endif
 
     const std::optional<PolicyContainer>& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
@@ -314,5 +314,5 @@ private:
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-extern "C" int showTree(const WebCore::HistoryItem*);
+extern "C" int NODELETE showTree(const WebCore::HistoryItem*);
 #endif

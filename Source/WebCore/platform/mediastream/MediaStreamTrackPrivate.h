@@ -134,7 +134,7 @@ public:
     Ref<MediaStreamTrackPrivate> clone();
 
     WEBCORE_EXPORT RealtimeMediaSource& NODELETE source();
-    const RealtimeMediaSource& source() const;
+    const RealtimeMediaSource& NODELETE source() const;
     RealtimeMediaSource& NODELETE sourceForProcessor();
     bool NODELETE hasSource(const RealtimeMediaSource*) const;
 
@@ -208,11 +208,11 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MediaStreamTrackPrivate"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
 #if ASSERT_ENABLED
-    bool isOnCreationThread();
+    bool NODELETE isOnCreationThread();
 #endif
 
     WeakHashSet<MediaStreamTrackPrivateObserver> m_observers;

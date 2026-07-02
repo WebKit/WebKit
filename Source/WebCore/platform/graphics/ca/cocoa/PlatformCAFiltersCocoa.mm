@@ -112,7 +112,7 @@ static const FilterOperation& passthroughFilter(const FilterOperation::Type type
     }
 }
 
-void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& presentationModifiers, RetainPtr<CAPresentationModifierGroup>& group)
+void PlatformCAFilters::presentationModifiers(const FilterOperations& initialFilters, const FilterOperations* canonicalFilters, Vector<TypedFilterPresentationModifier>& NODELETE presentationModifiers, RetainPtr<CAPresentationModifierGroup>& group)
 {
     if (!canonicalFilters || canonicalFilters->isEmpty())
         return;

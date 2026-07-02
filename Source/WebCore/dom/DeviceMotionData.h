@@ -91,8 +91,8 @@ public:
         std::optional<double> m_gamma;
     };
 
-    WEBCORE_EXPORT static Ref<DeviceMotionData> NODELETE create();
-    WEBCORE_EXPORT static Ref<DeviceMotionData> NODELETE create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, std::optional<double> interval);
+    WEBCORE_EXPORT static Ref<DeviceMotionData> create();
+    WEBCORE_EXPORT static Ref<DeviceMotionData> create(RefPtr<Acceleration>&&, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&&, std::optional<double> interval);
 
     const Acceleration* acceleration() const { return m_acceleration.get(); }
     const Acceleration* accelerationIncludingGravity() const { return m_accelerationIncludingGravity.get(); }

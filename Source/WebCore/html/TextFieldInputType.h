@@ -66,7 +66,7 @@ protected:
 
     HTMLElement* NODELETE containerElement() const final;
     HTMLElement* NODELETE innerBlockElement() const final;
-    RefPtr<TextControlInnerTextElement> innerTextElement() const final;
+    RefPtr<TextControlInnerTextElement> NODELETE innerTextElement() const final;
     HTMLElement* NODELETE innerSpinButtonElement() const final;
     HTMLElement* NODELETE autoFillButtonElement() const final;
     HTMLElement* NODELETE dataListButtonElement() const final;
@@ -96,7 +96,7 @@ private:
     bool shouldSubmitImplicitly(Event&) final;
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) override;
     bool shouldUseInputMethod() const override { return true; }
-    bool shouldRespectListAttribute() override;
+    bool NODELETE shouldRespectListAttribute() override;
     HTMLElement* NODELETE placeholderElement() const final;
     void updatePlaceholderText() final;
     bool appendFormData(DOMFormData&) const final;

@@ -295,7 +295,7 @@ public:
     WEBCORE_EXPORT Vector<Ref<ArchiveResource>> subresources() const;
 
 #if ASSERT_ENABLED
-    bool isSubstituteLoadPending(ResourceLoader*) const;
+    bool NODELETE isSubstituteLoadPending(ResourceLoader*) const;
 #endif
     void cancelPendingSubstituteLoad(ResourceLoader*);   
     
@@ -491,7 +491,7 @@ public:
 
     const AtomString& downloadAttribute() const LIFETIME_BOUND { return m_triggeringAction.downloadAttribute(); }
 
-    WEBCORE_EXPORT void applyPoliciesToSettings();
+    WEBCORE_EXPORT void NODELETE applyPoliciesToSettings();
 
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }

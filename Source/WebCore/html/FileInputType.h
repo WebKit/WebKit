@@ -60,8 +60,8 @@ public:
     void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
 
     static std::pair<Vector<FileChooserFileInfo>, String> filesFromFormControlState(const FormControlState&);
-    bool canSetStringValue() const final;
-    bool valueMissing(StringView) const final;
+    bool NODELETE canSetStringValue() const final;
+    bool NODELETE valueMissing(StringView) const final;
 
 private:
     explicit FileInputType(HTMLInputElement&);
@@ -78,7 +78,7 @@ private:
     String NODELETE displayString() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     void showPicker() final;
-    bool allowsShowPickerAcrossFrames() final;
+    bool NODELETE allowsShowPickerAcrossFrames() final;
 
 #if ENABLE(DRAG_SUPPORT)
     bool receiveDroppedFilesWithImageTranscoding(const Vector<String>& paths);
@@ -103,9 +103,9 @@ private:
     void didCreateFileList(Ref<FileList>&&, RefPtr<Icon>&&);
     void requestIcon(const Vector<String>&);
 
-    bool allowsDirectories() const;
+    bool NODELETE allowsDirectories() const;
 
-    bool dirAutoUsesValue() const final;
+    bool NODELETE dirAutoUsesValue() const final;
 
     RefPtr<FileChooser> m_fileChooser;
     std::unique_ptr<FileIconLoader> m_fileIconLoader;

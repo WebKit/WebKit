@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-static inline CAAudioStreamDescription streamDescription(size_t sampleRate, size_t channelCount)
+static inline CAAudioStreamDescription NODELETE streamDescription(size_t sampleRate, size_t channelCount)
 {
     bool isFloat = true;
     bool isBigEndian = false;
@@ -55,7 +55,7 @@ static inline CAAudioStreamDescription streamDescription(size_t sampleRate, size
     return streamFormat;
 }
 
-static inline void copyChannelData(AudioChannel& channel, ::AudioBuffer& buffer, size_t numberOfFrames, bool isMuted)
+static inline void NODELETE copyChannelData(AudioChannel& channel, ::AudioBuffer& buffer, size_t numberOfFrames, bool isMuted)
 {
     RELEASE_ASSERT(buffer.mDataByteSize <= numberOfFrames * sizeof(float), "copyChannelData() given an AudioBuffer with insufficient size");
     buffer.mNumberChannels = 1;

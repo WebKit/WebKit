@@ -71,7 +71,7 @@ public:
     virtual bool hasNoSession() const;
 
     virtual bool activeAudioSessionRequired() const;
-    virtual bool hasActiveAudioSession() const;
+    virtual bool NODELETE hasActiveAudioSession() const;
     virtual bool canProduceAudio() const;
 
     virtual void setShouldDeactivateAudioSession(bool should) { m_shouldDeactivateAudioSession = should; };
@@ -80,7 +80,7 @@ public:
     virtual void updateNowPlayingInfoIfNecessary();
     virtual void updateNowPlayingInfo();
     virtual void setNowPlayingUpdateInterval(double);
-    virtual double nowPlayingUpdateInterval();
+    virtual double NODELETE nowPlayingUpdateInterval();
     virtual void updateAudioSessionCategoryIfNecessary();
 
     virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
@@ -119,7 +119,7 @@ public:
 
     virtual void addRestriction(PlatformMediaSessionMediaType, MediaSessionRestrictions);
     virtual void removeRestriction(PlatformMediaSessionMediaType, MediaSessionRestrictions);
-    virtual MediaSessionRestrictions restrictions(PlatformMediaSessionMediaType);
+    virtual MediaSessionRestrictions NODELETE restrictions(PlatformMediaSessionMediaType);
     virtual void resetRestrictions();
 
     virtual void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&);
@@ -165,7 +165,7 @@ public:
     virtual void scheduleSessionStatusUpdate() { }
     virtual void resetSessionState() { };
 
-    virtual bool isMediaSessionManagerGLib() const;
+    virtual bool NODELETE isMediaSessionManagerGLib() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
@@ -204,7 +204,7 @@ protected:
 
     uint64_t logIdentifier() const final { return 0; }
     ASCIILiteral logClassName() const override { return "MediaSessionManagerInterface"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     bool willLog(WTFLogLevel) const;

@@ -81,7 +81,7 @@ Ref<AsyncPDFRenderer> PDFPresentationController::asyncRenderer()
     return *m_asyncRenderer;
 }
 
-RefPtr<AsyncPDFRenderer> PDFPresentationController::asyncRendererIfExists() const
+RefPtr<AsyncPDFRenderer> NODELETE PDFPresentationController::asyncRendererIfExists() const
 {
     return m_asyncRenderer;
 }

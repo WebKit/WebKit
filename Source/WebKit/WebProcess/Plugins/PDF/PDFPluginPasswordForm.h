@@ -38,7 +38,7 @@ public:
     static Ref<PDFPluginPasswordForm> create(PDFPluginBase*);
     virtual ~PDFPluginPasswordForm();
 
-    void updateGeometry() override;
+    void NODELETE updateGeometry() override;
 
     void unlockFailed();
 

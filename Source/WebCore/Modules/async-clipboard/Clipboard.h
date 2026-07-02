@@ -46,7 +46,7 @@ public:
     static Ref<Clipboard> create(Navigator&);
     ~Clipboard();
 
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     LocalFrame* NODELETE frame() const;

@@ -108,7 +108,7 @@ uint8_t NODELETE convertColor16BigTo8(uint16_t value)
 }
 
 template<GraphicsContextGL::DataFormat format, typename SourceType, typename DstType>
-ALWAYS_INLINE void convert16BitFormatToRGBA8(std::span<const SourceType>, std::span<DstType>, unsigned)
+ALWAYS_INLINE void NODELETE convert16BitFormatToRGBA8(std::span<const SourceType>, std::span<DstType>, unsigned)
 {
     ASSERT_NOT_REACHED();
 }

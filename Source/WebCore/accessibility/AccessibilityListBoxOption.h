@@ -51,7 +51,7 @@ private:
     bool isEnabled() const final;
     bool isSelectedOptionActive() const final;
     String stringValue() const final;
-    Element* actionElement() const final;
+    Element* NODELETE actionElement() const final;
     bool canSetSelectedAttribute() const final;
 
     LayoutRect elementRect() const final;

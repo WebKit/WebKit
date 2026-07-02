@@ -156,8 +156,8 @@ public:
     void updateScreenTimeWebpageControllerURL(WKWebView *);
 #endif
 
-    void viewIsBecomingVisible() override;
-    void viewIsBecomingInvisible() override;
+    void NODELETE viewIsBecomingVisible() override;
+    void NODELETE viewIsBecomingInvisible() override;
 
 #if ENABLE(GAMEPAD)
     void setGamepadsRecentlyAccessed(GamepadsRecentlyAccessed) final;

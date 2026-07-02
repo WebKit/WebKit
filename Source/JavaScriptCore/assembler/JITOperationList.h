@@ -46,7 +46,7 @@ struct JITOperationAnnotation;
 class JITOperationList {
 public:
     static JITOperationList& singleton();
-    static void initialize();
+    static void NODELETE initialize();
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
     template<typename PtrType>
@@ -63,11 +63,11 @@ public:
     }
 #endif
 
-    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
+    JS_EXPORT_PRIVATE static void NODELETE populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
 #endif // ENABLE(JIT_OPERATION_VALIDATION)
 
-    static void populatePointersInJavaScriptCore();
-    static void populatePointersInJavaScriptCoreForLLInt();
+    static void NODELETE populatePointersInJavaScriptCore();
+    static void NODELETE populatePointersInJavaScriptCoreForLLInt();
 
 #if ENABLE(JIT_OPERATION_DISASSEMBLY)
     JS_EXPORT_PRIVATE static void populateDisassemblyLabelsInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
@@ -97,10 +97,10 @@ private:
 #endif
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-    ALWAYS_INLINE void addPointers(const JITOperationAnnotation* begin, const JITOperationAnnotation* end);
+    ALWAYS_INLINE void NODELETE addPointers(const JITOperationAnnotation* begin, const JITOperationAnnotation* end);
 
 #if ENABLE(JIT_OPERATION_VALIDATION_ASSERT)
-    void addInverseMap(void* validationEntry, void* pointer);
+    void NODELETE addInverseMap(void* validationEntry, void* pointer);
 #endif
 
     UncheckedKeyHashMap<void*, void*> m_validatedOperations;

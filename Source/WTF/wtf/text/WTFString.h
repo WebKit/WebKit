@@ -127,8 +127,8 @@ public:
 
     template<typename Func>
     Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8ConversionError> tryGetUTF8(NOESCAPE const Func&, ConversionMode = LenientConversion) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode) const;
-    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> tryGetUTF8() const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> NODELETE tryGetUTF8(ConversionMode) const;
+    WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> NODELETE tryGetUTF8() const;
 
     char16_t codeUnitAt(unsigned index) const;
     char16_t operator[](unsigned index) const { return codeUnitAt(index); }
@@ -198,23 +198,23 @@ public:
     [[nodiscard]] String left(unsigned length) const { return substring(0, length); }
     [[nodiscard]] String right(unsigned length) const { return substring(this->length() - length, length); }
 
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToLowercaseWithoutLocale() const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToUppercaseWithoutLocale() const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex) const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToLowercaseWithLocale(const AtomString& localeIdentifier) const;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String convertToUppercaseWithLocale(const AtomString& localeIdentifier) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToASCIILowercase() const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToASCIIUppercase() const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToLowercaseWithoutLocale() const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToUppercaseWithoutLocale() const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToLowercaseWithLocale(const AtomString& localeIdentifier) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE convertToUppercaseWithLocale(const AtomString& localeIdentifier) const;
 
-    [[nodiscard]] WTF_EXPORT_PRIVATE String simplifyWhiteSpace(CodeUnitMatchFunction) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
-    [[nodiscard]] WTF_EXPORT_PRIVATE String trim(CodeUnitMatchFunction) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE trim(CodeUnitMatchFunction) const;
     template<typename Predicate> [[nodiscard]] String removeCharacters(const Predicate&) const;
 
     // Returns the string with case folded for case insensitive comparison.
     // Use convertToASCIILowercase instead if ASCII case insensitive comparison is desired.
-    [[nodiscard]] WTF_EXPORT_PRIVATE String foldCase() const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE foldCase() const;
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.
@@ -234,8 +234,8 @@ public:
     WTF_EXPORT_PRIVATE double toDouble(bool* ok = nullptr) const;
     WTF_EXPORT_PRIVATE float toFloat(bool* ok = nullptr) const;
 
-    [[nodiscard]] WTF_EXPORT_PRIVATE String isolatedCopy() const &;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String isolatedCopy() &&;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE isolatedCopy() const &;
+    [[nodiscard]] WTF_EXPORT_PRIVATE String NODELETE isolatedCopy() &&;
 
     WTF_EXPORT_PRIVATE bool NODELETE isSafeToSendToAnotherThread() const;
 
@@ -308,7 +308,7 @@ public:
     unsigned existingHash() const { return isNull() ? 0 : impl()->existingHash(); }
 
 #ifndef NDEBUG
-    WTF_EXPORT_PRIVATE void show() const;
+    WTF_EXPORT_PRIVATE void NODELETE show() const;
 #endif
 
     // Turns this String empty if the StringImpl is not referenced by anyone else.
@@ -318,9 +318,9 @@ public:
     static constexpr unsigned MaxLength = StringImpl::MaxLength;
 
 private:
-    template<bool allowEmptyEntries> void splitInternal(char16_t separator, NOESCAPE const SplitFunctor&) const;
-    template<bool allowEmptyEntries> Vector<String> splitInternal(char16_t separator) const;
-    template<bool allowEmptyEntries> Vector<String> splitInternal(StringView separator) const;
+    template<bool allowEmptyEntries> void NODELETE splitInternal(char16_t separator, NOESCAPE const SplitFunctor&) const;
+    template<bool allowEmptyEntries> Vector<String> NODELETE splitInternal(char16_t separator) const;
+    template<bool allowEmptyEntries> Vector<String> NODELETE splitInternal(StringView separator) const;
 
     // This is intentionally private. Use fromLatin1() / fromUTF8() / String(ASCIILiteral) instead.
     WTF_EXPORT_PRIVATE explicit String(const char* characters);

@@ -71,9 +71,9 @@ public:
 
 private:
     template <typename KeyMatchingFunction>
-    RefPtr<Element> get(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
+    RefPtr<Element> NODELETE get(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
     template <typename KeyMatchingFunction>
-    Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getAll(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
+    Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* NODELETE getAll(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
         MapEntry() = default;

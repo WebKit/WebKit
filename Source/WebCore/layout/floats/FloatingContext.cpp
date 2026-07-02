@@ -126,7 +126,7 @@ static Iterator end(const PlacedFloats::List& floats)
 }
 
 #if ASSERT_ENABLED
-static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
+static bool NODELETE areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 {
     auto& floats = placedFloats.list();
     auto inlineEndEdgeOfInlineStartFloats = LayoutUnit::min();
@@ -349,7 +349,7 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
     return { };
 }
 
-static bool floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
+static bool NODELETE floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
 {
     if (floatBoxRect.isEmpty())
         return false;
@@ -631,7 +631,7 @@ FloatPair::FloatPair(const PlacedFloats::List& floats)
 {
 }
 
-const PlacedFloats::Item* NODELETE FloatPair::inlineStart() const
+const PlacedFloats::Item* FloatPair::inlineStart() const
 {
     if (!m_floatPair.inlineStart)
         return { };
@@ -640,7 +640,7 @@ const PlacedFloats::Item* NODELETE FloatPair::inlineStart() const
     return &m_floats[*m_floatPair.inlineStart];
 }
 
-const PlacedFloats::Item* NODELETE FloatPair::inlineEnd() const
+const PlacedFloats::Item* FloatPair::inlineEnd() const
 {
     if (!m_floatPair.inlineEnd)
         return { };
@@ -664,7 +664,7 @@ bool FloatPair::intersects(const FloatAvoider& floatAvoider) const
     return intersects(inlineStart()) || intersects(inlineEnd());
 }
 
-bool NODELETE FloatPair::intersects(BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
+bool FloatPair::intersects(BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
 {
     ASSERT(!m_floatPair.isEmpty());
 
@@ -695,7 +695,7 @@ bool NODELETE FloatPair::operator ==(const FloatPair& other) const
     return m_floatPair.inlineStart == other.m_floatPair.inlineStart && m_floatPair.inlineEnd == other.m_floatPair.inlineEnd;
 }
 
-FloatPair::InlineAxisConstraints NODELETE FloatPair::inlineAxisConstraints() const
+FloatPair::InlineAxisConstraints FloatPair::inlineAxisConstraints() const
 {
     auto startEdge = std::optional<PositionInContextRoot> { };
     auto endEdge = std::optional<PositionInContextRoot> { };
@@ -735,7 +735,7 @@ Iterator::Iterator(const PlacedFloats::List& floats, std::optional<PositionInCon
         set(*blockStart);
 }
 
-inline static std::optional<size_t> NODELETE previousFloatingIndex(Float floatingType, const PlacedFloats::List& floats, size_t currentIndex)
+inline static std::optional<size_t> previousFloatingIndex(Float floatingType, const PlacedFloats::List& floats, size_t currentIndex)
 {
     ASSERT(floatingType == Float::InlineStart || floatingType == Float::InlineEnd);
     RELEASE_ASSERT(currentIndex <= floats.size());

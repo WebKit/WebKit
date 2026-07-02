@@ -57,7 +57,7 @@ static ScrollbarThemeMac* macScrollbarTheme()
     return !scrollbarTheme.isMockTheme() ? downcast<ScrollbarThemeMac>(&scrollbarTheme) : nullptr;
 }
 
-static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
+static NSScrollerImp *NODELETE scrollerImpForScrollbar(Scrollbar& scrollbar)
 {
     return ScrollbarThemeMac::scrollerImpForScrollbar(scrollbar);
 }

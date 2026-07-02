@@ -71,7 +71,7 @@ private:
     bool isXRBindingImpl() const final { return true; }
 
     RefPtr<XRProjectionLayer> createProjectionLayer(const XRProjectionLayerInit&) final;
-    RefPtr<XRSubImage> getSubImage(XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<XREye>/* = "none"*/) final;
+    RefPtr<XRSubImage> NODELETE getSubImage(XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<XREye>/* = "none"*/) final;
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&) final;
     TextureFormat NODELETE getPreferredColorFormat() final;
 

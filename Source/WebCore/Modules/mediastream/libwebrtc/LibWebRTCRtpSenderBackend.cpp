@@ -147,7 +147,7 @@ RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
     return toRTCRtpSendParameters(*m_currentParameters, m_rtcSender->media_type() == webrtc::MediaType::AUDIO);
 }
 
-static bool NODELETE validateModifiedParameters(const RTCRtpSendParameters& newParameters, const RTCRtpSendParameters& oldParameters)
+static bool validateModifiedParameters(const RTCRtpSendParameters& newParameters, const RTCRtpSendParameters& oldParameters)
 {
     if (oldParameters.transactionId != newParameters.transactionId)
         return false;

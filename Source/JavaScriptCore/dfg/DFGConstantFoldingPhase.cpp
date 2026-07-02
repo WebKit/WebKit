@@ -45,7 +45,7 @@
 
 namespace JSC { namespace DFG {
 
-static bool isZeroBigInt(JSValue& value)
+static bool NODELETE isZeroBigInt(JSValue& value)
 {
 #if USE(BIGINT32)
     if (value.isBigInt32())
@@ -55,7 +55,7 @@ static bool isZeroBigInt(JSValue& value)
     return value.asHeapBigInt()->isZero();
 }
 
-static bool isNegativeBigInt(JSValue& value)
+static bool NODELETE isNegativeBigInt(JSValue& value)
 {
 #if USE(BIGINT32)
     if (value.isBigInt32())
@@ -65,7 +65,7 @@ static bool isNegativeBigInt(JSValue& value)
     return value.asHeapBigInt()->sign();
 }
 
-static std::optional<JSPromise::InlineReactionKind> classifyPerformPromiseThen(const AbstractValue& fulfilledValue, const AbstractValue& rejectedValue)
+static std::optional<JSPromise::InlineReactionKind> NODELETE classifyPerformPromiseThen(const AbstractValue& fulfilledValue, const AbstractValue& rejectedValue)
 {
     if (fulfilledValue.m_type == SpecNone || rejectedValue.m_type == SpecNone)
         return std::nullopt;

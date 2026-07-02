@@ -263,8 +263,8 @@ public:
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static Ref<WebProcessProxy> fromConnection(const IPC::Connection&);
     static WebPageProxy* NODELETE webPage(WebPageProxyIdentifier);
-    static WebPageProxy* NODELETE webPage(WebCore::PageIdentifier);
-    static WebPageProxy* NODELETE audioCapturingWebPage();
+    static WebPageProxy* webPage(WebCore::PageIdentifier);
+    static WebPageProxy* audioCapturingWebPage();
 #if ENABLE(WEBXR)
     static WebPageProxy* webPageWithActiveXRSession();
 #endif
@@ -414,7 +414,7 @@ public:
 #if PLATFORM(COCOA)
     static const Vector<String>& mediaMIMETypes();
     void cacheMediaMIMETypes(const Vector<String>&);
-    void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
+    void NODELETE cacheMediaSourceTypeSupported(const String& type, bool isSupported);
 #endif
 
 #if HAVE(DISPLAY_LINK)
@@ -462,17 +462,17 @@ public:
     void grantAudioCaptureExtension() { m_mediaCaptureSandboxExtensions |= Audio; }
     void revokeAudioCaptureExtension() { m_mediaCaptureSandboxExtensions &= ~Audio; }
 
-    void sendAudioComponentRegistrations();
+    void NODELETE sendAudioComponentRegistrations();
 #endif
 
     bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    void enableRemoteInspectorIfNeeded();
+    void NODELETE enableRemoteInspectorIfNeeded();
 #endif
     
 #if PLATFORM(COCOA)
-    void unblockAccessibilityServerIfNeeded();
+    void NODELETE unblockAccessibilityServerIfNeeded();
 #endif
 
     void updateAudibleMediaAssertions();
@@ -516,7 +516,7 @@ public:
 
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
-    void setIgnoreInvalidMessageForTesting();
+    void NODELETE setIgnoreInvalidMessageForTesting();
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -536,19 +536,19 @@ public:
     void pageIsBecomingInvisible(WebCore::PageIdentifier);
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    static bool shouldEnableRemoteInspector();
+    static bool NODELETE shouldEnableRemoteInspector();
 #endif
 
     void markProcessAsRecentlyUsed();
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
-    void platformSuspendProcess();
-    void platformResumeProcess();
+    void NODELETE platformSuspendProcess();
+    void NODELETE platformResumeProcess();
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    void setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
-    void setCaptionLanguage(const String&);
+    void NODELETE setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
+    void NODELETE setCaptionLanguage(const String&);
 #endif
     void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
     void serializeAndWrapCryptoKey(WebCore::CryptoKeyData&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
@@ -561,7 +561,7 @@ public:
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
 
 #if PLATFORM(COCOA)
-    std::optional<audit_token_t> auditToken() const;
+    std::optional<audit_token_t> NODELETE auditToken() const;
 #if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
     std::optional<Vector<SandboxExtension::Handle>> fontdMachExtensionHandles();
 #endif
@@ -570,7 +570,7 @@ public:
     bool isConnectedToHardwareConsole() const { return m_isConnectedToHardwareConsole; }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    void hardwareConsoleStateChanged();
+    void NODELETE hardwareConsoleStateChanged();
 #endif
 
     const WeakHashSet<WebProcessProxy>* NODELETE serviceWorkerClientProcesses() const LIFETIME_BOUND;
@@ -630,7 +630,7 @@ public:
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+    void NODELETE takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
     void setIneligbleForWebProcessCache() { m_isEligibleForWebProcessCache = false; }
@@ -667,12 +667,12 @@ private:
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) override;
-    bool shouldConfigureJSCForTesting() const final;
-    bool isJITEnabled() const final;
+    bool NODELETE shouldConfigureJSCForTesting() const final;
+    bool NODELETE isJITEnabled() const final;
     bool shouldEnableSharedArrayBuffer() const final { return m_crossOriginMode == WebCore::CrossOriginMode::Isolated; }
     bool shouldEnableLockdownMode() const final { return m_lockdownMode == LockdownMode::Enabled; }
     bool shouldEnableEnhancedSecurity() const final { return isEnhancedSecurityEnabledForState(m_enhancedSecurity); }
-    bool shouldDisableJITCage() const final;
+    bool NODELETE shouldDisableJITCage() const final;
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     RefPtr<XPCEventHandler> xpcEventHandler() const final;
 #endif
@@ -692,11 +692,11 @@ private:
 
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
 
-    void platformInitialize();
-    void platformDestroy();
+    void NODELETE platformInitialize();
+    void NODELETE platformDestroy();
 
 #if PLATFORM(COCOA)
-    static void registerNotifyObservers();
+    static void NODELETE registerNotifyObservers();
 #endif
 
     ProcessTerminationReason NODELETE terminationReason() const;
@@ -760,14 +760,14 @@ private:
     void systemBeep();
     
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    void isAXAuthenticated(CoreIPCAuditToken&&, CompletionHandler<void(bool)>&&);
+    void NODELETE isAXAuthenticated(CoreIPCAuditToken&&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if PLATFORM(COCOA)
     bool NODELETE messageSourceIsValidWebContentProcess();
 #endif
 
-    bool shouldTakeNearSuspendedAssertion() const;
+    bool NODELETE shouldTakeNearSuspendedAssertion() const;
     bool shouldDropNearSuspendedAssertionAfterDelay() const;
 
     void updateRuntimeStatistics();

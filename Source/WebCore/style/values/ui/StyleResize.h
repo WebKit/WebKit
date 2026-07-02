@@ -44,7 +44,7 @@ enum class Resize : uint8_t {
 // MARK: - Conversion
 
 // NOTE: Custom conversion is required to resolve `-internal-textarea-auto`.
-template<> struct CSSValueConversion<Resize> { Resize NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<Resize> { Resize operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

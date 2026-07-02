@@ -52,7 +52,7 @@ public:
     void showValidationMessage(const WebCore::Element& anchor, String&& message) final;
     void hideValidationMessage(const WebCore::Element& anchor) final;
     void hideAnyValidationMessage() final;
-    bool isValidationMessageVisible(const WebCore::Element& anchor) final;
+    bool NODELETE isValidationMessageVisible(const WebCore::Element& anchor) final;
     void updateValidationBubbleStateIfNeeded() final;
 
 private:

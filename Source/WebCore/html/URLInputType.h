@@ -53,7 +53,7 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
     String typeMismatchText() const final;
     ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
 };

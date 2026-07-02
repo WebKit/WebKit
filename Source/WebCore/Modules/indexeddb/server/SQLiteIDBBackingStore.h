@@ -86,14 +86,14 @@ public:
     IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) final;
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
-    IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) final;
+    IDBObjectStoreInfo* NODELETE infoForObjectStore(IDBObjectStoreIdentifier) final;
     void deleteBackingStore() override;
 
     bool supportsSimultaneousReadWriteTransactions() override { return false; }
     bool isEphemeral() override { return false; }
     String fullDatabasePath() const override;
 
-    bool hasTransaction(const IDBResourceIdentifier&) const final;
+    bool NODELETE hasTransaction(const IDBResourceIdentifier&) const final;
 
     IDBError addIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&) final;
     void revertAddIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier, IDBIndexIdentifier) final;

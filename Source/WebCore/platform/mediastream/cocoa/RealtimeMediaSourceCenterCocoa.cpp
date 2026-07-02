@@ -71,7 +71,7 @@ public:
         return DisplayCaptureSourceCocoa::create(device, WTF::move(hashSalts), constraints, pageIdentifier);
     }
 private:
-    DisplayCaptureManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }
+    DisplayCaptureManager& NODELETE displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }
 };
 
 AudioCaptureFactory& RealtimeMediaSourceCenter::defaultAudioCaptureFactory()

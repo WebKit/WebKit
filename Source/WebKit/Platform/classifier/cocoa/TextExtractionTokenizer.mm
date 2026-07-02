@@ -41,7 +41,7 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextExtractionTokenizer);
 
-static RefPtr<TextExtractionTokenizer>& sharedInstance()
+static RefPtr<TextExtractionTokenizer>& NODELETE sharedInstance()
 {
     static NeverDestroyed<RefPtr<TextExtractionTokenizer>> instance;
     return instance;

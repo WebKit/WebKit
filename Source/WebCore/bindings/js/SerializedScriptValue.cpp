@@ -471,7 +471,7 @@ Ref<SerializedScriptValue> SerializedScriptValue::createFromWireBytes(Vector<uin
 
 class CloneSerializer;
 #if ASSERT_ENABLED
-static void validateSerializedResult(CloneSerializer&, SerializationReturnCode, Vector<uint8_t>& result, JSGlobalObject*, Vector<Ref<MessagePort>>&, ArrayBufferContentsArray&, ArrayBufferContentsArray& sharedBuffers, Vector<Ref<MessagePort>>&);
+static void NODELETE validateSerializedResult(CloneSerializer&, SerializationReturnCode, Vector<uint8_t>& result, JSGlobalObject*, Vector<Ref<MessagePort>>&, ArrayBufferContentsArray&, ArrayBufferContentsArray& sharedBuffers, Vector<Ref<MessagePort>>&);
 #endif
 
 class CloneSerializer : public JSC::CloneSerializerBase<CloneSerializer> {
@@ -644,8 +644,8 @@ public:
     }
 
 #if ASSERT_ENABLED
-    bool didSeeComplexCases() const { return m_didSeeComplexCases; }
-    void setDidSeeComplexCases() { m_didSeeComplexCases = true; }
+    bool NODELETE didSeeComplexCases() const { return m_didSeeComplexCases; }
+    void NODELETE setDidSeeComplexCases() { m_didSeeComplexCases = true; }
 #else
     ALWAYS_INLINE void setDidSeeComplexCases() { }
 #endif
@@ -738,7 +738,7 @@ private:
     }
 
     template<typename T>
-    JSValue toJSOrNull(JSDOMGlobalObject* globalObject, const RefPtr<T>& value)
+    JSValue NODELETE toJSOrNull(JSDOMGlobalObject* globalObject, const RefPtr<T>& value)
     {
         if (!value)
             return jsNull();
@@ -3928,7 +3928,7 @@ private:
     }
 
 public:
-    bool isTagExposed(SerializationTag tag) const
+    bool NODELETE isTagExposed(SerializationTag tag) const
     {
         return isTypeExposedToGlobalObject(*m_globalObject, tag);
     }
@@ -4307,7 +4307,7 @@ public:
 private:
 
     template<SerializationTag Tag>
-    bool consumeCollectionDataTerminationIfPossible()
+    bool NODELETE consumeCollectionDataTerminationIfPossible()
     {
         auto originalData = m_data;
         if (readTag() == Tag)
@@ -4369,7 +4369,7 @@ private:
     Vector<RefPtr<MediaStreamTrackHandle>> m_mediaStreamTrackHandles;
 #endif
 
-    String NODELETE blobFilePathForBlobURL(const String& blobURL)
+    String blobFilePathForBlobURL(const String& blobURL)
     {
         size_t i = 0;
         for (; i < m_blobURLs.size(); ++i) {

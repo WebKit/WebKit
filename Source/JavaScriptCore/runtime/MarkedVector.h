@@ -95,7 +95,7 @@ public:
         m_size--;
     }
 
-    template<typename Visitor> static void markLists(Visitor&, ListSet&);
+    template<typename Visitor> static void NODELETE markLists(Visitor&, ListSet&);
 
     void overflowCheckNotNeeded() { clearNeedsOverflowCheck(); }
 

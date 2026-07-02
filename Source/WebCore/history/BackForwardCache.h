@@ -71,12 +71,12 @@ public:
     WEBCORE_EXPORT void clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>&);
 
     unsigned pageCount() const { return m_items.size(); }
-    WEBCORE_EXPORT unsigned frameCount() const;
+    WEBCORE_EXPORT unsigned NODELETE frameCount() const;
 
     void markPagesForDeviceOrPageScaleChanged(Page&);
     void markPagesForContentsSizeChanged(Page&);
 #if ENABLE(VIDEO)
-    void markPagesForCaptionPreferencesChanged();
+    void NODELETE markPagesForCaptionPreferencesChanged();
 #endif
 
     bool NODELETE isInBackForwardCache(BackForwardFrameItemIdentifier) const;

@@ -74,7 +74,7 @@ public:
     }
 
 private:
-    void displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override;
+    void NODELETE displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override;
 
     WebPageProxyIdentifier m_pageIdentifier;
 };
@@ -94,7 +94,7 @@ void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplay
     });
 }
 
-Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeDrawingAreaProxyMac::create(WebPageProxy& page, WebProcessProxy& webProcessProxy)
+Ref<RemoteLayerTreeDrawingAreaProxyMac> NODELETE RemoteLayerTreeDrawingAreaProxyMac::create(WebPageProxy& page, WebProcessProxy& webProcessProxy)
 {
     return adoptRef(*new RemoteLayerTreeDrawingAreaProxyMac(page, webProcessProxy));
 }
@@ -117,7 +117,7 @@ DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyMac::delegatedScrollingMod
     return DelegatedScrollingMode::DelegatedToWebKit;
 }
 
-std::unique_ptr<RemoteScrollingCoordinatorProxy> RemoteLayerTreeDrawingAreaProxyMac::createScrollingCoordinatorProxy() const
+std::unique_ptr<RemoteScrollingCoordinatorProxy> NODELETE RemoteLayerTreeDrawingAreaProxyMac::createScrollingCoordinatorProxy() const
 {
     return makeUnique<RemoteScrollingCoordinatorProxyMac>(*protect(page()));
 }
@@ -237,7 +237,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     layoutBannerLayers(transaction);
 }
 
-static RetainPtr<CABasicAnimation> fillFowardsAnimationWithKeyPath(NSString *keyPath)
+static RetainPtr<CABasicAnimation> NODELETE fillFowardsAnimationWithKeyPath(NSString *keyPath)
 {
     RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:keyPath];
     [animation setDuration:std::numeric_limits<double>::max()];
@@ -249,7 +249,7 @@ static RetainPtr<CABasicAnimation> fillFowardsAnimationWithKeyPath(NSString *key
     return animation;
 }
 
-static RetainPtr<CABasicAnimation> fillFowardsAnimationWithKeyPathAndValue(NSString *keyPath, NSValue *value)
+static RetainPtr<CABasicAnimation> NODELETE fillFowardsAnimationWithKeyPathAndValue(NSString *keyPath, NSValue *value)
 {
     RetainPtr animation = fillFowardsAnimationWithKeyPath(keyPath);
     [animation setFromValue:value];
@@ -257,17 +257,17 @@ static RetainPtr<CABasicAnimation> fillFowardsAnimationWithKeyPathAndValue(NSStr
     return animation;
 }
 
-static RetainPtr<CABasicAnimation> transientZoomTransformOverrideAnimation(const TransformationMatrix& transform)
+static RetainPtr<CABasicAnimation> NODELETE transientZoomTransformOverrideAnimation(const TransformationMatrix& transform)
 {
     return fillFowardsAnimationWithKeyPathAndValue(@"transform", [NSValue valueWithCATransform3D:transform]);
 }
 
-static RetainPtr<CABasicAnimation> transientSizeAnimation(const FloatSize& size)
+static RetainPtr<CABasicAnimation> NODELETE transientSizeAnimation(const FloatSize& size)
 {
     return fillFowardsAnimationWithKeyPathAndValue(@"bounds.size", [NSValue valueWithSize:size]);
 }
 
-static RetainPtr<CABasicAnimation> transientPositionAnimation(const FloatPoint& position)
+static RetainPtr<CABasicAnimation> NODELETE transientPositionAnimation(const FloatPoint& position)
 {
     return fillFowardsAnimationWithKeyPathAndValue(@"position", [NSValue valueWithPoint:position]);
 }

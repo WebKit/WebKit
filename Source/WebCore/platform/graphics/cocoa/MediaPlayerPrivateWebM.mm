@@ -1743,7 +1743,7 @@ class MediaPlayerFactoryWebM final : public MediaPlayerFactory {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryWebM);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryWebM);
 private:
-    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::CocoaWebM; };
+    MediaPlayerEnums::MediaEngineIdentifier NODELETE identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::CocoaWebM; };
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final
     {
@@ -1760,7 +1760,7 @@ private:
         return MediaPlayerPrivateWebM::supportsType(parameters);
     }
 
-    MediaPlayerScope supportedScope() const final
+    MediaPlayerScope NODELETE supportedScope() const final
     {
         return hasPlatformStrategies() ? MediaPlayerScope::Playback : MediaPlayerScope::Supports;
     }

@@ -47,7 +47,7 @@ public:
     bool operator==(const GridData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const GridData&) const;
+    void NODELETE dumpDifferences(TextStream&, const GridData&) const;
 #endif
 
     GridAutoFlow gridAutoFlow;

@@ -60,13 +60,13 @@ public:
     Value* fMinConstant(Procedure&, const Value* other) const final;
     Value* fMaxConstant(Procedure&, const Value* other) const final;
 
-    TriState equalConstant(const Value* other) const final;
-    TriState notEqualConstant(const Value* other) const final;
-    TriState lessThanConstant(const Value* other) const final;
-    TriState greaterThanConstant(const Value* other) const final;
-    TriState lessEqualConstant(const Value* other) const final;
-    TriState greaterEqualConstant(const Value* other) const final;
-    TriState equalOrUnorderedConstant(const Value* other) const final;
+    TriState NODELETE equalConstant(const Value* other) const final;
+    TriState NODELETE notEqualConstant(const Value* other) const final;
+    TriState NODELETE lessThanConstant(const Value* other) const final;
+    TriState NODELETE greaterThanConstant(const Value* other) const final;
+    TriState NODELETE lessEqualConstant(const Value* other) const final;
+    TriState NODELETE greaterEqualConstant(const Value* other) const final;
+    TriState NODELETE equalOrUnorderedConstant(const Value* other) const final;
 
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 

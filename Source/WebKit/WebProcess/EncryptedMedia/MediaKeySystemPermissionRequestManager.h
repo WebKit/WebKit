@@ -46,7 +46,7 @@ class MediaKeySystemPermissionRequestManager : public AbstractRefCountedAndCanMa
 public:
     explicit MediaKeySystemPermissionRequestManager(WebPage&);
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     void startMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);

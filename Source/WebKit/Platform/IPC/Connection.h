@@ -515,7 +515,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA) && !USE(EXTENSIONKIT_PROCESS_TERMINATION)
-    bool kill();
+    bool NODELETE kill();
 #endif
 
     bool isValid() const { return m_isValid; }
@@ -531,11 +531,11 @@ public:
     void NODELETE enableIncomingMessagesThrottling();
 
 #if ENABLE(IPC_TESTING_API)
-    void addMessageObserver(const MessageObserver&);
+    void NODELETE addMessageObserver(const MessageObserver&);
 
     void setIgnoreInvalidMessageForTesting() { m_ignoreInvalidMessageForTesting = true; }
     bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
-    void dispatchIncomingMessageForTesting(UniqueRef<Decoder>&&);
+    void NODELETE dispatchIncomingMessageForTesting(UniqueRef<Decoder>&&);
     DecoderOrError waitForMessageForTesting(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 #endif
 
@@ -611,7 +611,7 @@ private:
     void processIncomingMessage(UniqueRef<Decoder>);
     void processIncomingSyncReply(UniqueRef<Decoder>);
 
-    bool canSendOutgoingMessages() const;
+    bool NODELETE canSendOutgoingMessages() const;
     bool NODELETE platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
     bool sendOutgoingMessage(UniqueRef<Encoder>&&);

@@ -62,7 +62,7 @@ size_t WebExtensionDataRecord::sizeOfTypes(OptionSet<Type> types) const
     return total;
 }
 
-OptionSet<WebExtensionDataRecord::Type> WebExtensionDataRecord::types() const
+OptionSet<WebExtensionDataRecord::Type> NODELETE WebExtensionDataRecord::types() const
 {
     OptionSet<WebExtensionDataRecord::Type> result;
     for (auto& entry : m_typeSizes)

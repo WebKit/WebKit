@@ -56,7 +56,7 @@ static bool areRectsFullyAligned(FocusDirection, const LayoutRect&, const Layout
 static bool areRectsPartiallyAligned(FocusDirection, const LayoutRect&, const LayoutRect&);
 static bool areRectsMoreThanFullScreenApart(FocusDirection, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize);
 static bool isRectInDirection(FocusDirection, const LayoutRect&, const LayoutRect&);
-static void deflateIfOverlapped(LayoutRect&, LayoutRect&);
+static void NODELETE deflateIfOverlapped(LayoutRect&, LayoutRect&);
 static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const LayoutRect&);
 static void entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
 static bool isScrollableNode(const ContainerNode&);

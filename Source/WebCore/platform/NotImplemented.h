@@ -40,7 +40,7 @@
 #else
 
 namespace WebCore {
-WEBCORE_EXPORT WTFLogChannel* notImplementedLoggingChannel();
+WEBCORE_EXPORT WTFLogChannel* NODELETE notImplementedLoggingChannel();
 }
 
 #define notImplemented() do { \

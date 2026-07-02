@@ -46,7 +46,7 @@ using namespace JSC;
 
 // Helper functions.
 
-inline JSTypedArrayType toJSTypedArrayType(JSC::JSType type)
+inline JSTypedArrayType NODELETE toJSTypedArrayType(JSC::JSType type)
 {
     switch (type) {
     case JSC::Int8ArrayType:
@@ -77,7 +77,7 @@ inline JSTypedArrayType toJSTypedArrayType(JSC::JSType type)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline TypedArrayType toTypedArrayType(JSTypedArrayType type)
+inline TypedArrayType NODELETE toTypedArrayType(JSTypedArrayType type)
 {
     switch (type) {
     case kJSTypedArrayTypeArrayBuffer:
@@ -355,7 +355,7 @@ inline static bool isLinkedBeforeTypedArrayLengthQuirk()
     return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTypedArrayAPIQuirk);
 }
 #else
-inline static bool isLinkedBeforeTypedArrayLengthQuirk() { return false; }
+inline static bool NODELETE isLinkedBeforeTypedArrayLengthQuirk() { return false; }
 #endif
 
 size_t JSObjectGetArrayBufferByteLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)

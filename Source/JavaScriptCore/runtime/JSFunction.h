@@ -231,7 +231,7 @@ private:
     PropertyStatus reifyLazyBoundNameIfNeeded(VM&, JSGlobalObject*, PropertyName);
 
 #if ASSERT_ENABLED
-    void assertTypeInfoFlagInvariants();
+    void NODELETE assertTypeInfoFlagInvariants();
 #else
     void assertTypeInfoFlagInvariants() { }
 #endif

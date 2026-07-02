@@ -272,7 +272,7 @@ public:
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
+    void NODELETE takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
     bool NODELETE isAlwaysOnLoggingAllowed() const;

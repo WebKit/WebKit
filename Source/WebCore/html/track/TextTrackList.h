@@ -47,12 +47,12 @@ public:
     virtual ~TextTrackList();
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
-    unsigned length() const final;
+    unsigned NODELETE length() const final;
     int getTrackIndex(TextTrack&);
     int NODELETE getTrackIndexRelativeToRenderedTracks(TextTrack&);
     bool contains(TrackBase&) const final;
 
-    TextTrack* NODELETE item(unsigned index) const;
+    TextTrack* item(unsigned index) const;
     RefPtr<TextTrack> getTrackById(const AtomString&) const;
     RefPtr<TextTrack> getTrackById(TrackID) const;
     TextTrack* lastItem() const { return item(length() - 1); }
@@ -64,7 +64,7 @@ public:
     const MediaTime& duration() const LIFETIME_BOUND { return m_duration; }
 
     // EventTarget
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
 private:
     explicit TextTrackList(ScriptExecutionContext*);

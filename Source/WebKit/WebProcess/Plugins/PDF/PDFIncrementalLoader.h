@@ -64,18 +64,18 @@ public:
 
     static Ref<PDFIncrementalLoader> create(PDFPluginBase&);
 
-    void clear();
+    void NODELETE clear();
 
-    void incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&);
-    void incrementalPDFStreamDidFinishLoading();
-    void incrementalPDFStreamDidFail();
+    void NODELETE incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&);
+    void NODELETE incrementalPDFStreamDidFinishLoading();
+    void NODELETE incrementalPDFStreamDidFail();
 
     void streamLoaderDidStart(ByteRangeRequestIdentifier, RefPtr<WebCore::NetscapePlugInStreamLoader>&&);
 
-    void receivedNonLinearizedPDFSentinel();
+    void NODELETE receivedNonLinearizedPDFSentinel();
 
 #if !LOG_DISABLED
-    void logState(WTF::TextStream&);
+    void NODELETE logState(WTF::TextStream&);
 #endif
 
     // Only public for the callbacks
@@ -86,38 +86,38 @@ private:
     PDFIncrementalLoader(PDFPluginBase&);
 
     void threadEntry(Ref<PDFIncrementalLoader>&&);
-    void transitionToMainThreadDocument();
+    void NODELETE transitionToMainThreadDocument();
 
-    bool documentFinishedLoading() const;
+    bool NODELETE documentFinishedLoading() const;
 
-    void appendAccumulatedDataToDataBuffer(ByteRangeRequest&);
+    void NODELETE appendAccumulatedDataToDataBuffer(ByteRangeRequest&);
 
-    void dataSpanForRange(uint64_t position, size_t count, CheckValidRanges, CompletionHandler<void(std::span<const uint8_t>)>&&) const;
-    uint64_t availableDataSize() const;
+    void NODELETE dataSpanForRange(uint64_t position, size_t count, CheckValidRanges, CompletionHandler<void(std::span<const uint8_t>)>&&) const;
+    uint64_t NODELETE availableDataSize() const;
 
-    void getResourceBytesAtPosition(size_t count, off_t position, DataRequestCompletionHandler&&);
+    void NODELETE getResourceBytesAtPosition(size_t count, off_t position, DataRequestCompletionHandler&&);
     size_t getResourceBytesAtPositionAfterLoadingComplete(std::span<uint8_t> buffer, off_t position);
 
-    void unconditionalCompleteOutstandingRangeRequests();
+    void NODELETE unconditionalCompleteOutstandingRangeRequests();
 
     ByteRangeRequest* NODELETE byteRangeRequestForStreamLoader(WebCore::NetscapePlugInStreamLoader&);
-    void forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
-    void cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
+    void NODELETE forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
+    void NODELETE cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
 
     std::optional<ByteRangeRequestIdentifier> NODELETE identifierForLoader(WebCore::NetscapePlugInStreamLoader&);
     void removeOutstandingByteRangeRequest(ByteRangeRequestIdentifier);
 
 
-    bool requestCompleteIfPossible(ByteRangeRequest&);
-    void requestDidCompleteWithBytes(ByteRangeRequest&, size_t byteCount);
-    void requestDidCompleteWithAccumulatedData(ByteRangeRequest&, size_t completionSize);
+    bool NODELETE requestCompleteIfPossible(ByteRangeRequest&);
+    void NODELETE requestDidCompleteWithBytes(ByteRangeRequest&, size_t byteCount);
+    void NODELETE requestDidCompleteWithAccumulatedData(ByteRangeRequest&, size_t completionSize);
 
 #if !LOG_DISABLED
     size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }
     size_t decrementThreadsWaitingOnCallback() { return --m_threadsWaitingOnCallback; }
 
-    void incrementalLoaderLog(const String&);
-    void logStreamLoader(WTF::TextStream&, WebCore::NetscapePlugInStreamLoader&);
+    void NODELETE incrementalLoaderLog(const String&);
+    void NODELETE logStreamLoader(WTF::TextStream&, WebCore::NetscapePlugInStreamLoader&);
 #endif
 
     class SemaphoreWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SemaphoreWrapper> {

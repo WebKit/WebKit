@@ -183,8 +183,8 @@ private:
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
     ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);
 
-    void NODELETE insertBeforeCommon(Node& nextChild, Node& oldChild);
-    void NODELETE appendChildCommon(Node&);
+    void insertBeforeCommon(Node& nextChild, Node& oldChild);
+    void appendChildCommon(Node&);
 
     void rebuildSVGExtensionsElementsIfNecessary();
 

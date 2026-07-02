@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CSSKeywordValue final : public CSSValue {
 public:
-    static inline Ref<CSSKeywordValue> NODELETE create(CSS::Keyword); // Defined in CSSValuePool.h
+    static inline Ref<CSSKeywordValue> create(CSS::Keyword); // Defined in CSSValuePool.h
     static inline Ref<CSSKeywordValue> NODELETE create(CSSValueID); // Defined in CSSValuePool.h
     static inline CSSKeywordValue& implicitInitialValue(); // Defined in CSSValuePool.h
 
@@ -39,8 +39,8 @@ public:
     CSSValueID valueID() const { return m_keyword.value; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSKeywordValue&) const;
-    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+    bool NODELETE equals(const CSSKeywordValue&) const;
+    IterationStatus NODELETE customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
     bool NODELETE addDerivedHash(Hasher&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

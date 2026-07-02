@@ -151,7 +151,7 @@ private:
     void stall() final;
     Ref<WebCore::MediaTimePromise> prepareToSeek(const MediaTime&) final;
     Ref<GenericPromise> finishSeek(const MediaTime&) final;
-    bool seeking() const final;
+    bool NODELETE seeking() const final;
     void setScreenReserved(bool) final;
     WebCore::SharedTimebase* sharedTimebase() final { return nullptr; }
 
@@ -173,7 +173,7 @@ private:
     void cancelTimeReachedAction() final;
     void performTaskAtTime(const MediaTime&, Function<void(const MediaTime&)>&&) final;
 
-    void flush() final;
+    void NODELETE flush() final;
     void flushTrack(TrackIdentifier) final;
 
     void applicationWillResignActive() final;
@@ -212,7 +212,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const final { return "AudioVideoRendererRemote"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
     void setState(RemoteAudioVideoRendererState);

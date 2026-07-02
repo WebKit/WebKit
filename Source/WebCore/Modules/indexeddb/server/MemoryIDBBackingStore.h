@@ -81,7 +81,7 @@ private:
     IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) final;
     IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
 
-    IDBObjectStoreInfo* infoForObjectStore(IDBObjectStoreIdentifier) final;
+    IDBObjectStoreInfo* NODELETE infoForObjectStore(IDBObjectStoreIdentifier) final;
     void NODELETE deleteBackingStore() final;
 
     bool supportsSimultaneousReadWriteTransactions() final { return true; }

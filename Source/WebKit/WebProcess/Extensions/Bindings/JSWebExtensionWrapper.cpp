@@ -502,7 +502,7 @@ JSWebExtensionWrappable* JSWebExtensionWrapper::unwrap(JSContextRef context, JSV
     return static_cast<JSWebExtensionWrappable*>(JSObjectGetPrivate(JSValueToObject(context, value, nullptr)));
 }
 
-static JSWebExtensionWrappable* unwrapObject(JSObjectRef object)
+static JSWebExtensionWrappable* NODELETE unwrapObject(JSObjectRef object)
 {
     ASSERT(object);
 

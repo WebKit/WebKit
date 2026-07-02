@@ -315,7 +315,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
 }
 
-OptionSet<WebEventModifier> WebAutomationSession::platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers)
+OptionSet<WebEventModifier> NODELETE WebAutomationSession::platformWebModifiersFromRaw(WebPageProxy&, unsigned modifiers)
 {
     return kit(WebCore::modifiersForModifierFlags(modifiers));
 }

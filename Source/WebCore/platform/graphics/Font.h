@@ -215,7 +215,7 @@ public:
     bool allowsAntialiasing() const { return m_allowsAntialiasing; }
 
 #if !LOG_DISABLED
-    String description() const;
+    String NODELETE description() const;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

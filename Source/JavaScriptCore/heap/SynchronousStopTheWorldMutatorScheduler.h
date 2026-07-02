@@ -42,14 +42,14 @@ public:
     SynchronousStopTheWorldMutatorScheduler();
     ~SynchronousStopTheWorldMutatorScheduler() final;
     
-    State state() const final;
+    State NODELETE state() const final;
     
-    void beginCollection() final;
+    void NODELETE beginCollection() final;
     
     MonotonicTime timeToStop() final;
     MonotonicTime timeToResume() final;
     
-    void endCollection() final;
+    void NODELETE endCollection() final;
 
 private:
     State m_state { Normal };

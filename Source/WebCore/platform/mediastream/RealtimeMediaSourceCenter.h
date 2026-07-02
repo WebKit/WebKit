@@ -104,7 +104,7 @@ public:
     void captureDevicesChanged();
     void captureDeviceWillBeRemoved(const String& persistentId);
 
-    WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
+    WEBCORE_EXPORT static bool NODELETE shouldInterruptAudioOnPageVisibilityChange();
 
 #if ENABLE(APP_PRIVACY_REPORT)
     void setIdentity(OSObjectPtr<tcc_identity_t>&& identity) { m_identity = WTF::move(identity); }

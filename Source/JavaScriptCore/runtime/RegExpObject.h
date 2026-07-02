@@ -148,7 +148,7 @@ public:
 private:
     JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*, bool areLegacyFeaturesEnabled);
 #if ASSERT_ENABLED
-    JS_EXPORT_PRIVATE void finishCreation(VM&);
+    JS_EXPORT_PRIVATE void NODELETE finishCreation(VM&);
 #endif
 
     void setLastIndexIsNotWritable()

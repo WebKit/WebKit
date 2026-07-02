@@ -45,8 +45,8 @@ private:
     HTMLFieldSetElement(const QualifiedName&, Document&);
     ~HTMLFieldSetElement();
 
-    bool isDisabledFormControl() const final;
-    bool isActuallyDisabled() const final;
+    bool NODELETE isDisabledFormControl() const final;
+    bool NODELETE isActuallyDisabled() const final;
     bool NODELETE isEnumeratable() const final { return true; }
     bool supportsFocus() const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
@@ -57,8 +57,8 @@ private:
     void childrenChanged(const ChildChange&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    bool matchesValidPseudoClass() const final;
-    bool matchesInvalidPseudoClass() const final;
+    bool NODELETE matchesValidPseudoClass() const final;
+    bool NODELETE matchesInvalidPseudoClass() const final;
 
     WeakHashSet<HTMLElement, WeakPtrImplWithEventTargetData> m_invalidDescendants;
 };

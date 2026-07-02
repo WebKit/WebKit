@@ -65,12 +65,12 @@ public:
     void process(const AudioBus& source, AudioBus& destination, size_t framesToProcess) override;
     void processOnlyAudioParams(size_t framesToProcess) override;
     void reset() override;
-    void setNumberOfChannels(unsigned) override;
+    void NODELETE setNumberOfChannels(unsigned) override;
     unsigned numberOfChannels() const override { return m_numberOfChannels; }
 
     double tailTime() const override;
     double latencyTime() const override;
-    bool requiresTailProcessing() const override;
+    bool NODELETE requiresTailProcessing() const override;
 
 protected:
     Vector<std::unique_ptr<AudioDSPKernel>> m_kernels;

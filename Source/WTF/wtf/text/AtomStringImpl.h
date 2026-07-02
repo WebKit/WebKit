@@ -59,7 +59,7 @@ public:
     ALWAYS_INLINE static RefPtr<AtomStringImpl> addWithStringTableProvider(StringTableProvider&, StringImpl*);
 
 #if ASSERT_ENABLED
-    WTF_EXPORT_PRIVATE static bool isInAtomStringTable(StringImpl*);
+    WTF_EXPORT_PRIVATE static bool NODELETE isInAtomStringTable(StringImpl*);
 #endif
 
 private:

@@ -147,16 +147,16 @@ private:
 
     void layout() override;
 
-    Node* nodeForHitTest() const override;
+    Node* NODELETE nodeForHitTest() const override;
 
-    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
+    LogicalExtentComputedValues NODELETE computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     void paintObject(PaintInfo&, const LayoutPoint&) override { }
 
     LayoutUnit pageLogicalWidth() const override { return m_computedColumnWidth; }
     LayoutUnit pageLogicalHeight() const override { return m_computedColumnHeight; }
 
-    LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
+    LayoutUnit NODELETE pageLogicalTopForOffset(LayoutUnit offset) const override;
 
     LayoutUnit logicalHeightOfAllFragmentedFlowContent() const override { return logicalHeightInFragmentedFlow(); }
 

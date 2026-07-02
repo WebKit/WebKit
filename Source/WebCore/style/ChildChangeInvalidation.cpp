@@ -39,7 +39,7 @@
 
 namespace WebCore::Style {
 
-static bool elementIsEmptyForCSS(const Element& element)
+static bool NODELETE elementIsEmptyForCSS(const Element& element)
 {
     for (auto* node = element.firstChild(); node; node = node->nextSibling()) {
         if (is<Element>(*node))
@@ -62,7 +62,7 @@ bool ChildChangeInvalidation::emptyStateMayChange() const
     return m_childChange.isInsertion() == wasEmpty;
 }
 
-static bool isSiblingHasRelation(const MatchElement& matchElement)
+static bool NODELETE isSiblingHasRelation(const MatchElement& matchElement)
 {
     if (!matchElement.hasRelation)
         return false;

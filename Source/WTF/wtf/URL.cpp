@@ -314,7 +314,7 @@ static inline void NODELETE assertProtocolIsGood(StringView)
 
 #else
 
-static void assertProtocolIsGood(StringView protocol)
+static void NODELETE assertProtocolIsGood(StringView protocol)
 {
     // FIXME: We probably don't need this function any more.
     // The isASCIIAlphaCaselessEqual function asserts that passed-in characters

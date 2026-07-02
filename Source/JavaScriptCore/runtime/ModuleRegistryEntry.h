@@ -67,22 +67,22 @@ public:
     static ModuleRegistryEntry* create(VM&, Structure*, Identifier key, ScriptFetchParameters::Type, RefPtr<ScriptFetcher>);
     static ModuleRegistryEntry* create(VM&, Identifier key, ScriptFetchParameters::Type, RefPtr<ScriptFetcher>);
 
-    const Identifier& key() const;
-    ScriptFetchParameters::Type moduleType() const;
-    AbstractModuleRecord* record() const;
+    const Identifier& NODELETE key() const;
+    ScriptFetchParameters::Type NODELETE moduleType() const;
+    AbstractModuleRecord* NODELETE record() const;
     JSPromise* ensureFetchPromise(JSGlobalObject*);
     JSPromise* ensureModulePromise(JSGlobalObject*);
-    JSPromise* loadPromise() const;
+    JSPromise* NODELETE loadPromise() const;
     JSValue error(JSGlobalObject*) const;
-    JSValue fetchError() const;
-    Status status() const;
+    JSValue NODELETE fetchError() const;
+    Status NODELETE status() const;
 
     void setRecord(VM&, AbstractModuleRecord*);
     void setLoadPromise(VM&, JSPromise*);
     void setFetchError(JSGlobalObject*, JSValue);
     void setInstantiationError(JSGlobalObject*, JSValue);
     void setEvaluationError(JSGlobalObject*, JSValue);
-    void setStatus(Status);
+    void NODELETE setStatus(Status);
 
     void provideFetch(JSGlobalObject*, SourceCode&&);
     void provideFetch(JSGlobalObject*, JSSourceCode*);

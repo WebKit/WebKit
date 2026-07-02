@@ -82,8 +82,8 @@ public:
     WEBCORE_EXPORT CSSStyleProperties& ensureCSSStyleProperties();
     CSSStyleProperties& ensureInlineCSSStyleProperties(StyledElement& parentElement);
 
-    int NODELETE findPropertyIndex(CSSPropertyID) const;
-    int NODELETE findCustomPropertyIndex(StringView propertyName) const;
+    int findPropertyIndex(CSSPropertyID) const;
+    int findCustomPropertyIndex(StringView propertyName) const;
 
     // Methods for querying and altering CSS custom properties.
     bool setCustomProperty(const String& propertyName, const String& value, CSSParserContext, IsImportant = IsImportant::No);
@@ -97,9 +97,9 @@ private:
     bool removeLonghandProperty(CSSPropertyID, String* returnText);
     bool removeShorthandProperty(CSSPropertyID, String* returnText);
     bool removePropertyAtIndex(int index, String* returnText);
-    CSSProperty* NODELETE findCSSPropertyWithID(CSSPropertyID);
-    CSSProperty* NODELETE findCustomCSSPropertyWithName(const String&);
-    bool canUpdateInPlace(const CSSProperty&, CSSProperty* toReplace) const;
+    CSSProperty* findCSSPropertyWithID(CSSPropertyID);
+    CSSProperty* findCustomCSSPropertyWithName(const String&);
+    bool NODELETE canUpdateInPlace(const CSSProperty&, CSSProperty* toReplace) const;
 
     friend class StyleProperties;
 

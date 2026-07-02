@@ -39,7 +39,7 @@ private:
     SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, const String& correction);
     bool willApplyCommand() final;
     void doApply() override;
-    bool shouldRetainAutocorrectionIndicator() const override;
+    bool NODELETE shouldRetainAutocorrectionIndicator() const override;
 
     String inputEventData() const final;
     Vector<Ref<StaticRange>> targetRanges() const final;

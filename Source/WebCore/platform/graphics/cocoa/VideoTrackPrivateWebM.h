@@ -41,11 +41,11 @@ public:
     static Ref<VideoTrackPrivateWebM> create(webm::TrackEntry&&);
     virtual ~VideoTrackPrivateWebM() = default;
 
-    TrackID id() const final;
+    TrackID NODELETE id() const final;
     String label() const final;
     String language() const final;
-    int trackIndex() const final;
-    std::optional<bool> defaultEnabled() const final;
+    int NODELETE trackIndex() const final;
+    std::optional<bool> NODELETE defaultEnabled() const final;
     uint32_t NODELETE width() const;
     uint32_t NODELETE height() const;
 

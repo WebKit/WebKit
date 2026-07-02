@@ -97,8 +97,8 @@ public:
     void browserExtensionsEnabled(HashMap<String, String>&&);
     void browserExtensionsDisabled(HashSet<String>&&);
 
-    bool isNetworkInstrumentationEnabled() const;
-    bool isPageInstrumentationEnabled() const;
+    bool NODELETE isNetworkInstrumentationEnabled() const;
+    bool NODELETE isPageInstrumentationEnabled() const;
 
 private:
     WebPageAgentContext NODELETE webPageAgentContext();

@@ -303,13 +303,13 @@ id WebProcess::accessibilityFocusedUIElement()
 }
 
 #if USE(APPKIT)
-static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
+static id NODELETE NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 {
     return WebProcess::accessibilityFocusedUIElement();
 }
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
+static void NODELETE preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
 {
     // WebKit prohibits communication with Launch Services after entering the sandbox. This method override
     // prevents AppKit from attempting to update application information with Launch Services from the WebContent process.
@@ -325,7 +325,7 @@ void WebProcess::setAllowAXAuthenticationForTesting(bool allow)
     allowAllAXAuthenticationForTesting = allow;
 }
 
-static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
+static Boolean NODELETE isAXAuthenticatedCallback(audit_token_t auditToken)
 {
     if (allowAllAXAuthenticationForTesting) [[unlikely]]
         return true;
@@ -348,7 +348,7 @@ enum class VideoDecoderBehavior : uint8_t {
     EnableAVIF                  = 1 << 4,
 };
 
-static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecoderBehavior)
+static void NODELETE setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecoderBehavior)
 {
     if (!(PAL::isVideoToolboxFrameworkAvailable() && PAL::canLoad_VideoToolbox_VTRestrictVideoDecoders()))
         return;
@@ -795,7 +795,7 @@ static NSString *webProcessAccessibilityBundlePath()
 }
 #endif
 
-static void registerWithAccessibility()
+static void NODELETE registerWithAccessibility()
 {
 #if USE(APPKIT)
     [NSAccessibilityRemoteUIElement setRemoteUIApp:YES];
@@ -1081,7 +1081,7 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 
 #if PLATFORM(MAC)
 
-static NSURL *origin(WebPage& page)
+static NSURL *NODELETE origin(WebPage& page)
 {
     auto rootFrameOriginString = page.rootFrameOriginString();
     // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear when we would have a malformed URL here,
@@ -1090,7 +1090,7 @@ static NSURL *origin(WebPage& page)
     return [NSURL URLWithString:rootFrameOriginString.createNSString().get()];
 }
 
-static Vector<String> activePagesOrigins(const HashMap<PageIdentifier, Ref<WebPage>>& pageMap)
+static Vector<String> NODELETE activePagesOrigins(const HashMap<PageIdentifier, Ref<WebPage>>& pageMap)
 {
     Vector<String> origins;
     for (auto& page : pageMap.values()) {
@@ -1432,20 +1432,20 @@ void WebProcess::setMediaMIMETypes(const Vector<String> types)
 #if ENABLE(CFPREFS_DIRECT_MODE)
 
 #if USE(APPKIT)
-static const WTF::String& userAccentColorPreferenceKey()
+static const WTF::String& NODELETE userAccentColorPreferenceKey()
 {
     static NeverDestroyed<WTF::String> userAccentColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleAccentColor"));
     return userAccentColorPreferenceKey;
 }
 
-static const WTF::String& userHighlightColorPreferenceKey()
+static const WTF::String& NODELETE userHighlightColorPreferenceKey()
 {
     static NeverDestroyed<WTF::String> userHighlightColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleHighlightColor"));
     return userHighlightColorPreferenceKey;
 }
 #endif
 
-static const WTF::String& captionProfilePreferenceKey()
+static const WTF::String& NODELETE captionProfilePreferenceKey()
 {
     static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("MACaptionActiveProfile"));
     return key;

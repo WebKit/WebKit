@@ -52,7 +52,7 @@ public:
 #else
     WEBCORE_EXPORT static ParentalControlsURLFilter& singleton();
     WEBCORE_EXPORT static void setGlobalFilter(Ref<ParentalControlsURLFilter>&&);
-    WEBCORE_EXPORT static bool hasGlobalFilter();
+    WEBCORE_EXPORT static bool NODELETE hasGlobalFilter();
 #endif
     WEBCORE_EXPORT static void setFilterForTesting(Ref<ParentalControlsURLFilter>&&);
     WEBCORE_EXPORT static void allowURL(const ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);

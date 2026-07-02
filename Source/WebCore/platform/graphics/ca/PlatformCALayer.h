@@ -325,7 +325,7 @@ public:
     virtual bool setNeedsDisplayIfEDRHeadroomExceeds(float);
 
     virtual void setTonemappingEnabled(bool);
-    virtual bool tonemappingEnabled() const;
+    virtual bool NODELETE tonemappingEnabled() const;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

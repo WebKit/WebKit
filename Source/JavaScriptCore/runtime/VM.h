@@ -934,7 +934,7 @@ public:
         Change,
         Prototype,
     };
-    JS_EXPORT_PRIVATE void invalidateStructureChainIntegrity(StructureChainIntegrityEvent);
+    JS_EXPORT_PRIVATE void NODELETE invalidateStructureChainIntegrity(StructureChainIntegrityEvent);
 
 #if ENABLE(REGEXP_TRACING)
     using RTTraceList = ListHashSet<RegExp*>;
@@ -956,7 +956,7 @@ public:
 
     JS_EXPORT_PRIVATE bool currentThreadIsHoldingAPILock() const;
 
-    JS_EXPORT_PRIVATE JSLock& apiLock();
+    JS_EXPORT_PRIVATE JSLock& NODELETE apiLock();
     CodeCache* codeCache() LIFETIME_BOUND { return m_codeCache.get(); }
     IntlCache& intlCache() { return *m_intlCache; }
 
@@ -1005,7 +1005,7 @@ public:
         RefPtr<VM> m_vm;
     };
 
-    MicrotaskQueue& defaultMicrotaskQueue();
+    MicrotaskQueue& NODELETE defaultMicrotaskQueue();
 
     DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     JS_EXPORT_PRIVATE void drainMicrotasks();
@@ -1177,8 +1177,8 @@ private:
     JS_EXPORT_PRIVATE Exception* throwException(JSGlobalObject*, JSObject*);
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
-    void verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);
-    JS_EXPORT_PRIVATE void clearNativeStackTraceOfLastThrow();
+    void NODELETE verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);
+    JS_EXPORT_PRIVATE void NODELETE clearNativeStackTraceOfLastThrow();
 #endif
     
     static void primitiveGigacageDisabledCallback(void*);

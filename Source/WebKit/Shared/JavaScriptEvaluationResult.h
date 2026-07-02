@@ -83,7 +83,7 @@ public:
     JSObjectID root() const { return m_root; }
     const Map& map() const LIFETIME_BOUND { return m_map; }
 
-    String toString() const;
+    String NODELETE toString() const;
 
 #if PLATFORM(COCOA)
     static std::optional<JavaScriptEvaluationResult> extract(id);

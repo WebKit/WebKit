@@ -42,11 +42,11 @@ public:
     JS_EXPORT_PRIVATE ~ObjectInitializationScope();
 
     VM& vm() const { return m_vm; }
-    void notifyAllocated(JSObject*);
-    void notifyInitialized(JSObject*);
+    void NODELETE notifyAllocated(JSObject*);
+    void NODELETE notifyInitialized(JSObject*);
 
 private:
-    void verifyPropertiesAreInitialized(JSObject*);
+    void NODELETE verifyPropertiesAreInitialized(JSObject*);
 
     VM& m_vm;
     std::optional<AssertNoGC> m_assertNoGC;

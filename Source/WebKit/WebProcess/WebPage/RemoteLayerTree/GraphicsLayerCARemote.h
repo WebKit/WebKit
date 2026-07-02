@@ -49,7 +49,7 @@ public:
     bool filtersCanBeComposited(const WebCore::FilterOperations& filters) override;
 
     void moveToContext(RemoteLayerTreeContext&);
-    LayerMode layerMode() const final;
+    LayerMode NODELETE layerMode() const final;
     
 private:
     bool isGraphicsLayerCARemote() const override { return true; }

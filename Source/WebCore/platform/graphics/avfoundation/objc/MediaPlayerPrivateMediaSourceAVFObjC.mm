@@ -154,7 +154,7 @@ class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaSourceAVFObjC);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryMediaSourceAVFObjC);
 private:
-    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
+    MediaPlayerEnums::MediaEngineIdentifier NODELETE identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final
     {
@@ -173,7 +173,7 @@ private:
 
     // Only reached when registered locally; registerMediaEngine may instead install
     // a remote proxy for this engine.
-    MediaPlayerScope supportedScope() const final
+    MediaPlayerScope NODELETE supportedScope() const final
     {
         return hasPlatformStrategies() ? MediaPlayerScope::Playback : MediaPlayerScope::Supports;
     }

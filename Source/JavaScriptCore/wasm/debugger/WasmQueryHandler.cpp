@@ -326,7 +326,7 @@ void QueryHandler::handleWasmCallStack(StringView packet)
     m_debugServer.sendReply(response);
 }
 
-static constexpr uint32_t typeKindToWidth(TypeKind kind)
+static constexpr uint32_t NODELETE typeKindToWidth(TypeKind kind)
 {
     switch (kind) {
 #define CREATE_CASE(name, id, b3type, inc, wasmName, width, ...) \

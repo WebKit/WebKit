@@ -80,73 +80,73 @@ public:
 
     CSSValue* value() const { return m_value.ptr(); }
 
-    static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, WritingMode);
-    static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, WritingMode);
-    static bool isInheritedProperty(CSSPropertyID);
+    static CSSPropertyID NODELETE resolveDirectionAwareProperty(CSSPropertyID, WritingMode);
+    static CSSPropertyID NODELETE unresolvePhysicalProperty(CSSPropertyID, WritingMode);
+    static bool NODELETE isInheritedProperty(CSSPropertyID);
     static Vector<String> aliasesForProperty(CSSPropertyID);
     static bool isDirectionAwareProperty(CSSPropertyID propertyID) { return isLogicalPropertyGroupLogicalProperty(propertyID); }
-    static bool isInLogicalPropertyGroup(CSSPropertyID);
-    static bool areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID, CSSPropertyID);
-    static bool isDescriptorOnly(CSSPropertyID);
-    static char16_t listValuedPropertySeparator(CSSPropertyID);
+    static bool NODELETE isInLogicalPropertyGroup(CSSPropertyID);
+    static bool NODELETE areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSPropertyID, CSSPropertyID);
+    static bool NODELETE isDescriptorOnly(CSSPropertyID);
+    static char16_t NODELETE listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID) || propertyID == CSSPropertyCustom; }
-    static bool allowsNumberOrIntegerInput(CSSPropertyID);
+    static bool NODELETE allowsNumberOrIntegerInput(CSSPropertyID);
 
-    static bool animationUsesNonAdditiveOrCumulativeInterpolation(CSSPropertyID);
-    static bool animationUsesNonNormalizedDiscreteInterpolation(CSSPropertyID);
+    static bool NODELETE animationUsesNonAdditiveOrCumulativeInterpolation(CSSPropertyID);
+    static bool NODELETE animationUsesNonNormalizedDiscreteInterpolation(CSSPropertyID);
 
-    static bool animationIsAccelerated(CSSPropertyID, const Settings&);
-    static std::span<const CSSPropertyID> allAcceleratedAnimationProperties(const Settings&);
+    static bool NODELETE animationIsAccelerated(CSSPropertyID, const Settings&);
+    static std::span<const CSSPropertyID> NODELETE allAcceleratedAnimationProperties(const Settings&);
 
     // Properties where <color> productions should accept <quirky-color> (e.g. hashless hex color quirk).
     // https://drafts.csswg.org/css-color-4/#quirky-color
     // https://quirks.spec.whatwg.org/#the-hashless-hex-color-quirk
-    static bool acceptsQuirkyColor(CSSPropertyID);
+    static bool NODELETE acceptsQuirkyColor(CSSPropertyID);
 
     // Properties where <length> productions should accept <quirky-length> (e.g. unitless length quirk).
     // https://drafts.csswg.org/css-values-4/#deprecated-quirky-length
     // https://quirks.spec.whatwg.org/#the-unitless-length-quirk
-    static bool acceptsQuirkyLength(CSSPropertyID);
+    static bool NODELETE acceptsQuirkyLength(CSSPropertyID);
 
     // Properties where <angle> productions should accept <quirky-angle> (e.g. unitless angle quirk).
     // FIXME: This is not specified anywhere and other engines don't implement the properties where this is used. We should remove this quirk.
-    static bool acceptsQuirkyAngle(CSSPropertyID);
+    static bool NODELETE acceptsQuirkyAngle(CSSPropertyID);
 
     // Logical Property Groups.
     // NOTE: These return true if the CSSPropertyID is member of the named logical
     // property group or is the shorthand of a member of the logical property group.
 
-    static bool isBorderColorProperty(CSSPropertyID);
-    static bool isBorderRadiusProperty(CSSPropertyID);
-    static bool isBorderStyleProperty(CSSPropertyID);
-    static bool isBorderWidthProperty(CSSPropertyID);
-    static bool isContainIntrinsicSizeProperty(CSSPropertyID);
-    static bool isCornerShapeProperty(CSSPropertyID);
-    static bool isInsetProperty(CSSPropertyID);
-    static bool isMarginProperty(CSSPropertyID);
-    static bool isMaxSizeProperty(CSSPropertyID);
-    static bool isMinSizeProperty(CSSPropertyID);
-    static bool isOverflowProperty(CSSPropertyID);
-    static bool isOverscrollBehaviorProperty(CSSPropertyID);
-    static bool isPaddingProperty(CSSPropertyID);
-    static bool isScrollMarginProperty(CSSPropertyID);
-    static bool isScrollPaddingProperty(CSSPropertyID);
-    static bool isSizeProperty(CSSPropertyID);
+    static bool NODELETE isBorderColorProperty(CSSPropertyID);
+    static bool NODELETE isBorderRadiusProperty(CSSPropertyID);
+    static bool NODELETE isBorderStyleProperty(CSSPropertyID);
+    static bool NODELETE isBorderWidthProperty(CSSPropertyID);
+    static bool NODELETE isContainIntrinsicSizeProperty(CSSPropertyID);
+    static bool NODELETE isCornerShapeProperty(CSSPropertyID);
+    static bool NODELETE isInsetProperty(CSSPropertyID);
+    static bool NODELETE isMarginProperty(CSSPropertyID);
+    static bool NODELETE isMaxSizeProperty(CSSPropertyID);
+    static bool NODELETE isMinSizeProperty(CSSPropertyID);
+    static bool NODELETE isOverflowProperty(CSSPropertyID);
+    static bool NODELETE isOverscrollBehaviorProperty(CSSPropertyID);
+    static bool NODELETE isPaddingProperty(CSSPropertyID);
+    static bool NODELETE isScrollMarginProperty(CSSPropertyID);
+    static bool NODELETE isScrollPaddingProperty(CSSPropertyID);
+    static bool NODELETE isSizeProperty(CSSPropertyID);
 
     // Check if a property is a sizing property, as defined in:
     // https://drafts.csswg.org/css-sizing-3/#sizing-property
-    static bool isSizingProperty(CSSPropertyID);
+    static bool NODELETE isSizingProperty(CSSPropertyID);
 
-    static bool disablesNativeAppearance(CSSPropertyID);
+    static bool NODELETE disablesNativeAppearance(CSSPropertyID);
 
     // Returns the valid keyword values for a property from CSSProperties.json.
     // This is used by the Inspector to provide completions for properties
     // that aren't keyword-fast-path eligible but still have enumerated values.
-    static std::span<const CSSValueID> validKeywordsForProperty(CSSPropertyID);
+    static std::span<const CSSValueID> NODELETE validKeywordsForProperty(CSSPropertyID);
 
     // Checks if a keyword is valid for a property, taking settings flags into account.
     // This is used by the Inspector to filter keywords based on enabled settings.
-    static bool isKeywordValidForPropertyValues(CSSPropertyID, CSSValueID, const CSSParserContext&);
+    static bool NODELETE isKeywordValidForPropertyValues(CSSPropertyID, CSSValueID, const CSSParserContext&);
 
     const StylePropertyMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
     static bool isColorProperty(CSSPropertyID propertyId)

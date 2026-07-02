@@ -56,8 +56,8 @@ private:
     void newRegionsAvailable(TextTrackLoader&) final;
     void newStyleSheetsAvailable(TextTrackLoader&) final;
 
-    AtomString id() const final;
-    bool isDefault() const final;
+    AtomString NODELETE id() const final;
+    bool NODELETE isDefault() const final;
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "LoadableTextTrack"_s; }

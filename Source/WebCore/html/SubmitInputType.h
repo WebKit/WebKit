@@ -49,11 +49,11 @@ private:
     {
     }
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
     bool appendFormData(DOMFormData&) const final;
-    bool supportsRequired() const final;
+    bool NODELETE supportsRequired() const final;
     void handleDOMActivateEvent(Event&) final;
-    bool canBeSuccessfulSubmitButton() final;
+    bool NODELETE canBeSuccessfulSubmitButton() final;
     String defaultValue() const final;
 };
 

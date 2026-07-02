@@ -56,15 +56,15 @@ protected:
 
 private:
     // SOAuthorizationSession
-    void shouldStartInternal() final;
-    void beginAuthorizationIfReady() final;
+    void NODELETE shouldStartInternal() final;
+    void NODELETE beginAuthorizationIfReady() final;
 
     // WebViewDidMoveToWindowObserver
-    void webViewDidMoveToWindow() final;
+    void NODELETE webViewDidMoveToWindow() final;
 
     virtual void beforeStart() = 0;
 
-    bool pageActiveURLDidChangeDuringWaiting() const;
+    bool NODELETE pageActiveURLDidChangeDuringWaiting() const;
 
     Callback m_callback;
     URL m_waitingPageActiveURL;

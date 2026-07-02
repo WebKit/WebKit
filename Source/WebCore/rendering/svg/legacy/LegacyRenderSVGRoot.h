@@ -43,7 +43,7 @@ public:
     SVGSVGElement& NODELETE svgSVGElement() const;
 
     bool isEmbeddedThroughSVGImage() const;
-    bool isEmbeddedThroughFrameContainingSVGDocument() const;
+    bool NODELETE isEmbeddedThroughFrameContainingSVGDocument() const;
 
     FloatSize computeIntrinsicSize() const;
     FloatSize preferredAspectRatioAsSize() const final;
@@ -57,7 +57,7 @@ public:
     IntSize containerSize() const { return m_containerSize; }
     void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
-    bool hasRelativeDimensions() const override;
+    bool NODELETE hasRelativeDimensions() const override;
 
     // localToBorderBoxTransform maps local SVG viewport coordinates to local CSS box coordinates.  
     const AffineTransform& localToBorderBoxTransform() const LIFETIME_BOUND { return m_localToBorderBoxTransform; }
@@ -91,7 +91,7 @@ private:
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
-    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override;
+    const AffineTransform& NODELETE localToParentTransform() const LIFETIME_BOUND override;
 
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox.value_or(FloatRect()); }
     FloatRect strokeBoundingBox() const override;

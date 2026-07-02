@@ -142,7 +142,7 @@ public:
     bool NODELETE isSteppable() const; // stepUp()/stepDown() for user-interaction.
     WEBCORE_EXPORT bool NODELETE isTextButton() const;
     bool NODELETE isRadioButton() const;
-    WEBCORE_EXPORT bool isTextField() const final;
+    WEBCORE_EXPORT bool NODELETE isTextField() const final;
     WEBCORE_EXPORT bool NODELETE isSearchField() const;
     bool NODELETE isInputTypeHidden() const;
     WEBCORE_EXPORT bool NODELETE isPasswordField() const;
@@ -163,7 +163,7 @@ public:
     WEBCORE_EXPORT bool NODELETE isFileUpload() const;
     bool NODELETE isImageButton() const;
     WEBCORE_EXPORT bool NODELETE isNumberField() const;
-    WEBCORE_EXPORT bool isSubmitButton() const final;
+    WEBCORE_EXPORT bool NODELETE isSubmitButton() const final;
     WEBCORE_EXPORT bool NODELETE isTelephoneField() const;
     WEBCORE_EXPORT bool NODELETE isURLField() const;
     WEBCORE_EXPORT bool NODELETE isDateField() const;
@@ -188,7 +188,7 @@ public:
     HTMLElement* cancelButtonElement() const;
     HTMLElement* sliderThumbElement() const;
     HTMLElement* sliderTrackElement() const;
-    HTMLElement* placeholderElement() const final;
+    HTMLElement* NODELETE placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
     WEBCORE_EXPORT HTMLElement* dataListButtonElement() const;
 
@@ -222,13 +222,13 @@ public:
 
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+    bool NODELETE isReplaced(const Style::ComputedStyle* = nullptr) const final;
     void willAttachRenderers() final;
     void didAttachRenderers() final;
     void didDetachRenderers() final;
 
-    bool isActivatedSubmit() const final;
-    void setActivatedSubmit(bool flag) final;
+    bool NODELETE isActivatedSubmit() const final;
+    void NODELETE setActivatedSubmit(bool flag) final;
 
     String altText() const;
 
@@ -325,7 +325,7 @@ public:
     void blur() final;
     void defaultBlur();
 
-    const AtomString& name() const final;
+    const AtomString& NODELETE name() const final;
 
     void endEditing();
 
@@ -379,21 +379,21 @@ private:
     void removingSteps(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
     bool NODELETE isEnumeratable() const final;
-    bool isLabelable() const final;
+    bool NODELETE isLabelable() const final;
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
-    bool shouldUseInputMethod() final;
+    bool NODELETE shouldUseInputMethod() final;
 
-    bool isInteractiveContent() const final;
+    bool NODELETE isInteractiveContent() const final;
 
     bool canTriggerImplicitSubmission() const final { return isTextField(); }
 
     const AtomString& formControlType() const final;
 
-    bool shouldSaveAndRestoreFormControlState() const final;
+    bool NODELETE shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
 
@@ -412,7 +412,7 @@ private:
 
     bool appendFormData(DOMFormData&) final;
 
-    bool isSuccessfulSubmitButton() const final;
+    bool NODELETE isSuccessfulSubmitButton() const final;
     bool matchesDefaultPseudoClass() const final;
 
     void reset() final;
@@ -430,13 +430,13 @@ private:
     void registerForSuspensionCallbackIfNeeded();
     void unregisterForSuspensionCallbackIfNeeded();
 
-    bool supportsReadOnly() const final;
+    bool NODELETE supportsReadOnly() const final;
     bool supportsMinLength() const { return isTextType(); }
     bool supportsMaxLength() const { return isTextType(); }
     bool NODELETE tooShort(StringView, NeedsToCheckDirtyFlag) const;
     bool tooLong(StringView, NeedsToCheckDirtyFlag) const;
 
-    bool supportsPlaceholder() const final;
+    bool NODELETE supportsPlaceholder() const final;
     void updatePlaceholderText() final;
     bool isEmptyValue() const final;
     void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
@@ -469,7 +469,7 @@ private:
 
     void updateUserAgentShadowTree() final;
 
-    bool dirAutoUsesValue() const final;
+    bool NODELETE dirAutoUsesValue() const final;
 
     AtomString m_name;
     String m_valueIfDirty;

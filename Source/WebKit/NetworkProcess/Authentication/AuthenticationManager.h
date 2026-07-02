@@ -66,7 +66,7 @@ public:
     explicit AuthenticationManager(NetworkProcess&);
     ~AuthenticationManager();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
     static ASCIILiteral supplementName();

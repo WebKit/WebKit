@@ -72,30 +72,30 @@ public:
     void removeStorageAccess();
 
 private:
-    bool hasHTMLView() const final;
+    bool NODELETE hasHTMLView() const final;
     bool hasWebView() const final;
     
-    void makeRepresentation(WebCore::DocumentLoader*) final;
+    void NODELETE makeRepresentation(WebCore::DocumentLoader*) final;
 #if PLATFORM(IOS_FAMILY)
     bool forceLayoutOnRestoreFromBackForwardCache() final;
 #endif
-    void forceLayoutForNonHTML() final;
+    void NODELETE forceLayoutForNonHTML() final;
     
-    void setCopiesOnScroll() final;
+    void NODELETE setCopiesOnScroll() final;
     
     void detachedFromParent2() final;
-    void detachedFromParent3() final;
+    void NODELETE detachedFromParent3() final;
 
-    bool shouldSuppressLayoutMilestones() const final;
+    bool NODELETE shouldSuppressLayoutMilestones() const final;
     void fireLayoutRelatedMilestonesIfNeeded();
     
     void assignIdentifierToInitialRequest(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&) final;
     
     void dispatchWillSendRequest(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) final;
     bool shouldUseCredentialStorage(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final;
-    void dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::AuthenticationChallenge&) final;
+    void NODELETE dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::AuthenticationChallenge&) final;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    bool canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::ProtectionSpace&) final;
+    bool NODELETE canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::ProtectionSpace&) final;
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final;
@@ -104,7 +104,7 @@ private:
     void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, int dataLength) final;
     void dispatchDidFinishLoading(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final;
     void dispatchDidFailLoading(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&) final;
-    bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) final;
+    bool NODELETE dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length) final;
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *detectionResults) final;
 #endif
@@ -123,7 +123,7 @@ private:
     void dispatchDidReplaceStateWithinPage() final;
     void dispatchDidPopStateWithinPage() final;
     void didSameDocumentNavigationForFrameViaJS(SameDocumentNavigationType);
-    void dispatchWillClose() final;
+    void NODELETE dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
     void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>, std::optional<WebCore::WasPrivateRelayed>) final;
@@ -148,22 +148,22 @@ private:
     void setPrinting(bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize) final;
     void cancelPolicyCheck() final;
     
-    void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;
+    void NODELETE dispatchUnableToImplementPolicy(const WebCore::ResourceError&) final;
     
     void dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&) final;
     void dispatchWillSubmitForm(WebCore::FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
     
     void dispatchBackForwardItemLoading(const URL&, const String& referer, WebCore::LocalFrame& childFrame) final;
 
-    void revertToProvisionalState(WebCore::DocumentLoader*) final;
+    void NODELETE revertToProvisionalState(WebCore::DocumentLoader*) final;
     void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&) final;
     
-    void setMainFrameDocumentReady(bool) final;
+    void NODELETE setMainFrameDocumentReady(bool) final;
     
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String(), WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
     
-    void willChangeTitle(WebCore::DocumentLoader*) final;
-    void didChangeTitle(WebCore::DocumentLoader*) final;
+    void NODELETE willChangeTitle(WebCore::DocumentLoader*) final;
+    void NODELETE didChangeTitle(WebCore::DocumentLoader*) final;
 
     void willReplaceMultipartContent() final;
     void didReplaceMultipartContent() final;
@@ -175,7 +175,7 @@ private:
     void updateGlobalHistoryRedirectLinks() final;
 
     WebCore::ShouldGoToHistoryItem shouldGoToHistoryItem(WebCore::HistoryItem&, WebCore::IsSameDocumentNavigation) const final;
-    bool supportsAsyncShouldGoToHistoryItem() const final;
+    bool NODELETE supportsAsyncShouldGoToHistoryItem() const final;
     void shouldGoToHistoryItemAsync(WebCore::HistoryItem&, CompletionHandler<void(WebCore::ShouldGoToHistoryItem)>&&) const final;
 
     void dispatchGoToBackForwardItemAtIndex(int steps, WebCore::FrameLoadType) final;
@@ -186,18 +186,18 @@ private:
 
     bool shouldFallBack(const WebCore::ResourceError&) const final;
     
-    bool canHandleRequest(const WebCore::ResourceRequest&) const final;
-    bool canShowMIMEType(const String& MIMEType) const final;
-    bool canShowMIMETypeAsHTML(const String& MIMEType) const final;
-    bool representationExistsForURLScheme(StringView URLScheme) const final;
-    String generatedMIMETypeForURLScheme(StringView URLScheme) const final;
+    bool NODELETE canHandleRequest(const WebCore::ResourceRequest&) const final;
+    bool NODELETE canShowMIMEType(const String& MIMEType) const final;
+    bool NODELETE canShowMIMETypeAsHTML(const String& MIMEType) const final;
+    bool NODELETE representationExistsForURLScheme(StringView URLScheme) const final;
+    String NODELETE generatedMIMETypeForURLScheme(StringView URLScheme) const final;
     
     void frameLoadCompleted() final;
-    void saveViewStateToItem(WebCore::HistoryItem&) final;
+    void NODELETE saveViewStateToItem(WebCore::HistoryItem&) final;
     void restoreViewState() final;
     void provisionalLoadStarted() final;
-    void didFinishLoad() final;
-    void prepareForDataSourceReplacement() final;
+    void NODELETE didFinishLoad() final;
+    void NODELETE prepareForDataSourceReplacement() final;
 
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&, WebCore::ResourceRequest&&) final;
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&) final;
@@ -210,20 +210,20 @@ private:
 
     String overrideContentSecurityPolicy() const final;
 
-    void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
+    void NODELETE savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
 #if PLATFORM(IOS_FAMILY)
     void didRestoreFrameHierarchyForCachedFrame() final;
 #endif
     void transitionToCommittedForNewPage(InitializingIframe) final;
 
-    void didRestoreFromBackForwardCache() final;
+    void NODELETE didRestoreFromBackForwardCache() final;
 
     void didCacheBackForwardItem(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier) final;
     void didEvictBackForwardItem(WebCore::BackForwardItemIdentifier) final;
     void didTakeBackForwardItemForRestoration(WebCore::BackForwardItemIdentifier) final;
 
-    bool canCachePage() const final;
+    bool NODELETE canCachePage() const final;
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
     RefPtr<WebCore::LocalFrame> createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
@@ -245,21 +245,21 @@ private:
     void willInjectUserScript(WebCore::DOMWrapperWorld&) final;
 
 #if PLATFORM(COCOA)
-    RemoteAXObjectRef accessibilityRemoteObject() final;
-    WebCore::IntPoint accessibilityRemoteFrameOffset() final;
+    RemoteAXObjectRef NODELETE accessibilityRemoteObject() final;
+    WebCore::IntPoint NODELETE accessibilityRemoteFrameOffset() final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) final;
     RefPtr<WebCore::AXIsolatedTree> isolatedTree() const final;
 #endif
-    void willCacheResponse(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
+    void NODELETE willCacheResponse(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 
-    std::optional<double> dataDetectionReferenceDate() final;
+    std::optional<double> NODELETE dataDetectionReferenceDate() final;
 #endif
 
     void didChangeScrollOffset() final;
     bool isWebLocalFrameLoaderClient() const final { return true; }
 
-    bool allowScript(bool enabledPerSettings) final;
+    bool NODELETE allowScript(bool enabledPerSettings) final;
 
     bool shouldForceUniversalAccessFromLocalURL(const URL&) final;
 

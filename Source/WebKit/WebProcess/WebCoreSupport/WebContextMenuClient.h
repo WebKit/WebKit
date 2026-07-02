@@ -43,12 +43,12 @@ public:
     }
     
 private:
-    void downloadURL(const URL&) override;
-    void searchWithGoogle(const WebCore::LocalFrame*) override;
-    void lookUpInDictionary(WebCore::LocalFrame*) override;
-    bool isSpeaking() const override;
-    void speak(const String&) override;
-    void stopSpeaking() override;
+    void NODELETE downloadURL(const URL&) override;
+    void NODELETE searchWithGoogle(const WebCore::LocalFrame*) override;
+    void NODELETE lookUpInDictionary(WebCore::LocalFrame*) override;
+    bool NODELETE isSpeaking() const override;
+    void NODELETE speak(const String&) override;
+    void NODELETE stopSpeaking() override;
 
 #if ENABLE(IMAGE_ANALYSIS)
     bool supportsLookUpInImages() final { return true; }
@@ -59,7 +59,7 @@ private:
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)
-    void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
+    void NODELETE handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
 #endif
 
 #if PLATFORM(GTK)

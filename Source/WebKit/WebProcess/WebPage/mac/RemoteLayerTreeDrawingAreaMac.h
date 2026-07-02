@@ -49,20 +49,20 @@ public:
 private:
     RemoteLayerTreeDrawingAreaMac(WebPage&, const WebPageCreationParameters&);
 
-    WebCore::DelegatedScrollingMode delegatedScrollingMode() const final;
+    WebCore::DelegatedScrollingMode NODELETE delegatedScrollingMode() const final;
 
-    void setColorSpace(std::optional<WebCore::DestinationColorSpace>) final;
-    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const final;
+    void NODELETE setColorSpace(std::optional<WebCore::DestinationColorSpace>) final;
+    std::optional<WebCore::DestinationColorSpace> NODELETE displayColorSpace() const final;
 
     std::optional<WebCore::DestinationColorSpace> m_displayColorSpace;
 
     bool usesDelegatedPageScaling() const override { return false; }
 
-    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) final;
+    void NODELETE mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) final;
 
-    void adjustTransientZoom(double scale, WebCore::FloatPoint origin) final;
+    void NODELETE adjustTransientZoom(double scale, WebCore::FloatPoint origin) final;
 
-    void willCommitMainFrameData(MainFrameData&) final;
+    void NODELETE willCommitMainFrameData(MainFrameData&) final;
 };
 
 } // namespace WebKit

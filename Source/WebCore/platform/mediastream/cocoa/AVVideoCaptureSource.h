@@ -72,7 +72,7 @@ public:
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
     void deviceDisconnected(RetainPtr<NSNotification>);
 
-    AVCaptureSession* session() const;
+    AVCaptureSession* NODELETE session() const;
 
     void captureSessionIsRunningDidChange(bool);
     void captureSessionRuntimeError(RetainPtr<NSError>);
@@ -105,7 +105,7 @@ private:
     void stopProducingData() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     void monitorOrientation(OrientationNotifier&) final;
-    void startApplyingConstraints() final;
+    void NODELETE startApplyingConstraints() final;
     void endApplyingConstraints() final;
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
@@ -132,7 +132,7 @@ private:
 
     IntSize sizeForPreset(NSString*);
 
-    AVCaptureDevice* device() const;
+    AVCaptureDevice* NODELETE device() const;
 
     IntDegrees sensorOrientationFromVideoOutput();
 

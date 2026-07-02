@@ -40,15 +40,15 @@ public:
     JSWeakValue() = default;
     ~JSWeakValue();
 
-    void clear();
-    bool isClear() const;
+    void NODELETE clear();
+    bool NODELETE isClear() const;
 
     bool isSet() const { return m_tag != WeakTypeTag::NotSet; }
     bool isPrimitive() const { return m_tag == WeakTypeTag::Primitive; }
     bool isObject() const { return m_tag == WeakTypeTag::Object; }
     bool isString() const { return m_tag == WeakTypeTag::String; }
 
-    void setPrimitive(JSValue);
+    void NODELETE setPrimitive(JSValue);
     void setObject(JSObject*, WeakHandleOwner&, void* context);
     void setString(JSString*, WeakHandleOwner&, void* context);
 

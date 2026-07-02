@@ -48,7 +48,7 @@ public:
     bool NODELETE operator==(const GridItemData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const GridItemData&) const;
+    void NODELETE dumpDifferences(TextStream&, const GridItemData&) const;
 #endif
 
     GridPosition gridItemColumnStart;

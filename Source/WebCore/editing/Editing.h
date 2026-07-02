@@ -79,8 +79,8 @@ Node* previousLeafNode(const Node*);
 WEBCORE_EXPORT int lastOffsetForEditing(const Node&);
 int caretMinOffset(const Node&);
 int caretMaxOffset(const Node&);
-unsigned convertOffsetInTextFragmentToNodeOffset(const RenderObject&, unsigned offset);
-unsigned convertNodeOffsetToOffsetInTextFragment(const RenderObject&, unsigned offset);
+unsigned NODELETE convertOffsetInTextFragmentToNodeOffset(const RenderObject&, unsigned offset);
+unsigned NODELETE convertNodeOffsetToOffsetInTextFragment(const RenderObject&, unsigned offset);
 
 bool hasEditableStyle(const Node&, EditableType);
 bool isEditableNode(const Node&);

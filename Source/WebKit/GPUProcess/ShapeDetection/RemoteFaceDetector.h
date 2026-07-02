@@ -62,7 +62,7 @@ public:
         return adoptRef(*new RemoteFaceDetector(WTF::move(faceDetector), renderingBackend, identifier));
     }
 
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
     virtual ~RemoteFaceDetector();
 

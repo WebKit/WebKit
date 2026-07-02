@@ -96,7 +96,7 @@ public:
         }
 
     private:
-        bool hasCallback() const final { return true; }
+        bool NODELETE hasCallback() const final { return true; }
 
         SubscriberCallbackInspect(ScriptExecutionContext& context, Ref<Observable>&& source, ObservableInspector&& inspector)
             : SubscriberCallback(&context)

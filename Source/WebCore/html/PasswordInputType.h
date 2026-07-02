@@ -51,12 +51,12 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    bool shouldSaveAndRestoreFormControlState() const final;
+    bool NODELETE shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;
-    void restoreFormControlState(const FormControlState&) final;
-    bool shouldUseInputMethod() const final;
-    bool shouldResetOnDocumentActivation() final;
-    bool shouldRespectListAttribute() final;
+    void NODELETE restoreFormControlState(const FormControlState&) final;
+    bool NODELETE shouldUseInputMethod() const final;
+    bool NODELETE shouldResetOnDocumentActivation() final;
+    bool NODELETE shouldRespectListAttribute() final;
 };
 
 } // namespace WebCore

@@ -33,7 +33,7 @@ namespace WebCore {
 // Scrollbar theme used in image snapshots, to eliminate appearance differences between platforms.
 class ScrollbarThemeMock : public ScrollbarThemeComposite {
 public:
-    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
+    int NODELETE scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) override;
 
 protected:
     bool hasButtons(Scrollbar&) override { return false; }
@@ -47,7 +47,7 @@ protected:
     void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
     int maxOverlapBetweenPages() override { return 40; }
 
-    bool usesOverlayScrollbars() const override;
+    bool NODELETE usesOverlayScrollbars() const override;
 private:
     bool isMockTheme() const override { return true; }
 };

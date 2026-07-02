@@ -180,7 +180,7 @@ private:
     inline static Ref<AtomStringImpl> add(VM&, ASCIILiteral); // Defined in IdentifierInlines.h
 
 #ifndef NDEBUG
-    JS_EXPORT_PRIVATE static void checkCurrentAtomStringTable(VM&);
+    JS_EXPORT_PRIVATE static void NODELETE checkCurrentAtomStringTable(VM&);
 #else
     JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH static void checkCurrentAtomStringTable(VM&);
 #endif

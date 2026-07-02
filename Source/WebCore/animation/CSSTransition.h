@@ -65,8 +65,8 @@ private:
     void animationDidFinish() final;
     bool isCSSTransition() const final { return true; }
 
-    AnimationPlayState backingAnimationPlayState() const final;
-    TimingFunction* backingAnimationTimingFunction() const final;
+    AnimationPlayState NODELETE backingAnimationPlayState() const final;
+    TimingFunction* NODELETE backingAnimationTimingFunction() const final;
 
     AnimatableCSSProperty m_property;
     MonotonicTime m_generationTime;

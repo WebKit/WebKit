@@ -33,7 +33,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+ClientDataType NODELETE getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
         return ClientDataType::Create;

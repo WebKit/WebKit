@@ -64,7 +64,7 @@ private:
     explicit DOMAudioSession(ScriptExecutionContext*);
 
     // EventTarget
-    EventTargetInterfaceType eventTargetInterface() const final;
+    EventTargetInterfaceType NODELETE eventTargetInterface() const final;
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

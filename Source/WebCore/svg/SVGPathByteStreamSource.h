@@ -32,7 +32,7 @@ public:
     explicit SVGPathByteStreamSource(const SVGPathByteStream&);
 
 private:
-    bool hasMoreData() const final;
+    bool NODELETE hasMoreData() const final;
     bool moveToNextToken() final { return true; }
     SVGPathSegType nextCommand(SVGPathSegType) final;
 

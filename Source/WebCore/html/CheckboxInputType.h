@@ -55,7 +55,7 @@ public:
         return adoptRef(*new CheckboxInputType(element));
     }
 
-    bool valueMissing(StringView) const final;
+    bool NODELETE valueMissing(StringView) const final;
     float switchAnimationVisuallyOnProgress() const;
     bool NODELETE isSwitchVisuallyOn() const;
     float switchAnimationHeldProgress() const;
@@ -84,7 +84,7 @@ private:
     bool NODELETE isSwitchPointerTracking() const;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
-    bool matchesIndeterminatePseudoClass() const final;
+    bool NODELETE matchesIndeterminatePseudoClass() const final;
     void willUpdateCheckedness(bool /* nowChecked */, WasSetByJavaScript);
     void disabledStateChanged() final;
     Seconds NODELETE switchAnimationStartTime(SwitchAnimationType) const;

@@ -44,7 +44,7 @@ static TextBoxTrim NODELETE textBoxTrim(const RenderBlockFlow& textBoxTrimRoot)
     return textBoxTrimRoot.style().textBoxTrim();
 }
 
-static void NODELETE removeTextBoxTrimStart(LocalFrameViewLayoutContext& layoutContext)
+static void removeTextBoxTrimStart(LocalFrameViewLayoutContext& layoutContext)
 {
     auto textBoxTrim = layoutContext.textBoxTrim();
     if (!textBoxTrim || !textBoxTrim->trimFirstFormattedLine) {

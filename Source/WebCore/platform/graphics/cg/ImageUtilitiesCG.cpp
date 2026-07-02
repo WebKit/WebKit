@@ -377,7 +377,7 @@ void decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize>
 
 using PutBytesCallback = size_t(std::span<const uint8_t>);
 
-uint8_t verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer)
+uint8_t NODELETE verifyImageBufferIsBigEnough(std::span<const uint8_t> buffer)
 {
     RELEASE_ASSERT(!buffer.empty());
 

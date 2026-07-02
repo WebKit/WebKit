@@ -271,7 +271,7 @@ public:
     }
 
     template<typename T>
-    bool NODELETE couldOverflowAdd(const IntRange& other)
+    bool couldOverflowAdd(const IntRange& other)
     {
         return sumOverflows<T>(m_min, other.m_min)
             || sumOverflows<T>(m_min, other.m_max)
@@ -279,7 +279,7 @@ public:
             || sumOverflows<T>(m_max, other.m_max);
     }
 
-    bool NODELETE couldOverflowAdd(const IntRange& other, Type type)
+    bool couldOverflowAdd(const IntRange& other, Type type)
     {
         switch (type.kind()) {
         case Int32:
@@ -292,7 +292,7 @@ public:
     }
 
     template<typename T>
-    bool NODELETE couldOverflowSub(const IntRange& other)
+    bool couldOverflowSub(const IntRange& other)
     {
         return differenceOverflows<T>(m_min, other.m_min)
             || differenceOverflows<T>(m_min, other.m_max)
@@ -300,7 +300,7 @@ public:
             || differenceOverflows<T>(m_max, other.m_max);
     }
 
-    bool NODELETE couldOverflowSub(const IntRange& other, Type type)
+    bool couldOverflowSub(const IntRange& other, Type type)
     {
         switch (type.kind()) {
         case Int32:
@@ -313,7 +313,7 @@ public:
     }
 
     template<typename T>
-    bool NODELETE couldOverflowMul(const IntRange& other)
+    bool couldOverflowMul(const IntRange& other)
     {
         return productOverflows<T>(m_min, other.m_min)
             || productOverflows<T>(m_min, other.m_max)
@@ -321,7 +321,7 @@ public:
             || productOverflows<T>(m_max, other.m_max);
     }
 
-    bool NODELETE couldOverflowMul(const IntRange& other, Type type)
+    bool couldOverflowMul(const IntRange& other, Type type)
     {
         switch (type.kind()) {
         case Int32:
@@ -417,14 +417,14 @@ public:
     }
 
     template<typename T>
-    IntRange NODELETE add(const IntRange& other)
+    IntRange add(const IntRange& other)
     {
         if (couldOverflowAdd<T>(other))
             return top<T>();
         return IntRange(m_min + other.m_min, m_max + other.m_max);
     }
 
-    IntRange NODELETE add(const IntRange& other, Type type)
+    IntRange add(const IntRange& other, Type type)
     {
         switch (type.kind()) {
         case Int32:
@@ -438,14 +438,14 @@ public:
     }
 
     template<typename T>
-    IntRange NODELETE sub(const IntRange& other)
+    IntRange sub(const IntRange& other)
     {
         if (couldOverflowSub<T>(other))
             return top<T>();
         return IntRange(m_min - other.m_max, m_max - other.m_min);
     }
 
-    IntRange NODELETE sub(const IntRange& other, Type type)
+    IntRange sub(const IntRange& other, Type type)
     {
         switch (type.kind()) {
         case Int32:

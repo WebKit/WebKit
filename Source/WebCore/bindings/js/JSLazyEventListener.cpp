@@ -83,7 +83,7 @@ JSLazyEventListener::JSLazyEventListener(CreationArguments&& arguments, const UR
 }
 
 #if ASSERT_ENABLED
-static inline bool isCloneInShadowTreeOfSVGUseElement(Node& originalNode, EventTarget& eventTarget)
+static inline bool NODELETE isCloneInShadowTreeOfSVGUseElement(Node& originalNode, EventTarget& eventTarget)
 {
     auto* element = dynamicDowncast<SVGElement>(eventTarget);
     if (!element || !element->correspondingElement())

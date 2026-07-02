@@ -56,7 +56,7 @@ public:
     ~DataTransferItem();
 
     File* file() { return m_file; }
-    void NODELETE clearListAndPutIntoDisabledMode();
+    void clearListAndPutIntoDisabledMode();
 
     bool NODELETE isFile() const;
     String kind() const;

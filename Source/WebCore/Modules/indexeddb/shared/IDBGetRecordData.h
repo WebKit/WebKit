@@ -41,7 +41,7 @@ struct IDBGetRecordData {
     WEBCORE_EXPORT IDBGetRecordData isolatedCopy() const;
 
 #if !LOG_DISABLED
-    String loggingString() const;
+    String NODELETE loggingString() const;
 #endif
 };
 

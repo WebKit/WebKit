@@ -55,7 +55,7 @@ public:
 
     PlatformLayer* platformLayer() const override { return m_platformLayer.get(); }
 
-    uint32_t hostingContextID() override;
+    uint32_t NODELETE hostingContextID() override;
 
     void setNeedsDisplayInRect(const WebCore::FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;

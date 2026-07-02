@@ -85,7 +85,7 @@ private:
 
     void potentiallyBlockRendering() final;
     void unblockRendering() final;
-    bool isImplicitlyPotentiallyRenderBlocking() const;
+    bool NODELETE isImplicitlyPotentiallyRenderBlocking() const;
 
     ExceptionOr<void> setTextContent(ExceptionOr<String>);
 
@@ -93,14 +93,14 @@ private:
 
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 
-    String sourceAttributeValue() const final;
-    AtomString charsetAttributeValue() const final;
-    String typeAttributeValue() const final;
-    String languageAttributeValue() const final;
-    bool hasAsyncAttribute() const final;
-    bool hasDeferAttribute() const final;
-    bool hasNoModuleAttribute() const final;
-    bool hasSourceAttribute() const final;
+    String NODELETE sourceAttributeValue() const final;
+    AtomString NODELETE charsetAttributeValue() const final;
+    String NODELETE typeAttributeValue() const final;
+    String NODELETE languageAttributeValue() const final;
+    bool NODELETE hasAsyncAttribute() const final;
+    bool NODELETE hasDeferAttribute() const final;
+    bool NODELETE hasNoModuleAttribute() const final;
+    bool NODELETE hasSourceAttribute() const final;
 
     void dispatchLoadEvent() final;
 

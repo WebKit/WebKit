@@ -72,7 +72,7 @@ private:
     void updateBeforeDescendants(Element&, const Style::ElementUpdate*);
     void updateAfterDescendants(Element&, const Style::ElementUpdate*);
     bool textRendererIsNeeded(const Text& textNode);
-    void NODELETE storePreviousRenderer(Node&);
+    void storePreviousRenderer(Node&);
 
     void destroyAndCancelAnimationsForSubtree(RenderElement&);
 
@@ -89,8 +89,8 @@ private:
         Parent(Element&, const Style::ElementUpdate*);
     };
     Parent& parent() LIFETIME_BOUND { return m_parentStack.last(); }
-    Parent& NODELETE renderingParent();
-    RenderTreePosition& NODELETE renderTreePosition();
+    Parent& renderingParent();
+    RenderTreePosition& renderTreePosition();
 
     GeneratedContent& generatedContent() LIFETIME_BOUND { return m_generatedContent; }
     ViewTransition& viewTransition() LIFETIME_BOUND { return m_viewTransition; }
@@ -105,7 +105,7 @@ private:
     static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
     static void tearDownDescendantRenderers(Element&, TeardownType, RenderTreeBuilder&);
     enum class TeardownScope { IncludingRoot, DescendantsOnly };
-    template<TeardownScope> static void tearDownRenderersInternal(Element&, TeardownType, RenderTreeBuilder&);
+    template<TeardownScope> static void NODELETE tearDownRenderersInternal(Element&, TeardownType, RenderTreeBuilder&);
     enum class NeedsRepaintAndLayout : bool { No, Yes };
     static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&, NeedsRepaintAndLayout = NeedsRepaintAndLayout::Yes);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);

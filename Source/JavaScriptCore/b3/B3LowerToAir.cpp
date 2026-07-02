@@ -535,7 +535,7 @@ private:
         return true;
     }
 
-    bool NODELETE isMergeableValue(Value* v, B3::Opcode b3Opcode)
+    bool isMergeableValue(Value* v, B3::Opcode b3Opcode)
     { 
         if (v->opcode() != b3Opcode)
             return false;
@@ -559,7 +559,7 @@ private:
     }
 
     template<IsLegalOffset Int>
-    std::optional<unsigned> NODELETE scaleForShl(Air::Opcode opcode, Value* shl, Int offset, std::optional<Width> width = std::nullopt)
+    std::optional<unsigned> scaleForShl(Air::Opcode opcode, Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
             return std::nullopt;
@@ -1155,7 +1155,7 @@ private:
     }
 
     template<Air::Opcode opcode32, Air::Opcode opcode64, Commutativity commutativity = NotCommutative>
-    void appendBinOp(Value* left, Value* right)
+    void NODELETE appendBinOp(Value* left, Value* right)
     {
         appendBinOp<opcode32, opcode64, Air::Oops, Air::Oops, commutativity>(left, right);
     }
@@ -1725,14 +1725,14 @@ private:
     }
 
     template<typename... Arguments>
-    void print(Arguments&&... arguments)
+    void NODELETE print(Arguments&&... arguments)
     {
         Value* origin = m_value;
         print(origin, std::forward<Arguments>(arguments)...);
     }
 
     template<typename... Arguments>
-    void print(Value* origin, Arguments&&... arguments)
+    void NODELETE print(Value* origin, Arguments&&... arguments)
     {
         auto printList = Printer::makePrintRecordList(arguments...);
         auto printSpecial = static_cast<Air::PrintSpecial*>(m_code.addSpecial(makeUnique<Air::PrintSpecial>(printList)));

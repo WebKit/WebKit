@@ -91,7 +91,7 @@ public:
 
     private:
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
-        WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void reportVerificationFailureAndCrash();
+        WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void NODELETE reportVerificationFailureAndCrash();
 #endif
 
         StackCheck& m_checker;

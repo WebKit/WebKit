@@ -39,9 +39,9 @@ enum class LogMemoryStatisticsReason : uint8_t {
 };
 
 WEBCORE_EXPORT void releaseMemory(Critical, Synchronous, MaintainBackForwardCache = MaintainBackForwardCache::No, MaintainMemoryCache = MaintainMemoryCache::No);
-void platformReleaseMemory(Critical);
+void NODELETE platformReleaseMemory(Critical);
 WEBCORE_EXPORT void releaseGraphicsMemory(Critical, Synchronous);
-void platformReleaseGraphicsMemory(Critical);
+void NODELETE platformReleaseGraphicsMemory(Critical);
 void jettisonExpensiveObjectsOnTopLevelNavigation();
 WEBCORE_EXPORT void registerMemoryReleaseNotifyCallbacks();
 WEBCORE_EXPORT void logMemoryStatistics(LogMemoryStatisticsReason);

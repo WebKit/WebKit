@@ -198,7 +198,7 @@ public:
     DownloadManager& NODELETE downloadManager();
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
-    NetworkSession* networkSession(PAL::SessionID) const final;
+    NetworkSession* NODELETE networkSession(PAL::SessionID) const final;
     void destroySession(PAL::SessionID, CompletionHandler<void()>&& = [] { });
     void ensureSessionWithDataStoreIdentifierRemoved(WTF::UUID, CompletionHandler<void()>&&);
 
@@ -227,7 +227,7 @@ public:
 #endif
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
-    std::optional<audit_token_t> sourceApplicationAuditToken() const;
+    std::optional<audit_token_t> NODELETE sourceApplicationAuditToken() const;
 #endif
 #if PLATFORM(COCOA) || USE(SOUP)
     HashSet<String> hostNamesWithHSTSCache(PAL::SessionID) const;
@@ -520,7 +520,7 @@ private:
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
     void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     void initializeConnection(IPC::Connection*) override;
-    bool shouldTerminate() override;
+    bool NODELETE shouldTerminate() override;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -529,9 +529,9 @@ private:
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     // DownloadManager::Client
-    void didCreateDownload() override;
+    void NODELETE didCreateDownload() override;
     void didDestroyDownload() override;
-    IPC::Connection* downloadProxyConnection() override;
+    IPC::Connection* NODELETE downloadProxyConnection() override;
     IPC::Connection* parentProcessConnectionForDownloads() override { return parentProcessConnection(); }
     AuthenticationManager& downloadsAuthenticationManager() override;
 
@@ -612,7 +612,7 @@ private:
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
 #endif
-    void stopRunLoopIfNecessary();
+    void NODELETE stopRunLoopIfNecessary();
 
     void setShouldRelaxThirdPartyCookieBlockingForPage(WebPageProxyIdentifier);
 

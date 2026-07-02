@@ -46,12 +46,12 @@ public:
     StochasticSpaceTimeMutatorScheduler(Heap&);
     ~StochasticSpaceTimeMutatorScheduler() final;
     
-    State state() const final;
+    State NODELETE state() const final;
     
     void beginCollection() final;
     
-    void didStop() final;
-    void willResume() final;
+    void NODELETE didStop() final;
+    void NODELETE willResume() final;
     void didReachTermination() final;
     void didExecuteConstraints() final;
     void synchronousDrainingDidStall() final;
@@ -61,7 +61,7 @@ public:
     
     void log() final;
     
-    void endCollection() final;
+    void NODELETE endCollection() final;
     
 private:
     class Snapshot;

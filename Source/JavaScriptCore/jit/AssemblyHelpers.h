@@ -1466,19 +1466,19 @@ public:
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if ASSERT_ENABLED
-    void jitAssertIsInt32(GPRReg);
-    void jitAssertIsJSInt32(GPRReg);
-    void jitAssertIsJSNumber(GPRReg);
-    void jitAssertIsJSDouble(GPRReg);
-    void jitAssertIsCell(GPRReg);
-    void jitAssertHasValidCallFrame();
-    void jitAssertIsNull(GPRReg);
-    void jitAssertTagsInPlace();
-    void jitAssertArgumentCountSane();
+    void NODELETE jitAssertIsInt32(GPRReg);
+    void NODELETE jitAssertIsJSInt32(GPRReg);
+    void NODELETE jitAssertIsJSNumber(GPRReg);
+    void NODELETE jitAssertIsJSDouble(GPRReg);
+    void NODELETE jitAssertIsCell(GPRReg);
+    void NODELETE jitAssertHasValidCallFrame();
+    void NODELETE jitAssertIsNull(GPRReg);
+    void NODELETE jitAssertTagsInPlace();
+    void NODELETE jitAssertArgumentCountSane();
     inline void jitAssertNoException(VM& vm) { jitReleaseAssertNoException(vm); }
-    void jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType);
-    void jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(GPRReg scratchGPR, GPRReg scratchGPR2, UnlinkedCodeBlock&);
-    void jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR);
+    void NODELETE jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType);
+    void NODELETE jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(GPRReg scratchGPR, GPRReg scratchGPR2, UnlinkedCodeBlock&);
+    void NODELETE jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR);
 #else
     void jitAssertIsInt32(GPRReg) { }
     void jitAssertIsJSInt32(GPRReg) { }

@@ -46,7 +46,7 @@ public:
     bool operator==(const SVGMarkerResourceData&) const;
 
 #if !LOG_DISABLED
-    void dumpDifferences(TextStream&, const SVGMarkerResourceData&) const;
+    void NODELETE dumpDifferences(TextStream&, const SVGMarkerResourceData&) const;
 #endif
 
     SVGMarkerResource markerStart;

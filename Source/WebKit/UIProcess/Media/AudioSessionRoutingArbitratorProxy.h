@@ -50,7 +50,7 @@ public:
     explicit AudioSessionRoutingArbitratorProxy(WebProcessProxy&);
     virtual ~AudioSessionRoutingArbitratorProxy();
 
-    void processDidTerminate();
+    void NODELETE processDidTerminate();
     WebCore::AudioSession::CategoryType category() const { return m_category; }
 
     static uint64_t destinationId() { return 1; }
@@ -69,7 +69,7 @@ public:
     WallTime arbitrationUpdateTime() const { return m_arbitrationUpdateTime; }
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 protected:
@@ -83,8 +83,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages
-    void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&);
-    void endRoutingArbitration();
+    void NODELETE beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&);
+    void NODELETE endRoutingArbitration();
 
     WeakRef<WebProcessProxy> m_process;
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };

@@ -104,7 +104,7 @@ RemoteDeviceProxy::~RemoteDeviceProxy()
     UNUSED_PARAM(sendResult);
 }
 
-Ref<WebCore::WebGPU::Queue> RemoteDeviceProxy::queue()
+Ref<WebCore::WebGPU::Queue> NODELETE RemoteDeviceProxy::queue()
 {
     return m_queue;
 }
@@ -469,27 +469,27 @@ void RemoteDeviceProxy::pauseAllErrorReporting(bool pause)
     UNUSED_PARAM(sendResult);
 }
 
-Ref<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::invalidCommandEncoder()
+Ref<WebCore::WebGPU::CommandEncoder> NODELETE RemoteDeviceProxy::invalidCommandEncoder()
 {
     return m_invalidCommandEncoder;
 }
 
-Ref<WebCore::WebGPU::CommandBuffer> RemoteDeviceProxy::invalidCommandBuffer()
+Ref<WebCore::WebGPU::CommandBuffer> NODELETE RemoteDeviceProxy::invalidCommandBuffer()
 {
     return m_invalidCommandBuffer;
 }
 
-Ref<WebCore::WebGPU::RenderPassEncoder> RemoteDeviceProxy::invalidRenderPassEncoder()
+Ref<WebCore::WebGPU::RenderPassEncoder> NODELETE RemoteDeviceProxy::invalidRenderPassEncoder()
 {
     return m_invalidRenderPassEncoder;
 }
 
-Ref<WebCore::WebGPU::ComputePassEncoder> RemoteDeviceProxy::invalidComputePassEncoder()
+Ref<WebCore::WebGPU::ComputePassEncoder> NODELETE RemoteDeviceProxy::invalidComputePassEncoder()
 {
     return m_invalidComputePassEncoder;
 }
 
-Ref<WebCore::WebGPU::BindGroupLayout> RemoteDeviceProxy::emptyBindGroupLayout() const
+Ref<WebCore::WebGPU::BindGroupLayout> NODELETE RemoteDeviceProxy::emptyBindGroupLayout() const
 {
     return m_emptyBindGroupLayout;
 }

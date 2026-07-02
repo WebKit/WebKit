@@ -66,7 +66,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DynamicContentScalingImageBuffer);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AsyncPDFRenderer);
 
-Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(PDFPresentationController& presentationController)
+Ref<AsyncPDFRenderer> NODELETE AsyncPDFRenderer::create(PDFPresentationController& presentationController)
 {
     return adoptRef(*new AsyncPDFRenderer { presentationController });
 }
@@ -140,7 +140,7 @@ void AsyncPDFRenderer::stopTrackingLayer(GraphicsLayer& layer)
     m_layerIDtoLayerMap.remove(*layer.primaryLayerID());
 }
 
-RefPtr<GraphicsLayer> AsyncPDFRenderer::layerForTileGrid(TileGridIdentifier identifier) const
+RefPtr<GraphicsLayer> NODELETE AsyncPDFRenderer::layerForTileGrid(TileGridIdentifier identifier) const
 {
     auto layerID = m_tileGridToLayerIDMap.getOptional(identifier);
     if (!layerID)
@@ -154,7 +154,7 @@ void AsyncPDFRenderer::setShowDebugBorders(bool showDebugBorders)
     m_showDebugBorders = showDebugBorders;
 }
 
-static RefPtr<NativeImage> renderPDFPagePreview(RetainPtr<PDFDocument>&& pdfDocument, const PDFPagePreviewRenderRequest& request)
+static RefPtr<NativeImage> NODELETE renderPDFPagePreview(RetainPtr<PDFDocument>&& pdfDocument, const PDFPagePreviewRenderRequest& request)
 {
     ASSERT(!isMainRunLoop());
     RefPtr imageBuffer = ImageBuffer::create(request.normalizedPageBounds.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, request.scale, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
@@ -255,7 +255,7 @@ std::optional<DynamicContentScalingDisplayList> AsyncPDFRenderer::dynamicContent
 }
 #endif
 
-std::optional<PDFTileRenderIdentifier> AsyncPDFRenderer::enqueueTileRenderForTileGridRepaint(TiledBacking& tiledBacking, TileGridIdentifier gridIdentifier, TileIndex tileIndex, const FloatRect& tileRect, const FloatRect& tileDirtyRect)
+std::optional<PDFTileRenderIdentifier> NODELETE AsyncPDFRenderer::enqueueTileRenderForTileGridRepaint(TiledBacking& tiledBacking, TileGridIdentifier gridIdentifier, TileIndex tileIndex, const FloatRect& tileRect, const FloatRect& tileDirtyRect)
 {
     auto tileInfo = TileForGrid { gridIdentifier, tileIndex };
 
@@ -502,7 +502,7 @@ FloatRect AsyncPDFRenderer::convertTileRectToPaintingCoords(const FloatRect& til
     return tileToPaintingTransform(pageScaleFactor).mapRect(tileRect);
 }
 
-std::optional<PDFTileRenderIdentifier> AsyncPDFRenderer::enqueueTileRenderIfNecessary(const TileForGrid& tileInfo, TileRenderInfo&& renderInfo)
+std::optional<PDFTileRenderIdentifier> NODELETE AsyncPDFRenderer::enqueueTileRenderIfNecessary(const TileForGrid& tileInfo, TileRenderInfo&& renderInfo)
 {
     if (renderInfo.pageCoverage.pages.isEmpty())
         return std::nullopt;
@@ -558,7 +558,7 @@ TileRenderInfo AsyncPDFRenderer::renderInfoForTile(const TiledBacking& tiledBack
     return TileRenderInfo { tileRect, encloseRectToDevicePixels(renderRect, pageCoverage.deviceScaleFactor), WTF::move(background), pageCoverage, m_showDebugBorders };
 }
 
-static void renderPDFTile(PDFDocument *pdfDocument, const TileRenderInfo& renderInfo, GraphicsContext& context)
+static void NODELETE renderPDFTile(PDFDocument *pdfDocument, const TileRenderInfo& renderInfo, GraphicsContext& context)
 {
     context.translate(-renderInfo.tileRect.location());
     if (renderInfo.tileRect != renderInfo.renderRect)
@@ -589,7 +589,7 @@ static void renderPDFTile(PDFDocument *pdfDocument, const TileRenderInfo& render
     }
 }
 
-static RefPtr<NativeImage> renderPDFTileToImage(PDFDocument *pdfDocument, const TileRenderInfo& renderInfo)
+static RefPtr<NativeImage> NODELETE renderPDFTileToImage(PDFDocument *pdfDocument, const TileRenderInfo& renderInfo)
 {
     ASSERT(!isMainRunLoop());
     RefPtr tileBuffer = ImageBuffer::create(renderInfo.tileRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);

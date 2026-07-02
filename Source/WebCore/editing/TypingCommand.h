@@ -109,7 +109,7 @@ private:
     static RefPtr<TypingCommand> lastTypingCommandIfStillOpenForTyping(Document&);
 
     void doApply() final;
-    bool isTypingCommand() const final;
+    bool NODELETE isTypingCommand() const final;
     bool preservesTypingStyle() const final { return m_preservesTypingStyle; }
     bool shouldRetainAutocorrectionIndicator() const final
     {
@@ -121,10 +121,10 @@ private:
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
     AtomString inputEventTypeName() const final;
-    bool isInputMethodComposing() const final;
+    bool NODELETE isInputMethodComposing() const final;
     String inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
-    bool isBeforeInputEventCancelable() const final;
+    bool NODELETE isBeforeInputEventCancelable() const final;
 
     bool performSmartListUndo(TextGranularity);
 
@@ -143,9 +143,9 @@ private:
     void insertParagraphSeparatorAndNotifyAccessibility();
 
     bool willApplyCommand() final;
-    void didApplyCommand() final;
+    void NODELETE didApplyCommand() final;
 
-    bool shouldDeferWillApplyCommandUntilAddingTypingCommand() const;
+    bool NODELETE shouldDeferWillApplyCommandUntilAddingTypingCommand() const;
 
     Type m_commandType;
     EditAction m_currentTypingEditAction;

@@ -65,7 +65,7 @@ public:
     ~CachedResourceMediaLoader() { stop(); }
 
     // CachedResourceClient.
-    void ref() const final { RefCounted::ref(); }
+    void NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
@@ -170,8 +170,8 @@ private:
     // PlatformMediaResourceClient
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) final;
     void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final { completionHandler(WTF::move(request)); }
-    bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final { return false; }
-    void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final { }
+    bool NODELETE shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final { return false; }
+    void NODELETE dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final { }
     void dataReceived(PlatformMediaResource&, const SharedBuffer&) final;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }

@@ -610,9 +610,9 @@ const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
 #ifndef NDEBUG
 
 // For use in the debugger.
-String* string(const char*);
-Vector<char> asciiDebug(StringImpl* impl);
-Vector<char> asciiDebug(String& string);
+String* NODELETE string(const char*);
+Vector<char> NODELETE asciiDebug(StringImpl* impl);
+Vector<char> NODELETE asciiDebug(String& string);
 
 void String::show() const
 {

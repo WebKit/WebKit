@@ -92,7 +92,7 @@ public:
     CheckedPtr<const RenderElement> stickyContainer() const;
     RefPtr<Element> bindingsSource() const override;
     RefPtr<Element> source() const override;
-    Style::SingleAnimationRange defaultRange() const final;
+    Style::SingleAnimationRange NODELETE defaultRange() const final;
 
     std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const final;
     std::pair<double, double> offsetIntervalForAttachmentRange(const Style::SingleAnimationRange&) const;
@@ -102,9 +102,9 @@ public:
     WebAnimationTime NODELETE epsilon() const;
 
 private:
-    ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;
+    ScrollTimeline::Data NODELETE computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;
     std::pair<double, double> intervalForTimelineRangeName(const ScrollTimeline::Data&, Style::SingleAnimationRangeName) const;
-    template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, Style::SingleAnimationRangeName, F&&) const;
+    template<typename F> double NODELETE mapOffsetToTimelineRange(const ScrollTimeline::Data&, Style::SingleAnimationRangeName, F&&) const;
 
     explicit ViewTimeline(ScrollAxis);
     explicit ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&);

@@ -106,7 +106,7 @@ public:
         JS_EXPORT_PRIVATE String preRedirectURL() const;
         JS_EXPORT_PRIVATE String toString() const;
 
-        JS_EXPORT_PRIVATE SourceID sourceID();
+        JS_EXPORT_PRIVATE SourceID NODELETE sourceID();
 
         CodeType NODELETE codeType() const;
         bool NODELETE hasLineAndColumnInfo() const;

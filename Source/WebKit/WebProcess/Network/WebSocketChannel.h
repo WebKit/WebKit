@@ -67,16 +67,16 @@ private:
 
     // ThreadableWebSocketChannel
     ConnectStatus connect(const URL&, const String& protocol) final;
-    String subprotocol() final;
-    String extensions() final;
+    String NODELETE subprotocol() final;
+    String NODELETE extensions() final;
     void send(CString&&) final;
     void send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
     void send(WebCore::Blob&) final;
     void close(int code, const String& reason) final;
     void fail(String&& reason) final;
     void disconnect() final;
-    void suspend() final;
-    void resume() final;
+    void NODELETE suspend() final;
+    void NODELETE resume() final;
 
     void notifySendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
     void logErrorMessage(const String&);
@@ -92,7 +92,7 @@ private:
 
     // MessageSender
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     bool increaseBufferedAmount(size_t);
     void decreaseBufferedAmount(size_t);

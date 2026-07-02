@@ -48,8 +48,8 @@ public:
 #endif
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const override;
-    ASCIILiteral boxName() const override;
+    void NODELETE outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const override;
+    ASCIILiteral NODELETE boxName() const override;
 #endif
 
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(LegacyInlineBox::renderer()); }
@@ -77,9 +77,9 @@ public:
 
     void addToLine(LegacyInlineBox* child);
     void deleteLine() final;
-    void adjustPosition(float dx, float dy) override;
+    void NODELETE adjustPosition(float dx, float dy) override;
 
-    virtual void removeLineBoxFromRenderObject();
+    virtual void NODELETE removeLineBoxFromRenderObject();
 
     void computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, GlyphOverflowAndFallbackFontsMap&);
     
@@ -92,8 +92,8 @@ public:
     void setHasTextChildren() { m_hasTextChildren = true; setHasTextDescendants(); }
     void setHasTextDescendants() { m_hasTextDescendants = true; }
     
-    void checkConsistency() const;
-    void setHasBadChildList();
+    void NODELETE checkConsistency() const;
+    void NODELETE setHasBadChildList();
 
     LayoutRect visualOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
     { 

@@ -81,7 +81,7 @@ public:
     Box<PCToCodeOriginMap> pcToCodeOriginMap() const;
 #endif
 
-    const HandlerInfo* handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*);
+    const HandlerInfo* NODELETE handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*);
 
     bool hasExceptionHandlers() const { return !m_exceptionHandlers.isEmpty(); }
 
@@ -107,9 +107,9 @@ protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, FunctionSpaceIndex, std::pair<const Name*, RefPtr<NameSection>>&&);
 
     template<typename Func>
-    void runWithDowncast(const Func&);
+    void NODELETE runWithDowncast(const Func&);
     template<typename Func>
-    void runWithDowncast(const Func&) const;
+    void NODELETE runWithDowncast(const Func&) const;
 
 private:
     const CompilationMode m_compilationMode;
@@ -478,7 +478,7 @@ public:
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
-    void setEntrypointWithoutRegistration(CodePtr<WasmEntryPtrTag>);
+    void NODELETE setEntrypointWithoutRegistration(CodePtr<WasmEntryPtrTag>);
     const uint8_t* bytecode() const { return m_bytecode; }
     const uint8_t* bytecodeEnd() const { return m_bytecodeEnd; }
     const uint8_t* metadata() const LIFETIME_BOUND { return m_metadata.span().data(); }

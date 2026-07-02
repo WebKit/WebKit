@@ -418,7 +418,7 @@ public:
     // WebPopupMenuProxy::Client
 #if !PLATFORM(IOS_FAMILY)
     void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) final;
-    NativeWebMouseEvent* currentlyProcessedMouseDownEvent() final;
+    NativeWebMouseEvent* NODELETE currentlyProcessedMouseDownEvent() final;
 #endif
 #if !PLATFORM(COCOA)
     void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
@@ -429,14 +429,14 @@ public:
 
 #if ENABLE(APPLE_PAY)
     // WebPaymentCoordinatorProxy::Client
-    IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
-    const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
+    IPC::Connection* NODELETE paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;
+    const String& NODELETE paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const String& NODELETE paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const String& NODELETE paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
-    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const final;
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebPaymentMessages() const final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;

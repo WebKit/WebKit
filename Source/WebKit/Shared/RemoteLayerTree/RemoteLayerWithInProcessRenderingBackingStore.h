@@ -60,7 +60,7 @@ public:
 private:
     RefPtr<WebCore::ImageBuffer> allocateBuffer();
     void ensureFrontBuffer();
-    bool hasFrontBuffer() const final;
+    bool NODELETE hasFrontBuffer() const final;
     bool frontBufferMayBeVolatile() const final;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

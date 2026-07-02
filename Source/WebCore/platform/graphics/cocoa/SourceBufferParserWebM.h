@@ -87,7 +87,7 @@ public:
     void provideMediaData(MediaSamplesBlock&&);
 
     WEBCORE_EXPORT void setLogger(const Logger&, uint64_t identifier);
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
@@ -278,17 +278,17 @@ private:
     void flushPendingVideoSamples();
 
     // webm::Callback
-    webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;
+    webm::Status NODELETE OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;
     webm::Status OnElementEnd(const webm::ElementMetadata&) final;
     webm::Status OnEbml(const webm::ElementMetadata&, const webm::Ebml&) final;
     webm::Status OnSegmentBegin(const webm::ElementMetadata&, webm::Action*) final;
     webm::Status OnInfo(const webm::ElementMetadata&, const webm::Info&) final;
-    webm::Status OnClusterBegin(const webm::ElementMetadata&, const webm::Cluster&, webm::Action*) final;
+    webm::Status NODELETE OnClusterBegin(const webm::ElementMetadata&, const webm::Cluster&, webm::Action*) final;
     webm::Status OnTrackEntry(const webm::ElementMetadata&, const webm::TrackEntry&) final;
     webm::Status OnBlockBegin(const webm::ElementMetadata&, const webm::Block&, webm::Action*) final;
-    webm::Status OnBlockEnd(const webm::ElementMetadata&, const webm::Block&) final;
+    webm::Status NODELETE OnBlockEnd(const webm::ElementMetadata&, const webm::Block&) final;
     webm::Status OnSimpleBlockBegin(const webm::ElementMetadata&, const webm::SimpleBlock&, webm::Action*) final;
-    webm::Status OnSimpleBlockEnd(const webm::ElementMetadata&, const webm::SimpleBlock&) final;
+    webm::Status NODELETE OnSimpleBlockEnd(const webm::ElementMetadata&, const webm::SimpleBlock&) final;
     webm::Status OnBlockGroupBegin(const webm::ElementMetadata& , webm::Action*);
     webm::Status OnBlockGroupEnd(const webm::ElementMetadata&, const webm::BlockGroup&);
     webm::Status OnFrame(const webm::FrameMetadata&, webm::Reader*, uint64_t* bytesRemaining) final;
@@ -340,7 +340,7 @@ public:
 
     Type type() const { return Type::WebM; }
     WEBCORE_EXPORT Expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) final;
-    void flushPendingMediaData() final;
+    void NODELETE flushPendingMediaData() final;
     void resetParserState() final { m_parser.resetState(); }
     void invalidate() final;
 
@@ -373,7 +373,7 @@ private:
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "SourceBufferParserWebM"_s; }
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 
     DidParseTrimmingDataCallback m_didParseTrimmingDataCallback;
     WebMParser m_parser;

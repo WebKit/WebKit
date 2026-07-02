@@ -125,7 +125,7 @@ public:
         return @"";
     }
 
-    static String createKeyForStorage(const String& key) { return key.isolatedCopy(); }
+    static String NODELETE createKeyForStorage(const String& key) { return key.isolatedCopy(); }
 };
 
 static Lock cacheUTIFromMIMETypeLock;

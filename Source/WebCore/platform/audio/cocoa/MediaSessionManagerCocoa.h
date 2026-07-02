@@ -80,7 +80,7 @@ protected:
     void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo() final;
     void setNowPlayingUpdateInterval(double) final;
-    double nowPlayingUpdateInterval() final;
+    double NODELETE nowPlayingUpdateInterval() final;
     void updateActiveNowPlayingSession(RefPtr<PlatformMediaSessionInterface>);
     bool shouldUpdateNowPlaying(const NowPlayingInfo&);
 

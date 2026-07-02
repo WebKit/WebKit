@@ -56,13 +56,13 @@ private:
     friend class WebRTCResolver;
 
     // webrtc::AsyncDnsResolverInterface
-    const webrtc::AsyncDnsResolverResult& result() const final;
+    const webrtc::AsyncDnsResolverResult& NODELETE result() const final;
 
     // webrtc::AsyncDnsResolverResult
     bool GetResolvedAddress(int family, webrtc::SocketAddress*) const final;
     int GetError() const { return m_error; }
 
-    void setError(int);
+    void NODELETE setError(int);
     void setResolvedAddress(Vector<webrtc::IPAddress>&&);
 
     static void sendOnMainThread(Function<void(IPC::Connection&)>&&);

@@ -43,7 +43,7 @@ public:
     explicit WebPagePreferencesLockdownModeObserver(API::WebsitePolicies&);
     ~WebPagePreferencesLockdownModeObserver();
 
-    void ref() const final;
+    void NODELETE ref() const final;
     void deref() const final;
 
 private:

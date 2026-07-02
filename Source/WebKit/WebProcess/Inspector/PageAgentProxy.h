@@ -61,7 +61,7 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     // InspectorAgentBase (via PageAgentInstrumentation)
-    void didCreateFrontendAndBackend() final;
+    void NODELETE didCreateFrontendAndBackend() final;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
     // PageAgentInstrumentation
@@ -72,19 +72,19 @@ public:
     void loadEventFired() final;
     void frameNavigated(WebCore::LocalFrame&) final;
     void frameDetached(WebCore::LocalFrame&) final;
-    void loaderDetachedFromFrame(WebCore::DocumentLoader&) final;
-    void accessibilitySettingsDidChange() final;
-    void defaultUserPreferencesDidChange() final;
+    void NODELETE loaderDetachedFromFrame(WebCore::DocumentLoader&) final;
+    void NODELETE accessibilitySettingsDidChange() final;
+    void NODELETE defaultUserPreferencesDidChange() final;
 #if ENABLE(DARK_MODE_CSS)
-    void defaultAppearanceDidChange() final;
+    void NODELETE defaultAppearanceDidChange() final;
 #endif
-    void applyUserAgentOverride(String&) final;
-    void applyEmulatedMedia(AtomString&) final;
-    void didClearWindowObjectInWorld(WebCore::LocalFrame&, WebCore::DOMWrapperWorld&) final;
-    void didPaint(WebCore::RenderObject&, const WebCore::LayoutRect&) final;
-    void didLayout() final;
-    void didScroll() final;
-    void didRecalculateStyle() final;
+    void NODELETE applyUserAgentOverride(String&) final;
+    void NODELETE applyEmulatedMedia(AtomString&) final;
+    void NODELETE didClearWindowObjectInWorld(WebCore::LocalFrame&, WebCore::DOMWrapperWorld&) final;
+    void NODELETE didPaint(WebCore::RenderObject&, const WebCore::LayoutRect&) final;
+    void NODELETE didLayout() final;
+    void NODELETE didScroll() final;
+    void NODELETE didRecalculateStyle() final;
 
 private:
     WeakRef<WebCore::Page> m_inspectedPage;

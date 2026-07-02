@@ -64,8 +64,8 @@ public:
     static std::optional<Style::PseudoElementIdentifier> parsePseudoElement(const String&, const CSSSelectorParserContext&);
 
 private:
-    template<typename ConsumeSelector> MutableCSSSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
-    template<typename ConsumeSelector> MutableCSSSelectorList consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
+    template<typename ConsumeSelector> MutableCSSSelectorList NODELETE consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
+    template<typename ConsumeSelector> MutableCSSSelectorList NODELETE consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
 
     MutableCSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
     MutableCSSSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);

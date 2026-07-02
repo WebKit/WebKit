@@ -246,7 +246,7 @@ public:
 #endif
 
 #ifndef NDEBUG
-    void print() const;
+    void NODELETE print() const;
 #endif
 
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
@@ -316,7 +316,7 @@ WTF_EXPORT_PRIVATE bool isValidJavaScriptURL(StringView url);
 // These are operations that aren't faster on a parsed URL.
 // These are also different from the WTF::URL functions in that they don't require the string to be a valid and parsable URL.
 
-WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
+WTF_EXPORT_PRIVATE bool NODELETE protocolIs(StringView url, ASCIILiteral protocol);
 WTF_EXPORT_PRIVATE bool NODELETE protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);

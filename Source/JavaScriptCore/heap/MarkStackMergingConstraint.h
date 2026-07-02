@@ -40,11 +40,11 @@ public:
     MarkStackMergingConstraint(Heap&);
     ~MarkStackMergingConstraint() final;
     
-    double quickWorkEstimate(SlotVisitor&) final;
+    double NODELETE quickWorkEstimate(SlotVisitor&) final;
     
 private:
     void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, AbstractSlotVisitor&) final;
-    template<typename Visitor> ALWAYS_INLINE void executeImplImpl(Visitor&);
+    template<typename Visitor> ALWAYS_INLINE void NODELETE executeImplImpl(Visitor&);
     void executeImpl(AbstractSlotVisitor&) final;
     void executeImpl(SlotVisitor&) final;
     

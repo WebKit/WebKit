@@ -52,7 +52,7 @@ public:
 
     void setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction);
 
-    WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElement() const final;
+    WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> NODELETE innerTextElement() const final;
 
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
 
@@ -90,7 +90,7 @@ private:
 
     bool isInteractiveContent() const final { return true; }
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
 
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;

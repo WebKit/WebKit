@@ -72,7 +72,7 @@ public:
     std::optional<double> originQuotaRatio() const { return m_originQuotaRatio; }
     void setOriginQuotaRatio(std::optional<double> ratio) { m_originQuotaRatio = ratio; }
 
-    static TimeBasedEvictionMode defaultTimeBasedEvictionMode();
+    static TimeBasedEvictionMode NODELETE defaultTimeBasedEvictionMode();
     TimeBasedEvictionMode timeBasedEvictionMode() const { return m_timeBasedEvictionMode; }
     void setTimeBasedEvictionMode(TimeBasedEvictionMode mode) { m_timeBasedEvictionMode = mode; }
     Seconds timeBasedEvictionThreshold() const { return m_timeBasedEvictionThreshold; }
@@ -301,8 +301,8 @@ public:
         String resourceMonitorThrottlerDirectory;
 #endif
         String enhancedSecurityDirectory;
-        Directories isolatedCopy() const&;
-        Directories isolatedCopy() &&;
+        Directories NODELETE isolatedCopy() const&;
+        Directories NODELETE isolatedCopy() &&;
     };
     const Directories& directories() const LIFETIME_BOUND { return m_directories; }
 

@@ -1467,7 +1467,7 @@ DocumentEditingContext PDFPluginBase::documentEditingContext(DocumentEditingCont
 #if !LOG_DISABLED
 
 #if HAVE(INCREMENTAL_PDF_APIS)
-static void verboseLog(PDFIncrementalLoader* incrementalLoader, std::optional<uint64_t>&& streamedBytes, bool documentFinishedLoading)
+static void NODELETE verboseLog(PDFIncrementalLoader* incrementalLoader, std::optional<uint64_t>&& streamedBytes, bool documentFinishedLoading)
 {
     ASSERT(isMainRunLoop());
 

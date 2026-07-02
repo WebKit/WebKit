@@ -98,7 +98,7 @@ private:
 
     Type type() const final { return Type::DedicatedWorker; }
 
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
 
     void prepareForDestruction() final;
 

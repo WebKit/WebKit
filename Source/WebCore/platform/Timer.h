@@ -107,8 +107,8 @@ private:
 
     bool inHeap() const { return m_heapItemWithBitfields.pointer() && m_heapItemWithBitfields.pointer()->isInHeap(); }
 
-    bool NODELETE hasValidHeapPosition() const;
-    WEBCORE_EXPORT bool canAccessOnCurrentThread() const;
+    bool hasValidHeapPosition() const;
+    WEBCORE_EXPORT bool NODELETE canAccessOnCurrentThread() const;
     void updateHeapIfNeeded(MonotonicTime oldTime);
 
     void heapDecreaseKey();

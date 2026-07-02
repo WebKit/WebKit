@@ -37,13 +37,13 @@
 namespace WebCore {
 
 using HandleToGlobalMap = HashMap<JSHandleIdentifier, JSC::Weak<JSDOMGlobalObject>>;
-static HandleToGlobalMap& handleToGlobalMap()
+static HandleToGlobalMap& NODELETE handleToGlobalMap()
 {
     static MainThreadNeverDestroyed<HandleToGlobalMap> map;
     return map.get();
 }
 
-static JSDOMGlobalObject* globalObjectForIdentifier(JSHandleIdentifier identifier)
+static JSDOMGlobalObject* NODELETE globalObjectForIdentifier(JSHandleIdentifier identifier)
 {
     auto it = handleToGlobalMap().find(identifier);
     return it == handleToGlobalMap().end() ? nullptr : it->value.get();

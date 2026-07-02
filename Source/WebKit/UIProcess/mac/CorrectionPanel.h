@@ -43,13 +43,13 @@ public:
     CorrectionPanel();
     ~CorrectionPanel();
     void show(NSView *, WebViewImpl&, WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
-    String dismiss(WebCore::ReasonForDismissingAlternativeText);
-    static void recordAutocorrectionResponse(WebViewImpl&, NSInteger spellCheckerDocumentTag, NSCorrectionResponse, const String& replacedString, const String& replacementString);
+    String NODELETE dismiss(WebCore::ReasonForDismissingAlternativeText);
+    static void NODELETE recordAutocorrectionResponse(WebViewImpl&, NSInteger spellCheckerDocumentTag, NSCorrectionResponse, const String& replacedString, const String& replacementString);
 
 private:
     bool isShowing() const { return !!m_view; }
-    String dismissInternal(WebCore::ReasonForDismissingAlternativeText, bool dismissingExternally);
-    void handleAcceptedReplacement(WebViewImpl&, NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
+    String NODELETE dismissInternal(WebCore::ReasonForDismissingAlternativeText, bool dismissingExternally);
+    void NODELETE handleAcceptedReplacement(WebViewImpl&, NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
 
     bool m_wasDismissedExternally;
     WebCore::ReasonForDismissingAlternativeText m_reasonForDismissing;

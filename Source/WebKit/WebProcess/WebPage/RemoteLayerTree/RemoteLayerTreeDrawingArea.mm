@@ -101,7 +101,7 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
     return m_remoteLayerTreeContext.ptr();
 }
 
-RefPtr<DisplayRefreshMonitor> RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
+RefPtr<DisplayRefreshMonitor> NODELETE RemoteLayerTreeDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -495,7 +495,7 @@ void RemoteLayerTreeDrawingArea::tryMarkLayersVolatile(CompletionHandler<void(bo
     m_remoteLayerTreeContext->backingStoreCollection().tryMarkAllBackingStoreVolatile(WTF::move(completionFunction));
 }
 
-Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(Ref<IPC::Connection>&& connection)
+Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> NODELETE RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(Ref<IPC::Connection>&& connection)
 {
     return adoptRef(*new RemoteLayerTreeDrawingArea::BackingStoreFlusher(WTF::move(connection)));
 }

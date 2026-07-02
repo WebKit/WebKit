@@ -111,7 +111,7 @@ public:
         return m_slot.get();
     }
 
-    JSValue asyncStackTraceContext() const;
+    JSValue NODELETE asyncStackTraceContext() const;
 
     JS_EXPORT_PRIVATE static JSPromise* resolvedPromise(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE static JSPromise* rejectedPromise(JSGlobalObject*, JSValue);
@@ -250,6 +250,6 @@ JSC_DECLARE_HOST_FUNCTION(promiseCapabilityExecutor);
 
 JSObject* promiseSpeciesConstructor(JSGlobalObject*, JSObject*);
 Structure* createPromiseCapabilityObjectStructure(VM&, JSGlobalObject&);
-bool isDefinitelyNonThenable(JSObject*, JSGlobalObject*);
+bool NODELETE isDefinitelyNonThenable(JSObject*, JSGlobalObject*);
 
 } // namespace JSC

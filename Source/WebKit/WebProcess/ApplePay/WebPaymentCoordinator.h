@@ -57,7 +57,7 @@ public:
     static Ref<WebPaymentCoordinator> create(WebPage&);
     ~WebPaymentCoordinator();
 
-    void networkProcessConnectionClosed();
+    void NODELETE networkProcessConnectionClosed();
 
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
@@ -94,7 +94,7 @@ private:
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
+    uint64_t NODELETE messageSenderDestinationID() const final;
 
     WebCore::PaymentCoordinator& NODELETE paymentCoordinator() const;
 
@@ -110,7 +110,7 @@ private:
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
 
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
-    static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();
+    static AvailablePaymentNetworksSet NODELETE platformAvailablePaymentNetworks();
 
     WeakPtr<WebPage> m_webPage;
 

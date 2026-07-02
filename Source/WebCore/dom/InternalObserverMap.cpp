@@ -83,7 +83,7 @@ public:
             , m_mapper(mapper)
         { }
 
-        bool hasCallback() const final { return true; }
+        bool NODELETE hasCallback() const final { return true; }
 
         const Ref<Observable> m_sourceObservable;
         const Ref<MapperCallback> m_mapper;

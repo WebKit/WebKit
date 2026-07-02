@@ -107,7 +107,7 @@ struct MultiDeleteByOffsetData {
     Vector<DeleteByVariant, 2> variants;
 
     bool writesStructures() const;
-    bool NODELETE allVariantsStoreEmpty() const;
+    bool allVariantsStoreEmpty() const;
 };
 
 struct MultiGetByValData {
@@ -540,8 +540,8 @@ public:
     void NODELETE convertToIdentityOn(Node*);
 
     void convertToGetByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
-    void NODELETE convertToPutByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
-    void NODELETE convertToInByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
+    void convertToPutByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
+    void convertToInByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
 
     bool mustGenerate() const
     {
@@ -950,7 +950,7 @@ public:
     void NODELETE convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     void NODELETE convertToNewArrayWithSize();
     void NODELETE convertToNewArrayWithButterfly(Graph&, Node* butterfly);
-    void NODELETE convertToNewArrayWithSizeAndStructure(Graph&, RegisteredStructure);
+    void convertToNewArrayWithSizeAndStructure(Graph&, RegisteredStructure);
 
     void NODELETE convertToNewBoundFunction(FrozenValue*);
 
@@ -958,7 +958,7 @@ public:
 
     void NODELETE convertToCallWasm(FrozenValue*);
 
-    void NODELETE convertToCallDOM(Graph&);
+    void convertToCallDOM(Graph&);
 
     void NODELETE convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp);
     void NODELETE convertToRegExpMatchFastGlobalWithoutChecks(FrozenValue* regExp);

@@ -63,7 +63,7 @@ private:
     TreeWalker(Node&, unsigned long whatToShow, RefPtr<NodeFilter>&&);
 
     enum class SiblingTraversalType { Previous, Next };
-    template<SiblingTraversalType> ExceptionOr<Node*> traverseSiblings();
+    template<SiblingTraversalType> ExceptionOr<Node*> NODELETE traverseSiblings();
 
     Node* setCurrent(Ref<Node>&&);
 

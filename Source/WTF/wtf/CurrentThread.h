@@ -31,7 +31,7 @@
 namespace WTF {
 
 WTF_EXPORT_PRIVATE uint32_t currentThreadID();
-WTF_EXPORT_PRIVATE bool currentThreadMayBeGCThread();
+WTF_EXPORT_PRIVATE bool NODELETE currentThreadMayBeGCThread();
 
 } // namespace WTF
 

@@ -79,7 +79,7 @@ public:
     void didReachTimeout();
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::XMLHttpRequest; }
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     using SendTypes = Variant<Ref<Document>, Ref<Blob>, Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, Ref<DOMFormData>, String, Ref<URLSearchParams>>;
 
@@ -140,7 +140,7 @@ public:
 
     void dispatchThrottledProgressEventIfNeeded();
 
-    template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
+    template<typename Visitor> void NODELETE visitAdditionalChildrenInGCThread(Visitor&);
 
 private:
     friend class XMLHttpRequestUpload;
@@ -159,12 +159,12 @@ private:
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;
-    bool virtualHasPendingActivity() const final;
+    bool NODELETE virtualHasPendingActivity() const final;
 
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    Document* document() const;
+    Document* NODELETE document() const;
     SecurityOrigin* securityOrigin() const;
 
     // ThreadableLoaderClient

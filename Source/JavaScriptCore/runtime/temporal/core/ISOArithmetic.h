@@ -37,7 +37,7 @@
 namespace JSC {
 namespace TemporalCore {
 
-ISO8601::PlainYearMonth JS_EXPORT_PRIVATE balanceISOYearMonth(int64_t year, int64_t month);
+ISO8601::PlainYearMonth JS_EXPORT_PRIVATE NODELETE balanceISOYearMonth(int64_t year, int64_t month);
 
 ISO8601::PlainDate JS_EXPORT_PRIVATE addDaysToISODate(const ISO8601::PlainDate&, int64_t days);
 

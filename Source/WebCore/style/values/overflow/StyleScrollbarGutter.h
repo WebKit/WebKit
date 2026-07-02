@@ -77,7 +77,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<ScrollbarGutter> { ScrollbarGutter NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<ScrollbarGutter> { ScrollbarGutter operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

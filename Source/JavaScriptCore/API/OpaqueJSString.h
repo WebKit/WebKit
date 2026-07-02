@@ -63,10 +63,10 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
 
     const char16_t* characters() LIFETIME_BOUND;
 
-    JS_EXPORT_PRIVATE String string() const;
+    JS_EXPORT_PRIVATE String NODELETE string() const;
     JSC::Identifier identifier(JSC::VM*) const;
 
-    static bool equal(const OpaqueJSString*, const OpaqueJSString*);
+    static bool NODELETE equal(const OpaqueJSString*, const OpaqueJSString*);
 
 private:
     friend class WTF::ThreadSafeRefCounted<OpaqueJSString>;

@@ -112,15 +112,15 @@ public:
     virtual ~AudioSession();
 
     using CategoryType = AudioSessionCategory;
-    virtual CategoryType category() const;
+    virtual CategoryType NODELETE category() const;
     using Mode = AudioSessionMode;
-    virtual Mode mode() const;
+    virtual Mode NODELETE mode() const;
     virtual void setCategory(CategoryType, Mode, RouteSharingPolicy);
 
     virtual void setCategoryOverride(CategoryType);
-    virtual CategoryType categoryOverride() const;
+    virtual CategoryType NODELETE categoryOverride() const;
 
-    virtual RouteSharingPolicy routeSharingPolicy() const;
+    virtual RouteSharingPolicy NODELETE routeSharingPolicy() const;
     virtual String routingContextUID() const;
 
     virtual float sampleRate() const;
@@ -179,7 +179,7 @@ protected:
     AudioSession();
 
     virtual Ref<SetActivePromise> tryToSetActiveInternal(bool);
-    void setActive(bool);
+    void NODELETE setActive(bool);
     void activeStateChanged();
 
     Logger& logger();

@@ -141,7 +141,7 @@ public:
     bool hasStrings() const { return !m_strings.isEmpty(); }
     bool hasSingleCharacters() const { return !m_matches8.isEmpty() || !m_ranges8.isEmpty() || !m_matches32.isEmpty() || !m_ranges32.isEmpty(); }
 
-    std::optional<char16_t> hasSharedLeadSurrogate() const;
+    std::optional<char16_t> NODELETE hasSharedLeadSurrogate() const;
 
     Vector<Vector<char32_t>> m_strings;
     Vector<char32_t> m_matches8;
@@ -343,7 +343,7 @@ struct PatternTerm {
 
     static PatternTerm NamedBackReference(unsigned subpatternId, OptionSet<Flags> currFlags)
     {
-        PatternTerm NODELETE term(subpatternId, currFlags);
+        PatternTerm term(subpatternId, currFlags);
         ASSERT(term.type == Type::NumberedBackReference);
         term.type = Type::NamedBackReference;
         return term;

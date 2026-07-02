@@ -78,11 +78,11 @@ protected:
     explicit AudioMediaStreamTrackRenderer(Init&&);
 
 #if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final;
-    uint64_t logIdentifier() const final;
+    const Logger& NODELETE logger() const final;
+    uint64_t NODELETE logIdentifier() const final;
 
     ASCIILiteral logClassName() const final;
-    WTFLogChannel& logChannel() const final;
+    WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
 #if USE(LIBWEBRTC)

@@ -234,7 +234,7 @@ struct ScrollStateFeatureSchema : public FeatureSchema {
     {
     }
 
-    EvaluationResult evaluate(const MQ::Feature&, const FeatureEvaluationContext&) const override
+    EvaluationResult NODELETE evaluate(const MQ::Feature&, const FeatureEvaluationContext&) const override
     {
         // FIXME: Evaluate the actual scroll state. For now the feature is recognized and
         // evaluates to false (no active scroll state); real evaluation is a follow-up.

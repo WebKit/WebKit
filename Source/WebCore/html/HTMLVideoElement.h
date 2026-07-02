@@ -168,7 +168,7 @@ private:
     bool hasVideo() const final { return player() && protect(player())->hasVideo(); }
     bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const final;
     bool NODELETE isURLAttribute(const Attribute&) const final;
-    String imageSourceURL() const final;
+    String NODELETE imageSourceURL() const final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 

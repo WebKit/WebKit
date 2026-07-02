@@ -59,7 +59,7 @@ public:
 
     void copyToArguments(JSGlobalObject*, JSValue* firstElementDest, unsigned offset, unsigned length);
 
-    JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
+    JS_EXPORT_PRIVATE bool NODELETE isIteratorProtocolFastAndNonObservable();
     
 private:
     ClonedArguments(VM&, Structure*, Butterfly*);

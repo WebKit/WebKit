@@ -51,9 +51,9 @@ private:
     void startObserving(OSObjectPtr<xpc_connection_t>);
 
     // XPCEndpoint
-    ASCIILiteral xpcEndpointMessageNameKey() const override;
-    ASCIILiteral xpcEndpointMessageName() const override;
-    ASCIILiteral xpcEndpointNameKey() const override;
+    ASCIILiteral NODELETE xpcEndpointMessageNameKey() const override;
+    ASCIILiteral NODELETE xpcEndpointMessageName() const override;
+    ASCIILiteral NODELETE xpcEndpointNameKey() const override;
     void handleEvent(xpc_connection_t, xpc_object_t) override;
 
     RetainPtr<id> m_observer;

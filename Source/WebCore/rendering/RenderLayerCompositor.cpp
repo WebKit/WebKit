@@ -328,7 +328,7 @@ public:
 
     auto& NODELETE backingProviderCandidates() { return m_backingProviderCandidates; }
 
-    const RenderLayer* NODELETE firstProviderCandidateLayer() const
+    const RenderLayer* firstProviderCandidateLayer() const
     {
         return !m_backingProviderCandidates.isEmpty() ? m_backingProviderCandidates.first().providerLayer.get() : nullptr;
     }
@@ -337,7 +337,7 @@ public:
 
     Provider* backingProviderCandidateForLayer(const RenderLayer&, const RenderLayerCompositor&, LayerOverlapMap&, OverlapExtent&);
     Provider* NODELETE existingBackingProviderCandidateForLayer(const RenderLayer&);
-    Provider* backingProviderForLayer(const RenderLayer&);
+    Provider* NODELETE backingProviderForLayer(const RenderLayer&);
 
     // Add a layer that would repaint into a layer in m_backingSharingLayers.
     // That repaint has to wait until we've set the provider's backing-sharing layers.
@@ -535,12 +535,12 @@ void RenderLayerCompositor::BackingSharingState::issuePendingRepaints()
 }
 
 #if !LOG_DISABLED || ENABLE(TREE_DEBUGGING)
-static inline bool compositingLogEnabled()
+static inline bool NODELETE compositingLogEnabled()
 {
     return LogCompositing.state == WTFLogChannelState::On;
 }
 
-static inline bool layersLogEnabled()
+static inline bool NODELETE layersLogEnabled()
 {
     return LogLayers.state == WTFLogChannelState::On;
 }

@@ -161,7 +161,7 @@ public:
     Node* NODELETE pseudoAwareFirstChild() const;
     Node* NODELETE pseudoAwareLastChild() const;
 
-    WEBCORE_EXPORT const URL& baseURI() const;
+    WEBCORE_EXPORT const URL& NODELETE baseURI() const;
     
     void getSubresourceURLs(OrderedHashSet<URL>&) const;
     void getCandidateSubresourceURLs(OrderedHashSet<URL>&) const;
@@ -508,17 +508,17 @@ public:
     // https://dom.spec.whatwg.org/#concept-node-move-ext
     virtual void movingSteps(bool, ContainerNode&);
 
-    void updateShadowIncludingRootForSubtree();
+    void NODELETE updateShadowIncludingRootForSubtree();
 
     virtual String description() const;
     virtual String debugDescription() const;
 
 #if ENABLE(TREE_DEBUGGING)
-    void showNode(ASCIILiteral prefix = ""_s) const;
-    WEBCORE_EXPORT void showTreeForThis() const;
-    void showNodePathForThis() const;
-    void showTreeAndMark(const Node* markedNode1, ASCIILiteral markedLabel1, const Node* markedNode2 = nullptr, ASCIILiteral markedLabel2 = { }) const;
-    void showTreeForThisAcrossFrame() const;
+    void NODELETE showNode(ASCIILiteral prefix = ""_s) const;
+    WEBCORE_EXPORT void NODELETE showTreeForThis() const;
+    void NODELETE showNodePathForThis() const;
+    void NODELETE showTreeAndMark(const Node* markedNode1, ASCIILiteral markedLabel1, const Node* markedNode2 = nullptr, ASCIILiteral markedLabel2 = { }) const;
+    void NODELETE showTreeForThisAcrossFrame() const;
 #endif // ENABLE(TREE_DEBUGGING)
 
     void invalidateNodeListAndCollectionCachesInAncestors();
@@ -534,8 +534,8 @@ public:
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 
-    enum EventTargetInterfaceType eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const override;
+    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     using EventTarget::addEventListener;
@@ -776,18 +776,18 @@ private:
 
     WEBCORE_EXPORT void removedLastRef();
 
-    void refEventTarget() final;
+    void NODELETE refEventTarget() final;
     void derefEventTarget() final;
 
 #if ASSERT_ENABLED
-    bool checkIsInUserAgentShadowTree(bool) const;
+    bool NODELETE checkIsInUserAgentShadowTree(bool) const;
 #else
     bool checkIsInUserAgentShadowTree(bool value) const { return value; }
 #endif
 
     void NODELETE trackForDebugging();
 
-    void updateShadowIncludingRoot();
+    void NODELETE updateShadowIncludingRoot();
 
     void materializeRareData();
 
@@ -830,7 +830,7 @@ bool NODELETE connectedInSameTreeScope(const Node*, const Node*);
 
 enum TreeType { Tree, ShadowIncludingTree, ComposedTree, ComposedTreeIncludingPseudoElements };
 template<TreeType = Tree> ContainerNode* NODELETE parent(const Node&);
-template<TreeType = Tree> Node* commonInclusiveAncestor(const Node&, const Node&);
+template<TreeType = Tree> Node* NODELETE commonInclusiveAncestor(const Node&, const Node&);
 template<TreeType = Tree> std::partial_ordering treeOrder(const Node&, const Node&);
 
 WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const Node&, const Node&);
@@ -909,8 +909,8 @@ inline void collectChildNodes(Node&, NodeVector&);
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::Node*);
-void showNodePath(const WebCore::Node*);
+void NODELETE showTree(const WebCore::Node*);
+void NODELETE showNodePath(const WebCore::Node*);
 #endif
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Node)

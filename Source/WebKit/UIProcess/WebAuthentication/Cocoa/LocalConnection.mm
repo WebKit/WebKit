@@ -46,14 +46,14 @@ using namespace WebCore;
 
 namespace {
 #if PLATFORM(MAC)
-static inline String bundleName()
+static inline String NODELETE bundleName()
 {
     return [[NSRunningApplication currentApplication] localizedName];
 }
 #endif
 } // namespace
 
-static bool shouldUseAlternateAttributes()
+static bool NODELETE shouldUseAlternateAttributes()
 {
 #if ENABLE(SYNCED_CREDENTIALS)
     if (WebKit::getASCWebKitSPISupportClassSingleton())
@@ -64,7 +64,7 @@ static bool shouldUseAlternateAttributes()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalConnection);
 
-Ref<LocalConnection> LocalConnection::create()
+Ref<LocalConnection> NODELETE LocalConnection::create()
 {
     return adoptRef(*new LocalConnection);
 }
@@ -181,7 +181,7 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *c
     [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }
 
-static NSDictionary *alternateAttributes(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag)
+static NSDictionary *NODELETE alternateAttributes(LAContext *context, SecAccessControlRef accessControlRef, const String& secAttrLabel, NSData *secAttrApplicationTag)
 {
     return @{
         (id)kSecAttrSynchronizable: @YES,

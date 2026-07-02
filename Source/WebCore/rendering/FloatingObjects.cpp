@@ -192,7 +192,7 @@ public:
 
     virtual ~ComputeFloatOffsetForFloatLayoutAdapter() = default;
 
-    LayoutUnit heightRemaining() const;
+    LayoutUnit NODELETE heightRemaining() const;
 
 protected:
     bool updateOffsetIfNeeded(const FloatingObject&) final;

@@ -45,13 +45,13 @@ namespace WebKit {
 
 #if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 using RootViewToWebViewConverter = Function<WebCore::FloatRect(const WebCore::FloatRect&)>;
-RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&, RootViewToWebViewConverter&&);
+RetainPtr<WKTextExtractionItem> NODELETE createItem(const WebCore::TextExtraction::Item&, RootViewToWebViewConverter&&);
 
-void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<WebCore::TextExtraction::FilterRuleData>&&)>&&);
+void NODELETE requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<WebCore::TextExtraction::FilterRuleData>&&)>&&);
 #endif
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
-std::optional<double> computeSimilarity(NSString *a, NSString *b, unsigned minimumLength = 1);
+std::optional<double> NODELETE computeSimilarity(NSString *a, NSString *b, unsigned minimumLength = 1);
 #endif
 
 } // namespace WebKit

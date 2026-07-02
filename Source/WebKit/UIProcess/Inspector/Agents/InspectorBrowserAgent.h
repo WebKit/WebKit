@@ -47,7 +47,7 @@ public:
     bool NODELETE enabled() const;
 
     // InspectorAgentBase
-    void didCreateFrontendAndBackend();
+    void NODELETE didCreateFrontendAndBackend();
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
 
     // BrowserBackendDispatcherHandler

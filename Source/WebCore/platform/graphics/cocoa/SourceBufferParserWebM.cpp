@@ -301,7 +301,7 @@ public:
         return Status(Status::kWouldBlock);
     }
 
-    Status Skip(uint64_t numToSkip, uint64_t* numActuallySkipped) final
+    Status NODELETE Skip(uint64_t numToSkip, uint64_t* numActuallySkipped) final
     {
         ASSERT(numActuallySkipped);
         if (!numActuallySkipped)
@@ -371,7 +371,7 @@ public:
         return Status(Status::kWouldBlock);
     }
 
-    uint64_t Position() const final { return m_position; }
+    uint64_t NODELETE Position() const final { return m_position; }
 
     void reset()
     {
@@ -442,9 +442,9 @@ public:
     {
     }
 
-    bool isVideo() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kVideo; }
-    bool isAudio() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kAudio; }
-    bool isText() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kSubtitle; }
+    bool NODELETE isVideo() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kVideo; }
+    bool NODELETE isAudio() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kAudio; }
+    bool NODELETE isText() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kSubtitle; }
 
     const webm::TrackEntry& NODELETE track() { return m_track; }
 

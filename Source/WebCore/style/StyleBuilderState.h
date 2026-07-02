@@ -139,7 +139,7 @@ public:
     const Document& document() const { return *m_context.document; }
     const Element* element() const { return m_context.element.get(); }
 
-    const CSSRegisteredCustomProperty* registeredProperty(const AtomString&) const;
+    const CSSRegisteredCustomProperty* NODELETE registeredProperty(const AtomString&) const;
 
     inline void setZoom(Zoom);
     inline void setUsedZoom(float);

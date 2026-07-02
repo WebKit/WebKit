@@ -187,20 +187,20 @@ public:
     // WebCore::TiledBackingClient.
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
-    void startTrackingLayer(WebCore::GraphicsLayer&);
-    void stopTrackingLayer(WebCore::GraphicsLayer&);
-    void teardown();
+    void NODELETE startTrackingLayer(WebCore::GraphicsLayer&);
+    void NODELETE stopTrackingLayer(WebCore::GraphicsLayer&);
+    void NODELETE teardown();
 
-    void releaseMemory();
+    void NODELETE releaseMemory();
 
-    bool paintTilesForPage(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, float documentScale, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& clipRectInPageCoordinates, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
-    void paintPagePreview(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
+    bool NODELETE paintTilesForPage(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, float documentScale, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& clipRectInPageCoordinates, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
+    void NODELETE paintPagePreview(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect, const WebCore::FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex);
 
     // Updates existing tiles. Can result in temporarily stale content.
-    void setNeedsRenderForRect(WebCore::GraphicsLayer&, const WebCore::FloatRect& bounds);
+    void NODELETE setNeedsRenderForRect(WebCore::GraphicsLayer&, const WebCore::FloatRect& bounds);
 
-    void generatePreviewImageForPage(PDFDocumentLayout::PageIndex, float scale);
-    void removePreviewForPage(PDFDocumentLayout::PageIndex);
+    void NODELETE generatePreviewImageForPage(PDFDocumentLayout::PageIndex, float scale);
+    void NODELETE removePreviewForPage(PDFDocumentLayout::PageIndex);
     void invalidatePreviewsForPageCoverage(const PDFPageCoverage&);
 
     void NODELETE setShowDebugBorders(bool);
@@ -210,17 +210,17 @@ private:
 
     RefPtr<WebCore::GraphicsLayer> layerForTileGrid(WebCore::TileGridIdentifier) const;
 
-    TileRenderInfo renderInfoForFullTile(const WebCore::TiledBacking&, const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect) const;
+    TileRenderInfo NODELETE renderInfoForFullTile(const WebCore::TiledBacking&, const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect) const;
     TileRenderInfo renderInfoForTile(const WebCore::TiledBacking&, const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& renderRect, RefPtr<WebCore::NativeImage>&& background) const;
 
-    bool renderInfoIsValidForTile(WebCore::TiledBacking&, const TileForGrid&, const TileRenderInfo&) const;
+    bool NODELETE renderInfoIsValidForTile(WebCore::TiledBacking&, const TileForGrid&, const TileRenderInfo&) const;
 
     // TiledBackingClient
     void willRepaintTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect) final;
     void willRemoveTile(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex) final;
     void willRepaintAllTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
-    void coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
+    void NODELETE coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
 
     void willRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType) final;
     void didRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType, const HashSet<WebCore::TileIndex>& tilesNeedingDisplay) final;
@@ -238,7 +238,7 @@ private:
     std::optional<PDFTileRenderIdentifier> enqueueTileRenderForTileGridRepaint(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileIndex, const WebCore::FloatRect& tileRect, const WebCore::FloatRect& tileDirtyRect);
     std::optional<PDFTileRenderIdentifier> enqueueTileRenderIfNecessary(const TileForGrid&, TileRenderInfo&&);
 
-    void serviceRequestQueues();
+    void NODELETE serviceRequestQueues();
 
     void didCompleteTileRender(const TileForGrid& renderKey, PDFTileRenderIdentifier, RenderedPDFTile);
 
@@ -253,13 +253,13 @@ private:
     void trackRendersForStaleTileMaintenance(WebCore::TileGridIdentifier, HashSet<PDFTileRenderIdentifier>&&);
     void trackRenderCompletionForStaleTileMaintenance(WebCore::TileGridIdentifier, PDFTileRenderIdentifier);
 
-    void clearRequestsAndCachedTiles();
+    void NODELETE clearRequestsAndCachedTiles();
 
     void didCompletePagePreviewRender(RefPtr<WebCore::NativeImage>&&, const PDFPagePreviewRenderRequest&);
-    void removePagePreviewsOutsideCoverageRect(const WebCore::FloatRect&, const std::optional<PDFLayoutRow>& = { });
-    void ensurePreviewsForCurrentPageCoverage();
+    void NODELETE removePagePreviewsOutsideCoverageRect(const WebCore::FloatRect&, const std::optional<PDFLayoutRow>& = { });
+    void NODELETE ensurePreviewsForCurrentPageCoverage();
 
-    static WebCore::FloatRect convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
+    static WebCore::FloatRect NODELETE convertTileRectToPaintingCoords(const WebCore::FloatRect&, float pageScaleFactor);
     static WebCore::AffineTransform NODELETE tileToPaintingTransform(float tilingScaleFactor);
     static WebCore::AffineTransform NODELETE paintingToTileTransform(float tilingScaleFactor);
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

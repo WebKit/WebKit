@@ -91,7 +91,7 @@ private:
 
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void setIsModal(bool newValue);
-    bool supportsFocus() const final;
+    bool NODELETE supportsFocus() const final;
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;

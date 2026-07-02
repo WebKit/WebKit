@@ -83,7 +83,7 @@ public:
     void registerForInvalidationCallbacks(FontSelectorClient&) final;
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
 
-    bool isSimpleFontSelectorForDescription() const final;
+    bool NODELETE isSimpleFontSelectorForDescription() const final;
 
     bool isCSSFontSelector() const final { return true; }
 

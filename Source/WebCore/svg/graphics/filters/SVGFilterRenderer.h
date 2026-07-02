@@ -71,8 +71,8 @@ private:
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTF::move(expression); }
     void setEffects(FilterEffectVector&& effects) { m_effects = WTF::move(effects); }
 
-    FloatSize resolvedSize(const FloatSize&) const final;
-    FloatPoint3D resolvedPoint3D(const FloatPoint3D&) const final;
+    FloatSize NODELETE resolvedSize(const FloatSize&) const final;
+    FloatPoint3D NODELETE resolvedPoint3D(const FloatPoint3D&) const final;
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
 

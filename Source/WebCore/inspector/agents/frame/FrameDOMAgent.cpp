@@ -86,13 +86,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameDOMAgent);
 static const size_t frameMaxTextSize = 10000;
 static const char16_t frameHorizontalEllipsisUTF16[] = { horizontalEllipsis, 0 };
 
-static bool frameContainsOnlyASCIIWhitespace(Node* node)
+static bool NODELETE frameContainsOnlyASCIIWhitespace(Node* node)
 {
     auto* text = dynamicDowncast<Text>(node);
     return text && text->containsOnlyASCIIWhitespace();
 }
 
-static Inspector::Protocol::DOM::ShadowRootType frameShadowRootType(ShadowRootMode mode)
+static Inspector::Protocol::DOM::ShadowRootType NODELETE frameShadowRootType(ShadowRootMode mode)
 {
     switch (mode) {
     case ShadowRootMode::UserAgent:
@@ -106,7 +106,7 @@ static Inspector::Protocol::DOM::ShadowRootType frameShadowRootType(ShadowRootMo
     return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
 }
 
-static Inspector::Protocol::DOM::CustomElementState frameCustomElementState(const Element& element)
+static Inspector::Protocol::DOM::CustomElementState NODELETE frameCustomElementState(const Element& element)
 {
     if (element.isDefinedCustomElement())
         return Inspector::Protocol::DOM::CustomElementState::Custom;
@@ -117,7 +117,7 @@ static Inspector::Protocol::DOM::CustomElementState frameCustomElementState(cons
     return Inspector::Protocol::DOM::CustomElementState::Builtin;
 }
 
-static bool framePseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
+static bool NODELETE framePseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
 {
     switch (pseudoElementType) {
     case PseudoElementType::Before:

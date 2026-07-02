@@ -133,7 +133,7 @@ void disableForwardingVPrintfStdErrToOSLog()
 extern "C" {
 
 #if PLATFORM(COCOA)
-static os_log_t webkitSubsystemForGenericOSLog()
+static os_log_t NODELETE webkitSubsystemForGenericOSLog()
 {
     SUPPRESS_RETAINPTR_CTOR_ADOPT static NeverDestroyed<OSObjectPtr<os_log_t>> subsystem = adoptOSObject(os_log_create(LOG_CHANNEL_WEBKIT_SUBSYSTEM, "Generic"));
     return subsystem.get().get();
@@ -655,7 +655,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 
 #if !ASAN_ENABLED && (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5, UCPURegister misc6)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5, UCPURegister misc6)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     register UCPURegister misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -668,7 +668,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UC
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4, UCPURegister misc5)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     register UCPURegister misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -680,7 +680,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UC
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3, UCPURegister misc4)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     register UCPURegister misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -691,7 +691,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UC
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2, UCPURegister misc3)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     register UCPURegister misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -701,7 +701,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UC
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1, UCPURegister misc2)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     register UCPURegister misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -710,7 +710,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UC
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UCPURegister misc1)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     register UCPURegister misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -718,7 +718,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason, UC
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason)
+SUPPRESS_NODELETE void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister reason)
 {
     register UCPURegister reasonGPR __asm__(CRASH_GPR0) = reason;
     __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR));

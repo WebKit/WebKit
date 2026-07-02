@@ -63,7 +63,7 @@ public:
 
 private:
     template <typename Parent, typename Child>
-    RenderPtr<RenderObject> collapseAndDetachAnonymousNextSibling(Parent*, Child* previousChild, Child* nextChild);
+    RenderPtr<RenderObject> NODELETE collapseAndDetachAnonymousNextSibling(Parent*, Child* previousChild, Child* nextChild);
 
     RenderTreeBuilder& m_builder;
 };

@@ -42,11 +42,11 @@ public:
     RefPtr<Element> commandForElement() const;
     CommandType commandType() const;
 
-    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool NODELETE willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     RenderButton* renderer() const;
 
-    bool isExplicitlySetSubmitButton() const;
+    bool NODELETE isExplicitlySetSubmitButton() const;
 
     bool isDevolvableWidget() const override { return true; }
 
@@ -55,11 +55,11 @@ private:
 
     enum class Type : uint8_t { Submit, Reset, Button };
 
-    const AtomString& formControlType() const final;
+    const AtomString& NODELETE formControlType() const final;
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
-    int defaultTabIndex() const final;
+    int NODELETE defaultTabIndex() const final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
@@ -75,10 +75,10 @@ private:
     bool isLabelable() const final { return true; }
     bool isInteractiveContent() const final { return true; }
 
-    bool isSuccessfulSubmitButton() const final;
+    bool NODELETE isSuccessfulSubmitButton() const final;
     bool matchesDefaultPseudoClass() const final;
-    bool isActivatedSubmit() const final;
-    void setActivatedSubmit(bool flag) final;
+    bool NODELETE isActivatedSubmit() const final;
+    void NODELETE setActivatedSubmit(bool flag) final;
 
     bool NODELETE isURLAttribute(const Attribute&) const final;
 
@@ -87,7 +87,7 @@ private:
     bool NODELETE isOptionalFormControl() const final { return true; }
     bool computeWillValidate() const final;
 
-    bool isSubmitButton() const final;
+    bool NODELETE isSubmitButton() const final;
 
     void computeType(const AtomString& typeAttrValue);
 

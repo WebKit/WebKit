@@ -110,7 +110,7 @@ public:
     Ref<MediaPromise> removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
     bool evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
     void asyncEvictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
-    WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
+    WEBCORE_EXPORT virtual size_t NODELETE platformEvictionThreshold() const;
     WEBCORE_EXPORT uint64_t contentSize() const;
     void resetTimestampOffsetInTrackBuffers();
     virtual void startChangingType();
@@ -235,7 +235,7 @@ protected:
     std::atomic<size_t> m_maximumBufferSize { 0 };
 
 #if ASSERT_ENABLED
-    bool isOnCreationThread() const;
+    bool NODELETE isOnCreationThread() const;
 #endif
 
 private:

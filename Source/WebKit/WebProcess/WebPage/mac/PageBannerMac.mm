@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<PageBanner> PageBanner::create(CALayer *layer, int height, std::unique_ptr<Client>&& client)
+Ref<PageBanner> NODELETE PageBanner::create(CALayer *layer, int height, std::unique_ptr<Client>&& client)
 {
     return adoptRef(*new PageBanner(layer, height, WTF::move(client)));
 }

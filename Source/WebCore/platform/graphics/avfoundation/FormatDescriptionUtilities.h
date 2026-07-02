@@ -37,14 +37,14 @@ class FloatSize;
 struct ImmersiveVideoMetadata;
 struct PlatformVideoColorSpace;
 
-TrackInfoTrackType typeFromFormatDescription(CMFormatDescriptionRef);
-FloatSize presentationSizeFromFormatDescription(CMFormatDescriptionRef);
-WEBCORE_EXPORT std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatDescriptionRef);
-String codecFromFormatDescription(CMFormatDescriptionRef);
-bool formatDescriptionIsProtected(CMFormatDescriptionRef);
-WEBCORE_EXPORT std::optional<ImmersiveVideoMetadata> immersiveVideoMetadataFromFormatDescription(CMFormatDescriptionRef);
+TrackInfoTrackType NODELETE typeFromFormatDescription(CMFormatDescriptionRef);
+FloatSize NODELETE presentationSizeFromFormatDescription(CMFormatDescriptionRef);
+WEBCORE_EXPORT std::optional<PlatformVideoColorSpace> NODELETE colorSpaceFromFormatDescription(CMFormatDescriptionRef);
+String NODELETE codecFromFormatDescription(CMFormatDescriptionRef);
+bool NODELETE formatDescriptionIsProtected(CMFormatDescriptionRef);
+WEBCORE_EXPORT std::optional<ImmersiveVideoMetadata> NODELETE immersiveVideoMetadataFromFormatDescription(CMFormatDescriptionRef);
 #if HAVE(IMMERSIVE_VIDEO_METADATA_SUPPORT)
-RetainPtr<CFDictionaryRef> extractImmersiveVideoMetadata(CMFormatDescriptionRef);
-WEBCORE_EXPORT RetainPtr<CFDictionaryRef> formatDescriptionDictionaryFromImmersiveVideoMetadata(const ImmersiveVideoMetadata&);
+RetainPtr<CFDictionaryRef> NODELETE extractImmersiveVideoMetadata(CMFormatDescriptionRef);
+WEBCORE_EXPORT RetainPtr<CFDictionaryRef> NODELETE formatDescriptionDictionaryFromImmersiveVideoMetadata(const ImmersiveVideoMetadata&);
 #endif
 } // namespace WebCore

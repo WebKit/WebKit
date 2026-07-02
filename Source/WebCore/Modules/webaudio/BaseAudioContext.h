@@ -284,7 +284,7 @@ private:
     void handleDeferredDerefs();
 
     // EventTarget
-    enum EventTargetInterfaceType eventTargetInterface() const final;
+    enum EventTargetInterfaceType NODELETE eventTargetInterface() const final;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 

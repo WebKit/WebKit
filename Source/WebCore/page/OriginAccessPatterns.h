@@ -49,7 +49,7 @@ class WEBCORE_EXPORT EmptyOriginAccessPatterns final : public OriginAccessPatter
 public:
     static const EmptyOriginAccessPatterns& NODELETE singleton();
 private:
-    bool anyPatternMatches(const URL&) const final;
+    bool NODELETE anyPatternMatches(const URL&) const final;
 };
 
 const OriginAccessPatterns& NODELETE originAccessPatternsForWebProcessOrEmpty();

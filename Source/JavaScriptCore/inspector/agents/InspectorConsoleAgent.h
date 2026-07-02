@@ -65,7 +65,7 @@ public:
     Protocol::ErrorStringOr<void> enable() final;
     Protocol::ErrorStringOr<void> disable() final;
     Protocol::ErrorStringOr<void> clearMessages() override;
-    Protocol::ErrorStringOr<void> setConsoleClearAPIEnabled(bool) override;
+    Protocol::ErrorStringOr<void> NODELETE setConsoleClearAPIEnabled(bool) override;
     Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> getLoggingChannels() override;
     Protocol::ErrorStringOr<void> setLoggingChannelLevel(Protocol::Console::ChannelSource, Protocol::Console::ChannelLevel) override;
 

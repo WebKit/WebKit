@@ -304,7 +304,7 @@ inline static bool hasScrollbarPseudoElement(EnumSet<PseudoElementType> collecte
     return collectedPseudoElements.contains(PseudoElementType::WebKitResizer);
 }
 
-static SelectorChecker::LocalContext NODELETE localContextForParent(const SelectorChecker::LocalContext& context)
+static SelectorChecker::LocalContext localContextForParent(const SelectorChecker::LocalContext& context)
 {
     SelectorChecker::LocalContext updatedContext(context);
     // Disable :visited matching when we see the first link.
@@ -1472,7 +1472,7 @@ void SelectorChecker::clearCompiledHasArgumentSelectors()
 // FIXME(https://bugs.webkit.org/show_bug.cgi?id=313164): The JIT doesn't generate the full set
 // of style relations needed for :has() invalidation with adjacent/sibling combinators. Skip JIT
 // for argument selectors containing these, or functional pseudo-classes that may nest them.
-static bool canJITCompileHasArgument(const CSSSelector& selector)
+static bool NODELETE canJITCompileHasArgument(const CSSSelector& selector)
 {
     for (auto* current = &selector; current; current = current->precedingInComplexSelector()) {
         auto relation = current->relation();

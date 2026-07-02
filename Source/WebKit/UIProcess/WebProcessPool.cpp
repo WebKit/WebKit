@@ -1480,7 +1480,7 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
     }
 }
 
-static void loadRestrictedOpenerTypeDataIfNeeded()
+static void NODELETE loadRestrictedOpenerTypeDataIfNeeded()
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RestrictedOpenerDomainsController::singleton();
@@ -1877,7 +1877,7 @@ bool WebProcessPool::httpPipeliningEnabled() const
 #endif
 }
 
-RefPtr<WebProcessProxy> WebProcessPool::webProcessProxyFromConnection(const IPC::Connection& connection) const
+RefPtr<WebProcessProxy> NODELETE WebProcessPool::webProcessProxyFromConnection(const IPC::Connection& connection) const
 {
     for (auto& process : m_processes) {
         if (process->hasConnection(connection))
@@ -2074,7 +2074,7 @@ void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityS
 #endif
 }
 
-WeakHashSet<WebProcessProxy>& WebProcessPool::remoteWorkerProcesses()
+WeakHashSet<WebProcessProxy>& NODELETE WebProcessPool::remoteWorkerProcesses()
 {
     static NeverDestroyed<WeakHashSet<WebProcessProxy>> processes;
     return processes;

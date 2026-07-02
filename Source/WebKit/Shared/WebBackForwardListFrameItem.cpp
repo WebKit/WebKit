@@ -59,7 +59,7 @@ WebBackForwardListFrameItem::~WebBackForwardListFrameItem()
     allItems().remove({ *m_frameState->frameItemID, *m_frameState->itemID });
 }
 
-HashMap<std::pair<BackForwardFrameItemIdentifier, BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& WebBackForwardListFrameItem::allItems()
+HashMap<std::pair<BackForwardFrameItemIdentifier, BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>& NODELETE WebBackForwardListFrameItem::allItems()
 {
     static MainRunLoopNeverDestroyed<HashMap<std::pair<BackForwardFrameItemIdentifier, BackForwardItemIdentifier>, WeakRef<WebBackForwardListFrameItem>>> items;
     return items;

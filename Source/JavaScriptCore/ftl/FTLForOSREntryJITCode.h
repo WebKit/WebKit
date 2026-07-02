@@ -55,7 +55,7 @@ public:
     void countEntryFailure() { m_entryFailureCount++; }
     unsigned entryFailureCount() const { return m_entryFailureCount; }
     
-    ForOSREntryJITCode* ftlForOSREntry() final;
+    ForOSREntryJITCode* NODELETE ftlForOSREntry() final;
 
     void setArgumentFlushFormats(FixedVector<DFG::FlushFormat>&& argumentFlushFormats)
     {

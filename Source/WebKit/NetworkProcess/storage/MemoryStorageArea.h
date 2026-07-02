@@ -41,7 +41,7 @@ public:
     static Ref<MemoryStorageArea> create(const WebCore::ClientOrigin&, StorageAreaBase::StorageType = StorageAreaBase::StorageType::Session);
 
     StorageAreaBase::Type type() const final { return StorageAreaBase::Type::Memory; }
-    bool isEmpty() final;
+    bool NODELETE isEmpty() final;
     void clear() final;
     Ref<MemoryStorageArea> clone() const;
 

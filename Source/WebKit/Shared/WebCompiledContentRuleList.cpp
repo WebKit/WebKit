@@ -44,27 +44,27 @@ WebCompiledContentRuleList::WebCompiledContentRuleList(WebCompiledContentRuleLis
 
 WebCompiledContentRuleList::~WebCompiledContentRuleList() = default;
 
-std::span<const uint8_t> WebCompiledContentRuleList::urlFiltersBytecode() const
+std::span<const uint8_t> NODELETE WebCompiledContentRuleList::urlFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.urlFiltersBytecodeOffset, m_data.urlFiltersBytecodeSize);
 }
 
-std::span<const uint8_t> WebCompiledContentRuleList::topURLFiltersBytecode() const
+std::span<const uint8_t> NODELETE WebCompiledContentRuleList::topURLFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.topURLFiltersBytecodeOffset, m_data.topURLFiltersBytecodeSize);
 }
 
-std::span<const uint8_t> WebCompiledContentRuleList::frameURLFiltersBytecode() const
+std::span<const uint8_t> NODELETE WebCompiledContentRuleList::frameURLFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.frameURLFiltersBytecodeOffset, m_data.frameURLFiltersBytecodeSize);
 }
 
-std::span<const uint8_t> WebCompiledContentRuleList::serializedActions() const
+std::span<const uint8_t> NODELETE WebCompiledContentRuleList::serializedActions() const
 {
     return spanWithOffsetAndLength(m_data.actionsOffset, m_data.actionsSize);
 }
 
-std::span<const uint8_t> WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const
+std::span<const uint8_t> NODELETE WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const
 {
     RELEASE_ASSERT(offset + length <= m_data.data->size());
     return m_data.data->span().subspan(offset, length);

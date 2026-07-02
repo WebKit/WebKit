@@ -281,8 +281,8 @@ private:
     bool validateCapability(ASCIILiteral functionName, GCGLenum cap) final;
     template<typename T, typename TypedArrayType>
     std::optional<std::span<const T>> validateClearBuffer(ASCIILiteral functionName, GCGLenum buffer, TypedList<TypedArrayType, T>& values, GCGLuint srcOffset);
-    bool validateFramebufferTarget(GCGLenum target) final;
-    WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
+    bool NODELETE validateFramebufferTarget(GCGLenum target) final;
+    WebGLFramebuffer* NODELETE getFramebufferBinding(GCGLenum target) final;
     bool validateNonDefaultFramebufferAttachment(ASCIILiteral functionName, GCGLenum attachment);
     enum ActiveQueryKey { SamplesPassed = 0, PrimitivesWritten = 1, TimeElapsed = 2, NumKeys = 3 };
     std::optional<ActiveQueryKey> validateQueryTarget(ASCIILiteral functionName, GCGLenum target);
@@ -306,7 +306,7 @@ private:
     RefPtr<WebGLTexture> validateTextureStorage2DBinding(ASCIILiteral functionName, GCGLenum target);
 
     bool validateTexFuncLayer(ASCIILiteral functionName, GCGLenum texTarget, GCGLint layer);
-    GCGLint maxTextureLevelForTarget(GCGLenum target) final;
+    GCGLint NODELETE maxTextureLevelForTarget(GCGLenum target) final;
 
     void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*) final;
 

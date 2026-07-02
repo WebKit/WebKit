@@ -58,13 +58,13 @@ private:
     void graphicsElement() const = delete;
     ASCIILiteral renderName() const override { return "RenderSVGForeignObject"_s; }
 
-    void updateLogicalWidth() override;
-    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
+    void NODELETE updateLogicalWidth() override;
+    LogicalExtentComputedValues NODELETE computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
-    const AffineTransform& localToParentTransform() const LIFETIME_BOUND override;
+    const AffineTransform& NODELETE localToParentTransform() const LIFETIME_BOUND override;
     AffineTransform localTransform() const override { return m_localTransform; }
 
-    LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+    LayoutSize NODELETE offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
 
     AffineTransform m_localTransform;
     mutable AffineTransform m_localToParentTransform;

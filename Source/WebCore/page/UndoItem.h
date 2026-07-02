@@ -57,7 +57,7 @@ public:
     Document* NODELETE document() const;
 
     UndoManager* NODELETE undoManager() const;
-    void setUndoManager(UndoManager*);
+    void NODELETE setUndoManager(UndoManager*);
 
     const String& label() const LIFETIME_BOUND { return m_label; }
     VoidCallback& undoHandler() const { return m_undoHandler.get(); }

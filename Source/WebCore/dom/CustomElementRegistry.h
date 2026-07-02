@@ -114,7 +114,7 @@ public:
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>>& promiseMap() LIFETIME_BOUND { return m_promiseMap; }
     bool isShadowDisabled(const AtomString& name) const { return m_disabledShadowSet.contains(name); }
 
-    template<typename Visitor> void visitJSCustomElementInterfacesInGCThread(Visitor&) const;
+    template<typename Visitor> void NODELETE visitJSCustomElementInterfacesInGCThread(Visitor&) const;
 
 private:
     CustomElementRegistry(ScriptExecutionContext&, LocalDOMWindow&);

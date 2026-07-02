@@ -42,13 +42,13 @@ public:
     BaselineJITPlan(CodeBlock*);
 
     CompilationPath compileInThreadImpl() final;
-    size_t codeSize() const final;
+    size_t NODELETE codeSize() const final;
     CompilationResult finalize() override;
 
     CompilationPath compileSync(JITCompilationEffort);
 
-    bool isKnownToBeLiveAfterGC() final;
-    bool isKnownToBeLiveDuringGC(AbstractSlotVisitor&) final;
+    bool NODELETE isKnownToBeLiveAfterGC() final;
+    bool NODELETE isKnownToBeLiveDuringGC(AbstractSlotVisitor&) final;
 
 private:
     CompilationPath compileInThreadImpl(JITCompilationEffort);

@@ -51,7 +51,7 @@ public:
             : m_words(words)
         { }
 
-        bool add(unsigned bit)
+        bool NODELETE add(unsigned bit)
         {
             uint64_t& word = m_words[bit / 64];
             uint64_t mask = static_cast<uint64_t>(1) << (bit % 64);

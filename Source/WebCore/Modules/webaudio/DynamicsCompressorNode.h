@@ -66,7 +66,7 @@ protected:
     void setReduction(float reduction) { m_reduction = reduction; }
 
 private:
-    double tailTime() const final;
+    double NODELETE tailTime() const final;
     double NODELETE latencyTime() const final;
     bool NODELETE requiresTailProcessing() const final;
 

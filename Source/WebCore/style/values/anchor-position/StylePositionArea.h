@@ -86,7 +86,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<PositionArea> { PositionArea NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<PositionArea> { PositionArea operator()(BuilderState&, const CSSValue&); };
 template<> struct CSSValueCreation<PositionAreaValue> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const PositionAreaValue&); };
 
 // MARK: - Serialization

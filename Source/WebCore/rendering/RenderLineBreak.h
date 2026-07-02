@@ -57,7 +57,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final { }
 
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) final;
-    int caretMinOffset() const final;
+    int NODELETE caretMinOffset() const final;
     int NODELETE caretMaxOffset() const final;
     bool NODELETE canBeSelectionLeaf() const final;
 

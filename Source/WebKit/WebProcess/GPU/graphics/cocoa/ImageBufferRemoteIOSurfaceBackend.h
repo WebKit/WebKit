@@ -50,18 +50,18 @@ public:
     }
 
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
-    bool canMapBackingStore() const final;
+    bool NODELETE canMapBackingStore() const final;
 
-    WebCore::GraphicsContext& context() final;
+    WebCore::GraphicsContext& NODELETE context() final;
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
     std::optional<ImageBufferBackendHandle> takeBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) final;
 
 private:
-    RefPtr<WebCore::NativeImage> copyNativeImage() final;
-    RefPtr<WebCore::NativeImage> createNativeImageReference() final;
+    RefPtr<WebCore::NativeImage> NODELETE copyNativeImage() final;
+    RefPtr<WebCore::NativeImage> NODELETE createNativeImageReference() final;
 
-    void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
-    void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
+    void NODELETE getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
+    void NODELETE putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
     unsigned bytesPerRow() const final;
 

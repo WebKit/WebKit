@@ -45,7 +45,7 @@ private:
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
     const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.ptr(); }
     void setEncoding(const String&) final;
-    ASCIILiteral encoding() const final;
+    ASCIILiteral NODELETE encoding() const final;
 
     const Ref<TextResourceDecoder> m_decoder;
     std::optional<String> m_text;

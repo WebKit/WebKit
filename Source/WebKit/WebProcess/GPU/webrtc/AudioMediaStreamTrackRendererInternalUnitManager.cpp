@@ -60,7 +60,7 @@ public:
 
     ~AudioMediaStreamTrackRendererInternalUnitManagerProxy();
 
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void NODELETE ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     enum class IsClosed : bool { No, Yes };

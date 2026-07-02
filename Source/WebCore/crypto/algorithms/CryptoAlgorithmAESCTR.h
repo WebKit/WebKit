@@ -45,7 +45,7 @@ public:
     private:
         // 128 bits integer with miminum required operators.
         struct CounterBlockBits {
-            void NODELETE set();
+            void set();
             bool NODELETE all() const;
             bool NODELETE any() const;
 
@@ -68,7 +68,7 @@ public:
 
 private:
     CryptoAlgorithmAESCTR() = default;
-    CryptoAlgorithmIdentifier identifier() const final;
+    CryptoAlgorithmIdentifier NODELETE identifier() const final;
 
     void encrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;
     void decrypt(const CryptoAlgorithmParameters&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&) final;

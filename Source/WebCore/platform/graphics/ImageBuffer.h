@@ -146,7 +146,7 @@ public:
     static bool sizeNeedsClamping(const FloatSize&);
     static bool sizeNeedsClamping(const FloatSize&, FloatSize& scale);
     static FloatSize NODELETE clampedSize(const FloatSize&);
-    static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
+    static FloatSize NODELETE clampedSize(const FloatSize&, FloatSize& scale);
     static FloatRect NODELETE clampedRect(const FloatRect&);
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> clone() const;

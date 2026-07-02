@@ -40,9 +40,9 @@ public:
 private:
     Ref<const SwitchPart> owningPart() const { return downcast<SwitchPart>(m_owningPart.get()); }
 
-    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
-    IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
-    FloatRect rectForBounds(const FloatRect&, const ControlStyle&) const override;
+    IntSize NODELETE cellSize(NSControlSize, const ControlStyle&) const override;
+    IntOutsets NODELETE cellOutsets(NSControlSize, const ControlStyle&) const override;
+    FloatRect NODELETE rectForBounds(const FloatRect&, const ControlStyle&) const override;
 
     void draw(GraphicsContext&, const FloatRoundedRect&, float, const ControlStyle&) override;
 

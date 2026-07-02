@@ -167,7 +167,7 @@ private:
     static bool overrideAliasedOptionWithHeuristic(const char* name);
 #endif
 
-    static void setAllJITCodeValidations(bool);
+    static void NODELETE setAllJITCodeValidations(bool);
 
     static bool NODELETE defaultTCSMValue();
     static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers);

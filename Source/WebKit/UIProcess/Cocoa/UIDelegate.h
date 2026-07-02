@@ -108,11 +108,11 @@ private:
         void presentStorageAccessConfirmDialog(const WTF::String& requestingDomain, const WTF::String& currentDomain, CompletionHandler<void(bool)>&&);
         void requestStorageAccessConfirm(WebPageProxy&, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&&) final;
         void decidePolicyForGeolocationPermissionRequest(WebPageProxy&, WebFrameProxy&, const FrameInfoData&, Function<void(bool)>&) final;
-        bool canRunBeforeUnloadConfirmPanel() const final;
+        bool NODELETE canRunBeforeUnloadConfirmPanel() const final;
         void runBeforeUnloadConfirmPanel(WebPageProxy&, WTF::String&&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
         void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
-        bool lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType) final;
-        void unlockScreenOrientation(WebPageProxy&) final;
+        bool NODELETE lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType) final;
+        void NODELETE unlockScreenOrientation(WebPageProxy&) final;
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
@@ -129,7 +129,7 @@ private:
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
 
-        bool canRunModal() const final;
+        bool NODELETE canRunModal() const final;
         void runModal(WebPageProxy&) final;
         void pageDidScroll(WebPageProxy*) final;
         void setIsResizable(WebPageProxy&, bool) final;

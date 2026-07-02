@@ -46,7 +46,7 @@ std::optional<ParsedMonthCode> parseMonthCode(JSGlobalObject*, JSValue argument)
 ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, TemporalDateFormat, int32_t, uint32_t, uint32_t, std::optional<ParsedMonthCode>, TemporalOverflow, CalendarID = iso8601CalendarID());
 
 template<DifferenceOperation>
-ISO8601::Duration differenceTemporalPlainYearMonth(JSGlobalObject*, const ISO8601::PlainYearMonth&, const ISO8601::PlainYearMonth&, unsigned, TemporalUnit, TemporalUnit, RoundingMode, CalendarID = iso8601CalendarID());
+ISO8601::Duration NODELETE differenceTemporalPlainYearMonth(JSGlobalObject*, const ISO8601::PlainYearMonth&, const ISO8601::PlainYearMonth&, unsigned, TemporalUnit, TemporalUnit, RoundingMode, CalendarID = iso8601CalendarID());
 
 ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 ISO8601::PlainDate calendarDateAdd(JSGlobalObject*, CalendarID, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
@@ -55,7 +55,7 @@ ISO8601::Duration calendarDateUntil(CalendarID, const ISO8601::PlainDate&, const
 enum class FieldSetType { Date, YearMonth, MonthDay };
 enum class CalendarRead { Read, Skip };
 template<FieldSetType type = FieldSetType::Date, CalendarRead calendarRead = CalendarRead::Read>
-TemporalCore::CalendarFieldsIn readCalendarFieldsFromObject(JSGlobalObject*, JSObject* bag, CalendarID& outCalendarId);
+TemporalCore::CalendarFieldsIn NODELETE readCalendarFieldsFromObject(JSGlobalObject*, JSObject* bag, CalendarID& outCalendarId);
 
 // Fields read from a ZonedDateTime property bag (from() or with()).
 struct ZonedDateTimeFields {
@@ -86,6 +86,6 @@ enum class ZonedDateTimeFieldMode {
 };
 
 template<ZonedDateTimeFieldMode mode = ZonedDateTimeFieldMode::Full, CalendarRead calendarRead = CalendarRead::Read>
-ZonedDateTimeFields readZonedDateTimeFieldsFromObject(JSGlobalObject*, JSObject* bag, CalendarID& outCalendarId);
+ZonedDateTimeFields NODELETE readZonedDateTimeFieldsFromObject(JSGlobalObject*, JSObject* bag, CalendarID& outCalendarId);
 
 } // namespace JSC

@@ -241,7 +241,7 @@ public:
     virtual CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>);
 
     virtual bool canSwapCodePtrWithArityCheckForDebugger() const { return false; }
-    virtual CodePtr<JSEntryPtrTag> swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>);
+    virtual CodePtr<JSEntryPtrTag> NODELETE swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>);
     
     enum class ShareAttribute : uint8_t {
         NotShared,
@@ -277,11 +277,11 @@ public:
     virtual void* dataAddressAtOffset(size_t offset) = 0;
     virtual unsigned offsetOf(void* pointerIntoCode) = 0;
     
-    virtual DFG::CommonData* dfgCommon();
-    virtual const DFG::CommonData* dfgCommon() const;
-    virtual DFG::JITCode* dfg();
-    virtual FTL::JITCode* ftl();
-    virtual FTL::ForOSREntryJITCode* ftlForOSREntry();
+    virtual DFG::CommonData* NODELETE dfgCommon();
+    virtual const DFG::CommonData* NODELETE dfgCommon() const;
+    virtual DFG::JITCode* NODELETE dfg();
+    virtual FTL::JITCode* NODELETE ftl();
+    virtual FTL::ForOSREntryJITCode* NODELETE ftlForOSREntry();
     virtual void shrinkToFit();
     
     virtual void validateReferences(const TrackedReferences&);
@@ -323,11 +323,11 @@ protected:
 public:
     ~JITCodeWithCodeRef() override;
 
-    void* executableAddressAtOffset(size_t offset) override;
-    void* dataAddressAtOffset(size_t offset) override;
-    unsigned offsetOf(void* pointerIntoCode) override;
-    size_t size() override;
-    bool contains(void*) override;
+    void* NODELETE executableAddressAtOffset(size_t offset) override;
+    void* NODELETE dataAddressAtOffset(size_t offset) override;
+    unsigned NODELETE offsetOf(void* pointerIntoCode) override;
+    size_t NODELETE size() override;
+    bool NODELETE contains(void*) override;
 
     CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>) override;
 
@@ -344,11 +344,11 @@ public:
     DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, Intrinsic, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared); // For generated thunk.
     ~DirectJITCode() override;
     
-    CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
+    CodePtr<JSEntryPtrTag> NODELETE addressForCall(ArityCheckMode) override;
 
     bool canSwapCodeRefForDebugger() const override { return jitType() == JITType::HostCallThunk; }
     bool canSwapCodePtrWithArityCheckForDebugger() const override { return jitType() == JITType::HostCallThunk; }
-    CodePtr<JSEntryPtrTag> swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>) override;
+    CodePtr<JSEntryPtrTag> NODELETE swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>) override;
 
 protected:
     void initializeCodeRefForDFG(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);
@@ -363,7 +363,7 @@ public:
     NativeJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
     ~NativeJITCode() override;
 
-    CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
+    CodePtr<JSEntryPtrTag> NODELETE addressForCall(ArityCheckMode) override;
 
     bool canSwapCodeRefForDebugger() const override { return true; }
 };

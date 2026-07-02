@@ -515,7 +515,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
     return requests;
 }
 
-WeakPtr<WebAuthenticatorCoordinatorProxy>& WebAuthenticatorCoordinatorProxy::activeConditionalMediationProxy()
+WeakPtr<WebAuthenticatorCoordinatorProxy>& NODELETE WebAuthenticatorCoordinatorProxy::activeConditionalMediationProxy()
 {
     static MainRunLoopNeverDestroyed<WeakPtr<WebAuthenticatorCoordinatorProxy>> proxy;
     return proxy.get();

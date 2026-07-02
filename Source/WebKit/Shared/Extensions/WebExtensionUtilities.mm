@@ -375,7 +375,7 @@ bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWit
     return itemExceededQuota;
 }
 
-Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
+Markable<WTF::UUID> NODELETE toDocumentIdentifier(WebFrame& frame)
 {
     auto* coreFrame = frame.coreLocalFrame();
     auto* document = coreFrame ? coreFrame->document() : nullptr;

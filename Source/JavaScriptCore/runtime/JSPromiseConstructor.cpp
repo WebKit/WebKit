@@ -154,7 +154,7 @@ static bool NODELETE isFastPromiseConstructor(JSGlobalObject* globalObject, JSVa
     return true;
 }
 
-static ALWAYS_INLINE bool canSkipIntermediatePromise(JSGlobalObject* globalObject, JSValue value)
+static ALWAYS_INLINE bool NODELETE canSkipIntermediatePromise(JSGlobalObject* globalObject, JSValue value)
 {
     if (!globalObject->promiseThenWatchpointSet().isStillValid()) [[unlikely]]
         return false;

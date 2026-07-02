@@ -483,7 +483,7 @@ void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceR
 }
 
 #if ASSERT_ENABLED
-static bool isOpaqueRedirectResponseWithoutLocationHeader(const ResourceResponse& response)
+static bool NODELETE isOpaqueRedirectResponseWithoutLocationHeader(const ResourceResponse& response)
 {
     return response.type() == ResourceResponse::Type::Opaqueredirect && response.isRedirection() && response.httpHeaderField(HTTPHeaderName::Location).isNull();
 }

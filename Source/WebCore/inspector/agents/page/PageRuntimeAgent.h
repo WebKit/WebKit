@@ -69,8 +69,8 @@ public:
 
 private:
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
-    void muteConsole();
-    void unmuteConsole();
+    void NODELETE muteConsole();
+    void NODELETE unmuteConsole();
     void reportExecutionContextCreation();
     void notifyContextCreated(const Inspector::Protocol::Network::FrameId&, JSC::JSGlobalObject*, const DOMWrapperWorld&, SecurityOrigin* = nullptr);
 

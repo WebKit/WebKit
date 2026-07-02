@@ -42,9 +42,9 @@ public:
     JS_EXPORT_PRIVATE ~EdenGCActivityCallback();
 
 private:
-    JS_EXPORT_PRIVATE Seconds lastGCLength(Heap&) final;
+    JS_EXPORT_PRIVATE Seconds NODELETE lastGCLength(Heap&) final;
     JS_EXPORT_PRIVATE double gcTimeSlice(size_t bytes) final;
-    JS_EXPORT_PRIVATE double deathRate(Heap&) final;
+    JS_EXPORT_PRIVATE double NODELETE deathRate(Heap&) final;
 };
 
 } // namespace JSC

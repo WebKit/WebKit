@@ -151,7 +151,7 @@ public:
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
-    bool hasStickyActivation() const;
+    bool NODELETE hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
     WEBCORE_EXPORT bool NODELETE hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool NODELETE consumeHistoryActionUserActivation();
@@ -271,8 +271,8 @@ public:
     // Secure Contexts
     bool isSecureContext() const;
 
-    bool NODELETE crossOriginIsolated() const;
-    bool NODELETE originAgentCluster() const;
+    bool crossOriginIsolated() const;
+    bool originAgentCluster() const;
 
     // Events
     // EventTarget API
@@ -345,7 +345,7 @@ public:
     DeviceMotionController* deviceMotionController() const;
 #endif
 
-    void resetAllGeolocationPermission();
+    void NODELETE resetAllGeolocationPermission();
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     bool hasTouchOrGestureEventListeners() const { return m_touchAndGestureEventListenerCount > 0; }

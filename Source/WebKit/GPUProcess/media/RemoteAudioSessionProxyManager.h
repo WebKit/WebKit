@@ -85,8 +85,8 @@ private:
     void sampleRateDidChange(const WebCore::AudioSession&) final;
     void configurationDidChange(const WebCore::AudioSession&);
 
-    bool hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude);
-    bool hasActiveNotInterruptedProxy();
+    bool NODELETE hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude);
+    bool NODELETE hasActiveNotInterruptedProxy();
 
     WeakRef<GPUProcess> m_gpuProcess;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;

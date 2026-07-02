@@ -71,7 +71,7 @@ private:
 
     friend struct APICallbackFunction;
 
-    static CallData getConstructData(JSCell*);
+    static CallData NODELETE getConstructData(JSCell*);
 
     JSObjectCallAsConstructorCallback constructCallback() { return m_callback; }
 

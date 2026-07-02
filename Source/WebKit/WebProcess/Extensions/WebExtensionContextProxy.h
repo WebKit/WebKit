@@ -84,7 +84,7 @@ public:
     const URL& baseURL() const LIFETIME_BOUND { return m_baseURL; }
     const String& uniqueIdentifier() const LIFETIME_BOUND { return m_uniqueIdentifier; }
 
-    bool isURLForThisExtension(const URL&) const;
+    bool NODELETE isURLForThisExtension(const URL&) const;
 
 #if PLATFORM(COCOA)
     NSDictionary *manifest() const { return m_manifest.get(); }
