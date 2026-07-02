@@ -50,12 +50,13 @@ public:
     // Oversampling requires more resources, so let's only allocate them if needed.
     void lazyInitializeOversampling();
 
+    // Apply the shaping curve.
+    WEBCORE_EXPORT static void processCurveWithData(std::span<const float> source, std::span<float> destination, std::span<const float> curveData);
+
 private:
     bool isWaveShaperDSPKernel() const final { return true; }
 
-    // Apply the shaping curve.
     void processCurve(std::span<const float> source, std::span<float> destination);
-
     // Use up-sampling, process at the higher sample-rate, then down-sample.
     void processCurve2x(std::span<const float> source, std::span<float> destination);
     void processCurve4x(std::span<const float> source, std::span<float> destination);

@@ -894,6 +894,8 @@ enum ContentsFormat {
     [Conditional=WEB_AUDIO] unsigned long long baseAudioContextIdentifier(BaseAudioContext context);
     [Conditional=WEB_AUDIO] boolean isBaseAudioContextAlive(unsigned long long contextID);
 
+    [Conditional=WEB_AUDIO] sequence<unrestricted float> waveShaperProcessCurveWithData(sequence<unrestricted float> source, sequence<unrestricted float> curve);
+
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     sequence<DOMString> shortcutIconURLs();
