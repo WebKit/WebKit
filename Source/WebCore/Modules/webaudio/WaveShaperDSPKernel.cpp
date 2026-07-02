@@ -30,7 +30,6 @@
 
 #include "AudioUtilities.h"
 #include "WaveShaperProcessor.h"
-#include <JavaScriptCore/Float32Array.h>
 #include <algorithm>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -85,9 +84,7 @@ void WaveShaperDSPKernel::process(std::span<const float> source, std::span<float
 void WaveShaperDSPKernel::processCurve(std::span<const float> source, std::span<float> destination)
 {
     assertIsHeld(waveShaperProcessor()->processLock());
-    RefPtr curve = waveShaperProcessor()->curve();
-    auto curveData = curve ? curve->typedMutableSpan() : std::span<float> { };
-    processCurveWithData(source, destination, curveData);
+    processCurveWithData(source, destination, waveShaperProcessor()->curve().span());
 }
 
 void WaveShaperDSPKernel::processCurveWithData(std::span<const float> source, std::span<float> destination, std::span<const float> curveData)

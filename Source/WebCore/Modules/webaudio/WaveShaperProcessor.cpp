@@ -29,7 +29,6 @@
 #include "WaveShaperProcessor.h"
 
 #include "WaveShaperDSPKernel.h"
-#include <JavaScriptCore/Float32Array.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -52,13 +51,13 @@ std::unique_ptr<AudioDSPKernel> WaveShaperProcessor::createKernel()
     return makeUnique<WaveShaperDSPKernel>(this);
 }
 
-void WaveShaperProcessor::setCurveForBindings(Float32Array* curve)
+void WaveShaperProcessor::setCurveForBindings(Vector<float>&& curve)
 {
     ASSERT(isMainThread());
     // This synchronizes with process().
     Locker locker { m_processLock };
 
-    m_curve = curve;
+    m_curve = WTF::move(curve);
 }
 
 void WaveShaperProcessor::setOversampleForBindings(OverSampleType oversample)
