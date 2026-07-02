@@ -1316,6 +1316,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)didEndSyntheticMomentumScrolling
 {
     _isMomentumActive = false;
+    [self _resetCaughtDeceleratingScroll];
 }
 
 - (void)_resetCaughtDeceleratingScroll
