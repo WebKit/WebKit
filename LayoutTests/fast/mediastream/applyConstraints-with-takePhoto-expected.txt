@@ -1,0 +1,3 @@
+
+PASS applyConstraints while takePhoto is happening on a cloned track
+

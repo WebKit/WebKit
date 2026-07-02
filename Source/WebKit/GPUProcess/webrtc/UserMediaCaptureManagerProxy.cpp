@@ -231,7 +231,7 @@ public:
             bool isObservingMedia = protectedThis->isObservingMedia();
             protectedThis->unobserveMedia();
 
-            source->applyConstraints(WTF::move(constraints), [weakThis = WTF::move(weakThis), &constraints, isObservingMedia, callback = WTF::move(callback)](auto&& error) mutable {
+            source->applyConstraints(constraints, [weakThis = WTF::move(weakThis), constraints, isObservingMedia, callback = WTF::move(callback)](auto&& error) mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis) {
                     callback(RealtimeMediaSource::ApplyConstraintsError { { }, { } });
