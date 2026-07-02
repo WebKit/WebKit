@@ -103,6 +103,7 @@
 
 #if PLATFORM(COCOA)
 #include "PathsBlockedForSandboxExtensions.h"
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #define LOADER_RELEASE_LOG_WITH_THIS(thisPtr, fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, WTF::getPtr(thisPtr), thisPtr->webPageProxyID().toUInt64(), thisPtr->pageID().toUInt64(), thisPtr->frameID().toUInt64(), thisPtr->coreIdentifier().toUInt64(), thisPtr->isMainResource(), static_cast<unsigned>(thisPtr->m_parameters.options.destination), thisPtr->isSynchronous(), ##__VA_ARGS__)
@@ -396,13 +397,18 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
 bool NetworkResourceLoader::isLocalFileLoadAllowed(const URL& url)
 {
 #if PLATFORM(IOS_FAMILY)
-    // Some applications are relying on using the fetch JS API to load local files they have created in their temp directory.
+    // Some 3rd party apps are relying on using the fetch JS API or -[WKWebView loadHTMLString:baseURL:] to load local files in their temp directory.
     // In this case, the WebContent process will not provide the Networking process with a sandbox extension to that file, since it does not have access.
     // This is because the load is not initiated from the UI process which would provide an extension, but from JS in the WebContent process.
     // To continue supporting this undocumented feature, we should allow local file loads from that location.
 
+    // FIXME: rdar://177160334
+    // The method -[WKWebView loadHTMLString:baseURL:] can be used to load local files by referring to links relative to the base URL in the HTML string.
+    // When the app is using -[WKWebView loadHTMLString:baseURL:] to load files in the temp directory, we should create a sandbox extension for the base URL.
+    // This can be done in WebPageProxy::loadDataWithNavigationShared. However, this is a larger change, so for now we rely on this exemption.
+
     String directory = connectionToWebProcess().networkProcess().containerTemporaryDirectory();
-    if (!directory.isEmpty() && FileSystem::isAncestor(directory, FileSystem::realPath(url.fileSystemPath()))) {
+    if (!WTF::IOSApplication::isMobileSafari() && !directory.isEmpty() && FileSystem::isAncestor(directory, FileSystem::realPath(url.fileSystemPath()))) {
         RELEASE_LOG(Network, "shouldAllowLocalFileLoad: allowing loads from the temp directory");
         return true;
     }
