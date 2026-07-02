@@ -40,20 +40,32 @@ namespace WebCore {
 
 void StyleRuleKeyframe::Key::writeToString(StringBuilder& str) const
 {
-    if (rangeName == CSSValueContain)
+    switch (rangeName) {
+    case CSSValueContain:
         str.append("contain "_s);
-    else if (rangeName == CSSValueCover)
+        break;
+    case CSSValueCover:
         str.append("cover "_s);
-    else if (rangeName == CSSValueEntry)
+        break;
+    case CSSValueEntry:
         str.append("entry "_s);
-    else if (rangeName == CSSValueEntryCrossing)
+        break;
+    case CSSValueEntryCrossing:
         str.append("entry-crossing "_s);
-    else if (rangeName == CSSValueExit)
+        break;
+    case CSSValueExit:
         str.append("exit "_s);
-    else if (rangeName == CSSValueExitCrossing)
+        break;
+    case CSSValueExitCrossing:
         str.append("exit-crossing "_s);
-    else if (rangeName == CSSValueScroll)
+        break;
+    case CSSValueScroll:
         str.append("scroll "_s);
+        break;
+    default:
+        break;
+    }
+
     str.append(offset * 100, '%');
 }
 
