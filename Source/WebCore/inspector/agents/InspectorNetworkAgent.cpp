@@ -1396,7 +1396,7 @@ void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpressi
     Vector<NetworkResourcesData::ResourceData*> resources = m_resourcesData->resources();
     for (auto* resourceData : resources) {
         if (auto textContent = textContentForResourceData(*resourceData)) {
-            int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, resourceData->content());
+            int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
             if (matchesCount)
                 result->addItem(buildObjectForSearchResult(resourceData->requestId(), resourceData->frameId(), resourceData->url(), matchesCount));
         }
