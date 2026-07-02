@@ -1,0 +1,25 @@
+<!doctype html>
+
+<style>
+  body {
+    margin: 100px;
+    border: 1px black solid;
+    color: white;
+    background-color: green;
+  }
+
+  #fixedpos-text {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border: 1px black solid;
+  }
+</style>
+
+<body>
+
+<div id="fixedpos-text">Fixed-positioned with negative z-order</div>
+<p>Body element. The page background should be all green with no red.</p>
+
+</body>

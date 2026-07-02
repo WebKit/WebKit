@@ -485,6 +485,19 @@ bool RenderView::shouldRepaint(const LayoutRect& rect) const
 
 void RenderView::repaintRootContents()
 {
+    // The contents background could come from the root (document element) renderer.
+    // If the root is not composited, repainting this RenderView should repaint it and
+    // its background. But if it's composited, then the background doesn't get repainted
+    // unless we explicitly repaint its layers.
+    if (RefPtr rootElement = protect(document())->documentElement()) {
+        if (CheckedPtr rootRenderer = dynamicDowncast<RenderLayerModelObject>(rootElement->renderer())) {
+            // Only repaint if its has its own backing. Otherwise, it paints into its
+            // ancestor layer (this RenderView), which we're repainting anyway.
+            if (CheckedPtr rootLayer = rootRenderer->layer(); rootLayer && compositedWithOwnBackingStore(*rootLayer))
+                rootLayer->setBackingNeedsRepaint(GraphicsLayerShouldClipToLayer::DoNotClip);
+        }
+    }
+
     if (layer()->isComposited()) {
         layer()->setBackingNeedsRepaint(GraphicsLayerShouldClipToLayer::DoNotClip);
         return;

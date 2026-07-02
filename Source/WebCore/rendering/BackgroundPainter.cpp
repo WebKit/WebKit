@@ -117,8 +117,11 @@ bool BackgroundPainter::paintsOwnBackground(const RenderBoxModelObject& renderer
         return true;
     if (renderer.shouldApplyAnyContainment())
         return true;
-    // The <body> only paints its background if the root element has defined a background independent of the body,
-    // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
+
+    // Per CSS Backgrounds spec, the background of <body> is used as the root background,
+    // hence it'll be painted by the root background painter. <body> only paints its background
+    // if the root element has defined a background independent of the body, or if the <body>'s
+    // parent is not the document element's renderer (e.g. inside SVG foreignObject).
     auto documentElementRenderer = renderer.document().documentElement()->renderer();
     return !documentElementRenderer || documentElementRenderer->shouldApplyAnyContainment() || documentElementRenderer->hasBackground() || documentElementRenderer != renderer.parent();
 }
