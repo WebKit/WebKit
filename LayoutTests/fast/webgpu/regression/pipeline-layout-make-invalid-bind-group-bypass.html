@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+
+    // Pipeline-side BGL: two storage buffers
+    let bglA = device.createBindGroupLayout({ entries: [
+      {binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'storage'}},
+      {binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'storage'}},
+    ]});
+    let layoutL = device.createPipelineLayout({ bindGroupLayouts: [bglA] });
+    let module = device.createShaderModule({ code: `
+      @group(0) @binding(0) var<storage, read_write> a: array<u32>;
+      @group(0) @binding(1) var<storage, read_write> b: array<u32>;
+      @compute @workgroup_size(1) fn main() { a[0] = b[0]; }
+    `});
+    let pipeline = device.createComputePipeline({ layout: layoutL, compute: { module, entryPoint: 'main' }});
+
+    // Incompatible BGL: single uniform buffer at a different binding index
+    let bglB = device.createBindGroupLayout({ entries: [
+      {binding: 7, visibility: GPUShaderStage.COMPUTE, buffer: {type: 'uniform'}},
+    ]});
+    let buf = device.createBuffer({ size: 256, usage: GPUBufferUsage.UNIFORM });
+    let bgBad = device.createBindGroup({ layout: bglB, entries: [{binding: 7, resource: {buffer: buf}}] });
+
+    let enc = device.createCommandEncoder();
+    let pass = enc.beginComputePass();
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bgBad);
+
+    // Inner scope: consume the validation error from getBindGroupLayout(100) itself,
+    // so it doesn't mask whether the dispatch path generates its own error.
+    device.pushErrorScope('validation');
+    pipeline.getBindGroupLayout(100);
+    let bglError = await device.popErrorScope();
+    log('getBindGroupLayout error: ' + (bglError ? 'yes' : 'no'));
+
+    // Outer scope: now check whether dispatch/submit against the poisoned layout
+    // is properly rejected. Without the fix, no error is generated here and the
+    // Metal dispatch proceeds against a wrong-shape argument buffer (GPU OOB).
+    device.pushErrorScope('validation');
+    pass.dispatchWorkgroups(1, 1, 1);
+    pass.end();
+    device.queue.submit([enc.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    let dispatchError = await device.popErrorScope();
+    if (dispatchError) {
+      log('PASS: dispatch rejected after pipeline layout invalidation');
+    } else {
+      log('FAIL: dispatch proceeded with invalidated pipeline layout');
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

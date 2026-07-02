@@ -299,6 +299,11 @@ bool RenderBundleEncoder::executePreDrawCommands(bool needsValidationLayerWorkar
         return false;
     }
 
+    if (!pipeline->isValid()) {
+        makeInvalid(@"pipeline is not valid prior to draw");
+        return false;
+    }
+
     Ref pipelineLayout = pipeline->pipelineLayout();
     auto vertexDynamicOffsetSum = checkedSum<uint64_t>(m_vertexDynamicOffset, sizeof(uint32_t) * pipelineLayout->sizeOfVertexDynamicOffsets());
     if (vertexDynamicOffsetSum.hasOverflowed()) {
