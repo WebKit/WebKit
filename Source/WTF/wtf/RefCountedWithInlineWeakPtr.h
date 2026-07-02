@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,16 +43,24 @@ public:
 
     RefCountDebugger& refCountDebugger() const { return const_cast<RefCountDebugger&>(m_refCountDebugger); }
 
-protected:
-    RefCountedWithInlineWeakPtrBase() = default;
+    RefCountedWithInlineWeakPtrBase(unsigned weakCount)
+        : m_strongCount(0)
+        , m_weakCount(weakCount)
+    {
+        m_refCountDebugger.relaxAdoptionRequirement();
+    }
 
     ~RefCountedWithInlineWeakPtrBase()
     {
-        m_refCountDebugger.willDestroy(m_strongCount);
-        RELEASE_ASSERT(m_strongCount == 1);
-        // Use volatile to prevent compilers from eliminating this code. <https://webkit.org/b/304549>
-        *static_cast<volatile unsigned*>(&m_strongCount) = 0;
+        if (m_strongCount) {
+            m_refCountDebugger.willDestroy(m_strongCount);
+            RELEASE_ASSERT(m_strongCount == 1);
+        } else
+            RELEASE_ASSERT(m_weakCount == 1);
     }
+
+protected:
+    RefCountedWithInlineWeakPtrBase() = default;
 
     // Returns true if the pointer should be destroyed.
     bool derefBase() const
@@ -75,8 +84,11 @@ protected:
             return false;
         }
 
+        m_refCountDebugger.willDelete();
         return true;
     }
+
+    unsigned weakCount() const { return m_weakCount; }
 
 private:
     mutable unsigned m_strongCount { 1 };
@@ -111,12 +123,15 @@ private:
 
 template<typename T> void RefCountedWithInlineWeakPtr<T>::derefSlowCase() const
 {
+    unsigned weakCount = this->weakCount();
     const_cast<T*>(static_cast<const T*>(this))->~T();
+    new (const_cast<void*>(static_cast<const void*>(this))) RefCountedWithInlineWeakPtrBase(weakCount);
     weakDeref();
 }
 
 template<typename T> void RefCountedWithInlineWeakPtr<T>::weakDerefSlowCase() const
 {
+    const_cast<RefCountedWithInlineWeakPtrBase*>(static_cast<const RefCountedWithInlineWeakPtrBase*>(this))->~RefCountedWithInlineWeakPtrBase();
     T::operator delete(const_cast<T*>(static_cast<const T*>(this)));
 }
 
