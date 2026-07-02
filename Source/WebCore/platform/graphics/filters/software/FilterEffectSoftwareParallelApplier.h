@@ -90,11 +90,12 @@ inline bool applyPlatformParallel(typename ParallelJobs<ApplyParameters>::Worker
 
     // Copy together the parts of the image.
     currentY = 0;
+    int scratchHeight = calculateAdjustedBlockHeight(0);
     for (int job = 1; job < jobs; ++job) {
         ApplyParameters& params = parallelJobs.parameter(job);
-        int scratchHeight = calculateAdjustedBlockHeight(job);
 
         currentY += scratchHeight;
+        scratchHeight = calculateAdjustedBlockHeight(job);
 
         unsigned destinationOffset = currentY * scanline;
         unsigned scratchSize = scratchHeight * scanline;
