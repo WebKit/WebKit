@@ -34,6 +34,7 @@ class CSSToLengthConversionData;
 class CSSValue;
 class TimingFunction;
 struct CSSParserContext;
+enum CSSValueID : uint16_t;
 
 namespace CSS {
 struct PropertyParserState;
@@ -44,6 +45,10 @@ namespace CSSPropertyParserHelpers {
 // <easing-function> = linear | ease | ease-in | ease-out | ease-in-out | step-start | step-end | <linear()> | <cubic-bezier()> | <steps()>
 // NOTE: also includes non-standard <spring()>.
 // https://drafts.csswg.org/css-easing/#typedef-easing-function
+
+// MARK: <easing-function> identification
+inline constexpr size_t allEasingFunctionsCount = 4;
+Vector<CSSValueID, allEasingFunctionsCount> enabledEasingFunctions(const CSSParserContext&);
 
 // MARK: <easing-function> consuming (unresolved)
 std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserTokenRange&, CSS::PropertyParserState&);

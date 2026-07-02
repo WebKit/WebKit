@@ -83,7 +83,7 @@ public:
     Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText) override;
     Inspector::CommandResult<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(const Inspector::Protocol::Network::FrameId&) override;
     Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(const Inspector::Protocol::CSS::StyleSheetId&, const String& selector) override;
-    Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> getSupportedCSSProperties() override;
+    Inspector::CommandResult<std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>, Ref<JSON::ArrayOf<String> /* colors */>>> getSupportedCSSProperties() override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> getSupportedSystemFontFamilyNames() override;
     Inspector::CommandResult<void> forcePseudoState(Inspector::Protocol::DOM::NodeId, Ref<JSON::Array>&& forcedPseudoClasses) override;
     Inspector::CommandResult<void> setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode) override;

@@ -4071,6 +4071,61 @@ class GenerateCSSPropertyNames:
         to.write("}")
         to.newline()
 
+    def _collect_grammar_references(self, term, names):
+        if isinstance(term, ReferenceTerm):
+            names.add(term.name.name)
+        elif isinstance(term, (MatchOneTerm, MatchOneOrMoreAnyOrderTerm, MatchAllOrderedTerm, MatchAllAnyOrderTerm)):
+            for subterm in term.subterms:
+                self._collect_grammar_references(subterm, names)
+        elif isinstance(term, OptionalTerm):
+            self._collect_grammar_references(term.subterm, names)
+        elif isinstance(term, (UnboundedRepetitionTerm, BoundedRepetitionTerm)):
+            self._collect_grammar_references(term.repeated_term, names)
+
+    def _generate_inspector_property_references(self, *, to):
+        reference_name_to_flag = [
+            ("color", "Color"),
+            ("image", "Image"),
+            ("easing-function", "EasingFunction"),
+            ("basic-shape", "BasicShape"),
+            ("url", "URL"),
+        ]
+
+        properties_with_references = []
+        seen_ids = set()
+        for prop in self.properties_and_descriptors.style_properties.all:
+            if str(prop.id) in seen_ids:
+                continue
+            seen_ids.add(str(prop.id))
+
+            names = set()
+            grammar = prop.codegen_properties.parser_grammar
+            if grammar:
+                self._collect_grammar_references(grammar.root_term, names)
+            unused_grammar = prop.codegen_properties.parser_grammar_unused
+            if unused_grammar:
+                self._collect_grammar_references(unused_grammar.root_term, names)
+
+            flags = [flag for name, flag in reference_name_to_flag if name in names]
+            if flags:
+                properties_with_references.append((prop, flags))
+
+        to.write("OptionSet<CSSPropertyValueType> CSSProperty::valueTypesForProperty(CSSPropertyID id)")
+        to.write("{")
+        with to.indent():
+            to.write("switch (id) {")
+            for prop, flags in properties_with_references:
+                to.write(f"case {prop.id}:")
+                with to.indent():
+                    flags_str = ", ".join(f"CSSPropertyValueType::{flag}" for flag in flags)
+                    to.write(f"return {{ {flags_str} }};")
+            to.write("default:")
+            with to.indent():
+                to.write("return { };")
+            to.write("}")
+        to.write("}")
+        to.newline()
+
     def _term_matches_number_or_integer(self, term):
         if isinstance(term, MatchOneTerm):
             return any(self._term_matches_number_or_integer(inner_term) for inner_term in term.subterms)
@@ -4303,6 +4358,10 @@ class GenerateCSSPropertyNames:
             )
 
             self._generate_valid_keywords_for_property(
+                to=writer
+            )
+
+            self._generate_inspector_property_references(
                 to=writer
             )
 

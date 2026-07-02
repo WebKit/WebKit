@@ -27,6 +27,7 @@
 
 #include <WebCore/CSSColorType.h>
 #include <optional>
+#include <span>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 
@@ -55,6 +56,10 @@ struct CSSColorParsingOptions {
 
 // MARK: Mode specific color settings.
 bool NODELETE isColorKeywordAllowed(CSSValueID, const CSSParserContext&);
+
+// MARK: <color> identification
+inline constexpr size_t allColorFunctionsCount = 15;
+Vector<CSSValueID, allColorFunctionsCount> enabledColorFunctions(const CSSParserContext&);
 
 // MARK: <color> consuming (unresolved)
 std::optional<CSS::Color> consumeUnresolvedColor(CSSParserTokenRange&, CSS::PropertyParserState&, const CSSColorParsingOptions& = { });

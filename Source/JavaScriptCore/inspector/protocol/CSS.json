@@ -205,7 +205,9 @@
                 { "name": "aliases", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Other names for this property." },
                 { "name": "longhands", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Longhand property names." },
                 { "name": "values", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Supported values for this property." },
-                { "name": "inherited", "type": "boolean", "optional": true, "description": "Whether the property is able to be inherited." }
+                { "name": "inherited", "type": "boolean", "optional": true, "description": "Whether the property is able to be inherited." },
+                { "name": "isColorAware", "type": "boolean", "optional": true, "description": "Whether the property's value can contain a <color>." },
+                { "name": "isEasingAware", "type": "boolean", "optional": true, "description": "Whether the property's value can contain a <easing-function>." }
             ]
         },
         {
@@ -461,7 +463,8 @@
             "name": "getSupportedCSSProperties",
             "description": "Returns all supported CSS property names.",
             "returns": [
-                { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSPropertyInfo" }, "description": "Supported property metainfo." }
+                { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSPropertyInfo" }, "description": "Supported property metainfo." },
+                { "name": "colors", "type": "array", "items": { "type": "string" }, "description": "Supported <color> values." }
             ]
         },
         {

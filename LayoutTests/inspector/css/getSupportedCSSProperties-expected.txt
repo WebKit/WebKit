@@ -1,5 +1,35 @@
+"background-color" is supported
+"background-color" is color-aware
+
+"background-image" is supported
+"background-image" has values:
+ - "none"
+ - "url()"
+ - "conic-gradient()"
+ - "cross-fade()"
+ - "filter()"
+ - "image()"
+ - "image-set()"
+ - "light-dark()"
+ - "linear-gradient()"
+ - "paint()"
+ - "radial-gradient()"
+ - "repeating-conic-gradient()"
+ - "repeating-linear-gradient()"
+ - "repeating-radial-gradient()"
+ - "-webkit-canvas()"
+ - "-webkit-cross-fade()"
+ - "-webkit-filter()"
+ - "-webkit-gradient()"
+ - "-webkit-image-set()"
+ - "-webkit-linear-gradient()"
+ - "-webkit-named-image()"
+ - "-webkit-radial-gradient()"
+ - "-webkit-repeating-linear-gradient()"
+ - "-webkit-repeating-radial-gradient()"
+
 "background-repeat" is supported
-"background-repeat" has keyword values:
+"background-repeat" has values:
  - "repeat-x"
  - "repeat-y"
  - "repeat"
@@ -10,12 +40,34 @@
 "box-sizing" is supported
 "box-sizing" has aliases:
  - "-webkit-box-sizing"
-"box-sizing" has keyword values:
+"box-sizing" has values:
  - "border-box"
  - "content-box"
 
+"clip-path" is supported
+"clip-path" has aliases:
+ - "-webkit-clip-path"
+"clip-path" has values:
+ - "none"
+ - "content-box"
+ - "margin-box"
+ - "stroke-box"
+ - "border-box"
+ - "fill-box"
+ - "view-box"
+ - "padding-box"
+ - "url()"
+ - "circle()"
+ - "ellipse()"
+ - "inset()"
+ - "path()"
+ - "polygon()"
+ - "rect()"
+ - "shape()"
+ - "xywh()"
+
 "display" is supported
-"display" has keyword values:
+"display" has values:
  - "inline"
  - "block"
  - "flow"
@@ -48,12 +100,13 @@
 "filter" is supported
 "filter" has aliases:
  - "-webkit-filter"
-"filter" has keyword values:
+"filter" has values:
  - "none"
+ - "url()"
 
 "font-style" is supported
 "font-style" is inherited
-"font-style" has keyword values:
+"font-style" has values:
  - "normal"
  - "italic"
  - "oblique"
@@ -69,8 +122,30 @@
 "text-transform" has aliases:
  - "-epub-text-transform"
 "text-transform" is inherited
-"text-transform" has keyword values:
+"text-transform" has values:
  - "none"
  - "math-auto"
 
+"transition-timing-function" is supported
+"transition-timing-function" has aliases:
+ - "-webkit-transition-timing-function"
+"transition-timing-function" is easing-aware
+"transition-timing-function" has values:
+ - "linear"
+ - "ease"
+ - "ease-in"
+ - "ease-out"
+ - "ease-in-out"
+ - "step-start"
+ - "step-end"
+ - "cubic-bezier()"
+ - "linear()"
+ - "steps()"
+
+"colors" is present
+ - includes "red": true
+ - includes "currentcolor": true
+ - includes "transparent": true
+ - includes "rgb()": true
+ - includes "color-mix()": true
 

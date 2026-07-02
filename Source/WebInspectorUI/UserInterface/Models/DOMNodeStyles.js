@@ -976,7 +976,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         for (var i = 0; i < styles.length; ++i) {
             var properties = styles[i].enabledProperties;
 
-            var knownShorthands = {};
+            let propertyForShorthandPropertyName = new Map;
 
             for (var j = 0; j < properties.length; ++j) {
                 var property = properties[j];
@@ -984,15 +984,16 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 if (!property.valid)
                     continue;
 
-                if (!WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(property.name))
+                if (!WI.CSSKeywordCompletions.LonghandPropertyNamesForShorthandPropertyName.has(property.name))
                     continue;
 
-                if (knownShorthands[property.canonicalName] && !knownShorthands[property.canonicalName].overridden) {
+                let shorthandProperty = propertyForShorthandPropertyName.get(property.canonicalName);
+                if (shorthandProperty && !shorthandProperty.overridden) {
                     console.assert(property.overridden);
                     continue;
                 }
 
-                knownShorthands[property.canonicalName] = property;
+                propertyForShorthandPropertyName.set(property.canonicalName, property);
             }
 
             for (var j = 0; j < properties.length; ++j) {
@@ -1003,13 +1004,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
                 var shorthandProperty = null;
 
-                if (!isEmptyObject(knownShorthands)) {
-                    var possibleShorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(property.canonicalName) || [];
-                    for (var k = 0; k < possibleShorthands.length; ++k) {
-                        if (possibleShorthands[k] in knownShorthands) {
-                            shorthandProperty = knownShorthands[possibleShorthands[k]];
+                if (propertyForShorthandPropertyName.size) {
+                    for (let shorthandPropertyName of (WI.CSSKeywordCompletions.ShorthandPropertyNamesForLonghandPropertyName.get(property.canonicalName) || [])) {
+                        shorthandProperty = propertyForShorthandPropertyName.get(shorthandPropertyName);
+                        if (shorthandProperty)
                             break;
-                        }
                     }
                 }
 
@@ -1047,7 +1046,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 }
 
                 // Always collect variables used in values of inheritable properties.
-                if (WI.CSSKeywordCompletions.InheritedProperties.has(property.name)) {
+                if (WI.CSSKeywordCompletions.InheritedPropertyNames.has(property.name)) {
                     this._usedCSSVariables.addAll(variables);
                     continue;
                 }

@@ -166,12 +166,8 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
             if (property.canonicalName === "all")
                 return false;
 
-            let longhandPropertyNames = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.get(property.canonicalName);
-            if (!longhandPropertyNames)
-                return false;
-
-            for (let longhandPropertyName of longhandPropertyNames) {
-                let property = propertyNameMap.get(longhandPropertyName);
+            for (let longhand of (WI.CSSKeywordCompletions.LonghandPropertyNamesForShorthandPropertyName.get(property.canonicalName) || [])) {
+                let property = propertyNameMap.get(longhand);
                 if (property && !property.implicit)
                     return true;
             }
@@ -192,7 +188,7 @@ WI.ComputedStyleSection = class ComputedStyleSection extends WI.View
             }
 
             if (this._showsShorthandsInsteadOfLonghands) {
-                if (property.shorthandPropertyNames.length)
+                if (property.hasShorthand)
                     return false;
             } else if (property.isShorthand)
                 return false;

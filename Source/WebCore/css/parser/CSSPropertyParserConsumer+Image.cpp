@@ -67,6 +67,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
+#include <array>
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
@@ -1185,6 +1186,56 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& args, CSS::Property
 // MARK: <image>
 // https://drafts.csswg.org/css-images-4/#image-values
 
+static constexpr std::array allImageFunctions = {
+    CSSValueConicGradient,
+    CSSValueCrossFade,
+    CSSValueFilter,
+    CSSValueImage,
+    CSSValueImageSet,
+    CSSValueLightDark,
+    CSSValueLinearGradient,
+    CSSValuePaint,
+    CSSValueRadialGradient,
+    CSSValueRepeatingConicGradient,
+    CSSValueRepeatingLinearGradient,
+    CSSValueRepeatingRadialGradient,
+    CSSValueWebkitCanvas,
+    CSSValueWebkitCrossFade,
+    CSSValueWebkitFilter,
+    CSSValueWebkitGradient,
+    CSSValueWebkitImageSet,
+    CSSValueWebkitLinearGradient,
+    CSSValueWebkitNamedImage,
+    CSSValueWebkitRadialGradient,
+    CSSValueWebkitRepeatingLinearGradient,
+    CSSValueWebkitRepeatingRadialGradient,
+};
+static_assert(std::size(allImageFunctions) == allImageFunctionsCount);
+
+Vector<CSSValueID, allImageFunctionsCount> enabledImageFunctions(const CSSParserContext& context)
+{
+    Vector<CSSValueID, allImageFunctionsCount> result;
+    for (auto functionId : allImageFunctions) {
+        if (functionId == CSSValuePaint && !context.cssPaintingAPIEnabled)
+            continue;
+        result.append(functionId);
+    }
+    return result;
+}
+
+static void validateImageFunction(CSSValueID functionId, const CSSParserContext& context)
+{
+    UNUSED_PARAM(functionId);
+    UNUSED_PARAM(context);
+#if ASSERT_ENABLED
+    if (std::ranges::find(allImageFunctions, functionId) == allImageFunctions.end())
+        return;
+
+    auto enabledFunctionIds = enabledImageFunctions(context);
+    RELEASE_ASSERT(std::ranges::find(enabledFunctionIds, functionId) != enabledFunctionIds.end());
+#endif
+}
+
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<AllowedImageType> allowedImageTypes)
 {
     if (range.peek().type() == StringToken && allowedImageTypes.contains(AllowedImageType::RawStringAsURL)) {
@@ -1219,6 +1270,7 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSS::PropertyParserSta
         };
 
         auto functionId = range.peek().functionId();
+        validateImageFunction(functionId, state.context);
         switch (functionId) {
         case CSSValueRadialGradient:
             return consumeGeneratedImage([&](auto& args) { return consumeRadialGradient<CSSValueRadialGradient>(args, state); });
