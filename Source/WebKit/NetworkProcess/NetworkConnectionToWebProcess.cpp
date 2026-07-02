@@ -1764,6 +1764,10 @@ WebSWServerConnection* NetworkConnectionToWebProcess::swConnection()
 
 void NetworkConnectionToWebProcess::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {
+    // Both ports clearly should originate from this web process.
+    MESSAGE_CHECK(port1.processIdentifier == m_webProcessIdentifier);
+    MESSAGE_CHECK(port2.processIdentifier == m_webProcessIdentifier);
+
     m_processEntangledPorts.add(port1);
     m_processEntangledPorts.add(port2);
     protect(m_networkProcess->messagePortChannelRegistry())->didCreateMessagePortChannel(port1, port2);
@@ -1771,24 +1775,55 @@ void NetworkConnectionToWebProcess::createNewMessagePortChannel(const MessagePor
 
 void NetworkConnectionToWebProcess::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    m_processEntangledPorts.add(local);
-    protect(m_networkProcess->messagePortChannelRegistry())->didEntangleLocalToRemote(local, remote, m_webProcessIdentifier);
+    CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
 
-    RefPtr channel = m_networkProcess->messagePortChannelRegistry().existingChannelContainingPort(local);
-    if (channel && channel->hasAnyMessagesPendingOrInFlight())
+    // A MessageChannel created on a stopped ScriptExecutionContext skips the CreateNewMessagePortChannel
+    // IPC, but still sends Disentangle/Entangle for the ensuing transfer.
+    // Allow a missing channel here, as there's no state to protect or verify.
+    RefPtr channel = registry->existingChannelContainingPort(local);
+    if (!channel)
+        return;
+
+    // Ports can be transferred to another process (cross origin) or within the same process.
+    // Even in same process transfers they can be disentangled before being reentangled.
+    // Allow for either case here.
+    MESSAGE_CHECK(registry->claimPendingTransferDestination(local, m_webProcessIdentifier)
+        || registry->claimPendingTransferOrigin(local, m_webProcessIdentifier));
+
+    MESSAGE_CHECK(channel->includesPort(remote));
+
+    // The local port must currently be in transit (no current owner).
+    MESSAGE_CHECK(!channel->processForPort(local));
+
+    m_processEntangledPorts.add(local);
+    registry->didEntangleLocalToRemote(local, remote, m_webProcessIdentifier);
+
+    if (channel->hasAnyMessagesPendingOrInFlight())
         m_connection->send(Messages::NetworkProcessConnection::MessagesAvailableForPort(local), 0);
 }
 
 void NetworkConnectionToWebProcess::messagePortDisentangled(const MessagePortIdentifier& port)
 {
-    m_processEntangledPorts.remove(port);
+    CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
+    RefPtr channel = registry->existingChannelContainingPort(port);
+    if (channel)
+        MESSAGE_CHECK(channel->processForPort(port) == m_webProcessIdentifier);
 
-    protect(m_networkProcess->messagePortChannelRegistry())->didDisentangleMessagePort(port);
+    m_processEntangledPorts.remove(port);
+    registry->didDisentangleMessagePort(port);
+
+    // Record that this process is the legitimate origin for any subsequent message that carries this port.
+    if (channel)
+        registry->recordPendingTransferOrigin(port, m_webProcessIdentifier);
 }
 
 void NetworkConnectionToWebProcess::messagePortClosed(const MessagePortIdentifier& port)
 {
-    protect(m_networkProcess->messagePortChannelRegistry())->didCloseMessagePort(port);
+    CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
+    if (RefPtr channel = registry->existingChannelContainingPort(port))
+        MESSAGE_CHECK(channel->processForPort(port) == m_webProcessIdentifier);
+
+    registry->didCloseMessagePort(port);
 }
 
 MessageBatchIdentifier NetworkConnectionToWebProcess::nextMessageBatchIdentifier(CompletionHandler<void()>&& deliveryCallback)
@@ -1801,10 +1836,20 @@ MessageBatchIdentifier NetworkConnectionToWebProcess::nextMessageBatchIdentifier
 
 void NetworkConnectionToWebProcess::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, std::optional<MessageBatchIdentifier>)>&& callback)
 {
+    CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
+    RefPtr channel = registry->existingChannelContainingPort(port);
+    MESSAGE_CHECK_COMPLETION(channel, callback({ }, std::nullopt));
     // A WebContent process may only receive messages for ports entangled to it.
-    MESSAGE_CHECK_COMPLETION(m_processEntangledPorts.contains(port), callback({ }, std::nullopt));
+    MESSAGE_CHECK_COMPLETION(channel->processForPort(port) == m_webProcessIdentifier, callback({ }, std::nullopt));
 
-    protect(m_networkProcess->messagePortChannelRegistry())->takeAllMessagesForPort(port, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& deliveryCallback) mutable {
+    registry->takeAllMessagesForPort(port, [this, protectedThis = Ref { *this }, callback = WTF::move(callback)](Vector<MessageWithMessagePorts>&& messages, CompletionHandler<void()>&& deliveryCallback) mutable {
+        // Now that the receiving process has been authenticated and is about to take possession,
+        // record the destination for any ports being transferred so the receiver can entangle them.
+        CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
+        for (auto& message : messages) {
+            for (auto& transferredPort : message.transferredPorts)
+                registry->recordPendingTransferDestination(transferredPort.first, m_webProcessIdentifier);
+        }
         callback(WTF::move(messages), nextMessageBatchIdentifier(WTF::move(deliveryCallback)));
     });
 }
@@ -1818,13 +1863,24 @@ void NetworkConnectionToWebProcess::didDeliverMessagePortMessages(MessageBatchId
 
 void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& port)
 {
-    if (protect(m_networkProcess->messagePortChannelRegistry())->didPostMessageToRemote(WTF::move(message), port)) {
-        // Look up the process for that port
-        RefPtr channel = m_networkProcess->messagePortChannelRegistry().existingChannelContainingPort(port);
-        ASSERT(channel);
-        auto processIdentifier = channel->processForPort(port);
-        if (processIdentifier) {
-            if (RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(*processIdentifier))
+    CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
+    RefPtr channel = registry->existingChannelContainingPort(port);
+    if (!channel)
+        return;
+
+    // The caller must own at least one port belonging to this channel.
+    auto otherPort = (channel->port1() == port) ? channel->port2() : channel->port1();
+    MESSAGE_CHECK(channel->processForPort(otherPort) == m_webProcessIdentifier
+        || channel->processForPort(port) == m_webProcessIdentifier);
+
+    // Each transferred port must have been disentangled by this same web process.
+    // It's invalid to be transfering a port this web process doesn't even own.
+    for (auto& transferredPort : message.transferredPorts)
+        MESSAGE_CHECK(registry->claimPendingTransferOrigin(transferredPort.first, m_webProcessIdentifier));
+
+    if (registry->didPostMessageToRemote(WTF::move(message), port)) {
+        if (auto destinationProcess = channel->processForPort(port)) {
+            if (RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(*destinationProcess))
                 connectionToWebProcess->m_connection->send(Messages::NetworkProcessConnection::MessagesAvailableForPort(port), 0);
         }
     }

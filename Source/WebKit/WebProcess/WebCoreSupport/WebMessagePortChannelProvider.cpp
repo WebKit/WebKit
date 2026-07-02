@@ -109,7 +109,8 @@ void WebMessagePortChannelProvider::networkProcessConnectionClosed()
 void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& port)
 {
     m_inProcessPortMessages.remove(port);
-    m_portsKnownToNetworkProcess.remove(port);
+    if (!m_portsKnownToNetworkProcess.remove(port))
+        return;
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
 }
 

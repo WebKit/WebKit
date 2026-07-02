@@ -49,7 +49,7 @@ public:
     const MessagePortIdentifier& port2() const LIFETIME_BOUND { return m_ports[1]; }
 
     WEBCORE_EXPORT std::optional<ProcessIdentifier> NODELETE processForPort(const MessagePortIdentifier&);
-    bool NODELETE includesPort(const MessagePortIdentifier&);
+    WEBCORE_EXPORT bool NODELETE includesPort(const MessagePortIdentifier&);
     void entanglePortWithProcess(const MessagePortIdentifier&, ProcessIdentifier);
     void disentanglePort(const MessagePortIdentifier&);
     void closePort(const MessagePortIdentifier&);

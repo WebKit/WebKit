@@ -37,6 +37,7 @@
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
 #include "WebSharedWorkerServer.h"
+#include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -162,6 +163,14 @@ void WebSharedWorkerServerToContextConnection::resumeSharedWorker(WebCore::Share
 void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedWorker& sharedWorker, const WebCore::TransferredMessagePort& port, CompletionHandler<void(bool)>&& completionHandler)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("postConnectEvent: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
+
+    // SharedWorkers follow a different flow than normal MessagePort events
+    // We pre-record the destination so impending message checks pass.
+    if (RefPtr connection = m_connection.get()) {
+        Ref networkProcess = connection->networkProcess();
+        CheckedRef registry = networkProcess->messagePortChannelRegistry();
+        registry->recordPendingTransferDestination(port.first, connection->webProcessIdentifier());
+    }
     sendWithAsyncReply(Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent { sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin }, WTF::move(completionHandler));
 }
 

@@ -3353,6 +3353,13 @@ void NetworkProcess::setCORSDisablingPatternsForPage(WebCore::ProcessIdentifier 
     m_extensionCORSDisablingPatterns.set(pageIdentifier, WTF::move(parsedPatterns));
 }
 
+void NetworkProcess::recordMessagePortTransferDestinationsForSiteIsolation(Vector<WebCore::MessagePortIdentifier>&& ports, WebCore::ProcessIdentifier destination, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& port : ports)
+        m_messagePortChannelRegistry.recordPendingTransferDestination(port, destination);
+    completionHandler();
+}
+
 #if PLATFORM(COCOA)
 void NetworkProcess::appPrivacyReportTestingData(PAL::SessionID sessionID, CompletionHandler<void(const AppPrivacyReportTestingData&)>&& completionHandler)
 {
