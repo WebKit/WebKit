@@ -30,6 +30,7 @@
 #include "OverSampleType.h"
 #include "WaveShaperOptions.h"
 #include "WaveShaperProcessor.h"
+#include <JavaScriptCore/Forward.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
