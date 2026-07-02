@@ -61,8 +61,7 @@ public:
     const Color& highlightColor() const LIFETIME_BOUND { return m_highlightColor; }
     void setHighlightColor(const Color& color) { m_highlightColor = color; }
 
-    bool wrapTextDuringPercentageBasedPositioning() const override { return !m_preventLineWrapping; }
-    bool preventLineWrapping() const { return m_preventLineWrapping; }
+    bool preventLineWrapping() const override { return m_preventLineWrapping; }
     void setPreventLineWrapping(bool preventWrapping) { m_preventLineWrapping = preventWrapping; }
 
 private:

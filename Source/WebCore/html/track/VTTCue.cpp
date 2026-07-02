@@ -249,10 +249,10 @@ void VTTCueBox::applyCSSProperties()
     // unless if it is the child of a region, then it is to be relatively positioned.
     setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
 
-    if (!cue->snapToLines())
+    if (cue->preventLineWrapping()) {
         setInlineStyleProperty(CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
-    if (!cue->snapToLines() && !cue->wrapTextDuringPercentageBasedPositioning())
         setInlineStyleProperty(CSSPropertyTextWrapMode, CSSValueNowrap);
+    }
 
     // Make sure shadow or stroke is not clipped.
     // NOTE: Set in text-tracks.css

@@ -219,7 +219,7 @@ public:
     const LineAndPositionSetting& width() const LIFETIME_BOUND { return m_width; }
     const LineAndPositionSetting& height() const LIFETIME_BOUND { return m_height; }
 
-    virtual bool wrapTextDuringPercentageBasedPositioning() const { return false; }
+    virtual bool preventLineWrapping() const { return false; }
 
 protected:
     VTTCue(Document&, const MediaTime& start, const MediaTime& end, String&& content);

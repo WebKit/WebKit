@@ -1,0 +1,14 @@
+/* Reset all css properties that can possibly be set on ::cue (8.2.1. The ::cue pseudo-element) to override any system styles. */
+::cue {
+    color: rgba(255,255,255,1);
+    opacity: 1;
+    visibility: visibile;
+    text-decoration: none;
+    text-shadow: none;
+    background: rgba(0,0,0,0.8);
+    outline: none;
+    font: 5cqh sans-serif;
+    white-space: pre-line;
+    text-combine-upright: none;
+    ruby-position: alternate;
+}
