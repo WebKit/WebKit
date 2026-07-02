@@ -43,7 +43,7 @@ Ref<BlobEvent> BlobEvent::create(const AtomString& type, Init&& init, IsTrusted 
 BlobEvent::BlobEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
     : Event(EventInterfaceType::BlobEvent, type, init, isTrusted)
     , m_blob(init.data.releaseNonNull())
-    , m_timecode(init.timecode)
+    , m_timecode(init.timecode.value_or(0))
 {
 }
 
