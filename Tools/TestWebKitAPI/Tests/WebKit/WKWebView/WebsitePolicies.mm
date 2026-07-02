@@ -2285,7 +2285,10 @@ TEST(WebpagePreferences, LoadHTMLString)
 
 TEST(WebpagePreferences, GlobalPrivacyControlNavigatorAPI)
 {
-    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("GlobalPrivacyControlFeatureEnabled"));
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
 
     __block BOOL nextNavigationGPC = YES;
@@ -2362,7 +2365,10 @@ TEST(WebpagePreferences, GlobalPrivacyControlNavigatorAPIInSubframe)
         { "/sub.html"_s, { "<script>alert(String(navigator.globalPrivacyControl))</script>"_s } },
     }, HTTPServer::Protocol::Http);
 
-    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("GlobalPrivacyControlFeatureEnabled"));
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if (action.targetFrame.mainFrame)

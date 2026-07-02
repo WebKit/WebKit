@@ -3501,7 +3501,7 @@ GetUserMediaRequiresFocus:
 
 GlobalPrivacyControlFeatureEnabled:
   type: bool
-  status: testable
+  status: embedder
   category: privacy
   humanReadableName: "Global Privacy Control Feature"
   humanReadableDescription: "Enable Global Privacy Control (GPC) Feature"

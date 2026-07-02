@@ -25,6 +25,7 @@
 
 // https://www.w3.org/TR/gpc/
 [
+    EnabledBySetting=GlobalPrivacyControlFeatureEnabled,
     ImplementedBy=NavigatorGlobalPrivacyControl
 ] interface mixin NavigatorGlobalPrivacyControl {
     [ImplementedAs=globalPrivacyControlStatus] readonly attribute boolean globalPrivacyControl;
