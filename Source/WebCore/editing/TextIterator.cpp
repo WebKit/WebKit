@@ -432,10 +432,24 @@ static inline bool NODELETE isDescendantOf(TextIteratorBehaviors options, Node& 
     return node.isDescendantOf(&possibleAncestor);
 }
 
+static inline ContainerNode* NODELETE parentInComposedTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* slot = node.assignedSlot()) {
+        if (auto* shadowRoot = slot->containingShadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
+            return slot;
+    }
+
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(node))
+        return shadowRoot->host();
+
+    return node.parentNode();
+}
+
 static inline Node* NODELETE parentNodeOrShadowHost(TextIteratorBehaviors options, Node& node)
 {
     if (options.contains(TextIteratorBehavior::TraversesFlatTree)) [[unlikely]]
-        return node.parentInComposedTree();
+        return parentInComposedTreeIgnoringUserAgentShadow(node);
+
     return node.parentOrShadowHostNode();
 }
 

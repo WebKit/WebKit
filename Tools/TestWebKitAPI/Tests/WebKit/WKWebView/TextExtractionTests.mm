@@ -54,6 +54,7 @@
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKTextExtraction.h>
+#import <WebKit/_WKTextRun.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/cocoa/ScreenTimeSoftLink.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
@@ -766,6 +767,23 @@ TEST(TextExtractionTests, MinimalHTMLOutput)
     EXPECT_FALSE([debugText containsString:@"form"]);
     EXPECT_FALSE([debugText containsString:@"target"]);
     EXPECT_FALSE([debugText containsString:@"asdf"]);
+}
+
+TEST(TextExtractionTests, NestedDetailsDoesNotHang)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<details><details>x<summary></summary></details></details>"];
+
+    __block bool done = false;
+    [webView _requestAllTextWithCompletionHandler:^(NSArray<_WKTextRun *> *) {
+        done = true;
+    }];
+    Util::run(&done);
 }
 
 TEST(TextExtractionTests, FilterOptions)
