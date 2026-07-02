@@ -71,6 +71,12 @@ class TimeLabel extends LayoutNode
     }
     set value(value)
     {
+        // Avoid re-formatting the label (twice — once for textContent and once
+        // for the aria-label) when the value is unchanged. _performIdealLayout()
+        // writes this on every layout, which runs on each timeupdate.
+        if (value === this._value || (isNaN(value) && isNaN(this._value)))
+            return;
+
         this._value = value;
         this.markDirtyProperty("value");
     }
