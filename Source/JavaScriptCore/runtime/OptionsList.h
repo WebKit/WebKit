@@ -397,6 +397,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maximumDirectCallStackSize, 200, Normal, nullptr) \
     \
     v(Unsigned, minimumNumberOfScansBetweenRebalance, 100, Normal, nullptr) \
+    v(Unsigned, gcMarkingPrefetchDistance, 2, Normal, "FIFO prefetch queue depth for GC marking; 1-4 range, clamped to 4"_s) \
     v(Unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(8), Normal, nullptr) \
     v(Bool, useParallelMarkingConstraintSolver, true, Normal, nullptr) \
     v(Unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
