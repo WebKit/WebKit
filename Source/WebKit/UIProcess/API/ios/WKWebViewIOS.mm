@@ -1200,11 +1200,13 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         if (transactionIDForEndLiveResize && transactionID.greaterThanOrEqualSameProcess(*transactionIDForEndLiveResize)) {
             _perProcessState.waitingForEndLiveResizePresentationUpdate = YES;
             _perProcessState.transactionIDForEndLiveResize = std::nullopt;
-            [self _doAfterNextPresentationUpdate:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] {
+            [self _doAfterNextPresentationUpdate:makeBlockPtr([transactionIDForEndLiveResize, weakSelf = WeakObjCPtr<WKWebView>(self)] {
                 RetainPtr strongSelf = weakSelf.get();
                 if (!strongSelf)
                     return;
                 strongSelf->_perProcessState.waitingForEndLiveResizePresentationUpdate = NO;
+                if (strongSelf->_liveResizeSnapshotState && strongSelf->_liveResizeSnapshotState->first == *transactionIDForEndLiveResize && !strongSelf->_liveResizeSnapshotState->second.didForceEndLiveResize)
+                    [strongSelf _removeLiveSnapshotState];
             }).get()];
         }
 #endif
@@ -1934,7 +1936,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _invalidateResizeAssertions];
 #endif
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
-    [self _endLiveResize];
+    [self _endLiveResize:NO];
 #endif
     [self _updateLastKnownWindowSizeAndOrientation];
 }
@@ -2693,7 +2695,7 @@ static CGFloat liveResizeMinimumWidthDifference()
     [_endLiveResizeTimer invalidate];
 
     auto endLiveResizeHysteresis = 500_ms;
-    bool didEndLiveResizeImmediately = false;
+    BOOL didForceEndLiveResize = NO;
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
     if ([self _shouldForceEndLiveResize]
 #if ENABLE(FULLSCREEN_API)
@@ -2701,21 +2703,24 @@ static CGFloat liveResizeMinimumWidthDifference()
 #endif
     ) {
         endLiveResizeHysteresis = 0_ms;
-        didEndLiveResizeImmediately = true;
+        didForceEndLiveResize = YES;
     }
 #endif
 
     _endLiveResizeTimer = [NSTimer
         scheduledTimerWithTimeInterval:endLiveResizeHysteresis.seconds()
         repeats:NO
-        block:makeBlockPtr([didEndLiveResizeImmediately, weakSelf = WeakObjCPtr<WKWebView>(self)](NSTimer *) {
-            auto strongSelf = weakSelf.get();
-            [strongSelf _endLiveResize];
+        block:makeBlockPtr([didForceEndLiveResize, weakSelf = WeakObjCPtr<WKWebView>(self)](NSTimer *) {
+            RetainPtr strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            [strongSelf _endLiveResize:didForceEndLiveResize];
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-            if (!didEndLiveResizeImmediately)
+            if (!didForceEndLiveResize)
                 [strongSelf _resetResponsiveResizeState];
 #else
-            UNUSED_PARAM(didEndLiveResizeImmediately);
+            UNUSED_PARAM(didForceEndLiveResize);
 #endif
         }).get()];
 }
@@ -3806,7 +3811,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-- (void)_endLiveResizeWithResponsiveRelayout
+- (void)_endLiveResizeWithResponsiveRelayout:(BOOL)didForceEndLiveResize
 {
     if (_liveResizeSnapshotState)
         [self _removeLiveSnapshotState];
@@ -3833,7 +3838,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [liveResizeSnapshotView layer].position = CGPointZero;
     [self addSubview:liveResizeSnapshotView.get()];
     auto transactionIDForEndLiveResize = *_perProcessState.transactionIDForEndLiveResize;
-    _liveResizeSnapshotState = { { transactionIDForEndLiveResize, { liveResizeSnapshotView, self.bounds.size.width } } };
+    _liveResizeSnapshotState = { { transactionIDForEndLiveResize, { liveResizeSnapshotView, self.bounds.size.width, didForceEndLiveResize } } };
 
     _perProcessState.lastResizeTimestamp = [NSDate now];
     _perProcessState.lastResizedViewWidth = self.bounds.size.width;
@@ -3881,7 +3886,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     });
 }
 
-- (void)_endLiveResize
+- (void)_endLiveResize:(BOOL)didForceEndLiveResize
 {
     WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
 
@@ -3892,8 +3897,9 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _endLiveResizeTimer = nil;
 
 #if ENABLE(RESPONSIVE_LIVE_RESIZE_UPDATE)
-    [self _endLiveResizeWithResponsiveRelayout];
+    [self _endLiveResizeWithResponsiveRelayout:didForceEndLiveResize];
 #else
+    UNUSED_PARAM(didForceEndLiveResize);
     [self _endLiveResizeDefault];
 #endif
 }

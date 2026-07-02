@@ -324,6 +324,7 @@ struct PerWebProcessState {
 struct LiveResizeSnapshotState {
     RetainPtr<UIView> snapshotView;
     CGFloat initialWidth { 0 };
+    BOOL didForceEndLiveResize { NO };
 };
 #endif
 

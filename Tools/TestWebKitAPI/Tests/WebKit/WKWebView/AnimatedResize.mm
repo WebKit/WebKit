@@ -45,7 +45,7 @@
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 @interface WKWebView ()
 - (void)_beginLiveResize;
-- (void)_endLiveResize;
+- (void)_endLiveResize:(BOOL)didForceEndLiveResize;
 @end
 #endif
 
@@ -565,7 +565,7 @@ TEST(AnimatedResize, MinimumEffectiveDeviceWidthChangeIsDeferredDuringLiveResize
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ([webView scrollView].zoomScale, 1);
 
-    [webView _endLiveResize];
+    [webView _endLiveResize:NO];
 
     [webView waitForNextPresentationUpdate];
     EXPECT_EQ([webView scrollView].zoomScale, 0.5);
@@ -588,7 +588,7 @@ TEST(AnimatedResize, PinScrollPositionRelativeToTopEdgeOnPageScaleChange)
 
     [webView _beginLiveResize];
     [webView setFrame:CGRectMake(0, 0, frame.size.width - 200, frame.size.height)];
-    [webView _endLiveResize];
+    [webView _endLiveResize:NO];
 
     [webView waitForNextPresentationUpdate];
 
@@ -608,7 +608,7 @@ TEST(AnimatedResize, PinScrollPositionRelativeToTopEdgeOnPageScaleChangeAfterInc
 
     [webView _beginLiveResize];
     [webView setFrame:CGRectMake(0, 0, layoutWidth, 600)];
-    [webView _endLiveResize];
+    [webView _endLiveResize:NO];
 
     [webView waitForNextPresentationUpdate];
 
@@ -630,7 +630,7 @@ TEST(AnimatedResize, ChangingWebViewGeometryDuringLiveResizeDoesNotHang)
     auto layoutSize = CGSizeMake(100, 200);
     [webView _overrideLayoutParametersWithMinimumLayoutSize:layoutSize minimumUnobscuredSizeOverride:layoutSize maximumUnobscuredSizeOverride:layoutSize];
 
-    [webView _endLiveResize];
+    [webView _endLiveResize:NO];
 
     __block bool didReadLayoutSize = false;
 

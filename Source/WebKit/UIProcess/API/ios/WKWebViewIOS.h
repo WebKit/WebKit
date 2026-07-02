@@ -187,7 +187,7 @@ enum class TapHandlingResult : uint8_t;
 
 #if HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 - (void)_beginLiveResize;
-- (void)_endLiveResize;
+- (void)_endLiveResize:(BOOL)didForceEndLiveResize;
 #endif
 
 #if ENABLE(LOCKDOWN_MODE_API)
