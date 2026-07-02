@@ -1,8 +1,7 @@
 
-PASS Cannot reuse attached transforms
-PASS SFrameTransform exposes readable and writable
-PASS readable/writable are locked when attached and after being attached
-FAIL SFrame with array buffer - authentication size 10 promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'crypto.subtle.importKey')"
+FAIL Cannot reuse attached transforms promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: RTCRtpSFrameEncrypter"
+FAIL SFrameEncrypterStream exposes readable and writable Can't find variable: SFrameEncrypterStream
+FAIL SFrame with array buffer - AES_128_CTR_HMAC_SHA256_80 promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'crypto.subtle.importKey')"
 FAIL SFrame decryption with array buffer that is too small promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'crypto.subtle.importKey')"
 FAIL SFrame transform gets errored if trying to process unexpected value types promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'crypto.subtle.importKey')"
 

@@ -6818,6 +6818,15 @@
     "imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCEncodedFrame-copy-construction.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-encoded-transform.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-sender-worker-single-frame.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html": [
         "slow"
     ],
@@ -6828,6 +6837,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpEncodingParameters-scaleResolutionDownTo.https.html": [

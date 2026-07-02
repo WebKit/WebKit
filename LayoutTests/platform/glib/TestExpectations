@@ -2927,6 +2927,7 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/scr
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-sendKeyFrameRequest.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-encoded-transform.https.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-sender-worker-single-frame.https.html  [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/idlharness.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-audiolevel.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedFrame-timestamps.html [ Skip ]
 webrtc/audio-sframe.html [ Failure ]
