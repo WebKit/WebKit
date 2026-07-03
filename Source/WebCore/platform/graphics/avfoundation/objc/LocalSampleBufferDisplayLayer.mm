@@ -351,7 +351,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
 {
-    m_processingQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+    m_processingQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -362,7 +362,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
         } @catch(id exception) {
             RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::flushAndRemoveImage failed");
-            protectedThis->layerErrorDidChange();
+            callOnMainThread([weakThis = WTF::move(weakThis)] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->layerErrorDidChange();
+            });
         }
     });
 }
