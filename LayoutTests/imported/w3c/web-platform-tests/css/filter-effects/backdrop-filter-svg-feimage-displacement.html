@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter with feImage-driven feDisplacementMap</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-feimage-displacement-expected.html">
+<!-- feImage supplies a uniform displacement map: a solid white image (white is preserved
+     exactly under color-managed image decoding). With scale=16 every channel reads 255, so
+     every output pixel samples the backdrop at (x + 8, y + 8) and the fuchsia square painted
+     at (110, 110) appears at (102, 102) inside the glass. The reference draws that expected
+     result directly with plain CSS, so it does not depend on any filter code path. -->
+
+<div class="pattern"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="displace" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feImage href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='120' height='120' fill='white'/%3E%3C/svg%3E"
+             x="0" y="0" width="120" height="120" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="16" xChannelSelector="R" yChannelSelector="B"/>
+  </filter>
+</svg>
+
+<style>
+body { margin: 0; background: white; }
+.pattern {
+  position: absolute;
+  background: fuchsia;
+  width: 60px;
+  height: 60px;
+  top: 110px;
+  left: 110px;
+}
+.filter {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 80px;
+  left: 80px;
+  backdrop-filter: url(#displace);
+}
+</style>
+
+<script>
+// Wait until the feImage's image is decodable, then two frames for the repaint on load.
+const mapURL = document.querySelector('feImage').getAttribute('href');
+const img = new Image();
+img.onload = img.onerror = () => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.documentElement.classList.remove('reftest-wait');
+  }));
+};
+img.src = mapURL;
+</script>
+</html>

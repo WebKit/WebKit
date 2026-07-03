@@ -76,6 +76,7 @@
 #include "FrameTree.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextSwitcher.h"
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLFormControlElement.h"
@@ -3348,8 +3349,16 @@ static inline bool NODELETE paintForFixedRootBackground(const RenderLayer* layer
     return layer->renderer().isDocumentElementRenderer() && (paintFlags & RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly);
 }
 
+// While a reference (url()) backdrop-filter captures its backdrop by re-painting the view root,
+// this points at the layer being captured for, so the layer can be excluded from its own backdrop
+// and captures do not nest.
+static RenderLayer* s_backdropFilterCaptureLayer = nullptr;
+
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
 {
+    if (this == s_backdropFilterCaptureLayer)
+        return;
+
     auto shouldContinuePaint = [&] () {
         return backing()->paintsIntoWindow()
             || backing()->paintsIntoCompositedAncestor()
@@ -3904,6 +3913,111 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, fragmentOffset);
         }
         
+        // Software path for reference (url()) backdrop-filters, which Core Animation
+        // cannot express. Run the SVG filter over the captured backdrop and draw the result under
+        // the element, reusing the filter switcher (it handles the source buffer scale, color space
+        // and coordinate alignment).
+        // Skip non-display paints (e.g. ContentfulPaintChecker's NullGraphicsContext, which paints with
+        // FlattenCompositingLayers): capturing/filtering the backdrop there is wasteful and the accelerated
+        // (CoreImage) path cannot run in a null/software measurement context.
+        if (shouldPaintContent && !s_backdropFilterCaptureLayer && !currentContext.paintingDisabled() && renderer().style().backdropFilter().hasReferenceFilter()) {
+            if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer())) {
+                float deviceScaleFactor = renderer().document().deviceScaleFactor();
+                // Work in the element's LOCAL coordinate space (border box at the origin). A
+                // referenced <filter> with filterUnits="userSpaceOnUse" resolves its region from
+                // the filter element's literal x/y (SVGLengthContext::resolveRectangle ignores the
+                // reference box for userSpaceOnUse), so it lands at the user-space origin. Capturing
+                // and filtering in root coordinates left that region offset from the element (the
+                // displacement sampled the backdrop at the wrong place). Anchoring the box at the
+                // origin makes both userSpaceOnUse (x=0,y=0) and objectBoundingBox regions coincide
+                // with the source; the destination is translated by offsetFromRoot at draw time.
+                LayoutRect borderBox = box->borderBoxRect();
+                const auto& backdropFilter = renderer().style().backdropFilter();
+                // Capture / clip to the filter's RESOLVED region so the source co-registers with the SVG
+                // sub-filter: createReferenceFilter resolves the SVG <filter> region the same way (objectBoundingBox
+                // tracks the box + percentages; userSpaceOnUse is the filter element's literal x/y/w/h). Using
+                // borderBox + calculateOutsets instead put the captured source 68px off the element for a
+                // userSpaceOnUse glass (LGLite), since its region is the literal box, not an outset-expanded one.
+                LayoutRect filterRegion = enclosingLayoutRect(CSSFilterRenderer::resolvedReferenceFilterRegion(renderer(), backdropFilter, borderBox));
+                // Work in layout coordinates and let the filter scale handle device pixels, matching
+                // RenderLayerFilters::beginFilterEffect (the switcher snaps to device internally).
+                // Passing device-snapped rects here would scale twice and misplace the backdrop.
+                FloatRect destClipRect = borderBox;
+                FloatRect sourceRect = filterRegion;
+                // The switcher uses sourceImageRect for both the source buffer extent and the
+                // result-draw rect (ImageBufferContextSwitcher::beginClipAndDrawSourceImage and
+                // its endDrawSourceImage). Use the outset-expanded, origin-anchored filterRegion
+                // so the buffer covers the outset a pixel-moving filter samples and the result
+                // rect matches geometry.filterRegion.
+                FloatRect sourceImageRect = filterRegion;
+                FilterGeometry geometry { .referenceBox = borderBox, .filterRegion = filterRegion, .scale = FloatSize(deviceScaleFactor, deviceScaleFactor) };
+                if (RefPtr filter = CSSFilterRenderer::create(renderer(), backdropFilter, geometry, renderer().page().preferredFilterRenderingModes(currentContext), { }, currentContext)) {
+                    auto colorSpace = ColorSpace::SRGB();
+                    if (auto switcher = GraphicsContextSwitcher::create(currentContext, sourceImageRect, colorSpace, RefPtr<Filter> { WTF::move(filter) })) {
+                        // Translate the destination from local space to the element's position in the
+                        // paint root, so the filtered result (drawn in local coordinates) lands on the
+                        // element. The source buffer's own coordinate space is independent of this.
+                        GraphicsContextStateSaver destSpaceSaver(currentContext);
+                        currentContext.translate(FloatSize(offsetFromRoot));
+                        // Clip the filtered result to the element's rounded border box so the
+                        // backdrop honours border-radius (matching the Core Animation path).
+                        GraphicsContextStateSaver roundedClipSaver(currentContext, false);
+                        auto borderShape = BorderShape::shapeForBorderRect(renderer().style(), box->borderBoxRect());
+                        if (borderShape.hasNonZeroRadii()) {
+                            roundedClipSaver.save();
+                            borderShape.clipToOuterShape(currentContext, deviceScaleFactor);
+                        }
+                        switcher->beginClipAndDrawSourceImage(currentContext, sourceRect, destClipRect);
+                        CheckedPtr viewLayer = renderer().view().layer();
+                        if (auto* sourceContext = viewLayer ? switcher->drawingContext(currentContext) : nullptr) {
+                            // Capture the backdrop (everything painted behind this element) into the
+                            // filter's source buffer. Re-paint the real view root rather than the
+                            // current paint root: when this element is itself composited it paints
+                            // into its own backing (paint root == this layer), so the backdrop lives
+                            // in a separate backing we cannot read back. Painting the view root into
+                            // our own buffer works regardless of compositing. Translate the source so
+                            // the element's box in view coordinates lands on sourceRect, and flatten
+                            // composited layers so they paint inline instead of bailing in paintLayer().
+                            s_backdropFilterCaptureLayer = this;
+                            // captureDirty is filterRegion expressed in view coordinates.
+                            LayoutRect captureDirty = filterRegion;
+                            captureDirty.move(offsetFromAncestor(viewLayer.get()));
+                            // offsetFromAncestor() is layout-only; this layer's own transform — static
+                            // (e.g. the common translate(-50%, -50%) centering) or an accelerated
+                            // animation (a sliding glass sheet) — is applied by the compositor to the
+                            // backing this filtered result is painted into, so the capture must follow
+                            // it or it keeps sampling the un-transformed position. currentTransform()
+                            // is animation-aware (the same machinery as the Snapshotting flatten).
+                            // Rotation/scale would need inverse-mapped sampling and keep the
+                            // un-adjusted region for now.
+                            if (transform()) {
+                                auto selfTransform = currentTransform();
+                                if (selfTransform.isIdentityOrTranslation())
+                                    captureDirty.move(LayoutSize(LayoutUnit(selfTransform.e()), LayoutUnit(selfTransform.f())));
+                            }
+                            GraphicsContextStateSaver captureStateSaver(*sourceContext);
+                            // Translate the captured view paint so the element box (in view coordinates)
+                            // lands on sourceRect; sourceImageRect/filterRegion handle the outset coverage.
+                            auto captureTranslate = sourceRect.location() - FloatPoint(captureDirty.location());
+                            sourceContext->translate(captureTranslate);
+                            // Snapshotting makes the flatten paint composited layers at their CURRENT
+                            // animated transform (renderableTransform() -> currentTransform() -> animatedStyle())
+                            // instead of the frozen base value, exactly like view-transition snapshots —
+                            // without it a backdrop moving via an accelerated transform animation is
+                            // captured at its start position and the glass never tracks it.
+                            // IncludeDocumentMarkers keeps spelling/grammar markers, which are on screen
+                            // around the glass, in the captured backdrop too (Snapshotting drops them by default).
+                            auto captureBehavior = paintBehavior | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting | PaintBehavior::IncludeDocumentMarkers;
+                            LayerPaintingInfo captureInfo(viewLayer.get(), captureDirty, captureBehavior, LayoutSize());
+                            viewLayer->paintLayer(*sourceContext, captureInfo, { });
+                            s_backdropFilterCaptureLayer = nullptr;
+                        }
+                        switcher->endClipAndDrawSourceImage(currentContext, colorSpace);
+                    }
+                }
+            }
+        }
+
         if (isPaintingCompositedBackground) {
             // Paint only the backgrounds for all of the fragments of the layer.
             if (shouldPaintContent && !selectionOnly) {
