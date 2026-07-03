@@ -261,6 +261,12 @@ void RunLoop::TimerBase::stop()
     if (!isActiveWithLock())
         return;
 
+    // An active timer must be stopped/destroyed on its run loop's thread: timerFired() runs the timer's
+    // callback on that thread after releasing m_loopLock and the TimerBase is not ref-counted, so
+    // tearing it down from another thread races with the in-flight callback and risks a use-after-free.
+    // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
+    // schedule work onto another run loop.)
+    assertIsCurrent(m_runLoop);
     m_isActive = false;
     m_nextFireDate = MonotonicTime::infinity();
 

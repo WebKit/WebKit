@@ -133,8 +133,16 @@ private:
     void scheduleScratchBufferPurge()
     {
         ASSERT(lock().isHeld());
-        const Seconds scratchBufferPurgeInterval { 2_s };
-        m_purgeTimer.startOneShot(scratchBufferPurgeInterval);
+        static constexpr Seconds scratchBufferPurgeInterval { 2_s };
+
+        // m_purgeTimer fires on the main run loop and so must be started/restarted there: getScratchBuffer()
+        // runs on a paint worker thread in the GPU process, and restarting an active timer off its run
+        // loop's thread races with an in-flight callback. The ScratchBuffer singleton is NeverDestroyed,
+        // so capturing it across the hop is safe, and m_purgeTimer is then only ever touched on the main
+        // run loop.
+        ensureOnMainRunLoop([checkedThis = CheckedRef { *this }] {
+            checkedThis->m_purgeTimer.startOneShot(scratchBufferPurgeInterval);
+        });
     }
 
     void purgeTimerFired()

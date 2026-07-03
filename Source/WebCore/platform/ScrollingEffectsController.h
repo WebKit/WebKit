@@ -79,6 +79,12 @@ public:
     // Only used for non-animation timers.
     virtual std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) = 0;
 
+    // Destroys a timer returned by createTimer() on the thread that owns its run loop. A timer may
+    // fire on a different thread than the one tearing the controller down (e.g. the scrolling thread),
+    // so it must not be stopped or destroyed from the wrong thread. The default destroys it inline,
+    // which is correct for clients whose timers run on the calling thread.
+    virtual void destroyTimer(std::unique_ptr<ScrollingEffectsControllerTimer>) { }
+
     virtual void startAnimationCallback(ScrollingEffectsController&) = 0;
     virtual void stopAnimationCallback(ScrollingEffectsController&) = 0;
 

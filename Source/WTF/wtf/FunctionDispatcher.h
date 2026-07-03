@@ -56,10 +56,8 @@ class GuaranteedSerialFunctionDispatcher : public SerialFunctionDispatcher {
 
 inline void assertIsCurrent(const SerialFunctionDispatcher& queue) WTF_ASSERTS_ACQUIRED_CAPABILITY(queue)
 {
-    ASSERT(queue.isCurrent());
-#if !ASSERT_ENABLED
     UNUSED_PARAM(queue);
-#endif
+    ASSERT_WITH_SECURITY_IMPLICATION(queue.isCurrent());
 }
 
 } // namespace WTF

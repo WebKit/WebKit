@@ -929,15 +929,25 @@ void AcceleratedSurface::visibilityDidChange(bool isVisible)
         return;
 
     m_isVisible = isVisible;
-    if (!m_releaseUnusedBuffersTimer)
+
+    // m_releaseUnusedBuffersTimer is owned by, and fires on, the compositing run loop; it must be
+    // started/stopped there. visibilityDidChange() is called on the main thread (from
+    // ThreadedCompositor::suspend()/resume()), so hop to the compositing run loop.
+    RefPtr compositingRunLoop = m_compositingRunLoop;
+    if (!compositingRunLoop)
         return;
 
-    if (m_isVisible)
-        m_releaseUnusedBuffersTimer->stop();
-    else {
-        static const Seconds releaseUnusedBuffersDelay = 10_s;
-        m_releaseUnusedBuffersTimer->startOneShot(releaseUnusedBuffersDelay);
-    }
+    compositingRunLoop->dispatch([protectedThis = Ref { *this }, isVisible] {
+        auto& timer = protectedThis->m_releaseUnusedBuffersTimer;
+        if (!timer)
+            return;
+        if (isVisible)
+            timer->stop();
+        else {
+            static const Seconds releaseUnusedBuffersDelay = 10_s;
+            timer->startOneShot(releaseUnusedBuffersDelay);
+        }
+    });
 }
 
 void AcceleratedSurface::backgroundColorDidChange()
@@ -972,6 +982,7 @@ void AcceleratedSurface::didCreateCompositingRunLoop(RunLoop& runLoop)
         return;
 #endif
 
+    m_compositingRunLoop = &runLoop;
     m_releaseUnusedBuffersTimer = makeUnique<RunLoop::Timer>(runLoop, "AcceleratedSurface::ReleaseUnusedBuffersTimer"_s, this, &AcceleratedSurface::releaseUnusedBuffersTimerFired);
 #if USE(GLIB_EVENT_LOOP)
     m_releaseUnusedBuffersTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
@@ -990,7 +1001,13 @@ void AcceleratedSurface::willDestroyCompositingRunLoop()
         return;
 #endif
 
-    m_releaseUnusedBuffersTimer = nullptr;
+    // m_releaseUnusedBuffersTimer is owned by the compositing run loop and its destructor stops it, so
+    // destroy it on that run loop's thread rather than here on the main thread.
+    if (RefPtr compositingRunLoop = std::exchange(m_compositingRunLoop, nullptr)) {
+        compositingRunLoop->dispatch([protectedThis = Ref { *this }] {
+            protectedThis->m_releaseUnusedBuffersTimer = nullptr;
+        });
+    }
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurface::messageReceiverName(), m_id);
 #endif

@@ -106,6 +106,7 @@ private:
     void tryEvictOldestCachedSurface() WTF_REQUIRES_LOCK(m_lock);
 
     void scheduleCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
+    void stopCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
     void collectionTimerFired();
     void collectInUseSurfaces() WTF_REQUIRES_LOCK(m_lock);
     bool markOlderSurfacesPurgeable() WTF_REQUIRES_LOCK(m_lock);

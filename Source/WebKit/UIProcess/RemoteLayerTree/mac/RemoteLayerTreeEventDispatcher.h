@@ -78,7 +78,7 @@ class WebProcessPool;
 // This class exists to act as a threadsafe DisplayLink::Client client, allowing RemoteScrollingCoordinatorProxyMac to
 // be main-thread only. It's the UI-process analogue of WebPage/EventDispatcher.
 class RemoteLayerTreeEventDispatcher
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteLayerTreeEventDispatcher>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteLayerTreeEventDispatcher, WTF::DestructionThread::MainRunLoop>
     , public MomentumEventDispatcher::Client {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeEventDispatcher);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerTreeEventDispatcher);

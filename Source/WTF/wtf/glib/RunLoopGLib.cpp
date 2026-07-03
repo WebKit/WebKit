@@ -335,6 +335,13 @@ RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
 
 RunLoop::TimerBase::~TimerBase()
 {
+    // An active timer must be stopped/destroyed on its run loop's thread: the GSource holds a raw
+    // pointer to this TimerBase as its callback user data and runs fired() on that thread, so tearing
+    // it down from another thread races with the in-flight callback and risks a use-after-free.
+    // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
+    // schedule work onto another run loop.)
+    if (isActive())
+        assertIsCurrent(m_runLoop);
     g_source_destroy(m_source.get());
 }
 
@@ -378,6 +385,8 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 
 void RunLoop::TimerBase::stop()
 {
+    if (isActive())
+        assertIsCurrent(m_runLoop);
     g_source_set_ready_time(m_source.get(), -1);
     m_interval = { };
     m_isRepeating = false;

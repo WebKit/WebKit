@@ -30,6 +30,7 @@
 
 #include "ScrollExtents.h"
 #include "ScrollingStateScrollingNode.h"
+#include "ScrollingThread.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
@@ -101,6 +102,16 @@ std::unique_ptr<ScrollingEffectsControllerTimer> ThreadedScrollingTreeScrollingN
         Locker locker { scrollingNode->scrollingTree()->treeLock() };
         function();
     });
+}
+
+void ThreadedScrollingTreeScrollingNodeDelegate::destroyTimer(std::unique_ptr<ScrollingEffectsControllerTimer> timer)
+{
+    // Snap timers are created against the scrolling thread's run loop (see createTimer), so they must
+    // be destroyed there to avoid racing CFRunLoopTimerInvalidate() against an in-flight callback when
+    // the node is torn down on the main thread (e.g. from commitTreeState()). The timer's callback
+    // holds a Ref to the scrolling node, so the node and this delegate stay alive until the timer is
+    // gone, keeping a late-firing callback safe.
+    ScrollingThread::dispatch([timer = WTF::move(timer)] { });
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::startAnimationCallback(ScrollingEffectsController&)

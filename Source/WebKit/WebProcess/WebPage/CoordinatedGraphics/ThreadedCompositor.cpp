@@ -180,14 +180,37 @@ void ThreadedCompositor::startRenderTimer()
     ASSERT(m_state.lock.isHeld());
     ASSERT(!m_state.isRenderTimerActive);
     m_state.isRenderTimerActive = true;
-    m_renderTimer.startOneShot(0_s);
+    updateRenderTimer();
 }
 
 void ThreadedCompositor::stopRenderTimer()
 {
     ASSERT(m_state.lock.isHeld());
     m_state.isRenderTimerActive = false;
-    m_renderTimer.stop();
+    updateRenderTimer();
+}
+
+void ThreadedCompositor::updateRenderTimer()
+{
+    ASSERT(m_state.lock.isHeld());
+
+    // m_renderTimer is bound to the compositor thread's run loop (m_workQueue), so it must be started
+    // and stopped there. The render timer's desired state is tracked synchronously under m_state.lock by
+    // m_state.isRenderTimerActive and may be changed from the main thread (e.g. from suspend()/resume()/
+    // invalidate()), so hop to the compositor thread to bring the timer in line with that state.
+    if (!m_workQueue->runLoop().isCurrent()) {
+        m_workQueue->dispatch([protectedThis = Ref { *this }] {
+            Locker locker { protectedThis->m_state.lock };
+            protectedThis->updateRenderTimer();
+        });
+        return;
+    }
+
+    if (m_state.isRenderTimerActive) {
+        if (!m_renderTimer.isActive())
+            m_renderTimer.startOneShot(0_s);
+    } else
+        m_renderTimer.stop();
 }
 
 bool ThreadedCompositor::isOnlyRenderingUpdatePendingAndWaitingForTiles() const

@@ -121,7 +121,13 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
             return;
         }
 
-        stop();
+        // Re-arm the timer by invalidating the old CFRunLoopTimer in place. Unlike stop(), this does
+        // NOT assert run-loop affinity: start() may legitimately be called from another thread to (re)arm
+        // a timer -- e.g. JSRunLoopTimer::Manager arms its per-VM timer from GC and Wasm compiler threads.
+        // This does not free the TimerBase, so it cannot cause the cross-thread use-after-free that stop()
+        // and the destructor guard against.
+        CFRunLoopTimerInvalidate(m_timer.get());
+        m_timer = nullptr;
     }
 
     m_timer = createTimer(interval, repeat, [] (CFRunLoopTimerRef cfTimer, void* context) {
@@ -141,7 +147,14 @@ void RunLoop::TimerBase::stop()
 {
     if (!m_timer)
         return;
-    
+
+    // An active timer must be stopped (and destroyed) on its run loop's thread: the CFRunLoopTimer
+    // holds a raw pointer to this TimerBase as its callback context, and CFRunLoopTimerInvalidate()
+    // does not synchronize with a callback already dispatching on the run loop's thread, so invalidating
+    // from another thread races with the in-flight callback and can leave it reading freed memory.
+    // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
+    // schedule work onto another run loop.)
+    assertIsCurrent(m_runLoop);
     CFRunLoopTimerInvalidate(m_timer.get());
     m_timer = nullptr;
 }

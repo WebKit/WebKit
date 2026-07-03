@@ -95,9 +95,11 @@ public:
         // If the timeout for AsyncWaiter is infinity, we won't dispatch any timer.
         if (!m_timer)
             return;
-        m_timer->stop();
-        // The AsyncWaiter's timer holds the waiter's reference. This
-        // releases the strong reference to the Waiter in the timer.
+        // Don't stop the timer here: clearTimer() can run on a different thread than the one whose run
+        // loop owns the timer (e.g. from Atomics.notify on another agent), and stopping a RunLoop timer
+        // off its run loop's thread is unsafe. The dispatchAfter() timer keeps itself alive, fires once
+        // on its own thread, and tears itself down there; the timeout handler is idempotent because the
+        // waiter's ticket has already been cleared, so a late fire is a no-op. Just drop our reference.
         m_timer = nullptr;
     }
 

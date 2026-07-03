@@ -122,23 +122,41 @@ RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCo
 
 RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 {
+    ASSERT(!m_displayRefreshObserverID);
+    ASSERT(!m_delayedRenderingUpdateDetectionTimer);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     ASSERT(!m_momentumEventDispatcher);
 #endif
-    ASSERT(!m_displayRefreshObserverID);
 }
 
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
+    ASSERT(isMainRunLoop());
+
     protect(m_displayLinkClient)->invalidate();
 
     removeDisplayLinkClient();
+
+    // Stop m_wheelEventActivityHysteresis here, on the main run loop, so its (main run loop) timer
+    // does not fire a spurious state change while we tear down. Its timer is safe to destroy because
+    // this object is destroyed on the main run loop (see DestructionThread::MainRunLoop).
+    m_wheelEventActivityHysteresis.cancel();
 
     {
         Locker locker { m_scrollingTreeLock };
         m_scrollingTree = nullptr;
     }
+
+    // m_delayedRenderingUpdateDetectionTimer is created on the scrolling thread and fires on the
+    // scrolling thread's run loop, so it must be destroyed there to avoid racing with an in-flight
+    // CFRunLoopTimer callback that holds a raw pointer to it. The dispatcher itself is destroyed on the
+    // main run loop (DestructionThread::MainRunLoop), so dropping the last reference on the scrolling
+    // thread here hops the destructor back to the main run loop, where the main-run-loop timers are torn
+    // down safely.
+    ScrollingThread::dispatch([protectedThis = Ref { *this }] {
+        protectedThis->m_delayedRenderingUpdateDetectionTimer = nullptr;
+    });
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     m_momentumEventDispatcher = nullptr;

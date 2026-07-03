@@ -60,6 +60,7 @@ protected:
 
     // ScrollingEffectsControllerClient.
     std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) override;
+    void destroyTimer(std::unique_ptr<ScrollingEffectsControllerTimer>) override;
     void startAnimationCallback(ScrollingEffectsController&) override;
     void stopAnimationCallback(ScrollingEffectsController&) override;
 

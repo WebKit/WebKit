@@ -116,6 +116,7 @@ private:
 
     void startRenderTimer();
     void stopRenderTimer();
+    void updateRenderTimer();
     bool isOnlyRenderingUpdatePendingAndWaitingForTiles() const;
 
     void scheduleUpdateLocked();

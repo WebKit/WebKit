@@ -349,6 +349,22 @@ void IOSurfacePool::scheduleCollectionTimer()
         m_collectionTimer.startRepeating(collectionInterval);
 }
 
+void IOSurfacePool::stopCollectionTimer()
+{
+    if (RunLoop::isMain()) {
+        m_collectionTimer.stop();
+        return;
+    }
+
+    // m_collectionTimer fires on the main run loop, so it must be stopped there to avoid racing an
+    // in-flight callback. The pool can be discarded from other threads (e.g. when an ImageBuffer
+    // backend is destroyed in the GPU process).
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }] {
+        Locker locker { protectedThis->m_lock };
+        protectedThis->m_collectionTimer.stop();
+    });
+}
+
 void IOSurfacePool::discardAllSurfaces()
 {
     Locker locker { m_lock };
@@ -363,7 +379,7 @@ void IOSurfacePool::discardAllSurfacesInternal()
     m_cachedSurfaces.clear();
     m_inUseSurfaces.clear();
     m_sizesInPruneOrder.clear();
-    m_collectionTimer.stop();
+    stopCollectionTimer();
     platformGarbageCollectNow();
 }
 

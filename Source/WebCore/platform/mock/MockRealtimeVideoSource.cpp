@@ -405,7 +405,7 @@ void MockRealtimeVideoSource::applyFrameRateAndZoomWithPreset(double frameRate, 
     if (m_preset)
         setIntrinsicSize(m_preset->size());
     if (isProducingData())
-        m_emitFrameTimer->startRepeating(1_s / frameRate);
+        startCaptureTimer(frameRate);
 }
 
 IntSize MockRealtimeVideoSource::captureSize() const
@@ -450,7 +450,24 @@ void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
 
 void MockRealtimeVideoSource::startCaptureTimer()
 {
-    m_emitFrameTimer->startRepeating(1_s / frameRate());
+    startCaptureTimer(frameRate());
+}
+
+void MockRealtimeVideoSource::startCaptureTimer(double frameRate)
+{
+    // m_emitFrameTimer fires on m_runLoop's thread, so it must be started and stopped there to avoid
+    // racing CFRunLoopTimerInvalidate() against an in-flight callback. Marshal both onto m_runLoop so
+    // they also stay ordered relative to each other.
+    m_runLoop->dispatch([this, protectedThis = Ref { *this }, interval = 1_s / frameRate] {
+        m_emitFrameTimer->startRepeating(interval);
+    });
+}
+
+void MockRealtimeVideoSource::stopCaptureTimer()
+{
+    m_runLoop->dispatch([this, protectedThis = Ref { *this }] {
+        m_emitFrameTimer->stop();
+    });
 }
 
 void MockRealtimeVideoSource::startProducingData()
@@ -467,7 +484,7 @@ void MockRealtimeVideoSource::startProducingData()
 
 void MockRealtimeVideoSource::stopProducingData()
 {
-    m_emitFrameTimer->stop();
+    stopCaptureTimer();
     m_elapsedTime += MonotonicTime::now() - m_startTime;
     m_startTime = MonotonicTime::nan();
 }
@@ -793,7 +810,7 @@ void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
         if (!source->isProducingData())
             continue;
         if (isInterrupted)
-            source->m_emitFrameTimer->stop();
+            source->stopCaptureTimer();
         else
             source->startCaptureTimer();
         source->notifyMutedChange(isInterrupted);

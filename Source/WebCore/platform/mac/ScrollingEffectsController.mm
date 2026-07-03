@@ -74,13 +74,16 @@ ScrollingEffectsController::~ScrollingEffectsController()
 
 void ScrollingEffectsController::stopAllTimers()
 {
+    // Hand the timers to the client for destruction rather than stopping them here: they may fire on
+    // another thread (e.g. the scrolling thread) than the one tearing down the controller, and stopping
+    // or destroying a timer off its run loop's thread races with an in-flight callback.
     if (m_discreteSnapTransitionTimer) {
-        m_discreteSnapTransitionTimer->stop();
+        m_client.destroyTimer(WTF::move(m_discreteSnapTransitionTimer));
         m_client.didStopScrollSnapAnimation();
     }
 
     if (m_discreteScrollendTimer)
-        m_discreteScrollendTimer->stop();
+        m_client.destroyTimer(WTF::move(m_discreteScrollendTimer));
 
 #if ASSERT_ENABLED
     m_timersWereStopped = true;

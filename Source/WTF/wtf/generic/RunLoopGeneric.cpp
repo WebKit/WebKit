@@ -307,6 +307,13 @@ RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop, ASCIILiteral description)
 
 RunLoop::TimerBase::~TimerBase()
 {
+    // An active timer must be stopped/destroyed on its run loop's thread: fired() runs the timer's
+    // callback on that thread without holding m_loopLock, and the TimerBase is not ref-counted, so
+    // tearing it down from another thread races with the in-flight callback and risks a use-after-free.
+    // (Starting a timer cross-thread is safe and supported -- that is how dispatch()/dispatchAfter()
+    // schedule work onto another run loop.)
+    if (m_scheduledTask->isActive())
+        assertIsCurrent(m_runLoop);
     Locker locker { m_runLoop->m_loopLock };
     stopWithLock();
 }
@@ -329,6 +336,8 @@ void RunLoop::TimerBase::stopWithLock()
 void RunLoop::TimerBase::stop()
 {
     Locker locker { m_runLoop->m_loopLock };
+    if (m_scheduledTask->isActive())
+        assertIsCurrent(m_runLoop);
     stopWithLock();
 }
 

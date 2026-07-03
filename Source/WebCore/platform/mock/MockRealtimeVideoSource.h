@@ -105,6 +105,8 @@ private:
     void generateFrame();
     RefPtr<ImageBuffer> generateFrameInternal();
     void startCaptureTimer();
+    void startCaptureTimer(double frameRate);
+    void stopCaptureTimer();
     RefPtr<ImageBuffer> generatePhoto();
 
     void delaySamples(Seconds) final;

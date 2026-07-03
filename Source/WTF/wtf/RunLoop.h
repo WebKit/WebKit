@@ -152,16 +152,27 @@ public:
     static void registerRunLoopMessageWindowClass();
 #endif
 
+    // A RunLoop::Timer is owned by the thread whose run loop it is constructed with: it fires on that
+    // run loop's thread, and stop() and the destructor must run on that thread. Stopping or destroying
+    // a timer from another thread races with an in-flight callback and is a use-after-free; both assert
+    // RunLoop::isCurrent() in debug builds (see assertIsCurrent()). Starting/re-arming a timer from
+    // another thread is allowed -- it only schedules onto the run loop and never frees the timer -- which
+    // is how RunLoop::dispatch()/dispatchAfter() and cross-thread timer schedulers (e.g. JSRunLoopTimer)
+    // work.
     class TimerBase {
         friend class RunLoop;
     public:
         WTF_EXPORT_PRIVATE explicit TimerBase(Ref<RunLoop>&&, ASCIILiteral description);
+        // Must run on the run loop's thread if the timer is active (asserted in debug); see class comment.
         WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
+        // May be called from any thread; (re)schedules the timer onto its run loop's thread.
         void startRepeating(Seconds interval) { start(std::max(interval, 0_s), true); }
         void startOneShot(Seconds interval) { start(std::max(interval, 0_s), false); }
 
+        // Must be called on the run loop's thread when the timer is active (asserted in debug).
         WTF_EXPORT_PRIVATE void stop();
+
         WTF_EXPORT_PRIVATE bool isActive() const;
         WTF_EXPORT_PRIVATE Seconds secondsUntilFire() const;
 
@@ -399,7 +410,8 @@ private:
 
 inline void assertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABILITY(runLoop)
 {
-    ASSERT_UNUSED(runLoop, runLoop.isCurrent());
+    UNUSED_PARAM(runLoop);
+    ASSERT_WITH_SECURITY_IMPLICATION(runLoop.isCurrent());
 }
 
 } // namespace WTF
