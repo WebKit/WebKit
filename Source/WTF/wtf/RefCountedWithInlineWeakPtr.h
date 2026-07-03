@@ -67,6 +67,7 @@ protected:
         return true;
     }
 
+IGNORE_GCC_WARNINGS_BEGIN("uninitialized")
     // Returns true if the pointer should be freed.
     bool weakDerefBase() const
     {
@@ -77,6 +78,7 @@ protected:
 
         return true;
     }
+IGNORE_GCC_WARNINGS_END
 
 private:
     mutable unsigned m_strongCount { 1 };
