@@ -140,8 +140,8 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
 void WebXRSystem::obtainCurrentDevice(XRSessionMode mode, const Vector<String>& requiredFeatures, const Vector<String>& optionalFeatures, CompletionHandler<void(ThreadSafeWeakPtr<PlatformXR::Device>)>&& callback)
 {
     if (isImmersive(mode)) {
-        ensureImmersiveXRDeviceIsSelected([this, callback = WTF::move(callback)]() mutable {
-            callback(m_activeImmersiveDevice);
+        ensureImmersiveXRDeviceIsSelected([protectedThis = protect(*this), callback = WTF::move(callback)]() mutable {
+            callback(protectedThis->m_activeImmersiveDevice);
         });
         return;
     }
@@ -174,9 +174,9 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
 
     // 4. Run the following steps in parallel:
     // 4.1 Ensure an immersive XR device is selected.
-    ensureImmersiveXRDeviceIsSelected([this, promise = WTF::move(promise), mode]() mutable {
+    ensureImmersiveXRDeviceIsSelected([protectedThis = protect(*this), promise = WTF::move(promise), mode]() mutable {
         // 4.2 If the immersive XR device is null, resolve promise with false and abort these steps.
-        RefPtr activeImmersiveDevice { m_activeImmersiveDevice };
+        RefPtr activeImmersiveDevice = protectedThis->m_activeImmersiveDevice.get();
         if (!activeImmersiveDevice) {
             promise.resolve(false);
             return;
@@ -536,7 +536,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     // 5.2 Let optionalFeatures be options' optionalFeatures.
     // 5.3 Set device to the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
     // 5.4 Queue a task to perform the following steps:
-    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedDocument, immersive, init, mode, promise = WTF::move(promise)](ThreadSafeWeakPtr<PlatformXR::Device> weakDevice) mutable {
+    obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures, [this, protectedThis = protect(*this), protectedDocument, immersive, init, mode, promise = WTF::move(promise)](ThreadSafeWeakPtr<PlatformXR::Device> weakDevice) mutable {
         auto rejectPromiseWithNotSupportedError = makeScopeExit([&]() {
             promise.reject(Exception { ExceptionCode::NotSupportedError });
             m_pendingImmersiveSession = false;
@@ -562,7 +562,12 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
         // 5.4.6 Request the xr permission with descriptor and status.
         // 5.4.7 If status' state is "denied" run the following steps: (same as above in 5.4.1)
         resolveFeaturePermissions(mode, init, device, [this, weakThis = WeakPtr { *this }, protectedDocument, device, immersive, mode, promise](std::optional<FeatureList>&& requestedFeatures) mutable {
-            if (!weakThis || !requestedFeatures) {
+            RefPtr strongThis = weakThis;
+            if (!strongThis) {
+                promise.reject(Exception { ExceptionCode::NotSupportedError });
+                return;
+            }
+            if (!requestedFeatures) {
                 promise.reject(Exception { ExceptionCode::NotSupportedError });
                 m_pendingImmersiveSession = false;
                 return;

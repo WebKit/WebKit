@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.internals)
+    internals.settings.setWebXREnabled(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function gc() {
+    if (window.GCController)
+        GCController.collect();
+}
+
+(function () {
+    let f = document.createElement('iframe');
+    document.body.appendChild(f);
+    let xr = f.contentWindow.navigator.xr;
+    // Queue many async EnumerateImmersiveXRDevices IPCs whose replies and the
+    // re-posted callbacks land across multiple RunLoop iterations.
+    for (let i = 0; i < 50; i++)
+        xr.isSessionSupported('immersive-vr').catch(() => {});
+    // Detach the frame so the WebXRSystem becomes collectable once any
+    // in-flight IPC reply lambda drops its protecting Ref.
+    f.remove();
+})();
+
+(function gcLoop(n) {
+    for (let i = 0; i < 5; i++)
+        gc();
+    if (n > 0) {
+        setTimeout(() => gcLoop(n - 1), 0);
+        return;
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+})(50);
+</script>
+</body>
+</html>
