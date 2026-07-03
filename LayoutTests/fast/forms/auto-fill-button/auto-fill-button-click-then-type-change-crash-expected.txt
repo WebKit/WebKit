@@ -1,0 +1,4 @@
+This test passes if WebKit does not hit debug assertions or crash under ASAN.
+
+
+PASS
