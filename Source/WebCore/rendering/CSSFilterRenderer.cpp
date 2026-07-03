@@ -125,6 +125,28 @@ static IntOutsets calculateReferenceFilterOutsets(const Style::FilterReference& 
     return SVGFilterRenderer::calculateOutsets(*filterElement, targetBoundingBox);
 }
 
+FloatRect CSSFilterRenderer::resolvedReferenceFilterRegion(RenderElement& renderer, const Style::Filter& filter, const FloatRect& referenceBox)
+{
+    for (auto& value : filter) {
+        auto region = WTF::switchOn(value,
+            [&](const Style::FilterReference& filterReference) -> std::optional<FloatRect> {
+                RefPtr filterElement = referenceFilterElement(filterReference, renderer);
+                if (!filterElement)
+                    return std::nullopt;
+                RefPtr contextElement = dynamicDowncast<SVGElement>(renderer.element());
+                auto resolved = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), referenceBox);
+                if (resolved.isEmpty())
+                    return std::nullopt;
+                return resolved;
+            },
+            [&](const auto&) -> std::optional<FloatRect> { return std::nullopt; }
+        );
+        if (region)
+            return *region;
+    }
+    return referenceBox;
+}
+
 static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& filter, const Style::FilterReference& filterReference, RenderElement& renderer, OptionSet<FilterRenderingMode> preferredRenderingModes, OptionSet<FilterRenderingOption> renderingOptions, const GraphicsContext& destinationContext)
 {
     RefPtr filterElement = referenceFilterElement(filterReference, renderer);

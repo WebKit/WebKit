@@ -60,6 +60,8 @@ public:
 
     static bool isIdentity(const RenderElement&, const Style::Filter&);
     static IntOutsets calculateOutsets(const RenderElement&, const Style::Filter&, const FloatRect& targetBoundingBox);
+    // Resolves the region the same way createReferenceFilter() does, falling back to referenceBox.
+    static FloatRect resolvedReferenceFilterRegion(RenderElement&, const Style::Filter&, const FloatRect& referenceBox);
 
 private:
     CSSFilterRenderer(const FilterGeometry&, OptionSet<FilterRenderingOption>, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);

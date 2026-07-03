@@ -3687,6 +3687,11 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (hasBackingSharingLayers())
         return false;
 
+    // A reference (url()) backdrop-filter is painted into this layer's backing during its content
+    // paint, so the layer needs a backing store even if it has no content of its own.
+    if (renderer().style().backdropFilter().hasReferenceFilter())
+        return false;
+
     if (auto* replaced = dynamicDowncast<RenderReplaced>(renderer())) {
         if (replaced->paintsContent())
             return false;

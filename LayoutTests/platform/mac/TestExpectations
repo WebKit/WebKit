@@ -1608,7 +1608,6 @@ http/tests/media/hls/hls-limit-play-rate.html
 
 [ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-boundary.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-nested-border-radius-clip-3.html [ ImageOnlyFailure ]
 [ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/crashtests/fecomponenttransfer-tablevalues-crash.html [ Skip ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-border-radius-change.html [ Skip ]
