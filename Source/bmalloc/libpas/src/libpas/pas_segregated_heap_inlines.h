@@ -37,28 +37,30 @@ PAS_API pas_segregated_size_directory* pas_segregated_heap_size_directory_for_in
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index,
-    const pas_heap_config* config);
+    const pas_heap_config* config,
+    pas_lock_hold_mode heap_lock_hold_mode);
 
 static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_segregated_heap_size_directory_for_index(
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index,
-    const pas_heap_config* config)
+    const pas_heap_config* config,
+    pas_lock_hold_mode heap_lock_hold_mode)
 {
     pas_compact_atomic_segregated_size_directory_ptr* index_to_size_directory;
     pas_segregated_size_directory* result;
-    
+
     if (index >= (size_t)heap->small_index_upper_bound)
         goto slow;
-    
+
     index_to_size_directory = heap->index_to_small_size_directory;
     if (!index_to_size_directory) {
         /* Code that holds no locks may see this since we have no ordering between when the
            upper_bound is set and when this is set. */
         goto slow;
     }
-    
+
     result = pas_compact_atomic_segregated_size_directory_ptr_load(index_to_size_directory + index);
     if (result)
         return result;
@@ -67,7 +69,7 @@ pas_segregated_heap_size_directory_for_index(
        for the entry corresponding to the basic_size_directory to be unset in the lookup table! */
 
 slow:
-    return pas_segregated_heap_size_directory_for_index_slow(heap, index, cached_index, config);
+    return pas_segregated_heap_size_directory_for_index_slow(heap, index, cached_index, config, heap_lock_hold_mode);
 }
 
 static PAS_ALWAYS_INLINE pas_segregated_size_directory*
@@ -78,10 +80,15 @@ pas_segregated_heap_size_directory_for_size(
     unsigned* cached_index)
 {
     size_t index;
-    
+
     index = pas_segregated_heap_index_for_size(size, config);
-    
-    return pas_segregated_heap_size_directory_for_index(heap, index, cached_index, config.config_ptr);
+
+    /* This entry point is reached on the lock-free allocation slow path
+       (pas_heap_ensure_size_directory_for_size), so the heap lock cannot be
+       held here. The medium-tuple lookup uses the seqlock to validate
+       against concurrent writers. */
+    return pas_segregated_heap_size_directory_for_index(
+        heap, index, cached_index, config.config_ptr, pas_lock_is_not_held);
 }
 
 static PAS_ALWAYS_INLINE bool pas_segregated_heap_touch_lookup_tables(
