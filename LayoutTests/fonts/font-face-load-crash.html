@@ -1,0 +1,17 @@
+<style id="v">x{}</style>
+<body>
+<script>
+window?.testRunner?.dumpAsText();
+let s = document.createElement('style');
+s.textContent = '@font-face { font-family: t; src: local(Helvetica); }';
+document.head.appendChild(s);
+document.body.offsetHeight;
+let face = [...document.fonts].find(f => f.family.replace(/['"]/g, '') === 't');
+face.loaded;
+Object.defineProperty(FontFace.prototype, 'then', { get() {
+    document.getElementById('v').remove();
+    document.body.offsetHeight;
+}, configurable: true });
+face.load();
+document.write('This test passes if WebKit does not crash.');
+</script>
