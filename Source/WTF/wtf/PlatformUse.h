@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -398,4 +398,8 @@
 
 #if !defined(USE_SANDBOX_PARAMS) && PLATFORM(MAC)
 #define USE_SANDBOX_PARAMS 1
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
+#define USE_ITP_TCC_CHECK 1
 #endif
