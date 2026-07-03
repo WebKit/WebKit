@@ -386,6 +386,8 @@ int64_t TrackBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& 
 {
     ASSERT(start.isValid());
     ASSERT(end.isValid());
+    if (start.isInvalid() || end.isInvalid() || start > end)
+        return 0;
     // 3.5.9 Coded Frame Removal Algorithm
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
     

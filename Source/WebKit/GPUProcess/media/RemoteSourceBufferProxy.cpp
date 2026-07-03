@@ -46,6 +46,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
 namespace WebKit {
 
@@ -216,6 +217,7 @@ void RemoteSourceBufferProxy::startChangingType()
 
 void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void()>&& completionHandler)
 {
+    MESSAGE_CHECK_COMPLETION(start.isValid() && end.isValid() && start < end, completionHandler());
     protectedSourceBufferPrivate()->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::currentSingleton(), WTF::move(completionHandler));
 }
 
@@ -418,6 +420,7 @@ void RemoteSourceBufferProxy::connectionToWebProcessClosed()
 }
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_COMPLETION
 
 } // namespace WebKit
 

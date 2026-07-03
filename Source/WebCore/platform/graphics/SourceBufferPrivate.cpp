@@ -512,8 +512,10 @@ void SourceBufferPrivate::removeCodedFramesInternal(const MediaTime& start, cons
 {
     assertIsCurrent(m_dispatcher.get());
 
+    ASSERT(start.isValid());
+    ASSERT(end.isValid());
     ASSERT(start < end);
-    if (start >= end)
+    if (start.isInvalid() || end.isInvalid() || start >= end)
         return;
 
     // 3.5.9 Coded Frame Removal Algorithm
