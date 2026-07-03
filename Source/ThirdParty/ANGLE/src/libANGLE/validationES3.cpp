@@ -4144,6 +4144,13 @@ bool ValidateResumeTransformFeedback(const Context *context, angle::EntryPoint e
         return false;
     }
 
+    const Program *currentProgram = context->getState().getProgram();
+    if (!currentProgram || !transformFeedback->hasBoundProgram(currentProgram->id()))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTransformFeedbackProgramNotActive);
+        return false;
+    }
+
     if (!ValidateProgramExecutableXFBBuffersPresent(
             context, context->getState().getLinkedProgramExecutable(context)))
     {

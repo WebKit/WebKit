@@ -640,6 +640,7 @@ inline constexpr const char *kTransformFeedbackNotPaused = "The active Transform
 inline constexpr const char *kTransformFeedbackPaused = "The active Transform Feedback object is paused.";
 inline constexpr const char *kTransformFeedbackProgramBinary = "Cannot change program binary while program is associated with an active transform feedback object.";
 inline constexpr const char *kTransformFeedbackTargetActive = "Target is TRANSFORM_FEEDBACK_BUFFER and transform feedback is currently active.";
+inline constexpr const char *kTransformFeedbackProgramNotActive = "The program being used by the current transform feedback object is not the active program.";
 inline constexpr const char *kTransformFeedbackUseProgram = "Cannot change active program while transform feedback is unpaused.";
 inline constexpr const char *kTransformFeedbackVaryingIndexOutOfRange = "Index must be less than the transform feedback varying count in the program.";
 inline constexpr const char *kTypeNotUnsignedShortByte = "Only UNSIGNED_SHORT and UNSIGNED_BYTE types are supported.";
